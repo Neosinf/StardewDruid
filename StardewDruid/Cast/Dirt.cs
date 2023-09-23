@@ -30,7 +30,7 @@ namespace StardewDruid.Cast
             
             int probability = randomIndex.Next(10);
 
-            if (probability <= 2 && spawnIndex["grass"]) // 3/10 grass
+            if (probability <= 1 && spawnIndex["grass"]) // 2/10 grass
             {
 
                 targetLocation.terrainFeatures.Add(targetVector, new StardewValley.TerrainFeatures.Grass(1, 4));
@@ -40,74 +40,10 @@ namespace StardewDruid.Cast
                 castFire = true;
 
             }
-            else if (probability >= 3 && probability <= 4 && spawnIndex["trees"]) // 1/10 tree
+            else if (probability <= 2 && spawnIndex["trees"]) // 1/10 tree
             {
 
-                bool plantSeed = true;
-
-                List<Vector2> neighbourVectors = ModUtility.GetTilesWithinRadius(targetLocation, targetVector, 1);
-
-                Layer buildingLayer = targetLocation.Map.GetLayer("Buildings");
-
-                foreach (Vector2 neighbourVector in neighbourVectors)
-                {
-
-                    if (!plantSeed)
-                    {
-                        break;
-                    }
-
-                    Tile buildingTile = buildingLayer.PickTile(new Location((int)neighbourVector.X * 64, (int)neighbourVector.Y * 64), Game1.viewport.Size);
-
-                    if (buildingTile != null)
-                    {
-
-                        if (buildingTile.TileIndexProperties.TryGetValue("Passable", out _) == false)
-                        {
-                            plantSeed = false;
-
-                        }
-
-                        continue;
-
-                    }
-
-                    if (targetLocation.terrainFeatures.ContainsKey(neighbourVector))
-                    {
-                        var terrainFeature = targetLocation.terrainFeatures[neighbourVector];
-
-                        switch (terrainFeature.GetType().Name.ToString())
-                        {
-
-                            case "Tree":
-
-                                plantSeed = false;
-
-                                break;
-
-                            case "HoeDirt":
-
-                                HoeDirt hoeDirt = terrainFeature as HoeDirt;
-
-                                if (hoeDirt.crop != null)
-                                {
-
-                                    plantSeed = false;
-
-                                }
-
-                                break;
-
-                            default:
-
-                                break;
-
-                        }
-                    }
-
-                }
-
-                if (plantSeed)
+                if (ModUtility.CheckSeed(targetLocation, targetVector))
                 {
 
                     StardewValley.TerrainFeatures.Tree newTree;
@@ -130,7 +66,7 @@ namespace StardewDruid.Cast
 
                     };
 
-                    newTree.fertilized.Value = true;
+                    //newTree.fertilized.Value = true;
 
                     targetLocation.terrainFeatures.Add(targetVector, newTree);
 
@@ -139,6 +75,14 @@ namespace StardewDruid.Cast
                     ModUtility.AnimateGrowth(targetLocation,targetVector);
 
                 }
+
+            }
+            else if (probability <= 5) // 3/10 hoe dirt
+            {
+
+                targetLocation.makeHoeDirt(targetVector);
+
+                mod.UpdateEarthCasts(targetLocation, targetVector, false);
 
             }
 

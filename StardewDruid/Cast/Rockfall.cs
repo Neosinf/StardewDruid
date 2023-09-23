@@ -336,6 +336,8 @@ namespace StardewDruid.Cast
 
             targetLocation.damageMonster(areaOfEffect, 10 * objectStrength, 20 * objectStrength, true, targetPlayer);
 
+            targetLocation.lightGlows.Add(targetVector * 64);
+
         }
 
         public void RockImpact()

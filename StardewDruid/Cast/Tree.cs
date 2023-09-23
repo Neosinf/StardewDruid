@@ -9,18 +9,23 @@ namespace StardewDruid.Cast
     internal class Tree : Cast
     {
 
-        private readonly StardewValley.TerrainFeatures.Tree treeFeature;
-
-        public Tree(Mod mod, Vector2 target, Farmer player, StardewValley.TerrainFeatures.Tree TreeFeature)
+        public Tree(Mod mod, Vector2 target, Farmer player)
             : base(mod, target, player)
         {
-
-            treeFeature = TreeFeature;
 
         }
 
         public override void CastEarth()
         {
+
+            if (!targetLocation.terrainFeatures.ContainsKey(targetVector))
+            {
+
+                return;
+
+            }
+
+            StardewValley.TerrainFeatures.Tree treeFeature = targetLocation.terrainFeatures[targetVector] as StardewValley.TerrainFeatures.Tree;
 
             int probability = randomIndex.Next(10);
 
@@ -36,7 +41,7 @@ namespace StardewDruid.Cast
 
                     Game1.createObjectDebris(388, (int)targetVector.X + 1, (int)targetVector.Y);
 
-                    Game1.createObjectDebris(388, (int)targetVector.X, (int)targetVector.Y);
+                    //Game1.createObjectDebris(388, (int)targetVector.X, (int)targetVector.Y);
                 };
 
                 if (probability >= 6)
@@ -44,16 +49,16 @@ namespace StardewDruid.Cast
 
                     Game1.createObjectDebris(388, (int)targetVector.X, (int)targetVector.Y + 1);
 
-                    Game1.createObjectDebris(388, (int)targetVector.X, (int)targetVector.Y);
+                    //Game1.createObjectDebris(388, (int)targetVector.X, (int)targetVector.Y);
 
                 };
 
-                if (probability == 9)
-                {
+                //if (probability == 9)
+                //{
 
-                    Game1.createObjectDebris(388, (int)targetVector.X + 1, (int)targetVector.Y + 1);
+                    //Game1.createObjectDebris(388, (int)targetVector.X + 1, (int)targetVector.Y + 1);
 
-                };
+                //};
 
                 if (!treeFeature.stump.Value)
                 {
@@ -63,6 +68,8 @@ namespace StardewDruid.Cast
                 }
 
                 castFire = true;
+
+                targetPlayer.gainExperience(2,4); // gain foraging experience
 
             }
             else

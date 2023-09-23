@@ -5,32 +5,28 @@ namespace StardewDruid
     class StaticData
     {
 
-        public string statueChoice;
-
-        public Dictionary<string, bool> challengeList;
+        public string activeBlessing;
 
         public Dictionary<string, List<string>> triggerList;
 
         public Dictionary<string, bool> questList;
 
-        public List<string> blessingsReceived;
+        public Dictionary<string, int> blessingList;
 
-        public List<string> challengesReceived;
+        public int defaultMagnetism;
 
         public StaticData()
         {
 
-            statueChoice = "none";
-
-            challengeList = new();
+            activeBlessing = "none";
 
             triggerList = new();
 
             questList = new();
 
-            blessingsReceived = new();
+            blessingList = new();
 
-            challengesReceived = new();
+            defaultMagnetism = 1;
 
         }
 

@@ -44,27 +44,27 @@ namespace StardewDruid.Cast
 
                 }
 
-                if (probability <= 7) // hardwood
-                {
+                //if (probability <= 7) // hardwood
+                //{
 
-                    castFire = true;
+                //   Game1.createObjectDebris(709, (int)this.targetVector.X, (int)this.targetVector.Y + 1);
 
-                    Game1.createObjectDebris(709, (int)this.targetVector.X, (int)this.targetVector.Y + 1);
+                //   Game1.createObjectDebris(709, (int)this.targetVector.X + 1, (int)this.targetVector.Y + 1);
 
-                    Game1.createObjectDebris(709, (int)this.targetVector.X + 1, (int)this.targetVector.Y + 1);
-
-                }
+                //}
 
                 if (probability == 8) // seed
                 {
 
                     Game1.createObjectDebris(382, (int)this.targetVector.X + 1, (int)this.targetVector.Y);
 
-                    Game1.createObjectDebris(382, (int)this.targetVector.X + 1, (int)this.targetVector.Y + 1);
+                    //Game1.createObjectDebris(382, (int)this.targetVector.X + 1, (int)this.targetVector.Y + 1);
 
                 }
 
                 castFire = true;
+
+                targetPlayer.gainExperience(2, 6); // gain foraging experience
 
                 ModUtility.AnimateGrowth(targetLocation,targetVector);
 

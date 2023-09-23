@@ -100,13 +100,13 @@ namespace StardewDruid.Cast
                         [0] = 257, // 257 morel
                         [1] = 281, // 281 chanterelle
                         [2] = 404, // 404 mushroom
-                        [3] = 420,  // 420 red mushroom
-                        [4] = 422  // 421 purple mushroom
+                        //[3] = 420,  // 420 red mushroom
+                        //[4] = 422  // 421 purple mushroom
 
                     };
 
-                    objectIndex = objectIndexes[randomIndex.Next(5)];
-
+                    //objectIndex = objectIndexes[randomIndex.Next(5)];
+                    objectIndex = objectIndexes[randomIndex.Next(3)];
 
                 }
 

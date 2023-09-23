@@ -50,79 +50,15 @@ namespace StardewDruid.Cast
                 else
                 {
 
-                    bool plantSeed = true;
-
-                    List<Vector2> neighbourVectors = ModUtility.GetTilesWithinRadius(targetPlayer.currentLocation, targetVector, 1);
-
-                    Layer buildingLayer = targetPlayer.currentLocation.Map.GetLayer("Buildings");
-
-                    foreach (Vector2 neighbourVector in neighbourVectors)
-                    {
-
-                        if (!plantSeed)
-                        {
-                            break;
-                        }
-
-                        Tile buildingTile = buildingLayer.PickTile(new Location((int)neighbourVector.X * 64, (int)neighbourVector.Y * 64), Game1.viewport.Size);
-
-                        if (buildingTile != null)
-                        {
-
-                            if (buildingTile.TileIndexProperties.TryGetValue("Passable", out _) == false)
-                            { 
-                                plantSeed = false;
-
-                            }
-
-                            continue;
-
-                        }
-
-                        if (targetPlayer.currentLocation.terrainFeatures.ContainsKey(neighbourVector))
-                        {
-                            var terrainFeature = targetPlayer.currentLocation.terrainFeatures[neighbourVector];
-
-                            switch (terrainFeature.GetType().Name.ToString())
-                            {
-
-                                case "Tree":
-
-                                    plantSeed = false;
-
-                                    break;
-
-                                case "HoeDirt":
-
-                                    HoeDirt hoeDirt = terrainFeature as HoeDirt;
-
-                                    if (hoeDirt.crop != null)
-                                    {
-
-                                        plantSeed = false;
-
-                                    }
-
-                                    break;
-
-                                default:
-
-                                    break;
-
-                            }
-                        }
-
-                    }
-
-                    if (plantSeed)
+                    if (ModUtility.CheckSeed(targetLocation, targetVector))
                     {
 
                         int generateItem;
 
-                        if (probability <= 8)
+                        if (probability <= 1) // 2/3 low grade random seed
                         {
 
-                            generateItem = 770; // low grade random seed
+                            generateItem = 770;
 
                         }
                         else
@@ -181,19 +117,21 @@ namespace StardewDruid.Cast
 
                         hoeDirt.state.Value = 1;
 
-                        hoeDirt.plant(generateItem, (int)targetVector.X, (int)targetVector.Y, Game1.player, false, Game1.player.currentLocation); // high grade seed
+                        hoeDirt.plant(generateItem, (int)targetVector.X, (int)targetVector.Y, targetPlayer, false, targetLocation); // high grade seed
 
                         hoeDirt.crop.currentPhase.Value++;
 
                         hoeDirt.crop.currentPhase.Value++;
 
-                        hoeDirt.crop.currentPhase.Value++; // growth stage 3
+                        //hoeDirt.crop.currentPhase.Value++; // growth stage 3
 
                         hoeDirt.crop.dayOfCurrentPhase.Value = 0;
 
                         hoeDirt.crop.updateDrawMath(targetVector);
 
-                        hoeDirt.plant(920, (int)targetVector.X, (int)targetVector.Y, Game1.player, true, Game1.player.currentLocation); // always watered
+                        hoeDirt.plant(920, (int)targetVector.X, (int)targetVector.Y, targetPlayer, true, targetLocation); // always watered
+
+                        castCost = 4;
 
                         castFire = true;
 

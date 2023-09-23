@@ -29,80 +29,88 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
 
-            int probability = randomIndex.Next(50);
+            int probability = randomIndex.Next(100);
 
-            if (probability <= 4) // fish
+            if (probability <= 12) // fish
             {
 
                 Dictionary<int, int> objectIndexes;
 
-                switch (targetPlayer.currentLocation.Name)
+                if (targetPlayer.currentLocation.Name.Contains("Beach"))
                 {
-                    case "Farm":
-                    case "Hilltop":
 
-                        objectIndexes = new Dictionary<int, int>()
-                        {
-                            [0] = 153, // algae 153
-                            [1] = 153, // algae 153
-                            [2] = 721, // snail 721
-                            [3] = 716, // crayfish 716
-                            [4] = 145  // carp 145
-                        };
+                    objectIndexes = new Dictionary<int, int>()
+                    {
+                        
+                        [0] = 153, // seaweed 152
+                        [1] = 152, // seaweed 152
+                        [2] = 152, // seaweed 152
+                        [3] = 153, // seaweed 152
+                        [4] = 152, // seaweed 152
+                        [5] = 718, // cockle 718
+                        [6] = 715, // lobster 715
+                        [7] = 720, // shrimp 720
+                        [8] = 719, // mussel 719
+                        [9] = 131, // sardine 131
+                        [10] = 131, // sardine 131
+                        [11] = 129, // anchovy 129
+                        [12] = 129, // anchovy 129
+                    };
 
-                        break;
+                }
+                else
+                {
 
-                    case "Forest":
-
-                        objectIndexes = new Dictionary<int, int>()
-                        {
-                            [0] = 153, // algae 153
-                            [1] = 153, // algae 153
-                            [2] = 722, // periwinkle 722
-                            [3] = 717, // crab 717
-                            [4] = 142  // sunfish 142
-                            
-                        };
-
-                        break;
-
-                    case "Beach":
-
-                        objectIndexes = new Dictionary<int, int>()
-                        {
-                            [0] = 153, // seaweed 152
-                            [1] = 152, // seaweed 152
-                            [2] = 718, // cockle 718
-                            [3] = 715, // lobster 715
-                            [4] = 131  // sardine 131
-                            
-                        };
-
-                        break;
-
-                    default: // "Mountain":
-
-                        objectIndexes = new Dictionary<int, int>()
-                        {
-                            [0] = 152, // seaweed 152
-                            [1] = 152, // seaweed 152
-                            [2] = 719, // mussel 719
-                            [3] = 720, // shrimp 720
-                            [4] = 145  // carp 145
-                        };
-
-                        break;
+                    objectIndexes = new Dictionary<int, int>()
+                    {
+                        
+                        [0] = 153, // algae 153
+                        [1] = 153, // algae 153
+                        [2] = 153, // algae 153
+                        [3] = 153, // algae 153
+                        [4] = 153, // algae 153
+                        [5] = 721, // snail 721
+                        [6] = 716, // crayfish 716
+                        [7] = 722, // periwinkle 722
+                        [8] = 717, // crab 717
+                        [9] = 145, // carp 145
+                        [10] = 145, // carp 145
+                        [11] = 142,  // sunfish 142
+                        [12] = 142  // sunfish 142
+                    
+                    };
 
                 }
 
-                int randomQuality = randomIndex.Next(11 - targetPlayer.fishingLevel.Value);
-
                 int objectQuality = 0;
 
-                if(randomQuality == 0 && probability >= 48)
+                int experienceGain;
+
+                if (probability <= 4)
                 {
                     
-                    objectQuality = 2;
+                    experienceGain = 3;
+
+                }
+                else if (probability <= 8)
+                {
+                    
+                    experienceGain = 6;
+
+                }
+                else
+                {
+
+                    experienceGain = 12;
+
+                    if (randomIndex.Next(11 - targetPlayer.fishingLevel.Value) == 0)
+                    {
+
+                        objectQuality = 2;
+
+                        experienceGain = 20;
+
+                    }
 
                 }
 
@@ -113,6 +121,8 @@ namespace StardewDruid.Cast
                 targetPlayer.currentLocation.playSound("pullItemFromWater");
 
                 castCost = 8;
+
+                targetPlayer.gainExperience(1, experienceGain); // gain fishing experience
 
                 castFire = true;
 

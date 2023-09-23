@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Characters;
@@ -19,6 +20,8 @@ namespace StardewDruid.Cast
 
         public string activeChallenge;
 
+        public QuestData questData;
+
         public Queue<Vector2> trashQueue;
 
         public int trashCollected;
@@ -35,9 +38,11 @@ namespace StardewDruid.Cast
 
         Vector2 challengeBorder;
 
-        public Challenge(Mod mod, Vector2 target, Farmer player)
+        public Challenge(Mod mod, Vector2 target, Farmer player, Map.QuestData quest)
             : base(mod, target, player)
         {
+
+            questData = quest;
 
         }
 
@@ -113,9 +118,9 @@ namespace StardewDruid.Cast
 
             spawnCounter = 0;
 
-            challengeWithin = Map.Quest.ChallengeWithin(activeChallenge);
+            challengeWithin = questData.challengeWithin;
 
-            challengeRange = Map.Quest.ChallengeRange(activeChallenge);
+            challengeRange = questData.challengeRange;
 
             challengeBorder = challengeWithin + challengeRange;
 
@@ -123,7 +128,7 @@ namespace StardewDruid.Cast
 
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 45;
 
-            List<Vector2> spawnPortals = Map.Quest.ChallengePortals(activeChallenge);
+            List<Vector2> spawnPortals = questData.challengePortals;
 
             Portal portalHandle;
 
@@ -140,7 +145,7 @@ namespace StardewDruid.Cast
 
                 portalHandle.specialType = portalType;
 
-                portalHandle.spawnFrequency = Map.Quest.SpawnFrequency(activeChallenge);
+                portalHandle.spawnFrequency = questData.challengeFrequency;
 
                 mod.ActiveCast(portalHandle);
 
@@ -200,27 +205,29 @@ namespace StardewDruid.Cast
 
                     UpdateFriendship();
 
-                    targetPlayer.completeQuest(Map.Quest.QuestId(activeChallenge));
+                    mod.UpdateQuest(activeChallenge,true);
 
                     break;
 
                 default: // "challengeEarth"
 
-                    Game1.addHUDMessage(new HUDMessage($"Collected {trashCollected} pieces of trash!", ""));
-
                     if (trashCollected < 15)
                     {
 
-                        mod.UpdateChallenge(activeChallenge, false);
+                        Game1.addHUDMessage(new HUDMessage($"Try again to collect more trash", ""));
+
+                        //mod.UpdateQuest(activeChallenge, false);
 
                     }
                     else
                     {
 
+                        Game1.addHUDMessage(new HUDMessage($"Collected {trashCollected} pieces of trash!", ""));
+
                         UpdateFriendship();
 
-                        targetPlayer.completeQuest(Map.Quest.QuestId(activeChallenge));
-
+                        mod.UpdateQuest(activeChallenge, true);
+                        
                     }
 
                     break;

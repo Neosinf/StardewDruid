@@ -8,6 +8,10 @@ using Microsoft.Xna.Framework;
 using System.Runtime.InteropServices;
 using static StardewValley.FarmerSprite;
 using StardewDruid.Cast;
+using StardewValley.TerrainFeatures;
+using xTile.Dimensions;
+using xTile.Layers;
+using xTile.Tiles;
 
 namespace StardewDruid
 {
@@ -17,38 +21,47 @@ namespace StardewDruid
         public static void AnimateHands(Farmer player, int direction, int timeFrame)
         {
 
-            AnimationFrame carryAnimation;
+            //List<int> validAnimations = new() { 0, 6, 12 };
 
-            switch (direction)
-            {
+            //if (validAnimations.Contains(player.FarmerSprite.CurrentSingleAnimation))
+            //{
 
-                case 0: // Up
+                player.Halt();
 
-                    carryAnimation = new(12, timeFrame, true, false); // changes secondaryArm to active
+                AnimationFrame carryAnimation;
 
-                    break;
+                switch (direction)
+                {
 
-                case 1: // Right
+                    case 0: // Up
 
-                    carryAnimation = new(6, timeFrame, true, false);
+                        carryAnimation = new(12, timeFrame, true, false); // changes secondaryArm to active
 
-                    break;
+                        break;
 
-                case 2: // Down
+                    case 1: // Right
 
-                    carryAnimation = new(0, timeFrame, true, false);
+                        carryAnimation = new(6, timeFrame, true, false);
 
-                    break;
+                        break;
 
-                default: // Left
+                    case 2: // Down
 
-                    carryAnimation = new(6, timeFrame, true, true); // same as right but flipped
+                        carryAnimation = new(0, timeFrame, true, false);
 
-                    break;
+                        break;
 
-            }
+                    default: // Left
 
-            player.FarmerSprite.animateOnce(new AnimationFrame[1] { carryAnimation });
+                        carryAnimation = new(6, timeFrame, true, true); // same as right but flipped
+
+                        break;
+
+                }
+
+                player.FarmerSprite.animateOnce(new AnimationFrame[1] { carryAnimation });
+            
+           //}
 
         }
 
@@ -206,7 +219,7 @@ namespace StardewDruid
         public static void AnimateMeteor(GameLocation targetLocation, Vector2 targetVector, bool targetDirection)
         {
 
-            Rectangle meteorRectangle = new(0, 0, 32, 32);
+            Microsoft.Xna.Framework.Rectangle meteorRectangle = new(0, 0, 32, 32);
 
             Vector2 meteorPosition;
 
@@ -261,7 +274,7 @@ namespace StardewDruid
 
             int animationRow = 0;
 
-            Rectangle animationRectangle = new(0, animationRow * 64, 64, 64);
+            Microsoft.Xna.Framework.Rectangle animationRectangle = new(0, animationRow * 64, 64, 64);
 
             float animationInterval = 100f;
 
@@ -282,6 +295,77 @@ namespace StardewDruid
             targetLocation.temporarySprites.Add(newAnimation);
 
             return (newAnimation);
+
+        }
+
+        public static bool CheckSeed(GameLocation targetLocation, Vector2 targetVector)
+        {
+            
+            bool plantSeed = true;
+
+            List<Vector2> neighbourVectors = GetTilesWithinRadius(targetLocation, targetVector, 1);
+
+            Layer buildingLayer = targetLocation.Map.GetLayer("Buildings");
+
+            foreach (Vector2 neighbourVector in neighbourVectors)
+            {
+
+                if (!plantSeed)
+                {
+                    break;
+                }
+
+                Tile buildingTile = buildingLayer.PickTile(new Location((int)neighbourVector.X * 64, (int)neighbourVector.Y * 64), Game1.viewport.Size);
+
+                if (buildingTile != null)
+                {
+
+                    if (buildingTile.TileIndexProperties.TryGetValue("Passable", out _) == false)
+                    {
+                        plantSeed = false;
+
+                    }
+
+                    continue;
+
+                }
+
+                if (targetLocation.terrainFeatures.ContainsKey(neighbourVector))
+                {
+                    var terrainFeature = targetLocation.terrainFeatures[neighbourVector];
+
+                    switch (terrainFeature.GetType().Name.ToString())
+                    {
+
+                        case "Tree":
+
+                            plantSeed = false;
+
+                            break;
+
+                        case "HoeDirt":
+
+                            HoeDirt hoeDirt = terrainFeature as HoeDirt;
+
+                            if (hoeDirt.crop != null)
+                            {
+
+                                plantSeed = false;
+
+                            }
+
+                            break;
+
+                        default:
+
+                            break;
+
+                    }
+                }
+
+            }
+
+            return plantSeed;
 
         }
 

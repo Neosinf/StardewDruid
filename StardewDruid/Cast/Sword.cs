@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.TerrainFeatures;
@@ -13,9 +14,13 @@ namespace StardewDruid.Cast
 
         private int swordIndex;
 
-        public Sword(Mod mod, Vector2 target, Farmer player)
+        private QuestData questData;
+
+        public Sword(Mod mod, Vector2 target, Farmer player, QuestData quest)
             : base(mod, target, player)
         {
+
+            questData = quest;
 
         }
 
@@ -27,13 +32,20 @@ namespace StardewDruid.Cast
 
             int delayThrow = 600;
 
-            Vector2 originVector = targetVector + new Vector2(-1, -3);
-
-            ThrowSword(originVector, delayThrow);
+            ThrowSword(questData.triggerVector + new Vector2(0, -4), delayThrow);
 
             //----------------------- cast animation
 
-            ModUtility.AnimateGrowth(targetLocation, originVector);
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-2, -2));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-2, -3));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-1, -4));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-0, -5));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(1, -5));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(1, -4));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(2, -3));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(2, -2));
+
+            mod.UpdateQuest("swordEarth", true);
 
         }
 
@@ -53,6 +65,8 @@ namespace StardewDruid.Cast
 
             ModUtility.AnimateBolt(targetLocation, originVector);
 
+            mod.UpdateQuest("swordWater", true);
+
         }
 
         public override void CastStars()
@@ -71,6 +85,8 @@ namespace StardewDruid.Cast
             //---------------------- meteor animation
 
             ModUtility.AnimateMeteor(targetLocation, originVector, true);
+
+            mod.UpdateQuest("swordStars", true);
 
         }
 

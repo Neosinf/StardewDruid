@@ -64,6 +64,8 @@ namespace StardewDruid.Cast
 
                 castFire = true;
 
+                targetPlayer.gainExperience(2, 6); // gain foraging experience
+
                 ModUtility.AnimateGrowth(targetLocation, targetVector);
 
             }

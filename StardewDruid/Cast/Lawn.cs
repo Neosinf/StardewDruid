@@ -26,9 +26,9 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
 
-            int probability = randomIndex.Next(80);
+            int probability = randomIndex.Next(100);
 
-            if (probability <= 1 && spawnIndex["flower"]) // 2/80 flower
+            if (probability <= 1 && spawnIndex["flower"]) // 2/100 flower
             {
 
                 Dictionary<int, int> objectIndexes;
@@ -80,7 +80,7 @@ namespace StardewDruid.Cast
 
                  castFire = true;
 
-                 castCost = 8;
+                 castCost = 6;
 
             }
             else if (probability >= 2 && probability <= 3 && spawnIndex["forage"]) // 2/80 forage
@@ -141,7 +141,7 @@ namespace StardewDruid.Cast
                 castCost = 4;
 
             }
-            else if (probability >= 4 && probability <= 19 && spawnIndex["grass"]) // 16/80 grass
+            else if (probability >= 4 && probability <= 15 && spawnIndex["grass"]) // 12/80 grass
             {
 
                 StardewValley.TerrainFeatures.Grass grassFeature = new(1, 4);
@@ -157,74 +157,10 @@ namespace StardewDruid.Cast
                 castCost = 0;
 
             }
-            else if (probability >= 20 && probability <= 31 && spawnIndex["trees"]) // 12/80 tree
+            else if (probability >= 16 && probability <= 25 && spawnIndex["trees"]) // 10/80 tree
             {
-                
-                bool plantSeed = true;
 
-                List<Vector2> neighbourVectors = ModUtility.GetTilesWithinRadius(targetLocation, targetVector, 1);
-
-                Layer buildingLayer = targetLocation.Map.GetLayer("Buildings");
-
-                foreach (Vector2 neighbourVector in neighbourVectors)
-                {
-
-                    if (!plantSeed)
-                    {
-                        break;
-                    }
-
-                    Tile buildingTile = buildingLayer.PickTile(new Location((int)neighbourVector.X * 64, (int)neighbourVector.Y * 64), Game1.viewport.Size);
-
-                    if (buildingTile != null)
-                    {
-
-                        if (buildingTile.TileIndexProperties.TryGetValue("Passable", out _) == false)
-                        {
-                            plantSeed = false;
-
-                        }
-
-                        continue;
-
-                    }
-
-                    if (targetLocation.terrainFeatures.ContainsKey(neighbourVector))
-                    {
-                        var terrainFeature = targetLocation.terrainFeatures[neighbourVector];
-
-                        switch (terrainFeature.GetType().Name.ToString())
-                        {
-
-                            case "Tree":
-
-                                plantSeed = false;
-
-                                break;
-
-                            case "HoeDirt":
-
-                                HoeDirt hoeDirt = terrainFeature as HoeDirt;
-
-                                if (hoeDirt.crop != null)
-                                {
-
-                                    plantSeed = false;
-
-                                }
-
-                                break;
-
-                            default:
-
-                                break;
-
-                        }
-                    }
-
-                }
-
-                if (plantSeed)
+                if (ModUtility.CheckSeed(targetLocation, targetVector))
                 {
 
                     List<int> treeIndex = new()

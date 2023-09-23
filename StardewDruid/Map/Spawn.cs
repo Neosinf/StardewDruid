@@ -29,24 +29,28 @@ namespace StardewDruid.Map
                     ["wilderness"] = false,
                     ["meteor"] = true,
                     ["fishspot"] = false,
+                    ["stonecut"] = true,
+                    ["cropseed"] = true,
 
                 };
 
             }
-            else if (playerLocation.Name.Contains("Forest") || playerLocation.Name.Contains("Mountain"))
+            else if (playerLocation.Name.Contains("Forest") || playerLocation.Name.Contains("Mountain") || playerLocation.Name.Contains("Bus"))
             {
 
                 spawnIndex = new()
                 {
 
                     ["forage"] = true,
-                    ["flower"] = false,
+                    ["flower"] = true,
                     ["grass"] = true,
                     ["trees"] = true,
                     ["fishup"] = true,
                     ["wilderness"] = false,
                     ["meteor"] = true,
                     ["fishspot"] = true,
+                    ["stonecut"] = true,
+                    ["cropseed"] = false,
 
                 };
 
@@ -65,6 +69,8 @@ namespace StardewDruid.Map
                     ["wilderness"] = true,
                     ["meteor"] = true,
                     ["fishspot"] = false,
+                    ["stonecut"] = true,
+                    ["cropseed"] = false,
 
                 };
 
@@ -82,6 +88,8 @@ namespace StardewDruid.Map
                     ["wilderness"] = true,
                     ["meteor"] = true,
                     ["fishspot"] = true,
+                    ["stonecut"] = false,
+                    ["cropseed"] = false,
 
                 };
             }
@@ -98,6 +106,8 @@ namespace StardewDruid.Map
                     ["wilderness"] = true,
                     ["meteor"] = true,
                     ["fishspot"] = true,
+                    ["stonecut"] = false,
+                    ["cropseed"] = false,
 
                 };
             }
@@ -114,11 +124,13 @@ namespace StardewDruid.Map
                     ["wilderness"] = false,
                     ["meteor"] = true,
                     ["fishspot"] = false,
+                    ["stonecut"] = false,
+                    ["cropseed"] = false,
 
                 };
 
             }
-            else if (playerLocation.Name.Contains("Beach") || playerLocation.Name.Contains("Town") || playerLocation.Name.Contains("Bus"))
+            else if (playerLocation.Name.Contains("Beach") || playerLocation.Name.Contains("Town"))
             {
 
                 spawnIndex = new()
@@ -132,6 +144,8 @@ namespace StardewDruid.Map
                     ["wilderness"] = false,
                     ["meteor"] = false,
                     ["fishspot"] = true,
+                    ["stonecut"] = false,
+                    ["cropseed"] = false,
 
                 };
 

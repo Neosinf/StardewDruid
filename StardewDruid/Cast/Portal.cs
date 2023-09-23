@@ -144,7 +144,7 @@ namespace StardewDruid.Cast
             if(targetLocation.hasLightSource(portalLight.Identifier))
             {
 
-                targetLocation.sharedLights.Remove(portalLight.Identifier);
+                targetLocation.removeLightSource(portalLight.Identifier);
 
             }
 

@@ -10,18 +10,24 @@ namespace StardewDruid.Cast
     internal class Grass : Cast
     {
 
-        private readonly StardewValley.TerrainFeatures.Grass grassFeature;
-
-        public Grass(Mod mod, Vector2 target, Farmer player, StardewValley.TerrainFeatures.Grass GrassFeature)
+        public Grass(Mod mod, Vector2 target, Farmer player)
             : base(mod, target, player)
         {
-
-            grassFeature = GrassFeature;
+ 
 
         }
 
         public override void CastEarth()
         {
+
+            if (!targetLocation.terrainFeatures.ContainsKey(targetVector))
+            {
+
+                return;
+
+            }
+
+            StardewValley.TerrainFeatures.Grass grassFeature = targetLocation.terrainFeatures[targetVector] as StardewValley.TerrainFeatures.Grass;
 
             int probability = randomIndex.Next(20);
             /*
@@ -61,10 +67,10 @@ namespace StardewDruid.Cast
 
             }
             else*/ 
-            if (probability == 1)
+            if (probability <= 3) // 4 / 20 fibre
             {
-                
-                if (randomIndex.Next(10) == 0) // 1:500 chance
+
+                if (randomIndex.Next(50) == 0) // 1:250 chance
                 {
 
                     Game1.createObjectDebris(114, (int)targetVector.X, (int)targetVector.Y);
@@ -75,19 +81,22 @@ namespace StardewDruid.Cast
 
                 }
 
-            }
-            else if (probability <= 5) // 4 / 20 fibre
-            {
-                
                 Game1.createObjectDebris(771, (int)targetVector.X, (int)targetVector.Y);
 
                 Game1.createObjectDebris(771, (int)targetVector.X, (int)targetVector.Y);
 
-                Game1.createObjectDebris(771, (int)targetVector.X, (int)targetVector.Y);
+                if(probability == 4)
+                {
+                    
+                    Game1.createObjectDebris(771, (int)targetVector.X, (int)targetVector.Y);
+
+                }
 
                 castCost = 0;
 
                 castFire = true;
+
+                targetPlayer.gainExperience(2, 2); // gain foraging experience
 
             }
 
