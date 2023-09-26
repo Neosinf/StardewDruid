@@ -10,10 +10,13 @@ namespace StardewDruid.Cast
     internal class Grass : Cast
     {
 
+        public bool activateSeed;
+
         public Grass(Mod mod, Vector2 target, Farmer player)
             : base(mod, target, player)
         {
- 
+
+            activateSeed = false;
 
         }
 
@@ -27,50 +30,50 @@ namespace StardewDruid.Cast
 
             }
 
+            if (targetLocation.terrainFeatures[targetVector] is not StardewValley.TerrainFeatures.Grass)
+            {
+
+                return;
+
+            }
+
             StardewValley.TerrainFeatures.Grass grassFeature = targetLocation.terrainFeatures[targetVector] as StardewValley.TerrainFeatures.Grass;
 
             int probability = randomIndex.Next(20);
-            /*
-            if(probability == 0)
+
+            /*if(probability <= 1 && activateSeed)
             {
 
-                switch (Game1.currentSeason)
+                if (ModUtility.CheckSeed(targetLocation, targetVector))
                 {
 
-                    case "spring":
+                    targetLocation.terrainFeatures.Remove(targetVector);
 
-                        Game1.createObjectDebris(495, (int)targetVector.X, (int)targetVector.Y);
+                    targetLocation.makeHoeDirt(targetVector);
 
-                        break;
+                    int gradeSeed = 5;
 
-                    case "summer":
+                    if (probability == 0)
+                    {
 
-                        Game1.createObjectDebris(496, (int)targetVector.X, (int)targetVector.Y);
+                        gradeSeed = randomIndex.Next(5);
 
-                        break;
+                    }
 
-                    case "fall":
+                    ModUtility.PlantSeed(targetLocation, targetPlayer, targetVector, gradeSeed);
 
-                        Game1.createObjectDebris(497, (int)targetVector.X, (int)targetVector.Y);
+                    castCost = 4;
 
-                        break;
-
-                    default: // "winter":
-
-                        Game1.createObjectDebris(498, (int)targetVector.X, (int)targetVector.Y);
-
-                        break;
+                    castFire = true;
 
                 }
 
-                castFire = true;
-
             }
-            else*/ 
-            if (probability <= 3) // 4 / 20 fibre
+            else if (probability <= 4) // 3 / 20 fibre*/
+            if (probability <= 4)
             {
 
-                if (randomIndex.Next(50) == 0) // 1:250 chance
+                if (randomIndex.Next(100) == 0) // 1:500 chance
                 {
 
                     Game1.createObjectDebris(114, (int)targetVector.X, (int)targetVector.Y);

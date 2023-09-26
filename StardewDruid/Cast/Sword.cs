@@ -14,13 +14,41 @@ namespace StardewDruid.Cast
 
         private int swordIndex;
 
-        private QuestData questData;
+        private readonly QuestData questData;
 
         public Sword(Mod mod, Vector2 target, Farmer player, QuestData quest)
             : base(mod, target, player)
         {
 
             questData = quest;
+
+        }
+
+        public override void CastQuest()
+        {
+
+            switch(questData.triggerCast)
+            {
+
+                case "CastStars":
+
+                    CastStars();
+
+                    break;
+
+                case "CastWater":
+
+                    CastWater();
+
+                    break;
+
+                default: // CastEarth
+
+                    CastEarth();
+
+                    break;
+
+            }
 
         }
 

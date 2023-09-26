@@ -11,6 +11,21 @@ namespace StardewDruid.Map
     static class Spawn
     {
 
+        public static List<int> StoneIndex()
+        {
+
+            List<int> stoneIndex = new()
+            {
+                751, // copper
+                290, // iron
+                764, // gold
+                765, // iridium
+            };
+
+            return stoneIndex;
+
+        }
+
         public static Dictionary<string, bool> SpawnIndex(GameLocation playerLocation)
         {
 

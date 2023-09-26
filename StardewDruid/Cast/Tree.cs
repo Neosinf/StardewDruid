@@ -25,6 +25,13 @@ namespace StardewDruid.Cast
 
             }
 
+            if (targetLocation.terrainFeatures[targetVector] is not StardewValley.TerrainFeatures.Tree)
+            {
+
+                return;
+
+            }
+
             StardewValley.TerrainFeatures.Tree treeFeature = targetLocation.terrainFeatures[targetVector] as StardewValley.TerrainFeatures.Tree;
 
             int probability = randomIndex.Next(10);
@@ -32,59 +39,66 @@ namespace StardewDruid.Cast
             if (treeFeature.growthStage.Value >= 5)
             {
 
-                Game1.createObjectDebris(388, (int)targetVector.X, (int)targetVector.Y);
+                int debrisType = 388;
 
-                Game1.createObjectDebris(388, (int)targetVector.X, (int)targetVector.Y);
+                int debrisAmount = 1;
 
-                if (probability >= 3)
+                if (probability <= 2)
                 {
 
-                    Game1.createObjectDebris(388, (int)targetVector.X + 1, (int)targetVector.Y);
+                    debrisAmount = 2;
 
-                    //Game1.createObjectDebris(388, (int)targetVector.X, (int)targetVector.Y);
-                };
-
-                if (probability >= 6)
+                }
+                else if (probability <= 5)
                 {
 
-                    Game1.createObjectDebris(388, (int)targetVector.X, (int)targetVector.Y + 1);
+                    debrisAmount = 3;
 
-                    //Game1.createObjectDebris(388, (int)targetVector.X, (int)targetVector.Y);
+                }
 
-                };
+                if (treeFeature.treeType.Value == 8) //mahogany
+                {
 
-                //if (probability == 9)
-                //{
+                    debrisType = 709; debrisAmount = 1;
 
-                    //Game1.createObjectDebris(388, (int)targetVector.X + 1, (int)targetVector.Y + 1);
+                }
 
-                //};
+                if (treeFeature.treeType.Value == 7) // mushroom
+                {
+
+                    debrisType = 420; debrisAmount = 1;
+
+                }
+
+                for (int i = 0; i < debrisAmount; i++)
+                {
+
+                    Game1.createObjectDebris(debrisType, (int)targetVector.X, (int)targetVector.Y + 1);
+
+                }
 
                 if (!treeFeature.stump.Value)
                 {
 
                     treeFeature.performToolAction(null, 1, targetVector, null);
 
+                    treeFeature.health.Value += 1;
+
                 }
 
                 castFire = true;
 
-                targetPlayer.gainExperience(2,4); // gain foraging experience
+                targetPlayer.gainExperience(2,2); // gain foraging experience
 
             }
-            else
+            else if (treeFeature.fertilized.Value == false)
             {
 
-                if (probability >= 7 && treeFeature.fertilized.Value == false)
-                {
+                treeFeature.fertilize(Game1.currentLocation);
 
-                    treeFeature.fertilize(Game1.currentLocation);
+                castFire = true;
 
-                    castFire = true;
-
-                }
-
-            };
+            }
 
         }
 

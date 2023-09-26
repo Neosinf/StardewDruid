@@ -49,6 +49,11 @@ namespace StardewDruid.Cast
 
         }
 
+        public virtual void CastQuest()
+        {
+
+        }
+
         public virtual void CastEarth()
         {
 

@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StardewDruid
 {
     internal class ActiveData
     {
+
+        public string activeCast = "none";
 
         public bool activeCharge = false;
 
@@ -17,7 +16,7 @@ namespace StardewDruid
 
         public int castLevel = 0;
 
-        public int animateLevel = 0;
+        //public int animateLevel = 0;
 
         public int chargeLevel = 0;
 
@@ -25,9 +24,7 @@ namespace StardewDruid
 
         public int activeDirection = -1;
 
-        public List<Microsoft.Xna.Framework.Vector2> removeVectors = new(); // keep track of tiles under clumps
-
-        public List<Microsoft.Xna.Framework.Vector2> servedVectors = new();
+        public Vector2 activeVector = new(0,0);
 
         public Dictionary<string, bool> spawnIndex = new();
 

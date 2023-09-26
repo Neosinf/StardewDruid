@@ -21,47 +21,40 @@ namespace StardewDruid
         public static void AnimateHands(Farmer player, int direction, int timeFrame)
         {
 
-            //List<int> validAnimations = new() { 0, 6, 12 };
+            player.Halt();
 
-            //if (validAnimations.Contains(player.FarmerSprite.CurrentSingleAnimation))
-            //{
+            AnimationFrame carryAnimation;
 
-                player.Halt();
+            switch (direction)
+            {
 
-                AnimationFrame carryAnimation;
+                case 0: // Up
 
-                switch (direction)
-                {
+                    carryAnimation = new(12, timeFrame, true, false); // changes secondaryArm to active
 
-                    case 0: // Up
+                    break;
 
-                        carryAnimation = new(12, timeFrame, true, false); // changes secondaryArm to active
+                case 1: // Right
 
-                        break;
+                    carryAnimation = new(6, timeFrame, true, false);
 
-                    case 1: // Right
+                    break;
 
-                        carryAnimation = new(6, timeFrame, true, false);
+                case 2: // Down
 
-                        break;
+                    carryAnimation = new(0, timeFrame, true, false);
 
-                    case 2: // Down
+                    break;
 
-                        carryAnimation = new(0, timeFrame, true, false);
+                default: // Left
 
-                        break;
+                    carryAnimation = new(6, timeFrame, true, true); // same as right but flipped
 
-                    default: // Left
+                    break;
 
-                        carryAnimation = new(6, timeFrame, true, true); // same as right but flipped
+            }
 
-                        break;
-
-                }
-
-                player.FarmerSprite.animateOnce(new AnimationFrame[1] { carryAnimation });
-            
-           //}
+            player.FarmerSprite.animateOnce(new AnimationFrame[1] { carryAnimation });
 
         }
 
@@ -90,7 +83,7 @@ namespace StardewDruid
 
             };
 
-            Game1.currentLocation.temporarySprites.Add(newAnimation);
+            targetLocation.temporarySprites.Add(newAnimation);
 
             return;
 
@@ -121,7 +114,7 @@ namespace StardewDruid
 
             };
 
-            Game1.currentLocation.temporarySprites.Add(newAnimation);
+            targetLocation.temporarySprites.Add(newAnimation);
 
             return;
 
@@ -148,7 +141,7 @@ namespace StardewDruid
 
             TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, animationFlipped, animationSort, 0f, animationColor, 1f, 0f, 0f, 0f);
 
-            Game1.currentLocation.temporarySprites.Add(newAnimation);
+            targetLocation.temporarySprites.Add(newAnimation);
 
             return;
 
@@ -171,7 +164,7 @@ namespace StardewDruid
 
             targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(362, 75f, 6, 1, targetPosition, flicker: false, flipped: false));
 
-            Microsoft.Xna.Framework.Rectangle sourceRect = new Microsoft.Xna.Framework.Rectangle(644, 1078, 37, 57);
+            Microsoft.Xna.Framework.Rectangle sourceRect = new(644, 1078, 37, 57);
 
             Vector2 position = targetPosition + new Vector2(-5, -sourceRect.Height);
 
@@ -298,22 +291,19 @@ namespace StardewDruid
 
         }
 
-        public static bool CheckSeed(GameLocation targetLocation, Vector2 targetVector)
+        public static Dictionary<string, List<Vector2>> NeighbourCheck(GameLocation targetLocation, Vector2 targetVector)
         {
-            
-            bool plantSeed = true;
+
+            Dictionary<string, List<Vector2>> neighbourList = new();
 
             List<Vector2> neighbourVectors = GetTilesWithinRadius(targetLocation, targetVector, 1);
 
             Layer buildingLayer = targetLocation.Map.GetLayer("Buildings");
 
+            //Layer frontLayer = targetLocation.Map.GetLayer("Front");
+
             foreach (Vector2 neighbourVector in neighbourVectors)
             {
-
-                if (!plantSeed)
-                {
-                    break;
-                }
 
                 Tile buildingTile = buildingLayer.PickTile(new Location((int)neighbourVector.X * 64, (int)neighbourVector.Y * 64), Game1.viewport.Size);
 
@@ -322,7 +312,15 @@ namespace StardewDruid
 
                     if (buildingTile.TileIndexProperties.TryGetValue("Passable", out _) == false)
                     {
-                        plantSeed = false;
+
+                        if (!neighbourList.ContainsKey("Building"))
+                        {
+
+                            neighbourList["Building"] = new();
+
+                        }
+
+                        neighbourList["Building"].Add(neighbourVector);
 
                     }
 
@@ -339,20 +337,34 @@ namespace StardewDruid
 
                         case "Tree":
 
-                            plantSeed = false;
+                            if (!neighbourList.ContainsKey("Tree"))
+                            {
+
+                                neighbourList["Tree"] = new();
+
+                            }
+
+                            neighbourList["Tree"].Add(neighbourVector);
 
                             break;
 
                         case "HoeDirt":
 
-                            HoeDirt hoeDirt = terrainFeature as HoeDirt;
+                            //HoeDirt hoeDirt = terrainFeature as HoeDirt;
 
-                            if (hoeDirt.crop != null)
-                            {
+                            //if (hoeDirt.crop != null)
+                            //{
 
-                                plantSeed = false;
+                                if (!neighbourList.ContainsKey("HoeDirt"))
+                                {
 
-                            }
+                                    neighbourList["HoeDirt"] = new();
+                                
+                                }
+
+                                neighbourList["HoeDirt"].Add(neighbourVector);
+
+                            //}
 
                             break;
 
@@ -361,11 +373,157 @@ namespace StardewDruid
                             break;
 
                     }
+
+                    continue;
+
                 }
+
+                /*if(frontLayer != null)
+                {
+
+                    Tile frontTile = frontLayer.PickTile(new Location((int)neighbourVector.X * 64, (int)neighbourVector.Y * 64), Game1.viewport.Size);
+
+                    if (frontTile != null)
+                    {
+
+                        if (frontTile.TileIndexProperties.TryGetValue("Passable", out _) == false)
+                        {
+
+                            if (!neighbourList.ContainsKey("Front"))
+                            {
+
+                                neighbourList["Front"] = new();
+
+                            }
+
+                            neighbourList["Front"].Add(neighbourVector);
+
+                        }
+
+                        continue;
+
+                    }
+
+                }*/
+
 
             }
 
-            return plantSeed;
+            return neighbourList;
+
+        }
+
+        public static void PlantSeed(GameLocation targetLocation, Farmer targetPlayer, Vector2 targetVector, int targetSeed)
+        {
+
+            if (!targetLocation.terrainFeatures.ContainsKey(targetVector))
+            {
+
+                return;
+
+            }
+
+            if(targetLocation.terrainFeatures[targetVector] is not HoeDirt)
+            { 
+                
+                return; 
+            
+            }
+
+            StardewValley.TerrainFeatures.HoeDirt hoeDirt = targetLocation.terrainFeatures[targetVector] as StardewValley.TerrainFeatures.HoeDirt;
+
+            int generateItem;
+
+            if (targetSeed == 5) // 2/3 low grade random seed
+            {
+
+                generateItem = 770;
+
+            }
+            else
+            {
+
+                Dictionary<int, int> objectIndexes;
+
+                switch (Game1.currentSeason)
+                {
+
+                    case "spring":
+
+                        objectIndexes = new()
+                        {
+                            [0] = 478, // rhubarb
+                            [1] = 476, // garlic
+                            [2] = 433, // coffee
+                            [3] = 745, // strawberry
+                            [4] = 473, // bean
+                        };
+
+                        break;
+
+                    case "summer":
+
+                        objectIndexes = new()
+                        {
+                            [0] = 479, // melon
+                            [1] = 485, // red cabbage
+                            [2] = 433, // coffee
+                            [3] = 481, // blueberry
+                            [4] = 301 // hops
+                        };
+
+
+                        break;
+
+                    default: // "fall":
+
+                        objectIndexes = new()
+                        {
+                            [0] = 490, // pumpkin
+                            [1] = 492, // yam
+                            [2] = 299, // amaranth
+                            [3] = 493, // cranberry
+                            [4] = 302 // grape
+                        };
+
+                        break;
+
+                }
+
+                generateItem = objectIndexes[targetSeed];
+
+            }
+
+            hoeDirt.state.Value = 1;
+
+            hoeDirt.plant(generateItem, (int)targetVector.X, (int)targetVector.Y, targetPlayer, false, targetLocation); // high grade seed
+
+            int currentPhase;
+
+            switch (hoeDirt.crop.phaseDays.Count)
+            {
+
+                case 5: currentPhase = 3; break;
+
+                case 6: currentPhase = 3; break;
+
+                default: currentPhase = 2; break;
+
+            }
+
+            for(int i = 0; i < currentPhase; i++)
+            {
+
+                hoeDirt.crop.currentPhase.Value++;
+
+            }
+
+            hoeDirt.crop.dayOfCurrentPhase.Value = 0;
+
+            hoeDirt.crop.updateDrawMath(targetVector);
+
+            hoeDirt.plant(920, (int)targetVector.X, (int)targetVector.Y, targetPlayer, true, targetLocation); // always watered        
+
 
         }
 
@@ -599,7 +757,10 @@ namespace StardewDruid
             List<Vector2> templateList;
 
             switch (level)
-            {
+            {   
+                case 1:
+                    templateList = TilesWithinOne(center);
+                    break;
                 case 2:
                     templateList = TilesWithinTwo(center);
                     break;
@@ -615,8 +776,8 @@ namespace StardewDruid
                 case 6:
                     templateList = TilesWithinSix(center);
                     break;
-                default: // 1
-                    templateList = TilesWithinOne(center);
+                default: // 0
+                    templateList = new() { center, };
                     break;
 
             }

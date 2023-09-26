@@ -16,22 +16,34 @@ namespace StardewDruid.Cast
     internal class Hoed : Cast
     {
 
-        private readonly HoeDirt hoeDirt;
-
-        public Hoed(Mod mod, Vector2 target, Farmer player, HoeDirt HoeDirtFeature)
+        public Hoed(Mod mod, Vector2 target, Farmer player)
             : base(mod, target, player)
         {
-
-            hoeDirt = HoeDirtFeature;
 
         }
 
         public override void CastEarth()
         {
 
-            int probability = randomIndex.Next(10);
+            if (!targetLocation.terrainFeatures.ContainsKey(targetVector))
+            {
 
-            if (probability <= 2) // 3/10 fertiliser / new random seed
+                return;
+
+            }
+
+            if (targetLocation.terrainFeatures[targetVector] is not StardewValley.TerrainFeatures.HoeDirt)
+            {
+
+                return;
+
+            }
+
+            StardewValley.TerrainFeatures.HoeDirt hoeDirt = targetLocation.terrainFeatures[targetVector] as StardewValley.TerrainFeatures.HoeDirt;
+
+            int probability = randomIndex.Next(mod.SpecialLimit());
+
+            if (probability == 0)
             {
 
                 if (hoeDirt.crop != null)
@@ -50,92 +62,27 @@ namespace StardewDruid.Cast
                 else
                 {
 
-                    if (ModUtility.CheckSeed(targetLocation, targetVector))
-                    {
+                    //if (ModUtility.CheckSeed(targetLocation, targetVector))
+                    //{
 
-                        int generateItem;
+                    int gradeSeed = 5;
 
-                        if (probability <= 1) // 2/3 low grade random seed
-                        {
-
-                            generateItem = 770;
-
-                        }
-                        else
-                        {
-
-                            Dictionary<int, int> objectIndexes;
-
-                            switch (Game1.currentSeason)
-                            {
-
-                                case "spring":
-
-                                    objectIndexes = new()
-                                    {
-                                        [0] = 478, // rhubarb
-                                        [1] = 476, // garlic
-                                        [2] = 433, // coffee
-                                        [3] = 745, // strawberry
-                                        [4] = 473, // bean
-                                    };
-
-                                    break;
-
-                                case "summer":
-
-                                    objectIndexes = new()
-                                    {
-                                        [0] = 479, // melon
-                                        [1] = 485, // red cabbage
-                                        [2] = 433, // coffee
-                                        [3] = 481, // blueberry
-                                        [4] = 301 // hops
-                                     };
-
-
-                                    break;
-
-                                default: // "fall":
-
-                                    objectIndexes = new()
-                                    {
-                                        [0] = 490, // pumpkin
-                                        [1] = 492, // yam
-                                        [2] = 299, // amaranth
-                                        [3] = 493, // cranberry
-                                        [4] = 302 // grape
-                                    };
-
-                                    break;
-
-                            }
-
-                            generateItem = objectIndexes[randomIndex.Next(5)];
-
-                        }
-
-                        hoeDirt.state.Value = 1;
-
-                        hoeDirt.plant(generateItem, (int)targetVector.X, (int)targetVector.Y, targetPlayer, false, targetLocation); // high grade seed
-
-                        hoeDirt.crop.currentPhase.Value++;
-
-                        hoeDirt.crop.currentPhase.Value++;
-
-                        //hoeDirt.crop.currentPhase.Value++; // growth stage 3
-
-                        hoeDirt.crop.dayOfCurrentPhase.Value = 0;
-
-                        hoeDirt.crop.updateDrawMath(targetVector);
-
-                        hoeDirt.plant(920, (int)targetVector.X, (int)targetVector.Y, targetPlayer, true, targetLocation); // always watered
-
-                        castCost = 4;
-
-                        castFire = true;
-
+                    if(probability == 2)
+                    { 
+                            
+                        gradeSeed = randomIndex.Next(5); 
+                        
                     }
+
+                    ModUtility.PlantSeed(targetLocation, targetPlayer, targetVector, gradeSeed);
+
+                    castCost = 4;
+
+                    castFire = true;
+
+                    mod.SpecialIncrement();
+
+                    //}
 
                 }
 

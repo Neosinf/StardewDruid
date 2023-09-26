@@ -29,13 +29,13 @@ namespace StardewDruid.Cast
 
             int animationLoops = 1;
 
-            Color animationColor = new Color(0.8f, 0.8f, 1f, 1f);
+            Color animationColor = new(0.8f, 0.8f, 1f, 1f);
 
             Vector2 animationPosition;
 
             float animationSort;
 
-            for(int i = 1; i < 5; i++)
+            for(int i = 1; i < 4; i++)
             { 
 
                 List<Vector2> hoeVectors = ModUtility.GetTilesWithinRadius(targetLocation, targetVector, i);
@@ -64,7 +64,7 @@ namespace StardewDruid.Cast
 
                                 TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, animationColor, 0.7f, 0f, 0f, 0f)
                                 {
-                                    motion = new Vector2(0f, -0.1f),
+                                    //motion = new Vector2(0f, -0.1f),
                                     delayBeforeAnimationStart = i*200,
 
                                 };
@@ -85,9 +85,11 @@ namespace StardewDruid.Cast
 
             castFire = true;
 
-            castCost = 96;
+            castCost = 48;
 
             castLimit = true;
+
+            ModUtility.AnimateBolt(targetLocation, targetVector);
 
             ModUtility.AnimateRipple(targetLocation, targetVector);
 

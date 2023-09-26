@@ -9,16 +9,32 @@ namespace StardewDruid.Cast
 
         private StardewValley.Object targetObject;
 
-        public Craft(Mod mod, Vector2 target, Farmer player, StardewValley.Object TargetObject)
+        public Craft(Mod mod, Vector2 target, Farmer player)
             : base(mod, target, player)
         {
 
-            targetObject = TargetObject;
+            
 
         }
 
         public override void CastWater()
         {
+
+            if (!targetLocation.objects.ContainsKey(targetVector))
+            {
+
+                return;
+
+            }
+
+            targetObject = targetLocation.objects[targetVector];
+
+            if (targetObject.MinutesUntilReady == 0)
+            {
+
+                return;
+
+            }
 
             int probability = randomIndex.Next(mod.SpecialLimit());
 

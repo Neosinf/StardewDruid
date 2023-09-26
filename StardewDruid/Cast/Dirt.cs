@@ -17,6 +17,7 @@ namespace StardewDruid.Cast
 
         private readonly Dictionary<string, bool> spawnIndex;
 
+
         public Dirt(Mod mod, Vector2 target, Farmer player, Dictionary<string, bool> SpawnIndex)
             : base(mod, target, player)
         {
@@ -28,61 +29,73 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
             
-            int probability = randomIndex.Next(10);
-
-            if (probability <= 1 && spawnIndex["grass"]) // 2/10 grass
+            if(targetLocation.terrainFeatures.ContainsKey(targetVector))
             {
 
-                targetLocation.terrainFeatures.Add(targetVector, new StardewValley.TerrainFeatures.Grass(1, 4));
+                return;
 
-                castCost = 0;
+            }
+
+            Dictionary<string, List<Vector2>> neighbourList = ModUtility.NeighbourCheck(targetLocation, targetVector);
+
+            int probability = randomIndex.Next(10);
+
+            if (probability <= 2 && spawnIndex["grass"] && neighbourList.ContainsKey("Tree")) // 3/10 grass
+            {
+
+                StardewValley.TerrainFeatures.Grass grassFeature = new(1, 4);
+
+                targetLocation.terrainFeatures.Add(targetVector, grassFeature);
+
+                Microsoft.Xna.Framework.Rectangle tileRectangle = new((int)targetVector.X * 64 + 1, (int)targetVector.Y * 64 + 1, 62, 62);
+
+                grassFeature.doCollisionAction(tileRectangle, 2, targetVector, null, targetLocation);
 
                 castFire = true;
 
+                castCost = 0;
+
             }
-            else if (probability <= 2 && spawnIndex["trees"]) // 1/10 tree
+            else if (probability == 3 && spawnIndex["trees"] && neighbourList.Count == 0) // 1/10 tree
+            //if (probability <= 1 && spawnIndex["trees"])
             {
 
-                if (ModUtility.CheckSeed(targetLocation, targetVector))
+                StardewValley.TerrainFeatures.Tree newTree;
+
+                if (targetLocation.Name == "Desert")
                 {
-
-                    StardewValley.TerrainFeatures.Tree newTree;
-
-                    if (targetLocation.Name == "Desert")
-                    {
                         
-                        newTree = new(9, 1);
-
-                    }
-                    else
-                    {
-
-                        List<int> treeIndex = new()
-                        {
-                            1,2,3,1,2,3,1,2,3,7,8,
-                        };
-
-                       newTree = new(treeIndex[randomIndex.Next(11)], 1);
-
-                    };
-
-                    //newTree.fertilized.Value = true;
-
-                    targetLocation.terrainFeatures.Add(targetVector, newTree);
-
-                    castFire = true;
-
-                    ModUtility.AnimateGrowth(targetLocation,targetVector);
+                    newTree = new(9, 1);
 
                 }
+                else
+                {
+
+                    List<int> treeIndex = new()
+                    {
+                        1,2,3,1,2,3,1,2,3,7,8,
+                    };
+
+                    newTree = new(treeIndex[randomIndex.Next(11)], 1);
+
+                };
+
+                //newTree.fertilized.Value = true;
+
+                targetLocation.terrainFeatures.Add(targetVector, newTree);
+
+                castFire = true;
+
+                ModUtility.AnimateGrowth(targetLocation,targetVector);
 
             }
-            else if (probability <= 5) // 3/10 hoe dirt
+            else if (probability >= 4 && probability <= 6 && neighbourList.ContainsKey("HoeDirt")) // 3/10 hoe dirt
+            //else if (probability <= 4) // 3/10 hoe dirt
             {
 
                 targetLocation.makeHoeDirt(targetVector);
 
-                mod.UpdateEarthCasts(targetLocation, targetVector, false);
+                //mod.UpdateEarthCasts(targetLocation, targetVector, false);
 
             }
 

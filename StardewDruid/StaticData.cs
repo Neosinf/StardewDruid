@@ -7,13 +7,11 @@ namespace StardewDruid
 
         public string activeBlessing;
 
-        public Dictionary<string, List<string>> triggerList;
+        public List<string> triggerList;
 
         public Dictionary<string, bool> questList;
 
         public Dictionary<string, int> blessingList;
-
-        public int defaultMagnetism;
 
         public StaticData()
         {
@@ -25,8 +23,6 @@ namespace StardewDruid
             questList = new();
 
             blessingList = new();
-
-            defaultMagnetism = 1;
 
         }
 

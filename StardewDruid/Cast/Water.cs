@@ -22,121 +22,110 @@ namespace StardewDruid.Cast
             : base(mod, target, player)
         {
 
-            expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 300;
+            portalPosition = new(targetVector.X * 64, targetVector.Y * 64);
 
         }
 
         public override void CastEarth()
         {
 
-            int probability = randomIndex.Next(100);
+            int probability = randomIndex.Next(80);
 
-            if (probability <= 12) // fish
+            if (probability >= 8) // fish
+            {
+                return;
+            }
+
+            Dictionary<int, int> objectIndexes;
+
+            if (targetPlayer.currentLocation.Name.Contains("Beach"))
             {
 
-                Dictionary<int, int> objectIndexes;
-
-                if (targetPlayer.currentLocation.Name.Contains("Beach"))
+                objectIndexes = new Dictionary<int, int>()
                 {
-
-                    objectIndexes = new Dictionary<int, int>()
-                    {
                         
-                        [0] = 153, // seaweed 152
-                        [1] = 152, // seaweed 152
-                        [2] = 152, // seaweed 152
-                        [3] = 153, // seaweed 152
-                        [4] = 152, // seaweed 152
-                        [5] = 718, // cockle 718
-                        [6] = 715, // lobster 715
-                        [7] = 720, // shrimp 720
-                        [8] = 719, // mussel 719
-                        [9] = 131, // sardine 131
-                        [10] = 131, // sardine 131
-                        [11] = 129, // anchovy 129
-                        [12] = 129, // anchovy 129
-                    };
+                    [0] = 153, // seaweed
+                    [1] = 152, // seaweed
+                    [2] = 152, // seaweed
+                    [3] = 153, // seaweed
+                    [4] = 131, // sardine
+                    [5] = 147, // herring
+                    [6] = 129, // anchovy
+                    [7] = 150, // red snapper
 
-                }
-                else
-                {
-
-                    objectIndexes = new Dictionary<int, int>()
-                    {
-                        
-                        [0] = 153, // algae 153
-                        [1] = 153, // algae 153
-                        [2] = 153, // algae 153
-                        [3] = 153, // algae 153
-                        [4] = 153, // algae 153
-                        [5] = 721, // snail 721
-                        [6] = 716, // crayfish 716
-                        [7] = 722, // periwinkle 722
-                        [8] = 717, // crab 717
-                        [9] = 145, // carp 145
-                        [10] = 145, // carp 145
-                        [11] = 142,  // sunfish 142
-                        [12] = 142  // sunfish 142
-                    
-                    };
-
-                }
-
-                int objectQuality = 0;
-
-                int experienceGain;
-
-                if (probability <= 4)
-                {
-                    
-                    experienceGain = 3;
-
-                }
-                else if (probability <= 8)
-                {
-                    
-                    experienceGain = 6;
-
-                }
-                else
-                {
-
-                    experienceGain = 12;
-
-                    if (randomIndex.Next(11 - targetPlayer.fishingLevel.Value) == 0)
-                    {
-
-                        objectQuality = 2;
-
-                        experienceGain = 20;
-
-                    }
-
-                }
-
-                Throw throwObject = new(objectIndexes[probability], objectQuality);
-
-                throwObject.ThrowObject(targetPlayer, targetVector);
-
-                targetPlayer.currentLocation.playSound("pullItemFromWater");
-
-                castCost = 8;
-
-                targetPlayer.gainExperience(1, experienceGain); // gain fishing experience
-
-                castFire = true;
-
-                bool targetDirection = (targetPlayer.getTileLocation().X <= targetVector.X);
-
-                ModUtility.AnimateSplash(targetLocation,targetVector,targetDirection);
+                };
 
             }
+            else
+            {
+
+                objectIndexes = new Dictionary<int, int>()
+                {
+                        
+                    [0] = 153, // algae
+                    [1] = 153, // algae
+                    [2] = 153, // algae
+                    [3] = 153, // algae
+                    [4] = 145, // carp
+                    [5] = 137, // smallmouth bass
+                    [6] = 142,  // sunfish
+                    [7] = 132  // bream
+                    
+                };
+
+            }
+
+            int objectQuality = 0;
+
+            int experienceGain;
+
+            if (probability <= 3)
+            {
+                    
+                experienceGain = 3;
+
+            }
+            else
+            {
+
+                experienceGain = 12;
+
+                if (randomIndex.Next(11 - targetPlayer.fishingLevel.Value) == 0)
+                {
+
+                    objectQuality = 2;
+
+                    experienceGain = 20;
+
+                }
+
+            }
+
+            Throw throwObject = new(objectIndexes[probability], objectQuality);
+
+            throwObject.ThrowObject(targetPlayer, targetVector);
+
+            targetPlayer.currentLocation.playSound("pullItemFromWater");
+
+            castCost = 8;
+
+            targetPlayer.gainExperience(1, experienceGain); // gain fishing experience
+
+            castFire = true;
+
+            castLimit = true;
+
+            bool targetDirection = (targetPlayer.getTileLocation().X <= targetVector.X);
+
+            ModUtility.AnimateSplash(targetLocation,targetVector,targetDirection);
 
         }
 
         public override void CastWater() {
 
-            List<Vector2> neighbourVectors = ModUtility.GetTilesWithinRadius(targetPlayer.currentLocation, targetVector, 3);
+            /*expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 300;
+
+            List<Vector2> neighbourVectors = ModUtility.GetTilesWithinRadius(targetLocation, targetVector, 3);
 
             Layer backLayer = targetPlayer.currentLocation.Map.GetLayer("Back");
 
@@ -164,33 +153,31 @@ namespace StardewDruid.Cast
             }
 
             if (validBubbleSpot)
-            {
+            {*/
 
-                expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 300;
+            expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 300;
 
-                portalPosition = new(targetVector.X * 64, targetVector.Y * 64);
+            Microsoft.Xna.Framework.Color animationColor = new(0.6f, 1, 0.6f, 1); // light green
 
-                Microsoft.Xna.Framework.Color animationColor = new(0.6f, 1, 0.6f, 1); // light green
+            Microsoft.Xna.Framework.Rectangle animationRectangle = new(0, 51 * 64, 64, 64);
 
-                Microsoft.Xna.Framework.Rectangle animationRectangle = new(0, 51 * 64, 64, 64);
+            float animationSort = (targetVector.X * 1000) + targetVector.Y+1;
 
-                float animationSort = (targetVector.X * 1000) + targetVector.Y+1;
+            portalAnimation = new("TileSheets\\animations", animationRectangle, 80f, 10, 999999, portalPosition, false, false, animationSort, 0f, animationColor, 1f, 0f, 0f, 0f);
 
-                portalAnimation = new("TileSheets\\animations", animationRectangle, 80f, 10, 999999, portalPosition, false, false, animationSort, 0f, animationColor, 1f, 0f, 0f, 0f);
+            targetLocation.temporarySprites.Add(portalAnimation);
 
-                targetLocation.temporarySprites.Add(portalAnimation);
+            castLimit = true;
 
-                castLimit = true;
+            castFire = true;
 
-                castFire = true;
+            castCost = 48;
 
-                castCost = 48;
+            castActive = true;
 
-                castActive = true;
+            ModUtility.AnimateRipple(targetLocation, targetVector);
 
-                ModUtility.AnimateRipple(targetLocation, targetVector);
-
-            }
+            //}
 
             return;
 
@@ -283,7 +270,7 @@ namespace StardewDruid.Cast
 
                 Dictionary<int, int> objectIndexes;
 
-                Random randomIndex = new Random();
+                //Random randomIndex = new();
 
                 switch (Game1.currentLocation.Name)
                 {

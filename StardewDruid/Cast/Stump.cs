@@ -33,7 +33,7 @@ namespace StardewDruid.Cast
 
                 Game1.createObjectDebris(388, (int)this.targetVector.X, (int)this.targetVector.Y + 1);
 
-                Game1.createObjectDebris(388, (int)this.targetVector.X + 1, (int)this.targetVector.Y);
+                //Game1.createObjectDebris(388, (int)this.targetVector.X + 1, (int)this.targetVector.Y);
 
                 if (probability <= 3) // wood
                 {

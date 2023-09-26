@@ -31,7 +31,7 @@ namespace StardewDruid.Cast
 
                 Game1.createObjectDebris(390, (int)targetVector.X, (int)targetVector.Y + 1);
 
-                Game1.createObjectDebris(390, (int)targetVector.X + 1, (int)targetVector.Y);
+                //Game1.createObjectDebris(390, (int)targetVector.X + 1, (int)targetVector.Y);
 
                 if (probability <= 3) // stone
                 {
@@ -58,7 +58,7 @@ namespace StardewDruid.Cast
 
                     Game1.createObjectDebris(382, (int)targetVector.X, (int)targetVector.Y + 1);
 
-                    Game1.createObjectDebris(382, (int)targetVector.X + 1, (int)targetVector.Y + 1);
+                    //Game1.createObjectDebris(382, (int)targetVector.X + 1, (int)targetVector.Y + 1);
 
                 }
 

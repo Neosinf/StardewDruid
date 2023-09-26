@@ -78,11 +78,13 @@ namespace StardewDruid.Map
                     questValue = 6,
                     questTitle = "The Shadow Invasion",
                     questDescription = "The Effigy has heard the whispers of shadowy figures that loiter in the dark spaces of the village.",
-                    questObjective = "Perform a rite of the water in Pelican Town's graveyard after dark.",
+                    questObjective = "Perform a rite of the water in Pelican Town's graveyard between 7:00 pm and Midnight.",
                     questReward = 3000,
 
                     triggerVector = new(45, 87),
                     triggerLimit = new(5, 5),
+                    startTime = 1900,
+                    //endTime = 2400,
                     challengeWithin = new(42, 84),
                     challengeRange = new(10, 8),
                     challengePortals = new()
@@ -93,6 +95,7 @@ namespace StardewDruid.Map
 
                     },
                     challengeFrequency = 6,
+                    challengeSeconds = 60,
                     updateEffigy = true,
 
                 },
@@ -100,14 +103,14 @@ namespace StardewDruid.Map
                 {
 
                     name = "challengeStars",
-                    triggerCast = "CastEarth",
+                    triggerCast = "CastStars",
                     triggerType = "challenge",
                     triggerLocation = "Forest",
 
                     questId = 280719874,
                     questValue = 6,
                     questTitle = "The Slime Infestation",
-                    questDescription = "The Effigy notes that many of the trees in the local forest have been marred with a slimy substance.",
+                    questDescription = "Many of the trees in the local forest have been marred with a slimy substance. Has the old enemy of the farm returned?",
                     questObjective = "Perform a rite of the stars in the clearing east of arrowhead island in Cindersap Forest.",
                     questReward = 5000,
 
@@ -125,6 +128,7 @@ namespace StardewDruid.Map
 
                     },
                     challengeFrequency = 5,
+                    challengeSeconds = 60,
                     updateEffigy = true,
                 },
                 ["swordEarth"] = new()

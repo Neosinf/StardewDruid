@@ -16,6 +16,8 @@ namespace StardewDruid.Cast
 
         public LightSource portalLight;
 
+        public StardewValley.Object stoneBrazier;
+
         public double expireTime;
 
         public List<Monster> monsterSpawns;
@@ -83,12 +85,13 @@ namespace StardewDruid.Cast
 
             targetLocation.temporarySprites.Add(portalAnimation);
 
-            StardewValley.Object stoneBrazier = new(targetVector, 144, false);
+            stoneBrazier = new(targetVector, 144, false);
 
             int portalKey = (int)(targetVector.X * 3000f + targetVector.Y);
 
             portalLight = new(4, new((targetVector.X * 64f) + 12f, (targetVector.Y * 64f) - 56f), 2f, new Color(0, 80, 160), portalKey, LightSource.LightContext.None, 0L);
 
+            stoneBrazier.name = "PortalFlame";
             stoneBrazier.CanBeSetDown = false;
             stoneBrazier.Fragility = 2;
             stoneBrazier.setHealth(9999);
@@ -139,6 +142,8 @@ namespace StardewDruid.Cast
 
             targetLocation.objects.Remove(targetVector);
 
+            stoneBrazier = null;
+
             targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, targetVector * 64f, Color.Blue * 0.75f, 8));
 
             if(targetLocation.hasLightSource(portalLight.Identifier))
@@ -154,6 +159,8 @@ namespace StardewDruid.Cast
                 Game1.currentLightSources.Remove(portalLight);
 
             }
+
+            portalLight = null;
 
             foreach (Monster monsterSpawn in monsterSpawns)
             {

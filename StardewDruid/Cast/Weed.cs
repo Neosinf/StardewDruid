@@ -10,7 +10,7 @@ namespace StardewDruid.Cast
             : base(mod, target, player)
         {
 
-            castCost = 0;
+            castCost = 1;
 
         }
 
@@ -27,6 +27,8 @@ namespace StardewDruid.Cast
             StardewValley.Object targetObject = targetLocation.objects[targetVector];
 
             targetObject.Fragility = 0;
+
+            int explodeRadius = 2;
 
             if (targetObject.name.Contains("Weeds"))
             {
@@ -48,7 +50,14 @@ namespace StardewDruid.Cast
 
             }
 
-            targetLocation.explode(targetVector, 2, targetPlayer, false);
+            if (targetObject.name.Contains("Stone"))
+            {
+
+                explodeRadius = 1;
+
+            }
+
+            targetLocation.explode(targetVector, explodeRadius, targetPlayer, false);
 
             castFire = true;
 

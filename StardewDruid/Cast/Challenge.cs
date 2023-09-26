@@ -46,6 +46,34 @@ namespace StardewDruid.Cast
 
         }
 
+        public override void CastQuest()
+        {
+
+            switch (questData.triggerCast)
+            {
+
+                case "CastStars":
+
+                    CastStars();
+
+                    break;
+
+                case "CastWater":
+
+                    CastWater();
+
+                    break;
+
+                default: // CastEarth
+
+                    CastEarth();
+
+                    break;
+
+            }
+
+        }
+
         public override void CastEarth()
         {
 
@@ -126,7 +154,9 @@ namespace StardewDruid.Cast
 
             challengeWarning = false;
 
-            expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 45;
+            int portalTime = (questData.challengeSeconds == 0) ? 45 : questData.challengeSeconds;
+
+            expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + portalTime;
 
             List<Vector2> spawnPortals = questData.challengePortals;
 
@@ -138,6 +168,8 @@ namespace StardewDruid.Cast
                 portalHandle = new(mod, portalVector, targetPlayer);
 
                 portalHandle.CastWater();
+
+                portalHandle.expireTime = expireTime;
 
                 portalHandle.portalWithin = challengeWithin;
 
@@ -216,7 +248,7 @@ namespace StardewDruid.Cast
 
                         Game1.addHUDMessage(new HUDMessage($"Try again to collect more trash", ""));
 
-                        //mod.UpdateQuest(activeChallenge, false);
+                        mod.UpdateQuest(activeChallenge, false);
 
                     }
                     else
@@ -304,13 +336,16 @@ namespace StardewDruid.Cast
 
                     Vector2 randomVector = challengeWithin + new Vector2(randomIndex.Next(5), randomIndex.Next(5));
 
-                    Rockfall rockFall = new(mod, randomVector, targetPlayer);
-
-                    rockFall.objectStrength = 3;
+                    Rockfall rockFall = new(mod, randomVector, targetPlayer)
+                    {
+                        objectStrength = 3
+                    };
 
                     rockFall.CastEarth();
 
-                break;
+                    targetLocation.lightGlows.Clear();
+
+                    break;
 
             }
 
@@ -384,6 +419,8 @@ namespace StardewDruid.Cast
 
                     };
 
+                    Game1.addHUDMessage(new HUDMessage($"You have gained favour with those who love the forest", ""));
+
                     break;
 
                 case "challengeWater":
@@ -391,11 +428,13 @@ namespace StardewDruid.Cast
                     NPCIndex = new()
                     {
 
-                        "Alex", "Elliott", "Harvey", "Sam",
-                        "Abigail", "Emily", "Penny",
+                        "Alex", "Elliott", "Harvey", 
+                        "Emily", "Penny",
                         "Caroline", "Clint", "Evelyn", "George", "Gus", "Jodi", "Kent", "Lewis", "Pam", "Pierre", "Vincent",
 
                     };
+
+                    Game1.addHUDMessage(new HUDMessage($"You have gained favour with many of the town residents", ""));
 
                     break;
 
@@ -404,11 +443,13 @@ namespace StardewDruid.Cast
 
                     NPCIndex = new()
                     {
-                        "Sebastian",
-                        "Maru",
-                        "Robin", "Demetrius",   "Linus", "Dwarf"
+                        "Sebastian", "Sam",
+                        "Maru", "Abigail",
+                        "Robin", "Demetrius", "Linus", "Dwarf"
 
                     };
+
+                    Game1.addHUDMessage(new HUDMessage($"You have gained favour with the mountain residents and their friends", ""));
 
                     break;
 
@@ -419,10 +460,7 @@ namespace StardewDruid.Cast
 
                 NPC characterFromName = Game1.getCharacterFromName(NPCName);
 
-                if (characterFromName == null)
-                {
-                    characterFromName = Game1.getCharacterFromName<Child>(NPCName, mustBeVillager: false);
-                }
+                characterFromName ??= Game1.getCharacterFromName<Child>(NPCName, mustBeVillager: false);
 
                 if (characterFromName != null)
                 {

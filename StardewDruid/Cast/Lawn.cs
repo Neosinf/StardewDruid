@@ -25,10 +25,19 @@ namespace StardewDruid.Cast
 
         public override void CastEarth()
         {
+            
+            if (targetLocation.terrainFeatures.ContainsKey(targetVector))
+            {
 
-            int probability = randomIndex.Next(100);
+                return;
 
-            if (probability <= 1 && spawnIndex["flower"]) // 2/100 flower
+            }
+
+            Dictionary<string, List<Vector2>> neighbourList = ModUtility.NeighbourCheck(targetLocation, targetVector);
+
+            int probability = randomIndex.Next(120);
+
+            if (probability <= 1 && spawnIndex["flower"] && neighbourList.Count == 0) // 2/120 flower
             {
 
                 Dictionary<int, int> objectIndexes;
@@ -83,7 +92,7 @@ namespace StardewDruid.Cast
                  castCost = 6;
 
             }
-            else if (probability >= 2 && probability <= 3 && spawnIndex["forage"]) // 2/80 forage
+            else if (probability >= 2 && probability <= 3 && spawnIndex["forage"] && neighbourList.Count == 0) // 2/120 forage
             {
 
                 Dictionary<int, int> randomCrops;
@@ -141,46 +150,42 @@ namespace StardewDruid.Cast
                 castCost = 4;
 
             }
-            else if (probability >= 4 && probability <= 15 && spawnIndex["grass"]) // 12/80 grass
+            else if (probability >= 4 && probability <= 15 && spawnIndex["grass"] && neighbourList.ContainsKey("Tree")) // 12/120 grass
             {
 
                 StardewValley.TerrainFeatures.Grass grassFeature = new(1, 4);
 
                 targetLocation.terrainFeatures.Add(targetVector, grassFeature);
 
-                castFire = true;
-
                 Microsoft.Xna.Framework.Rectangle tileRectangle = new((int)targetVector.X * 64 + 1, (int)targetVector.Y * 64 + 1, 62, 62);
 
                 grassFeature.doCollisionAction(tileRectangle, 2, targetVector, null, targetLocation);
 
+                castFire = true;
+
                 castCost = 0;
 
             }
-            else if (probability >= 16 && probability <= 25 && spawnIndex["trees"]) // 10/80 tree
+            //else if (probability >= 16 && probability <= 25 && spawnIndex["trees"]) // 10/120 tree
+            else if (probability >= 4 && probability <= 13 && spawnIndex["trees"] && neighbourList.Count == 0) // 10/120 tree
             {
 
-                if (ModUtility.CheckSeed(targetLocation, targetVector))
+                List<int> treeIndex = new()
                 {
+                    1,2,3,1,2,3,1,2,3,7,8,
+                };
 
-                    List<int> treeIndex = new()
-                    {
-                        1,2,3,1,2,3,1,2,3,7,8,
-                    };
+                StardewValley.TerrainFeatures.Tree newTree = new(treeIndex[randomIndex.Next(11)], 1);
 
-                    StardewValley.TerrainFeatures.Tree newTree = new(treeIndex[randomIndex.Next(11)], 1);
+                //newTree.fertilized.Value = true;
 
-                    //newTree.fertilized.Value = true;
+                targetLocation.terrainFeatures.Add(targetVector, newTree);
 
-                    targetLocation.terrainFeatures.Add(targetVector, newTree);
+                castCost = 2;
 
-                    castCost = 2;
+                castFire = true;
 
-                    castFire = true;
-
-                    ModUtility.AnimateGrowth(targetLocation, targetVector);
-
-                }
+                ModUtility.AnimateGrowth(targetLocation, targetVector);
 
             }
             

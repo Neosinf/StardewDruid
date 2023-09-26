@@ -36,11 +36,17 @@ namespace StardewDruid.Map
 
         public Vector2 triggerLimit;
 
+        public int startTime;
+
+        //public int endTime;
+
         public Vector2 challengeWithin;
 
         public Vector2 challengeRange;
 
         public List<Vector2> challengePortals;
+
+        public int challengeSeconds;
 
         public int challengeFrequency;
 
