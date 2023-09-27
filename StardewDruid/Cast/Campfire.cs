@@ -9,8 +9,8 @@ namespace StardewDruid.Cast
     internal class Campfire : Cast
     {
 
-        public Campfire (Mod mod, Vector2 target, Farmer player)
-            : base(mod, target, player)
+        public Campfire (Mod mod, Vector2 target, Rite rite)
+            : base(mod, target, rite)
         {
 
         }

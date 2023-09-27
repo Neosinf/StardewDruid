@@ -42,11 +42,13 @@ namespace StardewDruid
 
         private int specialCasts;
 
+        private int specialLimit;
+
         public Dictionary<string, Vector2> warpPoints;
 
         public Dictionary<string, int> warpTotems;
 
-        private Dictionary<string, QuestData> questIndex;
+        private Dictionary<string, Map.Quest> questIndex;
 
         private Queue<Rite> riteQueue;
 
@@ -84,14 +86,14 @@ namespace StardewDruid
 
                 };
 
-            questIndex = Map.Quest.QuestList();
+            questIndex = Map.QuestData.QuestList();
 
             //ReviewQuests();
 
             if (staticData.questList.Count == 0)
             {
 
-                string firstQuest = Map.Quest.FirstQuest();
+                string firstQuest = Map.QuestData.FirstQuest();
 
                 staticData.questList[firstQuest] = false;
 
@@ -111,15 +113,29 @@ namespace StardewDruid
 
             riteQueue = new();
 
-            specialCasts = 6;
+            if (staticData.blessingList != null)
+            {
+
+                if (!staticData.blessingList.ContainsKey("special"))
+                {
+
+                    staticData.blessingList["special"] = 1;
+
+                }
+
+                specialLimit = 2 + (staticData.blessingList["special"] * 2);
+
+                specialCasts = specialLimit;
+
+            }
 
             druidEffigy = new(this);
 
             druidEffigy.ModifyCave();
 
-            warpPoints = Map.Warp.WarpPoints();
+            warpPoints = Map.WarpData.WarpPoints();
 
-            warpTotems = Map.Warp.WarpTotems();
+            warpTotems = Map.WarpData.WarpTotems();
 
             return;
 
@@ -152,7 +168,7 @@ namespace StardewDruid
 
             riteQueue = new();
 
-            specialCasts = 6;
+            specialCasts = specialLimit;
 
         }
 
@@ -395,7 +411,7 @@ namespace StardewDruid
                 else if (buttonList.Contains(buttonPressed.ToString())) 
                 {
 
-                    Dictionary<string, bool> spawnIndex = Map.Spawn.SpawnIndex(Game1.player.currentLocation);
+                    Dictionary<string, bool> spawnIndex = Map.SpawnData.SpawnIndex(Game1.player.currentLocation);
 
                     if(spawnIndex.Count == 0)
                     {
@@ -520,14 +536,14 @@ namespace StardewDruid
                     
                     }
 
-                    List<QuestData> triggeredQuests = new();
+                    List<Map.Quest> triggeredQuests = new();
 
                     Vector2 playerVector = activeData.activeVector;
 
                     foreach (string castString in staticData.triggerList)
                     {
 
-                        QuestData questData = questIndex[castString];
+                        Map.Quest questData = questIndex[castString];
 
                         if (questData.triggerLocation == Game1.player.currentLocation.Name)
                         {
@@ -583,18 +599,18 @@ namespace StardewDruid
 
                     }
 
-                    foreach(QuestData questData in triggeredQuests)
+                    foreach(Map.Quest questData in triggeredQuests)
                     {
 
                         Cast.Cast castHandle;
 
                         if (questData.triggerType == "sword")
                         {
-                            castHandle = new Cast.Sword(this, playerVector, Game1.player, questData);
+                            castHandle = new Cast.Sword(this, playerVector, new Rite(), questData);
                         }
                         else
                         {
-                            castHandle = new Cast.Challenge(this, playerVector, Game1.player, questData);
+                            castHandle = new Cast.Challenge(this, playerVector, new Rite(), questData);
                         }
 
                         castHandle.CastQuest();
@@ -858,10 +874,6 @@ namespace StardewDruid
 
             riteData ??= new();
 
-            //riteData.caster.MagneticRadius += 10;
-
-            //DelayedAction.functionAfterDelay(ResetMagnetism, 1000);
-
             List<Vector2> removeVectors = new();
 
             Dictionary<Vector2, Cast.Cast> effectCasts = new();
@@ -922,7 +934,7 @@ namespace StardewDruid
                             if (tidalList.Contains(buildingTile.TileIndex))
                             {
 
-                                effectCasts[tileVector] = new Cast.Pool(this, tileVector, riteData.caster);
+                                effectCasts[tileVector] = new Cast.Pool(this, tileVector, riteData);
 
                             }
 
@@ -930,6 +942,44 @@ namespace StardewDruid
                         
                         if (buildingTile.TileIndexProperties.TryGetValue("Passable", out _) == false)
                         {
+
+                            continue;
+
+                        }
+
+                    }
+
+                    if (riteData.castLocation.objects.Count() > 0)
+                    {
+
+                        if (riteData.castLocation.objects.ContainsKey(tileVector))
+                        {
+
+                            if (blessingLevel >= 1)
+                            {
+
+                                StardewValley.Object tileObject = riteData.castLocation.objects[tileVector];
+
+                                if (tileObject.name.Contains("Stone"))
+                                {
+
+                                    if (Map.SpawnData.StoneIndex().Contains(tileObject.ParentSheetIndex))
+                                    {
+
+                                        effectCasts[tileVector] = new Cast.Weed(this, tileVector, riteData);
+
+                                    }
+
+
+                                }
+                                else if (tileObject.name.Contains("Weeds") || tileObject.name.Contains("Twig"))
+                                {
+
+                                    effectCasts[tileVector] = new Cast.Weed(this, tileVector, riteData);
+
+                                }
+
+                            }
 
                             continue;
 
@@ -949,13 +999,26 @@ namespace StardewDruid
 
                                 case "Tree":
 
-                                    effectCasts[tileVector] = new Cast.Tree(this, tileVector, riteData.caster);
+                                    StardewValley.TerrainFeatures.Tree treeFeature = terrainFeature as StardewValley.TerrainFeatures.Tree;
+
+                                    if (treeFeature.growthStage.Value >= 5)
+                                    {
+
+                                        effectCasts[tileVector] = new Cast.Tree(this, tileVector, riteData);
+
+                                    }
+                                    else if(staticData.blessingList["earth"] >= 4 && treeFeature.fertilized.Value == false)
+                                    {
+
+                                        effectCasts[tileVector] = new Cast.Sapling(this, tileVector, riteData);
+
+                                    }
 
                                     break;
 
                                 case "Grass":
 
-                                    Cast.Grass effectGrass = new(this, tileVector, riteData.caster);
+                                    Cast.Grass effectGrass = new(this, tileVector, riteData);
 
                                     if (!Game1.currentSeason.Equals("winter") && riteData.spawnIndex["cropseed"] && staticData.blessingList["earth"] >= 4)
                                     {
@@ -973,7 +1036,7 @@ namespace StardewDruid
                                     if (!Game1.currentSeason.Equals("winter") && riteData.spawnIndex["cropseed"] && staticData.blessingList["earth"] >= 4)
                                     {
 
-                                        effectCasts[tileVector] = new Cast.Hoed(this, tileVector, riteData.caster);
+                                        effectCasts[tileVector] = new Cast.Hoed(this, tileVector, riteData);
 
                                     }
 
@@ -1023,13 +1086,13 @@ namespace StardewDruid
                                             case 600:
                                             case 602:
 
-                                                effectCasts[tileVector] = new Cast.Stump(this, tileVector, riteData.caster, resourceClump);
+                                                effectCasts[tileVector] = new Cast.Stump(this, tileVector, riteData, resourceClump);
 
                                                 break;
 
                                             default:
 
-                                                effectCasts[tileVector] = new Cast.Boulder(this, tileVector, riteData.caster, resourceClump);
+                                                effectCasts[tileVector] = new Cast.Boulder(this, tileVector, riteData, resourceClump);
 
                                                 break;
 
@@ -1079,7 +1142,7 @@ namespace StardewDruid
                                 if (blessingLevel >= 2)
                                 {
 
-                                    effectCasts[tileVector] = new Cast.Bush(this, tileVector, riteData.caster, largeTerrainFeature);
+                                    effectCasts[tileVector] = new Cast.Bush(this, tileVector, riteData, largeTerrainFeature);
 
                                 }
 
@@ -1093,43 +1156,6 @@ namespace StardewDruid
                         if (targetTerrain)
                         {
                             continue;
-                        }
-
-                    }
-
-                    if (riteData.castLocation.objects.Count() > 0)
-                    {
-
-                        if (riteData.castLocation.objects.ContainsKey(tileVector))
-                        {
-
-                            if (blessingLevel >= 1)
-                            {
-
-                                StardewValley.Object tileObject = riteData.castLocation.objects[tileVector];
-
-                                if(tileObject.name.Contains("Stone"))
-                                {
-
-                                    if(Map.Spawn.StoneIndex().Contains(tileObject.ParentSheetIndex))
-                                    {
-                                        
-                                        effectCasts[tileVector] = new Cast.Weed(this, tileVector, riteData.caster);
-
-                                    }
-                                    
-
-                                } else if (tileObject.name.Contains("Weeds") || tileObject.name.Contains("Twig"))
-                                {
-
-                                    effectCasts[tileVector] = new Cast.Weed(this, tileVector, riteData.caster);
-
-                                }
-
-                            }
-
-                            continue;
-
                         }
 
                     }
@@ -1158,7 +1184,7 @@ namespace StardewDruid
                             if (probability == 0)
                             {
 
-                                effectCasts[tileVector] = new Cast.Rockfall(this, tileVector, riteData.caster);
+                                effectCasts[tileVector] = new Cast.Rockfall(this, tileVector, riteData);
 
                             }
 
@@ -1187,13 +1213,13 @@ namespace StardewDruid
                                     if(riteData.castLocation.Name.Contains("Farm"))
                                     {
 
-                                        effectCasts[tileVector] = new Cast.Pool(this, tileVector, riteData.caster);
+                                        effectCasts[tileVector] = new Cast.Pool(this, tileVector, riteData);
 
                                     }
                                     else
                                     {
 
-                                        effectCasts[tileVector] = new Cast.Water(this, tileVector, riteData.caster);
+                                        effectCasts[tileVector] = new Cast.Water(this, tileVector, riteData);
 
                                     }
 
@@ -1214,7 +1240,7 @@ namespace StardewDruid
                                 if (typeValue == "Dirt" || backTile.TileIndexProperties.TryGetValue("Diggable", out _))
                                 {
 
-                                    effectCasts[tileVector] = new Cast.Dirt(this, tileVector, riteData.caster, riteData.spawnIndex);
+                                    effectCasts[tileVector] = new Cast.Dirt(this, tileVector, riteData);
 
                                     continue;
 
@@ -1223,7 +1249,7 @@ namespace StardewDruid
                                 if (typeValue == "Grass" && backTile.TileIndexProperties.TryGetValue("NoSpawn", out _) == false)
                                 {
 
-                                    effectCasts[tileVector] = new Cast.Lawn(this, tileVector, riteData.caster, riteData.spawnIndex);
+                                    effectCasts[tileVector] = new Cast.Lawn(this, tileVector, riteData);
 
                                     continue;
 
@@ -1528,7 +1554,7 @@ namespace StardewDruid
                             { 
                                 int targetIndex = warpTotems[locationName];
 
-                                effectCasts[tileVector] = new Cast.Totem(this, tileVector, riteData.caster, targetIndex);
+                                effectCasts[tileVector] = new Cast.Totem(this, tileVector, riteData, targetIndex);
 
                                 continue;
 
@@ -1572,13 +1598,13 @@ namespace StardewDruid
                                         case 600:
                                         case 602:
 
-                                            effectCasts[tileVector] = new Cast.Stump(this, tileVector, riteData.caster, resourceClump);
+                                            effectCasts[tileVector] = new Cast.Stump(this, tileVector, riteData, resourceClump);
 
                                             break;
 
                                         default:
 
-                                            effectCasts[tileVector] = new Cast.Boulder(this, tileVector, riteData.caster, resourceClump);
+                                            effectCasts[tileVector] = new Cast.Boulder(this, tileVector, riteData, resourceClump);
 
                                             break;
 
@@ -1626,7 +1652,7 @@ namespace StardewDruid
                                     if (targetObject.MinutesUntilReady > 0)
                                     {
 
-                                        effectCasts[tileVector] = new Cast.Craft(this, tileVector, riteData.caster);
+                                        effectCasts[tileVector] = new Cast.Craft(this, tileVector, riteData);
 
                                     }
 
@@ -1639,7 +1665,7 @@ namespace StardewDruid
                                 if (blessingLevel >= 2)
                                 {
 
-                                    effectCasts[tileVector] = new Cast.Rod(this, tileVector, riteData.caster);
+                                    effectCasts[tileVector] = new Cast.Rod(this, tileVector, riteData);
                                 
                                 }
 
@@ -1649,7 +1675,7 @@ namespace StardewDruid
                                 if (blessingLevel >= 2)
                                 {
                                     
-                                    effectCasts[tileVector] = new Cast.Campfire(this, tileVector, riteData.caster);
+                                    effectCasts[tileVector] = new Cast.Campfire(this, tileVector, riteData);
 
                                 }
                             }
@@ -1660,7 +1686,7 @@ namespace StardewDruid
                                     if (riteData.spawnIndex["wilderness"])
                                     {
 
-                                        effectCasts[tileVector] = new Cast.Portal(this, tileVector, riteData.caster);
+                                        effectCasts[tileVector] = new Cast.Portal(this, tileVector, riteData);
 
                                     }
                                 }
@@ -1668,9 +1694,9 @@ namespace StardewDruid
                             }
                             else if (targetObject.IsScarecrow())
                             {
-                                if (blessingLevel >= 2)
+                                if (blessingLevel >= 2 && !Game1.isRaining)
                                 {
-                                    effectCasts[tileVector] = new Cast.Scarecrow(this, tileVector, riteData.caster);
+                                    effectCasts[tileVector] = new Cast.Scarecrow(this, tileVector, riteData);
                                 }
                             }
 
@@ -1715,7 +1741,7 @@ namespace StardewDruid
 
                                     };
 
-                                    Cast.Water waterPortal = new(this, tileVector, riteData.caster)
+                                    Cast.Water waterPortal = new(this, tileVector, riteData)
                                     {
                                         portalPosition = new Vector2(tileVector.X * 64, tileVector.Y * 64) + portalOffsets[riteData.direction]
                                     };
@@ -1769,7 +1795,7 @@ namespace StardewDruid
                         {
                             Vector2 monsterVector = monsterCharacter.getTileLocation();
 
-                            effectCasts[monsterVector] = new Cast.Smite(this, monsterVector, riteData.caster, monsterCharacter);
+                            effectCasts[monsterVector] = new Cast.Smite(this, monsterVector, riteData, monsterCharacter);
 
                             smiteCount++;
 
@@ -1919,7 +1945,7 @@ namespace StardewDruid
 
                     newVector = castSelection[castIndex];
 
-                    effectCasts[newVector] = new Cast.Meteor(this, newVector, riteData.caster, riteData.direction);
+                    effectCasts[newVector] = new Cast.Meteor(this, newVector, riteData);
 
                 }
 
@@ -1968,7 +1994,14 @@ namespace StardewDruid
         public int SpecialLimit()
         {
 
-            decimal limit = specialCasts / 6;
+            if (specialCasts == (specialLimit * 6))
+            {
+
+                Game1.addHUDMessage(new HUDMessage("Special power has almost completely dissipated", 2));
+
+            }
+
+            decimal limit = specialCasts / specialLimit;
 
             return (int) Math.Floor(limit);
 
@@ -1979,22 +2012,10 @@ namespace StardewDruid
 
             specialCasts++;
 
-            if(specialCasts >= 12)
+            if (specialCasts == (specialLimit * 3))
             {
 
-                Game1.addHUDMessage(new HUDMessage("Special power wanes", 2));
-
-            }
-            else if(specialCasts >= 18)
-            {
-
-                Game1.addHUDMessage(new HUDMessage("Special power dissipates", 2));
-
-            }
-            else if (specialCasts >= 24)
-            {
-
-                Game1.addHUDMessage(new HUDMessage("Special power lost", 2));
+                Game1.addHUDMessage(new HUDMessage("Special power starts to wane", 2));
 
             }
 
@@ -2014,15 +2035,15 @@ namespace StardewDruid
 
         }
 
-        public void UpdateBlessing(string choice)
+        public void UpdateBlessing(string blessing)
         {
 
-            staticData.activeBlessing = choice;
+            staticData.activeBlessing = blessing;
 
-            if(!staticData.blessingList.ContainsKey(choice))
+            if(!staticData.blessingList.ContainsKey(blessing))
             {
 
-                staticData.blessingList[choice] = 0;
+                staticData.blessingList[blessing] = 0;
 
             }
 
@@ -2122,7 +2143,7 @@ namespace StardewDruid
         public void ReassignQuest(string quest)
         {
 
-            QuestData questData = questIndex[quest];
+            Map.Quest questData = questIndex[quest];
 
             if (questData.questId != 0)
             {
@@ -2163,7 +2184,7 @@ namespace StardewDruid
         public void RemoveQuest(string quest)
         {
 
-            QuestData questData = questIndex[quest];
+            Map.Quest questData = questIndex[quest];
 
             if (questData.questId != 0)
             {

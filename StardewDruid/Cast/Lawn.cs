@@ -15,11 +15,11 @@ namespace StardewDruid.Cast
 
         private readonly Dictionary<string, bool> spawnIndex;
 
-        public Lawn(Mod mod, Vector2 target, Farmer player, Dictionary<string, bool> SpawnIndex)
-            : base(mod, target, player)
+        public Lawn(Mod mod, Vector2 target, Rite rite)
+            : base(mod, target, rite)
         {
 
-            spawnIndex = SpawnIndex;
+            spawnIndex = rite.spawnIndex;
 
         }
 
@@ -40,7 +40,7 @@ namespace StardewDruid.Cast
             if (probability <= 1 && spawnIndex["flower"] && neighbourList.Count == 0) // 2/120 flower
             {
 
-                Dictionary<int, int> objectIndexes;
+                /*Dictionary<int, int> objectIndexes;
 
                 switch (Game1.currentSeason)
                 {
@@ -77,19 +77,79 @@ namespace StardewDruid.Cast
 
                 }
 
-                 Crop cropFlower = new(objectIndexes[probability], (int)targetVector.X, (int)targetVector.Y);
+                Crop cropFlower = new(objectIndexes[probability], (int)targetVector.X, (int)targetVector.Y);
                     
-                 HoeDirt hoeDirt = new(2, cropFlower);
+                HoeDirt hoeDirt = new(2, cropFlower);
 
-                 targetLocation.terrainFeatures.Add(targetVector, hoeDirt);
+                targetLocation.terrainFeatures.Add(targetVector, hoeDirt);
 
-                 cropFlower.growCompletely();
+                cropFlower.growCompletely();
 
-                 //cropFlower.forageCrop.Value = true;
+                //cropFlower.forageCrop.Value = true;
 
-                 castFire = true;
+                castFire = true;
 
-                 castCost = 6;
+                castCost = 6;*/
+
+
+                Dictionary<int, int> objectIndexes;
+
+                switch (Game1.currentSeason)
+                {
+
+                    case "spring":
+
+                        objectIndexes = new()
+                        {
+                            [0] = 591, // tulip
+                            [1] = 597, // jazz
+                        };
+
+                        break;
+
+                    case "summer":
+
+                        objectIndexes = new()
+                        {
+                            [0] = 593, // spangle
+                            [1] = 376, // poppy
+                        };
+
+                        break;
+
+                    default: //"fall":
+
+                        objectIndexes = new()
+                        {
+                            [0] = 595, // fairy
+                            [1] = 421, // sunflower
+                        };
+
+                        break;
+
+                }
+
+                int randomCrop = objectIndexes[probability];
+
+                targetLocation.dropObject(
+                    new StardewValley.Object(
+                        targetVector,
+                        randomCrop,
+                        null,
+                        canBeSetDown: false,
+                        canBeGrabbed: true,
+                        isHoedirt: false,
+                        isSpawnedObject: true
+                    ),
+                    new Vector2(targetVector.X * 64, targetVector.Y * 64),
+                    Game1.viewport,
+                    initialPlacement: true
+                );
+
+                castFire = true;
+
+                castCost = 4;
+
 
             }
             else if (probability >= 2 && probability <= 3 && spawnIndex["forage"] && neighbourList.Count == 0) // 2/120 forage

@@ -20,7 +20,7 @@ namespace StardewDruid.Cast
 
         public string activeChallenge;
 
-        public QuestData questData;
+        public Quest questData;
 
         public Queue<Vector2> trashQueue;
 
@@ -38,8 +38,8 @@ namespace StardewDruid.Cast
 
         Vector2 challengeBorder;
 
-        public Challenge(Mod mod, Vector2 target, Farmer player, Map.QuestData quest)
-            : base(mod, target, player)
+        public Challenge(Mod mod, Vector2 target, Rite rite, Map.Quest quest)
+            : base(mod, target, rite)
         {
 
             questData = quest;
@@ -144,8 +144,6 @@ namespace StardewDruid.Cast
         public void SetupPortal(int portalType)
         {
 
-            spawnCounter = 0;
-
             challengeWithin = questData.challengeWithin;
 
             challengeRange = questData.challengeRange;
@@ -165,7 +163,7 @@ namespace StardewDruid.Cast
             foreach (Vector2 portalVector in spawnPortals)
             {
 
-                portalHandle = new(mod, portalVector, targetPlayer);
+                portalHandle = new(mod, portalVector, new Rite() { caster = targetPlayer });
 
                 portalHandle.CastWater();
 
@@ -243,7 +241,7 @@ namespace StardewDruid.Cast
 
                 default: // "challengeEarth"
 
-                    if (trashCollected < 15)
+                    if (trashCollected < 12)
                     {
 
                         Game1.addHUDMessage(new HUDMessage($"Try again to collect more trash", ""));
@@ -305,8 +303,6 @@ namespace StardewDruid.Cast
 
                 default: //challengeEarth
 
-                    spawnCounter++;
-
                     if (
                         playerVector.X >= challengeWithin.X &&
                         playerVector.Y >= challengeWithin.Y &&
@@ -315,12 +311,12 @@ namespace StardewDruid.Cast
                         )
                     {
 
-                        if (spawnCounter == 2)
+                        if (randomIndex.Next(2) == 0)
                         {
 
                             ThrowTrash();
 
-                            spawnCounter = 0;
+                            spawnCounter++;
 
                         }
 
@@ -336,7 +332,7 @@ namespace StardewDruid.Cast
 
                     Vector2 randomVector = challengeWithin + new Vector2(randomIndex.Next(5), randomIndex.Next(5));
 
-                    Rockfall rockFall = new(mod, randomVector, targetPlayer)
+                    Rockfall rockFall = new(mod, randomVector, new Rite() { caster = targetPlayer })
                     {
                         objectStrength = 3
                     };
@@ -353,6 +349,11 @@ namespace StardewDruid.Cast
 
         public void ThrowTrash()
         {
+
+            if (trashQueue.Count == 0)
+            {
+                return;
+            }
 
             Dictionary<int, int> artifactIndex = new()
             {

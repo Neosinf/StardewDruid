@@ -1,10 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.Locations;
-using StardewValley.TerrainFeatures;
-using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using xTile.Dimensions;
 using xTile.Tiles;
 
@@ -19,32 +17,16 @@ namespace StardewDruid.Cast
 
         public int objectStrength;
 
-        public Rockfall(Mod mod, Vector2 target, Farmer player)
-            : base(mod, target, player)
+        public int debrisIndex;
+
+        public Rockfall(Mod mod, Vector2 target, Rite rite)
+            : base(mod, target, rite)
         {
 
-            castCost = 2;
+            castCost = 1;
 
             shaftLocation = targetPlayer.currentLocation as MineShaft;
-            
-            if (shaftLocation.mineLevel <= 40)
-            {
 
-                objectStrength = 1;
-           
-            }
-            else if (shaftLocation.mineLevel <= 80)
-            {
-
-                objectStrength = 2;
-            
-            }
-            else //(targetLocation.mineLevel <= 120)
-            {
-                
-                objectStrength = 3;
-            
-            }
 
         }
 
@@ -105,12 +87,12 @@ namespace StardewDruid.Cast
 
             Dictionary<int, int> objectIndexes;
 
-            Dictionary<int, int> scatterIndexes;
-
             Dictionary<int, int> specialIndexes;
 
             if (shaftLocation.mineLevel <= 40)
             {
+
+                objectStrength = 1;
 
                 objectIndexes = new()
                 {
@@ -123,35 +105,27 @@ namespace StardewDruid.Cast
                     [6] = 42, // grade 1 stone
                     [7] = 42, // grade 1 stone
                     [8] = 42, // grade 1 stone
-                    [9] = 668, // coal stone
+                    [9] = 42, // grade 1 stone
 
-                };
-
-                scatterIndexes = new()
-                {
-                    [32] = 33,
-                    [40] = 41,
-                    [42] = 43,
-                    [668] = 669,
-                    [670] = 671,
-                    [751] = 33,
-                    [8] = 9,
-                    [10] = 11,
                 };
 
                 specialIndexes = new()
                 {
 
-                    [0] = 44, // special stone
+                    [0] = 668, // coal stone
                     [1] = 751, // copper stone
-                    [2] = 8, // amethyst
-                    [3] = 10, // topaz
+                    [2] = 751, // copper stone
+                    [3] = 8, // amethyst
+                    [4] = 10, // topaz
 
                 };
 
             }
             else if (shaftLocation.mineLevel <= 80)
             {
+
+
+                objectStrength = 2;
 
                 objectIndexes = new()
                 {
@@ -167,25 +141,14 @@ namespace StardewDruid.Cast
                     [9] = 54, // grade 2d stone
                 };
 
-                scatterIndexes = new()
-                {
-                    [48] = 49,
-                    [50] = 51,
-                    [52] = 53,
-                    [54] = 55,
-                    [44] = 45,
-                    [290] = 35,
-                    [12] = 13,
-                    [14] = 15,
-                };
-
                 specialIndexes = new()
                 {
 
-                    [0] = 44, // special stone
+                    [0] = 668, // coal stone
                     [1] = 290, // iron ore
-                    [2] = 12, // emerald
-                    [3] = 14, // aquamarine*
+                    [2] = 290, // iron ore
+                    [3] = 12, // emerald
+                    [4] = 14, // aquamarine*
 
                 };
 
@@ -193,6 +156,8 @@ namespace StardewDruid.Cast
             }
             else //(targetLocation.mineLevel <= 120)
             {
+
+                objectStrength = 4;
 
                 objectIndexes = new()
                 {
@@ -209,34 +174,70 @@ namespace StardewDruid.Cast
 
                 };
 
-                scatterIndexes = new()
-                {
-                    [760] = 761,
-                    [762] = 763,
-                    [56] = 57,
-                    [58] = 59,
-                    [44] = 45,
-                    [764] = 761,
-                    [2] = 3,
-                    [4] = 5,
-                };
-
                 specialIndexes = new()
                 {
 
-                    [0] = 44, // special stone
+                    [0] = 668, // coal stone
                     [1] = 764, // gold ore
-                    [2] = 2, // ruby
-                    [3] = 4, // diamond*
+                    [2] = 764, // gold ore
+                    [3] = 2, // ruby
+                    [4] = 4, // diamond*
 
                 };
 
-
             }
 
-            if(probability == 10)
+            Dictionary<int, int> scatterIndexes = new()
             {
-                objectIndex = specialIndexes[randomIndex.Next(4)];
+
+                [2] = 3,
+                [4] = 5,
+                [8] = 9,
+                [10] = 11,
+                [12] = 13,
+                [14] = 15,
+                [32] = 33,
+                [40] = 41,
+                [42] = 43,
+                [44] = 45,
+                [48] = 49,
+                [50] = 51,
+                [52] = 53,
+                [54] = 55,
+                [56] = 57,
+                [58] = 59,
+                [290] = 35,
+                [668] = 669,
+                [670] = 671,
+                [751] = 33,
+                [760] = 761,
+                [762] = 763,
+                [764] = 761,
+
+            };
+
+            Dictionary<int, int> debrisIndexes = new()
+            {
+
+                [2] = 72,
+                [4] = 64,
+                [8] = 66,
+                [10] = 68,
+                [12] = 60,
+                [14] = 62,
+                [290] = 380,
+                [751] = 378,
+                [760] = 761,
+                [762] = 763,
+                [764] = 384,
+
+            };
+
+            if (probability == 10)
+            {
+                objectIndex = specialIndexes[randomIndex.Next(5)];
+
+                objectStrength += 1;
 
             }
             else
@@ -244,7 +245,14 @@ namespace StardewDruid.Cast
                 objectIndex = objectIndexes[probability];
 
             }
-            
+
+            debrisIndex = 390;
+
+            if (debrisIndexes.ContainsKey(objectIndex))
+            {
+                debrisIndex = debrisIndexes[objectIndex];
+
+            }
 
             int scatterIndex = scatterIndexes[objectIndex];
 
@@ -266,11 +274,11 @@ namespace StardewDruid.Cast
 
             // ----------------------------- large debris
 
-            animationPosition = new(targetVector.X * 64 + 8, (targetVector.Y - 3) * 64 + 8);
+            animationPosition = new(targetVector.X * 64 + 8, (targetVector.Y - 3) * 64 - 24);
 
             animationAcceleration = 0.001f;
 
-            animationSort = targetVector.X * 1000 + targetVector.Y + 10;
+            animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "1");
 
             animationScatter = new("Maps\\springobjects", scatterRectangle, animationInterval, 1, 0, animationPosition, flicker: false, flipped: false, animationSort, 0f, Color.White, 3f, 0f, 0f, 0f)
             {
@@ -284,12 +292,11 @@ namespace StardewDruid.Cast
 
             animationPosition = new(targetVector.X * 64 + 8, (targetVector.Y - 3) * 64 + 8);
 
-            animationSort = targetVector.X * 1000 + targetVector.Y + 12;
+            animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "2");
 
             animationRock = new("Maps\\springobjects", objectRectangle, animationInterval, 1, 0, animationPosition, flicker: false, flipped: false, animationSort, 0f, Color.White, 3f, 0f, 0f, 0f)
             {
                 acceleration = new Vector2(0, animationAcceleration),
-                delayBeforeAnimationStart = 100,
                 timeBasedMotion = true,
             };
 
@@ -299,7 +306,7 @@ namespace StardewDruid.Cast
 
             animationPosition = new(targetVector.X * 64 + 16, targetVector.Y * 64 + 16);
 
-            animationSort = targetVector.X * 1000 + targetVector.Y + 12;
+            animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "3");
 
             animationRock = new("Maps\\springobjects", objectRectangle, animationInterval, 1, 0, animationPosition, flicker: false, flipped: false, animationSort, 0f, Color.Black * 0.5f, 2f, 0f, 0f, 0f);
 
@@ -331,28 +338,22 @@ namespace StardewDruid.Cast
         {
 
             Microsoft.Xna.Framework.Rectangle areaOfEffect = new(
-                ((int)targetVector.X - 1) * 64,
-                ((int)targetVector.Y - 1) * 64,
-                192,
-                192
+                ((int)targetVector.X - 2) * 64,
+                ((int)targetVector.Y - 2) * 64,
+                300,
+                300
             );
 
             targetLocation.damageMonster(areaOfEffect, 10 * objectStrength, 20 * objectStrength, true, targetPlayer);
 
             targetLocation.lightGlows.Add(targetVector * 64);
 
-            for(int i = 0; i < randomIndex.Next(1,5); i++) {
-
-                Game1.createObjectDebris(390, (int)targetVector.X, (int)targetVector.Y);
-
-            }
-
         }
 
         public void RockImpact()
         {
 
-            StardewValley.Object objectInstance = new(targetVector, objectIndex, "Stone", true, false, false, false)
+            /*StardewValley.Object objectInstance = new(targetVector, objectIndex, "Stone", true, false, false, false)
             {
                 MinutesUntilReady = objectStrength
             };
@@ -362,7 +363,21 @@ namespace StardewDruid.Cast
                 targetLocation.Objects.Add(targetVector, objectInstance);
             }
 
-            mod.UpdateEarthCasts(targetLocation, targetVector, false);
+            mod.UpdateEarthCasts(targetLocation, targetVector, false);*/
+
+            for (int i = 0; i < randomIndex.Next(1, 4); i++)
+            {
+
+                if (i == 0)
+                {
+
+                    Game1.createObjectDebris(debrisIndex, (int)targetVector.X, (int)targetVector.Y);
+
+                }
+
+                Game1.createObjectDebris(390, (int)targetVector.X, (int)targetVector.Y);
+
+            }
 
         }
 

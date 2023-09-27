@@ -8,7 +8,7 @@ using StardewValley.Menus;
 
 namespace StardewDruid.Map
 {
-    static class Spawn
+    static class SpawnData
     {
 
         public static List<int> StoneIndex()
@@ -42,6 +42,7 @@ namespace StardewDruid.Map
                     ["trees"] = true,
                     ["fishup"] = true,
                     ["wilderness"] = false,
+                    ["critter"] = true,
                     ["meteor"] = true,
                     ["fishspot"] = false,
                     ["stonecut"] = true,
@@ -50,7 +51,7 @@ namespace StardewDruid.Map
                 };
 
             }
-            else if (playerLocation.Name.Contains("Forest") || playerLocation.Name.Contains("Mountain") || playerLocation.Name.Contains("Bus"))
+            else if (playerLocation.Name.Contains("Forest") || playerLocation.Name.Contains("Mountain"))
             {
 
                 spawnIndex = new()
@@ -62,6 +63,28 @@ namespace StardewDruid.Map
                     ["trees"] = true,
                     ["fishup"] = true,
                     ["wilderness"] = false,
+                    ["critter"] = true,
+                    ["meteor"] = true,
+                    ["fishspot"] = true,
+                    ["stonecut"] = true,
+                    ["cropseed"] = false,
+
+                };
+
+            }
+            else if (playerLocation.Name.Contains("Bus"))
+            {
+
+                spawnIndex = new()
+                {
+
+                    ["forage"] = true,
+                    ["flower"] = true,
+                    ["grass"] = true,
+                    ["trees"] = true,
+                    ["fishup"] = true,
+                    ["wilderness"] = false,
+                    ["critter"] = true,
                     ["meteor"] = true,
                     ["fishspot"] = true,
                     ["stonecut"] = true,
@@ -82,6 +105,7 @@ namespace StardewDruid.Map
                     ["trees"] = true,
                     ["fishup"] = false,
                     ["wilderness"] = true,
+                    ["critter"] = true,
                     ["meteor"] = true,
                     ["fishspot"] = false,
                     ["stonecut"] = true,
@@ -101,6 +125,7 @@ namespace StardewDruid.Map
                     ["trees"] = false,
                     ["fishup"] = false,
                     ["wilderness"] = true,
+                    ["critter"] = true,
                     ["meteor"] = true,
                     ["fishspot"] = true,
                     ["stonecut"] = false,
@@ -119,6 +144,7 @@ namespace StardewDruid.Map
                     ["trees"] = true,
                     ["fishup"] = true,
                     ["wilderness"] = true,
+                    ["critter"] = true,
                     ["meteor"] = true,
                     ["fishspot"] = true,
                     ["stonecut"] = false,
@@ -137,6 +163,7 @@ namespace StardewDruid.Map
                     ["trees"] = false,
                     ["fishup"] = false,
                     ["wilderness"] = false,
+                    ["critter"] = false,
                     ["meteor"] = true,
                     ["fishspot"] = false,
                     ["stonecut"] = false,
@@ -145,7 +172,7 @@ namespace StardewDruid.Map
                 };
 
             }
-            else if (playerLocation.Name.Contains("Beach") || playerLocation.Name.Contains("Town"))
+            else if (playerLocation.Name.Contains("Beach"))
             {
 
                 spawnIndex = new()
@@ -157,6 +184,28 @@ namespace StardewDruid.Map
                     ["trees"] = false,
                     ["fishup"] = true,
                     ["wilderness"] = false,
+                    ["critter"] = true,
+                    ["meteor"] = false,
+                    ["fishspot"] = true,
+                    ["stonecut"] = false,
+                    ["cropseed"] = false,
+
+                };
+
+            }
+            else if (playerLocation.Name.Contains("Town"))
+            {
+
+                spawnIndex = new()
+                {
+
+                    ["forage"] = true,
+                    ["flower"] = false,
+                    ["grass"] = false,
+                    ["trees"] = false,
+                    ["fishup"] = false,
+                    ["wilderness"] = false,
+                    ["critter"] = false,
                     ["meteor"] = false,
                     ["fishspot"] = true,
                     ["stonecut"] = false,
@@ -174,63 +223,6 @@ namespace StardewDruid.Map
             return spawnIndex;
 
         }
-
-        /*public static TemporaryAnimatedSprite ChallengeAnimation(string effect)
-        {
-
-            GameLocation location = Game1.getLocationFromName(ChallengeLocation(effect));
-
-            Vector2 vector = ChallengeVector(effect);
-
-            Color color = ChallengeColor(effect);
-
-            TemporaryAnimatedSprite animation = ModUtility.AnimateChallenge(location,vector,color);
-
-            return animation;
-
-        }
-
-        public static Color ChallengeColor(string effect)
-        {
-
-            Dictionary<string, Color> colorIndex = new()
-            {
-                ["challengeEarth"] = Color.Green,
-                ["challengeWater"] = Color.Blue,
-                ["challengeStars"] = Color.Red,
-                ["swordEarth"] = Color.Green,
-                ["swordWater"] = Color.Blue,
-                ["swordStars"] = Color.Red,
-            };
-
-            return colorIndex[effect];
-
-        }
-
-        public static Dictionary<string, List<string>> ChallengeLocations()
-        {
-
-            Dictionary<string, string> locationIndex = ChallengeLocationIndex();
-
-            Dictionary<string, List<string>> locationList = new();
-
-            foreach (KeyValuePair<string, string> location in locationIndex)
-            {
-
-                if (!locationList.ContainsKey(location.Value))
-                {
-
-                    locationList[location.Value] = new();
-
-                }
-
-                locationList[location.Value].Add(location.Key);
-
-            }
-
-            return locationList;
-
-        }*/
 
     }
 

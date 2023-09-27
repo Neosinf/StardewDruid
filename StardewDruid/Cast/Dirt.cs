@@ -18,11 +18,11 @@ namespace StardewDruid.Cast
         private readonly Dictionary<string, bool> spawnIndex;
 
 
-        public Dirt(Mod mod, Vector2 target, Farmer player, Dictionary<string, bool> SpawnIndex)
-            : base(mod, target, player)
+        public Dirt(Mod mod, Vector2 target, Rite rite)
+            : base(mod, target, rite)
         {
 
-            spawnIndex = SpawnIndex;
+            spawnIndex = rite.spawnIndex;
 
         }
 
@@ -57,7 +57,6 @@ namespace StardewDruid.Cast
 
             }
             else if (probability == 3 && spawnIndex["trees"] && neighbourList.Count == 0) // 1/10 tree
-            //if (probability <= 1 && spawnIndex["trees"])
             {
 
                 StardewValley.TerrainFeatures.Tree newTree;
@@ -89,13 +88,10 @@ namespace StardewDruid.Cast
                 ModUtility.AnimateGrowth(targetLocation,targetVector);
 
             }
-            else if (probability >= 4 && probability <= 6 && neighbourList.ContainsKey("HoeDirt")) // 3/10 hoe dirt
-            //else if (probability <= 4) // 3/10 hoe dirt
+            else if (neighbourList.ContainsKey("Crop") && !neighbourList.ContainsKey("Tree") && !neighbourList.ContainsKey("Sapling")) // 3/10 hoe dirt
             {
 
                 targetLocation.makeHoeDirt(targetVector);
-
-                //mod.UpdateEarthCasts(targetLocation, targetVector, false);
 
             }
 

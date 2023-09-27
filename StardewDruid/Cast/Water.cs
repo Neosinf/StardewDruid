@@ -18,8 +18,8 @@ namespace StardewDruid.Cast
 
         public double expireTime;
 
-        public Water(Mod mod, Vector2 target, Farmer player)
-            : base(mod, target, player)
+        public Water(Mod mod, Vector2 target, Rite rite)
+            : base(mod, target, rite)
         {
 
             portalPosition = new(targetVector.X * 64, targetVector.Y * 64);
@@ -29,11 +29,37 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
 
-            int probability = randomIndex.Next(80);
+            int probability = randomIndex.Next(60);
 
-            if (probability >= 8) // fish
+            if (probability >= 11) // nothing
             {
                 return;
+            }
+
+            if(probability >= 8)
+            {
+
+                if (riteData.spawnIndex["critter"])
+                {
+
+                    Portal critterPortal = new(mod, targetPlayer.getTileLocation(), riteData);
+
+                    critterPortal.spawnFrequency = 1;
+
+                    critterPortal.specialType = 1;
+
+                    critterPortal.baseType = "terrain";
+
+                    critterPortal.baseVector = targetVector;
+
+                    critterPortal.baseTarget = true;
+
+                    critterPortal.CastTrigger();
+
+                }
+
+                return;
+
             }
 
             Dictionary<int, int> objectIndexes;
@@ -44,10 +70,10 @@ namespace StardewDruid.Cast
                 objectIndexes = new Dictionary<int, int>()
                 {
                         
-                    [0] = 153, // seaweed
+                    [0] = 152, // seaweed
                     [1] = 152, // seaweed
                     [2] = 152, // seaweed
-                    [3] = 153, // seaweed
+                    [3] = 701, // tilapia
                     [4] = 131, // sardine
                     [5] = 147, // herring
                     [6] = 129, // anchovy
@@ -65,7 +91,7 @@ namespace StardewDruid.Cast
                     [0] = 153, // algae
                     [1] = 153, // algae
                     [2] = 153, // algae
-                    [3] = 153, // algae
+                    [3] = 141, // perch
                     [4] = 145, // carp
                     [5] = 137, // smallmouth bass
                     [6] = 142,  // sunfish
@@ -82,7 +108,7 @@ namespace StardewDruid.Cast
             if (probability <= 3)
             {
                     
-                experienceGain = 3;
+                experienceGain = 6;
 
             }
             else
@@ -95,7 +121,16 @@ namespace StardewDruid.Cast
 
                     objectQuality = 2;
 
-                    experienceGain = 20;
+                    experienceGain = 24;
+
+                }
+
+                if (targetPlayer.professions.Contains(6))
+                {
+
+                    objectQuality = 3;
+
+                    experienceGain = 36;
 
                 }
 
@@ -123,38 +158,6 @@ namespace StardewDruid.Cast
 
         public override void CastWater() {
 
-            /*expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 300;
-
-            List<Vector2> neighbourVectors = ModUtility.GetTilesWithinRadius(targetLocation, targetVector, 3);
-
-            Layer backLayer = targetPlayer.currentLocation.Map.GetLayer("Back");
-
-            bool validBubbleSpot = true;
-
-            foreach(Vector2 neighbourVector in neighbourVectors)
-            {
-
-                Tile backTile = backLayer.PickTile(new Location((int)neighbourVector.X * 64, (int)neighbourVector.Y * 64), Game1.viewport.Size);
-
-                if(backTile != null )
-                {
-
-                    if (!backTile.TileIndexProperties.TryGetValue("Water", out _))
-                    {
-
-                        validBubbleSpot = false;
-
-                        break;
-
-                    }
-
-                }
-
-            }
-
-            if (validBubbleSpot)
-            {*/
-
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 300;
 
             Microsoft.Xna.Framework.Color animationColor = new(0.6f, 1, 0.6f, 1); // light green
@@ -176,8 +179,6 @@ namespace StardewDruid.Cast
             castActive = true;
 
             ModUtility.AnimateRipple(targetLocation, targetVector);
-
-            //}
 
             return;
 

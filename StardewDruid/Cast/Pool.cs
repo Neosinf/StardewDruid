@@ -12,8 +12,8 @@ namespace StardewDruid.Cast
     internal class Pool : Cast
     {
 
-        public Pool(Mod mod, Vector2 target, Farmer player)
-            : base(mod, target, player)
+        public Pool(Mod mod, Vector2 target, Rite rite)
+            : base(mod, target, rite)
         {
 
         }
@@ -23,9 +23,35 @@ namespace StardewDruid.Cast
 
             int probability = randomIndex.Next(40);
 
-            if (probability >= 8)
+            if (probability >= 10)
             {
                 return;
+            }
+
+            if (probability >= 8)
+            {
+
+                if (riteData.spawnIndex["critter"])
+                {
+
+                    Portal critterPortal = new(mod, targetPlayer.getTileLocation(), riteData);
+
+                    critterPortal.spawnFrequency = 1;
+
+                    critterPortal.specialType = 1;
+
+                    critterPortal.baseType = "terrain";
+
+                    critterPortal.baseVector = targetVector;
+
+                    critterPortal.baseTarget = true;
+
+                    critterPortal.CastTrigger();
+
+                }
+
+                return;
+
             }
 
             Dictionary<int, int> objectIndexes;
@@ -69,7 +95,20 @@ namespace StardewDruid.Cast
 
             int objectQuality = 0;
 
-            int experienceGain = 6;
+            int experienceGain;
+
+            if (probability <= 3)
+            {
+
+                experienceGain = 6;
+
+            }
+            else
+            {
+
+                experienceGain = 12;
+
+            }
 
             Throw throwObject = new(objectIndexes[probability], objectQuality);
 

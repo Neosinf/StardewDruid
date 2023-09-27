@@ -9,10 +9,10 @@ namespace StardewDruid.Cast
     internal class Boulder : Cast
     {
 
-        private ResourceClump resourceClump;
+        private readonly ResourceClump resourceClump;
 
-        public Boulder(Mod mod, Vector2 target, Farmer player, ResourceClump ResourceClump)
-            : base(mod, target, player)
+        public Boulder(Mod mod, Vector2 target, Rite rite, ResourceClump ResourceClump)
+            : base(mod, target, rite)
         {
 
             resourceClump = ResourceClump;
@@ -22,86 +22,30 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
 
-            int probability = randomIndex.Next(10);
+            int debrisType = 390;
 
-            if (probability <= 8)
+            int debrisAmount = randomIndex.Next(1, 6);
+
+            for (int i = 0; i < debrisAmount; i++)
             {
 
-                Game1.createObjectDebris(390, (int)targetVector.X, (int)targetVector.Y);
-
-                Game1.createObjectDebris(390, (int)targetVector.X, (int)targetVector.Y + 1);
-
-                //Game1.createObjectDebris(390, (int)targetVector.X + 1, (int)targetVector.Y);
-
-                if (probability <= 3) // stone
-                {
-
-                    Game1.createObjectDebris(390, (int)targetVector.X + 1, (int)targetVector.Y);
-
-                    Game1.createObjectDebris(390, (int)targetVector.X + 1, (int)targetVector.Y + 1);
-
-                }
-
-                if (probability <= 6) // stone
-                {
-
-                    Game1.createObjectDebris(390, (int)targetVector.X, (int)targetVector.Y + 1);
-
-                    Game1.createObjectDebris(390, (int)targetVector.X + 1, (int)targetVector.Y + 1);
-
-                }
-
-                if (probability == 8) // coal
-                {
-
-                    Game1.createObjectDebris(382, (int)targetVector.X + 1, (int)targetVector.Y);
-
-                    Game1.createObjectDebris(382, (int)targetVector.X, (int)targetVector.Y + 1);
-
-                    //Game1.createObjectDebris(382, (int)targetVector.X + 1, (int)targetVector.Y + 1);
-
-                }
-
-                castFire = true;
-
-                targetPlayer.gainExperience(2, 6); // gain foraging experience
-
-                ModUtility.AnimateGrowth(targetLocation, targetVector);
+                Game1.createObjectDebris(debrisType, (int)targetVector.X, (int)targetVector.Y + 1);
 
             }
-            /*else // geode
+
+            if (debrisAmount == 1)
             {
+                Game1.createObjectDebris(382, (int)targetVector.X + 1, (int)targetVector.Y);
 
-                switch ((int)resourceClump.parentSheetIndex.Value)
-                {
+                Game1.createObjectDebris(382, (int)targetVector.X, (int)targetVector.Y + 1);
 
-                    case 752:
-                    case 754:
+            }
 
-                        Game1.createObjectDebris(537, (int)targetVector.X, (int)targetVector.Y);
+            castFire = true;
 
-                        break;
+            targetPlayer.gainExperience(2, 4); // gain foraging experience
 
-                    case 756:
-                    case 758:
-
-                        Game1.createObjectDebris(536, (int)targetVector.X, (int)targetVector.Y);
-
-                        break;
-
-                    default:
-
-                        Game1.createObjectDebris(535, (int)targetVector.X, (int)targetVector.Y);
-
-                        break;
-
-                }
-
-                castFire = true;
-
-                ModUtility.AnimateGrowth(targetLocation, targetVector);
-
-            }*/
+            ModUtility.AnimateGrowth(targetLocation, targetVector);
 
         }
 

@@ -6,11 +6,13 @@ using System;
 
 namespace StardewDruid.Cast
 {
-    public class Cast : ICast
+    public class Cast
     {
         public Vector2 targetVector { get; set; }
 
         public Random randomIndex { get; set; }
+
+        public readonly Rite riteData;
 
         public bool castFire { get; set; }
 
@@ -26,7 +28,7 @@ namespace StardewDruid.Cast
 
         public readonly GameLocation targetLocation;
 
-        public Cast(Mod Mod, Vector2 Vector, Farmer Player)
+        public Cast(Mod Mod, Vector2 Vector, Rite RiteData)
         {
 
             targetVector = Vector;
@@ -35,9 +37,11 @@ namespace StardewDruid.Cast
 
             randomIndex = new Random();
 
-            targetPlayer = Player;
+            riteData = RiteData;
 
-            targetLocation = targetPlayer.currentLocation;
+            targetPlayer = riteData.caster;
+
+            targetLocation = riteData.castLocation;
 
             castFire = false;
 

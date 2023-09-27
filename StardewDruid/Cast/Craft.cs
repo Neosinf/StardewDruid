@@ -9,11 +9,9 @@ namespace StardewDruid.Cast
 
         private StardewValley.Object targetObject;
 
-        public Craft(Mod mod, Vector2 target, Farmer player)
-            : base(mod, target, player)
+        public Craft(Mod mod, Vector2 target, Rite rite)
+            : base(mod, target, rite)
         {
-
-            
 
         }
 

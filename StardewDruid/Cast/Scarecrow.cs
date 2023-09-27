@@ -10,8 +10,8 @@ namespace StardewDruid.Cast
     internal class Scarecrow : Cast
     {
 
-        public Scarecrow(Mod mod, Vector2 target, Farmer player)
-            : base(mod, target, player)
+        public Scarecrow(Mod mod, Vector2 target, Rite rite)
+            : base(mod, target, rite)
         {
 
         }

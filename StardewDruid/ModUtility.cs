@@ -75,13 +75,9 @@ namespace StardewDruid
 
             Vector2 animationPosition = new(targetVector.X * 64 + 8, targetVector.Y * 64 + 8);
 
-            float animationSort = (animationPosition.X * 1000) + animationPosition.Y;
+            float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString());
 
-            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, animationColor, 1f, 0f, 0f, 0f)
-            {
-                //motion = new Vector2(0f, -0.1f)
-
-            };
+            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, animationColor, 1f, 0f, 0f, 0f);
 
             targetLocation.temporarySprites.Add(newAnimation);
 
@@ -106,13 +102,9 @@ namespace StardewDruid
 
             Vector2 animationPosition = new(targetVector.X * 64 + 8, targetVector.Y * 64 + 8);
 
-            float animationSort = (animationPosition.X * 1000) + animationPosition.Y + 100;
+            float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString());
 
-            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, animationColor, 0.75f, 0f, 0f, 0f)
-            {
-                //motion = new Vector2(0f, -0.1f)
-
-            };
+            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, animationColor, 0.75f, 0f, 0f, 0f);
 
             targetLocation.temporarySprites.Add(newAnimation);
 
@@ -137,7 +129,7 @@ namespace StardewDruid
 
             Vector2 animationPosition = new(targetVector.X * 64, targetVector.Y * 64);
 
-            float animationSort = (targetVector.X * 1000) + targetVector.Y;
+            float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString());
 
             TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, animationFlipped, animationSort, 0f, animationColor, 1f, 0f, 0f, 0f);
 
@@ -168,15 +160,20 @@ namespace StardewDruid
 
             Vector2 position = targetPosition + new Vector2(-5, -sourceRect.Height);
 
+            TemporaryAnimatedSprite boltAnimation;
+
             while (position.Y > (float)(-sourceRect.Height * 2))
             {
-                targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite("LooseSprites\\Cursors", sourceRect, 9999f, 1, 999, position, flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.001f, 0.025f, Microsoft.Xna.Framework.Color.White, 2f, 0f, 0f, 0f)
+
+                boltAnimation = new("LooseSprites\\Cursors", sourceRect, 9999f, 1, 999, position, flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.001f, 0.025f, Microsoft.Xna.Framework.Color.White, 2f, 0f, 0f, 0f)
                 {
                     light = true,
                     lightRadius = 2f,
                     delayBeforeAnimationStart = 200,
                     lightcolor = Microsoft.Xna.Framework.Color.Black
-                });
+                };
+
+                targetLocation.temporarySprites.Add(boltAnimation);
                 position.Y -= sourceRect.Height * 2;
             }
 
@@ -201,7 +198,7 @@ namespace StardewDruid
 
             Vector2 animationPosition = new((targetVector.X * 64) - 16, (targetVector.Y * 64) - 16);
 
-            float animationSort = (targetVector.X * 1000) + targetVector.Y;
+            float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString());
 
             TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, Microsoft.Xna.Framework.Color.White, 1.5f, 0f, 0f, 0f);
 
@@ -247,7 +244,7 @@ namespace StardewDruid
 
             float meteorInterval = 150f;
 
-            float animationSort = (targetVector.X * 1000) + targetVector.Y + 10;
+            float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString());
 
             TemporaryAnimatedSprite meteorAnimation = new("TileSheets\\Fireball", meteorRectangle, meteorInterval, 4, 0, meteorPosition, flicker: false, meteorRoll, animationSort, 0f, Color.White, 2f, 0f, 0f, 0f)
             {
@@ -262,35 +259,6 @@ namespace StardewDruid
 
         }
 
-        public static TemporaryAnimatedSprite AnimateIndicator(GameLocation targetLocation, Vector2 targetVector, Color animationColor)
-        {
-
-            int animationRow = 0;
-
-            Microsoft.Xna.Framework.Rectangle animationRectangle = new(0, animationRow * 64, 64, 64);
-
-            float animationInterval = 100f;
-
-            int animationLength = 8;
-
-            int animationLoops = 999999;
-
-            Vector2 animationPosition = new((targetVector.X * 64) - 16, (targetVector.Y * 64) - 16);
-
-            float animationSort = (targetVector.X * 1000) + targetVector.Y;
-
-            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, animationColor, 1.5f, 0f, 0f, 0f) {
-
-                dontClearOnAreaEntry = false,
-
-            };
-
-            targetLocation.temporarySprites.Add(newAnimation);
-
-            return (newAnimation);
-
-        }
-
         public static Dictionary<string, List<Vector2>> NeighbourCheck(GameLocation targetLocation, Vector2 targetVector)
         {
 
@@ -300,7 +268,7 @@ namespace StardewDruid
 
             Layer buildingLayer = targetLocation.Map.GetLayer("Buildings");
 
-            //Layer frontLayer = targetLocation.Map.GetLayer("Front");
+            Layer pathsLayer = targetLocation.Map.GetLayer("Paths");
 
             foreach (Vector2 neighbourVector in neighbourVectors)
             {
@@ -328,6 +296,29 @@ namespace StardewDruid
 
                 }
 
+                if (pathsLayer != null)
+                {
+
+                    Tile pathsTile = buildingLayer.PickTile(new Location((int)neighbourVector.X * 64, (int)neighbourVector.Y * 64), Game1.viewport.Size);
+
+                    if (pathsTile != null)
+                    {
+
+                        if (!neighbourList.ContainsKey("Building"))
+                        {
+
+                            neighbourList["Building"] = new();
+
+                        }
+
+                        neighbourList["Building"].Add(neighbourVector);
+
+                        continue;
+
+                    }
+
+                }
+
                 if (targetLocation.terrainFeatures.ContainsKey(neighbourVector))
                 {
                     var terrainFeature = targetLocation.terrainFeatures[neighbourVector];
@@ -337,34 +328,63 @@ namespace StardewDruid
 
                         case "Tree":
 
-                            if (!neighbourList.ContainsKey("Tree"))
+                            StardewValley.TerrainFeatures.Tree treeCheck = terrainFeature as StardewValley.TerrainFeatures.Tree;
+
+                            if (treeCheck.growthStage.Value >= 5)
                             {
 
-                                neighbourList["Tree"] = new();
+                                if (!neighbourList.ContainsKey("Tree"))
+                                {
+
+                                    neighbourList["Tree"] = new();
+
+                                }
+
+                                neighbourList["Tree"].Add(neighbourVector);
 
                             }
+                            else
+                            {
 
-                            neighbourList["Tree"].Add(neighbourVector);
+                                if (!neighbourList.ContainsKey("Sapling"))
+                                {
+
+                                    neighbourList["Sapling"] = new();
+
+                                }
+
+                                neighbourList["Sapling"].Add(neighbourVector);
+
+                            }
 
                             break;
 
                         case "HoeDirt":
 
-                            //HoeDirt hoeDirt = terrainFeature as HoeDirt;
+                            StardewValley.TerrainFeatures.HoeDirt hoedCheck = terrainFeature as StardewValley.TerrainFeatures.HoeDirt;
 
-                            //if (hoeDirt.crop != null)
-                            //{
+                            if(hoedCheck.crop != null)
+                            {
 
-                                if (!neighbourList.ContainsKey("HoeDirt"))
+                                if (!neighbourList.ContainsKey("Crop"))
                                 {
 
-                                    neighbourList["HoeDirt"] = new();
-                                
+                                    neighbourList["Crop"] = new();
+
                                 }
 
-                                neighbourList["HoeDirt"].Add(neighbourVector);
+                                neighbourList["Crop"].Add(neighbourVector);
 
-                            //}
+                            }
+
+                            if (!neighbourList.ContainsKey("HoeDirt"))
+                            {
+
+                                neighbourList["HoeDirt"] = new();
+                                
+                            }
+
+                            neighbourList["HoeDirt"].Add(neighbourVector);
 
                             break;
 
@@ -377,35 +397,6 @@ namespace StardewDruid
                     continue;
 
                 }
-
-                /*if(frontLayer != null)
-                {
-
-                    Tile frontTile = frontLayer.PickTile(new Location((int)neighbourVector.X * 64, (int)neighbourVector.Y * 64), Game1.viewport.Size);
-
-                    if (frontTile != null)
-                    {
-
-                        if (frontTile.TileIndexProperties.TryGetValue("Passable", out _) == false)
-                        {
-
-                            if (!neighbourList.ContainsKey("Front"))
-                            {
-
-                                neighbourList["Front"] = new();
-
-                            }
-
-                            neighbourList["Front"].Add(neighbourVector);
-
-                        }
-
-                        continue;
-
-                    }
-
-                }*/
-
 
             }
 
@@ -503,7 +494,7 @@ namespace StardewDruid
             switch (hoeDirt.crop.phaseDays.Count)
             {
 
-                case 5: currentPhase = 3; break;
+                //case 5: currentPhase = 3; break;
 
                 case 6: currentPhase = 3; break;
 

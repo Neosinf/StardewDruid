@@ -6,8 +6,8 @@ namespace StardewDruid.Cast
     internal class Weed : Cast
     {
 
-        public Weed(Mod mod, Vector2 target, Farmer player)
-            : base(mod, target, player)
+        public Weed(Mod mod, Vector2 target, Rite rite)
+            : base(mod, target, rite)
         {
 
             castCost = 1;

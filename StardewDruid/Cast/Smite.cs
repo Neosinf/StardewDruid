@@ -9,8 +9,8 @@ namespace StardewDruid.Cast
 
         private StardewValley.Monsters.Monster targetMonster;
 
-        public Smite(Mod mod, Vector2 target, Farmer player, StardewValley.Monsters.Monster TargetMonster)
-            : base(mod, target, player)
+        public Smite(Mod mod, Vector2 target, Rite rite, StardewValley.Monsters.Monster TargetMonster)
+            : base(mod, target, rite)
         {
 
             targetMonster = TargetMonster;

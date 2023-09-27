@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
-using StardewValley.TerrainFeatures;
-using System;
 using System.Collections.Generic;
-using static StardewValley.Minigames.TargetGame;
 
 namespace StardewDruid.Cast
 {
@@ -13,13 +9,13 @@ namespace StardewDruid.Cast
 
         int targetDirection;
 
-        public Meteor(Mod mod, Vector2 target, Farmer player, int direction)
-            : base(mod, target, player)
+        public Meteor(Mod mod, Vector2 target, Rite rite)
+            : base(mod, target, rite)
         {
 
             castCost = 4;
 
-            targetDirection = direction;
+            targetDirection = rite.direction;
 
         }
 

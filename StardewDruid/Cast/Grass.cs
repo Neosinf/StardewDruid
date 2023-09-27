@@ -12,8 +12,8 @@ namespace StardewDruid.Cast
 
         public bool activateSeed;
 
-        public Grass(Mod mod, Vector2 target, Farmer player)
-            : base(mod, target, player)
+        public Grass(Mod mod, Vector2 target, Rite rite)
+            : base(mod, target, rite)
         {
 
             activateSeed = false;

@@ -13,8 +13,8 @@ namespace StardewDruid.Cast
 
         private readonly LargeTerrainFeature bushFeature;
 
-        public Bush(Mod mod, Vector2 target, Farmer player, LargeTerrainFeature LargeTerrainFeature)
-            : base(mod, target, player)
+        public Bush(Mod mod, Vector2 target, Rite rite, LargeTerrainFeature LargeTerrainFeature)
+            : base(mod, target, rite)
         {
 
             bushFeature = LargeTerrainFeature;
@@ -24,117 +24,155 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
 
-            int probability = randomIndex.Next(10);
+            int probability = randomIndex.Next(20);
 
-            if (probability <= 4) // nothing
+            if (probability >= 3) // nothing
             {
 
+                bushFeature.performToolAction(null, 1, targetVector, null);
+
+                return;
 
             }
-            else if (probability <= 7) // effects
-            {   
-                
-                if (Game1.currentSeason == "summer")
+
+            if (probability == 2)
+            {
+                if (riteData.spawnIndex["critter"])
                 {
 
-                    Game1.currentLocation.critters.Add(new Firefly(targetVector + new Vector2(randomIndex.Next(-2, 3), randomIndex.Next(-2, 3))));
+                    Portal critterPortal = new(mod, targetPlayer.getTileLocation(), riteData);
 
-                    Game1.currentLocation.critters.Add(new Firefly(targetVector + new Vector2(randomIndex.Next(-2, 3), randomIndex.Next(-2, 3))));
+                    critterPortal.spawnFrequency = 1;
+
+                    critterPortal.specialType = 1;
+
+                    critterPortal.baseType = "terrain";
+
+                    critterPortal.baseVector = targetVector;
+
+                    critterPortal.baseTarget = true;
+
+                    critterPortal.CastTrigger();
 
                 }
-                else
+
+                bushFeature.performToolAction(null, 1, targetVector, null);
+
+                return;
+
+            }
+
+            int objectIndex;
+
+            if (probability == 1)
+            {
+
+                switch (Game1.currentSeason)
                 {
 
-                    Game1.currentLocation.critters.Add(new Butterfly(targetVector + new Vector2(randomIndex.Next(-2, 3), randomIndex.Next(-2, 3)), false));
+                    case "spring":
 
-                    Game1.currentLocation.critters.Add(new Butterfly(targetVector + new Vector2(randomIndex.Next(-2, 3), randomIndex.Next(-2, 3)), false));
+                        objectIndex = 296; // salmonberry
+
+                        break;
+
+                    case "summer":
+
+                        objectIndex = 398; // grape
+
+                        break;
+
+                    case "fall":
+
+                        objectIndex = 410; // blackberry
+
+                        break;
+
+                    default:
+
+                        objectIndex = 414; // crystal fruit
+
+                        break;
 
                 }
-
-                castFire = true;
 
             }
             else
             {
 
-                int objectIndex;
-
-                if (probability == 8)
+                Dictionary<int, int> objectIndexes = new()
                 {
+                    [0] = 257, // 257 morel
+                    [1] = 257, // 257 morel
+                    [2] = 281, // 281 chanterelle
+                    [3] = 404, // 404 mushroom
+                    [4] = 404, // 404 mushroom
 
-                    switch (Game1.currentSeason)
-                    {
+                };
 
-                        case "spring":
+                objectIndex = objectIndexes[randomIndex.Next(5)];
 
-                            objectIndex = 296; // salmonberry
+            }
 
-                            break;
+            int randomQuality = randomIndex.Next(11 - targetPlayer.foragingLevel.Value);
 
-                        case "summer":
+            int objectQuality = 0;
 
-                            objectIndex = 398; // grape
+            if (randomQuality == 0)
+            {
 
-                            break;
+                objectQuality = 2;
 
-                        case "fall":
+            }
 
-                            objectIndex = 410; // blackberry
+            if (targetPlayer.professions.Contains(16))
+            {
 
-                            break;
+                objectQuality = 3;
 
-                        default:
+            }
 
-                            objectIndex = 414; // crystal fruit
+            int throwAmount = 1;
 
-                            break;
+            if (targetPlayer.professions.Contains(13))
+            {
 
-                    }
+                throwAmount = randomIndex.Next(1, 3);
 
-                }
-                else
-                {
+            }
 
-                    Dictionary<int, int> objectIndexes = new()
-                    {
-                        [0] = 257, // 257 morel
-                        [1] = 281, // 281 chanterelle
-                        [2] = 404, // 404 mushroom
-                        //[3] = 420,  // 420 red mushroom
-                        //[4] = 422  // 421 purple mushroom
-
-                    };
-
-                    //objectIndex = objectIndexes[randomIndex.Next(5)];
-                    objectIndex = objectIndexes[randomIndex.Next(3)];
-
-                }
-
-
-                int randomQuality = randomIndex.Next(11 - targetPlayer.foragingLevel.Value);
-
-                int objectQuality = 0;
-
-                if (randomQuality == 0)
-                {
-                    
-                    objectQuality = 2;
-
-                }
+            for(int i = 0;i<throwAmount;i++) { 
 
                 Throw throwObject = new(objectIndex, objectQuality);
 
                 throwObject.ThrowObject(targetPlayer, targetVector);
 
-                castFire = true;
+            };
 
-                ModUtility.AnimateGrowth(targetLocation, targetVector);
+            castFire = true;
 
-                targetPlayer.gainExperience(2, 2); // gain foraging experience
+            ModUtility.AnimateGrowth(targetLocation, targetVector);
 
-            }
+            targetPlayer.gainExperience(2, 4); // gain foraging experience
 
             bushFeature.performToolAction(null, 1, targetVector, null);
+
+            if (Game1.currentSeason == "summer")
+            {
+
+                Game1.currentLocation.critters.Add(new Firefly(targetVector + new Vector2(randomIndex.Next(-2, 3), randomIndex.Next(-2, 3))));
+
+                Game1.currentLocation.critters.Add(new Firefly(targetVector + new Vector2(randomIndex.Next(-2, 3), randomIndex.Next(-2, 3))));
+
+            }
+            else
+            {
+
+                Game1.currentLocation.critters.Add(new Butterfly(targetVector + new Vector2(randomIndex.Next(-2, 3), randomIndex.Next(-2, 3)), false));
+
+                Game1.currentLocation.critters.Add(new Butterfly(targetVector + new Vector2(randomIndex.Next(-2, 3), randomIndex.Next(-2, 3)), false));
+
+            }
 
         }
 

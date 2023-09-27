@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace StardewDruid.Map
 {
-    static class Warp
+    static class WarpData
     {
 
         public static Dictionary<string, Vector2> WarpPoints()

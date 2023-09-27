@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace StardewDruid.Cast
 {
-    internal class Rite
+    public class Rite
     {
 
         public Dictionary<string, bool> spawnIndex;
@@ -40,7 +40,7 @@ namespace StardewDruid.Cast
 
             castVector = caster.getTileLocation();
 
-            spawnIndex = Map.Spawn.SpawnIndex(castLocation);
+            spawnIndex = Map.SpawnData.SpawnIndex(castLocation);
 
             direction = 0;
 

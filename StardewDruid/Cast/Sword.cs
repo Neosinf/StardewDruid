@@ -14,10 +14,10 @@ namespace StardewDruid.Cast
 
         private int swordIndex;
 
-        private readonly QuestData questData;
+        private readonly Quest questData;
 
-        public Sword(Mod mod, Vector2 target, Farmer player, QuestData quest)
-            : base(mod, target, player)
+        public Sword(Mod mod, Vector2 target, Rite rite, Quest quest)
+            : base(mod, target, rite)
         {
 
             questData = quest;

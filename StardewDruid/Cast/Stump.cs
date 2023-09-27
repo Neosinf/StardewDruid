@@ -13,8 +13,8 @@ namespace StardewDruid.Cast
 
         private ResourceClump resourceClump;
 
-        public Stump(Mod mod, Vector2 target, Farmer player, ResourceClump ResourceClump)
-            : base(mod, target, player)
+        public Stump(Mod mod, Vector2 target, Rite rite, ResourceClump ResourceClump)
+            : base(mod, target, rite)
         {
 
             resourceClump = ResourceClump;
@@ -24,83 +24,30 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
 
-            int probability = randomIndex.Next(10);
+            int debrisType = 388;
 
-            if (probability <= 8)
+            int debrisAmount = randomIndex.Next(1, 6);
+
+            for (int i = 0; i < debrisAmount; i++)
             {
 
-                Game1.createObjectDebris(388, (int)this.targetVector.X, (int)this.targetVector.Y);
-
-                Game1.createObjectDebris(388, (int)this.targetVector.X, (int)this.targetVector.Y + 1);
-
-                //Game1.createObjectDebris(388, (int)this.targetVector.X + 1, (int)this.targetVector.Y);
-
-                if (probability <= 3) // wood
-                {
-
-                    Game1.createObjectDebris(388, (int)this.targetVector.X + 1, (int)this.targetVector.Y);
-
-                    Game1.createObjectDebris(388, (int)this.targetVector.X + 1, (int)this.targetVector.Y + 1);
-
-                }
-
-                //if (probability <= 7) // hardwood
-                //{
-
-                //   Game1.createObjectDebris(709, (int)this.targetVector.X, (int)this.targetVector.Y + 1);
-
-                //   Game1.createObjectDebris(709, (int)this.targetVector.X + 1, (int)this.targetVector.Y + 1);
-
-                //}
-
-                if (probability == 8) // seed
-                {
-
-                    Game1.createObjectDebris(382, (int)this.targetVector.X + 1, (int)this.targetVector.Y);
-
-                    //Game1.createObjectDebris(382, (int)this.targetVector.X + 1, (int)this.targetVector.Y + 1);
-
-                }
-
-                castFire = true;
-
-                targetPlayer.gainExperience(2, 6); // gain foraging experience
-
-                ModUtility.AnimateGrowth(targetLocation,targetVector);
+                Game1.createObjectDebris(debrisType, (int)targetVector.X, (int)targetVector.Y + 1);
 
             }
-            /*else // mushroom
+
+            if (debrisAmount == 1)
             {
+                Game1.createObjectDebris(382, (int)targetVector.X + 1, (int)targetVector.Y);
 
-                Dictionary<int, int> objectIndexes = new()
-                {
-                    [0] = 257, // 257 morel
-                    [1] = 281, // 281 chanterelle
-                    [2] = 404, // 404 mushroom
-                    [3] = 420  // 420 red mushroom
+                Game1.createObjectDebris(382, (int)targetVector.X, (int)targetVector.Y + 1);
 
-                };
+            }
 
-                int objectIndex = randomIndex.Next(4);
+            castFire = true;
 
-                int randomQuality = randomIndex.Next(11 - targetPlayer.foragingLevel.Value);
+            targetPlayer.gainExperience(2, 4); // gain foraging experience
 
-                int objectQuality = 0;
-
-                if (randomQuality == 0)
-                {
-                    objectQuality = 2;
-                }
-
-                Throw throwObject = new(objectIndexes[objectIndex], objectQuality);
-
-                throwObject.ThrowObject(targetPlayer, targetVector);
-
-                castFire = true;
-
-                ModUtility.AnimateGrowth(targetLocation, targetVector);
-
-            }*/
+            ModUtility.AnimateGrowth(targetLocation,targetVector);
 
         }
 

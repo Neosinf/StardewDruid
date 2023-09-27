@@ -10,8 +10,8 @@ namespace StardewDruid.Cast
         public int targetIndex { get; set; }
 
 
-        public Totem(Mod mod, Vector2 target, Farmer player, int TargetIndex)
-            : base(mod, target, player)
+        public Totem(Mod mod, Vector2 target, Rite rite, int TargetIndex)
+            : base(mod, target, rite)
         {
 
             targetIndex = TargetIndex;

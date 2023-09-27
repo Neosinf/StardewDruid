@@ -30,27 +30,35 @@ namespace StardewDruid.Cast
 
         public int spawnCounter;
 
+        public Queue<Monster> spawnQueue;
+
         public Vector2 portalWithin;
 
         public Vector2 portalRange;
 
-        public Portal (Mod mod, Vector2 target, Farmer player)
-            : base(mod, target, player)
+        public bool baseTarget;
+
+        public Vector2 baseVector;
+
+        public string baseType;
+
+        public Portal (Mod mod, Vector2 target, Rite rite)
+            : base(mod, target, rite)
         {
             
             specialType = 0;
 
             mineLevel = 1;
 
-            if (player.CombatLevel >= 10)
+            if (targetPlayer.CombatLevel >= 10)
             {
                 mineLevel = 140;
             }
-            else if (player.CombatLevel >= 8)
+            else if (targetPlayer.CombatLevel >= 8)
             {
                 mineLevel = 100;
             }
-            else if (player.CombatLevel >= 4)
+            else if (targetPlayer.CombatLevel >= 4)
             {
                 mineLevel = 41;
             }
@@ -59,20 +67,28 @@ namespace StardewDruid.Cast
 
             portalRange = new Vector2(9, 9);
 
+            baseTarget = false;
+
+            baseVector = target;
+
+            baseType = "ground";
+
+            spawnQueue = new();
+
+            monsterSpawns = new();
+
         }
 
         public override void CastWater()
         {
 
-            expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 45;
+            expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 60;
 
             spawnFrequency = 2;
 
             spawnCounter = 0;
 
             targetLocation.objects.Remove(targetVector);
-
-            float animationSort = (targetVector.X * 1000) + targetVector.Y+2;
 
             Rectangle sourceRectForObject = new();
 
@@ -81,14 +97,16 @@ namespace StardewDruid.Cast
             sourceRectForObject.Width = 8;
             sourceRectForObject.Height = 8;
 
+            float animationSort = targetVector.X * 1000 + targetVector.Y + 2;
+
             portalAnimation = new("LooseSprites\\Cursors", sourceRectForObject, 100f, 6, 9999, new((targetVector.X * 64f)+12f,(targetVector.Y * 64f)-56f), false, false, animationSort, 0f, Color.Blue, 6f, 0f, 0f, 0f);
 
             targetLocation.temporarySprites.Add(portalAnimation);
 
             stoneBrazier = new(targetVector, 144, false);
 
-            int portalKey = (int)(targetVector.X * 3000f + targetVector.Y);
-
+            int portalKey = (int) float.Parse(baseVector.X.ToString() + baseVector.Y.ToString());
+            
             portalLight = new(4, new((targetVector.X * 64f) + 12f, (targetVector.Y * 64f) - 56f), 2f, new Color(0, 80, 160), portalKey, LightSource.LightContext.None, 0L);
 
             stoneBrazier.name = "PortalFlame";
@@ -112,8 +130,6 @@ namespace StardewDruid.Cast
             castCost = 24;
 
             castActive = true;
-
-            monsterSpawns = new();
 
             return;
 
@@ -176,6 +192,8 @@ namespace StardewDruid.Cast
 
             }
 
+            spawnQueue = new();
+
         }
 
         public override void CastTrigger() {
@@ -197,8 +215,6 @@ namespace StardewDruid.Cast
 
             bool spawnTarget = false;
 
-            bool waterTarget = false;
-
             int spawnAttempt = 0;
 
             Layer buildingLayer = targetLocation.Map.GetLayer("Buildings");
@@ -211,27 +227,8 @@ namespace StardewDruid.Cast
 
             Vector2 playerVector = targetPlayer.getTileLocation();
 
-            bool playerCollision;
-
             while (!spawnTarget && spawnAttempt++ < 4)
             {
-
-                /*int randomX = randomIndex.Next(5);
-
-                int randomY = randomIndex.Next(5);
-
-                offsetIndex = new()
-                {
-                    [0] = new(randomX, randomY),
-                    [1] = new(0 - randomX, 0 - randomY),
-                    [2] = new(randomX, 0 - randomY),
-                    [3] = new(0 - randomX, randomY),
-                };
-                
-                 spawnVector = targetVector + offsetIndex[randomIndex.Next(4)];
-                */
-
-                playerCollision = false;
 
                 int offsetX = randomIndex.Next((int)portalRange.X);
 
@@ -241,10 +238,16 @@ namespace StardewDruid.Cast
 
                 spawnVector = portalWithin + offsetVector;
 
-                if (Math.Abs(spawnVector.X - playerVector.X) <= 1 && Math.Abs(spawnVector.Y - playerVector.Y) <= 1)
+                if(spawnVector == targetVector)
                 {
 
-                    playerCollision = true;
+                    continue;
+
+                }
+
+                if (Math.Abs(spawnVector.X - playerVector.X) <= 1 && Math.Abs(spawnVector.Y - playerVector.Y) <= 1)
+                {
+                    continue;
 
                 }
 
@@ -252,39 +255,69 @@ namespace StardewDruid.Cast
 
                 backTile = backLayer.PickTile(new xTile.Dimensions.Location((int)spawnVector.X * 64, (int)spawnVector.Y * 64), Game1.viewport.Size);
 
-                if (backTile != null)
+                if (backTile == null)
                 {
-                    if (backTile.TileIndexProperties.TryGetValue("Water", out _))
+                    continue;
+                }
+
+                if (backTile.TileIndexProperties.TryGetValue("Water", out _))
+                {
+                    if (!baseTarget)
                     {
-                        waterTarget = true;
+                        baseType = "water";
+
+                        baseVector = spawnVector;
+
+                        baseTarget = true;
+
+                    }
+
+                }     
+                else if (targetLocation.isTileOccupied(spawnVector))
+                {
+
+                    if (!baseTarget)
+                    {
+                        baseType = "terrain";
+
+                        baseVector = spawnVector;
+
+                        baseTarget = true;
+
                     }
 
                 }
-                
-                if (!playerCollision && spawnVector != targetVector && !waterTarget && !targetLocation.isTileOccupied(spawnVector) && buildingTile == null)
+                else if (buildingTile == null)
                 {
+
                     spawnTarget = true;
+
+                    switch (baseType)
+                    {
+
+                        case "water":
+                            SpawnTerrain(spawnVector,true);
+                            break;
+                        case "terrain":
+                            SpawnTerrain(spawnVector,false);
+                            break;
+                        default: // ground
+                            SpawnGround(spawnVector);
+                            break;
+
+                    }
 
                 }
 
             }
 
-            if (spawnTarget)
-            {
+            baseTarget = false;
 
-                SpawnGround(spawnVector);
-
-            }
-            else if (waterTarget)
-            {
-
-                SpawnWater(spawnVector);
-
-            }
+            baseType = "ground";
 
         }
 
-        public void SpawnGround(Vector2 spawnVector)
+        public KeyValuePair<int, Monster> SpawnMonster(Vector2 spawnVector)
         {
 
             int spawnMob;
@@ -296,7 +329,13 @@ namespace StardewDruid.Cast
 
                 case 1: // challengeEarth
 
-                    spawnMob = 99; // bat
+                    spawnIndex = new()
+                    {
+                        0,99,
+
+                    };
+
+                    spawnMob = spawnIndex[randomIndex.Next(2)];
 
                     break;
 
@@ -328,14 +367,14 @@ namespace StardewDruid.Cast
 
                     spawnIndex = new()
                     {
-                        0,1,2,3,99,
+                        0,1,2,3,4,99,
 
-                    };     
-                    
-                    spawnMob = spawnIndex[randomIndex.Next(5)];
+                    };
+
+                    spawnMob = spawnIndex[randomIndex.Next(6)];
 
                     break;
-            
+
             }
 
             Monster theMonster;
@@ -357,7 +396,7 @@ namespace StardewDruid.Cast
 
                 case 2: // Brute
 
-                     theMonster = new ShadowBrute(spawnVector * 64f)
+                    theMonster = new ShadowBrute(spawnVector * 64f)
                     {
                         focusedOnFarmers = true,
                     };
@@ -375,26 +414,26 @@ namespace StardewDruid.Cast
                 case 4: // Big Slime
 
                     BigSlime bigMonster = new(spawnVector * 64f, targetPlayer.CombatLevel);
-                        
+
                     theMonster = bigMonster;
 
                     break;
 
                 case 5: // Shadow Archer
 
-                     theMonster = new Shooter(spawnVector * 64f, "Shadow Sniper");
+                    theMonster = new Shooter(spawnVector * 64f, "Shadow Sniper");
 
                     break;
 
                 case 6: // Shadow Shaman
 
-                     theMonster = new ShadowShaman(spawnVector * 64f);
+                    theMonster = new ShadowShaman(spawnVector * 64f);
 
                     break;
 
                 default: // Bat
 
-                     theMonster = new Bat(spawnVector * 64f, mineLevel)
+                    theMonster = new Bat(spawnVector * 64f, mineLevel)
                     {
                         //wildernessFarmMonster = true
                     };
@@ -403,35 +442,100 @@ namespace StardewDruid.Cast
 
             }
 
-            targetLocation.characters.Add(theMonster);
+            return new KeyValuePair<int, Monster>(spawnMob,theMonster);
 
-            theMonster.update(Game1.currentGameTime, targetLocation);
-
-            monsterSpawns.Add(theMonster);
-
-            targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, spawnVector * 64f, Color.DarkBlue * 0.75f, 8, false, 200));
-
-            return;
-        
         }
 
-        public void SpawnWater(Vector2 spawnVector)
+        public void SpawnGround(Vector2 spawnVector)
         {
 
-            Bat monsterBat = new(spawnVector * 64f, mineLevel)
+            KeyValuePair<int, Monster> monsterData = SpawnMonster(spawnVector);
+
+            Monster theMonster = monsterData.Value;
+
+            spawnQueue.Enqueue(theMonster);
+
+            targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, spawnVector * 64f, Color.DarkBlue * 0.75f, 4, false, 125));
+
+            DelayedAction.functionAfterDelay(ManifestMonster, 500);
+
+        }
+
+        public void SpawnTerrain(Vector2 spawnVector,bool splash)
+        {
+
+            KeyValuePair<int, Monster> monsterData = SpawnMonster(spawnVector);
+
+            int spawnMob = monsterData.Key;
+
+            Monster theMonster = monsterData.Value;
+
+            Rectangle targetRectangle = new(0,0,16,32);
+
+            Vector2 fromPosition = new(baseVector.X * 64, baseVector.Y * 64);
+
+            Vector2 toPosition = new(spawnVector.X * 64, spawnVector.Y * 64);
+
+            float animationInterval = 125f;
+
+            float motionX = (toPosition.X - fromPosition.X) / 1000;
+
+            float compensate = 0.555f;
+
+            float motionY = ((toPosition.Y - fromPosition.Y) / 1000) - compensate;
+
+            float animationSort = float.Parse("0.0" + baseVector.X.ToString() + baseVector.Y.ToString());
+
+            Color monsterColor = Color.White;
+
+            if(theMonster is GreenSlime)
             {
-                //wildernessFarmMonster = true
+                GreenSlime slimeMonster = (GreenSlime)theMonster;
+
+                monsterColor = slimeMonster.color.Value;
+            }
+
+            TemporaryAnimatedSprite monsterSprite = new("Characters\\Monsters\\" + theMonster.Name, targetRectangle, animationInterval, 4, 2, fromPosition, flicker: false, flipped: false, animationSort, 0f, monsterColor, 4f, 0f, 0f, 0f)
+            {
+
+                motion = new Vector2(motionX, motionY),
+
+                acceleration = new Vector2(0f, 0.001f),
+
+                timeBasedMotion = true,
+
             };
 
-            targetLocation.characters.Add(monsterBat);
+            targetLocation.temporarySprites.Add(monsterSprite);
 
-            monsterBat.update(Game1.currentGameTime, targetLocation);
+            spawnQueue.Enqueue(theMonster);
 
-            monsterSpawns.Add(monsterBat);
+            if (splash)
+            {
 
-            targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, spawnVector * 64f, Color.DarkBlue * 0.75f, 8, false, 200));
+                ModUtility.AnimateSplash(targetLocation, baseVector, true);
 
-            return;
+            }
+
+            DelayedAction.functionAfterDelay(ManifestMonster, 1000);
+
+        }
+
+        public void ManifestMonster()
+        {
+            if(spawnQueue.Count > 0)
+            {
+
+                Monster theMonster = spawnQueue.Dequeue();
+
+                targetLocation.characters.Add(theMonster);
+
+                theMonster.update(Game1.currentGameTime, targetLocation);
+
+                monsterSpawns.Add(theMonster);
+
+
+            }
 
         }
 
