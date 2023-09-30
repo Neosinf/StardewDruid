@@ -227,8 +227,6 @@ namespace StardewDruid.Cast
                 [14] = 62,
                 [290] = 380,
                 [751] = 378,
-                [760] = 761,
-                [762] = 763,
                 [764] = 384,
 
             };
@@ -344,7 +342,7 @@ namespace StardewDruid.Cast
                 300
             );
 
-            targetLocation.damageMonster(areaOfEffect, 10 * objectStrength, 20 * objectStrength, true, targetPlayer);
+            targetLocation.damageMonster(areaOfEffect, 30 * objectStrength, 40 * objectStrength, true, targetPlayer);
 
             targetLocation.lightGlows.Add(targetVector * 64);
 
@@ -365,7 +363,7 @@ namespace StardewDruid.Cast
 
             mod.UpdateEarthCasts(targetLocation, targetVector, false);*/
 
-            for (int i = 0; i < randomIndex.Next(1, 4); i++)
+            for (int i = 0; i < randomIndex.Next(1, 3); i++)
             {
 
                 if (i == 0)

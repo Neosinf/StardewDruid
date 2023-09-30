@@ -53,7 +53,10 @@ namespace StardewDruid.Cast
             if (targetObject.name.Contains("Stone"))
             {
 
-                explodeRadius = 1;
+                explodeRadius = 4;
+
+                Game1.playSound("fireball");
+
 
             }
 
@@ -62,6 +65,14 @@ namespace StardewDruid.Cast
             castFire = true;
 
         }
+
+        public void FireBall()
+        {
+
+            Game1.playSound("fireball");
+
+        }
+
 
     }
 }

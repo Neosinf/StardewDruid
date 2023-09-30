@@ -38,7 +38,7 @@ namespace StardewDruid.Cast
 
                     critterPortal.spawnFrequency = 1;
 
-                    critterPortal.specialType = 1;
+                    critterPortal.specialType = 5;
 
                     critterPortal.baseType = "terrain";
 

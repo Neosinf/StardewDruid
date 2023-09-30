@@ -355,7 +355,7 @@ namespace StardewDruid.Cast
                 return;
             }
 
-            Dictionary<int, int> artifactIndex = new()
+            Dictionary<int, int> artifactIndexes = new()
             {
                 [0] = 105,
                 [1] = 106,
@@ -366,28 +366,36 @@ namespace StardewDruid.Cast
                 [6] = 117,
             };
 
-            Dictionary<int, int> objectIndex = new()
+            Dictionary<int, int> objectIndexes = new()
             {
-                [0] = artifactIndex[randomIndex.Next(7)],
+                [0] = artifactIndexes[randomIndex.Next(7)],
                 [1] = 167,
                 [2] = 168,
                 [3] = 169,
                 [4] = 170,
                 [5] = 171,
                 [6] = 172,
-                [7] = 167,
-                [8] = 168,
-                [9] = 169,
-                [10] = 170,
-                [11] = 171,
-                [12] = 172,
             };
 
-            int index = randomIndex.Next(13);
+            int objectIndex = objectIndexes[randomIndex.Next(13)];
+
+            if (trashCollected == 8)
+            {
+
+                objectIndex = 517;
+
+            }
+
+            if(trashCollected == 16)
+            {
+
+                objectIndex = 519;
+            
+            }
 
             Vector2 trashVector = trashQueue.Dequeue();
 
-            Throw throwObject = new(objectIndex[index], 0);
+            Throw throwObject = new(objectIndex, 0);
 
             throwObject.ThrowObject(targetPlayer, trashVector);
 
@@ -466,7 +474,7 @@ namespace StardewDruid.Cast
                 if (characterFromName != null)
                 {
 
-                    targetPlayer.changeFriendship(250, characterFromName);
+                    targetPlayer.changeFriendship(375, characterFromName);
 
                 }
                 else

@@ -32,6 +32,8 @@ namespace StardewDruid.Cast
             if(targetLocation.terrainFeatures.ContainsKey(targetVector))
             {
 
+                mod.UpdateEarthCasts(targetLocation, targetVector, false);
+
                 return;
 
             }
@@ -92,6 +94,13 @@ namespace StardewDruid.Cast
             {
 
                 targetLocation.makeHoeDirt(targetVector);
+
+            }
+
+            if (!castFire)
+            {
+
+                mod.UpdateEarthCasts(targetLocation, targetVector, false);
 
             }
 

@@ -45,16 +45,16 @@ namespace StardewDruid.Map
                     triggerCast = "CastEarth",
                     triggerType = "challenge",
                     triggerLocation = "UndergroundMine20",
+                    triggerVector = new(23, 12),
+                    triggerLimit = new(4, 3),
 
                     questId = 280719872,
                     questValue = 6,
                     questTitle = "The Polluted Aquifier",
                     questDescription = "The Effigy believes the mountain spring has been polluted by rubbish dumped in the abandoned mineshafts.",
-                    questObjective = "Perform a rite of the earth over the aquifier in level 20 of the mines.",
+                    questObjective = "Perform a rite over the aquifier in level 20 of the mines.",
                     questReward = 1500,
 
-                    triggerVector = new(23, 12),
-                    triggerLimit = new(4, 3),
                     challengeWithin = new(20, 10),
                     challengeRange = new(9, 9),
                     challengePortals = new() {
@@ -73,16 +73,16 @@ namespace StardewDruid.Map
                     triggerCast = "CastWater",
                     triggerType = "challenge",
                     triggerLocation = "Town",
+                    triggerVector = new(45, 87),
+                    triggerLimit = new(5, 5),
 
                     questId = 280719873,
                     questValue = 6,
                     questTitle = "The Shadow Invasion",
                     questDescription = "The Effigy has heard the whispers of shadowy figures that loiter in the dark spaces of the village.",
-                    questObjective = "Perform a rite of the water in Pelican Town's graveyard between 7:00 pm and Midnight.",
+                    questObjective = "Perform a rite in Pelican Town's graveyard between 7:00 pm and Midnight.",
                     questReward = 3000,
 
-                    triggerVector = new(45, 87),
-                    triggerLimit = new(5, 5),
                     startTime = 1900,
                     //endTime = 2400,
                     challengeWithin = new(42, 84),
@@ -106,16 +106,16 @@ namespace StardewDruid.Map
                     triggerCast = "CastStars",
                     triggerType = "challenge",
                     triggerLocation = "Forest",
+                    triggerVector = new(77, 68),
+                    triggerLimit = new(5, 5),
 
                     questId = 280719874,
                     questValue = 6,
                     questTitle = "The Slime Infestation",
                     questDescription = "Many of the trees in the local forest have been marred with a slimy substance. Has the old enemy of the farm returned?",
-                    questObjective = "Perform a rite of the stars in the clearing east of arrowhead island in Cindersap Forest.",
-                    questReward = 5000,
+                    questObjective = "Perform a rite in the clearing east of arrowhead island in Cindersap Forest.",
+                    questReward = 4500,
 
-                    triggerVector = new(77, 68),
-                    triggerLimit = new(5, 5),
                     challengeWithin = new(74, 65),
                     challengeRange = new(14, 14),
                     challengePortals = new()
@@ -138,9 +138,16 @@ namespace StardewDruid.Map
                     triggerCast = "CastEarth",
                     triggerType = "sword",
                     triggerLocation = "Forest",
-
                     triggerVector = new(38, 9),
                     triggerLimit = new(3, 4),
+
+                    questId = 280719875,
+                    questValue = 6,
+                    questTitle = "The Two Kings",
+                    questDescription = "The Effigy has directed you to a source of otherworldly power.",
+                    questObjective = "Malus trees bloom pink in the spring. Find the biggest specimen in the southern forest and perform a rite there.",
+                    questReward = 100,
+
                     updateEffigy = true,
                 },
                 ["swordWater"] = new()
@@ -150,9 +157,16 @@ namespace StardewDruid.Map
                     triggerCast = "CastWater",
                     triggerType = "sword",
                     triggerLocation = "Beach",
-
                     triggerVector = new(82, 38),
                     triggerLimit = new(9, 3),
+
+                    questId = 280719876,
+                    questValue = 6,
+                    questTitle = "The Voice Beyond the Shore",
+                    questDescription = "The Effigy wants you to introduce yourself to another source of otherworldly power.",
+                    questObjective = "Find the far eastern pier at the beach and perform a rite there.",
+                    questReward = 100,
+
                     updateEffigy = true,
 
                 },
@@ -163,9 +177,15 @@ namespace StardewDruid.Map
                     triggerCast = "CastStars",
                     triggerType = "sword",
                     triggerLocation = "UndergroundMine100",
-
                     triggerVector = new(24, 13),
                     triggerLimit = new(10, 10),
+
+                    questId = 280719877,
+                    questValue = 6,
+                    questTitle = "The Stars Themselves",
+                    questDescription = "The Effigy wants you to introduce yourself to another source of otherworldly power.",
+                    questObjective = "Find the lake of flame deep in the mountain and perform a rite there.",
+                    questReward = 100,
 
                     updateEffigy = true,
 

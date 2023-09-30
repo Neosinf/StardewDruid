@@ -16,10 +16,15 @@ namespace StardewDruid.Map
 
             List<int> stoneIndex = new()
             {
-                751, // copper
-                290, // iron
-                764, // gold
-                765, // iridium
+                2,  // ruby
+                4,  // diamond
+                6,  // jade
+                8,  // amethyst
+                10, // topaz
+                12, // emerald
+                14, // aquamarine
+                44, // special ore
+                46, // mystic ore
             };
 
             return stoneIndex;

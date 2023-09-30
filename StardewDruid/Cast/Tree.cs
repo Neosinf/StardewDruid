@@ -37,7 +37,7 @@ namespace StardewDruid.Cast
 
             int debrisType = 388;
 
-            int debrisAmount = randomIndex.Next(1,5);
+            int debrisAmount = randomIndex.Next(1,4);
 
             if (treeFeature.treeType.Value == 8) //mahogany
             {
@@ -80,7 +80,7 @@ namespace StardewDruid.Cast
 
                 critterPortal.spawnFrequency = 1;
 
-                critterPortal.specialType = 1;
+                critterPortal.specialType = 5;
 
                 critterPortal.baseType = "terrain";
 

@@ -25,7 +25,9 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
 
-            if (!targetLocation.terrainFeatures.ContainsKey(targetVector))
+            mod.UpdateEarthCasts(targetLocation, targetVector, false);
+
+            /*if (!targetLocation.terrainFeatures.ContainsKey(targetVector))
             {
 
                 return;
@@ -48,10 +50,9 @@ namespace StardewDruid.Cast
 
                 targetLocation.terrainFeatures.Remove(targetVector);
 
-                return;
-
-
             }
+
+            mod.UpdateEarthCasts(targetLocation, targetVector, false);
 
             if (hoeDirt.crop != null)
             {
@@ -97,7 +98,7 @@ namespace StardewDruid.Cast
 
                 mod.SpecialIncrement();
                 
-            }
+            }*/
 
         }
 

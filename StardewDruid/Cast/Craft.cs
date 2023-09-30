@@ -7,7 +7,7 @@ namespace StardewDruid.Cast
     internal class Craft: Cast
     {
 
-        private StardewValley.Object targetObject;
+        //private StardewValley.Object targetObject;
 
         public Craft(Mod mod, Vector2 target, Rite rite)
             : base(mod, target, rite)
@@ -15,7 +15,7 @@ namespace StardewDruid.Cast
 
         }
 
-        public override void CastWater()
+        /*public override void CastWater()
         {
 
             if (!targetLocation.objects.ContainsKey(targetVector))
@@ -60,8 +60,8 @@ namespace StardewDruid.Cast
 
             return;
 
-        }
-
+        }*/
 
     }
+
 }

@@ -75,7 +75,7 @@ namespace StardewDruid
 
             Vector2 animationPosition = new(targetVector.X * 64 + 8, targetVector.Y * 64 + 8);
 
-            float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString());
+            float animationSort = float.Parse(targetVector.X.ToString() + targetVector.Y.ToString() + "0000");
 
             TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, animationColor, 1f, 0f, 0f, 0f);
 
@@ -148,7 +148,7 @@ namespace StardewDruid
         public static void AnimateBolt(GameLocation targetLocation, Vector2 targetVector, string playSound)
         {
 
-            Game1.flashAlpha = (float)(0.5 + Game1.random.NextDouble());
+            //Game1.flashAlpha = (float)(0.5 + Game1.random.NextDouble());
 
             Game1.playSound(playSound);
 
@@ -404,7 +404,82 @@ namespace StardewDruid
 
         }
 
-        public static void PlantSeed(GameLocation targetLocation, Farmer targetPlayer, Vector2 targetVector, int targetSeed)
+        public static void UpgradeCrop(StardewValley.TerrainFeatures.HoeDirt hoeDirt, int targetX, int targetY, Farmer targetPlayer, GameLocation targetLocation)
+        {
+
+            int generateItem;
+
+            int targetSeed = Game1.random.Next(8);
+
+            if (targetSeed >= 5) // 2/3 low grade random seed
+            {
+
+                generateItem = 770;
+
+            }
+            else
+            {
+
+                Dictionary<int, int> objectIndexes;
+
+                switch (Game1.currentSeason)
+                {
+
+                    case "spring":
+
+                        objectIndexes = new()
+                        {
+                            [0] = 478, // rhubarb
+                            [1] = 476, // garlic
+                            [2] = 433, // coffee
+                            [3] = 745, // strawberry
+                            [4] = 473, // bean
+                        };
+
+                        break;
+
+                    case "summer":
+
+                        objectIndexes = new()
+                        {
+                            [0] = 479, // melon
+                            [1] = 485, // red cabbage
+                            [2] = 433, // coffee
+                            [3] = 481, // blueberry
+                            [4] = 301 // hops
+                        };
+
+
+                        break;
+
+                    default: // "fall":
+
+                        objectIndexes = new()
+                        {
+                            [0] = 490, // pumpkin
+                            [1] = 492, // yam
+                            [2] = 299, // amaranth
+                            [3] = 493, // cranberry
+                            [4] = 302 // grape
+                        };
+
+                        break;
+
+                }
+
+                generateItem = objectIndexes[targetSeed];
+
+            }
+
+            hoeDirt.destroyCrop(new Vector2(targetX, targetY), false, targetLocation);
+
+            hoeDirt.plant(generateItem, targetX, targetY, targetPlayer,false, targetLocation);
+
+            //hoeDirt.crop.updateDrawMath(new Vector2(targetX, targetY));
+
+        }
+
+        /*public static void PlantSeed(GameLocation targetLocation, Farmer targetPlayer, Vector2 targetVector, int targetSeed)
         {
 
             if (!targetLocation.terrainFeatures.ContainsKey(targetVector))
@@ -516,7 +591,7 @@ namespace StardewDruid
             hoeDirt.plant(920, (int)targetVector.X, (int)targetVector.Y, targetPlayer, true, targetLocation); // always watered        
 
 
-        }
+        }*/
 
         static List<Vector2> TilesWithinOne(Vector2 center)
         {

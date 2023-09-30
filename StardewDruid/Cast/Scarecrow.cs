@@ -14,6 +14,8 @@ namespace StardewDruid.Cast
             : base(mod, target, rite)
         {
 
+            castCost = 32;
+
         }
 
         public override void CastWater()
@@ -85,9 +87,7 @@ namespace StardewDruid.Cast
 
             castFire = true;
 
-            castCost = 48;
-
-            castLimit = true;
+            //castLimit = true;
 
             ModUtility.AnimateBolt(targetLocation, targetVector);
 

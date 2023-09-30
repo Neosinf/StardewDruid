@@ -10,18 +10,24 @@ namespace StardewDruid.Cast
     internal class Grass : Cast
     {
 
-        public bool activateSeed;
-
         public Grass(Mod mod, Vector2 target, Rite rite)
             : base(mod, target, rite)
         {
 
-            activateSeed = false;
+            castCost = 0;
 
         }
 
         public override void CastEarth()
         {
+
+            int probability = randomIndex.Next(50);
+
+            if (probability >= 5)
+            {
+                return;
+
+            }
 
             if (!targetLocation.terrainFeatures.ContainsKey(targetVector))
             {
@@ -39,72 +45,91 @@ namespace StardewDruid.Cast
 
             StardewValley.TerrainFeatures.Grass grassFeature = targetLocation.terrainFeatures[targetVector] as StardewValley.TerrainFeatures.Grass;
 
-            int probability = randomIndex.Next(20);
+            int tileX = (int)targetVector.X;
 
-            /*if(probability <= 1 && activateSeed)
+            int tileY = (int)targetVector.Y;
+
+            if (randomIndex.Next(100) == 0) // 1:1000 chance
             {
 
-                if (ModUtility.CheckSeed(targetLocation, targetVector))
+                Game1.createObjectDebris(114, tileX, tileY);
+
+            }
+
+            if(probability <= 1)
+            {
+
+                switch (Game1.currentSeason)
                 {
 
-                    targetLocation.terrainFeatures.Remove(targetVector);
+                    case "spring":
 
-                    targetLocation.makeHoeDirt(targetVector);
+                        Game1.createObjectDebris(495, tileX, tileY);
 
-                    int gradeSeed = 5;
+                        break;
 
-                    if (probability == 0)
-                    {
+                    case "summer":
 
-                        gradeSeed = randomIndex.Next(5);
+                        Game1.createObjectDebris(496, tileX, tileY);
 
-                    }
+                        break;
 
-                    ModUtility.PlantSeed(targetLocation, targetPlayer, targetVector, gradeSeed);
+                    case "fall":
 
-                    castCost = 4;
+                        Game1.createObjectDebris(497, tileX, tileY);
 
-                    castFire = true;
+                        break;
+
+                    default:
+
+                        break;
+
+                }
+
+            }  
+            else if (probability == 2)
+            {
+
+                switch (Game1.currentSeason)
+                {
+
+                    case "spring":
+
+                        Game1.createObjectDebris(477, tileX, tileY);
+
+                        break;
+
+                    case "summer":
+
+                        Game1.createObjectDebris(483, tileX, tileY);
+
+                        break;
+
+                    case "fall":
+
+                        Game1.createObjectDebris(299, tileX, tileY);
+
+                        break;
+
+                    default:
+
+                        break;
 
                 }
 
             }
-            else if (probability <= 4) // 3 / 20 fibre*/
-            if (probability <= 4)
+            else
             {
 
-                if (randomIndex.Next(100) == 0) // 1:500 chance
+                for (int i = 2; i < probability; i++)
                 {
-
-                    Game1.createObjectDebris(114, (int)targetVector.X, (int)targetVector.Y);
-
-                    castCost = 0;
-
-                    castFire = true;
+                    Game1.createObjectDebris(771, tileX, tileY);
 
                 }
-
-                Game1.createObjectDebris(771, (int)targetVector.X, (int)targetVector.Y);
-
-                Game1.createObjectDebris(771, (int)targetVector.X, (int)targetVector.Y);
-
-                if(probability == 4)
-                {
-                    
-                    Game1.createObjectDebris(771, (int)targetVector.X, (int)targetVector.Y);
-
-                }
-
-                castCost = 0;
-
-                castFire = true;
-
-                targetPlayer.gainExperience(2, 2); // gain foraging experience
 
             }
 
-
-            Rectangle tileRectangle = new((int)targetVector.X * 64 + 1, (int)targetVector.Y * 64 + 1, 62, 62);
+            Rectangle tileRectangle = new(tileX * 64 + 1, tileY * 64 + 1, 62, 62);
 
             grassFeature.doCollisionAction(tileRectangle,2,targetVector,null,Game1.currentLocation);
 

@@ -13,6 +13,8 @@ using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Xml.Schema;
 using xTile.Dimensions;
 using xTile.Layers;
 using xTile.Tiles;
@@ -30,7 +32,7 @@ namespace StardewDruid
 
         private List<string> buttonList;
 
-        private List<string> craftList;
+        //private List<string> craftList;
 
         private Map.Effigy druidEffigy;
 
@@ -40,15 +42,19 @@ namespace StardewDruid
 
         private Dictionary<Type, List<Cast.Cast>> activeCasts;
 
-        private int specialCasts;
+        //private int specialCasts;
 
-        private int specialLimit;
+        //private int specialLimit;
 
         public Dictionary<string, Vector2> warpPoints;
 
         public Dictionary<string, int> warpTotems;
 
+        public List<string> warpCasts;
+
         private Dictionary<string, Map.Quest> questIndex;
+
+        private Dictionary<string, List<Monster>> monsterSpawns;
 
         private Queue<Rite> riteQueue;
 
@@ -67,24 +73,29 @@ namespace StardewDruid
 
         private void SaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            
+
             staticData = Helper.Data.ReadSaveData<StaticData>("staticData");
 
             staticData ??= new StaticData() {
 
-                    /*questList = new()
-                    {
-                        ["approachEffigy"] = true,
-                        ["swordEarth"] = true,
-                        ["challengeEarth"] = true,
-                    },
+                /* activeBlessing = "none",
 
-                    blessingList = new()
-                    {
-                        ["earth"] = 5,
-                    },*/
+                 questList = new()
+                 {
+                     ["approachEffigy"] = true,
+                     ["challengeEarth"] = true,
+                     ["challengeWater"] = true,
+                     ["challengeStars"] = true,
+                 },
 
-                };
+                 blessingList = new()
+                 {
+                     ["earth"] = 5,
+                     ["water"] = 5,
+                     ["stars"] = 1,
+                 },
+             */
+            };
 
             questIndex = Map.QuestData.QuestList();
 
@@ -105,7 +116,7 @@ namespace StardewDruid
 
             buttonList = Config.buttonList;
 
-            craftList = Config.craftList;
+            //craftList = Config.craftList;
 
             earthCasts = new();
 
@@ -113,7 +124,7 @@ namespace StardewDruid
 
             riteQueue = new();
 
-            if (staticData.blessingList != null)
+            /*if (staticData.blessingList != null)
             {
 
                 if (!staticData.blessingList.ContainsKey("special"))
@@ -127,7 +138,7 @@ namespace StardewDruid
 
                 specialCasts = specialLimit;
 
-            }
+            }*/
 
             druidEffigy = new(this);
 
@@ -136,6 +147,10 @@ namespace StardewDruid
             warpPoints = Map.WarpData.WarpPoints();
 
             warpTotems = Map.WarpData.WarpTotems();
+
+            warpCasts = new();
+
+            monsterSpawns = new();
 
             return;
 
@@ -150,12 +165,34 @@ namespace StardewDruid
 
             foreach (KeyValuePair<Type, List<Cast.Cast>> castEntry in activeCasts)
             {
+                
                 if (castEntry.Value.Count > 0)
                 {
+                    
                     foreach (Cast.Cast castInstance in castEntry.Value)
                     {
+                        
                         castInstance.CastRemove();
+                    
                     }
+                
+                }
+
+            }
+
+            foreach (KeyValuePair<string, List<Monster>> monsterEntry in monsterSpawns)
+            {
+                
+                if (monsterEntry.Value.Count > 0)
+                {
+                    
+                    foreach (Monster monsterInstance in monsterEntry.Value)
+                    {
+                        
+                        Game1.getLocationFromName(monsterEntry.Key).characters.Remove(monsterInstance);
+                    
+                    }
+                
                 }
 
             }
@@ -168,7 +205,9 @@ namespace StardewDruid
 
             riteQueue = new();
 
-            specialCasts = specialLimit;
+            warpCasts = new();
+
+            monsterSpawns = new();
 
         }
 
@@ -285,11 +324,13 @@ namespace StardewDruid
             
             }
 
+            activeData ??= new ActiveData();
+
             // ignore if player is busy with something else
             if (Game1.player.IsBusyDoingSomething())
             {
 
-                activeData = new ActiveData();
+                activeData.castComplete = true;
 
                 return;
 
@@ -308,17 +349,9 @@ namespace StardewDruid
 
                     foreach (SButton buttonPressed in e.Pressed)
                     {
+                        
                         if (buttonPressed.IsUseToolButton() || buttonPressed.IsActionButton())
                         {
-
-                            /*if(!staticData.questList["approachEffigy"])
-                            {
-
-                                Game1.player.completeQuest(Map.Quest.QuestId("approachEffigy"));
-
-                                staticData.questList["approachEffigy"] = true;
-
-                            }*/
 
                             druidEffigy.Approach(Game1.player);
 
@@ -350,195 +383,26 @@ namespace StardewDruid
 
             }
 
-            activeData ??= new ActiveData();
-
-            string activeBlessing = staticData.activeBlessing;
-
-            switch (Game1.player.CurrentTool.InitialParentTileIndex)
-            {
-
-                case 15: // Forest Sword
-
-                    if(staticData.blessingList.ContainsKey("earth"))
-                    {
-
-                        activeBlessing = "earth";
-
-                    }
-
-                    break;
-
-                case 14: // Neptune's Glaive
-
-                    if (staticData.blessingList.ContainsKey("water"))
-                    {
-
-                        activeBlessing = "water";
-
-                    }
-
-                    break;
-
-                case 9: // Lava Katana
-
-                    if (staticData.blessingList.ContainsKey("stars"))
-                    {
-
-                        activeBlessing = "stars";
-
-                    }
-
-                    break;
-
-            }
-
             bool chargeEffect = false;
 
+            // check for cast trigger
             foreach (SButton buttonPressed in e.Pressed)
             {
                 if (buttonPressed.IsUseToolButton() || buttonPressed.IsActionButton())
                 {
 
-                    // Active State is Overridden by tool usage
-                    if (activeData.activeCharge)
-                    {
+                    activeData.castComplete = true;
 
-                        activeData.castComplete = true;
+                    return;
 
-                    };
 
                 }
                 else if (buttonList.Contains(buttonPressed.ToString())) 
                 {
 
-                    Dictionary<string, bool> spawnIndex = Map.SpawnData.SpawnIndex(Game1.player.currentLocation);
-
-                    if(spawnIndex.Count == 0)
-                    {
-
-                        Game1.addHUDMessage(new HUDMessage("Unable to reach the otherworldly plane", 2));
-
-                        return;
-
-                    }
-
-                    if (activeBlessing == "none")
-                    {
-
-                        Game1.addHUDMessage(new HUDMessage("Nothing happens", 2));
-
-                        return;
-
-                    }
-
-                    activeData = new ActiveData
-                    {
-                        activeCast = activeBlessing,
-
-                        spawnIndex = spawnIndex
-
-                    };
-
-                }
-
-            }
-
-            // Ignore if cast complete and not retriggered
-            if (activeData.castComplete)
-            {
-                
-                return;
-
-            }
-
-            foreach (SButton buttonHeld in e.Held)
-            {
-
-                // Already in Active State
-                if (buttonList.Contains(buttonHeld.ToString()))
-                {
-
-                    int staminaRequired;
-
-                    switch (activeBlessing)
-                    {
-
-                        case "water":
-
-                            staminaRequired = 48;
-
-                            break;
-
-                        case "stars":
-
-                            staminaRequired = 24;
-
-                            break;
-
-                        default: //"earth"
-
-                            staminaRequired = 12;
-
-                            break;
-
-                    };
-
-                    if (Game1.player.Stamina <= staminaRequired)
-                    {
-
-                        //Game1.addHUDMessage(new HUDMessage($"Not enough energy to perform rite of the {activeBlessing}", 3);
-                        Game1.addHUDMessage(new HUDMessage("Not enough energy to perform rite", 3));
-
-                        activeData.castComplete = true;
-
-                        return;
-
-                    }
-
-                    activeData.activeKey = buttonHeld.ToString();
-
-                    chargeEffect = true;
-
-                    int chargeLevel;
-
-                    //-------------------------- hand animation
-
-                    if (activeData.activeDirection == -1)
-                    {
-
-                        activeData.activeDirection = Game1.player.FacingDirection;
-
-                        activeData.activeVector = Game1.player.getTileLocation();
-
-                        if(activeBlessing == "water")
-                        {
-
-                            Dictionary<int, Vector2> vectorIndex = new()
-                            {
-
-                                [0] = activeData.activeVector + new Vector2(0,-5),// up
-                                [1] = activeData.activeVector + new Vector2(5, 0), // right
-                                [2] = activeData.activeVector + new Vector2(0, 5),// down
-                                [3] = activeData.activeVector + new Vector2(-5, 0), // left
-
-                            };
-
-                            activeData.activeVector = vectorIndex[activeData.activeDirection];
-
-                        }
-
-                    }
-
-                    if (activeData.chargeAmount == 0 || activeData.chargeAmount % 12 == 0)
-                    {
-                        
-                        ModUtility.AnimateHands(Game1.player, activeData.activeDirection, 225);
-                    
-                    }
+                    Vector2 playerVector = Game1.player.getTileLocation();
 
                     List<Map.Quest> triggeredQuests = new();
-
-                    Vector2 playerVector = activeData.activeVector;
 
                     foreach (string castString in staticData.triggerList)
                     {
@@ -562,19 +426,7 @@ namespace StardewDruid
 
                             }
 
-                            /*if (questData.endTime != 0)
-                            {
-
-                                if (Game1.timeOfDay > questData.endTime)
-                                {
-
-                                    triggerValid = false;
-
-                                }
-
-                            }*/
-
-                            if(triggerValid)
+                            if (triggerValid)
                             {
 
                                 Vector2 ChallengeVector = questData.triggerVector;
@@ -599,8 +451,12 @@ namespace StardewDruid
 
                     }
 
-                    foreach(Map.Quest questData in triggeredQuests)
+                    foreach (Map.Quest questData in triggeredQuests)
                     {
+
+                        ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 225);
+
+                        //Game1.player.currentLocation.playSound("Yoba");
 
                         Cast.Cast castHandle;
 
@@ -615,7 +471,155 @@ namespace StardewDruid
 
                         castHandle.CastQuest();
 
-                        staticData.triggerList.Remove(questData.name);
+                        return;
+
+                    }
+
+                    // new cast configuration
+
+                    string activeBlessing = staticData.activeBlessing;
+
+                    if (activeBlessing == "none")
+                    {
+
+                        Game1.addHUDMessage(new HUDMessage("Nothing happens", 2));
+
+                        return;
+
+                    }
+
+                    switch (Game1.player.CurrentTool.InitialParentTileIndex)
+                    {
+
+                        case 15: // Forest Sword
+
+                            if (staticData.blessingList.ContainsKey("earth"))
+                            {
+
+                                activeBlessing = "earth";
+
+                            }
+
+                            break;
+
+                        case 14: // Neptune's Glaive
+
+                            if (staticData.blessingList.ContainsKey("water"))
+                            {
+
+                                activeBlessing = "water";
+
+                            }
+
+                            break;
+
+                        case 9: // Lava Katana
+
+                            if (staticData.blessingList.ContainsKey("stars"))
+                            {
+
+                                activeBlessing = "stars";
+
+                            }
+
+                            break;
+
+                    }
+
+                    Dictionary<string, bool> spawnIndex = Map.SpawnData.SpawnIndex(Game1.player.currentLocation);
+
+                    // ignore if game location has no spawn profile
+                    if(spawnIndex.Count == 0)
+                    {
+
+                        if(activeBlessing != "none")
+                        {
+
+                            Game1.addHUDMessage(new HUDMessage("Unable to reach the otherworldly plane", 2));
+
+                        }
+
+                        return;
+
+                    }
+
+                    activeData = new ActiveData
+                    {
+                        activeCast = activeBlessing,
+
+                        spawnIndex = spawnIndex
+
+                    };
+
+
+                    // initial charge effect
+                    chargeEffect = true;
+
+                }
+
+            }
+
+            // Ignore if cast complete and not retriggered
+            if (activeData.castComplete)
+            {
+                
+                return;
+
+            }
+
+            // begin to count amount that cast button is held
+            foreach (SButton buttonHeld in e.Held)
+            {
+
+                // Already in Active State
+                if (buttonList.Contains(buttonHeld.ToString()))
+                {
+
+                    int staminaRequired;
+
+                    switch (activeData.activeCast)
+                    {
+
+                        case "water":
+
+                            staminaRequired = 48;
+
+                            break;
+
+                        case "stars":
+
+                            staminaRequired = 24;
+
+                            break;
+
+                        case "earth":
+
+                            staminaRequired = 12;
+
+                            break;
+
+                        default:
+
+                            staminaRequired = 0;
+
+                            break;
+
+                    };
+
+                    // check player has enough energy for eventual costs
+                    if (Game1.player.Stamina <= staminaRequired)
+                    {
+
+                        if(activeData.castLevel >= 1)
+                        {
+                            Game1.addHUDMessage(new HUDMessage("Not enough energy to continue rite", 3));
+
+                        }
+                        else
+                        {
+                            Game1.addHUDMessage(new HUDMessage("Not enough energy to perform rite", 3));
+
+                        }
 
                         activeData.castComplete = true;
 
@@ -623,12 +627,47 @@ namespace StardewDruid
 
                     }
 
+                    // check direction player is facing
+                    if (activeData.activeDirection == -1)
+                    {
 
-                    //-------------------------- cast animation
+                        activeData.activeDirection = Game1.player.FacingDirection;
+
+                        activeData.activeVector = Game1.player.getTileLocation();
+
+                        if (activeData.activeCast == "water")
+                        {
+
+                            Dictionary<int, Vector2> vectorIndex = new()
+                            {
+
+                                [0] = activeData.activeVector + new Vector2(0, -5),// up
+                                [1] = activeData.activeVector + new Vector2(5, 0), // right
+                                [2] = activeData.activeVector + new Vector2(0, 5),// down
+                                [3] = activeData.activeVector + new Vector2(-5, 0), // left
+
+                            };
+
+                            activeData.activeVector = vectorIndex[activeData.activeDirection];
+
+                        }
+
+                    }
+
+                    if (activeData.chargeAmount == 0 || activeData.chargeAmount % 12 == 0)
+                    {
+
+                        ModUtility.AnimateHands(Game1.player, activeData.activeDirection, 225);
+
+                    }
+
+                    activeData.activeKey = buttonHeld.ToString();
+
+                    chargeEffect = true;
 
                     activeData.chargeAmount++;
 
-                    chargeLevel = 3;
+                    int chargeLevel = 3;
 
                     if (activeData.chargeAmount <= 40)
                     {
@@ -650,72 +689,64 @@ namespace StardewDruid
             }
 
             // Active charge requires engaged input
-            if (activeData.activeCharge && !chargeEffect)
+            if(!chargeEffect)
             {
 
                 activeData.castComplete = true;
 
+                return;
+
             }
 
-            if (chargeEffect)
+            if (activeData.castLevel != activeData.chargeLevel)
             {
 
-                //if (activeData.animateLevel != activeData.chargeLevel)
-                if (activeData.castLevel != activeData.chargeLevel)
+                activeData.castLevel = activeData.chargeLevel;
+
+                Rite castRite = new()
                 {
 
-                    activeData.castLevel = activeData.chargeLevel;
+                    //castLevel = activeData.castLevel++,
+                    castLevel = activeData.castLevel,
 
-                    Rite castRite = new()
-                    {
+                    direction = activeData.activeDirection,
 
-                        //castLevel = activeData.castLevel++,
-                        castLevel = activeData.castLevel,
+                };
 
-                        direction = activeData.activeDirection,
+                switch (activeData.activeCast)
+                {
 
-                    };
+                    case "stars":
 
-                    switch (activeBlessing)
-                    {
+                        castRite.castType = "CastStars";
 
-                        case "stars":
+                        AnimateStars();
 
-                            castRite.castType = "CastStars";
+                        break;
 
-                            AnimateStars();
+                    case "water":
 
-                            break;
+                        castRite.castType = "CastWater";
 
-                        case "water":
+                        castRite.castVector = activeData.activeVector;
 
-                            castRite.castType = "CastWater";
+                        AnimateWater();
 
-                            castRite.castVector = activeData.activeVector;
+                        break;
 
-                            AnimateWater();
+                    default: //"earth"
 
-                            break;
+                        AnimateEarth();
 
-                        default: //"earth"
-
-                            AnimateEarth();
-
-                            break;
-
-                    }
-
-                    riteQueue.Enqueue(castRite);
-
-                    DelayedAction.functionAfterDelay(CastRite, 666);
+                        break;
 
                 }
 
-                activeData.activeCharge = true;
+                riteQueue.Enqueue(castRite);
+
+                DelayedAction.functionAfterDelay(CastRite, 666);
 
             }
-
-            return;
 
         }
 
@@ -1018,7 +1049,7 @@ namespace StardewDruid
 
                                 case "Grass":
 
-                                    Cast.Grass effectGrass = new(this, tileVector, riteData);
+                                    /*Cast.Grass effectGrass = new(this, tileVector, riteData);
 
                                     if (!Game1.currentSeason.Equals("winter") && riteData.spawnIndex["cropseed"] && staticData.blessingList["earth"] >= 4)
                                     {
@@ -1027,16 +1058,23 @@ namespace StardewDruid
 
                                     }
 
-                                    effectCasts[tileVector] = effectGrass;
+                                    effectCasts[tileVector] = effectGrass;*/
+
+                                    effectCasts[tileVector] = new Cast.Grass(this, tileVector, riteData);
 
                                     break;
 
                                 case "HoeDirt":
 
-                                    if (!Game1.currentSeason.Equals("winter") && riteData.spawnIndex["cropseed"] && staticData.blessingList["earth"] >= 4)
+                                    if (staticData.blessingList["earth"] >= 4)
                                     {
 
-                                        effectCasts[tileVector] = new Cast.Hoed(this, tileVector, riteData);
+                                        if (!Game1.currentSeason.Equals("winter") && riteData.spawnIndex["cropseed"])
+                                        {
+
+                                            effectCasts[tileVector] = new Cast.Crop(this, tileVector, riteData);
+
+                                        }
 
                                     }
 
@@ -1198,8 +1236,6 @@ namespace StardewDruid
 
                     if (backTile != null)
                     {
-
-                        
 
                         if (backTile.TileIndexProperties.TryGetValue("Water", out _))
                         {
@@ -1544,21 +1580,127 @@ namespace StardewDruid
 
                     int tileY = (int)tileVector.Y;
 
-                    if (warpPoints.ContainsKey(locationName))
+                    if (blessingLevel >= 1)
                     {
-
-                        if (warpPoints[locationName] == tileVector)
+                        if (warpPoints.ContainsKey(locationName))
                         {
 
-                            if (blessingLevel >= 1)
-                            { 
+                            if (warpPoints[locationName] == tileVector)
+                            {
+
+                                if (warpCasts.Contains(locationName))
+                                {
+
+                                    Game1.addHUDMessage(new HUDMessage($"Already extracted {locationName} warp power today", 3));
+
+                                    continue;
+
+                                }
+
                                 int targetIndex = warpTotems[locationName];
 
                                 effectCasts[tileVector] = new Cast.Totem(this, tileVector, riteData, targetIndex);
 
+                                warpCasts.Add(locationName);
+
                                 continue;
 
                             }
+
+                        }
+
+                    }
+
+                    if (riteData.castLocation.objects.Count() > 0)
+                    {
+
+                        if (riteData.castLocation.objects.ContainsKey(tileVector))
+                        {
+
+                            StardewValley.Object targetObject = riteData.castLocation.objects[tileVector];
+
+                            /*if (craftList.Contains(targetObject.Name.ToString()))
+                            {
+                                if (blessingLevel >= 2)
+                                {
+                                    if (targetObject.MinutesUntilReady > 0)
+                                    {
+
+                                        effectCasts[tileVector] = new Cast.Craft(this, tileVector, riteData);
+
+                                    }
+
+                                }
+
+                            }
+                            else*/
+                            if (riteData.castLocation.IsFarm && targetObject.bigCraftable.Value && targetObject.ParentSheetIndex == 9)
+                            {
+
+                                if (warpCasts.Contains("rod"))
+                                {
+
+                                    Game1.addHUDMessage(new HUDMessage("Already powered a lightning rod today", 3));
+
+                                }
+                                else if (blessingLevel >= 2)
+                                {
+
+                                    effectCasts[tileVector] = new Cast.Rod(this, tileVector, riteData);
+
+                                    warpCasts.Add("rod");
+
+                                }
+
+                            }
+                            else if (targetObject.Name.Contains("Campfire"))
+                            {
+
+                                if (warpCasts.Contains("campfire"))
+                                {
+
+                                    Game1.addHUDMessage(new HUDMessage("Already powered a campfire today", 3));
+
+                                }
+                                else if (blessingLevel >= 2)
+                                {
+
+                                    effectCasts[tileVector] = new Cast.Campfire(this, tileVector, riteData);
+
+                                    warpCasts.Add("campfire");
+
+                                }
+                            }
+                            else if (targetObject is Torch && targetObject.ParentSheetIndex == 93) // crafted candle torch
+                            {
+                                if (blessingLevel >= 5)
+                                {
+                                    if (riteData.spawnIndex["wilderness"])
+                                    {
+
+                                        effectCasts[tileVector] = new Cast.Portal(this, tileVector, riteData);
+
+                                    }
+                                }
+
+                            }
+                            else if (targetObject.IsScarecrow())
+                            {
+                                
+                                string scid = "scarecrow_" + tileVector.X.ToString() + "_" + tileVector.Y.ToString();
+
+                                if (blessingLevel >= 2 && !Game1.isRaining && !warpCasts.Contains(scid))
+                                {
+                                    
+                                    effectCasts[tileVector] = new Cast.Scarecrow(this, tileVector, riteData);
+
+                                    warpCasts.Add(scid);
+
+                                }
+                            
+                            }
+
+                            continue;
 
                         }
 
@@ -1589,7 +1731,7 @@ namespace StardewDruid
                             if (resourceClump.tile.Value == tileVector)
                             {
 
-                                if (blessingLevel >= 4)
+                                if (blessingLevel >= 1)
                                 {
 
                                     switch (resourceClump.parentSheetIndex.Value)
@@ -1630,75 +1772,6 @@ namespace StardewDruid
 
                         if (targetClump)
                         {
-
-                            continue;
-
-                        }
-
-                    }
-
-                    if (riteData.castLocation.objects.Count() > 0)
-                    {
-
-                        if (riteData.castLocation.objects.ContainsKey(tileVector))
-                        {
-
-                            StardewValley.Object targetObject = riteData.castLocation.objects[tileVector];
-
-                            if (craftList.Contains(targetObject.Name.ToString()))
-                            {
-                                if (blessingLevel >= 2)
-                                {
-                                    if (targetObject.MinutesUntilReady > 0)
-                                    {
-
-                                        effectCasts[tileVector] = new Cast.Craft(this, tileVector, riteData);
-
-                                    }
-
-                                }
-
-                            }
-                            else if (riteData.castLocation.IsFarm && targetObject.bigCraftable.Value && targetObject.ParentSheetIndex == 9)
-                            {
-
-                                if (blessingLevel >= 2)
-                                {
-
-                                    effectCasts[tileVector] = new Cast.Rod(this, tileVector, riteData);
-                                
-                                }
-
-                            }
-                            else if (targetObject.Name.Contains("Campfire"))
-                            {
-                                if (blessingLevel >= 2)
-                                {
-                                    
-                                    effectCasts[tileVector] = new Cast.Campfire(this, tileVector, riteData);
-
-                                }
-                            }
-                            else if (targetObject is Torch && targetObject.ParentSheetIndex == 93) // crafted candle torch
-                            {
-                                if (blessingLevel >= 5)
-                                {
-                                    if (riteData.spawnIndex["wilderness"])
-                                    {
-
-                                        effectCasts[tileVector] = new Cast.Portal(this, tileVector, riteData);
-
-                                    }
-                                }
-
-                            }
-                            else if (targetObject.IsScarecrow())
-                            {
-                                if (blessingLevel >= 2 && !Game1.isRaining)
-                                {
-                                    effectCasts[tileVector] = new Cast.Scarecrow(this, tileVector, riteData);
-                                }
-                            }
 
                             continue;
 
@@ -1991,7 +2064,7 @@ namespace StardewDruid
 
         }
 
-        public int SpecialLimit()
+        /*public int SpecialLimit()
         {
 
             if (specialCasts == (specialLimit * 6))
@@ -2019,7 +2092,7 @@ namespace StardewDruid
 
             }
 
-        }
+        }*/
 
         public string ActiveBlessing()
         {
@@ -2099,6 +2172,13 @@ namespace StardewDruid
             }
 
             return received;
+
+        }
+
+        public void RemoveTrigger(string trigger)
+        {
+
+            staticData.triggerList.Remove(trigger);
 
         }
 
@@ -2255,6 +2335,19 @@ namespace StardewDruid
 
             }
 
+        }
+
+        public void MonsterTrack(GameLocation location, Monster monster)
+        {
+            if (!monsterSpawns.ContainsKey(location.Name))
+            {
+
+                monsterSpawns[location.Name] = new();
+
+            }
+
+            monsterSpawns[location.Name].Add(monster);
+        
         }
 
     }

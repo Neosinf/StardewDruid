@@ -363,6 +363,18 @@ namespace StardewDruid.Cast
 
                     break;
 
+                case 5: // forageable challenge
+
+                    spawnIndex = new()
+                    {
+                        0,3,99,
+
+                    };
+
+                    spawnMob = spawnIndex[randomIndex.Next(3)];
+
+                    break;
+
                 default: // 0
 
                     spawnIndex = new()
@@ -431,7 +443,7 @@ namespace StardewDruid.Cast
 
                     break;
 
-                default: // Bat
+                default: // Bat 99
 
                     theMonster = new Bat(spawnVector * 64f, mineLevel)
                     {
@@ -470,6 +482,16 @@ namespace StardewDruid.Cast
 
             Monster theMonster = monsterData.Value;
 
+            if(theMonster is RockGolem)
+            {
+                spawnQueue.Enqueue(theMonster);
+
+                DelayedAction.functionAfterDelay(ManifestMonster, 100);
+
+                return;
+
+            }
+
             Rectangle targetRectangle = new(0,0,16,32);
 
             Vector2 fromPosition = new(baseVector.X * 64, baseVector.Y * 64);
@@ -495,7 +517,11 @@ namespace StardewDruid.Cast
                 monsterColor = slimeMonster.color.Value;
             }
 
-            TemporaryAnimatedSprite monsterSprite = new("Characters\\Monsters\\" + theMonster.Name, targetRectangle, animationInterval, 4, 2, fromPosition, flicker: false, flipped: false, animationSort, 0f, monsterColor, 4f, 0f, 0f, 0f)
+            string textureName = theMonster.Sprite.textureName.Value;
+
+            //"Characters\\Monsters\\" + theMonster.Name
+
+            TemporaryAnimatedSprite monsterSprite = new(textureName, targetRectangle, animationInterval, 4, 2, fromPosition, flicker: false, flipped: false, animationSort, 0f, monsterColor, 4f, 0f, 0f, 0f)
             {
 
                 motion = new Vector2(motionX, motionY),
@@ -534,6 +560,7 @@ namespace StardewDruid.Cast
 
                 monsterSpawns.Add(theMonster);
 
+                mod.MonsterTrack(targetLocation,theMonster);
 
             }
 

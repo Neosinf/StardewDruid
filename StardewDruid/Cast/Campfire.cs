@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Menus;
 using StardewValley.TerrainFeatures;
 using System;
+using System.Collections.Generic;
 
 namespace StardewDruid.Cast
 {
@@ -17,6 +19,43 @@ namespace StardewDruid.Cast
 
         public override void CastWater()
         {
+            List<string> recipeList = new() {
+                "Salad",
+                "Baked Fish",
+                "Fried Mushroom",
+                "Carp Surprise",
+                "Hashbrowns",
+                "Fried Eel",
+                "Sashimi",
+                "Maki Roll",
+                "Algae Soup",
+                "Fish Stew",
+                "Escargot",
+                "Pale Broth",
+            };
+
+            int learnedRecipes = 0;
+
+            foreach(string recipe in recipeList)
+            {
+
+                if(!targetPlayer.cookingRecipes.ContainsKey(recipe))
+                {
+
+                    targetPlayer.cookingRecipes.Add(recipe, 0);
+
+                    learnedRecipes++;
+
+                }
+
+            }
+
+            if(learnedRecipes >= 1)
+            {
+
+                Game1.addHUDMessage(new HUDMessage($"Learned {learnedRecipes} recipes", 2));
+
+            }
 
             Vector2 newVector = new(targetVector.X, targetVector.Y);
 
@@ -45,4 +84,5 @@ namespace StardewDruid.Cast
         }
 
     }
+
 }

@@ -21,24 +21,28 @@ namespace StardewDruid.Cast
         public override void CastWater()
         {
 
-            int probability = randomIndex.Next(mod.SpecialLimit());
+            //int probability = randomIndex.Next(mod.SpecialLimit());
 
-            if (probability == 0)
+            //if (probability == 0)
+            //{
+
+            for (int i = 0; i < randomIndex.Next(1, 3); i++)
             {
-                
-                Game1.createObjectDebris(targetIndex, (int)targetVector.X, (int)targetVector.Y-1);
-
-                castFire = true;
-
-                castCost = 48;
-
-                Vector2 boltVector = new(targetVector.X, targetVector.Y - 2);
-
-                ModUtility.AnimateBolt(targetLocation, boltVector);
-
-                mod.SpecialIncrement();
+                Game1.createObjectDebris(targetIndex, (int)targetVector.X, (int)targetVector.Y - 1);
 
             }
+
+            castFire = true;
+
+            castCost = 48;
+
+            Vector2 boltVector = new(targetVector.X, targetVector.Y - 2);
+
+            ModUtility.AnimateBolt(targetLocation, boltVector);
+
+            //mod.SpecialIncrement();
+
+            //}
 
             return;
 

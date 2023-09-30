@@ -338,32 +338,6 @@ namespace StardewDruid.Map
 
             }
 
-            if (blessingList["special"] == 1 && mod.QuestComplete("challengeEarth"))
-            {
-
-                mod.LevelBlessing("special");
-
-            }
-            if (blessingList["special"] == 2 && mod.QuestComplete("challengeWater"))
-            {
-
-                mod.LevelBlessing("special");
-
-            }
-            if (blessingList["special"] == 3 && mod.QuestComplete("challengeStars"))
-            {
-
-                mod.LevelBlessing("special");
-
-            }
-
-            if (blessingList["special"] == 2)
-            {
-
-                effigyChoices.Add(new Response("special", "What is this special power that embues some rites?"));
-
-            }
-
             if (blessingList.ContainsKey("water"))
             {
 
@@ -373,7 +347,7 @@ namespace StardewDruid.Map
 
             effigyChoices.Add(new Response("none", "(say nothing)"));
 
-            GameLocation.afterQuestionBehavior effigyBehaviour = new(DialogueApproach);
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerApproach);
 
             targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
 
@@ -381,29 +355,7 @@ namespace StardewDruid.Map
 
         }
 
-        public void DialogueQuery()
-        {
-
-            mod.UpdateQuest("approachEffigy", true);
-
-            List<Response> effigyChoices = new();
-
-            string effigyQuestion = "Forgotten Effigy: " +
-                "^I was crafted by the first farmer of the valley." +
-                $"He could raise his hands with {mod.CastControl()} and touch the otherworld." +
-                "If you intend to succeed him, you will need to learn many lessons.";
-
-            effigyChoices.Add(new Response("journey", "What is the first lesson?"));
-
-            effigyChoices.Add(new Response("none", "(say nothing)"));
-
-            GameLocation.afterQuestionBehavior effigyBehaviour = new(DialogueApproach);
-
-            targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
-
-        }
-
-        public void DialogueApproach(Farmer effigyVisitor, string effigyAnswer)
+        public void AnswerApproach(Farmer effigyVisitor, string effigyAnswer)
         {
 
             switch (effigyAnswer)
@@ -426,16 +378,33 @@ namespace StardewDruid.Map
 
                     break;
 
-                case "special":
-
-                    DelayedAction.functionAfterDelay(DialogueSpecial, 100);
-
-                    break;
             }
 
             return;
 
         }
+
+        public void DialogueQuery()
+        {
+
+            mod.UpdateQuest("approachEffigy", true);
+
+            List<Response> effigyChoices = new();
+
+            string effigyQuestion = "Forgotten Effigy: " +
+                "^I was crafted by the first farmer of the valley, a powerful friend of the otherworld." +
+                "^If you intend to succeed him, you will need to learn many lessons.";
+
+            effigyChoices.Add(new Response("journey", "What is the first lesson?"));
+
+            effigyChoices.Add(new Response("none", "(say nothing)"));
+
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerApproach);
+
+            targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+
+        }
+
 
         public void DialogueJourney()
         {
@@ -463,12 +432,9 @@ namespace StardewDruid.Map
                 {
 
                     effigyReply = "Forgotten Effigy: " +
-                    "^Seek the patronage of the two Kings, a source of earthen power. Find the giant malus of the southern forest." +
-                    "Perform the rite below the tree's boughs, and return hence with what you receive there.";
-
-                    mod.UpdateBlessing("earth");
-
-                    EarthDecoration();
+                    "^Seek the patronage of the two Kings. Find the giant malus of the southern forest and perform a rite below it's boughs." +
+                    "..."+
+                    $"^({mod.CastControl()} to perform a rite)";
 
                     mod.NewQuest("swordEarth");
 
@@ -479,6 +445,16 @@ namespace StardewDruid.Map
             }
             else if (!mod.QuestComplete("challengeEarth"))
             {
+
+
+                if (!blessingList.ContainsKey("earth"))
+                {
+
+                    mod.UpdateBlessing("earth");
+
+                    EarthDecoration();
+
+                }
 
                 switch (blessingList["earth"])
                 {
@@ -512,9 +488,7 @@ namespace StardewDruid.Map
 
                         effigyReply = "Forgotten Effigy: ^Your connection to the earth deepens. You may channel the power of the Two Kings for your own purposes." +
                             "^..." +
-                            $"^({mod.CastControl()}: cultivate new crops in tilled soil and fertilise budding growth. Cultivation expends special power: chance to activate begins to diminish on successive usage.)";
-
-                        mod.LevelBlessing("special");
+                            $"^({mod.CastControl()}: increase the growth rate and quality of growing crops. Convert planted wild seeds into random cultivations. Stamina cost increases for each stage of growth.)";
 
                         break;
 
@@ -522,7 +496,8 @@ namespace StardewDruid.Map
 
                         effigyReply = "Forgotten Effigy: ^Be careful in the mines. The deep earth answers your call, both above and below you." +
                             "^..." +
-                            $"^({mod.CastControl()}: shake loose rocks free from the ceilings of mine shafts and explode ore veins)";
+                            $"^({mod.CastControl()}: shake loose rocks free from the ceilings of mine shafts. Explode gem ores." +
+                            $")";
 
                         break;
 
@@ -567,13 +542,9 @@ namespace StardewDruid.Map
                 }
                 else
                 {
-                    effigyReply = "Forgotten Effigy: ^The Voice Beyond the Shore harkens to you now. ^Perform a rite at the furthest pier, and return hence with her offering." +
+                    effigyReply = "Forgotten Effigy: ^The Voice Beyond the Shore harkens to you now. ^Perform a rite at the furthest pier, and behold her power." +
                     "^..." +
-                    $"^({mod.CastControl()} with a weapon or scythe in hand to perform rite of the water)";
-
-                    mod.UpdateBlessing("water");
-
-                    WaterDecoration();
+                    $"^({mod.CastControl()} with a weapon or scythe in hand to perform a rite)";
 
                     mod.NewQuest("swordWater");
 
@@ -585,16 +556,25 @@ namespace StardewDruid.Map
             else if (!mod.QuestComplete("challengeWater"))
             {
 
+                if (!blessingList.ContainsKey("water"))
+                {
+
+                    mod.UpdateBlessing("water");
+
+                    WaterDecoration();
+
+                }
+
                 switch (blessingList["water"])
                 {
 
                     case 0: // warp totems
 
-                        effigyReply = "Forgotten Effigy: ^Good. The Lady Beyond the Shore has answered your call. Find the shrines to the patrons of the Valley, and strike them to draw out a portion of their essence." +
+                        effigyReply = "Forgotten Effigy: ^Good. The Lady Beyond the Shore has answered your call. Find the shrines to the patrons of the Valley, and strike them to draw out a portion of their essence. Do the same to any obstacle in your way." +
                         "^..." +
-                        $"^({mod.CastControl()}: strike warp shrines to extract totems. Special Power Limit has been increased!)";
+                        $"^({mod.CastControl()}: strike warp shrines once a day to extract totems, and boulders and stumps to extract resources)";
 
-                        mod.LevelBlessing("special");
+                        //mod.LevelBlessing("special");
 
                         break;
 
@@ -602,8 +582,8 @@ namespace StardewDruid.Map
 
                         effigyReply = "Forgotten Effigy: ^The Lady is fascinated by the industriousness of humanity. Combine your artifice with her blessing and reap the rewards." +
                             "^..." +
-                            $"^({mod.CastControl()}: strike scarecrows, campfires, rods and other farm equipment to increase function. Some equipment effects expend special power.)";
-                        
+                            $"^({mod.CastControl()}:strike scarecrows, campfires and lightning rods to activate special functions.)";
+
                         break;
 
                     case 2: // fishspot
@@ -611,15 +591,15 @@ namespace StardewDruid.Map
                         effigyReply = "Forgotten Effigy: ^The denizens of the deep water serve the Lady. Go now, and test your skill against them." +
                             "^..." +
                             $"^({mod.CastControl()}: strike deep water to produce a fishing-spot that yields rare species of fish)";
-                        lessonGiven = true;
+
                         break;
 
                     case 3: // stump, boulder, enemy
 
                         effigyReply = "Forgotten Effigy: ^Your connection to the plane beyond broadens. ^Call upon the Lady's Voice to destroy your foes." +
                             "^..." +
-                            $"^({mod.CastControl()}: expend high amounts of stamina to instantly destroy enemies and obstacles)";
-                        lessonGiven = true;
+                            $"^({mod.CastControl()}: expend high amounts of stamina to instantly destroy enemies)";
+
                         break;
 
                     case 4: // portal
@@ -627,7 +607,7 @@ namespace StardewDruid.Map
                         effigyReply = "Forgotten Effigy: ^Are you yet a master of the veil between worlds? Focus your will to breach the divide." +
                             "^..." +
                             $"^({mod.CastControl()}: strike candle torches to create monster portals. Only works in remote outdoor locations.)";
-                        lessonGiven = true;
+
                         break;
 
                     default: // quest
@@ -658,8 +638,6 @@ namespace StardewDruid.Map
 
                     mod.LevelBlessing("water");
                     
-                    //ModUtility.AnimateBolt(Game1.player.currentLocation, Game1.player.getTileLocation() + new Vector2(0, -2));
-
                     Game1.currentLocation.playSoundPitched("thunder_small", 1200);
 
                 }
@@ -676,13 +654,7 @@ namespace StardewDruid.Map
                 else
                 {
 
-                    effigyReply = "Forgotten Effigy: ^Your name is known within the celestial plane. ^Travel to the lake of flames. Retrieve the final vestige of the first farmer." +
-                    "^..." +
-                    $"^({mod.CastControl()} with a weapon or scythe in hand to perform rite of the stars)";
-
-                    mod.UpdateBlessing("stars");
-
-                    StarsDecoration();
+                    effigyReply = "Forgotten Effigy: ^Your name is known within the celestial plane. ^Travel to the lake of flames. Retrieve the final vestige of the first farmer.";
 
                     mod.NewQuest("swordStars");
 
@@ -693,6 +665,16 @@ namespace StardewDruid.Map
             }
             else if (!mod.QuestComplete("challengeStars"))
             {
+
+
+                if (!blessingList.ContainsKey("stars"))
+                {
+
+                    mod.UpdateBlessing("stars");
+
+                    StarsDecoration();
+
+                }
 
                 if (mod.QuestGiven("challengeStars"))
                 {
@@ -719,12 +701,10 @@ namespace StardewDruid.Map
                 
                 effigyReply = "Satisfied Effigy: ^Your power rivals that of the first farmer. I have nothing further to teach you. When the seasons change, the valley may call upon your aid once again."+
                 "^..." +
-                $"^(Special Power Limit at Max. Thank you for playing with StardewDruid." +
-                $"^Credits: Neosinf/StardewDruid, PathosChild/SMAPI, ConcernedApe/StardewValley)";
+                "^(Thank you for playing with StardewDruid." +
+                "^Credits: Neosinf/StardewDruid, PathosChild/SMAPI, ConcernedApe/StardewValley)";
 
-                mod.LevelBlessing("special");
-
-                Game1.currentLocation.playSoundPitched("Yoba", 1200);
+                Game1.currentLocation.playSound("Yoba");
 
             }
 
@@ -835,21 +815,6 @@ namespace StardewDruid.Map
             }
 
             mod.UpdateBlessing(effigyAnswer);
-
-            Game1.activeClickableMenu = new DialogueBox(effigyReply);
-
-        }
-
-        public void DialogueSpecial()
-        {
-
-            string effigyReply = "Forgotten Effigy: " +
-                "^To draw out and transform the very essense of a thing requires a tremendous amount of concentration and luck." +
-                "^Your ability to perform successive rites of transmutation between rests will increase with training." +
-                "^..." +
-                $"^(Special Power activation rate diminishes on successive usage of certain effects, such as cultivation and warp extraction.)";
-
-            Dictionary<string, int> blessingList = mod.BlessingList();
 
             Game1.activeClickableMenu = new DialogueBox(effigyReply);
 

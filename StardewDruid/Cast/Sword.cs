@@ -2,6 +2,7 @@
 using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Menus;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
@@ -54,6 +55,64 @@ namespace StardewDruid.Cast
 
         public override void CastEarth()
         {
+
+            string effigyQuestion = "Voices in the Rustle of the Leaves: " +
+                "^You refer to the one destined to bring balance to the for- rest... between the light...of Spring... the dark... of Winter ...you believe it's this... farmer?";
+
+            List<Response> effigyChoices = new()
+            {
+                new Response("trigger", "I've come to pay homage to the Kings of Oak and Holly."),
+
+                new Response("none", "(say nothing)")
+            };
+
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerEarth);
+
+            targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+
+        }
+
+        public void AnswerEarth(Farmer effigyVisitor, string effigyAnswer)
+        {
+
+            switch (effigyAnswer)
+            {
+                case "trigger":
+
+                    Game1.activeClickableMenu = new DialogueBox("Two voices speak in unison: \"...Arise...\"");
+
+                    DelayedAction.functionAfterDelay(ThrowEarth, 2000);
+
+                    mod.RemoveTrigger("swordEarth");
+
+                    mod.UpdateQuest("swordEarth", true);
+
+                    break;
+
+                default:
+
+                    Game1.activeClickableMenu = new DialogueBox("The voices disperse into a rustle of laughter and whispered chants.");
+
+                    break;
+
+            }
+
+            return;
+
+        }
+
+        public void ThrowEarth()
+        {
+
+            DialogueBox dialogueBox = Game1.activeClickableMenu as DialogueBox;
+            
+            if(dialogueBox != null)
+            {
+
+                dialogueBox.closeDialogue();
+
+            }
+
             //---------------------- throw Forest Sword
 
             swordIndex = 15;
@@ -64,21 +123,81 @@ namespace StardewDruid.Cast
 
             //----------------------- cast animation
 
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-2, -2));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-2, -3));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-1, -4));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-0, -5));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(1, -5));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(1, -4));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(2, -3));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(2, -2));
-
-            mod.UpdateQuest("swordEarth", true);
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-3, -2));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-3, -3));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-2, -4));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-1, -5));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(0, -6));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(1, -6));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(2, -5));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(3, -4));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(4, -3));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(4, -2));
 
         }
 
         public override void CastWater()
         {
+            
+            string effigyQuestion = "Voices in the Breaking of the Waves: " +
+                "^The river sings again... smish... the spring is clean... smashh... the farmer is friend to the water...";
+
+            List<Response> effigyChoices = new()
+            {
+                new Response("trigger", "I harken to the Voice Beyond the Shore."),
+
+                new Response("none", "(say nothing)")
+            };
+
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerWater);
+
+            targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+
+        }
+
+        public void AnswerWater(Farmer effigyVisitor, string effigyAnswer)
+        {
+
+            switch (effigyAnswer)
+            {
+                case "trigger":
+
+                    Game1.activeClickableMenu = new DialogueBox("Voice Beyond the Shore: \"And I Hear Your Voice.\"");
+
+                    targetLocation.playSound("thunder_small");
+
+                    DelayedAction.functionAfterDelay(ThrowWater, 2000);
+
+                    mod.RemoveTrigger("swordWater");
+
+                    mod.UpdateQuest("swordWater", true);
+
+                    break;
+
+                default:
+
+                    Game1.activeClickableMenu = new DialogueBox("The voices disperse into the gentle rolling of the waves.");
+
+                    break;
+
+            }
+
+            return;
+
+        }
+
+        public void ThrowWater()
+        {
+
+            DialogueBox dialogueBox = Game1.activeClickableMenu as DialogueBox;
+
+            if (dialogueBox != null)
+            {
+
+                dialogueBox.closeDialogue();
+
+            }
+
             //---------------------- throw Neptune Glaive
 
             swordIndex = 14;
@@ -93,12 +212,68 @@ namespace StardewDruid.Cast
 
             ModUtility.AnimateBolt(targetLocation, originVector);
 
-            mod.UpdateQuest("swordWater", true);
-
         }
+
 
         public override void CastStars()
         {
+
+            string effigyQuestion = "Voices in the Roiling Flames: " +
+                "^???? ...it's the farmer... the shadow slayer... unburnt... watch we do...";
+
+            List<Response> effigyChoices = new()
+            {
+                new Response("trigger", "May the Lights Beyond the Expanse shine upon me."),
+
+                new Response("none", "(say nothing)")
+            };
+
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerStars);
+
+            targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+
+        }
+
+        public void AnswerStars(Farmer effigyVisitor, string effigyAnswer)
+        {
+
+            switch (effigyAnswer)
+            {
+                case "trigger":
+
+                    Game1.activeClickableMenu = new DialogueBox("Voices in the Roiling Flames: \"...Star Caller...\"");
+
+                    DelayedAction.functionAfterDelay(ThrowStars, 2000);
+
+                    mod.RemoveTrigger("swordStars");
+
+                    mod.UpdateQuest("swordStars", true);
+
+                    break;
+
+                default:
+
+                    Game1.activeClickableMenu = new DialogueBox("The voices disperse into the churning of the lava.");
+
+                    break;
+
+            }
+
+            return;
+
+        }
+
+        public void ThrowStars()
+        {
+
+            DialogueBox dialogueBox = Game1.activeClickableMenu as DialogueBox;
+
+            if (dialogueBox != null)
+            {
+
+                dialogueBox.closeDialogue();
+
+            }
 
             //---------------------- throw Lava Katana
 
@@ -114,9 +289,12 @@ namespace StardewDruid.Cast
 
             ModUtility.AnimateMeteor(targetLocation, originVector, true);
 
+            mod.RemoveTrigger("swordStars");
+
             mod.UpdateQuest("swordStars", true);
 
         }
+
 
         public void ThrowSword(Vector2 originVector, int delayThrow = 200)
         {
