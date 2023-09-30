@@ -24,7 +24,7 @@ namespace StardewDruid.Cast
 
             int debrisType = 390;
 
-            int debrisAmount = randomIndex.Next(1, 6);
+            int debrisAmount = randomIndex.Next(1, 5);
 
             for (int i = 0; i < debrisAmount; i++)
             {
@@ -36,8 +36,6 @@ namespace StardewDruid.Cast
             if (debrisAmount == 1)
             {
                 Game1.createObjectDebris(382, (int)targetVector.X + 1, (int)targetVector.Y);
-
-                Game1.createObjectDebris(382, (int)targetVector.X, (int)targetVector.Y + 1);
 
             }
 

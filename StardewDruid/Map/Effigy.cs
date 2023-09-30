@@ -472,7 +472,7 @@ namespace StardewDruid.Map
 
                         effigyReply = "Forgotten Effigy: ^The valley springs into new life. Go now, sample its hidden bounty, and prepare to face those who guard its secrets." +
                             "^..." +
-                            $"^({mod.CastControl()}: extract foragables from large bushes, trees, grass and bodies of water. Might spawn monsters.)";
+                            $"^({mod.CastControl()}: extract foragables from large bushes, wood from trees, fibre and seeds from grass and small fish from water. Might spawn monsters.)";
 
                         break;
 
@@ -480,7 +480,7 @@ namespace StardewDruid.Map
 
                         effigyReply = "Forgotten Effigy: ^Years of stagnation have starved the valley of it's wilderness. Go now, and recolour the barren spaces." +
                             "^..." +
-                            $"^({mod.CastControl()}: sprout trees, seasonal forage and flowers in empty spaces)";
+                            $"^({mod.CastControl()}: sprout trees, grass, seasonal forage and flowers in empty spaces)";
 
                         break;
 

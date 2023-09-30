@@ -87,7 +87,7 @@ namespace StardewDruid.Cast
                 }
 
             }  
-            else if (probability == 2)
+            /*else if (probability == 2)
             {
 
                 switch (Game1.currentSeason)
@@ -117,7 +117,7 @@ namespace StardewDruid.Cast
 
                 }
 
-            }
+            }*/
             else
             {
 

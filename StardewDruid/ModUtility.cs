@@ -434,6 +434,7 @@ namespace StardewDruid
                             [2] = 433, // coffee
                             [3] = 745, // strawberry
                             [4] = 473, // bean
+                            [5] = 477, // kale
                         };
 
                         break;
@@ -446,7 +447,8 @@ namespace StardewDruid
                             [1] = 485, // red cabbage
                             [2] = 433, // coffee
                             [3] = 481, // blueberry
-                            [4] = 301 // hops
+                            [4] = 301, // hops
+                            [5] = 483, // wheat
                         };
 
 
@@ -460,7 +462,8 @@ namespace StardewDruid
                             [1] = 492, // yam
                             [2] = 299, // amaranth
                             [3] = 493, // cranberry
-                            [4] = 302 // grape
+                            [4] = 302, // grape
+                            [5] = 299, // amaranth
                         };
 
                         break;
