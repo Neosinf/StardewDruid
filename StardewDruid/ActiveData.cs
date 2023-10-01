@@ -20,6 +20,8 @@ namespace StardewDruid
 
         public int chargeLevel = 0;
 
+        public int cycleLevel = 1;
+
         public bool castComplete = false;
 
         public int activeDirection = -1;

@@ -36,7 +36,7 @@ namespace StardewDruid.Map
 
             Dictionary<string, bool> spawnIndex;
 
-            if (playerLocation.Name == "Farm")
+            if (playerLocation.Name == "Farm" || playerLocation.Name == "Custom_Garden")
             {
                 spawnIndex = new()
                 {
@@ -50,7 +50,26 @@ namespace StardewDruid.Map
                     ["critter"] = true,
                     ["meteor"] = true,
                     ["fishspot"] = false,
-                    ["stonecut"] = true,
+                    ["cropseed"] = true,
+
+                };
+
+            }
+            else if (playerLocation.isGreenhouse.Value)
+            {
+
+                spawnIndex = new()
+                {
+
+                    ["forage"] = false,
+                    ["flower"] = false,
+                    ["grass"] = false,
+                    ["trees"] = false,
+                    ["fishup"] = false,
+                    ["wilderness"] = false,
+                    ["critter"] = false,
+                    ["meteor"] = false,
+                    ["fishspot"] = false,
                     ["cropseed"] = true,
 
                 };
@@ -71,7 +90,6 @@ namespace StardewDruid.Map
                     ["critter"] = true,
                     ["meteor"] = true,
                     ["fishspot"] = true,
-                    ["stonecut"] = true,
                     ["cropseed"] = false,
 
                 };
@@ -92,7 +110,6 @@ namespace StardewDruid.Map
                     ["critter"] = true,
                     ["meteor"] = true,
                     ["fishspot"] = true,
-                    ["stonecut"] = true,
                     ["cropseed"] = false,
 
                 };
@@ -113,13 +130,12 @@ namespace StardewDruid.Map
                     ["critter"] = true,
                     ["meteor"] = true,
                     ["fishspot"] = false,
-                    ["stonecut"] = true,
                     ["cropseed"] = false,
 
                 };
 
             }
-            else if (playerLocation.Name.Contains("Backwoods") || playerLocation is Woods)
+            else if (playerLocation.Name.Contains("Backwoods") || playerLocation is Woods || playerLocation.Name.Contains("Grampleton"))
             {
                 spawnIndex = new()
                 {
@@ -128,12 +144,11 @@ namespace StardewDruid.Map
                     ["flower"] = true,
                     ["grass"] = false,
                     ["trees"] = false,
-                    ["fishup"] = false,
+                    ["fishup"] = true,
                     ["wilderness"] = true,
                     ["critter"] = true,
                     ["meteor"] = true,
                     ["fishspot"] = true,
-                    ["stonecut"] = false,
                     ["cropseed"] = false,
 
                 };
@@ -152,7 +167,6 @@ namespace StardewDruid.Map
                     ["critter"] = true,
                     ["meteor"] = true,
                     ["fishspot"] = true,
-                    ["stonecut"] = false,
                     ["cropseed"] = false,
 
                 };
@@ -171,7 +185,6 @@ namespace StardewDruid.Map
                     ["critter"] = false,
                     ["meteor"] = true,
                     ["fishspot"] = false,
-                    ["stonecut"] = false,
                     ["cropseed"] = false,
 
                 };
@@ -192,7 +205,6 @@ namespace StardewDruid.Map
                     ["critter"] = true,
                     ["meteor"] = false,
                     ["fishspot"] = true,
-                    ["stonecut"] = false,
                     ["cropseed"] = false,
 
                 };
@@ -213,7 +225,26 @@ namespace StardewDruid.Map
                     ["critter"] = false,
                     ["meteor"] = false,
                     ["fishspot"] = true,
-                    ["stonecut"] = false,
+                    ["cropseed"] = false,
+
+                };
+
+            }
+            else if (playerLocation.Name.Contains("DeepWoods"))
+            {
+
+                spawnIndex = new()
+                {
+
+                    ["forage"] = false,
+                    ["flower"] = false,
+                    ["grass"] = false,
+                    ["trees"] = false,
+                    ["fishup"] = false,
+                    ["wilderness"] = false,
+                    ["critter"] = true,
+                    ["meteor"] = true,
+                    ["fishspot"] = true,
                     ["cropseed"] = false,
 
                 };

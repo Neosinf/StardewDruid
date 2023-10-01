@@ -378,6 +378,12 @@ namespace StardewDruid.Map
 
                     break;
 
+                case "ancestor":
+
+                    DelayedAction.functionAfterDelay(DialogueAncestor, 100);
+
+                    break;
+
             }
 
             return;
@@ -397,6 +403,13 @@ namespace StardewDruid.Map
 
             effigyChoices.Add(new Response("journey", "What is the first lesson?"));
 
+            if(Game1.year >= 2)
+            {
+
+                effigyChoices.Add(new Response("ancestor", "The first farmer was my ancestor, and my family has practiced his craft for generations"));
+
+            };
+
             effigyChoices.Add(new Response("none", "(say nothing)"));
 
             GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerApproach);
@@ -405,15 +418,12 @@ namespace StardewDruid.Map
 
         }
 
-
         public void DialogueJourney()
         {
 
             Dictionary<string, int> blessingList = mod.BlessingList();
 
             string effigyReply;
-
-            string hudPrompt = "";
 
             if (lessonGiven)
             {
@@ -434,7 +444,7 @@ namespace StardewDruid.Map
                     effigyReply = "Forgotten Effigy: " +
                     "^Seek the patronage of the two Kings. Find the giant malus of the southern forest and perform a rite below it's boughs." +
                     "..."+
-                    $"^({mod.CastControl()} to perform a rite)";
+                    $"^({mod.CastControl()} with a melee weapon or scythe in hand to perform a rite. Hold the button to increase the range of the effect.)";
 
                     mod.NewQuest("swordEarth");
 
@@ -464,7 +474,7 @@ namespace StardewDruid.Map
                         effigyReply = "Forgotten Effigy: ^Good. You are now a subject of the two kingdoms, and bear authority over the weed and the twig. " +
                             "Use this new power to drive out decay and detritus. Return tomorrow for another lesson." +
                             "^..." +
-                            $"^({mod.CastControl()}: explode weeds and twigs)";
+                            $"^({mod.CastControl()}: explode weeds and twigs. Remotely greet animals, pets and villagers once a day. Hold the button to increase the range of the effect.)";
 
                         break;
 
@@ -480,7 +490,7 @@ namespace StardewDruid.Map
 
                         effigyReply = "Forgotten Effigy: ^Years of stagnation have starved the valley of it's wilderness. Go now, and recolour the barren spaces." +
                             "^..." +
-                            $"^({mod.CastControl()}: sprout trees, grass, seasonal forage and flowers in empty spaces)";
+                            $"^({mod.CastControl()}: sprout trees, grass, seasonal forage and flowers in empty spaces.)";
 
                         break;
 
@@ -488,7 +498,7 @@ namespace StardewDruid.Map
 
                         effigyReply = "Forgotten Effigy: ^Your connection to the earth deepens. You may channel the power of the Two Kings for your own purposes." +
                             "^..." +
-                            $"^({mod.CastControl()}: increase the growth rate and quality of growing crops. Convert planted wild seeds into random cultivations. Stamina cost increases for each stage of growth.)";
+                            $"^({mod.CastControl()}: increase the growth rate and quality of growing crops. Convert planted wild seeds into random cultivations. Fertilise trees and uptick the growth rate of fruittrees.)";
 
                         break;
 
@@ -496,8 +506,7 @@ namespace StardewDruid.Map
 
                         effigyReply = "Forgotten Effigy: ^Be careful in the mines. The deep earth answers your call, both above and below you." +
                             "^..." +
-                            $"^({mod.CastControl()}: shake loose rocks free from the ceilings of mine shafts. Explode gem ores." +
-                            $")";
+                            $"^({mod.CastControl()}: shake loose rocks free from the ceilings of mine shafts. Explode gem ores.)";
 
                         break;
 
@@ -506,11 +515,12 @@ namespace StardewDruid.Map
                         if (mod.QuestGiven("challengeEarth"))
                         {
                             effigyReply = "Forgotten Effigy: Stop dallying. Return when the mountain is cleansed.";
-
                         }
                         else
                         {
-                            effigyReply = "Forgotten Effigy: ^A trial presents itself. Foulness seeps from the mountain springs. Cleanse the source with the King's blessing.";
+                            effigyReply = "Forgotten Effigy: ^A trial presents itself. Foulness seeps from the mountain springs. Cleanse the source with the King's blessing."+
+                            "^..." +
+                            $"^(You have received a new quest.)";
 
                             mod.NewQuest("challengeEarth");
 
@@ -544,7 +554,7 @@ namespace StardewDruid.Map
                 {
                     effigyReply = "Forgotten Effigy: ^The Voice Beyond the Shore harkens to you now. ^Perform a rite at the furthest pier, and behold her power." +
                     "^..." +
-                    $"^({mod.CastControl()} with a weapon or scythe in hand to perform a rite)";
+                    $"^({mod.CastControl()} with a weapon or scythe in hand to perform a rite. Hold the button to increase the range of the effect.)";
 
                     mod.NewQuest("swordWater");
 
@@ -620,7 +630,9 @@ namespace StardewDruid.Map
                         else
                         {
 
-                            effigyReply = "Forgotten Effigy: ^A new trial presents itself. Creatures of shadow linger in the hollowed grounds of the village. Smite them with the Lady's blessing.";
+                            effigyReply = "Forgotten Effigy: ^A new trial presents itself. Creatures of shadow linger in the hollowed grounds of the village. Smite them with the Lady's blessing." +
+                            "^..." +
+                            $"^(You have received a new quest.)";
 
                             mod.NewQuest("challengeWater");
 
@@ -683,7 +695,9 @@ namespace StardewDruid.Map
                 }
                 else
                 {
-                    effigyReply = "Forgotten Effigy: ^Your last trial awaits. The southern forest reeks of our mortal enemy. Rain judgement upon the slime with the blessing of the Stars.";
+                    effigyReply = "Forgotten Effigy: ^Your last trial awaits. The southern forest reeks of our mortal enemy. Rain judgement upon the slime with the blessing of the Stars." +
+                            "^..." +
+                            $"^(You have received a new quest.)";
 
                     mod.NewQuest("challengeStars");
 
@@ -704,13 +718,7 @@ namespace StardewDruid.Map
                 "^(Thank you for playing with StardewDruid." +
                 "^Credits: Neosinf/StardewDruid, PathosChild/SMAPI, ConcernedApe/StardewValley)";
 
-                Game1.currentLocation.playSound("Yoba");
-
-            }
-
-            if (hudPrompt.Length > 0)
-            {
-                Game1.addHUDMessage(new HUDMessage(hudPrompt, ""));
+                Game1.currentLocation.playSound("yoba");
 
             }
 
@@ -720,6 +728,20 @@ namespace StardewDruid.Map
                 Game1.activeClickableMenu = new DialogueBox(effigyReply);
 
             }
+
+        }
+
+        public void DialogueAncestor()
+        {
+            string effigyReply = "Satisfied Effigy: ^Indeed, I hear the wisdom of the old valley in each word spoken. I am blessed to serve you, and know, there is much to be done." +
+            "^..." +
+            "^( All rites unlocked at maximum level )";
+
+            Game1.currentLocation.playSound("yoba");
+
+            mod.UnlockAll();
+
+            Game1.activeClickableMenu = new DialogueBox(effigyReply);
 
         }
 

@@ -12,6 +12,8 @@ using StardewValley.TerrainFeatures;
 using xTile.Dimensions;
 using xTile.Layers;
 using xTile.Tiles;
+using StardewValley.Locations;
+using System.Threading;
 
 namespace StardewDruid
 {
@@ -25,38 +27,184 @@ namespace StardewDruid
 
             AnimationFrame carryAnimation;
 
+            int frameIndex;
+
+            bool frameFlip = false;
+
             switch (direction)
             {
 
                 case 0: // Up
 
-                    carryAnimation = new(12, timeFrame, true, false); // changes secondaryArm to active
+                    frameIndex = 12;
 
                     break;
 
                 case 1: // Right
 
-                    carryAnimation = new(6, timeFrame, true, false);
+                    frameIndex = 6;
 
                     break;
 
                 case 2: // Down
 
-                    carryAnimation = new(0, timeFrame, true, false);
+                    frameIndex = 0;
 
                     break;
 
                 default: // Left
 
-                    carryAnimation = new(6, timeFrame, true, true); // same as right but flipped
+                    frameIndex = 6;
+
+                    frameFlip = true; // same as right but flipped
 
                     break;
 
             }
 
+            carryAnimation = new(frameIndex, timeFrame, true, frameFlip);
+
             player.FarmerSprite.animateOnce(new AnimationFrame[1] { carryAnimation });
 
+
         }
+
+        /*public static void AnimateHands(Farmer player, int direction, int timeFrame)
+        {
+
+            //player.Halt();
+
+            //int newDirection = player.getFacingDirection();
+
+            int newDirection = direction;
+
+            AnimationFrame carryAnimation;
+
+            int frameIndex;
+
+            bool frameFlip = false;
+
+            bool stillFrame = false;
+
+            switch (newDirection)
+            {
+
+                case 0: // Up
+                    
+                    if (player.running)
+                    {
+
+                        frameIndex = 144;
+
+                    } 
+                    else if (player.isMoving())
+                    {
+
+                        frameIndex = 112;
+            
+                    }
+                    else
+                    {
+
+                        frameIndex = 12;
+
+                        stillFrame = true;
+                    }
+
+                    break;
+
+                case 1: // Right
+
+                    if (player.running)
+                    {
+
+                        frameIndex = 128;
+
+                    }
+                    else if (player.isMoving())
+                    {
+
+                        frameIndex = 96;
+
+                    }
+                    else
+                    {
+
+                        frameIndex = 6;
+
+                        stillFrame = true;
+                    }
+
+                    break;
+
+                case 2: // Down
+
+                    if (player.running)
+                    {
+
+                        frameIndex = 136;
+
+                    }
+                    else if (player.isMoving())
+                    {
+
+                        frameIndex = 104;
+
+                    }
+                    else
+                    {
+
+                        frameIndex = 0;
+
+                        stillFrame = true;
+                    }
+
+                    break;
+
+                default: // Left
+
+                    if (player.running)
+                    {
+
+                        frameIndex = 152;
+
+                    }
+                    else if (player.isMoving())
+                    {
+
+                        frameIndex = 120;
+
+                    }
+                    else
+                    {
+
+                        frameIndex = 6;
+
+                        frameFlip = true; // same as right but flipped
+
+                        stillFrame = true; 
+
+                    }
+                    break;
+
+            }
+
+            if (stillFrame)
+            {
+
+                carryAnimation = new(frameIndex, timeFrame, true, frameFlip);
+
+                player.FarmerSprite.animateOnce(new AnimationFrame[1] { carryAnimation });
+                
+            }
+            else
+            {
+
+                player.FarmerSprite.animate(frameIndex, timeFrame);
+
+            }
+
+        }*/
 
         public static void AnimateGrowth(GameLocation targetLocation, Vector2 targetVector) // DruidCastGrowth
         {
@@ -270,6 +418,35 @@ namespace StardewDruid
 
             Layer pathsLayer = targetLocation.Map.GetLayer("Paths");
 
+            if (targetLocation is BuildableGameLocation)
+            {
+
+                foreach (Vector2 neighbourVector in neighbourVectors)
+                {
+
+                    BuildableGameLocation farmLocation = targetLocation as BuildableGameLocation;
+
+                    if (farmLocation.isTileOccupiedForPlacement(neighbourVector))
+                    {
+
+                        if (!neighbourList.ContainsKey("Building"))
+                        {
+
+                            neighbourList["Building"] = new();
+
+                        }
+
+                        neighbourList["Building"].Add(neighbourVector);
+
+                    }
+
+                    continue;
+
+
+                }
+
+            }
+
             foreach (Vector2 neighbourVector in neighbourVectors)
             {
 
@@ -295,7 +472,7 @@ namespace StardewDruid
                     continue;
 
                 }
-
+                
                 if (pathsLayer != null)
                 {
 
@@ -325,6 +502,19 @@ namespace StardewDruid
 
                     switch (terrainFeature.GetType().Name.ToString())
                     {
+
+                        case "FruitTree":
+
+                            if (!neighbourList.ContainsKey("Sapling"))
+                            {
+
+                                neighbourList["Sapling"] = new();
+
+                            }
+
+                            neighbourList["Sapling"].Add(neighbourVector);
+
+                            break;
 
                         case "Tree":
 
@@ -820,6 +1010,121 @@ namespace StardewDruid
 
         }
 
+
+        static List<Vector2> TilesWithinSeven(Vector2 center)
+        {
+            List<Vector2> result = new() {
+
+                center + new Vector2(0,-7), // N
+                center + new Vector2(1,-7),
+
+                center + new Vector2(2,-6),
+                //center + new Vector2(3,-6),
+
+                center + new Vector2(4,-5), // NE
+                center + new Vector2(5,-4), // NE
+
+                //center + new Vector2(6,-3),
+                center + new Vector2(6,-2),
+
+                center + new Vector2(7,-1),
+                center + new Vector2(7,0), // E
+                center + new Vector2(7,1),
+
+                center + new Vector2(6,2),
+                //center + new Vector2(6,3),
+
+                center + new Vector2(5,4), // SE
+                center + new Vector2(4,5), // SE
+
+                //center + new Vector2(3,6),
+                center + new Vector2(2,6),
+
+                center + new Vector2(1,7),
+                center + new Vector2(0,7), // S
+                center + new Vector2(-1,7),
+
+                center + new Vector2(-2,6),
+                //center + new Vector2(-3,6),
+
+                center + new Vector2(-4,5), // SW
+                center + new Vector2(-5,4), // SW
+
+                //center + new Vector2(-6,3),
+                center + new Vector2(-6,2),
+
+                center + new Vector2(-7,-1),
+                center + new Vector2(-7,0), // W
+                center + new Vector2(-7,1),
+
+                center + new Vector2(-6,-2),
+                //center + new Vector2(-6,-3),
+
+                center + new Vector2(-5,-4), // NW
+                center + new Vector2(-4,-5), // NW
+
+                //center + new Vector2(-3,-6),
+                center + new Vector2(-2,-6),
+
+                center + new Vector2(-1,-7), // NNW
+
+            };
+
+            return result;
+
+        }
+
+        static List<Vector2> TilesWithinEight(Vector2 center)
+        {
+            List<Vector2> result = new() {
+
+                center + new Vector2(2,-7),
+                center + new Vector2(3,-6),
+
+                center + new Vector2(4,-6),
+                center + new Vector2(5,-5), // NE
+                center + new Vector2(6,-4),
+
+                center + new Vector2(6,-3),
+                center + new Vector2(7,-2),
+
+                center + new Vector2(7,2),
+                center + new Vector2(6,3),
+
+                center + new Vector2(6,4),
+                center + new Vector2(5,5), // SE
+                center + new Vector2(4,6),
+
+                center + new Vector2(3,6),
+                center + new Vector2(2,7),
+
+                center + new Vector2(-2,7),
+                center + new Vector2(-3,6),
+
+                center + new Vector2(-4,6),
+                center + new Vector2(-5,5), // SW
+                center + new Vector2(-6,4),
+
+                center + new Vector2(-6,3),
+                center + new Vector2(-7,2),
+
+                center + new Vector2(-7,-2),
+                center + new Vector2(-6,-3),
+
+                center + new Vector2(-6,-4),
+                center + new Vector2(-5,-5), // NW
+                center + new Vector2(-4,-6),
+
+                center + new Vector2(-3,-6),
+                center + new Vector2(-2,-7),
+
+
+            };
+
+            return result;
+
+        }
+
         public static List<Vector2> GetTilesWithinRadius(GameLocation playerLocation, Vector2 center, int level)
         {
 
@@ -844,6 +1149,12 @@ namespace StardewDruid
                     break;
                 case 6:
                     templateList = TilesWithinSix(center);
+                    break;
+                case 7:
+                    templateList = TilesWithinSeven(center);
+                    break;
+                case 8:
+                    templateList = TilesWithinEight(center);
                     break;
                 default: // 0
                     templateList = new() { center, };

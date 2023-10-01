@@ -5,7 +5,9 @@ using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Characters;
 using StardewValley.Locations;
+using StardewValley.Menus;
 using StardewValley.Monsters;
 using StardewValley.Objects;
 using StardewValley.Quests;
@@ -74,32 +76,24 @@ namespace StardewDruid
         private void SaveLoaded(object sender, SaveLoadedEventArgs e)
         {
 
+            Config = Helper.ReadConfig<ModData>();
+
             staticData = Helper.Data.ReadSaveData<StaticData>("staticData");
 
-            staticData ??= new StaticData() {
+            staticData ??= new StaticData();
 
-                /* activeBlessing = "none",
+            if (Config.startWithBlessing)
+            {
 
-                 questList = new()
-                 {
-                     ["approachEffigy"] = true,
-                     ["challengeEarth"] = true,
-                     ["challengeWater"] = true,
-                     ["challengeStars"] = true,
-                 },
+                staticData.questList = Config.questList;
 
-                 blessingList = new()
-                 {
-                     ["earth"] = 5,
-                     ["water"] = 5,
-                     ["stars"] = 1,
-                 },
-             */
-            };
+                staticData.blessingList = Config.blessingList;
+
+                staticData.activeBlessing = "earth";
+
+            }
 
             questIndex = Map.QuestData.QuestList();
-
-            //ReviewQuests();
 
             if (staticData.questList.Count == 0)
             {
@@ -111,8 +105,6 @@ namespace StardewDruid
                 ReassignQuest(firstQuest);
 
             }
-
-            Config = Helper.ReadConfig<ModData>();
 
             buttonList = Config.buttonList;
 
@@ -367,22 +359,6 @@ namespace StardewDruid
 
             }
 
-            // ignore if current tool isn't set
-            if (Game1.player.CurrentTool is null)
-            {
-
-                return;
-
-            }
-
-            // ignore if current tool isn't weapon
-            if (Game1.player.CurrentTool.GetType().Name != "MeleeWeapon")
-            {
-
-                return;
-
-            }
-
             bool chargeEffect = false;
 
             // check for cast trigger
@@ -399,6 +375,26 @@ namespace StardewDruid
                 }
                 else if (buttonList.Contains(buttonPressed.ToString())) 
                 {
+
+                    // ignore if current tool isn't set
+                    if (Game1.player.CurrentTool is null)
+                    {
+
+                        Game1.addHUDMessage(new HUDMessage("Requires a melee weapon or scythe to activate rite", 2));
+
+                        return;
+
+                    }
+
+                    // ignore if current tool isn't weapon
+                    if (Game1.player.CurrentTool.GetType().Name != "MeleeWeapon")
+                    {
+
+                        Game1.addHUDMessage(new HUDMessage("Requires a melee weapon or scythe to activate rite", 2));
+
+                        return;
+
+                    }
 
                     Vector2 playerVector = Game1.player.getTileLocation();
 
@@ -454,9 +450,9 @@ namespace StardewDruid
                     foreach (Map.Quest questData in triggeredQuests)
                     {
 
-                        ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 225);
+                        ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 500);
 
-                        //Game1.player.currentLocation.playSound("Yoba");
+                        Game1.player.currentLocation.playSound("yoba");
 
                         Cast.Cast castHandle;
 
@@ -468,6 +464,8 @@ namespace StardewDruid
                         {
                             castHandle = new Cast.Challenge(this, playerVector, new Rite(), questData);
                         }
+
+                        RemoveTrigger(questData.name);
 
                         castHandle.CastQuest();
 
@@ -481,6 +479,10 @@ namespace StardewDruid
 
                     if (activeBlessing == "none")
                     {
+
+                        //ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 500);
+
+                        Game1.player.currentLocation.playSound("ghost");
 
                         Game1.addHUDMessage(new HUDMessage("Nothing happens", 2));
 
@@ -531,11 +533,13 @@ namespace StardewDruid
                     // ignore if game location has no spawn profile
                     if(spawnIndex.Count == 0)
                     {
-
+                        
                         if(activeBlessing != "none")
                         {
 
                             Game1.addHUDMessage(new HUDMessage("Unable to reach the otherworldly plane", 2));
+
+                            //Monitor.Log($"{Game1.player.currentLocation.Name} {activeBlessing}",LogLevel.Debug);
 
                         }
 
@@ -556,6 +560,23 @@ namespace StardewDruid
                     chargeEffect = true;
 
                 }
+
+            }
+
+
+            // ignore if current tool isn't set
+            if (Game1.player.CurrentTool is null)
+            {
+
+                return;
+
+            }
+
+            // ignore if current tool isn't weapon
+            if (Game1.player.CurrentTool.GetType().Name != "MeleeWeapon")
+            {
+
+                return;
 
             }
 
@@ -610,7 +631,7 @@ namespace StardewDruid
                     if (Game1.player.Stamina <= staminaRequired)
                     {
 
-                        if(activeData.castLevel >= 1)
+                        if (activeData.castLevel >= 1)
                         {
                             Game1.addHUDMessage(new HUDMessage("Not enough energy to continue rite", 3));
 
@@ -626,6 +647,64 @@ namespace StardewDruid
                         return;
 
                     }
+
+                    if (activeData.chargeAmount == 0 || activeData.chargeAmount % 12 == 0)
+                    {
+
+                        //ModUtility.AnimateHands(Game1.player, activeData.activeDirection, 225);
+
+                    }
+
+                    activeData.activeKey = buttonHeld.ToString();
+
+                    chargeEffect = true;
+
+                    activeData.chargeAmount++;
+
+                    int chargeLevel = 4;
+
+                    if (activeData.chargeAmount <= 40)
+                    {
+
+                        chargeLevel = 1;
+
+                    }
+                    else if (activeData.chargeAmount <= 80)
+                    {
+
+                        chargeLevel = 2;
+
+                    }
+                    else if (activeData.chargeAmount <= 120)
+                    {
+
+                        chargeLevel = 3;
+
+                    }
+                    else if (activeData.chargeAmount == 160)
+                    {
+
+                        if(activeData.activeCast == "water")
+                        {
+
+                            activeData.activeDirection = -1;
+
+                        }
+
+                        activeData.chargeAmount = 0;
+
+                        activeData.cycleLevel++;
+
+                    }
+
+                    if(activeData.chargeLevel != chargeLevel && activeData.activeCast != "water")
+                    {
+
+                        activeData.activeDirection = -1;
+
+                    }
+
+                    activeData.chargeLevel = chargeLevel;
 
                     // check direction player is facing
                     if (activeData.activeDirection == -1)
@@ -654,35 +733,6 @@ namespace StardewDruid
 
                     }
 
-                    if (activeData.chargeAmount == 0 || activeData.chargeAmount % 12 == 0)
-                    {
-
-                        ModUtility.AnimateHands(Game1.player, activeData.activeDirection, 225);
-
-                    }
-
-                    activeData.activeKey = buttonHeld.ToString();
-
-                    chargeEffect = true;
-
-                    activeData.chargeAmount++;
-
-                    int chargeLevel = 3;
-
-                    if (activeData.chargeAmount <= 40)
-                    {
-
-                        chargeLevel = 1;
-
-                    }
-                    else if (activeData.chargeAmount <= 80)
-                    {
-
-                        chargeLevel = 2;
-
-                    }
-
-                    activeData.chargeLevel = chargeLevel;
 
                 }
 
@@ -837,7 +887,19 @@ namespace StardewDruid
 
             animationFlip = false;
 
-            switch (activeData.chargeLevel)
+            float colorIncrement = 1.2f - (0.2f * activeData.chargeLevel);
+
+            animationColor = new(colorIncrement, 1, colorIncrement, 1);
+
+            animationScale = 0.6f + (0.2f * activeData.chargeLevel);
+
+            float vectorCastX = 12 - (6 * activeData.chargeLevel);
+
+            float vectorCastY = 0 - 122 - (6 * activeData.chargeLevel);
+
+            animationPosition = (activeData.activeVector * 64) + new Vector2(vectorCastX, vectorCastY);
+
+            /*switch (activeData.chargeLevel)
             {
 
                 case 1:
@@ -856,7 +918,7 @@ namespace StardewDruid
                     animationPosition = Game1.player.Position + new Vector2(-6f, -140f); // 2 tiles above player
                     break;
 
-            }
+            }*/
 
             //-------------------------- cast animation
 
@@ -882,17 +944,19 @@ namespace StardewDruid
 
             //activeData.animateLevel = activeData.chargeLevel;
 
+            int pitchLevel = activeData.cycleLevel % 4;
+
             if(activeData.chargeLevel == 1)
             {
 
-                Game1.currentLocation.playSoundPitched("discoverMineral", 800);
+                Game1.currentLocation.playSoundPitched("discoverMineral", 600 + (pitchLevel * 200));
 
             }
 
             if (activeData.chargeLevel == 3)
             {
 
-                Game1.currentLocation.playSoundPitched("discoverMineral", 1000);
+                Game1.currentLocation.playSoundPitched("discoverMineral", 700 + (pitchLevel * 200));
 
             }
 
@@ -931,6 +995,99 @@ namespace StardewDruid
                 castRange = (riteData.castLevel * 2) - 1 + i;
 
                 List<Vector2> tileVectors = ModUtility.GetTilesWithinRadius(riteData.castLocation, riteData.castVector, castRange);
+
+               // bool npcCollision = false;
+
+                if (riteData.castLocation is Farm)
+                {
+                    
+                    foreach (Vector2 tileVector in tileVectors)
+                    {
+
+                        Microsoft.Xna.Framework.Rectangle tileRectangle = new((int)tileVector.X * 64 -16, (int)tileVector.Y * 64 -16, 96, 96);
+
+                        Farm farmLocation = riteData.castLocation as Farm;
+
+                        foreach (KeyValuePair<long, FarmAnimal> pair in farmLocation.animals.Pairs)
+                        {
+
+                            if(!pair.Value.wasPet.Value)
+                            {
+                                
+                                if (pair.Value.GetBoundingBox().Intersects(tileRectangle) || pair.Value.nextPosition(pair.Value.getDirection()).Intersects(tileRectangle))
+                                {
+
+                                    effectCasts[tileVector] = new Cast.PetAnimal(this, tileVector, riteData, pair.Value);
+
+                                    //npcCollision = true;
+
+                                }
+                            
+                            }
+                        
+                        }
+
+                    }
+               
+                }
+
+                if(riteData.castLocation.characters.Count > 1)
+                {
+
+                    foreach (Vector2 tileVector in tileVectors)
+                    {
+
+                        Microsoft.Xna.Framework.Rectangle tileRectangle = new((int)tileVector.X * 64 - 16, (int)tileVector.Y * 64 - 16, 96, 96);
+
+                        Farm farmLocation = riteData.castLocation as Farm;
+
+                        foreach (NPC riteWitness in riteData.castLocation.characters)
+                        {
+
+                            if (riteWitness is Pet)
+                            {
+
+                                if (riteWitness.GetBoundingBox().Intersects(tileRectangle) || riteWitness.nextPosition(riteWitness.getDirection()).Intersects(tileRectangle))
+                                {
+
+                                    Pet petPet = (Pet)riteWitness;
+
+                                    petPet.checkAction(riteData.caster, riteData.castLocation);
+
+                                }
+
+                            }
+                            else if (riteWitness.isVillager())
+                            {
+                                
+                                if (!riteData.caster.hasPlayerTalkedToNPC(riteWitness.Name))
+                                {
+
+                                    if (riteWitness.GetBoundingBox().Intersects(tileRectangle) || riteWitness.nextPosition(riteWitness.getDirection()).Intersects(tileRectangle))
+                                    {
+
+                                        effectCasts[tileVector] = new Cast.GreetVillager(this, tileVector, riteData, riteWitness);
+
+                                        //npcCollision = true;
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                //if (npcCollision)
+                //{
+
+                    //tileVectors.Clear();
+
+                //}
 
                 foreach (Vector2 tileVector in tileVectors)
                 {
@@ -1027,6 +1184,25 @@ namespace StardewDruid
 
                             switch (terrainFeature.GetType().Name.ToString())
                             {
+
+                                case "FruitTree":
+
+                                    StardewValley.TerrainFeatures.FruitTree fruitFeature = terrainFeature as StardewValley.TerrainFeatures.FruitTree;
+
+                                    if (fruitFeature.growthStage.Value >= 4)
+                                    {
+
+                                        effectCasts[tileVector] = new Cast.FruitTree(this, tileVector, riteData);
+
+                                    }
+                                    else if (staticData.blessingList["earth"] >= 4)
+                                    {
+
+                                        effectCasts[tileVector] = new Cast.FruitSapling(this, tileVector, riteData);
+
+                                    }
+                                    
+                                    break;
 
                                 case "Tree":
 
@@ -1411,7 +1587,11 @@ namespace StardewDruid
 
             animationColor = new(0, 0, 0, 0.5f);
 
-            switch (activeData.chargeLevel)
+            animationScale = 0.2f * activeData.chargeLevel;
+
+            animationPosition = (activeData.activeVector * 64) + (new Vector2(6, 6) * (5 - activeData.chargeLevel));
+
+            /*switch (activeData.chargeLevel)
             {
 
                 case 1:
@@ -1427,13 +1607,18 @@ namespace StardewDruid
                     animationPosition = (activeData.activeVector * 64) + new Vector2(12, 12);
                     break;
 
-            }
+            }*/
+
 
             TemporaryAnimatedSprite shadowAnimationOne = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, animationFlip, animationDepth+1, 0f, animationColor, animationScale, 0f, 0f, 0f);
 
             Game1.currentLocation.temporarySprites.Add(shadowAnimationOne);
 
-            switch (activeData.chargeLevel)
+            animationScale = 0.1f + (0.2f * activeData.chargeLevel);
+
+            animationPosition = (activeData.activeVector * 64) + (new Vector2(6, 6) * (5 - activeData.chargeLevel)) - new Vector2(3,3);
+
+            /*switch (activeData.chargeLevel)
             {
 
                 case 1:
@@ -1449,7 +1634,7 @@ namespace StardewDruid
                     animationPosition = (activeData.activeVector * 64) + new Vector2(9, 9);
                     break;
 
-            }
+            }*/
 
             TemporaryAnimatedSprite shadowAnimationTwo = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, animationFlip, animationDepth+2, 0f, animationColor, animationScale, 0f, 0f, 0f)
             {
@@ -1462,7 +1647,19 @@ namespace StardewDruid
 
             //-------------------------- cast animation
 
-            switch (activeData.chargeLevel)
+            float colorIncrement = 1.2f - (0.2f * activeData.chargeLevel);
+
+            animationColor = new(colorIncrement, colorIncrement, 1, 1); // deepens from white to blue
+
+            animationScale = 0.2f + (0.4f * activeData.chargeLevel);
+
+            float vectorCastX = 30 - (12 * activeData.chargeLevel);
+
+            float vectorCastY = 0 - 96 - (32f * activeData.chargeLevel);
+
+            animationPosition = (activeData.activeVector * 64) + new Vector2(vectorCastX, vectorCastY);
+
+            /*switch (activeData.chargeLevel)
             {
 
                 case 1:
@@ -1482,13 +1679,25 @@ namespace StardewDruid
                     animationPosition = (activeData.activeVector * 64) + new Vector2(-6,-192f);
                     break;
 
-            }
+            }*/
 
             TemporaryAnimatedSprite animationOne = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, animationFlip, animationDepth+3, 0f, animationColor, animationScale, 0f, 0f, 0f);
 
             Game1.currentLocation.temporarySprites.Add(animationOne);
 
-            switch (activeData.chargeLevel)
+            colorIncrement = 1.1f - (0.2f * activeData.chargeLevel);
+
+            animationColor = new(colorIncrement, colorIncrement, 1, 1); // deepens from white to blue
+
+            animationScale = 0.4f + (0.4f * activeData.chargeLevel);
+
+            vectorCastX = 24 - (12 * activeData.chargeLevel);
+
+            vectorCastY = 0 - 112 - (32f * activeData.chargeLevel);
+
+            animationPosition = (activeData.activeVector * 64) + new Vector2(vectorCastX, vectorCastY);
+
+            /*switch (activeData.chargeLevel)
             {
                 case 1:
                     animationColor = new(0.9f, 0.9f, 1, 1);
@@ -1507,7 +1716,7 @@ namespace StardewDruid
                     animationPosition = (activeData.activeVector * 64) + new Vector2(-12, -208f);
                     break;
 
-            }
+            }*/
 
             TemporaryAnimatedSprite animationTwo = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, animationFlip, animationDepth+4, 0f, animationColor, animationScale, 0f, 0f, 0f)
             {
@@ -2011,6 +2220,13 @@ namespace StardewDruid
 
                 int castSegment = castSelect / castAttempt;
 
+                if(castAttempt == 5)
+                {
+
+                    castAttempt = 4;
+
+                }
+
                 for (int i = 0; i < castAttempt; i++)
                 {
 
@@ -2175,13 +2391,6 @@ namespace StardewDruid
 
         }
 
-        public void RemoveTrigger(string trigger)
-        {
-
-            staticData.triggerList.Remove(trigger);
-
-        }
-
         public void NewQuest(string quest)
         {
             
@@ -2290,6 +2499,13 @@ namespace StardewDruid
 
         }
 
+        public void RemoveTrigger(string trigger)
+        {
+
+            staticData.triggerList.Remove(trigger);
+
+        }
+
         public void UpdateEarthCasts(GameLocation location, Vector2 vector, bool update)
         {
             
@@ -2348,6 +2564,20 @@ namespace StardewDruid
 
             monsterSpawns[location.Name].Add(monster);
         
+        }
+
+        public void UnlockAll()
+        {
+
+            staticData.blessingList = new()
+            {
+                ["earth"] = 5,
+                ["water"] = 5,
+                ["stars"] = 1,
+            };
+
+            staticData.activeBlessing = "earth";
+
         }
 
     }

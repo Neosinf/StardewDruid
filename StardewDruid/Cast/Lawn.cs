@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using xTile.Dimensions;
 using xTile.Layers;
 using xTile.Tiles;
@@ -131,8 +133,7 @@ namespace StardewDruid.Cast
 
                 int randomCrop = objectIndexes[probability];
 
-                targetLocation.dropObject(
-                    new StardewValley.Object(
+                StardewValley.Object newFlower = new(
                         targetVector,
                         randomCrop,
                         null,
@@ -140,7 +141,31 @@ namespace StardewDruid.Cast
                         canBeGrabbed: true,
                         isHoedirt: false,
                         isSpawnedObject: true
-                    ),
+                    );
+
+                /*List<Color> colorIndexes = new()
+                {
+                    Color.Blue,
+                    Color.Red,
+                    Color.Yellow,
+                    Color.Orange,
+                    Color.Purple,
+                };
+
+                ColoredObject colorFlower = new(randomCrop,1,colorIndexes[randomIndex.Next(5)]);
+
+                colorFlower.ColorSameIndexAsParentSheetIndex = false;
+
+                colorFlower.TileLocation = targetVector;
+
+                colorFlower.CanBeGrabbed = true;
+
+                colorFlower.CanBeSetDown = false;
+
+                colorFlower.IsSpawnedObject = true;*/
+
+                targetLocation.dropObject(
+                    newFlower,
                     new Vector2(targetVector.X * 64, targetVector.Y * 64),
                     Game1.viewport,
                     initialPlacement: true
@@ -149,7 +174,6 @@ namespace StardewDruid.Cast
                 castFire = true;
 
                 castCost = 4;
-
 
             }
             else if (probability >= 2 && probability <= 3 && spawnIndex["forage"] && neighbourList.Count == 0) // 2/120 forage

@@ -344,7 +344,7 @@ namespace StardewDruid.Cast
 
             targetLocation.damageMonster(areaOfEffect, 30 * objectStrength, 40 * objectStrength, true, targetPlayer);
 
-            targetLocation.lightGlows.Add(targetVector * 64);
+            //targetLocation.lightGlows.Add(targetVector * 64);
 
         }
 

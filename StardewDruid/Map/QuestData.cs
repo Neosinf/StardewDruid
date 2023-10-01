@@ -55,11 +55,11 @@ namespace StardewDruid.Map
                     questObjective = "Perform a rite over the aquifier in level 20 of the mines.",
                     questReward = 1500,
 
-                    challengeWithin = new(20, 10),
+                    challengeWithin = new(17, 10),
                     challengeRange = new(9, 9),
                     challengePortals = new() {
 
-                        new(21, 13),
+                        new(20, 13),
 
                     },
                     challengeFrequency = 2,

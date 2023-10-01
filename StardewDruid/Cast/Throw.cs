@@ -13,7 +13,7 @@ namespace StardewDruid.Cast
 
         private Farmer targetPlayer;
 
-        private StardewValley.Object objectInstance;
+        public StardewValley.Item objectInstance;
 
         public int objectIndex;
 
@@ -25,6 +25,8 @@ namespace StardewDruid.Cast
             objectIndex = ObjectIndex;
 
             objectQuality = ObjectQuality;
+
+            objectInstance = new StardewValley.Object(objectIndex, 1, false, -1, objectQuality);
 
         }
 
@@ -69,8 +71,6 @@ namespace StardewDruid.Cast
 
             });
 
-            objectInstance = new StardewValley.Object(objectIndex, 1, false, -1, objectQuality);
-
         }
 
         public void InventoriseObject(int endBehaviour)
@@ -81,7 +81,19 @@ namespace StardewDruid.Cast
 
                 Vector2 spawnVector = targetPlayer.getTileLocation();
 
-                Game1.createObjectDebris(objectInstance.ParentSheetIndex, (int)spawnVector.X, (int)spawnVector.Y);
+                if(objectInstance is StardewValley.Object)
+                {
+
+                    Game1.createObjectDebris(objectInstance.ParentSheetIndex, (int)spawnVector.X, (int)spawnVector.Y);
+
+                }
+                else
+                {
+
+                    targetPlayer.dropItem(objectInstance);
+
+                }
+
 
                 objectInstance = null;
 

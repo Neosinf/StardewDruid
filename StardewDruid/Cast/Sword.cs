@@ -123,16 +123,17 @@ namespace StardewDruid.Cast
 
             //----------------------- cast animation
 
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-3, -2));
             ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-3, -3));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-2, -4));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-1, -5));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(0, -6));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(1, -6));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(2, -5));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(3, -4));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(4, -3));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(4, -2));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-3, -4));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-2, -5));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-1, -6));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(0, -7));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(1, -7));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(2, -7));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(3, -6));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(4, -5));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(5, -4));
+            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(5, -3));
 
         }
 
@@ -140,7 +141,7 @@ namespace StardewDruid.Cast
         {
             
             string effigyQuestion = "Voices in the Breaking of the Waves: " +
-                "^The river sings again... smish... the spring is clean... smashh... the farmer is friend to the water...";
+                "^The river sings again... smish... the spring is clean... smashh... the farmer is friend to the water";
 
             List<Response> effigyChoices = new()
             {

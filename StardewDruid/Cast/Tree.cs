@@ -63,9 +63,11 @@ namespace StardewDruid.Cast
             if (!treeFeature.stump.Value)
             {
 
-                treeFeature.performToolAction(null, 1, targetVector, null);
+                treeFeature.performUseAction(targetVector,targetLocation);
 
-                treeFeature.health.Value += 1;
+                //treeFeature.performToolAction(null, 1, targetVector, null);
+
+                //treeFeature.health.Value += 1;
 
             }
 

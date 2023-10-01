@@ -5,6 +5,7 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Characters;
 using StardewValley.Monsters;
+using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections;
@@ -339,7 +340,7 @@ namespace StardewDruid.Cast
 
                     rockFall.CastEarth();
 
-                    targetLocation.lightGlows.Clear();
+                    //targetLocation.lightGlows.Clear();
 
                     break;
 
@@ -354,6 +355,8 @@ namespace StardewDruid.Cast
             {
                 return;
             }
+
+            Vector2 trashVector = trashQueue.Dequeue();
 
             Dictionary<int, int> artifactIndexes = new()
             {
@@ -377,25 +380,35 @@ namespace StardewDruid.Cast
                 [6] = 172,
             };
 
-            int objectIndex = objectIndexes[randomIndex.Next(13)];
+            int objectIndex = objectIndexes[randomIndex.Next(7)];
+
+            Throw throwObject;
 
             if (trashCollected == 8)
             {
 
                 objectIndex = 517;
 
-            }
+                throwObject = new(objectIndex, 0);
 
-            if(trashCollected == 16)
+                throwObject.objectInstance = new Ring(objectIndex);
+
+            } else if(trashCollected == 16)
             {
 
                 objectIndex = 519;
-            
+
+                throwObject = new(objectIndex, 0);
+
+                throwObject.objectInstance = new Ring(objectIndex);
+
             }
+            else
+            {
 
-            Vector2 trashVector = trashQueue.Dequeue();
+                throwObject = new(objectIndex, 0);
 
-            Throw throwObject = new(objectIndex, 0);
+            }
 
             throwObject.ThrowObject(targetPlayer, trashVector);
 

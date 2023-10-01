@@ -9,7 +9,11 @@ namespace StardewDruid
     {
         public List<string> buttonList { get; set; }
 
-        public List<string> craftList { get; set; }
+        public Dictionary<string, int> blessingList { get; set; }
+
+        public Dictionary<string, bool> questList { get; set; }
+
+        public bool startWithBlessing { get; set; }
 
         public ModData()
         {
@@ -19,19 +23,26 @@ namespace StardewDruid
                 "MouseX2"
             };
 
-            craftList = new List<string>
+            questList = new()
             {
-                "Keg",
-                "Furnace",
-                "Preserves Jar",
-                "Recycling Machine",
-                "Deconstructor",
-                "Bone Mill",
-                "Cheese Press",
-                "Mayonnaise Machine",
-                "Loom",
-                "Oil Maker",
+                ["approachEffigy"] = false,
+                ["swordEarth"] = false,
+                ["challengeEarth"] = false,
+                ["swordWater"] = false,
+                ["challengeWater"] = false,
+                ["swordStars"] = false,
+                ["challengeStars"] = false,
+
             };
+
+            blessingList = new()
+            {
+                ["earth"] = 5,
+                ["water"] = 5,
+                ["stars"] = 1,
+            };
+
+            startWithBlessing = false;
 
         }
 
