@@ -18,8 +18,6 @@ namespace StardewDruid.Cast
 
         public StardewValley.Object stoneBrazier;
 
-        public double expireTime;
-
         public List<Monster> monsterSpawns;
 
         public int specialType;
@@ -150,33 +148,38 @@ namespace StardewDruid.Cast
 
         public override void CastRemove() {
 
-            Game1.stopMusicTrack(Game1.MusicContext.Default);
-
-            Game1.playSound("fireball");
-
-            targetLocation.temporarySprites.Remove(portalAnimation);
-
-            targetLocation.objects.Remove(targetVector);
-
-            stoneBrazier = null;
-
-            targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, targetVector * 64f, Color.Blue * 0.75f, 8));
-
-            if(targetLocation.hasLightSource(portalLight.Identifier))
+            if(stoneBrazier != null)
             {
 
-                targetLocation.removeLightSource(portalLight.Identifier);
+                Game1.stopMusicTrack(Game1.MusicContext.Default);
+
+                Game1.playSound("fireball");
+
+                targetLocation.temporarySprites.Remove(portalAnimation);
+
+                targetLocation.objects.Remove(targetVector);
+
+                stoneBrazier = null;
+
+                targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, targetVector * 64f, Color.Blue * 0.75f, 8));
+
+                if (targetLocation.hasLightSource(portalLight.Identifier))
+                {
+
+                    targetLocation.removeLightSource(portalLight.Identifier);
+
+                }
+
+                if (Game1.currentLightSources.Contains(portalLight))
+                {
+
+                    Game1.currentLightSources.Remove(portalLight);
+
+                }
+
+                portalLight = null;
 
             }
-
-            if(Game1.currentLightSources.Contains(portalLight))
-            {
-
-                Game1.currentLightSources.Remove(portalLight);
-
-            }
-
-            portalLight = null;
 
             foreach (Monster monsterSpawn in monsterSpawns)
             {
@@ -232,7 +235,7 @@ namespace StardewDruid.Cast
 
                 int offsetX = randomIndex.Next((int)portalRange.X);
 
-                int offsetY = randomIndex.Next((int)portalRange.X);
+                int offsetY = randomIndex.Next((int)portalRange.Y);
 
                 Vector2 offsetVector = new(offsetX, offsetY);
 
@@ -372,6 +375,12 @@ namespace StardewDruid.Cast
                     };
 
                     spawnMob = spawnIndex[randomIndex.Next(3)];
+
+                    break;
+
+                case 6: // dustSprites in SecretWoods
+
+                    spawnMob = 1;
 
                     break;
 
@@ -565,7 +574,6 @@ namespace StardewDruid.Cast
             }
 
         }
-
 
     }
 

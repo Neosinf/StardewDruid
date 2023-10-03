@@ -27,22 +27,26 @@ Neptune Glaive and Lava Katana behave in similar fashion for Rite of the Water a
 CONFIG FILE
 -----------------------------------------
 
-Key "rite" mechanic binded to MouseX1 and MouseX2
-- can be changed in mod configuration after installing
-- holding the specified control will increase the range of the mechanic
+GMCM has been integrated
+
+Rite Buttons "riteButtons" is a list of keybinds set to MouseX1, MouseX2 and LeftShoulder
+
+- Holding the specified control will increase the range of the mechanic, up to ~7.5 tiles radius.
+
+- Keybinds can be changed in mod configuration after installing
+
+Master Start "masterStart"
+
+- Progress can be changed by enabling master start
+
+- Default false as recommended to play Stardew Druid on a new save at Day 1, Spring, Year 1, 
+  with a new ability unlocked at the Effigy each day via lessons and quests
 
 -----------------------------------------
+(The following config parameters can only be changed in the file)
 
-Default quest progress assumes start at Day 1, Spring, Year 1, with a new ability unlocked at the Effigy each day
-- progress can be changed in mod configuration by changing 
-	
-	"startWithBlessing" from false -> true
+BlessingList "blessingList"
 
-- other parameters can be configured as per the following
-
------------------------------------------
-
-"blessingList"
 Determines how many abilities of each rite are unlocked
 
 Earth:
@@ -55,11 +59,11 @@ Earth:
 
 Water:
 
-1. Explode weeds and twigs.
-2. Extract foragables from large bushes, wood from trees, fibre and seeds from grass and small fish from water. Might spawn monsters.
-3. Sprout trees, grass, seasonal forage and flowers in empty spaces.
-4. Increase the growth rate and quality of growing crops. Convert planted wild seeds into random cultivations.
-5. Shake loose rocks free from the ceilings of mine shafts. Explode gem ores.
+1. Strike warp shrines once a day to extract totems, and boulders and stumps to extract resources.
+2. Strike scarecrows, campfires and lightning rods to activate special functions. Villager firepits will work too..
+3. Strike deep water to produce a fishing-spot that yields rare species of fish.
+4. Expend high amounts of stamina to instantly destroy enemies.
+5. Strike candle torches to create monster portals. Only works in remote outdoor locations.
 
 Stars:
 
@@ -67,11 +71,11 @@ Stars:
 
 -----------------------------------------
 
-"questList"
+QuestList "questList"
 Determines what quests are available to complete
 
-False. quest is not considered complete, and the next available quest in the list will provided by the Effigy when approached
-True. considered complete for purposes of the game
+False. Quest is not considered complete, and the next available quest in the list will provided by the Effigy when approached
+True. Considered complete for purposes of the game
 
 -----------------------------------------
 COMPATIBILITY AND SAVE DATA

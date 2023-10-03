@@ -22,6 +22,8 @@ namespace StardewDruid.Cast
 
         public bool castActive { get; set; }
 
+        public double expireTime { get; set; }
+
         public readonly Mod mod;
 
         public readonly Farmer targetPlayer;
@@ -76,6 +78,13 @@ namespace StardewDruid.Cast
         public virtual bool CastActive(int castIndex, int castLimit)
         {
             return false;
+        }
+
+        public virtual void CastExtend()
+        {
+
+            expireTime++;
+
         }
 
         public virtual void CastRemove()

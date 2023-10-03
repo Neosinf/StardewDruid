@@ -27,8 +27,6 @@ namespace StardewDruid.Cast
 
         public int trashCollected;
 
-        public double expireTime;
-
         public int spawnCounter;
 
         public bool challengeWarning;

@@ -599,9 +599,9 @@ namespace StardewDruid
 
             int generateItem;
 
-            int targetSeed = Game1.random.Next(8);
+            int targetSeed = Game1.random.Next(12);
 
-            if (targetSeed >= 5) // 2/3 low grade random seed
+            if (targetSeed >= 6) // 2/3 low grade random seed
             {
 
                 generateItem = 770;
@@ -637,7 +637,7 @@ namespace StardewDruid
                             [1] = 485, // red cabbage
                             [2] = 433, // coffee
                             [3] = 481, // blueberry
-                            [4] = 301, // hops
+                            [4] = 302, // hops
                             [5] = 483, // wheat
                         };
 
@@ -652,7 +652,7 @@ namespace StardewDruid
                             [1] = 492, // yam
                             [2] = 299, // amaranth
                             [3] = 493, // cranberry
-                            [4] = 302, // grape
+                            [4] = 301, // grape
                             [5] = 299, // amaranth
                         };
 
@@ -663,7 +663,7 @@ namespace StardewDruid
                 generateItem = objectIndexes[targetSeed];
 
             }
-
+            
             hoeDirt.destroyCrop(new Vector2(targetX, targetY), false, targetLocation);
 
             hoeDirt.plant(generateItem, targetX, targetY, targetPlayer,false, targetLocation);
@@ -1009,7 +1009,6 @@ namespace StardewDruid
             return result;
 
         }
-
 
         static List<Vector2> TilesWithinSeven(Vector2 center)
         {

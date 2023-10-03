@@ -153,7 +153,7 @@ namespace StardewDruid.Cast
 
             ModUtility.AnimateGrowth(targetLocation, targetVector);
 
-            targetPlayer.gainExperience(2, 4); // gain foraging experience
+            targetPlayer.gainExperience(2, 2); // gain foraging experience
 
             bushFeature.performToolAction(null, 1, targetVector, null);
 

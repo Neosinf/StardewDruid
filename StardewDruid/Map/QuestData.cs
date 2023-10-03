@@ -106,8 +106,8 @@ namespace StardewDruid.Map
                     triggerCast = "CastStars",
                     triggerType = "challenge",
                     triggerLocation = "Forest",
-                    triggerVector = new(77, 68),
-                    triggerLimit = new(5, 5),
+                    triggerVector = new(76, 72),
+                    triggerLimit = new(7, 10),
 
                     questId = 280719874,
                     questValue = 6,
@@ -116,15 +116,15 @@ namespace StardewDruid.Map
                     questObjective = "Perform a rite in the clearing east of arrowhead island in Cindersap Forest.",
                     questReward = 4500,
 
-                    challengeWithin = new(74, 65),
-                    challengeRange = new(14, 14),
+                    challengeWithin = new(72, 68),
+                    challengeRange = new(14, 17),
                     challengePortals = new()
                     {
 
-                        new(76, 67),
-                        new(82, 67),
-                        new(76, 74),
-                        new(82, 74),
+                        new(75, 74),
+                        new(83, 74),
+                        new(75, 81),
+                        new(83, 81),
 
                     },
                     challengeFrequency = 5,
@@ -195,8 +195,8 @@ namespace StardewDruid.Map
 
             return questList;
 
-        }        
-        
+        }
+
         public static Quest RetrieveQuest(string quest)
         {
 

@@ -73,7 +73,7 @@ namespace StardewDruid.Cast
 
             castFire = true;
 
-            targetPlayer.gainExperience(2,4); // gain foraging experience
+            targetPlayer.gainExperience(2,2); // gain foraging experience
 
             if(debrisAmount == 4 && riteData.spawnIndex["critter"])
             {

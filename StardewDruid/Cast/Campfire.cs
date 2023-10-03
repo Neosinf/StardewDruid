@@ -59,7 +59,38 @@ namespace StardewDruid.Cast
 
             Vector2 newVector = new(targetVector.X, targetVector.Y);
 
-            targetLocation.objects.Remove(targetVector);
+            /*if(targetLocation.Name == "Beach" && !targetLocation.objects.ContainsKey(targetVector))
+            {
+
+                List<Vector2> fireList = new()
+                {
+                    newVector + new Vector2(1, 0),
+                    newVector + new Vector2(0,1),
+                    newVector + new Vector2(1,1)
+                };
+
+                foreach (Vector2 fireVector in fireList)
+                {
+                    if (targetLocation.objects.ContainsKey(fireVector))
+                    {
+                        targetLocation.objects.Remove(fireVector);
+
+                    }
+
+                    targetLocation.objects.Add(fireVector, new Torch(fireVector, 146, bigCraftable: true)
+                    {
+                        Fragility = 1,
+                        destroyOvernight = true
+                    });
+                }
+
+            }*/
+
+            if (targetLocation.objects.ContainsKey(targetVector))
+            {
+                targetLocation.objects.Remove(targetVector);
+
+            }
 
             targetLocation.objects.Add(newVector, new Torch(newVector, 278, bigCraftable: true)
             {
@@ -67,7 +98,7 @@ namespace StardewDruid.Cast
                 destroyOvernight = true
             });
 
-            Vector2 tilePosition = new Vector2(newVector.X * 64, newVector.Y * 64);
+            //Vector2 tilePosition = new Vector2(newVector.X * 64, newVector.Y * 64);
 
             Game1.playSound("fireball");
 

@@ -1,27 +1,27 @@
 ﻿using System.Collections.Generic;
+using StardewModdingAPI;
 using Microsoft.Xna.Framework;
 using System.Reflection.PortableExecutable;
+using StardewModdingAPI.Utilities;
 
 namespace StardewDruid
 {
 
     class ModData
     {
-        public List<string> buttonList { get; set; }
+
+        public StardewModdingAPI.Utilities.KeybindList riteButtons { get; set; }
 
         public Dictionary<string, int> blessingList { get; set; }
 
         public Dictionary<string, bool> questList { get; set; }
 
-        public bool startWithBlessing { get; set; }
+        public bool masterStart { get; set; }
 
         public ModData()
         {
-            buttonList = new List<string>
-            {
-                "MouseX1",
-                "MouseX2"
-            };
+
+            riteButtons = KeybindList.Parse("MouseX1,MouseX2,LeftShoulder");
 
             questList = new()
             {
@@ -42,7 +42,7 @@ namespace StardewDruid
                 ["stars"] = 1,
             };
 
-            startWithBlessing = false;
+            masterStart = false;
 
         }
 

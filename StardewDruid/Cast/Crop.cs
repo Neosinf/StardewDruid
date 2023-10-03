@@ -66,6 +66,13 @@ namespace StardewDruid.Cast
 
                 ModUtility.UpgradeCrop(hoeDirt, (int)targetVector.X, (int)targetVector.Y, targetPlayer, targetLocation);
 
+                if(hoeDirt.crop == null)
+                {
+                    
+                    return;
+
+                }
+
                 targetCrop = hoeDirt.crop;
 
                 castFire = true;

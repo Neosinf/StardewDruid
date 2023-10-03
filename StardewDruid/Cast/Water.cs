@@ -16,8 +16,6 @@ namespace StardewDruid.Cast
 
         public TemporaryAnimatedSprite portalAnimation;
 
-        public double expireTime;
-
         public Water(Mod mod, Vector2 target, Rite rite)
             : base(mod, target, rite)
         {

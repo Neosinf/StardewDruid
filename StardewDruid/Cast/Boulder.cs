@@ -41,7 +41,7 @@ namespace StardewDruid.Cast
 
             castFire = true;
 
-            targetPlayer.gainExperience(2, 4); // gain foraging experience
+            targetPlayer.gainExperience(2, 2); // gain foraging experience
 
             ModUtility.AnimateGrowth(targetLocation, targetVector);
 
@@ -50,11 +50,11 @@ namespace StardewDruid.Cast
         public override void CastWater()
         {
 
-            StardewValley.Tools.Pickaxe targetAxe = new();
+            StardewValley.Tools.Pickaxe targetAxe = mod.RetrievePick();
 
-            targetAxe.UpgradeLevel = 3;
+            //targetAxe.UpgradeLevel = 3;
 
-            targetAxe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+            //targetAxe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
 
             resourceClump.health.Set(1f);
 

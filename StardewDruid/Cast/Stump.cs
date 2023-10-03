@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
@@ -13,11 +14,15 @@ namespace StardewDruid.Cast
 
         private ResourceClump resourceClump;
 
-        public Stump(Mod mod, Vector2 target, Rite rite, ResourceClump ResourceClump)
+        private string resourceType;
+
+        public Stump(Mod mod, Vector2 target, Rite rite, ResourceClump ResourceClump, string ResourceType)
             : base(mod, target, rite)
         {
 
             resourceClump = ResourceClump;
+
+            resourceType = ResourceType;
 
         }
 
@@ -43,7 +48,7 @@ namespace StardewDruid.Cast
 
             castFire = true;
 
-            targetPlayer.gainExperience(2, 4); // gain foraging experience
+            targetPlayer.gainExperience(2, 2); // gain foraging experience
 
             ModUtility.AnimateGrowth(targetLocation,targetVector);
 
@@ -52,11 +57,18 @@ namespace StardewDruid.Cast
         public override void CastWater()
         {
 
-            StardewValley.Tools.Axe targetAxe = new();
+            if(resourceClump == null)
+            {
 
-            targetAxe.UpgradeLevel = 3;
+                return;
 
-            targetAxe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+            }
+
+            StardewValley.Tools.Axe targetAxe = mod.RetrieveAxe();
+
+            //targetAxe.UpgradeLevel = 3;
+
+            //targetAxe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
 
             resourceClump.health.Set(1f);
 
@@ -64,11 +76,51 @@ namespace StardewDruid.Cast
 
             resourceClump.NeedsUpdate = false;
 
-            targetLocation._activeTerrainFeatures.Remove(resourceClump);
+            switch (resourceType)
+            {
 
-            targetLocation.resourceClumps.Remove(resourceClump);
+                case "Woods":
 
-            resourceClump.currentLocation = null;
+                    Woods woodsLocation = riteData.castLocation as Woods;
+
+                    if (woodsLocation.stumps.Contains(resourceClump))
+                    {
+
+                        woodsLocation.stumps.Remove(resourceClump);
+
+                    }
+
+                    break;
+
+                case "Log":
+
+                    Forest forestLocation = riteData.castLocation as Forest;
+
+                    forestLocation.log = null;
+
+                    break;
+
+                default: // Farm
+
+                    if (targetLocation._activeTerrainFeatures.Contains(resourceClump))
+                    {
+
+                        targetLocation._activeTerrainFeatures.Remove(resourceClump);
+
+                    }
+
+                    if (targetLocation.resourceClumps.Contains(resourceClump))
+                    {
+
+                        targetLocation.resourceClumps.Remove(resourceClump);
+
+                    }
+
+                    break;
+
+            }
+
+            resourceClump = null;
 
             Game1.createObjectDebris(709, (int)this.targetVector.X, (int)this.targetVector.Y);
 

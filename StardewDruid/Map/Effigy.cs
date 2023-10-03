@@ -329,6 +329,14 @@ namespace StardewDruid.Map
                 questCompleted = null;
 
             }
+            else if (blessingList.ContainsKey("stars"))
+            {
+
+                effigyQuestion = "Forgotten Effigy: ^Successor.";
+
+                effigyChoices.Add(new Response("journey", "Does the valley have need of me?"));
+
+            }
             else
             {
 
@@ -592,7 +600,7 @@ namespace StardewDruid.Map
 
                         effigyReply = "Forgotten Effigy: ^The Lady is fascinated by the industriousness of humanity. Combine your artifice with her blessing and reap the rewards." +
                             "^..." +
-                            $"^({mod.CastControl()}:strike scarecrows, campfires and lightning rods to activate special functions.)";
+                            $"^({mod.CastControl()}: strike scarecrows, campfires and lightning rods to activate special functions. Villager firepits will work too.)";
 
                         break;
 
