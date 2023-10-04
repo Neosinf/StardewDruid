@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using System;
 
@@ -50,6 +51,8 @@ namespace StardewDruid.Cast
         public override void CastWater()
         {
 
+            castCost = Math.Max(2, 28 - (targetPlayer.MiningLevel * 2));
+
             StardewValley.Tools.Pickaxe targetAxe = mod.RetrievePick();
 
             //targetAxe.UpgradeLevel = 3;
@@ -77,29 +80,37 @@ namespace StardewDruid.Cast
             switch ((int)resourceClump.parentSheetIndex.Value)
             {
 
-                //case 752:
-                case 754:
-
-                    Game1.createObjectDebris(537, (int)targetVector.X, (int)targetVector.Y);
-
-                    //Game1.createObjectDebris(537, (int)targetVector.X, (int)targetVector.Y + 1);
-
-                    break;
-
                 case 756:
                 case 758:
 
                     Game1.createObjectDebris(536, (int)targetVector.X, (int)targetVector.Y);
 
-                    //Game1.createObjectDebris(536, (int)targetVector.X, (int)targetVector.Y + 1);
-
                     break;
 
                 default:
 
-                    Game1.createObjectDebris(535, (int)targetVector.X, (int)targetVector.Y);
+                    if(targetLocation is MineShaft)
+                    {
+                        MineShaft mineLocation = (MineShaft)targetLocation;
 
-                    //Game1.createObjectDebris(535, (int)targetVector.X, (int)targetVector.Y + 1);
+                        if(mineLocation.mineLevel >= 80)
+                        {
+                            Game1.createObjectDebris(537, (int)targetVector.X, (int)targetVector.Y);
+
+                            break;
+
+                        }
+                        else if (mineLocation.mineLevel >= 121)
+                        {
+                            Game1.createObjectDebris(749, (int)targetVector.X, (int)targetVector.Y);
+
+                            break;
+
+                        }
+
+                    }
+
+                    Game1.createObjectDebris(535, (int)targetVector.X, (int)targetVector.Y);
 
                     break;
 

@@ -13,6 +13,8 @@ namespace StardewDruid.Cast
             : base(mod, target, rite)
         {
 
+            castCost = Math.Max(2,16 - rite.caster.FarmingLevel);
+
         }
 
         public override void CastEarth()
@@ -36,7 +38,9 @@ namespace StardewDruid.Cast
 
             treeFeature.dayUpdate(targetLocation,targetVector);
 
-            castCost = 8;
+            Utility.addSprinklesToLocation(targetPlayer.currentLocation, (int)targetVector.X, (int)targetVector.Y, 1, 2, 400, 40, Color.White);
+
+            Game1.playSound("yoba");
 
             castFire = true;
 

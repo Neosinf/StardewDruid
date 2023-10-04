@@ -18,7 +18,7 @@ namespace StardewDruid.Cast
 
             targetVillager = villager;
 
-            castCost = 4;
+            castCost = 0;
 
         }
 

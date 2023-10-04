@@ -20,10 +20,12 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading;
+using System.Xml.Linq;
 using System.Xml.Schema;
 using xTile.Dimensions;
 using xTile.Layers;
 using xTile.Tiles;
+using static StardewValley.Menus.CharacterCustomization;
 
 namespace StardewDruid
 {
@@ -98,7 +100,6 @@ namespace StardewDruid
                 save: () => Helper.WriteConfig(Config)
             );
 
-            // add some config options
             configMenu.AddKeybindList(
                 mod: ModManifest,
                 name: () => "Rite Keybinds",
@@ -107,13 +108,68 @@ namespace StardewDruid
                 setValue: value => Config.riteButtons = value
             );
 
-            // add some config options
+            configMenu.AddBoolOption(
+                mod: ModManifest,
+                name: () => "Cast Buffs",
+                tooltip: () => "Enables automatic berry, sashimi and cheese consumption when casting with critically low stamina. Enables magnetism buff when casting Rite of the Earth.",
+                getValue: () => Config.masterStart,
+                setValue: value => Config.masterStart = value
+            );
+
             configMenu.AddBoolOption(
                 mod: ModManifest,
                 name: () => "Master Start",
-                tooltip: () => "Start with all Rite levels unlocked (not recommended for immersion)",
-                getValue: () => Config.masterStart,
-                setValue: value => Config.masterStart = value
+                tooltip: () => "Start with all Rite levels unlocked (not recommended for immersion). Note that activating, saving in game, then deactivating afterwards, will wipe all your Rite Levels and Effigy Quests.",
+                getValue: () => Config.castBuffs,
+                setValue: value => Config.castBuffs = value
+            );
+
+            configMenu.AddNumberOption(
+                mod: ModManifest,
+                name: () => "Effigy tileX",
+                tooltip: () => "Move the Effigy's position in the farmcave on the X Axis",
+                getValue: () => Config.farmCaveStatueX,
+                setValue: value => Config.farmCaveStatueX = value
+            );
+
+            configMenu.AddNumberOption(
+                mod: ModManifest,
+                name: () => "Effigy tileY",
+                tooltip: () => "Move the Effigy's position in the farmcave on the Y Axis",
+                getValue: () => Config.farmCaveStatueY,
+                setValue: value => Config.farmCaveStatueY = value
+            );
+
+            configMenu.AddNumberOption(
+                mod: ModManifest,
+                name: () => "Approach tileX location",
+                tooltip: () => "Move the position of the action tile used to trigger dialogue with the Effigy on the X Axis.",
+                getValue: () => Config.farmCaveActionX,
+                setValue: value => Config.farmCaveActionX = value
+            );
+
+            configMenu.AddNumberOption(
+                mod: ModManifest,
+                name: () => "Approach tileY location",
+                tooltip: () => "Move the position of the action tile used to trigger dialogue with the Effigy on the Y Axis",
+                getValue: () => Config.farmCaveActionY,
+                setValue: value => Config.farmCaveActionY = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: ModManifest,
+                name: () => "Hide Effigy",
+                tooltip: () => "Hide the Effigy, and instead use the Rite Key anywhere on the farmcave map to converse with its disembodied voice",
+                getValue: () => Config.farmCaveHideStatue,
+                setValue: value => Config.farmCaveHideStatue = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: ModManifest,
+                name: () => "Recess Effigy Space",
+                tooltip: () => "Configure the backwall of the farmcave to situate the Effigy",
+                getValue: () => Config.farmCaveMakeSpace,
+                setValue: value => Config.farmCaveMakeSpace = value
             );
 
         }
@@ -121,18 +177,30 @@ namespace StardewDruid
         private void SaveLoaded(object sender, SaveLoadedEventArgs e)
         {
 
-            staticData = Helper.Data.ReadSaveData<StaticData>("staticData");
+            if(Context.IsMainPlayer) {
+
+                staticData = Helper.Data.ReadSaveData<StaticData>("staticData");
+
+            }
 
             staticData ??= new StaticData();
 
-            if (Config.masterStart)
+            if (Config.masterStart && !staticData.blessingList.ContainsKey("masterStart"))
             {
 
                 staticData.questList = Config.questList;
 
                 staticData.blessingList = Config.blessingList;
 
+                staticData.blessingList["masterStart"] = 1;
+
                 staticData.activeBlessing = "earth";
+
+            }
+            else if(staticData.blessingList.ContainsKey("masterStart"))
+            {
+
+                staticData = new StaticData();
 
             }
 
@@ -173,7 +241,13 @@ namespace StardewDruid
 
             }*/
 
-            druidEffigy = new(this);
+            druidEffigy = new(
+                this,
+                Config.farmCaveStatueX,
+                Config.farmCaveStatueY,
+                Config.farmCaveHideStatue,
+                Config.farmCaveMakeSpace
+            );
 
             druidEffigy.ModifyCave();
 
@@ -207,8 +281,12 @@ namespace StardewDruid
 
         private void SaveUpdated(object sender, SavingEventArgs e)
         {
+            if(Context.IsMainPlayer)
+            {
+                
+                Helper.Data.WriteSaveData("staticData", staticData);
 
-            Helper.Data.WriteSaveData("staticData", staticData);
+            }
 
             druidEffigy.lessonGiven = false;
 
@@ -356,10 +434,23 @@ namespace StardewDruid
 
             removeCast.Clear();
 
+            bool exitAll = false;
+
+            if (Game1.eventUp || Game1.fadeToBlack || Game1.currentMinigame != null || Game1.isWarping || Game1.killScreen)
+            {
+                exitAll = true;
+            
+            }
+
             foreach (Cast.Cast castInstance in activeCast)
             {
+                if (exitAll)
+                {
 
-                if (castInstance.targetPlayer.IsBusyDoingSomething())
+                    castInstance.CastRemove();
+
+                }
+                if (Game1.activeClickableMenu != null || Game1.player.freezePause > 0)
                 {
 
                     castInstance.CastExtend();
@@ -410,7 +501,7 @@ namespace StardewDruid
 
                 Vector2 cursorLocation = Game1.currentCursorTile;
 
-                if (playerLocation.X >= 5 && playerLocation.X <= 7 && playerLocation.Y == 4 && cursorLocation.X == 6 && (cursorLocation.Y == 2 || cursorLocation.Y == 3))
+                if (playerLocation.X >= Config.farmCaveStatueX-1 && playerLocation.X <= Config.farmCaveActionX+1 && playerLocation.Y == Config.farmCaveActionY)// && cursorLocation.X == 6 && (cursorLocation.Y == 2 || cursorLocation.Y == 3))
                 {
 
                     foreach (SButton buttonPressed in e.Pressed)
@@ -419,16 +510,25 @@ namespace StardewDruid
                         if (buttonPressed.IsUseToolButton() || buttonPressed.IsActionButton())
                         {
 
-                            druidEffigy.Approach(Game1.player);
-
                             Helper.Input.Suppress(buttonPressed);
 
+                            druidEffigy.Approach(Game1.player);
+
                             return;
+
+                            
 
                         }
 
                     }
 
+                }
+
+                if (Config.riteButtons.GetState() == SButtonState.Pressed)
+                {
+                    druidEffigy.Approach(Game1.player);
+
+                    return;
                 }
 
             }
@@ -561,8 +661,6 @@ namespace StardewDruid
 
                     if (activeBlessing == "none")
                     {
-
-                        //ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 500);
 
                         Game1.player.currentLocation.playSound("ghost");
 
@@ -757,20 +855,62 @@ namespace StardewDruid
                 if (Game1.player.Stamina <= staminaRequired)
                 {
 
-                    if (activeData.castLevel >= 1)
+                    bool sashimiPower = false;
+
+                    if (Config.castBuffs)
                     {
-                        Game1.addHUDMessage(new HUDMessage("Not enough energy to continue rite", 3));
+
+                        StardewValley.Object sashimiObject = new(227, 1);
+
+                        int sashimiIndex = Game1.player.getIndexOfInventoryItem(sashimiObject);
+
+                        if (sashimiIndex >= 0 && sashimiIndex <= 11)
+                        {
+
+                            Game1.player.Items[sashimiIndex].Stack -= 1;
+
+                            if (Game1.player.Items[sashimiIndex].Stack <= 0)
+                            {
+                                Game1.player.Items[sashimiIndex] = null;
+
+                            }
+
+                            float num2 = Game1.player.Stamina;
+
+                            int num3 = Game1.player.health;
+
+                            int num4 = @sashimiObject.staminaRecoveredOnConsumption();
+
+                            Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + (float)num4);
+
+                            Game1.player.health = Math.Min(Game1.player.maxHealth, Game1.player.health + @sashimiObject.healthRecoveredOnConsumption());
+
+                            Game1.addHUDMessage(new HUDMessage("Sashimi", 4));
+
+                            sashimiPower = true;
+
+                        }
 
                     }
-                    else
+
+                    if(!sashimiPower)
                     {
-                        Game1.addHUDMessage(new HUDMessage("Not enough energy to perform rite", 3));
 
+                        if (activeData.castLevel >= 1)
+                        {
+                            Game1.addHUDMessage(new HUDMessage("Not enough energy to continue rite", 3));
+
+                        }
+                        else
+                        {
+                            Game1.addHUDMessage(new HUDMessage("Not enough energy to perform rite", 3));
+
+                        }
+
+                        activeData.castComplete = true;
+
+                        return;
                     }
-
-                    activeData.castComplete = true;
-
-                    return;
 
                 }
 
@@ -840,7 +980,7 @@ namespace StardewDruid
 
                     activeData.activeVector = Game1.player.getTileLocation();
 
-                    Monitor.Log($"{activeData.activeCast},{activeData.activeVector}", LogLevel.Debug);
+                    //Monitor.Log($"{activeData.activeCast},{activeData.activeVector}", LogLevel.Debug);
 
                     if (activeData.activeCast == "water")
                     {
@@ -895,7 +1035,7 @@ namespace StardewDruid
 
                         castRite.castType = "CastStars";
 
-                        AnimateStars();
+                        ModUtility.AnimateStarsCast(activeData.activeVector, activeData.chargeLevel, activeData.cycleLevel);
 
                         break;
 
@@ -905,13 +1045,13 @@ namespace StardewDruid
 
                         castRite.castVector = activeData.activeVector;
 
-                        AnimateWater();
+                        ModUtility.AnimateWaterCast(activeData.activeVector, activeData.chargeLevel, activeData.cycleLevel);
 
                         break;
 
                     default: //"earth"
 
-                        AnimateEarth();
+                        ModUtility.AnimateEarthCast(activeData.activeVector,activeData.chargeLevel,activeData.cycleLevel);
 
                         break;
 
@@ -924,38 +1064,6 @@ namespace StardewDruid
             }
 
         }
-
-        /*private void ReviewQuests()
-        {
-
-            if(staticData.questList.Count == 0)
-            {
-
-                string firstQuest = Map.Quest.FirstQuest();
-
-                staticData.questList[firstQuest] = false;
-
-                ReassignQuest(firstQuest,true);
-
-            }
-            else
-            {
-
-                foreach (KeyValuePair<string, bool> quest in staticData.questList)
-                {
-
-                    if (!quest.Value)
-                    {
-
-                        ReassignQuest(quest.Key);
-
-                    }
-
-                }
-
-            }
-
-        }*/
 
         private void CastRite()
         { 
@@ -985,110 +1093,28 @@ namespace StardewDruid
         
         }
 
-        private void AnimateEarth()
-        {
-
-            //-------------------------- cast variables
-
-            int animationRow;
-
-            Microsoft.Xna.Framework.Rectangle animationRectangle;
-
-            float animationInterval;
-
-            int animationLength;
-
-            int animationLoops;
-
-            bool animationFlip;
-
-            float animationScale;
-
-            Microsoft.Xna.Framework.Color animationColor;
-
-            Vector2 animationPosition;
-
-            TemporaryAnimatedSprite newAnimation;
-
-            animationFlip = false;
-
-            float colorIncrement = 1.2f - (0.2f * activeData.chargeLevel);
-
-            animationColor = new(colorIncrement, 1, colorIncrement, 1);
-
-            animationScale = 0.6f + (0.2f * activeData.chargeLevel);
-
-            float vectorCastX = 12 - (6 * activeData.chargeLevel);
-
-            float vectorCastY = 0 - 122 - (6 * activeData.chargeLevel);
-
-            animationPosition = (activeData.activeVector * 64) + new Vector2(vectorCastX, vectorCastY);
-
-            /*switch (activeData.chargeLevel)
-            {
-
-                case 1:
-                    animationColor = new(uint.MaxValue); // deepens from white to green
-                    animationScale = 0.8f;
-                    animationPosition = Game1.player.Position + new Vector2(6f, -128f); // 2 tiles above player
-                    break;
-                case 2:
-                    animationColor = new(0.8f, 1, 0.8f, 1);
-                    animationScale = 1f;
-                    animationPosition = Game1.player.Position + new Vector2(0f, -134f); // 2 tiles above player
-                    break;
-                default:
-                    animationColor = new(0.6f, 1, 0.6f, 1);
-                    animationScale = 1.2f;
-                    animationPosition = Game1.player.Position + new Vector2(-6f, -140f); // 2 tiles above player
-                    break;
-
-            }*/
-
-            //-------------------------- cast animation
-
-            animationRow = 10;
-
-            animationRectangle = new(0, animationRow * 64, 64, 64);
-
-            animationInterval = 75f;
-
-            animationLength = 8;
-
-            animationLoops = 1;
-
-            newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, animationFlip, -1, 0f, animationColor, animationScale, 0f, 0f, 0f)
-            {
-                //motion = new Vector2(0f, -0.1f)
-
-            };
-
-            Game1.currentLocation.temporarySprites.Add(newAnimation);
-
-            //-------------------------- hand animation
-
-            //activeData.animateLevel = activeData.chargeLevel;
-
-            int pitchLevel = activeData.cycleLevel % 4;
-
-            if(activeData.chargeLevel == 1)
-            {
-
-                Game1.currentLocation.playSoundPitched("discoverMineral", 600 + (pitchLevel * 200));
-
-            }
-
-            if (activeData.chargeLevel == 3)
-            {
-
-                Game1.currentLocation.playSoundPitched("discoverMineral", 700 + (pitchLevel * 200));
-
-            }
-
-        }
-
         private void CastEarth(Rite riteData = null)
         {
+            
+            if(Config.castBuffs)
+            {
+
+                Buff earthBuff = new("Earthen Magnetism", 6000, "Rite of the Earth", 8);
+
+                earthBuff.buffAttributes[8] = 8;
+
+                earthBuff.which = 184651;
+
+                //earthBuff.glow = Color.Green;
+
+                if (!Game1.buffsDisplay.hasBuff(184651))
+                {
+
+                    Game1.buffsDisplay.addOtherBuff(earthBuff);
+
+                }
+
+            }
 
             int castCost = 0;
 
@@ -1103,6 +1129,8 @@ namespace StardewDruid
             Layer buildingLayer = riteData.castLocation.Map.GetLayer("Buildings");
 
             int blessingLevel = staticData.blessingList["earth"];
+
+            int rockfallChance = 12 - Math.Max(8, riteData.caster.MiningLevel);
 
             List<Vector2> clumpIndex;
 
@@ -1120,8 +1148,6 @@ namespace StardewDruid
                 castRange = (riteData.castLevel * 2) - 1 + i;
 
                 List<Vector2> tileVectors = ModUtility.GetTilesWithinRadius(riteData.castLocation, riteData.castVector, castRange);
-
-               // bool npcCollision = false;
 
                 if (riteData.castLocation is Farm)
                 {
@@ -1206,13 +1232,6 @@ namespace StardewDruid
                     }
 
                 }
-
-                //if (npcCollision)
-                //{
-
-                    //tileVectors.Clear();
-
-                //}
 
                 foreach (Vector2 tileVector in tileVectors)
                 {
@@ -1548,7 +1567,7 @@ namespace StardewDruid
 
                         if (blessingLevel >= 5 && mineShaft.isTileOnClearAndSolidGround(tileX,tileY))
                         {
-                            int probability = Game1.random.Next(10);
+                            int probability = Game1.random.Next(rockfallChance);
 
                             if (probability == 0)
                             {
@@ -1630,6 +1649,13 @@ namespace StardewDruid
 
                 }
 
+                foreach (Vector2 tileVector in tileVectors)
+                {
+
+                    ModUtility.AnimateCastRadius(riteData.castLocation, tileVector, new Color(0.8f, 1f, 0.8f, 1), i);
+
+                }
+
             }
 
             //-------------------------- fire effects
@@ -1685,8 +1711,6 @@ namespace StardewDruid
 
                     }
 
-                    ModUtility.AnimateEarth(riteData.castLocation,effectHandle.targetVector);
-
                 }
 
             }
@@ -1709,198 +1733,6 @@ namespace StardewDruid
             }
 
             return;
-
-        }
-
-        private void AnimateWater()
-        {
-
-
-            //-------------------------- cast variables
-
-            int animationRow = 5;
-
-            Microsoft.Xna.Framework.Rectangle animationRectangle = new(0, animationRow * 64, 64, 64);
-
-            float animationInterval = 84f;
-
-            int animationLength = 4;
-
-            int animationLoops = 1;
-
-            bool animationFlip = false;
-
-            float animationScale;
-
-            float animationDepth = activeData.activeVector.X * 1000 + activeData.activeVector.Y;
-
-            Microsoft.Xna.Framework.Color animationColor;
-
-            Vector2 animationPosition;
-
-            //-------------------------- cast shadow
-
-            animationColor = new(0, 0, 0, 0.5f);
-
-            animationScale = 0.2f * activeData.chargeLevel;
-
-            animationPosition = (activeData.activeVector * 64) + (new Vector2(6, 6) * (5 - activeData.chargeLevel));
-
-            /*switch (activeData.chargeLevel)
-            {
-
-                case 1:
-                    animationScale = 0.2f;
-                    animationPosition = (activeData.activeVector * 64) + new Vector2(24,24);
-                    break;
-                case 2:
-                    animationScale = 0.4f;
-                    animationPosition = (activeData.activeVector * 64) + new Vector2(18, 18);
-                    break;
-                default: // 3
-                    animationScale = 0.6f;
-                    animationPosition = (activeData.activeVector * 64) + new Vector2(12, 12);
-                    break;
-
-            }*/
-
-
-            TemporaryAnimatedSprite shadowAnimationOne = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, animationFlip, animationDepth+1, 0f, animationColor, animationScale, 0f, 0f, 0f);
-
-            Game1.currentLocation.temporarySprites.Add(shadowAnimationOne);
-
-            animationScale = 0.1f + (0.2f * activeData.chargeLevel);
-
-            animationPosition = (activeData.activeVector * 64) + (new Vector2(6, 6) * (5 - activeData.chargeLevel)) - new Vector2(3,3);
-
-            /*switch (activeData.chargeLevel)
-            {
-
-                case 1:
-                    animationScale = 0.3f;
-                    animationPosition = (activeData.activeVector * 64) + new Vector2(21, 21);
-                    break;
-                case 2:
-                    animationScale = 0.5f;
-                    animationPosition = (activeData.activeVector * 64) + new Vector2(15, 15);
-                    break;
-                default: // 3
-                    animationScale = 0.7f;
-                    animationPosition = (activeData.activeVector * 64) + new Vector2(9, 9);
-                    break;
-
-            }*/
-
-            TemporaryAnimatedSprite shadowAnimationTwo = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, animationFlip, animationDepth+2, 0f, animationColor, animationScale, 0f, 0f, 0f)
-            {
-
-                delayBeforeAnimationStart = 336,
-
-            };
-
-            Game1.currentLocation.temporarySprites.Add(shadowAnimationTwo);
-
-            //-------------------------- cast animation
-
-            float colorIncrement = 1.2f - (0.2f * activeData.chargeLevel);
-
-            animationColor = new(colorIncrement, colorIncrement, 1, 1); // deepens from white to blue
-
-            animationScale = 0.2f + (0.4f * activeData.chargeLevel);
-
-            float vectorCastX = 30 - (12 * activeData.chargeLevel);
-
-            float vectorCastY = 0 - 96 - (32f * activeData.chargeLevel);
-
-            animationPosition = (activeData.activeVector * 64) + new Vector2(vectorCastX, vectorCastY);
-
-            /*switch (activeData.chargeLevel)
-            {
-
-                case 1:
-                    animationColor = new(uint.MaxValue); // deepens from white to blue
-                    animationScale = 0.6f;
-                    animationPosition = (activeData.activeVector * 64) + new Vector2(18,-128f);
-                    break;
-                case 2:
-                    animationColor = new(0.8f, 0.8f, 1, 1); // deepens from white to blue
-                    animationScale = 1.0f;
-                    animationPosition = (activeData.activeVector * 64) + new Vector2(6,-160f);
-                    break;
-                default: // 3
-                    animationColor = new(0.6f, 0.6f, 1, 1);
-                    animationFlip = true;
-                    animationScale = 1.4f;
-                    animationPosition = (activeData.activeVector * 64) + new Vector2(-6,-192f);
-                    break;
-
-            }*/
-
-            TemporaryAnimatedSprite animationOne = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, animationFlip, animationDepth+3, 0f, animationColor, animationScale, 0f, 0f, 0f);
-
-            Game1.currentLocation.temporarySprites.Add(animationOne);
-
-            colorIncrement = 1.1f - (0.2f * activeData.chargeLevel);
-
-            animationColor = new(colorIncrement, colorIncrement, 1, 1); // deepens from white to blue
-
-            animationScale = 0.4f + (0.4f * activeData.chargeLevel);
-
-            vectorCastX = 24 - (12 * activeData.chargeLevel);
-
-            vectorCastY = 0 - 112 - (32f * activeData.chargeLevel);
-
-            animationPosition = (activeData.activeVector * 64) + new Vector2(vectorCastX, vectorCastY);
-
-            /*switch (activeData.chargeLevel)
-            {
-                case 1:
-                    animationColor = new(0.9f, 0.9f, 1, 1);
-                    animationScale = 0.8f;
-                    animationPosition = (activeData.activeVector * 64) + new Vector2(12, -144f);
-                    break;
-                case 2:
-                    animationColor = new(0.7f, 0.7f, 1, 1);
-                    animationFlip = true;
-                    animationScale = 1.2f;
-                    animationPosition = (activeData.activeVector * 64) + new Vector2(0, -176f);
-                    break;
-                default:
-                    animationColor = new(0.5f, 0.5f, 1, 1);
-                    animationScale = 1.6f;
-                    animationPosition = (activeData.activeVector * 64) + new Vector2(-12, -208f);
-                    break;
-
-            }*/
-
-            TemporaryAnimatedSprite animationTwo = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, animationFlip, animationDepth+4, 0f, animationColor, animationScale, 0f, 0f, 0f)
-            {
-
-                delayBeforeAnimationStart = 336,
-
-            };
-
-            Game1.currentLocation.temporarySprites.Add(animationTwo);
-
-            //-------------------------- hand animation
-
-            //ModUtility.AnimateHands(Game1.player, activeData.activeDirection, 333);
-
-            //activeData.animateLevel = activeData.chargeLevel;
-
-            if (activeData.chargeLevel == 1)
-            {
-
-                Game1.currentLocation.playSoundPitched("thunder_small", 800);
-
-            }
-
-            if (activeData.chargeLevel == 3)
-            {
-
-                Game1.currentLocation.playSoundPitched("thunder_small", 1000);
-
-            }
 
         }
 
@@ -2294,6 +2126,12 @@ namespace StardewDruid
 
                 }
 
+                foreach (Vector2 tileVector in tileVectors) {
+
+                    ModUtility.AnimateCastRadius(riteData.castLocation, tileVector, new Color(0.8f,0.8f,1f,1),i);
+
+                }
+
             }
 
             if (blessingLevel >= 4)
@@ -2301,18 +2139,18 @@ namespace StardewDruid
                 Vector2 smiteVector = riteData.caster.getTileLocation();
 
                 Microsoft.Xna.Framework.Rectangle castArea = new(
-                    ((int)castVector.X - riteData.castLevel - 1) * 64,
-                    ((int)castVector.Y - riteData.castLevel - 1) * 64,
-                    (riteData.castLevel * 128) + 192,
-                    (riteData.castLevel * 128) + 192
+                    ((int)castVector.X - riteData.castLevel) * 64,
+                    ((int)castVector.Y - riteData.castLevel) * 64,
+                    (riteData.castLevel * 128) + 64,
+                    (riteData.castLevel * 128) + 64
                 );
 
 
                 Microsoft.Xna.Framework.Rectangle smiteArea = new(
-                    ((int)smiteVector.X - riteData.castLevel - 1) * 64,
-                    ((int)smiteVector.Y - riteData.castLevel - 1) * 64,
-                    (riteData.castLevel * 128) + 192,
-                    (riteData.castLevel * 128) + 192
+                    ((int)smiteVector.X - riteData.castLevel) * 64,
+                    ((int)smiteVector.Y - riteData.castLevel) * 64,
+                    (riteData.castLevel * 128) + 64,
+                    (riteData.castLevel * 128) + 64
                 );
 
                 int smiteCount = 0;
@@ -2418,20 +2256,6 @@ namespace StardewDruid
             }
 
         }
-        
-        private void AnimateStars()
-        {
-
-            //activeData.animateLevel = activeData.chargeLevel;
-
-            if(activeData.chargeLevel == 2)
-            {
-
-                Game1.currentLocation.playSound("Meteorite");
-
-            }
-
-        }
 
         private void CastStars(Rite riteData = null)
         {
@@ -2521,8 +2345,6 @@ namespace StardewDruid
                 float oldStamina = Game1.player.Stamina;
 
                 float staminaCost = Math.Min(castCost, oldStamina - 1);
-
-                //staminaCost = 8;
 
                 Game1.player.Stamina -= staminaCost;
 
@@ -2833,6 +2655,38 @@ namespace StardewDruid
         public Axe RetrieveAxe() { return targetAxe; }
 
         public Pickaxe RetrievePick() { return targetPick; }
+
+        public void ToggleEffect(string effect)
+        {
+
+            if (staticData.blessingList.ContainsKey(effect))
+            {
+                
+                staticData.blessingList.Remove(effect);
+
+            }
+            else
+            {
+
+                staticData.blessingList[effect] = 1;
+
+            }
+
+        }
+
+        public bool ForgotEffect(string effect)
+        {
+
+            if (staticData.blessingList.ContainsKey(effect))
+            {
+
+                return true;
+
+            }
+
+            return false;
+
+        }
 
     }
 

@@ -17,6 +17,13 @@ namespace StardewDruid.Cast
             : base(mod, target, rite)
         {
 
+            if (rite.caster.ForagingLevel >= 5)
+            {
+
+                castCost = 1;
+
+            }
+
             bushFeature = LargeTerrainFeature;
 
         }
@@ -37,7 +44,7 @@ namespace StardewDruid.Cast
 
             if (probability == 2)
             {
-                if (riteData.spawnIndex["critter"])
+                if (riteData.spawnIndex["critter"] && !mod.ForgotEffect("forgetCritters"))
                 {
 
                     Portal critterPortal = new(mod, targetPlayer.getTileLocation(), riteData);

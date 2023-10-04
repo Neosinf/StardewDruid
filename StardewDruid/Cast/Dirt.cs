@@ -17,10 +17,18 @@ namespace StardewDruid.Cast
 
         private readonly Dictionary<string, bool> spawnIndex;
 
-
         public Dirt(Mod mod, Vector2 target, Rite rite)
             : base(mod, target, rite)
         {
+
+            castCost = 4;
+
+            if (rite.caster.ForagingLevel >= 8)
+            {
+
+                castCost = 2;
+
+            }
 
             spawnIndex = rite.spawnIndex;
 
@@ -28,8 +36,15 @@ namespace StardewDruid.Cast
 
         public override void CastEarth()
         {
-            
-            if(targetLocation.terrainFeatures.ContainsKey(targetVector))
+
+            if(mod.ForgotEffect("forgetTrees"))
+            {
+
+                return;
+
+            }
+
+            if (targetLocation.terrainFeatures.ContainsKey(targetVector))
             {
 
                 mod.UpdateEarthCasts(targetLocation, targetVector, false);
@@ -53,9 +68,9 @@ namespace StardewDruid.Cast
 
                 grassFeature.doCollisionAction(tileRectangle, 2, targetVector, null, targetLocation);
 
-                castFire = true;
-
                 castCost = 0;
+
+                castFire = true;
 
             }
             else if (probability == 3 && spawnIndex["trees"] && neighbourList.Count == 0) // 1/10 tree
@@ -90,12 +105,12 @@ namespace StardewDruid.Cast
                 ModUtility.AnimateGrowth(targetLocation,targetVector);
 
             }
-            else if (neighbourList.ContainsKey("Crop") && !neighbourList.ContainsKey("Tree") && !neighbourList.ContainsKey("Sapling")) // 3/10 hoe dirt
+            /*else if (neighbourList.ContainsKey("Crop") && !neighbourList.ContainsKey("Tree") && !neighbourList.ContainsKey("Sapling")) // 3/10 hoe dirt
             {
 
                 targetLocation.makeHoeDirt(targetVector);
 
-            }
+            }*/
 
             if (!castFire)
             {

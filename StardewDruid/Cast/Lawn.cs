@@ -21,6 +21,15 @@ namespace StardewDruid.Cast
             : base(mod, target, rite)
         {
 
+            castCost = 4;
+
+            if (rite.caster.ForagingLevel >= 8)
+            {
+
+                castCost = 2;
+
+            }
+
             spawnIndex = rite.spawnIndex;
 
         }
@@ -34,6 +43,8 @@ namespace StardewDruid.Cast
                 return;
 
             }
+
+            bool forgotTrees = mod.ForgotEffect("forgetTrees");
 
             Dictionary<string, List<Vector2>> neighbourList = ModUtility.NeighbourCheck(targetLocation, targetVector);
 
@@ -173,8 +184,6 @@ namespace StardewDruid.Cast
 
                 castFire = true;
 
-                castCost = 4;
-
             }
             else if (probability >= 2 && probability <= 3 && spawnIndex["forage"] && neighbourList.Count == 0) // 2/120 forage
             {
@@ -231,10 +240,9 @@ namespace StardewDruid.Cast
 
                 castFire = true;
 
-                castCost = 4;
 
             }
-            else if (probability >= 4 && probability <= 15 && spawnIndex["grass"] && neighbourList.ContainsKey("Tree")) // 12/120 grass
+            else if (probability >= 4 && probability <= 15 && spawnIndex["grass"] && neighbourList.ContainsKey("Tree") && !forgotTrees) // 12/120 grass
             {
 
                 StardewValley.TerrainFeatures.Grass grassFeature = new(1, 4);
@@ -251,7 +259,7 @@ namespace StardewDruid.Cast
 
             }
             //else if (probability >= 16 && probability <= 25 && spawnIndex["trees"]) // 10/120 tree
-            else if (probability >= 4 && probability <= 13 && spawnIndex["trees"] && neighbourList.Count == 0) // 10/120 tree
+            else if (probability >= 4 && probability <= 13 && spawnIndex["trees"] && neighbourList.Count == 0 && !forgotTrees) // 10/120 tree
             {
 
                 List<int> treeIndex = new()
@@ -264,8 +272,6 @@ namespace StardewDruid.Cast
                 //newTree.fertilized.Value = true;
 
                 targetLocation.terrainFeatures.Add(targetVector, newTree);
-
-                castCost = 2;
 
                 castFire = true;
 

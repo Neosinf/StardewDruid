@@ -20,6 +20,13 @@ namespace StardewDruid.Cast
 
         public override void CastEarth()
         {
+           
+            if (mod.ForgotEffect("forgetFish"))
+            {
+
+                return;
+
+            }
 
             int probability = randomIndex.Next(40);
 
@@ -31,7 +38,7 @@ namespace StardewDruid.Cast
             if (probability >= 8)
             {
 
-                if (riteData.spawnIndex["critter"])
+                if (riteData.spawnIndex["critter"] && !mod.ForgotEffect("forgetCritters"))
                 {
 
                     Portal critterPortal = new(mod, targetPlayer.getTileLocation(), riteData);

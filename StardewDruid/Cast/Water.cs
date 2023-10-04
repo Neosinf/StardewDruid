@@ -20,12 +20,28 @@ namespace StardewDruid.Cast
             : base(mod, target, rite)
         {
 
+            castCost = 8;
+
+            if(rite.caster.FishingLevel > 5)
+            {
+
+                castCost = 4;
+
+            }
+
             portalPosition = new(targetVector.X * 64, targetVector.Y * 64);
 
         }
 
         public override void CastEarth()
         {
+            
+            if (mod.ForgotEffect("forgetFish"))
+            {
+
+                return;
+
+            }
 
             int probability = randomIndex.Next(60);
 
@@ -37,7 +53,7 @@ namespace StardewDruid.Cast
             if(probability >= 8)
             {
 
-                if (riteData.spawnIndex["critter"])
+                if (riteData.spawnIndex["critter"] && !mod.ForgotEffect("forgetCritters"))
                 {
 
                     Portal critterPortal = new(mod, targetPlayer.getTileLocation(), riteData);
@@ -140,8 +156,6 @@ namespace StardewDruid.Cast
 
             targetPlayer.currentLocation.playSound("pullItemFromWater");
 
-            castCost = 8;
-
             targetPlayer.gainExperience(1, experienceGain); // gain fishing experience
 
             castFire = true;
@@ -155,6 +169,8 @@ namespace StardewDruid.Cast
         }
 
         public override void CastWater() {
+
+            castCost = Math.Max(8, 48 - (targetPlayer.FishingLevel * 3));
 
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 300;
 
@@ -171,8 +187,6 @@ namespace StardewDruid.Cast
             castLimit = true;
 
             castFire = true;
-
-            castCost = 48;
 
             castActive = true;
 

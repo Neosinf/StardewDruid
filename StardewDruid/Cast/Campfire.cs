@@ -15,6 +15,8 @@ namespace StardewDruid.Cast
             : base(mod, target, rite)
         {
 
+            castCost = 0;
+
         }
 
         public override void CastWater()

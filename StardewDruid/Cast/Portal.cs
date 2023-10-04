@@ -30,6 +30,8 @@ namespace StardewDruid.Cast
 
         public Queue<Monster> spawnQueue;
 
+        public bool portalExpired;
+
         public Vector2 portalWithin;
 
         public Vector2 portalRange;
@@ -75,6 +77,10 @@ namespace StardewDruid.Cast
 
             monsterSpawns = new();
 
+            castCost = 0;
+
+            portalExpired = false;
+
         }
 
         public override void CastWater()
@@ -83,6 +89,12 @@ namespace StardewDruid.Cast
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 60;
 
             spawnFrequency = 2;
+
+            if (targetPlayer.hasBuff(24))
+            {
+                spawnFrequency = 1;
+
+            }
 
             spawnCounter = 0;
 
@@ -125,8 +137,6 @@ namespace StardewDruid.Cast
 
             castFire = true;
 
-            castCost = 24;
-
             castActive = true;
 
             return;
@@ -137,6 +147,8 @@ namespace StardewDruid.Cast
         {
 
             if (expireTime >= Game1.currentGameTime.TotalGameTime.TotalSeconds && targetPlayer.currentLocation == targetLocation) {
+
+                portalExpired = true;
 
                 return true;
             
@@ -181,6 +193,8 @@ namespace StardewDruid.Cast
 
             }
 
+            int removedCounter = 0;
+
             foreach (Monster monsterSpawn in monsterSpawns)
             {
 
@@ -191,7 +205,42 @@ namespace StardewDruid.Cast
 
                     targetLocation.characters.Remove(monsterSpawn);
 
+                    removedCounter++;
+
                 };
+
+            }
+
+            if(portalExpired && specialType == 0 && removedCounter <= 4)
+            {
+
+                int objectIndex;
+                
+                if (mineLevel <= 40)
+                {
+
+                    objectIndex = 535;
+
+                }
+                else if (mineLevel <= 80)
+                {
+
+                    objectIndex = 536;
+
+                }
+                else //(targetLocation.mineLevel <= 120)
+                {
+                    
+                    objectIndex = 537;
+                
+                }
+
+                for(int i = 0; i < randomIndex.Next(1,4);  i++)
+                {
+
+                    Game1.createObjectDebris(objectIndex, (int)targetVector.X, (int)targetVector.Y);
+
+                }
 
             }
 
@@ -334,7 +383,7 @@ namespace StardewDruid.Cast
 
                     spawnIndex = new()
                     {
-                        0,99,
+                        99,
 
                     };
 

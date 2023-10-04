@@ -27,7 +27,6 @@ namespace StardewDruid.Cast
 
             shaftLocation = targetPlayer.currentLocation as MineShaft;
 
-
         }
 
         public override void CastEarth()
@@ -344,25 +343,10 @@ namespace StardewDruid.Cast
 
             targetLocation.damageMonster(areaOfEffect, 30 * objectStrength, 40 * objectStrength, true, targetPlayer);
 
-            //targetLocation.lightGlows.Add(targetVector * 64);
-
         }
 
         public void RockImpact()
         {
-
-            /*StardewValley.Object objectInstance = new(targetVector, objectIndex, "Stone", true, false, false, false)
-            {
-                MinutesUntilReady = objectStrength
-            };
-            
-            if (objectInstance != null)
-            {
-                targetLocation.Objects.Add(targetVector, objectInstance);
-            }
-
-            mod.UpdateEarthCasts(targetLocation, targetVector, false);*/
-
             for (int i = 0; i < randomIndex.Next(1, 3); i++)
             {
 

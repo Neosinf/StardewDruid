@@ -26,17 +26,35 @@ namespace StardewDruid.Map
 
         public string questCompleted;
 
-        public Effigy(Mod Mod)
+        private int X;
+
+        private int Y;
+
+        private bool hideStatue;
+
+        private bool makeSpace;
+
+        public Effigy(Mod Mod,int statueX, int statueY, bool HideStatue, bool MakeSpace)
         {
 
             mod = Mod;
 
             lessonGiven = false;
 
+            X = statueX; // 6
+
+            Y = statueY; // 3
+
+            hideStatue = HideStatue;
+
+            makeSpace = MakeSpace;
+
         }
 
         public void ModifyCave()
         {
+
+            if(hideStatue) { return; }
 
             GameLocation farmCave = Game1.getLocationFromName("FarmCave");
 
@@ -46,17 +64,24 @@ namespace StardewDruid.Map
 
             //------------------------ rearrange existing tiles
 
-            backLayer.Tiles[6, 1] = buildingsLayer.Tiles[6, 1];
+            if (makeSpace) {
 
-            backLayer.Tiles[5, 2] = buildingsLayer.Tiles[5, 2];
 
-            backLayer.Tiles[6, 2] = buildingsLayer.Tiles[6, 3];
+                backLayer.Tiles[6, 1] = buildingsLayer.Tiles[6, 1];
 
-            backLayer.Tiles[7, 2] = buildingsLayer.Tiles[7, 2];
+                backLayer.Tiles[5, 2] = buildingsLayer.Tiles[5, 2];
 
-            buildingsLayer.Tiles[5, 3] = buildingsLayer.Tiles[3, 4];
+                backLayer.Tiles[6, 2] = buildingsLayer.Tiles[6, 3];
 
-            buildingsLayer.Tiles[7, 3] = buildingsLayer.Tiles[9, 4];
+                backLayer.Tiles[7, 2] = buildingsLayer.Tiles[7, 2];
+
+                buildingsLayer.Tiles[5, 3] = buildingsLayer.Tiles[3, 4];
+
+                buildingsLayer.Tiles[7, 3] = buildingsLayer.Tiles[9, 4];
+
+
+            }
+
 
             //------------------------ add effigy
 
@@ -69,23 +94,23 @@ namespace StardewDruid.Map
 
                 farmCave.map.AddTileSheet(witchSheet);
 
-                buildingsLayer.Tiles[6, 1] = new StaticTile(buildingsLayer, witchSheet, BlendMode.Alpha, 108);
+                buildingsLayer.Tiles[X, Y-2] = new StaticTile(buildingsLayer, witchSheet, BlendMode.Alpha, 108);
 
-                buildingsLayer.Tiles[5, 2] = new StaticTile(buildingsLayer, witchSheet, BlendMode.Alpha, 115);
+                buildingsLayer.Tiles[X-1, Y-1] = new StaticTile(buildingsLayer, witchSheet, BlendMode.Alpha, 115);
 
                 StaticTile effigyBody = new(buildingsLayer, witchSheet, BlendMode.Alpha, 116);
 
                 effigyBody.TileIndexProperties.Add("Action", "FarmCaveDruidEffigy");
 
-                buildingsLayer.Tiles[6, 2] = effigyBody;
+                buildingsLayer.Tiles[X, Y-1] = effigyBody;
 
-                buildingsLayer.Tiles[7, 2] = new StaticTile(buildingsLayer, witchSheet, BlendMode.Alpha, 117);
+                buildingsLayer.Tiles[X+1, Y-1] = new StaticTile(buildingsLayer, witchSheet, BlendMode.Alpha, 117);
 
                 StaticTile effigyFeet = new(buildingsLayer, witchSheet, BlendMode.Alpha, 124);
 
                 effigyFeet.TileIndexProperties.Add("Action", "FarmCaveDruidEffigy");
 
-                buildingsLayer.Tiles[6, 3] = effigyFeet;
+                buildingsLayer.Tiles[X, Y] = effigyFeet;
 
             }
 
@@ -157,8 +182,10 @@ namespace StardewDruid.Map
 
         }
 
-        private static void NoDecoration()
+        public void NoDecoration()
         {
+
+            if (hideStatue) { return; }
 
             GameLocation farmCave = Game1.getLocationFromName("FarmCave");
 
@@ -170,13 +197,13 @@ namespace StardewDruid.Map
                 Layer frontLayer = farmCave.map.GetLayer("Front");
 
 
-                frontLayer.Tiles[5, 0] = null;
+                frontLayer.Tiles[X-1, Y-3] = null;
 
-                frontLayer.Tiles[5, 1] = null;
+                frontLayer.Tiles[X-1, Y-2] = null;
 
-                frontLayer.Tiles[7, 0] = null;
+                frontLayer.Tiles[X+1, Y-3] = null;
 
-                frontLayer.Tiles[7, 1] = null;
+                frontLayer.Tiles[X+1, Y-2] = null;
 
             }
 
@@ -184,8 +211,10 @@ namespace StardewDruid.Map
 
         }
 
-        private static void EarthDecoration()
+        public void EarthDecoration()
         {
+
+            if (hideStatue) { return; }
 
             GameLocation farmCave = Game1.getLocationFromName("FarmCave");
 
@@ -196,22 +225,23 @@ namespace StardewDruid.Map
 
                 Layer frontLayer = farmCave.map.GetLayer("Front");
 
-                frontLayer.Tiles[5, 0] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 372);
+                frontLayer.Tiles[X - 1, Y - 3] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 372);
 
-                frontLayer.Tiles[5, 1] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 380);
+                frontLayer.Tiles[X - 1, Y - 2] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 380);
 
-                frontLayer.Tiles[7, 0] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 372);
+                frontLayer.Tiles[X + 1, Y - 3] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 372);
 
-                frontLayer.Tiles[7, 1] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 380);
-
+                frontLayer.Tiles[X + 1, Y - 2] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 380);
             }
 
             return;
 
         }
 
-        private static void WaterDecoration()
+        public void WaterDecoration()
         {
+
+            if (hideStatue) { return; }
 
             GameLocation farmCave = Game1.getLocationFromName("FarmCave");
 
@@ -222,22 +252,23 @@ namespace StardewDruid.Map
 
                 Layer frontLayer = farmCave.map.GetLayer("Front");
 
-                frontLayer.Tiles[5, 0] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 373);
+                frontLayer.Tiles[X - 1, Y - 3] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 373);
 
-                frontLayer.Tiles[5, 1] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 381);
+                frontLayer.Tiles[X - 1, Y - 2] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 381);
 
-                frontLayer.Tiles[7, 0] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 373);
+                frontLayer.Tiles[X + 1, Y - 3] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 373);
 
-                frontLayer.Tiles[7, 1] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 381);
-
+                frontLayer.Tiles[X + 1, Y - 2] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 381);
             }
 
             return;
 
         }
 
-        private static void StarsDecoration()
+        public void StarsDecoration()
         {
+
+            if (hideStatue) { return; }
 
             GameLocation farmCave = Game1.getLocationFromName("FarmCave");
 
@@ -248,13 +279,13 @@ namespace StardewDruid.Map
 
                 Layer frontLayer = farmCave.map.GetLayer("Front");
 
-                frontLayer.Tiles[5, 0] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 374);
+                frontLayer.Tiles[X - 1, Y - 3] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 373);
 
-                frontLayer.Tiles[5, 1] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 382);
+                frontLayer.Tiles[X - 1, Y - 2] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 381);
 
-                frontLayer.Tiles[7, 0] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 374);
+                frontLayer.Tiles[X + 1, Y - 3] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 373);
 
-                frontLayer.Tiles[7, 1] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 382);
+                frontLayer.Tiles[X + 1, Y - 2] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 381);
 
             }
 
@@ -346,10 +377,19 @@ namespace StardewDruid.Map
 
             }
 
+            if (blessingList.ContainsKey("earth"))
+            {
+
+                effigyChoices.Add(new Response("disable", "Something happened that I'd rather forget (disable an effect)"));
+
+                effigyChoices.Add(new Response("enable", "I want to relearn something (enable an effect)"));
+
+            }
+
             if (blessingList.ContainsKey("water"))
             {
 
-                effigyChoices.Add(new Response("blessing", "I seek another's favour"));
+                effigyChoices.Add(new Response("blessing", "I want to change my patron (change rite)"));
 
             }
 
@@ -377,6 +417,18 @@ namespace StardewDruid.Map
                 case "journey":
 
                     DelayedAction.functionAfterDelay(DialogueJourney, 100);
+
+                    break;
+
+                case "disable":
+
+                    DelayedAction.functionAfterDelay(DialogueDisable, 100);
+
+                    break;
+
+                case "enable":
+
+                    DelayedAction.functionAfterDelay(DialogueEnable, 100);
 
                     break;
 
@@ -763,7 +815,7 @@ namespace StardewDruid.Map
             if (mod.ActiveBlessing() != "earth")
             {
 
-                effigyChoices.Add(new Response("earth", "Seek the Two Kings"));
+                effigyChoices.Add(new Response("earth", "Seek the Two Kings for me"));
 
             }
 
@@ -777,11 +829,18 @@ namespace StardewDruid.Map
             if (mod.BlessingList().ContainsKey("stars") && mod.ActiveBlessing() != "stars")
             {
 
-                effigyChoices.Add(new Response("stars", "Look to the Stars"));
+                effigyChoices.Add(new Response("stars", "Look to the Stars for me"));
 
             }
 
-            effigyChoices.Add(new Response("none", "(say nothing)"));
+            if (mod.ActiveBlessing() != "none")
+            {
+
+                effigyChoices.Add(new Response("none", "I don't want anyone's favour (disables all effects)"));
+
+            }
+
+            effigyChoices.Add(new Response("cancel", "(say nothing)"));
 
             GameLocation.afterQuestionBehavior effigyBehaviour = new(DialogueBlessingAnswer);
 
@@ -834,21 +893,181 @@ namespace StardewDruid.Map
 
                     break;
 
-                default: // "none"
+                case "none":
+
+                    Game1.addHUDMessage(new HUDMessage($"{mod.CastControl()} will do nothing", ""));
 
                     effigyReply = "Forgotten Effigy: ^The light fades away.";
+
+                    Game1.currentLocation.playSound("ghost");
 
                     NoDecoration();
 
                     break;
 
+                default: // "none"
+
+                    effigyReply = "Forgotten Effigy: ^(says nothing back).";
+
+                    break;
+
             }
 
-            mod.UpdateBlessing(effigyAnswer);
+            if(effigyAnswer != "cancel")
+            {
+
+                mod.UpdateBlessing(effigyAnswer);
+
+            }
 
             Game1.activeClickableMenu = new DialogueBox(effigyReply);
 
         }
+
+        public void DialogueDisable()
+        {
+
+            Dictionary<string, int> blessingList = mod.BlessingList();
+
+            string effigyQuestion = "Forgotten Effigy: ^Is there a lesson you'd rather forget.";
+
+            List<Response> effigyChoices = new();
+
+            if (!blessingList.ContainsKey("forgetSeeds"))
+            {
+
+                effigyChoices.Add(new Response("forgetSeeds", "I end up with seeds in my boots everytime I run through the meadow. IT'S ANNOYING."));
+
+            }
+
+            if (!blessingList.ContainsKey("forgetFish"))
+            {
+
+                effigyChoices.Add(new Response("forgetFish", "I got slapped in the face by a flying fish today."));
+
+            }
+
+            if (!blessingList.ContainsKey("forgetCritters"))
+            {
+
+                effigyChoices.Add(new Response("forgetCritters", "Why does a bat sleep in every damn tree on this farm. Can't they live in this cave instead?"));
+
+            }
+
+            if (!blessingList.ContainsKey("forgetTrees"))
+            {
+
+                effigyChoices.Add(new Response("forgetTrees", "Just about inside Clint's by 3:50pm when a tree sprouted in front of me. Now my crotch is sore AND I don't have a Copper Axe."));
+
+            }
+
+            effigyChoices.Add(new Response("none", "(say nothing)"));
+
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(DialogueDisableAnswer);
+
+            targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+
+            return;
+
+        }
+
+        public void DialogueDisableAnswer(Farmer effigyVisitor, string effigyAnswer)
+        {
+
+            string effigyReply = "Forgotten Effigy: ^The druid's life is... full of random surprises... but may you not suffer any more of this kind.";
+
+            switch (effigyAnswer)
+            {
+                case "none":
+
+                    effigyReply = "Forgotten Effigy: ^... ^... ^you've forgotten what you wanted to forget, haven't you.";
+
+                    break;
+
+                default: //
+
+                    mod.ToggleEffect(effigyAnswer);
+
+                    break;
+
+            }
+
+            Game1.activeClickableMenu = new DialogueBox(effigyReply);
+
+        }
+
+        public void DialogueEnable()
+        {
+
+            Dictionary<string, int> blessingList = mod.BlessingList();
+
+            string effigyQuestion = "Forgotten Effigy: ^The mind is open.";
+
+            List<Response> effigyChoices = new();
+
+            if (blessingList.ContainsKey("forgetSeeds"))
+            {
+
+                effigyChoices.Add(new Response("forgetSeeds", "There's a time to reap and a time to sow. I want to reap seeds from wild grass, sell them, and buy a Sow."));
+
+            }
+
+            if (blessingList.ContainsKey("forgetFish"))
+            {
+
+                effigyChoices.Add(new Response("forgetFish", "I miss the way the fish dance to the rhythm of the rite"));
+
+            }
+
+            if (blessingList.ContainsKey("forgetCritters"))
+            {
+
+                effigyChoices.Add(new Response("forgetCritters", "I miss the feeling of being watched from every bush."));
+
+            }
+
+            if (blessingList.ContainsKey("forgetTrees"))
+            {
+
+                effigyChoices.Add(new Response("forgetTrees", "Stuff Clint. I want to impress Emily with the magic sprout trick."));
+
+            }
+
+            effigyChoices.Add(new Response("none", "(say nothing)"));
+
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(DialogueEnableAnswer);
+
+            targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+
+            return;
+
+        }
+
+        public void DialogueEnableAnswer(Farmer effigyVisitor, string effigyAnswer)
+        {
+
+            string effigyReply = "Forgotten Effigy: ^Let the essence of life itself enrich your world.";
+
+            switch (effigyAnswer)
+            {
+                case "none":
+
+                    effigyReply = "Forgotten Effigy: ^... ^... ^you can't remember what you wanted to remember, I see.";
+
+                    break;
+
+                default: //
+
+                    mod.ToggleEffect(effigyAnswer);
+
+                    break;
+
+            }
+
+            Game1.activeClickableMenu = new DialogueBox(effigyReply);
+
+        }
+
 
     }
 

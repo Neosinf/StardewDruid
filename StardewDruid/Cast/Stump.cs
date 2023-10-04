@@ -57,7 +57,9 @@ namespace StardewDruid.Cast
         public override void CastWater()
         {
 
-            if(resourceClump == null)
+            castCost = Math.Max(2, 28 - (targetPlayer.ForagingLevel * 2));
+
+            if (resourceClump == null)
             {
 
                 return;
@@ -131,8 +133,6 @@ namespace StardewDruid.Cast
             Game1.createObjectDebris(382, (int)this.targetVector.X + 1, (int)this.targetVector.Y);
 
             castFire = true;
-
-            castCost = 24;
 
             ModUtility.AnimateBolt(targetLocation, targetVector);
 

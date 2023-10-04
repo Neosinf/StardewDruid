@@ -13,6 +13,8 @@ namespace StardewDruid.Cast
             : base(mod, target, rite)
         {
 
+            castCost = Math.Max(6, 12 - (int)Math.Ceiling((double)(rite.caster.CombatLevel / 2)));
+
             targetMonster = TargetMonster;
 
         }
@@ -21,15 +23,15 @@ namespace StardewDruid.Cast
         {
 
             Rectangle areaOfEffect = new(
-                ((int)targetVector.X - 1) * 64,
-                ((int)targetVector.Y - 1) * 64,
-                192,
-                192
+                ((int)targetVector.X * 64) - 32,
+                ((int)targetVector.Y * 64) - 32,
+                128,
+                128
             );
 
-            targetLocation.damageMonster(areaOfEffect, 999, 999, true, targetPlayer);
+            targetLocation.damageMonster(areaOfEffect, 150, 250, true, targetPlayer);
 
-            ModUtility.AnimateBolt(targetLocation, new Vector2(targetVector.X, targetVector.Y - 1), "flameSpellHit");
+            ModUtility.AnimateBolt(targetLocation, new Vector2(targetVector.X, targetVector.Y - 1));
 
             if (randomIndex.Next(2) == 0)
             {
@@ -40,12 +42,10 @@ namespace StardewDruid.Cast
 
             castFire = true;
 
-            castCost = 12;
-
             return;
 
         }
 
-
     }
+
 }

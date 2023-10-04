@@ -20,6 +20,220 @@ namespace StardewDruid
     static class ModUtility
     {
 
+        public static void AnimateEarthCast(Vector2 activeVector, int chargeLevel, int cycleLevel) {
+
+            //-------------------------- cast variables
+
+            int animationRow;
+
+            Microsoft.Xna.Framework.Rectangle animationRectangle;
+
+            float animationInterval;
+
+            int animationLength;
+
+            int animationLoops;
+
+            bool animationFlip;
+
+            float animationScale;
+
+            Microsoft.Xna.Framework.Color animationColor;
+
+            Vector2 animationPosition;
+
+            TemporaryAnimatedSprite newAnimation;
+
+            animationFlip = false;
+
+            float colorIncrement = 1.2f - (0.2f * chargeLevel);
+
+            animationColor = new(colorIncrement, 1, colorIncrement, 1);
+
+            animationScale = 0.6f + (0.2f * chargeLevel);
+
+            float vectorCastX = 12 - (6 * chargeLevel);
+
+            float vectorCastY = 0 - 122 - (6 * chargeLevel);
+
+            animationPosition = (activeVector * 64) + new Vector2(vectorCastX, vectorCastY);
+
+            //-------------------------- cast animation
+
+            animationRow = 10;
+
+            animationRectangle = new(0, animationRow * 64, 64, 64);
+
+            animationInterval = 75f;
+
+            animationLength = 8;
+
+            animationLoops = 1;
+
+            newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, animationFlip, -1, 0f, animationColor, animationScale, 0f, 0f, 0f);
+
+            Game1.currentLocation.temporarySprites.Add(newAnimation);
+
+            //-------------------------- sound and pitch
+
+            if(Game1.currentLocation is MineShaft)
+            {
+
+                if (chargeLevel == 1 || chargeLevel == 3)
+                {
+
+                    Rumble.rumbleAndFade(1f, 1333);
+
+                }
+
+            }
+            else
+            {
+
+                int pitchLevel = cycleLevel % 4;
+
+                if (chargeLevel == 1)
+                {
+
+                    Game1.currentLocation.playSoundPitched("discoverMineral", 600 + (pitchLevel * 200));
+
+                }
+
+                if (chargeLevel == 3)
+                {
+
+                    Game1.currentLocation.playSoundPitched("discoverMineral", 700 + (pitchLevel * 200));
+
+                }
+
+            }
+
+        }
+
+        public static void AnimateWaterCast(Vector2 activeVector, int chargeLevel, int cycleLevel)
+        {
+
+            //-------------------------- cast variables
+
+            int animationRow = 5;
+
+            Microsoft.Xna.Framework.Rectangle animationRectangle = new(128, animationRow * 64, 64, 64);
+
+            float animationInterval = 168f;
+
+            int animationLength = 2;
+
+            bool animationFlip = false;
+
+            float animationScale;
+
+            float animationDepth = activeVector.X * 1000 + activeVector.Y;
+
+            Microsoft.Xna.Framework.Color animationColor;
+
+            Vector2 animationPosition;
+
+            //-------------------------- cast shadow
+
+            animationColor = new(0, 0, 0, 0.5f);
+
+            animationScale = 0.2f * chargeLevel;
+
+            animationPosition = (activeVector * 64) + (new Vector2(6, 6) * (5 - chargeLevel));
+
+            TemporaryAnimatedSprite shadowAnimationOne = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, 1, animationPosition, false, animationFlip, animationDepth + 1, 0f, animationColor, animationScale, 0f, 0f, 0f);
+
+            Game1.currentLocation.temporarySprites.Add(shadowAnimationOne);
+
+            //-------------------------- cast shadow with delay
+
+            animationScale = 0.1f + (0.2f * chargeLevel);
+
+            animationPosition = (activeVector * 64) + (new Vector2(6, 6) * (5 - chargeLevel)) - new Vector2(3, 3);
+
+            TemporaryAnimatedSprite shadowAnimationTwo = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, 1, animationPosition, false, animationFlip, animationDepth + 2, 0f, animationColor, animationScale, 0f, 0f, 0f)
+            {
+
+                delayBeforeAnimationStart = 334,
+
+            };
+
+            Game1.currentLocation.temporarySprites.Add(shadowAnimationTwo);
+
+            //-------------------------- cast animation
+
+            float colorIncrement = 1.2f - (0.2f * chargeLevel);
+
+            animationColor = new(colorIncrement, colorIncrement, 1, 1); // deepens from white to blue
+
+            animationScale = 0.2f + (0.4f * chargeLevel);
+
+            float vectorCastX = 30 - (12 * chargeLevel);
+
+            float vectorCastY = 0 - 160 - (32f * chargeLevel);
+
+            animationPosition = (activeVector * 64) + new Vector2(vectorCastX, vectorCastY);
+
+            TemporaryAnimatedSprite animationOne = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, 1, animationPosition, false, animationFlip, animationDepth + 3, 0f, animationColor, animationScale, 0f, 0f, 0f);
+
+            Game1.currentLocation.temporarySprites.Add(animationOne);
+
+            //-------------------------- cast animation with delay
+
+            colorIncrement = 1.1f - (0.2f * chargeLevel);
+
+            animationColor = new(colorIncrement, colorIncrement, 1, 1); // deepens from white to blue
+
+            animationScale = 0.4f + (0.4f * chargeLevel);
+
+            vectorCastX = 24 - (12 * chargeLevel);
+
+            vectorCastY = 0 - 176 - (32f * chargeLevel);
+
+            animationPosition = (activeVector * 64) + new Vector2(vectorCastX, vectorCastY);
+
+            TemporaryAnimatedSprite animationTwo = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, 1, animationPosition, false, animationFlip, animationDepth + 4, 0f, animationColor, animationScale, 0f, 0f, 0f)
+            {
+
+                delayBeforeAnimationStart = 334,
+
+            };
+
+            Game1.currentLocation.temporarySprites.Add(animationTwo);
+
+            //-------------------------- sound and pitch
+
+            int pitchLevel = cycleLevel % 4;
+
+            if (chargeLevel == 1)
+            {
+
+                Game1.currentLocation.playSoundPitched("thunder_small", 600 + (pitchLevel * 200));
+
+            }
+
+            if (chargeLevel == 3)
+            {
+
+                Game1.currentLocation.playSoundPitched("thunder_small", 700 + (pitchLevel * 200));
+
+            }
+
+
+        }
+
+        public static void AnimateStarsCast(Vector2 activeVector, int chargeLevel, int cycleLevel)
+        {
+
+            if (chargeLevel == 2)
+            {
+
+                Game1.currentLocation.playSound("Meteorite");
+
+            }
+
+        }
+
         public static void AnimateHands(Farmer player, int direction, int timeFrame)
         {
 
@@ -69,143 +283,6 @@ namespace StardewDruid
 
         }
 
-        /*public static void AnimateHands(Farmer player, int direction, int timeFrame)
-        {
-
-            //player.Halt();
-
-            //int newDirection = player.getFacingDirection();
-
-            int newDirection = direction;
-
-            AnimationFrame carryAnimation;
-
-            int frameIndex;
-
-            bool frameFlip = false;
-
-            bool stillFrame = false;
-
-            switch (newDirection)
-            {
-
-                case 0: // Up
-                    
-                    if (player.running)
-                    {
-
-                        frameIndex = 144;
-
-                    } 
-                    else if (player.isMoving())
-                    {
-
-                        frameIndex = 112;
-            
-                    }
-                    else
-                    {
-
-                        frameIndex = 12;
-
-                        stillFrame = true;
-                    }
-
-                    break;
-
-                case 1: // Right
-
-                    if (player.running)
-                    {
-
-                        frameIndex = 128;
-
-                    }
-                    else if (player.isMoving())
-                    {
-
-                        frameIndex = 96;
-
-                    }
-                    else
-                    {
-
-                        frameIndex = 6;
-
-                        stillFrame = true;
-                    }
-
-                    break;
-
-                case 2: // Down
-
-                    if (player.running)
-                    {
-
-                        frameIndex = 136;
-
-                    }
-                    else if (player.isMoving())
-                    {
-
-                        frameIndex = 104;
-
-                    }
-                    else
-                    {
-
-                        frameIndex = 0;
-
-                        stillFrame = true;
-                    }
-
-                    break;
-
-                default: // Left
-
-                    if (player.running)
-                    {
-
-                        frameIndex = 152;
-
-                    }
-                    else if (player.isMoving())
-                    {
-
-                        frameIndex = 120;
-
-                    }
-                    else
-                    {
-
-                        frameIndex = 6;
-
-                        frameFlip = true; // same as right but flipped
-
-                        stillFrame = true; 
-
-                    }
-                    break;
-
-            }
-
-            if (stillFrame)
-            {
-
-                carryAnimation = new(frameIndex, timeFrame, true, frameFlip);
-
-                player.FarmerSprite.animateOnce(new AnimationFrame[1] { carryAnimation });
-                
-            }
-            else
-            {
-
-                player.FarmerSprite.animate(frameIndex, timeFrame);
-
-            }
-
-        }*/
-
         public static void AnimateGrowth(GameLocation targetLocation, Vector2 targetVector) // DruidCastGrowth
         {
 
@@ -233,7 +310,7 @@ namespace StardewDruid
 
         }
 
-        public static void AnimateEarth(GameLocation targetLocation, Vector2 targetVector) // DruidGrowthAnimation
+        public static void AnimateCastRadius(GameLocation targetLocation, Vector2 targetVector, Color animationColor, int delayInterval)
         {
 
             int animationRow = 11;
@@ -246,13 +323,14 @@ namespace StardewDruid
 
             int animationLoops = 1;
 
-            Microsoft.Xna.Framework.Color animationColor = Microsoft.Xna.Framework.Color.White; //new(0.8f, 1, 0.8f, 1); // light green
-
             Vector2 animationPosition = new(targetVector.X * 64 + 8, targetVector.Y * 64 + 8);
 
             float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString());
 
-            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, animationColor, 0.75f, 0f, 0f, 0f);
+            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, animationColor, 0.75f, 0f, 0f, 0f)
+            {
+                delayBeforeAnimationStart = 333 * delayInterval,
+            };
 
             targetLocation.temporarySprites.Add(newAnimation);
 
@@ -287,44 +365,45 @@ namespace StardewDruid
 
         }
 
-        public static void AnimateBolt(GameLocation targetLocation, Vector2 targetVector) //DruidLightningBolt
-        {
-            AnimateBolt(targetLocation, targetVector, "thunder");
-
-        }
-
-        public static void AnimateBolt(GameLocation targetLocation, Vector2 targetVector, string playSound)
+        public static void AnimateBolt(GameLocation targetLocation, Vector2 targetVector)
         {
 
-            //Game1.flashAlpha = (float)(0.5 + Game1.random.NextDouble());
+            Game1.currentLocation.playSoundPitched("flameSpellHit",800);
 
-            Game1.playSound(playSound);
+            Vector2 targetPosition = new(targetVector.X * 64, (targetVector.Y * 64) - 200);
 
-            Vector2 targetPosition = new(targetVector.X * 64, targetVector.Y * 64);
+            // -------------------------
 
-            targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(362, 75f, 6, 1, targetPosition, flicker: false, flipped: false));
+            TemporaryAnimatedSprite boltCloud = new("TileSheets\\animations", new(128, 5 * 64, 64, 64), 200f, 4, 1, new Vector2(targetPosition.X+8,targetPosition.Y-24), flicker: false, false, (targetPosition.Y + 32f) / 10000f + 0.001f, 0.025f, new Color(0.6f,0.6f,1f,1), 0.875f, 0f, 0f, 0f);
+
+            targetLocation.temporarySprites.Add(boltCloud);
+
+            // -------------------------
+
+            //targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(362, 75f, 6, 1, targetPosition, flicker: false, flipped: false));
 
             Microsoft.Xna.Framework.Rectangle sourceRect = new(644, 1078, 37, 57);
 
-            Vector2 position = targetPosition + new Vector2(-5, -sourceRect.Height);
-
             TemporaryAnimatedSprite boltAnimation;
 
-            while (position.Y > (float)(-sourceRect.Height * 2))
+            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 9999f, 1, 750, targetPosition + new Vector2(0, sourceRect.Height/2), flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.003f, 0.025f, new Color(0.8f, 0.8f, 1f, 1), 2f, 0f, 0f, 0f)
             {
+                light = true,
+                lightRadius = 2f,
+                lightcolor = Microsoft.Xna.Framework.Color.Black
+            };
 
-                boltAnimation = new("LooseSprites\\Cursors", sourceRect, 9999f, 1, 999, position, flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.001f, 0.025f, Microsoft.Xna.Framework.Color.White, 2f, 0f, 0f, 0f)
-                {
-                    light = true,
-                    lightRadius = 2f,
-                    delayBeforeAnimationStart = 200,
-                    lightcolor = Microsoft.Xna.Framework.Color.Black
-                };
+            targetLocation.temporarySprites.Add(boltAnimation);
 
-                targetLocation.temporarySprites.Add(boltAnimation);
-                position.Y -= sourceRect.Height * 2;
-            }
+            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 9999f, 1, 750, targetPosition + new Vector2(0, sourceRect.Height), flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.002f, 0.025f, Microsoft.Xna.Framework.Color.White, 2f, 0f, 0f, 0f)
+            {
+                light = true,
+                lightRadius = 2f,
+                lightcolor = Microsoft.Xna.Framework.Color.Black
+            };
 
+            targetLocation.temporarySprites.Add(boltAnimation);
+            
             return;
 
         }

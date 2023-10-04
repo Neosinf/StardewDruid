@@ -56,7 +56,7 @@ namespace StardewDruid.Cast
 
             }
 
-            if(probability <= 1)
+            if(probability <= 1 && !mod.ForgotEffect("forgetSeeds"))
             {
 
                 switch (Game1.currentSeason)
@@ -87,37 +87,6 @@ namespace StardewDruid.Cast
                 }
 
             }  
-            /*else if (probability == 2)
-            {
-
-                switch (Game1.currentSeason)
-                {
-
-                    case "spring":
-
-                        Game1.createObjectDebris(477, tileX, tileY);
-
-                        break;
-
-                    case "summer":
-
-                        Game1.createObjectDebris(483, tileX, tileY);
-
-                        break;
-
-                    case "fall":
-
-                        Game1.createObjectDebris(299, tileX, tileY);
-
-                        break;
-
-                    default:
-
-                        break;
-
-                }
-
-            }*/
             else
             {
 

@@ -2,6 +2,8 @@
 STARDEW DRUID
 ==========================================
 
+NOTE: One of the latest updates contained a bug for multiplayer that is currently being addressed.
+
 A druidry themed mod that adds magic mechanics to the core game experience
 
 Requires SMAPI version 3.18.5 +
@@ -11,7 +13,7 @@ Optimised for:
 - Single Player
 - English
 
-Expected to work without issue on multiplayer and expansion mods
+Expected to work without issue on expansion mods
 
 -----------------------------------------
 CHALLENGE REWARDS
@@ -35,12 +37,31 @@ Rite Buttons "riteButtons" is a list of keybinds set to MouseX1, MouseX2 and Lef
 
 - Keybinds can be changed in mod configuration after installing
 
+-----------------------------------------
+
+Cast Buffs "castBuffs"
+
+- Enables automatic consumption of berry-type forageables (salmonberry, blackberry, grape), sashimi and cheese when 
+  casting with critically low stamina
+
+- Enables magnetic cast radius of 10 for 6 seconds when Rite of Earth is cast to ease pick up of debris at the outer range of the rite
+
+-----------------------------------------
+
 Master Start "masterStart"
 
-- Progress can be changed by enabling master start
+- Unlocks all levels of all Rites at start of playthrough, and sets the default rite to Earth.
 
 - Default false as recommended to play Stardew Druid on a new save at Day 1, Spring, Year 1, 
   with a new ability unlocked at the Effigy each day via lessons and quests
+
+-----------------------------------------
+
+Effigy Location X, etc
+
+Various options to move, activate and hide the Effigy in the farmcave
+
+- Pressing the Rite Button key anywhere in the cave will activate dialogue with the Effigy
 
 -----------------------------------------
 (The following config parameters can only be changed in the file)

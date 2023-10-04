@@ -14,6 +14,8 @@ namespace StardewDruid.Cast
             : base(mod, target, rite)
         {
 
+            castCost = 0;
+
         }
 
         public override void CastEarth()
@@ -34,8 +36,6 @@ namespace StardewDruid.Cast
             }
 
             StardewValley.TerrainFeatures.FruitTree treeFeature = targetLocation.terrainFeatures[targetVector] as StardewValley.TerrainFeatures.FruitTree;
-
-            //treeFeature.performToolAction(null, 1, targetVector, null);
 
             treeFeature.performUseAction(targetVector, targetLocation);
 

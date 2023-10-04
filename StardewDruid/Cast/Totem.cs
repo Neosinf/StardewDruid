@@ -16,15 +16,11 @@ namespace StardewDruid.Cast
 
             targetIndex = TargetIndex;
 
+            castCost = 0;
         }
 
         public override void CastWater()
         {
-
-            //int probability = randomIndex.Next(mod.SpecialLimit());
-
-            //if (probability == 0)
-            //{
 
             for (int i = 0; i < randomIndex.Next(1, 3); i++)
             {
@@ -34,15 +30,9 @@ namespace StardewDruid.Cast
 
             castFire = true;
 
-            castCost = 48;
-
             Vector2 boltVector = new(targetVector.X, targetVector.Y - 2);
 
             ModUtility.AnimateBolt(targetLocation, boltVector);
-
-            //mod.SpecialIncrement();
-
-            //}
 
             return;
 

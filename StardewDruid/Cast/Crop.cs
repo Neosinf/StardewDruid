@@ -19,7 +19,14 @@ namespace StardewDruid.Cast
         public Crop(Mod mod, Vector2 target, Rite rite)
             : base(mod, target, rite)
         {
-            //castCost = 3;
+
+            if (rite.caster.FarmingLevel >= 5)
+            {
+
+                castCost = 1;
+
+            }
+
         }
 
         public override void CastEarth()
@@ -91,21 +98,6 @@ namespace StardewDruid.Cast
                 castFire = true;
 
             }
-
-            /*if(!targetCrop.fullyGrown.Value)
-            {
-
-                targetCrop.currentPhase.Value++;
-
-                castCost = targetCrop.currentPhase.Value;
-
-                hoeDirt.crop.dayOfCurrentPhase.Value = 0;
-
-                hoeDirt.crop.updateDrawMath(targetVector);
-
-                castFire = true;
-
-            }*/
 
         }
 

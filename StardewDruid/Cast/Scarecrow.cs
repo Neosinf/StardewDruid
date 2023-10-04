@@ -14,7 +14,7 @@ namespace StardewDruid.Cast
             : base(mod, target, rite)
         {
 
-            castCost = 32;
+            castCost = Math.Max(12, 36 - (rite.caster.FarmingLevel * 2));
 
         }
 

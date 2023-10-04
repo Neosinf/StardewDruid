@@ -18,6 +18,20 @@ namespace StardewDruid
 
         public bool masterStart { get; set; }
 
+        public bool castBuffs { get; set; }
+
+        public int farmCaveStatueX { get; set; }
+
+        public int farmCaveStatueY { get; set; }
+
+        public int farmCaveActionX { get; set; }
+
+        public int farmCaveActionY { get; set; }
+
+        public bool farmCaveHideStatue { get; set; }
+
+        public bool farmCaveMakeSpace { get; set; }
+
         public ModData()
         {
 
@@ -43,6 +57,20 @@ namespace StardewDruid
             };
 
             masterStart = false;
+
+            castBuffs = true;
+
+            farmCaveActionX = 6;
+
+            farmCaveActionY = 4;
+
+            farmCaveStatueX = 6;
+
+            farmCaveStatueY = 3;
+
+            farmCaveHideStatue = false;
+
+            farmCaveMakeSpace = true;
 
         }
 

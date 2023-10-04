@@ -13,6 +13,13 @@ namespace StardewDruid.Cast
             : base(mod, target, rite)
         {
 
+            if (rite.caster.ForagingLevel >= 8)
+            {
+
+                castCost = 1;
+
+            }
+
         }
 
         public override void CastEarth()

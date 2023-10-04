@@ -71,8 +71,6 @@ namespace StardewDruid.Cast
 
             castFire = true;
 
-            castCost = 24;
-
             castActive = true;
 
             ModUtility.AnimateBolt(targetLocation, targetVector);
@@ -118,7 +116,7 @@ namespace StardewDruid.Cast
 
             activeCounter++;
 
-            if (activeCounter < 10)
+            if (activeCounter < 8)
             {
                 switch (activeCounter)
                 {
@@ -138,23 +136,23 @@ namespace StardewDruid.Cast
 
                         fakeNPC = fakeMonster;
 
-                        fakeNPC.showTextAboveHead("do you sense it?", duration: 2000);
+                        fakeNPC.showTextAboveHead("can you feel it", duration: 2000);
 
                         break;
 
-                    case 4:
+                    case 3:
 
                         fakeNPC.showTextAboveHead("the dust", duration: 2000);
 
                         break;
 
-                    case 7:
+                    case 5:
 
-                        fakeNPC.showTextAboveHead("they're coming!", duration: 2000);
+                        fakeNPC.showTextAboveHead("it's coming", duration: 2000);
 
                         break;
 
-                    case 9:
+                    case 7:
 
                         targetLocation.characters.Remove(fakeNPC);
 

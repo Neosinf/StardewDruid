@@ -18,7 +18,7 @@ namespace StardewDruid.Cast
             : base(mod, target, rite)
         {
 
-            castCost = 4;
+            castCost = 8 - (int)Math.Ceiling((double)(rite.caster.CombatLevel/2));
 
             targetDirection = rite.direction;
 

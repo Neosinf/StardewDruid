@@ -12,7 +12,7 @@ namespace StardewDruid.Cast
         public Rod(Mod mod, Vector2 target, Rite rite)
             : base(mod, target, rite)
         {
-
+            castCost = 0;
         }
 
         public override void CastWater()
