@@ -44,23 +44,37 @@ namespace StardewDruid.Cast
 
             int debrisType = 388;
 
-            int debrisAmount = randomIndex.Next(1,4);
+            int debrisMax = 4;
+
+            if(targetPlayer.professions.Contains(12))
+            {
+
+                debrisMax++;
+
+            }
 
             if (treeFeature.treeType.Value == 8) //mahogany
             {
 
-                debrisType = 709; debrisAmount = 1;
+                debrisType = 709; debrisMax = 1;
+
+                if (targetPlayer.professions.Contains(14))
+                {
+
+                    debrisMax++;
+
+                }
 
             }
 
             if (treeFeature.treeType.Value == 7) // mushroom
             {
 
-                debrisType = 420; debrisAmount = 1;
+                debrisType = 420; debrisMax = 1;
 
             }
 
-            for (int i = 0; i < debrisAmount; i++)
+            for (int i = 0; i < Math.Min(debrisMax,riteData.castAxe.UpgradeLevel+1); i++)
             {
 
                 Game1.createObjectDebris(debrisType, (int)targetVector.X, (int)targetVector.Y + 1);
@@ -72,18 +86,14 @@ namespace StardewDruid.Cast
 
                 treeFeature.performUseAction(targetVector,targetLocation);
 
-                //treeFeature.performToolAction(null, 1, targetVector, null);
-
-                //treeFeature.health.Value += 1;
-
             }
 
             castFire = true;
 
             targetPlayer.gainExperience(2,2); // gain foraging experience
 
-            if(debrisAmount == 4 && riteData.spawnIndex["critter"] && !mod.ForgotEffect("forgetCritters"))
-                {
+            if(randomIndex.Next(5) == 0 && riteData.spawnIndex["critter"] && !mod.ForgotEffect("forgetCritters"))
+            {
 
                 Portal critterPortal = new(mod, targetPlayer.getTileLocation(), riteData);
 

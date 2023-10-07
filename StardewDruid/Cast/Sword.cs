@@ -220,7 +220,8 @@ namespace StardewDruid.Cast
         {
 
             string effigyQuestion = "Voices in the Roiling Flames: " +
-                "^???? ...it's the farmer... the shadow slayer... unburnt... watch we do...";
+                "^???? It's the farmer. The shadow slayer. The unburnt." +
+                "^Will it walk under the light. Will it walk over the fire.";
 
             List<Response> effigyChoices = new()
             {

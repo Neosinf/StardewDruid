@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewValley;
+using System;
 
 namespace StardewDruid.Cast
 {
@@ -24,15 +25,17 @@ namespace StardewDruid.Cast
 
             }
 
+            int powerLevel = riteData.castPick.UpgradeLevel;
+
             StardewValley.Object targetObject = targetLocation.objects[targetVector];
 
             targetObject.Fragility = 0;
 
-            int explodeRadius = 2;
+            int explodeRadius = (powerLevel < 2) ? 2 : powerLevel;
 
             if (targetObject.name.Contains("Weeds"))
             {
-                
+
                 StardewValley.Tools.MeleeWeapon targetScythe = new(47);
 
                 targetScythe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
@@ -53,7 +56,7 @@ namespace StardewDruid.Cast
             if (targetObject.name.Contains("Stone"))
             {
 
-                explodeRadius = 4;
+                explodeRadius = Math.Min(6,2 + powerLevel);
 
                 Game1.playSound("fireball");
 

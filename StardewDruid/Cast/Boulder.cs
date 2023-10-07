@@ -51,17 +51,13 @@ namespace StardewDruid.Cast
         public override void CastWater()
         {
 
-            castCost = Math.Max(2, 28 - (targetPlayer.MiningLevel * 2));
+            StardewValley.Tools.Pickaxe targetPick = mod.RetrievePick();
 
-            StardewValley.Tools.Pickaxe targetAxe = mod.RetrievePick();
-
-            //targetAxe.UpgradeLevel = 3;
-
-            //targetAxe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+            castCost = Math.Max(2, 36 - (targetPlayer.MiningLevel * targetPick.UpgradeLevel));
 
             resourceClump.health.Set(1f);
 
-            resourceClump.performToolAction(targetAxe, 1, targetVector, targetLocation);
+            resourceClump.performToolAction(targetPick, 1, targetVector, targetLocation);
 
             resourceClump.NeedsUpdate = false;
 
@@ -71,48 +67,63 @@ namespace StardewDruid.Cast
 
             resourceClump.currentLocation = null;
 
-            Game1.createObjectDebris(382, (int)targetVector.X + 1, (int)targetVector.Y);
+            if (targetPick.UpgradeLevel >= 3)
+            {
+                Game1.createObjectDebris(709, (int)this.targetVector.X, (int)this.targetVector.Y);
 
-            Game1.createObjectDebris(382, (int)targetVector.X, (int)targetVector.Y + 1);
+                Game1.createObjectDebris(709, (int)this.targetVector.X + 1, (int)this.targetVector.Y);
 
-            Game1.createObjectDebris(382, (int)targetVector.X + 1, (int)targetVector.Y + 1);
+            }
 
-            switch ((int)resourceClump.parentSheetIndex.Value)
+            int debrisMax = 1;
+
+            if (targetPlayer.professions.Contains(22))
+            {
+                debrisMax = 2;
+
+            }
+
+            for (int i = 0; i < randomIndex.Next(1,debrisMax); i++)
             {
 
-                case 756:
-                case 758:
+                switch ((int)resourceClump.parentSheetIndex.Value)
+                {
 
-                    Game1.createObjectDebris(536, (int)targetVector.X, (int)targetVector.Y);
+                    case 756:
+                    case 758:
 
-                    break;
+                        Game1.createObjectDebris(536, (int)targetVector.X, (int)targetVector.Y);
 
-                default:
+                        break;
 
-                    if(targetLocation is MineShaft)
-                    {
-                        MineShaft mineLocation = (MineShaft)targetLocation;
+                    default:
 
-                        if(mineLocation.mineLevel >= 80)
+                        if (targetLocation is MineShaft)
                         {
-                            Game1.createObjectDebris(537, (int)targetVector.X, (int)targetVector.Y);
+                            MineShaft mineLocation = (MineShaft)targetLocation;
 
-                            break;
+                            if (mineLocation.mineLevel >= 80)
+                            {
+                                Game1.createObjectDebris(537, (int)targetVector.X, (int)targetVector.Y);
+
+                                break;
+
+                            }
+                            else if (mineLocation.mineLevel >= 121)
+                            {
+                                Game1.createObjectDebris(749, (int)targetVector.X, (int)targetVector.Y);
+
+                                break;
+
+                            }
 
                         }
-                        else if (mineLocation.mineLevel >= 121)
-                        {
-                            Game1.createObjectDebris(749, (int)targetVector.X, (int)targetVector.Y);
 
-                            break;
+                        Game1.createObjectDebris(535, (int)targetVector.X, (int)targetVector.Y);
 
-                        }
+                        break;
 
-                    }
-
-                    Game1.createObjectDebris(535, (int)targetVector.X, (int)targetVector.Y);
-
-                    break;
+                }
 
             }
 

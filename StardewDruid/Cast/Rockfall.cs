@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Locations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using xTile.Dimensions;
@@ -19,6 +20,8 @@ namespace StardewDruid.Cast
 
         public int debrisIndex;
 
+        public int powerLevel;
+
         public Rockfall(Mod mod, Vector2 target, Rite rite)
             : base(mod, target, rite)
         {
@@ -26,6 +29,8 @@ namespace StardewDruid.Cast
             castCost = 1;
 
             shaftLocation = targetPlayer.currentLocation as MineShaft;
+
+            powerLevel = riteData.castPick.UpgradeLevel;
 
         }
 
@@ -86,12 +91,19 @@ namespace StardewDruid.Cast
 
             Dictionary<int, int> objectIndexes;
 
-            Dictionary<int, int> specialIndexes;
+            Dictionary<int, int> specialIndexes = new()
+            {
+
+                [0] = 668, // coal stone
+                [1] = 32, // stone
+                [2] = 40,
+                [3] = 42,
+                [4] = 42,
+
+            };
 
             if (shaftLocation.mineLevel <= 40)
             {
-
-                objectStrength = 1;
 
                 objectIndexes = new()
                 {
@@ -123,9 +135,6 @@ namespace StardewDruid.Cast
             else if (shaftLocation.mineLevel <= 80)
             {
 
-
-                objectStrength = 2;
-
                 objectIndexes = new()
                 {
                     [0] = 48, // grade 2a stone
@@ -140,23 +149,25 @@ namespace StardewDruid.Cast
                     [9] = 54, // grade 2d stone
                 };
 
-                specialIndexes = new()
+                if(powerLevel >= 1)
                 {
 
-                    [0] = 668, // coal stone
-                    [1] = 290, // iron ore
-                    [2] = 290, // iron ore
-                    [3] = 12, // emerald
-                    [4] = 14, // aquamarine*
+                    specialIndexes = new()
+                    {
 
-                };
+                        [0] = 668, // coal stone
+                        [1] = 290, // iron ore
+                        [2] = 290, // iron ore
+                        [3] = 12, // emerald
+                        [4] = 14, // aquamarine*
 
+                    };
+
+                }
 
             }
-            else //(targetLocation.mineLevel <= 120)
+            else if(shaftLocation.mineLevel <= 120)
             {
-
-                objectStrength = 4;
 
                 objectIndexes = new()
                 {
@@ -173,14 +184,54 @@ namespace StardewDruid.Cast
 
                 };
 
-                specialIndexes = new()
+                if (powerLevel >= 2)
                 {
 
-                    [0] = 668, // coal stone
-                    [1] = 764, // gold ore
-                    [2] = 764, // gold ore
-                    [3] = 2, // ruby
-                    [4] = 4, // diamond*
+                    specialIndexes = new()
+                    {
+
+                        [0] = 668, // coal stone
+                        [1] = 764, // gold ore
+                        [2] = 764, // gold ore
+                        [3] = 2, // ruby
+                        [4] = 4, // diamond*
+
+                    };
+
+                };
+
+            }
+            else //(targetLocation.mineLevel <= 120)
+            {
+
+                objectIndexes = new()
+                {
+                    [0] = 760, // grade 3 stone
+                    [1] = 760, // grade 3 stone
+                    [2] = 760, // grade 3 stone
+                    [3] = 762, // grade 3 stone
+                    [4] = 762, // grade 3 stone
+                    [5] = 762, // grade 3 stone
+                    [6] = 56, // grade 3 stone
+                    [7] = 56, // grade 3 stone
+                    [8] = 58, // grade 3 stone
+                    [9] = 58, // grade 3 stone
+
+                };
+
+                if (powerLevel >= 3)
+                {
+
+                    specialIndexes = new()
+                    {
+
+                        [0] = 668, // coal stone
+                        [1] = 765, // iridium ore
+                        [2] = 765, // iridium ore
+                        [3] = 765, // iridium ore
+                        [4] = 765, // iridium ore
+
+                    };
 
                 };
 
@@ -212,6 +263,7 @@ namespace StardewDruid.Cast
                 [760] = 761,
                 [762] = 763,
                 [764] = 761,
+                [765] = 763,
 
             };
 
@@ -224,9 +276,11 @@ namespace StardewDruid.Cast
                 [10] = 68,
                 [12] = 60,
                 [14] = 62,
+                [668] = 382,
                 [290] = 380,
                 [751] = 378,
                 [764] = 384,
+                [765] = 386,
 
             };
 
@@ -234,7 +288,7 @@ namespace StardewDruid.Cast
             {
                 objectIndex = specialIndexes[randomIndex.Next(5)];
 
-                objectStrength += 1;
+                targetPlayer.gainExperience(3, 4); // gain mining experience for special drops
 
             }
             else
@@ -341,23 +395,43 @@ namespace StardewDruid.Cast
                 300
             );
 
-            targetLocation.damageMonster(areaOfEffect, 30 * objectStrength, 40 * objectStrength, true, targetPlayer);
+            int castDamage = riteData.castDamage / 4 * 3;
+
+            targetLocation.damageMonster(areaOfEffect, castDamage, riteData.castDamage, true, targetPlayer);
 
         }
 
         public void RockImpact()
-        {
-            for (int i = 0; i < randomIndex.Next(1, 3); i++)
+        {   
+            int rockCut = randomIndex.Next(2);
+
+            for (int i = 0; i < (1 + randomIndex.Next(powerLevel)); i++)
             {
 
                 if (i == 0)
                 {
+                    
+                    if (targetPlayer.professions.Contains(21) && rockCut == 0)
+                    {
+
+                        Game1.createObjectDebris(382, (int)targetVector.X, (int)targetVector.Y);
+
+                    } else if (targetPlayer.professions.Contains(19) && rockCut == 0)
+                    {
+
+                        Game1.createObjectDebris(debrisIndex, (int)targetVector.X, (int)targetVector.Y);
+
+                    }
 
                     Game1.createObjectDebris(debrisIndex, (int)targetVector.X, (int)targetVector.Y);
 
                 }
+                else
+                {
 
-                Game1.createObjectDebris(390, (int)targetVector.X, (int)targetVector.Y);
+                    Game1.createObjectDebris(390, (int)targetVector.X, (int)targetVector.Y);
+
+                }
 
             }
 

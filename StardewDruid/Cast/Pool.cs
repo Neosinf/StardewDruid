@@ -117,7 +117,7 @@ namespace StardewDruid.Cast
 
             }
 
-            Throw throwObject = new(objectIndexes[probability], objectQuality);
+            StardewDruid.Cast.Throw throwObject = new(objectIndexes[probability], objectQuality);
 
             throwObject.ThrowObject(targetPlayer, targetVector);
 

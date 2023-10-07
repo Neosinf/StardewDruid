@@ -2,8 +2,6 @@
 STARDEW DRUID
 ==========================================
 
-NOTE: One of the latest updates contained a bug for multiplayer that is currently being addressed.
-
 A druidry themed mod that adds magic mechanics to the core game experience
 
 Requires SMAPI version 3.18.5 +
@@ -13,10 +11,26 @@ Optimised for:
 - Single Player
 - English
 
-Expected to work without issue on expansion mods
+Expected to work without issue on expansion mods and multiplayer
 
 -----------------------------------------
-CHALLENGE REWARDS
+CASTING LOCATIONS
+-----------------------------------------
+
+Stardew Druid attempts, when possible, to detect appropriate maps for casting, namely outdoor locations and mineshafts.
+
+No interior locations, except the Greenhouse in limited capacity, enable the player to reach the otherworld to cast rites.
+
+Stardew Druid is not optimised for SDV 1.5 content at this time (It doesn't do much on Ginger Island, nor does it engage with any Island themed content)
+
+Some expansion mods may have exterior maps with names and properties that Stardew Druid is unable to detect, such as "Expansion_cliffside_resort".
+
+SVE and DeepWoods are the only Map expansion mods that Stardew Druid has optimised for at this stage.
+
+As expected Winter is a sad time for Rite of the Earth due to Tree, Crop, Grass and other behaviour.
+
+-----------------------------------------
+SWORD - RITE BEHAVIOIUR
 -----------------------------------------
 
 Some of the main questlines offer melee weapons that are each aligned with a druidic theme
@@ -41,10 +55,14 @@ Rite Buttons "riteButtons" is a list of keybinds set to MouseX1, MouseX2 and Lef
 
 Cast Buffs "castBuffs"
 
-- Enables automatic consumption of berry-type forageables (salmonberry, blackberry, grape), sashimi and cheese when 
-  casting with critically low stamina
+The castbuffs ease cast-running, when you cast continuously while running through the map, with three specialised effects
 
-- Enables magnetic cast radius of 10 for 6 seconds when Rite of Earth is cast to ease pick up of debris at the outer range of the rite
+- Enables automatic consumption of salmonberries, sashimi and cheese from top of inventory when casting with critically low stamina. The items can be of any
+  quality but must be in the first/top/upper section of your inventory toolbar - cast without stopping!
+
+- Enables magnetic buff of radius +3 tiles for 6 seconds when Rite of Earth is cast to ease pick up of debris at the outer range of the rite
+
+- Enables speed buff of +2 for 6 seconds when Rite of Earth is cast while the farmer sprite is on a Grass tile - move through grass with ease!
 
 -----------------------------------------
 
@@ -90,6 +108,10 @@ Stars:
 
 1. Summon meteors (This is the only ability for this rite)
 
+blessingList also contains some other level related values, which include
+"levelPickaxe" - the highest upgrade level obtained for a Pickaxe tool, from 0 (Initial) to 5 (Iridium+)
+"levelAxe" - as above for Axe tools
+
 -----------------------------------------
 
 QuestList "questList"
@@ -113,8 +135,6 @@ Stardew Druid is stable with most popular mods, including
 - Content Patcher
 - SpaceCore
 - JSON Assets
-
-Recommended download via Nexus Vortex Mod Manager application
 
 -----------------------------------------
 OPENSOURCE

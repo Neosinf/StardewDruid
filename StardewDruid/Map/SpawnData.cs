@@ -5,6 +5,7 @@ using StardewValley.Locations;
 using System.Linq;
 using System.Collections;
 using StardewValley.Menus;
+using System.Drawing;
 
 namespace StardewDruid.Map
 {
@@ -31,228 +32,171 @@ namespace StardewDruid.Map
 
         }
 
+        public static List<int> GrizzleList()
+        {
+            List<int> grizzleIndex = new()
+            {
+                92, // Sap
+                766, // Slime
+                311, // PineCone
+                310, // MapleSeed
+                309, // Acorn
+                292, // Mahogany
+                767, // BatWings
+                420, // RedMushroom
+            };
+
+            return grizzleIndex;
+        }
+
+        public static List<int> SashimiList()
+        {
+
+            List<int> sashimiIndex = new()
+            {
+                167, // JojaCola
+                399, // SpringOnion
+                403, // Snackbar
+                404, // FieldMushroom
+                257, // Morel
+                281, // Chanterelle
+                152, // Seaweed
+                153, // Algae
+                157, // white Algae
+                78, // Carrot
+                227, // Sashimi
+                296, // Salmonberry
+                424, // Cheese
+            };
+
+            return sashimiIndex;
+
+        }
+
+        public static Dictionary<string, bool> SpawnTemplate()
+        {
+            Dictionary<string, bool> spawnTemplate = new()
+            {
+
+                ["forage"] = false,
+                ["flower"] = false,
+                ["grass"] = false,
+                ["trees"] = false,
+                ["fishup"] = false,
+                ["portal"] = false,
+                ["critter"] = false,
+                ["fishspot"] = false,
+                ["cropseed"] = false,
+                ["mushroom"] = false,
+                ["rockfall"] = false,
+
+            };
+
+            return spawnTemplate;
+
+        }
+
         public static Dictionary<string, bool> SpawnIndex(GameLocation playerLocation)
         {
 
             Dictionary<string, bool> spawnIndex;
 
+            spawnIndex = SpawnTemplate();
+
             if (playerLocation.Name == "Farm" || playerLocation.Name == "Custom_Garden")
             {
-                spawnIndex = new()
-                {
 
-                    ["forage"] = true,
-                    ["flower"] = true,
-                    ["grass"] = true,
-                    ["trees"] = true,
-                    ["fishup"] = true,
-                    ["wilderness"] = false,
-                    ["critter"] = true,
-                    ["meteor"] = true,
-                    ["fishspot"] = false,
-                    ["cropseed"] = true,
-
-                };
+                spawnIndex["forage"] = true;
+                spawnIndex["flower"] = true;
+                spawnIndex["grass"] = true;
+                spawnIndex["trees"] = true;
+                spawnIndex["fishup"] = true;
+                spawnIndex["critter"] = true;
+                spawnIndex["cropseed"] = true;
+                spawnIndex["mushroom"] = true;
 
             }
             else if (playerLocation.isGreenhouse.Value)
             {
 
-                spawnIndex = new()
-                {
-
-                    ["forage"] = false,
-                    ["flower"] = false,
-                    ["grass"] = false,
-                    ["trees"] = false,
-                    ["fishup"] = false,
-                    ["wilderness"] = false,
-                    ["critter"] = false,
-                    ["meteor"] = false,
-                    ["fishspot"] = false,
-                    ["cropseed"] = true,
-
-                };
+                spawnIndex["cropseed"] = true;
 
             }
-            else if (playerLocation.Name.Contains("Forest") || playerLocation.Name.Contains("Mountain"))
+            else if (playerLocation.Name.Contains("Forest") || playerLocation.Name.Contains("Mountain") || playerLocation.Name.Contains("Desert"))
             {
-
-                spawnIndex = new()
-                {
-
-                    ["forage"] = true,
-                    ["flower"] = true,
-                    ["grass"] = true,
-                    ["trees"] = true,
-                    ["fishup"] = true,
-                    ["wilderness"] = false,
-                    ["critter"] = true,
-                    ["meteor"] = true,
-                    ["fishspot"] = true,
-                    ["cropseed"] = false,
-
-                };
+                
+                spawnIndex["forage"] = true;
+                spawnIndex["flower"] = true;
+                spawnIndex["grass"] = true;
+                spawnIndex["trees"] = true;
+                spawnIndex["fishup"] = true;
+                spawnIndex["critter"] = true;
+                spawnIndex["fishspot"] = true;
 
             }
             else if (playerLocation.Name.Contains("Bus"))
             {
 
-                spawnIndex = new()
-                {
-
-                    ["forage"] = true,
-                    ["flower"] = true,
-                    ["grass"] = true,
-                    ["trees"] = true,
-                    ["fishup"] = true,
-                    ["wilderness"] = false,
-                    ["critter"] = true,
-                    ["meteor"] = true,
-                    ["fishspot"] = true,
-                    ["cropseed"] = false,
-
-                };
+                spawnIndex["forage"] = true;
+                spawnIndex["flower"] = true;
+                spawnIndex["grass"] = true;
+                spawnIndex["trees"] = true;
+                spawnIndex["critter"] = true;
 
             }
             else if (playerLocation.Name.Contains("RailRoad"))
             {
 
-                spawnIndex = new()
-                {
-
-                    ["forage"] = true,
-                    ["flower"] = true,
-                    ["grass"] = true,
-                    ["trees"] = true,
-                    ["fishup"] = false,
-                    ["wilderness"] = true,
-                    ["critter"] = true,
-                    ["meteor"] = true,
-                    ["fishspot"] = false,
-                    ["cropseed"] = false,
-
-                };
+                spawnIndex["forage"] = true;
+                spawnIndex["flower"] = true;
+                spawnIndex["grass"] = true;
+                spawnIndex["trees"] = true;
+                spawnIndex["critter"] = true;
+                spawnIndex["portal"] = true;
 
             }
             else if (playerLocation.Name.Contains("Backwoods") || playerLocation is Woods || playerLocation.Name.Contains("Grampleton"))
             {
-                spawnIndex = new()
-                {
+                
+                spawnIndex["forage"] = true;
+                spawnIndex["flower"] = true;
+                spawnIndex["grass"] = true;
+                spawnIndex["critter"] = true;
+                spawnIndex["portal"] = true;
+                spawnIndex["fishspot"] = true;
 
-                    ["forage"] = true,
-                    ["flower"] = true,
-                    ["grass"] = false,
-                    ["trees"] = false,
-                    ["fishup"] = true,
-                    ["wilderness"] = true,
-                    ["critter"] = true,
-                    ["meteor"] = true,
-                    ["fishspot"] = true,
-                    ["cropseed"] = false,
-
-                };
             }
-            else if (playerLocation.Name.Contains("Desert"))
+            else if (playerLocation is MineShaft || playerLocation.Name.Contains("Mine"))
             {
-                spawnIndex = new()
-                {
-
-                    ["forage"] = false, // no lawn anyway
-                    ["flower"] = false,
-                    ["grass"] = true, // a miracle!
-                    ["trees"] = true,
-                    ["fishup"] = true,
-                    ["wilderness"] = true,
-                    ["critter"] = true,
-                    ["meteor"] = true,
-                    ["fishspot"] = true,
-                    ["cropseed"] = false,
-
-                };
-            }
-            else if (playerLocation is MineShaft || playerLocation.Name.Contains("FarmCave") || playerLocation.Name.Contains("Mine"))
-            {
-                spawnIndex = new()
-                {
-
-                    ["forage"] = false,
-                    ["flower"] = false,
-                    ["grass"] = false,
-                    ["trees"] = false,
-                    ["fishup"] = false,
-                    ["wilderness"] = false,
-                    ["critter"] = false,
-                    ["meteor"] = true,
-                    ["fishspot"] = false,
-                    ["cropseed"] = false,
-
-                };
+                
+                spawnIndex["rockfall"] = true;
 
             }
             else if (playerLocation.Name.Contains("Beach"))
             {
 
-                spawnIndex = new()
-                {
-
-                    ["forage"] = true,
-                    ["flower"] = false,
-                    ["grass"] = false,
-                    ["trees"] = false,
-                    ["fishup"] = true,
-                    ["wilderness"] = false,
-                    ["critter"] = true,
-                    ["meteor"] = false,
-                    ["fishspot"] = true,
-                    ["cropseed"] = false,
-
-                };
+                spawnIndex["critter"] = true;
+                spawnIndex["fishup"] = true;
+                spawnIndex["fishspot"] = true;
 
             }
             else if (playerLocation.Name.Contains("Town"))
             {
-
-                spawnIndex = new()
-                {
-
-                    ["forage"] = true,
-                    ["flower"] = false,
-                    ["grass"] = false,
-                    ["trees"] = false,
-                    ["fishup"] = false,
-                    ["wilderness"] = false,
-                    ["critter"] = false,
-                    ["meteor"] = false,
-                    ["fishspot"] = true,
-                    ["cropseed"] = false,
-
-                };
+                
+                spawnIndex["forage"] = true;
+                spawnIndex["flower"] = true;
+                spawnIndex["fishup"] = true;
 
             }
             else if (playerLocation.Name.Contains("DeepWoods"))
             {
-
-                spawnIndex = new()
-                {
-
-                    ["forage"] = false,
-                    ["flower"] = false,
-                    ["grass"] = false,
-                    ["trees"] = false,
-                    ["fishup"] = false,
-                    ["wilderness"] = false,
-                    ["critter"] = true,
-                    ["meteor"] = true,
-                    ["fishspot"] = true,
-                    ["cropseed"] = false,
-
-                };
+                spawnIndex["critter"] = true;
+                spawnIndex["fishspot"] = true;
 
             }
             else
             {
-                spawnIndex = new();
+                return null;
 
             }
 
@@ -261,5 +205,6 @@ namespace StardewDruid.Map
         }
 
     }
+
 
 }

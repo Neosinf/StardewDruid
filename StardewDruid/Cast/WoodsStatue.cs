@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Characters;
 using StardewValley.Locations;
 using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;
@@ -16,7 +17,7 @@ namespace StardewDruid.Cast
 
         public StardewDruid.Cast.Portal monsterPortal;
 
-        public NPC fakeNPC;
+        public NPC disembodiedVoice;
 
         public int activeCounter;
 
@@ -100,15 +101,6 @@ namespace StardewDruid.Cast
 
             monsterPortal.CastRemove();
 
-            if(fakeNPC != null)
-            {
-
-                targetLocation.characters.Remove(fakeNPC);
-
-                fakeNPC = null;
-
-            }
-
         }
 
         public override void CastTrigger()
@@ -122,41 +114,23 @@ namespace StardewDruid.Cast
                 {
                     case 1:
 
-                        Monster fakeMonster = new DustSpirit(targetVector * 64f);
-
-                        fakeMonster.setInvincibleCountdown(99999);
-
-                        fakeMonster.IsInvisible = true;
-
-                        targetLocation.characters.Add(fakeMonster);
-
-                        fakeMonster.update(Game1.currentGameTime, targetLocation);
-
-                        mod.MonsterTrack(targetLocation, fakeMonster);
-
-                        fakeNPC = fakeMonster;
-
-                        fakeNPC.showTextAboveHead("can you feel it", duration: 2000);
+                        CastVoice("can you feel it");
 
                         break;
 
                     case 3:
 
-                        fakeNPC.showTextAboveHead("the dust", duration: 2000);
+                        CastVoice("all around us");
 
                         break;
 
                     case 5:
 
-                        fakeNPC.showTextAboveHead("it's coming", duration: 2000);
+                        CastVoice("dust to dust");
 
                         break;
 
                     case 7:
-
-                        targetLocation.characters.Remove(fakeNPC);
-
-                        fakeNPC = null;
 
                         Game1.changeMusicTrack("cowboy_outlawsong", false, Game1.MusicContext.Default);
 
@@ -173,29 +147,15 @@ namespace StardewDruid.Cast
             else if (activeCounter == 35)
             {
 
-                Monster fakeMonster = new DustSpirit(targetVector * 64f);
-
-                targetLocation.characters.Add(fakeMonster);
-
-                fakeMonster.setInvincibleCountdown(99999);
-
-                fakeMonster.IsInvisible = true;
-
-                fakeMonster.update(Game1.currentGameTime, targetLocation);
-
-                mod.MonsterTrack(targetLocation, fakeMonster);
-
-                fakeNPC = fakeMonster;
-
-                fakeNPC.showTextAboveHead("ha ha ha", duration: 2000);
+                CastVoice("ha ha ha");
 
             }
             else if (activeCounter == 38)
             {
 
-                fakeNPC.showTextAboveHead("try these", duration: 2000);
+                CastVoice("dust them");
 
-                for(int i = 0; i < 2; i++)
+                for (int i = 0; i < 2; i++)
                 {
                     StardewDruid.Cast.Throw throwObject = new(288, 0);
 
@@ -204,32 +164,10 @@ namespace StardewDruid.Cast
                 }
 
             }
-            else if (activeCounter == 40)
-            {
-
-                targetLocation.characters.Remove(fakeNPC);
-
-                fakeNPC = null;
-
-            }
             else if (activeCounter == 59)
             {
 
-                Monster fakeMonster = new DustSpirit(targetVector * 64f);
-
-                targetLocation.characters.Add(fakeMonster);
-
-                fakeMonster.setInvincibleCountdown(99999);
-
-                fakeMonster.IsInvisible = true;
-
-                fakeMonster.update(Game1.currentGameTime, targetLocation);
-
-                mod.MonsterTrack(targetLocation, fakeMonster);
-
-                fakeNPC = fakeMonster;
-
-                fakeNPC.showTextAboveHead("the dust settles", duration: 2000);
+                CastVoice("the dust settles");
 
                 StardewDruid.Cast.Throw throwObject = new(347, 0);
 
@@ -244,6 +182,19 @@ namespace StardewDruid.Cast
                 monsterPortal.CastTrigger();
 
             }
+
+        }
+        
+        public void CastVoice(string message)
+        {
+            if(disembodiedVoice == null)
+            {
+
+                disembodiedVoice = mod.RetrieveVoice(targetLocation, (targetVector * 64) - new Vector2(40,56));
+
+            }
+
+            disembodiedVoice.showTextAboveHead(message, duration: 2000);
 
         }
 

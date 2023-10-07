@@ -94,7 +94,7 @@ namespace StardewDruid.Map
                         new(50, 89),
 
                     },
-                    challengeFrequency = 6,
+                    challengeFrequency = 7,
                     challengeSeconds = 60,
                     updateEffigy = true,
 
@@ -127,7 +127,7 @@ namespace StardewDruid.Map
                         new(83, 81),
 
                     },
-                    challengeFrequency = 5,
+                    challengeFrequency = 3,
                     challengeSeconds = 60,
                     updateEffigy = true,
                 },

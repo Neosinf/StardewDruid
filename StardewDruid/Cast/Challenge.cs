@@ -380,7 +380,7 @@ namespace StardewDruid.Cast
 
             int objectIndex = objectIndexes[randomIndex.Next(7)];
 
-            Throw throwObject;
+            StardewDruid.Cast.Throw throwObject;
 
             if (trashCollected == 8)
             {

@@ -122,35 +122,35 @@ namespace StardewDruid.Cast
             if (probability <= 3)
             {
                     
-                experienceGain = 6;
+                experienceGain = 4;
 
             }
             else
             {
 
-                experienceGain = 12;
+                experienceGain = 8;
 
                 if (randomIndex.Next(11 - targetPlayer.fishingLevel.Value) == 0)
                 {
 
                     objectQuality = 2;
 
-                    experienceGain = 24;
+                    experienceGain = 16;
 
                 }
 
-                if (targetPlayer.professions.Contains(6))
+                /*if (targetPlayer.professions.Contains(6))
                 {
 
                     objectQuality = 3;
 
                     experienceGain = 36;
 
-                }
+                }*/
 
             }
 
-            Throw throwObject = new(objectIndexes[probability], objectQuality);
+            StardewDruid.Cast.Throw throwObject = new(objectIndexes[probability], objectQuality);
 
             throwObject.ThrowObject(targetPlayer, targetVector);
 
@@ -216,7 +216,7 @@ namespace StardewDruid.Cast
             return false;
 
         }
-
+       
         public override void CastRemove()
         {
 

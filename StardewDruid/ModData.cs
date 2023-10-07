@@ -3,6 +3,7 @@ using StardewModdingAPI;
 using Microsoft.Xna.Framework;
 using System.Reflection.PortableExecutable;
 using StardewModdingAPI.Utilities;
+using System.Runtime.CompilerServices;
 
 namespace StardewDruid
 {
@@ -16,9 +17,17 @@ namespace StardewDruid
 
         public Dictionary<string, bool> questList { get; set; }
 
+        public bool castBuffs { get; set; }
+
+        public bool consumeRoughage { get; set; }
+
+        public bool consumeQuicksnack { get; set; }
+
         public bool masterStart { get; set; }
 
-        public bool castBuffs { get; set; }
+        public bool maxDamage { get; set; }
+
+        public bool unrestrictedStars { get; set; }
 
         public int farmCaveStatueX { get; set; }
 
@@ -54,11 +63,21 @@ namespace StardewDruid
                 ["earth"] = 5,
                 ["water"] = 5,
                 ["stars"] = 1,
+                ["levelPickaxe"] = 5,
+                ["levelAxe"] = 5,
             };
+
+            castBuffs = true;
+
+            consumeRoughage = true;
+
+            consumeQuicksnack = true;
 
             masterStart = false;
 
-            castBuffs = true;
+            maxDamage = false;
+
+            unrestrictedStars = false;
 
             farmCaveActionX = 6;
 

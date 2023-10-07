@@ -38,6 +38,8 @@ namespace StardewDruid.Cast
 
         public bool baseTarget;
 
+        public bool firstSpawn;
+
         public Vector2 baseVector;
 
         public string baseType;
@@ -80,6 +82,8 @@ namespace StardewDruid.Cast
             castCost = 0;
 
             portalExpired = false;
+
+            firstSpawn = false;
 
         }
 
@@ -252,7 +256,12 @@ namespace StardewDruid.Cast
 
             spawnCounter++;
 
-            if (spawnFrequency != spawnCounter)
+            if(spawnFrequency >= 3 && spawnCounter == 2 && !firstSpawn)
+            {
+                firstSpawn = true;
+            
+            }
+            else if (spawnFrequency != spawnCounter)
             {
 
                 return;

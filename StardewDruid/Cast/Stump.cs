@@ -57,7 +57,9 @@ namespace StardewDruid.Cast
         public override void CastWater()
         {
 
-            castCost = Math.Max(2, 28 - (targetPlayer.ForagingLevel * 2));
+            StardewValley.Tools.Axe targetAxe = mod.RetrieveAxe();
+
+            castCost = Math.Max(2, 36 - (targetPlayer.ForagingLevel * targetAxe.UpgradeLevel));
 
             if (resourceClump == null)
             {
@@ -66,17 +68,19 @@ namespace StardewDruid.Cast
 
             }
 
-            StardewValley.Tools.Axe targetAxe = mod.RetrieveAxe();
-
-            //targetAxe.UpgradeLevel = 3;
-
-            //targetAxe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
-
             resourceClump.health.Set(1f);
 
             resourceClump.performToolAction(targetAxe, 1, targetVector, targetLocation);
 
             resourceClump.NeedsUpdate = false;
+
+            if (targetAxe.UpgradeLevel >= 3)
+            {
+                Game1.createObjectDebris(709, (int)this.targetVector.X, (int)this.targetVector.Y);
+
+                Game1.createObjectDebris(709, (int)this.targetVector.X + 1, (int)this.targetVector.Y);
+
+            }
 
             switch (resourceType)
             {
@@ -123,14 +127,6 @@ namespace StardewDruid.Cast
             }
 
             resourceClump = null;
-
-            Game1.createObjectDebris(709, (int)this.targetVector.X, (int)this.targetVector.Y);
-
-            Game1.createObjectDebris(709, (int)this.targetVector.X + 1, (int)this.targetVector.Y);
-
-            Game1.createObjectDebris(382, (int)this.targetVector.X + 1, (int)this.targetVector.Y);
-
-            Game1.createObjectDebris(382, (int)this.targetVector.X + 1, (int)this.targetVector.Y);
 
             castFire = true;
 

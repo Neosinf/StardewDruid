@@ -13,7 +13,9 @@ namespace StardewDruid.Cast
             : base(mod, target, rite)
         {
 
-            castCost = Math.Max(6, 12 - (int)Math.Ceiling((double)(rite.caster.CombatLevel / 2)));
+            int castCombat = rite.caster.CombatLevel / 2;
+
+            castCost = Math.Max(4, 10-castCombat);
 
             targetMonster = TargetMonster;
 
@@ -29,7 +31,7 @@ namespace StardewDruid.Cast
                 128
             );
 
-            targetLocation.damageMonster(areaOfEffect, 150, 250, true, targetPlayer);
+            targetLocation.damageMonster(areaOfEffect, riteData.castDamage * 2, riteData.castDamage * 3, true, targetPlayer);
 
             ModUtility.AnimateBolt(targetLocation, new Vector2(targetVector.X, targetVector.Y - 1));
 

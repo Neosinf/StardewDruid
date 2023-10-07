@@ -14,6 +14,8 @@ using xTile.Layers;
 using xTile.Tiles;
 using StardewValley.Locations;
 using System.Threading;
+using StardewModdingAPI;
+using StardewValley.Monsters;
 
 namespace StardewDruid
 {
@@ -72,39 +74,27 @@ namespace StardewDruid
 
             newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, animationFlip, -1, 0f, animationColor, animationScale, 0f, 0f, 0f);
 
-            Game1.currentLocation.temporarySprites.Add(newAnimation);
+            Game1.player.currentLocation.temporarySprites.Add(newAnimation);
 
             //-------------------------- sound and pitch
 
-            if(Game1.currentLocation is MineShaft)
+            int pitchLevel = cycleLevel % 4;
+
+            if (chargeLevel == 1)
             {
 
-                if (chargeLevel == 1 || chargeLevel == 3)
-                {
+                Game1.player.currentLocation.playSoundPitched("discoverMineral", 600 + (pitchLevel * 200));
 
-                    Rumble.rumbleAndFade(1f, 1333);
-
-                }
+                Rumble.rumbleAndFade(1f, 333);
 
             }
-            else
+
+            if (chargeLevel == 3)
             {
 
-                int pitchLevel = cycleLevel % 4;
+                Game1.player.currentLocation.playSoundPitched("discoverMineral", 700 + (pitchLevel * 200));
 
-                if (chargeLevel == 1)
-                {
-
-                    Game1.currentLocation.playSoundPitched("discoverMineral", 600 + (pitchLevel * 200));
-
-                }
-
-                if (chargeLevel == 3)
-                {
-
-                    Game1.currentLocation.playSoundPitched("discoverMineral", 700 + (pitchLevel * 200));
-
-                }
+                Rumble.rumbleAndFade(1f, 333);
 
             }
 
@@ -451,7 +441,7 @@ namespace StardewDruid
 
                     meteorPosition = new((targetVector.X - 3) * 64, (targetVector.Y - 6) * 64);
 
-                    meteorMotion = new(0.32f, 0.64f);
+                    meteorMotion = new Vector2(0.32f, 0.64f);
 
                     meteorRoll = false;
 
@@ -461,7 +451,7 @@ namespace StardewDruid
 
                     meteorPosition = new((targetVector.X + 3) * 64, (targetVector.Y - 6) * 64);
 
-                    meteorMotion = new(-0.32f, 0.64f);
+                    meteorMotion = new Vector2(-0.32f, 0.64f);
 
                     meteorRoll = true;
 
@@ -469,11 +459,11 @@ namespace StardewDruid
 
             }
 
-            float meteorInterval = 150f;
+            float meteorInterval = 150;
 
             float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString());
 
-            TemporaryAnimatedSprite meteorAnimation = new("TileSheets\\Fireball", meteorRectangle, meteorInterval, 4, 0, meteorPosition, flicker: false, meteorRoll, animationSort, 0f, Color.White, 2f, 0f, 0f, 0f)
+            TemporaryAnimatedSprite meteorAnimation = new("TileSheets\\Fireball", meteorRectangle, meteorInterval, 4, 1, meteorPosition, flicker: false, meteorRoll, animationSort, 0f, Color.White, 2f, 0f, 0f, 0f)
             {
 
                 motion = meteorMotion,
@@ -483,7 +473,7 @@ namespace StardewDruid
             };
 
             targetLocation.temporarySprites.Add(meteorAnimation);
-
+  
         }
 
         public static Dictionary<string, List<Vector2>> NeighbourCheck(GameLocation targetLocation, Vector2 targetVector)
@@ -750,120 +740,6 @@ namespace StardewDruid
             //hoeDirt.crop.updateDrawMath(new Vector2(targetX, targetY));
 
         }
-
-        /*public static void PlantSeed(GameLocation targetLocation, Farmer targetPlayer, Vector2 targetVector, int targetSeed)
-        {
-
-            if (!targetLocation.terrainFeatures.ContainsKey(targetVector))
-            {
-
-                return;
-
-            }
-
-            if(targetLocation.terrainFeatures[targetVector] is not HoeDirt)
-            { 
-                
-                return; 
-            
-            }
-
-            StardewValley.TerrainFeatures.HoeDirt hoeDirt = targetLocation.terrainFeatures[targetVector] as StardewValley.TerrainFeatures.HoeDirt;
-
-            int generateItem;
-
-            if (targetSeed == 5) // 2/3 low grade random seed
-            {
-
-                generateItem = 770;
-
-            }
-            else
-            {
-
-                Dictionary<int, int> objectIndexes;
-
-                switch (Game1.currentSeason)
-                {
-
-                    case "spring":
-
-                        objectIndexes = new()
-                        {
-                            [0] = 478, // rhubarb
-                            [1] = 476, // garlic
-                            [2] = 433, // coffee
-                            [3] = 745, // strawberry
-                            [4] = 473, // bean
-                        };
-
-                        break;
-
-                    case "summer":
-
-                        objectIndexes = new()
-                        {
-                            [0] = 479, // melon
-                            [1] = 485, // red cabbage
-                            [2] = 433, // coffee
-                            [3] = 481, // blueberry
-                            [4] = 301 // hops
-                        };
-
-
-                        break;
-
-                    default: // "fall":
-
-                        objectIndexes = new()
-                        {
-                            [0] = 490, // pumpkin
-                            [1] = 492, // yam
-                            [2] = 299, // amaranth
-                            [3] = 493, // cranberry
-                            [4] = 302 // grape
-                        };
-
-                        break;
-
-                }
-
-                generateItem = objectIndexes[targetSeed];
-
-            }
-
-            hoeDirt.state.Value = 1;
-
-            hoeDirt.plant(generateItem, (int)targetVector.X, (int)targetVector.Y, targetPlayer, false, targetLocation); // high grade seed
-
-            int currentPhase;
-
-            switch (hoeDirt.crop.phaseDays.Count)
-            {
-
-                //case 5: currentPhase = 3; break;
-
-                case 6: currentPhase = 3; break;
-
-                default: currentPhase = 2; break;
-
-            }
-
-            for(int i = 0; i < currentPhase; i++)
-            {
-
-                hoeDirt.crop.currentPhase.Value++;
-
-            }
-
-            hoeDirt.crop.dayOfCurrentPhase.Value = 0;
-
-            hoeDirt.crop.updateDrawMath(targetVector);
-
-            hoeDirt.plant(920, (int)targetVector.X, (int)targetVector.Y, targetPlayer, true, targetLocation); // always watered        
-
-
-        }*/
 
         static List<Vector2> TilesWithinOne(Vector2 center)
         {

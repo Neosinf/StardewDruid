@@ -14,13 +14,17 @@ namespace StardewDruid.Cast
 
         int targetDirection;
 
+        int meteorRange;
+
         public Meteor(Mod mod, Vector2 target, Rite rite)
             : base(mod, target, rite)
         {
 
-            castCost = 8 - (int)Math.Ceiling((double)(rite.caster.CombatLevel/2));
+            castCost = Math.Max(4,12-Game1.player.CombatLevel);
 
             targetDirection = rite.direction;
+
+            meteorRange = 2;
 
         }
 
@@ -47,14 +51,26 @@ namespace StardewDruid.Cast
 
             targetLocation.temporarySprites.Add(newAnimation);
 
-
             // ---------------------------- fireball animation
 
-            ModUtility.AnimateMeteor(targetLocation, targetVector, targetDirection < 2);
+            //int targetSpeed = randomIndex.Next(1, 5) * 100;
+
+            //DelayedAction.functionAfterDelay(MeteorAnimation, targetSpeed);
+
+            //DelayedAction.functionAfterDelay(MeteorImpact, 600 + targetSpeed);
+
+            MeteorAnimation();
 
             DelayedAction.functionAfterDelay(MeteorImpact, 600);
 
             castFire = true;
+
+        }
+
+        public void MeteorAnimation()
+        {
+
+            ModUtility.AnimateMeteor(targetLocation, targetVector, targetDirection < 2);
 
         }
 
@@ -68,7 +84,21 @@ namespace StardewDruid.Cast
 
             }
 
-            StardewValley.Tools.Axe targetAxe = mod.RetrieveAxe();
+            int addedRange = 0;
+
+            if(riteData.castAxe.UpgradeLevel >= 3)
+            {
+
+                addedRange++;
+
+            }
+
+            if (riteData.castPick.UpgradeLevel >= 3)
+            {
+
+                addedRange++;
+
+            }
 
             targetLocation.playSound("flameSpellHit");
 
@@ -76,9 +106,13 @@ namespace StardewDruid.Cast
 
             List<Vector2> tileVectors;
 
-            Microsoft.Xna.Framework.Rectangle areaOfEffect = new Microsoft.Xna.Framework.Rectangle((int)(targetVector.X - 3f) * 64, (int)(targetVector.Y - 3f) * 64, (3 * 2 + 1) * 64, (3 * 2 + 1) * 64);
+            int damageRadius = meteorRange + addedRange;
 
-            targetLocation.damageMonster(areaOfEffect, 128, 256, true, targetPlayer);
+            int damageDiameter = (damageRadius * 2) + 1;
+
+            Microsoft.Xna.Framework.Rectangle areaOfEffect = new Microsoft.Xna.Framework.Rectangle((int)(targetVector.X - damageRadius) * 64, (int)(targetVector.Y - damageRadius) * 64, damageDiameter * 64, damageDiameter * 64);
+
+            targetLocation.damageMonster(areaOfEffect, riteData.castDamage, riteData.castDamage * damageRadius, true, targetPlayer);
 
             TemporaryAnimatedSprite bigAnimation = new(23, 9999f, 6, 1, new Vector2(targetVector.X * 64f, targetVector.Y * 64f), flicker: false, (Game1.random.NextDouble() < 0.5) ? true : false)
             {
@@ -91,8 +125,9 @@ namespace StardewDruid.Cast
 
             targetLocation.temporarySprites.Add(bigAnimation);
 
-            // reduce tree health for visceral impact
-            for (int i = 0; i < 5; i++)
+            int meteorRadius = meteorRange + addedRange + 1;
+
+            for (int i = 0; i < meteorRadius; i++)
             {
 
                 if (i == 0)
@@ -162,11 +197,7 @@ namespace StardewDruid.Cast
                             if (targetObject.Name.Contains("Weed"))
                             {
 
-                                //for (int fibreDebris = 2; fibreDebris < i; fibreDebris++)
-                                //{
-                                    Game1.createObjectDebris(771, (int)tileVector.X, (int)tileVector.Y);
-
-                                //}
+                                Game1.createObjectDebris(771, (int)tileVector.X, (int)tileVector.Y);
 
                                 targetLocation.objects.Remove(tileVector);
 
@@ -195,7 +226,7 @@ namespace StardewDruid.Cast
                             else
                             {
 
-                                targetTree.performToolAction(targetAxe, 0, tileVector, targetLocation);
+                                targetTree.performToolAction(riteData.castAxe, 0, tileVector, targetLocation);
 
                                 targetLocation.terrainFeatures.Remove(tileVector);
 
@@ -215,11 +246,7 @@ namespace StardewDruid.Cast
 
                                 targetLocation.terrainFeatures.Remove(tileVector);
 
-                                //for (int fibreDebris = 2; fibreDebris < i; fibreDebris++)
-                                //{
-                                    Game1.createObjectDebris(771, (int)tileVector.X, (int)tileVector.Y);
-
-                                //}
+                                Game1.createObjectDebris(771, (int)tileVector.X, (int)tileVector.Y);
 
                                 destroyVector = true;
 
@@ -229,7 +256,7 @@ namespace StardewDruid.Cast
 
                     }
 
-                    if(i == 3 || destroyVector) { 
+                    if(i == damageRadius || destroyVector) { 
 
                         if (Game1.random.NextDouble() < 0.5)
                         {

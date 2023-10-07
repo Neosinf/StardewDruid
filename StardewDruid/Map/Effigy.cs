@@ -20,8 +20,6 @@ namespace StardewDruid.Map
 
         private readonly Mod mod;
 
-        private Farmer targetPlayer;
-
         public bool lessonGiven;
 
         public string questCompleted;
@@ -33,6 +31,10 @@ namespace StardewDruid.Map
         private bool hideStatue;
 
         private bool makeSpace;
+
+        private string returnFrom;
+
+        public int caveChoice;
 
         public Effigy(Mod Mod,int statueX, int statueY, bool HideStatue, bool MakeSpace)
         {
@@ -48,6 +50,8 @@ namespace StardewDruid.Map
             hideStatue = HideStatue;
 
             makeSpace = MakeSpace;
+
+            caveChoice = Game1.player.caveChoice.Value;
 
         }
 
@@ -279,13 +283,13 @@ namespace StardewDruid.Map
 
                 Layer frontLayer = farmCave.map.GetLayer("Front");
 
-                frontLayer.Tiles[X - 1, Y - 3] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 373);
+                frontLayer.Tiles[X - 1, Y - 3] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 374);
 
-                frontLayer.Tiles[X - 1, Y - 2] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 381);
+                frontLayer.Tiles[X - 1, Y - 2] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 382);
 
-                frontLayer.Tiles[X + 1, Y - 3] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 373);
+                frontLayer.Tiles[X + 1, Y - 3] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 374);
 
-                frontLayer.Tiles[X + 1, Y - 2] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 381);
+                frontLayer.Tiles[X + 1, Y - 2] = new StaticTile(frontLayer, craftableSheet, BlendMode.Alpha, 382);
 
             }
 
@@ -293,10 +297,8 @@ namespace StardewDruid.Map
 
         }
 
-        public void Approach(Farmer player)
+        public void DialogueApproach()
         {
-
-            targetPlayer = player;
 
             string effigyQuestion;
 
@@ -310,6 +312,16 @@ namespace StardewDruid.Map
                 effigyQuestion = "Forgotten Effigy: ^Ah... the successor appears.";
 
                 effigyChoices.Add(new Response("query", "What are you?"));
+
+            }
+            else if(Game1.player.caveChoice.Value != caveChoice)
+            {
+
+                effigyQuestion = "Forgotten Effigy: ^I had a visitor today.";
+
+                effigyChoices.Add(new Response("demetrius", "Did you meet Demetrius?"));
+
+                caveChoice = Game1.player.caveChoice.Value;
 
             }
             else if(questCompleted != null)
@@ -363,7 +375,7 @@ namespace StardewDruid.Map
             else if (blessingList.ContainsKey("stars"))
             {
 
-                effigyQuestion = "Forgotten Effigy: ^Successor.";
+                effigyQuestion = "Satisfied Effigy: ^Successor.";
 
                 effigyChoices.Add(new Response("journey", "Does the valley have need of me?"));
 
@@ -380,9 +392,7 @@ namespace StardewDruid.Map
             if (blessingList.ContainsKey("earth"))
             {
 
-                effigyChoices.Add(new Response("disable", "Something happened that I'd rather forget (disable an effect)"));
-
-                effigyChoices.Add(new Response("enable", "I want to relearn something (enable an effect)"));
+                effigyChoices.Add(new Response("effects", "I'd like to review my training (manage rite effects)"));
 
             }
 
@@ -395,15 +405,17 @@ namespace StardewDruid.Map
 
             effigyChoices.Add(new Response("none", "(say nothing)"));
 
-            GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerApproach);
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(ApproachAnswer);
 
-            targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+            returnFrom = null;
+
+            Game1.player.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
 
             return;
 
         }
 
-        public void AnswerApproach(Farmer effigyVisitor, string effigyAnswer)
+        public void ApproachAnswer(Farmer effigyVisitor, string effigyAnswer)
         {
 
             switch (effigyAnswer)
@@ -420,15 +432,9 @@ namespace StardewDruid.Map
 
                     break;
 
-                case "disable":
+                case "effects":
 
-                    DelayedAction.functionAfterDelay(DialogueDisable, 100);
-
-                    break;
-
-                case "enable":
-
-                    DelayedAction.functionAfterDelay(DialogueEnable, 100);
+                    DelayedAction.functionAfterDelay(DialogueEffects, 100);
 
                     break;
 
@@ -441,6 +447,12 @@ namespace StardewDruid.Map
                 case "ancestor":
 
                     DelayedAction.functionAfterDelay(DialogueAncestor, 100);
+
+                    break;
+
+                case "demetrius":
+
+                    DelayedAction.functionAfterDelay(DialogueDemetrius, 100);
 
                     break;
 
@@ -472,9 +484,11 @@ namespace StardewDruid.Map
 
             effigyChoices.Add(new Response("none", "(say nothing)"));
 
-            GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerApproach);
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(ApproachAnswer);
 
-            targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+            returnFrom = null;
+
+            Game1.player.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
 
         }
 
@@ -763,7 +777,7 @@ namespace StardewDruid.Map
 
                     mod.LevelBlessing("stars");
 
-                    ModUtility.AnimateMeteor(Game1.player.currentLocation, Game1.player.getTileLocation() + new Vector2(0, -2), true);
+                    //ModUtility.AnimateMeteor(Game1.player.currentLocation, Game1.player.getTileLocation() + new Vector2(0, -2), true);
 
                     Game1.currentLocation.playSoundPitched("Meteorite", 1200);
 
@@ -842,15 +856,17 @@ namespace StardewDruid.Map
 
             effigyChoices.Add(new Response("cancel", "(say nothing)"));
 
-            GameLocation.afterQuestionBehavior effigyBehaviour = new(DialogueBlessingAnswer);
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerBlessing);
 
-            targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+            returnFrom = null;
+
+            Game1.player.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
 
             return;
 
         }
 
-        public void DialogueBlessingAnswer(Farmer effigyVisitor, string effigyAnswer)
+        public void AnswerBlessing(Farmer effigyVisitor, string effigyAnswer)
         {
 
             string effigyReply;
@@ -905,7 +921,7 @@ namespace StardewDruid.Map
 
                     break;
 
-                default: // "none"
+                default: // "cancel"
 
                     effigyReply = "Forgotten Effigy: ^(says nothing back).";
 
@@ -924,6 +940,306 @@ namespace StardewDruid.Map
 
         }
 
+        public void DialogueEffects()
+        {
+
+            Dictionary<string, int> blessingList = mod.BlessingList();
+
+            string effigyQuestion = "Forgotten Effigy: ^Our traditions are etched into the bedrock of the valley.";
+
+            if (returnFrom == "forget")
+            {
+
+                effigyQuestion = "Forgotten Effigy: ... you've forgotten what you wanted to forget, haven't you.";
+
+            }
+
+            if (returnFrom == "relearn")
+            {
+
+                effigyQuestion = "Forgotten Effigy: ... so you can't remember what you wanted to remember.";
+
+            }
+
+            List<Response> effigyChoices = new();
+
+            effigyChoices.Add(new Response("earth", "What role do the Two Kings play?"));
+
+            if (blessingList.ContainsKey("water"))
+            {
+
+                effigyChoices.Add(new Response("water", "Who is the Voice Beyond the Shore?"));
+
+            }
+
+            if (blessingList.ContainsKey("stars"))
+            {
+
+                effigyChoices.Add(new Response("stars", "Do the Stars have names?"));
+
+            }
+
+            if (blessingList["earth"] >= 2)
+            {
+                effigyChoices.Add(new Response("disable", "I'd rather forget something that happened (disable effects)"));
+
+                effigyChoices.Add(new Response("enable", "I want to relearn something (enable effects)"));
+
+            }
+
+            effigyChoices.Add(new Response("return", "(nevermind)"));
+
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerEffects);
+
+            returnFrom = null;
+
+            Game1.player.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+
+            return;
+
+        }
+
+        public void AnswerEffects(Farmer effigyVisitor, string effigyAnswer)
+        {
+
+            switch (effigyAnswer)
+            {
+
+                case "earth":
+
+                    DelayedAction.functionAfterDelay(EffectsEarth, 100);
+
+                    break;
+
+                case "water":
+
+                    DelayedAction.functionAfterDelay(EffectsWater, 100);
+
+                    break;
+
+                case "stars":
+
+                    DelayedAction.functionAfterDelay(EffectsStars, 100);
+
+                    break;
+
+                case "disable":
+
+                    DelayedAction.functionAfterDelay(DialogueDisable, 100);
+
+                    break;
+
+                case "enable":
+
+                    DelayedAction.functionAfterDelay(DialogueEnable, 100);
+
+                    break;
+
+                case "return":
+
+                    returnFrom = "effects";
+
+                    DelayedAction.functionAfterDelay(DialogueApproach, 100);
+
+                    break;
+
+            }
+
+            return;
+
+        }
+
+        public void EffectsEarth()
+        {
+
+            Dictionary<string, int> blessingList = mod.BlessingList();
+
+            string effigyQuestion = "Forgotten Effigy: ^The King of Oaks and the King of Holly war upon the Equinox. One will rule with winter, one with summer.";
+
+            if (blessingList["earth"] >= 1)
+            {
+
+                effigyQuestion += "^Lesson 1. Explode weeds and twigs. Greet Villagers, Pets and Animals once a day.";
+
+            }
+
+            if (blessingList["earth"] >= 2)
+            {
+
+                effigyQuestion += "^Lesson 2. Extract foragables from the landscape. Might attract monsters.^ ";
+            
+            }
+
+            List<Response> effigyChoices = new();
+
+            GameLocation.afterQuestionBehavior effigyBehaviour;
+
+            if (blessingList["earth"] >= 3)
+            {
+
+                effigyChoices.Add(new Response("next", "Next ->"));
+
+                effigyBehaviour = new(EffectsEarthTwo);
+
+            }
+            else
+            {
+
+                effigyChoices.Add(new Response("return", "It's all clear now"));
+
+                effigyBehaviour = new(ReturnEffects);
+
+            }
+
+            Game1.player.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+
+            return;
+
+        }
+
+        public void EffectsEarthTwo(Farmer effigyVisitor, string effigyAnswer)
+        {
+
+            Dictionary<string, int> blessingList = mod.BlessingList();
+
+            string effigyQuestion = "Forgotten Effigy: ^Lesson 3. Sprout trees, grass, seasonal forage and flowers in empty spaces.";
+
+            if (blessingList["earth"] >= 4)
+            {
+
+                effigyQuestion += "^Lesson 4. Increase the growth rate and quality of growing crops. Convert planted wild seeds into random cultivations.";
+
+            }
+
+            if (blessingList["earth"] >= 5)
+            {
+
+                effigyQuestion += "^Lesson 5. Shake loose rocks free from the ceilings of mine shafts. Explode gem ores.^ ";
+
+            }
+
+            List<Response> effigyChoices = new();
+
+            effigyChoices.Add(new Response("return", "It's all clear now"));
+
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(ReturnEffects);
+
+            Game1.player.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+
+            return;
+
+        }
+
+        public void EffectsWater()
+        {
+
+            Dictionary<string, int> blessingList = mod.BlessingList();
+
+            string effigyQuestion = "Forgotten Effigy: ^The Voice is that of the Lady of the Isle of Mists. She is as ancient and powerful as the sunset on the Gem Sea.";
+
+            if (blessingList["water"] >= 1)
+            {
+
+                effigyQuestion += "^Lesson 1. Strike warp shrines, stumps, logs and boulders to extract resources.";
+
+            }
+
+            if (blessingList["water"] >= 2)
+            {
+
+                effigyQuestion += "^Lesson 2. Strike scarecrows, campfires and lightning rods to activate special functions.^ ";
+
+            }
+
+            List<Response> effigyChoices = new();
+
+            GameLocation.afterQuestionBehavior effigyBehaviour;
+
+            if (blessingList["water"] >= 3)
+            {
+
+                effigyChoices.Add(new Response("next", "Next ->"));
+
+                effigyBehaviour = new(EffectsWaterTwo);
+
+            }
+            else
+            {
+
+                effigyChoices.Add(new Response("return", "It's all clear now"));
+
+                effigyBehaviour = new(ReturnEffects);
+
+            }
+
+            Game1.player.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+
+            return;
+
+        }
+
+        public void EffectsWaterTwo(Farmer effigyVisitor, string effigyAnswer)
+        {
+
+            Dictionary<string, int> blessingList = mod.BlessingList();
+
+            string effigyQuestion = "Forgotten Effigy: ^Lesson 3. Strike deep water to produce a fishing-spot that yields rare species of fish.";
+
+
+            if (blessingList["water"] >= 4)
+            {
+
+                effigyQuestion += "^Lesson 4. Expend high amounts of stamina to instantly destroy enemies.";
+
+            }
+
+            if (blessingList["water"] >= 5)
+            {
+
+                effigyQuestion += "^Lesson 5. Strike candle torches placed in remote outdoor locations to produce monster portals.^ ";
+
+            }
+
+            List<Response> effigyChoices = new();
+
+            effigyChoices.Add(new Response("return", "It's all clear now"));
+
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(ReturnEffects);
+
+            Game1.player.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+
+            return;
+
+        }
+
+        public void EffectsStars()
+        {
+
+            Dictionary<string, int> blessingList = mod.BlessingList();
+
+            string effigyQuestion = "Forgotten Effigy: ^The Stars have no names that can be uttered by earthly dwellers. They exist high above, and beyond, and care not for the life of our world, though their light sustains much of it. Yet... there is one star... a fallen star. He has a name. A name that we dread to speak.";
+
+            List<Response> effigyChoices = new();
+
+            effigyChoices.Add(new Response("return", "It's all clear now"));
+
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(ReturnEffects);
+
+            Game1.player.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+
+            return;
+
+        }
+
+        public void ReturnEffects(Farmer effigyVisitor, string effigyAnswer)
+        {
+
+            DelayedAction.functionAfterDelay(DialogueEffects, 100);
+
+            return;
+
+        }
+
         public void DialogueDisable()
         {
 
@@ -933,7 +1249,7 @@ namespace StardewDruid.Map
 
             List<Response> effigyChoices = new();
 
-            if (!blessingList.ContainsKey("forgetSeeds"))
+            if (!blessingList.ContainsKey("forgetSeeds") && blessingList["earth"] >= 3)
             {
 
                 effigyChoices.Add(new Response("forgetSeeds", "I end up with seeds in my boots everytime I run through the meadow. IT'S ANNOYING."));
@@ -954,35 +1270,37 @@ namespace StardewDruid.Map
 
             }
 
-            if (!blessingList.ContainsKey("forgetTrees"))
+            if (!blessingList.ContainsKey("forgetTrees") && blessingList["earth"] >= 3)
             {
 
                 effigyChoices.Add(new Response("forgetTrees", "Just about inside Clint's by 3:50pm when a tree sprouted in front of me. Now my crotch is sore AND I don't have a Copper Axe."));
 
             }
 
-            effigyChoices.Add(new Response("none", "(say nothing)"));
+            effigyChoices.Add(new Response("return", "(nevermind)"));
 
-            GameLocation.afterQuestionBehavior effigyBehaviour = new(DialogueDisableAnswer);
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerDisable);
 
-            targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+            Game1.player.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
 
             return;
 
         }
 
-        public void DialogueDisableAnswer(Farmer effigyVisitor, string effigyAnswer)
+        public void AnswerDisable(Farmer effigyVisitor, string effigyAnswer)
         {
 
             string effigyReply = "Forgotten Effigy: ^The druid's life is... full of random surprises... but may you not suffer any more of this kind.";
 
             switch (effigyAnswer)
             {
-                case "none":
+                case "return":
 
-                    effigyReply = "Forgotten Effigy: ^... ^... ^you've forgotten what you wanted to forget, haven't you.";
+                    returnFrom = "forget";
 
-                    break;
+                    DelayedAction.functionAfterDelay(DialogueEffects, 100);
+
+                    return;
 
                 default: //
 
@@ -1033,28 +1351,30 @@ namespace StardewDruid.Map
 
             }
 
-            effigyChoices.Add(new Response("none", "(say nothing)"));
+            effigyChoices.Add(new Response("return", "(nevermind)"));
 
-            GameLocation.afterQuestionBehavior effigyBehaviour = new(DialogueEnableAnswer);
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerEnable);
 
-            targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+            Game1.player.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
 
             return;
 
         }
 
-        public void DialogueEnableAnswer(Farmer effigyVisitor, string effigyAnswer)
+        public void AnswerEnable(Farmer effigyVisitor, string effigyAnswer)
         {
 
             string effigyReply = "Forgotten Effigy: ^Let the essence of life itself enrich your world.";
 
             switch (effigyAnswer)
             {
-                case "none":
+                case "return":
 
-                    effigyReply = "Forgotten Effigy: ^... ^... ^you can't remember what you wanted to remember, I see.";
+                    returnFrom = "relearn";
 
-                    break;
+                    DelayedAction.functionAfterDelay(DialogueEffects, 100);
+
+                    return;
 
                 default: //
 
@@ -1068,6 +1388,64 @@ namespace StardewDruid.Map
 
         }
 
+        public void DialogueDemetrius()
+        {
+
+            string effigyQuestion = "Forgotten Effigy: ^I concealed myself for a time, then I spoke to him in the old tongue of the Calico shamans.";
+
+            List<Response> effigyChoices = new();
+
+            effigyChoices.Add(new Response("descended", "Do you think Demetrius is descended from the shaman tradition?!"));
+
+            effigyChoices.Add(new Response("offended", "Wow, he must have been offended. Demetrius is a man of modern science and sensibilities."));
+
+            effigyChoices.Add(new Response("return", "Nope, not going to engage with this."));
+
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerDemetrius);
+
+            Game1.player.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+
+            return;
+
+        }
+
+        public void AnswerDemetrius(Farmer effigyVisitor, string effigyAnswer)
+        {
+
+            string effigyReply;
+
+            switch (effigyAnswer)
+            {
+                case "return":
+
+                    returnFrom = "demetrius";
+
+                    DelayedAction.functionAfterDelay(DialogueApproach, 100);
+
+                    return;
+
+                default: //
+
+                    if(caveChoice == 1)
+                    {
+
+                        effigyReply = "Forgotten Effigy: ^... ^... ^He came in with a feathered mask on, invoked a rite of summoning, threw Bat feed everywhere, then ran off singing \"Old man in a frog pond\".";
+
+                    }
+                    else
+                    {
+
+                        effigyReply = "Forgotten Effigy: ^I can smell the crisp, sandy scent of the Calico variety of mushroom. The shamans would eat them to... enter a trance-like state.";
+
+                    }
+
+                    break;
+
+            }
+
+            Game1.activeClickableMenu = new DialogueBox(effigyReply);
+
+        }
 
     }
 

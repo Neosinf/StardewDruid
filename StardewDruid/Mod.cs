@@ -5,6 +5,7 @@ using StardewDruid.Cast;
 using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Characters;
 using StardewValley.Locations;
@@ -16,6 +17,7 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Metadata.Ecma335;
@@ -48,6 +50,8 @@ namespace StardewDruid
 
         public string activeLockout;
 
+        public bool castBuffer;
+
         public Dictionary<string, Vector2> warpPoints;
 
         public Dictionary<string, Vector2> firePoints;
@@ -64,9 +68,13 @@ namespace StardewDruid
 
         private Queue<Rite> riteQueue;
 
-        StardewValley.Tools.Pickaxe targetPick;
+        public StardewValley.Tools.Pickaxe targetPick;
 
-        StardewValley.Tools.Axe targetAxe;
+        public StardewValley.Tools.Axe targetAxe;
+
+        public Dictionary<string, string> locationPoll;
+
+        public StardewValley.NPC disembodiedVoice;
 
         override public void Entry(IModHelper helper)
         {
@@ -111,17 +119,49 @@ namespace StardewDruid
             configMenu.AddBoolOption(
                 mod: ModManifest,
                 name: () => "Cast Buffs",
-                tooltip: () => "Enables automatic berry, sashimi and cheese consumption when casting with critically low stamina. Enables magnetism buff when casting Rite of the Earth.",
+                tooltip: () => "Enables magnetism buff when casting Rite of the Earth.",
+                getValue: () => Config.castBuffs,
+                setValue: value => Config.castBuffs = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: ModManifest,
+                name: () => "Consume Roughage",
+                tooltip: () => "Enables automatic consumption of usually inedible but often inventory-crowding items: Sap, Tree seeds, Slime, Batwings, Red mushrooms; Triggers when casting with critically low stamina. These items are far more abundant in Stardew Druid due to Rite of Earth behaviour.",
+                getValue: () => Config.consumeRoughage,
+                setValue: value => Config.consumeRoughage = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: ModManifest,
+                name: () => "Consume Lunch",
+                tooltip: () => "Enables automatic consumption of common sustenance items: Cola, SpringOnion, Snackbar, Mushrooms, Algae, Seaweed, Carrots, Sashimi, Salmonberry, Cheese; Triggers when casting with critically low stamina.",
+                getValue: () => Config.consumeQuicksnack,
+                setValue: value => Config.consumeQuicksnack = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: ModManifest,
+                name: () => "Master Start",
+                tooltip: () => "Start with all Rite levels unlocked (not recommended for immersion). Note that activating, saving in game, then deactivating afterwards, will reset all your Rite Levels and Effigy Quests.",
                 getValue: () => Config.masterStart,
                 setValue: value => Config.masterStart = value
             );
 
             configMenu.AddBoolOption(
                 mod: ModManifest,
-                name: () => "Master Start",
-                tooltip: () => "Start with all Rite levels unlocked (not recommended for immersion). Note that activating, saving in game, then deactivating afterwards, will wipe all your Rite Levels and Effigy Quests.",
-                getValue: () => Config.castBuffs,
-                setValue: value => Config.castBuffs = value
+                name: () => "Maximum Damage",
+                tooltip: () => "Some spell effects have damage modifiers that consider player combat level, highest upgrade on Pickaxe, Axe, and applied enchantments. Enable to cast at max damage everytime.",
+                getValue: () => Config.maxDamage,
+                setValue: value => Config.maxDamage = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: ModManifest,
+                name: () => "Unrestricted Stars",
+                tooltip: () => "Disables the cast buffer on Rite of Stars, so that it casts every button press instead of with reasonable delay.",
+                getValue: () => Config.unrestrictedStars,
+                setValue: value => Config.unrestrictedStars = value
             );
 
             configMenu.AddNumberOption(
@@ -225,22 +265,6 @@ namespace StardewDruid
 
             riteQueue = new();
 
-            /*if (staticData.blessingList != null)
-            {
-
-                if (!staticData.blessingList.ContainsKey("special"))
-                {
-
-                    staticData.blessingList["special"] = 1;
-
-                }
-
-                specialLimit = 2 + (staticData.blessingList["special"] * 2);
-
-                specialCasts = specialLimit;
-
-            }*/
-
             druidEffigy = new(
                 this,
                 Config.farmCaveStatueX,
@@ -265,15 +289,13 @@ namespace StardewDruid
 
             targetPick = new();
 
-            targetPick.UpgradeLevel = 4;
-
             targetPick.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
 
             targetAxe = new();
 
-            targetAxe.UpgradeLevel = 4;
-
             targetAxe.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
+
+            locationPoll = new();
 
             return;
 
@@ -339,6 +361,17 @@ namespace StardewDruid
             fireCasts = new();
 
             monsterSpawns = new();
+
+            if (disembodiedVoice != null)
+            {
+
+                GameLocation previous = disembodiedVoice.currentLocation;
+
+                previous.characters.Remove(disembodiedVoice);
+
+                disembodiedVoice = null;
+
+            }
 
         }
 
@@ -512,7 +545,7 @@ namespace StardewDruid
 
                             Helper.Input.Suppress(buttonPressed);
 
-                            druidEffigy.Approach(Game1.player);
+                            druidEffigy.DialogueApproach();
 
                             return;
 
@@ -526,7 +559,7 @@ namespace StardewDruid
 
                 if (Config.riteButtons.GetState() == SButtonState.Pressed)
                 {
-                    druidEffigy.Approach(Game1.player);
+                    druidEffigy.DialogueApproach();
 
                     return;
                 }
@@ -551,198 +584,201 @@ namespace StardewDruid
             }
 
             if(Config.riteButtons.GetState() == SButtonState.Pressed)
-                //else if (buttonPressed.Equals(Config.riteButton))
+            {
+
+                // ignore if current tool isn't set
+                if (Game1.player.CurrentTool is null)
                 {
 
-                    //Helper.Input.Suppress(buttonPressed);
+                    Game1.addHUDMessage(new HUDMessage("Requires a melee weapon or scythe to activate rite", 2));
 
-                    // ignore if current tool isn't set
-                    if (Game1.player.CurrentTool is null)
-                    {
-
-                        Game1.addHUDMessage(new HUDMessage("Requires a melee weapon or scythe to activate rite", 2));
-
-                        return;
-
-                    }
-
-                    // ignore if current tool isn't weapon
-                    if (Game1.player.CurrentTool.GetType().Name != "MeleeWeapon")
-                    {
-
-                        Game1.addHUDMessage(new HUDMessage("Requires a melee weapon or scythe to activate rite", 2));
-
-                        return;
-
-                    }
-
-                    Vector2 playerVector = Game1.player.getTileLocation();
-
-                    List<Map.Quest> triggeredQuests = new();
-
-                    foreach (string castString in staticData.triggerList)
-                    {
-
-                        Map.Quest questData = questIndex[castString];
-
-                        if (questData.triggerLocation == Game1.player.currentLocation.Name && activeLockout == "none")
-                        {
-
-                            bool triggerValid = true;
-
-                            if (questData.startTime != 0)
-                            {
-
-                                if (Game1.timeOfDay < questData.startTime)
-                                {
-
-                                    triggerValid = false;
-
-                                }
-
-                            }
-
-                            if (triggerValid)
-                            {
-
-                                Vector2 ChallengeVector = questData.triggerVector;
-
-                                Vector2 ChallengeLimit = ChallengeVector + questData.triggerLimit;
-
-                                if (
-                                    playerVector.X >= ChallengeVector.X &&
-                                    playerVector.Y >= ChallengeVector.Y &&
-                                    playerVector.X < ChallengeLimit.X &&
-                                    playerVector.Y < ChallengeLimit.Y
-                                    )
-                                {
-
-                                    triggeredQuests.Add(questData);
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                    foreach (Map.Quest questData in triggeredQuests)
-                    {
-
-                        ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 500);
-
-                        Game1.player.currentLocation.playSound("yoba");
-
-                        Cast.Cast castHandle;
-
-                        if (questData.triggerType == "sword")
-                        {
-                            castHandle = new Cast.Sword(this, playerVector, new Rite(), questData);
-                        }
-                        else
-                        {
-                            castHandle = new Cast.Challenge(this, playerVector, new Rite(), questData);
-                        }
-
-                        RemoveTrigger(questData.name);
-
-                        castHandle.CastQuest();
-
-                        activeLockout = "trigger";
-
-                        return;
-
-                    }
-
-                    // new cast configuration
-
-                    string activeBlessing = staticData.activeBlessing;
-
-                    if (activeBlessing == "none")
-                    {
-
-                        Game1.player.currentLocation.playSound("ghost");
-
-                        Game1.addHUDMessage(new HUDMessage("Nothing happens", 2));
-
-                        return;
-
-                    }
-
-                    switch (Game1.player.CurrentTool.InitialParentTileIndex)
-                    {
-
-                        case 15: // Forest Sword
-
-                            if (staticData.blessingList.ContainsKey("earth"))
-                            {
-
-                                activeBlessing = "earth";
-
-                            }
-
-                            break;
-
-                        case 14: // Neptune's Glaive
-
-                            if (staticData.blessingList.ContainsKey("water"))
-                            {
-
-                                activeBlessing = "water";
-
-                            }
-
-                            break;
-
-                        case 9: // Lava Katana
-
-                            if (staticData.blessingList.ContainsKey("stars"))
-                            {
-
-                                activeBlessing = "stars";
-
-                            }
-
-                            break;
-
-                    }
-
-                    Dictionary<string, bool> spawnIndex = Map.SpawnData.SpawnIndex(Game1.player.currentLocation);
-
-                    // ignore if game location has no spawn profile
-                    if (spawnIndex.Count == 0)
-                    {
-
-                        if (activeBlessing != "none")
-                        {
-
-                            Game1.addHUDMessage(new HUDMessage("Unable to reach the otherworldly plane", 2));
-
-                            //Monitor.Log($"{Game1.player.currentLocation.Name} {activeBlessing}",LogLevel.Debug);
-
-                        }
-
-                        return;
-
-                    }
-
-                    activeData = new ActiveData
-                    {
-                        activeCast = activeBlessing,
-
-                        spawnIndex = spawnIndex
-
-                    };
-
-
-                    // initial charge effect
-                    chargeEffect = true;
+                    return;
 
                 }
 
-            //}
+                // ignore if current tool isn't weapon
+                if (Game1.player.CurrentTool.GetType().Name != "MeleeWeapon")
+                {
 
+                    Game1.addHUDMessage(new HUDMessage("Requires a melee weapon or scythe to activate rite", 2));
+
+                    return;
+
+                }
+
+                // check if player has activated a triggered event
+                Vector2 playerVector = Game1.player.getTileLocation();
+
+                List<Map.Quest> triggeredQuests = new();
+
+                foreach (string castString in staticData.triggerList)
+                {
+
+                    Map.Quest questData = questIndex[castString];
+
+                    if (questData.triggerLocation == Game1.player.currentLocation.Name && activeLockout == "none")
+                    {
+
+                        bool triggerValid = true;
+
+                        if (questData.startTime != 0)
+                        {
+
+                            if (Game1.timeOfDay < questData.startTime)
+                            {
+
+                                triggerValid = false;
+
+                            }
+
+                        }
+
+                        if (triggerValid)
+                        {
+
+                            Vector2 ChallengeVector = questData.triggerVector;
+
+                            Vector2 ChallengeLimit = ChallengeVector + questData.triggerLimit;
+
+                            if (
+                                playerVector.X >= ChallengeVector.X &&
+                                playerVector.Y >= ChallengeVector.Y &&
+                                playerVector.X < ChallengeLimit.X &&
+                                playerVector.Y < ChallengeLimit.Y
+                                )
+                            {
+
+                                triggeredQuests.Add(questData);
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                foreach (Map.Quest questData in triggeredQuests)
+                {
+
+                    ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 500);
+
+                    Game1.player.currentLocation.playSound("yoba");
+
+                    Cast.Cast castHandle;
+
+                    if (questData.triggerType == "sword")
+                    {
+                        castHandle = new Cast.Sword(this, playerVector, new Rite(), questData);
+                    }
+                    else
+                    {
+                        castHandle = new Cast.Challenge(this, playerVector, new Rite(), questData);
+                    }
+
+                    RemoveTrigger(questData.name);
+
+                    castHandle.CastQuest();
+
+                    activeLockout = "trigger";
+
+                    return;
+
+                }
+
+                // new cast configuration
+                string activeBlessing = staticData.activeBlessing;
+
+                switch (Game1.player.CurrentTool.InitialParentTileIndex)
+                {
+
+                    case 15: // Forest Sword
+
+                        if (staticData.blessingList.ContainsKey("earth"))
+                        {
+
+                            activeBlessing = "earth";
+
+                        }
+
+                        break;
+
+                    case 14: // Neptune's Glaive
+
+                        if (staticData.blessingList.ContainsKey("water"))
+                        {
+
+                            activeBlessing = "water";
+
+                        }
+
+                        break;
+
+                    case 9: // Lava Katana
+
+                        if (staticData.blessingList.ContainsKey("stars"))
+                        {
+
+                            activeBlessing = "stars";
+
+                        }
+
+                        break;
+
+                }
+
+                if (castBuffer && !(Config.unrestrictedStars && activeBlessing == "stars"))
+                {
+
+                    return;
+                
+                }
+
+                castBuffer = true;
+
+                DelayedAction.functionAfterDelay(ClearBuffer, 1333);
+
+                if (activeBlessing == "none")
+                {
+
+                    Game1.player.currentLocation.playSound("ghost");
+
+                    Game1.addHUDMessage(new HUDMessage("Nothing happens", 2));
+
+                    return;
+
+                }
+
+                Dictionary<string, bool> spawnIndex = Map.SpawnData.SpawnIndex(Game1.player.currentLocation);
+
+                // ignore if game location has no spawn profile
+                if (spawnIndex.Count == 0)
+                {
+
+                    if (activeBlessing != "none")
+                    {
+
+                        Game1.addHUDMessage(new HUDMessage("Unable to reach the otherworldly plane", 2));
+
+                    }
+
+                    return;
+
+                }
+
+                activeData = new ActiveData
+                {
+                    activeCast = activeBlessing,
+
+                    spawnIndex = spawnIndex
+
+                };
+
+
+                // initial charge effect
+                chargeEffect = true;
+
+            }
 
             // ignore if current tool isn't set
             if (Game1.player.CurrentTool is null)
@@ -768,61 +804,12 @@ namespace StardewDruid
 
             }
 
-            bool validPress = false;
             if (Config.riteButtons.GetState() == SButtonState.Held)
             {
 
-                validPress = true;
-            
-            }
-                // begin to count amount that cast button is held
-                /*    foreach (SButton buttonHeld in e.Held)
-                {
+                int staminaRequired = 48;
 
-                    // Already in Active State
-                    if (buttonHeld.Equals(Config.riteButton))
-                    {
-
-                        validPress = true;
-
-                    }
-
-                }
-
-                if (!validPress)
-                {
-
-                    foreach (string buttonFire in buttonList)
-                    {
-
-                        SButton buttonEnum = (SButton) Enum.Parse(typeof(SButton), buttonFire);
-
-                        if (Helper.Input.IsSuppressed(buttonEnum))
-                        {
-
-                            Monitor.Log($"{buttonEnum}",LogLevel.Debug);
-
-                            validPress = true;
-
-                        } 
-                        else if (Helper.Input.IsDown(buttonEnum))
-                        {
-
-                            validPress = true;
-
-                        }
-
-                    }
-
-                }*/
-                //Helper.Input.Suppress(buttonPressed);
-
-            if (validPress)
-            {
-
-                int staminaRequired;
-
-                switch (activeData.activeCast)
+                /*switch (activeData.activeCast)
                 {
 
                     case "water":
@@ -833,13 +820,13 @@ namespace StardewDruid
 
                     case "stars":
 
-                        staminaRequired = 24;
+                        staminaRequired = 36;
 
                         break;
 
                     case "earth":
 
-                        staminaRequired = 12;
+                        staminaRequired = 16;
 
                         break;
 
@@ -849,51 +836,119 @@ namespace StardewDruid
 
                         break;
 
-                };
-
+                };*/
+                
                 // check player has enough energy for eventual costs
                 if (Game1.player.Stamina <= staminaRequired)
                 {
 
-                    bool sashimiPower = false;
-
-                    if (Config.castBuffs)
+                    if (Config.consumeRoughage || Config.consumeQuicksnack)
                     {
+                        //int grizzleIndex;
 
-                        StardewValley.Object sashimiObject = new(227, 1);
+                        //StardewValley.Object grizzleObject;
 
-                        int sashimiIndex = Game1.player.getIndexOfInventoryItem(sashimiObject);
+                        int grizzleConsume;
 
-                        if (sashimiIndex >= 0 && sashimiIndex <= 11)
+                        float staminaUp;
+
+                        //int sashimiIndex;
+
+                        //StardewValley.Object sashimiObject;
+
+                        //int sashimiConsume;
+
+                        bool sashimiPower = false;
+
+                        List<int> grizzleList = Map.SpawnData.GrizzleList();
+
+                        List<int> sashimiList= Map.SpawnData.SashimiList();
+
+                        int checkIndex;
+
+                        for (int i = 0; i < Game1.player.Items.Count; i++)
                         {
 
-                            Game1.player.Items[sashimiIndex].Stack -= 1;
-
-                            if (Game1.player.Items[sashimiIndex].Stack <= 0)
+                            if(Game1.player.Stamina == Game1.player.MaxStamina)
                             {
-                                Game1.player.Items[sashimiIndex] = null;
+
+                                break;
 
                             }
 
-                            float num2 = Game1.player.Stamina;
+                            Item checkItem = Game1.player.Items[i];
 
-                            int num3 = Game1.player.health;
+                            // ignore empty slots
+                            if(checkItem == null)
+                            {
 
-                            int num4 = @sashimiObject.staminaRecoveredOnConsumption();
+                                continue;
 
-                            Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + (float)num4);
+                            }
 
-                            Game1.player.health = Math.Min(Game1.player.maxHealth, Game1.player.health + @sashimiObject.healthRecoveredOnConsumption());
+                            int itemIndex = checkItem.ParentSheetIndex;
 
-                            Game1.addHUDMessage(new HUDMessage("Sashimi", 4));
+                            if (Config.consumeRoughage)
+                            {
+                                checkIndex = grizzleList.IndexOf(itemIndex);
 
-                            sashimiPower = true;
+                                if (checkIndex != -1)
+                                {
+
+                                    grizzleConsume = Math.Min(checkItem.Stack, 5);
+
+                                    staminaUp = grizzleConsume * Math.Max(4, checkIndex);
+
+                                    Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + (float)staminaUp);
+
+                                    Game1.addHUDMessage(new HUDMessage(checkItem.DisplayName + " x" + grizzleConsume, 4));
+
+                                    Game1.player.Items[i].Stack -= grizzleConsume;
+
+                                    if (Game1.player.Items[i].Stack <= 0)
+                                    {
+                                        Game1.player.Items[i] = null;
+
+                                    }
+
+                                    continue;
+
+                                }
+                            }
+
+                            if (Config.consumeQuicksnack)
+                            {
+                                checkIndex = sashimiList.IndexOf(itemIndex);
+
+                                if (checkIndex != -1 && !sashimiPower)
+                                {
+
+                                    Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + @checkItem.staminaRecoveredOnConsumption());
+
+                                    Game1.player.health = Math.Min(Game1.player.maxHealth, Game1.player.health + @checkItem.healthRecoveredOnConsumption());
+
+                                    Game1.addHUDMessage(new HUDMessage(checkItem.DisplayName, 4));
+
+                                    Game1.player.Items[i].Stack -= 1;
+
+                                    if (Game1.player.Items[i].Stack <= 0)
+                                    {
+                                        Game1.player.Items[i] = null;
+
+                                    }
+
+                                    sashimiPower = true;
+
+                                }
+
+                            }
 
                         }
 
                     }
 
-                    if(!sashimiPower)
+                    //if(!sashimiPower)
+                    if (Game1.player.Stamina <= staminaRequired)
                     {
 
                         if (activeData.castLevel >= 1)
@@ -914,40 +969,33 @@ namespace StardewDruid
 
                 }
 
-                if (activeData.chargeAmount == 0 || activeData.chargeAmount % 12 == 0)
-                {
-
-                    //ModUtility.AnimateHands(Game1.player, activeData.activeDirection, 225);
-
-                }
-
-                //activeData.activeKey = buttonHeld.ToString();
-
                 chargeEffect = true;
 
                 activeData.chargeAmount++;
 
+                int chargeFrequency = 40;
+
                 int chargeLevel = 4;
 
-                if (activeData.chargeAmount <= 40)
+                if (activeData.chargeAmount <= chargeFrequency * 1)
                 {
 
                     chargeLevel = 1;
 
                 }
-                else if (activeData.chargeAmount <= 80)
+                else if (activeData.chargeAmount <= chargeFrequency * 2)
                 {
 
                     chargeLevel = 2;
 
                 }
-                else if (activeData.chargeAmount <= 120)
+                else if (activeData.chargeAmount <= chargeFrequency * 3)
                 {
 
                     chargeLevel = 3;
 
                 }
-                else if (activeData.chargeAmount == 160)
+                else if (activeData.chargeAmount == chargeFrequency * 4)
                 {
 
                     if (activeData.activeCast == "water")
@@ -979,8 +1027,6 @@ namespace StardewDruid
                     activeData.activeDirection = Game1.player.FacingDirection;
 
                     activeData.activeVector = Game1.player.getTileLocation();
-
-                    //Monitor.Log($"{activeData.activeCast},{activeData.activeVector}", LogLevel.Debug);
 
                     if (activeData.activeCast == "water")
                     {
@@ -1018,13 +1064,56 @@ namespace StardewDruid
 
                 activeData.castLevel = activeData.chargeLevel;
 
+                if (activeData.activeCast == "stars" && (activeData.castLevel % 2) == 0)
+                {
+
+                    return;
+
+                }
+
+                Axe castAxe = RetrieveAxe();
+
+                Pickaxe castPick = RetrievePick();
+
+                int damageLevel = 150;
+
+                if (!Config.maxDamage)
+                {
+
+                    damageLevel = 5 * Game1.player.CombatLevel;
+
+                    damageLevel += 1 * Game1.player.MiningLevel;
+
+                    damageLevel += 1 * Game1.player.ForagingLevel;
+
+                    damageLevel += 5 * castAxe.UpgradeLevel;
+
+                    damageLevel += 5 * castPick.UpgradeLevel;
+
+                    if (Game1.player.CurrentTool is Tool currentTool)
+                    {
+                        if (currentTool.enchantments.Count > 0)
+                        {
+                            damageLevel += 25;
+                        }
+                    }
+
+                }
+
                 Rite castRite = new()
                 {
 
-                    //castLevel = activeData.castLevel++,
                     castLevel = activeData.castLevel,
 
                     direction = activeData.activeDirection,
+
+                    castAxe = castAxe,
+
+                    castPick = castPick,
+
+                    castDamage = damageLevel,
+
+                    castCycle = activeData.cycleLevel,
 
                 };
 
@@ -1037,6 +1126,10 @@ namespace StardewDruid
 
                         ModUtility.AnimateStarsCast(activeData.activeVector, activeData.chargeLevel, activeData.cycleLevel);
 
+                        riteQueue.Enqueue(castRite);
+
+                        CastRite();
+
                         break;
 
                     case "water":
@@ -1047,19 +1140,24 @@ namespace StardewDruid
 
                         ModUtility.AnimateWaterCast(activeData.activeVector, activeData.chargeLevel, activeData.cycleLevel);
 
+                        riteQueue.Enqueue(castRite);
+
+                        DelayedAction.functionAfterDelay(CastRite, 666);
+
                         break;
 
                     default: //"earth"
-
+                        
                         ModUtility.AnimateEarthCast(activeData.activeVector,activeData.chargeLevel,activeData.cycleLevel);
+
+                        riteQueue.Enqueue(castRite);
+
+                        DelayedAction.functionAfterDelay(CastRite, 666);
 
                         break;
 
                 }
 
-                riteQueue.Enqueue(castRite);
-
-                DelayedAction.functionAfterDelay(CastRite, 666);
 
             }
 
@@ -1096,21 +1194,44 @@ namespace StardewDruid
         private void CastEarth(Rite riteData = null)
         {
             
+            // Add cast buff if enabled
             if(Config.castBuffs)
             {
 
                 Buff earthBuff = new("Earthen Magnetism", 6000, "Rite of the Earth", 8);
 
-                earthBuff.buffAttributes[8] = 8;
+                earthBuff.buffAttributes[8] = 192;
 
                 earthBuff.which = 184651;
-
-                //earthBuff.glow = Color.Green;
 
                 if (!Game1.buffsDisplay.hasBuff(184651))
                 {
 
                     Game1.buffsDisplay.addOtherBuff(earthBuff);
+
+                }
+
+                Vector2 casterVector = riteData.caster.getTileLocation();
+
+                if (riteData.castLocation.terrainFeatures.ContainsKey(casterVector))
+                {
+
+                    if (riteData.castLocation.terrainFeatures[casterVector] is StardewValley.TerrainFeatures.Grass)
+                    { 
+                        Buff speedBuff = new("Earthen Bouyancy", 6000, "Rite of the Earth", 9);
+
+                        speedBuff.buffAttributes[9] = 2;
+
+                        speedBuff.which = 184652;
+
+                        if (!Game1.buffsDisplay.hasBuff(184652))
+                        {
+
+                            Game1.buffsDisplay.addOtherBuff(speedBuff);
+
+                        }
+
+                    }
 
                 }
 
@@ -1130,9 +1251,9 @@ namespace StardewDruid
 
             int blessingLevel = staticData.blessingList["earth"];
 
-            int rockfallChance = 12 - Math.Max(8, riteData.caster.MiningLevel);
-
             List<Vector2> clumpIndex;
+
+            int rockfallChance = 10 - Math.Max(5, riteData.castPick.UpgradeLevel);
 
             if (!earthCasts.ContainsKey(riteData.castLocation.Name))
             {
@@ -1169,8 +1290,6 @@ namespace StardewDruid
                                 {
 
                                     effectCasts[tileVector] = new Cast.PetAnimal(this, tileVector, riteData, pair.Value);
-
-                                    //npcCollision = true;
 
                                 }
                             
@@ -1369,17 +1488,6 @@ namespace StardewDruid
 
                                 case "Grass":
 
-                                    /*Cast.Grass effectGrass = new(this, tileVector, riteData);
-
-                                    if (!Game1.currentSeason.Equals("winter") && riteData.spawnIndex["cropseed"] && staticData.blessingList["earth"] >= 4)
-                                    {
-
-                                        effectGrass.activateSeed = true;
-
-                                    }
-
-                                    effectCasts[tileVector] = effectGrass;*/
-
                                     effectCasts[tileVector] = new Cast.Grass(this, tileVector, riteData);
 
                                     break;
@@ -1560,12 +1668,10 @@ namespace StardewDruid
 
                     }
 
-                    if (riteData.castLocation is MineShaft)
+                    if (riteData.spawnIndex["rockfall"])
                     {
 
-                        MineShaft mineShaft = riteData.castLocation as MineShaft;
-
-                        if (blessingLevel >= 5 && mineShaft.isTileOnClearAndSolidGround(tileX,tileY))
+                        if (blessingLevel >= 5)
                         {
                             int probability = Game1.random.Next(rockfallChance);
 
@@ -1685,15 +1791,13 @@ namespace StardewDruid
                         continue;
 
                     }
-
+                    
                     effectHandle.CastEarth();
 
                     if (effectHandle.castFire)
                     {
 
                         castCost += effectHandle.castCost;
-
-                        //experienceGain++;
 
                     }
 
@@ -1723,8 +1827,6 @@ namespace StardewDruid
                 float oldStamina = Game1.player.Stamina;
 
                 float staminaCost = Math.Min(castCost, oldStamina - 1);
-
-                //float staminaCost = 2;
 
                 Game1.player.Stamina -= staminaCost;
 
@@ -2154,7 +2256,7 @@ namespace StardewDruid
                 );
 
                 int smiteCount = 0;
-
+                
                 foreach (NPC nonPlayableCharacter in riteData.castLocation.characters)
                 {
 
@@ -2289,7 +2391,7 @@ namespace StardewDruid
 
             if(castSelect != 0)
             {
-
+                
                 int castIndex;
 
                 Vector2 newVector;
@@ -2303,14 +2405,75 @@ namespace StardewDruid
 
                 }
 
-                for (int i = 0; i < castAttempt; i++)
+                int castFrom = 0;
+
+                for (int k = 0; k < castAttempt; k++)
                 {
 
-                    castIndex = randomIndex.Next(castSegment) + (i * castSegment);
+                    bool priorityCast = false;
 
-                    newVector = castSelection[castIndex];
+                    if (riteData.castLocation.objects.Count() > 0)
+                    {
 
-                    effectCasts[newVector] = new Cast.Meteor(this, newVector, riteData);
+                        int lowerLimit = castSegment * k;
+
+                        int upperLimit = lowerLimit + castSegment;
+
+                        for (int j = lowerLimit; j < upperLimit; j++)
+                        {
+
+                            newVector = castSelection[j];
+
+                            if (riteData.castLocation.objects.ContainsKey(newVector))
+                            {
+
+                                StardewValley.Object tileObject = riteData.castLocation.objects[newVector];
+
+                                if (tileObject.name.Contains("Stone"))
+                                {
+
+                                    effectCasts[newVector] = new Cast.Meteor(this, newVector, riteData);
+
+                                    priorityCast = true;
+
+                                    castFrom = j + 2;          
+
+                                    break;
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    if (!priorityCast)
+                    {
+
+                        castIndex = randomIndex.Next(castSegment) + castFrom;
+
+                        if(castSelection.Count <= castIndex)
+                        {
+
+                            castIndex = castSelection.Count - 1;
+
+                        }
+
+                        newVector = castSelection[castIndex];
+
+                        effectCasts[newVector] = new Cast.Meteor(this, newVector, riteData);
+
+                        castFrom = castIndex + 2;  
+
+                    }
+
+                    if(castFrom == castSelect)
+                    {
+
+                        break;
+
+                    }
 
                 }
 
@@ -2354,35 +2517,12 @@ namespace StardewDruid
 
         }
 
-        /*public int SpecialLimit()
+        private void ClearBuffer()
         {
 
-            if (specialCasts == (specialLimit * 6))
-            {
-
-                Game1.addHUDMessage(new HUDMessage("Special power has almost completely dissipated", 2));
-
-            }
-
-            decimal limit = specialCasts / specialLimit;
-
-            return (int) Math.Floor(limit);
+            castBuffer = false;
 
         }
-
-        public void SpecialIncrement()
-        {
-
-            specialCasts++;
-
-            if (specialCasts == (specialLimit * 3))
-            {
-
-                Game1.addHUDMessage(new HUDMessage("Special power starts to wane", 2));
-
-            }
-
-        }*/
 
         public string ActiveBlessing()
         {
@@ -2651,11 +2791,121 @@ namespace StardewDruid
             staticData.activeBlessing = "earth";
 
         }
+        
+        public bool LocationPoll(string entryKey)
+        {
 
-        public Axe RetrieveAxe() { return targetAxe; }
+            string location = Game1.player.currentLocation.Name;
 
-        public Pickaxe RetrievePick() { return targetPick; }
+            if (locationPoll.ContainsKey(entryKey))
+            {
 
+               if(locationPoll[entryKey] == location)
+               {
+
+                    return true;
+
+                }
+
+            }
+
+            locationPoll[entryKey] = location;
+
+            return false;
+
+        }
+
+        public Axe RetrieveAxe()
+        {
+            
+            if(!LocationPoll("Axe"))
+            {
+
+                UpgradeTool("Axe");
+
+            }
+
+            return targetAxe;
+        
+        
+        }
+
+        public Pickaxe RetrievePick()
+        {
+
+            if (!LocationPoll("Pickaxe"))
+            {
+
+                UpgradeTool("Pickaxe");
+
+            }
+
+            return targetPick;
+
+        }
+
+        public void UpgradeTool(string toolType) {
+
+            int upgradeLevel = 0;
+
+            string toolBlessing = "level" + toolType;
+
+            Tool targetTool = (toolType == "Axe") ? targetAxe : targetPick;
+
+            if (Config.masterStart)
+            {
+
+                targetTool.UpgradeLevel = Config.blessingList.ContainsKey(toolBlessing) ? Config.blessingList[toolBlessing] : 5;
+
+                return;
+
+            }
+
+            if (staticData.blessingList.ContainsKey(toolBlessing))
+            {
+
+                upgradeLevel = staticData.blessingList[toolBlessing];
+
+            }
+
+            foreach (Item item in Game1.player.Items)
+            {
+                
+                if (item != null && item is Tool && item.Name.Contains(toolType))
+                {
+                    Tool playerTool = (Tool)item;
+
+                    if(playerTool.UpgradeLevel > upgradeLevel)
+                    {
+                        upgradeLevel = playerTool.UpgradeLevel;
+
+                    }
+                
+                }
+            
+            }
+
+            int levelCheck = (toolType == "Axe") ? Game1.player.ForagingLevel : Game1.player.MiningLevel;
+
+            if (levelCheck >= 7 && upgradeLevel <= 1)
+            {
+                
+                upgradeLevel = 2;
+
+            }
+            else if (levelCheck >= 4 && upgradeLevel == 0)
+            {
+               
+                upgradeLevel = 1;
+
+            }
+
+            staticData.blessingList[toolBlessing] = upgradeLevel;
+
+            targetTool.UpgradeLevel = upgradeLevel;
+
+        }
+        
         public void ToggleEffect(string effect)
         {
 
@@ -2685,6 +2935,49 @@ namespace StardewDruid
             }
 
             return false;
+
+        }
+
+        public NPC RetrieveVoice(GameLocation location, Vector2 position)
+        {
+
+            if (disembodiedVoice != null)
+            {
+
+                GameLocation previous = disembodiedVoice.currentLocation;
+
+                if (previous != location && disembodiedVoice.position != position)
+                {
+                    previous.characters.Remove(disembodiedVoice);
+
+                    disembodiedVoice = null;
+
+                }
+
+            }
+
+            if (disembodiedVoice == null)
+            {
+
+                disembodiedVoice = new StardewValley.NPC(new AnimatedSprite("Characters\\Junimo", 0, 16, 16), position, 2,"Disembodied Voice");
+
+                disembodiedVoice.IsInvisible = true;
+
+                disembodiedVoice.eventActor = true;
+
+                disembodiedVoice.forceUpdateTimer = 9999;
+
+                disembodiedVoice.collidesWithOtherCharacters.Value = true;
+
+                disembodiedVoice.farmerPassesThrough = true;
+
+                location.characters.Add(disembodiedVoice);
+
+                disembodiedVoice.update(Game1.currentGameTime, location);
+
+            }
+
+            return disembodiedVoice;
 
         }
 

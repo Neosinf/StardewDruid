@@ -19,6 +19,8 @@ namespace StardewDruid.Cast
 
         public int castLevel;
 
+        public int castCycle;
+
         public Vector2 castVector;
 
         public StardewValley.Farmer caster;
@@ -26,6 +28,12 @@ namespace StardewDruid.Cast
         public StardewValley.GameLocation castLocation;
 
         public int direction;
+
+        public StardewValley.Tools.Axe castAxe;
+
+        public StardewValley.Tools.Pickaxe castPick;
+
+        public int castDamage;
 
         public Rite()
         {
@@ -43,6 +51,8 @@ namespace StardewDruid.Cast
             spawnIndex = Map.SpawnData.SpawnIndex(castLocation);
 
             direction = 0;
+
+            castDamage = 10;
 
         }
 
