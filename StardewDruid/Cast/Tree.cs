@@ -44,7 +44,7 @@ namespace StardewDruid.Cast
 
             int debrisType = 388;
 
-            int debrisMax = 4;
+            int debrisMax = 3;
 
             if(targetPlayer.professions.Contains(12))
             {
@@ -74,7 +74,7 @@ namespace StardewDruid.Cast
 
             }
 
-            for (int i = 0; i < Math.Min(debrisMax,riteData.castAxe.UpgradeLevel+1); i++)
+            for (int i = 0; i < randomIndex.Next(Math.Min(debrisMax,riteData.castAxe.UpgradeLevel+1)); i++)
             {
 
                 Game1.createObjectDebris(debrisType, (int)targetVector.X, (int)targetVector.Y + 1);

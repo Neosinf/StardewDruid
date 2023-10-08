@@ -16,6 +16,9 @@ using StardewValley.Locations;
 using System.Threading;
 using StardewModdingAPI;
 using StardewValley.Monsters;
+using Microsoft.Xna.Framework.Graphics;
+using StardewDruid.Map;
+using System.Reflection.Emit;
 
 namespace StardewDruid
 {
@@ -398,6 +401,97 @@ namespace StardewDruid
 
         }
 
+        public static TemporaryAnimatedSprite AnimateFishSpot(GameLocation targetLocation, Vector2 targetVector)
+        {
+
+            Microsoft.Xna.Framework.Color animationColor = new(0.6f, 1, 0.6f, 1); // light green
+
+            Microsoft.Xna.Framework.Rectangle animationRectangle = new(0, 51 * 64, 64, 64);
+
+            Vector2 animationPosition = new((targetVector.X * 64), (targetVector.Y * 64));
+
+            float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "22");
+
+            TemporaryAnimatedSprite portalAnimation = new("TileSheets\\animations", animationRectangle, 80f, 10, 999999, animationPosition, false, false, animationSort, 0f, animationColor, 1f, 0f, 0f, 0f);
+
+            targetLocation.temporarySprites.Add(portalAnimation);
+
+            return portalAnimation;
+
+        }
+
+        public static void AnimateFishJump(GameLocation targetLocation, Vector2 targetVector,int fishIndex)
+        {
+            targetLocation.playSound("pullItemFromWater");
+
+            Microsoft.Xna.Framework.Rectangle targetRectangle = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, fishIndex, 16, 16);
+
+            Vector2 targetPosition = new((targetVector.X * 64)-64,(targetVector.Y * 64)-8);
+
+            float animationInterval = 1050f;
+
+            float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "33");
+
+            TemporaryAnimatedSprite fishAnimation = new("Maps\\springobjects", targetRectangle, animationInterval, 1, 0, targetPosition, flicker: false, flipped: false, animationSort, 0f, Color.White, 3f, 0f, 0f, 0.03f)
+            {
+
+                motion = new Vector2(0.160f, -0.5f),
+
+                acceleration = new Vector2(0f, 0.001f),
+
+                timeBasedMotion = true,
+
+            };
+
+            targetLocation.temporarySprites.Add(fishAnimation);
+
+            // ------------------------------------
+
+            int animationRow = 19;
+
+            Microsoft.Xna.Framework.Rectangle animationRectangle = new(0, animationRow * 64, 128, 128);
+
+            animationInterval = 150f;
+
+            int animationLength = 4;
+
+            int animationLoops = 1;
+
+            Microsoft.Xna.Framework.Color animationColor = Microsoft.Xna.Framework.Color.White;
+
+            Vector2 splashPosition = new((targetVector.X * 64) - 128, (targetVector.Y * 64) - 40);
+
+            animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "44");
+
+            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, splashPosition, false, true, animationSort, 0f, animationColor, 0.75f, 0f, 0.1f, 0f);
+
+            targetLocation.temporarySprites.Add(newAnimation);
+
+            // ------------------------------------
+
+            Vector2 sloshPosition = new((targetVector.X * 64) + 100, targetVector.Y * 64);
+
+            //animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "55");
+
+            TemporaryAnimatedSprite sloshAnimation = new(28, 200f, 2, 1, sloshPosition, flicker: false, flipped: false)
+            {
+                
+                delayBeforeAnimationStart = 900,
+
+            };
+
+            targetLocation.temporarySprites.Add(sloshAnimation);
+
+            DelayedAction.functionAfterDelay(QuickSlosh, 900);
+
+        }
+
+        public static void QuickSlosh()
+        {
+            Game1.currentLocation.localSound("quickSlosh");
+
+        }
+
         public static void AnimateRipple(GameLocation targetLocation, Vector2 targetVector) //DruidCastSplosh
         {
 
@@ -415,7 +509,7 @@ namespace StardewDruid
 
             Vector2 animationPosition = new((targetVector.X * 64) - 16, (targetVector.Y * 64) - 16);
 
-            float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString());
+            float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "11");
 
             TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, Microsoft.Xna.Framework.Color.White, 1.5f, 0f, 0f, 0f);
 
@@ -476,12 +570,56 @@ namespace StardewDruid
   
         }
 
+        public static bool WaterCheck(GameLocation targetLocation, Vector2 targetVector)
+        {
+            bool check = false;
+
+            Layer backLayer = targetLocation.Map.GetLayer("Back");
+
+            Tile backTile = backLayer.PickTile(new Location((int)targetVector.X * 64, (int)targetVector.Y * 64), Game1.viewport.Size);
+
+            if (backTile != null)
+            {
+
+                if (backTile.TileIndexProperties.TryGetValue("Water", out _)) {
+
+                    check = true;
+                }
+            }
+
+            List<Vector2> neighbours = GetTilesWithinRadius(targetLocation, targetVector, 1);
+
+            foreach(Vector2 neighbour in neighbours)
+            {
+
+                backTile = backLayer.PickTile(new Location((int)neighbour.X * 64, (int)neighbour.Y * 64), Game1.viewport.Size);
+
+                if (backTile != null)
+                {
+
+                    if (!backTile.TileIndexProperties.TryGetValue("Water", out _))
+                    {
+
+                        check = false;
+                    }
+
+                }
+
+            }
+
+            return check;
+
+
+        }
+
         public static Dictionary<string, List<Vector2>> NeighbourCheck(GameLocation targetLocation, Vector2 targetVector)
         {
 
             Dictionary<string, List<Vector2>> neighbourList = new();
 
             List<Vector2> neighbourVectors = GetTilesWithinRadius(targetLocation, targetVector, 1);
+
+            Layer backLayer = targetLocation.Map.GetLayer("Back");
 
             Layer buildingLayer = targetLocation.Map.GetLayer("Buildings");
 

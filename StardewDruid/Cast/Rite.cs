@@ -17,6 +17,8 @@ namespace StardewDruid.Cast
 
         public string castType;
 
+        public string castDisplay;
+
         public int castLevel;
 
         public int castCycle;
@@ -40,7 +42,7 @@ namespace StardewDruid.Cast
 
             castLevel = 1;
 
-            castType = "CastEarth";
+            castType = "earth";
 
             caster = Game1.player;
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewValley;
+using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
@@ -198,6 +199,24 @@ namespace StardewDruid.Cast
                             {
 
                                 Game1.createObjectDebris(771, (int)tileVector.X, (int)tileVector.Y);
+
+                                targetLocation.objects.Remove(tileVector);
+
+                                destroyVector = true;
+
+                            }
+
+                        }
+
+                        if (targetLocation is StardewValley.Locations.MineShaft && targetLocation.objects.ContainsKey(tileVector))
+                        {
+
+                            if (targetObject is BreakableContainer)
+                            {
+
+                                targetObject.MinutesUntilReady = 1;
+
+                                targetObject.performToolAction(riteData.castPick, targetLocation);
 
                                 targetLocation.objects.Remove(tileVector);
 

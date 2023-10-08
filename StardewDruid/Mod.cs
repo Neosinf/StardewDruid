@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 using System.Xml.Linq;
@@ -33,7 +34,7 @@ namespace StardewDruid
 {
     public class Mod : StardewModdingAPI.Mod
     {
-
+        
         private ModData Config;
 
         private ActiveData activeData;
@@ -119,7 +120,7 @@ namespace StardewDruid
             configMenu.AddBoolOption(
                 mod: ModManifest,
                 name: () => "Cast Buffs",
-                tooltip: () => "Enables magnetism buff when casting Rite of the Earth.",
+                tooltip: () => "Enables magnetism buff when casting. Enables a conditional speed buff that activates when moving through grass while casting.",
                 getValue: () => Config.castBuffs,
                 setValue: value => Config.castBuffs = value
             );
@@ -151,7 +152,7 @@ namespace StardewDruid
             configMenu.AddBoolOption(
                 mod: ModManifest,
                 name: () => "Maximum Damage",
-                tooltip: () => "Some spell effects have damage modifiers that consider player combat level, highest upgrade on Pickaxe, Axe, and applied enchantments. Enable to cast at max damage everytime.",
+                tooltip: () => "Some spell effects have damage modifiers that consider player combat level, highest upgrade on Pickaxe, Axe, and applied enchantments. Enable to cast at max damage and effect everytime.",
                 getValue: () => Config.maxDamage,
                 setValue: value => Config.maxDamage = value
             );
@@ -385,28 +386,6 @@ namespace StardewDruid
 
             }
 
-            /*if (ChallengeLocations.ContainsKey(Game1.player.currentLocation.Name))
-            {
-
-                foreach (string Challenge in ChallengeLocations[Game1.player.currentLocation.Name])
-                {
-
-                    if (!staticData.ChallengeList[Challenge])
-                    {
-
-                        if (!ChallengeAnimations.ContainsKey(Challenge))
-                        {
-
-                            ChallengeAnimations[Challenge] = Map.Spawn.ChallengeAnimation(Challenge);
-
-                        }
-
-                    }
-
-                }
-
-            }*/
-
             if (activeCasts.Count == 0)
             {
 
@@ -415,7 +394,7 @@ namespace StardewDruid
                 return;
 
             }
-
+            
             List<Cast.Cast> activeCast = new();
 
             List<Cast.Cast> removeCast = new();
@@ -458,7 +437,7 @@ namespace StardewDruid
 
             foreach (Cast.Cast castInstance in removeCast)
             {
-
+                
                 castInstance.CastRemove();
 
                 activeCasts[castInstance.GetType()].Remove(castInstance);
@@ -743,7 +722,7 @@ namespace StardewDruid
 
                     Game1.player.currentLocation.playSound("ghost");
 
-                    Game1.addHUDMessage(new HUDMessage("Nothing happens", 2));
+                    Game1.addHUDMessage(new HUDMessage("Nothing happened... I should consult the Effigy in the Farmcave.", 2));
 
                     return;
 
@@ -758,7 +737,7 @@ namespace StardewDruid
                     if (activeBlessing != "none")
                     {
 
-                        Game1.addHUDMessage(new HUDMessage("Unable to reach the otherworldly plane", 2));
+                        Game1.addHUDMessage(new HUDMessage("Unable to reach the otherworldly plane from this location", 2));
 
                     }
 
@@ -1097,7 +1076,7 @@ namespace StardewDruid
                             damageLevel += 25;
                         }
                     }
-
+                    
                 }
 
                 Rite castRite = new()
@@ -1106,6 +1085,8 @@ namespace StardewDruid
                     castLevel = activeData.castLevel,
 
                     direction = activeData.activeDirection,
+
+                    castType = activeData.activeCast,
 
                     castAxe = castAxe,
 
@@ -1122,8 +1103,6 @@ namespace StardewDruid
 
                     case "stars":
 
-                        castRite.castType = "CastStars";
-
                         ModUtility.AnimateStarsCast(activeData.activeVector, activeData.chargeLevel, activeData.cycleLevel);
 
                         riteQueue.Enqueue(castRite);
@@ -1133,8 +1112,6 @@ namespace StardewDruid
                         break;
 
                     case "water":
-
-                        castRite.castType = "CastWater";
 
                         castRite.castVector = activeData.activeVector;
 
@@ -1171,14 +1148,57 @@ namespace StardewDruid
 
                 Rite rite = riteQueue.Dequeue();
 
-                switch(rite.castType)
+                // Add cast buff if enabled
+                if (Config.castBuffs)
                 {
 
-                    case "CastStars":
+                    Buff magnetBuff = new("Druidic Magnetism", 6000, "Rite of the " + rite.castDisplay, 8);
+
+                    magnetBuff.buffAttributes[8] = 192;
+
+                    magnetBuff.which = 184651;
+
+                    if (!Game1.buffsDisplay.hasBuff(184651))
+                    {
+
+                        Game1.buffsDisplay.addOtherBuff(magnetBuff);
+
+                    }
+
+                    Vector2 casterVector = rite.caster.getTileLocation();
+
+                    if (rite.castLocation.terrainFeatures.ContainsKey(casterVector))
+                    {
+                       
+                        if (rite.castLocation.terrainFeatures[casterVector] is StardewValley.TerrainFeatures.Grass)
+                        {
+                            Buff speedBuff = new("Druidic Freneticism", 6000, "Rite of the " + rite.castType, 9);
+
+                            speedBuff.buffAttributes[9] = 2;
+
+                            speedBuff.which = 184652;
+
+                            if (!Game1.buffsDisplay.hasBuff(184652))
+                            {
+
+                                Game1.buffsDisplay.addOtherBuff(speedBuff);
+
+                            }
+
+                        }
+
+                    }
+
+                }
+                
+                switch (rite.castType)
+                {
+
+                    case "stars":
 
                         CastStars(rite); break;
 
-                    case "CastWater":
+                    case "water":
 
                         CastWater(rite); break;
 
@@ -1193,49 +1213,6 @@ namespace StardewDruid
 
         private void CastEarth(Rite riteData = null)
         {
-            
-            // Add cast buff if enabled
-            if(Config.castBuffs)
-            {
-
-                Buff earthBuff = new("Earthen Magnetism", 6000, "Rite of the Earth", 8);
-
-                earthBuff.buffAttributes[8] = 192;
-
-                earthBuff.which = 184651;
-
-                if (!Game1.buffsDisplay.hasBuff(184651))
-                {
-
-                    Game1.buffsDisplay.addOtherBuff(earthBuff);
-
-                }
-
-                Vector2 casterVector = riteData.caster.getTileLocation();
-
-                if (riteData.castLocation.terrainFeatures.ContainsKey(casterVector))
-                {
-
-                    if (riteData.castLocation.terrainFeatures[casterVector] is StardewValley.TerrainFeatures.Grass)
-                    { 
-                        Buff speedBuff = new("Earthen Bouyancy", 6000, "Rite of the Earth", 9);
-
-                        speedBuff.buffAttributes[9] = 2;
-
-                        speedBuff.which = 184652;
-
-                        if (!Game1.buffsDisplay.hasBuff(184652))
-                        {
-
-                            Game1.buffsDisplay.addOtherBuff(speedBuff);
-
-                        }
-
-                    }
-
-                }
-
-            }
 
             int castCost = 0;
 
@@ -1421,9 +1398,14 @@ namespace StardewDruid
 
                                     }
 
-
                                 }
                                 else if (tileObject.name.Contains("Weeds") || tileObject.name.Contains("Twig"))
+                                {
+
+                                    effectCasts[tileVector] = new Cast.Weed(this, tileVector, riteData);
+
+                                }
+                                else if (riteData.castLocation is MineShaft && tileObject is BreakableContainer)
                                 {
 
                                     effectCasts[tileVector] = new Cast.Weed(this, tileVector, riteData);
@@ -2084,7 +2066,7 @@ namespace StardewDruid
                         }
 
                     }
-
+                    
                     if(riteData.castLocation is Woods)
                     {
                         if (blessingLevel >= 1)
@@ -2186,51 +2168,35 @@ namespace StardewDruid
 
                     }
 
-                    if (riteData.castLevel == 1 && riteData.spawnIndex["fishspot"])
-                    { 
-                        
-                        Tile backTile = backLayer.PickTile(new Location(tileX * 64, tileY * 64), Game1.viewport.Size);
-
-                        if (backTile != null)
-                        {
-
-                            if (backTile.TileIndexProperties.TryGetValue("Water", out _))
-                            {
-                                if (blessingLevel >= 3)
-                                {
-
-                                    Dictionary<int, Vector2> portalOffsets = new()
-                                    {
-
-                                        [0] = activeData.activeVector + new Vector2(0, -64),// up
-                                        [1] = activeData.activeVector + new Vector2(64, 0), // right
-                                        [2] = activeData.activeVector + new Vector2(0, 64),// down
-                                        [3] = activeData.activeVector + new Vector2(-64, 0), // left
-
-                                    };
-
-                                    Cast.Water waterPortal = new(this, tileVector, riteData)
-                                    {
-                                        portalPosition = new Vector2(tileVector.X * 64, tileVector.Y * 64) + portalOffsets[riteData.direction]
-                                    };
-
-                                    effectCasts[tileVector] = waterPortal;
-
-                                }
-
-                                continue;
-
-                            }
-
-                        }
-
-                    }
-
                 }
 
                 foreach (Vector2 tileVector in tileVectors) {
 
                     ModUtility.AnimateCastRadius(riteData.castLocation, tileVector, new Color(0.8f,0.8f,1f,1),i);
+
+                }
+
+            }
+
+            if (blessingLevel >= 3 && riteData.castLevel == 1 && riteData.spawnIndex["fishspot"])
+            {
+
+                Dictionary<int, Vector2> portalOffsets = new()
+                {
+
+                    [0] = new Vector2(0, -1),// up
+                    [1] = new Vector2(1, 0), // right
+                    [2] = new Vector2(0, 1),// down
+                    [3] = new Vector2(-1, 0), // left
+
+                };
+
+                Vector2 fishVector = castVector + portalOffsets[riteData.direction];
+
+                if (ModUtility.WaterCheck(riteData.castLocation,fishVector))
+                {
+
+                    effectCasts[fishVector] = new Water(this, fishVector, riteData);
 
                 }
 
@@ -2429,6 +2395,7 @@ namespace StardewDruid
 
                                 StardewValley.Object tileObject = riteData.castLocation.objects[newVector];
 
+                                //Monitor.Log($"{tileObject.name}",LogLevel.Debug);
                                 if (tileObject.name.Contains("Stone"))
                                 {
 
@@ -2851,6 +2818,15 @@ namespace StardewDruid
             string toolBlessing = "level" + toolType;
 
             Tool targetTool = (toolType == "Axe") ? targetAxe : targetPick;
+
+            if (Config.maxDamage)
+            {
+
+                targetTool.UpgradeLevel = 5;
+
+                return;
+
+            }
 
             if (Config.masterStart)
             {

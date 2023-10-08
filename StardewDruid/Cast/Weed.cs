@@ -25,7 +25,7 @@ namespace StardewDruid.Cast
 
             }
 
-            int powerLevel = riteData.castPick.UpgradeLevel;
+            int powerLevel = riteData.castAxe.UpgradeLevel;
 
             StardewValley.Object targetObject = targetLocation.objects[targetVector];
 
@@ -33,7 +33,7 @@ namespace StardewDruid.Cast
 
             int explodeRadius = (powerLevel < 2) ? 2 : powerLevel;
 
-            if (targetObject.name.Contains("Weeds"))
+            /*if (targetObject.name.Contains("Weeds"))
             {
 
                 StardewValley.Tools.MeleeWeapon targetScythe = new(47);
@@ -51,9 +51,9 @@ namespace StardewDruid.Cast
                 
                 Game1.createObjectDebris(388, (int)targetVector.X + 1, (int)targetVector.Y + 1);
 
-            }
+            }*/
 
-            if (targetObject.name.Contains("Stone"))
+            if (targetLocation is StardewValley.Locations.MineShaft && targetObject.name.Contains("Stone"))
             {
 
                 explodeRadius = Math.Min(6,2 + powerLevel);
@@ -69,13 +69,6 @@ namespace StardewDruid.Cast
 
         }
 
-        public void FireBall()
-        {
-
-            Game1.playSound("fireball");
-
-        }
-
-
     }
+
 }

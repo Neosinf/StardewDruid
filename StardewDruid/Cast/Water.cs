@@ -12,24 +12,13 @@ namespace StardewDruid.Cast
     internal class Water : Cast
     {
 
-        public Vector2 portalPosition;
-
         public TemporaryAnimatedSprite portalAnimation;
+
+        public int fishCounter;
 
         public Water(Mod mod, Vector2 target, Rite rite)
             : base(mod, target, rite)
         {
-
-            castCost = 8;
-
-            if(rite.caster.FishingLevel > 5)
-            {
-
-                castCost = 4;
-
-            }
-
-            portalPosition = new(targetVector.X * 64, targetVector.Y * 64);
 
         }
 
@@ -43,9 +32,11 @@ namespace StardewDruid.Cast
 
             }
 
-            int probability = randomIndex.Next(60);
+            int catchChance = 120 - (targetPlayer.FishingLevel * 5);
 
-            if (probability >= 11) // nothing
+            int probability = randomIndex.Next(catchChance);
+
+            if (probability >= 12) // nothing
             {
                 return;
             }
@@ -83,10 +74,13 @@ namespace StardewDruid.Cast
 
                 objectIndexes = new Dictionary<int, int>()
                 {
-                        
-                    [0] = 152, // seaweed
-                    [1] = 152, // seaweed
-                    [2] = 152, // seaweed
+
+                    //[0] = 152, // seaweed
+                    //[1] = 152, // seaweed
+                    //[2] = 152, // seaweed
+                    [0] = 131, // sardine
+                    [1] = 147, // herring
+                    [2] = 129, // anchovy
                     [3] = 701, // tilapia
                     [4] = 131, // sardine
                     [5] = 147, // herring
@@ -101,10 +95,13 @@ namespace StardewDruid.Cast
 
                 objectIndexes = new Dictionary<int, int>()
                 {
-                        
-                    [0] = 153, // algae
-                    [1] = 153, // algae
-                    [2] = 153, // algae
+
+                    //[0] = 153, // algae
+                    //[1] = 153, // algae
+                    //[2] = 153, // algae
+                    [0] = 145, // carp
+                    [1] = 137, // smallmouth bass
+                    [2] = 142,  // sunfish
                     [3] = 141, // perch
                     [4] = 145, // carp
                     [5] = 137, // smallmouth bass
@@ -119,14 +116,14 @@ namespace StardewDruid.Cast
 
             int experienceGain;
 
-            if (probability <= 3)
-            {
+            //if (probability <= 3)
+            //{
                     
-                experienceGain = 4;
+            //   experienceGain = 4;
 
-            }
-            else
-            {
+            //}
+            //else
+            //{
 
                 experienceGain = 8;
 
@@ -148,7 +145,7 @@ namespace StardewDruid.Cast
 
                 }*/
 
-            }
+            //}
 
             StardewDruid.Cast.Throw throwObject = new(objectIndexes[probability], objectQuality);
 
@@ -174,15 +171,7 @@ namespace StardewDruid.Cast
 
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 300;
 
-            Microsoft.Xna.Framework.Color animationColor = new(0.6f, 1, 0.6f, 1); // light green
-
-            Microsoft.Xna.Framework.Rectangle animationRectangle = new(0, 51 * 64, 64, 64);
-
-            float animationSort = (targetVector.X * 1000) + targetVector.Y+1;
-
-            portalAnimation = new("TileSheets\\animations", animationRectangle, 80f, 10, 999999, portalPosition, false, false, animationSort, 0f, animationColor, 1f, 0f, 0f, 0f);
-
-            targetLocation.temporarySprites.Add(portalAnimation);
+            portalAnimation = ModUtility.AnimateFishSpot(targetLocation, targetVector);
 
             castLimit = true;
 
@@ -236,7 +225,38 @@ namespace StardewDruid.Cast
 
             if (Game1.player.CurrentTool.GetType().Name != "FishingRod")
             {
+                fishCounter++;
 
+                if (fishCounter >= 10) {
+
+                    int fishIndex;
+
+                    switch (targetPlayer.currentLocation.Name)
+                    {
+
+                        case "Beach":
+                            fishIndex = 836;  // stingray
+                            break;
+
+                        case "Woods":
+                        case "Desert":
+
+                            fishIndex = 161; // ice pip
+                            break;
+
+                        default: // default
+
+                            fishIndex = 699; // tiger trout
+                            break;
+
+                    }
+
+                    ModUtility.AnimateFishJump(targetLocation, targetVector, fishIndex);
+
+                    fishCounter = 0;
+
+                }
+                
                 return;
 
             }
@@ -249,6 +269,8 @@ namespace StardewDruid.Cast
                 return;
 
             }
+
+            Vector2 portalPosition = new(targetVector.X * 64, targetVector.Y * 64);
 
             int checkTime = 4000; // check bait
 
@@ -289,9 +311,9 @@ namespace StardewDruid.Cast
                 {
 
                     case "Beach":
-                    case "IslandSouth":
-                    case "IslandSouthEast":
-                    case "IslandWest":
+                    //case "IslandSouth":
+                    //case "IslandSouthEast":
+                    //case "IslandWest":
 
                         objectIndexes = new()
                         {

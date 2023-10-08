@@ -70,8 +70,8 @@ namespace StardewDruid.Cast
                 {
 
                     [0] = 392, // nautilus shell
-                    [1] = 393, // coral
-                    [2] = 394, // rainbow shell
+                    [1] = 152, // seaweed
+                    [2] = 152, // seaweed
                     [3] = 397, // urchin
                     [4] = 718, // cockle
                     [5] = 715, // lobster
