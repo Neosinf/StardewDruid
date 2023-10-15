@@ -21,7 +21,7 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
            
-            if (!riteData.castToggle.ContainsKey("forgetFish"))
+            if (riteData.castToggle.ContainsKey("forgetFish"))
             {
 
                 return;

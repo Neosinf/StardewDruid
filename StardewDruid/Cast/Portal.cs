@@ -160,16 +160,17 @@ namespace StardewDruid.Cast
         public override bool CastActive(int castIndex, int castLimit)
         {
 
-            if (expireTime >= Game1.currentGameTime.TotalGameTime.TotalSeconds && targetPlayer.currentLocation == targetLocation) {
-
+            if (expireTime < Game1.currentGameTime.TotalGameTime.TotalSeconds)
+            {
+                
                 portalExpired = true;
 
-                if (!riteData.castTask.ContainsKey("masterPortal"))
-                {
+                return false;
 
-                    mod.UpdateTask("lessonPortal", 1);
-
-                }
+            }
+            
+                
+            if(targetPlayer.currentLocation == targetLocation) {
 
                 return true;
             
@@ -242,6 +243,13 @@ namespace StardewDruid.Cast
                 {
 
                     Game1.createObjectDebris(objectIndex, (int)targetVector.X, (int)targetVector.Y);
+
+                }
+
+                if (!riteData.castTask.ContainsKey("masterPortal"))
+                {
+
+                    mod.UpdateTask("lessonPortal", 1);
 
                 }
 

@@ -19,6 +19,8 @@ using Force.DeepCloner;
 using StardewValley.Quests;
 using static StardewValley.Minigames.MineCart.Whale;
 using StardewValley.Menus;
+using System.Security.Cryptography.X509Certificates;
+using Microsoft.VisualBasic;
 
 namespace StardewDruid
 {
@@ -77,7 +79,9 @@ namespace StardewDruid
 
         public List<string> triggerList;
 
-        public bool farmhandData;
+        public bool receivedData;
+
+        public string mineShaftName;
 
         override public void Entry(IModHelper helper)
         {
@@ -113,7 +117,7 @@ namespace StardewDruid
                 staticData = Helper.Data.ReadSaveData<StaticData>("staticData");
 
             }
-            else if(!farmhandData)
+            else if(!receivedData)
             {
 
                 StaticData loadData = new();
@@ -350,6 +354,8 @@ namespace StardewDruid
                         Console.WriteLine($"Received Stardew Druid data for Farmer ID {e.FromPlayerID}");
 
                         ReadyState();
+
+                        receivedData = true;
 
                     }
 
@@ -618,8 +624,6 @@ namespace StardewDruid
 
                             return;
 
-
-
                         }
 
                     }
@@ -632,6 +636,20 @@ namespace StardewDruid
 
                     return;
                 }
+
+            }
+
+            // ignore if player is busy with something else
+            if (CasterTool())
+            {
+
+                activeData.castInterrupt = true;
+
+                riteQueue.Clear();
+
+                castBuffer.Clear();
+
+                return;
 
             }
 
@@ -869,7 +887,20 @@ namespace StardewDruid
 
                                 if (Game1.buffsDisplay.drink == null)
                                 {
-                                    Buff speedBuff = new("Druidic Roastmaster", coffeeList[itemIndex], checkItem.DisplayName, 9);
+
+                                    int coffeeConsume = 1;
+
+                                    int getSpeed = coffeeList[itemIndex];
+
+                                    if(getSpeed < 90000) { 
+                                        
+                                        coffeeConsume = Math.Min(5, Game1.player.Items[i].Stack);
+                                        
+                                        getSpeed *= coffeeConsume; 
+                                    
+                                    }
+
+                                    Buff speedBuff = new("Druidic Roastmaster", getSpeed, checkItem.DisplayName, 9);
 
                                     speedBuff.buffAttributes[9] = 1;
 
@@ -879,11 +910,11 @@ namespace StardewDruid
 
                                     Game1.buffsDisplay.tryToAddDrinkBuff(speedBuff);
 
-                                    Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + 8);
+                                    Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + 25);
                                     
                                     Game1.addHUDMessage(new HUDMessage(checkItem.DisplayName, 4));
 
-                                    Game1.player.Items[i].Stack -= 1;
+                                    Game1.player.Items[i].Stack -= coffeeConsume;
 
                                 }
 
@@ -917,57 +948,15 @@ namespace StardewDruid
 
             }
 
-            Axe castAxe = RetrieveAxe();
+            Rite castRite = NewRite();
 
-            Pickaxe castPick = RetrievePick();
+            castRite.castLevel = activeData.castLevel.DeepClone();
 
-            int damageLevel = 150;
+            castRite.direction = activeData.activeDirection.DeepClone();
 
-            if (!Config.maxDamage)
-            {
+            castRite.castType = activeData.activeBlessing.DeepClone();
 
-                damageLevel = 5 * Game1.player.CombatLevel;
-
-                damageLevel += 1 * Game1.player.MiningLevel;
-
-                damageLevel += 1 * Game1.player.ForagingLevel;
-
-                damageLevel += 5 * castAxe.UpgradeLevel;
-
-                damageLevel += 5 * castPick.UpgradeLevel;
-
-                if (Game1.player.CurrentTool is Tool currentTool)
-                {
-                    if (currentTool.enchantments.Count > 0)
-                    {
-                        damageLevel += 25;
-                    }
-                }
-                    
-            }
-
-            Rite castRite = new()
-            {
-
-                castLevel = activeData.castLevel.DeepClone(),
-
-                direction = activeData.activeDirection.DeepClone(),
-
-                castType = activeData.activeBlessing.DeepClone(),
-
-                //castBlessing = staticData.blessingList.DeepClone(),
-
-                castTask = staticData.taskList.DeepClone(),
-                
-                castAxe = castAxe,
-
-                castPick = castPick,
-
-                castDamage = damageLevel,
-
-                castCycle = activeData.cycleLevel.DeepClone(),
-
-            };
+            castRite.castCycle = activeData.cycleLevel.DeepClone();
 
             switch (activeData.activeBlessing)
             {
@@ -1021,14 +1010,19 @@ namespace StardewDruid
 
                 if (castBuffer.Count == 0)
                 {
-                    Game1.player.currentLocation.playSound("ghost");
 
-                    castBuffer.Enqueue(1);
+                    if (!EventHandler(Game1.player.getTileLocation()))
+                    {
 
-                    DelayedAction.functionAfterDelay(ClearBuffer, 1333);
+                        Game1.player.currentLocation.playSound("ghost");
 
-                    Game1.addHUDMessage(new HUDMessage("Nothing happened... I should consult the Effigy in the Farmcave.", 2));
+                        castBuffer.Enqueue(1);
 
+                        DelayedAction.functionAfterDelay(ClearBuffer, 1333);
+
+                        Game1.addHUDMessage(new HUDMessage("Nothing happened... I should consult the Effigy in the Farmcave.", 2));
+                    }
+                    
                 }
 
                 activeData.castInterrupt = true;
@@ -1162,6 +1156,12 @@ namespace StardewDruid
                 return true;
             }
 
+            return false;
+
+        }
+
+        public bool CasterTool() {
+
             // ignore if current tool isn't set
             if (Game1.player.CurrentTool is null)
             {
@@ -1218,7 +1218,7 @@ namespace StardewDruid
             {
 
                 Map.Quest questData = questIndex[castString];
-
+                //Monitor.Log($"{castString}", LogLevel.Debug);
                 if (questData.useTarget)
                 {
 
@@ -1287,7 +1287,7 @@ namespace StardewDruid
 
                 if (questData.vectorList.ContainsKey("triggerVector"))
                 {
-
+                    //Monitor.Log($"{questData.vectorList["triggerVector"]}", LogLevel.Debug);
                     Vector2 TriggerVector = questData.vectorList["triggerVector"];
 
                     Vector2 TriggerLimit = TriggerVector + questData.vectorList["triggerLimit"];
@@ -1391,12 +1391,9 @@ namespace StardewDruid
 
             Event.EventHandle eventHandle = new(this);
 
-            Cast.Rite rite = new()
-            {
-                castToggle = staticData.toggleList,
-                castTask = staticData.taskList,
+            Cast.Rite rite = NewRite();
 
-            };
+            rite.direction = Game1.player.getFacingDirection();
 
             foreach (Map.Quest questData in triggeredQuests)
             {
@@ -1412,6 +1409,59 @@ namespace StardewDruid
             }
 
             return false;
+
+        }
+
+        private Rite NewRite()
+        {
+
+            Axe castAxe = RetrieveAxe();
+
+            Pickaxe castPick = RetrievePick();
+
+            int damageLevel = 150;
+
+            if (!Config.maxDamage)
+            {
+
+                damageLevel = 5 * Game1.player.CombatLevel;
+
+                damageLevel += 1 * Game1.player.MiningLevel;
+
+                damageLevel += 1 * Game1.player.ForagingLevel;
+
+                damageLevel += 5 * castAxe.UpgradeLevel;
+
+                damageLevel += 5 * castPick.UpgradeLevel;
+
+                if (Game1.player.CurrentTool is Tool currentTool)
+                {
+                    if (currentTool.enchantments.Count > 0)
+                    {
+                        damageLevel += 25;
+                    }
+                }
+
+            }
+
+            Rite newRite = new()
+            {
+
+                //castBlessing = staticData.blessingList.DeepClone(),
+
+                castTask = staticData.taskList.DeepClone(),
+
+                castToggle = staticData.toggleList.DeepClone(),
+
+                castAxe = castAxe,
+
+                castPick = castPick,
+
+                castDamage = damageLevel,
+
+            };
+
+            return newRite;
 
         }
 
@@ -1619,10 +1669,26 @@ namespace StardewDruid
 
             int rockfallChance = 10 - Math.Max(5, riteData.castPick.UpgradeLevel);
 
-            if (!earthCasts.ContainsKey(riteData.castLocation.Name))
-            {
-                earthCasts[riteData.castLocation.Name] = new();
+            string locationName = riteData.castLocation.Name;
 
+            if (riteData.castLocation is MineShaft)
+            {
+
+                if (locationName != mineShaftName && earthCasts.ContainsKey(locationName))
+                {
+
+                    earthCasts.Remove(locationName);
+
+                    mineShaftName = locationName;
+
+                }
+
+            }
+
+            if (!earthCasts.ContainsKey(locationName))
+            {
+                earthCasts[locationName] = new();
+                
             };
 
             int castRange;
@@ -1644,7 +1710,7 @@ namespace StardewDruid
 
                     Vector2 terrainVector = bushFeature.tilePosition.Value;
                     
-                    if (earthCasts[riteData.castLocation.Name].Contains(terrainVector)) // already served
+                    if (earthCasts[locationName].Contains(terrainVector)) // already served
                     {
 
                         continue;
@@ -1658,7 +1724,7 @@ namespace StardewDruid
                         {
                             effectCasts[terrainVector] = new Cast.Bush(this, terrainVector, riteData, bushFeature);
 
-                            earthCasts[riteData.castLocation.Name].Add(terrainVector);
+                            earthCasts[locationName].Add(terrainVector);
                         }
                         
                     }
@@ -1684,7 +1750,7 @@ namespace StardewDruid
                 foreach (Vector2 tileVector in tileVectors)
                 {
 
-                    if (earthCasts[riteData.castLocation.Name].Contains(tileVector) || removeVectors.Contains(tileVector) || terrainVectors.Contains(tileVector)) // already served
+                    if (earthCasts[locationName].Contains(tileVector) || removeVectors.Contains(tileVector) || terrainVectors.Contains(tileVector)) // already served
                     {
 
                         continue;
@@ -1693,7 +1759,7 @@ namespace StardewDruid
                     else
                     {
 
-                        earthCasts[riteData.castLocation.Name].Add(tileVector);
+                        earthCasts[locationName].Add(tileVector);
 
                     }
 
@@ -1808,7 +1874,7 @@ namespace StardewDruid
 
                                     if (treeFeature.growthStage.Value >= 5)
                                     {
-
+                                        //Monitor.Log($"{riteData.castAxe.UpgradeLevel}", LogLevel.Debug);
                                         effectCasts[tileVector] = new Cast.Tree(this, tileVector, riteData);
 
                                     }
@@ -1994,7 +2060,7 @@ namespace StardewDruid
 
                     if (backTile != null)
                     {
-
+                        
                         if (backTile.TileIndexProperties.TryGetValue("Water", out _))
                         {
 

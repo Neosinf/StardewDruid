@@ -209,7 +209,7 @@ namespace StardewDruid.Map
                     questTitle = "The Polluted Aquifier",
                     questDescription = "The Effigy believes the mountain spring has been polluted by rubbish dumped in the abandoned mineshafts.",
                     questObjective = "Perform a rite over the aquifier in level 20 of the mines.",
-                    questReward = 1500,
+                    questReward = 1000,
                     challengePortals = new() {
 
                         new(20, 13),
@@ -420,7 +420,7 @@ namespace StardewDruid.Map
                     questTitle = "Druid Lesson One: Villagers",
                     questDescription = "Demonstrate your command over the Earth to the locals.",
                     questObjective = "Perform a rite in range of four different villagers. Unlocks friendship gain.",
-                    questReward = 500,
+                    questReward = 100,
 
                     taskCounter = 4,
                     taskFinish = "masterVillager",
@@ -434,7 +434,7 @@ namespace StardewDruid.Map
                     questTitle = "Druid Lesson Two: Creatures",
                     questDescription = "The Earth holds many riches, and some are guarded jealously.",
                     questObjective = "Draw out ten local creatures. Unlocks wild seed gathering from grass.",
-                    questReward = 500,
+                    questReward = 200,
 
                     taskCounter = 10,
                     taskFinish = "masterCreature",
@@ -447,10 +447,10 @@ namespace StardewDruid.Map
                     questValue = 6,
                     questTitle = "Druid Lesson Three: Flowers",
                     questDescription = "The Druid fills the barren spaces with life.",
-                    questObjective = "Sprout six forageables total in the Forest or elsewhere. Unlocks flowers.",
-                    questReward = 500,
+                    questObjective = "Sprout ten forageables total in the Forest or elsewhere. Unlocks flowers.",
+                    questReward = 300,
 
-                    taskCounter = 6,
+                    taskCounter = 10,
                     taskFinish = "masterForage",
                     questLevel = 3,
                 },
@@ -462,14 +462,14 @@ namespace StardewDruid.Map
                     questTitle = "Druid Lesson Four: Crops",
                     questDescription = "The Farmer and the Druid share the same vision.",
                     questObjective = "Convert twenty planted wild seeds into domestic crops. Unlocks quality conversions.",
-                    questReward = 500,
+                    questReward = 400,
 
                     taskCounter = 20,
                     taskFinish = "masterCrop",
                     questLevel = 4,
                 },
 
-                ["lessonRock"] = new()
+                ["lessonRockfall"] = new()
                 {
                     questId = 18465015,
                     questValue = 6,
@@ -479,7 +479,7 @@ namespace StardewDruid.Map
                     questReward = 500,
 
                     taskCounter = 100,
-                    taskFinish = "masterRock",
+                    taskFinish = "masterRockfall",
                     questLevel = 5,
                 },
 
@@ -503,10 +503,10 @@ namespace StardewDruid.Map
                     questValue = 6,
                     questTitle = "Druid Lesson Seven: Cookouts",
                     questDescription = "Every Druid should know how to cook",
-                    questObjective = "Create two cookouts from campfires, either in town or from crafts. Unlocks extra recipes.",
+                    questObjective = "Create two cookouts from campfires. Craft your own, or look around the Beach or Linus' tent. Unlocks extra recipes.",
                     questReward = 700,
 
-                    taskCounter = 3,
+                    taskCounter = 2,
                     taskFinish = "masterCookout",
                     questLevel = 8,
                 },

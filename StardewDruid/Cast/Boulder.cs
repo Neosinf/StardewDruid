@@ -1,7 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Force.DeepCloner;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
+using StardewValley.Minigames;
 using StardewValley.TerrainFeatures;
 using System;
 
@@ -57,7 +59,23 @@ namespace StardewDruid.Cast
 
             resourceClump.health.Set(1f);
 
-            resourceClump.performToolAction(targetPick, 1, targetVector, targetLocation);
+            if (targetPick.UpgradeLevel < 3)
+            {
+
+                StardewValley.Tools.Pickaxe betterPick = new();
+
+                betterPick.UpgradeLevel = 3;
+
+                betterPick.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+
+                resourceClump.performToolAction(betterPick, 1, targetVector, targetLocation);
+
+            }
+            else
+            {
+                resourceClump.performToolAction(targetPick, 1, targetVector, targetLocation);
+
+            }
 
             resourceClump.NeedsUpdate = false;
 

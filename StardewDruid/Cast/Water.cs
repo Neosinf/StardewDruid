@@ -27,7 +27,7 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
             
-            if (!riteData.castToggle.ContainsKey("forgetFish"))
+            if (riteData.castToggle.ContainsKey("forgetFish"))
             {
 
                 return;
@@ -38,12 +38,12 @@ namespace StardewDruid.Cast
 
             int probability = randomIndex.Next(catchChance);
 
-            if (probability >= 12) // nothing
+            if (probability >= 10) // nothing
             {
                 return;
             }
 
-            if(probability >= 8)
+            if(probability >= 7)
             {
 
                 if (riteData.spawnIndex["critter"] && !riteData.castToggle.ContainsKey("forgetCritters"))

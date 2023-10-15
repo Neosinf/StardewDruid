@@ -336,7 +336,7 @@ namespace StardewDruid.Event
 
                     Vector2 randomVector = challengeWithin + new Vector2(randomIndex.Next(5), randomIndex.Next(5));
 
-                    Rockfall rockFall = new(mod, randomVector, new Rite() { caster = targetPlayer })
+                    Rockfall rockFall = new(mod, randomVector, riteData)
                     {
                         objectStrength = 3
                     };

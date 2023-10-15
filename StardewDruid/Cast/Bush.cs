@@ -32,7 +32,7 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
 
-            int probability = randomIndex.Next(20);
+            int probability = randomIndex.Next(30 - riteData.caster.ForagingLevel);
 
             if (probability >= 3) // nothing
             {

@@ -16,21 +16,22 @@ namespace StardewDruid.Cast
         {
 
             bool friendShip = false;
+            
+            if (riteData.castTask.ContainsKey("masterVillager"))
+            {
+            
+                friendShip = true;
+            
+            }
 
-            if (!riteData.castTask.ContainsKey("masterVillager"))
+            bool greetVillager = ModUtility.GreetVillager(rite.castLocation, rite.caster, witness, friendShip);
+
+            if (!riteData.castTask.ContainsKey("masterVillager") && greetVillager)
             {
 
                 mod.UpdateTask("lessonVillager", 1);
 
             }
-            else
-            {
-
-                friendShip = true;
-
-            }
-
-            ModUtility.GreetVillager(rite.castLocation, rite.caster, witness, friendShip);
 
         }
 

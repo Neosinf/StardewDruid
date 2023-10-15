@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Force.DeepCloner;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
@@ -70,7 +71,23 @@ namespace StardewDruid.Cast
 
             resourceClump.health.Set(1f);
 
-            resourceClump.performToolAction(targetAxe, 1, targetVector, targetLocation);
+            if(targetAxe.UpgradeLevel < 3)
+            {
+
+                StardewValley.Tools.Axe betterAxe = new();
+
+                betterAxe.UpgradeLevel = 3;
+
+                betterAxe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+
+                resourceClump.performToolAction(betterAxe, 1, targetVector, targetLocation);
+
+            }
+            else
+            {
+                resourceClump.performToolAction(targetAxe, 1, targetVector, targetLocation);
+
+            }
 
             resourceClump.NeedsUpdate = false;
 

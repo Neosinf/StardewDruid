@@ -45,7 +45,7 @@ namespace StardewDruid.Cast
 
             }
 
-            bool forgotTrees = !riteData.castToggle.ContainsKey("forgetTrees");
+            bool forgotTrees = riteData.castToggle.ContainsKey("forgetTrees");
 
             Dictionary<string, List<Vector2>> neighbourList = ModUtility.NeighbourCheck(targetLocation, targetVector);
 

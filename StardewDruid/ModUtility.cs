@@ -83,23 +83,28 @@ namespace StardewDruid
 
             //-------------------------- sound and pitch
 
-            int pitchLevel = cycleLevel % 4;
+            if(cycleLevel <= 2)
+            { 
 
-            if (chargeLevel == 1)
-            {
+                int pitchLevel = cycleLevel % 4;
 
-                Game1.player.currentLocation.playSoundPitched("discoverMineral", 600 + (pitchLevel * 200));
+                if (chargeLevel == 1)
+                {
 
-                Rumble.rumbleAndFade(1f, 333);
+                    Game1.player.currentLocation.playSoundPitched("discoverMineral", 600 + (pitchLevel * 200));
 
-            }
+                    Rumble.rumbleAndFade(1f, 333);
 
-            if (chargeLevel == 3)
-            {
+                }
 
-                Game1.player.currentLocation.playSoundPitched("discoverMineral", 700 + (pitchLevel * 200));
+                if (chargeLevel == 3)
+                {
 
-                Rumble.rumbleAndFade(1f, 333);
+                    Game1.player.currentLocation.playSoundPitched("discoverMineral", 700 + (pitchLevel * 200));
+
+                    Rumble.rumbleAndFade(1f, 333);
+
+                }
 
             }
 
@@ -198,22 +203,26 @@ namespace StardewDruid
 
             //-------------------------- sound and pitch
 
-            int pitchLevel = cycleLevel % 4;
-
-            if (chargeLevel == 1)
+            if (cycleLevel <= 2)
             {
 
-                Game1.currentLocation.playSoundPitched("thunder_small", 600 + (pitchLevel * 200));
+                int pitchLevel = cycleLevel % 4;
+
+                if (chargeLevel == 1)
+                {
+
+                    Game1.currentLocation.playSoundPitched("thunder_small", 600 + (pitchLevel * 200));
+
+                }
+
+                if (chargeLevel == 3)
+                {
+
+                    Game1.currentLocation.playSoundPitched("thunder_small", 700 + (pitchLevel * 200));
+
+                }
 
             }
-
-            if (chargeLevel == 3)
-            {
-
-                Game1.currentLocation.playSoundPitched("thunder_small", 700 + (pitchLevel * 200));
-
-            }
-
 
         }
 
@@ -957,24 +966,12 @@ namespace StardewDruid
 
         }
 
-        public static void GreetVillager(GameLocation location, Farmer player, NPC villager, bool friendShip = false)
+        public static bool GreetVillager(GameLocation location, Farmer player, NPC villager, bool friendShip = false)
         {
 
             villager.faceTowardFarmerForPeriod(3000, 4, false, player);
 
-            if (!player.hasPlayerTalkedToNPC(villager.Name))
-            {
-
-                player.friendshipData[villager.Name].TalkedToToday = true;
-
-                if (friendShip)
-                {
-
-                    player.changeFriendship(25, villager);
-
-                }
-
-            }
+            bool friendCheck = player.hasPlayerTalkedToNPC(villager.Name);
 
             int emoteIndex = 8;
 
@@ -993,6 +990,24 @@ namespace StardewDruid
             }
 
             villager.doEmote(emoteIndex);
+
+            if (!friendCheck)
+            {
+
+                player.friendshipData[villager.Name].TalkedToToday = true;
+
+                if (friendShip)
+                {
+
+                    player.changeFriendship(25, villager);
+
+                }
+
+                return true;
+
+            }
+
+            return false;
 
         }
 

@@ -12,7 +12,7 @@ namespace StardewDruid.Cast
     internal class Rockfall: CastHandle
     {
 
-        private readonly MineShaft shaftLocation;
+        //private readonly MineShaft shaftLocation;
 
         public int objectIndex;
 
@@ -28,14 +28,14 @@ namespace StardewDruid.Cast
 
             castCost = 1;
 
-            shaftLocation = targetPlayer.currentLocation as MineShaft;
-
             powerLevel = riteData.castPick.UpgradeLevel;
 
         }
 
         public override void CastEarth()
         {
+
+            if(targetLocation is not MineShaft shaftLocation) { return; }
 
             int tileX = (int)targetVector.X;
 
@@ -365,7 +365,7 @@ namespace StardewDruid.Cast
 
             // ------------------------------ impacts
 
-            if (riteData.castTask.ContainsKey("masterRock"))
+            if (riteData.castTask.ContainsKey("masterRockfall"))
             {
                 
                 DelayedAction.functionAfterDelay(DebrisImpact, 575);
@@ -442,10 +442,10 @@ namespace StardewDruid.Cast
 
             }
 
-            if (!riteData.castTask.ContainsKey("masterRock"))
+            if (!riteData.castTask.ContainsKey("masterRockfall"))
             {
 
-                mod.UpdateTask("lessonRock", generateRock);
+                mod.UpdateTask("lessonRockfall", generateRock);
 
             }
 

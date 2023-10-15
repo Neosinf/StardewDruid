@@ -44,6 +44,8 @@ namespace StardewDruid.Cast
 
             int debrisType = 388;
 
+            int debrisAxe = riteData.castAxe.UpgradeLevel + 1;
+
             int debrisMax = 3;
 
             if(targetPlayer.professions.Contains(12))
@@ -74,7 +76,7 @@ namespace StardewDruid.Cast
 
             }
 
-            for (int i = 0; i < randomIndex.Next(Math.Min(debrisMax,riteData.castAxe.UpgradeLevel+1)); i++)
+            for (int i = 0; i < randomIndex.Next(1, Math.Min(debrisMax, debrisAxe)); i++)
             {
 
                 Game1.createObjectDebris(debrisType, (int)targetVector.X, (int)targetVector.Y + 1);
@@ -92,7 +94,7 @@ namespace StardewDruid.Cast
 
             targetPlayer.gainExperience(2,2); // gain foraging experience
 
-            if(randomIndex.Next(5) == 0 && riteData.spawnIndex["critter"] && !riteData.castToggle.ContainsKey("forgetCritters"))
+            if(randomIndex.Next(10) == 0 && riteData.spawnIndex["critter"] && !riteData.castToggle.ContainsKey("forgetCritters"))
             {
 
                 Portal critterPortal = new(mod, targetPlayer.getTileLocation(), riteData);

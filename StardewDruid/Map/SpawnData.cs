@@ -56,7 +56,6 @@ namespace StardewDruid.Map
 
             List<int> sashimiIndex = new()
             {
-                167, // JojaCola
                 399, // SpringOnion
                 403, // Snackbar
                 404, // FieldMushroom
@@ -69,6 +68,7 @@ namespace StardewDruid.Map
                 227, // Sashimi
                 296, // Salmonberry
                 424, // Cheese
+                24, // Parsnip
             };
 
             return sashimiIndex;
@@ -80,6 +80,7 @@ namespace StardewDruid.Map
 
             Dictionary<int, int> coffeeList = new()
             {
+                [167] = 60000,
                 [433] = 20000,
                 [395] = 90000,
                 [253] = 300000,
@@ -317,11 +318,11 @@ namespace StardewDruid.Map
 
                     switch (Game1.currentSeason)
                     {
-                        case "Spring":
-                        case "Fall":
+                        case "spring":
+                        case "fall":
                             seasonStar = 148;
                             break;
-                        case "Winter":
+                        case "winter":
                             seasonStar = 151;
                             break;
                         default:
@@ -354,11 +355,11 @@ namespace StardewDruid.Map
 
                     switch (Game1.currentSeason)
                     {
-                        case "Spring":
+                        case "spring":
                             seasonStar = 734;
                             break;
-                        case "Fall":
-                        case "Winter":
+                        case "fall":
+                        case "winter":
                             seasonStar = 161;
                             break;
                         default:
@@ -390,8 +391,8 @@ namespace StardewDruid.Map
 
                     switch (Game1.currentSeason)
                     {
-                        case "Spring":
-                        case "Fall":
+                        case "spring":
+                        case "fall":
                             seasonStar = 143;
                             break;
                         default:
@@ -561,7 +562,7 @@ namespace StardewDruid.Map
                 spawnIndex["fishspot"] = true;
 
             }
-            else if (playerLocation is MineShaft || playerLocation.Name.Contains("Mine"))
+            else if (playerLocation is MineShaft) //|| playerLocation.Name.Contains("Mine"))
             {
                 
                 spawnIndex["rockfall"] = true;

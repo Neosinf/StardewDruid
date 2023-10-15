@@ -546,7 +546,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: explode weeds and twigs. Remotely greet animals, pets and villagers once a day. Hold the button to increase the range of the effect.)";
 
-                        mod.ReassignQuest("lessonOne");
+                        mod.ReassignQuest("lessonVillager");
 
                         break;
 
@@ -556,7 +556,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: extract foragables from large bushes, wood from trees, fibre and seeds from grass and small fish from water. Might spawn monsters.)";
 
-                        mod.ReassignQuest("lessonTwo");
+                        mod.ReassignQuest("lessonCreature");
 
                         break;
 
@@ -566,7 +566,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: sprout trees, grass, seasonal forage and flowers in empty spaces.)";
 
-                        mod.ReassignQuest("lessonThree");
+                        mod.ReassignQuest("lessonForage");
 
                         break;
 
@@ -576,7 +576,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: increase the growth rate and quality of growing crops. Convert planted wild seeds into random cultivations. Fertilise trees and uptick the growth rate of fruittrees.)";
 
-                        mod.ReassignQuest("lessonFour");
+                        mod.ReassignQuest("lessonCrop");
 
                         break;
 
@@ -586,7 +586,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: shake loose rocks free from the ceilings of mine shafts. Explode gem ores.)";
 
-                        mod.ReassignQuest("lessonFive");
+                        mod.ReassignQuest("lessonRockfall");
 
                         break;
 
@@ -666,7 +666,7 @@ namespace StardewDruid.Map
 
                         //mod.LevelBlessing("special");
 
-                        mod.ReassignQuest("lessonSix");
+                        mod.ReassignQuest("lessonTotem");
 
                         break;
 
@@ -676,7 +676,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: strike scarecrows, campfires and lightning rods to activate special functions. Villager firepits will work too.)";
 
-                        mod.ReassignQuest("lessonSeven");
+                        mod.ReassignQuest("lessonCookout");
 
                         break;
 
@@ -686,7 +686,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: strike deep water to produce a fishing-spot that yields rare species of fish)";
 
-                        mod.ReassignQuest("lessonEight");
+                        mod.ReassignQuest("lessonFishspot");
 
                         break;
 
@@ -696,7 +696,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: expend high amounts of stamina to instantly destroy enemies)";
 
-                        mod.ReassignQuest("lessonNine");
+                        mod.ReassignQuest("lessonSmite");
 
                         break;
 
@@ -706,7 +706,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: strike candle torches to create monster portals. Only works in remote outdoor locations.)";
 
-                        mod.ReassignQuest("lessonTen");
+                        mod.ReassignQuest("lessonPortal");
 
                         break;
 
@@ -789,7 +789,7 @@ namespace StardewDruid.Map
 
                         //mod.LevelBlessing("special");
 
-                        mod.ReassignQuest("lessonEleven");
+                        mod.ReassignQuest("lessonMeteor");
 
                         mod.LevelBlessing("stars");
 
@@ -1111,9 +1111,11 @@ namespace StardewDruid.Map
             if (blessingList["earth"] >= 2)
             {
 
-                effigyQuestion += "^Lesson 2. Extract foragables from the landscape. Might attract monsters.^ ";
+                effigyQuestion += "^Lesson 2. Extract foragables from the landscape. Might attract monsters.";
             
             }
+
+            effigyQuestion += "^ ";
 
             List<Response> effigyChoices = new();
 
@@ -1159,9 +1161,11 @@ namespace StardewDruid.Map
             if (blessingList["earth"] >= 5)
             {
 
-                effigyQuestion += "^Lesson 5. Shake loose rocks free from the ceilings of mine shafts. Explode gem ores.^ ";
+                effigyQuestion += "^Lesson 5. Shake loose rocks free from the ceilings of mine shafts. Explode gem ores.";
 
             }
+
+            effigyQuestion += "^ ";
 
             List<Response> effigyChoices = new();
 
@@ -1192,9 +1196,11 @@ namespace StardewDruid.Map
             if (blessingList["water"] >= 2)
             {
 
-                effigyQuestion += "^Lesson 2. Strike scarecrows, campfires and lightning rods to activate special functions.^ ";
+                effigyQuestion += "^Lesson 2. Strike scarecrows, campfires and lightning rods to activate special functions.";
 
             }
+
+            effigyQuestion += "^ ";
 
             List<Response> effigyChoices = new();
 
@@ -1241,9 +1247,11 @@ namespace StardewDruid.Map
             if (blessingList["water"] >= 5)
             {
 
-                effigyQuestion += "^Lesson 5. Strike candle torches placed in remote outdoor locations to produce monster portals.^ ";
+                effigyQuestion += "^Lesson 5. Strike candle torches placed in remote outdoor locations to produce monster portals.";
 
             }
+
+            effigyQuestion += "^ ";
 
             List<Response> effigyChoices = new();
 
