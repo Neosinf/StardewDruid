@@ -6,7 +6,9 @@ namespace StardewDruid
     internal class ActiveData
     {
 
-        public string activeCast = "none";
+        public string activeBlessing = "none";
+
+        public int toolIndex = -1;
 
         public bool activeCharge = false;
 
@@ -16,13 +18,9 @@ namespace StardewDruid
 
         public int castLevel = 0;
 
-        //public int animateLevel = 0;
-
-        public int chargeLevel = 0;
-
         public int cycleLevel = 1;
 
-        public bool castComplete = false;
+        public bool castInterrupt = false;
 
         public int activeDirection = -1;
 

@@ -4,7 +4,7 @@ using System;
 
 namespace StardewDruid.Cast
 {
-    internal class Weed : Cast
+    internal class Weed : CastHandle
     {
 
         public Weed(Mod mod, Vector2 target, Rite rite)

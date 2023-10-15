@@ -6,7 +6,7 @@ using System;
 
 namespace StardewDruid.Cast
 {
-    internal class Rod : Cast
+    internal class Rod : CastHandle
     {
 
         public Rod(Mod mod, Vector2 target, Rite rite)

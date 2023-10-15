@@ -13,7 +13,7 @@ using xTile.Tiles;
 
 namespace StardewDruid.Cast
 {
-    internal class Crop : Cast
+    internal class Crop : CastHandle
     {
 
         public Crop(Mod mod, Vector2 target, Rite rite)
@@ -55,7 +55,7 @@ namespace StardewDruid.Cast
 
             }
 
-            Dictionary<string, List<Vector2>> neighbourList = ModUtility.NeighbourCheck(targetLocation, targetVector);
+            //Dictionary<string, List<Vector2>> neighbourList = ModUtility.NeighbourCheck(targetLocation, targetVector);
 
             if (hoeDirt.fertilizer.Value == 0)
             {
@@ -68,10 +68,12 @@ namespace StardewDruid.Cast
 
             StardewValley.Crop targetCrop = hoeDirt.crop;
 
-            if(targetCrop.isWildSeedCrop() && targetCrop.currentPhase.Value <= 1)
+            if(targetCrop.isWildSeedCrop() && targetCrop.currentPhase.Value <= 1 && (Game1.currentSeason != "winter" || targetLocation.isGreenhouse.Value))
             {
 
-                ModUtility.UpgradeCrop(hoeDirt, (int)targetVector.X, (int)targetVector.Y, targetPlayer, targetLocation);
+                bool enableQuality = (riteData.castTask.ContainsKey("masterCrop")) ? true : false;
+
+                ModUtility.UpgradeCrop(hoeDirt, (int)targetVector.X, (int)targetVector.Y, targetPlayer, targetLocation, enableQuality);
 
                 if(hoeDirt.crop == null)
                 {
@@ -83,6 +85,13 @@ namespace StardewDruid.Cast
                 targetCrop = hoeDirt.crop;
 
                 castFire = true;
+
+                if (!riteData.castTask.ContainsKey("masterCrop"))
+                {
+
+                    mod.UpdateTask("lessonCrop", 1);
+
+                }
 
             }
 

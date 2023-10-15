@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace StardewDruid.Cast
 {
-    internal class Scarecrow : Cast
+    internal class Scarecrow : CastHandle
     {
 
         public Scarecrow(Mod mod, Vector2 target, Rite rite)
@@ -91,7 +91,9 @@ namespace StardewDruid.Cast
 
             ModUtility.AnimateBolt(targetLocation, targetVector);
 
-            ModUtility.AnimateRipple(targetLocation, targetVector);
+            //ModUtility.AnimateRipple(targetLocation, targetVector);
+
+            Utility.addSprinklesToLocation(targetLocation, (int)targetVector.X - 1, (int)targetVector.Y - 1, 3, 3, 999, 333, Color.White);
 
             return;
 

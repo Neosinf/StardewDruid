@@ -6,19 +6,8 @@ using System;
 
 namespace StardewDruid.Cast
 {
-    /*
-        // Reference data for casts
-        forester = 12; Gain 25% more wood when chopping
-        gatherer = 13; Chance for double harvest of foraged items.
-        lumberjack = 14; All trees have a chance to drop hardwood.
 
-        geologist = 19; Chance for gems to appear in pairs.
-        burrower = 21; Chance to find coal doubled.
-        excavator = 22; Chance to find geodes doubled.
-
-    */
-
-    public class Cast
+    public class CastHandle
     {
         public Vector2 targetVector { get; set; }
 
@@ -42,7 +31,7 @@ namespace StardewDruid.Cast
 
         public readonly GameLocation targetLocation;
 
-        public Cast(Mod Mod, Vector2 Vector, Rite RiteData)
+        public CastHandle(Mod Mod, Vector2 Vector, Rite RiteData)
         {
 
             targetVector = Vector;

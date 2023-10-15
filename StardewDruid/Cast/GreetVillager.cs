@@ -1,62 +1,36 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Menus;
+using StardewValley.TerrainFeatures;
 using System;
-using System.Xml.Linq;
+using System.Collections.Generic;
 
 namespace StardewDruid.Cast
 {
-    internal class GreetVillager : Cast
+    internal class GreetVillager : CastHandle
     {
 
-        private readonly StardewValley.NPC targetVillager;
-
-        public GreetVillager(Mod mod, Vector2 target, Rite rite, NPC villager)
+        public GreetVillager (Mod mod, Vector2 target, Rite rite, NPC witness)
             : base(mod, target, rite)
         {
 
-            targetVillager = villager;
+            bool friendShip = false;
 
-            castCost = 0;
-
-        }
-
-        public override void CastEarth()
-        {
-
-            targetVillager.faceTowardFarmerForPeriod(3000, 4, false, targetPlayer);
-
-            if(targetPlayer.hasPlayerTalkedToNPC(targetVillager.Name))
+            if (!riteData.castTask.ContainsKey("masterVillager"))
             {
-                
-                return;
+
+                mod.UpdateTask("lessonVillager", 1);
+
+            }
+            else
+            {
+
+                friendShip = true;
 
             }
 
-            int emoteIndex = 8;
-
-            if (targetPlayer.friendshipData[targetVillager.Name].Points >= 500)
-            {
-
-                emoteIndex = 32;
-
-            }
-
-            if (targetPlayer.friendshipData[targetVillager.Name].Points >= 1000)
-            {
-
-                emoteIndex = 20;
-
-            }
-
-            targetVillager.doEmote(emoteIndex);
-
-            targetPlayer.friendshipData[targetVillager.Name].TalkedToToday = true;
-
-            targetPlayer.changeFriendship(25, targetVillager);
-
-            castFire = true;
+            ModUtility.GreetVillager(rite.castLocation, rite.caster, witness, friendShip);
 
         }
 

@@ -8,14 +8,21 @@ using System.Collections.Generic;
 
 namespace StardewDruid.Cast
 {
-    internal class PetAnimal : CastHandle
+    internal class Trough : CastHandle
     {
 
-        public PetAnimal (Mod mod, Vector2 target, Rite rite, FarmAnimal animal)
+        public Trough (Mod mod, Vector2 target, Rite rite)
             : base(mod, target, rite)
         {
 
-            ModUtility.PetAnimal(rite.caster, animal);
+        }
+
+        public override void CastEarth()
+        {
+
+            targetLocation.objects.Add(targetVector, new StardewValley.Object(178, 1));
+
+            return;
 
         }
 

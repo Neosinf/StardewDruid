@@ -12,7 +12,7 @@ using xTile.Tiles;
 
 namespace StardewDruid.Cast
 {
-    internal class Dirt : Cast
+    internal class Dirt : CastHandle
     {
 
         private readonly Dictionary<string, bool> spawnIndex;
@@ -37,7 +37,7 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
 
-            if(mod.ForgotEffect("forgetTrees"))
+            if(!riteData.castToggle.ContainsKey("forgetTrees"))
             {
 
                 return;
@@ -78,23 +78,28 @@ namespace StardewDruid.Cast
 
                 StardewValley.TerrainFeatures.Tree newTree;
 
-                if (targetLocation.Name == "Desert")
+                List<int> treeIndex;
+
+                if (targetLocation is Desert)
                 {
-                        
-                    newTree = new(9, 1);
+
+                    treeIndex = new()
+                    {
+                        6,9,
+                    };
 
                 }
                 else
                 {
 
-                    List<int> treeIndex = new()
+                    treeIndex = new()
                     {
                         1,2,3,1,2,3,1,2,3,7,8,
                     };
 
-                    newTree = new(treeIndex[randomIndex.Next(11)], 1);
-
                 };
+
+                newTree = new(treeIndex[randomIndex.Next(treeIndex.Count)], 1);
 
                 //newTree.fertilized.Value = true;
 

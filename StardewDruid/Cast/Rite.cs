@@ -37,10 +37,16 @@ namespace StardewDruid.Cast
 
         public int castDamage;
 
+        //public Dictionary<string, int> castBlessing;
+
+        public Dictionary<string, int> castTask;
+
+        public Dictionary<string, int> castToggle;
+
         public Rite()
         {
 
-            castLevel = 1;
+            castLevel = -1;
 
             castType = "earth";
 
@@ -51,6 +57,12 @@ namespace StardewDruid.Cast
             castVector = caster.getTileLocation();
 
             spawnIndex = Map.SpawnData.SpawnIndex(castLocation);
+
+            //castBlessing = new();
+
+            castTask = new();
+
+            castToggle = new();
 
             direction = 0;
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using StardewDruid.Cast;
 using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
@@ -14,9 +15,9 @@ using xTile.Dimensions;
 using xTile.Layers;
 using xTile.Tiles;
 
-namespace StardewDruid.Cast
+namespace StardewDruid.Event
 {
-    internal class Challenge : Cast
+    internal class Challenge : StardewDruid.Cast.CastHandle
     {
 
         public string activeChallenge;
@@ -37,7 +38,7 @@ namespace StardewDruid.Cast
 
         Vector2 challengeBorder;
 
-        public Challenge(Mod mod, Vector2 target, Rite rite, Map.Quest quest)
+        public Challenge(Mod mod, Vector2 target, Rite rite, Quest quest)
             : base(mod, target, rite)
         {
 
@@ -48,16 +49,16 @@ namespace StardewDruid.Cast
         public override void CastQuest()
         {
 
-            switch (questData.triggerCast)
+            switch (questData.name)
             {
 
-                case "CastStars":
+                case "challengeStars":
 
                     CastStars();
 
                     break;
 
-                case "CastWater":
+                case "challengeWater":
 
                     CastWater();
 
@@ -78,7 +79,7 @@ namespace StardewDruid.Cast
 
             activeChallenge = "challengeEarth";
 
-            SetupPortal(1);
+            SetupPortal();
 
             Layer backLayer = targetLocation.Map.GetLayer("Back");
 
@@ -123,7 +124,7 @@ namespace StardewDruid.Cast
 
             activeChallenge = "challengeWater";
 
-            SetupPortal(2);
+            SetupPortal();
 
             Game1.addHUDMessage(new HUDMessage($"Defeat the shadows!", "2"));
 
@@ -134,24 +135,24 @@ namespace StardewDruid.Cast
 
             activeChallenge = "challengeStars";
 
-            SetupPortal(3);
+            SetupPortal();
 
             Game1.addHUDMessage(new HUDMessage($"Defeat the slimes!", "2"));
 
         }
 
-        public void SetupPortal(int portalType)
+        public void SetupPortal()
         {
 
-            challengeWithin = questData.challengeWithin;
+            challengeWithin = questData.vectorList["challengeWithin"];
 
-            challengeRange = questData.challengeRange;
+            challengeRange = questData.vectorList["challengeRange"];
 
             challengeBorder = challengeWithin + challengeRange;
 
             challengeWarning = false;
 
-            int portalTime = (questData.challengeSeconds == 0) ? 45 : questData.challengeSeconds;
+            int portalTime = questData.challengeSeconds == 0 ? 45 : questData.challengeSeconds;
 
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + portalTime;
 
@@ -172,7 +173,7 @@ namespace StardewDruid.Cast
 
                 portalHandle.portalRange = challengeRange;
 
-                portalHandle.specialType = portalType;
+                portalHandle.spawnIndex = questData.challengeSpawn;
 
                 portalHandle.spawnFrequency = questData.challengeFrequency;
 
@@ -195,7 +196,7 @@ namespace StardewDruid.Cast
                 if (expireTime >= nowTime)
                 {
 
-                    int diffTime = (int) Math.Round(expireTime - nowTime);
+                    int diffTime = (int)Math.Round(expireTime - nowTime);
 
                     if (diffTime % 10 == 0 && diffTime != 0)
                     {
@@ -205,16 +206,16 @@ namespace StardewDruid.Cast
                             case "challengeWater":
                             case "challengeStars":
 
-                                Game1.addHUDMessage(new HUDMessage($"Survive for {(int)diffTime} more minutes!", "2"));
+                                Game1.addHUDMessage(new HUDMessage($"Survive for {diffTime} more minutes!", "2"));
 
                                 break;
 
 
                             default: // earth
 
-                                Game1.addHUDMessage(new HUDMessage($"{(int)diffTime} minutes left until cleanup complete", "2"));
+                                Game1.addHUDMessage(new HUDMessage($"{diffTime} minutes left until cleanup complete", "2"));
 
-                            break;
+                                break;
 
                         }
 
@@ -223,7 +224,7 @@ namespace StardewDruid.Cast
                     return true;
 
                 }
-            
+
             }
 
             switch (activeChallenge)
@@ -234,7 +235,9 @@ namespace StardewDruid.Cast
 
                     UpdateFriendship();
 
-                    mod.UpdateQuest(activeChallenge,true);
+                    mod.CompleteQuest(activeChallenge);
+
+                    mod.UpdateBlessing(activeChallenge);
 
                     break;
 
@@ -245,8 +248,8 @@ namespace StardewDruid.Cast
 
                         Game1.addHUDMessage(new HUDMessage($"Try again to collect more trash", ""));
 
-                        mod.UpdateQuest(activeChallenge, false);
-
+                        //mod.CompleteQuest(activeChallenge);
+                        mod.ReassignQuest(activeChallenge);
                     }
                     else
                     {
@@ -255,8 +258,10 @@ namespace StardewDruid.Cast
 
                         UpdateFriendship();
 
-                        mod.UpdateQuest(activeChallenge, true);
-                        
+                        mod.CompleteQuest(activeChallenge);
+
+                        mod.UpdateBlessing("earth");
+
                     }
 
                     break;
@@ -320,7 +325,7 @@ namespace StardewDruid.Cast
                         }
 
                     }
-                    else if(!challengeWarning)
+                    else if (!challengeWarning)
                     {
 
                         Game1.addHUDMessage(new HUDMessage($"Out of range of cleanup!", "3"));
@@ -380,7 +385,7 @@ namespace StardewDruid.Cast
 
             int objectIndex = objectIndexes[randomIndex.Next(7)];
 
-            StardewDruid.Cast.Throw throwObject;
+            Throw throwObject;
 
             if (trashCollected == 8)
             {
@@ -391,7 +396,8 @@ namespace StardewDruid.Cast
 
                 throwObject.objectInstance = new Ring(objectIndex);
 
-            } else if(trashCollected == 16)
+            }
+            else if (trashCollected == 16)
             {
 
                 objectIndex = 519;
@@ -412,7 +418,7 @@ namespace StardewDruid.Cast
 
             targetPlayer.currentLocation.playSound("pullItemFromWater");
 
-            bool targetDirection = (targetPlayer.getTileLocation().X <= trashVector.X);
+            bool targetDirection = targetPlayer.getTileLocation().X <= trashVector.X;
 
             ModUtility.AnimateSplash(targetLocation, trashVector, targetDirection);
 
@@ -448,7 +454,7 @@ namespace StardewDruid.Cast
                     NPCIndex = new()
                     {
 
-                        "Alex", "Elliott", "Harvey", 
+                        "Alex", "Elliott", "Harvey",
                         "Emily", "Penny",
                         "Caroline", "Clint", "Evelyn", "George", "Gus", "Jodi", "Kent", "Lewis", "Pam", "Pierre", "Vincent",
 

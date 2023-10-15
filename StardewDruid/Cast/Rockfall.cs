@@ -9,7 +9,7 @@ using xTile.Tiles;
 
 namespace StardewDruid.Cast
 {
-    internal class Rockfall: Cast
+    internal class Rockfall: CastHandle
     {
 
         private readonly MineShaft shaftLocation;
@@ -365,7 +365,12 @@ namespace StardewDruid.Cast
 
             // ------------------------------ impacts
 
-            DelayedAction.functionAfterDelay(DebrisImpact, 575);
+            if (riteData.castTask.ContainsKey("masterRock"))
+            {
+                
+                DelayedAction.functionAfterDelay(DebrisImpact, 575);
+
+            }
 
             if (generateRock)
             {
@@ -405,7 +410,9 @@ namespace StardewDruid.Cast
         {   
             int rockCut = randomIndex.Next(2);
 
-            for (int i = 0; i < (1 + randomIndex.Next(powerLevel)); i++)
+            int generateRock = 1 + randomIndex.Next(powerLevel);
+
+            for (int i = 0; i < generateRock; i++)
             {
 
                 if (i == 0)
@@ -434,6 +441,14 @@ namespace StardewDruid.Cast
                 }
 
             }
+
+            if (!riteData.castTask.ContainsKey("masterRock"))
+            {
+
+                mod.UpdateTask("lessonRock", generateRock);
+
+            }
+
 
         }
 

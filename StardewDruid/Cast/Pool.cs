@@ -9,7 +9,7 @@ using xTile.Tiles;
 
 namespace StardewDruid.Cast
 {
-    internal class Pool : Cast
+    internal class Pool : CastHandle
     {
 
         public Pool(Mod mod, Vector2 target, Rite rite)
@@ -21,7 +21,7 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
            
-            if (mod.ForgotEffect("forgetFish"))
+            if (!riteData.castToggle.ContainsKey("forgetFish"))
             {
 
                 return;
@@ -38,14 +38,18 @@ namespace StardewDruid.Cast
             if (probability >= 8)
             {
 
-                if (riteData.spawnIndex["critter"] && !mod.ForgotEffect("forgetCritters"))
+                if (riteData.spawnIndex["critter"] && !riteData.castToggle.ContainsKey("forgetCritters"))
                 {
 
                     Portal critterPortal = new(mod, targetPlayer.getTileLocation(), riteData);
 
                     critterPortal.spawnFrequency = 1;
 
-                    critterPortal.specialType = 5;
+                    critterPortal.spawnIndex = new()
+                    {
+                        0,3,99,
+
+                    };
 
                     critterPortal.baseType = "terrain";
 
@@ -54,6 +58,18 @@ namespace StardewDruid.Cast
                     critterPortal.baseTarget = true;
 
                     critterPortal.CastTrigger();
+
+                    if (critterPortal.spawnQueue.Count > 0)
+                    {
+
+                        if (!riteData.castTask.ContainsKey("masterCreature"))
+                        {
+
+                            mod.UpdateTask("lessonCreature", 1);
+
+                        }
+
+                    }
 
                 }
 

@@ -7,7 +7,7 @@ using StardewValley.Monsters;
 
 namespace StardewDruid.Cast
 {
-    internal class FruitTree : Cast
+    internal class FruitTree : CastHandle
     {
 
         public FruitTree(Mod mod, Vector2 target, Rite rite)

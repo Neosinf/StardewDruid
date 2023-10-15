@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace StardewDruid.Cast
 {
-    internal class Stump : Cast
+    internal class Stump : CastHandle
     {
 
         private ResourceClump resourceClump;

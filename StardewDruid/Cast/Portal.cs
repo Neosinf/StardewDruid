@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Locations;
 using StardewValley.Monsters;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,7 @@ using xTile.Tiles;
 
 namespace StardewDruid.Cast
 {
-    internal class Portal : Cast
+    internal class Portal : CastHandle
     {
 
         public TemporaryAnimatedSprite portalAnimation;
@@ -20,9 +22,9 @@ namespace StardewDruid.Cast
 
         public List<Monster> monsterSpawns;
 
-        public int specialType;
-
         public int mineLevel;
+
+        public List<int> spawnIndex;
 
         public int spawnFrequency;
 
@@ -44,11 +46,11 @@ namespace StardewDruid.Cast
 
         public string baseType;
 
+        public string spawnAnimation;
+
         public Portal (Mod mod, Vector2 target, Rite rite)
             : base(mod, target, rite)
         {
-            
-            specialType = 0;
 
             mineLevel = 1;
 
@@ -83,7 +85,15 @@ namespace StardewDruid.Cast
 
             portalExpired = false;
 
+            spawnIndex = new()
+            {
+                0,1,2,3,4,99,
+
+            };
+
             firstSpawn = false;
+
+            spawnAnimation = "none";
 
         }
 
@@ -154,6 +164,13 @@ namespace StardewDruid.Cast
 
                 portalExpired = true;
 
+                if (!riteData.castTask.ContainsKey("masterPortal"))
+                {
+
+                    mod.UpdateTask("lessonPortal", 1);
+
+                }
+
                 return true;
             
             }
@@ -197,29 +214,11 @@ namespace StardewDruid.Cast
 
             }
 
-            int removedCounter = 0;
-
-            foreach (Monster monsterSpawn in monsterSpawns)
-            {
-
-                if (monsterSpawn.Health > 0)
-                {
-
-                    targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, monsterSpawn.getTileLocation() * 64f, Color.White * 0.75f, 8));
-
-                    targetLocation.characters.Remove(monsterSpawn);
-
-                    removedCounter++;
-
-                };
-
-            }
-
-            if(portalExpired && specialType == 0 && removedCounter <= 4)
+            if (portalExpired && riteData.castLevel != -1 && monsterSpawns.Count <= 4)
             {
 
                 int objectIndex;
-                
+
                 if (mineLevel <= 40)
                 {
 
@@ -234,12 +233,12 @@ namespace StardewDruid.Cast
                 }
                 else //(targetLocation.mineLevel <= 120)
                 {
-                    
+
                     objectIndex = 537;
-                
+
                 }
 
-                for(int i = 0; i < randomIndex.Next(1,4);  i++)
+                for (int i = 0; i < randomIndex.Next(1, 4); i++)
                 {
 
                     Game1.createObjectDebris(objectIndex, (int)targetVector.X, (int)targetVector.Y);
@@ -248,7 +247,40 @@ namespace StardewDruid.Cast
 
             }
 
+            for (int i = monsterSpawns.Count - 1; i >= 0; i--)
+            {
+                targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, monsterSpawns[i].getTileLocation() * 64f, Color.White * 0.75f, 8));
+
+                targetLocation.characters.Remove(monsterSpawns[i]);
+
+                monsterSpawns.RemoveAt(i);
+
+            }
+
             spawnQueue = new();
+
+        }
+
+        public bool CheckSpawns()
+        {
+
+            for (int i = monsterSpawns.Count - 1; i >= 0; i--)
+            {
+
+                if (monsterSpawns[i].Health <= 0 && (monsterSpawns[i].currentLocation == null || !monsterSpawns[i].currentLocation.characters.Contains(monsterSpawns[i])))
+                {
+                    monsterSpawns.RemoveAt(i);
+                }
+
+            }
+
+            if (monsterSpawns.Count == 0)
+            {
+                return false;
+
+            }
+
+            return true;
 
         }
 
@@ -268,9 +300,11 @@ namespace StardewDruid.Cast
 
             }
 
+            CheckSpawns();
+
             spawnCounter = 0;
 
-            Vector2 spawnVector = new();
+            Vector2 spawnVector;
 
             //Dictionary<int, Vector2> offsetIndex;
 
@@ -381,95 +415,30 @@ namespace StardewDruid.Cast
         public KeyValuePair<int, Monster> SpawnMonster(Vector2 spawnVector)
         {
 
-            int spawnMob;
-
-            List<int> spawnIndex;
-
-            switch (specialType)
-            {
-
-                case 1: // challengeEarth
-
-                    spawnIndex = new()
-                    {
-                        99,
-
-                    };
-
-                    spawnMob = spawnIndex[randomIndex.Next(2)];
-
-                    break;
-
-                case 2: // challengeWater
-
-                    spawnIndex = new()
-                    {
-                        2,2,6,
-
-                    };
-
-                    spawnMob = spawnIndex[randomIndex.Next(3)];
-
-                    break;
-
-                case 3: // challengeStars
-
-                    spawnIndex = new()
-                    {
-                        0,0,0,4,
-
-                    };
-
-                    spawnMob = spawnIndex[randomIndex.Next(4)];
-
-                    break;
-
-                case 5: // forageable challenge
-
-                    spawnIndex = new()
-                    {
-                        0,3,99,
-
-                    };
-
-                    spawnMob = spawnIndex[randomIndex.Next(3)];
-
-                    break;
-
-                case 6: // dustSprites in SecretWoods
-
-                    spawnMob = 1;
-
-                    break;
-
-                default: // 0
-
-                    spawnIndex = new()
-                    {
-                        0,1,2,3,4,99,
-
-                    };
-
-                    spawnMob = spawnIndex[randomIndex.Next(6)];
-
-                    break;
-
-            }
+            int spawnMob = spawnIndex[randomIndex.Next(spawnIndex.Count)];
 
             Monster theMonster;
+
+            MineShaft mineLocation = new() { mineLevel = mineLevel, };
 
             switch (spawnMob)
             {
 
                 case 0: // Slime
 
-                    theMonster = new GreenSlime(spawnVector * 64f, mineLevel);
+                    theMonster = new GreenSlime(spawnVector * 64f, mineLevel)
+                    {
+                        focusedOnFarmers = true,
+                    };
 
                     break;
 
                 case 1: // Duster
 
-                    theMonster = new DustSpirit(spawnVector * 64f);
+                    theMonster = new DustSpirit(spawnVector * 64f)
+                    {
+                        focusedOnFarmers = true,
+                    };
 
                     break;
 
@@ -484,29 +453,74 @@ namespace StardewDruid.Cast
 
                 case 3: // Golem
 
-                    RockGolem golemMonster = new(spawnVector * 64f, targetPlayer.CombatLevel);
-
-                    theMonster = golemMonster;
+                    theMonster = new RockGolem(spawnVector * 64f, targetPlayer.CombatLevel)
+                    {
+                        focusedOnFarmers = true,
+                    };
 
                     break;
 
                 case 4: // Big Slime
 
-                    BigSlime bigMonster = new(spawnVector * 64f, targetPlayer.CombatLevel);
-
-                    theMonster = bigMonster;
+                    theMonster = new BigSlime(spawnVector * 64f, targetPlayer.CombatLevel)
+                    {
+                        focusedOnFarmers = true,
+                    };
 
                     break;
 
                 case 5: // Shadow Archer
 
-                    theMonster = new Shooter(spawnVector * 64f, "Shadow Sniper");
+                    theMonster = new Shooter(spawnVector * 64f, "Shadow Sniper")
+                    {
+                        focusedOnFarmers = true,
+                    };
 
                     break;
 
                 case 6: // Shadow Shaman
 
-                    theMonster = new ShadowShaman(spawnVector * 64f);
+                    theMonster = new ShadowShaman(spawnVector * 64f)
+                    {
+                        focusedOnFarmers = true,
+                    };
+
+                    break;
+
+                case 7: // Rock Monster
+
+                    theMonster = new RockGolem(spawnVector * 64f, mineLocation);
+                    theMonster.focusedOnFarmers = true;
+                    theMonster.IsWalkingTowardPlayer = true;
+                    theMonster.moveTowardPlayerThreshold.Value = 16;
+
+                    break;
+
+                case 8: // Pirate Skeleton
+
+                    theMonster = new Event.PirateSkeleton(spawnVector * 64f, targetPlayer.CombatLevel);
+
+                    break;
+
+                case 9: // Forest Spirit
+
+                    theMonster = new Event.WoodsSpirit(spawnVector * 64f, targetPlayer.CombatLevel)
+                    {
+                        focusedOnFarmers = true,
+                    };
+
+                    break;
+
+
+                case 10: // Dino Monster
+
+                    theMonster = new Event.SandDragon(spawnVector * 64f);
+
+                    break;
+
+                case 11: // Pirate Golem
+
+                    theMonster = new Event.PirateGolem(spawnVector * 64f, targetPlayer.CombatLevel);
 
                     break;
 
@@ -514,6 +528,7 @@ namespace StardewDruid.Cast
 
                     theMonster = new Bat(spawnVector * 64f, mineLevel)
                     {
+                        focusedOnFarmers = true,
                         //wildernessFarmMonster = true
                     };
 
@@ -536,7 +551,12 @@ namespace StardewDruid.Cast
 
             targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, spawnVector * 64f, Color.DarkBlue * 0.75f, 4, false, 125));
 
-            DelayedAction.functionAfterDelay(ManifestMonster, 500);
+            DelayedAction.functionAfterDelay(ManifestMonster, 200);
+
+            if (spawnAnimation == "bolt")
+            {
+                ModUtility.AnimateBolt(targetLocation, spawnVector, false);
+            }
 
         }
 
@@ -612,10 +632,16 @@ namespace StardewDruid.Cast
 
             DelayedAction.functionAfterDelay(ManifestMonster, 1000);
 
+            if (spawnAnimation == "bolt")
+            {
+                ModUtility.AnimateBolt(targetLocation, baseVector, false);
+            }
+
         }
 
         public void ManifestMonster()
         {
+            
             if(spawnQueue.Count > 0)
             {
 

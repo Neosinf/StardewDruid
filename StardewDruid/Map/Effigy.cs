@@ -12,6 +12,7 @@ using xTile.Tiles;
 using System.Runtime.CompilerServices;
 using StardewValley.Locations;
 using System.ComponentModel.Design;
+using StardewModdingAPI;
 
 namespace StardewDruid.Map
 {
@@ -19,6 +20,8 @@ namespace StardewDruid.Map
     {
 
         private readonly Mod mod;
+
+        private string activeDecoration;
 
         public bool lessonGiven;
 
@@ -58,7 +61,7 @@ namespace StardewDruid.Map
         public void ModifyCave()
         {
 
-            if(hideStatue) { return; }
+            if (hideStatue) { return; }
 
             GameLocation farmCave = Game1.getLocationFromName("FarmCave");
 
@@ -86,77 +89,43 @@ namespace StardewDruid.Map
 
             }
 
-
             //------------------------ add effigy
 
-            string witchTiles = Path.Combine("Maps", "WitchHutTiles");
+            TileSheet witchSheet = farmCave.map.GetTileSheet("witchHutTiles");
 
-            if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "Content", witchTiles + ".xnb")))
+            buildingsLayer.Tiles[X, Y - 2] = new StaticTile(buildingsLayer, witchSheet, BlendMode.Alpha, 108);
+
+            buildingsLayer.Tiles[X - 1, Y - 1] = new StaticTile(buildingsLayer, witchSheet, BlendMode.Alpha, 115);
+
+            StaticTile effigyBody = new(buildingsLayer, witchSheet, BlendMode.Alpha, 116);
+
+            effigyBody.TileIndexProperties.Add("Action", "FarmCaveDruidEffigy");
+
+            buildingsLayer.Tiles[X, Y - 1] = effigyBody;
+
+            buildingsLayer.Tiles[X + 1, Y - 1] = new StaticTile(buildingsLayer, witchSheet, BlendMode.Alpha, 117);
+
+            StaticTile effigyFeet = new(buildingsLayer, witchSheet, BlendMode.Alpha, 124);
+
+            effigyFeet.TileIndexProperties.Add("Action", "FarmCaveDruidEffigy");
+
+            buildingsLayer.Tiles[X, Y] = effigyFeet;
+
+        }
+
+        public void DecorateCave()
+        {
+
+            string blessing = mod.ActiveBlessing();
+
+            if (blessing == activeDecoration)
             {
 
-                TileSheet witchSheet = new("witchHutTiles", farmCave.map, witchTiles, new xTile.Dimensions.Size(8, 16), new xTile.Dimensions.Size(1, 1));
-
-                farmCave.map.AddTileSheet(witchSheet);
-
-                buildingsLayer.Tiles[X, Y-2] = new StaticTile(buildingsLayer, witchSheet, BlendMode.Alpha, 108);
-
-                buildingsLayer.Tiles[X-1, Y-1] = new StaticTile(buildingsLayer, witchSheet, BlendMode.Alpha, 115);
-
-                StaticTile effigyBody = new(buildingsLayer, witchSheet, BlendMode.Alpha, 116);
-
-                effigyBody.TileIndexProperties.Add("Action", "FarmCaveDruidEffigy");
-
-                buildingsLayer.Tiles[X, Y-1] = effigyBody;
-
-                buildingsLayer.Tiles[X+1, Y-1] = new StaticTile(buildingsLayer, witchSheet, BlendMode.Alpha, 117);
-
-                StaticTile effigyFeet = new(buildingsLayer, witchSheet, BlendMode.Alpha, 124);
-
-                effigyFeet.TileIndexProperties.Add("Action", "FarmCaveDruidEffigy");
-
-                buildingsLayer.Tiles[X, Y] = effigyFeet;
+                return;
 
             }
 
-            //------------------------ add decoration
-
-            string craftableTiles = Path.Combine("TileSheets", "Craftables"); // preloading tilesheet
-
-            if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "Content", craftableTiles + ".xnb")))
-            {
-
-                TileSheet craftableSheet = new("craftableTiles", farmCave.map, craftableTiles, new xTile.Dimensions.Size(8, 72), new xTile.Dimensions.Size(1, 1));
-
-                farmCave.map.AddTileSheet(craftableSheet);
-
-
-            }
-            /*
-            string fireballTiles = Path.Combine("TileSheets", "Fireball"); // preloading tilesheet
-
-            if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "Content", fireballTiles + ".xnb")))
-            {
-
-                TileSheet fireballSheet = new("fireballTiles", farmCave.map, fireballTiles, new xTile.Dimensions.Size(4, 4), new xTile.Dimensions.Size(2, 2));
-
-                farmCave.map.AddTileSheet(fireballSheet);
-
-
-            }
-
-            string animationTiles = Path.Combine("TileSheets", "animations"); // preloading tilesheet
-
-            if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "Content", animationTiles + ".xnb")))
-            {
-
-                TileSheet animationSheet = new("animationTiles", farmCave.map, animationTiles, new xTile.Dimensions.Size(10, 52), new xTile.Dimensions.Size(1, 1));
-
-                farmCave.map.AddTileSheet(animationSheet);
-
-
-            }*/
-
-            switch (mod.ActiveBlessing())
+            switch (blessing)
             {
                 case "earth":
 
@@ -178,9 +147,13 @@ namespace StardewDruid.Map
 
                 default: // "none"
 
+                    NoDecoration();
+
                     break;
 
             }
+
+            activeDecoration = blessing;
 
             return;
 
@@ -193,23 +166,15 @@ namespace StardewDruid.Map
 
             GameLocation farmCave = Game1.getLocationFromName("FarmCave");
 
-            TileSheet craftableSheet = farmCave.map.GetTileSheet("craftableTiles");
+            Layer frontLayer = farmCave.map.GetLayer("Front");
 
-            if (craftableSheet != null)
-            {
+            frontLayer.Tiles[X-1, Y-3] = null;
 
-                Layer frontLayer = farmCave.map.GetLayer("Front");
+            frontLayer.Tiles[X-1, Y-2] = null;
 
+            frontLayer.Tiles[X+1, Y-3] = null;
 
-                frontLayer.Tiles[X-1, Y-3] = null;
-
-                frontLayer.Tiles[X-1, Y-2] = null;
-
-                frontLayer.Tiles[X+1, Y-3] = null;
-
-                frontLayer.Tiles[X+1, Y-2] = null;
-
-            }
+            frontLayer.Tiles[X+1, Y-2] = null;
 
             return;
 
@@ -372,12 +337,12 @@ namespace StardewDruid.Map
                 questCompleted = null;
 
             }
-            else if (blessingList.ContainsKey("stars"))
+            else if (mod.QuestComplete("challengeStars"))
             {
 
                 effigyQuestion = "Satisfied Effigy: ^Successor.";
 
-                effigyChoices.Add(new Response("journey", "Does the valley have need of me?"));
+                effigyChoices.Add(new Response("threats", "Does the valley have need of me?"));
 
             }
             else
@@ -400,6 +365,20 @@ namespace StardewDruid.Map
             {
 
                 effigyChoices.Add(new Response("blessing", "I want to change my patron (change rite)"));
+
+            }
+
+            if (blessingList.ContainsKey("earth") && Context.IsMultiplayer && Context.IsMainPlayer)
+            {
+
+                effigyChoices.Add(new Response("farmhands", "I want to share what I've learned (train farmhands)"));
+
+            }
+
+            if (mod.AttuneableWeapon())
+            {
+
+                effigyChoices.Add(new Response("attune", "I want to dedicate this artifact to my patron (attune weapon)"));
 
             }
 
@@ -432,6 +411,12 @@ namespace StardewDruid.Map
 
                     break;
 
+                case "threats":
+
+                    DelayedAction.functionAfterDelay(DialogueThreats, 100);
+
+                    break;
+
                 case "effects":
 
                     DelayedAction.functionAfterDelay(DialogueEffects, 100);
@@ -456,6 +441,17 @@ namespace StardewDruid.Map
 
                     break;
 
+                case "farmhands":
+
+                    DelayedAction.functionAfterDelay(DialogueFarmhands, 100);
+
+                    break;
+
+                case "attune":
+
+                    DelayedAction.functionAfterDelay(DialogueAttune, 100);
+
+                    break;
             }
 
             return;
@@ -465,7 +461,7 @@ namespace StardewDruid.Map
         public void DialogueQuery()
         {
 
-            mod.UpdateQuest("approachEffigy", true);
+            mod.CompleteQuest("approachEffigy");
 
             List<Response> effigyChoices = new();
 
@@ -520,7 +516,7 @@ namespace StardewDruid.Map
                     "..."+
                     $"^({mod.CastControl()} with a melee weapon or scythe in hand to perform a rite. Hold the button to increase the range of the effect.)";
 
-                    mod.NewQuest("swordEarth");
+                    mod.ReassignQuest("swordEarth");
 
                     Game1.currentLocation.playSoundPitched("discoverMineral", 600);
 
@@ -550,6 +546,8 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: explode weeds and twigs. Remotely greet animals, pets and villagers once a day. Hold the button to increase the range of the effect.)";
 
+                        mod.ReassignQuest("lessonOne");
+
                         break;
 
                     case 1: // bush, water, grass, stump, boulder
@@ -557,6 +555,8 @@ namespace StardewDruid.Map
                         effigyReply = "Forgotten Effigy: ^The valley springs into new life. Go now, sample its hidden bounty, and prepare to face those who guard its secrets." +
                             "^..." +
                             $"^({mod.CastControl()}: extract foragables from large bushes, wood from trees, fibre and seeds from grass and small fish from water. Might spawn monsters.)";
+
+                        mod.ReassignQuest("lessonTwo");
 
                         break;
 
@@ -566,6 +566,8 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: sprout trees, grass, seasonal forage and flowers in empty spaces.)";
 
+                        mod.ReassignQuest("lessonThree");
+
                         break;
 
                     case 3: // hoed
@@ -574,6 +576,8 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: increase the growth rate and quality of growing crops. Convert planted wild seeds into random cultivations. Fertilise trees and uptick the growth rate of fruittrees.)";
 
+                        mod.ReassignQuest("lessonFour");
+
                         break;
 
                     case 4: // rockfall
@@ -581,6 +585,8 @@ namespace StardewDruid.Map
                         effigyReply = "Forgotten Effigy: ^Be careful in the mines. The deep earth answers your call, both above and below you." +
                             "^..." +
                             $"^({mod.CastControl()}: shake loose rocks free from the ceilings of mine shafts. Explode gem ores.)";
+
+                        mod.ReassignQuest("lessonFive");
 
                         break;
 
@@ -596,7 +602,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^(You have received a new quest.)";
 
-                            mod.NewQuest("challengeEarth");
+                            mod.ReassignQuest("challengeEarth");
 
                         }
 
@@ -630,7 +636,7 @@ namespace StardewDruid.Map
                     "^..." +
                     $"^({mod.CastControl()} with a weapon or scythe in hand to perform a rite. Hold the button to increase the range of the effect.)";
 
-                    mod.NewQuest("swordWater");
+                    mod.ReassignQuest("swordWater");
 
                     Game1.currentLocation.playSoundPitched("thunder_small", 1200);
 
@@ -660,6 +666,8 @@ namespace StardewDruid.Map
 
                         //mod.LevelBlessing("special");
 
+                        mod.ReassignQuest("lessonSix");
+
                         break;
 
                     case 1: // scarecrow, rod, craftable, campfire
@@ -667,6 +675,8 @@ namespace StardewDruid.Map
                         effigyReply = "Forgotten Effigy: ^The Lady is fascinated by the industriousness of humanity. Combine your artifice with her blessing and reap the rewards." +
                             "^..." +
                             $"^({mod.CastControl()}: strike scarecrows, campfires and lightning rods to activate special functions. Villager firepits will work too.)";
+
+                        mod.ReassignQuest("lessonSeven");
 
                         break;
 
@@ -676,6 +686,8 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: strike deep water to produce a fishing-spot that yields rare species of fish)";
 
+                        mod.ReassignQuest("lessonEight");
+
                         break;
 
                     case 3: // stump, boulder, enemy
@@ -684,6 +696,8 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: expend high amounts of stamina to instantly destroy enemies)";
 
+                        mod.ReassignQuest("lessonNine");
+
                         break;
 
                     case 4: // portal
@@ -691,6 +705,8 @@ namespace StardewDruid.Map
                         effigyReply = "Forgotten Effigy: ^Are you yet a master of the veil between worlds? Focus your will to breach the divide." +
                             "^..." +
                             $"^({mod.CastControl()}: strike candle torches to create monster portals. Only works in remote outdoor locations.)";
+
+                        mod.ReassignQuest("lessonTen");
 
                         break;
 
@@ -708,7 +724,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^(You have received a new quest.)";
 
-                            mod.NewQuest("challengeWater");
+                            mod.ReassignQuest("challengeWater");
 
                         }
 
@@ -742,9 +758,9 @@ namespace StardewDruid.Map
 
                     effigyReply = "Forgotten Effigy: ^Your name is known within the celestial plane. ^Travel to the lake of flames. Retrieve the final vestige of the first farmer.";
 
-                    mod.NewQuest("swordStars");
+                    mod.ReassignQuest("swordStars");
 
-                    Game1.currentLocation.playSoundPitched("Meteorite", 1200);
+                    
 
                 }
 
@@ -762,29 +778,53 @@ namespace StardewDruid.Map
 
                 }
 
-                if (mod.QuestGiven("challengeStars"))
+                switch (blessingList["stars"])
                 {
-                    effigyReply = "Forgotten Effigy: ^Only you can deal with the threat to the forest";
 
-                }
-                else
-                {
-                    effigyReply = "Forgotten Effigy: ^Your last trial awaits. The southern forest reeks of our mortal enemy. Rain judgement upon the slime with the blessing of the Stars." +
-                            "^..." +
-                            $"^(You have received a new quest.)";
+                    case 0: // warp totems
 
-                    mod.NewQuest("challengeStars");
+                        effigyReply = "Forgotten Effigy: ^Excellent. The Stars Beyond the Expanse have chosen a new champion. Shatter the thickened wild so that new life may find root there." +
+                        "^..." +
+                        $"^({mod.CastControl()}: call down a shower of fireballs that increase in number and range as the cast is held)";
 
-                    mod.LevelBlessing("stars");
+                        //mod.LevelBlessing("special");
 
-                    //ModUtility.AnimateMeteor(Game1.player.currentLocation, Game1.player.getTileLocation() + new Vector2(0, -2), true);
+                        mod.ReassignQuest("lessonEleven");
 
-                    Game1.currentLocation.playSoundPitched("Meteorite", 1200);
+                        mod.LevelBlessing("stars");
 
+                        lessonGiven = true;
+
+                        Game1.currentLocation.playSoundPitched("Meteorite", 1200);
+
+                        break;
+
+                    default:
+
+                        if (mod.QuestGiven("challengeStars"))
+                        {
+                            effigyReply = "Forgotten Effigy: ^Only you can deal with the threat to the forest";
+
+                        }
+                        else
+                        {
+                            effigyReply = "Forgotten Effigy: ^Your last trial awaits. The southern forest reeks of our mortal enemy. Rain judgement upon the slime with the blessing of the Stars." +
+                                    "^..." +
+                                    $"^(You have received a new quest.)";
+
+                            mod.ReassignQuest("challengeStars");
+
+                            //ModUtility.AnimateMeteor(Game1.player.currentLocation, Game1.player.getTileLocation() + new Vector2(0, -2), true);
+
+                            Game1.currentLocation.playSoundPitched("Meteorite", 1200);
+
+                        }
+
+                        break;
                 }
 
             }
-            else
+            else 
             {
                 
                 effigyReply = "Satisfied Effigy: ^Your power rivals that of the first farmer. I have nothing further to teach you. When the seasons change, the valley may call upon your aid once again."+
@@ -802,6 +842,17 @@ namespace StardewDruid.Map
                 Game1.activeClickableMenu = new DialogueBox(effigyReply);
 
             }
+
+        }
+
+        public void DialogueThreats()
+        {
+            string effigyReply = "Satisfied Effigy: ^Those with a twisted connection to the otherworld may remain tethered to the Valley long after their mortal vessel wastes away." +
+                "^Strike them with bolt and flame to draw out and disperse their corrupted energies." +
+            "^..." +
+            "^( Search out the secret gardener's statue, the mariner's spectre, and the tyrant's bleached bones )";
+
+            Game1.activeClickableMenu = new DialogueBox(effigyReply);
 
         }
 
@@ -881,8 +932,6 @@ namespace StardewDruid.Map
 
                     Game1.currentLocation.playSound("discoverMineral");
 
-                    EarthDecoration();
-
                     break;
 
                 case "water":
@@ -892,8 +941,6 @@ namespace StardewDruid.Map
                     effigyReply = "Forgotten Effigy: ^The Voice Beyond the Shore echoes around us.";
 
                     Game1.currentLocation.playSound("thunder_small");
-
-                    WaterDecoration();
 
                     break;
 
@@ -905,8 +952,6 @@ namespace StardewDruid.Map
 
                     Game1.currentLocation.playSound("Meteorite");
 
-                    StarsDecoration();
-
                     break;
 
                 case "none":
@@ -916,8 +961,6 @@ namespace StardewDruid.Map
                     effigyReply = "Forgotten Effigy: ^The light fades away.";
 
                     Game1.currentLocation.playSound("ghost");
-
-                    NoDecoration();
 
                     break;
 
@@ -935,6 +978,8 @@ namespace StardewDruid.Map
                 mod.UpdateBlessing(effigyAnswer);
 
             }
+
+            DecorateCave();
 
             Game1.activeClickableMenu = new DialogueBox(effigyReply);
 
@@ -1217,7 +1262,7 @@ namespace StardewDruid.Map
 
             Dictionary<string, int> blessingList = mod.BlessingList();
 
-            string effigyQuestion = "Forgotten Effigy: ^The Stars have no names that can be uttered by earthly dwellers. They exist high above, and beyond, and care not for the life of our world, though their light sustains much of it. Yet... there is one star... a fallen star. He has a name. A name that we dread to speak.";
+            string effigyQuestion = "Forgotten Effigy: ^The Stars have no names that can be uttered by earthly dwellers. They exist high above, and beyond, and care not for the life of our world, though their light sustains much of it. ^Yet... there is one star... a fallen star. He has a name. A name that we dread to speak.";
 
             List<Response> effigyChoices = new();
 
@@ -1446,6 +1491,49 @@ namespace StardewDruid.Map
             Game1.activeClickableMenu = new DialogueBox(effigyReply);
 
         }
+
+        public void DialogueFarmhands()
+        {
+
+            string effigyReply = "Forgotten Effigy: ^Good. Teach them to embrace the source, or seize it.";
+
+            mod.TrainFarmhands();
+
+            Game1.activeClickableMenu = new DialogueBox(effigyReply);
+
+            return;
+
+        }
+
+        public void DialogueAttune()
+        {
+
+            string effigyReply = "Forgotten Effigy: ^This artifact cannot be attuned.";
+
+            if (mod.AttuneWeapon())
+            {
+                string activeBlessing = mod.ActiveBlessing();
+
+                effigyReply = "Forgotten Effigy: ^Done. Now this artifact will always source its power from ";
+
+                switch (activeBlessing)
+                {
+
+                    case "stars": effigyReply += "the Stars"; Game1.currentLocation.playSound("Meteorite"); break;
+                    case "water": effigyReply += "the Lady Beyond the Shore"; Game1.currentLocation.playSound("thunder_small"); break;
+                    default: effigyReply += "the Two Kings"; Game1.currentLocation.playSound("discoverMineral"); break; //earth
+
+                }
+
+            }
+
+            Game1.activeClickableMenu = new DialogueBox(effigyReply);
+
+            return;
+
+
+        }
+
 
     }
 

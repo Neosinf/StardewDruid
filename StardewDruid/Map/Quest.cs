@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,11 +13,25 @@ namespace StardewDruid.Map
 
         public string name;
 
-        public string triggerCast;
-
         public string triggerType;
 
-        public string triggerLocation;
+        public List<string> triggerLocation;
+
+        public int startTime;
+
+        public string triggerBlessing;
+
+        public int triggerTile;
+
+        public string triggerAction;
+
+        public bool triggerSpecial;
+
+        public Dictionary<string, Vector2> vectorList = new();
+
+        public List<Type> triggerLocale;
+
+        public int triggerRadius;
 
         public int questId;
 
@@ -30,25 +45,23 @@ namespace StardewDruid.Map
 
         public int questReward;
 
+        public int questLevel;
+
         public bool updateEffigy;
-
-        public Vector2 triggerVector;
-
-        public Vector2 triggerLimit;
-
-        public int startTime;
-
-        //public int endTime;
-
-        public Vector2 challengeWithin;
-
-        public Vector2 challengeRange;
 
         public List<Vector2> challengePortals;
 
         public int challengeSeconds;
 
         public int challengeFrequency;
+
+        public List<int> challengeSpawn = new();
+
+        public int taskCounter;
+
+        public string taskFinish;
+
+        public bool useTarget;
 
     }
 }

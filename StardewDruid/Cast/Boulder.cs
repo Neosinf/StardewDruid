@@ -7,7 +7,7 @@ using System;
 
 namespace StardewDruid.Cast
 {
-    internal class Boulder : Cast
+    internal class Boulder : CastHandle
     {
 
         private readonly ResourceClump resourceClump;

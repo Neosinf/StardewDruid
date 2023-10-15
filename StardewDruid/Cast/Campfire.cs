@@ -4,11 +4,12 @@ using StardewValley;
 using StardewValley.Menus;
 using StardewValley.TerrainFeatures;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace StardewDruid.Cast
 {
-    internal class Campfire : Cast
+    internal class Campfire : CastHandle
     {
 
         public Campfire (Mod mod, Vector2 target, Rite rite)
@@ -21,41 +22,28 @@ namespace StardewDruid.Cast
 
         public override void CastWater()
         {
-            List<string> recipeList = new() {
-                "Salad",
-                "Baked Fish",
-                "Fried Mushroom",
-                "Carp Surprise",
-                "Hashbrowns",
-                "Fried Eel",
-                "Sashimi",
-                "Maki Roll",
-                "Algae Soup",
-                "Fish Stew",
-                "Escargot",
-                "Pale Broth",
-            };
 
-            int learnedRecipes = 0;
+            int currentStack = 0;
 
-            foreach(string recipe in recipeList)
+            if (!riteData.castTask.ContainsKey("masterCookout"))
             {
 
-                if(!targetPlayer.cookingRecipes.ContainsKey(recipe))
-                {
+                currentStack = mod.UpdateTask("lessonCookout", 1);
 
-                    targetPlayer.cookingRecipes.Add(recipe, 0);
+            } 
+            else if(!riteData.castTask.ContainsKey("masterRecipe"))
+            {
 
-                    learnedRecipes++;
-
-                }
+                currentStack = 2;
 
             }
 
-            if(learnedRecipes >= 1)
+            if(currentStack >= 2)
             {
 
-                Game1.addHUDMessage(new HUDMessage($"Learned {learnedRecipes} recipes", 2));
+                ModUtility.LearnRecipe(targetPlayer);
+
+                mod.TaskSet("masterRecipe",1);
 
             }
 

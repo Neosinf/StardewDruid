@@ -4,7 +4,7 @@ using System;
 
 namespace StardewDruid.Cast
 {
-    internal class Totem : Cast
+    internal class Totem : CastHandle
     {
 
         public int targetIndex { get; set; }
@@ -22,7 +22,21 @@ namespace StardewDruid.Cast
         public override void CastWater()
         {
 
-            for (int i = 0; i < randomIndex.Next(1, 3); i++)
+            int extractionChance = 1;
+
+            if (!riteData.castTask.ContainsKey("masterTotem"))
+            {
+
+                mod.UpdateTask("lessonTotem", 1);
+
+            }
+            else
+            {
+                extractionChance = randomIndex.Next(1, 3);
+
+            }
+
+            for (int i = 0; i < extractionChance; i++)
             {
                 Game1.createObjectDebris(targetIndex, (int)targetVector.X, (int)targetVector.Y - 1);
 

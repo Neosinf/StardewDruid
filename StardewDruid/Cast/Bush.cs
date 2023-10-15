@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
@@ -8,12 +9,12 @@ using System.Collections.Generic;
 
 namespace StardewDruid.Cast
 {
-    internal class Bush : Cast
+    internal class Bush : CastHandle
     {
 
-        private readonly LargeTerrainFeature bushFeature;
+        private readonly StardewValley.TerrainFeatures.Bush bushFeature;
 
-        public Bush(Mod mod, Vector2 target, Rite rite, LargeTerrainFeature LargeTerrainFeature)
+        public Bush(Mod mod, Vector2 target, Rite rite, StardewValley.TerrainFeatures.Bush bush)
             : base(mod, target, rite)
         {
 
@@ -24,7 +25,7 @@ namespace StardewDruid.Cast
 
             }
 
-            bushFeature = LargeTerrainFeature;
+            bushFeature = bush;
 
         }
 
@@ -44,14 +45,18 @@ namespace StardewDruid.Cast
 
             if (probability == 2)
             {
-                if (riteData.spawnIndex["critter"] && !mod.ForgotEffect("forgetCritters"))
+                if (riteData.spawnIndex["critter"] && !riteData.castToggle.ContainsKey("forgetCritters"))
                 {
 
                     Portal critterPortal = new(mod, targetPlayer.getTileLocation(), riteData);
 
                     critterPortal.spawnFrequency = 1;
 
-                    critterPortal.specialType = 5;
+                    critterPortal.spawnIndex = new()
+                    {
+                        0,3,99,
+
+                    };
 
                     critterPortal.baseType = "terrain";
 
@@ -60,6 +65,18 @@ namespace StardewDruid.Cast
                     critterPortal.baseTarget = true;
 
                     critterPortal.CastTrigger();
+
+                    if (critterPortal.spawnQueue.Count > 0)
+                    {
+
+                        if (!riteData.castTask.ContainsKey("masterCreature"))
+                        {
+
+                            mod.UpdateTask("lessonCreature", 1);
+
+                        }
+
+                    }
 
                 }
 

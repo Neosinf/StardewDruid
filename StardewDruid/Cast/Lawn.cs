@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Objects;
@@ -12,7 +13,7 @@ using xTile.Tiles;
 
 namespace StardewDruid.Cast
 {
-    internal class Lawn : Cast
+    internal class Lawn : CastHandle
     {
 
         private readonly Dictionary<string, bool> spawnIndex;
@@ -44,13 +45,13 @@ namespace StardewDruid.Cast
 
             }
 
-            bool forgotTrees = mod.ForgotEffect("forgetTrees");
+            bool forgotTrees = !riteData.castToggle.ContainsKey("forgetTrees");
 
             Dictionary<string, List<Vector2>> neighbourList = ModUtility.NeighbourCheck(targetLocation, targetVector);
 
             int probability = randomIndex.Next(120);
 
-            if (probability <= 1 && spawnIndex["flower"] && neighbourList.Count == 0) // 2/120 flower
+            if (probability <= 1 && spawnIndex["flower"] && neighbourList.Count == 0 && riteData.castTask.ContainsKey("masterForage")) // 2/120 flower
             {
 
                 /*Dictionary<int, int> objectIndexes;
@@ -104,45 +105,7 @@ namespace StardewDruid.Cast
 
                 castCost = 6;*/
 
-
-                Dictionary<int, int> objectIndexes;
-
-                switch (Game1.currentSeason)
-                {
-
-                    case "spring":
-
-                        objectIndexes = new()
-                        {
-                            [0] = 591, // tulip
-                            [1] = 597, // jazz
-                        };
-
-                        break;
-
-                    case "summer":
-
-                        objectIndexes = new()
-                        {
-                            [0] = 593, // spangle
-                            [1] = 376, // poppy
-                        };
-
-                        break;
-
-                    default: //"fall":
-
-                        objectIndexes = new()
-                        {
-                            [0] = 595, // fairy
-                            [1] = 421, // sunflower
-                        };
-
-                        break;
-
-                }
-
-                int randomCrop = objectIndexes[probability];
+                int randomCrop = SpawnData.RandomFlower();
 
                 StardewValley.Object newFlower = new(
                         targetVector,
@@ -188,40 +151,7 @@ namespace StardewDruid.Cast
             else if (probability >= 2 && probability <= 3 && spawnIndex["forage"] && neighbourList.Count == 0) // 2/120 forage
             {
 
-                Dictionary<int, int> randomCrops;
-
-                int randomCrop;
-
-                switch (Game1.currentSeason)
-                {
-
-                    case "spring":
-
-                        randomCrop = 16 + randomIndex.Next(4) * 2;
-
-                        break;
-
-                    case "summer":
-
-                        randomCrops = new()
-                        {
-                            [0] = 396,
-                            [1] = 396,
-                            [2] = 402,
-                            [3] = 398,
-                        };
-
-                        randomCrop = randomCrops[randomIndex.Next(4)];
-
-                        break;
-
-                    default: //"fall":
-
-                        randomCrop = 404 + randomIndex.Next(4) * 2;
-
-                        break;
-
-                }
+                int randomCrop = SpawnData.RandomForage();
 
                 targetLocation.dropObject(
                     new StardewValley.Object(
@@ -240,6 +170,12 @@ namespace StardewDruid.Cast
 
                 castFire = true;
 
+                if (!riteData.castTask.ContainsKey("masterForage"))
+                {
+
+                    mod.UpdateTask("lessonForage", 1);
+
+                }
 
             }
             else if (probability >= 4 && probability <= 15 && spawnIndex["grass"] && neighbourList.ContainsKey("Tree") && !forgotTrees) // 12/120 grass

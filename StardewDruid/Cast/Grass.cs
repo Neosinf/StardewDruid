@@ -7,7 +7,7 @@ using System.ComponentModel.Design;
 
 namespace StardewDruid.Cast
 {
-    internal class Grass : Cast
+    internal class Grass : CastHandle
     {
 
         public Grass(Mod mod, Vector2 target, Rite rite)
@@ -56,7 +56,7 @@ namespace StardewDruid.Cast
 
             }
 
-            if(probability <= 1 && !mod.ForgotEffect("forgetSeeds"))
+            if(probability <= 1 && !riteData.castToggle.ContainsKey("forgetSeeds") && riteData.castTask.ContainsKey("masterCreature"))
             {
 
                 switch (Game1.currentSeason)

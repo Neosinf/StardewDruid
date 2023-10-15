@@ -2,6 +2,7 @@
 using StardewValley;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Intrinsics;
@@ -10,7 +11,7 @@ using xTile;
 
 namespace StardewDruid.Cast
 {
-    internal class Meteor: Cast
+    internal class Meteor: CastHandle
     {
 
         int targetDirection;
@@ -32,46 +33,13 @@ namespace StardewDruid.Cast
         public override void CastStars()
         {
 
-            // --------------------------- splash animation
+            ModUtility.AnimateMeteorZone(targetLocation, targetVector, Color.White, meteorRange);
 
-            int animationRow = 0;
-
-            Microsoft.Xna.Framework.Rectangle animationRectangle = new(0, animationRow * 64, 64, 64);
-
-            float animationInterval = 75f;
-
-            int animationLength = 8;
-
-            int animationLoops = 1;
-
-            Vector2 animationPosition = new((targetVector.X * 64), (targetVector.Y * 64));
-
-            float animationSort = (targetVector.X * 1000) + targetVector.Y;
-
-            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, Color.Red, 1f, 0f, 0f, 0f);
-
-            targetLocation.temporarySprites.Add(newAnimation);
-
-            // ---------------------------- fireball animation
-
-            //int targetSpeed = randomIndex.Next(1, 5) * 100;
-
-            //DelayedAction.functionAfterDelay(MeteorAnimation, targetSpeed);
-
-            //DelayedAction.functionAfterDelay(MeteorImpact, 600 + targetSpeed);
-
-            MeteorAnimation();
+            ModUtility.AnimateMeteor(targetLocation, targetVector, targetDirection < 2);
 
             DelayedAction.functionAfterDelay(MeteorImpact, 600);
 
             castFire = true;
-
-        }
-
-        public void MeteorAnimation()
-        {
-
-            ModUtility.AnimateMeteor(targetLocation, targetVector, targetDirection < 2);
 
         }
 
@@ -163,7 +131,7 @@ namespace StardewDruid.Cast
 
                         if (targetObject.Name.Contains("Stone"))
                         {
-                           
+
                             targetLocation.OnStoneDestroyed(@targetObject.ParentSheetIndex, (int)tileVector.X, (int)tileVector.Y, targetPlayer);
 
                             targetLocation.objects.Remove(tileVector);
@@ -171,44 +139,31 @@ namespace StardewDruid.Cast
                             destroyVector = true;
 
                         }
-
-                        if (targetLocation.objects.ContainsKey(tileVector))
+                        else if (targetObject.Name.Contains("Twig"))
                         {
 
-                            if (targetObject.Name.Contains("Twig"))
+                            for (int fibreDebris = 2; fibreDebris < i; fibreDebris++)
                             {
-
-                                for (int fibreDebris = 2; fibreDebris < i; fibreDebris++)
-                                {
-                                    Game1.createObjectDebris(388, (int)tileVector.X, (int)tileVector.Y);
-
-                                }
-
-                                targetLocation.objects.Remove(tileVector);
-
-                                destroyVector = true;
+                                Game1.createObjectDebris(388, (int)tileVector.X, (int)tileVector.Y);
 
                             }
 
-                        }
+                            targetLocation.objects.Remove(tileVector);
 
-                        if (targetLocation.objects.ContainsKey(tileVector))
+                            destroyVector = true;
+
+                        }
+                        else if (targetObject.Name.Contains("Weed"))
                         {
 
-                            if (targetObject.Name.Contains("Weed"))
-                            {
+                            Game1.createObjectDebris(771, (int)tileVector.X, (int)tileVector.Y);
 
-                                Game1.createObjectDebris(771, (int)tileVector.X, (int)tileVector.Y);
+                            targetLocation.objects.Remove(tileVector);
 
-                                targetLocation.objects.Remove(tileVector);
-
-                                destroyVector = true;
-
-                            }
+                            destroyVector = true;
 
                         }
-
-                        if (targetLocation is StardewValley.Locations.MineShaft && targetLocation.objects.ContainsKey(tileVector))
+                        else if (targetLocation is StardewValley.Locations.MineShaft && targetLocation.objects.ContainsKey(tileVector))
                         {
 
                             if (targetObject is BreakableContainer)
@@ -225,9 +180,29 @@ namespace StardewDruid.Cast
                             }
 
                         }
+                        else
+                        {
+
+                            for (int j = 0; j < 2; j++)
+                            {
+
+                                Tool toolUse = (j == 0) ? riteData.castPick : riteData.castAxe;
+
+                                if (targetLocation.objects.ContainsKey(tileVector) && targetObject.performToolAction(toolUse, targetLocation))
+                                {
+                                    targetObject.performRemoveAction(tileVector, targetLocation);
+
+                                    targetObject.dropItem(targetLocation, tileVector*64, tileVector * 64 + new Vector2(0,32));
+
+                                    targetLocation.objects.Remove(tileVector);
+
+                                }
+
+                            }
+
+                        }
 
                     }
-
                     if (targetLocation.terrainFeatures.ContainsKey(tileVector))
                     {
 
@@ -265,7 +240,13 @@ namespace StardewDruid.Cast
 
                                 targetLocation.terrainFeatures.Remove(tileVector);
 
-                                Game1.createObjectDebris(771, (int)tileVector.X, (int)tileVector.Y);
+
+                                if (Game1.random.NextDouble() < 0.5)
+                                {
+
+                                    Game1.createObjectDebris(771, (int)tileVector.X, (int)tileVector.Y);
+
+                                }
 
                                 destroyVector = true;
 

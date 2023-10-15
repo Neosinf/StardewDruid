@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewDruid.Cast;
 using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
@@ -8,9 +9,9 @@ using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 
-namespace StardewDruid.Cast
+namespace StardewDruid.Event
 {
-    internal class Sword : Cast
+    internal class Sword : StardewDruid.Cast.CastHandle
     {
 
         private int swordIndex;
@@ -28,16 +29,16 @@ namespace StardewDruid.Cast
         public override void CastQuest()
         {
 
-            switch(questData.triggerCast)
+            switch (questData.name)
             {
 
-                case "CastStars":
+                case "swordStars":
 
                     CastStars();
 
                     break;
 
-                case "CastWater":
+                case "swordWater":
 
                     CastWater();
 
@@ -83,9 +84,7 @@ namespace StardewDruid.Cast
 
                     DelayedAction.functionAfterDelay(ThrowEarth, 2000);
 
-                    mod.RemoveTrigger("swordEarth");
-
-                    mod.UpdateQuest("swordEarth", true);
+                    mod.CompleteQuest("swordEarth");
 
                     break;
 
@@ -105,8 +104,8 @@ namespace StardewDruid.Cast
         {
 
             DialogueBox dialogueBox = Game1.activeClickableMenu as DialogueBox;
-            
-            if(dialogueBox != null)
+
+            if (dialogueBox != null)
             {
 
                 dialogueBox.closeDialogue();
@@ -119,27 +118,29 @@ namespace StardewDruid.Cast
 
             int delayThrow = 600;
 
-            ThrowSword(questData.triggerVector + new Vector2(0, -4), delayThrow);
+            Vector2 triggerVector = questData.vectorList["triggerVector"];
+
+            ThrowSword(triggerVector + new Vector2(0, -4), delayThrow);
 
             //----------------------- cast animation
 
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-3, -3));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-3, -4));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-2, -5));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(-1, -6));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(0, -7));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(1, -7));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(2, -7));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(3, -6));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(4, -5));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(5, -4));
-            ModUtility.AnimateGrowth(targetLocation, questData.triggerVector + new Vector2(5, -3));
+            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(-3, -3));
+            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(-3, -4));
+            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(-2, -5));
+            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(-1, -6));
+            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(0, -7));
+            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(1, -7));
+            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(2, -7));
+            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(3, -6));
+            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(4, -5));
+            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(5, -4));
+            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(5, -3));
 
         }
 
         public override void CastWater()
         {
-            
+
             string effigyQuestion = "Voices in the Breaking of the Waves: " +
                 "^The river sings again... smish... the spring is clean... smashh... the farmer is friend to the water";
 
@@ -169,9 +170,7 @@ namespace StardewDruid.Cast
 
                     DelayedAction.functionAfterDelay(ThrowWater, 2000);
 
-                    mod.RemoveTrigger("swordWater");
-
-                    mod.UpdateQuest("swordWater", true);
+                    mod.CompleteQuest("swordWater");
 
                     break;
 
@@ -220,8 +219,9 @@ namespace StardewDruid.Cast
         {
 
             string effigyQuestion = "Voices in the Roiling Flames: " +
-                "^???? It's the farmer. The shadow slayer. The unburnt." +
-                "^Will it walk under the light. Will it walk over the fire.";
+                "Farmer. Shadow slayer. Unburnt one." +
+                "^Will you walk under the light?" +
+                "^Will you walk over the fire?";
 
             List<Response> effigyChoices = new()
             {
@@ -247,9 +247,7 @@ namespace StardewDruid.Cast
 
                     DelayedAction.functionAfterDelay(ThrowStars, 2000);
 
-                    mod.RemoveTrigger("swordStars");
-
-                    mod.UpdateQuest("swordStars", true);
+                    mod.CompleteQuest("swordStars");
 
                     break;
 
@@ -291,9 +289,9 @@ namespace StardewDruid.Cast
 
             ModUtility.AnimateMeteor(targetLocation, originVector, true);
 
-            mod.RemoveTrigger("swordStars");
+            //mod.RemoveTrigger("swordStars");
 
-            mod.UpdateQuest("swordStars", true);
+            //mod.UpdateQuest("swordStars", true);
 
         }
 
@@ -311,11 +309,11 @@ namespace StardewDruid.Cast
 
             int swordOffset = swordIndex % 8;
 
-            int swordRow = (swordIndex-swordOffset) / 8;
+            int swordRow = (swordIndex - swordOffset) / 8;
 
-            Rectangle swordRectangle = new(swordOffset*16, swordRow*16, 16, 16);
+            Rectangle swordRectangle = new(swordOffset * 16, swordRow * 16, 16, 16);
 
-            Vector2 targetPosition = new(originVector.X * 64, (originVector.Y * 64) - 96);
+            Vector2 targetPosition = new(originVector.X * 64, originVector.Y * 64 - 96);
 
             Vector2 playerPosition = targetPlayer.Position;
 
@@ -325,9 +323,9 @@ namespace StardewDruid.Cast
 
             float compensate = 0.555f;
 
-            float motionY = ((playerPosition.Y - targetPosition.Y) / 1000) - compensate;
+            float motionY = (playerPosition.Y - targetPosition.Y) / 1000 - compensate;
 
-            float animationSort = (originVector.X * 1000) + originVector.Y + 20;
+            float animationSort = originVector.X * 1000 + originVector.Y + 20;
 
             TemporaryAnimatedSprite throwAnimation = new("TileSheets\\weapons", swordRectangle, animationInterval, 1, 0, targetPosition, flicker: false, flipped: false, animationSort, 0f, Color.White, 4f, 0f, 0f, 0.2f)
             {
@@ -350,7 +348,7 @@ namespace StardewDruid.Cast
 
         public void CatchSword(int EndBehaviour)
         {
-            
+
             Item targetSword = new MeleeWeapon(swordIndex);
 
             targetPlayer.addItemByMenuIfNecessaryElseHoldUp(targetSword);

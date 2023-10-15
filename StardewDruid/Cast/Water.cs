@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewDruid.Map;
 using StardewValley;
 using StardewValley.Tools;
 using System;
@@ -6,13 +7,14 @@ using System.Collections.Generic;
 using xTile.Dimensions;
 using xTile.Layers;
 using xTile.Tiles;
+using static StardewValley.Minigames.MineCart.Whale;
 
 namespace StardewDruid.Cast
 {
-    internal class Water : Cast
+    internal class Water : CastHandle
     {
 
-        public TemporaryAnimatedSprite portalAnimation;
+        //public TemporaryAnimatedSprite portalAnimation;
 
         public int fishCounter;
 
@@ -25,7 +27,7 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
             
-            if (mod.ForgotEffect("forgetFish"))
+            if (!riteData.castToggle.ContainsKey("forgetFish"))
             {
 
                 return;
@@ -44,14 +46,18 @@ namespace StardewDruid.Cast
             if(probability >= 8)
             {
 
-                if (riteData.spawnIndex["critter"] && !mod.ForgotEffect("forgetCritters"))
+                if (riteData.spawnIndex["critter"] && !riteData.castToggle.ContainsKey("forgetCritters"))
                 {
 
                     Portal critterPortal = new(mod, targetPlayer.getTileLocation(), riteData);
 
                     critterPortal.spawnFrequency = 1;
 
-                    critterPortal.specialType = 5;
+                    critterPortal.spawnIndex = new()
+                    {
+                        0,3,99,
+
+                    };
 
                     critterPortal.baseType = "terrain";
 
@@ -61,56 +67,24 @@ namespace StardewDruid.Cast
 
                     critterPortal.CastTrigger();
 
+                    if (critterPortal.spawnQueue.Count > 0)
+                    {
+
+                        if (!riteData.castTask.ContainsKey("masterCreature"))
+                        {
+
+                            mod.UpdateTask("lessonCreature", 1);
+
+                        }
+
+                    }
                 }
 
                 return;
 
             }
 
-            Dictionary<int, int> objectIndexes;
-
-            if (targetPlayer.currentLocation.Name.Contains("Beach"))
-            {
-
-                objectIndexes = new Dictionary<int, int>()
-                {
-
-                    //[0] = 152, // seaweed
-                    //[1] = 152, // seaweed
-                    //[2] = 152, // seaweed
-                    [0] = 131, // sardine
-                    [1] = 147, // herring
-                    [2] = 129, // anchovy
-                    [3] = 701, // tilapia
-                    [4] = 131, // sardine
-                    [5] = 147, // herring
-                    [6] = 129, // anchovy
-                    [7] = 150, // red snapper
-
-                };
-
-            }
-            else
-            {
-
-                objectIndexes = new Dictionary<int, int>()
-                {
-
-                    //[0] = 153, // algae
-                    //[1] = 153, // algae
-                    //[2] = 153, // algae
-                    [0] = 145, // carp
-                    [1] = 137, // smallmouth bass
-                    [2] = 142,  // sunfish
-                    [3] = 141, // perch
-                    [4] = 145, // carp
-                    [5] = 137, // smallmouth bass
-                    [6] = 142,  // sunfish
-                    [7] = 132  // bream
-                    
-                };
-
-            }
+            int randomFish = SpawnData.RandomLowFish(targetLocation);
 
             int objectQuality = 0;
 
@@ -147,7 +121,7 @@ namespace StardewDruid.Cast
 
             //}
 
-            StardewDruid.Cast.Throw throwObject = new(objectIndexes[probability], objectQuality);
+            StardewDruid.Cast.Throw throwObject = new(randomFish, objectQuality);
 
             throwObject.ThrowObject(targetPlayer, targetVector);
 
@@ -171,7 +145,7 @@ namespace StardewDruid.Cast
 
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 300;
 
-            portalAnimation = ModUtility.AnimateFishSpot(targetLocation, targetVector);
+            //portalAnimation = ModUtility.AnimateFishSpot(targetLocation, targetVector);
 
             castLimit = true;
 
@@ -179,7 +153,10 @@ namespace StardewDruid.Cast
 
             castActive = true;
 
-            ModUtility.AnimateRipple(targetLocation, targetVector);
+            ModUtility.AnimateBolt(targetLocation, targetVector);
+
+            //ModUtility.AnimateRipple(targetLocation, targetVector);
+            Utility.addSprinklesToLocation(targetLocation, (int)targetVector.X, (int)targetVector.Y, 3, 3, 999, 333, Color.White);
 
             return;
 
@@ -209,7 +186,7 @@ namespace StardewDruid.Cast
         public override void CastRemove()
         {
 
-            targetLocation.temporarySprites.Remove(portalAnimation);
+            //targetLocation.temporarySprites.Remove(portalAnimation);
 
         }
         
@@ -223,40 +200,18 @@ namespace StardewDruid.Cast
 
             };
 
+            fishCounter--;
+
+            if (fishCounter <= 0) {
+
+                ModUtility.AnimateFishJump(targetLocation, targetVector);
+
+                fishCounter = 5;
+
+            }
+
             if (Game1.player.CurrentTool.GetType().Name != "FishingRod")
             {
-                fishCounter++;
-
-                if (fishCounter >= 10) {
-
-                    int fishIndex;
-
-                    switch (targetPlayer.currentLocation.Name)
-                    {
-
-                        case "Beach":
-                            fishIndex = 836;  // stingray
-                            break;
-
-                        case "Woods":
-                        case "Desert":
-
-                            fishIndex = 161; // ice pip
-                            break;
-
-                        default: // default
-
-                            fishIndex = 699; // tiger trout
-                            break;
-
-                    }
-
-                    ModUtility.AnimateFishJump(targetLocation, targetVector, fishIndex);
-
-                    fishCounter = 0;
-
-                }
-                
                 return;
 
             }
@@ -289,7 +244,7 @@ namespace StardewDruid.Cast
 
             Vector2 bobberPosition = fishingRod.bobber;
 
-            Microsoft.Xna.Framework.Rectangle splashRectangle = new((int)portalPosition.X - 32, (int)portalPosition.Y - 32, 128, 128);
+            Microsoft.Xna.Framework.Rectangle splashRectangle = new((int)portalPosition.X - 56, (int)portalPosition.Y - 56, 176, 176);
 
             Microsoft.Xna.Framework.Rectangle bobberRectangle = new((int)bobberPosition.X, (int)bobberPosition.Y, 64, 64);
 
@@ -303,63 +258,22 @@ namespace StardewDruid.Cast
                 fishingRod.timeUntilFishingNibbleDone = FishingRod.maxTimeToNibble;
                 fishingRod.hit = true;
 
-                Dictionary<int, int> objectIndexes;
+                bool enableRare = false;
 
-                //Random randomIndex = new();
-
-                switch (Game1.currentLocation.Name)
+                if(!riteData.castTask.ContainsKey("masterFishspot"))
                 {
 
-                    case "Beach":
-                    //case "IslandSouth":
-                    //case "IslandSouthEast":
-                    //case "IslandWest":
+                    mod.UpdateTask("lessonFishspot", 1);
 
-                        objectIndexes = new()
-                        {
-                            [0] = 148, // eel
-                            [1] = 149, // squid
-                            [2] = 151, // octopus
-                            [3] = 155, // super cucumber
-                            [4] = 128, // puff ball
-                            [5] = 836  // stingray
-                        };
+                }
+                else
+                {
 
-                        break;
-
-                    case "Woods":
-                    case "Desert":
-
-                        objectIndexes = new()
-                        {
-                            [0] = 161, // ice pip
-                            [1] = 734, // wood skip
-                            [2] = 164, // sand fish
-                            [3] = 165, // scorpion carp
-                            [4] = 162, // lava eel
-                            [5] = 156, // ghost fish
-                        };
-
-                        break;
-
-                    default: // default
-
-                        objectIndexes = new()
-                        {
-                            [0] = 143, // cat fish
-                            [1] = 698, // sturgeon
-                            [2] = 140, // walleye
-                            [3] = 699, // tiger trout
-                            [4] = 158, // stone fish
-                            [5] = 269, // midnight carp
-
-                        };
-
-                        break;
+                    enableRare = true;
 
                 }
 
-                int objectIndex = objectIndexes[randomIndex.Next(objectIndexes.Count)];
+                int objectIndex = SpawnData.RandomHighFish(targetLocation, enableRare);
 
                 int animationRow = 10;
 

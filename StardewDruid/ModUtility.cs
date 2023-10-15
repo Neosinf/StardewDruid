@@ -19,6 +19,8 @@ using StardewValley.Monsters;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Map;
 using System.Reflection.Emit;
+using System.ComponentModel.DataAnnotations;
+using StardewValley.Characters;
 
 namespace StardewDruid
 {
@@ -218,12 +220,12 @@ namespace StardewDruid
         public static void AnimateStarsCast(Vector2 activeVector, int chargeLevel, int cycleLevel)
         {
 
-            if (chargeLevel == 2)
-            {
+            //if (chargeLevel == 2)
+            //{
 
-                Game1.currentLocation.playSound("Meteorite");
+            //    Game1.currentLocation.playSound("Meteorite");
 
-            }
+            //}
 
         }
 
@@ -303,7 +305,7 @@ namespace StardewDruid
 
         }
 
-        public static void AnimateCastRadius(GameLocation targetLocation, Vector2 targetVector, Color animationColor, int delayInterval)
+        public static void AnimateCastRadius(GameLocation targetLocation, Vector2 targetVector, Color animationColor, int delayInterval = 0, int animationLoops = 1, float animationStrength = 0.75f)
         {
 
             int animationRow = 11;
@@ -314,13 +316,20 @@ namespace StardewDruid
 
             int animationLength = 8;
 
-            int animationLoops = 1;
+            Vector2 animationPosition;
 
-            Vector2 animationPosition = new(targetVector.X * 64 + 8, targetVector.Y * 64 + 8);
+            if (animationStrength == 0.75f)
+            {
+                animationPosition = new(targetVector.X * 64 + 8, targetVector.Y * 64 + 8);
+            }
+            else
+            {
+                animationPosition = new(targetVector.X * 64 + (32 - (animationStrength * 32f)), targetVector.Y * 64 + (32 - (animationStrength * 32f)));
+            }
 
             float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString());
 
-            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, animationColor, 0.75f, 0f, 0f, 0f)
+            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, animationColor, animationStrength, 0f, 0f, 0f)
             {
                 delayBeforeAnimationStart = 333 * delayInterval,
             };
@@ -358,41 +367,61 @@ namespace StardewDruid
 
         }
 
-        public static void AnimateBolt(GameLocation targetLocation, Vector2 targetVector)
+        public static void AnimateBolt(GameLocation targetLocation, Vector2 targetVector, bool playSound = true)
         {
 
-            Game1.currentLocation.playSoundPitched("flameSpellHit",800);
+            if(playSound)
+            {
 
-            Vector2 targetPosition = new(targetVector.X * 64, (targetVector.Y * 64) - 200);
+                Game1.currentLocation.playSoundPitched("flameSpellHit", 800);
 
-            // -------------------------
+            }
 
-            TemporaryAnimatedSprite boltCloud = new("TileSheets\\animations", new(128, 5 * 64, 64, 64), 200f, 4, 1, new Vector2(targetPosition.X+8,targetPosition.Y-24), flicker: false, false, (targetPosition.Y + 32f) / 10000f + 0.001f, 0.025f, new Color(0.6f,0.6f,1f,1), 0.875f, 0f, 0f, 0f);
+            Vector2 targetPosition = new(targetVector.X * 64, (targetVector.Y * 64) - 256);
+
+            // ------------------------- cloud
+
+            TemporaryAnimatedSprite boltCloud = new("TileSheets\\animations", new(128, 5 * 64, 64, 64), 250f, 4, 1, new Vector2(targetPosition.X+8,targetPosition.Y), flicker: false, false, (targetPosition.Y + 32f) / 10000f + 0.001f, 0.01f, new Color(0.6f,0.6f,1f,1), 0.875f, 0f, 0f, 0f);
 
             targetLocation.temporarySprites.Add(boltCloud);
 
-            // -------------------------
+            // ------------------------- glow
 
-            //targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(362, 75f, 6, 1, targetPosition, flicker: false, flipped: false));
+            targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(362, 75f, 6, 1, targetPosition, flicker: false, flipped: false));
 
             Microsoft.Xna.Framework.Rectangle sourceRect = new(644, 1078, 37, 57);
 
             TemporaryAnimatedSprite boltAnimation;
 
-            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 9999f, 1, 750, targetPosition + new Vector2(0, sourceRect.Height/2), flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.003f, 0.025f, new Color(0.8f, 0.8f, 1f, 1), 2f, 0f, 0f, 0f)
+            // ------------------------- first bolt
+
+            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 1000f, 1, 1, targetPosition + new Vector2(0, 28.5f), flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.003f, 0.015f, new Color(0.6f, 0.6f, 1f, 1), 2f, 0f, 0f, 0f)
             {
                 light = true,
                 lightRadius = 2f,
-                lightcolor = Microsoft.Xna.Framework.Color.Black
+                lightcolor = Color.Black
             };
 
             targetLocation.temporarySprites.Add(boltAnimation);
 
-            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 9999f, 1, 750, targetPosition + new Vector2(0, sourceRect.Height), flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.002f, 0.025f, Microsoft.Xna.Framework.Color.White, 2f, 0f, 0f, 0f)
+            // ------------------------- second bolt
+
+            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 1000f, 1, 1, targetPosition + new Vector2(0, 57f), flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.003f, 0.01f, new Color(0.8f, 0.8f, 1f, 1), 2f, 0f, 0f, 0f)
             {
                 light = true,
                 lightRadius = 2f,
-                lightcolor = Microsoft.Xna.Framework.Color.Black
+                lightcolor = Color.Black
+            };
+
+            targetLocation.temporarySprites.Add(boltAnimation);
+
+            // ------------------------- third bolt
+
+            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 1000f, 1, 1, targetPosition + new Vector2(0, 85.5f), flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.002f, 0.005f, Color.White, 2f, 0f, 0f, 0f)
+            {
+                light = true,
+                lightRadius = 2f,
+                lightcolor = Color.Black
             };
 
             targetLocation.temporarySprites.Add(boltAnimation);
@@ -401,7 +430,7 @@ namespace StardewDruid
 
         }
 
-        public static TemporaryAnimatedSprite AnimateFishSpot(GameLocation targetLocation, Vector2 targetVector)
+        /*public static TemporaryAnimatedSprite AnimateFishSpot(GameLocation targetLocation, Vector2 targetVector)
         {
 
             Microsoft.Xna.Framework.Color animationColor = new(0.6f, 1, 0.6f, 1); // light green
@@ -418,26 +447,100 @@ namespace StardewDruid
 
             return portalAnimation;
 
-        }
+        }*/
 
-        public static void AnimateFishJump(GameLocation targetLocation, Vector2 targetVector,int fishIndex)
+        public static void AnimateFishJump(GameLocation targetLocation, Vector2 targetVector)
         {
-            targetLocation.playSound("pullItemFromWater");
+            
+            int fishIndex = SpawnData.RandomJumpFish(targetLocation);
+
+            //if(!(Game1.viewport.X <= (targetVector.X*64)) || !(Game1.viewport.Y <= (targetVector.Y*64)))
+            if (!Utility.isOnScreen(targetVector* 64, 128))
+            {
+
+                return;    
+            
+            }
+
+            targetLocation.playSound("pullItemFromWater"); 
+            
+            DelayedAction.functionAfterDelay(QuickSlosh, 900);
+
+            Vector2 fishPosition;
+
+            Vector2 sloshPosition;
+
+            Vector2 splashPosition;
+
+            Vector2 sloshMotion;
+
+            Vector2 sloshAcceleration;
+
+            bool fishFlip;
+
+            float fishRotate;
+
+            bool sloshFlip;
+
+            switch (Game1.random.Next(2) == 0)
+            {
+
+                case true:
+                    
+                    fishPosition = new((targetVector.X * 64) - 64, (targetVector.Y * 64) - 8);
+                    
+                    sloshPosition = new((targetVector.X * 64) + 100, targetVector.Y * 64);
+
+                    splashPosition = new((targetVector.X * 64) - 128, (targetVector.Y * 64) - 40);
+
+                    sloshMotion = new(0.160f, -0.5f);
+
+                    sloshAcceleration = new(0f, 0.001f);
+
+                    fishFlip = false;
+
+                    fishRotate = 0.03f;
+
+                    sloshFlip = true;
+
+                    break;
+
+                default:
+
+                    fishPosition = new((targetVector.X * 64) + 64, (targetVector.Y * 64) - 8);
+
+                    sloshPosition = new((targetVector.X * 64) - 128, targetVector.Y * 64);
+
+                    splashPosition = new((targetVector.X * 64) + 100, (targetVector.Y * 64) - 40);
+
+                    sloshMotion = new(-0.160f, -0.5f);
+
+                    sloshAcceleration = new(0f, 0.001f);
+
+                    fishFlip = true;
+
+                    fishRotate = -0.03f;
+
+                    sloshFlip = false;
+
+                    break;
+
+
+            }
+
 
             Microsoft.Xna.Framework.Rectangle targetRectangle = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, fishIndex, 16, 16);
-
-            Vector2 targetPosition = new((targetVector.X * 64)-64,(targetVector.Y * 64)-8);
 
             float animationInterval = 1050f;
 
             float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "33");
 
-            TemporaryAnimatedSprite fishAnimation = new("Maps\\springobjects", targetRectangle, animationInterval, 1, 0, targetPosition, flicker: false, flipped: false, animationSort, 0f, Color.White, 3f, 0f, 0f, 0.03f)
+            TemporaryAnimatedSprite fishAnimation = new("Maps\\springobjects", targetRectangle, animationInterval, 1, 0, fishPosition, flicker: false, flipped: fishFlip, animationSort, 0f, Color.White, 3f, 0f, 0f, fishRotate)
             {
 
-                motion = new Vector2(0.160f, -0.5f),
+                motion = sloshMotion,
 
-                acceleration = new Vector2(0f, 0.001f),
+                acceleration = sloshAcceleration,
 
                 timeBasedMotion = true,
 
@@ -459,17 +562,13 @@ namespace StardewDruid
 
             Microsoft.Xna.Framework.Color animationColor = Microsoft.Xna.Framework.Color.White;
 
-            Vector2 splashPosition = new((targetVector.X * 64) - 128, (targetVector.Y * 64) - 40);
-
             animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "44");
 
-            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, splashPosition, false, true, animationSort, 0f, animationColor, 0.75f, 0f, 0.1f, 0f);
+            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, splashPosition, false, sloshFlip, animationSort, 0f, animationColor, 0.75f, 0f, 0.1f, 0f);
 
             targetLocation.temporarySprites.Add(newAnimation);
 
             // ------------------------------------
-
-            Vector2 sloshPosition = new((targetVector.X * 64) + 100, targetVector.Y * 64);
 
             //animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "55");
 
@@ -482,8 +581,6 @@ namespace StardewDruid
 
             targetLocation.temporarySprites.Add(sloshAnimation);
 
-            DelayedAction.functionAfterDelay(QuickSlosh, 900);
-
         }
 
         public static void QuickSlosh()
@@ -492,9 +589,9 @@ namespace StardewDruid
 
         }
 
-        public static void AnimateRipple(GameLocation targetLocation, Vector2 targetVector) //DruidCastSplosh
+        /*public static void AnimateRipple(GameLocation targetLocation, Vector2 targetVector) //DruidCastSplosh
         {
-
+            
             Game1.playSound("yoba");
 
             int animationRow = 0;
@@ -507,13 +604,47 @@ namespace StardewDruid
 
             int animationLoops = 1;
 
-            Vector2 animationPosition = new((targetVector.X * 64) - 16, (targetVector.Y * 64) - 16);
+            Vector2 animationPosition = new((targetVector.X * 64), (targetVector.Y * 64));
 
             float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "11");
 
-            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, Microsoft.Xna.Framework.Color.White, 1.5f, 0f, 0f, 0f);
+            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, Microsoft.Xna.Framework.Color.White, 1f, 0f, 0f, 0f);
 
             targetLocation.temporarySprites.Add(newAnimation);
+
+        }*/
+
+        public static void AnimateMeteorZone(GameLocation targetLocation, Vector2 targetVector, Color animationcolor, int meteorRange = 4, int animationLoops = 1, float animationStrength = 0.75f)
+        {
+
+            // --------------------------- splash animation
+
+            int animationRow = 0;
+
+            Microsoft.Xna.Framework.Rectangle animationRectangle = new(0, animationRow * 64, 64, 64);
+
+            float animationInterval = 75f;
+
+            int animationLength = 8;
+
+            Vector2 animationPosition = new((targetVector.X * 64), (targetVector.Y * 64));
+
+            float animationSort = (targetVector.X * 1000) + targetVector.Y;
+
+            TemporaryAnimatedSprite newAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, false, false, animationSort, 0f, Color.Red, 1f, 0f, 0f, 0f);
+
+            targetLocation.temporarySprites.Add(newAnimation);
+
+            // --------------------------- splash radius
+
+            List<Vector2> meteorZones = GetTilesWithinRadius(targetLocation, targetVector, meteorRange);
+
+            foreach(Vector2 meteorZone in meteorZones)
+            {
+
+                AnimateCastRadius(targetLocation, meteorZone, animationcolor, 0, animationLoops, animationStrength);
+
+            }
 
         }
 
@@ -567,40 +698,38 @@ namespace StardewDruid
             };
 
             targetLocation.temporarySprites.Add(meteorAnimation);
-  
+
+            Game1.currentLocation.playSound("fireball");
+
         }
 
         public static bool WaterCheck(GameLocation targetLocation, Vector2 targetVector)
         {
-            bool check = false;
+            bool check = true;
 
             Layer backLayer = targetLocation.Map.GetLayer("Back");
 
-            Tile backTile = backLayer.PickTile(new Location((int)targetVector.X * 64, (int)targetVector.Y * 64), Game1.viewport.Size);
+            Tile backTile;
 
-            if (backTile != null)
+            for (int i = 0; i < 4; i++)
             {
 
-                if (backTile.TileIndexProperties.TryGetValue("Water", out _)) {
+                List<Vector2> neighbours = GetTilesWithinRadius(targetLocation, targetVector, i);
 
-                    check = true;
-                }
-            }
-
-            List<Vector2> neighbours = GetTilesWithinRadius(targetLocation, targetVector, 1);
-
-            foreach(Vector2 neighbour in neighbours)
-            {
-
-                backTile = backLayer.PickTile(new Location((int)neighbour.X * 64, (int)neighbour.Y * 64), Game1.viewport.Size);
-
-                if (backTile != null)
+                foreach (Vector2 neighbour in neighbours)
                 {
 
-                    if (!backTile.TileIndexProperties.TryGetValue("Water", out _))
+                    backTile = backLayer.PickTile(new Location((int)neighbour.X * 64, (int)neighbour.Y * 64), Game1.viewport.Size);
+
+                    if (backTile != null)
                     {
 
-                        check = false;
+                        if (!backTile.TileIndexProperties.TryGetValue("Water", out _))
+                        {
+
+                            check = false;
+                        }
+
                     }
 
                 }
@@ -608,7 +737,6 @@ namespace StardewDruid
             }
 
             return check;
-
 
         }
 
@@ -801,81 +929,155 @@ namespace StardewDruid
 
         }
 
-        public static void UpgradeCrop(StardewValley.TerrainFeatures.HoeDirt hoeDirt, int targetX, int targetY, Farmer targetPlayer, GameLocation targetLocation)
+        public static void UpgradeCrop(StardewValley.TerrainFeatures.HoeDirt hoeDirt, int targetX, int targetY, Farmer targetPlayer, GameLocation targetLocation, bool enableQuality)
         {
 
-            int generateItem;
+            int generateItem = 770;
 
-            int targetSeed = Game1.random.Next(12);
-
-            if (targetSeed >= 6) // 2/3 low grade random seed
+            if (enableQuality)
             {
 
-                generateItem = 770;
+                Dictionary<int, int> objectIndexes = SpawnData.CropList(targetLocation);
 
-            }
-            else
-            {
+                int chance = Game1.random.Next(objectIndexes.Count * 3);
 
-                Dictionary<int, int> objectIndexes;
-
-                switch (Game1.currentSeason)
+                if (objectIndexes.ContainsKey(chance))
                 {
-
-                    case "spring":
-
-                        objectIndexes = new()
-                        {
-                            [0] = 478, // rhubarb
-                            [1] = 476, // garlic
-                            [2] = 433, // coffee
-                            [3] = 745, // strawberry
-                            [4] = 473, // bean
-                            [5] = 477, // kale
-                        };
-
-                        break;
-
-                    case "summer":
-
-                        objectIndexes = new()
-                        {
-                            [0] = 479, // melon
-                            [1] = 485, // red cabbage
-                            [2] = 433, // coffee
-                            [3] = 481, // blueberry
-                            [4] = 302, // hops
-                            [5] = 483, // wheat
-                        };
-
-
-                        break;
-
-                    default: // "fall":
-
-                        objectIndexes = new()
-                        {
-                            [0] = 490, // pumpkin
-                            [1] = 492, // yam
-                            [2] = 299, // amaranth
-                            [3] = 493, // cranberry
-                            [4] = 301, // grape
-                            [5] = 299, // amaranth
-                        };
-
-                        break;
+                    generateItem = objectIndexes[chance];
 
                 }
 
-                generateItem = objectIndexes[targetSeed];
-
             }
-            
+
             hoeDirt.destroyCrop(new Vector2(targetX, targetY), false, targetLocation);
 
             hoeDirt.plant(generateItem, targetX, targetY, targetPlayer,false, targetLocation);
 
             //hoeDirt.crop.updateDrawMath(new Vector2(targetX, targetY));
+
+        }
+
+        public static void GreetVillager(GameLocation location, Farmer player, NPC villager, bool friendShip = false)
+        {
+
+            villager.faceTowardFarmerForPeriod(3000, 4, false, player);
+
+            if (!player.hasPlayerTalkedToNPC(villager.Name))
+            {
+
+                player.friendshipData[villager.Name].TalkedToToday = true;
+
+                if (friendShip)
+                {
+
+                    player.changeFriendship(25, villager);
+
+                }
+
+            }
+
+            int emoteIndex = 8;
+
+            if (player.friendshipData[villager.Name].Points >= 500)
+            {
+
+                emoteIndex = 32;
+
+            }
+
+            if (player.friendshipData[villager.Name].Points >= 1000)
+            {
+
+                emoteIndex = 20;
+
+            }
+
+            villager.doEmote(emoteIndex);
+
+        }
+
+        public static void PetAnimal(Farmer targetPlayer, FarmAnimal targetAnimal)
+        {
+
+            if (targetAnimal.wasPet.Value)
+            {
+
+                return;
+
+            }
+
+            targetAnimal.wasPet.Value = true;
+
+            int num = 7;
+
+            if (targetAnimal.wasAutoPet.Value)
+            {
+
+                targetAnimal.friendshipTowardFarmer.Value = Math.Min(1000, (int)targetAnimal.friendshipTowardFarmer.Value + num);
+
+            }
+            else
+            {
+
+                targetAnimal.friendshipTowardFarmer.Value = Math.Min(1000, (int)targetAnimal.friendshipTowardFarmer.Value + 15);
+
+            }
+
+            if ((targetPlayer.professions.Contains(3) && !targetAnimal.isCoopDweller()) || (targetPlayer.professions.Contains(2) && targetAnimal.isCoopDweller()))
+            {
+
+                targetAnimal.friendshipTowardFarmer.Value = Math.Min(1000, (int)targetAnimal.friendshipTowardFarmer.Value + 15);
+
+                targetAnimal.happiness.Value = (byte)Math.Min(255, (byte)targetAnimal.happiness.Value + Math.Max(5, 40 - (byte)targetAnimal.happinessDrain.Value));
+
+            }
+
+            int num2 = 20;
+
+            if (targetAnimal.wasAutoPet.Value)
+            {
+
+                num2 = 32;
+
+            }
+
+            targetAnimal.doEmote(((int)targetAnimal.moodMessage.Value == 4) ? 12 : num2);
+
+            targetAnimal.happiness.Value = (byte)Math.Min(255, (byte)targetAnimal.happiness.Value + Math.Max(5, 40 - (byte)targetAnimal.happinessDrain.Value));
+
+            targetAnimal.makeSound();
+
+            targetPlayer.gainExperience(0, 5);
+
+        }
+
+        public static void LearnRecipe(Farmer targetPlayer)
+        {
+
+            List<string> recipeList = SpawnData.RecipeList();
+
+            int learnedRecipes = 0;
+
+            foreach (string recipe in recipeList)
+            {
+
+                if (!targetPlayer.cookingRecipes.ContainsKey(recipe))
+                {
+
+                    targetPlayer.cookingRecipes.Add(recipe, 0);
+
+                    learnedRecipes++;
+
+                }
+
+            }
+
+            if (learnedRecipes >= 1)
+            {
+
+                Game1.addHUDMessage(new HUDMessage($"Learned {learnedRecipes} recipes", 2));
+
+            }
 
         }
 

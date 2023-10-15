@@ -7,7 +7,7 @@ using StardewValley.Monsters;
 
 namespace StardewDruid.Cast
 {
-    internal class Tree : Cast
+    internal class Tree : CastHandle
     {
 
         public Tree(Mod mod, Vector2 target, Rite rite)
@@ -33,14 +33,14 @@ namespace StardewDruid.Cast
 
             }
 
-            if (targetLocation.terrainFeatures[targetVector] is not StardewValley.TerrainFeatures.Tree)
+            if (targetLocation.terrainFeatures[targetVector] is not StardewValley.TerrainFeatures.Tree treeFeature)
             {
 
                 return;
 
             }
 
-            StardewValley.TerrainFeatures.Tree treeFeature = targetLocation.terrainFeatures[targetVector] as StardewValley.TerrainFeatures.Tree;
+            //StardewValley.TerrainFeatures.Tree treeFeature = targetLocation.terrainFeatures[targetVector] as StardewValley.TerrainFeatures.Tree;
 
             int debrisType = 388;
 
@@ -92,14 +92,18 @@ namespace StardewDruid.Cast
 
             targetPlayer.gainExperience(2,2); // gain foraging experience
 
-            if(randomIndex.Next(5) == 0 && riteData.spawnIndex["critter"] && !mod.ForgotEffect("forgetCritters"))
+            if(randomIndex.Next(5) == 0 && riteData.spawnIndex["critter"] && !riteData.castToggle.ContainsKey("forgetCritters"))
             {
 
                 Portal critterPortal = new(mod, targetPlayer.getTileLocation(), riteData);
 
                 critterPortal.spawnFrequency = 1;
 
-                critterPortal.specialType = 5;
+                critterPortal.spawnIndex = new()
+                    {       
+                        0,3,99,
+
+                    };
 
                 critterPortal.baseType = "terrain";
 
@@ -109,7 +113,58 @@ namespace StardewDruid.Cast
 
                 critterPortal.CastTrigger();
 
+                if(critterPortal.spawnQueue.Count > 0)
+                {
+
+                    if (!riteData.castTask.ContainsKey("masterCreature"))
+                    {
+
+                        mod.UpdateTask("lessonCreature", 1);
+
+                    }
+
+                }
+
             }
+
+        }
+
+        public override void CastWater()
+        {
+            if (!targetLocation.terrainFeatures.ContainsKey(targetVector))
+            {
+                return;
+            }
+
+            if (targetLocation.terrainFeatures[targetVector] is not StardewValley.TerrainFeatures.Tree treeFeature)
+            {
+                return;
+            }
+
+            Dictionary<int, int> resinIndex = new()
+            {
+                [1] = 725, // Oak
+                [2] = 724, // Maple
+                [3] = 726, // Pine
+                [6] = 247, // Palm
+                [7] = 422, // Purple Mushroom // Mushroom
+                [8] = 419, // Vinegar // Mahogany
+                [9] = 247, // Palm
+            };
+
+            treeFeature.health.Value = 1;
+
+            treeFeature.performToolAction(riteData.castAxe,0,targetVector, targetLocation);
+
+            if (randomIndex.Next(4) == 0 && resinIndex.ContainsKey(treeFeature.treeType.Value))
+            {
+                StardewDruid.Cast.Throw throwObject = new(resinIndex[treeFeature.treeType.Value],0);
+
+                throwObject.ThrowObject(targetPlayer, targetVector);
+
+            }
+
+            targetLocation.terrainFeatures.Remove(targetVector);
 
         }
 

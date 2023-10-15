@@ -6,7 +6,7 @@ using System;
 
 namespace StardewDruid.Cast
 {
-    internal class Sapling : Cast
+    internal class Sapling : CastHandle
     {
 
         public Sapling(Mod mod, Vector2 target, Rite rite)

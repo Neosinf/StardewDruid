@@ -52,26 +52,40 @@ Rite Buttons "riteButtons" is a list of keybinds set to MouseX1, MouseX2 and Lef
 - Keybinds can be changed in mod configuration after installing
 
 -----------------------------------------
-
 Cast Buffs "castBuffs"
 
 The castbuffs ease cast-running, when you cast continuously while running through the map, with three specialised effects
-
-- Enables automatic consumption of salmonberries, sashimi and cheese from top of inventory when casting with critically low stamina. The items can be of any
-  quality but must be in the first/top/upper section of your inventory toolbar - cast without stopping!
-
-- Enables magnetic buff of radius +3 tiles for 6 seconds when Rite of Earth is cast to ease pick up of debris at the outer range of the rite
-
-- Enables speed buff of +2 for 6 seconds when Rite of Earth is cast while the farmer sprite is on a Grass tile - move through grass with ease!
+- Enables magnetic buff of radius +3 tiles for 6 seconds during an cast to ease pick up of debris at the outer range of the rite
+- Enables speed buff of +2 for 6 seconds during cast while the farmer sprite is on a Grass tile - move through grass with ease!
 
 -----------------------------------------
+Consume Roughage, Consume Lunch
 
+When enabled allows automatic consumption of listed items from the inventory when attempting to cast Rites with critically low stamina
+
+Roughage: "consumeRoughage"
+Autoconsume usually inedible but often inventory-crowding items: Sap, all TreeSeeds, Slime, Batwings, Red Mushrooms.
+
+Lunch: "consumeQuickSnack"
+Autoconsume common sustenance items: Joja Cola, SpringOnion, Snackbar, Mushrooms, Algae, Seaweed, CaveCarrots, Sashimi, Salmonberry, Cheese.
+
+-----------------------------------------
 Master Start "masterStart"
 
-- Unlocks all levels of all Rites at start of playthrough, and sets the default rite to Earth.
+Unlocks all levels of all Rites at start of playthrough, and sets the default rite to Earth.
+The default is false as we recommend you play Stardew Druid on a new save at Day 1, Spring, Year 1, with a new ability unlocked at the Effigy each day via lessons and quests
 
-- Default false as recommended to play Stardew Druid on a new save at Day 1, Spring, Year 1, 
-  with a new ability unlocked at the Effigy each day via lessons and quests
+-----------------------------------------
+Maximum Damage "maximumDamage"
+
+Some spell effects have damage modifiers that consider player combat level, highest upgrade on Pickaxe, Axe, and applied enchantments.
+Enable to cast at max damage and effect everytime, as was the case in versions up to 1.1.3
+
+-----------------------------------------
+Unrestricted Stars "unrestrictedStars"
+
+Enable to disable the cast buffer on Rite of Stars, so that it casts every button press instead of with reasonable delay.
+This was an unintended behaviour of the rite in versions up to 1.1.3
 
 -----------------------------------------
 
@@ -101,7 +115,7 @@ Water:
 1. Strike warp shrines once a day to extract totems, and boulders and stumps to extract resources.
 2. Strike scarecrows, campfires and lightning rods to activate special functions. Villager firepits will work too..
 3. Strike deep water to produce a fishing-spot that yields rare species of fish.
-4. Expend high amounts of stamina to instantly destroy enemies.
+4. Expend high amounts of stamina to smite your enemies.
 5. Strike candle torches to create monster portals. Only works in remote outdoor locations.
 
 Stars:

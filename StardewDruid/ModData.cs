@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 namespace StardewDruid
 {
 
-    class ModData
+    public class ModData
     {
 
         public StardewModdingAPI.Utilities.KeybindList riteButtons { get; set; }
@@ -23,11 +23,17 @@ namespace StardewDruid
 
         public bool consumeQuicksnack { get; set; }
 
+        public int setProgress { get; set; }
+
         public bool masterStart { get; set; }
 
         public bool maxDamage { get; set; }
 
         public bool unrestrictedStars { get; set; }
+
+        public Dictionary<int, string> weaponAttunement { get; set; }
+
+        public bool checkQuests { get; set; }
 
         public int farmCaveStatueX { get; set; }
 
@@ -46,26 +52,20 @@ namespace StardewDruid
 
             riteButtons = KeybindList.Parse("MouseX1,MouseX2,LeftShoulder");
 
-            questList = new()
-            {
-                ["approachEffigy"] = false,
-                ["swordEarth"] = false,
-                ["challengeEarth"] = false,
-                ["swordWater"] = false,
-                ["challengeWater"] = false,
-                ["swordStars"] = false,
-                ["challengeStars"] = false,
+            questList = new();
 
-            };
+            blessingList = new();
 
-            blessingList = new()
+            /*blessingList = new()
             {
                 ["earth"] = 5,
                 ["water"] = 5,
                 ["stars"] = 1,
                 ["levelPickaxe"] = 5,
                 ["levelAxe"] = 5,
-            };
+            };*/
+
+            setProgress = -1;
 
             castBuffs = true;
 
@@ -78,6 +78,13 @@ namespace StardewDruid
             maxDamage = false;
 
             unrestrictedStars = false;
+
+            weaponAttunement = new()
+            {
+                [15] = "earth",
+                [14] = "water",
+                [9] = "stars",
+            };
 
             farmCaveActionX = 6;
 
