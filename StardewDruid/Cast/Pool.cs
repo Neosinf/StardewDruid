@@ -20,60 +20,18 @@ namespace StardewDruid.Cast
 
         public override void CastEarth()
         {
-           
-            if (riteData.castToggle.ContainsKey("forgetFish"))
+
+            if (randomIndex.Next(5) == 0 && riteData.spawnIndex["critter"] && !riteData.castToggle.ContainsKey("forgetCritters"))
             {
 
-                return;
+                int spawnMonster = mod.SpawnMonster(targetLocation, targetVector, new() { 0, }, "water");
 
-            }
-
-            int probability = randomIndex.Next(40);
-
-            if (probability >= 10)
-            {
-                return;
-            }
-
-            if (probability >= 8)
-            {
-
-                if (riteData.spawnIndex["critter"] && !riteData.castToggle.ContainsKey("forgetCritters"))
+                if (!riteData.castTask.ContainsKey("masterCreature") && spawnMonster >= 1)
                 {
 
-                    Portal critterPortal = new(mod, targetPlayer.getTileLocation(), riteData);
-
-                    critterPortal.spawnFrequency = 1;
-
-                    critterPortal.spawnIndex = new()
-                    {
-                        0,3,99,
-
-                    };
-
-                    critterPortal.baseType = "terrain";
-
-                    critterPortal.baseVector = targetVector;
-
-                    critterPortal.baseTarget = true;
-
-                    critterPortal.CastTrigger();
-
-                    if (critterPortal.spawnQueue.Count > 0)
-                    {
-
-                        if (!riteData.castTask.ContainsKey("masterCreature"))
-                        {
-
-                            mod.UpdateTask("lessonCreature", 1);
-
-                        }
-
-                    }
+                    mod.UpdateTask("lessonCreature", 1);
 
                 }
-
-                return;
 
             }
 
@@ -93,7 +51,6 @@ namespace StardewDruid.Cast
                     [5] = 715, // lobster
                     [6] = 720, // shrimp
                     [7] = 719, // mussel
-
                 };
 
             }
@@ -116,6 +73,10 @@ namespace StardewDruid.Cast
 
             }
 
+            int probability = randomIndex.Next(objectIndexes.Count);
+
+            int objectIndex = objectIndexes[probability];
+
             int objectQuality = 0;
 
             int experienceGain;
@@ -133,7 +94,7 @@ namespace StardewDruid.Cast
 
             }
 
-            StardewDruid.Cast.Throw throwObject = new(objectIndexes[probability], objectQuality);
+            StardewDruid.Cast.Throw throwObject = new(objectIndex, objectQuality);
 
             throwObject.ThrowObject(targetPlayer, targetVector);
 
@@ -144,8 +105,6 @@ namespace StardewDruid.Cast
             targetPlayer.gainExperience(1, experienceGain); // gain fishing experience
 
             castFire = true;
-
-            castLimit = true;
 
             bool targetDirection = (targetPlayer.getTileLocation().X <= targetVector.X);
 

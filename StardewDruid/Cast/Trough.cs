@@ -19,6 +19,10 @@ namespace StardewDruid.Cast
 
         public override void CastEarth()
         {
+            if (targetLocation.objects.ContainsKey(targetVector))
+            {
+                return;
+            }
 
             targetLocation.objects.Add(targetVector, new StardewValley.Object(178, 1));
 

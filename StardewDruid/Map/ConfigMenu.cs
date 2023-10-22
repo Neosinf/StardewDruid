@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GenericModConfigMenu;
+using StardewModdingAPI;
 using StardewValley.Monsters;
 
 namespace StardewDruid.Map
@@ -58,9 +59,17 @@ namespace StardewDruid.Map
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => "Consume Lunch",
-                tooltip: () => "Enables automatic consumption of common sustenance items: Cola, SpringOnion, Snackbar, Mushrooms, Algae, Seaweed, Carrots, Sashimi, Salmonberry, Cheese; Triggers when casting with critically low stamina.",
+                tooltip: () => "Enables automatic consumption of common sustenance items: SpringOnion, Snackbar, Mushrooms, Algae, Seaweed, Carrots, Sashimi, Salmonberry, Cheese; Triggers when casting with critically low stamina.",
                 getValue: () => Config.consumeQuicksnack,
                 setValue: value => Config.consumeQuicksnack = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: mod.ModManifest,
+                name: () => "Consume Caffeine",
+                tooltip: () => "Enables automatic consumption of caffeinated items: Cola, Coffee Bean, Coffee, Triple Espresso; Triggers when casting with low stamina without an active drink buff.",
+                getValue: () => Config.consumeCaffeine,
+                setValue: value => Config.consumeCaffeine = value
             );
 
             configMenu.AddBoolOption(
@@ -90,6 +99,17 @@ namespace StardewDruid.Map
                 setValue: value => Config.maxDamage = value
             );
 
+            string[] textOption = { "easy", "medium", "hard", };
+
+            configMenu.AddTextOption(
+                mod: mod.ModManifest,
+                name: () => "Monster Difficulty",
+                tooltip: () => "Select difficulty level for mod-spawned monsters.",
+                allowedValues: textOption,
+                getValue: () => Config.combatDifficulty,
+                setValue: value => Config.combatDifficulty = value
+            );
+
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => "Unrestricted Stars",
@@ -97,6 +117,14 @@ namespace StardewDruid.Map
                 getValue: () => Config.unrestrictedStars,
                 setValue: value => Config.unrestrictedStars = value
             );
+
+            /*configMenu.AddBoolOption(
+                mod: mod.ModManifest,
+                name: () => "Monster Hats",
+                tooltip: () => "Adds hats to some monsters. If that's your thing.",
+                getValue: () => Config.monsterHats,
+                setValue: value => Config.monsterHats = value
+            );*/
 
             configMenu.AddNumberOption(
                 mod: mod.ModManifest,

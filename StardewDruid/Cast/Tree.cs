@@ -40,6 +40,20 @@ namespace StardewDruid.Cast
 
             }
 
+            if (randomIndex.Next(30) == 0 && riteData.spawnIndex["critter"] && !riteData.castToggle.ContainsKey("forgetCritters"))
+            {
+
+                int spawnMonster = mod.SpawnMonster(targetLocation, targetVector, new() { 99, }, "tree");
+
+                if (!riteData.castTask.ContainsKey("masterCreature") && spawnMonster >= 1)
+                {
+
+                    mod.UpdateTask("lessonCreature", 1);
+
+                }
+
+            }
+
             //StardewValley.TerrainFeatures.Tree treeFeature = targetLocation.terrainFeatures[targetVector] as StardewValley.TerrainFeatures.Tree;
 
             int debrisType = 388;
@@ -76,10 +90,16 @@ namespace StardewDruid.Cast
 
             }
 
+            Dictionary<int, Throw> throwList = new();
+
             for (int i = 0; i < randomIndex.Next(1, Math.Min(debrisMax, debrisAxe)); i++)
             {
 
-                Game1.createObjectDebris(debrisType, (int)targetVector.X, (int)targetVector.Y + 1);
+                throwList[i] = new(debrisType, 0);
+
+                throwList[i].ThrowObject(targetPlayer, targetVector);
+
+                //Game1.createObjectDebris(, (int)targetVector.X, (int)targetVector.Y + 1);
 
             }
 
@@ -94,40 +114,6 @@ namespace StardewDruid.Cast
 
             targetPlayer.gainExperience(2,2); // gain foraging experience
 
-            if(randomIndex.Next(10) == 0 && riteData.spawnIndex["critter"] && !riteData.castToggle.ContainsKey("forgetCritters"))
-            {
-
-                Portal critterPortal = new(mod, targetPlayer.getTileLocation(), riteData);
-
-                critterPortal.spawnFrequency = 1;
-
-                critterPortal.spawnIndex = new()
-                    {       
-                        0,3,99,
-
-                    };
-
-                critterPortal.baseType = "terrain";
-
-                critterPortal.baseVector = targetVector + new Vector2(0,-3);
-
-                critterPortal.baseTarget = true;
-
-                critterPortal.CastTrigger();
-
-                if(critterPortal.spawnQueue.Count > 0)
-                {
-
-                    if (!riteData.castTask.ContainsKey("masterCreature"))
-                    {
-
-                        mod.UpdateTask("lessonCreature", 1);
-
-                    }
-
-                }
-
-            }
 
         }
 

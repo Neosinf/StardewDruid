@@ -11,20 +11,29 @@ namespace StardewDruid.Cast
     internal class GreetVillager : CastHandle
     {
 
+        NPC riteWitness;
+
         public GreetVillager (Mod mod, Vector2 target, Rite rite, NPC witness)
             : base(mod, target, rite)
         {
 
+            riteWitness = witness;
+
+        }
+
+        public void GentlyCaress()
+        {
+
             bool friendShip = false;
-            
+
             if (riteData.castTask.ContainsKey("masterVillager"))
             {
-            
+
                 friendShip = true;
-            
+
             }
 
-            bool greetVillager = ModUtility.GreetVillager(rite.castLocation, rite.caster, witness, friendShip);
+            bool greetVillager = ModUtility.GreetVillager(riteData.castLocation, riteData.caster, riteWitness, friendShip);
 
             if (!riteData.castTask.ContainsKey("masterVillager") && greetVillager)
             {

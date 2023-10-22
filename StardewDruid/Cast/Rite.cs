@@ -37,11 +37,13 @@ namespace StardewDruid.Cast
 
         public int castDamage;
 
-        //public Dictionary<string, int> castBlessing;
+        public int combatModifier;
 
         public Dictionary<string, int> castTask;
 
         public Dictionary<string, int> castToggle;
+
+        public Random randomIndex { get; set; }
 
         public Rite()
         {
@@ -58,8 +60,6 @@ namespace StardewDruid.Cast
 
             spawnIndex = Map.SpawnData.SpawnIndex(castLocation);
 
-            //castBlessing = new();
-
             castTask = new();
 
             castToggle = new();
@@ -67,6 +67,10 @@ namespace StardewDruid.Cast
             direction = 0;
 
             castDamage = 10;
+
+            combatModifier = 1;
+
+            randomIndex = new Random();
 
         }
 

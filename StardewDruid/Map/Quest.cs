@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 
 namespace StardewDruid.Map
 {
-    internal class Quest
+    public class Quest
     {
 
         public string name;
 
         public string triggerType;
+
+        public string markerType;
 
         public List<string> triggerLocation;
 
@@ -46,16 +48,6 @@ namespace StardewDruid.Map
         public int questReward;
 
         public int questLevel;
-
-        public bool updateEffigy;
-
-        public List<Vector2> challengePortals;
-
-        public int challengeSeconds;
-
-        public int challengeFrequency;
-
-        public List<int> challengeSpawn = new();
 
         public int taskCounter;
 

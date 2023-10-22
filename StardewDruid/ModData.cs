@@ -23,6 +23,8 @@ namespace StardewDruid
 
         public bool consumeQuicksnack { get; set; }
 
+        public bool consumeCaffeine { get; set; }
+
         public int setProgress { get; set; }
 
         public bool masterStart { get; set; }
@@ -31,9 +33,13 @@ namespace StardewDruid
 
         public bool unrestrictedStars { get; set; }
 
+        public string combatDifficulty { get; set; }
+
         public Dictionary<int, string> weaponAttunement { get; set; }
 
         public bool checkQuests { get; set; }
+
+        //public bool monsterHats { get; set; }
 
         public int farmCaveStatueX { get; set; }
 
@@ -50,7 +56,7 @@ namespace StardewDruid
         public ModData()
         {
 
-            riteButtons = KeybindList.Parse("MouseX1,MouseX2,LeftShoulder");
+            riteButtons = KeybindList.Parse("MouseX1,MouseX2,V,LeftShoulder");
 
             questList = new();
 
@@ -73,9 +79,13 @@ namespace StardewDruid
 
             consumeQuicksnack = true;
 
+            consumeCaffeine = true;
+
             masterStart = false;
 
             maxDamage = false;
+
+            combatDifficulty = "medium";
 
             unrestrictedStars = false;
 
@@ -85,6 +95,8 @@ namespace StardewDruid
                 [14] = "water",
                 [9] = "stars",
             };
+
+            //monsterHats = false;
 
             farmCaveActionX = 6;
 

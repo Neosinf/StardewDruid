@@ -83,8 +83,8 @@ namespace StardewDruid
 
             //-------------------------- sound and pitch
 
-            if(cycleLevel <= 2)
-            { 
+            if (cycleLevel <= 2)
+            {
 
                 int pitchLevel = cycleLevel % 4;
 
@@ -364,7 +364,7 @@ namespace StardewDruid
 
             Microsoft.Xna.Framework.Color animationColor = Microsoft.Xna.Framework.Color.White;
 
-            Vector2 animationPosition = new(targetVector.X * 64, targetVector.Y * 64);
+            Vector2 animationPosition = new(targetVector.X * 64, targetVector.Y * 64 - 64);
 
             float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString());
 
@@ -376,10 +376,10 @@ namespace StardewDruid
 
         }
 
-        public static void AnimateBolt(GameLocation targetLocation, Vector2 targetVector, bool playSound = true)
+        public static void AnimateBolt(GameLocation targetLocation, Vector2 targetVector, int playSound = 800)
         {
 
-            if(playSound)
+            if (playSound >= 500)
             {
 
                 Game1.currentLocation.playSoundPitched("flameSpellHit", 800);
@@ -390,7 +390,7 @@ namespace StardewDruid
 
             // ------------------------- cloud
 
-            TemporaryAnimatedSprite boltCloud = new("TileSheets\\animations", new(128, 5 * 64, 64, 64), 250f, 4, 1, new Vector2(targetPosition.X+8,targetPosition.Y), flicker: false, false, (targetPosition.Y + 32f) / 10000f + 0.001f, 0.01f, new Color(0.6f,0.6f,1f,1), 0.875f, 0f, 0f, 0f);
+            TemporaryAnimatedSprite boltCloud = new("TileSheets\\animations", new(128, 5 * 64, 64, 64), 333f, 3, 1, new Vector2(targetPosition.X + 8, targetPosition.Y), flicker: false, false, (targetPosition.Y + 32f) / 10000f + 0.001f, 0.02f, new Color(0.8f, 0.8f, 1f, 1), 0.875f, 0f, 0f, 0f);
 
             targetLocation.temporarySprites.Add(boltCloud);
 
@@ -404,7 +404,7 @@ namespace StardewDruid
 
             // ------------------------- first bolt
 
-            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 1000f, 1, 1, targetPosition + new Vector2(0, 28.5f), flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.003f, 0.015f, new Color(0.6f, 0.6f, 1f, 1), 2f, 0f, 0f, 0f)
+            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 1000f, 1, 1, targetPosition + new Vector2(0, 24f), flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.003f, 0.02f, new Color(0.8f, 0.8f, 1f, 1), 2f, 0f, 0f, 0f)
             {
                 light = true,
                 lightRadius = 2f,
@@ -415,7 +415,7 @@ namespace StardewDruid
 
             // ------------------------- second bolt
 
-            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 1000f, 1, 1, targetPosition + new Vector2(0, 57f), flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.003f, 0.01f, new Color(0.8f, 0.8f, 1f, 1), 2f, 0f, 0f, 0f)
+            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 1000f, 1, 1, targetPosition + new Vector2(0, 100f), flicker: false, Game1.random.NextDouble() > 0.5, (targetPosition.Y + 32f) / 10000f + 0.003f, 0.0175f, new Color(0.9f, 0.9f, 1f, 1), 2f, 0f, 0f, 0f)
             {
                 light = true,
                 lightRadius = 2f,
@@ -426,7 +426,7 @@ namespace StardewDruid
 
             // ------------------------- third bolt
 
-            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 1000f, 1, 1, targetPosition + new Vector2(0, 85.5f), flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.002f, 0.005f, Color.White, 2f, 0f, 0f, 0f)
+            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 1000f, 1, 1, targetPosition + new Vector2(0, 176f), flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.002f, 0.015f, Color.White, 2f, 0f, 0f, 0f)
             {
                 light = true,
                 lightRadius = 2f,
@@ -434,7 +434,7 @@ namespace StardewDruid
             };
 
             targetLocation.temporarySprites.Add(boltAnimation);
-            
+
             return;
 
         }
@@ -460,19 +460,19 @@ namespace StardewDruid
 
         public static void AnimateFishJump(GameLocation targetLocation, Vector2 targetVector)
         {
-            
+
             int fishIndex = SpawnData.RandomJumpFish(targetLocation);
 
             //if(!(Game1.viewport.X <= (targetVector.X*64)) || !(Game1.viewport.Y <= (targetVector.Y*64)))
-            if (!Utility.isOnScreen(targetVector* 64, 128))
+            if (!Utility.isOnScreen(targetVector * 64, 128))
             {
 
-                return;    
-            
+                return;
+
             }
 
-            targetLocation.playSound("pullItemFromWater"); 
-            
+            targetLocation.playSound("pullItemFromWater");
+
             DelayedAction.functionAfterDelay(QuickSlosh, 900);
 
             Vector2 fishPosition;
@@ -495,9 +495,9 @@ namespace StardewDruid
             {
 
                 case true:
-                    
+
                     fishPosition = new((targetVector.X * 64) - 64, (targetVector.Y * 64) - 8);
-                    
+
                     sloshPosition = new((targetVector.X * 64) + 100, targetVector.Y * 64);
 
                     splashPosition = new((targetVector.X * 64) - 128, (targetVector.Y * 64) - 40);
@@ -583,7 +583,7 @@ namespace StardewDruid
 
             TemporaryAnimatedSprite sloshAnimation = new(28, 200f, 2, 1, sloshPosition, flicker: false, flipped: false)
             {
-                
+
                 delayBeforeAnimationStart = 900,
 
             };
@@ -648,7 +648,7 @@ namespace StardewDruid
 
             List<Vector2> meteorZones = GetTilesWithinRadius(targetLocation, targetVector, meteorRange);
 
-            foreach(Vector2 meteorZone in meteorZones)
+            foreach (Vector2 meteorZone in meteorZones)
             {
 
                 AnimateCastRadius(targetLocation, meteorZone, animationcolor, 0, animationLoops, animationStrength);
@@ -712,6 +712,70 @@ namespace StardewDruid
 
         }
 
+        public static void ImpactVector(GameLocation targetLocation, Vector2 targetVector)
+        {
+
+            if (Game1.random.NextDouble() < 0.5)
+            {
+                TemporaryAnimatedSprite smallAnimation = new(362, Game1.random.Next(30, 90), 6, 1, new Vector2(targetVector.X * 64f, targetVector.Y * 64f), flicker: false, (Game1.random.NextDouble() < 0.5) ? true : false)
+                {
+                    //delayBeforeAnimationStart = Game1.random.Next(700)
+                };
+
+                targetLocation.temporarySprites.Add(smallAnimation);
+            }
+            else
+            {
+
+                TemporaryAnimatedSprite smallAnimation = new(5, new Vector2(targetVector.X * 64f, targetVector.Y * 64f), Color.White, 8, flipped: false, 50f)
+                {
+                    //delayBeforeAnimationStart = Game1.random.Next(200),
+                    scale = (float)Game1.random.Next(5, 15) / 10f
+                };
+
+                targetLocation.temporarySprites.Add(smallAnimation);
+
+            }
+
+        }
+
+        public static StardewValley.Torch StoneBrazier(GameLocation targetLocation, Vector2 targetVector)
+        {
+
+            /*Rectangle sourceRectForObject = new();
+
+            sourceRectForObject.X = 276;
+            sourceRectForObject.Y = 1965;
+            sourceRectForObject.Width = 8;
+            sourceRectForObject.Height = 8;
+
+            float animationSort = targetVector.X * 1000 + targetVector.Y + 2;
+
+            portalAnimation = new("LooseSprites\\Cursors", sourceRectForObject, 100f, 6, 9999, new((targetVector.X * 64f)+12f,(targetVector.Y * 64f)-56f), false, false, animationSort, 0f, Color.Blue, 6f, 0f, 0f, 0f);
+
+            targetLocation.temporarySprites.Add(portalAnimation);*/
+
+            StardewValley.Torch stoneBrazier = new(targetVector, 144, false);
+
+            int portalKey = (int)float.Parse(targetVector.X.ToString() + targetVector.Y.ToString());
+
+            LightSource portalLight = new(4, new((targetVector.X * 64f) + 12f, (targetVector.Y * 64f) - 56f), 2f, new Color(0, 80, 160), portalKey, LightSource.LightContext.None, 0L);
+
+            stoneBrazier.name = "PortalFlame";
+            stoneBrazier.CanBeSetDown = false;
+            stoneBrazier.Fragility = 2;
+            stoneBrazier.setHealth(9999);
+            stoneBrazier.isLamp.Value = true;
+            stoneBrazier.IsOn = true;
+            stoneBrazier.lightSource = portalLight;
+
+            targetLocation.objects.Add(targetVector, stoneBrazier);
+
+            return stoneBrazier;
+
+        }
+
+
         public static bool WaterCheck(GameLocation targetLocation, Vector2 targetVector)
         {
             bool check = true;
@@ -749,12 +813,12 @@ namespace StardewDruid
 
         }
 
-        public static Dictionary<string, List<Vector2>> NeighbourCheck(GameLocation targetLocation, Vector2 targetVector)
+        public static Dictionary<string, List<Vector2>> NeighbourCheck(GameLocation targetLocation, Vector2 targetVector, int targetRadius = 1)
         {
 
             Dictionary<string, List<Vector2>> neighbourList = new();
 
-            List<Vector2> neighbourVectors = GetTilesWithinRadius(targetLocation, targetVector, 1);
+            List<Vector2> neighbourVectors = GetTilesWithinRadius(targetLocation, targetVector, targetRadius);
 
             Layer backLayer = targetLocation.Map.GetLayer("Back");
 
@@ -1494,6 +1558,106 @@ namespace StardewDruid
             }
 
             return vectorList;
+
+        }
+
+        public static List<int> CastWaterAdjust(Vector2 vector, int direction)
+        {
+
+            Point mousePoint = Game1.getMousePosition();
+
+            if (mousePoint.Equals(new(0)))
+            {
+                return CastWaterNormal(vector, direction);
+            
+            }
+
+            Vector2 playerPosition = Game1.player.Position;
+
+            Vector2 viewPortPosition = Game1.viewportPositionLerp;
+
+            Vector2 mousePosition = new(mousePoint.X + viewPortPosition.X, mousePoint.Y + viewPortPosition.Y);
+
+            float vectorDistance = Vector2.Distance(playerPosition, mousePosition);
+
+            if (vectorDistance <= 96)
+            {
+
+                return CastWaterNormal(vector, direction);
+
+            }
+
+            Vector2 relativeVector = mousePosition - playerPosition;
+
+            float adjustmentRatio = 320 / vectorDistance;
+
+            Vector2 macroVector = relativeVector * adjustmentRatio;
+
+            int microX = Convert.ToInt32(macroVector.X / 64);
+
+            int microY = Convert.ToInt32(macroVector.Y / 64);
+
+            int newDirection;
+
+            if(microY <= microX)
+            {
+                if(microX > 0) // right
+                {
+                    newDirection = 1;
+                }
+                else // left
+                {
+                    newDirection = 3;
+
+                }
+            }
+            else
+            {
+                if (microY > 0) // down
+                {
+                    newDirection = 2;
+                }
+                else // up
+                {
+                    newDirection = 0;
+
+                }
+            }
+
+            List<int> targetList = new()
+            {
+                newDirection,
+                microX + (int)vector.X,
+                microY + (int)vector.Y
+            };
+
+            return targetList;
+
+        }
+
+        public static List<int> CastWaterNormal(Vector2 vector, int direction)
+        {
+
+            Dictionary<int, Vector2> vectorIndex = new()
+            {
+
+                [0] = vector + new Vector2(0, -5),// up
+                [1] = vector + new Vector2(5, 0), // right
+                [2] = vector + new Vector2(0, 5),// down
+                [3] = vector + new Vector2(-5, 0), // left
+
+            };
+
+            Vector2 targetVector = vectorIndex[direction];
+
+            List<int> targetList = new()
+            {
+                direction,
+                (int)targetVector.X,
+                (int)targetVector.Y
+            };
+
+            return targetList; 
 
         }
 

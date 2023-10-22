@@ -32,16 +32,16 @@ namespace StardewDruid.Cast
 
             }
 
-            if (targetLocation.terrainFeatures[targetVector] is not StardewValley.TerrainFeatures.Tree)
+            if (targetLocation.terrainFeatures[targetVector] is not StardewValley.TerrainFeatures.Tree treeFeature)
             {
 
                 return;
 
             }
 
-            StardewValley.TerrainFeatures.Tree treeFeature = targetLocation.terrainFeatures[targetVector] as StardewValley.TerrainFeatures.Tree;
+            treeFeature.dayUpdate(targetLocation,targetVector);
 
-            treeFeature.fertilize(Game1.currentLocation);
+            Utility.addSprinklesToLocation(targetLocation, (int)targetVector.X, (int)targetVector.Y, 1, 1, 1000, 500, new Color(0.8f, 1, 0.8f, 1));
 
             castFire = true;
 

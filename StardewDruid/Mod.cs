@@ -21,6 +21,11 @@ using static StardewValley.Minigames.MineCart.Whale;
 using StardewValley.Menus;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.VisualBasic;
+using Microsoft.Xna.Framework.Graphics;
+using System.Linq;
+using StardewDruid.Event;
+using System.Dynamic;
+using StardewDruid.Monster;
 
 namespace StardewDruid
 {
@@ -45,9 +50,17 @@ namespace StardewDruid
 
         public Dictionary<string, List<Vector2>> earthCasts;
 
-        private Dictionary<Type, List<Cast.CastHandle>> activeCasts;
+        //private Dictionary<Type, List<Cast.CastHandle>> activeCasts;
 
-        public string activeLockout;
+        //private Event.ChallengeHandle activeChallenge;
+
+        //private Event.ChallengeHandle inactiveChallenge;
+
+        private Dictionary<string,Event.ChallengeHandle> challengeRegister;
+
+        private Dictionary<string, Event.MarkerHandle> markerRegister;
+
+        //public string activeLockout;
 
         public Dictionary<string, Vector2> warpPoints;
 
@@ -61,8 +74,6 @@ namespace StardewDruid
 
         private Dictionary<string, Map.Quest> questIndex;
 
-        private Dictionary<string, List<Monster>> monsterSpawns;
-
         private Queue<Rite> riteQueue;
 
         private Queue<int> castBuffer;
@@ -73,11 +84,15 @@ namespace StardewDruid
 
         public Dictionary<string, string> locationPoll;
 
+        public Dictionary<string, MonsterHandle> monsterHandles;
+
         public StardewValley.NPC disembodiedVoice;
 
         private bool trainedToday;
 
         public List<string> triggerList;
+
+        public List<string> triggerActive;
 
         public bool receivedData;
 
@@ -127,8 +142,10 @@ namespace StardewDruid
             }
 
             staticData ??= new StaticData() {  staticVersion = Map.QuestData.StableVersion() };
-
+            
             StaticChecks();
+
+            Helper.Data.WriteJsonFile("staticData.json", staticData);
 
             questIndex = Map.QuestData.QuestList();
 
@@ -233,7 +250,7 @@ namespace StardewDruid
 
             druidEffigy.lessonGiven = false;
 
-            foreach (KeyValuePair<Type, List<Cast.CastHandle>> castEntry in activeCasts)
+            /*foreach (KeyValuePair<Type, List<Cast.CastHandle>> castEntry in activeCasts)
             {
                 
                 if (castEntry.Value.Count > 0)
@@ -248,26 +265,24 @@ namespace StardewDruid
                 
                 }
 
-            }
+            }*/
 
-            foreach (KeyValuePair<string, List<Monster>> monsterEntry in monsterSpawns)
+            foreach (KeyValuePair<string, Event.ChallengeHandle> challengeEntry in challengeRegister)
             {
-                
-                if (monsterEntry.Value.Count > 0)
-                {
-                    
-                    foreach (Monster monsterInstance in monsterEntry.Value)
-                    {
-                        
-                        Game1.getLocationFromName(monsterEntry.Key).characters.Remove(monsterInstance);
-                    
-                    }
-                
-                }
+
+                challengeEntry.Value.EventRemove();
 
             }
 
-            //activeData.castComplete = true;
+            challengeRegister.Clear();
+
+            foreach (KeyValuePair<string, MonsterHandle> monsterEntry in monsterHandles)
+            {
+
+                monsterEntry.Value.ShutDown();
+
+            }
+                
             activeData.castInterrupt = true;
 
             if (disembodiedVoice != null)
@@ -379,13 +394,21 @@ namespace StardewDruid
 
             triggerList = new();
 
+            triggerActive = new();
+
             activeData = new ActiveData() { activeBlessing = staticData.activeBlessing };
 
             earthCasts = new();
 
-            activeCasts = new();
+            //activeCasts = new();
 
-            activeLockout = "none";
+            challengeRegister = new();
+
+            markerRegister = new();
+
+            monsterHandles = new();
+
+            //activeLockout = "none";
 
             riteQueue = new();
 
@@ -397,8 +420,6 @@ namespace StardewDruid
 
             fireCasts = new();
 
-            monsterSpawns = new();
-
             targetPick = new();
 
             targetPick.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
@@ -409,30 +430,22 @@ namespace StardewDruid
 
             locationPoll = new();
 
+            disembodiedVoice = new();
+
             // ---------------------- trigger assignment
 
-            if (staticData.questList.Count == 0)
+            /*if (staticData.questList.Count == 0)
             {
 
                 string firstQuest = Map.QuestData.FirstQuest();
 
                 staticData.questList[firstQuest] = false;
 
-            }
+            }*/
 
-            foreach (KeyValuePair<string,bool> questRecord in staticData.questList)
-            {
+            SynchroniseQuest();
 
-                if (!questRecord.Value)
-                {
-
-                    ReassignQuest(questRecord.Key);
-
-                }
-
-            }
-
-            List<string> resetTriggers = QuestData.ResetTriggers();
+            /*List<string> resetTriggers = QuestData.ResetTriggers(staticData);
 
             foreach(string trigger in resetTriggers)
             {
@@ -444,7 +457,7 @@ namespace StardewDruid
 
                 }
 
-            }
+            }*/
 
             return;
 
@@ -460,7 +473,111 @@ namespace StardewDruid
 
             }
 
-            if (activeCasts.Count == 0)
+            if (!LocationPoll("current"))
+            {
+
+                SetTriggers();
+
+            }
+
+            if (challengeRegister.Count == 0 && markerRegister.Count == 0)
+            {
+                return;
+            }
+
+            bool exitAll = false;
+
+            bool extendAll = false;
+
+            List<string> removeList = new();
+
+            if (Game1.eventUp || Game1.fadeToBlack || Game1.currentMinigame != null || Game1.isWarping || Game1.killScreen)
+            {
+
+                exitAll = true;
+
+            }
+
+            if (!Game1.shouldTimePass() || !Game1.game1.IsActive)
+            {
+
+                extendAll = true;
+
+            }
+
+            if (markerRegister.Count > 0 && !extendAll)
+            {
+
+                foreach (KeyValuePair<string, MarkerHandle> markerHandle in markerRegister)
+                {
+
+                    markerHandle.Value.EventInterval();
+
+                }
+
+            }
+
+            if (challengeRegister.Count == 0)
+            {
+                
+                return;
+            
+            }
+
+            foreach (KeyValuePair<string, Event.ChallengeHandle> challengeEntry in challengeRegister)
+            {
+
+                if (exitAll)
+                {
+
+                    challengeEntry.Value.EventAbort();
+
+                    challengeEntry.Value.EventRemove();
+
+                    continue;
+
+                }
+
+                if (extendAll)
+                {
+
+                    challengeEntry.Value.EventExtend();
+
+                    continue;
+
+                }
+
+                if (!challengeEntry.Value.EventActive())
+                {
+
+                    removeList.Add(challengeEntry.Key);
+
+                    challengeEntry.Value.EventRemove();
+
+                    continue;
+
+                }
+
+                challengeEntry.Value.EventInterval();
+
+            }
+
+            if (exitAll)
+            {
+
+                challengeRegister.Clear();
+
+                return;
+            }
+
+            foreach (string removeChallenge in  removeList) 
+            { 
+            
+                challengeRegister.Remove(removeChallenge);
+            
+            }
+
+            /*if (activeCasts.Count == 0)
             {
 
                 activeLockout = "none";
@@ -573,7 +690,7 @@ namespace StardewDruid
 
             activeCast.Clear();
 
-            return;
+            return;*/
 
         }
 
@@ -750,17 +867,15 @@ namespace StardewDruid
                 if (activeData.activeBlessing == "water")
                 {
 
-                    Dictionary<int, Vector2> vectorIndex = new()
-                    {
+                    //Monitor.Log($"Normal {activeData.activeVector}", LogLevel.Debug);
 
-                        [0] = activeData.activeVector + new Vector2(0, -5),// up
-                        [1] = activeData.activeVector + new Vector2(5, 0), // right
-                        [2] = activeData.activeVector + new Vector2(0, 5),// down
-                        [3] = activeData.activeVector + new Vector2(-5, 0), // left
+                    List<int> targetList = ModUtility.CastWaterAdjust(activeData.activeVector, activeData.activeDirection);
 
-                    };
+                    activeData.activeDirection = targetList[0];
 
-                    activeData.activeVector = vectorIndex[activeData.activeDirection];
+                    activeData.activeVector = new(targetList[1], targetList[2]);
+
+                    //Monitor.Log($"Adjusted {activeData.activeVector}", LogLevel.Debug);
 
                 }
 
@@ -785,146 +900,7 @@ namespace StardewDruid
             // check player has enough energy for eventual costs
             if (Game1.player.Stamina <= staminaRequired)
             {
-
-                if (Config.consumeRoughage || Config.consumeQuicksnack)
-                {
-
-                    int grizzleConsume;
-
-                    int grizzlePower;
-
-                    float staminaUp;
-
-                    bool sashimiPower = false;
-
-                    List<int> grizzleList = Map.SpawnData.GrizzleList();
-
-                    List<int> sashimiList = Map.SpawnData.SashimiList();
-
-                    Dictionary<int,int> coffeeList = Map.SpawnData.CoffeeList();
-
-                    int checkIndex;
-
-                    for (int i = 0; i < Game1.player.Items.Count; i++)
-                    {
-
-                        if (Game1.player.Stamina == Game1.player.MaxStamina)
-                        {
-
-                            break;
-
-                        }
-
-                        Item checkItem = Game1.player.Items[i];
-
-                        // ignore empty slots
-                        if (checkItem == null)
-                        {
-
-                            continue;
-
-                        }
-
-                        int itemIndex = checkItem.ParentSheetIndex;
-
-                        if (Config.consumeRoughage)
-                        {
-                            checkIndex = grizzleList.IndexOf(itemIndex);
-
-                            if (checkIndex != -1)
-                            {
-
-                                grizzlePower = Math.Max(5, checkIndex);
-
-                                grizzleConsume = Math.Min(checkItem.Stack, (int)(30/grizzlePower));
-
-                                staminaUp = grizzleConsume * grizzlePower;
-
-                                Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + (float)staminaUp);
-
-                                Game1.addHUDMessage(new HUDMessage(checkItem.DisplayName + " x" + grizzleConsume, 4));
-
-                                Game1.player.Items[i].Stack -= grizzleConsume;
-
-                                if (Game1.player.Items[i].Stack <= 0)
-                                {
-                                    Game1.player.Items[i] = null;
-
-                                }
-
-                                continue;
-
-                            }
-                        }
-
-                        if (Config.consumeQuicksnack)
-                        {
-                            checkIndex = sashimiList.IndexOf(itemIndex);
-
-                            if (checkIndex != -1 && !sashimiPower)
-                            {
-
-                                Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + @checkItem.staminaRecoveredOnConsumption());
-
-                                Game1.player.health = Math.Min(Game1.player.maxHealth, Game1.player.health + @checkItem.healthRecoveredOnConsumption());
-
-                                Game1.addHUDMessage(new HUDMessage(checkItem.DisplayName, 4));
-
-                                Game1.player.Items[i].Stack -= 1;
-
-                                if (Game1.player.Items[i].Stack <= 0)
-                                {
-                                    Game1.player.Items[i] = null;
-
-                                }
-
-                                sashimiPower = true;
-
-                            }
-
-                            if (coffeeList.ContainsKey(itemIndex))
-                            {
-
-                                if (Game1.buffsDisplay.drink == null)
-                                {
-
-                                    int coffeeConsume = 1;
-
-                                    int getSpeed = coffeeList[itemIndex];
-
-                                    if(getSpeed < 90000) { 
-                                        
-                                        coffeeConsume = Math.Min(5, Game1.player.Items[i].Stack);
-                                        
-                                        getSpeed *= coffeeConsume; 
-                                    
-                                    }
-
-                                    Buff speedBuff = new("Druidic Roastmaster", getSpeed, checkItem.DisplayName, 9);
-
-                                    speedBuff.buffAttributes[9] = 1;
-
-                                    speedBuff.total = 1;
-
-                                    speedBuff.which = 184653;
-
-                                    Game1.buffsDisplay.tryToAddDrinkBuff(speedBuff);
-
-                                    Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + 25);
-                                    
-                                    Game1.addHUDMessage(new HUDMessage(checkItem.DisplayName, 4));
-
-                                    Game1.player.Items[i].Stack -= coffeeConsume;
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                }
+                AutoConsume();
 
                 if (Game1.player.Stamina <= staminaRequired)
                 {
@@ -1088,7 +1064,8 @@ namespace StardewDruid
 
             }
 
-            if (activeLockout == "trigger" && activeBlessing == "earth")
+            //if (activeLockout == "trigger" && activeBlessing == "earth")
+            if (challengeRegister.ContainsKey("active") && activeBlessing == "earth")
             {
                 if (castBuffer.Count == 0)
                 {
@@ -1194,37 +1171,32 @@ namespace StardewDruid
 
         }
 
-        private bool EventHandler(Vector2 targetVector)
+        public void SetTriggers()
         {
-
-            if (activeLockout != "none"){ 
-                
-                return false; 
-            
-            }
-
-            // check if player has activated a triggered event
-            Vector2 playerVector = Game1.player.getTileLocation();
-
-            List<Map.Quest> triggeredQuests = new();
-
-            GameLocation playerLocation = Game1.player.currentLocation;
 
             string locationName = Game1.player.currentLocation.Name;
 
-            Type locationType = playerLocation.GetType();
+            Type locationType = Game1.player.currentLocation.GetType();
+
+            triggerActive.Clear();
+
+            foreach(KeyValuePair<string,MarkerHandle> markerHandle in markerRegister)
+            {
+
+                markerHandle.Value.EventRemove();
+
+            }
+
+            markerRegister.Clear();
+
+            int markerCounter = 0;
 
             foreach (string castString in triggerList)
             {
+                
+                markerCounter++;
 
                 Map.Quest questData = questIndex[castString];
-                //Monitor.Log($"{castString}", LogLevel.Debug);
-                if (questData.useTarget)
-                {
-
-                    playerVector = targetVector;
-
-                }
 
                 if (questData.triggerLocation != null)
                 {
@@ -1240,6 +1212,60 @@ namespace StardewDruid
                     {
                         continue;
                     }
+                }
+
+                triggerActive.Add(castString);
+
+                if(questData.markerType != null)
+                {
+
+                    MarkerHandle markerHandle = MarkerData.MarkerInstance(this, Game1.player.currentLocation, questData);
+
+                    markerHandle.EventTrigger();
+
+                    markerRegister[castString] = markerHandle;
+
+                }
+
+            }
+
+        }
+
+        private bool EventHandler(Vector2 targetVector)
+        {
+
+            //if (activeLockout != "none"){ 
+            if (challengeRegister.ContainsKey("active"))
+            {
+
+                return false; 
+            
+            }
+
+            if(triggerActive.Count == 0)
+            {
+                
+                return false;
+
+            }
+
+            // check if player has activated a triggered event
+            Vector2 playerVector = Game1.player.getTileLocation();
+
+            List<string> triggeredQuests = new();
+
+            GameLocation playerLocation = Game1.player.currentLocation;
+
+            foreach (string castString in triggerActive)
+            {
+
+                Map.Quest questData = questIndex[castString];
+                //Monitor.Log($"{castString}", LogLevel.Debug);
+                if (questData.useTarget)
+                {
+
+                    playerVector = targetVector;
+
                 }
 
                 if (questData.startTime != 0)
@@ -1263,23 +1289,24 @@ namespace StardewDruid
                 if (questData.triggerSpecial && !questData.vectorList.ContainsKey("triggerVector"))
                 {
 
-                    Vector2 specialTrigger = Map.QuestData.SpecialVector(playerLocation, questData.name);
+                    Vector2 specialTrigger = Map.QuestData.SpecialVector(playerLocation, castString);
                     
                     if (specialTrigger != new Vector2(-1))
                     {
 
-                        questData.vectorList["specialVector"] = specialTrigger;
+                        questData.vectorList["targetVector"] = specialTrigger;
 
-                        questData.vectorList["triggerVector"] = specialTrigger;
+                        questData.vectorList["triggerVector"] = specialTrigger - new Vector2(1,1);
 
-                        if (questData.vectorList.ContainsKey("specialOffset"))
-                        {
-                            questData.vectorList["triggerVector"] += questData.vectorList["specialOffset"];
-                        }
+                        questData.vectorList["triggerLimit"] = new Vector2(3, 3);
 
-                        questIndex[castString].triggerSpecial = false;
+                        // ----------------------------------
 
                         questIndex[castString].vectorList["triggerVector"] = questData.vectorList["triggerVector"];
+
+                        questIndex[castString].vectorList["triggerLimit"] = questData.vectorList["triggerLimit"];
+
+                        //questIndex[castString].triggerSpecial = false;
                     
                     }
                 
@@ -1332,7 +1359,7 @@ namespace StardewDruid
 
                                         runTrigger = true; //1140
 
-                                        questData.vectorList["tileVector"] = tileVector;
+                                        questData.vectorList["targetVector"] = tileVector;
 
                                     }
 
@@ -1347,7 +1374,7 @@ namespace StardewDruid
                                         if(value3.ToString() == questData.triggerAction)
                                         {
 
-                                            questData.vectorList["actionVector"] = tileVector;
+                                            questData.vectorList["targetVector"] = tileVector;
 
                                             runTrigger = true;
                                         
@@ -1383,32 +1410,62 @@ namespace StardewDruid
                 if(runTrigger)
                 {
 
-                    triggeredQuests.Add(questData);
+                    triggeredQuests.Add(castString);
 
                 }
 
             }
 
-            Event.EventHandle eventHandle = new(this);
+            if (triggeredQuests.Count == 0)
+            {
+                return false;
 
+            }
+                
             Cast.Rite rite = NewRite();
 
             rite.direction = Game1.player.getFacingDirection();
 
-            foreach (Map.Quest questData in triggeredQuests)
+            foreach (string quest in triggeredQuests)
             {
-                //Monitor.Log($"{questData.vectorList["triggerVector"]}",LogLevel.Debug);
-                triggerList.Remove(questData.name);
 
-                eventHandle.RunEvent(playerVector, questData, rite);
+                triggerList.Remove(quest);
 
-                activeLockout = "trigger";
+                SetTriggers();
 
-                return true;
+                Map.Quest questData = questIndex[quest];
+
+                questData.name = quest;
+
+                ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 500);
+
+                Game1.player.currentLocation.playSound("yoba");
+
+                switch (questData.triggerType)
+                {
+                    case "sword":
+
+                        SwordHandle swordHandle = new(this, playerVector, rite, questData);
+
+                        swordHandle.EventTrigger();
+
+                        break;
+
+                    default: // challenge
+
+                        ChallengeHandle challengeHandle = ChallengeData.ChallengeInstance(this, playerVector, rite, questData);
+
+                        challengeHandle.EventTrigger();
+
+                        break;
+
+                }
+
+                //activeLockout = "trigger";
 
             }
 
-            return false;
+            return true;
 
         }
 
@@ -1419,7 +1476,7 @@ namespace StardewDruid
 
             Pickaxe castPick = RetrievePick();
 
-            int damageLevel = 150;
+            int damageLevel = 175;
 
             if (!Config.maxDamage)
             {
@@ -1442,7 +1499,53 @@ namespace StardewDruid
                     }
                 }
 
+                if (Game1.player.professions.Contains(24))
+                {
+                    damageLevel += 15;
+                }
+
+                if (Game1.player.professions.Contains(26))
+                {
+                    damageLevel += 15;
+                }
+
             }
+
+            int monsterDifficulty = 1;
+
+            switch (Config.combatDifficulty)
+            {
+                case "hard":
+
+                    monsterDifficulty = 3;
+                    break;
+
+                case "medium":
+
+                    monsterDifficulty = 2;
+                    break;
+
+            }
+
+            int blessingLevel = 1;
+
+            if (staticData.blessingList.ContainsKey("water"))
+            {
+                blessingLevel = 2;
+            }
+
+            if(staticData.blessingList.ContainsKey("stars"))
+            {
+                blessingLevel = 3;
+            }
+
+            int combatDifficulty = monsterDifficulty + blessingLevel;
+
+            // 4, 9, 16, 25, 36
+
+            int combatModifier = Math.Min(Game1.player.CombatLevel + 5, 15) * (int)Math.Pow(combatDifficulty,2);
+
+            //Monitor.Log($"{combatModifier}", LogLevel.Debug);
 
             Rite newRite = new()
             {
@@ -1458,6 +1561,8 @@ namespace StardewDruid
                 castPick = castPick,
 
                 castDamage = damageLevel,
+
+                combatModifier = combatModifier,
 
             };
 
@@ -1488,7 +1593,7 @@ namespace StardewDruid
 
                     foreach (NPC riteWitness in rite.castLocation.characters)
                     {
-                        if (riteWitness is Monster)
+                        if (riteWitness is StardewValley.Monsters.Monster)
                         {
                             continue;
                         }
@@ -1526,7 +1631,9 @@ namespace StardewDruid
                                 else
                                 {
 
-                                    new Cast.GreetVillager(this, rite.castVector, rite, riteWitness);
+                                    Cast.GreetVillager greetVillager = new(this, rite.castVector, rite, riteWitness);
+
+                                    greetVillager.GentlyCaress();
 
                                 }
 
@@ -1549,7 +1656,10 @@ namespace StardewDruid
                             continue;
 
                         }
-                        new Cast.PetAnimal(this, rite.castVector, rite, pair.Value);
+
+                        Cast.PetAnimal petAnimal = new(this, rite.castVector, rite, pair.Value);
+
+                        petAnimal.GentlyCaress();
 
                     }
 
@@ -1568,7 +1678,9 @@ namespace StardewDruid
 
                         }
 
-                        new Cast.PetAnimal(this, rite.castVector, rite, pair.Value);
+                        Cast.PetAnimal petAnimal = new(this, rite.castVector, rite, pair.Value);
+
+                        petAnimal.GentlyCaress();
 
                     }
 
@@ -1580,7 +1692,7 @@ namespace StardewDruid
 
                     Buff magnetBuff = new("Druidic Magnetism", 6000, "Rite of the " + rite.castDisplay, 8);
 
-                    magnetBuff.buffAttributes[8] = 192;
+                    magnetBuff.buffAttributes[8] = 128;
 
                     magnetBuff.which = 184651;
 
@@ -1693,10 +1805,10 @@ namespace StardewDruid
 
             int castRange;
 
+            float castLimit = (riteData.castLevel * 2) + 0.5f;
+
             if (riteData.castLocation.largeTerrainFeatures.Count > 0)
             {
-
-                float castLimit = (riteData.castLevel * 2) + 0.5f;
 
                 foreach (LargeTerrainFeature largeTerrainFeature in riteData.castLocation.largeTerrainFeatures)
                 {
@@ -1740,6 +1852,56 @@ namespace StardewDruid
 
             }
 
+            if (riteData.castLocation.objects.Count() > 0 && blessingLevel >= 1 && riteData.spawnIndex["weeds"])
+            {
+
+                for (int i = 0; i < ((riteData.castLevel * 2) + 1); i++)
+                {
+
+                    List<Vector2> tileVectors = ModUtility.GetTilesWithinRadius(riteData.castLocation, riteData.castVector, i);
+
+                    foreach (Vector2 tileVector in tileVectors)
+                    {
+                        
+                        if (riteData.castLocation.objects.ContainsKey(tileVector))
+                        {
+
+                            StardewValley.Object tileObject = riteData.castLocation.objects[tileVector];
+
+                            if (tileObject.name.Contains("Stone"))
+                            {
+
+                                if (Map.SpawnData.StoneIndex().Contains(tileObject.ParentSheetIndex))
+                                {
+
+                                    effectCasts[tileVector] = new Cast.Weed(this, tileVector, riteData);
+
+                                }
+
+                            }
+                            else if (tileObject.name.Contains("Weeds") || tileObject.name.Contains("Twig"))
+                            {
+
+                                effectCasts[tileVector] = new Cast.Weed(this, tileVector, riteData);
+
+                            }
+                            else if (riteData.castLocation is MineShaft && tileObject is BreakableContainer)
+                            {
+
+                                effectCasts[tileVector] = new Cast.Weed(this, tileVector, riteData);
+
+                            }
+
+                        }
+
+                        continue;
+                    
+                    }
+                
+                }
+
+            }
+
             for (int i = 0; i < 2; i++)
             {
 
@@ -1773,7 +1935,7 @@ namespace StardewDruid
                     {
 
                         //if (riteData.castLocation.Name.Contains("Beach"))
-                        if (riteData.castLocation is Beach)
+                        if (riteData.castLocation is Beach && !riteData.castToggle.ContainsKey("forgetFish") && riteData.randomIndex.Next((25 - riteData.caster.FishingLevel)) == 0)
                         {
 
                             List<int> tidalList = new() { 60, 61, 62, 63, 77, 78, 79, 80, 94, 95, 96, 97, 104, 287, 288, 304, 305, 321, 362, 363 };
@@ -1789,49 +1951,6 @@ namespace StardewDruid
                         
                         if (buildingTile.TileIndexProperties.TryGetValue("Passable", out _) == false)
                         {
-
-                            continue;
-
-                        }
-
-                    }
-
-                    if (riteData.castLocation.objects.Count() > 0)
-                    {
-
-                        if (riteData.castLocation.objects.ContainsKey(tileVector))
-                        {
-
-                            if (blessingLevel >= 1)
-                            {
-
-                                StardewValley.Object tileObject = riteData.castLocation.objects[tileVector];
-
-                                if (tileObject.name.Contains("Stone"))
-                                {
-
-                                    if (Map.SpawnData.StoneIndex().Contains(tileObject.ParentSheetIndex))
-                                    {
-
-                                        effectCasts[tileVector] = new Cast.Weed(this, tileVector, riteData);
-
-                                    }
-
-                                }
-                                else if (tileObject.name.Contains("Weeds") || tileObject.name.Contains("Twig"))
-                                {
-
-                                    effectCasts[tileVector] = new Cast.Weed(this, tileVector, riteData);
-
-                                }
-                                else if (riteData.castLocation is MineShaft && tileObject is BreakableContainer)
-                                {
-
-                                    effectCasts[tileVector] = new Cast.Weed(this, tileVector, riteData);
-
-                                }
-
-                            }
 
                             continue;
 
@@ -2067,7 +2186,7 @@ namespace StardewDruid
                             if (blessingLevel >= 2)
                             {
 
-                                if (riteData.spawnIndex["fishup"])
+                                if (riteData.spawnIndex["fishup"] && !riteData.castToggle.ContainsKey("forgetFish") && riteData.randomIndex.Next((35-riteData.caster.FishingLevel)) == 0)
                                 {
 
                                     if(riteData.castLocation.Name.Contains("Farm"))
@@ -2148,8 +2267,6 @@ namespace StardewDruid
 
             //-------------------------- fire effects
 
-            List<Type> castLimits = new();
-
             if (effectCasts.Count != 0)
             {
                 foreach (KeyValuePair<Vector2, Cast.CastHandle> effectEntry in effectCasts)
@@ -2167,13 +2284,13 @@ namespace StardewDruid
 
                     Type effectType = effectHandle.GetType();
 
-                    if (castLimits.Contains(effectType))
+                    if (activeData.castLimits.Contains(effectType))
                     {
 
                         continue;
 
                     }
-                    
+
                     effectHandle.CastEarth();
 
                     if (effectHandle.castFire)
@@ -2186,14 +2303,7 @@ namespace StardewDruid
                     if (effectHandle.castLimit)
                     {
 
-                        castLimits.Add(effectEntry.Value.GetType());
-
-                    }
-
-                    if (effectHandle.castActive)
-                    {
-
-                        ActiveCast(effectHandle);
+                        activeData.castLimits.Add(effectEntry.Value.GetType());
 
                     }
 
@@ -2373,7 +2483,8 @@ namespace StardewDruid
                             }
                             else if (targetObject is Torch && targetObject.ParentSheetIndex == 93) // crafted candle torch
                             {
-                                if (blessingLevel >= 5 && activeLockout != "trigger")
+
+                                if (blessingLevel >= 5 && !challengeRegister.ContainsKey("active"))
                                 {
                                     if (riteData.spawnIndex["portal"])
                                     {
@@ -2613,7 +2724,7 @@ namespace StardewDruid
                 if (ModUtility.WaterCheck(riteData.castLocation,fishVector))
                 {
 
-                    effectCasts[fishVector] = new Water(this, fishVector, riteData);
+                    effectCasts[fishVector] = new Cast.Water(this, fishVector, riteData);
 
                 }
 
@@ -2653,7 +2764,7 @@ namespace StardewDruid
                 foreach (NPC nonPlayableCharacter in riteData.castLocation.characters)
                 {
 
-                    if (nonPlayableCharacter is Monster monsterCharacter)
+                    if (nonPlayableCharacter is StardewValley.Monsters.Monster monsterCharacter)
                     {
 
                         float monsterDifference = Vector2.Distance(monsterCharacter.Position, castPosition);
@@ -2689,8 +2800,6 @@ namespace StardewDruid
             
             //-------------------------- fire effects
 
-            List<Type> castLimits = new();
-
             if (effectCasts.Count != 0)
             {
                 foreach (KeyValuePair<Vector2, Cast.CastHandle> effectEntry in effectCasts)
@@ -2707,7 +2816,7 @@ namespace StardewDruid
 
                     Type effectType = effectHandle.GetType();
 
-                    if (castLimits.Contains(effectType))
+                    if (activeData.castLimits.Contains(effectType))
                     {
 
                         continue;
@@ -2726,14 +2835,7 @@ namespace StardewDruid
                     if (effectHandle.castLimit)
                     {
 
-                        castLimits.Add(effectEntry.Value.GetType());
-
-                    }
-
-                    if(effectHandle.castActive)
-                    {
-
-                        ActiveCast(effectHandle);
+                        activeData.castLimits.Add(effectEntry.Value.GetType());
 
                     }
 
@@ -2971,12 +3073,21 @@ namespace StardewDruid
 
         }
 
-        public void UpdateBlessing(string blessing)
+        public void ChangeBlessing(string blessing)
         {
-
+            
             staticData.activeBlessing = blessing;
 
             activeData = new() { activeBlessing = blessing, castInterrupt = true, };
+
+        }
+
+        public void UpdateBlessing(string blessing)
+        {
+
+            //staticData.activeBlessing = blessing;
+
+            //activeData = new() { activeBlessing = blessing, castInterrupt = true, };
 
             if (!staticData.blessingList.ContainsKey(blessing))
             {
@@ -2994,7 +3105,7 @@ namespace StardewDruid
 
         }
 
-        public void ActiveCast(Cast.CastHandle castHandle)
+        /*public void ActiveCast(Cast.CastHandle castHandle)
         {
 
             Type handleType = castHandle.GetType();
@@ -3008,58 +3119,26 @@ namespace StardewDruid
 
             activeCasts[handleType].Add(castHandle);
 
-        }
+        }*/
 
-        /*public void QuestCheck()
+        public void RegisterChallenge(Event.ChallengeHandle challengeHandle, string placeHolder)
         {
 
-            List<string> saveQuests = new();
-
-            List<string> alsoQuests = new();
-
-            foreach (KeyValuePair<string,bool> questPair in staticData.questList)
+            if (challengeRegister.ContainsKey(placeHolder))
             {
 
-                Map.Quest questData = questIndex[questPair.Key];
-
-                if (Game1.player.hasQuest(questData.questId))
-                {
-                    if (questPair.Value)
-                    {
-
-                        saveQuests.Add(questPair.Key);
-
-                    } else
-                    {
-
-                        alsoQuests.Add(questPair.Key);
-
-                    }
-
-                }
+                challengeRegister[placeHolder].EventRemove();
 
             }
 
-            foreach (string quest in saveQuests)
-            {
+            challengeRegister[placeHolder] = challengeHandle;
 
-                staticData.questList[quest] = true;
-
-            }
-
-            foreach (string quest in alsoQuests)
-            {
-
-                staticData.questList[quest] = false;
-
-            }
-
-        }*/
+        }
 
         public bool QuestComplete(string quest)
         {
 
-            if(staticData.questList.ContainsKey(quest))
+            if (staticData.questList.ContainsKey(quest))
             {
 
                 return staticData.questList[quest];
@@ -3070,22 +3149,6 @@ namespace StardewDruid
 
         }
 
-        public List<string> QuestList()
-        {
-
-            List<string> received = new();
-
-            foreach (KeyValuePair<string, bool> challenge in staticData.questList)
-            {
-
-                received.Add(challenge.Key);
-
-            }
-
-            return received;
-
-        }
-
         public bool QuestGiven(string quest)
         {
 
@@ -3093,29 +3156,113 @@ namespace StardewDruid
 
         }
 
-        /*public void UpdateQuest(string quest, bool update)
+        public bool QuestCompletion()
         {
+            
+            return staticData.questList.ContainsValue(false);
 
-            if(!update)
+        }
+
+        public void SynchroniseQuest()
+        {
+            
+            Dictionary<int, string> questIds = new();
+
+            foreach (KeyValuePair<string,StardewDruid.Map.Quest> questData in questIndex)
             {
 
-                staticData.questList[quest] = false;
+                if(questData.Value.questId != 0)
+                {
 
-                ReassignQuest(quest);
+                    questIds.Add(questData.Value.questId, questData.Key);
+
+                }
+
+                if (staticData.questList.Count == 0)
+                {
+
+                    NewQuest(questData.Key);
+
+                }
+
+                /*if (questData.Value.triggerAfter != 0)
+                {
+
+                    if (staticData.blessingList.ContainsKey(questData.Value.triggerBlessing))
+                    {
+
+                        if(staticData.blessingList[questData.Value.triggerBlessing] >= questData.Value.triggerAfter)
+                        {
+
+                            triggerList.Add(questData.Key);
+
+                            SetTriggers();
+
+                        }
+
+                    }
+
+                }*/
 
             }
-            else
+
+            for (int num = Game1.player.questLog.Count - 1; num >= 0; num--)
             {
 
-                staticData.questList[quest] = true;
+                int gameId = Game1.player.questLog[num].id.Value;
 
-                RemoveQuest(quest);
+                if (questIds.ContainsKey(gameId))
+                {
+
+                    string questName = questIds[gameId];
+
+                    if (staticData.questList.ContainsKey(questName))
+                    {
+                        // player can see unfinished quest but mod has already turned over
+                        if (staticData.questList[questName] && !Game1.player.questLog[num].completed.Value)
+                        {
+                            staticData.questList[questName] = false;
+
+                        }
+
+                        // player has finished quest according to game but mod has not turned over
+                        if (!staticData.questList[questName] && Game1.player.questLog[num].completed.Value)
+                        {
+
+                            Game1.player.questLog.RemoveAt(num);
+
+                            RegisterQuest(questName);
+
+                        }
+
+                    }
+                    else 
+                    {
+                        // mod has not initiated this quest yet - possible duplicate or reset progress
+                        Game1.player.questLog.RemoveAt(num);
+
+                    }
+
+                }
 
             }
 
-        }*/
+            foreach(KeyValuePair<string,bool> questPair in staticData.questList)
+            {
 
-        public void ReassignQuest(string quest)
+                if (questPair.Value)
+                {
+                    continue;
+                }
+
+                ReassignQuest(questPair.Key);
+
+            }
+
+
+        }
+
+        public void NewQuest(string quest)
         {
 
             if (!staticData.questList.ContainsKey(quest))
@@ -3129,45 +3276,53 @@ namespace StardewDruid
 
             if (questData.questId != 0)
             {
-                bool addQuest = true;
 
                 for (int num = Game1.player.questLog.Count - 1; num >= 0; num--)
                 {
                     if (Game1.player.questLog[num].id.Value == questData.questId)
                     {
 
-                        addQuest = false;
-
                         if (Game1.player.questLog[num].completed.Value)
-                        { 
+                        {
                             Game1.player.questLog.RemoveAt(num);
 
-                            addQuest = true;
                         }
-                    
+
                     }
-
-                }
-
-                if(addQuest)
-                {
-
-                    StardewValley.Quests.Quest newQuest = new();
-
-                    newQuest.questType.Value = questData.questValue;
-                    newQuest.id.Value = questData.questId;
-                    newQuest.questTitle = questData.questTitle;
-                    newQuest.questDescription = questData.questDescription;
-                    newQuest.currentObjective = questData.questObjective;
-                    newQuest.showNew.Value = true;
-                    newQuest.moneyReward.Value = questData.questReward;
-
-                    Game1.player.questLog.Add(newQuest);
 
                 }
 
             }
 
+            RegisterQuest(quest);
+
+            ReassignQuest(quest);
+
+        }
+
+        public void RegisterQuest(string quest)
+        {
+            Map.Quest questData = questIndex[quest];
+
+            StardewValley.Quests.Quest newQuest = new();
+
+            newQuest.questType.Value = questData.questValue;
+            newQuest.id.Value = questData.questId;
+            newQuest.questTitle = questData.questTitle;
+            newQuest.questDescription = questData.questDescription;
+            newQuest.currentObjective = questData.questObjective;
+            newQuest.showNew.Value = true;
+            newQuest.moneyReward.Value = questData.questReward;
+
+            Game1.player.questLog.Add(newQuest);
+
+        }
+
+        public void ReassignQuest(string quest)
+        {
+
+            Map.Quest questData = questIndex[quest];
+            //Monitor.Log($"{quest}", LogLevel.Debug);
             if (questData.triggerType != null)
             {
 
@@ -3175,6 +3330,8 @@ namespace StardewDruid
                 {
                     
                     triggerList.Add(quest);
+
+                    SetTriggers();
 
                 }
 
@@ -3187,6 +3344,13 @@ namespace StardewDruid
                 {
 
                     staticData.taskList[quest] = 0;
+
+                }
+
+                if (staticData.taskList.ContainsKey(questData.taskFinish))
+                {
+
+                    staticData.taskList.Remove(questData.taskFinish);
 
                 }
 
@@ -3216,14 +3380,9 @@ namespace StardewDruid
 
                     triggerList.Remove(quest);
 
+                    SetTriggers();
+
                 }
-
-            }
-
-            if (questData.updateEffigy == true)
-            {
-
-                druidEffigy.questCompleted = quest;
 
             }
 
@@ -3233,6 +3392,12 @@ namespace StardewDruid
                 staticData.taskList[questData.taskFinish] = 1;
 
             }
+
+        }
+
+        public void UpdateEffigy(string quest)
+        {
+            druidEffigy.questCompleted = quest;
 
         }
 
@@ -3248,7 +3413,7 @@ namespace StardewDruid
 
             if (!staticData.questList.ContainsKey(quest))
             {
-                ReassignQuest(quest);    
+                NewQuest(quest);    
             }
 
             if(!staticData.taskList.ContainsKey(quest))
@@ -3279,7 +3444,7 @@ namespace StardewDruid
 
         }
 
-        public void UpdateEarthCasts(GameLocation location, Vector2 vector, bool update)
+        /*public void UpdateEarthCasts(GameLocation location, Vector2 vector, bool update)
         {
             
             if (!earthCasts.ContainsKey(location.Name))
@@ -3303,7 +3468,7 @@ namespace StardewDruid
 
             }
 
-        }
+        }*/
 
         public string CastControl()
         {
@@ -3312,33 +3477,15 @@ namespace StardewDruid
 
         }
 
-        public void MonsterTrack(GameLocation location, Monster monster)
-        {
-            if (!monsterSpawns.ContainsKey(location.Name))
-            {
-
-                monsterSpawns[location.Name] = new();
-
-            }
-
-            monsterSpawns[location.Name].Add(monster);
-        
-        }
-
         public void UnlockAll()
         {
 
-            staticData.blessingList = new()
-            {
-                ["earth"] = 5,
-                ["water"] = 5,
-                ["stars"] = 1,
-            };
+             staticData = new StaticData() { staticVersion = Map.QuestData.StableVersion() };
 
-            staticData.activeBlessing = "earth";
+             staticData = Map.QuestData.ConfigureProgress(staticData, 14);
 
         }
-        
+
         public bool LocationPoll(string entryKey)
         {
 
@@ -3461,7 +3608,14 @@ namespace StardewDruid
             targetTool.UpgradeLevel = upgradeLevel;
 
         }
-        
+
+        public Dictionary<string, int> ToggleList()
+        {
+
+            return staticData.toggleList;
+
+        }
+
         public void ToggleEffect(string effect)
         {
 
@@ -3488,7 +3642,13 @@ namespace StardewDruid
 
                 GameLocation previous = disembodiedVoice.currentLocation;
 
-                if (previous != location && disembodiedVoice.position != position)
+                if(previous == null)
+                {
+
+                    disembodiedVoice = null;
+
+                } 
+                else if (previous != location && disembodiedVoice.position != position)
                 {
                     previous.characters.Remove(disembodiedVoice);
 
@@ -3600,6 +3760,259 @@ namespace StardewDruid
             return true;
 
         }
+
+        public int SpawnMonster(GameLocation location, Vector2 vector, List<int> spawnIndex, string terrain = "ground")
+        {
+            
+            MonsterHandle monsterHandle;
+
+            if (monsterHandles.ContainsKey(location.Name))
+            {
+
+                monsterHandle = monsterHandles[location.Name];
+
+                monsterHandle.SpawnCheck();
+
+            }
+            else
+            {
+
+                Rite rite = NewRite();
+
+                rite.castLocation = location;
+
+                rite.castVector = vector;
+
+                monsterHandle = new(this, vector, rite);
+
+                monsterHandles[location.Name] = monsterHandle;
+
+            }
+
+            monsterHandle.spawnIndex = spawnIndex;
+
+            if(terrain == "ground")
+            {
+
+                monsterHandle.SpawnGround(vector);
+
+                return 1;
+
+            } 
+            else 
+            {
+
+                monsterHandle.TargetToPlayer(vector);
+
+                Vector2 spawnVector = monsterHandle.SpawnVector();
+
+                if(spawnVector != new Vector2(-1))
+                {
+
+                    monsterHandle.SpawnTerrain(spawnVector, vector, (terrain == "water"));
+
+                    return 1;
+
+                }
+
+            }
+
+            return 0;
+
+        }
+
+        public List<StardewValley.Monsters.Monster> SpawnList(GameLocation location)
+        {
+            
+            List<StardewValley.Monsters.Monster> spawnList = new();
+
+            if (monsterHandles.ContainsKey(location.Name))
+            {
+
+                MonsterHandle monsterHandle = monsterHandles[location.Name];
+
+                monsterHandle.SpawnCheck();
+
+                spawnList = monsterHandle.monsterSpawns;
+
+            }
+
+            return spawnList;
+
+        }
+
+        public void AutoConsume()
+        {
+
+
+            if (Config.consumeRoughage || Config.consumeQuicksnack)
+            {
+
+                int grizzleConsume;
+
+                int grizzlePower;
+
+                float staminaUp;
+
+                bool sashimiPower = false;
+
+                List<int> grizzleList = Map.SpawnData.GrizzleList();
+
+                List<int> sashimiList = Map.SpawnData.SashimiList();
+
+                Dictionary<int, int> coffeeList = Map.SpawnData.CoffeeList();
+
+                List<string> consumeList = new();
+
+                int checkIndex;
+
+                for (int i = 0; i < Game1.player.Items.Count; i++)
+                {
+
+                    if (Game1.player.Stamina == Game1.player.MaxStamina)
+                    {
+
+                        break;
+
+                    }
+
+                    Item checkItem = Game1.player.Items[i];
+
+                    // ignore empty slots
+                    if (checkItem == null)
+                    {
+
+                        continue;
+
+                    }
+
+                    int itemIndex = checkItem.ParentSheetIndex;
+
+                    if (Config.consumeRoughage)
+                    {
+                        checkIndex = grizzleList.IndexOf(itemIndex);
+
+                        if (checkIndex != -1)
+                        {
+
+                            grizzlePower = Math.Max(2, checkIndex);
+
+                            grizzleConsume = Math.Min(checkItem.Stack, (int)(30 / grizzlePower));
+
+                            staminaUp = grizzleConsume * grizzlePower;
+
+                            Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + (float)staminaUp);
+
+                            Game1.player.health = Math.Min(Game1.player.maxHealth, Game1.player.health + (int)(staminaUp * 0.35));
+
+                            consumeList.Add(checkItem.DisplayName);
+
+                            Game1.player.Items[i].Stack -= grizzleConsume;
+
+                            if (Game1.player.Items[i].Stack <= 0)
+                            {
+                                Game1.player.Items[i] = null;
+
+                            }
+
+                            continue;
+
+                        }
+                    }
+
+                    if (Config.consumeQuicksnack)
+                    {
+                        checkIndex = sashimiList.IndexOf(itemIndex);
+
+                        if (checkIndex != -1 && !sashimiPower)
+                        {
+
+                            Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + @checkItem.staminaRecoveredOnConsumption());
+
+                            Game1.player.health = Math.Min(Game1.player.maxHealth, Game1.player.health + @checkItem.healthRecoveredOnConsumption());
+
+                            consumeList.Add(checkItem.DisplayName);
+
+                            Game1.player.Items[i].Stack -= 1;
+
+                            if (Game1.player.Items[i].Stack <= 0)
+                            {
+                                Game1.player.Items[i] = null;
+
+                            }
+
+                            sashimiPower = true;
+
+                        }
+
+                    }
+
+                    if (Config.consumeCaffeine)
+                    {
+
+                        if (coffeeList.ContainsKey(itemIndex))
+                        {
+
+                            if (Game1.buffsDisplay.drink == null)
+                            {
+
+                                int coffeeConsume = 1;
+
+                                int getSpeed = coffeeList[itemIndex];
+
+                                if (getSpeed < 90000)
+                                {
+
+                                    coffeeConsume = Math.Min(5, Game1.player.Items[i].Stack);
+
+                                    getSpeed *= coffeeConsume;
+
+                                }
+
+                                Buff speedBuff = new("Druidic Roastmaster", getSpeed, checkItem.DisplayName, 9);
+
+                                speedBuff.buffAttributes[9] = 1;
+
+                                speedBuff.total = 1;
+
+                                speedBuff.which = 184653;
+
+                                Game1.buffsDisplay.tryToAddDrinkBuff(speedBuff);
+
+                                Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + 25);
+
+                                consumeList.Add(checkItem.DisplayName);
+
+                                Game1.player.Items[i].Stack -= coffeeConsume;
+
+                                if (Game1.player.Items[i].Stack <= 0)
+                                {
+                                    Game1.player.Items[i] = null;
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                if (consumeList.Count > 0)
+                {
+
+                    string consumeString = String.Join(", ", consumeList.ToArray());
+
+                    Game1.addHUDMessage(new HUDMessage(consumeString, 4));
+
+                }
+
+            }
+
+
+        }
+
 
     }
 

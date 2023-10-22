@@ -34,16 +34,27 @@ namespace StardewDruid.Cast
 
             int debrisAmount = randomIndex.Next(1, 5);
 
+            Dictionary<int,Throw> throwList = new();
+
             for (int i = 0; i < debrisAmount; i++)
             {
 
-                Game1.createObjectDebris(debrisType, (int)targetVector.X, (int)targetVector.Y + 1);
+                throwList[i] = new(debrisType, 0);
+
+                throwList[i].ThrowObject(targetPlayer, targetVector);
+
+                //Game1.createObjectDebris(debrisType, (int)targetVector.X, (int)targetVector.Y + 1);
 
             }
 
             if (debrisAmount == 1)
             {
-                Game1.createObjectDebris(382, (int)targetVector.X + 1, (int)targetVector.Y);
+
+                throwList[1] = new(382, 0);
+
+                throwList[1].ThrowObject(targetPlayer, targetVector);
+
+                //Game1.createObjectDebris(382, (int)targetVector.X + 1, (int)targetVector.Y);
 
             }
 

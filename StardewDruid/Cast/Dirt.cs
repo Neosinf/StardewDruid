@@ -44,20 +44,20 @@ namespace StardewDruid.Cast
 
             }
 
-            if (targetLocation.terrainFeatures.ContainsKey(targetVector))
+            /*if (targetLocation.terrainFeatures.ContainsKey(targetVector))
             {
 
-                mod.UpdateEarthCasts(targetLocation, targetVector, false);
+                //mod.UpdateEarthCasts(targetLocation, targetVector, false);
 
                 return;
 
-            }
+            }*/
 
             Dictionary<string, List<Vector2>> neighbourList = ModUtility.NeighbourCheck(targetLocation, targetVector);
 
             int probability = randomIndex.Next(10);
 
-            if (probability <= 2 && spawnIndex["grass"] && neighbourList.ContainsKey("Tree")) // 3/10 grass
+            if (probability <= 1 && spawnIndex["grass"] && neighbourList.ContainsKey("Tree")) // 2/10 grass
             {
 
                 StardewValley.TerrainFeatures.Grass grassFeature = new(1, 4);
@@ -73,8 +73,15 @@ namespace StardewDruid.Cast
                 castFire = true;
 
             }
-            else if (probability == 3 && spawnIndex["trees"] && neighbourList.Count == 0) // 1/10 tree
+            else if (probability == 2 && spawnIndex["trees"] && neighbourList.Count == 0) // 1/10 tree
             {
+
+                Dictionary<string, List<Vector2>> nextList = ModUtility.NeighbourCheck(targetLocation, targetVector,2);
+
+                if(nextList.ContainsKey("Tree") || nextList.ContainsKey("Sapling"))
+                {
+                    return;
+                }
 
                 StardewValley.TerrainFeatures.Tree newTree;
 
@@ -115,14 +122,14 @@ namespace StardewDruid.Cast
 
                 targetLocation.makeHoeDirt(targetVector);
 
-            }*/
+            }
 
             if (!castFire)
             {
 
                 mod.UpdateEarthCasts(targetLocation, targetVector, false);
 
-            }
+            }*/
 
             return;
 

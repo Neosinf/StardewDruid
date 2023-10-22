@@ -291,6 +291,7 @@ namespace StardewDruid.Map
             }
             else if(questCompleted != null)
             {
+                
                 effigyQuestion = "Forgotten Effigy: ^I sense a change.";
 
                 switch (questCompleted)
@@ -516,7 +517,7 @@ namespace StardewDruid.Map
                     "..."+
                     $"^({mod.CastControl()} with a melee weapon or scythe in hand to perform a rite. Hold the button to increase the range of the effect.)";
 
-                    mod.ReassignQuest("swordEarth");
+                    mod.NewQuest("swordEarth");
 
                     Game1.currentLocation.playSoundPitched("discoverMineral", 600);
 
@@ -532,6 +533,8 @@ namespace StardewDruid.Map
 
                     mod.UpdateBlessing("earth");
 
+                    mod.ChangeBlessing("earth");
+
                     EarthDecoration();
 
                 }
@@ -546,7 +549,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: explode weeds and twigs. Remotely greet animals, pets and villagers once a day. Hold the button to increase the range of the effect.)";
 
-                        mod.ReassignQuest("lessonVillager");
+                        mod.NewQuest("lessonVillager");
 
                         break;
 
@@ -556,7 +559,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: extract foragables from large bushes, wood from trees, fibre and seeds from grass and small fish from water. Might spawn monsters.)";
 
-                        mod.ReassignQuest("lessonCreature");
+                        mod.NewQuest("lessonCreature");
 
                         break;
 
@@ -566,7 +569,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: sprout trees, grass, seasonal forage and flowers in empty spaces.)";
 
-                        mod.ReassignQuest("lessonForage");
+                        mod.NewQuest("lessonForage");
 
                         break;
 
@@ -576,7 +579,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: increase the growth rate and quality of growing crops. Convert planted wild seeds into random cultivations. Fertilise trees and uptick the growth rate of fruittrees.)";
 
-                        mod.ReassignQuest("lessonCrop");
+                        mod.NewQuest("lessonCrop");
 
                         break;
 
@@ -586,7 +589,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: shake loose rocks free from the ceilings of mine shafts. Explode gem ores.)";
 
-                        mod.ReassignQuest("lessonRockfall");
+                        mod.NewQuest("lessonRockfall");
 
                         break;
 
@@ -602,7 +605,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^(You have received a new quest.)";
 
-                            mod.ReassignQuest("challengeEarth");
+                            mod.NewQuest("challengeEarth");
 
                         }
 
@@ -636,7 +639,7 @@ namespace StardewDruid.Map
                     "^..." +
                     $"^({mod.CastControl()} with a weapon or scythe in hand to perform a rite. Hold the button to increase the range of the effect.)";
 
-                    mod.ReassignQuest("swordWater");
+                    mod.NewQuest("swordWater");
 
                     Game1.currentLocation.playSoundPitched("thunder_small", 1200);
 
@@ -650,6 +653,8 @@ namespace StardewDruid.Map
                 {
 
                     mod.UpdateBlessing("water");
+
+                    mod.ChangeBlessing("water");
 
                     WaterDecoration();
 
@@ -666,7 +671,7 @@ namespace StardewDruid.Map
 
                         //mod.LevelBlessing("special");
 
-                        mod.ReassignQuest("lessonTotem");
+                        mod.NewQuest("lessonTotem");
 
                         break;
 
@@ -676,7 +681,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: strike scarecrows, campfires and lightning rods to activate special functions. Villager firepits will work too.)";
 
-                        mod.ReassignQuest("lessonCookout");
+                        mod.NewQuest("lessonCookout");
 
                         break;
 
@@ -686,7 +691,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: strike deep water to produce a fishing-spot that yields rare species of fish)";
 
-                        mod.ReassignQuest("lessonFishspot");
+                        mod.NewQuest("lessonFishspot");
 
                         break;
 
@@ -696,7 +701,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: expend high amounts of stamina to instantly destroy enemies)";
 
-                        mod.ReassignQuest("lessonSmite");
+                        mod.NewQuest("lessonSmite");
 
                         break;
 
@@ -706,7 +711,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^({mod.CastControl()}: strike candle torches to create monster portals. Only works in remote outdoor locations.)";
 
-                        mod.ReassignQuest("lessonPortal");
+                        mod.NewQuest("lessonPortal");
 
                         break;
 
@@ -724,7 +729,7 @@ namespace StardewDruid.Map
                             "^..." +
                             $"^(You have received a new quest.)";
 
-                            mod.ReassignQuest("challengeWater");
+                            mod.NewQuest("challengeWater");
 
                         }
 
@@ -758,7 +763,7 @@ namespace StardewDruid.Map
 
                     effigyReply = "Forgotten Effigy: ^Your name is known within the celestial plane. ^Travel to the lake of flames. Retrieve the final vestige of the first farmer.";
 
-                    mod.ReassignQuest("swordStars");
+                    mod.NewQuest("swordStars");
 
                     
 
@@ -773,6 +778,8 @@ namespace StardewDruid.Map
                 {
 
                     mod.UpdateBlessing("stars");
+
+                    mod.ChangeBlessing("stars");
 
                     StarsDecoration();
 
@@ -789,7 +796,7 @@ namespace StardewDruid.Map
 
                         //mod.LevelBlessing("special");
 
-                        mod.ReassignQuest("lessonMeteor");
+                        mod.NewQuest("lessonMeteor");
 
                         mod.LevelBlessing("stars");
 
@@ -812,7 +819,7 @@ namespace StardewDruid.Map
                                     "^..." +
                                     $"^(You have received a new quest.)";
 
-                            mod.ReassignQuest("challengeStars");
+                            mod.NewQuest("challengeStars");
 
                             //ModUtility.AnimateMeteor(Game1.player.currentLocation, Game1.player.getTileLocation() + new Vector2(0, -2), true);
 
@@ -847,10 +854,85 @@ namespace StardewDruid.Map
 
         public void DialogueThreats()
         {
-            string effigyReply = "Satisfied Effigy: ^Those with a twisted connection to the otherworld may remain tethered to the Valley long after their mortal vessel wastes away." +
-                "^Strike them with bolt and flame to draw out and disperse their corrupted energies." +
-            "^..." +
-            "^( Search out the secret gardener's statue, the mariner's spectre, and the tyrant's bleached bones )";
+
+            Dictionary<string, int> blessingList = mod.BlessingList();
+
+            string effigyReply;
+
+            if (lessonGiven)
+            {
+                
+                effigyReply = "Forgotten Effigy: ^Hmm... return tomorrow after I have consulted the Others.";
+
+            }
+            else if (mod.QuestCompletion())
+            {
+                
+                effigyReply = "Forgotten Effigy: ^There is a task you haven't accomplished yet. Return when you are victorious.";
+            
+            }
+            else if (!mod.QuestGiven("challengeCanoli") || !mod.QuestGiven("challengeMariner") || !mod.QuestGiven("challengeSandDragon"))
+            {
+                
+                effigyReply = "Satisfied Effigy: " +
+                    "^Those with a twisted connection to the otherworld may remain tethered to the Valley long after their mortal vessel wastes away." +
+                    "^Strike them with bolt and flame to draw out and disperse their corrupted energies." +
+                    "^..." +
+                    "^(You have received new quests)";
+
+                mod.NewQuest("challengeCanoli");
+
+                mod.NewQuest("challengeMariner");
+
+                mod.NewQuest("challengeSandDragon");
+
+                lessonGiven = true;
+
+            }
+            else
+            {
+
+                List<string> challengeList = new()
+                {
+                    "challengeCanoliTwo",
+                    "challengeMarinerTwo",
+                    "challengeSandDragonTwo",
+                    "challengeEarthTwo",
+                    "challengeWaterTwo",
+                    "challengeStarsTwo",
+                };
+
+                List<string> enterList = new();
+
+                effigyReply = "Forgotten Effigy: ^An old threat has re-emerged. Be careful, they may have increased in power since your last confrontation." +
+                    "^..." +
+                    "^(You have received a new quest)";
+
+                foreach(string challenge in challengeList)
+                {
+
+                    if (!mod.QuestGiven(challenge))
+                    {
+                        enterList.Add(challenge);
+
+                    }
+
+                }
+
+                if(enterList.Count == 0)
+                {
+
+                    enterList = challengeList;
+
+                }
+
+                string enterChallenge = enterList[Game1.random.Next(enterList.Count)];
+
+                mod.NewQuest(enterChallenge);
+
+                lessonGiven = true;
+
+            }
 
             Game1.activeClickableMenu = new DialogueBox(effigyReply);
 
@@ -865,6 +947,8 @@ namespace StardewDruid.Map
             Game1.currentLocation.playSound("yoba");
 
             mod.UnlockAll();
+
+            DecorateCave();
 
             Game1.activeClickableMenu = new DialogueBox(effigyReply);
 
@@ -975,7 +1059,7 @@ namespace StardewDruid.Map
             if(effigyAnswer != "cancel")
             {
 
-                mod.UpdateBlessing(effigyAnswer);
+                mod.ChangeBlessing(effigyAnswer);
 
             }
 
@@ -990,19 +1074,22 @@ namespace StardewDruid.Map
 
             Dictionary<string, int> blessingList = mod.BlessingList();
 
+            Dictionary<string, int> toggleList = mod.ToggleList();
+
             string effigyQuestion = "Forgotten Effigy: ^Our traditions are etched into the bedrock of the valley.";
 
             if (returnFrom == "forget")
             {
 
-                effigyQuestion = "Forgotten Effigy: ... you've forgotten what you wanted to forget, haven't you.";
+                effigyQuestion = "Forgotten Effigy: ^The druid's life is... full of random surprises... but may you not suffer any more of this kind.";
+
 
             }
 
-            if (returnFrom == "relearn")
+            if (returnFrom == "remember")
             {
 
-                effigyQuestion = "Forgotten Effigy: ... so you can't remember what you wanted to remember.";
+                effigyQuestion = "Forgotten Effigy: ^Let the essence of life itself enrich your world.";
 
             }
 
@@ -1026,9 +1113,17 @@ namespace StardewDruid.Map
 
             if (blessingList["earth"] >= 2)
             {
-                effigyChoices.Add(new Response("disable", "I'd rather forget something that happened (disable effects)"));
+                if(toggleList.Count < 4)
+                {
+                    effigyChoices.Add(new Response("disable", "I'd rather forget something that happened (disable effects)"));
 
-                effigyChoices.Add(new Response("enable", "I want to relearn something (enable effects)"));
+                }
+                if (toggleList.Count > 0)
+                {
+
+                    effigyChoices.Add(new Response("enable", "I want to relearn something (enable effects)"));
+
+                }
 
             }
 
@@ -1240,7 +1335,7 @@ namespace StardewDruid.Map
             if (blessingList["water"] >= 4)
             {
 
-                effigyQuestion += "^Lesson 4. Expend high amounts of stamina to instantly destroy enemies.";
+                effigyQuestion += "^Lesson 4. Expend high amounts of stamina to smite enemies with bolts of power.";
 
             }
 
@@ -1270,7 +1365,7 @@ namespace StardewDruid.Map
 
             Dictionary<string, int> blessingList = mod.BlessingList();
 
-            string effigyQuestion = "Forgotten Effigy: ^The Stars have no names that can be uttered by earthly dwellers. They exist high above, and beyond, and care not for the life of our world, though their light sustains much of it. ^Yet... there is one star... a fallen star. He has a name. A name that we dread to speak.";
+            string effigyQuestion = "Forgotten Effigy: ^The Stars have no names that can be uttered by earthly dwellers. They exist high above, and beyond, and care not for the life of our world, though their light sustains much of it. ^Yet... there is one star... a fallen star. That has a name. A name that we dread to speak.";
 
             List<Response> effigyChoices = new();
 
@@ -1298,39 +1393,54 @@ namespace StardewDruid.Map
 
             Dictionary<string, int> blessingList = mod.BlessingList();
 
+            Dictionary<string, int> toggleList = mod.ToggleList();
+
             string effigyQuestion = "Forgotten Effigy: ^Is there a lesson you'd rather forget.";
 
             List<Response> effigyChoices = new();
 
-            if (!blessingList.ContainsKey("forgetSeeds") && blessingList["earth"] >= 3)
+            if (!toggleList.ContainsKey("forgetSeeds") && blessingList["earth"] >= 3)
             {
 
                 effigyChoices.Add(new Response("forgetSeeds", "I end up with seeds in my boots everytime I run through the meadow. IT'S ANNOYING."));
 
             }
 
-            if (!blessingList.ContainsKey("forgetFish"))
+            if (!toggleList.ContainsKey("forgetFish"))
             {
 
                 effigyChoices.Add(new Response("forgetFish", "I got slapped in the face by a flying fish today."));
 
             }
 
-            if (!blessingList.ContainsKey("forgetCritters"))
+            if (!toggleList.ContainsKey("forgetCritters"))
             {
 
                 effigyChoices.Add(new Response("forgetCritters", "Why does a bat sleep in every damn tree on this farm. Can't they live in this cave instead?"));
 
             }
 
-            if (!blessingList.ContainsKey("forgetTrees") && blessingList["earth"] >= 3)
+            if (!toggleList.ContainsKey("forgetTrees") && blessingList["earth"] >= 3)
             {
 
                 effigyChoices.Add(new Response("forgetTrees", "Just about inside Clint's by 3:50pm when a tree sprouted in front of me. Now my crotch is sore AND I don't have a Copper Axe."));
 
             }
 
-            effigyChoices.Add(new Response("return", "(nevermind)"));
+            if(effigyChoices.Count == 0)
+            {
+
+                effigyQuestion = "Forgotten Effigy: ^Your mind is already completely empty.";
+
+                effigyChoices.Add(new Response("return", "(sure...)"));
+
+            }
+            else
+            {
+                
+                effigyChoices.Add(new Response("return", "(nevermind)"));
+
+            }
 
             GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerDisable);
 
@@ -1343,27 +1453,25 @@ namespace StardewDruid.Map
         public void AnswerDisable(Farmer effigyVisitor, string effigyAnswer)
         {
 
-            string effigyReply = "Forgotten Effigy: ^The druid's life is... full of random surprises... but may you not suffer any more of this kind.";
-
             switch (effigyAnswer)
             {
                 case "return":
 
-                    returnFrom = "forget";
+                    returnFrom = "nevermind";
 
-                    DelayedAction.functionAfterDelay(DialogueEffects, 100);
-
-                    return;
+                    break;
 
                 default: //
 
                     mod.ToggleEffect(effigyAnswer);
 
+                    returnFrom = "forget";
+
                     break;
 
             }
 
-            Game1.activeClickableMenu = new DialogueBox(effigyReply);
+            DelayedAction.functionAfterDelay(DialogueEffects, 100);
 
         }
 
@@ -1372,39 +1480,54 @@ namespace StardewDruid.Map
 
             Dictionary<string, int> blessingList = mod.BlessingList();
 
+            Dictionary<string, int> toggleList = mod.ToggleList();
+
             string effigyQuestion = "Forgotten Effigy: ^The mind is open.";
 
             List<Response> effigyChoices = new();
 
-            if (blessingList.ContainsKey("forgetSeeds"))
+            if (toggleList.ContainsKey("forgetSeeds"))
             {
 
                 effigyChoices.Add(new Response("forgetSeeds", "There's a time to reap and a time to sow. I want to reap seeds from wild grass, sell them, and buy a Sow."));
 
             }
 
-            if (blessingList.ContainsKey("forgetFish"))
+            if (toggleList.ContainsKey("forgetFish"))
             {
 
                 effigyChoices.Add(new Response("forgetFish", "I miss the way the fish dance to the rhythm of the rite"));
 
             }
 
-            if (blessingList.ContainsKey("forgetCritters"))
+            if (toggleList.ContainsKey("forgetCritters"))
             {
 
                 effigyChoices.Add(new Response("forgetCritters", "I miss the feeling of being watched from every bush."));
 
             }
 
-            if (blessingList.ContainsKey("forgetTrees"))
+            if (toggleList.ContainsKey("forgetTrees"))
             {
 
                 effigyChoices.Add(new Response("forgetTrees", "Stuff Clint. I want to impress Emily with the magic sprout trick."));
 
             }
 
-            effigyChoices.Add(new Response("return", "(nevermind)"));
+            if (effigyChoices.Count == 0)
+            {
+
+                effigyQuestion = "Forgotten Effigy: ^You already remember everything I taught you.";
+
+                effigyChoices.Add(new Response("return", "(sure...)"));
+
+            }
+            else
+            {
+
+                effigyChoices.Add(new Response("return", "(nevermind)"));
+
+            }
 
             GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerEnable);
 
@@ -1417,27 +1540,25 @@ namespace StardewDruid.Map
         public void AnswerEnable(Farmer effigyVisitor, string effigyAnswer)
         {
 
-            string effigyReply = "Forgotten Effigy: ^Let the essence of life itself enrich your world.";
-
             switch (effigyAnswer)
             {
                 case "return":
 
-                    returnFrom = "relearn";
+                    returnFrom = "nevermind";
 
-                    DelayedAction.functionAfterDelay(DialogueEffects, 100);
-
-                    return;
+                    break;
 
                 default: //
 
                     mod.ToggleEffect(effigyAnswer);
 
+                    returnFrom = "remember";
+
                     break;
 
             }
 
-            Game1.activeClickableMenu = new DialogueBox(effigyReply);
+            DelayedAction.functionAfterDelay(DialogueEffects, 100);
 
         }
 

@@ -11,7 +11,9 @@ namespace StardewDruid.Cast
     {
         public Vector2 targetVector { get; set; }
 
-        public Random randomIndex { get; set; }
+        public readonly Farmer targetPlayer;
+
+        public readonly GameLocation targetLocation;
 
         public readonly Rite riteData;
 
@@ -21,26 +23,20 @@ namespace StardewDruid.Cast
 
         public bool castLimit { get; set; }
 
-        public bool castActive { get; set; }
-
-        public double expireTime { get; set; }
-
         public readonly Mod mod;
 
-        public readonly Farmer targetPlayer;
+        public Random randomIndex;
 
-        public readonly GameLocation targetLocation;
-
-        public CastHandle(Mod Mod, Vector2 Vector, Rite RiteData)
+        public CastHandle(Mod Mod, Vector2 Vector, Rite rite)
         {
 
             targetVector = Vector;
 
             mod = Mod;
 
-            randomIndex = new Random();
+            randomIndex = rite.randomIndex;
 
-            riteData = RiteData;
+            riteData = rite;
 
             targetPlayer = riteData.caster;
 
@@ -51,8 +47,6 @@ namespace StardewDruid.Cast
             castCost = 2;
 
             castLimit = false;
-
-            castActive = false;
 
         }
 
@@ -76,27 +70,6 @@ namespace StardewDruid.Cast
 
         }
 
-        public virtual bool CastActive(int castIndex, int castLimit)
-        {
-            return false;
-        }
-
-        public virtual void CastExtend()
-        {
-
-            expireTime++;
-
-        }
-
-        public virtual void CastRemove()
-        {
-
-        }
-
-        public virtual void CastTrigger()
-        {
-
-        }
 
     }
 }

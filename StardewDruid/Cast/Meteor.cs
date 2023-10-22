@@ -256,29 +256,9 @@ namespace StardewDruid.Cast
 
                     }
 
-                    if(i == damageRadius || destroyVector) { 
+                    if(i == damageRadius || destroyVector) {
 
-                        if (Game1.random.NextDouble() < 0.5)
-                        {
-                            TemporaryAnimatedSprite smallAnimation = new(362, Game1.random.Next(30, 90), 6, 1, new Vector2(tileVector.X * 64f, tileVector.Y * 64f), flicker: false, (Game1.random.NextDouble() < 0.5) ? true : false)
-                            {
-                                delayBeforeAnimationStart = Game1.random.Next(700)
-                            };
-
-                            targetLocation.temporarySprites.Add(smallAnimation);
-                        }
-                        else
-                        {
-
-                            TemporaryAnimatedSprite smallAnimation = new(5, new Vector2(tileVector.X * 64f, tileVector.Y * 64f), Color.White, 8, flipped: false, 50f)
-                            {
-                                delayBeforeAnimationStart = Game1.random.Next(200),
-                                scale = (float)Game1.random.Next(5, 15) / 10f
-                            };
-
-                            targetLocation.temporarySprites.Add(smallAnimation);
-
-                        }
+                        ModUtility.ImpactVector(targetLocation, tileVector);
 
                     }
 

@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewValley;
+using StardewValley.Monsters;
 using StardewValley.Tools;
 using System;
+using System.Threading;
 
 namespace StardewDruid.Cast
 {
@@ -25,14 +27,12 @@ namespace StardewDruid.Cast
         public override void CastWater()
         {
 
-            /*Rectangle areaOfEffect = new(
-                ((int)targetVector.X * 64) - 32,
-                ((int)targetVector.Y * 64) - 32,
-                128,
-                128
-            );*/
+            if(targetMonster == null || targetMonster.Health <= 0 || !targetLocation.characters.Contains(targetMonster))
+            {
 
-            //targetLocation.damageMonster(areaOfEffect, riteData.castDamage * 2, riteData.castDamage * 3, true, targetPlayer);
+                return;
+
+            }
 
             float critChance = 0.05f;
 
@@ -45,27 +45,151 @@ namespace StardewDruid.Cast
             else
             {
 
-                critChance = 0.35f;
+                critChance += 0.2f;
+
+
+                //if(targetPlayer.CurrentTool is MeleeWeapon meleeWeapon)
+                //{
+                 //   critChance += meleeWeapon.critChance.Value * 0.025f;
+
+                //}
 
             }
 
-            Rectangle areaOfEffect = new(
-                ((int)targetVector.X * 64)+2,
-                ((int)targetVector.Y * 64)+2,
-                60,
-                60
-            );
+            if (targetPlayer.professions.Contains(25))
+            {
+
+                critChance += 0.15f;
+
+            }
+
+            //Rectangle areaOfEffect = targetMonster.GetBoundingBox();
+
+            //targetMonster.invincibleCountdown = 0;
+
+            //Rectangle monsterHitbox = targetMonster.nextPosition(targetMonster.FacingDirection);
+
+            //Rectangle areaOfEffect = new(monsterHitbox.X - 8, monsterHitbox.Y - 8, monsterHitbox.Width + 16, monsterHitbox.Height + 16);
+
+            //targetLocation.damageMonster(areaOfEffect, riteData.castDamage, riteData.castDamage * 2, false, 0f, targetPlayer.CombatLevel, critChance, 2, false, targetPlayer);
+
+            int damageApplied = randomIndex.Next(riteData.castDamage, riteData.castDamage * 2);
+
+            int critModifier = 2;
+
+            if (targetPlayer.professions.Contains(29))
+            {
+                critModifier += 1;
+
+            }
+
+            bool critApplied = false;
+
+            if(randomIndex.NextDouble() <= critChance){
+
+                damageApplied *= critModifier;
+
+                //targetLocation.playSound("crit");
+
+                critApplied = true;
+
+            }
+
+            int damageDealt = targetMonster.takeDamage(damageApplied, 0, 0, false, 999f, targetPlayer);
+
+            if (damageDealt <= 0)
+            {
+                return;            
+            }
+
+            foreach (BaseEnchantment enchantment in targetPlayer.enchantments)
+            {
+                enchantment.OnCalculateDamage(targetMonster, targetLocation, targetPlayer, ref damageDealt);
+            }
+
+            targetLocation.removeDamageDebris(targetMonster);
+
+            Microsoft.Xna.Framework.Rectangle boundingBox = targetMonster.GetBoundingBox();
+
+            targetLocation.debris.Add(new Debris(damageDealt, new Vector2(boundingBox.Center.X + 16, boundingBox.Center.Y), critApplied ? Color.Yellow : new Color(255, 130, 0), critApplied ? (1f + (float)damageDealt / 300f) : 1f, targetMonster));
+
+            foreach (BaseEnchantment enchantment2 in targetPlayer.enchantments)
+            {
+                enchantment2.OnDealDamage(targetMonster, targetLocation, targetPlayer, ref damageDealt);
+            }
+
+            if (targetMonster.Health <= 0)
+            {
+                targetPlayer.checkForQuestComplete(null, 1, 1, null, targetMonster.Name, 4);
+
+                if (Game1.player.team.specialOrders is not null)
+                {
+                    foreach (SpecialOrder specialOrder in Game1.player.team.specialOrders)
+                    {
+                        if (specialOrder.onMonsterSlain != null)
+                        {
+                            specialOrder.onMonsterSlain(Game1.player, targetMonster);
+                        }
+                    }
+                }
+
+                foreach (BaseEnchantment enchantment3 in targetPlayer.enchantments)
+                {
+                    enchantment3.OnMonsterSlay(targetMonster, targetLocation, targetPlayer);
+                }
+
+                if (targetPlayer.leftRing.Value != null)
+                {
+                    targetPlayer.leftRing.Value.onMonsterSlay(targetMonster, targetLocation, targetPlayer);
+                }
+
+                if (targetPlayer.rightRing.Value != null)
+                {
+                    targetPlayer.rightRing.Value.onMonsterSlay(targetMonster, targetLocation, targetPlayer);
+                }
+
+                if (!(targetMonster is GreenSlime) || (bool)(targetMonster as GreenSlime).firstGeneration.Value)
+                {
+                    if (targetPlayer.IsLocalPlayer)
+                    {
+                        Game1.stats.monsterKilled(targetMonster.Name);
+                    }
+                    else if (Game1.IsMasterGame)
+                    {
+                        targetPlayer.queueMessage(25, Game1.player, targetMonster.Name);
+                    }
+                }
+
+                targetLocation.monsterDrop(targetMonster, boundingBox.Center.X, boundingBox.Center.Y, targetPlayer);
+
+                targetPlayer.gainExperience(4, targetMonster.ExperienceGained);
+
+                if ((bool)targetMonster.isHardModeMonster.Value)
+                {
+                    Game1.stats.incrementStat("hardModeMonstersKilled", 1);
+                }
+
+                targetLocation.characters.Remove(targetMonster);
+
+                Game1.stats.MonstersKilled++;
+
+                ModUtility.AnimateBolt(targetLocation, new Vector2(targetVector.X, targetVector.Y - 1), 1200);
+
+            }
+            else
+            {
+
+                ModUtility.AnimateBolt(targetLocation, new Vector2(targetVector.X, targetVector.Y - 1), 600+(randomIndex.Next(1,8)*100));
+
+            }
             
-            targetLocation.damageMonster(areaOfEffect, riteData.castDamage, riteData.castDamage * 2, false, 0f, targetPlayer.CombatLevel, critChance, 2, false, targetPlayer);
 
-            ModUtility.AnimateBolt(targetLocation, new Vector2(targetVector.X, targetVector.Y - 1));
-
-            if (randomIndex.Next(2) == 0)
+            /*if (randomIndex.Next(2) == 0)
             {
 
                 castLimit = true;
 
-            }
+            }*/
 
             castFire = true;
 

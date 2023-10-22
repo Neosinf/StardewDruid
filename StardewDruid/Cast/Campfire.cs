@@ -82,11 +82,13 @@ namespace StardewDruid.Cast
 
             }
 
-            targetLocation.objects.Add(newVector, new Torch(newVector, 278, bigCraftable: true)
+            Torch campFire = new(newVector, 278, bigCraftable: true)
             {
                 Fragility = 1,
                 destroyOvernight = true
-            });
+            };
+
+            targetLocation.objects.Add(newVector, campFire);
 
             //Vector2 tilePosition = new Vector2(newVector.X * 64, newVector.Y * 64);
 

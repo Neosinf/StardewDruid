@@ -55,8 +55,6 @@ namespace StardewDruid.Cast
 
             }
 
-            //Dictionary<string, List<Vector2>> neighbourList = ModUtility.NeighbourCheck(targetLocation, targetVector);
-
             if (hoeDirt.fertilizer.Value == 0)
             {
 

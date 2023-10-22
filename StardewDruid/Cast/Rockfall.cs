@@ -16,11 +16,13 @@ namespace StardewDruid.Cast
 
         public int objectIndex;
 
-        public int objectStrength;
+        //public int objectStrength;
 
         public int debrisIndex;
 
         public int powerLevel;
+
+        public bool challengeCast;
 
         public Rockfall(Mod mod, Vector2 target, Rite rite)
             : base(mod, target, rite)
@@ -237,6 +239,36 @@ namespace StardewDruid.Cast
 
             }
 
+            /*Dictionary<int, int> scatterIndexes = new()
+            {
+
+                [2] = 3,
+                [4] = 5,
+                [8] = 9,
+                [10] = 11,
+                [12] = 13,
+                [14] = 15,
+                [32] = 33,
+                [40] = 41,
+                [42] = 43,
+                [44] = 45,
+                [48] = 49,
+                [50] = 51,
+                [52] = 53,
+                [54] = 55,
+                [56] = 57,
+                [58] = 59,
+                [290] = 35,
+                [668] = 669,
+                [670] = 671,
+                [751] = 33,
+                [760] = 761,
+                [762] = 763,
+                [764] = 761,
+                [765] = 763,
+
+            };*/
+
             Dictionary<int, int> scatterIndexes = new()
             {
 
@@ -311,7 +343,7 @@ namespace StardewDruid.Cast
 
             Microsoft.Xna.Framework.Rectangle scatterRectangle = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, scatterIndex, 16, 16);
 
-            float animationInterval = 500f;
+            float animationInterval = 575f;
 
             Vector2 animationPosition;
 
@@ -327,7 +359,7 @@ namespace StardewDruid.Cast
 
             animationPosition = new(targetVector.X * 64 + 8, (targetVector.Y - 3) * 64 - 24);
 
-            animationAcceleration = 0.001f;
+            animationAcceleration = 0.0015f;
 
             animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "1");
 
@@ -365,12 +397,7 @@ namespace StardewDruid.Cast
 
             // ------------------------------ impacts
 
-            if (riteData.castTask.ContainsKey("masterRockfall"))
-            {
-                
-                DelayedAction.functionAfterDelay(DebrisImpact, 575);
-
-            }
+            DelayedAction.functionAfterDelay(DebrisImpact, 575);
 
             if (generateRock)
             {
@@ -392,25 +419,30 @@ namespace StardewDruid.Cast
 
         public void DebrisImpact()
         {
+            ModUtility.ImpactVector(targetLocation, targetVector);
+            
+            if (riteData.castTask.ContainsKey("masterRockfall") || challengeCast)
+            {
 
-            Microsoft.Xna.Framework.Rectangle areaOfEffect = new(
-                ((int)targetVector.X - 2) * 64,
-                ((int)targetVector.Y - 2) * 64,
-                300,
-                300
-            );
+                Microsoft.Xna.Framework.Rectangle areaOfEffect = new(
+                    ((int)targetVector.X* 64) - 32,
+                    ((int)targetVector.Y* 64) - 32,
+                    128,
+                    128
+                );
 
-            int castDamage = riteData.castDamage / 4 * 3;
+                int castDamage = riteData.castDamage / 2;
 
-            targetLocation.damageMonster(areaOfEffect, castDamage, riteData.castDamage, true, targetPlayer);
+                targetLocation.damageMonster(areaOfEffect, castDamage, riteData.castDamage, true, targetPlayer);
 
+            }
         }
 
         public void RockImpact()
         {   
             int rockCut = randomIndex.Next(2);
 
-            int generateRock = 1 + randomIndex.Next(powerLevel);
+            int generateRock = 1 + (int) (randomIndex.Next(powerLevel) / 2);
 
             for (int i = 0; i < generateRock; i++)
             {

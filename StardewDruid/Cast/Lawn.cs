@@ -38,12 +38,12 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
             
-            if (targetLocation.terrainFeatures.ContainsKey(targetVector))
+            /*if (targetLocation.terrainFeatures.ContainsKey(targetVector))
             {
 
                 return;
 
-            }
+            }*/
 
             bool forgotTrees = riteData.castToggle.ContainsKey("forgetTrees");
 

@@ -4,6 +4,7 @@ using StardewModdingAPI;
 using StardewValley;
 using System;
 using System.ComponentModel.Design;
+using static StardewValley.Debris;
 
 namespace StardewDruid.Cast
 {
@@ -52,7 +53,11 @@ namespace StardewDruid.Cast
             if (randomIndex.Next(100) == 0) // 1:1000 chance
             {
 
-                Game1.createObjectDebris(114, tileX, tileY);
+                Throw ancientObject = new(114,0);
+
+                ancientObject.ThrowObject(targetPlayer, targetVector);
+
+                //Game1.createObjectDebris(114, tileX, tileY);
 
             }
 
@@ -64,19 +69,31 @@ namespace StardewDruid.Cast
 
                     case "spring":
 
-                        Game1.createObjectDebris(495, tileX, tileY);
+                        Throw springObject = new(495, 0);
+
+                        springObject.ThrowObject(targetPlayer, targetVector);
+
+                        //Game1.createObjectDebris(495, tileX, tileY);
 
                         break;
 
                     case "summer":
 
-                        Game1.createObjectDebris(496, tileX, tileY);
+                        Throw summerObject = new(496, 0);
+
+                        summerObject.ThrowObject(targetPlayer, targetVector);
+
+                        //Game1.createObjectDebris(496, tileX, tileY);
 
                         break;
 
                     case "fall":
 
-                        Game1.createObjectDebris(497, tileX, tileY);
+                        Throw fallObject = new(497, 0);
+
+                        fallObject.ThrowObject(targetPlayer, targetVector);
+
+                        //Game1.createObjectDebris(497, tileX, tileY);
 
                         break;
 
@@ -90,9 +107,16 @@ namespace StardewDruid.Cast
             else
             {
 
+                Dictionary<int, Throw> throwList = new();
+
                 for (int i = 2; i < probability; i++)
                 {
-                    Game1.createObjectDebris(771, tileX, tileY);
+                    
+                    throwList[i] = new(771, 0);
+
+                    throwList[i].ThrowObject(targetPlayer, targetVector);
+
+                    //Game1.createObjectDebris(771, tileX, tileY);
 
                 }
 

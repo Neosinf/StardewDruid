@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 
 namespace StardewDruid
@@ -19,6 +20,8 @@ namespace StardewDruid
         public int castLevel = 0;
 
         public int cycleLevel = 1;
+
+        public List<Type> castLimits = new();
 
         public bool castInterrupt = false;
 

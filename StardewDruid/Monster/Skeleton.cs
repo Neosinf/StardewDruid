@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.Characters;
 using StardewValley.Monsters;
+using StardewValley.Network;
 using StardewValley.Objects;
 using StardewValley.Tools;
 using System;
@@ -11,9 +12,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StardewDruid.Event
+namespace StardewDruid.Monster
 {
-    public class PirateSkeleton: Skeleton
+    public class Skeleton : StardewValley.Monsters.Skeleton
     {
 
         public List<string> ouchList;
@@ -21,8 +22,6 @@ namespace StardewDruid.Event
         public List<string> dialogueList;
 
         public int tickCount;
-
-        public TemporaryAnimatedSprite hatAnimation;
 
         public Texture2D hatsTexture;
 
@@ -36,7 +35,9 @@ namespace StardewDruid.Event
 
         public Dictionary<int, Vector2> hatOffsets;
 
-        public TemporaryAnimatedSprite swordAnimation;
+        public float hatSize;
+
+        public Texture2D swordsTexture;
 
         public Rectangle swordSourceRect;
 
@@ -58,11 +59,17 @@ namespace StardewDruid.Event
 
         public float swordDepth;
 
-        public PirateSkeleton(Vector2 position, int difficultyMod)
-            : base(position, false)
+        public Skeleton(Vector2 vector, int combatModifier, string monsterType = "wild")
+            : base(vector*64, false)
         {
 
             focusedOnFarmers = true;
+
+            base.Health = combatModifier;
+
+            base.DamageToFarmer = (int)Math.Max(2, combatModifier * 0.075);
+
+            // ---------------------------------
 
             IsWalkingTowardPlayer = true;
 
@@ -74,30 +81,24 @@ namespace StardewDruid.Event
 
             jitteriness.Value = 0.0;
 
-            DamageToFarmer += difficultyMod;
-
-            Health += (int)(difficultyMod * difficultyMod *2);
-
-            ExperienceGained += difficultyMod;
-
             objectsToDrop.Clear();
 
             if (Game1.random.Next(2) == 0)
             {
                 objectsToDrop.Add(378);
             }
-            else if (Game1.random.Next(3) == 0 && difficultyMod >= 5)
+            else if (Game1.random.Next(3) == 0 && combatModifier >= 5)
             {
                 objectsToDrop.Add(380);
             }
-            else if (Game1.random.Next(4) == 0 && difficultyMod >= 8)
+            else if (Game1.random.Next(4) == 0 && combatModifier >= 8)
             {
                 objectsToDrop.Add(384);
             }
 
             ouchList = new()
             {
-                "oooft",
+                "deep",
                 "yeoww",
                 "crikey!",
             };
@@ -116,10 +117,15 @@ namespace StardewDruid.Event
             {
                 242,
                 292,
-                3,
+                //3,
+                //299,
             };
 
+            hatSize = 3.5f;
+
             hatIndex = hatList[Game1.random.Next(hatList.Count)];
+
+            //if (hatIndex == 299) { hatSize = 4f; }
 
             hatSourceRects = new()
             {
@@ -131,11 +137,13 @@ namespace StardewDruid.Event
 
             hatOffsets = new()
             {
-                [2] = new Vector2(5, -81),
-                [1] = new Vector2(6, -81),
-                [3] = new Vector2(2, -81),
-                [0] = new Vector2(6, -81),
+                [2] = new Vector2(-2, 0),
+                [1] = new Vector2(0, -4),
+                [3] = new Vector2(-4, -4),
+                [0] = new Vector2(2, 0),
             };
+
+            swordsTexture = Game1.content.Load<Texture2D>("TileSheets\\weapons");
 
             List<int> swordList = new()
             {
@@ -150,10 +158,10 @@ namespace StardewDruid.Event
 
             swordOffsets = new()
             {
-                [2] = new Vector2(38, -8), // down
-                [1] = new Vector2(10, -8), // right
-                [3] = new Vector2(26, -8), // left
-                [0] = new Vector2(2, -8), // up
+                [2] = new Vector2(20, 0), // down
+                [1] = new Vector2(-52, 4), // right
+                [3] = new Vector2(0, -20), // left
+                [0] = new Vector2(-42, 24), // up
             };
 
             swordFlips = new()
@@ -172,50 +180,110 @@ namespace StardewDruid.Event
                 [0] = 4.0f,//0.8f,
             };
 
-            swordDepths = new()
+        }
+
+        public override void draw(SpriteBatch b)
+        {
+            base.draw(b);
+
+            if (!IsInvisible && Utility.isOnScreen(Position, 128))
             {
-                [2] = 999f,
-                [1] = 999f,
-                [3] = 0.0999f,
-                [0] = 999f,
-            };
+                int spriteDirection = getFacingDirection();
+
+                if (Sprite.currentFrame >= 20)
+                {
+                    spriteDirection = 2;
+
+                }
+
+                // ----------------- hats
+
+                hatSourceRect = hatSourceRects[spriteDirection];
+
+                hatOffset = hatOffsets[spriteDirection];
+
+                switch (Sprite.currentFrame % 4)
+                {
+
+                    case 1:
+
+                        hatOffset += new Vector2(0, 3); // down
+
+                        break;
+
+                    case 3:
+
+                        hatOffset += new Vector2(0, 3); // down
+
+                        break;
+
+                    default: break;
+
+                }
+
+                Vector2 localPosition = getLocalPosition(Game1.viewport) + new Vector2(56f, 16 + yJumpOffset);
+
+                float depth = (float)GetBoundingBox().Center.Y / 10000f + 0.00005f;
+
+                b.Draw(
+                    hatsTexture,
+                    localPosition + hatOffset,
+                    hatSourceRect,
+                    Color.White,
+                    0,
+                    new Vector2(16f, 29f),
+                    hatSize,
+                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    depth
+                 );
+                
+                // ------------------ swords
+
+                swordOffset = swordOffsets[spriteDirection];
+
+                swordFlip = swordFlips[spriteDirection];
+
+                swordRotate = swordRotates[spriteDirection];
+
+                swordDepths = new()
+                {
+                    [2] = depth - 0.0001f,
+                    [1] = depth - 0.0001f,
+                    [3] = depth,
+                    [0] = depth,
+                };
+
+                swordDepth = swordDepths[spriteDirection];
+
+                b.Draw(
+                    swordsTexture,
+                    localPosition + swordOffset,
+                    swordSourceRect,
+                    Color.White,
+                    swordRotate,
+                    new(0,0),
+                    2.25f,
+                    swordFlip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    swordDepth
+                 );
+
+            }
 
         }
 
         public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who)
         {
+            int ouchIndex = Game1.random.Next(10);
 
-            int num = Math.Max(1, damage - resilience.Value);
-
-            /*if (Game1.random.NextDouble() < (double)missChance.Value - (double)missChance.Value * addedPrecision)
+            if (ouchIndex < ouchList.Count)
             {
-                num = -1;
-
+                showTextAboveHead(ouchList[ouchIndex], duration: 2000);
             }
-            else
-            {*/
 
-                Health -= num;
+            return base.takeDamage(damage, xTrajectory, yTrajectory, isBomb, addedPrecision, who);
 
-                setTrajectory(xTrajectory, yTrajectory);
-
-                if (Health <= 0)
-                {
-                    deathAnimation();
-                }
-
-                //base.currentLocation.playSound("hitEnemy");
-                int ouchIndex = Game1.random.Next(10);
-                if (ouchList.Count - 1 >= ouchIndex)
-                {
-                    showTextAboveHead(ouchList[ouchIndex], duration: 2000);
-                }
-
-            //}
-
-            return num;
         }
-        
+
         public override List<Item> getExtraDropItems()
         {
             return new List<Item>();
@@ -226,9 +294,9 @@ namespace StardewDruid.Event
 
             List<string> panicList = new()
             {
-                "cover?",
-                "deep deep",
-                "RUN!",
+                "cover!",
+                "RUN",
+                "oh no!",
             };
 
             showTextAboveHead(panicList[Game1.random.Next(3)], duration: 3000);
@@ -249,47 +317,6 @@ namespace StardewDruid.Event
                 }
                 tickCount = 0;
             }
-
-            int facingDirection = getFacingDirection();
-
-            hatSourceRect = hatSourceRects[facingDirection];
-
-            hatOffset = hatOffsets[facingDirection];
-
-            switch (Sprite.currentFrame % 4)
-            {
-
-                case 1:
-
-                    hatOffset += new Vector2(0, 3); // down
-
-                    break;
-
-                case 3:
-
-                    hatOffset += new Vector2(0, 3); // down
-
-                    break;
-
-                default: break;
-
-            }
-
-            hatAnimation = new("Characters\\Farmer\\hats", hatSourceRect, 17f, 1, 1, position + hatOffset, flicker: false, flipped: false, 999f, 0f, Color.White, 3f, 0, 0, 0);
-
-            currentLocation.temporarySprites.Add(hatAnimation);
-
-            swordOffset = swordOffsets[facingDirection];
-
-            swordFlip = swordFlips[facingDirection];
-
-            swordRotate = swordRotates[facingDirection];
-
-            swordDepth = swordDepths[facingDirection];
-
-            swordAnimation = new("TileSheets\\weapons", swordSourceRect, 17f, 1, 1, position + swordOffset, flicker: false, flipped: swordFlip, swordDepth, 0f, Color.White, 2f, 0f, swordRotate, 0f);
-
-            currentLocation.temporarySprites.Add(swordAnimation);
 
             base.behaviorAtGameTick(time);
 

@@ -32,63 +32,32 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
 
-            int probability = randomIndex.Next(30 - riteData.caster.ForagingLevel);
-
-            if (probability >= 3) // nothing
+            if (randomIndex.Next(20) == 0 && riteData.spawnIndex["critter"] && !riteData.castToggle.ContainsKey("forgetCritters"))
             {
 
-                bushFeature.performToolAction(null, 1, targetVector, null);
+                int spawnMonster = mod.SpawnMonster(targetLocation, targetVector, new() { 99, }, "bush");
 
-                return;
-
-            }
-
-            if (probability == 2)
-            {
-                if (riteData.spawnIndex["critter"] && !riteData.castToggle.ContainsKey("forgetCritters"))
+                if (!riteData.castTask.ContainsKey("masterCreature") && spawnMonster >= 1)
                 {
 
-                    Portal critterPortal = new(mod, targetPlayer.getTileLocation(), riteData);
-
-                    critterPortal.spawnFrequency = 1;
-
-                    critterPortal.spawnIndex = new()
-                    {
-                        0,3,99,
-
-                    };
-
-                    critterPortal.baseType = "terrain";
-
-                    critterPortal.baseVector = targetVector;
-
-                    critterPortal.baseTarget = true;
-
-                    critterPortal.CastTrigger();
-
-                    if (critterPortal.spawnQueue.Count > 0)
-                    {
-
-                        if (!riteData.castTask.ContainsKey("masterCreature"))
-                        {
-
-                            mod.UpdateTask("lessonCreature", 1);
-
-                        }
-
-                    }
+                    mod.UpdateTask("lessonCreature", 1);
 
                 }
 
-                bushFeature.performToolAction(null, 1, targetVector, null);
+            }
 
-                return;
+            bushFeature.performToolAction(null, 1, targetVector, null);
 
+            int probability = randomIndex.Next(25 - riteData.caster.ForagingLevel);
+
+            if(probability > 1)
+            { 
+                return; 
             }
 
             int objectIndex;
 
-            if (probability == 1)
+            if (probability == 0)
             {
 
                 switch (Game1.currentSeason)

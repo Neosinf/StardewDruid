@@ -11,22 +11,33 @@ using System.Collections.Generic;
 
 namespace StardewDruid.Event
 {
-    internal class Sword : StardewDruid.Cast.CastHandle
+    internal class SwordHandle
     {
 
         private int swordIndex;
 
         private readonly Quest questData;
 
-        public Sword(Mod mod, Vector2 target, Rite rite, Quest quest)
-            : base(mod, target, rite)
+        private readonly Rite riteData;
+
+        private readonly Vector2 targetVector;
+
+        public readonly Mod mod;
+
+        public SwordHandle(Mod Mod, Vector2 target, Rite rite, Quest quest)
         {
+
+            targetVector = target;
+
+            mod = Mod;
+
+            riteData = rite;
 
             questData = quest;
 
         }
 
-        public override void CastQuest()
+        public void EventTrigger()
         {
 
             switch (questData.name)
@@ -34,19 +45,19 @@ namespace StardewDruid.Event
 
                 case "swordStars":
 
-                    CastStars();
+                    SwordStars();
 
                     break;
 
                 case "swordWater":
 
-                    CastWater();
+                    SwordWater();
 
                     break;
 
                 default: // CastEarth
 
-                    CastEarth();
+                    SwordEarth();
 
                     break;
 
@@ -54,7 +65,7 @@ namespace StardewDruid.Event
 
         }
 
-        public override void CastEarth()
+        public void SwordEarth()
         {
 
             string effigyQuestion = "Voices in the Rustle of the Leaves: " +
@@ -69,7 +80,7 @@ namespace StardewDruid.Event
 
             GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerEarth);
 
-            targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+            riteData.castLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
 
         }
 
@@ -85,6 +96,8 @@ namespace StardewDruid.Event
                     DelayedAction.functionAfterDelay(ThrowEarth, 2000);
 
                     mod.CompleteQuest("swordEarth");
+
+                    mod.UpdateEffigy("swordEarth");
 
                     break;
 
@@ -124,21 +137,21 @@ namespace StardewDruid.Event
 
             //----------------------- cast animation
 
-            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(-3, -3));
-            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(-3, -4));
-            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(-2, -5));
-            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(-1, -6));
-            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(0, -7));
-            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(1, -7));
-            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(2, -7));
-            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(3, -6));
-            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(4, -5));
-            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(5, -4));
-            ModUtility.AnimateGrowth(targetLocation, triggerVector + new Vector2(5, -3));
+            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(-3, -3));
+            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(-3, -4));
+            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(-2, -5));
+            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(-1, -6));
+            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(0, -7));
+            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(1, -7));
+            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(2, -7));
+            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(3, -6));
+            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(4, -5));
+            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(5, -4));
+            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(5, -3));
 
         }
 
-        public override void CastWater()
+        public void SwordWater()
         {
 
             string effigyQuestion = "Voices in the Breaking of the Waves: " +
@@ -153,7 +166,7 @@ namespace StardewDruid.Event
 
             GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerWater);
 
-            targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+            riteData.castLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
 
         }
 
@@ -166,11 +179,13 @@ namespace StardewDruid.Event
 
                     Game1.activeClickableMenu = new DialogueBox("Voice Beyond the Shore: \"And I Hear Your Voice.\"");
 
-                    targetLocation.playSound("thunder_small");
+                    riteData.castLocation.playSound("thunder_small");
 
                     DelayedAction.functionAfterDelay(ThrowWater, 2000);
 
                     mod.CompleteQuest("swordWater");
+
+                    mod.UpdateEffigy("swordWater");
 
                     break;
 
@@ -210,12 +225,12 @@ namespace StardewDruid.Event
 
             //----------------------- strike animations
 
-            ModUtility.AnimateBolt(targetLocation, originVector);
+            ModUtility.AnimateBolt(riteData.castLocation, originVector);
 
         }
 
 
-        public override void CastStars()
+        public void SwordStars()
         {
 
             string effigyQuestion = "Voices in the Roiling Flames: " +
@@ -232,7 +247,7 @@ namespace StardewDruid.Event
 
             GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerStars);
 
-            targetPlayer.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+            riteData.castLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
 
         }
 
@@ -248,6 +263,8 @@ namespace StardewDruid.Event
                     DelayedAction.functionAfterDelay(ThrowStars, 2000);
 
                     mod.CompleteQuest("swordStars");
+
+                    mod.UpdateEffigy("swordStars");
 
                     break;
 
@@ -287,7 +304,7 @@ namespace StardewDruid.Event
 
             //---------------------- meteor animation
 
-            ModUtility.AnimateMeteor(targetLocation, originVector, true);
+            ModUtility.AnimateMeteor(riteData.castLocation, originVector, true);
 
             //mod.RemoveTrigger("swordStars");
 
@@ -315,7 +332,7 @@ namespace StardewDruid.Event
 
             Vector2 targetPosition = new(originVector.X * 64, originVector.Y * 64 - 96);
 
-            Vector2 playerPosition = targetPlayer.Position;
+            Vector2 playerPosition = riteData.caster.Position;
 
             float animationInterval = 1000f;
 
@@ -342,7 +359,7 @@ namespace StardewDruid.Event
 
             };
 
-            targetLocation.temporarySprites.Add(throwAnimation);
+            riteData.castLocation.temporarySprites.Add(throwAnimation);
 
         }
 
@@ -351,7 +368,7 @@ namespace StardewDruid.Event
 
             Item targetSword = new MeleeWeapon(swordIndex);
 
-            targetPlayer.addItemByMenuIfNecessaryElseHoldUp(targetSword);
+            riteData.caster.addItemByMenuIfNecessaryElseHoldUp(targetSword);
 
         }
 

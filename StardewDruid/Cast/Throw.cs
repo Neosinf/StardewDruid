@@ -44,6 +44,8 @@ namespace StardewDruid.Cast
 
             targetPlayer = TargetPlayer;
 
+            Vector2 motionPlayer = targetPlayer.getMostRecentMovementVector() / 33.33f;
+
             Rectangle targetRectangle = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, objectIndex, 16, 16);
 
             Vector2 targetPosition = new(targetVector.X * 64, targetVector.Y * 64);
@@ -52,16 +54,20 @@ namespace StardewDruid.Cast
 
             float animationInterval = 1000f;
 
-            float motionX = (playerPosition.X - targetPosition.X) / 1000;
+            float xOffset = (playerPosition.X - targetPosition.X);
+
+            float yOffset = (playerPosition.Y - targetPosition.Y);
+
+            float motionX =  xOffset / 1000;
 
             float compensate = 0.555f;
 
-            float motionY = ((playerPosition.Y - targetPosition.Y) / 1000) - compensate;
+            float motionY = ( yOffset / 1000) - compensate;
 
-            targetPlayer.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite("Maps\\springobjects", targetRectangle, animationInterval, 1, 0, targetPosition, flicker: false, flipped: false, targetPosition.Y / 10000f, 0f, Color.White, 4f, 0f, 0f, 0f)
+            TemporaryAnimatedSprite throwAnimation = new("Maps\\springobjects", targetRectangle, animationInterval, 1, 0, targetPosition, flicker: false, flipped: false, targetPosition.Y / 10000f, 0.001f, Color.White, 3f, 0f, 0f, 0f)
             {
-                
-                motion = new Vector2(motionX, motionY),
+
+                motion = new Vector2(motionX, motionY) + motionPlayer,
 
                 acceleration = new Vector2(0f, 0.001f),
 
@@ -69,7 +75,9 @@ namespace StardewDruid.Cast
 
                 endFunction = InventoriseObject,
 
-            });
+            };
+
+            targetPlayer.currentLocation.temporarySprites.Add(throwAnimation);
 
         }
 

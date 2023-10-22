@@ -11,14 +11,21 @@ namespace StardewDruid.Cast
     internal class PetAnimal : CastHandle
     {
 
+        FarmAnimal riteWitness;
+
         public PetAnimal (Mod mod, Vector2 target, Rite rite, FarmAnimal animal)
             : base(mod, target, rite)
         {
 
-            ModUtility.PetAnimal(rite.caster, animal);
+            riteWitness = animal;
 
         }
+        public void GentlyCaress()
+        {
 
+            ModUtility.PetAnimal(riteData.caster, riteWitness);
+
+        }
     }
 
 }

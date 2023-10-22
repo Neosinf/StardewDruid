@@ -8,6 +8,7 @@ using StardewValley.Menus;
 using System.Drawing;
 using xTile.Dimensions;
 using xTile.Tiles;
+using System.ComponentModel.Design;
 
 namespace StardewDruid.Map
 {
@@ -90,7 +91,6 @@ namespace StardewDruid.Map
             return coffeeList;
 
         }
-
 
         public static Dictionary<int, int> CropList(GameLocation location)
         {
@@ -210,6 +210,7 @@ namespace StardewDruid.Map
             return randomFlower;
 
         }
+        
         public static int RandomForage()
         {
             Dictionary<int, int> randomCrops;
@@ -311,115 +312,109 @@ namespace StardewDruid.Map
 
             int seasonStar;
 
-            switch (location.GetType().ToString())
+            if (location is Beach)
             {
 
-                case "Beach":
+                switch (Game1.currentSeason)
+                {
+                    case "spring":
+                    case "fall":
+                        seasonStar = 148;
+                        break;
+                    case "winter":
+                        seasonStar = 151;
+                        break;
+                    default:
+                        seasonStar = 155;
+                        break;
 
-                    switch (Game1.currentSeason)
-                    {
-                        case "spring":
-                        case "fall":
-                            seasonStar = 148;
-                            break;
-                        case "winter":
-                            seasonStar = 151;
-                            break;
-                        default:
-                            seasonStar = 155;
-                            break;
+                }
 
-                    }
+                objectIndexes = new()
+                {
+                    [0] = 148, // eel
+                    [1] = 149, // squid
+                    [2] = 151, // octopus
+                    [3] = 155, // super cucumber
+                    [4] = 128, // puff ball
+                    [5] = seasonStar,
+                    [6] = seasonStar,
+                };
 
-                    objectIndexes = new()
-                    {
-                        [0] = 148, // eel
-                        [1] = 149, // squid
-                        [2] = 151, // octopus
-                        [3] = 155, // super cucumber
-                        [4] = 128, // puff ball
-                        [5] = seasonStar,
-                        [6] = seasonStar,
-                    };
+                if (enableRare)
+                {
+                    objectIndexes[7] = 836;  // stingray
 
-                    if (enableRare)
-                    {
-                        objectIndexes[7] = 836;  // stingray
+                }
 
-                    }
+            } 
+            else if (location is Woods || location is Desert) 
+            {
 
-                    break;
+                switch (Game1.currentSeason)
+                {
+                    case "spring":
+                        seasonStar = 734;
+                        break;
+                    case "fall":
+                    case "winter":
+                        seasonStar = 161;
+                        break;
+                    default:
+                        seasonStar = 162;
+                        break;
 
-                case "Woods":
-                case "Desert":
+                }
 
-                    switch (Game1.currentSeason)
-                    {
-                        case "spring":
-                            seasonStar = 734;
-                            break;
-                        case "fall":
-                        case "winter":
-                            seasonStar = 161;
-                            break;
-                        default:
-                            seasonStar = 162;
-                            break;
+                objectIndexes = new()
+                {
+                    [0] = 161, // ice pip
+                    [1] = 734, // wood skip
+                    [2] = 164, // sand fish
+                    [3] = 165, // scorpion carp
+                    [4] = 156, // ghost fish
+                    [5] = seasonStar,
+                    [6] = seasonStar,
+                };
 
-                    }
+                if (enableRare)
+                {
+                    objectIndexes[7] = 162;  // lava eel
 
-                    objectIndexes = new()
-                    {
-                        [0] = 161, // ice pip
-                        [1] = 734, // wood skip
-                        [2] = 164, // sand fish
-                        [3] = 165, // scorpion carp
-                        [4] = 156, // ghost fish
-                        [5] = seasonStar,
-                        [6] = seasonStar,
-                    };
+                }
+            }
+            else
+            {
 
-                    if (enableRare)
-                    {
-                        objectIndexes[7] = 162;  // lava eel
+                switch (Game1.currentSeason)
+                {
+                    case "spring":
+                    case "fall":
+                        seasonStar = 143;
+                        break;
+                    default:
+                        seasonStar = 698;
+                        break;
 
-                    }
+                }
 
-                    break;
+                objectIndexes = new()
+                {
+                    [0] = 143, // cat fish
+                    [1] = 698, // sturgeon
+                    [2] = 140, // walleye
+                    [3] = 699, // tiger trout
+                    [4] = 158, // stone fish
+                    [5] = seasonStar,
+                    [6] = seasonStar,
 
-                default: // default
+                };
 
-                    switch (Game1.currentSeason)
-                    {
-                        case "spring":
-                        case "fall":
-                            seasonStar = 143;
-                            break;
-                        default:
-                            seasonStar = 698;
-                            break;
+                if (enableRare)
+                {
+                    objectIndexes[7] = 269;  // midnight carp
 
-                    }
-
-                    objectIndexes = new()
-                    {
-                        [0] = 143, // cat fish
-                        [1] = 698, // sturgeon
-                        [2] = 140, // walleye
-                        [3] = 699, // tiger trout
-                        [4] = 158, // stone fish
-                        [5] = seasonStar,
-                        [6] = seasonStar,
-
-                    };
-
-                    if (enableRare)
-                    {
-                        objectIndexes[7] = 269;  // midnight carp
-
-                    }
-
-                    break;
+                }
 
             }
 
@@ -434,24 +429,17 @@ namespace StardewDruid.Map
 
             int fishIndex;
 
-            switch (location.GetType().ToString())
+            if (location is Beach)
             {
-
-                case "Beach":
-                    fishIndex = 836;  // stingray
-                    break;
-
-                case "Woods":
-                case "Desert":
-
-                    fishIndex = 161; // ice pip
-                    break;
-
-                default: // default
-
-                    fishIndex = 699; // tiger trout
-                    break;
-
+                fishIndex = 836;  // stingray  
+            }
+            else if (location is Woods || location is Desert)
+            {
+                fishIndex = 161; // ice pip
+            }
+            else
+            {
+                fishIndex = 699; // tiger trout
             }
 
             return fishIndex;
@@ -484,6 +472,7 @@ namespace StardewDruid.Map
             Dictionary<string, bool> spawnTemplate = new()
             {
 
+                ["weeds"] = false,
                 ["forage"] = false,
                 ["flower"] = false,
                 ["grass"] = false,
@@ -512,6 +501,7 @@ namespace StardewDruid.Map
             if (playerLocation is Farm || playerLocation.Name == "Custom_Garden")
             {
 
+                spawnIndex["weeds"] = true;
                 spawnIndex["forage"] = true;
                 spawnIndex["flower"] = true;
                 spawnIndex["grass"] = true;
@@ -530,7 +520,7 @@ namespace StardewDruid.Map
             }
             else if (playerLocation is Forest ||  playerLocation is Mountain || playerLocation is Desert || playerLocation.Name.Contains("Bus"))
             {
-                
+                spawnIndex["weeds"] = true;
                 spawnIndex["forage"] = true;
                 spawnIndex["flower"] = true;
                 spawnIndex["grass"] = true;
@@ -564,7 +554,7 @@ namespace StardewDruid.Map
             }
             else if (playerLocation is MineShaft) //|| playerLocation.Name.Contains("Mine"))
             {
-                
+                spawnIndex["weeds"] = true;
                 spawnIndex["rockfall"] = true;
 
             }
@@ -578,7 +568,7 @@ namespace StardewDruid.Map
             }
             else if (playerLocation is Town)
             {
-                
+                spawnIndex["weeds"] = true;
                 spawnIndex["forage"] = true;
                 spawnIndex["flower"] = true;
                 spawnIndex["fishup"] = true;
