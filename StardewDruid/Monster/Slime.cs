@@ -23,17 +23,50 @@ namespace StardewDruid.Monster
 
         public Dictionary<int, Vector2> hatOffsets;
 
-        public Slime(Vector2 position, int combatModifier)
+        public bool partyHats;
+
+        public int spawnBuff;
+
+        public int spawnDamage;
+
+        public Slime(Vector2 position, int combatModifier,bool hats)
             : base(position * 64, combatModifier / 2)
         {
 
-            base.focusedOnFarmers = true;
+            focusedOnFarmers = true;
 
-            base.Health = (int)(combatModifier * 0.5);
+            Health = (int)(combatModifier * 0.5);
 
-            base.MaxHealth = (int)(combatModifier * 0.5);
+            MaxHealth = Health;
 
-            base.DamageToFarmer = (int)Math.Max(2, combatModifier * 0.075);
+            DamageToFarmer = 0;
+
+            spawnDamage = (int)Math.Max(2, combatModifier * 0.075);
+
+            spawnBuff = 60;
+
+            objectsToDrop.Clear();
+
+            objectsToDrop.Add(766);
+
+            if (Game1.random.Next(3) == 0)
+            {
+                objectsToDrop.Add(766);
+            }
+            else if (Game1.random.Next(4) == 0 && combatModifier >= 120)
+            {
+                objectsToDrop.Add(766);
+
+            }
+            else if (Game1.random.Next(5) == 0 && combatModifier >= 240)
+            {
+                List<int> slimeSyrups = new()
+                {
+                    724,725,726,247,184,419,
+                };
+
+                objectsToDrop.Add(slimeSyrups[Game1.random.Next(slimeSyrups.Count)]);
+            }
 
             ouchList = new()
             {
@@ -72,10 +105,17 @@ namespace StardewDruid.Monster
 
             hatSourceRect = Game1.getSourceRectForStandardTileSheet(hatsTexture, hatIndex, 20, 20);
 
+            partyHats = hats;
+
         }
 
         public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who)
         {
+            if (spawnBuff > 0)
+            {
+                return 0;
+            }
+
             int ouchIndex = Game1.random.Next(10);
 
             if (ouchIndex < ouchList.Count)
@@ -93,7 +133,7 @@ namespace StardewDruid.Monster
 
             // ----------------- hats
 
-            /*if (!IsInvisible && Utility.isOnScreen(Position, 128))
+            if (!IsInvisible && Utility.isOnScreen(Position, 128) && partyHats)
             {
 
                 if(Sprite.currentFrame >= 16)
@@ -145,10 +185,29 @@ namespace StardewDruid.Monster
                     depth
                 );
                 
-            }*/
+            }
 
         }
+        public override void behaviorAtGameTick(GameTime time)
+        {
 
+            if (spawnBuff > 0)
+            {
+
+                spawnBuff--;
+
+                if (spawnBuff < 1)
+                {
+
+                    DamageToFarmer = spawnDamage;
+
+                }
+
+            }
+
+            base.behaviorAtGameTick(time);
+
+        }
     }
 
 }

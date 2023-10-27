@@ -22,8 +22,6 @@ namespace StardewDruid.Monster
 
         public int burnDamage;
 
-       // public TemporaryAnimatedSprite hatAnimation;
-
         public Texture2D hatsTexture;
 
         public Rectangle hatSourceRect;
@@ -42,23 +40,29 @@ namespace StardewDruid.Monster
 
         public bool firingAction;
 
+        public bool defeated;
+
         public BossDragon(Vector2 vector, int combatModifier)
             : base(vector*64)
         {
-            base.Health = combatModifier * 10;
+            Health = combatModifier * 12;
 
-            base.focusedOnFarmers = true;
+            MaxHealth = Health;
 
-            base.DamageToFarmer = combatModifier / 5;
+            focusedOnFarmers = true;
 
-            burnDamage = combatModifier / 10;
+            DamageToFarmer = (int)(combatModifier * 0.15);
+
+            objectsToDrop.Clear();
+
+            burnDamage = (int)(combatModifier * 0.1);
 
             burningQueue = new();
 
             // -------------------------
 
             hideShadow.Value = true;
-            //ExperienceGained *= 8;
+
             ouchList = new()
             {
                 "ARRRGGHHH",
@@ -123,20 +127,13 @@ namespace StardewDruid.Monster
             List<Item> list = new List<Item>();
 
             return list;
+
         }
 
         public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who)
         {
 
             int num = Math.Max(1, damage - resilience.Value);
-
-            /*if (Game1.random.NextDouble() < (double)missChance.Value - (double)missChance.Value * addedPrecision)
-            {
-                num = -1;
-
-            }
-            else
-            {*/
 
             Health -= num;
 
@@ -148,9 +145,10 @@ namespace StardewDruid.Monster
             if (Health <= 0)
             {
                 deathAnimation();
+
+                defeated = true;
             }
 
-            //base.currentLocation.playSound("hitEnemy");
             int ouchIndex = Game1.random.Next(15);
 
             if (ouchIndex < ouchList.Count)
@@ -158,13 +156,11 @@ namespace StardewDruid.Monster
                 showTextAboveHead(ouchList[ouchIndex], duration: 3000);
 
                 burningQueue.Enqueue(getTileLocation());
-                //burningQueue.Enqueue(burningVector2);
+
                 DelayedAction.functionAfterDelay(burningDesert, 600);
 
             }
-
-            //}
-
+            
             return num;
         }
 
@@ -177,7 +173,7 @@ namespace StardewDruid.Monster
                     getLocalPosition(Game1.viewport) + new Vector2(56f, 16 + yJumpOffset),
                     Sprite.SourceRect,
                     //new Color(0.8f,0.8f,1,0.75f),
-                    Color.White * 0.8f,
+                    Color.White * 0.7f,
                     rotation,
                     new Vector2(16f, 16f),
                     7f,
@@ -265,20 +261,14 @@ namespace StardewDruid.Monster
 
                 }
 
-                //hatAnimation = new("Characters\\Farmer\\hats", hatSourceRect, 17f, 1, 1, position + hatOffset, flicker: false, flipped: false, layerDepth, 0f, Color.White * 0.6f, 8f, 0, hatRotate, 0);
-
-                //currentLocation.temporarySprites.Add(hatAnimation);
-
                 Vector2 hatPosition = getLocalPosition(Game1.viewport) + new Vector2(56f, 16 + yJumpOffset) + hatOffset;
 
                 b.Draw(
                     hatsTexture,
                     hatPosition,
                     hatSourceRect,
-                    //new Color(0.8f,0.8f,1,0.75f),
                     Color.White * 0.6f,
                     hatRotate,
-                    //new(8f,8f),
                     new(8f,12f),
                     8f,
                     flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
@@ -459,7 +449,6 @@ namespace StardewDruid.Monster
                         if (burningQueue.Count == 0)
                         {
                             burningQueue.Enqueue(burningVector);
-                            //burningQueue.Enqueue(burningVector2);
                             DelayedAction.functionAfterDelay(burningDesert, 600);
                         }
 
@@ -480,103 +469,11 @@ namespace StardewDruid.Monster
                 }
             }
 
-            //bigHat();
-
         }
-
-        /*public void bigHat()
-        {
-
-            hatSourceRect = hatSourceRects[facingDirection.Value];
-
-            hatOffset = hatOffsets[facingDirection.Value];
-
-            float hatRotate = 0f;
-
-            if (firingAction)
-            {
-
-                if (hatRotates.ContainsKey(facingDirection.Value))
-                {
-
-                    hatRotate = hatRotates[facingDirection.Value];
-
-                    hatOffset -= new Vector2(6, 6);
-
-                }
-                else
-                {
-
-                    hatOffset -= new Vector2(0, 8);
-
-                }
-
-            }
-
-            if (facingDirection.Value % 2 == 0) // Up down
-            {
-                switch (Sprite.currentFrame % 4)
-                {
-
-                    case 1:
-
-                        hatOffset += new Vector2(4, 0); // right of center
-
-                        break;
-
-                    case 3:
-
-                        hatOffset -= new Vector2(4, 0); // left of center
-
-                        break;
-
-                    default: break;
-
-                }
-
-            }
-            else // left right
-            {
-                switch (Sprite.currentFrame % 4)
-                {
-
-                    case 1:
-
-                        hatOffset += new Vector2(0, 4); // down
-
-                        break;
-
-                    case 3:
-
-                        hatOffset += new Vector2(0, 4); //down
-
-                        break;
-
-                    default: break;
-
-                }
-
-            }
-
-            float layerDepth = 999f;
-
-            if (facingDirection.Value == 0)
-            {
-
-                layerDepth = 0.0999f;
-
-            }
-
-            hatAnimation = new("Characters\\Farmer\\hats", hatSourceRect, 17f, 1, 1, position + hatOffset, flicker: false, flipped: false, layerDepth, 0f, Color.White * 0.6f, 8f, 0, hatRotate, 0);
-
-            currentLocation.temporarySprites.Add(hatAnimation);
-
-        }*/
 
         public void burningDesert()
         {
-            //for(int i = 0; i < 2; i++)
-            //{
+
             if (burningQueue.Count > 0)
             {
 
@@ -585,7 +482,6 @@ namespace StardewDruid.Monster
                 currentLocation.explode(explosionVector / 64, 2, Game1.player, true, 20 + Game1.player.CombatLevel * 2);
 
             }
-            //}
 
         }
 

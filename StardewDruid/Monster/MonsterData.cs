@@ -13,7 +13,7 @@ namespace StardewDruid.Monster
 {
     static class MonsterData
     {
-        public static StardewValley.Monsters.Monster CreateMonster(int spawnMob, Vector2 spawnVector, int combatModifier)
+        public static StardewValley.Monsters.Monster CreateMonster(int spawnMob, Vector2 spawnVector, int combatModifier, bool partyHats = false)
         {
 
             StardewValley.Monsters.Monster theMonster;
@@ -49,7 +49,7 @@ namespace StardewDruid.Monster
 
                 case 0: // Green Slime
 
-                    theMonster = new StardewDruid.Monster.Slime(spawnVector, combatModifier);
+                    theMonster = new StardewDruid.Monster.Slime(spawnVector, combatModifier, partyHats);
 
                     break;
 
@@ -61,19 +61,19 @@ namespace StardewDruid.Monster
 
                 case 2: // Skeleton
 
-                    theMonster = new StardewDruid.Monster.Skeleton(spawnVector, combatModifier);
+                    theMonster = new StardewDruid.Monster.Skeleton(spawnVector, combatModifier, partyHats);
 
                     break;
 
                 case 3: // Golem
 
-                    theMonster = new StardewDruid.Monster.Golem(spawnVector, combatModifier);
+                    theMonster = new StardewDruid.Monster.Golem(spawnVector, combatModifier, partyHats);
 
                     break;
 
                 case 4: // DustSpirit
 
-                    theMonster = new StardewDruid.Monster.Spirit(spawnVector, combatModifier);
+                    theMonster = new StardewDruid.Monster.Spirit(spawnVector, combatModifier, partyHats);
 
                     break;
 
@@ -102,6 +102,13 @@ namespace StardewDruid.Monster
                     theMonster = new StardewDruid.Monster.BossDragon(spawnVector, combatModifier);
 
                     break;
+
+                case 15: // firebird
+
+                    theMonster = new StardewDruid.Monster.Firebird(spawnVector, combatModifier);
+
+                    break;
+
 
 
             }

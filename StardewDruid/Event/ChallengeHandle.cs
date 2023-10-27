@@ -85,6 +85,8 @@ namespace StardewDruid.Event
 
             mod.RegisterChallenge(this, "active");
 
+            Game1.addHUDMessage(new HUDMessage($"Challenge Initiated", ""));
+
         }
 
         public void SetupSpawn()
@@ -128,15 +130,10 @@ namespace StardewDruid.Event
 
                 if (expireTime >= nowTime && !expireEarly)
                 {
+
                     int diffTime = (int)Math.Round(expireTime - nowTime);
 
-                    if(activeCounter == 0)
-                    {
-
-                        Game1.addHUDMessage(new HUDMessage($"Challenge initiated", ""));
-
-                    }
-                    else if (diffTime % 10 == 0 && diffTime != 0)
+                    if (activeCounter != 0 && diffTime % 10 == 0 && diffTime != 0)
                     {
 
                         Game1.addHUDMessage(new HUDMessage($"{diffTime} more minutes left!", "2"));
@@ -179,8 +176,6 @@ namespace StardewDruid.Event
 
             Game1.addHUDMessage(new HUDMessage($"Try the challenge again tomorrow", ""));
 
-            //mod.ReassignQuest(questData.name);
-
         }
 
         public virtual void EventRemove()
@@ -207,8 +202,6 @@ namespace StardewDruid.Event
 
                     LightSource portalLight = torch.lightSource;
 
-                    //targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(6, targetVector * 64f, Color.Blue * 0.75f, 8));
-
                     if (targetLocation.hasLightSource(portalLight.Identifier))
                     {
 
@@ -231,7 +224,7 @@ namespace StardewDruid.Event
         }
 
         public virtual void EventInterval()
-        {   
+        {
 
             activeCounter++;
 

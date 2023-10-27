@@ -1,14 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using StardewModdingAPI;
-using StardewValley;
-using StardewValley.Locations;
-using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
-using System;
 using System.Collections.Generic;
-using xTile.Dimensions;
-using xTile.Layers;
-using xTile.Tiles;
+
 
 namespace StardewDruid.Cast
 {
@@ -37,27 +29,11 @@ namespace StardewDruid.Cast
         public override void CastEarth()
         {
 
-            if(riteData.castToggle.ContainsKey("forgetTrees"))
-            {
-
-                return;
-
-            }
-
-            /*if (targetLocation.terrainFeatures.ContainsKey(targetVector))
-            {
-
-                //mod.UpdateEarthCasts(targetLocation, targetVector, false);
-
-                return;
-
-            }*/
-
             Dictionary<string, List<Vector2>> neighbourList = ModUtility.NeighbourCheck(targetLocation, targetVector);
 
             int probability = randomIndex.Next(10);
 
-            if (probability <= 1 && spawnIndex["grass"] && neighbourList.ContainsKey("Tree")) // 2/10 grass
+            if (probability <= 1 && spawnIndex["grass"] && neighbourList.ContainsKey("Tree") && !riteData.castToggle.ContainsKey("forgetTrees")) // 2/10 grass
             {
 
                 StardewValley.TerrainFeatures.Grass grassFeature = new(1, 4);
@@ -73,63 +49,50 @@ namespace StardewDruid.Cast
                 castFire = true;
 
             }
-            else if (probability == 2 && spawnIndex["trees"] && neighbourList.Count == 0) // 1/10 tree
+            else if (probability == 2 && spawnIndex["trees"] && neighbourList.Count == 0 && !riteData.castToggle.ContainsKey("forgetTrees")) // 1/10 tree
             {
 
-                Dictionary<string, List<Vector2>> nextList = ModUtility.NeighbourCheck(targetLocation, targetVector,2);
+                bool treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
 
-                if(nextList.ContainsKey("Tree") || nextList.ContainsKey("Sapling"))
+                if (treeSpawn)
                 {
-                    return;
+
+                    castCost = 4;
+
+                    castFire = true;
+
+                    ModUtility.AnimateGrowth(targetLocation, targetVector);
+
                 }
 
-                StardewValley.TerrainFeatures.Tree newTree;
+            }
+            else if (probability == 3)
+            {
 
-                List<int> treeIndex;
+                int hoeLevel = mod.virtualHoe.UpgradeLevel;
 
-                if (targetLocation is Desert)
+                int procChance = 50 - (5  * hoeLevel);
+
+                if (randomIndex.Next(procChance) == 0 && spawnIndex["artifact"] && hoeLevel >= 3)
                 {
 
-                    treeIndex = new()
+                    int tileX = (int)targetVector.X;
+                    int tileY = (int)targetVector.Y;
+
+                    if (targetLocation.getTileIndexAt(tileX, tileY, "AlwaysFront") == -1 &&
+                        targetLocation.getTileIndexAt(tileX, tileY, "Front") == -1 &&
+                        !targetLocation.isBehindBush(targetVector) &&
+                        targetLocation.doesTileHaveProperty(tileX, tileY, "Diggable", "Back") != null
+                    )
                     {
-                        6,9,
-                    };
+
+                        targetLocation.objects.Add(targetVector, new StardewValley.Object(targetVector, 590, 1));
+
+                    }
 
                 }
-                else
-                {
-
-                    treeIndex = new()
-                    {
-                        1,2,3,1,2,3,1,2,3,7,8,
-                    };
-
-                };
-
-                newTree = new(treeIndex[randomIndex.Next(treeIndex.Count)], 1);
-
-                //newTree.fertilized.Value = true;
-
-                targetLocation.terrainFeatures.Add(targetVector, newTree);
-
-                castFire = true;
-
-                ModUtility.AnimateGrowth(targetLocation,targetVector);
 
             }
-            /*else if (neighbourList.ContainsKey("Crop") && !neighbourList.ContainsKey("Tree") && !neighbourList.ContainsKey("Sapling")) // 3/10 hoe dirt
-            {
-
-                targetLocation.makeHoeDirt(targetVector);
-
-            }
-
-            if (!castFire)
-            {
-
-                mod.UpdateEarthCasts(targetLocation, targetVector, false);
-
-            }*/
 
             return;
 

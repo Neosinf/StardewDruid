@@ -144,19 +144,19 @@ namespace StardewDruid.Event
 
                 case 20: CannonsAtTheReady(); break;
 
-                case 27: CastVoice("the Lady is not a friend to the drowned"); break;
+                case 27: CastVoice("the Lady is not a friend to the drowned", 3000); break;
 
-                case 29: CastVoice("she buried us with our boats on this shore"); break;
+                case 30: CastVoice("she buried us with our boats on this shore", 3000); break;
 
-                case 31: CastVoice("but soon Lord Deep will avenge us!"); break;
+                case 33: CastVoice("but soon Lord Deep will avenge us!", 3000); break;
 
-                case 33: CastVoice("he'll swallow the ol' sea 'ag whole"); break;
+                case 36: CastVoice("he'll swallow the ol' sea witch whole", 3000); break;
 
-                case 35: CastVoice("then the waves will no longer wash our tattered bones"); break;
+                case 39: CastVoice("then the waves will no longer wash our tattered bones", 3000); break;
 
-                case 37: CastVoice("an we'll sink into the warm embrace of the earth"); break;
+                case 42: CastVoice("an we'll sink into the warm embrace of the earth", 3000); break;
 
-                case 40: CannonsAtTheReady(); break;
+                case 45: CannonsAtTheReady(); break;
 
                 default: break;
 

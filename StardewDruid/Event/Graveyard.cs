@@ -98,22 +98,21 @@ namespace StardewDruid.Event
 
             monsterHandle.SpawnInterval();
 
-            if (activeCounter == 2)
+            if (activeCounter == 1)
             {
                 
                 StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(12, new(47, 82), riteData.combatModifier);
 
                 bossMonster = theMonster as BossShooter;
 
+                bossMonster.posturing = true;
+
                 riteData.castLocation.characters.Add(bossMonster);
 
                 bossMonster.update(Game1.currentGameTime, riteData.castLocation);
 
-            }
-
-            if (activeCounter <= 2)
-            {
                 return;
+
             }
 
             if (bossMonster.Health >= 1)
@@ -124,49 +123,49 @@ namespace StardewDruid.Event
 
                     case 5: bossMonster.shiftPosition = true; bossMonster.SetMovingLeft(true); break;
 
-                    case 6: bossMonster.showTextAboveHead("ENGAGE", 3000); bossMonster.shiftPosition = false; bossMonster.aimPlayer = true; break;
+                    case 6: bossMonster.showTextAboveHead("ENGAGE"); bossMonster.shiftPosition = false; bossMonster.aimPlayer = true; break;
 
                     case 8: bossMonster.aimPlayer = false; bossMonster.shootPlayer = true; break;
 
-                    case 10: bossMonster.showTextAboveHead("secure the graveyard"); break;
+                    case 9: bossMonster.showTextAboveHead("secure the graveyard", 3000); break;
 
                     case 11: bossMonster.shiftPosition = true; bossMonster.SetMovingRight(true); break;
 
-                    case 12: bossMonster.showTextAboveHead("FIRE", 3000); bossMonster.shiftPosition = false; bossMonster.aimPlayer = true; break;
+                    case 12: bossMonster.showTextAboveHead("FIRE"); bossMonster.shiftPosition = false; bossMonster.aimPlayer = true; break;
 
                     case 14: bossMonster.aimPlayer = false; bossMonster.shootPlayer = true; break;
 
-                    case 16: bossMonster.showTextAboveHead("protect the tear");  break;
+                    case 15: bossMonster.showTextAboveHead("protect the tear", 3000);  break;
 
                     case 17: bossMonster.shiftPosition = true; bossMonster.SetMovingLeft(true);  break;
 
-                    case 18: bossMonster.showTextAboveHead("ENGAGE", 3000); bossMonster.shiftPosition = false; bossMonster.aimPlayer = true; break;
+                    case 18: bossMonster.showTextAboveHead("ENGAGE"); bossMonster.shiftPosition = false; bossMonster.aimPlayer = true; break;
 
                     case 20: bossMonster.aimPlayer = false; bossMonster.shootPlayer = true; break;
 
-                    case 22: bossMonster.showTextAboveHead("surround the farmer");  break;
+                    case 21: bossMonster.showTextAboveHead("surround the farmer", 3000);  break;
 
                     case 23: bossMonster.shiftPosition = true; bossMonster.SetMovingRight(true); break;
 
-                    case 24: bossMonster.showTextAboveHead("FIRE", 3000); bossMonster.shiftPosition = false; bossMonster.aimPlayer = true; break;
+                    case 24: bossMonster.showTextAboveHead("FIRE"); bossMonster.shiftPosition = false; bossMonster.aimPlayer = true; break;
 
                     case 26: bossMonster.aimPlayer = false; bossMonster.shootPlayer = true; break;
 
-                    case 28: bossMonster.showTextAboveHead("pin them down!"); break;
+                    case 27: bossMonster.showTextAboveHead("pin them down!", 3000); break;
 
                     case 29: bossMonster.shiftPosition = true; bossMonster.SetMovingLeft(true); break;
 
-                    case 30: bossMonster.showTextAboveHead("ENGAGE", 3000); bossMonster.shiftPosition = false; bossMonster.aimPlayer = true; break;
+                    case 30: bossMonster.showTextAboveHead("ENGAGE"); bossMonster.shiftPosition = false; bossMonster.aimPlayer = true; break;
 
                     case 32: bossMonster.aimPlayer = false; bossMonster.shootPlayer = true; break;
 
-                    case 34: bossMonster.showTextAboveHead("no retreat for us");  break;
+                    case 33: bossMonster.showTextAboveHead("no retreat for us", 3000);  break;
 
                     case 35: bossMonster.shiftPosition = true; bossMonster.SetMovingLeft(true); break;
 
-                    case 36: bossMonster.showTextAboveHead("the Deep One sees all"); bossMonster.shiftPosition = false; break;
+                    case 36: bossMonster.showTextAboveHead("the Deep One sees all", 3000); bossMonster.shiftPosition = false; break;
                     
-                    case 38: bossMonster.showTextAboveHead("ADVANCE",3000); bossMonster.posturing = false; bossMonster.focusedOnFarmers = true; break;
+                    case 39: bossMonster.showTextAboveHead("ADVANCE"); bossMonster.posturing = false; bossMonster.focusedOnFarmers = true; break;
                     
                     case 56:
 

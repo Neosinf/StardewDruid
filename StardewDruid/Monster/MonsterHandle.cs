@@ -29,11 +29,17 @@ namespace StardewDruid.Monster
 
         public List<int> spawnIndex;
 
+        public List<int> specialIndex;
+
         public int spawnFrequency;
 
         public int spawnAmplitude;
 
         public int spawnCounter;
+
+        public int spawnSpecial;
+
+        public int specialCounter;
 
         public Queue<StardewValley.Monsters.Monster> spawnQueue;
 
@@ -56,13 +62,9 @@ namespace StardewDruid.Monster
 
             spawnAmplitude = 1;
 
-            spawnCounter = 0;
-
             monsterSpawns = new();
 
             spawnIndex = new() { 99, };
-
-            firstSpawn = false;
 
             riteData = rite;
 
@@ -137,6 +139,8 @@ namespace StardewDruid.Monster
 
             spawnCounter++;
 
+            specialCounter++;
+
             if (spawnFrequency >= 3 && spawnCounter == 2 && !firstSpawn)
             {
                 firstSpawn = true;
@@ -168,6 +172,26 @@ namespace StardewDruid.Monster
                     SpawnGround(spawnVector);
 
                     spawnAmount++;
+
+                }
+
+            }
+
+            if(specialCounter > 30 && spawnSpecial > 0)
+            {
+
+                spawnVector = SpawnVector();
+
+                if (spawnVector != new Vector2(-1))
+                {
+
+                    SpawnGround(spawnVector, true);
+
+                    spawnAmount++;
+
+                    spawnSpecial--;
+
+                    specialCounter = 0;
 
                 }
 
@@ -252,6 +276,7 @@ namespace StardewDruid.Monster
                     }
                 }
 
+
                 if (riteData.castLocation.terrainFeatures.TryGetValue(spawnVector, out var terrainValue))
                 {
                     if(terrainValue is not StardewValley.TerrainFeatures.Grass)
@@ -261,12 +286,11 @@ namespace StardewDruid.Monster
 
                 }
 
-                foreach (LargeTerrainFeature largeTerrainFeature in riteData.castLocation.largeTerrainFeatures)
+                if (riteData.castLocation.isBehindBush(spawnVector))
                 {
-                    if (largeTerrainFeature.getBoundingBox().Intersects(spawnRectangle))
-                    {
-                        continue;
-                    }
+
+                    continue;
+
                 }
 
                 foreach (Furniture item in riteData.castLocation.furniture)
@@ -286,12 +310,23 @@ namespace StardewDruid.Monster
 
         }
 
-        public void SpawnGround(Vector2 spawnVector)
+        public void SpawnGround(Vector2 spawnVector, bool special = false)
         {
 
-            int spawnMob = spawnIndex[riteData.randomIndex.Next(spawnIndex.Count)];
+            int spawnMob;
 
-            StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(spawnMob, spawnVector, riteData.combatModifier);
+            if (special)
+            {
+                spawnMob = specialIndex[riteData.randomIndex.Next(specialIndex.Count)];
+                //mod.Log($"Special: {spawnMob}");
+            }
+            else
+            {
+                spawnMob = spawnIndex[riteData.randomIndex.Next(spawnIndex.Count)];
+                //mod.Log($"Spawn: {spawnMob}");
+            }
+
+            StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(spawnMob, spawnVector, riteData.combatModifier, mod.PartyHats());
 
             spawnQueue.Enqueue(theMonster);
 
@@ -311,7 +346,7 @@ namespace StardewDruid.Monster
 
             int spawnMob = spawnIndex[riteData.randomIndex.Next(spawnIndex.Count)];
 
-            StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(spawnMob, spawnVector, riteData.combatModifier);
+            StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(spawnMob, spawnVector, riteData.combatModifier, mod.PartyHats());
 
             Vector2 fromPosition = new(terrainVector.X * 64, terrainVector.Y * 64);
 

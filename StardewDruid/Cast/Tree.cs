@@ -58,7 +58,7 @@ namespace StardewDruid.Cast
 
             int debrisType = 388;
 
-            int debrisAxe = riteData.castAxe.UpgradeLevel + 1;
+            int debrisAxe = mod.virtualAxe.UpgradeLevel + 1;
 
             int debrisMax = 3;
 
@@ -142,7 +142,11 @@ namespace StardewDruid.Cast
 
             treeFeature.health.Value = 1;
 
-            treeFeature.performToolAction(riteData.castAxe,0,targetVector, targetLocation);
+            targetPlayer.Stamina += Math.Min(2, targetPlayer.MaxStamina - targetPlayer.Stamina);
+
+            mod.virtualAxe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+
+            treeFeature.performToolAction(mod.virtualAxe,0,targetVector, targetLocation);
 
             if (randomIndex.Next(4) == 0 && resinIndex.ContainsKey(treeFeature.treeType.Value))
             {

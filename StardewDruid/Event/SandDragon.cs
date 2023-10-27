@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Map;
+using StardewDruid.Monster;
 using StardewValley;
 using StardewValley.Locations;
 using System;
@@ -14,6 +15,8 @@ namespace StardewDruid.Event
     {
 
         public bool modifiedSandDragon;
+
+        public BossDragon bossMonster;
 
         public SandDragon(Mod Mod, Vector2 target, Rite rite, Quest quest)
             : base(Mod, target, rite, quest)
@@ -29,14 +32,6 @@ namespace StardewDruid.Event
 
         public override void EventTrigger()
         {
-
-            monsterHandle = new(mod, targetVector, riteData);
-
-            monsterHandle.spawnIndex = new() { 14, };
-
-            monsterHandle.spawnWithin = targetVector + new Vector2(-6, -1);
-
-            monsterHandle.spawnRange = new Vector2(3, 3);
 
             ModUtility.AnimateMeteorZone(targetLocation, targetVector, Color.Red, 2);
 
@@ -58,13 +53,7 @@ namespace StardewDruid.Event
                 {
                     int diffTime = (int)Math.Round(expireTime - nowTime);
 
-                    if (activeCounter == 0)
-                    {
-
-                        Game1.addHUDMessage(new HUDMessage($"Challenge initiated", ""));
-
-                    }
-                    else if (diffTime % 10 == 0 && diffTime != 0)
+                    if (activeCounter != 0 && diffTime % 10 == 0 && diffTime != 0)
                     {
 
                         Game1.addHUDMessage(new HUDMessage($"{diffTime} more minutes left!", "2"));
@@ -96,6 +85,15 @@ namespace StardewDruid.Event
             {
 
                 ResetSandDragon();
+
+            }
+
+            if (bossMonster != null)
+            {
+
+                riteData.castLocation.characters.Remove(bossMonster);
+
+                bossMonster = null;
 
             }
 
@@ -167,7 +165,7 @@ namespace StardewDruid.Event
 
                     case 7:
 
-                        CastVoice("...now my bones stir...");
+                        CastVoice("...my bones stir...");
 
                         break;
 
@@ -191,7 +189,13 @@ namespace StardewDruid.Event
             {
                 ModifySandDragon();
 
-                monsterHandle.SpawnInterval();
+                StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(14, targetVector + new Vector2(-5, 0), riteData.combatModifier);
+
+                bossMonster = theMonster as BossDragon;
+
+                riteData.castLocation.characters.Add(bossMonster);
+
+                bossMonster.update(Game1.currentGameTime, riteData.castLocation);
 
                 Game1.changeMusicTrack("cowboy_boss", false, Game1.MusicContext.Default);
 
@@ -199,9 +203,7 @@ namespace StardewDruid.Event
 
             }
 
-            monsterHandle.SpawnCheck();
-
-            if (monsterHandle.monsterSpawns.Count == 0)
+            if (bossMonster.defeated || bossMonster.Health <= 0)
             {
 
                 expireEarly = true;

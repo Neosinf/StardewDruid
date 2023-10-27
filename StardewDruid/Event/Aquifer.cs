@@ -82,7 +82,7 @@ namespace StardewDruid.Event
 
             }
 
-            Game1.addHUDMessage(new HUDMessage($"Stand your ground!", "2"));
+            Game1.addHUDMessage(new HUDMessage($"Stand your ground until the rite completes", "2"));
 
             Game1.changeMusicTrack("tribal", false, Game1.MusicContext.Default);
 
@@ -102,7 +102,7 @@ namespace StardewDruid.Event
                 {
                     int diffTime = (int)Math.Round(expireTime - nowTime);
 
-                    if (diffTime % 10 == 0 && diffTime != 0)
+                    if (activeCounter != 0 && diffTime % 10 == 0 && diffTime != 0)
                     {
 
                         Game1.addHUDMessage(new HUDMessage($"{diffTime} minutes left until cleanup complete", "2"));
@@ -222,6 +222,8 @@ namespace StardewDruid.Event
 
                 bossMonster = theMonster as BossBat;
 
+                bossMonster.posturing = true;
+
                 riteData.castLocation.characters.Add(bossMonster);
 
                 bossMonster.update(Game1.currentGameTime, riteData.castLocation);
@@ -250,11 +252,11 @@ namespace StardewDruid.Event
 
                     case 32: bossMonster.showTextAboveHead("cheeep cheep"); break;
 
-                    case 34: bossMonster.showTextAboveHead("She Who Screeches Over Seas"); break;
+                    case 34: bossMonster.showTextAboveHead("She Who Screeches Over Seas",3000); break;
 
-                    case 36: bossMonster.showTextAboveHead("...is angry..."); break;
+                    case 37: bossMonster.showTextAboveHead("...is angry..."); break;
 
-                    case 38: bossMonster.showTextAboveHead("CHEEEP"); bossMonster.posturing = false; bossMonster.focusedOnFarmers = true; break;
+                    case 39: bossMonster.showTextAboveHead("CHEEEP"); bossMonster.posturing = false; bossMonster.focusedOnFarmers = true; break;
 
                     case 56:
 

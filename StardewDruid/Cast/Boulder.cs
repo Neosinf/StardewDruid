@@ -65,18 +65,20 @@ namespace StardewDruid.Cast
         public override void CastWater()
         {
 
-            StardewValley.Tools.Pickaxe targetPick = mod.RetrievePick();
+            int pickLevel = mod.virtualPick.UpgradeLevel;
 
-            castCost = Math.Max(2, 36 - (targetPlayer.MiningLevel * targetPick.UpgradeLevel));
+            castCost = Math.Max(2, 36 - (targetPlayer.MiningLevel * pickLevel));
 
             resourceClump.health.Set(1f);
 
-            if (targetPick.UpgradeLevel < 3)
+            if (pickLevel < 3)
             {
 
                 StardewValley.Tools.Pickaxe betterPick = new();
 
                 betterPick.UpgradeLevel = 3;
+
+                targetPlayer.Stamina += Math.Min(2, targetPlayer.MaxStamina - targetPlayer.Stamina);
 
                 betterPick.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
 
@@ -85,7 +87,12 @@ namespace StardewDruid.Cast
             }
             else
             {
-                resourceClump.performToolAction(targetPick, 1, targetVector, targetLocation);
+
+                targetPlayer.Stamina += Math.Min(2, targetPlayer.MaxStamina - targetPlayer.Stamina);
+
+                mod.virtualPick.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+
+                resourceClump.performToolAction(mod.virtualPick, 1, targetVector, targetLocation);
 
             }
 
@@ -97,7 +104,7 @@ namespace StardewDruid.Cast
 
             resourceClump.currentLocation = null;
 
-            if (targetPick.UpgradeLevel >= 3)
+            if (pickLevel >= 3)
             {
                 Game1.createObjectDebris(709, (int)this.targetVector.X, (int)this.targetVector.Y);
 

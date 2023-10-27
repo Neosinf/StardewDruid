@@ -51,6 +51,12 @@ namespace StardewDruid.Event
 
                     break;
 
+                case "challengeGemShrine":
+
+                    challengeHandle = new Event.GemShrine(Mod, target, rite, quest);
+
+                    break;
+
                 default: //case "challengeEarth":
 
                     challengeHandle = new Event.Aquifer(Mod, target, rite, quest);

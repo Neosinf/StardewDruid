@@ -37,13 +37,6 @@ namespace StardewDruid.Cast
 
         public override void CastEarth()
         {
-            
-            /*if (targetLocation.terrainFeatures.ContainsKey(targetVector))
-            {
-
-                return;
-
-            }*/
 
             bool forgotTrees = riteData.castToggle.ContainsKey("forgetTrees");
 
@@ -53,57 +46,6 @@ namespace StardewDruid.Cast
 
             if (probability <= 1 && spawnIndex["flower"] && neighbourList.Count == 0 && riteData.castTask.ContainsKey("masterForage")) // 2/120 flower
             {
-
-                /*Dictionary<int, int> objectIndexes;
-
-                switch (Game1.currentSeason)
-                {
-
-                    case "spring":
-
-                        objectIndexes = new()
-                        {
-                            [0] = 427, //591, // tulip
-                            [1] = 429, //597, // jazz
-                        };
-
-                        break;
-
-                    case "summer":
-
-                        objectIndexes = new()
-                        {
-                            [0] = 455, //593, // spangle
-                            [1] = 453, //376, // poppy
-                        };
-
-                        break;
-
-                    default: //"fall":
-
-                        objectIndexes = new()
-                        {
-                            [0] = 425, //595, // fairy
-                            [1] = 431, //421, // sunflower
-                        };
-
-                        break;
-
-                }
-
-                Crop cropFlower = new(objectIndexes[probability], (int)targetVector.X, (int)targetVector.Y);
-                    
-                HoeDirt hoeDirt = new(2, cropFlower);
-
-                targetLocation.terrainFeatures.Add(targetVector, hoeDirt);
-
-                cropFlower.growCompletely();
-
-                //cropFlower.forageCrop.Value = true;
-
-                castFire = true;
-
-                castCost = 6;*/
 
                 int randomCrop = SpawnData.RandomFlower();
 
@@ -116,27 +58,6 @@ namespace StardewDruid.Cast
                         isHoedirt: false,
                         isSpawnedObject: true
                     );
-
-                /*List<Color> colorIndexes = new()
-                {
-                    Color.Blue,
-                    Color.Red,
-                    Color.Yellow,
-                    Color.Orange,
-                    Color.Purple,
-                };
-
-                ColoredObject colorFlower = new(randomCrop,1,colorIndexes[randomIndex.Next(5)]);
-
-                colorFlower.ColorSameIndexAsParentSheetIndex = false;
-
-                colorFlower.TileLocation = targetVector;
-
-                colorFlower.CanBeGrabbed = true;
-
-                colorFlower.CanBeSetDown = false;
-
-                colorFlower.IsSpawnedObject = true;*/
 
                 targetLocation.dropObject(
                     newFlower,
@@ -151,18 +72,20 @@ namespace StardewDruid.Cast
             else if (probability >= 2 && probability <= 3 && spawnIndex["forage"] && neighbourList.Count == 0) // 2/120 forage
             {
 
-                int randomCrop = SpawnData.RandomForage();
+                int randomCrop = SpawnData.RandomForage(targetLocation);
+
+                StardewValley.Object newForage = new StardewValley.Object(
+                    targetVector,
+                    randomCrop,
+                    null,
+                    canBeSetDown: false,
+                    canBeGrabbed: true,
+                    isHoedirt: false,
+                    isSpawnedObject: true
+                );
 
                 targetLocation.dropObject(
-                    new StardewValley.Object(
-                        targetVector,
-                        randomCrop,
-                        null,
-                        canBeSetDown: false,
-                        canBeGrabbed: true,
-                        isHoedirt: false,
-                        isSpawnedObject: true
-                    ),
+                    newForage,
                     new Vector2(targetVector.X * 64, targetVector.Y * 64),
                     Game1.viewport,
                     initialPlacement: true
@@ -194,27 +117,47 @@ namespace StardewDruid.Cast
                 castCost = 0;
 
             }
-            //else if (probability >= 16 && probability <= 25 && spawnIndex["trees"]) // 10/120 tree
             else if (probability >= 4 && probability <= 13 && spawnIndex["trees"] && neighbourList.Count == 0 && !forgotTrees) // 10/120 tree
             {
 
-                List<int> treeIndex = new()
+                bool treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
+
+                if (treeSpawn)
                 {
-                    1,2,3,1,2,3,1,2,3,7,8,
-                };
 
-                StardewValley.TerrainFeatures.Tree newTree = new(treeIndex[randomIndex.Next(11)], 1);
+                    castCost = 4;
 
-                //newTree.fertilized.Value = true;
+                    castFire = true;
 
-                targetLocation.terrainFeatures.Add(targetVector, newTree);
+                    ModUtility.AnimateGrowth(targetLocation, targetVector);
 
-                castFire = true;
-
-                ModUtility.AnimateGrowth(targetLocation, targetVector);
+                }
 
             }
-            
+            else if (probability == 16)
+            {
+
+                if (spawnIndex["artifact"] && Game1.currentSeason == "winter" && mod.virtualHoe.UpgradeLevel >= 3)
+                {
+
+                    int tileX = (int)targetVector.X;
+                    int tileY = (int)targetVector.Y;
+
+                    if (targetLocation.getTileIndexAt(tileX, tileY, "AlwaysFront") == -1 &&
+                        targetLocation.getTileIndexAt(tileX, tileY, "Front") == -1 &&
+                        !targetLocation.isBehindBush(targetVector) &&
+                        targetLocation.doesTileHaveProperty(tileX, tileY, "Diggable", "Back") != null
+                    )
+                    {
+
+                        targetLocation.objects.Add(targetVector, new StardewValley.Object(targetVector, 590, 1));
+
+                    }
+
+                }
+
+            }
+
         }
 
     }

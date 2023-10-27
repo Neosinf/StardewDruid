@@ -13,7 +13,7 @@ namespace StardewDruid.Monster
     {
         public List<string> ouchList;
         
-        public bool posturing = true;
+        public bool posturing;
 
         public Texture2D hatsTexture;
 
@@ -26,12 +26,16 @@ namespace StardewDruid.Monster
         public BossSlime(Vector2 position, int combatModifier)
             : base(position * 64, combatModifier /2)
         {
-            
-            base.Health = (int)(combatModifier * 8);
 
-            base.MaxHealth = (int)(combatModifier * 8);
+            moveTowardPlayerThreshold.Value = 99;
 
-            base.DamageToFarmer = (int)Math.Max(2, combatModifier * 0.1);
+            Health = (int)(combatModifier * 10);
+
+            MaxHealth = Health;
+
+            DamageToFarmer = (int)Math.Max(2, combatModifier * 0.1);
+
+            IsWalkingTowardPlayer = true;
 
             ouchList = new()
             {
@@ -45,8 +49,22 @@ namespace StardewDruid.Monster
             //hatSourceRect = Game1.getSourceRectForStandardTileSheet(hatsTexture, 151, 20, 20);
             hatSourceRect = Game1.getSourceRectForStandardTileSheet(hatsTexture, 192, 20, 20);
 
+            base.speed = (int)(speed *2);
 
+        }
+        public override List<Item> getExtraDropItems()
+        {
+            List<Item> list = new List<Item>();
 
+            return list;
+
+        }
+
+        public override Rectangle GetBoundingBox()
+        {
+            Vector2 vector = base.Position;
+
+            return new Rectangle((int)vector.X - 16, (int)vector.Y, 96, 64);
         }
 
         public override void defaultMovementBehavior(GameTime time)
@@ -100,17 +118,17 @@ namespace StardewDruid.Monster
 
             }
 
-            base.Slipperiness = 3;
+            Slipperiness = 3;
 
-            base.Health -= damage;
+            Health -= damage;
 
             setTrajectory(xTrajectory, yTrajectory);
 
-            base.currentLocation.playSound("hitEnemy");
+            currentLocation.playSound("hitEnemy");
 
-            base.IsWalkingTowardPlayer = true;
+            IsWalkingTowardPlayer = true;
 
-            if (base.Health <= 0)
+            if (Health <= 0)
             {
                 deathAnimation();
 

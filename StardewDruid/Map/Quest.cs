@@ -27,6 +27,10 @@ namespace StardewDruid.Map
 
         public string triggerAction;
 
+        public bool triggerAnywhere;
+
+        public string triggerMilestone;
+
         public bool triggerSpecial;
 
         public Dictionary<string, Vector2> vectorList = new();

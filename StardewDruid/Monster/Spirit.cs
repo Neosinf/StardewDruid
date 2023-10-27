@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System;
 using Microsoft.Xna.Framework.Graphics;
 using System.Reflection.Metadata.Ecma335;
+using StardewValley.Objects;
 
 namespace StardewDruid.Monster
 {
@@ -27,21 +28,33 @@ namespace StardewDruid.Monster
 
         public bool hatFlip;
 
+        public bool partyHats;
+
         //public Dictionary<int, Rectangle> hatSourceRects;
 
-        public Dictionary<int, Vector2> hatOffsets;
+        //public Dictionary<int, Vector2> hatOffsets;
 
-        public Dictionary<int, bool> hatFlips;
+        //public Dictionary<int, bool> hatFlips;
 
-        public Spirit(Vector2 position, int combatModifier)
+        public int spawnBuff;
+
+        public int spawnDamage;
+
+        public Spirit(Vector2 position, int combatModifier, bool hats)
             : base(position * 64, true)
         {
 
             focusedOnFarmers = true;
 
-            base.Health = (int)Math.Max(2, combatModifier *0.25);
+            Health = (int)Math.Max(2, combatModifier *0.25);
 
-            base.DamageToFarmer = (int)Math.Max(2, combatModifier * 0.05);
+            MaxHealth = Health;
+
+            DamageToFarmer = 0;
+
+            spawnDamage = (int)Math.Max(2, combatModifier * 0.05);
+
+            spawnBuff = 60;
 
             // ---------------------------------
 
@@ -56,12 +69,12 @@ namespace StardewDruid.Monster
             if (Game1.random.Next(3) == 0)
             {
                 objectsToDrop.Add(382); // coal
-            }
-            else if (Game1.random.Next(5) == 0 && combatModifier >= 5)
+
+            } else if (Game1.random.Next(4) == 0 && combatModifier >= 120)
             {
                 objectsToDrop.Add(395); // coffee (edible)
-            }
-            else if (Game1.random.Next(7) == 0 && combatModifier >= 8)
+
+            } else if (Game1.random.Next(5) == 0 && combatModifier >= 240)
             {
                 objectsToDrop.Add(251); // tea sapling
             }
@@ -94,10 +107,17 @@ namespace StardewDruid.Monster
 
             hatSourceRect = Game1.getSourceRectForStandardTileSheet(hatsTexture, hatIndex, 20, 20);
 
+            partyHats = hats;
+
         }
 
         public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who)
         {
+            if (spawnBuff > 0)
+            {
+                return 0;
+            }
+
             int ouchIndex = Game1.random.Next(10);
             if (ouchList.Count - 1 >= ouchIndex)
             {
@@ -110,6 +130,20 @@ namespace StardewDruid.Monster
 
         public override void behaviorAtGameTick(GameTime time)
         {
+
+            if (spawnBuff > 0)
+            {
+
+                spawnBuff--;
+
+                if(spawnBuff < 1)
+                {
+
+                    DamageToFarmer = spawnDamage;
+
+                }
+
+            }
 
             tickCount++;
 
@@ -132,7 +166,7 @@ namespace StardewDruid.Monster
 
             // ----------------- hats
 
-            /*if (!IsInvisible && Utility.isOnScreen(Position, 128))
+            if (!IsInvisible && Utility.isOnScreen(Position, 128) && partyHats)
             {
 
                 Vector2 localPosition = getLocalPosition(Game1.viewport) + new Vector2(32 + ((shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), 64 + yJumpOffset);
@@ -153,7 +187,7 @@ namespace StardewDruid.Monster
                     depth
                  );
 
-            }*/
+            }
 
         }
 

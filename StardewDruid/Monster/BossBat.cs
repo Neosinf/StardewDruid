@@ -12,7 +12,7 @@ namespace StardewDruid.Monster
     {
         public List<string> ouchList;
 
-        public bool posturing = true;
+        public bool posturing;
 
         public Texture2D hatsTexture;
 
@@ -30,11 +30,13 @@ namespace StardewDruid.Monster
 
             moveTowardPlayerThreshold.Value = 99;
 
-            base.Health = (int)(combatModifier * 2);
+            Health = (int)(combatModifier * 6);
 
-            base.MaxHealth = (int)(combatModifier * 2);
+            MaxHealth = Health;
 
-            base.DamageToFarmer = (int)Math.Max(2, combatModifier * 0.2);
+            DamageToFarmer = (int)Math.Max(2, combatModifier * 0.1);
+
+            objectsToDrop.Clear();
 
             hatsTexture = Game1.content.Load<Texture2D>("Characters\\Farmer\\hats");
 
@@ -56,6 +58,13 @@ namespace StardewDruid.Monster
                 "flippity",
                 "cheeep"
             };
+
+        }
+        public override List<Item> getExtraDropItems()
+        {
+            List<Item> list = new List<Item>();
+
+            return list;
 
         }
 

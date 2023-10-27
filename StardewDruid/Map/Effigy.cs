@@ -16,7 +16,7 @@ using StardewModdingAPI;
 
 namespace StardewDruid.Map
 {
-    internal class Effigy
+    public class Effigy
     {
 
         private readonly Mod mod;
@@ -271,6 +271,8 @@ namespace StardewDruid.Map
 
             Dictionary<string, int> blessingList = mod.BlessingList();
 
+            string blessing = mod.ActiveBlessing();
+
             if (!mod.QuestComplete("approachEffigy"))
             {
                 
@@ -376,10 +378,13 @@ namespace StardewDruid.Map
 
             }
 
-            if (mod.AttuneableWeapon())
+            int toolIndex = mod.AttuneableWeapon();
+
+            if (toolIndex != -1)
             {
 
-                effigyChoices.Add(new Response("attune", "I want to dedicate this artifact to my patron (attune weapon)"));
+                effigyChoices.Add(new Response("attune", $"I want to dedicate this {Game1.player.CurrentTool.Name} (manage attunement)"));
+
 
             }
 
@@ -453,6 +458,7 @@ namespace StardewDruid.Map
                     DelayedAction.functionAfterDelay(DialogueAttune, 100);
 
                     break;
+
             }
 
             return;
@@ -709,7 +715,7 @@ namespace StardewDruid.Map
 
                         effigyReply = "Forgotten Effigy: ^Are you yet a master of the veil between worlds? Focus your will to breach the divide." +
                             "^..." +
-                            $"^({mod.CastControl()}: strike candle torches to create monster portals. Only works in remote outdoor locations.)";
+                            $"^({mod.CastControl()}: strike candle torches to create monster portals. Every candle included in the rite increases the challenge. Only works in remote outdoor locations like the backwoods.)";
 
                         mod.NewQuest("lessonPortal");
 
@@ -864,15 +870,48 @@ namespace StardewDruid.Map
                 
                 effigyReply = "Forgotten Effigy: ^Hmm... return tomorrow after I have consulted the Others.";
 
+                Game1.activeClickableMenu = new DialogueBox(effigyReply);
+
+                return;
+
             }
-            else if (mod.QuestCompletion())
+            
+            if (mod.QuestCompletion())
             {
                 
                 effigyReply = "Forgotten Effigy: ^There is a task you haven't accomplished yet. Return when you are victorious.";
-            
+
+                Game1.activeClickableMenu = new DialogueBox(effigyReply);
+
+                return;
+
             }
-            else if (!mod.QuestGiven("challengeCanoli") || !mod.QuestGiven("challengeMariner") || !mod.QuestGiven("challengeSandDragon"))
+
+            List<string> challengeQuests = Map.QuestData.ChallengeQuests();
+
+            List<string> addQuests = new();
+
+            foreach(string questName in challengeQuests)
             {
+                    
+                if (!mod.QuestGiven(questName))
+                {
+
+                    addQuests.Add(questName);
+
+                }
+
+            }
+
+            if(addQuests.Count > 0)
+            {
+            
+                foreach(string questName in addQuests)
+                {
+                    
+                    mod.NewQuest(questName);
+
+                }
                 
                 effigyReply = "Satisfied Effigy: " +
                     "^Those with a twisted connection to the otherworld may remain tethered to the Valley long after their mortal vessel wastes away." +
@@ -880,59 +919,55 @@ namespace StardewDruid.Map
                     "^..." +
                     "^(You have received new quests)";
 
-                mod.NewQuest("challengeCanoli");
-
-                mod.NewQuest("challengeMariner");
-
-                mod.NewQuest("challengeSandDragon");
+                Game1.currentLocation.playSound("yoba");
 
                 lessonGiven = true;
 
-            }
-            else
+                Game1.activeClickableMenu = new DialogueBox(effigyReply);
+
+                return;
+
+            } 
+
+
+            Dictionary<string, string> challengeList = Map.QuestData.SecondQuests();
+
+            List<string> enterList = new();
+
+            List<string> rotateList = new();
+
+            effigyReply = "Forgotten Effigy: ^An old threat has re-emerged. Be careful, they may have increased in power since your last confrontation." +
+                "^..." +
+                "^(You have received a new quest)";
+
+            foreach(KeyValuePair<string, string> challenge in challengeList)
             {
 
-                List<string> challengeList = new()
-                {
-                    "challengeCanoliTwo",
-                    "challengeMarinerTwo",
-                    "challengeSandDragonTwo",
-                    "challengeEarthTwo",
-                    "challengeWaterTwo",
-                    "challengeStarsTwo",
-                };
+                string questName = challenge.Key + "Two";
 
-                List<string> enterList = new();
-
-                effigyReply = "Forgotten Effigy: ^An old threat has re-emerged. Be careful, they may have increased in power since your last confrontation." +
-                    "^..." +
-                    "^(You have received a new quest)";
-
-                foreach(string challenge in challengeList)
+                if (!mod.QuestGiven(questName))
                 {
 
-                    if (!mod.QuestGiven(challenge))
-                    {
-                        enterList.Add(challenge);
-
-                    }
+                    enterList.Add(questName);
 
                 }
 
-                if(enterList.Count == 0)
-                {
-
-                    enterList = challengeList;
-
-                }
-
-                string enterChallenge = enterList[Game1.random.Next(enterList.Count)];
-
-                mod.NewQuest(enterChallenge);
-
-                lessonGiven = true;
+                rotateList.Add(questName);
 
             }
+
+            if (enterList.Count == 0)
+            {
+
+                enterList = rotateList;
+
+            }
+
+            string enterChallenge = enterList[Game1.random.Next(enterList.Count)];
+
+            mod.NewQuest(enterChallenge);
+
+            lessonGiven = true;
 
             Game1.activeClickableMenu = new DialogueBox(effigyReply);
 
@@ -1637,32 +1672,111 @@ namespace StardewDruid.Map
         public void DialogueAttune()
         {
 
-            string effigyReply = "Forgotten Effigy: ^This artifact cannot be attuned.";
+            string effigyQuestion;
 
-            if (mod.AttuneWeapon())
+            List<Response> effigyChoices = new();
+
+            int toolIndex = mod.AttuneableWeapon();
+
+            string attunement = mod.AttunedWeapon(toolIndex);
+
+            Dictionary<string, int> blessingList = mod.BlessingList();
+
+            effigyQuestion = $"Forgotten Effigy: ^To whom should this {Game1.player.CurrentTool.Name} be dedicated to?^";
+
+            if (attunement != "reserved")
             {
-                string activeBlessing = mod.ActiveBlessing();
 
-                effigyReply = "Forgotten Effigy: ^Done. Now this artifact will always source its power from ";
-
-                switch (activeBlessing)
+                if(attunement != "earth" && blessingList.ContainsKey("earth"))
                 {
 
-                    case "stars": effigyReply += "the Stars"; Game1.currentLocation.playSound("Meteorite"); break;
-                    case "water": effigyReply += "the Lady Beyond the Shore"; Game1.currentLocation.playSound("thunder_small"); break;
-                    default: effigyReply += "the Two Kings"; Game1.currentLocation.playSound("discoverMineral"); break; //earth
+                    effigyChoices.Add(new Response("earth", $"To the Two Kings"));
+
+
+                }
+
+                if (attunement != "water" && blessingList.ContainsKey("water"))
+                {
+
+                    effigyChoices.Add(new Response("water", $"To the Lady Beyond the Shore"));
+
+
+                }
+
+                if (attunement != "stars" && blessingList.ContainsKey("stars"))
+                {
+
+                    effigyChoices.Add(new Response("stars", $"To the Stars Themselves"));
+
+
+                }
+
+                if (attunement != "none")
+                {
+
+                    effigyChoices.Add(new Response("none", "I want to reclaim it for myself (removes attunement)"));
+
 
                 }
 
             }
+            else
+            {
+
+                effigyQuestion = $"Forgotten Effigy: ^This {Game1.player.CurrentTool.Name} will serve only you.";
+
+            }
+
+            effigyChoices.Add(new Response("return", "(nevermind)"));
+
+            GameLocation.afterQuestionBehavior effigyBehaviour = new(AnswerAttune);
+
+            returnFrom = null;
+
+            Game1.player.currentLocation.createQuestionDialogue(effigyQuestion, effigyChoices.ToArray(), effigyBehaviour);
+
+        }
+
+        public void AnswerAttune(Farmer effigyVisitor, string effigyAnswer)
+        {
+
+            string effigyReply = $"Forgotten Effigy: ^Done. Now this {Game1.player.CurrentTool.Name} will serve ";
+
+            switch (effigyAnswer)
+            {
+                case "return":
+
+                    returnFrom = "attune";
+
+                    DelayedAction.functionAfterDelay(DialogueApproach, 100);
+
+                    return;
+
+                case "none": 
+                    
+                    effigyReply = $"Forgotten Effigy: ^This {Game1.player.CurrentTool.Name} will no longer serve."; 
+                    
+                    mod.DetuneWeapon(); 
+                    
+                    Game1.activeClickableMenu = new DialogueBox(effigyReply); 
+                    
+                    return;
+
+                case "stars": effigyReply += "the Stars"; Game1.currentLocation.playSound("Meteorite"); break;
+
+                case "water": effigyReply += "the Lady Beyond the Shore"; Game1.currentLocation.playSound("thunder_small"); break;
+
+                default: effigyReply += "the Two Kings"; Game1.currentLocation.playSound("discoverMineral"); break; //earth
+
+            }
+
+            mod.AttuneWeapon(effigyAnswer);
 
             Game1.activeClickableMenu = new DialogueBox(effigyReply);
 
             return;
 
-
         }
-
 
     }
 

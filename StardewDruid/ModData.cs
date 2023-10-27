@@ -27,7 +27,7 @@ namespace StardewDruid
 
         public int setProgress { get; set; }
 
-        public bool masterStart { get; set; }
+        //public bool masterStart { get; set; }
 
         public bool maxDamage { get; set; }
 
@@ -39,7 +39,7 @@ namespace StardewDruid
 
         public bool checkQuests { get; set; }
 
-        //public bool monsterHats { get; set; }
+        public bool partyHats { get; set; }
 
         public int farmCaveStatueX { get; set; }
 
@@ -81,7 +81,7 @@ namespace StardewDruid
 
             consumeCaffeine = true;
 
-            masterStart = false;
+            //masterStart = false;
 
             maxDamage = false;
 
@@ -96,7 +96,7 @@ namespace StardewDruid
                 [9] = "stars",
             };
 
-            //monsterHats = false;
+            partyHats = false;
 
             farmCaveActionX = 6;
 

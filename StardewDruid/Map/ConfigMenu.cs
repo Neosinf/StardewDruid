@@ -72,13 +72,13 @@ namespace StardewDruid.Map
                 setValue: value => Config.consumeCaffeine = value
             );
 
-            configMenu.AddBoolOption(
+            /*configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => "Master Start",
                 tooltip: () => "Start with all Rite levels unlocked (not recommended for immersion). Note that activating, saving in game, then deactivating afterwards, will reset all your Rite Levels and Effigy Quests.",
                 getValue: () => Config.masterStart,
                 setValue: value => Config.masterStart = value
-            );
+            );*/
 
             configMenu.AddNumberOption(
                 mod: mod.ModManifest,
@@ -118,13 +118,13 @@ namespace StardewDruid.Map
                 setValue: value => Config.unrestrictedStars = value
             );
 
-            /*configMenu.AddBoolOption(
+            configMenu.AddBoolOption(
                 mod: mod.ModManifest,
-                name: () => "Monster Hats",
-                tooltip: () => "Adds hats to some monsters. If that's your thing.",
-                getValue: () => Config.monsterHats,
-                setValue: value => Config.monsterHats = value
-            );*/
+                name: () => "Ostentatious Hats",
+                tooltip: () => "Adds hats to some monsters. Cosmetic effect only.",
+                getValue: () => Config.partyHats,
+                setValue: value => Config.partyHats = value
+            );
 
             configMenu.AddNumberOption(
                 mod: mod.ModManifest,

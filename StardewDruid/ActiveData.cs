@@ -25,7 +25,11 @@ namespace StardewDruid
 
         public bool castInterrupt = false;
 
+        public bool castDoppler = false;
+
         public int activeDirection = -1;
+
+        public Vector2 originVector = new(0,0);
 
         public Vector2 activeVector = new(0,0);
 

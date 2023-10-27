@@ -57,15 +57,27 @@ namespace StardewDruid.Monster
 
         public float swordDepth;
 
-        public Golem(Vector2 vector, int combatModifier, string monsterType = "wild")
+        public bool partyHats;
+
+        public int spawnBuff;
+
+        public int spawnDamage;
+
+        public Golem(Vector2 vector, int combatModifier, bool hats)
             : base(vector*64, true)
         {
 
             focusedOnFarmers = true;
 
-            base.Health = combatModifier;
+            Health = combatModifier;
 
-            base.DamageToFarmer = (int)Math.Max(2, combatModifier * 0.075);
+            MaxHealth = health;
+
+            DamageToFarmer = 0;
+
+            spawnDamage = (int)Math.Max(2, combatModifier * 0.075);
+
+            spawnBuff = 60;
 
             // ---------------------------------
 
@@ -77,17 +89,18 @@ namespace StardewDruid.Monster
 
             objectsToDrop.Clear();
 
-            if (Game1.random.Next(2) == 0)
+            if (Game1.random.Next(3) == 0)
             {
                 objectsToDrop.Add(378);
-            }
-            else if (Game1.random.Next(3) == 0 && combatModifier >= 5)
+            } else if (Game1.random.Next(4) == 0 && combatModifier >= 120)
             {
                 objectsToDrop.Add(380);
-            }
-            else if (Game1.random.Next(4) == 0 && combatModifier >= 8)
+            } else if (Game1.random.Next(5) == 0 && combatModifier >= 240)
             {
                 objectsToDrop.Add(384);
+            } else if (Game1.random.Next(6) == 0 && combatModifier >= 360)
+            {
+                objectsToDrop.Add(386); // iridium
             }
 
             ouchList = new()
@@ -114,6 +127,14 @@ namespace StardewDruid.Monster
                 //3,
                 //299,
             };
+
+            if (hats)
+            {
+
+                hatList.Add(3); 
+                hatList.Add(149);
+
+            }
 
             hatSize = 3.25f;
 
@@ -284,7 +305,12 @@ namespace StardewDruid.Monster
 
         public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who)
         {
-            
+
+            if (spawnBuff > 0)
+            {
+                return 0;
+            }
+
             int ouchIndex = Game1.random.Next(10);
 
             if (ouchIndex < ouchList.Count)
@@ -329,6 +355,20 @@ namespace StardewDruid.Monster
 
         public override void behaviorAtGameTick(GameTime time)
         {
+
+            if (spawnBuff > 0)
+            {
+
+                spawnBuff--;
+
+                if (spawnBuff < 1)
+                {
+
+                    DamageToFarmer = spawnDamage;
+
+                }
+
+            }
 
             tickCount++;
 

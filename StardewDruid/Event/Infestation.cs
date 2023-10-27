@@ -103,6 +103,8 @@ namespace StardewDruid.Event
 
                 bossMonster = theMonster as BossSlime;
 
+                bossMonster.posturing = true;
+
                 riteData.castLocation.characters.Add(bossMonster);
 
                 bossMonster.update(Game1.currentGameTime, riteData.castLocation);
@@ -119,21 +121,21 @@ namespace StardewDruid.Event
                 switch (activeCounter)
                 {
 
-                    case 20: bossMonster.showTextAboveHead("PATHETIC"); break;
+                    case 15: bossMonster.showTextAboveHead("HOW BORING", 3000); break;
 
-                    case 22: bossMonster.showTextAboveHead("the monarchs must be asleep."); break;
+                    case 18: bossMonster.showTextAboveHead("the monarchs must be asleep.", 3000); break;
 
-                    case 24: bossMonster.showTextAboveHead("if they send only a farmer", 3000); break;
+                    case 21: bossMonster.showTextAboveHead("if they send only a farmer", 3000); break;
 
-                    case 27: bossMonster.showTextAboveHead("to face the onslaught..."); break;
+                    case 24: bossMonster.showTextAboveHead("to face the onslaught...", 3000); break;
 
-                    case 29: bossMonster.showTextAboveHead("OF THE MIGHTY SLIME"); break;
+                    case 27: bossMonster.showTextAboveHead("OF THE MIGHTY SLIME", 3000); break;
 
-                    case 31: bossMonster.showTextAboveHead("you will be consumed"); break;
+                    case 30: bossMonster.showTextAboveHead("you will be consumed", 3000); break;
 
-                    case 33: bossMonster.showTextAboveHead("along with the whole valley"); break;
+                    case 33: bossMonster.showTextAboveHead("along with the whole valley", 3000); break;
 
-                    case 35: bossMonster.showTextAboveHead("ALL WILL BE JELLY", 3000); break;
+                    case 36: bossMonster.showTextAboveHead("ALL WILL BE JELLY", 3000); break;
 
                     case 37:
 

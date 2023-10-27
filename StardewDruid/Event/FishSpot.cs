@@ -48,6 +48,11 @@ namespace StardewDruid.Event
 
         }
 
+        public override void EventAbort()
+        {
+
+        }
+
         public override void EventRemove()
         {
 

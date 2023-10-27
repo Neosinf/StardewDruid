@@ -31,10 +31,6 @@ namespace StardewDruid.Cast
 
         public int direction;
 
-        public StardewValley.Tools.Axe castAxe;
-
-        public StardewValley.Tools.Pickaxe castPick;
-
         public int castDamage;
 
         public int combatModifier;

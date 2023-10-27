@@ -37,7 +37,9 @@ namespace StardewDruid.Cast
 
             float animationSort;
 
-            for(int i = 1; i < 5; i++)
+            int waterRadius = Math.Max(3,mod.virtualCan.UpgradeLevel) + 1;
+
+            for (int i = 1; i < waterRadius; i++)
             { 
 
                 List<Vector2> hoeVectors = ModUtility.GetTilesWithinRadius(targetLocation, targetVector, i);

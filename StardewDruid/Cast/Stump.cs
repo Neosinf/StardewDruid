@@ -69,9 +69,9 @@ namespace StardewDruid.Cast
         public override void CastWater()
         {
 
-            StardewValley.Tools.Axe targetAxe = mod.RetrieveAxe();
+            int axeLevel = mod.virtualAxe.UpgradeLevel;
 
-            castCost = Math.Max(2, 36 - (targetPlayer.ForagingLevel * targetAxe.UpgradeLevel));
+            castCost = Math.Max(2, 36 - (targetPlayer.ForagingLevel * axeLevel));
 
             if (resourceClump == null)
             {
@@ -82,7 +82,7 @@ namespace StardewDruid.Cast
 
             resourceClump.health.Set(1f);
 
-            if(targetAxe.UpgradeLevel < 3)
+            if(axeLevel < 3)
             {
 
                 StardewValley.Tools.Axe betterAxe = new();
@@ -96,13 +96,18 @@ namespace StardewDruid.Cast
             }
             else
             {
-                resourceClump.performToolAction(targetAxe, 1, targetVector, targetLocation);
+                
+                targetPlayer.Stamina += Math.Min(2, targetPlayer.MaxStamina - targetPlayer.Stamina);
+
+                mod.virtualAxe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+
+                resourceClump.performToolAction(mod.virtualAxe, 1, targetVector, targetLocation);
 
             }
 
             resourceClump.NeedsUpdate = false;
 
-            if (targetAxe.UpgradeLevel >= 3)
+            if (axeLevel >= 3)
             {
                 Game1.createObjectDebris(709, (int)this.targetVector.X, (int)this.targetVector.Y);
 

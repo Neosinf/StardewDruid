@@ -363,6 +363,32 @@ namespace StardewDruid.Map
 
                 },
 
+                ["challengeGemShrine"] = new()
+                {
+
+                    name = "challengeGemShrine",
+                    triggerType = "challenge",
+                    triggerLocale = new() { typeof(IslandShrine), },
+                    triggerBlessing = "stars",
+                    triggerMilestone = "Island",
+                    markerType = "icon",
+                    vectorList = new()
+                    {
+                        ["triggerVector"] = new(22, 26),
+                        ["triggerLimit"] = new(5, 3),
+                        ["markerVector"] = new(24, 27),
+                    },
+                    questLevel = 14,
+
+                    questId = 18465034,
+                    questValue = 6,
+                    questTitle = "The Forgotten Shrine",
+                    questDescription = "A strange presence lingers at a long forgotten shrine.",
+                    questObjective = "Perform a rite of the stars between the pedestals of the Ginger Island forest shrine.",
+                    questReward = 2500,
+
+                },
+
                 ["lessonVillager"] = new() {
 
                     name = "lessonVillager",
@@ -506,7 +532,7 @@ namespace StardewDruid.Map
                     questValue = 6,
                     questTitle = "Druid Lesson Ten: Portals",
                     questDescription = "Who knows what lies beyond the veil",
-                    questObjective = "Create a portal in the backwoods or elsewhere and hold your ground against invaders.",
+                    questObjective = "Create a portal in the backwoods, railroad or secret woods by placing down a candle torch and striking it with Rite of the Water. Every candle included in the rite increases the challenge.",
                     questReward = 1000,
 
                     taskCounter = 1,
@@ -531,15 +557,7 @@ namespace StardewDruid.Map
 
             };
 
-            Dictionary<string, string> secondList = new()
-            {
-                ["challengeEarth"] = "The Aquifer Revisited",
-                ["challengeWater"] = "The Invasion Revisited",
-                ["challengeStars"] =  "The Infestation Revisited",
-                ["challengeCanoli"] = "The Dusting Revisited",
-                ["challengeMariner"] = "The Seafarer Revisited",
-                ["challengeSandDragon"] = "The Tyrant Revisited",
-            };
+            Dictionary<string, string> secondList = SecondQuests();
 
             foreach(KeyValuePair<string,string> secondData in secondList)
             {
@@ -558,6 +576,53 @@ namespace StardewDruid.Map
             }
 
             return questList;
+
+        }
+
+        public static List<string> ChallengeQuests()
+        {
+
+            List<string> secondList = new()
+            {
+
+                "challengeCanoli",
+                "challengeMariner",
+                "challengeSandDragon",
+
+            };
+
+            if (Game1.player.hasOrWillReceiveMail("seenBoatJourney"))
+            {
+
+                secondList.Add("challengeGemShrine");
+
+            }
+
+            return secondList;
+
+        }
+
+        public static Dictionary<string, string> SecondQuests()
+        {
+
+            Dictionary<string, string> secondList = new()
+            {
+                ["challengeEarth"] = "The Aquifer Revisited",
+                ["challengeWater"] = "The Invasion Revisited",
+                ["challengeStars"] = "The Infestation Revisited",
+                ["challengeCanoli"] = "The Dusting Revisited",
+                ["challengeMariner"] = "The Seafarer Revisited",
+                ["challengeSandDragon"] = "The Tyrant Revisited",
+            };
+
+            if (Game1.player.hasOrWillReceiveMail("seenBoatJourney"))
+            {
+
+                secondList.Add("challengeGemShrine", "The Shrine Revisited");
+
+            }
+
+            return secondList;
 
         }
 

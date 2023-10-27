@@ -34,7 +34,7 @@ namespace StardewDruid.Cast
 
             }
 
-            float critChance = 0.05f;
+            float critChance = 0.1f;
 
             if (!riteData.castTask.ContainsKey("masterSmite"))
             {
