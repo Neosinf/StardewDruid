@@ -33,7 +33,7 @@ namespace StardewDruid.Event
         public override void EventTrigger()
         {
 
-            ModUtility.AnimateMeteorZone(targetLocation, targetVector, Color.Red, 2);
+            ModUtility.AnimateMeteorZone(targetLocation, targetVector, Color.Red);
 
             ModUtility.AnimateMeteor(targetLocation, targetVector, true);
            
@@ -112,7 +112,7 @@ namespace StardewDruid.Event
 
                 Dictionary<string, int> blessingList = mod.BlessingList();
 
-                if (!blessingList.ContainsKey("shardSandDragon"))
+                if (!questData.name.Contains("Two"))
                 {
 
                     Game1.createObjectDebris(74, (int)debrisVector.X, (int)debrisVector.Y);
@@ -173,7 +173,7 @@ namespace StardewDruid.Event
 
                         Vector2 randomVector = targetVector + new Vector2(0, 1) - new Vector2(randomIndex.Next(7), randomIndex.Next(3));
 
-                        ModUtility.AnimateMeteorZone(targetLocation, randomVector, Color.Red, 2);
+                        ModUtility.AnimateMeteorZone(targetLocation, randomVector, Color.Red);
 
                         ModUtility.AnimateMeteor(targetLocation, randomVector, randomIndex.Next(2) == 0);
 
@@ -192,6 +192,13 @@ namespace StardewDruid.Event
                 StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(14, targetVector + new Vector2(-5, 0), riteData.combatModifier);
 
                 bossMonster = theMonster as BossDragon;
+
+                if (questData.name.Contains("Two"))
+                {
+
+                    bossMonster.HardMode();
+
+                }
 
                 riteData.castLocation.characters.Add(bossMonster);
 

@@ -85,7 +85,7 @@ namespace StardewDruid.Map
                 name: () => "Set Progress",
                 tooltip: () => "Use to adjust progress level on game load. -1 is no change. 0-5 Rite of Earth, 6-11 Rite of Water, 12+ Rite of Stars. Note that adjustments may clear or miss levels of progress.",
                 min: -1,
-                max: 14,
+                max: 15,
                 interval: 1,
                 getValue: () => Config.setProgress,
                 setValue: value => Config.setProgress = (int)value
@@ -126,7 +126,7 @@ namespace StardewDruid.Map
                 setValue: value => Config.partyHats = value
             );
 
-            configMenu.AddNumberOption(
+            /*configMenu.AddNumberOption(
                 mod: mod.ModManifest,
                 name: () => "Effigy tileX",
                 tooltip: () => "Move the Effigy's position in the farmcave on the X Axis",
@@ -172,7 +172,7 @@ namespace StardewDruid.Map
                 tooltip: () => "Configure the backwall of the farmcave to situate the Effigy",
                 getValue: () => Config.farmCaveMakeSpace,
                 setValue: value => Config.farmCaveMakeSpace = value
-            );
+            );*/
 
             return configMenu;
 

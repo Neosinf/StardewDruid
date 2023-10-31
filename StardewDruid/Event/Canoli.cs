@@ -29,6 +29,13 @@ namespace StardewDruid.Event
 
             monsterHandle.spawnAmplitude = 2;
 
+            if (questData.name.Contains("Two"))
+            {
+
+                monsterHandle.spawnAmplitude = 3;
+
+            }
+
             monsterHandle.spawnIndex = new() { 4, };
 
             monsterHandle.spawnWithin = new(Math.Max(targetVector.X - 3, 0), targetVector.Y + 1);

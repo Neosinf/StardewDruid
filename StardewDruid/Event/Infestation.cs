@@ -81,7 +81,7 @@ namespace StardewDruid.Event
 
                 UpdateFriendship(NPCIndex);
 
-                mod.UpdateEffigy(questData.name);
+                mod.QuestFeedback("I defeated the Slime Lord. Now I'm covered in gunk.");
 
                 mod.LevelBlessing("stars");
 

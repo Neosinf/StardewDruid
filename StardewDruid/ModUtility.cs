@@ -583,7 +583,7 @@ namespace StardewDruid
 
         }
 
-        public static void AnimateMeteorZone(GameLocation targetLocation, Vector2 targetVector, Color animationcolor, int meteorRange = 4, int animationLoops = 1, float animationStrength = 0.75f)
+        public static void AnimateMeteorZone(GameLocation targetLocation, Vector2 targetVector, Color animationcolor, int animationLoops = 1)
         {
 
             // --------------------------- splash animation
@@ -606,13 +606,17 @@ namespace StardewDruid
 
             // --------------------------- splash radius
 
-            AnimateCastRadius(targetLocation, targetVector - new Vector2(0, 1), animationcolor, 0, 1, animationStrength);
+            TemporaryAnimatedSprite secondAnimation = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition- new Vector2(24,24), false, false, animationSort, 0f, animationcolor*0.65f, 1.75f, 0f, 0f, 0f);
+
+            targetLocation.temporarySprites.Add(secondAnimation);
+
+            /*AnimateCastRadius(targetLocation, targetVector - new Vector2(0, 1), animationcolor, 0, 1, animationStrength);
 
             AnimateCastRadius(targetLocation, targetVector - new Vector2(1, 0), animationcolor, 0, 1, animationStrength);
 
             AnimateCastRadius(targetLocation, targetVector + new Vector2(0, 1), animationcolor, 0, 1, animationStrength);
 
-            AnimateCastRadius(targetLocation, targetVector + new Vector2(1, 0), animationcolor, 0, 1, animationStrength);
+            AnimateCastRadius(targetLocation, targetVector + new Vector2(1, 0), animationcolor, 0, 1, animationStrength);*/
 
         }
 

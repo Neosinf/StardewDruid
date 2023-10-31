@@ -10,26 +10,44 @@ using xTile.Dimensions;
 using System.Xml.Serialization;
 using StardewValley.Monsters;
 using StardewValley.Objects;
+using StardewModdingAPI;
+using System.IO;
 
 namespace StardewDruid.Character
 {
     public class Effigy : StardewValley.NPC
     {
 
-        private Mod mod;
+        public int movementTimer;
 
-        public int attendPlayer;
+        public int wanderTimer;
 
-        public int wanderAway;
-
-        public int movementChange;
-
-        public bool moveToPlayer;
-
-        public Effigy(Mod Mod, AnimatedSprite sprite, Vector2 position, string defaultMap, int facingDir, string name, Dictionary<int, int[]> schedule, Texture2D portrait) 
-           : base(sprite, position, defaultMap, facingDir, name, schedule, portrait, false)
+        public Effigy()
         {
-            mod = Mod;
+
+        }
+
+        public Effigy(string Name = "Effigy")
+            : base(
+            CharacterData.CharacterSprite(Name),
+            CharacterData.CharacterPosition(Name),
+            CharacterData.CharacterMap(Name),
+            2,
+            Name, 
+            new(),
+            CharacterData.CharacterPortrait(Name),
+            false
+            )
+        {
+
+        }
+
+        public override void reloadSprite()
+        {
+            
+            Sprite = CharacterData.CharacterSprite("effigy");
+            
+            Portrait = CharacterData.CharacterPortrait("effigy");
 
         }
 
@@ -63,7 +81,7 @@ namespace StardewDruid.Character
         public override void reloadDefaultLocation()
         {
         
-            DefaultMap = CharacterData.CharacterDefaultMap(name);
+            DefaultMap = CharacterData.CharacterMap(name);
 
             DefaultPosition = CharacterData.CharacterPosition(name);
         
@@ -85,11 +103,24 @@ namespace StardewDruid.Character
            
             Halt();
 
-            attendPlayer = 120;
+            movementTimer = 180;
+
+            wanderTimer = 900;
 
             faceGeneralDirection(who.Position);
 
-            mod.druidEffigy.DialogueApproach();
+            /*if (!Context.IsMainPlayer)
+            {
+
+                mod.MultiplayerMessage("EffigyDialogue",who.UniqueMultiplayerID);
+
+                return true;
+
+            }*/
+
+            Mod.instance.dialogueEffigy.effigy = this;
+
+            Mod.instance.dialogueEffigy.DialogueApproach();
 
             return true;
 
@@ -97,12 +128,6 @@ namespace StardewDruid.Character
 
         public override void performTenMinuteUpdate(int timeOfDay, GameLocation l)
         {
-            if(wanderAway > 0)
-            {
-
-                wanderAway--;
-
-            }
 
         }
 
@@ -122,33 +147,53 @@ namespace StardewDruid.Character
 
         }
 
-        public Dictionary<int,float> PlayerProximity()
+        public Dictionary<int,float> TargetProximity(string target = "origin")
         {
 
             Dictionary<int, float> proximity = new() { [0] = -1f };
 
-            if (Game1.player.currentLocation != currentLocation)
-            {
-                return proximity;
-            }
+            Vector2 targetPosition;
 
-            if (currentLocation.map.GetLayer("Back").Tiles[(int)Game1.player.getTileLocation().X, (int)Game1.player.getTileLocation().Y] == null)
+            if (target == "player")
             {
-                return proximity;
-            }
 
-            if (currentLocation.map.GetLayer("Back").Tiles[(int)Game1.player.getTileLocation().X, (int)Game1.player.getTileLocation().Y].Properties.ContainsKey("NPCBarrier"))
+                if (Game1.player.currentLocation != currentLocation)
+                {
+                    return proximity;
+                }
+
+                if (currentLocation.map.GetLayer("Back").Tiles[(int)Game1.player.getTileLocation().X, (int)Game1.player.getTileLocation().Y] == null)
+                {
+                    return proximity;
+                }
+
+                if (currentLocation.map.GetLayer("Back").Tiles[(int)Game1.player.getTileLocation().X, (int)Game1.player.getTileLocation().Y].Properties.ContainsKey("NPCBarrier"))
+                {
+                    return proximity;
+                }
+
+                targetPosition = Game1.player.GetBoundingBox().Center.ToVector2();
+
+            }
+            else
             {
-                return proximity;
-            }
 
-            Vector2 targetPosition = Game1.player.GetBoundingBox().Center.ToVector2();
+                targetPosition = CharacterData.CharacterPosition(name);
+
+
+            }
 
             Vector2 currentPosition = GetBoundingBox().Center.ToVector2();
 
             float targetDistance = Vector2.Distance(targetPosition, currentPosition);
 
-            if (targetDistance > 480)
+            if (target == "player" && targetDistance > 447)
+            {
+
+                return proximity;
+
+            }
+            else if(target == "origin" && targetDistance <= 447)
             {
 
                 return proximity;
@@ -208,25 +253,51 @@ namespace StardewDruid.Character
         public override void update(GameTime time, GameLocation location)
         {
 
-            if (attendPlayer > 0)
+            if(shakeTimer > 0)
+            {
+                shakeTimer = 0;
+            }
+
+            if (Game1.IsMasterGame)
             {
 
-                attendPlayer--;
-
-                if(attendPlayer == 0)
+                if (movementTimer > 0)
                 {
 
-                    wanderAway = 3;
+                    movementTimer--;
 
                 }
 
-                return;
+                if (wanderTimer > 0)
+                {
+
+                    wanderTimer--;
+
+                }
+
+                updateMovement(location, time);
+
+                MovePosition(time, Game1.viewport, location);
 
             }
+            else
+            {
 
-            updateMovement(location, time);
+                if(Sprite.loadedTexture == null || Sprite.loadedTexture.Length == 0)
+                {
 
-            MovePosition(time, Game1.viewport, location);
+                    Sprite.spriteTexture = CharacterData.CharacterTexture(name);
+
+                    Sprite.loadedTexture = Sprite.textureName.Value;
+
+                    Portrait = CharacterData.CharacterPortrait(name);
+
+                }
+
+                updateSlaveAnimation(time);
+            
+            }
+
 
         }
 
@@ -235,49 +306,102 @@ namespace StardewDruid.Character
 
             if (Game1.IsClient)
             {
+                
                 return;
+            
             }
+            
+            MoveTowardsOrigin();
 
-            if (movementChange > 0)
-            {
+            MoveTowardsPlayer();
 
-                movementChange--;
-
-                return;
-
-            }
-
-            MoveTowardsPlayer(location);
-
-            MoveRandomDirection(location);
-
-            movementChange = 60;
+            MoveRandomDirection();
 
         }
 
-        public void MoveTowardsPlayer(GameLocation location)
+        public void MoveTowardsOrigin()
         {
-            
-            if (wanderAway > 0)
+
+            if (movementTimer > 0)
+            {
+
+                return;
+
+            }
+
+            Dictionary<int, float> proximity = TargetProximity("origin");
+
+            if (proximity[0] < 0f)
             {
                 return;
             }
 
-            Dictionary<int, float> proximity = PlayerProximity();
+            switch ((int)proximity[0])
+            {
+                case 0:
 
-            if (proximity[0] < 0f)
+                    SetMovingOnlyUp();
+
+                    break;
+
+                case 1:
+
+                    SetMovingOnlyRight();
+
+                    break;
+                case 2:
+
+                    SetMovingOnlyDown();
+
+                    break;
+
+                default:
+
+                    SetMovingOnlyLeft();
+
+                    break;
+
+            }
+
+            movementTimer = 30;
+
+            return;
+
+        }
+
+        public void MoveTowardsPlayer()
+        {
+
+            if (movementTimer > 0)
             {
 
                 return;
 
+            }
+
+            if (wanderTimer > 0)
+            {
+
+                return;
+
+            }
+
+            Dictionary<int, float> proximity = TargetProximity("player");
+
+            if (proximity[0] < 0f)
+            {
+ 
+                return;
             }
 
             if (proximity[1] <= 80f)
             {
-
+                
                 Halt();
 
-                attendPlayer = 120;
+                movementTimer = 180;
+
+                wanderTimer = 900;
 
                 faceDirection((int)proximity[0]);
 
@@ -312,18 +436,22 @@ namespace StardewDruid.Character
 
             }
 
+            movementTimer = 30;
+
             return;
 
         }
 
-        public void MoveRandomDirection(GameLocation location)
+        public void MoveRandomDirection()
         {
 
-            if (isMoving())
+            if (movementTimer > 0)
             {
+
                 return;
 
             }
+
             int num = Game1.random.Next(5);
 
             if (num != (FacingDirection + 2) % 4)
@@ -365,12 +493,14 @@ namespace StardewDruid.Character
                         Sprite.StopAnimation();
                         break;
                 }
+
+                movementTimer = 30;
+
             }
 
             return;
 
         }
-
 
         public override void MovePosition(GameTime time, xTile.Dimensions.Rectangle viewport, GameLocation currentLocation)
         {
@@ -480,7 +610,7 @@ namespace StardewDruid.Character
         public virtual bool HandleCollision(Microsoft.Xna.Framework.Rectangle next, int direction = 0)
         {
 
-            Dictionary<int, float> proximity = PlayerProximity();
+            Dictionary<int, float> proximity = TargetProximity("player");
 
             if (proximity[0] < 0f)
             {
@@ -494,7 +624,9 @@ namespace StardewDruid.Character
 
                 Halt();
 
-                attendPlayer = 120;
+                movementTimer = 180;
+
+                wanderTimer = 900;
 
                 return true;
 
@@ -506,4 +638,5 @@ namespace StardewDruid.Character
 
 
     }
+
 }

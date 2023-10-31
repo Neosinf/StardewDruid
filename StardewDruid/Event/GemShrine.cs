@@ -32,7 +32,7 @@ namespace StardewDruid.Event
         public override void EventTrigger()
         {
 
-            ModUtility.AnimateMeteorZone(targetLocation, targetVector, Color.Red, 2);
+            ModUtility.AnimateMeteorZone(targetLocation, targetVector, Color.Red);
 
             ModUtility.AnimateMeteor(targetLocation, targetVector, true);
            
@@ -109,12 +109,12 @@ namespace StardewDruid.Event
 
                 Dictionary<string, int> blessingList = mod.BlessingList();
 
-                if (!blessingList.ContainsKey("shardGemShrine"))
+                if (!questData.name.Contains("Two"))
                 {
 
                     Game1.createObjectDebris(74, 24, 21);
 
-                    mod.UpdateBlessing("shardGemShrine");
+                    //mod.UpdateBlessing("shardGemShrine");
 
                 }
 
@@ -176,8 +176,6 @@ namespace StardewDruid.Event
 
             if (activeCounter == 7)
             {
-
-                Game1.addHUDMessage(new HUDMessage($"Hit the birds to stop their fire attacks", ""));
 
                 // ---------------- West Bird
 
@@ -281,6 +279,12 @@ namespace StardewDruid.Event
 
             }
 
+            if(activeCounter == 10)
+            {
+
+                Game1.addHUDMessage(new HUDMessage($"Hit the birds to stop their fire attacks", ""));
+
+            }
 
             int defeated = 0;
 

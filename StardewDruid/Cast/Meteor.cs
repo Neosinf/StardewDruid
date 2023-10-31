@@ -33,7 +33,7 @@ namespace StardewDruid.Cast
         public override void CastStars()
         {
 
-            ModUtility.AnimateMeteorZone(targetLocation, targetVector, new Color(1f,0.4f,0.4f,1), meteorRange);
+            ModUtility.AnimateMeteorZone(targetLocation, targetVector, new Color(1f,0.4f,0.4f,1));
 
             ModUtility.AnimateMeteor(targetLocation, targetVector, targetDirection < 2);
 

@@ -173,7 +173,7 @@ namespace StardewDruid.Event
                     
                     UpdateFriendship(NPCIndex);
 
-                    mod.UpdateEffigy(questData.name);
+                    mod.QuestFeedback("The rite disturbed the bats. ALL the bats.");
 
                     mod.LevelBlessing("earth");
 

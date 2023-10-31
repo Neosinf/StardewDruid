@@ -31,6 +31,15 @@ namespace StardewDruid.Event
 
             monsterHandle.spawnFrequency = 2;
 
+            if (questData.name.Contains("Two"))
+            {
+
+                monsterHandle.spawnFrequency = 1;
+
+                monsterHandle.spawnAmplitude = 2;
+
+            }
+
             monsterHandle.spawnWithin = targetVector + new Vector2(-5, 1);
 
             monsterHandle.spawnRange = new Vector2(11, 11);
@@ -171,21 +180,21 @@ namespace StardewDruid.Event
 
             cannonTargets = new()
             {
-                monsterHandle.spawnWithin + new Vector2(1,2),
+                monsterHandle.spawnWithin + new Vector2(1,4),
 
-                monsterHandle.spawnWithin + new Vector2(7,2),
+                monsterHandle.spawnWithin + new Vector2(7,4),
 
-                monsterHandle.spawnWithin + new Vector2(13,2),
+                monsterHandle.spawnWithin + new Vector2(13,4),
 
-                monsterHandle.spawnWithin + new Vector2(4,7),
+                monsterHandle.spawnWithin + new Vector2(4,9),
 
-                monsterHandle.spawnWithin + new Vector2(4,7),
+                monsterHandle.spawnWithin + new Vector2(10,9),
 
-                monsterHandle.spawnWithin + new Vector2(1,12),
+                //monsterHandle.spawnWithin + new Vector2(1,12),
 
-                monsterHandle.spawnWithin + new Vector2(7,12),
+                //monsterHandle.spawnWithin + new Vector2(7,12),
 
-                monsterHandle.spawnWithin + new Vector2(13,12),
+                //monsterHandle.spawnWithin + new Vector2(13,12),
 
             };
 
@@ -207,10 +216,7 @@ namespace StardewDruid.Event
 
             foreach (Vector2 cannonTarget in cannonTargets)
             {
-
-                ModUtility.AnimateMeteorZone(targetLocation, cannonTarget, Color.Red * 0.9f, 3, 6, 1.25f);
-                ModUtility.AnimateMeteorZone(targetLocation, cannonTarget, Color.Red * 0.8f, 2, 6, 1f);
-                ModUtility.AnimateMeteorZone(targetLocation, cannonTarget, Color.Red * 0.7f, 1, 6, 0.75f);
+                ModUtility.AnimateMeteorZone(targetLocation, cannonTarget, Color.Purple, 6);
             }
 
             DelayedAction.functionAfterDelay(CannonsToFire, 3600);

@@ -97,7 +97,7 @@ namespace StardewDruid.Event
 
                     mod.CompleteQuest("swordEarth");
 
-                    mod.UpdateEffigy("swordEarth");
+                    mod.QuestFeedback("The tree gave me a branch shaped like a sword.");
 
                     break;
 
@@ -185,7 +185,7 @@ namespace StardewDruid.Event
 
                     mod.CompleteQuest("swordWater");
 
-                    mod.UpdateEffigy("swordWater");
+                    mod.QuestFeedback("I went to the pier and... was that a bolt of lightning?");
 
                     break;
 
@@ -264,7 +264,7 @@ namespace StardewDruid.Event
 
                     mod.CompleteQuest("swordStars");
 
-                    mod.UpdateEffigy("swordStars");
+                    mod.QuestFeedback("I found the lake of flames.");
 
                     break;
 

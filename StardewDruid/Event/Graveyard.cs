@@ -84,7 +84,7 @@ namespace StardewDruid.Event
 
                 UpdateFriendship(NPCIndex);
 
-                mod.UpdateEffigy(questData.name);
+                mod.QuestFeedback("The graveyard has a few less shadows.");
 
                 mod.LevelBlessing("water");
 

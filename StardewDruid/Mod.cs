@@ -30,12 +30,15 @@ using StardewValley.BellsAndWhistles;
 using System.Xml.Linq;
 using System.Reflection.Emit;
 using StardewDruid.Character;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace StardewDruid
 {
+
     public class Mod : StardewModdingAPI.Mod
     {
-        
+
         public ModData Config;
 
         private ActiveData activeData;
@@ -45,8 +48,6 @@ namespace StardewDruid
         public Dictionary<int, string> weaponAttunement;
 
         private MultiplayerData multiplayerData;
-
-        public Map.Effigy druidEffigy;
 
         public Dictionary<int, string> TreeTypes;
 
@@ -94,7 +95,11 @@ namespace StardewDruid
 
         public StardewValley.NPC disembodiedVoice;
 
-        public Character.Effigy realEffigy;
+        public Character.Effigy npcEffigy;
+
+        public EffigyDialogue dialogueEffigy;
+
+        //blic Map.CaveEffigy caveEffigy;
 
         private bool trainedToday;
 
@@ -108,8 +113,12 @@ namespace StardewDruid
 
         public Dictionary<string,List<int>> riteWitnesses;
 
+        internal static Mod instance;
+
         override public void Entry(IModHelper helper)
         {
+
+            instance = this;
 
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
 
@@ -119,7 +128,9 @@ namespace StardewDruid
 
             helper.Events.GameLoop.OneSecondUpdateTicked += EverySecond;
 
-            helper.Events.GameLoop.Saving += SaveUpdated;
+            helper.Events.GameLoop.Saving += SaveImminent;
+
+            helper.Events.GameLoop.Saved += SaveUpdated;
 
             helper.Events.Multiplayer.ModMessageReceived += OnModMessageReceived;
 
@@ -141,6 +152,8 @@ namespace StardewDruid
 
                 staticData = Helper.Data.ReadSaveData<StaticData>("staticData");
 
+                CreateEffigy();
+
             }
             else if(!receivedData)
             {
@@ -148,6 +161,8 @@ namespace StardewDruid
                 StaticData loadData = new();
 
                 Helper.Multiplayer.SendMessage(loadData, "FarmhandRequest", modIDs: new[] { this.ModManifest.UniqueID });
+
+                //LoadEffigy();
 
             }
 
@@ -165,35 +180,7 @@ namespace StardewDruid
 
             firePoints = Map.FireData.FirePoints();
 
-            Map.TileData.LoadSheets();
-
-            AnimatedSprite effigySprite = CharacterData.CharacterSprite("Effigy");
-
-            Texture2D effigyPortrait = CharacterData.CharacterPortrait("Effigy");
-
-            Dictionary<int, int[]> effigySchedule = CharacterData.CharacterSchedule("Effigy");
-
-            Vector2 effigyPosition = CharacterData.CharacterPosition("Effigy");
-
-            string effigyDefaultMap = CharacterData.CharacterDefaultMap("Effigy");
-
-            realEffigy = new(this, effigySprite, effigyPosition, effigyDefaultMap, 2, "Effigy", effigySchedule, effigyPortrait);
-
-            GameLocation farmCave = Game1.getLocationFromName(effigyDefaultMap);
-
-            farmCave.characters.Add(realEffigy);
-
-            realEffigy.update(Game1.currentGameTime, farmCave );
-
-            druidEffigy = new(
-                this,
-                Config.farmCaveStatueX,
-                Config.farmCaveStatueY,
-                Config.farmCaveHideStatue,
-                Config.farmCaveMakeSpace
-            );
-
-            druidEffigy.ModifyCave();
+            dialogueEffigy = new();
 
             ReadyState();
 
@@ -203,25 +190,6 @@ namespace StardewDruid
         {
 
             int stableVersion = Map.QuestData.StableVersion();
-
-            /*if (Config.masterStart && !staticData.blessingList.ContainsKey("masterStart"))
-            {
-
-                staticData = new StaticData() { staticVersion = stableVersion };
-
-                staticData = Map.QuestData.ConfigureProgress(staticData,14);
-
-                staticData.blessingList["masterStart"] = 1;
-
-                return;
-
-            }
-            else if (staticData.blessingList.ContainsKey("masterStart"))
-            {
-
-                staticData = new StaticData() { staticVersion = stableVersion };
-
-            }*/
 
             if (Config.setProgress != -1)
             {
@@ -261,7 +229,7 @@ namespace StardewDruid
 
         }
 
-        private void SaveUpdated(object sender, SavingEventArgs e)
+        private void SaveImminent(object sender, SavingEventArgs e)
         {
             if(Context.IsMainPlayer)
             {
@@ -275,25 +243,6 @@ namespace StardewDruid
                 Helper.Multiplayer.SendMessage(staticData, "FarmhandSave", modIDs: new[] { this.ModManifest.UniqueID });
 
             }
-
-            druidEffigy.lessonGiven = false;
-
-            /*foreach (KeyValuePair<Type, List<Cast.CastHandle>> castEntry in activeCasts)
-            {
-                
-                if (castEntry.Value.Count > 0)
-                {
-                    
-                    foreach (Cast.CastHandle castInstance in castEntry.Value)
-                    {
-                        
-                        castInstance.CastRemove();
-                    
-                    }
-                
-                }
-
-            }*/
 
             foreach (KeyValuePair<string, Event.ChallengeHandle> challengeEntry in challengeRegister)
             {
@@ -325,7 +274,64 @@ namespace StardewDruid
 
             }
 
+            dialogueEffigy = null;
+
+            if (Context.IsMainPlayer)
+            {
+
+                if (npcEffigy != null)
+                {
+
+                    if (npcEffigy.currentLocation != null)
+                    {
+                        npcEffigy.currentLocation.characters.Remove(npcEffigy);
+                    }
+
+                    npcEffigy = null;
+
+                }
+
+            }
+
+        }
+
+        private void SaveUpdated(object sender, SavedEventArgs e)
+        {
+
+            CreateEffigy();
+
             ReadyState();
+
+        }
+
+        public void CreateEffigy()
+        {
+
+            if (!Context.IsMainPlayer)
+            {
+
+                return;
+
+            }
+
+            npcEffigy = new("Effigy");
+
+            GameLocation farmCave = Game1.getLocationFromName(CharacterData.CharacterMap("Effigy"));
+ 
+            farmCave.characters.Add(npcEffigy);
+
+            npcEffigy.update(Game1.currentGameTime, farmCave);
+
+        }
+
+        public void MultiplayerMessage(string requestString, long multiplayerId)
+        {
+
+            StaticData messageData = new();
+
+            messageData.staticId = multiplayerId;
+
+            Helper.Multiplayer.SendMessage(messageData, requestString, modIDs: new[] { this.ModManifest.UniqueID });
 
         }
 
@@ -362,10 +368,23 @@ namespace StardewDruid
 
                         multiplayerData ??= new MultiplayerData();
 
-                        StaticData farmhandData = multiplayerData.farmhandData[e.FromPlayerID];
+                        StaticData farmhandData;
+
+                        if (multiplayerData.farmhandData.ContainsKey(e.FromPlayerID))
+                        {
+
+                            farmhandData = multiplayerData.farmhandData[e.FromPlayerID];
+
+                        }
+                        else
+                        {
+
+                            farmhandData = new StaticData();
+
+                        }
 
                         farmhandData.staticId = e.FromPlayerID;
-                        
+
                         this.Helper.Multiplayer.SendMessage(farmhandData, "FarmhandLoad", modIDs: new[] { this.ModManifest.UniqueID });
 
                         //Game1.addHUDMessage(new HUDMessage($"Sent Stardew Druid data to Farmer ID {e.FromPlayerID}", ""));
@@ -377,8 +396,8 @@ namespace StardewDruid
                 {
 
                     StaticData farmhandData = e.ReadAs<StaticData>();
-                    
-                    if(farmhandData.staticId == Game1.player.UniqueMultiplayerID)
+
+                    if (farmhandData.staticId == Game1.player.UniqueMultiplayerID)
                     {
 
                         if (e.Type == "FarmhandTrain")
@@ -400,7 +419,7 @@ namespace StardewDruid
                         ReadyState();
 
                         receivedData = true;
-
+                        
                     }
 
                 }
@@ -439,7 +458,7 @@ namespace StardewDruid
 
             castBuffer = new();
 
-            druidEffigy.DecorateCave();
+            //caveEffigy.DecorateCave();
 
             warpCasts = new();
 
@@ -459,6 +478,8 @@ namespace StardewDruid
 
             riteWitnesses = new();
 
+            dialogueEffigy = new();
+
             // ---------------------- trigger assignment
 
             SynchroniseQuest();
@@ -477,7 +498,7 @@ namespace StardewDruid
 
             }
 
-            if (!LocationPoll("current"))
+            if (!LocationPoll("trigger"))
             {
 
                 SetTriggers();
@@ -708,6 +729,13 @@ namespace StardewDruid
 
             }
 
+            if (Config.riteButtons.GetState() != SButtonState.Pressed && Config.riteButtons.GetState() != SButtonState.Held)
+            {
+                
+                return;
+            
+            }
+
             // ignore if player is busy with something else
             if (CasterBusy())
             {
@@ -722,55 +750,13 @@ namespace StardewDruid
 
             }
 
-            // simulates interactions with the farm cave effigy
-            if (Game1.currentLocation.Name == "FarmCave")
-            {
-
-                Vector2 playerLocation = Game1.player.getTileLocation();
-
-                Vector2 cursorLocation = Game1.currentCursorTile;
-
-                if (playerLocation.X >= Config.farmCaveStatueX - 1 && playerLocation.X <= Config.farmCaveActionX + 1 && playerLocation.Y == Config.farmCaveActionY)
-                {
-
-                    foreach (SButton buttonPressed in e.Pressed)
-                    {
-
-                        if (buttonPressed.IsUseToolButton() || buttonPressed.IsActionButton())
-                        {
-
-                            Helper.Input.Suppress(buttonPressed);
-
-                            druidEffigy.DialogueApproach();
-
-                            return;
-
-                        }
-
-                    }
-
-                }
-
-                if (Config.riteButtons.GetState() == SButtonState.Pressed)
-                {
-                    druidEffigy.DialogueApproach();
-
-                    return;
-                }
-
-            }
-
             int toolIndex = AttuneableWeapon();
 
             // ignore if player is busy with something else
             if(toolIndex == -1)
             {
 
-                if (Config.riteButtons.GetState() == SButtonState.Pressed)
-                {
-                    Game1.addHUDMessage(new HUDMessage("Rite requires a melee weapon or tool", 2));
-
-                }
+                Game1.addHUDMessage(new HUDMessage("Rite requires a melee weapon or tool", 2));
 
                 activeData.castInterrupt = true;
 
@@ -782,7 +768,22 @@ namespace StardewDruid
 
             }
 
-            if(activeData.toolIndex != toolIndex && currentTool != toolIndex)
+            if(Config.riteButtons.GetState() != SButtonState.Pressed && Game1.player.currentLocation is FarmCave)
+            {
+
+                Game1.player.Halt();
+
+                activeData.castInterrupt = true;
+
+                riteQueue.Clear();
+
+                castBuffer.Clear();
+
+                dialogueEffigy.DialogueApproach();
+
+            }
+
+            if (activeData.toolIndex != toolIndex && currentTool != toolIndex)
             {
 
                 if(toolIndex >= 990)
@@ -1361,12 +1362,11 @@ namespace StardewDruid
 
                 }
 
-
                 bool runTrigger = false;
 
                 if (questData.triggerSpecial && !questData.vectorList.ContainsKey("triggerVector"))
                 {
-
+                    
                     Vector2 specialTrigger = Map.QuestData.SpecialVector(playerLocation, castString);
                     
                     if (specialTrigger != new Vector2(-1))
@@ -1504,7 +1504,7 @@ namespace StardewDruid
 
                 triggerList.Remove(quest);
 
-                SetTriggers();
+                locationPoll["trigger"] = null;
 
                 Map.Quest questData = questIndex[quest];
 
@@ -3170,6 +3170,13 @@ namespace StardewDruid
 
         }
 
+        public bool HasBlessing(string blessing)
+        {
+
+            return staticData.blessingList.ContainsKey(blessing);
+
+        }
+
         public void ChangeBlessing(string blessing)
         {
             
@@ -3268,22 +3275,39 @@ namespace StardewDruid
 
             }
 
+            List<string> duplicateIds = new();
+
             for (int num = Game1.player.questLog.Count - 1; num >= 0; num--)
             {
 
                 int gameId = Game1.player.questLog[num].id.Value;
 
-                if (questIds.ContainsKey(gameId))
+                if (questIds.ContainsKey(gameId)) // valid
                 {
 
                     string questName = questIds[gameId];
 
                     if (staticData.questList.ContainsKey(questName))
                     {
+
+                        // player has a duplicate quest
+                        if (duplicateIds.Contains(questName))
+                        {
+
+                            Game1.player.questLog.RemoveAt(num);
+
+                            continue;
+
+                        }
+
+                        duplicateIds.Add(questName);
+
                         // player can see unfinished quest but mod has already turned over
                         if (staticData.questList[questName] && !Game1.player.questLog[num].completed.Value)
                         {
                             staticData.questList[questName] = false;
+
+                            continue;
 
                         }
 
@@ -3393,7 +3417,7 @@ namespace StardewDruid
                     
                     triggerList.Add(quest);
 
-                    SetTriggers();
+                    locationPoll["trigger"] = null;
 
                 }
 
@@ -3442,7 +3466,7 @@ namespace StardewDruid
 
                     triggerList.Remove(quest);
 
-                    SetTriggers();
+                    locationPoll["trigger"] = null;
 
                 }
 
@@ -3457,9 +3481,40 @@ namespace StardewDruid
 
         }
 
-        public void UpdateEffigy(string quest)
+        public void RemoveQuest(string quest)
         {
-            druidEffigy.questCompleted = quest;
+            
+            Map.Quest questData = questIndex[quest];
+            
+            if (questData.triggerType != null)
+            {
+
+                if (triggerList.Contains(quest))
+                {
+
+                    triggerList.Remove(quest);
+
+                    locationPoll["trigger"] = null;
+
+                }
+
+            }
+
+            if (staticData.questList.ContainsKey(quest))
+            {
+
+                staticData.questList.Remove(quest);
+
+            }
+
+            SynchroniseQuest();
+
+        }
+
+        public void QuestFeedback(string feedback)
+        {
+
+            dialogueEffigy.specialDialogue["journey"] = new() { "I sense a change", feedback };
 
         }
 
@@ -4083,10 +4138,17 @@ namespace StardewDruid
 
         }
 
-        public void Log(string message)
+        /*public void Log(string message)
         {
 
             Monitor.Log(message, LogLevel.Debug);
+
+        }*/
+
+        public void DecorateCave()
+        {
+
+            //caveEffigy.DecorateCave();
 
         }
 

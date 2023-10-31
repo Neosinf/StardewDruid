@@ -41,6 +41,13 @@ namespace StardewDruid.Map
             foreach (KeyValuePair<string, Quest> questData in questIndex)
             {
 
+                if(questData.Value.questLevel == -1)
+                {
+
+                    continue;
+
+                }
+
                 if(questData.Value.questLevel < blessingLevel)
                 {   
 
@@ -62,20 +69,22 @@ namespace StardewDruid.Map
             }
 
             staticData.blessingList["earth"] = Math.Min(6, blessingLevel);
+
             staticData.activeBlessing = "earth";
 
             if (blessingLevel > 6)
             {
                 staticData.blessingList["water"] = Math.Min(6,blessingLevel - 6);
+
                 staticData.activeBlessing = "water";
             }
+            
             if (blessingLevel > 12)
             {
                 staticData.blessingList["stars"] = Math.Min(2, blessingLevel - 12);
+
                 staticData.activeBlessing = "stars";
             }
-
-            
 
             return staticData;
 
@@ -84,25 +93,7 @@ namespace StardewDruid.Map
         public static StaticData QuestCheck(StaticData staticData)
         {
 
-            int blessingLevel = 0;
-
-            if (staticData.blessingList.ContainsKey("earth"))
-            {
-                blessingLevel = staticData.blessingList["earth"];
-
-            }
-
-            if (staticData.blessingList.ContainsKey("water"))
-            {
-                blessingLevel = 6 + staticData.blessingList["water"];
-
-            }
-
-            if (staticData.blessingList.ContainsKey("stars"))
-            {
-                blessingLevel = 12 + staticData.blessingList["stars"];
-
-            }
+            int blessingLevel = BlessingCheck();
 
             staticData = ConfigureProgress(staticData, blessingLevel);
 
@@ -110,10 +101,69 @@ namespace StardewDruid.Map
 
         }
 
-        public static Vector2 SpecialVector(GameLocation playerLocation, string triggerString)
+        public static int BlessingCheck()
         {
 
-            switch (triggerString)
+            Dictionary<string, int> blessingList = Mod.instance.BlessingList();
+
+            int blessingLevel = 0;
+
+            if (blessingList.ContainsKey("earth"))
+            {
+                blessingLevel = blessingList["earth"];
+
+            }
+
+            if (blessingList.ContainsKey("water"))
+            {
+                blessingLevel = 6 + blessingList["water"];
+
+            }
+
+            if (blessingList.ContainsKey("stars"))
+            {
+                blessingLevel = 12 + blessingList["stars"];
+
+            }
+
+            return blessingLevel;
+
+        }
+
+
+        public static bool ChallengeCompleted()
+        {
+            List<string> challengeQuests = ChallengeQuests();
+
+            foreach(string challenge in challengeQuests)
+            {
+
+                if (!Mod.instance.QuestComplete(challenge))
+                {
+
+                    return false;
+
+                }
+
+            }
+
+            return true;
+
+        }
+
+        public static bool JourneyCompleted()
+        {
+
+            return (BlessingCheck() >= 14);
+
+        }
+
+        public static Vector2 SpecialVector(GameLocation playerLocation, string questName)
+        {
+
+            questName = questName.Replace("Two", "");
+
+            switch (questName)
             {
 
                 case "challengeMariner":
@@ -569,7 +619,7 @@ namespace StardewDruid.Map
                 newQuest.questId += 100;
                 newQuest.questTitle = secondData.Value;
                 newQuest.questReward = 5000;
-                newQuest.questLevel = 14;
+                newQuest.questLevel = -1;
 
                 questList[newQuest.name] = newQuest;
 
@@ -586,10 +636,16 @@ namespace StardewDruid.Map
             {
 
                 "challengeCanoli",
-                "challengeMariner",
                 "challengeSandDragon",
 
             };
+
+            if (Game1.currentSeason != "winter")
+            {
+
+                secondList.Add("challengeMariner");
+
+            }
 
             if (Game1.player.hasOrWillReceiveMail("seenBoatJourney"))
             {
@@ -602,6 +658,31 @@ namespace StardewDruid.Map
 
         }
 
+        public static List<string> ActiveSeconds()
+        {
+
+            Dictionary<string, string> challengeList = SecondQuests();
+
+            List<string> activeList = new();
+
+            foreach (KeyValuePair<string, string> challenge in challengeList)
+            {
+
+                string questName = challenge.Key + "Two";
+
+                if (Mod.instance.QuestGiven(questName) && !Mod.instance.QuestComplete(questName))
+                {
+
+                    activeList.Add(questName);
+
+                }
+
+            }
+
+            return activeList;
+
+        }
+
         public static Dictionary<string, string> SecondQuests()
         {
 
@@ -611,9 +692,15 @@ namespace StardewDruid.Map
                 ["challengeWater"] = "The Invasion Revisited",
                 ["challengeStars"] = "The Infestation Revisited",
                 ["challengeCanoli"] = "The Dusting Revisited",
-                ["challengeMariner"] = "The Seafarer Revisited",
                 ["challengeSandDragon"] = "The Tyrant Revisited",
             };
+
+            if (Game1.currentSeason != "winter")
+            {
+
+                secondList.Add("challengeMariner", "The Seafarer Revisited");
+
+            }
 
             if (Game1.player.hasOrWillReceiveMail("seenBoatJourney"))
             {
