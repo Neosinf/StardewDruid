@@ -9,6 +9,7 @@ using System.Drawing;
 using xTile.Dimensions;
 using xTile.Tiles;
 using System.ComponentModel.Design;
+using System;
 
 namespace StardewDruid.Map
 {
@@ -35,68 +36,68 @@ namespace StardewDruid.Map
 
         }
 
-public static List<int> GrizzleList()
-{
-    List<int> grizzleIndex = new()
-    {
-        92, // Sap
-        766, // Slime
-        311, // PineCone
-        310, // MapleSeed
-        309, // Acorn
-        292, // Mahogany
-        767, // BatWings
-        420, // RedMushroom
-        831, // Taro Tuber
-    };
+        public static List<int> GrizzleList()
+        {
+            List<int> grizzleIndex = new()
+            {
+                92, // Sap
+                766, // Slime
+                311, // PineCone
+                310, // MapleSeed
+                309, // Acorn
+                292, // Mahogany
+                767, // BatWings
+                420, // RedMushroom
+                831, // Taro Tuber
+            };
 
-    return grizzleIndex;
-}
+            return grizzleIndex;
+        }
 
-public static List<int> SashimiList()
-{
+        public static List<int> SashimiList()
+        {
 
-    List<int> sashimiIndex = new()
-    {
-        399, // SpringOnion
-        403, // Snackbar
-        404, // FieldMushroom
-        257, // Morel
-        281, // Chanterelle
-        152, // Seaweed
-        153, // Algae
-        157, // white Algae
-        78, // Carrot
-        227, // Sashimi
-        296, // Salmonberry
-        410, // Blackberry
-        424, // Cheese
-        24, // Parsnip
-        851, // Magma Cap
-    };
+            List<int> sashimiIndex = new()
+            {
+                399, // SpringOnion
+                403, // Snackbar
+                404, // FieldMushroom
+                257, // Morel
+                281, // Chanterelle
+                152, // Seaweed
+                153, // Algae
+                157, // white Algae
+                78, // Carrot
+                227, // Sashimi
+                296, // Salmonberry
+                410, // Blackberry
+                424, // Cheese
+                24, // Parsnip
+                851, // Magma Cap
+            };
 
-    return sashimiIndex;
+            return sashimiIndex;
 
-}
+        }
 
-public static Dictionary<int, int> CoffeeList()
-{
+        public static Dictionary<int, int> CoffeeList()
+        {
 
-    Dictionary<int, int> coffeeList = new()
-    {
-        [167] = 60000, // Joja Cola
-        [433] = 20000, // Coffee Beans
-        [829] = 60000, // Ginger
-        [815] = 60000, // Tea Leaves
-        [614] = 120000, // Tea
-        [395] = 90000, // Coffee
-        [253] = 300000, // Triple Espresso
+            Dictionary<int, int> coffeeList = new()
+            {
+                [167] = 60000, // Joja Cola
+                [433] = 20000, // Coffee Beans
+                [829] = 60000, // Ginger
+                [815] = 60000, // Tea Leaves
+                [614] = 120000, // Tea
+                [395] = 90000, // Coffee
+                [253] = 300000, // Triple Espresso
 
-    };
+            };
 
-    return coffeeList;
+            return coffeeList;
 
-}
+        }
 
         public static int RandomTree(GameLocation location)
         {
@@ -132,7 +133,7 @@ public static Dictionary<int, int> CoffeeList()
 
         }
 
-        public static List<int> RockFall(GameLocation location, Farmer player)
+        public static List<int> RockFall(GameLocation location, Farmer player, int specialChance = 10)
         {
 
             List<int> rockList = new();
@@ -167,8 +168,8 @@ public static Dictionary<int, int> CoffeeList()
                         [1] = 378, // copper stone
                         [2] = 378, // copper stone
                         [3] = 378, // copper stone
-                        [4] = 66, // amethyst
-                        [5] = 68, // topaz
+                        //[4] = 66, // amethyst
+                        //[5] = 68, // topaz
 
                     };
 
@@ -192,8 +193,8 @@ public static Dictionary<int, int> CoffeeList()
                         [1] = 380, // iron ore
                         [2] = 380, // iron ore
                         [3] = 380, // iron ore
-                        [4] = 60, // emerald
-                        [5] = 62, // aquamarine
+                        //[4] = 60, // emerald
+                        //[5] = 62, // aquamarine
 
                     };
 
@@ -217,8 +218,8 @@ public static Dictionary<int, int> CoffeeList()
                         [1] = 384, // gold ore
                         [2] = 384, // gold ore
                         [3] = 384, // gold ore
-                        [4] = 72, // ruby
-                        [5] = 64, // diamond*
+                        //[4] = 72, // ruby
+                        //[5] = 64, // diamond*
 
                     };
 
@@ -295,7 +296,7 @@ public static Dictionary<int, int> CoffeeList()
 
             debrisIndex = 390;
 
-            if (Game1.random.Next(9) == 0)
+            if (Game1.random.Next(specialChance) == 0)
             {
                 debrisIndex = specialIndexes[Game1.random.Next(specialIndexes.Count)];
 
@@ -995,6 +996,27 @@ public static Dictionary<int, int> CoffeeList()
 
         }
 
+        public static List<string> MachineList()
+        {
+
+            List<string> machineList = new(){
+                "Deconstructor",
+                "Bone Mill",
+                "Keg",
+                "Preserves Jar",
+                "Cheese Press",
+                "Mayonnaise Machine",
+                "Loom",
+                "Oil Maker",
+                "Recycling Machine",
+                "Furnace",
+                "Geode Crusher",
+            };
+
+            return machineList;
+
+        }
+
         public static Dictionary<string, bool> SpawnTemplate()
         {
             Dictionary<string, bool> spawnTemplate = new()
@@ -1007,11 +1029,12 @@ public static Dictionary<int, int> CoffeeList()
                 ["trees"] = false,
                 ["fishup"] = false,
                 ["portal"] = false,
-                ["critter"] = false,
+                ["wildspawn"] = false,
                 ["fishspot"] = false,
                 ["cropseed"] = false,
-                ["rockfall"] = false,
                 ["artifact"] = false,
+                ["whisk"] = false,
+                ["gravity"] = false,
 
             };
 
@@ -1026,6 +1049,20 @@ public static Dictionary<int, int> CoffeeList()
 
             spawnIndex = SpawnTemplate();
 
+            if (Mod.instance.CastAnywhere())
+            {
+
+                foreach(KeyValuePair<string,bool> keyValuePair in spawnIndex)
+                {
+
+                    spawnIndex[keyValuePair.Key] = true;
+
+                }
+
+                return spawnIndex;
+
+            }
+
             if (playerLocation is Farm || playerLocation.Name == "Custom_Garden")
             {
 
@@ -1035,8 +1072,10 @@ public static Dictionary<int, int> CoffeeList()
                 spawnIndex["grass"] = true;
                 spawnIndex["trees"] = true;
                 spawnIndex["fishup"] = true;
-                spawnIndex["critter"] = true;
+                spawnIndex["wildspawn"] = true;
                 spawnIndex["cropseed"] = true;
+                spawnIndex["whisk"] = true;
+                spawnIndex["gravity"] = true;
 
             }
             else if (playerLocation.isGreenhouse.Value)
@@ -1049,11 +1088,13 @@ public static Dictionary<int, int> CoffeeList()
             {
                 spawnIndex["fishup"] = true;
                 spawnIndex["fishspot"] = true;
-                spawnIndex["critter"] = true;
+                spawnIndex["wildspawn"] = true;
                 spawnIndex["cropseed"] = true;
                 spawnIndex["trees"] = true;
                 spawnIndex["weeds"] = true;
                 spawnIndex["artifact"] = true;
+                spawnIndex["whisk"] = true;
+                spawnIndex["gravity"] = true;
 
             }
             else if (playerLocation is Forest || playerLocation is Mountain || playerLocation is Desert || playerLocation is BusStop)
@@ -1064,9 +1105,10 @@ public static Dictionary<int, int> CoffeeList()
                 spawnIndex["grass"] = true;
                 spawnIndex["trees"] = true;
                 spawnIndex["fishup"] = true;
-                spawnIndex["critter"] = true;
+                spawnIndex["wildspawn"] = true;
                 spawnIndex["fishspot"] = true;
                 spawnIndex["artifact"] = true;
+                spawnIndex["whisk"] = true;
 
             }
             else if (playerLocation.Name.Contains("Backwoods") || playerLocation is Railroad)
@@ -1076,9 +1118,10 @@ public static Dictionary<int, int> CoffeeList()
                 spawnIndex["flower"] = true;
                 spawnIndex["grass"] = true;
                 spawnIndex["trees"] = true;
-                spawnIndex["critter"] = true;
+                spawnIndex["wildspawn"] = true;
                 spawnIndex["portal"] = true;
                 spawnIndex["artifact"] = true;
+                spawnIndex["whisk"] = true;
 
             }
             else if (playerLocation is Woods || playerLocation.Name.Contains("Grampleton") || playerLocation is IslandEast || playerLocation is IslandShrine)
@@ -1087,7 +1130,7 @@ public static Dictionary<int, int> CoffeeList()
                 spawnIndex["forage"] = true;
                 spawnIndex["flower"] = true;
                 spawnIndex["grass"] = true;
-                spawnIndex["critter"] = true;
+                spawnIndex["wildspawn"] = true;
                 spawnIndex["portal"] = true;
                 spawnIndex["fishspot"] = true;
                 spawnIndex["weeds"] = true;
@@ -1103,16 +1146,16 @@ public static Dictionary<int, int> CoffeeList()
                 }
 
                 spawnIndex["weeds"] = true;
-                spawnIndex["rockfall"] = true;
 
             }
             else if (playerLocation is Beach || playerLocation is IslandSouth || playerLocation is IslandSouthEast || playerLocation is IslandSouthEastCave)
             {
 
-                spawnIndex["critter"] = true;
+                spawnIndex["wildspawn"] = true;
                 spawnIndex["fishup"] = true;
                 spawnIndex["fishspot"] = true;
                 spawnIndex["artifact"] = true;
+                spawnIndex["whisk"] = true;
 
             }
             else if (playerLocation is Town)
@@ -1122,12 +1165,13 @@ public static Dictionary<int, int> CoffeeList()
                 spawnIndex["flower"] = true;
                 spawnIndex["fishup"] = true;
                 spawnIndex["artifact"] = true;
+                spawnIndex["whisk"] = true;
 
             }
             else if (playerLocation.Name.Contains("DeepWoods"))
             {
 
-                spawnIndex["critter"] = true;
+                spawnIndex["wildspawn"] = true;
                 spawnIndex["fishspot"] = true;
 
             }
@@ -1141,6 +1185,12 @@ public static Dictionary<int, int> CoffeeList()
             {
 
                 spawnIndex["fishspot"] = true;
+
+            }
+            else if (playerLocation is Shed)
+            {
+
+                spawnIndex["machine"] = true;
 
             }
             else

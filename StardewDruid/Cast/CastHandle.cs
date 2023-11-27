@@ -23,16 +23,12 @@ namespace StardewDruid.Cast
 
         public bool castLimit { get; set; }
 
-        public readonly Mod mod;
-
         public Random randomIndex;
 
-        public CastHandle(Mod Mod, Vector2 Vector, Rite rite)
+        public CastHandle(Vector2 Vector, Rite rite)
         {
 
             targetVector = Vector;
-
-            mod = Mod;
 
             randomIndex = rite.randomIndex;
 
@@ -50,24 +46,9 @@ namespace StardewDruid.Cast
 
         }
 
-        public virtual void CastQuest()
-        {
-
-        }
-
-        public virtual void CastEarth()
-        {
-
-        }
-
-        public virtual void CastWater()
-        {
-
-        }
-
-        public virtual void CastStars()
-        {
-
+        public virtual void CastEffect()
+        { 
+        
         }
 
 

@@ -96,7 +96,7 @@ namespace StardewDruid.Monster
                 {
                     spawnBuff = false;
 
-                    DamageToFarmer -= spawnDamage;
+                    DamageToFarmer = spawnDamage;
                 }
             }
 
