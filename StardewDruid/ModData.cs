@@ -11,18 +11,17 @@ namespace StardewDruid
 
     public class ModData
     {
+        public KeybindList riteButtons { get; set; }
 
-        public StardewModdingAPI.Utilities.KeybindList riteButtons { get; set; }
+        public KeybindList actionButtons { get; set; }
 
-        public StardewModdingAPI.Utilities.KeybindList actionButtons { get; set; }
+        public KeybindList journalButtons { get; set; }
 
         public bool slotAttune { get; set; }
 
-        //public bool autoLesson { get; set; }
+        public bool autoProgress { get; set; }
 
-        public Dictionary<string, int> blessingList { get; set; }
-
-        public Dictionary<string, bool> questList { get; set; }
+        public string colourPreference { get; set; }
 
         public bool castBuffs { get; set; }
 
@@ -32,15 +31,13 @@ namespace StardewDruid
 
         public bool consumeCaffeine { get; set; }
 
-        public int setProgress { get; set; }
+        public int newProgress { get; set; }
 
         public bool castAnywhere { get; set; }
 
         public bool maxDamage { get; set; }
 
         public string combatDifficulty { get; set; }
-
-        public Dictionary<int, string> weaponAttunement { get; set; }
 
         public bool partyHats { get; set; }
 
@@ -52,55 +49,27 @@ namespace StardewDruid
 
         public bool disableTrees { get; set; }
 
-        public ModData() 
+        public ModData()
         {
-  
             riteButtons = KeybindList.Parse("MouseX1,MouseX2,V,LeftShoulder");
-
             actionButtons = KeybindList.Parse("MouseLeft,C,ControllerX");
-
+            journalButtons = KeybindList.Parse("K");
             slotAttune = false;
-
-            //autoLesson = false;
-
-            questList = new();
-
-            blessingList = new();
-
-            setProgress = -1;
-
+            autoProgress = false;
+            colourPreference = "Red";
+            newProgress = -1;
             castBuffs = true;
-
             consumeRoughage = true;
-
             consumeQuicksnack = true;
-
             consumeCaffeine = true;
-
             maxDamage = false;
-
             combatDifficulty = "medium";
-
             castAnywhere = false;
-
-            weaponAttunement = new()
-            {
-                [15] = "earth",
-                [14] = "water",
-                [9] = "stars",
-                [53] = "fates",
-            };
-
             partyHats = false;
-
             disableSeeds = false;
-
             disableFish = false;
-
             disableWildspawn = false;
-
             disableTrees = false;
-
         }
 
     }

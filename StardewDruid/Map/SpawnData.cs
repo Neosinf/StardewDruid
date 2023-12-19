@@ -15,6 +15,17 @@ namespace StardewDruid.Map
 {
     static class SpawnData
     {
+        public static Dictionary<int, string> WeaponAttunement()
+        {
+            return new Dictionary<int, string>()
+            {
+                [15] = "weald",
+                [14] = "mists",
+                [9] = "stars",
+                [53] = "fates",
+                [57] = "ether"
+            };
+        }
 
         public static List<int> StoneIndex()
         {
@@ -312,225 +323,6 @@ namespace StardewDruid.Map
 
             return rockList;
 
-            /*
-            Dictionary<int, int> specialIndexes = new()
-            {
-
-                [0] = 668, // coal stone
-                [1] = 32, // stone
-                [2] = 40,
-                [3] = 42,
-                [4] = 42,
-
-            };
-
-            if (shaftLocation.mineLevel <= 40)
-            {
-
-                objectIndexes = new()
-                {
-
-                    [1] = 32, // grade 1 stone
-                    [2] = 32, // grade 1 stone
-                    [3] = 40, // grade 1 stone
-                    [4] = 40, // grade 1 stone
-                    [5] = 40, // grade 1 stone
-                    [6] = 42, // grade 1 stone
-                    [7] = 42, // grade 1 stone
-                    [8] = 42, // grade 1 stone
-
-
-                };
-
-                specialIndexes = new()
-                {
-
-                    [0] = 668, // coal stone
-                    [1] = 751, // copper stone
-                    [2] = 751, // copper stone
-                    [3] = 8, // amethyst
-                    [4] = 10, // topaz
-
-                };
-
-            }
-            else if (shaftLocation.mineLevel <= 80)
-            {
-
-                objectIndexes = new()
-                {
-                    [0] = 48, // grade 2a stone
-                    [1] = 48, // grade 2a stone
-                    [2] = 48, // grade 2a stone
-                    [3] = 50, // grade 2b stone
-                    [4] = 50, // grade 2b stone
-                    [5] = 50, // grade 2b stone
-                    [6] = 52, // grade 2c stone
-                    [7] = 52, // grade 2c stone
-                    [8] = 54, // grade 2d stone
-                    [9] = 54, // grade 2d stone
-                };
-
-                if (powerLevel >= 1)
-                {
-
-                    specialIndexes = new()
-                    {
-
-                        [0] = 668, // coal stone
-                        [1] = 290, // iron ore
-                        [2] = 290, // iron ore
-                        [3] = 12, // emerald
-                        [4] = 14, // aquamarine*
-
-                    };
-
-                }
-
-            }
-            else if (shaftLocation.mineLevel <= 120)
-            {
-
-                objectIndexes = new()
-                {
-                    [0] = 760, // grade 3 stone
-                    [1] = 760, // grade 3 stone
-                    [2] = 760, // grade 3 stone
-                    [3] = 762, // grade 3 stone
-                    [4] = 762, // grade 3 stone
-                    [5] = 762, // grade 3 stone
-                    [6] = 56, // grade 3 stone
-                    [7] = 56, // grade 3 stone
-                    [8] = 58, // grade 3 stone
-                    [9] = 58, // grade 3 stone
-
-                };
-
-                if (powerLevel >= 2)
-                {
-
-                    specialIndexes = new()
-                    {
-
-                        [0] = 668, // coal stone
-                        [1] = 764, // gold ore
-                        [2] = 764, // gold ore
-                        [3] = 2, // ruby
-                        [4] = 4, // diamond*
-
-                    };
-
-                };
-
-            }
-            else // Skull Cavern
-            {
-
-                objectIndexes = new()
-                {
-                    [0] = 760, // grade 3 stone
-                    [1] = 760, // grade 3 stone
-                    [2] = 760, // grade 3 stone
-                    [3] = 762, // grade 3 stone
-                    [4] = 762, // grade 3 stone
-                    [5] = 762, // grade 3 stone
-                    [6] = 56, // grade 3 stone
-                    [7] = 56, // grade 3 stone
-                    [8] = 58, // grade 3 stone
-                    [9] = 58, // grade 3 stone
-
-                };
-
-                if (powerLevel >= 3)
-                {
-
-                    specialIndexes = new()
-                    {
-
-                        [0] = 668, // coal stone
-                        [1] = 765, // iridium ore
-                        [2] = 765, // iridium ore
-                        [3] = 765, // iridium ore
-                        [4] = 765, // iridium ore
-
-                    };
-
-                };
-
-            }
-
-            Dictionary<int, int> scatterIndexes = new()
-            {
-
-                [2] = 3,
-                [4] = 5,
-                [8] = 9,
-                [10] = 11,
-                [12] = 13,
-                [14] = 15,
-                [32] = 33,
-                [40] = 41,
-                [42] = 43,
-                [44] = 45,
-                [48] = 49,
-                [50] = 51,
-                [52] = 53,
-                [54] = 55,
-                [56] = 57,
-                [58] = 59,
-                [290] = 35,
-                [668] = 669,
-                [670] = 671,
-                [751] = 33,
-                [760] = 761,
-                [762] = 763,
-                [764] = 761,
-                [765] = 763,
-
-            };
-
-            Dictionary<int, int> debrisIndexes = new()
-            {
-
-                [2] = 72,
-                [4] = 64,
-                [8] = 66,
-                [10] = 68,
-                [12] = 60,
-                [14] = 62,
-                [668] = 382,
-                [290] = 380,
-                [751] = 378,
-                [764] = 384,
-                [765] = 386,
-
-            };
-
-            if (probability == 10)
-            {
-                objectIndex = specialIndexes[randomIndex.Next(5)];
-
-                targetPlayer.gainExperience(3, 4); // gain mining experience for special drops
-
-            }
-            else
-            {
-                objectIndex = objectIndexes[probability];
-
-            }
-
-            debrisIndex = 390;
-
-            if (debrisIndexes.ContainsKey(objectIndex))
-            {
-                debrisIndex = debrisIndexes[objectIndex];
-
-            }
-
-            int scatterIndex = scatterIndexes[objectIndex];
-            */
-
-
         }
 
         public static Dictionary<int, int> CropList(GameLocation location)
@@ -751,9 +543,7 @@ namespace StardewDruid.Map
                 objectIndexes = new Dictionary<int, int>()
                 {
 
-                    //[0] = 152, // seaweed
-                    //[1] = 152, // seaweed
-                    //[2] = 152, // seaweed
+
                     [0] = 131, // sardine
                     [1] = 147, // herring
                     [2] = 129, // anchovy
@@ -772,9 +562,7 @@ namespace StardewDruid.Map
                 objectIndexes = new Dictionary<int, int>()
                 {
 
-                    //[0] = 152, // seaweed
-                    //[1] = 152, // seaweed
-                    //[2] = 152, // seaweed
+
                     [0] = 838, // blue discuss
                     [1] = 837, // lionfish
                     [2] = 267, // flounder
@@ -793,9 +581,6 @@ namespace StardewDruid.Map
                 objectIndexes = new Dictionary<int, int>()
                 {
 
-                    //[0] = 153, // algae
-                    //[1] = 153, // algae
-                    //[2] = 153, // algae
                     [0] = 145, // carp
                     [1] = 137, // smallmouth bass
                     [2] = 142,  // sunfish
@@ -1008,7 +793,6 @@ namespace StardewDruid.Map
                 "Mayonnaise Machine",
                 "Loom",
                 "Oil Maker",
-                "Recycling Machine",
                 "Furnace",
                 "Geode Crusher",
             };
@@ -1035,6 +819,7 @@ namespace StardewDruid.Map
                 ["artifact"] = false,
                 ["whisk"] = false,
                 ["gravity"] = false,
+                ["teahouse"] = false,
 
             };
 
@@ -1082,6 +867,7 @@ namespace StardewDruid.Map
             {
 
                 spawnIndex["cropseed"] = true;
+                spawnIndex["teahouse"] = true;
 
             }
             else if (playerLocation is IslandWest || playerLocation is IslandNorth)
@@ -1191,7 +977,7 @@ namespace StardewDruid.Map
             {
 
                 spawnIndex["machine"] = true;
-
+                spawnIndex["teahouse"] = true;
             }
             else
             {

@@ -73,16 +73,27 @@ namespace StardewDruid.Event.Challenge
 
             if(eventLinger == -1)
             {
+                if (monsterHandle.monsterSpawns.Count <= 4)
+                {
+                    CastVoice("the woods breathe again");
+                    int num = questData.name.Contains("Two") ? 2 : 1;
+                    for (int index = 0; index < num; ++index)
+                    {
 
-                if (monsterHandle.monsterSpawns.Count <= 10)
+                        new Throw(targetPlayer, targetVector * 64f, 347, 0).ThrowObject();
+                    }
+                        
+                }
+                else if (monsterHandle.monsterSpawns.Count <= 10)
                 {
 
                     CastVoice("the dust settles");
+                    int num = questData.name.Contains("Two") ? 2 : 1;
+                    for (int index = 0; index < num; ++index)
+                    {
 
-                    Throw throwObject = new(targetPlayer, targetVector * 64, 347, 0);
-
-                    throwObject.ThrowObject();
-
+                        new Throw(targetPlayer, targetVector * 64f, 72, 0).ThrowObject();
+                    }
                     Mod.instance.CompleteQuest(questData.name);
 
                 }
@@ -90,6 +101,8 @@ namespace StardewDruid.Event.Challenge
                 {
 
                     CastVoice("dust overwhelming");
+
+                    Mod.instance.CompleteQuest(questData.name);
 
                 }
 

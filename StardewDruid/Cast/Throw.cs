@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewValley;
+using StardewValley.Menus;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +26,29 @@ namespace StardewDruid.Cast
         public Vector2 catchPosition;
 
         public bool itemDebris;
+
+        public Throw()
+        {
+        }
+
+        public void AnimateObject()
+        {
+            Rectangle standardTileSheet = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, this.objectIndex, 16, 16);
+            float num1 = 1000f;
+            float num2 = this.catchPosition.X - this.throwPosition.X;
+            float num3 = this.catchPosition.Y - this.throwPosition.Y;
+            float num4 = num2 / 1000f;
+            float num5 = 0.555f;
+            float num6 = num3 / 1000f - num5;
+            this.itemDebris = true;
+            targetPlayer.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite("Maps\\springobjects", standardTileSheet, num1, 1, 0, this.throwPosition, false, false, 999f, 0.0f, Color.White, 4f, 0.0f, 0.0f, 0.0f, false)
+            {
+                motion = new Vector2(num4, num6),
+                acceleration = new Vector2(0.0f, 1f / 1000f),
+                timeBasedMotion = true,
+                endFunction = InventoriseObject
+            });
+        }
 
         public Throw(Farmer Player, Vector2 Position, int ObjectIndex, int ObjectQuality)
         {
@@ -138,7 +163,34 @@ namespace StardewDruid.Cast
             }
 
         }
+        public void ThrowSword(Farmer player, int swordIndex, Vector2 originVector, int delayThrow = 200)
+        {
+            this.targetPlayer = player;
+            this.objectIndex = swordIndex;
+            int num1 = this.objectIndex % 8;
+            int num2 = (this.objectIndex - num1) / 8;
+            Rectangle rectangle = new(num1 * 16, num2 * 16, 16, 16);
+            Vector2 vector2 = new(originVector.X * 64f, (float)((double)originVector.Y * 64.0 - 96.0));
+            Vector2 position = targetPlayer.Position;
+            float num3 = 1000f;
+            float num4 = (float)(((double)position.X - (double)vector2.X) / 1000.0);
+            float num5 = 0.555f;
+            float num6 = (float)(((double)position.Y - (double)vector2.Y) / 1000.0) - num5;
+            float num7 = (float)((double)originVector.X * 1000.0 + (double)originVector.Y + 20.0);
+            targetPlayer.currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite("TileSheets\\weapons", rectangle, num3, 1, 0, vector2, false, false, num7, 0.0f, Color.White, 4f, 0.0f, 0.0f, 0.2f, false)
+            {
+                motion = new Vector2(num4, num6),
+                acceleration = new Vector2(0.0f, 1f / 1000f),
+                timeBasedMotion = true,
+                endFunction = CatchSword,
+                delayBeforeAnimationStart = delayThrow
+            });
+        }
 
+        public void CatchSword(int EndBehaviour)
+        {
+            this.targetPlayer.addItemByMenuIfNecessaryElseHoldUp(new MeleeWeapon(this.objectIndex),null);
+        }
 
     }
 

@@ -83,8 +83,6 @@ namespace StardewDruid.Event.Challenge
 
                 Mod.instance.dialogue["Effigy"].specialDialogue["journey"] = new() { "I sense a change", "I defeated the Pumpkin Slime. Now I'm covered in gunk." };
 
-                Mod.instance.LevelBlessing("stars");
-
             }
 
             return false;
@@ -105,7 +103,7 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.SpawnInterval();
 
-            if (activeCounter == 19)
+            if (activeCounter == 14)
             {
 
                 StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(13, new(79, 72), riteData.combatModifier);
@@ -127,7 +125,7 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            if (activeCounter <= 19)
+            if (activeCounter <= 14)
             {
                 return;
             }
@@ -161,15 +159,17 @@ namespace StardewDruid.Event.Challenge
 
                         break;
 
-                    case 57:
+                    case 55:
 
                         bossMonster.showTextAboveHead("bloop?");
 
                         bossMonster.Halt();
 
+                        bossMonster.stunTime = 5000;
+
                         break;
 
-                    case 58:
+                    case 56:
 
                         bossMonster.showTextAboveHead("that's a lot of star power");
 
@@ -177,7 +177,7 @@ namespace StardewDruid.Event.Challenge
 
                         break;
 
-                    case 59:
+                    case 58:
 
                         bossMonster.showTextAboveHead("!!!!");
 

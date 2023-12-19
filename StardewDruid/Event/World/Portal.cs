@@ -149,8 +149,6 @@ namespace StardewDruid.Event.World
 
                 int tileY = (int)targetVector.Y;
 
-                Dictionary<string, int> blessingList = Mod.instance.BlessingList();
-
                 switch (portalConfig[0])
                 {
                     case 2:
@@ -177,7 +175,7 @@ namespace StardewDruid.Event.World
                         CastVoice("superb", 2000);
                         break;
                     case 7:
-                        if (!blessingList.ContainsKey("shardPortal"))
+                        if (riteData.randomIndex.Next(3) == 0)
                         {
                             Game1.createObjectDebris(74, tileX, tileY);
                         }

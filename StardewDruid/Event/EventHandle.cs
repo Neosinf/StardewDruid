@@ -39,13 +39,13 @@ namespace StardewDruid.Event
 
         public List<Torch> torchList;
 
-        //public NPC disembodiedVoice;
-
-        public List<StardewDruid.Character.Character> actors;
+        public List<Actor> actors;
 
         public Vector2 voicePosition;
 
         public bool soundTrack;
+
+        public bool eventSync;
 
         public EventHandle(Vector2 target, Rite rite)
         {
@@ -124,7 +124,7 @@ namespace StardewDruid.Event
 
         }
 
-        public virtual bool EventPerformAction()
+        public virtual bool EventPerformAction(SButton Button)
         {
 
             return false;
@@ -266,11 +266,7 @@ namespace StardewDruid.Event
             if(actors.Count <= 0)
             {
 
-                StardewDruid.Character.Character disembodied = CharacterData.DisembodiedVoice(targetLocation,voicePosition);
-
-                targetLocation.characters.Add(disembodied);
-
-                actors.Add(disembodied);
+                this.AddActor(this.voicePosition);
 
             }
 
@@ -285,6 +281,14 @@ namespace StardewDruid.Event
 
             soundTrack = true;
 
+        }
+
+        public void AddActor(Vector2 position, bool slave = false)
+        {
+            Actor actor = CharacterData.DisembodiedVoice(this.targetLocation, position);
+            actor.drawSlave = slave;
+            targetLocation.characters.Add((NPC)actor);
+            actors.Add(actor);
         }
 
     }

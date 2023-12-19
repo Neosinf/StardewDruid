@@ -55,7 +55,7 @@ namespace StardewDruid.Cast.Stars
 
             ModUtility.Explode(targetLocation, targetVector, targetPlayer, meteorRange, riteData.castDamage, 2, Mod.instance.virtualPick, Mod.instance.virtualAxe);
 
-            if (randomIndex.Next(3) == 0) { Game1.currentLocation.playSound("fireball"); }
+            if (randomIndex.Next(6) == 0) { Game1.currentLocation.playSound("fireball"); }
 
             castFire = true;
 

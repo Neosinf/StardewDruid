@@ -96,7 +96,7 @@ namespace StardewDruid.Event.Challenge
             Mod.instance.dialogue["Jester"].specialDialogue.Add("afterQuarry", new() {
                 "Jester of Fate:" +
                 "^I wasn't expecting the rite to produce a portal to the Undervalley. " +
-                "I don't think even Fortee could have foreseen that.",
+                "I don't think even Fortumei could have foreseen that.",
                 "Did you learn anything about the fallen one?" });
 
             return false;

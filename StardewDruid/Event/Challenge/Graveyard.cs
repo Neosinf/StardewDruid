@@ -89,8 +89,6 @@ namespace StardewDruid.Event.Challenge
 
                     Mod.instance.dialogue["Effigy"].specialDialogue["journey"] = new() { "I sense a change", "The graveyard has a few less shadows." };
 
-                    Mod.instance.LevelBlessing("water");
-
                 }
 
                 eventLinger = 3;

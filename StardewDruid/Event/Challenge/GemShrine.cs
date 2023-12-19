@@ -72,14 +72,10 @@ namespace StardewDruid.Event.Challenge
 
                     CastVoice("you have the Island... for now", 3000);
 
-                    Dictionary<string, int> blessingList = Mod.instance.BlessingList();
-
                     if (!questData.name.Contains("Two"))
                     {
 
                         Game1.createObjectDebris(74, 24, 21);
-
-                        //mod.UpdateBlessing("shardGemShrine");
 
                     }
 

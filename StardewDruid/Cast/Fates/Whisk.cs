@@ -26,9 +26,6 @@ namespace StardewDruid.Cast.Fates
 
         public override void CastEffect()
         {
-
-            ModUtility.AnimateFateTarget(targetLocation, targetVector*64, destination*64);
-
             Event.World.Whisk whiskEvent = new(targetVector, riteData, destination);
 
             whiskEvent.EventTrigger();

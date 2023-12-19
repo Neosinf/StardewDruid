@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Netcode;
 using StardewDruid.Character;
 using StardewModdingAPI;
 using StardewValley;
@@ -18,7 +19,8 @@ namespace StardewDruid.Map
 
         public static void CharacterLoad(string characterName, string startMap)
         {
-
+            if (!Context.IsMainPlayer) { return; }
+            
             if (Mod.instance.characters.ContainsKey(characterName))
             {
 
@@ -136,12 +138,21 @@ namespace StardewDruid.Map
 
                     break;
 
-                default:
+                case "Effigy":
 
 
                     characterSprite.SpriteHeight = 32;
 
                     characterSprite.SpriteWidth = 16;
+
+                    break;
+
+                default:
+
+
+                    characterSprite.SpriteHeight = 64;
+
+                    characterSprite.SpriteWidth = 64;
 
                     break;
 
@@ -153,8 +164,22 @@ namespace StardewDruid.Map
 
         public static Texture2D CharacterPortrait(string characterName)
         {
+            Texture2D characterPortrait;
 
-            Texture2D characterPortrait = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", characterName + "Portrait.png"));
+            switch (characterName)
+            {
+                case "Jester":
+                case "Effigy":
+
+                    characterPortrait = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", characterName + "Portrait.png"));
+
+                    break;
+
+                default:
+                    characterPortrait = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "DisembodiedPortrait.png"));
+                    break;
+
+            }
 
             return characterPortrait;
 
@@ -229,89 +254,19 @@ namespace StardewDruid.Map
 
         }
 
-        public static StardewDruid.Character.Character DisembodiedVoice(GameLocation location, Vector2 position)
+        public static StardewDruid.Character.Actor DisembodiedVoice(GameLocation location, Vector2 position)
         {
 
-            StardewDruid.Character.Character disembodied = new(position, location.Name, "Disembodied");
-
-            //disembodied.frozenMode = true;
-
-            disembodied.SwitchFrozenMode();
-
-            disembodied.IsInvisible = true;
-
-            disembodied.eventActor = true;
-
-            //disembodied.forceUpdateTimer = 9999;
-
-            disembodied.collidesWithOtherCharacters.Value = true;
-
-            disembodied.farmerPassesThrough = true;
-
-            return disembodied;
+            Actor actor = new Actor(position, location.Name, "Disembodied");
+            actor.SwitchFrozenMode();
+            actor.IsInvisible = true;
+            actor.eventActor = true;
+            actor.collidesWithOtherCharacters.Value = true;
+            actor.farmerPassesThrough = true;
+            return actor;
 
         }
 
-
-        /*public static NPC RetrieveVoice(GameLocation location, Vector2 position)
-        {
-
-            if (Mod.instance.characters.ContainsKey("Disembodied"))
-            {
-
-                Character.Character disembodied = Mod.instance.characters["Disembodied"];
-
-                GameLocation previous = disembodied.currentLocation;
-
-                if (previous != null)
-                {
-
-                    if (previous != location)
-                    {
-
-                        previous.characters.Remove(disembodied);
-
-                        location.characters.Add(disembodied);
-
-                    }
-
-                }
-                else
-                {
-                    location.characters.Add(disembodied);
-
-                }
-
-            }
-            else
-            {
-
-                Character.Character disembodied = new(position, location.Name, "Disembodied");
-
-                //disembodied.frozenMode = true;
-
-                disembodied.SwitchFrozenMode();
-
-                disembodied.IsInvisible = true;
-
-                disembodied.eventActor = true;
-
-                //disembodied.forceUpdateTimer = 9999;
-
-                disembodied.collidesWithOtherCharacters.Value = true;
-
-                disembodied.farmerPassesThrough = true;
-
-                location.characters.Add(disembodied);
-
-                Mod.instance.characters["Disembodied"] = disembodied;
-
-            }
-
-            return Mod.instance.characters["Disembodied"];
-
-        }
-        */
 
     }
 

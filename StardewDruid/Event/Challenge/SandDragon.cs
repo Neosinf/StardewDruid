@@ -17,7 +17,7 @@ namespace StardewDruid.Event.Challenge
         public bool modifiedSandDragon;
 
         //public BossDragon bossMonster;
-        public StardewDruid.Monster.RedDragon bossMonster;
+        public StardewDruid.Monster.Boss bossMonster;
 
         public Vector2 returnPosition;
 
@@ -29,7 +29,7 @@ namespace StardewDruid.Event.Challenge
 
             voicePosition = targetVector * 64 + new Vector2(0, -32);
 
-            expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 90;
+            expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 120;
 
             returnPosition = rite.caster.Position;
 
@@ -113,6 +113,8 @@ namespace StardewDruid.Event.Challenge
 
             if(eventLinger == -1)
             {
+                
+                RemoveMonsters();
 
                 ResetSandDragon();
 
@@ -137,8 +139,6 @@ namespace StardewDruid.Event.Challenge
 
                         Game1.createObjectDebris(74, (int)debrisVector.X, (int)debrisVector.Y);
 
-                        Mod.instance.UpdateBlessing("shardSandDragon");
-
                     }
 
                     Game1.createObjectDebris(681, (int)debrisVector.X, (int)debrisVector.Y);
@@ -149,7 +149,9 @@ namespace StardewDruid.Event.Challenge
                 else
                 {
 
-                    CastVoice("return when you have strength");
+                    CastVoice("You're no match for me");
+
+                    Mod.instance.CastMessage("Try again tomorrow");
 
                 }
 
@@ -219,14 +221,12 @@ namespace StardewDruid.Event.Challenge
 
             if (activeCounter == 9)
             {
+                
                 ModifySandDragon();
 
-                //StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(14, targetVector + new Vector2(-5, 0), riteData.combatModifier);
                 StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(16, targetVector + new Vector2(-5, 0), riteData.combatModifier);
 
-                //bossMonster = theMonster as BossDragon;
-                bossMonster = theMonster as StardewDruid.Monster.RedDragon;
-
+                bossMonster = theMonster as StardewDruid.Monster.Boss;
 
                 if (questData.name.Contains("Two"))
                 {
@@ -236,6 +236,8 @@ namespace StardewDruid.Event.Challenge
                 }
 
                 riteData.castLocation.characters.Add(bossMonster);
+
+                bossMonster.currentLocation = targetLocation;
 
                 bossMonster.update(Game1.currentGameTime, riteData.castLocation);
 

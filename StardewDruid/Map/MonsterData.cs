@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Event;
 using StardewDruid.Monster;
+using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Monsters;
 using System;
@@ -104,7 +105,7 @@ namespace StardewDruid.Map
 
                 case 14: // Dino Monster
 
-                    theMonster = new BossDragon(spawnVector, combatModifier);
+                    theMonster = new Reaper(spawnVector, combatModifier);
 
                     break;
 
@@ -116,10 +117,15 @@ namespace StardewDruid.Map
 
                 case 16: 
 
-                    theMonster = new RedDragon(spawnVector, combatModifier);
+                    theMonster = new Boss(spawnVector, combatModifier);
 
                     break;
 
+                case 17:
+
+                    theMonster = new Reaper(spawnVector, combatModifier);
+
+                    break;
 
                 // ------------------ Solaris
 
@@ -145,7 +151,9 @@ namespace StardewDruid.Map
             List<System.Type> customMonsters = new()
             {
                 typeof(StardewDruid.Monster.BossBat),
-                typeof(StardewDruid.Monster.BossDragon),
+                typeof (BossDino),
+                typeof (Boss),
+                typeof (Reaper),
                 typeof(StardewDruid.Monster.BossShooter),
                 typeof(StardewDruid.Monster.BossSlime),
                 typeof(StardewDruid.Monster.Firebird),
@@ -191,6 +199,11 @@ namespace StardewDruid.Map
 
                 characterSprite.SpriteWidth = 64;
 
+            }
+            else if (characterName.Contains("Reaper"))
+            {
+                characterSprite.SpriteHeight = 48;
+                characterSprite.SpriteWidth = 64;
             }
             else
             {

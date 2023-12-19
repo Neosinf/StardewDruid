@@ -7,6 +7,7 @@ using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
+using static System.Collections.Specialized.BitVector32;
 
 namespace StardewDruid.Cast.Fates
 {
@@ -18,6 +19,8 @@ namespace StardewDruid.Cast.Fates
         int source;
 
         int friendship;
+
+        private string trick;
 
         public Trick(Vector2 target, Rite rite, NPC witness, int Source)
             : base(target, rite)
@@ -65,7 +68,7 @@ namespace StardewDruid.Cast.Fates
             }
 
             int reaction = 500;
-
+            this.trick = "butterfly";
             switch (source)
             {
                 case 768:
@@ -80,7 +83,7 @@ namespace StardewDruid.Cast.Fates
                             DelayedAction.functionAfterDelay(DeathSpray, 200);
 
                             friendship = -10;
-
+                            this.trick = "meteor";
                             break;
 
                         case 1:
@@ -88,7 +91,7 @@ namespace StardewDruid.Cast.Fates
                             ModUtility.AnimateRandomCritter(targetLocation, riteWitness.getTileLocation());
 
                             friendship = randomIndex.Next(1,friendshipRatio) * 25;
-
+                            this.trick = "critter";
                             break;
 
                         default:
@@ -113,7 +116,7 @@ namespace StardewDruid.Cast.Fates
                             ModUtility.AnimateBolt(targetLocation, riteWitness.getTileLocation() - new Vector2(0, 1));
 
                             DelayedAction.functionAfterDelay(DeathSpray, 200);
-
+                            this.trick = "bolt";
                             friendship = -10;
 
                             break;
@@ -123,7 +126,7 @@ namespace StardewDruid.Cast.Fates
                             ModUtility.AnimateRandomCritter(targetLocation, riteWitness.getTileLocation());
 
                             friendship = randomIndex.Next(1, friendshipRatio) * 25;
-
+                            this.trick = "critter";
                             break;
 
                         default:
@@ -131,7 +134,7 @@ namespace StardewDruid.Cast.Fates
                             ModUtility.AnimateRandomFish(targetLocation, riteWitness.getTileLocation());
 
                             friendship = randomIndex.Next(1, friendshipRatio) * 25;
-
+                            this.trick = "fish";
                             break;
                     }
                     
@@ -146,32 +149,11 @@ namespace StardewDruid.Cast.Fates
         public void VillagerReaction()
         {
 
-            if(friendship >= 75)
-            {
-
-                riteWitness.doEmote(20);
-
-            }
-            else if (friendship >= 50)
-            {
-
-                riteWitness.doEmote(32);
-
-            }
-            else if (friendship >= 25)
-            {
-
-                riteWitness.doEmote(24);
-
-            }
-            else
-            {
-
-                riteWitness.doEmote(28);
-
-            }
-
-            ModUtility.GreetVillager(targetPlayer, riteWitness, friendship);
+            ModUtility.GreetVillager(this.targetPlayer, this.riteWitness, this.friendship);
+            StardewDruid.Dialogue.Reaction.ReactTo(this.riteWitness, "Fates", this.friendship, new List<string>()
+              {
+                this.trick
+              });
 
         }
 

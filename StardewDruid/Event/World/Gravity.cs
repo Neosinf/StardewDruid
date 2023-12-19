@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using System.Xml.Linq;
 using xTile.Dimensions;
+using StardewDruid.Map;
 
 namespace StardewDruid.Event.World
 {
@@ -130,41 +131,6 @@ namespace StardewDruid.Event.World
             if (gravityAnimations.ContainsKey(2))
             {
 
-                /*TemporaryAnimatedSprite GravityAnimation = new(0, 100f, 4, 1, gravityCorner, false, false)
-                {
-
-                    sourceRect = new(0, 64, 32, 32),
-
-                    sourceRectStartingPos = new Vector2(0, 64),
-
-                    texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Gravity" + gravityType + ".png")),
-
-                    scale = 4f,
-
-                    layerDepth = 0.0002f,
-
-                };
-
-                targetLocation.temporarySprites.Add(GravityAnimation);
-
-                TemporaryAnimatedSprite nightAnimation = new(0, 400f, 1, 1, gravityCorner, false, false)
-                {
-
-                    sourceRect = new(0, 0, 32, 32),
-
-                    sourceRectStartingPos = new Vector2(0, 0),
-
-                    texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Blackhole.png")),
-
-                    scale = 4f,
-
-                    layerDepth = 0.0001f,
-
-                    rotationChange = -0.12f,
-                };
-
-                targetLocation.temporarySprites.Add(nightAnimation);*/
-
                 TemporaryAnimatedSprite nightAnimation = new(0, 1000f, 1, 1, gravityCorner, false, false)
                 {
 
@@ -185,6 +151,8 @@ namespace StardewDruid.Event.World
                     timeBasedMotion = true,
 
                     scaleChange = -0.002f,
+
+                    alpha = 0.75f,
 
                 };
 
@@ -294,69 +262,6 @@ namespace StardewDruid.Event.World
             if (activeCounter == 1)
             {
 
-                /*TemporaryAnimatedSprite startAnimation = new(0, 100f, 4, 1, gravityCorner, false, false)
-                {
-
-                    sourceRect = new(0, 0, 32, 32),
-
-                    texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Gravity" + gravityType + ".png")),
-
-                    scale = 4f,
-
-                    layerDepth = 0.0002f,
-
-                };
-
-                targetLocation.temporarySprites.Add(startAnimation);
-
-                gravityAnimations[0] = startAnimation;
-
-                TemporaryAnimatedSprite nightAnimation = new(0, 9999f, 1, 1, gravityCorner, false, false)
-                {
-
-                    sourceRect = new(0, 0, 32, 32),
-
-                    sourceRectStartingPos = new Vector2(0, 0),
-
-                    texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Blackhole.png")),
-
-                    scale = 4f,
-
-                    layerDepth = 0.0001f,
-
-                    rotationChange = -0.12f,
-
-                };
-
-                targetLocation.temporarySprites.Add(nightAnimation);
-
-                gravityAnimations[1] = nightAnimation;
-
-                TemporaryAnimatedSprite initialAnimation = new(0, 9999f, 1, 1, gravityCorner, false, false)
-                {
-
-                    sourceRect = new(0, 32, 32, 32),
-
-                    sourceRectStartingPos = new Vector2(0, 32),
-
-                    texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Gravity" + gravityType + ".png")),
-
-                    scale = 4f,
-
-                    delayBeforeAnimationStart = 400,
-
-                    layerDepth = 0.0003f,
-
-                    rotationChange = -0.08f,
-
-                };
-
-                targetLocation.temporarySprites.Add(initialAnimation);
-
-                gravityAnimations[2] = initialAnimation;
-
-                return;*/
-
                 Vector2 targetPosition = gravityCorner;
 
                 Vector2 playerPosition = riteData.caster.Position - new Vector2(0, 32);
@@ -367,9 +272,6 @@ namespace StardewDruid.Event.World
 
                 float motionX = xOffset / 1000;
 
-                //float compensate = 0.555f;
-
-                //float motionY = (yOffset / 1000) - compensate;
                 float motionY = yOffset / 1000;
 
                 float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString()) + 2;
@@ -395,6 +297,8 @@ namespace StardewDruid.Event.World
 
                     rotationChange = -0.06f,
 
+                    alpha = 0.75f,
+
                 };
 
                 targetLocation.temporarySprites.Add(startAnimation);
@@ -419,6 +323,8 @@ namespace StardewDruid.Event.World
                     timeBasedMotion = true,
 
                     delayBeforeAnimationStart = 1000,
+
+                    alpha = 0.75f,
 
                 };
 
@@ -497,12 +403,12 @@ namespace StardewDruid.Event.World
 
                     float pullDistance = Vector2.Distance(monster.Position, gravityCenter);
 
-                    float pullLimit = 720f;
+                    float pullLimit = 560f;
 
                     if (riteData.castTask.ContainsKey("masterGravity"))
                     {
 
-                        pullLimit = 960f;
+                        pullLimit = 720f;
 
                     }
 
@@ -513,11 +419,12 @@ namespace StardewDruid.Event.World
 
                     gravityVictims.Add(monster);
 
-                    monster.Halt();
-
-                    monster.stunTime = 1000 * (6 - activeCounter);
-
-                    if (riteData.blessingList["fates"] >= 5)
+                    if (!MonsterData.CustomMonsters().Contains(monster.GetType()))
+                    {
+                        monster.Halt();
+                        monster.stunTime = 1000 * (6 - this.activeCounter);
+                    }
+                    if (Mod.instance.CurrentProgress() >= 25)
                     {
 
                         for(int i = 0; i < 5;  i++)
@@ -528,7 +435,7 @@ namespace StardewDruid.Event.World
                             if (!Mod.instance.eventRegister.ContainsKey(eventName))
                             {
 
-                                Event.World.Daze dazeEvent = new(targetVector,riteData,monster,i);
+                                Event.World.Daze dazeEvent = new(targetVector,riteData,monster,i,0);
 
                                 dazeEvent.EventTrigger();
                                 

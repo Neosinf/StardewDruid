@@ -2,6 +2,7 @@
 using StardewDruid.Cast;
 using StardewDruid.Event.Challenge;
 using StardewDruid.Map;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
 using System;
@@ -16,18 +17,14 @@ namespace StardewDruid.Event.World
     public class Whisk : EventHandle
     {
 
-        //public int source;
+        public Vector2 destination;
+        public List<TemporaryAnimatedSprite> animationList;
 
-        Vector2 destination;
-
-        //public Whisk(Vector2 target, Rite rite, Vector2 Destination, int Source)
         public Whisk(Vector2 target, Rite rite, Vector2 Destination)
             : base(target, rite)
         {
 
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 2;
-
-            //source = Source;
 
             destination = Destination * 64;
 
@@ -35,6 +32,7 @@ namespace StardewDruid.Event.World
 
         public override void EventTrigger()
         {
+            animationList.Add(ModUtility.AnimateFateTarget(targetLocation,targetVector* 64f,destination*64f));
 
             Mod.instance.RegisterEvent(this, "whisk");
 
@@ -67,8 +65,19 @@ namespace StardewDruid.Event.World
             return true;
 
         }
+        public void RemoveAnimations()
+        {
+            if (animationList.Count > 0)
+            {
+                foreach (TemporaryAnimatedSprite animation in animationList)
+                {
+                    targetLocation.temporarySprites.Remove(animation);
+                }
+            }
 
-        public override bool EventPerformAction()
+        }
+
+        public override bool EventPerformAction(SButton Button)
         {
 
             if (!EventActive())
@@ -110,7 +119,9 @@ namespace StardewDruid.Event.World
 
             riteData.caster.Position = destination;
 
-            ModUtility.AnimateQuickWarp(targetLocation, destination - new Vector2(0,32));
+            ModUtility.AnimateQuickWarp(targetLocation, destination - new Vector2(0,32),"Solar");
+
+            RemoveAnimations();
 
             expireEarly = true;
 

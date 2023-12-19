@@ -5,6 +5,7 @@ using StardewDruid.Cast.Earth;
 using StardewDruid.Event.Challenge;
 using StardewDruid.Map;
 using StardewDruid.Monster;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Monsters;
 using StardewValley.Tools;
@@ -38,9 +39,13 @@ namespace StardewDruid.Event.World
 
         public bool complete;
 
+        public int origin;
+
+        public List<TemporaryAnimatedSprite> animation;
+
         //public List<TemporaryAnimatedSprite> animation;
 
-        public Daze(Vector2 target, Rite rite, StardewValley.Monsters.Monster Monster, int Slot)
+        public Daze(Vector2 target, Rite rite, StardewValley.Monsters.Monster Monster, int Slot, int Origin)
             : base(target, rite)
         {
 
@@ -71,9 +76,18 @@ namespace StardewDruid.Event.World
             
             morph = (!Map.MonsterData.CustomMonsters().Contains(Monster.GetType()) && riteData.castTask.ContainsKey("masterDaze"));
 
-            //animation = new();
+            animation = new List<TemporaryAnimatedSprite>();
 
-            //WarpAnimation();
+            origin = Origin;
+
+            if (origin != 1)
+            {
+
+                return;
+
+            }
+
+            WarpAnimation();
 
         }
 
@@ -119,8 +133,6 @@ namespace StardewDruid.Event.World
 
                     targetLocation.characters.Remove(victim);
 
-                    //ModUtility.AnimateQuickWarp(targetLocation, spawnAttempt.Position, "Void");
-
                     victim = null;
 
                 }
@@ -139,6 +151,12 @@ namespace StardewDruid.Event.World
         public override bool EventActive()
         {
 
+            if (!ModUtility.MonsterVitals(victim, targetLocation))
+            {
+
+                return false;
+
+            }
 
             if (victim is StardewValley.Monsters.Mummy mummy)
             {
@@ -170,27 +188,21 @@ namespace StardewDruid.Event.World
 
             }
 
-            if (expireTime <= Game1.currentGameTime.TotalGameTime.TotalSeconds)
+            if (expireTime > Game1.currentGameTime.TotalGameTime.TotalSeconds)
             {
 
-                MorphVictim();
 
-                return false;
+
+                return true;
 
             }
 
-            if (!ModUtility.MonsterVitals(victim, targetLocation))
-            {
+            MorphVictim();
 
-                return false;
-
-            }
-
-            return true;
-
+            return false;
         }
 
-        public override bool EventPerformAction()
+        public override bool EventPerformAction(SButton Button)
         {
 
             if (complete)
@@ -317,7 +329,9 @@ namespace StardewDruid.Event.World
 
             targetPlayer.temporarilyInvincible = true;
 
-            targetPlayer.temporaryInvincibilityTimer = 1000;
+            targetPlayer.temporaryInvincibilityTimer = 0;
+            
+            targetPlayer.currentTemporaryInvincibilityDuration = 1200;
 
             ModUtility.AnimateQuickWarp(targetLocation, targetPlayer.Position, "Void");
 
@@ -343,8 +357,15 @@ namespace StardewDruid.Event.World
 
         }
 
-        /*public override void EventDecimal()
+        public override void EventDecimal()
         {
+
+            if(origin == 1)
+            {
+
+                return;
+
+            }
 
             if (complete)
             {
@@ -364,8 +385,6 @@ namespace StardewDruid.Event.World
 
                 WarpAnimation();
 
-                return;
-
             }
 
             if (!targetLocation.temporarySprites.Contains(animation.First()))
@@ -375,15 +394,13 @@ namespace StardewDruid.Event.World
 
                 WarpAnimation();
 
-                return;
-
             }
 
             Microsoft.Xna.Framework.Rectangle box = victim.GetBoundingBox();
 
             Point center = box.Center;
 
-            animation[0].Position = (center.ToVector2() - new Vector2(32, 0)) + new Vector2(0, 32);
+            animation[0].Position = center.ToVector2() + new Vector2(-32, 32);
 
             animation[0].reset();
 
@@ -421,7 +438,7 @@ namespace StardewDruid.Event.World
 
             animation.Add(warpTarget);
 
-        }*/
+        }
 
     }
 

@@ -54,32 +54,32 @@ namespace StardewDruid.Event.Challenge
             if (eventLinger == -1)
             {
 
-                if (monsterHandle.monsterSpawns.Count <= 6)
+                if (monsterHandle.monsterSpawns.Count <= 3)
+                {
+                    CastVoice("aye... maybe as strong as Deep himself...");
+                    List<int> intList = new List<int>() { 797, 166 };
+                    int num = questData.name.Contains("Two") ? 2 : 1;
+                    for (int index = 0; index < num; ++index)
+                        new Throw(targetPlayer,targetVector*64f, intList[randomIndex.Next(intList.Count)], 0).ThrowObject();
+                }
+                else if (monsterHandle.monsterSpawns.Count <= 7)
                 {
                     CastVoice("eh. take this an sod off.");
 
-                    List<int> objectIndexes = new()
-                    {
-                        265,
-                        275,
-                        797,
-                        166,
-                    };
-
-                    Throw throwObject = new(targetPlayer, targetVector * 64, objectIndexes[randomIndex.Next(objectIndexes.Count)], 0);
-
-                    throwObject.ThrowObject();
-
-                    Mod.instance.CompleteQuest(questData.name);
+                    List<int> intList = new List<int>() { 265, 275 };
+                    int num = questData.name.Contains("Two") ? 2 : 1;
+                    for (int index = 0; index < num; ++index)
+                        new Throw(targetPlayer, targetVector * 64f, intList[randomIndex.Next(intList.Count)], 0).ThrowObject();
 
                 }
                 else
                 {
 
-                    CastVoice("haha! not good enough lad");
+                    CastVoice("haha! not good enough for the Lady");
 
                 }
-
+                
+                Mod.instance.CompleteQuest(questData.name);
                 eventLinger = 3;
 
                 RemoveMonsters();
@@ -137,6 +137,8 @@ namespace StardewDruid.Event.Challenge
                         targetLocation.playSound("thunder_small");
 
                         soundTrack = true;
+
+                        Mod.instance.CastMessage("Defeat more foes for better rewards", -1);
 
                         break;
 

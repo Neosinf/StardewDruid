@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Netcode;
 using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
@@ -7,11 +8,14 @@ using StardewValley.BellsAndWhistles;
 using StardewValley.Buildings;
 using StardewValley.Locations;
 using StardewValley.Monsters;
+using StardewValley.Network;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Linq;
 using xTile.Dimensions;
 using xTile.Layers;
 using xTile.ObjectModel;
@@ -23,7 +27,7 @@ namespace StardewDruid
     static class ModUtility
     {
 
-        public static void AnimateEarthCast(int castLevel)
+        public static void WealdSound(int castLevel)
         {
 
             int chargeLevel = castLevel % 4;
@@ -53,7 +57,36 @@ namespace StardewDruid
 
         }
 
-        public static void AnimateRadiusDecoration(GameLocation location, Vector2 vector, string name, float size, float change, float interval = 600f)
+        public static void MistsSound(int castLevel)
+        {
+            int chargeLevel = castLevel % 4;
+
+            int pitchLevel = castLevel / 4;
+
+            //-------------------------- sound and pitch
+
+            if (pitchLevel <= 2)
+            {
+
+                if (chargeLevel == 1)
+                {
+
+                    Game1.player.currentLocation.playSoundPitched("thunder_small", 600 + (pitchLevel * 200));
+
+                }
+
+                if (chargeLevel == 3)
+                {
+
+                    Game1.player.currentLocation.playSoundPitched("thunder_small", 700 + (pitchLevel * 200));
+
+                }
+
+            }
+
+        }
+
+        public static void AnimateRadiusDecoration(GameLocation location, Vector2 vector, string name, float size, float change, float interval = 600f, float depth = 0.0001f)
         {
 
             TemporaryAnimatedSprite radiusAnimation = new(0, interval, 1, 1, (vector * 64) + new Vector2(32,32) - (new Vector2(32,32) * size), false, false)
@@ -73,7 +106,7 @@ namespace StardewDruid
 
                 timeBasedMotion = true,
 
-                layerDepth = 0.0001f,
+                layerDepth =depth,
 
                 rotationChange = 0.06f,
 
@@ -114,124 +147,6 @@ namespace StardewDruid
             };
 
             location.temporarySprites.Add(radiusAnimation);
-
-        }
-
-        public static void AnimateWaterCast(Vector2 activeVector, int castLevel)
-        {
-
-            //-------------------------- cast variables
-
-            int chargeLevel = castLevel % 4;
-            /*
-            int animationRow = 5;
-
-            Microsoft.Xna.Framework.Rectangle animationRectangle = new(128, animationRow * 64, 64, 64);
-
-            float animationInterval = 168f;
-
-            int animationLength = 2;
-
-            bool animationFlip = false;
-
-            float animationScale;
-
-            float animationDepth = activeVector.X * 1000 + activeVector.Y;
-
-            Microsoft.Xna.Framework.Color animationColor;
-
-            Vector2 animationPosition;
-
-            //-------------------------- cast shadow
-
-            animationColor = new(0, 0, 0, 0.5f);
-
-            animationScale = 0.2f * chargeLevel;
-
-            animationPosition = (activeVector * 64) + (new Vector2(6, 6) * (5 - chargeLevel));
-
-            TemporaryAnimatedSprite shadowAnimationOne = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, 1, animationPosition, false, animationFlip, animationDepth + 1, 0f, animationColor, animationScale, 0f, 0f, 0f);
-
-            Game1.currentLocation.temporarySprites.Add(shadowAnimationOne);
-
-            //-------------------------- cast shadow with delay
-
-            animationScale = 0.1f + (0.2f * chargeLevel);
-
-            animationPosition = (activeVector * 64) + (new Vector2(6, 6) * (5 - chargeLevel)) - new Vector2(3, 3);
-
-            TemporaryAnimatedSprite shadowAnimationTwo = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, 1, animationPosition, false, animationFlip, animationDepth + 2, 0f, animationColor, animationScale, 0f, 0f, 0f)
-            {
-
-                delayBeforeAnimationStart = 334,
-
-            };
-
-            Game1.currentLocation.temporarySprites.Add(shadowAnimationTwo);
-
-            //-------------------------- cast animation
-
-            float colorIncrement = 1.2f - (0.2f * chargeLevel);
-
-            animationColor = new(colorIncrement, colorIncrement, 1, 1); // deepens from white to blue
-
-            animationScale = 0.2f + (0.4f * chargeLevel);
-
-            float vectorCastX = 30 - (12 * chargeLevel);
-
-            float vectorCastY = 0 - 160 - (32f * chargeLevel);
-
-            animationPosition = (activeVector * 64) + new Vector2(vectorCastX, vectorCastY);
-
-            TemporaryAnimatedSprite animationOne = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, 1, animationPosition, false, animationFlip, animationDepth + 3, 0f, animationColor, animationScale, 0f, 0f, 0f);
-
-            Game1.currentLocation.temporarySprites.Add(animationOne);
-
-            //-------------------------- cast animation with delay
-
-            colorIncrement = 1.1f - (0.2f * chargeLevel);
-
-            animationColor = new(colorIncrement, colorIncrement, 1, 1); // deepens from white to blue
-
-            animationScale = 0.4f + (0.4f * chargeLevel);
-
-            vectorCastX = 24 - (12 * chargeLevel);
-
-            vectorCastY = 0 - 176 - (32f * chargeLevel);
-
-            animationPosition = (activeVector * 64) + new Vector2(vectorCastX, vectorCastY);
-
-            TemporaryAnimatedSprite animationTwo = new("TileSheets\\animations", animationRectangle, animationInterval, animationLength, 1, animationPosition, false, animationFlip, animationDepth + 4, 0f, animationColor, animationScale, 0f, 0f, 0f)
-            {
-
-                delayBeforeAnimationStart = 334,
-
-            };
-
-            Game1.currentLocation.temporarySprites.Add(animationTwo);*/
-
-            //-------------------------- sound and pitch
-
-            int pitchLevel = castLevel / 4;
-
-            if (pitchLevel <= 2)
-            {
-
-                if (chargeLevel == 1)
-                {
-
-                    Game1.currentLocation.playSoundPitched("thunder_small", 600 + (pitchLevel * 200));
-
-                }
-
-                if (chargeLevel == 3)
-                {
-
-                    Game1.currentLocation.playSoundPitched("thunder_small", 700 + (pitchLevel * 200));
-
-                }
-
-            }
 
         }
 
@@ -997,6 +912,13 @@ namespace StardewDruid
 
             }
 
+            if(backTile.TileIndex == 2154)
+            {
+
+                return false;
+
+            }
+
             if (backTile.TileIndexProperties.TryGetValue("Water", out _))
             {
 
@@ -1355,36 +1277,6 @@ namespace StardewDruid
             villager.faceTowardFarmerForPeriod(3000, 4, false, player);
 
             bool friendCheck = player.hasPlayerTalkedToNPC(villager.Name);
-
-            int emoteIndex = 8;
-
-            if (player.friendshipData.ContainsKey(villager.Name))
-            {
-                if (player.friendshipData[villager.Name].Points >= 500)
-                {
-
-                    emoteIndex = 32;
-
-                }
-
-                if (player.friendshipData[villager.Name].Points >= 1000)
-                {
-
-                    emoteIndex = 20;
-
-                }
-
-            }
-            else
-            {
-
-                villager.doEmote(emoteIndex);
-
-                return false;
-
-            }
-
-            villager.doEmote(emoteIndex);
 
             if (!friendCheck)
             {
@@ -2134,10 +2026,14 @@ namespace StardewDruid
 
         }
 
-        public static void Explode(GameLocation targetLocation, Vector2 targetVector, Farmer targetPlayer, int damageRadius, int castDamage, int powerLevel, Tool Pick, Tool Axe)
+        public static void Explode(GameLocation targetLocation, Vector2 targetVector, Farmer targetPlayer, int damageRadius, int castDamage, int powerLevel, Tool Pick, Tool Axe, bool decorate = true)
         {
+            if (decorate)
+            {
 
-            targetLocation.playSound("flameSpellHit");
+                targetLocation.playSound("flameSpellHit");
+
+            }
 
             targetPlayer.Stamina += Math.Min(2, targetPlayer.MaxStamina - targetPlayer.Stamina);
 
@@ -2167,6 +2063,41 @@ namespace StardewDruid
             Microsoft.Xna.Framework.Rectangle areaOfEffect = new Microsoft.Xna.Framework.Rectangle((int)(targetVector.X - damageRadius) * 64, (int)(targetVector.Y - damageRadius) * 64, damageDiameter * 64, damageDiameter * 64);
 
             targetLocation.damageMonster(areaOfEffect, castDamage, castDamage * 2, true, targetPlayer);
+
+            // ----------------- clump destruction
+
+            if (targetLocation.resourceClumps.Count > 0 && powerLevel >= 3)
+            {
+                for (int index = targetLocation.resourceClumps.Count - 1; index >= 0; --index)
+                {
+                    ResourceClump resourceClump = targetLocation.resourceClumps[index];
+                    Vector2 targetVector1 = ((NetFieldBase<Vector2, NetVector2>)resourceClump.tile).Value;
+                    if ((double)Vector2.Distance(targetVector1, targetVector) <= (double)(damageRadius + 1))
+                    {
+                        switch (((NetFieldBase<int, NetInt>)resourceClump.parentSheetIndex).Value)
+                        {
+                            case 600:
+                            case 602:
+                                DestroyStump(targetLocation, targetPlayer, resourceClump, targetVector1, Axe as Axe, "Farm");
+                                break;
+                            default:
+                                DestroyBoulder(targetLocation, targetPlayer, resourceClump, targetVector1, Pick as Pickaxe, 2);
+                                break;
+                        }
+                    }
+                }
+            }
+            if (targetLocation is Woods woods && powerLevel >= 3)
+            {
+                for (int index = ((NetList<ResourceClump, NetRef<ResourceClump>>)woods.stumps).Count - 1; index >= 0; --index)
+                {
+                    ResourceClump stump = ((NetList<ResourceClump, NetRef<ResourceClump>>)woods.stumps)[index];
+                    Vector2 targetVector2 = ((NetFieldBase<Vector2, NetVector2>)stump.tile).Value;
+                    if ((double)Vector2.Distance(targetVector2, targetVector) <= (double)(damageRadius + 1))
+                        DestroyStump(targetLocation, targetPlayer, stump, targetVector2, Axe as Axe, "Woods");
+                }
+            }
+
 
             // ----------------- object destruction
 
@@ -2241,14 +2172,23 @@ namespace StardewDruid
                             destroyVector = true;
 
                         }
-                        else if (targetObject is BreakableContainer)
+                        else if (targetObject.Name.Contains("SupplyCrate"))
                         {
-
-                            targetObject.setHealth(1);
+                            targetObject.MinutesUntilReady = 1;
 
                             targetObject.performToolAction(Pick, targetLocation);
 
                             targetLocation.objects.Remove(tileVector);
+
+                            destroyVector = true;
+                        }
+                        else if (targetObject is BreakableContainer breakableContainer)
+                        {
+                            breakableContainer.releaseContents(targetLocation, targetPlayer);
+
+                            targetLocation.objects.Remove(tileVector);
+
+                            targetLocation.playSound("barrelBreak", (NetAudio.SoundContext)0);
 
                             destroyVector = true;
 
@@ -2287,7 +2227,7 @@ namespace StardewDruid
                     if (targetLocation.terrainFeatures.ContainsKey(tileVector))
                     {
 
-                        if (powerLevel > 1)
+                        if (powerLevel >= 2)
                         {
 
                             if (targetLocation.terrainFeatures[tileVector] is StardewValley.TerrainFeatures.Tree)
@@ -2342,7 +2282,7 @@ namespace StardewDruid
 
                     }
 
-                    if (i == damageRadius || destroyVector)
+                    if (decorate && ( i == damageRadius || destroyVector))
                     {
 
                         ImpactVector(targetLocation, tileVector);
@@ -2498,7 +2438,7 @@ namespace StardewDruid
 
         }
 
-        public static void HitMonster(GameLocation targetLocation, Farmer targetPlayer, StardewValley.Monsters.Monster targetMonster, int damage, bool critApplied)
+        public static void HitMonster(GameLocation targetLocation, Farmer targetPlayer, StardewValley.Monsters.Monster targetMonster, int damage, bool critApplied,int diffX = 0,int diffY = 0)
         {
 
             bool specialHit = false;
@@ -2537,7 +2477,7 @@ namespace StardewDruid
             if (!specialHit)
             {
 
-                damageDealt = targetMonster.takeDamage(damage, 0, 0, false, 999f, targetPlayer);
+                damageDealt = targetMonster.takeDamage(damage, diffX, diffY, false, 999f, targetPlayer);
 
             }
 
@@ -2620,7 +2560,7 @@ namespace StardewDruid
         public static void AnimateQuickWarp(GameLocation location, Vector2 position, string name = "Escape")
         {
 
-            TemporaryAnimatedSprite firstWarp = new(0, 75f, 12, 1, position, false, false)
+            TemporaryAnimatedSprite firstWarp = new(0, 75f, 12, 1, position - new Vector2(16,16), false, false)
             {
 
                 sourceRect = new(0, 32, 32, 32),
@@ -2629,21 +2569,24 @@ namespace StardewDruid
 
                 texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", name + ".png")),
 
-                scale = 2f,
+                scale = 3f,
 
                 layerDepth = 999,
 
                 rotationChange = -0.8f,
+
+                alpha = 0.35f
+
             };
 
             location.temporarySprites.Add(firstWarp);
 
         }
 
-        public static void AnimateFateTarget(GameLocation location, Vector2 playerVector, Vector2 targetVector, string name = "Escape")
+        public static TemporaryAnimatedSprite AnimateFateTarget(GameLocation location, Vector2 playerVector, Vector2 targetVector)
         {
 
-            Vector2 targetPosition = targetVector;
+            Vector2 targetPosition = targetVector - new Vector2(0, 32);
 
             Vector2 playerPosition = playerVector - new Vector2(0, 32);
 
@@ -2653,39 +2596,34 @@ namespace StardewDruid
 
             float motionX = xOffset / 1000;
 
-            //float compensate = 0.555f;
-
-            //float motionY = (yOffset / 1000) - compensate;
             float motionY = yOffset / 1000;
 
             float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString()) + 2;
 
-            TemporaryAnimatedSprite warpAnimation = new(0, 125f, 8, 1, playerPosition, false, false)
+            TemporaryAnimatedSprite warpAnimation = new(0, 1000f, 1, 1, playerPosition, false, false)
             {
 
-                sourceRect = new(0,0, 32, 32),
+                sourceRect = new(0,0, 64, 64),
 
                 sourceRectStartingPos = new Vector2(0, 0),
 
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", name+".png")),
-
-                scale = 2f,
+                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Warp.png")),
+                scale = 0.75f,
+                scaleChange = 0.0005f,
 
                 layerDepth = animationSort,
 
                 motion = new Vector2(motionX,motionY),
 
-                //acceleration = new Vector2(0f, 0.001f),
-
                 timeBasedMotion = true,
 
-                rotationChange = -0.08f,
-
-                //alpha = 0.5f,
+                rotationChange = 0.08f,
 
             };
 
             location.temporarySprites.Add(warpAnimation);
+
+            return warpAnimation;
 
         }
 
@@ -2729,7 +2667,231 @@ namespace StardewDruid
             return true;
 
         }
+        
+        public static void DestroyBoulder(
+          GameLocation targetLocation,
+          Farmer targetPlayer,
+          ResourceClump resourceClump,
+          Vector2 targetVector,
+          Pickaxe pickaxe,
+          int debrisMax)
+        {
+            Random random = new Random();
+            int upgradeLevel = ((Tool)pickaxe).UpgradeLevel;
+            ((NetFieldBase<float, NetFloat>)resourceClump.health).Set(1f);
+            if (upgradeLevel < 3)
+            {
+                Pickaxe pickaxe1 = new Pickaxe();
+                ((Tool)pickaxe1).UpgradeLevel = 3;
+                targetPlayer.Stamina += Math.Min(2f, (float)targetPlayer.MaxStamina - targetPlayer.Stamina);
+                ((Tool)pickaxe1).DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+                resourceClump.performToolAction((Tool)pickaxe1, 1, targetVector, targetLocation);
+            }
+            else
+            {
+                targetPlayer.Stamina += Math.Min(2f, (float)targetPlayer.MaxStamina - targetPlayer.Stamina);
+                ((Tool)Mod.instance.virtualPick).DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+                resourceClump.performToolAction((Tool)Mod.instance.virtualPick, 1, targetVector, targetLocation);
+            }
+            resourceClump.NeedsUpdate = false;
+            targetLocation._activeTerrainFeatures.Remove(resourceClump);
+            targetLocation.resourceClumps.Remove(resourceClump);
+            resourceClump.currentLocation = (GameLocation)null;
+            if (upgradeLevel >= 3)
+            {
+                Game1.createObjectDebris(709, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, (GameLocation)null);
+                Game1.createObjectDebris(709, (int)targetVector.X + 1, (int)targetVector.Y, -1, 0, 1f, (GameLocation)null);
+            }
+            for (int index = 0; index < random.Next(1, debrisMax); ++index)
+            {
+                switch (((NetFieldBase<int, NetInt>)resourceClump.parentSheetIndex).Value)
+                {
+                    case 756:
+                    case 758:
+                        Game1.createObjectDebris(536, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, (GameLocation)null);
+                        break;
+                    default:
+                        if (targetLocation is MineShaft)
+                        {
+                            MineShaft mineShaft = (MineShaft)targetLocation;
+                            if (mineShaft.mineLevel >= 80)
+                            {
+                                Game1.createObjectDebris(537, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, (GameLocation)null);
+                                break;
+                            }
+                            if (mineShaft.mineLevel >= 121)
+                            {
+                                Game1.createObjectDebris(749, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, (GameLocation)null);
+                                break;
+                            }
+                        }
+                        Game1.createObjectDebris(535, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, (GameLocation)null);
+                        break;
+                }
+            }
+        }
 
+        public static void DestroyStump(
+          GameLocation targetLocation,
+          Farmer targetPlayer,
+          ResourceClump resourceClump,
+          Vector2 targetVector,
+          Axe Axe,
+          string resourceType)
+        {
+            int upgradeLevel = Axe.UpgradeLevel;
+            resourceClump.health.Set(1f);
+            if (upgradeLevel < 3)
+            {
+                Axe axe = new Axe();
+                axe.UpgradeLevel = 3;
+                axe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+                resourceClump.performToolAction(axe, 1, targetVector, targetLocation);
+            }
+            else
+            {
+                targetPlayer.Stamina += Math.Min(2f, (float)targetPlayer.MaxStamina - targetPlayer.Stamina);
+                (Mod.instance.virtualAxe).DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+                resourceClump.performToolAction(Mod.instance.virtualAxe, 1, targetVector, targetLocation);
+            }
+          resourceClump.NeedsUpdate = false;
+            if (upgradeLevel >= 3)
+            {
+                Game1.createObjectDebris(709, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, null);
+                Game1.createObjectDebris(709, (int)targetVector.X + 1, (int)targetVector.Y, -1, 0, 1f, null);
+            }
+            switch (resourceType)
+            {
+                case "Woods":
+                    Woods woods = targetLocation as Woods;
+                    if (!woods.stumps.Contains(resourceClump))
+                        break;
+                    woods.stumps.Remove(resourceClump);
+                    break;
+                case "Log":
+                    (targetLocation as Forest).log = null;
+                    break;
+                default:
+                    if (targetLocation._activeTerrainFeatures.Contains(resourceClump))
+                    {
+                        targetLocation._activeTerrainFeatures.Remove(resourceClump);
+
+                    }
+                        
+                    if (!targetLocation.resourceClumps.Contains(resourceClump))
+                    {
+
+                        break;
+                    }
+                    
+                    targetLocation.resourceClumps.Remove(resourceClump);
+
+                    break;
+            }
+        }
+
+        public static void AnimateRockfalls(GameLocation location, Vector2 vector)
+        {
+            Random random = new Random();
+            for (int index1 = 0; index1 < 10; ++index1)
+            {
+                int index2 = index1 % 5;
+                List<Vector2> tilesWithinRadius = GetTilesWithinRadius(location, vector, index2 + 2);
+                if (random.Next(2) == 0)
+                    tilesWithinRadius.Reverse();
+                int count = tilesWithinRadius.Count;
+                if (count != 0)
+                {
+                    int num1 = new List<int>() { 6, 8, 8, 7, 8 }[index2];
+                    int num2 = new List<int>() { 2, 2, 3, 4, 4 }[index2];
+                    for (int index3 = 0; index3 < num2; ++index3)
+                    {
+                        int minValue = num1 * index3;
+                        if (minValue + 1 < count)
+                        {
+                            int castDelay = random.Next(3, 20) * 100;
+                            int maxValue = Math.Min(minValue + num1, tilesWithinRadius.Count);
+                            int index4 = random.Next(minValue, maxValue);
+                            Vector2 vector2 = tilesWithinRadius[index4];
+                            AnimateRockfall(location, vector2, castDelay);
+                            for (int level = 0; level < 3; ++level)
+                            {
+                                foreach (Vector2 tilesWithinRadiu in ModUtility.GetTilesWithinRadius(location, vector2, level))
+                                    AnimateCastRadius(location, tilesWithinRadiu, new Color(0.8f, 1f, 0.8f, 1f), castDelay + index2 * 200);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void AnimateRockfall(
+          GameLocation targetLocation,
+          Vector2 targetVector,
+          int castDelay,
+          int objectIndex = -1,
+          int scatterIndex = -1)
+        {
+            if (objectIndex == -1)
+            {
+                List<int> intList = SpawnData.RockFall(targetLocation, Game1.player);
+                objectIndex = intList[0];
+                scatterIndex = intList[1];
+            }
+            Microsoft.Xna.Framework.Rectangle standardTileSheet1 = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, objectIndex, 16, 16);
+            Microsoft.Xna.Framework.Rectangle standardTileSheet2 = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, scatterIndex, 16, 16);
+            float num1 = 575f;
+            Vector2 vector2 = new((float)((double)targetVector.X * 64.0 + 8.0), (float)(((double)targetVector.Y - 3.0) * 64.0 - 24.0));
+            float num2 = 0.0015f;
+            float num3 = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "1");
+            TemporaryAnimatedSprite temporaryAnimatedSprite1 = new TemporaryAnimatedSprite("Maps\\springobjects", standardTileSheet2, num1, 1, 0, vector2, false, false, num3, 1f / 1000f, Color.White, 3f, 0.0f, 0.0f, 0.0f, false)
+            {
+                acceleration = new Vector2(0.0f, num2),
+                timeBasedMotion = true,
+                delayBeforeAnimationStart = castDelay
+            };
+            targetLocation.temporarySprites.Add(temporaryAnimatedSprite1);
+
+            vector2 = new((float)((double)targetVector.X * 64.0 + 8.0), (float)(((double)targetVector.Y - 3.0) * 64.0 + 8.0));
+            float num4 = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "2");
+            TemporaryAnimatedSprite temporaryAnimatedSprite2 = new TemporaryAnimatedSprite("Maps\\springobjects", standardTileSheet1, num1, 1, 0, vector2, false, false, num4, 1f / 1000f, Color.White, 3f, 0.0f, 0.0f, 0.0f, false)
+            {
+                acceleration = new Vector2(0.0f, num2),
+                timeBasedMotion = true,
+                delayBeforeAnimationStart = castDelay
+            };
+            targetLocation.temporarySprites.Add(temporaryAnimatedSprite2);
+
+            vector2 = new((float)((double)targetVector.X * 64.0 + 16.0), (float)((double)targetVector.Y * 64.0 + 16.0));
+            float num5 = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "3");
+            TemporaryAnimatedSprite temporaryAnimatedSprite3 = new TemporaryAnimatedSprite("Maps\\springobjects", standardTileSheet1, num1, 1, 0, vector2, false, false, num5, 1f / 1000f, Color.Black * 0.5f, 2f, 0.0f, 0.0f, 0.0f, false)
+            {
+                delayBeforeAnimationStart = castDelay
+            };
+            targetLocation.temporarySprites.Add(temporaryAnimatedSprite3);
+        }
+
+        public static void DamageFarmers(
+          GameLocation location,
+          Microsoft.Xna.Framework.Rectangle zone,
+          int damage,
+          StardewValley.Monsters.Monster monster,
+          bool parry = false)
+        {
+            foreach (Farmer farmer in Game1.getAllFarmers())
+            {
+                if (farmer.currentLocation.Name == location.Name)
+                {
+                    Microsoft.Xna.Framework.Rectangle boundingBox = farmer.GetBoundingBox();
+                    if (boundingBox.Intersects(zone))
+                    {
+                        farmer.takeDamage(damage, parry, monster);
+
+                    }
+                        
+                }
+            }
+        }
 
     }
 

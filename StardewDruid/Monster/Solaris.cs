@@ -70,9 +70,10 @@ namespace StardewDruid.Monster
 
             ouchList = new()
             {
-                "teeheehee",
-                "wooooo"
+                "seep", "SEEP"
             };
+
+            wasHitCounter = 500;
 
             Slipperiness = 24 + Game1.random.Next(-10, 10);
 
