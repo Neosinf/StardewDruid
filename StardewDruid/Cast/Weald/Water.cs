@@ -9,7 +9,7 @@ namespace StardewDruid.Cast.Weald
         public Water(Vector2 target, Rite rite)
             : base(target, rite)
         {
-            
+
             castCost = 8;
 
             if (rite.caster.FishingLevel >= 6)
@@ -53,7 +53,7 @@ namespace StardewDruid.Cast.Weald
 
             bool targetDirection = (targetPlayer.getTileLocation().X > targetVector.X); // false animation goes left to right, true animation right to left, check if target is right of left
 
-            ModUtility.AnimateSplash(targetLocation,targetVector,targetDirection);
+            ModUtility.AnimateSplash(targetLocation, targetVector, targetDirection);
 
         }
 

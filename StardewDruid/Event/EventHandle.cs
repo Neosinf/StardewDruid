@@ -5,10 +5,8 @@ using StardewDruid.Map;
 using StardewDruid.Monster;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Characters;
 using System;
 using System.Collections.Generic;
-using xTile.Dimensions;
 
 namespace StardewDruid.Event
 {
@@ -146,7 +144,7 @@ namespace StardewDruid.Event
 
         public virtual void EventAbort()
         {
-            
+
             eventLinger = 0;
 
         }
@@ -176,7 +174,7 @@ namespace StardewDruid.Event
                 monsterHandle.ShutDown();
 
             }
-        
+
         }
 
         public virtual void EventRemove()
@@ -215,14 +213,14 @@ namespace StardewDruid.Event
 
             }
 
-            if(actors.Count > 0)
+            if (actors.Count > 0)
             {
-                
+
                 foreach (StardewDruid.Character.Character actor in actors)
                 {
 
                     actor.currentLocation.characters.Remove(actor);
-                
+
                 }
 
                 actors.Clear();
@@ -263,7 +261,7 @@ namespace StardewDruid.Event
         public void CastVoice(string message, int duration = 2000)
         {
 
-            if(actors.Count <= 0)
+            if (actors.Count <= 0)
             {
 
                 this.AddActor(this.voicePosition);
@@ -287,7 +285,7 @@ namespace StardewDruid.Event
         {
             Actor actor = CharacterData.DisembodiedVoice(this.targetLocation, position);
             actor.drawSlave = slave;
-            targetLocation.characters.Add((NPC)actor);
+            targetLocation.characters.Add(actor);
             actors.Add(actor);
         }
 

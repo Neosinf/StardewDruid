@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using StardewValley;
 using System;
 
 namespace StardewDruid.Cast.Weald

@@ -60,10 +60,51 @@ namespace StardewDruid.Cast.Weald
                 }
 
             }
-            else if (spawnIndex["trees"] && !Mod.instance.EffectDisabled("Trees") && targetPlayer.facingDirection != targetPlayer.getGeneralDirectionTowards(targetVector)) // 1/10 tree
+            else if (spawnIndex["trees"] && !Mod.instance.EffectDisabled("Trees")) // 1/10 tree
             {
 
-                bool treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
+                bool treeSpawn  = false;
+
+                switch (targetPlayer.FacingDirection)
+                {
+                    case 0:
+
+                        if(riteData.castVector.Y < targetVector.Y)
+                        {
+                            treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
+
+                        }        
+
+                        break;
+
+                    case 1:
+
+                        if (riteData.castVector.X > targetVector.X)
+                        {
+                            treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
+
+                        }
+                        break;
+                    
+                    case 2:
+
+                        if (riteData.castVector.Y > targetVector.Y)
+                        {
+                            treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
+
+                        }
+                        break;
+
+                    default:
+
+                        if (riteData.castVector.X < targetVector.X)
+                        {
+                            treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
+
+                        }
+                        break;
+
+                }
 
                 if (treeSpawn)
                 {

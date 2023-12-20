@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Netcode;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using System;
@@ -34,7 +33,7 @@ namespace StardewDruid.Monster
         {
             this.Health = this.combatModifier * 12;
             this.MaxHealth = this.Health;
-            this.DamageToFarmer = (int)((double)this.combatModifier * 0.1);
+            this.DamageToFarmer = (int)(combatModifier * 0.1);
             this.ouchList = new List<string>()
       {
         "reap",
@@ -99,47 +98,45 @@ namespace StardewDruid.Monster
 
         public override Rectangle GetBoundingBox()
         {
-            Vector2 position = ((Character)this).Position;
-            return new Rectangle((int)position.X - 32, (int)position.Y - ((NetFieldBase<int, NetInt>)this.netFlightHeight).Value, 128, 144);
+            Vector2 position = Position;
+            return new Rectangle((int)position.X - 32, (int)position.Y - netFlightHeight.Value, 128, 144);
         }
 
         public override void draw(SpriteBatch b, float alpha = 1f)
         {
-            if (((NPC)this).IsInvisible || !Utility.isOnScreen(((Character)this).Position, 128))
+            if (IsInvisible || !Utility.isOnScreen(Position, 128))
                 return;
-            Vector2 localPosition = ((Character)this).getLocalPosition(Game1.viewport);
+            Vector2 localPosition = getLocalPosition(Game1.viewport);
             float drawLayer = Game1.player.getDrawLayer();
-            if (((Character)this).IsEmoting && !Game1.eventUp)
+            if (IsEmoting && !Game1.eventUp)
             {
-                localPosition.Y -= (float)(32 + ((Character)this).Sprite.SpriteHeight * 4);
-                b.Draw(Game1.emoteSpriteSheet, localPosition, new Rectangle?(new Rectangle(((Character)this).CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, ((Character)this).CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16)), Color.White, 0.0f, Vector2.Zero, 4f, (SpriteEffects)0, drawLayer);
+                localPosition.Y -= 32 + Sprite.SpriteHeight * 4;
+                b.Draw(Game1.emoteSpriteSheet, localPosition, new Rectangle?(new Rectangle(CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16)), Color.White, 0.0f, Vector2.Zero, 4f, 0, drawLayer);
             }
-            b.Draw(Game1.shadowTexture, Vector2.op_Addition(localPosition, new Vector2(0.0f, 128f)), new Rectangle?(Game1.shadowTexture.Bounds), Color.White, 0.0f, Vector2.Zero, 4f, (SpriteEffects)0, Math.Max(0.0f, (float)((Character)this).getStandingY() / 10000f) - 1E-06f);
-            if (NetFieldBase<bool, NetBool>.op_Implicit((NetFieldBase<bool, NetBool>)this.netDashActive))
+            b.Draw(Game1.shadowTexture, new(localPosition.X, localPosition.Y + 128f), new Rectangle?(Game1.shadowTexture.Bounds), Color.White, 0.0f, Vector2.Zero, 4f, 0, Math.Max(0.0f, getStandingY() / 10000f) - 1E-06f);
+            if (netDashActive)
             {
-                Rectangle rectangle;
-                // ISSUE: explicit constructor call
-                ((Rectangle)ref rectangle).\u002Ector(NetFieldBase<int, NetInt>.op_Implicit((NetFieldBase<int, NetInt>)this.netFlightFrame) * 64, 0, 64, 48);
-                b.Draw(((Character)this).Sprite.Texture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f - (float)NetFieldBase<int, NetInt>.op_Implicit((NetFieldBase<int, NetInt>)this.netFlightHeight)), new Rectangle?(rectangle), Color.op_Multiply(Color.White, 0.65f), ((NPC)this).rotation, new Vector2(0.0f, 0.0f), 4f, ((Character)this).flip || NetFieldBase<int, NetInt>.op_Implicit((NetFieldBase<int, NetInt>)this.netDirection) == 3 ? (SpriteEffects)1 : (SpriteEffects)0, drawLayer);
+                Rectangle rectangle = new(netFlightFrame * 64, 0, 64, 48);
+                b.Draw(Sprite.Texture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f - netFlightHeight), new Rectangle?(rectangle), Color.White * 0.65f, rotation, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
             }
-            else if (NetFieldBase<bool, NetBool>.op_Implicit((NetFieldBase<bool, NetBool>)this.netFireActive))
+            else if (netFireActive)
             {
                 if (this.bobHeight <= 0)
                     ++this.bobHeight;
                 else if (this.bobHeight >= 64)
                     --this.bobHeight;
-                b.Draw(((Character)this).Sprite.Texture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f - (float)this.bobHeight), new Rectangle?(new Rectangle(256, 0, 64, 48)), Color.op_Multiply(Color.White, 0.65f), ((NPC)this).rotation, new Vector2(0.0f, 0.0f), 4f, ((Character)this).flip || NetFieldBase<int, NetInt>.op_Implicit((NetFieldBase<int, NetInt>)this.netDirection) == 3 ? (SpriteEffects)1 : (SpriteEffects)0, drawLayer);
+                b.Draw(Sprite.Texture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f - bobHeight), new Rectangle?(new Rectangle(256, 0, 64, 48)), Color.White * 0.65f, rotation, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
             }
             else
-                b.Draw(((Character)this).Sprite.Texture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f), new Rectangle?(new Rectangle(0, 0, 64, 48)), Color.op_Multiply(Color.White, 0.65f), 0.0f, new Vector2(0.0f, 0.0f), 4f, ((Character)this).flip ? (SpriteEffects)1 : (SpriteEffects)0, drawLayer);
+                b.Draw(Sprite.Texture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f), new Rectangle?(new Rectangle(0, 0, 64, 48)), Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip ? (SpriteEffects)1 : 0, drawLayer);
         }
 
-        public virtual void drawAboveAlwaysFrontLayer(SpriteBatch b)
+        public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
         {
-            if (((NPC)this).textAboveHeadTimer <= 0 || ((NPC)this).textAboveHead == null)
+            if (textAboveHeadTimer <= 0 || textAboveHead == null)
                 return;
-            Vector2 localPosition = ((Character)this).getLocalPosition(Game1.viewport);
-            SpriteText.drawStringWithScrollCenteredAt(b, ((NPC)this).textAboveHead, (int)localPosition.X, (int)localPosition.Y - 160, "", ((NPC)this).textAboveHeadAlpha, ((NPC)this).textAboveHeadColor, 1, (float)((double)(((Character)this).getTileY() * 64) / 10000.0 + 1.0 / 1000.0 + (double)((Character)this).getTileX() / 10000.0), false);
+            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            SpriteText.drawStringWithScrollCenteredAt(b, textAboveHead, (int)localPosition.X, (int)localPosition.Y - 160, "", textAboveHeadAlpha, textAboveHeadColor, 1, (float)(getTileY() * 64 / 10000.0 + 1.0 / 1000.0 + getTileX() / 10000.0), false);
         }
 
         public override void SpecialAttack()
@@ -150,8 +147,8 @@ namespace StardewDruid.Monster
             {
                 case 0:
                     // ISSUE: explicit constructor call
-                    ((Vector2)ref zero).\u002Ector((float)((int)((double)((Character)this).Position.X / 64.0) + 3), (float)((int)((double)((Character)this).Position.Y / 64.0) - (4 + num)));
-                    if (this.altDirection == 3 || ((Character)this).flip)
+                    zero = new((int)(Position.X / 64.0) + 3, (int)(Position.Y / 64.0) - (4 + num));
+                    if (this.altDirection == 3 || flip)
                     {
                         zero.X -= 6f;
                         break;
@@ -159,12 +156,12 @@ namespace StardewDruid.Monster
                     break;
                 case 1:
                     // ISSUE: explicit constructor call
-                    ((Vector2)ref zero).\u002Ector((float)((int)((double)((Character)this).Position.X / 64.0) + (5 + num)), (float)(int)((double)((Character)this).Position.Y / 64.0));
+                    zero = new((int)(Position.X / 64.0) + (5 + num), (int)(Position.Y / 64.0));
                     break;
                 case 2:
                     // ISSUE: explicit constructor call
-                    ((Vector2)ref zero).\u002Ector((float)((int)((double)((Character)this).Position.X / 64.0) + 3), (float)((int)((double)((Character)this).Position.Y / 64.0) + (4 + num)));
-                    if (this.altDirection == 3 || ((Character)this).flip)
+                    zero = new((int)(Position.X / 64.0) + 3, (int)(Position.Y / 64.0) + (4 + num));
+                    if (this.altDirection == 3 || flip)
                     {
                         zero.X -= 6f;
                         break;
@@ -172,40 +169,40 @@ namespace StardewDruid.Monster
                     break;
                 default:
                     // ISSUE: explicit constructor call
-                    ((Vector2)ref zero).\u002Ector((float)((int)((double)((Character)this).Position.X / 64.0) - (5 + num)), (float)(int)((double)((Character)this).Position.Y / 64.0));
+                    zero = new((int)(Position.X / 64.0) - (5 + num), (int)(Position.Y / 64.0));
                     break;
             }
-          ((Character)this).currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(0, 125f, 4, 1, Vector2.op_Subtraction(Vector2.op_Subtraction(Vector2.op_Multiply(zero, 64f), new Vector2(32f, 32f)), new Vector2((float)(32 * this.blastRadius), (float)(32 * this.blastRadius))), false, false)
-          {
-              sourceRect = new Rectangle(0, 0, 64, 64),
-              sourceRectStartingPos = new Vector2(0.0f, 0.0f),
-              texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "EnergyBomb.png")),
-              scale = 2f + (float)this.blastRadius,
-              timeBasedMotion = true,
-              layerDepth = 999f,
-              rotationChange = 0.00628f,
-              alphaFade = 1f / 1000f
-          });
-            ((Character)this).currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(23, 500f, 6, 1, new Vector2(zero.X * 64f, zero.Y * 64f), false, Game1.random.NextDouble() < 0.5)
+
+            Vector2 zero64 = new(zero.X * 64, zero.Y * 64);
+            currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(0, 125f, 4, 1, new(zero64.X - 32 - (32 * blastRadius), zero64.Y - 32 - (32 * blastRadius)), false, false)
+            {
+                sourceRect = new Rectangle(0, 0, 64, 64),
+                sourceRectStartingPos = new Vector2(0.0f, 0.0f),
+                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "EnergyBomb.png")),
+                scale = 2f + blastRadius,
+                timeBasedMotion = true,
+                layerDepth = 999f,
+                rotationChange = 0.00628f,
+                alphaFade = 1f / 1000f
+            });
+            currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(23, 500f, 6, 1, new Vector2(zero.X * 64f, zero.Y * 64f), false, Game1.random.NextDouble() < 0.5)
             {
                 texture = Game1.mouseCursors,
                 light = true,
-                lightRadius = (float)(2 + this.blastRadius),
+                lightRadius = 2 + this.blastRadius,
                 lightcolor = Color.Black,
                 alphaFade = 0.03f,
-                Parent = ((Character)this).currentLocation
+                Parent = currentLocation
             });
-            Rectangle rectangle;
-            // ISSUE: explicit constructor call
-            ((Rectangle)ref rectangle).\u002Ector((int)(((double)zero.X - (double)this.blastRadius) * 64.0), (int)(((double)zero.Y - (double)this.blastRadius) * 64.0), 64 + this.blastRadius * 128, 64 + this.blastRadius * 128);
+            Rectangle rectangle = new((int)((zero.X - (double)this.blastRadius) * 64.0), (int)((zero.Y - (double)this.blastRadius) * 64.0), 64 + this.blastRadius * 128, 64 + this.blastRadius * 128);
             this.blastZone.Enqueue(rectangle);
-            // ISSUE: method pointer
-            DelayedAction.functionAfterDelay(new DelayedAction.delayedBehavior((object)this, __methodptr(TriggerBlast)), 375);
+
+            DelayedAction.functionAfterDelay(TriggerBlast, 375);
         }
 
         public void TriggerBlast()
         {
-            ModUtility.DamageFarmers(((Character)this).currentLocation, this.blastZone.Dequeue(), (int)((double)this.DamageToFarmer * 0.4), (StardewValley.Monsters.Monster)this);
+            ModUtility.DamageFarmers(currentLocation, this.blastZone.Dequeue(), (int)(DamageToFarmer * 0.4), this);
         }
     }
 }

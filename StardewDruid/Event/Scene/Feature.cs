@@ -13,16 +13,16 @@ namespace StardewDruid.Event.Scene
         public Feature(GameLocation location, Quest quest)
           : base(location, quest)
         {
-           hatsTexture = Game1.content.Load<Texture2D>("Characters\\Farmer\\hats");
+            hatsTexture = Game1.content.Load<Texture2D>("Characters\\Farmer\\hats");
             hatSourceRect = Game1.getSourceRectForStandardTileSheet(hatsTexture, 345, 20, 20);
         }
 
         public override void EventInterval()
         {
-            TemporaryAnimatedSprite temporaryAnimatedSprite = new TemporaryAnimatedSprite(0, 1000f, 1, 1, targetVector*64f, false, false)
+            TemporaryAnimatedSprite temporaryAnimatedSprite = new TemporaryAnimatedSprite(0, 1000f, 1, 1, targetVector * 64f, false, false)
             {
                 sourceRect = hatSourceRect,
-                sourceRectStartingPos = new Vector2((float)hatSourceRect.X, (float)hatSourceRect.Y),
+                sourceRectStartingPos = new Vector2(hatSourceRect.X, hatSourceRect.Y),
                 texture = hatsTexture,
                 scale = 4.5f
             };

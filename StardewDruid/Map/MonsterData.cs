@@ -1,17 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using StardewDruid.Cast;
-using StardewDruid.Event;
 using StardewDruid.Monster;
-using StardewValley;
-using StardewValley.Locations;
-using StardewValley.Monsters;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StardewDruid.Map
 {
@@ -105,7 +96,7 @@ namespace StardewDruid.Map
 
                 case 14: // Dino Monster
 
-                    theMonster = new Reaper(spawnVector, combatModifier);
+                    theMonster = new BossDino(spawnVector, combatModifier);
 
                     break;
 
@@ -115,7 +106,7 @@ namespace StardewDruid.Map
 
                     break;
 
-                case 16: 
+                case 16:
 
                     theMonster = new Boss(spawnVector, combatModifier);
 
@@ -186,7 +177,7 @@ namespace StardewDruid.Map
 
             if (characterName.Contains("Zero"))
             {
-                
+
                 characterSprite.SpriteHeight = 16;
 
                 characterSprite.SpriteWidth = 16;

@@ -1,11 +1,5 @@
-﻿using Force.DeepCloner;
-using Microsoft.Xna.Framework;
-using StardewModdingAPI;
-using StardewValley;
-using StardewValley.Locations;
-using StardewValley.Minigames;
+﻿using Microsoft.Xna.Framework;
 using StardewValley.TerrainFeatures;
-using System;
 using System.Collections.Generic;
 
 namespace StardewDruid.Cast.Weald
@@ -35,7 +29,7 @@ namespace StardewDruid.Cast.Weald
             for (int i = 0; i < debrisAmount; i++)
             {
 
-                throwList[i] = new(targetPlayer, targetVector*64, debrisType, 0);
+                throwList[i] = new(targetPlayer, targetVector * 64, debrisType, 0);
 
                 throwList[i].ThrowObject();
 

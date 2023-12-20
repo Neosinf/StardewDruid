@@ -1,11 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
-using StardewValley.Monsters;
 using StardewValley.Projectiles;
 using System;
 using System.Collections.Generic;
-using static StardewValley.IslandGemBird;
 
 namespace StardewDruid.Monster
 {
@@ -58,7 +56,7 @@ namespace StardewDruid.Monster
         public Texture2D birdTexture;
 
         public Firebird(Vector2 vector, int combatModifier)
-            : base("Shadow Brute",vector * 64)
+            : base("Shadow Brute", vector * 64)
         {
 
             birdTexture = Game1.content.Load<Texture2D>("LooseSprites\\GemBird");
@@ -108,7 +106,7 @@ namespace StardewDruid.Monster
                 _ => Color.White,
             };
 
-            birdItem = birdType switch 
+            birdItem = birdType switch
             {
                 "Emerald" => 60,
                 "Aquamarine" => 62,
@@ -132,21 +130,21 @@ namespace StardewDruid.Monster
 
                 currentTickIndex++;
 
-                if(currentTickIndex == 8)
+                if (currentTickIndex == 8)
                 {
 
                     if (currentAnimation == flyAnimation)
                     {
 
                         alpha -= 0.1f;
-                        
+
                     }
 
                     currentFrameIndex++;
 
                     if (currentFrameIndex == currentAnimation.Length)
                     {
-                        
+
                         if (currentAnimation == flyAnimation)
                         {
 
@@ -155,7 +153,7 @@ namespace StardewDruid.Monster
                             Health = 0;
 
                         }
-                        else if(currentAnimation == scratchAnimation)
+                        else if (currentAnimation == scratchAnimation)
                         {
 
                             currentAnimation = idleAnimation;
@@ -178,7 +176,7 @@ namespace StardewDruid.Monster
 
                 if (currentAnimation == flyAnimation)
                 {
-                    
+
                     height += 4f;
 
                     position.X -= 3f;
@@ -190,7 +188,7 @@ namespace StardewDruid.Monster
 
             b.Draw(birdTexture, Game1.GlobalToLocal(Game1.viewport, position.Value + new Vector2(0f, 0f - height)), new Rectangle(num * 32, 0, 32, 32), Color.White * alpha, 0f, new Vector2(8f, 0), 4f, SpriteEffects.None, (position.Value.Y - 1f) / 10000f);
 
-            b.Draw(birdTexture, Game1.GlobalToLocal(Game1.viewport, position.Value + new Vector2(0f, 0f - height)), new Rectangle(num * 32, 32, 32, 32), birdColor * alpha, 0f, new Vector2(8f,0), 4f, SpriteEffects.None, position.Value.Y / 10000f);
+            b.Draw(birdTexture, Game1.GlobalToLocal(Game1.viewport, position.Value + new Vector2(0f, 0f - height)), new Rectangle(num * 32, 32, 32, 32), birdColor * alpha, 0f, new Vector2(8f, 0), 4f, SpriteEffects.None, position.Value.Y / 10000f);
 
             b.Draw(Game1.shadowTexture, Game1.GlobalToLocal(Game1.viewport, position.Value), Game1.shadowTexture.Bounds, Color.White * alpha, 0f, new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y), 3f, SpriteEffects.None, (position.Y - 2f) / 10000f);
 
@@ -201,7 +199,7 @@ namespace StardewDruid.Monster
         {
             Vector2 vector = Position;
 
-            return new Rectangle((int)vector.X, (int)vector.Y+16, 64, 112);
+            return new Rectangle((int)vector.X, (int)vector.Y + 16, 64, 112);
 
         }
 
@@ -212,12 +210,12 @@ namespace StardewDruid.Monster
             if (currentAnimation == null)
             {
                 currentAnimation = scratchAnimation;
-            
+
                 currentFrameIndex = 0;
-            
+
             }
 
-            if(currentAnimation == flyAnimation)
+            if (currentAnimation == flyAnimation)
             {
 
                 return 0;
@@ -269,7 +267,7 @@ namespace StardewDruid.Monster
 
         public override void defaultMovementBehavior(GameTime time)
         {
-            
+
         }
 
         protected override void sharedDeathAnimation()
@@ -294,22 +292,22 @@ namespace StardewDruid.Monster
                 {
 
                     base.IsWalkingTowardPlayer = false;
-                    
+
                     Vector2 vector = new Vector2(base.Position.X, base.Position.Y + 64f);
-                    
+
                     Halt();
-                    
+
                     Vector2 velocityTowardPoint = Utility.getVelocityTowardPoint(getStandingPosition(), new Vector2(base.Player.GetBoundingBox().X, base.Player.GetBoundingBox().Y) + new Vector2(Game1.random.Next(-128, 128)), 8f);
-                    
+
                     BasicProjectile basicProjectile = new BasicProjectile(damageToFarmer, 10, 2, 4, 0f, velocityTowardPoint.X, velocityTowardPoint.Y, getStandingPosition() - new Vector2(32f, 0f), "", "", explode: true, damagesMonsters: false, base.currentLocation, this);
-                    
+
                     basicProjectile.height.Value = 48f;
-                    
+
                     base.currentLocation.projectiles.Add(basicProjectile);
-                    
+
                     base.currentLocation.playSound("fireball");
-                    
-                    firingTimer = Game1.random.Next(2,6) * 1000f;
+
+                    firingTimer = Game1.random.Next(2, 6) * 1000f;
 
                 }
 

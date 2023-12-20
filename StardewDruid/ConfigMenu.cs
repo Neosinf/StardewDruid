@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GenericModConfigMenu;
+﻿using GenericModConfigMenu;
 using StardewDruid.Map;
-using StardewModdingAPI;
-using StardewValley.Monsters;
 
 namespace StardewDruid
 {
@@ -65,7 +58,7 @@ namespace StardewDruid
                 setValue: value => Config.slotAttune = value
             );
 
-            string[] colourOption = { "Red", "Blue", "Green","Purple", "Black" };
+            string[] colourOption = { "Red", "Blue", "Green", "Purple", "Black" };
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
@@ -113,7 +106,7 @@ namespace StardewDruid
                 name: () => "Set Progress",
                 tooltip: () => "Use to adjust progress level on game load. -1 is no change. Note that adjustments may clear or miss levels of progress.",
                 min: -1,
-                max: 21,
+                max: QuestData.MaxProgress(),
                 interval: 1,
                 getValue: () => Config.newProgress,
                 setValue: value => Config.newProgress = value

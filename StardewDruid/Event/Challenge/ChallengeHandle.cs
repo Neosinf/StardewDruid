@@ -1,11 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Map;
-using StardewDruid.Monster;
-using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Characters;
-using System;
 using System.Collections.Generic;
 
 namespace StardewDruid.Event.Challenge
@@ -94,7 +91,7 @@ namespace StardewDruid.Event.Challenge
 
                 Game1.addHUDMessage(new HUDMessage("Challenge will fail if you leave!", 2));
 
-                if(challengeWarning > 5)
+                if (challengeWarning > 5)
                 {
 
                     eventAbort = true;

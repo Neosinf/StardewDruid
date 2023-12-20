@@ -1,13 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewValley;
-using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
-using StardewValley.Tools;
 using System;
-using System.Collections.Generic;
-using System.Runtime.Intrinsics;
-using System.Xml.Linq;
-using xTile;
 
 namespace StardewDruid.Cast.Stars
 {

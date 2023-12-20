@@ -1,15 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Map;
-using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
-using System;
 using System.Collections.Generic;
-using System.Xml.Linq;
-using xTile.Dimensions;
-using xTile.Layers;
-using xTile.Tiles;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -123,10 +115,51 @@ namespace StardewDruid.Cast.Weald
 
 
             }
-            else if (riteData.spawnIndex["trees"] && neighbourList.Count == 0 && !forgotTrees && targetPlayer.facingDirection != targetPlayer.getGeneralDirectionTowards(targetVector)) // 10/120 tree
+            else if (riteData.spawnIndex["trees"] && neighbourList.Count == 0 && !forgotTrees) // 10/120 tree
             {
 
-                bool treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
+                bool treeSpawn = false;
+
+                switch (targetPlayer.FacingDirection)
+                {
+                    case 0:
+
+                        if (riteData.castVector.Y < targetVector.Y)
+                        {
+                            treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
+
+                        }
+
+                        break;
+
+                    case 1:
+
+                        if (riteData.castVector.X > targetVector.X)
+                        {
+                            treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
+
+                        }
+                        break;
+
+                    case 2:
+
+                        if (riteData.castVector.Y > targetVector.Y)
+                        {
+                            treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
+
+                        }
+                        break;
+
+                    default:
+
+                        if (riteData.castVector.X < targetVector.X)
+                        {
+                            treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
+
+                        }
+                        break;
+
+                }
 
                 if (treeSpawn)
                 {
@@ -134,7 +167,6 @@ namespace StardewDruid.Cast.Weald
                     castFire = true;
 
                 }
-
             }
 
 

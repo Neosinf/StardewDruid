@@ -4,9 +4,6 @@ using StardewDruid.Map;
 using StardewDruid.Monster;
 using StardewValley;
 using System.Collections.Generic;
-using xTile.Dimensions;
-using xTile.Layers;
-using xTile.Tiles;
 
 namespace StardewDruid.Event.Challenge
 {
@@ -73,7 +70,7 @@ namespace StardewDruid.Event.Challenge
         public override bool EventExpire()
         {
 
-            if(eventLinger == -1)
+            if (eventLinger == -1)
             {
 
                 List<string> NPCIndex = VillagerData.VillagerIndex("town");
@@ -108,7 +105,7 @@ namespace StardewDruid.Event.Challenge
 
             activeCounter++;
 
-            if(eventLinger != -1)
+            if (eventLinger != -1)
             {
 
                 return;

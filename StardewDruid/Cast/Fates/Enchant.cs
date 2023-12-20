@@ -1,12 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
-using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
-using static StardewValley.Minigames.CraneGame;
 
 
 namespace StardewDruid.Cast.Fates
@@ -26,7 +22,7 @@ namespace StardewDruid.Cast.Fates
             targetObject = machine;
 
             source = Source;
-        
+
         }
 
         public override void CastEffect()
@@ -34,7 +30,7 @@ namespace StardewDruid.Cast.Fates
 
             DelayedAction.functionAfterDelay(CastAfterDelay, 1000);
 
-            ModUtility.AnimateFate(targetLocation,targetPlayer.getTileLocation(), targetVector, source);
+            ModUtility.AnimateFate(targetLocation, targetPlayer.getTileLocation(), targetVector, source);
 
             castFire = true;
 
@@ -60,7 +56,7 @@ namespace StardewDruid.Cast.Fates
                 DelayedAction.functionAfterDelay(delegate { targetObject.minutesElapsed(10, targetLocation); }, 50);
 
             }
-            else if(targetObject.heldObject.Value == null)
+            else if (targetObject.heldObject.Value == null)
             {
                 switch (targetObject.name)
                 {
@@ -94,7 +90,7 @@ namespace StardewDruid.Cast.Fates
         public void FillDeconstructor()
         {
 
-            KeyValuePair<string,string> craftingRecipe = CraftingRecipe.craftingRecipes.ElementAt(randomIndex.Next(CraftingRecipe.craftingRecipes.Count));
+            KeyValuePair<string, string> craftingRecipe = CraftingRecipe.craftingRecipes.ElementAt(randomIndex.Next(CraftingRecipe.craftingRecipes.Count));
 
             string[] array = craftingRecipe.Value.Split('/')[0].Split(' ');
 
@@ -117,9 +113,9 @@ namespace StardewDruid.Cast.Fates
             targetObject.MinutesUntilReady = 240;
 
             Game1.playSound("furnace");
-            
-        }        
-        
+
+        }
+
         public void FillBoneMill()
         {
 
@@ -153,9 +149,9 @@ namespace StardewDruid.Cast.Fates
             targetObject.heldObject.Value = new StardewValley.Object(num2, num3);
 
             targetObject.MinutesUntilReady = 240;
-            
+
             targetLocation.playSound("skeletonStep");
-            
+
             DelayedAction.playSoundAfterDelay("skeletonHit", 150);
 
         }
@@ -213,7 +209,7 @@ namespace StardewDruid.Cast.Fates
 
             int cropIndex = cropList[randomIndex.Next(cropList.Count)];
 
-            StardewValley.Object input = new(cropIndex,0);
+            StardewValley.Object input = new(cropIndex, 0);
 
             if (input == null) { return; }
 
@@ -230,7 +226,7 @@ namespace StardewDruid.Cast.Fates
 
             targetObject.MinutesUntilReady = 1000;
 
-            switch ((int)@input.ParentSheetIndex)
+            switch (@input.ParentSheetIndex)
             {
                 case 262:
                     targetObject.heldObject.Value = new StardewValley.Object(Vector2.Zero, 346, "Beer", canBeSetDown: false, canBeGrabbed: true, isHoedirt: false, isSpawnedObject: false);
@@ -259,7 +255,7 @@ namespace StardewDruid.Cast.Fates
             {
                 case -75:
                     targetObject.heldObject.Value = new StardewValley.Object(Vector2.Zero, 350, @input.Name + " Juice", canBeSetDown: false, canBeGrabbed: true, isHoedirt: false, isSpawnedObject: false);
-                    targetObject.heldObject.Value.Price = (int)((double)@input.Price * 2.25);
+                    targetObject.heldObject.Value.Price = (int)(@input.Price * 2.25);
                     targetObject.heldObject.Value.name = @input.Name + " Juice";
                     targetObject.heldObject.Value.preserve.Value = StardewValley.Object.PreserveType.Juice;
                     targetObject.heldObject.Value.preservedParentSheetIndex.Value = @input.ParentSheetIndex;
@@ -405,7 +401,7 @@ namespace StardewDruid.Cast.Fates
                 305,
                 107,
                 928,
-            
+
             };
 
             int eggIndex = eggList[randomIndex.Next(eggList.Count)];
@@ -528,7 +524,7 @@ namespace StardewDruid.Cast.Fates
             }
 
         }
-        
+
         public void FillFurnace()
         {
 
@@ -588,20 +584,20 @@ namespace StardewDruid.Cast.Fates
             targetObject.MinutesUntilReady = 240;
 
         }
-        
+
         public void FillGeodeCrusher()
         {
-            
-            targetObject.heldObject.Value = (StardewValley.Object)Utility.getTreasureFromGeode(new StardewValley.Object(749,1));
+
+            targetObject.heldObject.Value = (StardewValley.Object)Utility.getTreasureFromGeode(new StardewValley.Object(749, 1));
 
             Game1.stats.GeodesCracked++;
 
             targetObject.MinutesUntilReady = 240;
-            
+
             Game1.playSound("drumkit4");
-            
+
             Game1.playSound("stoneCrack");
-            
+
             DelayedAction.playSoundAfterDelay("steam", 200);
 
         }

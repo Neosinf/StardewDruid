@@ -2,12 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Map;
-using StardewDruid.Monster;
-using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Characters;
-using StardewValley.Locations;
-using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -56,7 +51,7 @@ namespace StardewDruid.Event
 
             animationColor = new Color(0, 1f, 0, 1f);
 
-            if(quest.triggerColour != Color.White)
+            if (quest.triggerColour != Color.White)
             {
 
                 animationColor = quest.triggerColour;
@@ -123,9 +118,9 @@ namespace StardewDruid.Event
 
             }
 
-            if (questData.triggerAnywhere || Vector2.Distance(rite.castVector, targetVector) <= 3f)
+            if (questData.triggerAnywhere || Vector2.Distance(rite.castVector, targetVector) <= 5f)
             {
-                
+
                 EventRemove();
 
                 Mod.instance.triggerList.Remove(questData.name);
@@ -148,7 +143,7 @@ namespace StardewDruid.Event
 
         public void RemoveAnimations()
         {
-            
+
             if (targets.Count > 0)
             {
 

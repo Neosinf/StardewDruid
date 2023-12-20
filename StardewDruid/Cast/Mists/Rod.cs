@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using StardewModdingAPI;
 using StardewValley;
-using System;
 
 
 namespace StardewDruid.Cast.Mists

@@ -1,10 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
-using StardewValley.Monsters;
 using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
 
 namespace StardewDruid.Monster
 {
@@ -25,12 +23,12 @@ namespace StardewDruid.Monster
         public Dictionary<int, Vector2> hatOffsets;
 
         public BossBat(Vector2 vector, int combatModifier)
-            : base(vector * 64,200)
+            : base(vector * 64, 200)
         {
 
             moveTowardPlayerThreshold.Value = 99;
 
-            Health = (int)(combatModifier * 6);
+            Health = combatModifier * 6;
 
             MaxHealth = Health;
 
@@ -72,7 +70,7 @@ namespace StardewDruid.Monster
         {
 
             if (posturing) { return; }
-            
+
             base.behaviorAtGameTick(time);
 
         }
@@ -83,7 +81,7 @@ namespace StardewDruid.Monster
             if (posturing) { return; }
 
             base.defaultMovementBehavior(time);
-            
+
         }
 
         protected override void localDeathAnimation()
@@ -91,7 +89,7 @@ namespace StardewDruid.Monster
             ModUtility.AnimateDeathSpray(base.currentLocation, base.Position, Color.MediumPurple);
         }
 
-        public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who) 
+        public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who)
         {
 
             if (posturing) { return 0; }
@@ -104,7 +102,7 @@ namespace StardewDruid.Monster
 
             }
 
-            return base.takeDamage(damage, xTrajectory,yTrajectory,isBomb,addedPrecision,who);
+            return base.takeDamage(damage, xTrajectory, yTrajectory, isBomb, addedPrecision, who);
 
         }
 
@@ -116,27 +114,27 @@ namespace StardewDruid.Monster
             }
 
             b.Draw(
-                Sprite.Texture, 
-                getLocalPosition(Game1.viewport)+ new Vector2(32f, 32f), 
-                Sprite.SourceRect, 
-                (shakeTimer > 0) ? Color.Red : Color.White, 
-                0f, 
-                new Vector2(8f, 16f), 
-                Math.Max(0.2f, scale) * 6f, 
+                Sprite.Texture,
+                getLocalPosition(Game1.viewport) + new Vector2(32f, 32f),
+                Sprite.SourceRect,
+                (shakeTimer > 0) ? Color.Red : Color.White,
+                0f,
+                new Vector2(8f, 16f),
+                Math.Max(0.2f, scale) * 6f,
                 flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 Math.Max(0f, drawOnTop ? 0.991f : getStandingY() / 10000f)
             );
-            
+
             b.Draw(
-                Game1.shadowTexture, 
-                getLocalPosition(Game1.viewport)+ new Vector2(32f, 64f), 
-                Game1.shadowTexture.Bounds, 
-                Color.White, 
-                0f, 
-                new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y), 
-                6f, 
-                SpriteEffects.None, 
-                base.wildernessFarmMonster ? 0.0001f : ((float)(getStandingY() - 1) / 10000f)
+                Game1.shadowTexture,
+                getLocalPosition(Game1.viewport) + new Vector2(32f, 64f),
+                Game1.shadowTexture.Bounds,
+                Color.White,
+                0f,
+                new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y),
+                6f,
+                SpriteEffects.None,
+                base.wildernessFarmMonster ? 0.0001f : ((getStandingY() - 1) / 10000f)
              );
 
             int frameOffset = Sprite.currentFrame % 4;

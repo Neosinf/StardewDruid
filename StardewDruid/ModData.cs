@@ -1,10 +1,4 @@
-﻿using System.Collections.Generic;
-using StardewModdingAPI;
-using Microsoft.Xna.Framework;
-using System.Reflection.PortableExecutable;
-using StardewModdingAPI.Utilities;
-using System.Runtime.CompilerServices;
-using StardewValley.Tools;
+﻿using StardewModdingAPI.Utilities;
 
 namespace StardewDruid
 {

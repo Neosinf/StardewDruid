@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using StardewModdingAPI;
-using StardewValley;
 using System;
-using StardewValley.Monsters;
+using System.Collections.Generic;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -14,7 +11,7 @@ namespace StardewDruid.Cast.Weald
             : base(target, rite)
         {
 
-            if(rite.caster.ForagingLevel >= 8)
+            if (rite.caster.ForagingLevel >= 8)
             {
 
                 castCost = 1;
@@ -40,14 +37,14 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if (randomIndex.Next(30) == 0 && riteData.spawnIndex["wildspawn"] && !riteData.castToggle.ContainsKey("forgetWildspawn"))
+            if (randomIndex.Next(30) == 0 && riteData.spawnIndex["wildspawn"] && !Mod.instance.EffectDisabled("Wildspawn"))
             {
 
                 StardewValley.Monsters.Monster spawnMonster = Mod.instance.SpawnMonster(targetLocation, targetVector, new() { 99, }, "tree");
 
             }
 
-            if (riteData.spawnIndex["grass"] && !riteData.castToggle.ContainsKey("forgetTrees")) // 2/10 grass
+            if (riteData.spawnIndex["grass"] && !Mod.instance.EffectDisabled("Trees")) // 2/10 grass
             {
 
                 Dictionary<string, List<Vector2>> neighbourList = ModUtility.NeighbourCheck(targetLocation, targetVector);
@@ -79,7 +76,7 @@ namespace StardewDruid.Cast.Weald
 
                     }
 
-                    foreach(Vector2 grassVector in grassVectors)
+                    foreach (Vector2 grassVector in grassVectors)
                     {
 
                         StardewValley.TerrainFeatures.Grass grassFeature = new(1, 4);
@@ -96,15 +93,13 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            //StardewValley.TerrainFeatures.Tree treeFeature = targetLocation.terrainFeatures[targetVector] as StardewValley.TerrainFeatures.Tree;
-
             int debrisType = 388;
 
             int debrisAxe = Mod.instance.virtualAxe.UpgradeLevel + 1;
 
             int debrisMax = 3;
 
-            if(targetPlayer.professions.Contains(12))
+            if (targetPlayer.professions.Contains(12))
             {
 
                 debrisMax++;
@@ -141,20 +136,18 @@ namespace StardewDruid.Cast.Weald
 
                 throwList[i].ThrowObject();
 
-                //Game1.createObjectDebris(, (int)targetVector.X, (int)targetVector.Y + 1);
-
             }
 
             if (!treeFeature.stump.Value)
             {
 
-                treeFeature.performUseAction(targetVector,targetLocation);
+                treeFeature.performUseAction(targetVector, targetLocation);
 
             }
 
             castFire = true;
 
-            targetPlayer.gainExperience(2,2); // gain foraging experience
+            targetPlayer.gainExperience(2, 2); // gain foraging experience
 
 
         }

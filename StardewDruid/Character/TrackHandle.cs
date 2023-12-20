@@ -12,57 +12,57 @@ using System.Collections.Generic;
 #nullable disable
 namespace StardewDruid.Character
 {
-  public class TrackHandle
-  {
-    public string trackFor;
-    public string trackLocation;
-    public Vector2 trackPlayer;
-    public List<Vector2> trackVectors;
-    public int trackLimit;
-
-    public TrackHandle(string For)
+    public class TrackHandle
     {
-      this.trackVectors = new List<Vector2>();
-      this.trackPlayer = new Vector2(-99f);
-      this.trackLimit = 24;
-      this.trackFor = For;
-    }
+        public string trackFor;
+        public string trackLocation;
+        public Vector2 trackPlayer;
+        public List<Vector2> trackVectors;
+        public int trackLimit;
 
-    public void TrackPlayer()
-    {
-      if (this.trackLocation != ((StardewValley.Character) Game1.player).currentLocation.Name)
-      {
-        this.trackLocation = ((StardewValley.Character) Game1.player).currentLocation.Name;
-        this.trackPlayer = new Vector2(-99f);
-        this.trackVectors.Clear();
-      }
-      Vector2 position = ((StardewValley.Character) Game1.player).Position;
-      if ((double) Vector2.Distance(position, this.trackPlayer) >= 64.0)
-      {
-        this.trackPlayer = position;
-        this.trackVectors.Add(position);
-        if (this.trackVectors.Count >= this.trackLimit)
-          this.trackVectors.RemoveAt(0);
-      }
-      if (!(((StardewValley.Character) Mod.instance.characters[this.trackFor]).currentLocation.Name != ((StardewValley.Character) Game1.player).currentLocation.Name) || this.trackVectors.Count < 3)
-        return;
-      Mod.instance.characters[this.trackFor].WarpToTarget();
-    }
+        public TrackHandle(string For)
+        {
+            this.trackVectors = new List<Vector2>();
+            this.trackPlayer = new Vector2(-99f);
+            this.trackLimit = 24;
+            this.trackFor = For;
+        }
 
-    public void TruncateTo(int requirement)
-    {
-      int num = Math.Min(requirement, this.trackVectors.Count);
-      List<Vector2> vector2List = new List<Vector2>();
-      for (int index = this.trackVectors.Count - num; index < this.trackVectors.Count; ++index)
-        vector2List.Add(this.trackVectors[index]);
-      this.trackVectors = vector2List;
-    }
+        public void TrackPlayer()
+        {
+            if (this.trackLocation != Game1.player.currentLocation.Name)
+            {
+                this.trackLocation = Game1.player.currentLocation.Name;
+                this.trackPlayer = new Vector2(-99f);
+                this.trackVectors.Clear();
+            }
+            Vector2 position = Game1.player.Position;
+            if ((double)Vector2.Distance(position, this.trackPlayer) >= 64.0)
+            {
+                this.trackPlayer = position;
+                this.trackVectors.Add(position);
+                if (this.trackVectors.Count >= this.trackLimit)
+                    this.trackVectors.RemoveAt(0);
+            }
+            if (!(Mod.instance.characters[this.trackFor].currentLocation.Name != Game1.player.currentLocation.Name) || this.trackVectors.Count < 3)
+                return;
+            Mod.instance.characters[this.trackFor].WarpToTarget();
+        }
 
-    public Vector2 NextVector()
-    {
-      Vector2 trackVector = this.trackVectors[0];
-      this.trackVectors.RemoveAt(0);
-      return trackVector;
+        public void TruncateTo(int requirement)
+        {
+            int num = Math.Min(requirement, this.trackVectors.Count);
+            List<Vector2> vector2List = new List<Vector2>();
+            for (int index = this.trackVectors.Count - num; index < this.trackVectors.Count; ++index)
+                vector2List.Add(this.trackVectors[index]);
+            this.trackVectors = vector2List;
+        }
+
+        public Vector2 NextVector()
+        {
+            Vector2 trackVector = this.trackVectors[0];
+            this.trackVectors.RemoveAt(0);
+            return trackVector;
+        }
     }
-  }
 }

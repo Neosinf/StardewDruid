@@ -1,9 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using StardewValley;
-using StardewValley.Monsters;
-using StardewValley.Tools;
 using System;
-using System.Threading;
 
 namespace StardewDruid.Cast.Mists
 {

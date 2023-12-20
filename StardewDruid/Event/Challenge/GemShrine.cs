@@ -3,8 +3,6 @@ using StardewDruid.Cast;
 using StardewDruid.Map;
 using StardewDruid.Monster;
 using StardewValley;
-using StardewValley.Locations;
-using System;
 using System.Collections.Generic;
 using static StardewValley.IslandGemBird;
 
@@ -64,8 +62,8 @@ namespace StardewDruid.Event.Challenge
 
         public override bool EventExpire()
         {
-                
-            if(eventLinger == -1)
+
+            if (eventLinger == -1)
             {
                 if (expireEarly)
                 {

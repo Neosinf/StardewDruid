@@ -1,12 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Map;
-using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
-using StardewValley.TerrainFeatures;
-using StardewValley.Tools;
-using System;
 using System.Collections.Generic;
 
 namespace StardewDruid.Event.Scene

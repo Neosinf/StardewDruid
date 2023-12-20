@@ -5,10 +5,6 @@ using StardewValley;
 using StardewValley.Projectiles;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StardewDruid.Monster
 {
@@ -28,7 +24,7 @@ namespace StardewDruid.Monster
         public bool defeated;
 
         public RedDragon(Vector2 vector, int combatModifier)
-            : base(vector*64)
+            : base(vector * 64)
         {
             Health = combatModifier * 12;
 
@@ -116,7 +112,7 @@ namespace StardewDruid.Monster
             base.update(time, location);
 
         }
-            
+
         public override void reloadSprite()
         {
             Sprite = MonsterData.MonsterSprite("RedDragon");
@@ -184,11 +180,11 @@ namespace StardewDruid.Monster
 
             Health -= num;
 
-            if(Game1.random.Next(5) == 0)
+            if (Game1.random.Next(5) == 0)
             {
                 setTrajectory(xTrajectory, yTrajectory);
             }
-            
+
             if (Health <= 0)
             {
                 deathAnimation();
@@ -207,7 +203,7 @@ namespace StardewDruid.Monster
                 DelayedAction.functionAfterDelay(burningDesert, 600);
 
             }
-            
+
             return num;
         }
 
@@ -324,7 +320,7 @@ namespace StardewDruid.Monster
                             case 0:
                                 yVelocity = -1f;
                                 startingPosition = new Vector2(box.Center.X, box.Top) - new Vector2(0, 64);
-                                startingPosition2 = startingPosition - new Vector2(16,0);
+                                startingPosition2 = startingPosition - new Vector2(16, 0);
                                 startingPosition3 = startingPosition + new Vector2(16, 0);
                                 num = 90f;
                                 burningVector = new Vector2(GetBoundingBox().Center.X, GetBoundingBox().Center.Y - 512);
@@ -350,7 +346,7 @@ namespace StardewDruid.Monster
                                 break;
                             default: // 2 / down
                                 yVelocity = 1f;
-                                startingPosition = new Vector2(box.Center.X, box.Top) + new Vector2(0,32);
+                                startingPosition = new Vector2(box.Center.X, box.Top) + new Vector2(0, 32);
                                 startingPosition2 = startingPosition - new Vector2(16, 0);
                                 startingPosition3 = startingPosition + new Vector2(16, 0);
                                 num = 270f;

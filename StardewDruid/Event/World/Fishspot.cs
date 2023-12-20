@@ -1,13 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
-using StardewDruid.Event.Challenge;
 using StardewDruid.Map;
 using StardewValley;
 using StardewValley.Tools;
-using System.Collections.Generic;
-using xTile.Dimensions;
-using xTile.Layers;
-using xTile.Tiles;
 
 namespace StardewDruid.Event.World
 {

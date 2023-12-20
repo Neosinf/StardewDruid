@@ -1,5 +1,5 @@
-﻿using StardewDruid.Map;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using StardewDruid.Map;
 using StardewValley;
 using System;
 using System.Collections.Generic;

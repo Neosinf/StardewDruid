@@ -1,13 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using StardewDruid.Cast.Earth;
-using StardewModdingAPI;
-using StardewValley;
-using StardewValley.Menus;
-using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
-using System;
-using System.Collections.Generic;
-using static StardewValley.Menus.CharacterCustomization;
 
 namespace StardewDruid.Cast.Fates
 {

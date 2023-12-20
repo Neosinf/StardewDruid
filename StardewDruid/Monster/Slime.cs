@@ -1,16 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.Monsters;
-using System.Collections.Generic;
 using System;
-using Microsoft.Xna.Framework.Graphics;
-using System.Reflection.Metadata.Ecma335;
+using System.Collections.Generic;
 
 namespace StardewDruid.Monster
 {
     public class Slime : GreenSlime
     {
-        
+
         public List<string> ouchList;
 
         public Texture2D hatsTexture;
@@ -31,7 +30,7 @@ namespace StardewDruid.Monster
 
         public double spawnTimeout;
 
-        public Slime(Vector2 position, int combatModifier,bool hats)
+        public Slime(Vector2 position, int combatModifier, bool hats)
             : base(position * 64, combatModifier / 2)
         {
 
@@ -140,7 +139,7 @@ namespace StardewDruid.Monster
             if (!IsInvisible && Utility.isOnScreen(Position, 128) && partyHats)
             {
 
-                if(Sprite.currentFrame >= 16)
+                if (Sprite.currentFrame >= 16)
                 {
                     hatOffsets = new()
                     {
@@ -162,19 +161,19 @@ namespace StardewDruid.Monster
                     };
 
                 }
- 
+
                 hatOffset = hatOffsets[Sprite.currentFrame % 4];
 
                 Vector2 vector = Vector2.Zero;
 
                 if (stackedSlimes.Value > 0)
                 {
-                    vector = new Vector2((float)Math.Sin((double)randomStackOffset + Game1.currentGameTime.TotalGameTime.TotalSeconds * Math.PI * 2.0 + (double)((stackedSlimes.Value-1) * 30)) * 8f, -30 * (stackedSlimes.Value-1));
+                    vector = new Vector2((float)Math.Sin(randomStackOffset + Game1.currentGameTime.TotalGameTime.TotalSeconds * Math.PI * 2.0 + (stackedSlimes.Value - 1) * 30) * 8f, -30 * (stackedSlimes.Value - 1));
                 }
 
                 Vector2 localPosition = getLocalPosition(Game1.viewport) + new Vector2(32f, GetBoundingBox().Height / 2 + yOffset) + vector;
 
-                float depth = Math.Max(0f, drawOnTop ? 0.992f : ((float)(getStandingY() * 2) / 10000f)+0.00005f);
+                float depth = Math.Max(0f, drawOnTop ? 0.992f : (getStandingY() * 2 / 10000f) + 0.00005f);
 
                 b.Draw(
                     hatsTexture,
@@ -188,7 +187,7 @@ namespace StardewDruid.Monster
                     flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                     depth
                 );
-                
+
             }
 
         }

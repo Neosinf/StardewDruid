@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using StardewModdingAPI;
-using StardewValley;
 using System;
-using StardewValley.Monsters;
+using System.Collections.Generic;
 
 namespace StardewDruid.Cast.Mists
 {

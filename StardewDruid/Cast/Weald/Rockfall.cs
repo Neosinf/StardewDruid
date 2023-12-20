@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewValley;
-using StardewValley.Locations;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using xTile.Dimensions;
 using xTile.Layers;
 using xTile.Tiles;
@@ -24,8 +21,6 @@ namespace StardewDruid.Cast.Weald
         public bool generateHoed;
 
         public int castDelay;
-
-        public string castSound;
 
         public Rockfall(Vector2 target, Rite rite)
             : base(target, rite)
@@ -127,13 +122,6 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if(castSound != null)
-            {
-
-                targetLocation.playSoundPitched(castSound, 800);
-
-            }
-
         }
 
         public void RockImpact()
@@ -144,31 +132,39 @@ namespace StardewDruid.Cast.Weald
 
             for (int i = 0; i < generateRock; i++)
             {
-
+                Throw throwObject;
                 if (i == 0)
                 {
 
                     if (targetPlayer.professions.Contains(21) && rockCut == 0)
                     {
 
-                        Game1.createObjectDebris(382, (int)targetVector.X, (int)targetVector.Y);
+                        //Game1.createObjectDebris(382, (int)targetVector.X, (int)targetVector.Y);
+                        throwObject = new(targetPlayer, targetVector * 64, 382);
 
+                        throwObject.ThrowObject();
                     }
                     else if (targetPlayer.professions.Contains(19) && rockCut == 0)
                     {
 
-                        Game1.createObjectDebris(debrisIndex, (int)targetVector.X, (int)targetVector.Y);
+                        //Game1.createObjectDebris(debrisIndex, (int)targetVector.X, (int)targetVector.Y);
+                        throwObject = new(targetPlayer, targetVector * 64, debrisIndex);
 
+                        throwObject.ThrowObject();
                     }
 
-                    Game1.createObjectDebris(debrisIndex, (int)targetVector.X, (int)targetVector.Y);
+                    //Game1.createObjectDebris(debrisIndex, (int)targetVector.X, (int)targetVector.Y);
+                    throwObject = new(targetPlayer, targetVector * 64, debrisIndex);
 
+                    throwObject.ThrowObject();
                 }
                 else
                 {
 
-                    Game1.createObjectDebris(390, (int)targetVector.X, (int)targetVector.Y);
+                    //Game1.createObjectDebris(390, (int)targetVector.X, (int)targetVector.Y);
+                    throwObject = new(targetPlayer, targetVector * 64, 390);
 
+                    throwObject.ThrowObject();
                 }
 
             }
@@ -177,13 +173,6 @@ namespace StardewDruid.Cast.Weald
             {
 
                 Mod.instance.UpdateTask("lessonRockfall", generateRock);
-
-            }
-
-            if(castSound != null)
-            {
-
-                targetLocation.playSoundPitched(castSound, 800);
 
             }
 

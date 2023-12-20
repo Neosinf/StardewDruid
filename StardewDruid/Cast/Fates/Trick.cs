@@ -1,13 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using StardewDruid.Cast.Earth;
-using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Menus;
-using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
-using System;
 using System.Collections.Generic;
-using static System.Collections.Specialized.BitVector32;
 
 namespace StardewDruid.Cast.Fates
 {
@@ -78,7 +71,7 @@ namespace StardewDruid.Cast.Fates
 
                         case 0:
 
-                            ModUtility.AnimateMeteor(targetLocation, riteWitness.getTileLocation() - new Vector2(0,1), true);
+                            ModUtility.AnimateMeteor(targetLocation, riteWitness.getTileLocation() - new Vector2(0, 1), true);
 
                             DelayedAction.functionAfterDelay(DeathSpray, 200);
 
@@ -90,7 +83,7 @@ namespace StardewDruid.Cast.Fates
 
                             ModUtility.AnimateRandomCritter(targetLocation, riteWitness.getTileLocation());
 
-                            friendship = randomIndex.Next(1,friendshipRatio) * 25;
+                            friendship = randomIndex.Next(1, friendshipRatio) * 25;
                             this.trick = "critter";
                             break;
 
@@ -98,12 +91,12 @@ namespace StardewDruid.Cast.Fates
 
                             ModUtility.AnimateButterflySpray(targetLocation, riteWitness.getTileLocation());
 
-                            friendship = randomIndex.Next(1,friendshipRatio) * 25;
+                            friendship = randomIndex.Next(1, friendshipRatio) * 25;
 
                             break;
-                    
+
                     }
-                    
+
                     break;
 
                 default:
@@ -137,9 +130,9 @@ namespace StardewDruid.Cast.Fates
                             this.trick = "fish";
                             break;
                     }
-                    
+
                     break;
-            
+
             }
 
             DelayedAction.functionAfterDelay(VillagerReaction, reaction);

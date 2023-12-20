@@ -1,15 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using StardewModdingAPI;
 using StardewValley;
 using StardewValley.TerrainFeatures;
-using System;
-using System.Collections.Generic;
 //using System.Numerics;
-using System.Reflection;
-using System.Reflection.Emit;
-using xTile.Dimensions;
-using xTile.Layers;
-using xTile.Tiles;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -65,13 +57,13 @@ namespace StardewDruid.Cast.Weald
                     hoeDirt.destroyCrop(targetVector, true, targetLocation);
 
                 }
-            
+
             }
 
             if (hoeDirt.crop == null)
             {
-            
-                if(!reseed)
+
+                if (!reseed)
                 {
                     return;
 

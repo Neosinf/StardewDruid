@@ -1,16 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Netcode;
 using StardewDruid.Character;
 using StardewModdingAPI;
 using StardewValley;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace StardewDruid.Map
 {
@@ -19,8 +13,12 @@ namespace StardewDruid.Map
 
         public static void CharacterLoad(string characterName, string startMap)
         {
-            if (!Context.IsMainPlayer) { return; }
+            if (!Context.IsMainPlayer) { 
             
+                return; 
+            
+            }
+
             if (Mod.instance.characters.ContainsKey(characterName))
             {
 
@@ -42,6 +40,8 @@ namespace StardewDruid.Map
                 GameLocation startLocation = Game1.getLocationFromName(startMap);
 
                 startLocation.characters.Add(npcEffigy);
+
+                npcEffigy.currentLocation = startLocation;
 
                 npcEffigy.update(Game1.currentGameTime, startLocation);
 
@@ -78,6 +78,8 @@ namespace StardewDruid.Map
                 GameLocation startLocation = Game1.getLocationFromName(startMap);
 
                 startLocation.characters.Add(npcJester);
+
+                npcJester.currentLocation = startLocation;
 
                 npcJester.update(Game1.currentGameTime, startLocation);
 
@@ -236,11 +238,7 @@ namespace StardewDruid.Map
 
                             Vector2 cavePosition = new Vector2(warp.TargetX, warp.TargetY - 2) * 64;
 
-                            //Vector2 caveOffset = (cavePosition.Y <= 512) ? new(0, 64) : new(0, -64);
-
                             Vector2 farmPosition = new Vector2(warp.X, warp.Y + 4) * 64;
-
-                            //Vector2 farmOffset = (farmPosition.Y <= 512) ? new(0, 64) : new(0, -64);
 
                             farmPositions = new() { ["FarmCave"] = cavePosition, ["Farm"] = farmPosition, };
 

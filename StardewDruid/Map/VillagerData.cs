@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace StardewDruid.Map
 {
@@ -34,10 +30,10 @@ namespace StardewDruid.Map
                     "Marnie", "Jas", "Krobus", "Wizard", "Willy",
                 }
             };
-            
-            if(villagerIndex.ContainsKey(residentType))
+
+            if (villagerIndex.ContainsKey(residentType))
             {
-                
+
                 villagerList = villagerIndex[residentType];
 
             }

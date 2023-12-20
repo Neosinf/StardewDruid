@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using StardewModdingAPI;
 using StardewValley;
-using System;
-using System.ComponentModel.Design;
-using static StardewValley.Debris;
+using System.Collections.Generic;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -47,7 +43,7 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if (probability == 0 && !riteData.castToggle.ContainsKey("forgetSeeds") && riteData.castTask.ContainsKey("masterCreature"))
+            if (probability == 0 && !Mod.instance.EffectDisabled("Seeds") && riteData.castTask.ContainsKey("masterCreature"))
             {
 
                 int wildSeed;

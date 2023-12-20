@@ -1,13 +1,6 @@
-﻿using Force.DeepCloner;
-using Microsoft.Xna.Framework;
-using Netcode;
-using StardewModdingAPI;
-using StardewValley;
-using StardewValley.Locations;
-using StardewValley.Minigames;
+﻿using Microsoft.Xna.Framework;
 using StardewValley.TerrainFeatures;
 using System;
-using System.Collections.Generic;
 
 namespace StardewDruid.Cast.Mists
 {
@@ -38,7 +31,7 @@ namespace StardewDruid.Cast.Mists
             castCost = Math.Max(2, 36 - targetPlayer.MiningLevel * Mod.instance.virtualPick.UpgradeLevel);
 
             ModUtility.DestroyBoulder(targetLocation, targetPlayer, resourceClump, targetVector, Mod.instance.virtualPick, debrisMax);
-           
+
             resourceClump = null;
 
             castFire = true;

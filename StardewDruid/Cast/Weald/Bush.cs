@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
-using StardewValley.TerrainFeatures;
-using System;
 using System.Collections.Generic;
 
 namespace StardewDruid.Cast.Weald
@@ -42,7 +38,7 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if (randomIndex.Next(20) == 0 && riteData.spawnIndex["wildspawn"] && !riteData.castToggle.ContainsKey("forgetWildspawn"))
+            if (randomIndex.Next(20) == 0 && riteData.spawnIndex["wildspawn"] && Mod.instance.EffectDisabled("Wildspawn"))
             {
 
                 StardewValley.Monsters.Monster spawnMonster = Mod.instance.SpawnMonster(targetLocation, targetVector, new() { 99, }, "bush");

@@ -1,9 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
-using StardewValley.Monsters;
 using StardewValley.Objects;
-using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 
@@ -12,7 +10,7 @@ namespace StardewDruid.Monster
     public class BossSlime : StardewValley.Monsters.BigSlime
     {
         public List<string> ouchList;
-        
+
         public bool posturing;
 
         public bool dropHat;
@@ -26,12 +24,12 @@ namespace StardewDruid.Monster
         public Dictionary<int, Vector2> hatOffsets;
 
         public BossSlime(Vector2 position, int combatModifier)
-            : base(position * 64, combatModifier /2)
+            : base(position * 64, combatModifier / 2)
         {
 
             moveTowardPlayerThreshold.Value = 99;
 
-            Health = (int)(combatModifier * 10);
+            Health = combatModifier * 10;
 
             MaxHealth = Health;
 
@@ -53,7 +51,7 @@ namespace StardewDruid.Monster
 
             dropHat = true;
 
-            base.speed = (int)(speed *2);
+            base.speed = speed * 2;
 
         }
         public override List<Item> getExtraDropItems()
@@ -75,8 +73,8 @@ namespace StardewDruid.Monster
         {
 
             if (posturing)
-            { 
-                return; 
+            {
+                return;
             }
 
             base.defaultMovementBehavior(time);
@@ -86,8 +84,8 @@ namespace StardewDruid.Monster
         public override void behaviorAtGameTick(GameTime time)
         {
             if (posturing)
-            { 
-                return; 
+            {
+                return;
             }
 
             base.behaviorAtGameTick(time);
@@ -98,8 +96,8 @@ namespace StardewDruid.Monster
         {
 
             if (posturing)
-            { 
-                return; 
+            {
+                return;
             }
 
             base.updateMovement(location, time);
@@ -110,8 +108,8 @@ namespace StardewDruid.Monster
         {
 
             if (posturing)
-            { 
-                return 0; 
+            {
+                return 0;
             }
 
             int ouchIndex = Game1.random.Next(15);
@@ -161,15 +159,15 @@ namespace StardewDruid.Monster
             {
 
                 b.Draw(
-                    Sprite.Texture, 
-                    getLocalPosition(Game1.viewport) + new Vector2(56f, 16 + yJumpOffset), 
+                    Sprite.Texture,
+                    getLocalPosition(Game1.viewport) + new Vector2(56f, 16 + yJumpOffset),
                     Sprite.SourceRect,
-                    Color.Orange*0.7f,
+                    Color.Orange * 0.7f,
                     rotation,
-                    new Vector2(16f, 16f), 
-                    6f, 
-                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 
-                    Math.Max(0f, drawOnTop ? 0.991f : ((float)getStandingY() / 10000f))
+                    new Vector2(16f, 16f),
+                    6f,
+                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    Math.Max(0f, drawOnTop ? 0.991f : (getStandingY() / 10000f))
                 );
 
                 hatOffsets = new()
@@ -198,7 +196,7 @@ namespace StardewDruid.Monster
                     new Vector2(10f, 9f),
                     6f,
                     flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    Math.Max(0f, drawOnTop ? 0.990f : ((float)getStandingY() / 10000f)-0.00005f)
+                    Math.Max(0f, drawOnTop ? 0.990f : (getStandingY() / 10000f) - 0.00005f)
                 );
 
             }

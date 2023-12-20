@@ -1,15 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using StardewValley;
-using System.Collections.Generic;
+﻿using StardewValley;
 using StardewValley.Locations;
-using System.Linq;
-using System.Collections;
-using StardewValley.Menus;
-using System.Drawing;
-using xTile.Dimensions;
-using xTile.Tiles;
-using System.ComponentModel.Design;
-using System;
+using System.Collections.Generic;
 
 namespace StardewDruid.Map
 {
@@ -462,7 +453,7 @@ namespace StardewDruid.Map
             return randomFlower;
 
         }
-        
+
         public static int RandomForage(GameLocation location)
         {
             Dictionary<int, int> randomCrops;
@@ -471,7 +462,7 @@ namespace StardewDruid.Map
 
             string season;
 
-            if(location is IslandEast || location is Woods)
+            if (location is IslandEast || location is Woods)
             {
 
                 season = "woods";
@@ -600,9 +591,9 @@ namespace StardewDruid.Map
 
         }
 
-        public static int RandomHighFish(GameLocation location,bool enableRare)
+        public static int RandomHighFish(GameLocation location, bool enableRare)
         {
-            
+
             Dictionary<int, int> objectIndexes;
 
             int seasonStar;
@@ -677,7 +668,7 @@ namespace StardewDruid.Map
 
                 }
 
-            } 
+            }
             else
             {
 
@@ -837,7 +828,7 @@ namespace StardewDruid.Map
             if (Mod.instance.CastAnywhere())
             {
 
-                foreach(KeyValuePair<string,bool> keyValuePair in spawnIndex)
+                foreach (KeyValuePair<string, bool> keyValuePair in spawnIndex)
                 {
 
                     spawnIndex[keyValuePair.Key] = true;

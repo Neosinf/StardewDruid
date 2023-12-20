@@ -1,12 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Map;
 using StardewValley;
-using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
-using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 
 namespace StardewDruid.Event.Challenge
@@ -80,7 +77,7 @@ namespace StardewDruid.Event.Challenge
                     targetLocation.temporarySprites.Remove(animation);
 
                 }
-            
+
             }
 
         }
@@ -127,7 +124,7 @@ namespace StardewDruid.Event.Challenge
                 if (activeCounter == 4)
                 {
 
-                    TemporaryAnimatedSprite challengeAnimation = new(0, 99999f, 1, 1, targetVector * 64 - new Vector2(64,64), false, false)
+                    TemporaryAnimatedSprite challengeAnimation = new(0, 99999f, 1, 1, targetVector * 64 - new Vector2(64, 64), false, false)
                     {
 
                         sourceRect = new(0, 0, 64, 64),
@@ -182,7 +179,7 @@ namespace StardewDruid.Event.Challenge
             }
 
 
-            if(activeCounter == 8)
+            if (activeCounter == 8)
             {
 
                 Mod.instance.characters["Jester"].showTextAboveHead("get ready for a fight!", 3000);
@@ -196,7 +193,7 @@ namespace StardewDruid.Event.Challenge
 
                 if (spawnVector != new Vector2(-1))
                 {
-                    monsterHandle.specialIndex = new() {55,};
+                    monsterHandle.specialIndex = new() { 55, };
                     monsterHandle.SpawnGround(spawnVector, true);
 
                 }
@@ -243,14 +240,17 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            if (activeCounter <= 56) { 
-                
-                monsterHandle.SpawnInterval(); 
-            
-            } else { 
-                
-                monsterHandle.SpawnCheck(); 
-            
+            if (activeCounter <= 56)
+            {
+
+                monsterHandle.SpawnInterval();
+
+            }
+            else
+            {
+
+                monsterHandle.SpawnCheck();
+
             }
 
         }

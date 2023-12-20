@@ -12,27 +12,27 @@ using StardewValley;
 #nullable disable
 namespace StardewDruid.Character
 {
-  public class Actor : StardewDruid.Character.Character
-  {
-    public bool drawSlave;
-
-    public Actor(Vector2 position, string map, string Name)
-      : base(position, map, Name)
+    public class Actor : StardewDruid.Character.Character
     {
-    }
+        public bool drawSlave;
 
-    public virtual void draw(SpriteBatch b, float alpha = 1f)
-    {
-      if (Context.IsMainPlayer && this.drawSlave)
-      {
-        foreach (NPC character in ((StardewValley.Character) this).currentLocation.characters)
+        public Actor(Vector2 position, string map, string Name)
+          : base(position, map, Name)
         {
-          if (!(character is StardewDruid.Character.Character))
-            ((StardewValley.Character) character).drawAboveAlwaysFrontLayer(b);
         }
-        ((StardewValley.Character) this).drawAboveAlwaysFrontLayer(b);
-      }
-      base.draw(b, alpha);
+
+        public override void draw(SpriteBatch b, float alpha = 1f)
+        {
+            if (Context.IsMainPlayer && this.drawSlave)
+            {
+                foreach (NPC character in this.currentLocation.characters)
+                {
+                    if (!(character is StardewDruid.Character.Character))
+                        character.drawAboveAlwaysFrontLayer(b);
+                }
+                this.drawAboveAlwaysFrontLayer(b);
+            }
+            base.draw(b, alpha);
+        }
     }
-  }
 }

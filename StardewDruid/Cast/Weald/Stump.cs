@@ -1,11 +1,5 @@
-﻿using Force.DeepCloner;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using StardewModdingAPI;
-using StardewValley;
-using StardewValley.Locations;
+﻿using Microsoft.Xna.Framework;
 using StardewValley.TerrainFeatures;
-using System;
 using System.Collections.Generic;
 
 namespace StardewDruid.Cast.Weald
@@ -34,7 +28,7 @@ namespace StardewDruid.Cast.Weald
 
             int debrisAmount = randomIndex.Next(1, 5);
 
-            Dictionary<int,Throw> throwList = new();
+            Dictionary<int, Throw> throwList = new();
 
             for (int i = 0; i < debrisAmount; i++)
             {
@@ -58,7 +52,7 @@ namespace StardewDruid.Cast.Weald
 
             targetPlayer.gainExperience(2, 2); // gain foraging experience
 
-            ModUtility.AnimateGrowth(targetLocation,targetVector, new(0.8f, 1, 0.8f, 1));
+            ModUtility.AnimateGrowth(targetLocation, targetVector, new(0.8f, 1, 0.8f, 1));
 
         }
 

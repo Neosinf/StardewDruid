@@ -3,7 +3,6 @@ using StardewDruid.Cast;
 using StardewDruid.Map;
 using StardewValley;
 using System;
-using System.Collections.Generic;
 
 namespace StardewDruid.Event.Challenge
 {
@@ -71,7 +70,7 @@ namespace StardewDruid.Event.Challenge
         public override bool EventExpire()
         {
 
-            if(eventLinger == -1)
+            if (eventLinger == -1)
             {
                 if (monsterHandle.monsterSpawns.Count <= 4)
                 {
@@ -82,7 +81,7 @@ namespace StardewDruid.Event.Challenge
 
                         new Throw(targetPlayer, targetVector * 64f, 347, 0).ThrowObject();
                     }
-                        
+
                 }
                 else if (monsterHandle.monsterSpawns.Count <= 10)
                 {

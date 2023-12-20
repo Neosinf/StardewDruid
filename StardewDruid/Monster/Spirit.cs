@@ -1,11 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StardewValley;
 using StardewValley.Monsters;
-using System.Collections.Generic;
 using System;
-using Microsoft.Xna.Framework.Graphics;
-using System.Reflection.Metadata.Ecma335;
-using StardewValley.Objects;
+using System.Collections.Generic;
 
 namespace StardewDruid.Monster
 {
@@ -48,7 +46,7 @@ namespace StardewDruid.Monster
 
             focusedOnFarmers = true;
 
-            Health = (int)Math.Max(2, combatModifier *0.25);
+            Health = (int)Math.Max(2, combatModifier * 0.25);
 
             MaxHealth = Health;
 
@@ -74,11 +72,13 @@ namespace StardewDruid.Monster
             {
                 objectsToDrop.Add(382); // coal
 
-            } else if (Game1.random.Next(4) == 0 && combatModifier >= 120)
+            }
+            else if (Game1.random.Next(4) == 0 && combatModifier >= 120)
             {
                 objectsToDrop.Add(395); // coffee (edible)
 
-            } else if (Game1.random.Next(5) == 0 && combatModifier >= 240)
+            }
+            else if (Game1.random.Next(5) == 0 && combatModifier >= 240)
             {
                 objectsToDrop.Add(251); // tea sapling
             }
@@ -99,7 +99,7 @@ namespace StardewDruid.Monster
             hatsTexture = Game1.content.Load<Texture2D>("Characters\\Farmer\\hats");
 
             List<int> hatList = new()
-            {   
+            {
                 103,
                 104,
                 //201,
@@ -172,7 +172,7 @@ namespace StardewDruid.Monster
 
                 Vector2 localPosition = getLocalPosition(Game1.viewport) + new Vector2(32 + ((shakeTimer > 0) ? Game1.random.Next(-1, 2) : 0), 64 + yJumpOffset);
 
-                float depth = Math.Max(0f, drawOnTop ? 0.992f : ((float)(getStandingY() * 2) / 10000f) + 0.00005f);
+                float depth = Math.Max(0f, drawOnTop ? 0.992f : (getStandingY() * 2 / 10000f) + 0.00005f);
 
                 b.Draw(
                     hatsTexture,

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewValley;
-using System;
 
 namespace StardewDruid.Cast.Mists
 {
@@ -38,8 +37,11 @@ namespace StardewDruid.Cast.Mists
 
             for (int i = 0; i < extractionChance; i++)
             {
-                Game1.createObjectDebris(targetIndex, (int)targetVector.X, (int)targetVector.Y - 1);
+                //Game1.createObjectDebris(targetIndex, (int)targetVector.X, (int)targetVector.Y - 1);
+                Throw throwObject = new(targetPlayer, targetVector * 64, targetIndex);
 
+                throwObject.ThrowObject();
+            
             }
 
             castFire = true;

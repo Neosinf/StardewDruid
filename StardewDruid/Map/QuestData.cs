@@ -4,6 +4,7 @@ using StardewDruid.Cast;
 using StardewDruid.Event;
 using StardewDruid.Event.Challenge;
 using StardewDruid.Event.Scene;
+using StardewDruid.Journal;
 using StardewValley;
 using StardewValley.Locations;
 using System;
@@ -13,7 +14,6 @@ using System.Reflection;
 using xTile.Layers;
 using xTile.ObjectModel;
 using xTile.Tiles;
-using StardewDruid.Journal;
 
 namespace StardewDruid.Map
 {
@@ -35,22 +35,22 @@ namespace StardewDruid.Map
             Dictionary<string, Quest> dictionary2 = QuestList();
             foreach (KeyValuePair<int, List<string>> keyValuePair in dictionary1)
             {
-            foreach (string key in keyValuePair.Value)
-            {
-                if (dictionary2.ContainsKey(key))
+                foreach (string key in keyValuePair.Value)
                 {
-                Quest quest = dictionary2[key];
-                if (keyValuePair.Key < progressLevel)
-                {
-                    if (quest.questId != 0)
-                    staticData.questList[key] = true;
-                    if (quest.taskFinish != null)
-                    staticData.taskList[quest.taskFinish] = 1;
-                    if (quest.questCharacter != null)
-                    staticData.characterList[quest.questCharacter] = "FarmCave";
+                    if (dictionary2.ContainsKey(key))
+                    {
+                        Quest quest = dictionary2[key];
+                        if (keyValuePair.Key < progressLevel)
+                        {
+                            if (quest.questId != 0)
+                                staticData.questList[key] = true;
+                            if (quest.taskFinish != null)
+                                staticData.taskList[quest.taskFinish] = 1;
+                            if (quest.questCharacter != null)
+                                staticData.characterList[quest.questCharacter] = "FarmCave";
+                        }
+                    }
                 }
-                }
-            }
             }
             List<string> source = RitesProgress();
             staticData.activeBlessing = source.Last<string>();
@@ -61,29 +61,29 @@ namespace StardewDruid.Map
         {
             foreach (KeyValuePair<int, string> keyValuePair in staticData.weaponAttunement)
             {
-            if (keyValuePair.Value == "water")
-                staticData.weaponAttunement[keyValuePair.Key] = "mists";
-            if (keyValuePair.Value == "earth")
-                staticData.weaponAttunement[keyValuePair.Key] = "weald";
+                if (keyValuePair.Value == "water")
+                    staticData.weaponAttunement[keyValuePair.Key] = "mists";
+                if (keyValuePair.Value == "earth")
+                    staticData.weaponAttunement[keyValuePair.Key] = "weald";
             }
             if (staticData.activeBlessing == "water")
-            staticData.activeBlessing = "mists";
+                staticData.activeBlessing = "mists";
             if (staticData.activeBlessing == "earth")
-            staticData.activeBlessing = "weald";
+                staticData.activeBlessing = "weald";
             staticData.setProgress = -1;
             Dictionary<int, List<string>> dictionary = QuestProgress();
             List<int> list = dictionary.Keys.ToList<int>();
             for (int index = list.Count - 1; index >= 0; --index)
             {
-            int key1 = list[index];
-            foreach (string key2 in dictionary[key1])
-            {
-                if (staticData.questList.ContainsKey(key2))
+                int key1 = list[index];
+                foreach (string key2 in dictionary[key1])
                 {
-                staticData = ConfigureProgress(staticData, key1 + 1);
-                return staticData;
+                    if (staticData.questList.ContainsKey(key2))
+                    {
+                        staticData = ConfigureProgress(staticData, key1 + 1);
+                        return staticData;
+                    }
                 }
-            }
             }
             staticData = ConfigureProgress(staticData, 0);
             return staticData;
@@ -93,15 +93,15 @@ namespace StardewDruid.Map
         {
             switch (questData.type)
             {
-            case "sword":
-                new Sword(vector, rite, questData).EventTrigger();
-                break;
-            case "scythe":
-                new Scythe(vector, rite, questData).EventTrigger();
-                break;
-            default:
-                ChallengeInstance(vector, rite, questData).EventTrigger();
-                break;
+                case "sword":
+                    new Sword(vector, rite, questData).EventTrigger();
+                    break;
+                case "scythe":
+                    new Scythe(vector, rite, questData).EventTrigger();
+                    break;
+                default:
+                    ChallengeInstance(vector, rite, questData).EventTrigger();
+                    break;
             }
         }
 
@@ -111,7 +111,7 @@ namespace StardewDruid.Map
             {
                 return;
             }
-                
+
             TriggerHandle triggerHandle;
 
             string questName = quest.name.Replace("Two", "");
@@ -139,35 +139,35 @@ namespace StardewDruid.Map
 
             if (triggerHandle == null || !triggerHandle.SetMarker())
             {
-                    return;
+                return;
             }
-        
+
             Mod.instance.markerRegister[quest.name] = triggerHandle;
         }
 
         public static ChallengeHandle ChallengeInstance(Vector2 target, Rite rite, Quest quest)
         {
-        string questName = quest.name.Replace("Two", "");
+            string questName = quest.name.Replace("Two", "");
 
-        ChallengeHandle challengeHandle;
+            ChallengeHandle challengeHandle;
 
-        switch (questName)
-        {
+            switch (questName)
+            {
 
-            case "swordEther": challengeHandle = new Tyrannus(target, rite, quest); break;
-            case "challengeFates": challengeHandle = new Quarry(target, rite, quest); break;
-            case "challengeStars": challengeHandle = new Infestation(target, rite, quest); break;
-            case "challengeWater": challengeHandle = new Graveyard(target, rite, quest); break;
-            case "challengeCanoli": challengeHandle = new Canoli(target, rite, quest); break;
-            case "challengeMuseum": challengeHandle = new Museum(target, rite, quest); break;
-            case "challengeMariner": challengeHandle = new Mariner(target, rite, quest); break;
-            case "challengeGemShrine": challengeHandle = new GemShrine(target, rite, quest); break;
-            case "challengeSandDragon": challengeHandle = new SandDragon(target, rite, quest); break;
-            default: challengeHandle =new Aquifer(target, rite, quest); break;
+                case "swordEther": challengeHandle = new Tyrannus(target, rite, quest); break;
+                case "challengeFates": challengeHandle = new Quarry(target, rite, quest); break;
+                case "challengeStars": challengeHandle = new Infestation(target, rite, quest); break;
+                case "challengeWater": challengeHandle = new Graveyard(target, rite, quest); break;
+                case "challengeCanoli": challengeHandle = new Canoli(target, rite, quest); break;
+                case "challengeMuseum": challengeHandle = new Museum(target, rite, quest); break;
+                case "challengeMariner": challengeHandle = new Mariner(target, rite, quest); break;
+                case "challengeGemShrine": challengeHandle = new GemShrine(target, rite, quest); break;
+                case "challengeSandDragon": challengeHandle = new SandDragon(target, rite, quest); break;
+                default: challengeHandle = new Aquifer(target, rite, quest); break;
 
 
-        }
-        return challengeHandle;
+            }
+            return challengeHandle;
         }
 
         public static Vector2 SpecialVector(GameLocation playerLocation, string questName)
@@ -175,61 +175,61 @@ namespace StardewDruid.Map
             questName = questName.Replace("Two", "");
             switch (questName)
             {
-            case "challengeMariner":
-                if (playerLocation is Beach beach && Game1.isRaining && !Game1.isFestival())
-                {
-                object obj = typeof (Beach).GetField("oldMariner", BindingFlags.Instance | BindingFlags.NonPublic).GetValue((object) beach);
-                if (obj != null)
-                    return (obj as NPC).getTileLocation();
-                break;
-                }
-                break;
-            case "challengeCanoli":
-                if (playerLocation is Woods)
-                {
-                Layer layer = playerLocation.Map.GetLayer("Buildings");
-                for (int index1 = 0; index1 < playerLocation.Map.DisplayWidth / 64; ++index1)
-                {
-                    for (int index2 = 0; index2 < playerLocation.Map.DisplayHeight / 64; ++index2)
+                case "challengeMariner":
+                    if (playerLocation is Beach beach && Game1.isRaining && !Game1.isFestival())
                     {
-                    Tile tile = layer.Tiles[index1, index2];
-                    if (tile != null)
+                        object obj = typeof(Beach).GetField("oldMariner", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(beach);
+                        if (obj != null)
+                            return (obj as NPC).getTileLocation();
+                        break;
+                    }
+                    break;
+                case "challengeCanoli":
+                    if (playerLocation is Woods)
                     {
-                        switch (tile.TileIndex)
+                        Layer layer = playerLocation.Map.GetLayer("Buildings");
+                        for (int index1 = 0; index1 < playerLocation.Map.DisplayWidth / 64; ++index1)
                         {
-                        case 1140:
-                        case 1141:
-                            return new Vector2((float) (index1 + 1), (float) index2);
-                        default:
-                            continue;
+                            for (int index2 = 0; index2 < playerLocation.Map.DisplayHeight / 64; ++index2)
+                            {
+                                Tile tile = layer.Tiles[index1, index2];
+                                if (tile != null)
+                                {
+                                    switch (tile.TileIndex)
+                                    {
+                                        case 1140:
+                                        case 1141:
+                                            return new Vector2(index1 + 1, index2);
+                                        default:
+                                            continue;
+                                    }
+                                }
+                            }
                         }
+                        break;
                     }
-                    }
-                }
-                break;
-                }
-                break;
-            case "challengeSandDragon":
-                if (playerLocation is Desert)
-                {
-                Layer layer = playerLocation.Map.GetLayer("Buildings");
-                for (int index3 = 0; index3 < playerLocation.Map.DisplayWidth / 64; ++index3)
-                {
-                    for (int index4 = 0; index4 < playerLocation.Map.DisplayHeight / 64; ++index4)
+                    break;
+                case "challengeSandDragon":
+                    if (playerLocation is Desert)
                     {
-                    Tile tile = layer.Tiles[index3, index4];
-                    if (tile != null)
-                    {
-                        PropertyValue propertyValue;
-                        ((IDictionary<string, PropertyValue>) ((Component) tile).Properties).TryGetValue("Action", out propertyValue);
-                        if (propertyValue != null && propertyValue.ToString() == "SandDragon")
-                        return new Vector2((float) (index3 + 1), (float) index4);
+                        Layer layer = playerLocation.Map.GetLayer("Buildings");
+                        for (int index3 = 0; index3 < playerLocation.Map.DisplayWidth / 64; ++index3)
+                        {
+                            for (int index4 = 0; index4 < playerLocation.Map.DisplayHeight / 64; ++index4)
+                            {
+                                Tile tile = layer.Tiles[index3, index4];
+                                if (tile != null)
+                                {
+                                    PropertyValue propertyValue;
+                                    tile.Properties.TryGetValue("Action", out propertyValue);
+                                    if (propertyValue != null && propertyValue.ToString() == "SandDragon")
+                                        return new Vector2(index3 + 1, index4);
+                                }
+                            }
+                        }
+                        break;
                     }
-                    }
-                }
-                break;
-                }
-                break;
+                    break;
             }
             return new Vector2(-1f);
         }
@@ -238,43 +238,44 @@ namespace StardewDruid.Map
         {
             return new Dictionary<int, List<string>>()
             {
-            [0] = new() { "approachEffigy" },
-            [1] = new() { "swordEarth" },
-            [2] = new() { "lessonVillager" },
-            [3] = new() { "lessonCreature" },
-            [4] = new() { "lessonForage" },
-            [5] = new() { "lessonCrop" },
-            [6] = new() { "lessonRockfall" },
-            [7] = new() { "challengeEarth" },
-            [8] = new() { "swordWater" },
-            [9] = new() { "lessonTotem" },
-            [10] = new() { "lessonCookout" },
-            [11] = new() { "lessonFishspot" },
-            [12] = new() { "lessonSmite" },
-            [13] = new() { "lessonPortal" },
-            [14] = new() { "challengeWater" },
-            [15] = new() { "swordStars" },
-            [16] = new() { "lessonMeteor" },
-            [17] = new() { "challengeStars" },
-            [18] = new()
-            {
-                "challengeCanoli",
-                "challengeMariner",
-                "challengeSandDragon",
-                "challengeGemShrine"
-            },
-            [19] = new() { "approachJester" },
-            [20] = new() { "swordFates" },
-            [21] = new() { "lessonWhisk" },
-            [22] = new() { "lessonTrick" },
-            [23] = new() { "lessonEnchant" },
-            [24] = new() { "lessonGravity" },
-            [25] = new() { "lessonDaze" },
-            [26] = new() { "challengeFates" },
-            [27] = new() { "swordEther" },
-            [28] = new() { "lessonTransform" },
-            [29] = new() { "lessonFlight" },
-            [30] = new() { "lessonBlast" }
+                [0] = new() { "approachEffigy" },
+                [1] = new() { "swordEarth" },
+                [2] = new() { "lessonVillager" },
+                [3] = new() { "lessonCreature" },
+                [4] = new() { "lessonForage" },
+                [5] = new() { "lessonCrop" },
+                [6] = new() { "lessonRockfall" },
+                [7] = new() { "challengeEarth" },
+                [8] = new() { "swordWater" },
+                [9] = new() { "lessonTotem" },
+                [10] = new() { "lessonCookout" },
+                [11] = new() { "lessonFishspot" },
+                [12] = new() { "lessonSmite" },
+                [13] = new() { "lessonPortal" },
+                [14] = new() { "challengeWater" },
+                [15] = new() { "swordStars" },
+                [16] = new() { "lessonMeteor" },
+                [17] = new() { "challengeStars" },
+                [18] = new()
+                {
+                    "challengeCanoli",
+                    "challengeMariner",
+                    "challengeSandDragon",
+                    "challengeGemShrine",
+                    "challengeMuseum"
+                },
+                [19] = new() { "approachJester" },
+                [20] = new() { "swordFates" },
+                [21] = new() { "lessonWhisk" },
+                [22] = new() { "lessonTrick" },
+                [23] = new() { "lessonEnchant" },
+                [24] = new() { "lessonGravity" },
+                [25] = new() { "lessonDaze" },
+                [26] = new() { "challengeFates" },
+                [27] = new() { "swordEther" },
+                [28] = new() { "lessonTransform" },
+                [29] = new() { "lessonFlight" },
+                [30] = new() { "lessonBlast" }
             };
         }
 
@@ -283,15 +284,15 @@ namespace StardewDruid.Map
             int num = Mod.instance.CurrentProgress();
             List<string> stringList = new();
             if (num > 1)
-            stringList.Add("weald");
+                stringList.Add("weald");
             if (num > 8)
-            stringList.Add("mists");
+                stringList.Add("mists");
             if (num > 15)
-            stringList.Add("stars");
+                stringList.Add("stars");
             if (num > 20)
-            stringList.Add("fates");
+                stringList.Add("fates");
             if (num > 27)
-            stringList.Add("ether");
+                stringList.Add("ether");
             return stringList;
         }
 
@@ -303,19 +304,19 @@ namespace StardewDruid.Map
                 "weald"
             };
             if (num > 7)
-            stringList.Add("mists");
+                stringList.Add("mists");
             if (num > 14)
-            stringList.Add("stars");
+                stringList.Add("stars");
             if (num > 17)
-            stringList.Add("hidden");
+                stringList.Add("hidden");
             if (num > 18)
-            stringList.Add("Jester");
+                stringList.Add("Jester");
             if (num > 19)
-            stringList.Add("fates");
+                stringList.Add("fates");
             if (num > 26)
-            stringList.Add("ether");
+                stringList.Add("ether");
             if (num > 30)
-            stringList.Add("complete");
+                stringList.Add("complete");
             return stringList;
         }
 
@@ -325,15 +326,15 @@ namespace StardewDruid.Map
             int key = Mod.instance.CurrentProgress();
             Dictionary<int, List<string>> dictionary = QuestProgress();
             if (!dictionary.ContainsKey(key))
-            return str;
+                return str;
             foreach (string quest in dictionary[key])
             {
-            if (!(quest == "approachJester") || (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[1])
-            {
-                if (!Mod.instance.QuestGiven(quest))
-                Mod.instance.NewQuest(quest);
-                str = quest;
-            }
+                if (!(quest == "approachJester") || (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[1])
+                {
+                    if (!Mod.instance.QuestGiven(quest))
+                        Mod.instance.NewQuest(quest);
+                    str = quest;
+                }
             }
             return str;
         }
@@ -1042,7 +1043,7 @@ namespace StardewDruid.Map
 
         public static List<List<Page>> RetrievePages()
         {
-        
+
             List<List<Page>> source = new List<List<Page>>();
 
             Dictionary<int, List<List<string>>> dictionary1 = JournalPages();
@@ -1065,63 +1066,63 @@ namespace StardewDruid.Map
                         switch (stringList[1])
                         {
                             case "quest":
-                            if (stringList.Count > 5)
-                            {
-                                if (Mod.instance.QuestGiven(stringList[5]))
+                                if (stringList.Count > 5)
                                 {
-                                Page page = new Page();
-                                page.title = stringList[0];
-                                page.icon = stringList[2];
-                                page.description = stringList[3];
-                                if (Mod.instance.QuestComplete(stringList[5]))
-                                    page.objectives.Add(stringList[4]);
-                                else
-                                    page.active = true;
-                                source.Last<List<Page>>().Add(page);
-                                break;
+                                    if (Mod.instance.QuestGiven(stringList[5]))
+                                    {
+                                        Page page = new Page();
+                                        page.title = stringList[0];
+                                        page.icon = stringList[2];
+                                        page.description = stringList[3];
+                                        if (Mod.instance.QuestComplete(stringList[5]))
+                                            page.objectives.Add(stringList[4]);
+                                        else
+                                            page.active = true;
+                                        source.Last<List<Page>>().Add(page);
+                                        break;
+                                    }
+                                    break;
                                 }
+                                Page page1 = new Page();
+                                page1.title = stringList[0];
+                                page1.icon = stringList[2];
+                                page1.description = stringList[3];
+                                if (num > keyValuePair.Key)
+                                    page1.objectives.Add(stringList[4]);
+                                source.Last<List<Page>>().Add(page1);
                                 break;
-                            }
-                            Page page1 = new Page();
-                            page1.title = stringList[0];
-                            page1.icon = stringList[2];
-                            page1.description = stringList[3];
-                            if (num > keyValuePair.Key)
-                                page1.objectives.Add(stringList[4]);
-                            source.Last<List<Page>>().Add(page1);
-                            break;
 
                             case "lesson":
-                            Page page2 = new Page();
-                            page2.title = stringList[0];
-                            page2.icon = stringList[2];
-                            page2.description = stringList[3];
-                            page2.objectives.Add("Lesson: " + stringList[4]);
-                            if (dictionary2.ContainsKey(stringList[5]))
-                                page2.objectives.Add("Practice: " + dictionary2[stringList[5]].ToString() + " " + stringList[6]);
-                            if (dictionary2.ContainsKey(stringList[7]))
-                                page2.objectives.Add("Mastery: " + stringList[8]);
-                            else
-                                page2.active = true;
-                            source.Last<List<Page>>().Add(page2);
-                            break;
+                                Page page2 = new Page();
+                                page2.title = stringList[0];
+                                page2.icon = stringList[2];
+                                page2.description = stringList[3];
+                                page2.objectives.Add("Lesson: " + stringList[4]);
+                                if (dictionary2.ContainsKey(stringList[5]))
+                                    page2.objectives.Add("Practice: " + dictionary2[stringList[5]].ToString() + " " + stringList[6]);
+                                if (dictionary2.ContainsKey(stringList[7]))
+                                    page2.objectives.Add("Mastery: " + stringList[8]);
+                                else
+                                    page2.active = true;
+                                source.Last<List<Page>>().Add(page2);
+                                break;
 
                             case "effect":
-                            source.Last<List<Page>>().Add(new Page()
-                            {
-                                title = stringList[0],
-                                icon = stringList[2],
-                                description = stringList[3],
-                                objectives = {
+                                source.Last<List<Page>>().Add(new Page()
+                                {
+                                    title = stringList[0],
+                                    icon = stringList[2],
+                                    description = stringList[3],
+                                    objectives = {
                                 "Effect: " + stringList[4]
                                 }
-                            });
-                            break;
+                                });
+                                break;
                         }
                     }
                 }
                 else
-                break;
+                    break;
             }
 
             return source;

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewValley;
 using StardewValley.Monsters;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 
 namespace StardewDruid.Monster
 {

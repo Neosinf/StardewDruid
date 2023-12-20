@@ -1,13 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using StardewValley;
-using StardewValley.Characters;
-using StardewValley.Monsters;
-using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
-using StardewValley.Tools;
 using System;
-using System.Threading;
-using static StardewValley.Menus.CharacterCustomization;
 
 namespace StardewDruid.Cast.Fates
 {
@@ -43,7 +35,7 @@ namespace StardewDruid.Cast.Fates
             gravityEvent.EventTrigger();
 
             castFire = true;
-            
+
         }
 
     }

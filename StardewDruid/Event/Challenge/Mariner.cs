@@ -3,7 +3,6 @@ using StardewDruid.Cast;
 using StardewDruid.Map;
 using StardewDruid.Monster;
 using StardewValley;
-using System;
 using System.Collections.Generic;
 
 namespace StardewDruid.Event.Challenge
@@ -60,7 +59,7 @@ namespace StardewDruid.Event.Challenge
                     List<int> intList = new List<int>() { 797, 166 };
                     int num = questData.name.Contains("Two") ? 2 : 1;
                     for (int index = 0; index < num; ++index)
-                        new Throw(targetPlayer,targetVector*64f, intList[randomIndex.Next(intList.Count)], 0).ThrowObject();
+                        new Throw(targetPlayer, targetVector * 64f, intList[randomIndex.Next(intList.Count)], 0).ThrowObject();
                 }
                 else if (monsterHandle.monsterSpawns.Count <= 7)
                 {
@@ -78,7 +77,7 @@ namespace StardewDruid.Event.Challenge
                     CastVoice("haha! not good enough for the Lady");
 
                 }
-                
+
                 Mod.instance.CompleteQuest(questData.name);
                 eventLinger = 3;
 
@@ -238,9 +237,9 @@ namespace StardewDruid.Event.Challenge
 
             foreach (Vector2 cannonTarget in cannonTargets)
             {
-                
+
                 ModUtility.AnimateBombZone(targetLocation, cannonTarget, Color.Purple, 6);
-            
+
             }
 
             DelayedAction.functionAfterDelay(CannonsToFire, 3600);

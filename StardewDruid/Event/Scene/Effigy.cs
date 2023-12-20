@@ -1,24 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Map;
 using StardewValley;
-using StardewValley.Network;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StardewDruid.Event.Scene
 {
-    public class Effigy : TriggerHandle{
+    public class Effigy : TriggerHandle
+    {
 
         public Effigy(GameLocation location, Map.Quest quest)
             : base(location, quest)
         {
-            voicePosition = quest.triggerVector * 64 - new Vector2(48,48);
+            voicePosition = quest.triggerVector * 64 - new Vector2(48, 48);
         }
 
         public override bool SetMarker()
@@ -29,7 +23,7 @@ namespace StardewDruid.Event.Scene
                 return false;
 
             }
-            
+
             return base.SetMarker();
 
         }
@@ -49,18 +43,18 @@ namespace StardewDruid.Event.Scene
                 CastVoice("Well done", duration: 2000);
 
                 ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 500);
-                
+
                 Game1.player.currentLocation.playSound("yoba");
 
                 // ----- rock fall
-                ModUtility.AnimateRadiusDecoration(targetLocation,targetVector, "Weald", 1f, 1f);
+                ModUtility.AnimateRadiusDecoration(targetLocation, targetVector, "Weald", 1f, 1f);
 
-                ModUtility.AnimateRockfalls(targetLocation,Game1.player.getTileLocation());
-                
+                ModUtility.AnimateRockfalls(targetLocation, Game1.player.getTileLocation());
+
                 DelayedAction.functionAfterDelay(RockfallSounds, 575);
-                
+
                 DelayedAction.functionAfterDelay(RockfallSounds, 675);
-                
+
                 DelayedAction.functionAfterDelay(RockfallSounds, 775);
 
                 DelayedAction.functionAfterDelay(AnimateEffigy, 1000);
@@ -76,12 +70,12 @@ namespace StardewDruid.Event.Scene
         }
         public void RockfallSounds()
         {
-            targetLocation.playSoundPitched(new Random().Next(2) == 0 ? "boulderBreak" : "boulderCrack", 800, (NetAudio.SoundContext)0);
+            targetLocation.playSoundPitched(new Random().Next(2) == 0 ? "boulderBreak" : "boulderCrack", 800, 0);
         }
 
         public override void EventInterval()
         {
-            
+
             base.EventInterval();
 
             int actionCycle = activeCounter % 17;
@@ -97,13 +91,13 @@ namespace StardewDruid.Event.Scene
                 case 5:
 
                     CastVoice("You come at last", duration: 3000);
-                    
+
                     break;
 
                 case 8:
 
                     CastVoice("I'm in the ceiling", duration: 3000);
-                    
+
                     break;
 
                 case 11:
@@ -158,7 +152,7 @@ namespace StardewDruid.Event.Scene
             Mod.instance.characters["Effigy"].checkAction(Game1.player, targetLocation);
 
         }
-    
+
     }
 
 }

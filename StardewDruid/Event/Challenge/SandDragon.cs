@@ -1,11 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Map;
-using StardewDruid.Monster;
 using StardewValley;
 using StardewValley.Locations;
 using System;
-using System.Collections.Generic;
 using xTile.Layers;
 using xTile.Tiles;
 
@@ -51,7 +49,7 @@ namespace StardewDruid.Event.Challenge
 
             if (targetPlayer.currentLocation == targetLocation && !eventAbort)
             {
-                    
+
                 double nowTime = Game1.currentGameTime.TotalGameTime.TotalSeconds;
 
                 if (expireTime >= nowTime && !expireEarly)
@@ -70,7 +68,7 @@ namespace StardewDruid.Event.Challenge
                 }
 
                 return EventExpire();
-                
+
             }
             else
             {
@@ -111,9 +109,9 @@ namespace StardewDruid.Event.Challenge
         public override bool EventExpire()
         {
 
-            if(eventLinger == -1)
+            if (eventLinger == -1)
             {
-                
+
                 RemoveMonsters();
 
                 ResetSandDragon();
@@ -221,7 +219,7 @@ namespace StardewDruid.Event.Challenge
 
             if (activeCounter == 9)
             {
-                
+
                 ModifySandDragon();
 
                 StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(16, targetVector + new Vector2(-5, 0), riteData.combatModifier);
@@ -259,7 +257,7 @@ namespace StardewDruid.Event.Challenge
         public void ResetSandDragon()
         {
 
-            if(!modifiedSandDragon)
+            if (!modifiedSandDragon)
             {
 
                 return;

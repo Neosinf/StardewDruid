@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
-using System;
 
 
 namespace StardewDruid.Cast.Weald

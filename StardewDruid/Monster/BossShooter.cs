@@ -5,7 +5,6 @@ using StardewValley.Monsters;
 using StardewValley.Projectiles;
 using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
 
 namespace StardewDruid.Monster
 {
@@ -38,7 +37,7 @@ namespace StardewDruid.Monster
         {
             focusedOnFarmers = true;
 
-            Health = (int)(combatModifier * 6);
+            Health = combatModifier * 6;
 
             MaxHealth = Health;
 
@@ -105,9 +104,9 @@ namespace StardewDruid.Monster
                     value = MathF.PI;
                 }
 
-                vector *= (float)projectileSpeed;
+                vector *= projectileSpeed;
 
-                Vector2 basePosition = base.Position - new Vector2(128f,0);
+                Vector2 basePosition = base.Position - new Vector2(128f, 0);
 
                 for (int i = 0; i < 3; i++)
                 {
@@ -132,8 +131,8 @@ namespace StardewDruid.Monster
                 return;
             }
             else if (posturing)
-            { 
-                return; 
+            {
+                return;
             }
 
             base.behaviorAtGameTick(time);
@@ -253,7 +252,7 @@ namespace StardewDruid.Monster
 
                 Vector2 localPosition = getLocalPosition(Game1.viewport) + new Vector2(56f, 16 + yJumpOffset);
 
-                float depth = (float)GetBoundingBox().Center.Y / 10000f + 0.00005f;
+                float depth = GetBoundingBox().Center.Y / 10000f + 0.00005f;
 
                 b.Draw(
                     hatsTexture,

@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using StardewModdingAPI;
-using StardewValley;
-using System;
-using StardewValley.Monsters;
 
 namespace StardewDruid.Cast.Weald
 {

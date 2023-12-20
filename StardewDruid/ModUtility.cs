@@ -1,21 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using StardewDruid.Cast;
 using StardewDruid.Map;
-using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Buildings;
 using StardewValley.Locations;
 using StardewValley.Monsters;
-using StardewValley.Network;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml.Linq;
 using xTile.Dimensions;
 using xTile.Layers;
 using xTile.ObjectModel;
@@ -59,37 +57,38 @@ namespace StardewDruid
 
         public static void MistsSound(int castLevel)
         {
-            int chargeLevel = castLevel % 4;
+            //int chargeLevel = castLevel % 4;
 
-            int pitchLevel = castLevel / 4;
+            //int pitchLevel = castLevel / 4;
 
             //-------------------------- sound and pitch
 
-            if (pitchLevel <= 2)
-            {
+            //if (pitchLevel <= 2)
+            //{
 
-                if (chargeLevel == 1)
+            //if (chargeLevel == 1)
+                if (castLevel == 1)
                 {
 
-                    Game1.player.currentLocation.playSoundPitched("thunder_small", 600 + (pitchLevel * 200));
+                    Game1.player.currentLocation.playSoundPitched("thunder_small", 600 + (new Random().Next(5) * 200));
 
                 }
 
-                if (chargeLevel == 3)
-                {
+                //if (chargeLevel == 3)
+                //{
 
-                    Game1.player.currentLocation.playSoundPitched("thunder_small", 700 + (pitchLevel * 200));
+                //    Game1.player.currentLocation.playSoundPitched("thunder_small", 700 + (pitchLevel * 200));
 
-                }
+                //}
 
-            }
+            //}
 
         }
 
         public static void AnimateRadiusDecoration(GameLocation location, Vector2 vector, string name, float size, float change, float interval = 600f, float depth = 0.0001f)
         {
 
-            TemporaryAnimatedSprite radiusAnimation = new(0, interval, 1, 1, (vector * 64) + new Vector2(32,32) - (new Vector2(32,32) * size), false, false)
+            TemporaryAnimatedSprite radiusAnimation = new(0, interval, 1, 1, (vector * 64) + new Vector2(32, 32) - (new Vector2(32, 32) * size), false, false)
             {
 
                 sourceRect = new(0, 0, 64, 64),
@@ -102,11 +101,11 @@ namespace StardewDruid
 
                 scaleChange = 0.004f * change,
 
-                motion = new Vector2(-0.128f,-0.128f) * change,
+                motion = new Vector2(-0.128f, -0.128f) * change,
 
                 timeBasedMotion = true,
 
-                layerDepth =depth,
+                layerDepth = depth,
 
                 rotationChange = 0.06f,
 
@@ -121,7 +120,7 @@ namespace StardewDruid
         public static void AnimateSprout(GameLocation location, Vector2 vector)
         {
 
-            TemporaryAnimatedSprite radiusAnimation = new(0, 1000f, 1, 1, (vector * 64) + new Vector2(16,16), false, false)
+            TemporaryAnimatedSprite radiusAnimation = new(0, 1000f, 1, 1, (vector * 64) + new Vector2(16, 16), false, false)
             {
 
                 sourceRect = new(0, 0, 32, 32),
@@ -595,7 +594,7 @@ namespace StardewDruid
 
                     meteorMotion = new Vector2(0.32f, 0.64f);
 
-                   // meteorRoll = false;
+                    // meteorRoll = false;
 
                     break;
 
@@ -620,7 +619,7 @@ namespace StardewDruid
 
                 sourceRectStartingPos = new Vector2(0, 0),
 
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images","Fireball.png")),
+                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Fireball.png")),
 
                 scale = 2f,
 
@@ -679,7 +678,7 @@ namespace StardewDruid
                 TemporaryAnimatedSprite smallAnimation = new(362, Game1.random.Next(30, 90), 6, 1, new Vector2(targetVector.X * 64f, targetVector.Y * 64f), flicker: false, (Game1.random.NextDouble() < 0.5) ? true : false)
                 {
                     //delayBeforeAnimationStart = Game1.random.Next(700)
-                    scale = (float)Game1.random.Next(5,10) * 0.1f,
+                    scale = Game1.random.Next(5, 10) * 0.1f,
                     alpha = 0.65f,
                 };
 
@@ -692,7 +691,7 @@ namespace StardewDruid
                 {
                     //delayBeforeAnimationStart = Game1.random.Next(200),
                     //scale = (float)Game1.random.Next(5, 15) / 10f
-                    scale = (float)Game1.random.Next(5, 10) * 0.1f,
+                    scale = Game1.random.Next(5, 10) * 0.1f,
                     alpha = 0.65f,
                 };
 
@@ -912,7 +911,7 @@ namespace StardewDruid
 
             }
 
-            if(backTile.TileIndex == 2154)
+            if (backTile.TileIndex == 2154)
             {
 
                 return false;
@@ -923,7 +922,7 @@ namespace StardewDruid
             {
 
                 return false;
-                    
+
             }
 
             if (npc)
@@ -943,8 +942,8 @@ namespace StardewDruid
                 if (barrier != null) { return false; }
 
                 Layer buildingLayer = targetLocation.Map.GetLayer("Buildings");
-                
-                if(buildingLayer != null)
+
+                if (buildingLayer != null)
                 {
 
                     Tile buildingTile = buildingLayer.Tiles[targetX, targetY];
@@ -1200,7 +1199,7 @@ namespace StardewDruid
                             neighbourList["BigObject"] = new();
 
                         }
-                        
+
                         neighbourList["BigObject"].Add(neighbourVector);
 
                     }
@@ -1315,22 +1314,22 @@ namespace StardewDruid
             if (targetAnimal.wasAutoPet.Value)
             {
 
-                targetAnimal.friendshipTowardFarmer.Value = Math.Min(1000, (int)targetAnimal.friendshipTowardFarmer.Value + num);
+                targetAnimal.friendshipTowardFarmer.Value = Math.Min(1000, targetAnimal.friendshipTowardFarmer.Value + num);
 
             }
             else
             {
 
-                targetAnimal.friendshipTowardFarmer.Value = Math.Min(1000, (int)targetAnimal.friendshipTowardFarmer.Value + 15);
+                targetAnimal.friendshipTowardFarmer.Value = Math.Min(1000, targetAnimal.friendshipTowardFarmer.Value + 15);
 
             }
 
             if ((targetPlayer.professions.Contains(3) && !targetAnimal.isCoopDweller()) || (targetPlayer.professions.Contains(2) && targetAnimal.isCoopDweller()))
             {
 
-                targetAnimal.friendshipTowardFarmer.Value = Math.Min(1000, (int)targetAnimal.friendshipTowardFarmer.Value + 15);
+                targetAnimal.friendshipTowardFarmer.Value = Math.Min(1000, targetAnimal.friendshipTowardFarmer.Value + 15);
 
-                targetAnimal.happiness.Value = (byte)Math.Min(255, (byte)targetAnimal.happiness.Value + Math.Max(5, 40 - (byte)targetAnimal.happinessDrain.Value));
+                targetAnimal.happiness.Value = (byte)Math.Min(255, targetAnimal.happiness.Value + Math.Max(5, 40 - targetAnimal.happinessDrain.Value));
 
             }
 
@@ -1343,9 +1342,9 @@ namespace StardewDruid
 
             }
 
-            targetAnimal.doEmote(((int)targetAnimal.moodMessage.Value == 4) ? 12 : num2);
+            targetAnimal.doEmote((targetAnimal.moodMessage.Value == 4) ? 12 : num2);
 
-            targetAnimal.happiness.Value = (byte)Math.Min(255, (byte)targetAnimal.happiness.Value + Math.Max(5, 40 - (byte)targetAnimal.happinessDrain.Value));
+            targetAnimal.happiness.Value = (byte)Math.Min(255, targetAnimal.happiness.Value + Math.Max(5, 40 - targetAnimal.happinessDrain.Value));
 
             targetAnimal.makeSound();
 
@@ -1765,7 +1764,7 @@ namespace StardewDruid
 
             }
 
-            if(segment != -1)
+            if (segment != -1)
             {
 
                 List<Vector2> segmentList = new();
@@ -1780,12 +1779,12 @@ namespace StardewDruid
 
                 int segmentPortion = (segment * segmentLength) - (segmentLength / 2);
 
-                for(int i = 0; i < segmentLength + segmentAdjust; i++)
+                for (int i = 0; i < segmentLength + segmentAdjust; i++)
                 {
 
                     int segmentIndex = segmentPortion + i;
 
-                    if(segmentIndex < 0) { segmentIndex = templateList.Count + segmentIndex; }
+                    if (segmentIndex < 0) { segmentIndex = templateList.Count + segmentIndex; }
 
                     segmentList.Add(templateList[segmentIndex]);
 
@@ -2071,10 +2070,10 @@ namespace StardewDruid
                 for (int index = targetLocation.resourceClumps.Count - 1; index >= 0; --index)
                 {
                     ResourceClump resourceClump = targetLocation.resourceClumps[index];
-                    Vector2 targetVector1 = ((NetFieldBase<Vector2, NetVector2>)resourceClump.tile).Value;
-                    if ((double)Vector2.Distance(targetVector1, targetVector) <= (double)(damageRadius + 1))
+                    Vector2 targetVector1 = resourceClump.tile.Value;
+                    if ((double)Vector2.Distance(targetVector1, targetVector) <= damageRadius + 1)
                     {
-                        switch (((NetFieldBase<int, NetInt>)resourceClump.parentSheetIndex).Value)
+                        switch (resourceClump.parentSheetIndex.Value)
                         {
                             case 600:
                             case 602:
@@ -2089,11 +2088,11 @@ namespace StardewDruid
             }
             if (targetLocation is Woods woods && powerLevel >= 3)
             {
-                for (int index = ((NetList<ResourceClump, NetRef<ResourceClump>>)woods.stumps).Count - 1; index >= 0; --index)
+                for (int index = woods.stumps.Count - 1; index >= 0; --index)
                 {
                     ResourceClump stump = ((NetList<ResourceClump, NetRef<ResourceClump>>)woods.stumps)[index];
-                    Vector2 targetVector2 = ((NetFieldBase<Vector2, NetVector2>)stump.tile).Value;
-                    if ((double)Vector2.Distance(targetVector2, targetVector) <= (double)(damageRadius + 1))
+                    Vector2 targetVector2 = stump.tile.Value;
+                    if ((double)Vector2.Distance(targetVector2, targetVector) <= damageRadius + 1)
                         DestroyStump(targetLocation, targetPlayer, stump, targetVector2, Axe as Axe, "Woods");
                 }
             }
@@ -2141,7 +2140,11 @@ namespace StardewDruid
                         if (targetObject.Name == "Stone")
                         {
 
-                            targetLocation.OnStoneDestroyed(@targetObject.ParentSheetIndex, (int)tileVector.X, (int)tileVector.Y, targetPlayer);
+                            //targetLocation.OnStoneDestroyed(@targetObject.ParentSheetIndex, (int)tileVector.X, (int)tileVector.Y, targetPlayer);
+
+                            Vector2 stoneVector = targetPlayer.getTileLocation();
+
+                            targetLocation.OnStoneDestroyed(@targetObject.ParentSheetIndex, (int)stoneVector.X, (int)stoneVector.Y, targetPlayer);
 
                             targetLocation.objects.Remove(tileVector);
 
@@ -2153,8 +2156,10 @@ namespace StardewDruid
 
                             for (int fibreDebris = 2; fibreDebris < i; fibreDebris++)
                             {
-                                Game1.createObjectDebris(388, (int)tileVector.X, (int)tileVector.Y);
+                                //Game1.createObjectDebris(388, (int)tileVector.X, (int)tileVector.Y);
+                                Throw throwObject = new(targetPlayer, tileVector * 64, 388);
 
+                                throwObject.ThrowObject();
                             }
 
                             targetLocation.objects.Remove(tileVector);
@@ -2165,7 +2170,11 @@ namespace StardewDruid
                         else if (targetObject.Name.Contains("Weed"))
                         {
 
-                            Game1.createObjectDebris(771, (int)tileVector.X, (int)tileVector.Y);
+                            //Game1.createObjectDebris(771, (int)tileVector.X, (int)tileVector.Y);
+
+                            Throw throwObject = new(targetPlayer, tileVector * 64, 771);
+
+                            throwObject.ThrowObject();
 
                             targetLocation.objects.Remove(tileVector);
 
@@ -2184,11 +2193,12 @@ namespace StardewDruid
                         }
                         else if (targetObject is BreakableContainer breakableContainer)
                         {
+
                             breakableContainer.releaseContents(targetLocation, targetPlayer);
 
                             targetLocation.objects.Remove(tileVector);
 
-                            targetLocation.playSound("barrelBreak", (NetAudio.SoundContext)0);
+                            targetLocation.playSound("barrelBreak", 0);
 
                             destroyVector = true;
 
@@ -2270,7 +2280,11 @@ namespace StardewDruid
                                 if (Game1.random.NextDouble() < 0.5)
                                 {
 
-                                    Game1.createObjectDebris(771, (int)tileVector.X, (int)tileVector.Y);
+                                    //Game1.createObjectDebris(771, (int)tileVector.X, (int)tileVector.Y);
+
+                                    Throw throwObject = new(targetPlayer, tileVector * 64, 771);
+
+                                    throwObject.ThrowObject();
 
                                 }
 
@@ -2282,7 +2296,7 @@ namespace StardewDruid
 
                     }
 
-                    if (decorate && ( i == damageRadius || destroyVector))
+                    if (decorate && (i == damageRadius || destroyVector))
                     {
 
                         ImpactVector(targetLocation, tileVector);
@@ -2357,7 +2371,7 @@ namespace StardewDruid
 
                 TemporaryAnimatedSprite critterAnimation = new("TileSheets\\critters", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, flicker: false, flipped: false, animationSort, 0.001f, animationColor, 3f, 0f, 0f, 0f)
                 {
-                    motion = new Vector2((float)critterConfig[4] / 80f * critterConfig[9], 0), // (float)critterConfig[4] / 80f * critterConfig[9]
+                    motion = new Vector2(critterConfig[4] / 80f * critterConfig[9], 0), // (float)critterConfig[4] / 80f * critterConfig[9]
                     timeBasedMotion = true,
                 };
 
@@ -2438,7 +2452,7 @@ namespace StardewDruid
 
         }
 
-        public static void HitMonster(GameLocation targetLocation, Farmer targetPlayer, StardewValley.Monsters.Monster targetMonster, int damage, bool critApplied,int diffX = 0,int diffY = 0)
+        public static void HitMonster(GameLocation targetLocation, Farmer targetPlayer, StardewValley.Monsters.Monster targetMonster, int damage, bool critApplied, int diffX = 0, int diffY = 0)
         {
 
             bool specialHit = false;
@@ -2448,7 +2462,7 @@ namespace StardewDruid
             if (targetMonster is StardewValley.Monsters.Mummy mummy)
             {
 
-                if(mummy.reviveTimer.Value > 0)
+                if (mummy.reviveTimer.Value > 0)
                 {
 
                     damageDealt = mummy.takeDamage(1, 0, 0, true, 999f, targetPlayer);
@@ -2459,9 +2473,9 @@ namespace StardewDruid
 
             }
 
-            if(targetMonster is StardewValley.Monsters.Bug buggy)
+            if (targetMonster is StardewValley.Monsters.Bug buggy)
             {
-                
+
                 damageDealt = 99;
 
                 buggy.Health = 0;
@@ -2560,7 +2574,7 @@ namespace StardewDruid
         public static void AnimateQuickWarp(GameLocation location, Vector2 position, string name = "Escape")
         {
 
-            TemporaryAnimatedSprite firstWarp = new(0, 75f, 12, 1, position - new Vector2(16,16), false, false)
+            TemporaryAnimatedSprite firstWarp = new(0, 75f, 12, 1, position - new Vector2(16, 16), false, false)
             {
 
                 sourceRect = new(0, 32, 32, 32),
@@ -2603,7 +2617,7 @@ namespace StardewDruid
             TemporaryAnimatedSprite warpAnimation = new(0, 1000f, 1, 1, playerPosition, false, false)
             {
 
-                sourceRect = new(0,0, 64, 64),
+                sourceRect = new(0, 0, 64, 64),
 
                 sourceRectStartingPos = new Vector2(0, 0),
 
@@ -2613,7 +2627,7 @@ namespace StardewDruid
 
                 layerDepth = animationSort,
 
-                motion = new Vector2(motionX,motionY),
+                motion = new Vector2(motionX, motionY),
 
                 timeBasedMotion = true,
 
@@ -2632,9 +2646,9 @@ namespace StardewDruid
 
             if (Monster == null)
             {
-            
+
                 return false;
-            
+
             }
 
             if (Monster.Health <= 0)
@@ -2667,48 +2681,57 @@ namespace StardewDruid
             return true;
 
         }
-        
-        public static void DestroyBoulder(
-          GameLocation targetLocation,
-          Farmer targetPlayer,
-          ResourceClump resourceClump,
-          Vector2 targetVector,
-          Pickaxe pickaxe,
-          int debrisMax)
+
+        public static void DestroyBoulder(GameLocation targetLocation,Farmer targetPlayer,ResourceClump resourceClump,Vector2 targetVector,Pickaxe pickaxe,int debrisMax)
         {
             Random random = new Random();
-            int upgradeLevel = ((Tool)pickaxe).UpgradeLevel;
-            ((NetFieldBase<float, NetFloat>)resourceClump.health).Set(1f);
+            int upgradeLevel = pickaxe.UpgradeLevel;
+            resourceClump.health.Set(1f);
             if (upgradeLevel < 3)
             {
                 Pickaxe pickaxe1 = new Pickaxe();
-                ((Tool)pickaxe1).UpgradeLevel = 3;
-                targetPlayer.Stamina += Math.Min(2f, (float)targetPlayer.MaxStamina - targetPlayer.Stamina);
-                ((Tool)pickaxe1).DoFunction(targetLocation, 0, 0, 1, targetPlayer);
-                resourceClump.performToolAction((Tool)pickaxe1, 1, targetVector, targetLocation);
+                pickaxe1.UpgradeLevel = 3;
+                targetPlayer.Stamina += Math.Min(2f, targetPlayer.MaxStamina - targetPlayer.Stamina);
+                pickaxe1.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+                resourceClump.performToolAction(pickaxe1, 1, targetVector, targetLocation);
             }
             else
             {
-                targetPlayer.Stamina += Math.Min(2f, (float)targetPlayer.MaxStamina - targetPlayer.Stamina);
-                ((Tool)Mod.instance.virtualPick).DoFunction(targetLocation, 0, 0, 1, targetPlayer);
-                resourceClump.performToolAction((Tool)Mod.instance.virtualPick, 1, targetVector, targetLocation);
+                targetPlayer.Stamina += Math.Min(2f, targetPlayer.MaxStamina - targetPlayer.Stamina);
+                Mod.instance.virtualPick.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+                resourceClump.performToolAction(Mod.instance.virtualPick, 1, targetVector, targetLocation);
             }
             resourceClump.NeedsUpdate = false;
             targetLocation._activeTerrainFeatures.Remove(resourceClump);
             targetLocation.resourceClumps.Remove(resourceClump);
-            resourceClump.currentLocation = (GameLocation)null;
+            resourceClump.currentLocation = null;
+
+            Throw throwObject;
+
             if (upgradeLevel >= 3)
             {
-                Game1.createObjectDebris(709, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, (GameLocation)null);
-                Game1.createObjectDebris(709, (int)targetVector.X + 1, (int)targetVector.Y, -1, 0, 1f, (GameLocation)null);
+                //Game1.createObjectDebris(709, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, null);
+                //Game1.createObjectDebris(709, (int)targetVector.X + 1, (int)targetVector.Y, -1, 0, 1f, null);
+
+                throwObject = new(targetPlayer, targetVector * 64, 709);
+
+                throwObject.ThrowObject();
+                throwObject.ThrowObject();
+
             }
+
             for (int index = 0; index < random.Next(1, debrisMax); ++index)
             {
-                switch (((NetFieldBase<int, NetInt>)resourceClump.parentSheetIndex).Value)
+                switch (resourceClump.parentSheetIndex.Value)
                 {
                     case 756:
                     case 758:
-                        Game1.createObjectDebris(536, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, (GameLocation)null);
+                        //Game1.createObjectDebris(536, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, null);
+
+                        throwObject = new(targetPlayer, targetVector * 64, 536);
+
+                        throwObject.ThrowObject();
+
                         break;
                     default:
                         if (targetLocation is MineShaft)
@@ -2716,28 +2739,37 @@ namespace StardewDruid
                             MineShaft mineShaft = (MineShaft)targetLocation;
                             if (mineShaft.mineLevel >= 80)
                             {
-                                Game1.createObjectDebris(537, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, (GameLocation)null);
+                               // Game1.createObjectDebris(537, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, null);
+
+                                throwObject = new(targetPlayer, targetVector * 64, 537);
+
+                                throwObject.ThrowObject();
+
                                 break;
                             }
                             if (mineShaft.mineLevel >= 121)
                             {
-                                Game1.createObjectDebris(749, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, (GameLocation)null);
+                                //Game1.createObjectDebris(749, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, null);
+
+                                throwObject = new(targetPlayer, targetVector * 64, 749);
+
+                                throwObject.ThrowObject();
+
                                 break;
                             }
                         }
-                        Game1.createObjectDebris(535, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, (GameLocation)null);
+                        //Game1.createObjectDebris(535, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, null);
+
+                        throwObject = new(targetPlayer, targetVector * 64, 535);
+
+                        throwObject.ThrowObject();
+
                         break;
                 }
             }
         }
 
-        public static void DestroyStump(
-          GameLocation targetLocation,
-          Farmer targetPlayer,
-          ResourceClump resourceClump,
-          Vector2 targetVector,
-          Axe Axe,
-          string resourceType)
+        public static void DestroyStump(GameLocation targetLocation,Farmer targetPlayer,ResourceClump resourceClump,Vector2 targetVector,Axe Axe,string resourceType)
         {
             int upgradeLevel = Axe.UpgradeLevel;
             resourceClump.health.Set(1f);
@@ -2750,15 +2782,23 @@ namespace StardewDruid
             }
             else
             {
-                targetPlayer.Stamina += Math.Min(2f, (float)targetPlayer.MaxStamina - targetPlayer.Stamina);
+                targetPlayer.Stamina += Math.Min(2f, targetPlayer.MaxStamina - targetPlayer.Stamina);
                 (Mod.instance.virtualAxe).DoFunction(targetLocation, 0, 0, 1, targetPlayer);
                 resourceClump.performToolAction(Mod.instance.virtualAxe, 1, targetVector, targetLocation);
             }
-          resourceClump.NeedsUpdate = false;
+            resourceClump.NeedsUpdate = false;
+
+            Throw throwObject;
+
             if (upgradeLevel >= 3)
             {
-                Game1.createObjectDebris(709, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, null);
-                Game1.createObjectDebris(709, (int)targetVector.X + 1, (int)targetVector.Y, -1, 0, 1f, null);
+                //Game1.createObjectDebris(709, (int)targetVector.X, (int)targetVector.Y, -1, 0, 1f, null);
+                //Game1.createObjectDebris(709, (int)targetVector.X + 1, (int)targetVector.Y, -1, 0, 1f, null);
+
+                throwObject = new(targetPlayer, targetVector * 64, 709);
+
+                throwObject.ThrowObject();
+                throwObject.ThrowObject();
             }
             switch (resourceType)
             {
@@ -2777,13 +2817,13 @@ namespace StardewDruid
                         targetLocation._activeTerrainFeatures.Remove(resourceClump);
 
                     }
-                        
+
                     if (!targetLocation.resourceClumps.Contains(resourceClump))
                     {
 
                         break;
                     }
-                    
+
                     targetLocation.resourceClumps.Remove(resourceClump);
 
                     break;
@@ -2825,12 +2865,7 @@ namespace StardewDruid
             }
         }
 
-        public static void AnimateRockfall(
-          GameLocation targetLocation,
-          Vector2 targetVector,
-          int castDelay,
-          int objectIndex = -1,
-          int scatterIndex = -1)
+        public static void AnimateRockfall(GameLocation targetLocation,Vector2 targetVector,int castDelay,int objectIndex = -1,int scatterIndex = -1)
         {
             if (objectIndex == -1)
             {
@@ -2841,7 +2876,7 @@ namespace StardewDruid
             Microsoft.Xna.Framework.Rectangle standardTileSheet1 = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, objectIndex, 16, 16);
             Microsoft.Xna.Framework.Rectangle standardTileSheet2 = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, scatterIndex, 16, 16);
             float num1 = 575f;
-            Vector2 vector2 = new((float)((double)targetVector.X * 64.0 + 8.0), (float)(((double)targetVector.Y - 3.0) * 64.0 - 24.0));
+            Vector2 vector2 = new((float)(targetVector.X * 64.0 + 8.0), (float)((targetVector.Y - 3.0) * 64.0 - 24.0));
             float num2 = 0.0015f;
             float num3 = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "1");
             TemporaryAnimatedSprite temporaryAnimatedSprite1 = new TemporaryAnimatedSprite("Maps\\springobjects", standardTileSheet2, num1, 1, 0, vector2, false, false, num3, 1f / 1000f, Color.White, 3f, 0.0f, 0.0f, 0.0f, false)
@@ -2852,7 +2887,7 @@ namespace StardewDruid
             };
             targetLocation.temporarySprites.Add(temporaryAnimatedSprite1);
 
-            vector2 = new((float)((double)targetVector.X * 64.0 + 8.0), (float)(((double)targetVector.Y - 3.0) * 64.0 + 8.0));
+            vector2 = new((float)(targetVector.X * 64.0 + 8.0), (float)((targetVector.Y - 3.0) * 64.0 + 8.0));
             float num4 = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "2");
             TemporaryAnimatedSprite temporaryAnimatedSprite2 = new TemporaryAnimatedSprite("Maps\\springobjects", standardTileSheet1, num1, 1, 0, vector2, false, false, num4, 1f / 1000f, Color.White, 3f, 0.0f, 0.0f, 0.0f, false)
             {
@@ -2862,7 +2897,7 @@ namespace StardewDruid
             };
             targetLocation.temporarySprites.Add(temporaryAnimatedSprite2);
 
-            vector2 = new((float)((double)targetVector.X * 64.0 + 16.0), (float)((double)targetVector.Y * 64.0 + 16.0));
+            vector2 = new((float)(targetVector.X * 64.0 + 16.0), (float)(targetVector.Y * 64.0 + 16.0));
             float num5 = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "3");
             TemporaryAnimatedSprite temporaryAnimatedSprite3 = new TemporaryAnimatedSprite("Maps\\springobjects", standardTileSheet1, num1, 1, 0, vector2, false, false, num5, 1f / 1000f, Color.Black * 0.5f, 2f, 0.0f, 0.0f, 0.0f, false)
             {
@@ -2871,12 +2906,7 @@ namespace StardewDruid
             targetLocation.temporarySprites.Add(temporaryAnimatedSprite3);
         }
 
-        public static void DamageFarmers(
-          GameLocation location,
-          Microsoft.Xna.Framework.Rectangle zone,
-          int damage,
-          StardewValley.Monsters.Monster monster,
-          bool parry = false)
+        public static void DamageFarmers(GameLocation location,Microsoft.Xna.Framework.Rectangle zone,int damage,StardewValley.Monsters.Monster monster,bool parry = false)
         {
             foreach (Farmer farmer in Game1.getAllFarmers())
             {
@@ -2888,7 +2918,7 @@ namespace StardewDruid
                         farmer.takeDamage(damage, parry, monster);
 
                     }
-                        
+
                 }
             }
         }

@@ -1,12 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Force.DeepCloner;
+using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
-using StardewDruid.Map;
-using StardewDruid.Monster;
 using StardewValley;
-using System.Collections.Generic;
 using System;
-using Force.DeepCloner;
-using StardewDruid.Event.Challenge;
+using System.Collections.Generic;
 
 namespace StardewDruid.Event.World
 {
@@ -135,7 +132,7 @@ namespace StardewDruid.Event.World
         public override bool EventExpire()
         {
 
-            if(eventLinger == -1)
+            if (eventLinger == -1)
             {
 
                 if (!riteData.castTask.ContainsKey("masterPortal"))

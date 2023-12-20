@@ -2,19 +2,9 @@
 using StardewDruid.Cast;
 using StardewDruid.Map;
 using StardewValley;
-using StardewValley.Locations;
 using StardewValley.Monsters;
-using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using xTile.Layers;
-using xTile.Tiles;
-using static StardewValley.Minigames.TargetGame;
 
 namespace StardewDruid.Monster
 {
@@ -80,7 +70,7 @@ namespace StardewDruid.Monster
 
             Vector2 playerVector = riteData.caster.getTileLocation();
 
-            spawnWithin = playerVector + ((target - playerVector) / 2) - new Vector2(2,2);
+            spawnWithin = playerVector + ((target - playerVector) / 2) - new Vector2(2, 2);
 
             spawnRange = new Vector2(5, 5);
 
@@ -113,7 +103,7 @@ namespace StardewDruid.Monster
         public void SpawnCheck()
         {
 
-            for(int i = spawnHandles.Count - 1; i >= 0; --i)
+            for (int i = spawnHandles.Count - 1; i >= 0; --i)
             {
 
                 if (spawnHandles[i].spawnComplete)
@@ -171,7 +161,7 @@ namespace StardewDruid.Monster
 
                 spawnVector = SpawnVector();
 
-                if(spawnVector != new Vector2(-1))
+                if (spawnVector != new Vector2(-1))
                 {
 
                     SpawnGround(spawnVector);
@@ -182,7 +172,7 @@ namespace StardewDruid.Monster
 
             }
 
-            if(specialCounter > 30 && spawnSpecial > 0)
+            if (specialCounter > 30 && spawnSpecial > 0)
             {
 
                 spawnVector = SpawnVector();
@@ -244,7 +234,7 @@ namespace StardewDruid.Monster
                     continue;
                 }
 
-                if(ModUtility.NeighbourCheck(riteData.castLocation, spawnVector, 0).Count > 0)
+                if (ModUtility.NeighbourCheck(riteData.castLocation, spawnVector, 0).Count > 0)
                 {
                     continue;
                 }
@@ -320,7 +310,7 @@ namespace StardewDruid.Monster
                 return spawnVector;
 
             }
-  
+
             return spawnVector;
 
         }
