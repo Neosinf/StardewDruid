@@ -46,6 +46,8 @@ namespace StardewDruid.Character
         public Dictionary<int, List<Rectangle>> fireFrames;
         public List<Vector2> fireVectors;
         public int fireTimer;
+        public Texture2D pointTexture;
+        public Dictionary<Vector2,List<int>> firePoints;
         public bool avatar;
 
         public Dragon()
@@ -69,104 +71,107 @@ namespace StardewDruid.Character
         {
             shadowTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "DragonShadow.png"));
             shadowFrames = new List<Rectangle>()
-      {
-        new Rectangle(0, 0, 64, 32),
-        new Rectangle(0, 32, 64, 32),
-        new Rectangle(0, 64, 64, 32),
-        new Rectangle(0, 32, 64, 32),
-        new Rectangle(64, 0, 64, 32),
-        new Rectangle(64, 32, 64, 32),
-        new Rectangle(64, 64, 64, 32),
-        new Rectangle(64, 32, 64, 32)
-      };
+            {
+            new Rectangle(0, 0, 64, 32),
+            new Rectangle(0, 32, 64, 32),
+            new Rectangle(0, 64, 64, 32),
+            new Rectangle(0, 32, 64, 32),
+            new Rectangle(64, 0, 64, 32),
+            new Rectangle(64, 32, 64, 32),
+            new Rectangle(64, 64, 64, 32),
+            new Rectangle(64, 32, 64, 32)
+            };
             flightTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", Name + "Flight.png"));
             flightFrames = new Dictionary<int, List<Rectangle>>()
             {
                 [0] = new List<Rectangle>()
-        {
-          new Rectangle(0, 64, 128, 64),
-          new Rectangle(128, 64, 128, 64),
-          new Rectangle(256, 64, 128, 64),
-          new Rectangle(384, 64, 128, 64),
-          new Rectangle(256, 64, 128, 64),
-          new Rectangle(0, 64, 128, 64)
-        },
+                {
+                new Rectangle(0, 64, 128, 64),
+                new Rectangle(128, 64, 128, 64),
+                new Rectangle(256, 64, 128, 64),
+                new Rectangle(384, 64, 128, 64),
+                new Rectangle(256, 64, 128, 64),
+                new Rectangle(0, 64, 128, 64)
+                },
                 [1] = new List<Rectangle>()
-        {
-          new Rectangle(0, 0, 128, 64),
-          new Rectangle(128, 0, 128, 64),
-          new Rectangle(256, 0, 128, 64),
-          new Rectangle(384, 0, 128, 64),
-          new Rectangle(256, 0, 128, 64),
-          new Rectangle(0, 0, 128, 64)
-        },
+                {
+                new Rectangle(0, 0, 128, 64),
+                new Rectangle(128, 0, 128, 64),
+                new Rectangle(256, 0, 128, 64),
+                new Rectangle(384, 0, 128, 64),
+                new Rectangle(256, 0, 128, 64),
+                new Rectangle(0, 0, 128, 64)
+                },
                 [2] = new List<Rectangle>()
-        {
-          new Rectangle(0, 128, 128, 64),
-          new Rectangle(128, 128, 128, 64),
-          new Rectangle(256, 128, 128, 64),
-          new Rectangle(384, 128, 128, 64),
-          new Rectangle(256, 128, 128, 64),
-          new Rectangle(0, 128, 128, 64)
-        },
+                {
+                new Rectangle(0, 128, 128, 64),
+                new Rectangle(128, 128, 128, 64),
+                new Rectangle(256, 128, 128, 64),
+                new Rectangle(384, 128, 128, 64),
+                new Rectangle(256, 128, 128, 64),
+                new Rectangle(0, 128, 128, 64)
+                },
                 [3] = new List<Rectangle>()
-        {
-          new Rectangle(0, 0, 128, 64),
-          new Rectangle(128, 0, 128, 64),
-          new Rectangle(256, 0, 128, 64),
-          new Rectangle(384, 0, 128, 64),
-          new Rectangle(256, 0, 128, 64),
-          new Rectangle(0, 0, 128, 64)
-        }
+                {
+                new Rectangle(0, 0, 128, 64),
+                new Rectangle(128, 0, 128, 64),
+                new Rectangle(256, 0, 128, 64),
+                new Rectangle(384, 0, 128, 64),
+                new Rectangle(256, 0, 128, 64),
+                new Rectangle(0, 0, 128, 64)
+                }
             };
             breathTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", Name + "Breath.png"));
             fireTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "DragonFire.png"));
+            pointTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "FirePoint.png"));
             fireFrames = new Dictionary<int, List<Rectangle>>()
             {
                 [0] = new List<Rectangle>()
-        {
-          new Rectangle(0, 0, 64, 32),
-          new Rectangle(64, 0, 64, 32),
-          new Rectangle(128, 0, 64, 32),
-          new Rectangle(192, 0, 64, 32)
-        },
+                {
+                new Rectangle(0, 0, 64, 32),
+                new Rectangle(64, 0, 64, 32),
+                new Rectangle(128, 0, 64, 32),
+                new Rectangle(192, 0, 64, 32)
+                },
                 [1] = new List<Rectangle>()
-        {
-          new Rectangle(0, 32, 64, 32),
-          new Rectangle(64, 32, 64, 32),
-          new Rectangle(128, 32, 64, 32),
-          new Rectangle(192, 32, 64, 32)
-        },
+                {
+                new Rectangle(0, 32, 64, 32),
+                new Rectangle(64, 32, 64, 32),
+                new Rectangle(128, 32, 64, 32),
+                new Rectangle(192, 32, 64, 32)
+                },
                 [2] = new List<Rectangle>()
-        {
-          new Rectangle(0, 64, 64, 32),
-          new Rectangle(64, 64, 64, 32),
-          new Rectangle(128, 64, 64, 32),
-          new Rectangle(192, 64, 64, 32)
-        },
+                {
+                new Rectangle(0, 64, 64, 32),
+                new Rectangle(64, 64, 64, 32),
+                new Rectangle(128, 64, 64, 32),
+                new Rectangle(192, 64, 64, 32)
+                },
                 [3] = new List<Rectangle>()
-        {
-          new Rectangle(0, 32, 64, 32),
-          new Rectangle(64, 32, 64, 32),
-          new Rectangle(128, 32, 64, 32),
-          new Rectangle(192, 32, 64, 32)
-        }
+                {
+                new Rectangle(0, 32, 64, 32),
+                new Rectangle(64, 32, 64, 32),
+                new Rectangle(128, 32, 64, 32),
+                new Rectangle(192, 32, 64, 32)
+                }
             };
             fireVectors = new List<Vector2>()
-      {
-        new Vector2(44f, -300f),
-        new Vector2(-300f, -300f),
-        new Vector2(128f, -96f),
-        new Vector2(60f, -96f),
-        new Vector2(-320f, -96f),
-        new Vector2(-320f, -96f),
-        new Vector2(136f, -280f),
-        new Vector2(-260f, -280f),
-        new Vector2(264f, -72f),
-        new Vector2(180f, -24f),
-        new Vector2(-300f, -24f),
-        new Vector2(-328f, -72f)
-      };
+            {
+            new Vector2(44f, -300f),
+            new Vector2(-300f, -300f),
+            new Vector2(128f, -96f),
+            new Vector2(60f, -96f),
+            new Vector2(-320f, -96f),
+            new Vector2(-320f, -96f),
+            new Vector2(136f, -280f),
+            new Vector2(-260f, -280f),
+            new Vector2(264f, -72f),
+            new Vector2(180f, -24f),
+            new Vector2(-300f, -24f),
+            new Vector2(-328f, -72f)
+            };
+
+            firePoints = new();
         }
 
         protected override void initNetFields()
@@ -174,13 +179,13 @@ namespace StardewDruid.Character
             base.initNetFields();
             NetFields.AddFields(new INetSerializable[7]
             {
-         netDirection,
-         netAlternative,
-         netFlightFrame,
-         netFlightHeight,
-         netDashActive,
-         netFireFrame,
-         netFireActive
+                 netDirection,
+                 netAlternative,
+                 netFlightFrame,
+                 netFlightHeight,
+                 netDashActive,
+                 netFireFrame,
+                 netFireActive
             });
         }
 
@@ -210,12 +215,12 @@ namespace StardewDruid.Character
 
             if (netFireActive)
             {
-                b.Draw(breathTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f), new Rectangle?(Sprite.SourceRect), Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(breathTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f), Sprite.SourceRect, Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip ? (SpriteEffects)1 : 0, drawLayer);
                 DrawFire(b, localPosition,netDirection, drawLayer);
             }
             else
             {
-                b.Draw(Sprite.Texture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f), new Rectangle?(Sprite.SourceRect), Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(Sprite.Texture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f),Sprite.SourceRect, Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip ? (SpriteEffects)1 : 0, drawLayer);
 
             }
             b.Draw(shadowTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 40f), shadowFrames[netDirection], Color.White * 0.35f, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer - 1E-05f);
@@ -250,22 +255,48 @@ namespace StardewDruid.Character
                     break;
             }
             int index = num2 + adjust;
+
             b.Draw(fireTexture, new(position.X+fireVectors[index].X, position.Y + fireVectors[index].Y),fireFrames[direction][netFireFrame], Color.White, rotation, new Vector2(0.0f, 0.0f), num1, flip || direction == 3 ? (SpriteEffects)1 : 0, depth);
+
+            foreach(KeyValuePair<Vector2,List<int>> firePoint in firePoints)
+            {
+
+                int point = (firePoint.Value[0] + firePoint.Value[1]) % 8;
+
+                int pointTwo = (firePoint.Value[0] + firePoint.Value[1] + 4) % 8;
+
+                Vector2 pointVector = new((firePoint.Key.X * 64) - (float)Game1.viewport.X, (firePoint.Key.Y * 64) - (float)Game1.viewport.Y);
+
+                b.Draw(pointTexture, pointVector, new Rectangle(point*32,0,32,32), Color.White, 0f, Vector2.Zero, 2, SpriteEffects.None, 0.001f);
+
+                b.Draw(pointTexture, pointVector + new Vector2(0,32f), new Rectangle(pointTwo*32, 0, 32, 32), Color.White, 0f, Vector2.Zero, 2, SpriteEffects.None, 0.001f);
+
+            }
+
         }
 
         public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
         {
             if (!Context.IsMainPlayer)
             {
+                
                 base.drawAboveAlwaysFrontLayer(b);
+           
             }
             else
             {
+                
                 if (textAboveHeadTimer <= 0 || textAboveHead == null)
+                {
                     return;
+                }
+                    
                 Vector2 local = Game1.GlobalToLocal(new Vector2(getStandingX(), getStandingY() - Sprite.SpriteHeight * 4 - 64 + yJumpOffset));
+                
                 SpriteText.drawStringWithScrollCenteredAt(b, textAboveHead, (int)local.X, (int)local.Y, "", textAboveHeadAlpha, textAboveHeadColor, 1, (float)(getTileY() * 64 / 10000.0 + 1.0 / 1000.0 + getTileX() / 10000.0), false);
+            
             }
+        
         }
 
         public override bool checkAction(Farmer who, GameLocation l) => false;
@@ -640,75 +671,172 @@ namespace StardewDruid.Character
         public void PerformBreath()
         {
             breathActive = true;
+
             breathDelay = 3;
+
             breathTimer = 48;
+
             netFireFrame.Set(-1);
+
             fireTimer = 12;
+
             if (Mod.instance.TaskList().ContainsKey("masterBreath"))
+            {
+
                 return;
+
+            }
+
             Mod.instance.UpdateTask("lessonBreath", 1);
+
         }
 
         public bool UpdateBreath()
         {
             if (breathDelay > 0)
             {
+                
                 --breathDelay;
+                
                 return true;
+            
             }
+
             --breathTimer;
+            
             --fireTimer;
+
             if (breathTimer == 0 || Game1.player.IsBusyDoingSomething())
             {
+               
                 breathActive = false;
+                
                 netFireActive.Set(false);
+                
                 return false;
+            
             }
+
             if (breathTimer % 12 == 0)
             {
+                
                 netFireActive.Set(true);
+
                 netFireFrame.Set(netFireFrame.Value + 1);
+
                 if (netFireFrame== 4)
+
                     netFireFrame.Set(2);
+
                 if (Mod.instance.Helper.Input.IsDown(rightButton) && breathTimer == 12)
+
                     breathTimer = 24;
+           
             }
+
+
+
             if (fireTimer == 0)
             {
                 Vector2 zero = Vector2.Zero;
+
                 switch (netDirection)
                 {
                     case 0:
-                        // ISSUE: explicit constructor call
+
                         zero = new((float)((int)(Position.X / 64.0) + 2), (float)((int)(Position.Y / 64.0) - 4));
+
                         if (netAlternative == 3 || flip)
                         {
                             zero.X -= 4f;
+
                             break;
+
                         }
+
                         break;
+
                     case 1:
-                        // ISSUE: explicit constructor call
+
                         zero = new((float)((int)(Position.X / 64.0) + 5), (float)(int)(Position.Y / 64.0));
+
                         break;
+
                     case 2:
-                        // ISSUE: explicit constructor call
+
                         zero = new((float)((int)(Position.X / 64.0) + 3), (float)((int)(Position.Y / 64.0) + 1));
+
                         if (netAlternative == 3 || flip)
                         {
                             zero.X -= 4f;
                             break;
+
                         }
+
                         break;
+
                     default:
-                        // ISSUE: explicit constructor call
+
                         zero = new((float)((int)(Position.X / 64.0) - 4), (float)(int)(Position.Y / 64.0));
+
                         break;
+
                 }
-                ModUtility.Explode(currentLocation, zero, Game1.player, 2, Mod.instance.DamageLevel() / 2, 3, Mod.instance.virtualPick, Mod.instance.virtualAxe);
-                fireTimer = 36;
+
+                Random random = new();
+
+                for(int i = 0; i < 2; i++)
+                {
+
+                    List<Vector2> spreadFire = ModUtility.GetTilesWithinRadius(currentLocation, zero, i);
+
+                    foreach(Vector2 tile in spreadFire)
+                    {
+
+                        if (!firePoints.ContainsKey(tile))
+                        {
+
+                            firePoints[tile] = new() { 16, random.Next(8) };
+
+                        }
+
+                    }
+
+
+                }
+
+                for(int p = firePoints.Count - 1; p >= 0; p--)
+                {
+
+                    KeyValuePair<Vector2,List<int>> firePoint = firePoints.ElementAt(p);
+
+                    firePoints[firePoint.Key][0] -= 1;
+
+                    if (firePoints[firePoint.Key][0] <= 0)
+                    {
+
+                        firePoints.Remove(firePoint.Key);
+
+                    }
+                    else
+                    {
+
+                        ModUtility.Explode(currentLocation, firePoint.Key, Game1.player, 0, Mod.instance.DamageLevel() / 20, 3, Mod.instance.virtualPick, Mod.instance.virtualAxe, decorate:false);
+
+                    }
+
+                }
+
+                //ModUtility.Explode(currentLocation, zero, Game1.player, 2, Mod.instance.DamageLevel() / 2, 3, Mod.instance.virtualPick, Mod.instance.virtualAxe);
+
+                //fireTimer = 36;
+                //fireTimer = 18;
+                fireTimer = 12;
+            
             }
+            
             return true;
+
         }
 
         public void PerformStrike(Rectangle hitBox, int damage)

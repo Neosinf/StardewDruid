@@ -38,69 +38,69 @@ namespace StardewDruid.Character
             if (!Context.IsMainPlayer)
             {
                 base.draw(b, alpha);
+
+                return;
+            }
+
+            if (IsInvisible || !Utility.isOnScreen(Position, 128))
+            {
+                return;
+            }
+
+            if (base.IsEmoting && !Game1.eventUp)
+            {
+                Vector2 localPosition2 = getLocalPosition(Game1.viewport);
+                localPosition2.Y -= 32 + Sprite.SpriteHeight * 4;
+                b.Draw(Game1.emoteSpriteSheet, localPosition2, new Microsoft.Xna.Framework.Rectangle(base.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, base.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, getStandingY() / 10000f);
+            }
+
+            Vector2 localPosition = getLocalPosition(Game1.viewport);
+
+            b.Draw(
+                Game1.shadowTexture,
+                localPosition + new Vector2(32f, 40f),
+                Game1.shadowTexture.Bounds,
+                Color.White * alpha, 0f,
+                new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y),
+                4f,
+                SpriteEffects.None,
+                Math.Max(0.0f, getStandingY() / 10000f) - 0.0001f
+                );
+
+
+            if (timers.ContainsKey("idle"))
+            {
+                int num3 = timers["idle"] / 80 % 4 * 32;
+
+                b.Draw(
+                    Sprite.Texture,
+                    localPosition + new Vector2(64, 16f),
+                    new Rectangle(num3, 256, 32, 32),
+                    Color.White,
+                    0f,
+                    new Vector2(Sprite.SpriteWidth / 2, Sprite.SpriteHeight * 3f / 4f),
+                    4f,
+                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    Math.Max(0f, drawOnTop ? 0.991f : (getStandingY() / 10000f))
+                );
+
             }
             else
             {
-                if (IsInvisible || !Utility.isOnScreen(Position, 128))
-                {
-                    return;
-                }
-
-                if (base.IsEmoting && !Game1.eventUp)
-                {
-                    Vector2 localPosition2 = getLocalPosition(Game1.viewport);
-                    localPosition2.Y -= 32 + Sprite.SpriteHeight * 4;
-                    b.Draw(Game1.emoteSpriteSheet, localPosition2, new Microsoft.Xna.Framework.Rectangle(base.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, base.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, getStandingY() / 10000f);
-                }
-
-                Vector2 localPosition = getLocalPosition(Game1.viewport);
-
                 b.Draw(
-                    Game1.shadowTexture,
-                    localPosition + new Vector2(32f, 40f),
-                    Game1.shadowTexture.Bounds,
-                    Color.White * alpha, 0f,
-                    new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y),
+                    Sprite.Texture,
+                    localPosition + new Vector2(64f + xOffset, 16f),
+                    Sprite.SourceRect,
+                    Color.White,
+                    0f,
+                    new Vector2(Sprite.SpriteWidth / 2, Sprite.SpriteHeight * 3f / 4f),
                     4f,
-                    SpriteEffects.None,
-                    Math.Max(0.0f, getStandingY() / 10000f) - 0.0001f
-                    );
+                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    Math.Max(0f, drawOnTop ? 0.991f : (getStandingY() / 10000f)));
 
-
-                if (timers.ContainsKey("idle"))
-                {
-                    int num3 = timers["idle"] / 80 % 4 * 32;
-
-                    b.Draw(
-                        Sprite.Texture,
-                        localPosition + new Vector2(64f, 16f),
-                        new Rectangle(num3, 256, 32, 32),
-                        Color.White,
-                        0f,
-                        new Vector2(Sprite.SpriteWidth / 2, Sprite.SpriteHeight * 3f / 4f),
-                        Math.Max(0.2f, scale) * 4f,
-                        flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                        Math.Max(0f, drawOnTop ? 0.991f : (getStandingY() / 10000f))
-                    );
-
-                }
-                else
-                {
-                    b.Draw(
-                        Sprite.Texture,
-                        localPosition + new Vector2(64f + xOffset, 16f),
-                        Sprite.SourceRect,
-                        Color.White,
-                        0f,
-                        new Vector2(Sprite.SpriteWidth / 2, Sprite.SpriteHeight * 3f / 4f),
-                        Math.Max(0.2f, scale) * 4f,
-                        flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                        Math.Max(0f, drawOnTop ? 0.991f : (getStandingY() / 10000f)));
-
-
-                }
 
             }
+
         }
 
         public override Rectangle GetBoundingBox()
@@ -116,7 +116,10 @@ namespace StardewDruid.Character
         public override void AnimateMovement(GameTime time)
         {
             if (timers.ContainsKey("attack") && targetOpponents.Count > 0 && (double)Vector2.Distance(Position, targetOpponents.First().Position) <= 96.0 && Sprite.CurrentFrame % 6 == 2 && Sprite.currentFrame >= 24)
+            {
                 return;
+            }
+
             flip = false;
             moveDown = false;
             moveLeft = false;

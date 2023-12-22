@@ -164,17 +164,19 @@ namespace StardewDruid.Event.Challenge
                 if (activeCounter == 10 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
                     Mod.instance.characters["Jester"].showTextAboveHead("Thanatoshi?", -1, 3, 3000, 0);
                 if (activeCounter == 15 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
-                    Mod.instance.characters["Jester"].showTextAboveHead("The Reaper of Fate", -1, 3, 3000, 0);
+                    Mod.instance.characters["Jester"].showTextAboveHead("Farmer, it's him, The Reaper of Fate", -1, 3, 3000, 0);
                 if (activeCounter == 20 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
-                    Mod.instance.characters["Jester"].showTextAboveHead("Stop Thanatoshi!", -1, 3, 3000, 0);
+                    Mod.instance.characters["Jester"].showTextAboveHead("Thanatoshi, stop messing around!", -1, 3, 3000, 0);
                 if (activeCounter == 25 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
-                    Mod.instance.characters["Jester"].showTextAboveHead("I am the Jester of Fate, your kin", -1, 2, 3000, 0);
+                    Mod.instance.characters["Jester"].showTextAboveHead("I am a Fate too you know, the Jester?", -1, 2, 3000, 0);
                 if (activeCounter == 30 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
                     Mod.instance.characters["Jester"].showTextAboveHead("It's no use, he's insane", -1, 2, 3000, 0);
                 if (activeCounter == 35 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
                     Mod.instance.characters["Jester"].showTextAboveHead("That's... a cutlass... on the shaft", -1, 2, 3000, 0);
                 if (activeCounter == 40 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
                     Mod.instance.characters["Jester"].showTextAboveHead("What has he done to himself?", -1, 2, 3000, 0);
+                if (activeCounter == 40 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
+                    Mod.instance.characters["Jester"].showTextAboveHead("I guess we have no choice...", -1, 2, 3000, 0);
                 if (activeCounter == 50 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
                     Mod.instance.characters["Jester"].showTextAboveHead("For Fate and Fortune!", -1, 3, 3000, 0);
                 if (bossMonster.defeated || bossMonster.Health <= 0 || bossMonster == null || !targetLocation.characters.Contains(bossMonster))

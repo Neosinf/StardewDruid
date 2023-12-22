@@ -28,73 +28,72 @@ namespace StardewDruid.Character
             
             if (!Context.IsMainPlayer)
             {
+                
                 base.draw(b, alpha);
-            }
-            else
-            {
-                
-                if (IsInvisible || !Utility.isOnScreen(Position, 128))
-                {
-                    return;
-                }
 
-                if (base.IsEmoting && !Game1.eventUp)
-                {
-                    Vector2 localPosition2 = getLocalPosition(Game1.viewport);
-                    localPosition2.Y -= 32 + Sprite.SpriteHeight * 4;
-                    b.Draw(Game1.emoteSpriteSheet, localPosition2, new Microsoft.Xna.Framework.Rectangle(base.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, base.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, getStandingY() / 10000f);
-                }
+                return;
+
+            }
+
+            if (IsInvisible || !Utility.isOnScreen(Position, 128))
+            {
+                return;
+            }
+
+            if (base.IsEmoting && !Game1.eventUp)
+            {
+                Vector2 localPosition2 = getLocalPosition(Game1.viewport);
+                localPosition2.Y -= 32 + Sprite.SpriteHeight * 4;
+                b.Draw(Game1.emoteSpriteSheet, localPosition2, new Microsoft.Xna.Framework.Rectangle(base.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, base.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, getStandingY() / 10000f);
+            }
                 
-                Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = getLocalPosition(Game1.viewport);
+
+            if (timers.ContainsKey("idle"))
+            {
+                int num = timers["idle"] / 200 % 2 == 0 ? 0 : 32;
 
                 b.Draw(
-                    Game1.shadowTexture,
-                    localPosition + new Vector2(32f, 40f),
-                    Game1.shadowTexture.Bounds,
-                    Color.White * 0.65f,
+                    Sprite.Texture,
+                    localPosition + new Vector2(32f, 16f),
+                    new Rectangle(num, 352, 32, 32),
+                    Color.White,
                     0f,
-                    new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y),
-                    4f,
-                    SpriteEffects.None,
-                    Math.Max(0.0f, getStandingY() / 10000f) - 0.0001f
-                    );
+                    new Vector2(Sprite.SpriteWidth / 2, Sprite.SpriteHeight * 3f / 4f),
+                    Math.Max(0.2f, scale) * 4f,
+                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    Math.Max(0f, drawOnTop ? 0.991f : ((float)getStandingY() / 10000f))
+                );
 
-
-                if (timers.ContainsKey("idle"))
-                {
-                    int num = timers["idle"] / 200 % 2 == 0 ? 0 : 32;
-
-                    b.Draw(
-                        Sprite.Texture,
-                        localPosition + new Vector2(32f, 16f),
-                        new Rectangle(num, 352, 32, 32),
-                        Color.White,
-                        0f,
-                        new Vector2(Sprite.SpriteWidth / 2, Sprite.SpriteHeight * 3f / 4f),
-                        Math.Max(0.2f, scale) * 4f,
-                        flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                        Math.Max(0f, drawOnTop ? 0.991f : ((float)getStandingY() / 10000f))
-                    );
-
-                }
-                else
-                {
-
-                    b.Draw(
-                        Sprite.Texture,
-                        localPosition + new Vector2(32f, 16f),
-                        Sprite.SourceRect,
-                        Color.White,
-                        0f,
-                        new Vector2(Sprite.SpriteWidth / 2, Sprite.SpriteHeight * 3f / 4f),
-                        Math.Max(0.2f, scale) * 4f,
-                        flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                        Math.Max(0f, drawOnTop ? 0.991f : ((float)getStandingY() / 10000f))
-                        );
-
-                }
+                return;
 
             }
+
+            b.Draw(
+                Sprite.Texture,
+                localPosition + new Vector2(32f, 16f),
+                Sprite.SourceRect,
+                Color.White,
+                0f,
+                new Vector2(Sprite.SpriteWidth / 2, Sprite.SpriteHeight * 3f / 4f),
+                Math.Max(0.2f, scale) * 4f,
+                flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                Math.Max(0f, drawOnTop ? 0.991f : ((float)getStandingY() / 10000f))
+                );
+
+
+            b.Draw(
+                Game1.shadowTexture,
+                localPosition + new Vector2(32f, 40f),
+                Game1.shadowTexture.Bounds,
+                Color.White * 0.65f,
+                0f,
+                new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y),
+                4f,
+                SpriteEffects.None,
+                Math.Max(0.0f, getStandingY() / 10000f) - 0.0001f
+                );
+
 
         }
 
@@ -116,22 +115,54 @@ namespace StardewDruid.Character
 
         public override List<Vector2> RoamAnalysis()
         {
+            
             List<Vector2> vector2List = new List<Vector2>();
+
+            int takeABreak = 0;
+
             foreach (Dictionary<Vector2, StardewValley.Object> dictionary in currentLocation.Objects)
             {
+                
                 foreach (KeyValuePair<Vector2, StardewValley.Object> keyValuePair in dictionary)
                 {
+                    
                     if (keyValuePair.Value.IsScarecrow())
-                        vector2List.Add(new(keyValuePair.Key.X + 64f, keyValuePair.Key.Y + 64f)); // Vector2.op_Multiply(keyValuePair.Key, 64f));
-                    if (vector2List.Count % 4 == 0)
+                    {
+
+                        Vector2 scareVector = new(keyValuePair.Key.X * 64f, keyValuePair.Key.Y * 64f);
+
+                        vector2List.Add(scareVector);
+
+                        takeABreak++;
+
+                    }
+
+                    if (takeABreak >= 4)
+                    {
+
                         vector2List.Add(new Vector2(-1f));
+
+                        takeABreak = 0;
+
+                    }
+
                 }
+
                 if (vector2List.Count >= 24)
+                {
+
                     break;
+
+                }
+                    
             }
+           
             List<Vector2> collection = base.RoamAnalysis();
+            
             vector2List.AddRange(collection);
+            
             return vector2List;
+        
         }
 
         public void AnimateCast()
@@ -251,5 +282,7 @@ namespace StardewDruid.Character
             rite.CastEffect(false);
             ritesDone.Add(vector2);
         }
+
     }
+
 }

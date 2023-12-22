@@ -108,7 +108,7 @@ namespace StardewDruid.Event.Challenge
                 {
                     case 1:
                         CastVoice("croak");
-                        GuntherVoice("Farmer? What have you done?");
+                        GuntherVoice("Farmer? What's this?");
                         using (List<NPC>.Enumerator enumerator = targetLocation.characters.GetEnumerator())
                         {
                             while (enumerator.MoveNext())
@@ -126,7 +126,7 @@ namespace StardewDruid.Event.Challenge
                         CastVoice("CROAK");
                         break;
                     case 5:
-                        GuntherVoice("Farmer! Protect the library!");
+                        GuntherVoice("Protect the library!");
                         break;
                 }
                 Vector2 vector2 = targetVector + new Vector2(0.0f, 1f) - new Vector2(randomIndex.Next(7), randomIndex.Next(3));
@@ -170,10 +170,10 @@ namespace StardewDruid.Event.Challenge
                         GuntherThrowRandomShit();
                         break;
                     case 35:
-                        GuntherVoice("Tell him I wont accept any more cursed artifacts");
+                        GuntherVoice("Tell the guildmaster I wont accept any more cursed artifacts!");
                         break;
                     case 40:
-                        GuntherVoice("Thank goodness we have a resident Druid");
+                        GuntherVoice("How are you doing these amazing feats of magic?");
                         GuntherThrowRandomShit();
                         break;
                     case 41:
@@ -184,7 +184,7 @@ namespace StardewDruid.Event.Challenge
                         GuntherVoice("Can't you perform a rite of banishment or something?");
                         break;
                     case 50:
-                        GuntherVoice("Goodbye, priceless artifact. Trash anyway.");
+                        GuntherVoice("Goodbye, priceless artifact. Sniff.");
                         GuntherThrowRandomShit();
                         break;
                     case 55:
@@ -291,7 +291,7 @@ namespace StardewDruid.Event.Challenge
             Layer layer4 = targetLocation.map.GetLayer("AlwaysFront");
             TileSheet tileSheet = targetLocation.map.TileSheets[1];
             Vector2 vector2_1 = new(targetVector.X - 8, targetVector.Y - 5);//Vector2.op_Subtraction(targetVector, new Vector2(8f, 5f));
-            for (int index1 = 0; index1 < 14; ++index1)
+            for (int index1 = 0; index1 < 13; ++index1)
             {
                 for (int index2 = 0; index2 < 13; ++index2)
                 {

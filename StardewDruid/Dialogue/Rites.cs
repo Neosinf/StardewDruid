@@ -257,7 +257,7 @@ namespace StardewDruid.Dialogue
             if (npc is StardewDruid.Character.Effigy)
                 Game1.drawDialogue(npc, "I know very little of Dragonkind and their ilk. They were the first servants of Yoba, and perhaps they disappointed their creator. Their bones have become the foundation of the other world, their potent life essence has become the streams of ether that flow through the planes.");
             else
-                Game1.drawDialogue(npc, "We're talking about creatures that could reforge the world itself, Farmer. They don't like our kind, otherfolk or humanfolk. I'm... (Jester's hairs raise across it's backside) scared of them. I'm glad you're here to face them with me.");
+                Game1.drawDialogue(npc, "We're talking about creatures that could reforge the world itself, Farmer. They don't like our kind, otherfolk or humanfolk. Actually I'm... (Jester's hairs raise across it's backside) kind of scared of them. I'm glad you have my back!");
         }
 
         public void DiscussJester()
@@ -267,7 +267,18 @@ namespace StardewDruid.Dialogue
 
         public void DiscussEffigy()
         {
-            Game1.drawDialogue(npc, "Of all the constructs embued with the power of the elderborn, he is the most loyal to his master. They must have have become good friends. Has he asked you to build a pyre yet? (Jester gives a mischievous smirk)");
+            if (npc is StardewDruid.Character.Effigy)
+            {
+                
+                Game1.drawDialogue(npc, "The first farmer was blessed by the elderborn, the monarchs of the valley, to cultivate and protect this special land. He used this blessing to construct me, and showed me how I could preserve his techniques for a future successor. Though my friend is long gone, I remain, because the power of the elders remain. For now.");
+
+            }
+            else
+            {
+                Game1.drawDialogue(npc, "Of all the constructs embued with the power of the elderborn, he is the most loyal to his master. They must have have become good friends. Has he asked you to build a pyre yet? (Jester gives a mischievous smirk)");
+
+            }
+
         }
 
         public void DialogueFarmhands()

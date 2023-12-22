@@ -63,13 +63,12 @@ namespace StardewDruid.Event.World
                 return;
 
             };
-
+           
             fishCounter--;
 
             if (fishCounter <= 0)
             {
-
-
+                
                 int fishIndex = SpawnData.RandomJumpFish(targetLocation);
 
                 ModUtility.AnimateFishJump(targetLocation, targetVector * 64, fishIndex, randomIndex.Next(2) == 0);

@@ -105,11 +105,45 @@ namespace StardewDruid.Map
             }
         }
 
+        public static ChallengeHandle ChallengeInstance(Vector2 target, Rite rite, Quest quest)
+        {
+            string questName = quest.name.Replace("Two", "");
+
+            ChallengeHandle challengeHandle;
+
+            switch (questName)
+            {
+
+                case "swordEther": challengeHandle = new Tyrannus(target, rite, quest); break;
+                case "challengeFates": challengeHandle = new Quarry(target, rite, quest); break;
+                case "challengeStars": challengeHandle = new Infestation(target, rite, quest); break;
+                case "challengeWater": challengeHandle = new Graveyard(target, rite, quest); break;
+                case "challengeCanoli": challengeHandle = new Canoli(target, rite, quest); break;
+                case "challengeMuseum": challengeHandle = new Museum(target, rite, quest); break;
+                case "challengeMariner": challengeHandle = new Mariner(target, rite, quest); break;
+                case "challengeGemShrine": challengeHandle = new GemShrine(target, rite, quest); break;
+                case "challengeSandDragon": challengeHandle = new SandDragon(target, rite, quest); break;
+                default: challengeHandle = new Aquifer(target, rite, quest); break;
+
+
+            }
+            return challengeHandle;
+        }
+
         public static void MarkerInstance(GameLocation location, Quest quest)
         {
-            if (quest.triggerLocation != null && !quest.triggerLocation.Contains(location.Name) || quest.triggerLocale != null && !quest.triggerLocale.Contains(location.GetType()))
+            
+            if (quest.triggerLocation != null && !quest.triggerLocation.Contains(location.Name))
             {
                 return;
+
+            }
+
+            if (quest.triggerLocale != null && !quest.triggerLocale.Contains(location.GetType()))
+            {
+
+                return;
+
             }
 
             TriggerHandle triggerHandle;
@@ -143,31 +177,6 @@ namespace StardewDruid.Map
             }
 
             Mod.instance.markerRegister[quest.name] = triggerHandle;
-        }
-
-        public static ChallengeHandle ChallengeInstance(Vector2 target, Rite rite, Quest quest)
-        {
-            string questName = quest.name.Replace("Two", "");
-
-            ChallengeHandle challengeHandle;
-
-            switch (questName)
-            {
-
-                case "swordEther": challengeHandle = new Tyrannus(target, rite, quest); break;
-                case "challengeFates": challengeHandle = new Quarry(target, rite, quest); break;
-                case "challengeStars": challengeHandle = new Infestation(target, rite, quest); break;
-                case "challengeWater": challengeHandle = new Graveyard(target, rite, quest); break;
-                case "challengeCanoli": challengeHandle = new Canoli(target, rite, quest); break;
-                case "challengeMuseum": challengeHandle = new Museum(target, rite, quest); break;
-                case "challengeMariner": challengeHandle = new Mariner(target, rite, quest); break;
-                case "challengeGemShrine": challengeHandle = new GemShrine(target, rite, quest); break;
-                case "challengeSandDragon": challengeHandle = new SandDragon(target, rite, quest); break;
-                default: challengeHandle = new Aquifer(target, rite, quest); break;
-
-
-            }
-            return challengeHandle;
         }
 
         public static Vector2 SpecialVector(GameLocation playerLocation, string questName)
@@ -323,20 +332,41 @@ namespace StardewDruid.Map
         public static string NextProgress()
         {
             string str = "none";
-            int key = Mod.instance.CurrentProgress();
-            Dictionary<int, List<string>> dictionary = QuestProgress();
-            if (!dictionary.ContainsKey(key))
-                return str;
-            foreach (string quest in dictionary[key])
+
+            int progress = Mod.instance.CurrentProgress();
+
+            Dictionary<int, List<string>> quests = QuestProgress();
+
+            if (!quests.ContainsKey(progress))
             {
-                if (!(quest == "approachJester") || (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[1])
-                {
-                    if (!Mod.instance.QuestGiven(quest))
-                        Mod.instance.NewQuest(quest);
-                    str = quest;
-                }
+                return "none";
+
             }
+
+            foreach (string quest in quests[progress])
+            {
+                if (quest == "approachJester")
+                {
+
+                    if (!(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[1])
+                    {
+                        return "none";
+                    }
+
+                }
+
+                if (!Mod.instance.QuestGiven(quest))
+                {
+
+                    Mod.instance.NewQuest(quest);
+                
+                }
+                    
+                str = quest;
+            }
+
             return str;
+
         }
 
         public static int AchieveProgress(string questCheck)
@@ -888,7 +918,7 @@ namespace StardewDruid.Map
                     triggerVector = new Vector2(5f, 5f),
                     questValue = 6,
                     questTitle = "The Fate Of Tyrannus",
-                    questDescription = "The Effigy has posited that information about the undervalley lies with the remains of Tyrannus Prime in the skull caverns.",
+                    questDescription = "The Effigy has posited that information about the undervalley lies with the remains of Tyrannus Prime in the skull caverns. Jester is keen to accompany you on this quest.",
                     questObjective = "Travel to the Skull Caverns in the Calico Desert and perform a Rite of the Weald before the Skull door.",
                     questReward = 2100,
                     questProgress = 1,
@@ -904,7 +934,7 @@ namespace StardewDruid.Map
                     questObjective = "The Rite of Ether transforms you into a Dragon! Impress or frighten five different villagers while in dragon form. Quest completion extends transformation time.",
                     questReward = 2200,
                     questProgress = 2,
-                    questDiscuss = "Thanatoshi... he didn't finish his quest. (Jester casts his sights downward) He must have tried to use the tooth of the Prime to touch the ethereal plane, but it defeated him. My kin cannot hope to comprehend the ways of the Ancient ones, but you can, Farmer, you are already a master of Yoba's essence. Now you can become a Dragon.",
+                    questDiscuss = "Thanatoshi... he went after the fallen one too, but this is as far as he got. (Jester casts his sights downward) He must have tried to use the tooth of the Prime to create a path to the undervalley, but it proved too much for him, and drove him mad. I can't hope to succeed where he failed. (Jester looks hopefully at you) I think it's Fortumei's blessing that you found the dragontooth, farmer, with it you can do what me and Thanatoshi can't. You can assume the form of a Dragon and find a way to cross over.",
                     taskCounter = 5,
                     taskFinish = "masterTransform"
                 },
@@ -995,48 +1025,98 @@ namespace StardewDruid.Map
 
         public static List<string> ActiveSeconds()
         {
-            Dictionary<string, string> dictionary = SecondQuests();
+            
+            Dictionary<string, string> dictionary = SecondQuests(true);
+            
             List<string> stringList = new();
+            
             foreach (KeyValuePair<string, string> keyValuePair in dictionary)
             {
+                
                 string quest = keyValuePair.Key + "Two";
+                
                 if (Mod.instance.QuestGiven(quest) && !Mod.instance.QuestComplete(quest))
+                {
+                    
                     stringList.Add(quest);
+
+                }
+
             }
+           
             return stringList;
+
         }
 
-        public static Dictionary<string, string> SecondQuests()
+        public static Dictionary<string, string> SecondQuests(bool all = false)
         {
             Dictionary<string, string> dictionary1 = new Dictionary<string, string>()
             {
+                
                 ["challengeEarth"] = "The Aquifer Revisited",
+                
                 ["challengeWater"] = "The Invasion Revisited",
+                
                 ["challengeStars"] = "The Infestation Revisited",
+                
                 ["challengeCanoli"] = "The Dusting Revisited",
+                
                 ["challengeSandDragon"] = "The Tyrant Revisited",
-                ["challengeFates"] = "The Fallen Revisited",
+                
                 ["challengeMuseum"] = "The Feature Revisited"
+
             };
 
-            if (Game1.currentSeason != "winter")
+            if (Game1.currentSeason != "winter" || all)
+            {
 
                 dictionary1.Add("challengeMariner", "The Seafarer Revisited");
 
-            if (Game1.player.hasOrWillReceiveMail("seenBoatJourney"))
+            }
+
+            if (Game1.player.hasOrWillReceiveMail("seenBoatJourney") || all)
+            {
 
                 dictionary1.Add("challengeGemShrine", "The Shrine Revisited");
+
+            }
+
+            if (StageProgress().Contains("ether") || all)
+            {
+
+                dictionary1.Add("challengeFates", "The Fallen Revisited");
+
+            }
+
+            if (all)
+            {
+
+                return dictionary1;
+
+            }
 
             Dictionary<string, string> dictionary2 = new Dictionary<string, string>();
 
             foreach (KeyValuePair<string, string> keyValuePair in dictionary1)
             {
+                
                 if (Mod.instance.QuestComplete(keyValuePair.Key))
+                {
+                    
                     dictionary2.Add(keyValuePair.Key, keyValuePair.Value);
+                
+                }
                 else if (!Mod.instance.QuestGiven(keyValuePair.Key))
+                {
+                    
                     dictionary2.Add(keyValuePair.Key, keyValuePair.Value);
+                
+                }
+                    
             }
+
             return dictionary2;
+
         }
 
         public static Quest RetrieveQuest(string quest) => QuestList()[quest];
@@ -1160,15 +1240,15 @@ namespace StardewDruid.Map
                 {
                     new()
                     {
-                    "Effect: Druid Freneticism",
+                    "Effect: Rites of the Druids",
                     "effect",
                     "Weald",
                     "When I perform a rite once practiced by the valley druids, I feel the essence of the wild being drawn under me with each step.",
-                    "Hold the rite button to increase the range of the effect up to eight tiles away. Performing a rite provides increased magnetism, faster movement through grass and the consumption of roughage and other items to boost stamina."
+                    "Hold the rite button to steadily increase the range of the effect up to eight tiles away. You can run and ride a horse while holding the rite button. Performing a rite provides faster movement through grass and the consumption of roughage and other items to boost stamina."
                     },
                     new()
                     {
-                    "Lesson: Communal Druid",
+                    "Lesson: Community",
                     "lesson",
                     "Weald",
                     "The druids of antiquity played an important role in civil matters, as ceremonial leaders, mediators and physicians. The Rite of the Weald appears to have a positive effect on those who witness the rite.",
@@ -1225,7 +1305,7 @@ namespace StardewDruid.Map
                     "lesson",
                     "Weald",
                     "I have learned that the Farmer and the Druid share the same vision for a prosperous and well fed community, and so the wild seed is domesticated.",
-                    "Cast over wild seeds sewn into tilled dirt to convert them into seasonal crops. Fertilise crops and orchard trees to enhance their growth rate.",
+                    "Cast over wild seeds sewn into tilled dirt to convert them into seasonal crops. Will also fertilise existing crops, and progress the growth rate of maturing fruit trees by one day (once per day).",
                     "lessonCrop",
                     "of 20 seeds converted",
                     "masterCrop",
@@ -1272,14 +1352,22 @@ namespace StardewDruid.Map
                     }
                 },
                 [9] = new()
-                {
+                {   
+                    new()
+                    {
+                    "Effect: Cursor Targetting",
+                    "effect",
+                    "Mists",
+                    "The mists gather in front of me.",
+                    "The Rite of the Mists uses directional and cursor based targetting to effect a point ahead of or away from the player, as opposed to centered-on-player targetting, so the direction and position of the farmer and/or mouse cursor is important to get precise hits."
+                    },
                     new()
                     {
                     "Lesson: Totem Shrines",
                     "lesson",
                     "Mists",
                     "The old circle of druids left traces of their presence. Their work is visible in the delipidated structures and moss covered shrines of the valley. Some residual power remains.",
-                    "Strike warp shrines once a day to extract totems. The Rite of the Mists uses directional and cursor based targetting, so the direction and position of the farmer and mouse is important to get precise hits.",
+                    "Strike warp shrines once a day to extract totems.",
                     "lessonTotem",
                     "of 2 shrines struck",
                     "masterTotem",
@@ -1291,7 +1379,7 @@ namespace StardewDruid.Map
                     "effect",
                     "Mists",
                     "The Lady Beyond the Shore is often honoured with trinkets and little devices. There seem to be a lot of those buried around the Valley.",
-                    "Extract items from artifact dig spots. Requires steel hoe or better."
+                    "Extract items from artifact dig spots."
                     },
                     new()
                     {
@@ -1424,7 +1512,7 @@ namespace StardewDruid.Map
                     "The Slime Infestation",
                     "quest",
                     "Stars",
-                    "Throughout my adventures I've engaged many a slime in combat. Unlike the bats and shadowfolk, I am uncertain of their origin or master, but while I spent time deep in the mountains, a grand splattering of slime infested the forest. With the blessing of the Stars, I can confront even an army of jellies.",
+                    "Throughout my adventures I've engaged many a slime in combat. Unlike the bats and shadowfolk, I am uncertain of their origin or master, but while I spent time deep in the mountains looking for the lake of fire, a grand splattering of slime infested the forest. With the blessing of the Stars, I can confront even an army of jellies.",
                     "The pumpkin visaged king of the slimes mocked my lieges for leaving the valley wasted and unguarded. I am no longer a greenhorned Druid, but a fully fledged master of the Druidic tradition. The circle of Druids is reborn in the valley, but what role will it play in today's modernised society, I do not know.",
                     "challengeStars"
                     }
@@ -1485,7 +1573,8 @@ namespace StardewDruid.Map
                     "quest",
                     "Jester",
                     "The apple bodied spirits of the forest accepted my offering of fruits and forageables. They have repaired the bridge to the western face of the mountain, and fate bids me to cross the ravine.",
-                    "I met a strange cat-like being on the bridge, and a deal was struck to share the secrets of the Fates in exchange for my services in the cat's quest."
+                    "I met a strange cat-like being on the bridge, and a deal was struck to share the secrets of the Fates in exchange for my services in the cat's quest.",
+                    "approachJester"
                     },
                     new()
                     {
@@ -1516,7 +1605,7 @@ namespace StardewDruid.Map
                     "effect",
                     "Fates",
                     "The efforts of the fates are sustained by Yoba.",
-                    "Many effects of the Rite of the Fates require an offering of solar or void essence. It's prudent to collect and store this essence for when it will be useful to cast rites."
+                    "This rite uses cursor and directional targetting as opposed to centered-on-player. Some of the effects of the Rite of the Fates require an offering of solar or void essence. It's prudent to collect and store this essence for when it will be useful to cast rites."
                     },
                     new()
                     {
@@ -1547,7 +1636,7 @@ namespace StardewDruid.Map
                     "lesson",
                     "Fates",
                     "Druids train for many years to master the oral tradition, not only to safeguard esoteric knowledge, but to entertain and inspire their communities. Now, with Jester's help, I can add special effects.",
-                    "Greet villagers with a special effect for a random amount of friendship. Each trick consumes one essence.",
+                    "Greet villagers with a special effect for a random amount of friendship.",
                     "lessonTrick",
                     "of 5 tricks performed",
                     "masterTrick",
@@ -1562,7 +1651,7 @@ namespace StardewDruid.Map
                     "lesson",
                     "Fates",
                     "The otherworld has it's own devices of faye design, powered by essence of light and void. Now I can experiment with using essence to power my own artifice.",
-                    "Enchant one of various types of farm machine to produce a randomised product without standard inputs. Each enchantment consumes one essence. Works on Deconstructors, Bone Mills, Kegs, Preserves Jars, Cheese Presses, Mayonnaise Machines, Looms, Oil Makers, Furnaces and Geode Crushers.",
+                    "Enchant one of various types of farm machine to produce a randomised product without standard inputs. Each enchantment consumes one solar or void essence. Works on Deconstructors, Bone Mills, Kegs, Preserves Jars, Cheese Presses, Mayonnaise Machines, Looms, Oil Makers, Furnaces and Geode Crushers.",
                     "lessonEnchant",
                     "of 10 machines enchanted",
                     "masterEnchant",
@@ -1616,7 +1705,7 @@ namespace StardewDruid.Map
                     new()
                     {
                     "The Fate Of Tyrannus",
-                    "effect",
+                    "quest",
                     "Ether",
                     "The Effigy has remembered that the undervalley was once the ether-drenched domain of Tyrannus Prime, the ancient Lord attended to by the cult of Calico. The Calico shamans gathered unto themselves a wealth of knowledge about otherworldly things, including the undervalley, and Jester has urged me to explore the skull caverns for clues as to their fate.",
                     "The Rite of the Weald unveiled the entrance to the desecrated throne room of Tyrannus Prime. Once inside, I was set upon by the wraith of Thanatoshi, who's mind had deteriorated with the burden of unfulfilled purpose. It seems the wraith was tethered to this world by the power of Prime's dragon tooth, which has been fashioned into a weapon of ethereal might."
@@ -1624,7 +1713,7 @@ namespace StardewDruid.Map
                     new()
                     {
                     "Adventures with Jester",
-                    "quest",
+                    "effect",
                     "Jester",
                     "Jester believes that his great purpose is intertwined with my own story. Despite the resoluton of our bargain, he will remain close by while he searches for a way to access the Undervalley.",
                     "Jester can be invited to roam the farm, or accompany you on journeys through the valley. He will automatically target nearby enemies, and his leaping melee attack applies the Daze effect. If positioned at right angles to a foe he can perform a powerful energy beam attack."

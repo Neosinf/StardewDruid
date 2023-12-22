@@ -112,11 +112,11 @@ namespace StardewDruid.Map
 
             AnimatedSprite characterSprite = new();
 
-            characterSprite.textureName.Value = "18465_" + characterName + "_Sprite";
-
             characterSprite.spriteTexture = CharacterTexture(characterName);
 
-            characterSprite.loadedTexture = "18465_" + characterName + "_Sprite";
+            characterSprite.textureName.Value = "18465_" + characterName;
+
+            characterSprite.loadedTexture = "18465_" + characterName;
 
             switch (characterName)
             {

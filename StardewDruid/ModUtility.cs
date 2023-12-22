@@ -701,112 +701,6 @@ namespace StardewDruid
 
         }
 
-        public static void AnimateFate(GameLocation targetLocation, Vector2 playerVector, Vector2 targetVector, int fuelSource = 768, bool fadeAway = false, bool usePosition = false)
-        {
-
-            Vector2 targetPosition;
-
-            Vector2 playerPosition;
-
-            if (usePosition)
-            {
-
-                targetPosition = targetVector;
-
-                playerPosition = playerVector - new Vector2(0, 64);
-
-            }
-            else
-            {
-
-                targetPosition = new(targetVector.X * 64, targetVector.Y * 64);
-
-                playerPosition = (playerVector * 64) - new Vector2(0, 64);
-
-            }
-
-            float xOffset = (targetPosition.X - playerPosition.X);
-
-            float yOffset = (targetPosition.Y - playerPosition.Y);
-
-            float motionX = xOffset / 1000;
-
-            float compensate = 0.555f;
-
-            float motionY = (yOffset / 1000) - compensate;
-
-            float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString()) + 2;
-
-            float animationFade = fadeAway ? 0.001f : 0f;
-
-            Color tingleColor = (fuelSource == 768) ? Color.Yellow : Color.DarkBlue;
-
-            Microsoft.Xna.Framework.Rectangle targetRectangle = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, fuelSource, 16, 16);
-
-            TemporaryAnimatedSprite starAnimation = new("Maps\\springobjects", targetRectangle, 1000f, 1, 1, playerPosition, flicker: false, flipped: false, animationSort, animationFade, Color.White, 3f, 0f, 0f, 0.2f)
-            {
-
-                motion = new Vector2(motionX, motionY),
-
-                acceleration = new Vector2(0f, 0.001f),
-
-                timeBasedMotion = true,
-
-            };
-
-            targetLocation.temporarySprites.Add(starAnimation);
-
-            animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString()) + 1;
-
-            TemporaryAnimatedSprite tingleAnimation = new("TileSheets\\animations", new(0, 11 * 64, 64, 64), 62.5f, 8, 2, playerPosition, false, false, animationSort, animationFade, tingleColor, 1f, 0f, 0f, 0.2f)
-            {
-
-                motion = new Vector2(motionX, motionY),
-
-                acceleration = new Vector2(0f, 0.001f),
-
-                timeBasedMotion = true,
-
-                delayBeforeAnimationStart = 40,
-
-            };
-
-            targetLocation.temporarySprites.Add(tingleAnimation);
-
-            TemporaryAnimatedSprite tingleAnimationTwo = new("TileSheets\\animations", new(0, 11 * 64, 64, 64), 62.5f, 8, 2, playerPosition, false, false, animationSort, animationFade, tingleColor, 0.75f, 0f, 0f, 0.2f)
-            {
-
-                motion = new Vector2(motionX, motionY),
-
-                acceleration = new Vector2(0f, 0.001f),
-
-                timeBasedMotion = true,
-
-                delayBeforeAnimationStart = 80,
-
-            };
-
-            targetLocation.temporarySprites.Add(tingleAnimationTwo);
-
-            TemporaryAnimatedSprite tingleAnimationThree = new("TileSheets\\animations", new(0, 11 * 64, 64, 64), 62.5f, 8, 2, playerPosition, false, false, animationSort, animationFade, tingleColor, 0.75f, 0f, 0f, 0.2f)
-            {
-
-                motion = new Vector2(motionX, motionY),
-
-                acceleration = new Vector2(0f, 0.001f),
-
-                timeBasedMotion = true,
-
-                delayBeforeAnimationStart = 120,
-
-            };
-
-            targetLocation.temporarySprites.Add(tingleAnimationThree);
-
-            //targetLocation.playSoundPitched("yoba",700);
-
-        }
-
         public static StardewValley.Torch StoneBrazier(GameLocation targetLocation, Vector2 targetVector)
         {
 
@@ -2036,11 +1930,11 @@ namespace StardewDruid
 
             targetPlayer.Stamina += Math.Min(2, targetPlayer.MaxStamina - targetPlayer.Stamina);
 
-            Pick.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+            //Pick.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
 
             targetPlayer.Stamina += Math.Min(2, targetPlayer.MaxStamina - targetPlayer.Stamina);
 
-            Axe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+            //Axe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
 
 
             // ----------------- damage monsters
@@ -2594,6 +2488,112 @@ namespace StardewDruid
             };
 
             location.temporarySprites.Add(firstWarp);
+
+        }
+
+        public static void AnimateFate(GameLocation targetLocation, Vector2 playerVector, Vector2 targetVector, int fuelSource = 768, bool fadeAway = false, bool usePosition = false)
+        {
+
+            Vector2 targetPosition;
+
+            Vector2 playerPosition;
+
+            if (usePosition)
+            {
+
+                targetPosition = targetVector;
+
+                playerPosition = playerVector - new Vector2(0, 64);
+
+            }
+            else
+            {
+
+                targetPosition = new(targetVector.X * 64, targetVector.Y * 64);
+
+                playerPosition = (playerVector * 64) - new Vector2(0, 64);
+
+            }
+
+            float xOffset = (targetPosition.X - playerPosition.X);
+
+            float yOffset = (targetPosition.Y - playerPosition.Y);
+
+            float motionX = xOffset / 1000;
+
+            float compensate = 0.555f;
+
+            float motionY = (yOffset / 1000) - compensate;
+
+            float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString()) + 2;
+
+            float animationFade = fadeAway ? 0.001f : 0f;
+
+            Color tingleColor = (fuelSource == 768) ? Color.Yellow : Color.DarkBlue;
+
+            Microsoft.Xna.Framework.Rectangle targetRectangle = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, fuelSource, 16, 16);
+
+            TemporaryAnimatedSprite starAnimation = new("Maps\\springobjects", targetRectangle, 1000f, 1, 1, playerPosition, flicker: false, flipped: false, animationSort, animationFade, Color.White, 3f, 0f, 0f, 0.2f)
+            {
+
+                motion = new Vector2(motionX, motionY),
+
+                acceleration = new Vector2(0f, 0.001f),
+
+                timeBasedMotion = true,
+
+            };
+
+            targetLocation.temporarySprites.Add(starAnimation);
+
+            animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString()) + 1;
+
+            TemporaryAnimatedSprite tingleAnimation = new("TileSheets\\animations", new(0, 11 * 64, 64, 64), 62.5f, 8, 2, playerPosition, false, false, animationSort, animationFade, tingleColor, 1f, 0f, 0f, 0.2f)
+            {
+
+                motion = new Vector2(motionX, motionY),
+
+                acceleration = new Vector2(0f, 0.001f),
+
+                timeBasedMotion = true,
+
+                delayBeforeAnimationStart = 40,
+
+            };
+
+            targetLocation.temporarySprites.Add(tingleAnimation);
+
+            TemporaryAnimatedSprite tingleAnimationTwo = new("TileSheets\\animations", new(0, 11 * 64, 64, 64), 62.5f, 8, 2, playerPosition, false, false, animationSort, animationFade, tingleColor, 0.75f, 0f, 0f, 0.2f)
+            {
+
+                motion = new Vector2(motionX, motionY),
+
+                acceleration = new Vector2(0f, 0.001f),
+
+                timeBasedMotion = true,
+
+                delayBeforeAnimationStart = 80,
+
+            };
+
+            targetLocation.temporarySprites.Add(tingleAnimationTwo);
+
+            TemporaryAnimatedSprite tingleAnimationThree = new("TileSheets\\animations", new(0, 11 * 64, 64, 64), 62.5f, 8, 2, playerPosition, false, false, animationSort, animationFade, tingleColor, 0.75f, 0f, 0f, 0.2f)
+            {
+
+                motion = new Vector2(motionX, motionY),
+
+                acceleration = new Vector2(0f, 0.001f),
+
+                timeBasedMotion = true,
+
+                delayBeforeAnimationStart = 120,
+
+            };
+
+            targetLocation.temporarySprites.Add(tingleAnimationThree);
+
+            //targetLocation.playSoundPitched("yoba",700);
 
         }
 

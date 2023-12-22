@@ -676,10 +676,10 @@ namespace StardewDruid.Map
                 {
                     case "spring":
                     case "fall":
-                        seasonStar = 143;
+                        seasonStar = 143; // catfish
                         break;
                     default:
-                        seasonStar = 698;
+                        seasonStar = 698; // sturgeon
                         break;
 
                 }

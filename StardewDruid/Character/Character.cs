@@ -81,15 +81,29 @@ namespace StardewDruid.Character
         public override bool checkAction(Farmer who, GameLocation l)
         {
             if (Mod.instance.eventRegister.ContainsKey("transform"))
+            {
                 return false;
+
+            }
+                
             foreach (NPC character in currentLocation.characters)
             {
+                
                 if (character is StardewValley.Monsters.Monster monster && (double)Vector2.Distance(Position, monster.Position) <= 1280.0)
+                {
+                    
                     return false;
+               
+                }
+                    
             }
+
             Halt();
+
             faceGeneralDirection(who.Position, 0, false);
+
             moveDirection = FacingDirection;
+
             switch (moveDirection)
             {
                 case 0:
@@ -105,7 +119,9 @@ namespace StardewDruid.Character
                     moveLeft = true;
                     break;
             }
+
             return true;
+
         }
 
         public override void performTenMinuteUpdate(int timeOfDay, GameLocation l)
@@ -115,18 +131,35 @@ namespace StardewDruid.Character
         public override void behaviorOnFarmerPushing()
         {
             if (!Context.IsMainPlayer || priorities.Contains("frozen"))
+            {
+                
                 return;
+
+            }
+                
             if (timers.ContainsKey("push"))
             {
                 timers["push"] += 2;
+
                 if (timers["push"] <= 10)
+                {
                     return;
+                }
+                    
                 moveVectors.Clear();
+
                 TargetDirection(findPlayer().facingDirection, 2);
+
                 timers.Remove("Push");
+
             }
             else
+            {
+
                 timers["push"] = 2;
+
+            }
+                
         }
 
         public override void Halt()
@@ -147,14 +180,15 @@ namespace StardewDruid.Character
 
         public virtual void normalUpdate(GameTime time, GameLocation location)
         {
+            if (Sprite.loadedTexture == null || Sprite.loadedTexture.Length == 0)
+            {
+                Sprite.spriteTexture = CharacterData.CharacterTexture(Name);
+                Sprite.loadedTexture = Sprite.textureName.Value;
+                Portrait = CharacterData.CharacterPortrait(Name);
+            }
+
             if (!Context.IsMainPlayer)
             {
-                if (Sprite.loadedTexture == null || Sprite.loadedTexture.Length == 0)
-                {
-                    Sprite.spriteTexture = CharacterData.CharacterTexture(Name);
-                    Sprite.loadedTexture = Sprite.textureName.Value;
-                    Portrait = CharacterData.CharacterPortrait(Name);
-                }
                 updateSlaveAnimation(time);
             }
             else
@@ -210,51 +244,107 @@ namespace StardewDruid.Character
         public virtual void UpdateTarget()
         {
             if (Game1.IsClient)
+            {
+                
                 return;
+
+            }
+
             foreach (string priority in priorities)
             {
+                
                 switch (priority)
                 {
+                    
                     case "event":
+                        
                         if (TargetEvent())
+                        {
+
                             return;
+
+                        }
+                            
                         break;
+
                     case "frozen":
+                    case "idle":
+
                         timers["stop"] = 1000;
+
                         Sprite.CurrentFrame = 0;
-                        if (new Random().Next(2) != 0)
-                            return;
-                        timers["idle"] = 1000;
+
+                        if (new Random().Next(2) == 0 || priorities.Contains("idle"))
+                        {
+                            
+                            timers["idle"] = 1000;
+
+                        }
+
                         return;
+
                     case "attack":
+
                         if (TargetOpponent())
+                        {
                             return;
+                        }
+
                         break;
+
                     case "track":
+
                         if (TargetTrack())
+                        {
+
                             return;
+
+                        }
+
                         break;
+
                     case "roam":
+
                         if (TargetRoam())
+                        {
+
                             return;
+
+                        }
+
                         break;
+                
                 }
+            
             }
+
             TargetRandom();
+        
         }
 
         public virtual bool TargetEvent()
         {
             if (eventVectors.Count <= 0)
-                return false;
-            Vector2 target = eventVectors.First<Vector2>();
-            if ((double)Vector2.Distance(target, Position) <= 32.0)
             {
-                ReachedEventPosition();
-                return true;
+                return false;
+
             }
+
+            Vector2 target = eventVectors.First();
+
+            if (Vector2.Distance(target, Position) <= 32f)
+            {
+                
+                ReachedEventPosition();
+                
+                return true;
+            
+            }
+            
             VectorForTarget(target, 4f);
+
             return true;
+        
         }
 
         public virtual bool TargetOpponent()
@@ -367,80 +457,148 @@ namespace StardewDruid.Character
 
         public void VectorForTarget(Vector2 target, float ahead = 1.5f, bool check = true)
         {
-            Vector2 vector2_1 = target;
-            float val2 = Vector2.Distance(Position, target);
-            Vector2 vector2_2 = new(target.X - Position.X, target.Y - Position.Y);//Vector2.op_Subtraction(target, Position);
-            float num1 = Math.Abs(vector2_2.X);
-            float num2 = Math.Abs(vector2_2.Y);
-            int num3 = vector2_2.X < 0.001 ? -1 : 1;
-            int num4 = vector2_2.Y < 0.001 ? -1 : 1;
-            if ((double)num1 > (double)num2)
+
+            Vector2 moveTarget = target;
+
+            float distance = Vector2.Distance(Position, target);
+            
+            Vector2 difference = new(target.X - Position.X, target.Y - Position.Y);//Vector2.op_Subtraction(target, Position);
+            
+            float absoluteX = Math.Abs(difference.X);
+            
+            float absoluteY = Math.Abs(difference.Y);
+            
+            int signX = difference.X < 0.001f ? -1 : 1;
+            
+            int signY = difference.Y < 0.001f ? -1 : 1;
+            
+            if (absoluteX > absoluteY)
             {
-                moveDirection = 2 - num3;
-                altDirection = 1 + num4;
+                
+                moveDirection = 2 - signX;
+
+                altDirection = 1 + signY;
+
             }
             else
             {
-                moveDirection = 1 + num4;
-                altDirection = 2 - num3;
+                moveDirection = 1 + signY;
+
+                altDirection = 2 - signX;
+
             }
-            if ((double)val2 >= 128.0 & check)
+            
+            if (distance >= 128.0 & check)
             {
-                float num5 = Math.Min(64f * ahead, val2);
-                Vector2 vector2_3;
-                if ((double)num1 > (double)num2)
+                
+                float checkAhead = Math.Min(64f * ahead, distance);
+                
+                Vector2 checkTarget;
+
+                if (absoluteX > absoluteY)
                 {
-                    moveDirection = 2 - num3;
-                    altDirection = 1 + num4;
 
+                    float ratio = absoluteY / absoluteX;
 
-                    vector2_3 = new Vector2(num3 * num5, (int)((double)num2 / (double)num1 * num4) * num5);//Vector2.op_Multiply(new Vector2((float) num3, (float) (int) ((double) num2 / (double) num1 * (double) num4)), num5);
+                    float checkX = signX * checkAhead;
+
+                    float checkY = ratio * signY * checkAhead;
+
+                    checkTarget = new(checkX, checkY);
+
                 }
                 else
                 {
-                    moveDirection = 1 + num4;
-                    altDirection = 2 - num3;
 
-                    vector2_3 = vector2_3 = new Vector2((int)((double)num1 / (double)num2 * num3) * num5, num4 * num5);//Vector2.op_Multiply(new Vector2((float) (int) ((double) num1 / (double) num2 * (double) num3), (float) num4), num5);
+                    float ratio = absoluteX / absoluteY;
+
+                    float checkX = ratio * signX * checkAhead;
+
+                    float checkY = signY * checkAhead;
+
+                    checkTarget = new(checkX, checkY);
+
                 }
-                vector2_1 = new Vector2(Position.X + vector2_3.X, Position.Y + vector2_3.Y);//Vector2.op_Addition(Position, vector2_3);
+
+                moveTarget = new Vector2(Position.X + checkTarget.X, Position.Y + checkTarget.Y);
+            
             }
-            moveVectors.Add(vector2_1);
+            
+            moveVectors.Add(moveTarget);
+
         }
 
         public virtual void TargetRandom()
         {
+            
             moveVectors.Clear();
+            
             timers.Clear();
+            
             Random random = new Random();
-            if (random.Next(2) == 0)
-                TargetDirection(random.Next(4), random.Next(1, 4));
-            else
-                Halt();
+
+            int randomInt = random.Next(4);
+
+            switch(randomInt)
+            {
+                case 0:
+                case 1:
+                case 2:
+
+                    TargetDirection(random.Next(4), random.Next(1, 4));
+
+                    break;
+
+                case 3:
+                case 4:
+
+                    Halt();
+
+                    break;
+
+                case 5:
+
+                    Halt();
+
+                    timers["stop"] = 400;
+
+                    timers["idle"] = 400;
+
+                    break;
+
+            }
+            
         }
 
         public virtual void TargetDirection(int direction, int distance)
         {
+            
             int num = 64 * distance;
+            
             Vector2 vector2;
+            
             switch (direction)
             {
                 case 0:
-                    vector2 = new(Position.X, Position.Y - num);//Vector2.op_Subtraction(Position, new Vector2(0.0f, (float) num));
+                    vector2 = new(Position.X, Position.Y - num);
                     break;
                 case 1:
-                    vector2 = new(Position.X + num, Position.Y);//vector2 = Vector2.op_Addition(Position, new Vector2((float) num, 0.0f));
+                    vector2 = new(Position.X + num, Position.Y);
                     break;
                 case 2:
-                    vector2 = new(Position.X, Position.Y + num);//vector2 = Vector2.op_Addition(Position, new Vector2(0.0f, (float) num));
+                    vector2 = new(Position.X, Position.Y + num);
                     break;
                 default:
-                    vector2 = new(Position.X - num, Position.Y);//vector2 = Vector2.op_Subtraction(Position, new Vector2((float) num, 0.0f));
+                    vector2 = new(Position.X - num, Position.Y);
                     break;
             }
+            
             moveDirection = direction;
+
             altDirection = moveDirection + 1;
+
             moveVectors.Add(vector2);
+
         }
 
         public virtual void MoveTowardsTarget(GameTime time)
@@ -675,7 +833,6 @@ namespace StardewDruid.Character
 
         }
 
-
         public virtual void AnimateMovement(GameTime time)
         {
             moveDown = false;
@@ -719,12 +876,15 @@ namespace StardewDruid.Character
 
         public virtual void SwitchEventMode()
         {
+            
             SwitchDefaultMode();
+
             priorities = new List<string>()
-      {
-        "event",
-        "frozen"
-      };
+            {
+                "event",
+                "frozen"
+            };
+
         }
 
         public virtual void SwitchFrozenMode()
@@ -746,9 +906,15 @@ namespace StardewDruid.Character
 
         public virtual void SwitchRoamMode()
         {
+            
             SwitchDefaultMode();
+
+            roamVectors.Clear();
+            
             roamLapse = Game1.currentGameTime.TotalGameTime.TotalMinutes + 1.0;
+            
             priorities = new List<string>() { "roam" };
+        
         }
 
         public virtual void SwitchDefaultMode()
@@ -760,31 +926,57 @@ namespace StardewDruid.Character
 
         public virtual List<Vector2> RoamAnalysis()
         {
+            
             int layerWidth = currentLocation.map.Layers[0].LayerWidth;
+            
             int layerHeight = currentLocation.map.Layers[0].LayerHeight;
+            
             int num = layerWidth / 8;
 
             int midWidth = (layerWidth / 2) * 64;
+            
             int eighthWidth = (layerWidth / 8) * 64;
+            
             int nextWidth = (layerWidth * 64) - eighthWidth;
+            
             int midHeight = (layerHeight / 2) * 64;
+            
             int eighthHeight = (layerHeight / 8) * 64;
+            
             int nextHeight = (layerHeight * 64) - eighthHeight;
+
             List<Vector2> roamList = new()
             {
-                new(midWidth, midHeight),
-                new(-1f),
-                new(nextWidth,eighthHeight),
                 new(midWidth,midHeight),
-                new(-1f),
+                new(midWidth,midHeight),
+                new(midWidth,midHeight),
+                new(midWidth,midHeight),
                 new(nextWidth,nextHeight),
-                new(midWidth,midHeight),
-                new(-1f),
+                new(nextWidth,eighthHeight),
                 new(eighthWidth,nextHeight),
-                new(midHeight,midHeight),
-                new(-1f),
                 new(eighthWidth,eighthHeight),
+
             };
+
+            if(currentLocation.IsOutdoors)
+            {
+                roamList = new()
+                {
+                    new(midWidth, midHeight),
+                    new(midWidth,midHeight),
+                    new(midWidth,midHeight),
+                    new(midWidth,midHeight),
+                    new(nextWidth,nextHeight),
+                    new(nextWidth,eighthHeight),
+                    new(eighthWidth,nextHeight),
+                    new(eighthWidth,eighthHeight),
+                    new(-1f),
+                    new(-1f),
+                    new(-1f),
+                    new(-1f),
+                };
+
+            }
 
             List<Vector2> randomList = new();
 
@@ -841,8 +1033,11 @@ namespace StardewDruid.Character
 
         public virtual void ReachedEventPosition()
         {
+
             Halt();
+            
             eventVectors.RemoveAt(0);
+        
         }
 
         public virtual void ReachedRoamPosition()
@@ -851,9 +1046,13 @@ namespace StardewDruid.Character
 
         public virtual void ReachedIdlePosition()
         {
+            
             Halt();
+            
             timers["stop"] = 1000;
+            
             timers["idle"] = 1000;
+        
         }
 
         public virtual void LeftClickAction(SButton Button)

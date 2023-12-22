@@ -14,6 +14,7 @@ using StardewValley.Objects;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace StardewDruid
 {
@@ -683,12 +684,37 @@ namespace StardewDruid
 
             markerRegister.Clear();
 
+            /*if(triggerList.Count > 0)
+            {
+
+                Map.Quest questData = questIndex[triggerList.First()];
+
+                QuestData.MarkerInstance(Game1.player.currentLocation, questData);
+
+            }*/
+
+            //List<string> locationsDone = new();
+
             foreach (string castString in triggerList)
             {
+
+                //if (locationsDone.Contains(Game1.player.currentLocation.Name))
+                //{
+
+                 //   continue;
+
+                //}
 
                 Map.Quest questData = questIndex[castString];
 
                 QuestData.MarkerInstance(Game1.player.currentLocation, questData);
+
+                if(markerRegister.Count > 0)
+                {
+
+                    break;
+
+                }
 
             }
 
@@ -1722,7 +1748,7 @@ namespace StardewDruid
 
             if (questData.taskFinish != null)
             {
-
+                
                 staticData.taskList[questData.taskFinish] = 1;
 
             }

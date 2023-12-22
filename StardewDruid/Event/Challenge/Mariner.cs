@@ -78,7 +78,12 @@ namespace StardewDruid.Event.Challenge
 
                 }
 
+                int monsterDefeated = monsterHandle.spawnTotal - monsterHandle.monsterSpawns.Count;
+
+                Mod.instance.CastMessage("Defeated " + monsterDefeated + " out of " + monsterHandle.spawnTotal + " opponents");
+
                 Mod.instance.CompleteQuest(questData.name);
+
                 eventLinger = 3;
 
                 RemoveMonsters();

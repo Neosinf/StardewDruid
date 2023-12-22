@@ -25,8 +25,8 @@ namespace StardewDruid.Event.Challenge
             challengeFrequency = 1;
             challengeAmplitude = 1;
             challengeSeconds = 60;
-            challengeWithin = new(71, 70);
-            challengeRange = new(16, 15);
+            challengeWithin = new(72, 71);
+            challengeRange = new(14, 13);
             challengeTorches = new()
             {
                 new(75, 74),
@@ -106,7 +106,15 @@ namespace StardewDruid.Event.Challenge
             if (activeCounter == 14)
             {
 
-                StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(13, new(79, 72), riteData.combatModifier);
+                Vector2 bossVector = monsterHandle.SpawnVector(12,76,72,5,4);
+
+                if(bossVector == new Vector2(-1))
+                {
+                    bossVector = new(78, 74);
+
+                }
+
+                StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(13, bossVector, riteData.combatModifier);
 
                 bossMonster = theMonster as BossSlime;
 

@@ -44,7 +44,6 @@ namespace StardewDruid.Dialogue
                     responseList.Add(new Response("rites", "I have some requests (manage rites)"));
                 responseList.Add(new Response("none", "(say nothing)"));
                 Effigy effigy = this;
-                // ISSUE: virtual method pointer
                 GameLocation.afterQuestionBehavior questionBehavior = new(AnswerApproach);
                 returnFrom = null;
                 Game1.player.currentLocation.createQuestionDialogue(str, responseList.ToArray(), questionBehavior, npc);
@@ -56,18 +55,15 @@ namespace StardewDruid.Dialogue
             switch (effigyAnswer)
             {
                 case "intro":
-                    // ISSUE: method pointer
                     DelayedAction.functionAfterDelay(DialogueQuery, 100);
                     break;
                 case "quests":
                     new Quests(npc).Approach();
                     break;
                 case "relocate":
-                    // ISSUE: method pointer
                     DelayedAction.functionAfterDelay(DialogueRelocate, 100);
                     break;
                 case "Demetrius":
-                    // ISSUE: method pointer
                     DelayedAction.functionAfterDelay(DialogueDemetrius, 100);
                     break;
                 case "rites":
@@ -80,12 +76,11 @@ namespace StardewDruid.Dialogue
         {
             string str = "So the successor appears, and has demonstrated remarkable potential. I am the Effigy of the First Farmer, and the sole remnant of my circle of Druids.";
             List<Response> responseList = new List<Response>()
-      {
-        new Response("intro", "Who stuck you in the ceiling?"),
-        new Response("none", "(say nothing)")
-      };
+              {
+                new Response("intro", "Who stuck you in the ceiling?"),
+                new Response("none", "(say nothing)")
+              };
             Effigy effigy = this;
-            // ISSUE: virtual method pointer
             GameLocation.afterQuestionBehavior questionBehavior = new(AnswerApproach);
             Game1.player.currentLocation.createQuestionDialogue(str, responseList.ToArray(), questionBehavior, npc);
         }
@@ -97,7 +92,6 @@ namespace StardewDruid.Dialogue
             responseList.Add(new Response("quests", "Ok. What is the first lesson? (start journey)"));
             responseList.Add(new Response("none", "(say nothing)"));
             Effigy effigy = this;
-            // ISSUE: virtual method pointer
             GameLocation.afterQuestionBehavior questionBehavior = new(AnswerApproach);
             returnFrom = null;
             Game1.player.currentLocation.createQuestionDialogue(str, responseList.ToArray(), questionBehavior, npc);
@@ -107,12 +101,11 @@ namespace StardewDruid.Dialogue
         {
             string str = "Forgotten Effigy: ^I concealed myself for a time, then I spoke to him in the old tongue of the Calico shamans.";
             List<Response> responseList = new List<Response>()
-      {
-        new Response("descended", "Do you think Demetrius is descended from the shaman tradition?!"),
-        new Response("offended", "Wow, he must have been offended. Demetrius is a man of modern science and sensibilities."),
-        new Response("return", "Nope, not going to engage with ")
-      };
-            // ISSUE: method pointer
+              {
+                new Response("descended", "Do you think Demetrius is descended from the shaman tradition?!"),
+                new Response("offended", "Wow, he must have been offended. Demetrius is a man of modern science and sensibilities."),
+                new Response("return", "Nope, not going to engage with ")
+              };
             GameLocation.afterQuestionBehavior questionBehavior = new(AnswerDemetrius);
             Game1.player.currentLocation.createQuestionDialogue(str, responseList.ToArray(), questionBehavior, npc);
         }
@@ -123,7 +116,6 @@ namespace StardewDruid.Dialogue
             {
                 returnFrom = "demetrius";
                 Effigy effigy = this;
-                // ISSUE: virtual method pointer
                 DelayedAction.functionAfterDelay(DialogueApproach, 100);
             }
             else
@@ -132,14 +124,24 @@ namespace StardewDruid.Dialogue
 
         public void DialogueRelocate()
         {
+            
             List<Response> responseList = new List<Response>();
+            
             string str = "Forgotten Effigy: ^Now that you have vanquished the twisted spectres of the past, it is safe for me to roam the wilds of the Valley once more. Where shall I await your command?^";
+            
             if (npc.DefaultMap == "FarmCave")
+            {
                 responseList.Add(new Response("Farm", "My farm would benefit from your gentle stewardship. (The Effigy will target scarecrows with Rite of the Earth effects, automatically sewing seeds, fertilising and watering tilled earth around any scarecrow)"));
+
+            }
+            
             if (npc.DefaultMap == "Farm")
+            {
                 responseList.Add(new Response("FarmCave", "Shelter within the farm cave for the while."));
+
+            }
+                
             responseList.Add(new Response("return", "(nevermind)"));
-            // ISSUE: method pointer
             GameLocation.afterQuestionBehavior questionBehavior = new(AnswerRelocate);
             returnFrom = null;
             Game1.player.currentLocation.createQuestionDialogue(str, responseList.ToArray(), questionBehavior, npc);
@@ -152,16 +154,16 @@ namespace StardewDruid.Dialogue
             {
                 case "FarmCave":
                     str = "I will return to where I may feel the rumbling energies of the Valley's leylines.";
-                    (npc as StardewDruid.Character.Effigy).SwitchDefaultMode();
                     Mod.instance.CharacterRegister(npc.Name, "FarmCave");
                     npc.WarpToDefault();
+                    (npc as StardewDruid.Character.Effigy).SwitchDefaultMode();
                     Mod.instance.CastMessage("The Effigy has moved to the farm cave", -1);
                     break;
                 case "Farm":
                     str = "I will take my place amongst the posts and furrows of my old master's home.";
-                    (npc as StardewDruid.Character.Effigy).SwitchRoamMode();
                     Mod.instance.CharacterRegister(npc.Name, "Farm");
                     npc.WarpToDefault();
+                    (npc as StardewDruid.Character.Effigy).SwitchRoamMode();
                     Mod.instance.CastMessage("The Effigy now roams the farm", -1);
                     break;
             }

@@ -22,7 +22,7 @@ namespace StardewDruid.Event.World
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 6.0;
             veilAnimations = new Dictionary<int, TemporaryAnimatedSprite>();
             veilAnchor = new Vector2(target.X, target.Y-32f);
-            veilCorner = veilAnchor + new Vector2(veilCorner.X-96f, veilCorner.Y-96f);
+            veilCorner = veilAnchor - new Vector2(128f,128f);
         }
 
         public override void EventTrigger()
@@ -89,21 +89,21 @@ namespace StardewDruid.Event.World
                     sourceRect = new Rectangle(0, 0, 64, 64),
                     sourceRectStartingPos = new Vector2(0.0f, 0.0f),
                     texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Veil.png")),
-                    scaleChange = 3f / 1000f,
-                    motion = new Vector2(-0.096f, -0.096f),
+                    scaleChange = 4f / 1000f,
+                    motion = new Vector2(-0.128f, -0.128f),
                     layerDepth = 999f,
                     timeBasedMotion = true,
                     rotationChange = -0.03f,
-                    alpha = 0.15f,
+                    alpha = 0.2f,
                     color = new Color(0.75f, 0.75f, 1f, 1f)
                 };
                 targetLocation.temporarySprites.Add(temporaryAnimatedSprite);
                 veilAnimations[0] = temporaryAnimatedSprite;
 
-                for (int i = 0; i < 12; i++)
+                for (int i = 0; i < 16; i++)
                 {
 
-                    Vector2 glowVector = veilCorner + new Vector2(randomIndex.Next(16) * 16, randomIndex.Next(16) * 16) - new Vector2(96,96);
+                    Vector2 glowVector = veilCorner + new Vector2(randomIndex.Next(16) * 20, randomIndex.Next(16) * 20) - new Vector2(96,96);
 
                     TemporaryAnimatedSprite glowSprite = new TemporaryAnimatedSprite(0, 6000f, 1, 1, glowVector, false, false)
                     {
@@ -135,11 +135,11 @@ namespace StardewDruid.Event.World
                     sourceRect = new Rectangle(0, 0, 64, 64),
                     sourceRectStartingPos = new Vector2(0.0f, 0.0f),
                     texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Veil.png")),
-                    scale = 4f,
+                    scale = 5f,
                     layerDepth = 999f,
                     timeBasedMotion = true,
                     rotationChange = -0.03f,
-                    alpha = 0.15f,
+                    alpha = 0.2f,
                     color = new Color(0.75f, 0.75f, 1f, 1f)
                 };
                 targetLocation.temporarySprites.Add(temporaryAnimatedSprite);
@@ -149,12 +149,12 @@ namespace StardewDruid.Event.World
 
             }
             
-            if ((double)Vector2.Distance(targetVector, riteData.caster.Position) > 128.0)
+            if ((double)Vector2.Distance(targetVector, riteData.caster.Position) > 192.0)
             {
                 return;
             }
             
-            int num = Math.Min(riteData.caster.maxHealth / 8, riteData.caster.maxHealth - riteData.caster.health);
+            int num = Math.Min(riteData.caster.maxHealth / 12, riteData.caster.maxHealth - riteData.caster.health);
             
             if(num > 0 )
             {

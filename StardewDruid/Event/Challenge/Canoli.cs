@@ -93,7 +93,6 @@ namespace StardewDruid.Event.Challenge
 
                         new Throw(targetPlayer, targetVector * 64f, 72, 0).ThrowObject();
                     }
-                    Mod.instance.CompleteQuest(questData.name);
 
                 }
                 else
@@ -101,9 +100,13 @@ namespace StardewDruid.Event.Challenge
 
                     CastVoice("dust overwhelming");
 
-                    Mod.instance.CompleteQuest(questData.name);
-
                 }
+
+                int monsterDefeated = monsterHandle.spawnTotal - monsterHandle.monsterSpawns.Count;
+
+                Mod.instance.CastMessage("Defeated " + monsterDefeated + " out of " + monsterHandle.spawnTotal +" opponents");
+
+                Mod.instance.CompleteQuest(questData.name);
 
                 eventLinger = 3;
 

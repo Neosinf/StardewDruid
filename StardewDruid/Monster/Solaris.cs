@@ -164,7 +164,6 @@ namespace StardewDruid.Monster
 
             Sprite = MonsterData.MonsterSprite(spawnName);
 
-
         }
 
         public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who)

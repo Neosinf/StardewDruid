@@ -15,6 +15,8 @@ namespace StardewDruid.Monster
 {
     public class Boss : StardewValley.Monsters.Monster
     {
+        public bool loadedOut;
+        public Texture2D characterTexture;
         public List<string> ouchList;
         public List<string> dialogueList;
         public bool defeated;
@@ -141,55 +143,55 @@ namespace StardewDruid.Monster
             }
             shadowTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "DragonShadow.png"));
             shadowFrames = new List<Rectangle>()
-      {
-        new Rectangle(0, 0, 64, 32),
-        new Rectangle(0, 32, 64, 32),
-        new Rectangle(0, 64, 64, 32),
-        new Rectangle(0, 32, 64, 32),
-        new Rectangle(64, 0, 64, 32),
-        new Rectangle(64, 32, 64, 32),
-        new Rectangle(64, 64, 64, 32),
-        new Rectangle(64, 32, 64, 32)
-      };
+              {
+                new Rectangle(0, 0, 64, 32),
+                new Rectangle(0, 32, 64, 32),
+                new Rectangle(0, 64, 64, 32),
+                new Rectangle(0, 32, 64, 32),
+                new Rectangle(64, 0, 64, 32),
+                new Rectangle(64, 32, 64, 32),
+                new Rectangle(64, 64, 64, 32),
+                new Rectangle(64, 32, 64, 32)
+              };
             flightTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", Name + "Flight.png"));
             flightFrames = new Dictionary<int, List<Rectangle>>()
             {
                 [0] = new List<Rectangle>()
-        {
-          new Rectangle(0, 64, 128, 64),
-          new Rectangle(128, 64, 128, 64),
-          new Rectangle(256, 64, 128, 64),
-          new Rectangle(384, 64, 128, 64),
-          new Rectangle(256, 64, 128, 64),
-          new Rectangle(0, 64, 128, 64)
-        },
+                {
+                    new Rectangle(0, 64, 128, 64),
+                    new Rectangle(128, 64, 128, 64),
+                    new Rectangle(256, 64, 128, 64),
+                    new Rectangle(384, 64, 128, 64),
+                    new Rectangle(256, 64, 128, 64),
+                    new Rectangle(0, 64, 128, 64)
+                },
                 [1] = new List<Rectangle>()
-        {
-          new Rectangle(0, 0, 128, 64),
-          new Rectangle(128, 0, 128, 64),
-          new Rectangle(256, 0, 128, 64),
-          new Rectangle(384, 0, 128, 64),
-          new Rectangle(256, 0, 128, 64),
-          new Rectangle(0, 0, 128, 64)
-        },
+                {
+                    new Rectangle(0, 0, 128, 64),
+                    new Rectangle(128, 0, 128, 64),
+                    new Rectangle(256, 0, 128, 64),
+                    new Rectangle(384, 0, 128, 64),
+                    new Rectangle(256, 0, 128, 64),
+                    new Rectangle(0, 0, 128, 64)
+                },
                 [2] = new List<Rectangle>()
-        {
-          new Rectangle(0, 128, 128, 64),
-          new Rectangle(128, 128, 128, 64),
-          new Rectangle(256, 128, 128, 64),
-          new Rectangle(384, 128, 128, 64),
-          new Rectangle(256, 128, 128, 64),
-          new Rectangle(0, 128, 128, 64)
-        },
+                {
+                    new Rectangle(0, 128, 128, 64),
+                    new Rectangle(128, 128, 128, 64),
+                    new Rectangle(256, 128, 128, 64),
+                    new Rectangle(384, 128, 128, 64),
+                    new Rectangle(256, 128, 128, 64),
+                    new Rectangle(0, 128, 128, 64)
+                },
                 [3] = new List<Rectangle>()
-        {
-          new Rectangle(0, 0, 128, 64),
-          new Rectangle(128, 0, 128, 64),
-          new Rectangle(256, 0, 128, 64),
-          new Rectangle(384, 0, 128, 64),
-          new Rectangle(256, 0, 128, 64),
-          new Rectangle(0, 0, 128, 64)
-        }
+                {
+                    new Rectangle(0, 0, 128, 64),
+                    new Rectangle(128, 0, 128, 64),
+                    new Rectangle(256, 0, 128, 64),
+                    new Rectangle(384, 0, 128, 64),
+                    new Rectangle(256, 0, 128, 64),
+                    new Rectangle(0, 0, 128, 64)
+                }
             };
             flightCeiling = 4;
             flightFloor = 1;
@@ -199,36 +201,41 @@ namespace StardewDruid.Monster
             fireFrames = new Dictionary<int, List<Rectangle>>()
             {
                 [0] = new List<Rectangle>()
-        {
-          new Rectangle(0, 0, 64, 32),
-          new Rectangle(64, 0, 64, 32),
-          new Rectangle(128, 0, 64, 32),
-          new Rectangle(192, 0, 64, 32)
-        },
+                {
+                new Rectangle(0, 0, 64, 32),
+                new Rectangle(64, 0, 64, 32),
+                new Rectangle(128, 0, 64, 32),
+                new Rectangle(192, 0, 64, 32)
+                },
                 [1] = new List<Rectangle>()
-        {
-          new Rectangle(0, 32, 64, 32),
-          new Rectangle(64, 32, 64, 32),
-          new Rectangle(128, 32, 64, 32),
-          new Rectangle(192, 32, 64, 32)
-        },
+                {
+                new Rectangle(0, 32, 64, 32),
+                new Rectangle(64, 32, 64, 32),
+                new Rectangle(128, 32, 64, 32),
+                new Rectangle(192, 32, 64, 32)
+                },
                 [2] = new List<Rectangle>()
-        {
-          new Rectangle(0, 64, 64, 32),
-          new Rectangle(64, 64, 64, 32),
-          new Rectangle(128, 64, 64, 32),
-          new Rectangle(192, 64, 64, 32)
-        },
+                {
+                new Rectangle(0, 64, 64, 32),
+                new Rectangle(64, 64, 64, 32),
+                new Rectangle(128, 64, 64, 32),
+                new Rectangle(192, 64, 64, 32)
+                },
                 [3] = new List<Rectangle>()
-        {
-          new Rectangle(0, 32, 64, 32),
-          new Rectangle(64, 32, 64, 32),
-          new Rectangle(128, 32, 64, 32),
-          new Rectangle(192, 32, 64, 32)
-        }
+                {
+                new Rectangle(0, 32, 64, 32),
+                new Rectangle(64, 32, 64, 32),
+                new Rectangle(128, 32, 64, 32),
+                new Rectangle(192, 32, 64, 32)
+                }
             };
             fireCeiling = 3;
             fireFloor = 2;
+
+            characterTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", Name + ".png"));
+
+            loadedOut = true;
+
         }
 
         public virtual void HardMode()
@@ -240,22 +247,22 @@ namespace StardewDruid.Monster
             DamageToFarmer /= 2;
             fireInterval = 9;
             ouchList = new List<string>()
-      {
-        "Ah ha ha ha ha",
-        "Such pitiful strikes",
-        "insolence!",
-        "The land has died... and so WILL YOU",
-        "CREEP"
-      };
-            dialogueList = new List<string>()
-      {
-        "Where are my servants",
-        "The shamans have failed me",
-        "The only recourse for humanity, is subjugation",
-        "Beg for my mercy",
-        "Kneel Before Tyrannus Steve!",
-        "I WILL BURNINATE... EVERYTHING"
-      };
+              {
+                "Ah ha ha ha ha",
+                "Such pitiful strikes",
+                "insolence!",
+                "The land has died... and so WILL YOU",
+                "CREEP"
+              };
+                    dialogueList = new List<string>()
+              {
+                "Where are my servants",
+                "The shamans have failed me",
+                "The only recourse for humanity, is subjugation",
+                "Beg for my mercy",
+                "Kneel Before Tyrannus Steve!",
+                "I WILL BURNINATE... EVERYTHING"
+              };
             cooldownInterval = 48;
         }
 
@@ -271,7 +278,13 @@ namespace StardewDruid.Monster
             {
                 return;
             }
-            
+
+            if(!loadedOut)
+            {
+                LoadOut();
+
+            }
+
             Vector2 localPosition = getLocalPosition(Game1.viewport);
 
             float drawLayer = Game1.player.getDrawLayer();
@@ -303,11 +316,16 @@ namespace StardewDruid.Monster
                 else
                 {
 
-                    b.Draw(Sprite.Texture, new Vector2(localPosition.X - 96f, localPosition.Y - 192f), new Rectangle?(walkFrames[netDirection][netWalkFrame]), Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip ? (SpriteEffects)1 : 0, drawLayer);
+                    //b.Draw(Sprite.Texture, new Vector2(localPosition.X - 96f, localPosition.Y - 192f), new Rectangle?(walkFrames[netDirection][netWalkFrame]), Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip ? (SpriteEffects)1 : 0, drawLayer);
+
+                    b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 192f), new Rectangle?(walkFrames[netDirection][netWalkFrame]), Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip ? (SpriteEffects)1 : 0, drawLayer);
 
                 }
+
                 b.Draw(shadowTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 40f), new Rectangle?(shadowFrames[netDirection]), Color.White * 0.25f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer - 1E-05f);
+
             }
+
         }
 
         public virtual void SpecialAttack()
@@ -317,31 +335,35 @@ namespace StardewDruid.Monster
             switch (moveDirection)
             {
                 case 0:
-                    // ISSUE: explicit constructor call
+   
                     zero = new((int)(Position.X / 64.0) + 2, (int)(Position.Y / 64.0) - 4);
                     if (altDirection == 3 || flip)
+                    {
                         zero.X -= 4f;
-                    // ISSUE: explicit constructor call
+                    }
                     zone = new((int)((zero.X - 3.0) * 64.0), (int)((zero.Y - 1.0) * 64.0), 448, 256);
                     break;
                 case 1:
-                    // ISSUE: explicit constructor call
+
                     zero = new((int)(Position.X / 64.0) + 5, (int)(Position.Y / 64.0));
-                    // ISSUE: explicit constructor call
+
                     zone = new((int)((zero.X - 1.0) * 64.0), (int)((zero.Y - 3.0) * 64.0), 256, 448);
                     break;
                 case 2:
-                    // ISSUE: explicit constructor call
+
                     zero = new((int)(Position.X / 64.0) + 3, (int)(Position.Y / 64.0) + 1);
                     if (altDirection == 3 || flip)
+                    {
                         zero.X -= 4f;
-                    // ISSUE: explicit constructor call
+
+                    }
+
                     zone = new((int)((zero.X - 3.0) * 64.0), (int)((zero.Y - 1.0) * 64.0), 448, 256);
                     break;
                 default:
-                    // ISSUE: explicit constructor call
+
                     zero = new((int)(Position.X / 64.0) - 4, (int)(Position.Y / 64.0));
-                    // ISSUE: explicit constructor call
+
                     zone = new((int)((zero.X - 1.0) * 64.0), (int)((zero.Y - 3.0) * 64.0), 256, 448);
                     break;
             }
@@ -365,14 +387,14 @@ namespace StardewDruid.Monster
           int adjust = 0)
         {
             fireVectors = new List<Vector2>()
-      {
-        new Vector2(44f, -336f),
-        new Vector2(-348f, -336f),
-        new Vector2(148f, -96f),
-        new Vector2(60f, -106f),
-        new Vector2(-380f, -106f),
-        new Vector2(-400f, -96f)
-      };
+            {
+                new Vector2(44f, -336f),
+                new Vector2(-348f, -336f),
+                new Vector2(148f, -96f),
+                new Vector2(60f, -106f),
+                new Vector2(-380f, -106f),
+                new Vector2(-400f, -96f)
+            };
             float num1 = 5f;
             depth += 1f / 1000f;
             int num2;
@@ -415,21 +437,24 @@ namespace StardewDruid.Monster
             base.initNetFields();
             NetFields.AddFields(new INetSerializable[8]
             {
-         netDirection,
-         netWalkFrame,
-         netAlternative,
-         netFlightFrame,
-         netFlightHeight,
-         netDashActive,
-         netFireFrame,
-         netFireActive
+                 netDirection,
+                 netWalkFrame,
+                 netAlternative,
+                 netFlightFrame,
+                 netFlightHeight,
+                 netDashActive,
+                 netFireFrame,
+                 netFireActive
             });
         }
 
         public override void reloadSprite()
         {
+            
             Sprite = MonsterData.MonsterSprite(Name);
+
             this.HideShadow = true;
+        
         }
 
         public override void shedChunks(int number)
@@ -500,50 +525,76 @@ namespace StardewDruid.Monster
                 haltActive = true;
                 haltTimer = 60;
                 if (Context.IsMainPlayer)
+                {
                     netHaltActive.Set(true);
+                }
+                    
             }
             flightActive = false;
             specialActive = false;
             followActive = false;
-            if (!Context.IsMainPlayer)
-                return;
-            netWalkFrame.Set(0);
-            netDashActive.Set(false);
-            netFireActive.Set(false);
+            if (Context.IsMainPlayer)
+            {
+                netWalkFrame.Set(0);
+                netDashActive.Set(false);
+                netFireActive.Set(false);
+            }
+
         }
 
         public override void update(GameTime time, GameLocation location)
         {
             if (Mod.instance.CasterBusy())
+            {
                 return;
+            }
+
+            if (!loadedOut)
+            {
+                LoadOut();
+
+            }
+
+            if (Sprite.loadedTexture == null || Sprite.loadedTexture.Length == 0)
+            {
+
+                Sprite.spriteTexture = MonsterData.MonsterTexture(Name);
+
+                Sprite.loadedTexture = Sprite.textureName.Value;
+
+            }
+
             if (!Context.IsMainPlayer)
             {
-                if (Sprite.loadedTexture == null || Sprite.loadedTexture.Length == 0)
-                {
-                    Sprite.spriteTexture = CharacterData.CharacterTexture(Name);
-                    Sprite.loadedTexture = Sprite.textureName.Value;
-                    LoadOut();
-                }
+                
                 base.update(time, location);
+                
                 FixDirection();
+            
             }
             else
             {
+                
                 base.update(time, location);
+
                 ChooseBehaviour(time);
+
                 FixDirection();
-                if (haltActive)
-                    UpdateHalt(time);
-                if (flightActive)
-                    UpdateFlight(time);
-                if (followActive)
-                    UpdateFollow(time);
-                if (specialActive)
-                    UpdateSpecial();
-                if (!cooldownActive)
-                    return;
+
+                if (haltActive) { UpdateHalt(time); }
+                    
+                if (flightActive) { UpdateFlight(time); }
+                    
+                if (followActive) { UpdateFollow(time); }
+                    
+                if (specialActive) { UpdateSpecial(); }
+                    
+                if (!cooldownActive) { return; }
+
                 UpdateCooldown();
+
             }
+
         }
 
         public void ChooseBehaviour(GameTime time)
