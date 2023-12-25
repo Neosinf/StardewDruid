@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -39,7 +40,15 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            ModUtility.Explode(targetLocation, targetVector, targetPlayer, explodeRadius, (int)(riteData.castDamage * 0.25), 1, Mod.instance.virtualPick, Mod.instance.virtualAxe);
+            List<Vector2> impactVectors = ModUtility.Explode(targetLocation, targetVector, targetPlayer, explodeRadius, (int)(riteData.castDamage * 0.25), powerLevel:1);
+
+            targetLocation.playSound("flameSpellHit");
+
+            foreach (Vector2 vector in impactVectors)
+            {
+                ModUtility.ImpactVector(targetLocation, vector);
+
+            }
 
             castFire = true;
 

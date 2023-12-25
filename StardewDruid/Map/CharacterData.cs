@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Character;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Quests;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
@@ -10,6 +12,26 @@ namespace StardewDruid.Map
 {
     public static class CharacterData
     {
+
+        public static void CharacterCheck(int progress)
+        {
+
+            if(progress >= 1 && !Mod.instance.characters.ContainsKey("Effigy"))
+            {
+
+                Mod.instance.CharacterRegister("Effigy", "FarmCave");
+
+            }
+
+            if (progress >= 20 && !Mod.instance.characters.ContainsKey("Jester"))
+            {
+
+                Mod.instance.CharacterRegister("Jester", "FarmCave");
+
+            }
+
+        }
+
 
         public static void CharacterLoad(string characterName, string startMap)
         {

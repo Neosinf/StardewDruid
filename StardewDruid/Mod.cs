@@ -442,19 +442,6 @@ namespace StardewDruid
         public void ReadyState()
         {
 
-            weaponAttunement = SpawnData.WeaponAttunement();
-
-            foreach (KeyValuePair<int, string> keyValuePair in staticData.weaponAttunement)
-            {
-
-                if (!weaponAttunement.ContainsKey(keyValuePair.Key))
-                {
-
-                    weaponAttunement[keyValuePair.Key] = keyValuePair.Value;
-                }
-
-            }
-
             triggerList = new();
 
             activeData = new ActiveData() { activeBlessing = staticData.activeBlessing };
@@ -462,8 +449,6 @@ namespace StardewDruid
             eventRegister = new();
 
             eventSync = new();
-
-            blessingList = QuestData.RitesProgress();
 
             markerRegister = new();
 
@@ -483,19 +468,28 @@ namespace StardewDruid
 
             fireCasts = new();
 
-            RiteTool(991);
-
-            RiteTool(992);
-
-            RiteTool(993);
-
-            RiteTool(994);
-
             locationPoll = new();
 
             riteWitnesses = new();
 
             // ---------------------- trigger assignment
+
+            weaponAttunement = SpawnData.WeaponAttunement();
+
+            foreach (KeyValuePair<int, string> keyValuePair in staticData.weaponAttunement)
+            {
+
+                if (!weaponAttunement.ContainsKey(keyValuePair.Key))
+                {
+
+                    weaponAttunement[keyValuePair.Key] = keyValuePair.Value;
+                }
+
+            }
+
+            RiteTool();
+
+            blessingList = QuestData.RitesProgress();
 
             if (Config.autoProgress)
             {
@@ -518,6 +512,8 @@ namespace StardewDruid
                 return;
 
             }
+
+            CharacterData.CharacterCheck(staticData.activeProgress);
 
             foreach (KeyValuePair<string, string> characterInfo in staticData.characterList)
             {
@@ -1395,26 +1391,26 @@ namespace StardewDruid
             {
                 toolIndex = 991;
 
-                if (currentTool != toolIndex) { RiteTool(toolIndex, Game1.player.CurrentTool.UpgradeLevel); }
+                //if (currentTool != toolIndex) { RiteTool(toolIndex, Game1.player.CurrentTool.UpgradeLevel); }
 
             }
             else if (Game1.player.CurrentTool is Axe)
             {
                 toolIndex = 992;
 
-                if (currentTool != toolIndex) { RiteTool(toolIndex, Game1.player.CurrentTool.UpgradeLevel); }
+                //if (currentTool != toolIndex) { RiteTool(toolIndex, Game1.player.CurrentTool.UpgradeLevel); }
             }
             else if (Game1.player.CurrentTool is Hoe)
             {
                 toolIndex = 993;
 
-                if (currentTool != toolIndex) { RiteTool(toolIndex, Game1.player.CurrentTool.UpgradeLevel); }
+                //if (currentTool != toolIndex) { RiteTool(toolIndex, Game1.player.CurrentTool.UpgradeLevel); }
             }
             else if (Game1.player.CurrentTool is WateringCan)
             {
                 toolIndex = 994;
 
-                if (currentTool != toolIndex) { RiteTool(toolIndex, Game1.player.CurrentTool.UpgradeLevel); }
+                //if (currentTool != toolIndex) { RiteTool(toolIndex, Game1.player.CurrentTool.UpgradeLevel); }
             }
             else if (Game1.player.CurrentTool is MeleeWeapon)
             {
@@ -1876,17 +1872,10 @@ namespace StardewDruid
 
         }
 
-        public void RiteTool(int toolIndex, int setLevel = -1)
+        public void RiteTool()
         {
 
             int level = Math.Min(5, Math.Max(1,staticData.activeProgress / 5));
-
-            if (setLevel != -1)
-            {
-
-                level = setLevel;
-
-            }
 
             if (Config.maxDamage)
             {
@@ -1895,67 +1884,23 @@ namespace StardewDruid
 
             }
 
-            switch (toolIndex)
-            {
+            virtualPick = new Pickaxe();
+            virtualPick.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
+            virtualPick.UpgradeLevel = level;
 
-                case 991:
+            virtualAxe = new Axe();
+            virtualAxe.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
+            virtualAxe.UpgradeLevel = level;
 
-                    if (virtualPick == null)
-                    {
+            virtualHoe = new Hoe();
+            virtualHoe.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
+            virtualHoe.UpgradeLevel = level;
 
-                        virtualPick = new Pickaxe();
-                        virtualPick.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
-                        Game1.player.Stamina += Math.Min(2, Game1.player.MaxStamina - Game1.player.Stamina);
-                    }
+            virtualCan = new WateringCan();
+            virtualCan.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
+            virtualCan.UpgradeLevel = level;
 
-                    virtualPick.UpgradeLevel = level;
-
-                    return;
-
-                case 992:
-
-                    if (virtualAxe == null)
-                    {
-
-                        virtualAxe = new Axe();
-                        virtualAxe.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
-                        Game1.player.Stamina += Math.Min(2, Game1.player.MaxStamina - Game1.player.Stamina);
-
-                    }
-
-                    virtualAxe.UpgradeLevel = level;
-
-                    return;
-
-                case 993:
-
-                    if (virtualHoe == null)
-                    {
-
-                        virtualHoe = new Hoe();
-                        virtualHoe.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
-                        Game1.player.Stamina += Math.Min(2, Game1.player.MaxStamina - Game1.player.Stamina);
-                    }
-
-                    virtualHoe.UpgradeLevel = level;
-
-                    return;
-
-                default:
-
-                    if (virtualCan == null)
-                    {
-
-                        virtualCan = new WateringCan();
-                        virtualCan.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
-                        Game1.player.Stamina += Math.Min(2, Game1.player.MaxStamina - Game1.player.Stamina);
-                    }
-
-                    virtualCan.UpgradeLevel = level;
-
-                    return;
-
-            }
+            Game1.player.Stamina += Math.Min(8, Game1.player.MaxStamina - Game1.player.Stamina);
 
         }
 

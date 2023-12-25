@@ -1,9 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Netcode;
+using StardewDruid.Map;
 using StardewValley;
 using StardewValley.Projectiles;
 using System;
 using System.Collections.Generic;
+using static StardewValley.Objects.BedFurniture;
 
 namespace StardewDruid.Monster
 {
@@ -43,7 +46,7 @@ namespace StardewDruid.Monster
 
         public float alpha = 1f;
 
-        public string birdType;
+        public NetString netBirdType;
 
         public Color birdColor;
 
@@ -55,11 +58,18 @@ namespace StardewDruid.Monster
 
         public Texture2D birdTexture;
 
+        public bool loadedOut;
+
+        public Firebird()
+        {
+
+        }
+
         public Firebird(Vector2 vector, int combatModifier)
             : base("Shadow Brute", vector * 64)
         {
 
-            birdTexture = Game1.content.Load<Texture2D>("LooseSprites\\GemBird");
+            //birdTexture = Game1.content.Load<Texture2D>("LooseSprites\\GemBird");
 
             Health = combatModifier * 10;
 
@@ -69,11 +79,11 @@ namespace StardewDruid.Monster
 
             DamageToFarmer = (int)(combatModifier * 0.1);
 
+            objectsToDrop.Clear();
+
             birdColor = new Color(255, 38, 38);
 
             birdItem = 64;
-
-            objectsToDrop.Clear();
 
             firingTimer = Game1.random.Next(2, 6) * 1000f;
 
@@ -84,17 +94,15 @@ namespace StardewDruid.Monster
 
             };
 
+            netBirdType.Set("Ruby");
+
+            LoadOut();
         }
 
-        public override void reloadSprite()
+        public void LoadOut()
         {
 
-        }
-
-        public void setBirdType(string newType)
-        {
-
-            birdType = newType;
+            string birdType = netBirdType.Value;
 
             birdColor = birdType switch
             {
@@ -115,6 +123,24 @@ namespace StardewDruid.Monster
                 "Topaz" => 68,
                 _ => 0,
             };
+
+            birdTexture = Game1.content.Load<Texture2D>("LooseSprites\\GemBird");
+
+            loadedOut = true;
+
+        }
+
+        public override void reloadSprite()
+        {
+
+        }
+
+        public void setBirdType(string birdType)
+        {
+
+            netBirdType.Set(birdType);
+
+            LoadOut();
 
         }
 
@@ -183,6 +209,13 @@ namespace StardewDruid.Monster
 
                 }
 
+
+            }
+
+            if (!loadedOut)
+            {
+
+                LoadOut();
 
             }
 

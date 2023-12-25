@@ -174,15 +174,32 @@ namespace StardewDruid.Character
         public override bool TargetOpponent()
         {
             if (!base.TargetOpponent())
-                return false;
-            float num = Vector2.Distance(Position, targetOpponents.First().Position);
-            if ((double)num >= 64.0 && (double)num <= 480.0)
             {
-                Vector2 vector2 = new(targetOpponents.First().Position.X + 32f, targetOpponents.First().Position.Y);//Vector2.op_Subtraction(((StardewValley.Character)targetOpponents.First<Monster>()).Position, Vector2.op_Addition(Position, new Vector2(32f, 0.0f)));
-                if ((double)Math.Abs(vector2.Y) <= 32.0 || (double)Math.Abs(vector2.X) <= 32.0)
-                    TargetBeam();
+
+                return false;
+            
             }
+                
+            float distance = Vector2.Distance(Position, targetOpponents.First().Position);
+
+            if (distance >= 64f && distance <= 480f)
+            {
+
+                StardewValley.Monsters.Monster targetMonster = targetOpponents.First();
+
+                Vector2 vector2 = new(targetMonster.Position.X - Position.X - 32f, targetMonster.Position.Y - Position.Y);//Vector2.op_Subtraction(((StardewValley.Character)targetOpponents.First<Monster>()).Position, Vector2.op_Addition(Position, new Vector2(32f, 0.0f)));
+                
+                if ((double)Math.Abs(vector2.Y) <= 32.0 || (double)Math.Abs(vector2.X) <= 32.0)
+                {
+                    
+                    TargetBeam();
+
+                }
+
+            }
+            
             return true;
+
         }
 
         public void TargetBeam()

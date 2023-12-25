@@ -31,7 +31,7 @@ namespace StardewDruid.Map
 
         public int questId;
 
-        public string questCharacter;
+        //public string questCharacter;
 
         public int questValue;
 

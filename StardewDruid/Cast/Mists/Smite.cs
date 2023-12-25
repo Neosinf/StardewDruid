@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace StardewDruid.Cast.Mists
 {
@@ -45,39 +46,28 @@ namespace StardewDruid.Cast.Mists
             else
             {
 
-                critChance += 0.2f;
+                critChance += 0.3f;
 
             }
 
-            if (targetPlayer.professions.Contains(25))
-            {
-
-                critChance += 0.15f;
-
-            }
-
-            int damageApplied = randomIndex.Next(riteData.castDamage, riteData.castDamage * 2);
-
-            int critModifier = 2;
-
-            if (targetPlayer.professions.Contains(29))
-            {
-                critModifier += 1;
-
-            }
+            int damageApplied = randomIndex.Next(riteData.castDamage);
 
             bool critApplied = false;
 
-            if (randomIndex.NextDouble() <= critChance)
+            float critDamage = ModUtility.CalculateCritical(damageApplied, critChance);
+
+            if (critDamage > 0)
             {
 
-                damageApplied *= critModifier;
+                damageApplied = (int)critDamage;
 
                 critApplied = true;
 
             }
 
-            ModUtility.HitMonster(targetLocation, targetPlayer, targetMonster, damageApplied, critApplied);
+            List<int> diff = ModUtility.CalculatePush(targetLocation, targetMonster, targetPlayer.Position, 64);
+
+            ModUtility.HitMonster(targetLocation, targetPlayer, targetMonster, damageApplied, critApplied, diffX: diff[0], diffY: diff[1]);
 
             if (targetMonster.Health <= 0)
             {

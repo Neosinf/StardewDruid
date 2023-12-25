@@ -30,7 +30,7 @@ namespace StardewDruid.Cast.Mists
 
             castCost = Math.Max(2, 36 - targetPlayer.MiningLevel * Mod.instance.virtualPick.UpgradeLevel);
 
-            ModUtility.DestroyBoulder(targetLocation, targetPlayer, resourceClump, targetVector, Mod.instance.virtualPick, debrisMax);
+            ModUtility.DestroyBoulder(targetLocation, targetPlayer, resourceClump, targetVector, debrisMax);
 
             resourceClump = null;
 

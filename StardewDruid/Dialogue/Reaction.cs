@@ -1,12 +1,17 @@
-﻿using Netcode;
+﻿using Microsoft.VisualBasic;
+using Netcode;
+using StardewDruid.Event.World;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
+using StardewValley.Locations;
 using StardewValley.Network;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.Intrinsics.X86;
 
 namespace StardewDruid.Dialogue
 {
@@ -20,14 +25,44 @@ namespace StardewDruid.Dialogue
         $u	Switch the speaking character to their unique portrait.
         $l	Switch the speaking character to their love portrait.
         $a	Switch the speaking character to their angry portrait.
-        */
+        
+        row	index	purpose
+        1	0–3	animation used to start an emote (I think)
+        2	4–7	empty can
+        3	8–11	question mark
+        4	12–15	angry
+        5	16–19	exclamation
+        6	20–23	heart
+        7	24–27	sleep
+        8	28–31	sad
+        9	32–35	happy
+        10	36–39	x
+        11	40–43	pause
+        12	44–47	not used
+        13	48–51	not used
+        14	52–55	videogame
+        15	56–59	music note
+        16	60–63	blush 
+
+         */
 
         public static void ReactTo(NPC NPC, string cast, int friendship = 0, List<string> context = null)
         {
 
             List<string> stringList = new List<string>();
 
-            int random = new Random().Next(4);
+            //int random = new Random().Next(3);
+
+            Dictionary<string, int> affinities = Map.VillagerData.Affinity();
+
+            int affinity = 3;
+
+            if (affinities.ContainsKey(NPC.Name))
+            {
+
+                affinity = affinities[NPC.Name];
+
+            }
 
             switch (cast)
             {
@@ -42,35 +77,51 @@ namespace StardewDruid.Dialogue
 
                             NPC.doEmote(20, true);
 
-                            switch (random)
+                            switch (affinity)
                             {
                                 case 0:
 
-                                    stringList.Add("One day I might have the courage to soar through the sky with you.$l");
+                                    stringList.Add("I read somewhere about the return of Dragons.");
+
+                                    stringList.Add("I couldn't make sense of it, but I trust you. $h");
 
                                     break;
 
                                 case 1:
 
-                                    stringList.Add("It's so great to have a resident Dragon warrior looking out for us.$h");
-
-                                    stringList.Add("It's like something out of the old legends. $h");
+                                    stringList.Add("It's great to see a friendly Dragon. $l");
 
                                     break;
 
                                 case 2:
 
-                                    stringList.Add("I read somewhere about the return of Dragons. I forgot what it was supposed to mean.");
+                                    stringList.Add(" I think I saw you fly. You're brave to go so high! $h");
 
-                                    stringList.Add("I trust you though! $h");
+                                    break;
+
+                                case 3:
+
+                                    stringList.Add("Your scales glitter in the light of the valley.");
+
+                                    stringList.Add("It's really something! $l");
+
+                                    break;
+
+                                case 4:
+
+                                    stringList.Add("A Dragon warrior is a great boon to the forces of light.");
+
+                                    stringList.Add("We'll count on you to protect the valley form evil. $h");
 
                                     break;
 
                                 default:
 
-                                    stringList.Add("Your scales glitter in the light of the valley.");
+                                    stringList.Add("The Prime Tyrannus created a mystical kingdom of ether called the Undervalley");
 
-                                    stringList.Add("Majestic! $l");
+                                    stringList.Add("The tyrant king was cast out by a powerful shadow.");
+
+                                    stringList.Add("He terrorised the denizens of the Calico basin for a time, until he faded into obscurity.");
 
                                     break;
                             }
@@ -84,9 +135,34 @@ namespace StardewDruid.Dialogue
 
                             NPC.doEmote(32, true);
 
-                            switch (random)
+                            switch (affinity)
                             {
+
                                 case 0:
+
+                                    stringList.Add("I don't know if I'll ever get used to seeing you like this.");
+
+                                    stringList.Add("I'm sure one day it will be wierd to see you as a human. $h");
+
+                                    break;
+
+                                case 1:
+
+                                    stringList.Add("Is it fun to be a Dragon?");
+
+                                    stringList.Add("You must eat a lot of barbeque. $h");
+
+                                    break;
+
+                                case 2:
+
+                                    stringList.Add("I thought I heard something massive stomping along the wayside.");
+
+                                    stringList.Add("Please be careful when you are... enlarged.");
+
+                                    break;
+
+                                case 3:
 
                                     stringList.Add("Can you breath fire? Can you fly?");
 
@@ -94,27 +170,22 @@ namespace StardewDruid.Dialogue
 
                                     break;
 
-                                case 1:
+                                case 4:
 
-                                    stringList.Add("I thought I heard something massive stomping along the wayside!");
+                                    stringList.Add("Dragons were the masters of many legendary kingdoms.");
 
-                                    stringList.Add("Guess it would be our friendly neighbourhood Dragon. $h");
+                                    stringList.Add("Perhaps you might find and explore their long forgotten secrets.");
 
-                                    break;
-
-                                case 2:
-
-                                    stringList.Add("I don't know if I'll ever get used to seeing you like this.");
-
-                                    stringList.Add("I'm sure one day it will be wierd to see you as a human! $h");
-                                    
                                     break;
 
                                 default:
 
-                                    stringList.Add("Thank you for protecting our town from evil. $h");
+                                    stringList.Add("Can you see the flows of ether from the ethereal plane?");
+
+                                    stringList.Add("It's effervescent nature is imperceptible to the limited senses of humans.");
 
                                     break;
+                            
                             }
 
                             break;
@@ -122,31 +193,36 @@ namespace StardewDruid.Dialogue
                         }
 
                     }
-                    switch (random)
+                    switch (affinity)
                     {
                         case 0:
 
-                            List<string> alertList = new()
+                            List<string> alertListOne = new()
                             {
-                                "Alert the Guild!",
-                                "To Arms!",
-                                "We're under attack!",
-                                "OH NO NO NO NO",
+                                "Whoa",
+                                "What The Flip?"
                             };
 
-                            NPC.showTextAboveHead(alertList[new Random().Next(4)]);
+                            NPC.showTextAboveHead(alertListOne[new Random().Next(3)]);
 
-                            stringList.Add("Oh... it's farmer " + Game1.player.Name);
+                            stringList.Add("Oh... it's "+Game1.player.Name);
 
-                            stringList.Add("I feared the worst $s");
+                            stringList.Add("How did you become a... big lizard? $s");
 
                             break;
 
                         case 1:
 
-                            NPC.showTextAboveHead("AHHH! DRAGON!!");
+                            List<string> alertListTwo = new()
+                            {
+                                "Monster!",
+                                "AHHH! DRAGON!!",
+                                "OH NO NO NO NO",
+                            };
 
-                            stringList.Add("(" + NPC.Name + " trembles with fear and uncertainty).$s");
+                            NPC.showTextAboveHead(alertListTwo[new Random().Next(3)]);
+
+                            stringList.Add("(" + NPC.Name + " trembles with fear and uncertainty). $s");
 
                             break;
 
@@ -156,7 +232,33 @@ namespace StardewDruid.Dialogue
 
                             stringList.Add("Oh... hi there big friend...");
 
-                            stringList.Add("If you're looking for a horde of treasure... maybe try the mountain... or even further away.");
+                            stringList.Add("If you're looking for a horde of treasure... maybe try the mountain... or even further away. $s");
+
+                            break;
+
+                        case 3:
+
+                            NPC.doEmote(16, true);
+
+                            stringList.Add(Game1.player.Name + "?");
+
+                            stringList.Add("I can't believe this happened to you. It's like something out of a fairytale.");
+
+                            break;
+
+                        case 4:
+
+
+                            List<string> alertList = new()
+                            {
+                                "Alert the Guild!",
+                                "The town is under attack!",
+                                "To Arms!",
+                            };
+
+                            NPC.showTextAboveHead(alertList[new Random().Next(3)]);
+
+                            stringList.Add("Declare yourself, beast!");
 
                             break;
 
@@ -164,9 +266,9 @@ namespace StardewDruid.Dialogue
 
                             NPC.doEmote(16, true);
 
-                            stringList.Add("Farmer "+ Game1.player.Name + "?");
+                            stringList.Add("Ancient ones have not roamed the valley in centuries");
 
-                            stringList.Add("I can't believe this happened to you. Were you cursed by something?");
+                            stringList.Add("This might be an omen of troubling times to come. $s");
 
                             break;
                     }
@@ -178,19 +280,26 @@ namespace StardewDruid.Dialogue
                     if (friendship >= 75)
                     {
 
-                        switch (random)
+                        switch (affinity)
                         {
                             case 0:
 
                                 NPC.doEmote(20, true);
 
-                                stringList.Add("You've picked up so many wonderful skills so quickly.");
-
-                                stringList.Add("It's as if Fate watches over you. $l");
+                                stringList.Add("I just had an out of body experience. My perception of reality is all messed up. $h");
 
                                 break;
 
                             case 1:
+                                NPC.doEmote(20, true);
+
+                                stringList.Add("I think " + context.First() + " is my new favourite trick. $l");
+
+
+                                break;
+
+                            case 2:
+
 
                                 NPC.showTextAboveHead("Bravo!");
 
@@ -198,11 +307,19 @@ namespace StardewDruid.Dialogue
 
                                 break;
 
-                            case 2:
+                            case 3:
 
                                 NPC.doEmote(20, true);
 
-                                stringList.Add("I think "+context.First()+" is my new favourite trick. $l");
+                                stringList.Add("I really want to be able to do that kind of thing. $l");
+
+                                break;
+
+                            case 4:
+
+                                NPC.doEmote(20, true);
+
+                                stringList.Add("Ah, so there's a little bit of magic in this magician (wink). $l");
 
                                 break;
 
@@ -210,9 +327,9 @@ namespace StardewDruid.Dialogue
 
                                 NPC.doEmote(20, true);
 
-                                stringList.Add("I just had an out of body experience. My perception of reality is all messed up.");
+                                stringList.Add("You've become a master manipulater of the chaos of chance.");
 
-                                stringList.Add("It's fantastic! $l");
+                                stringList.Add("I suspect a Fate watches over you. $h");
 
                                 break;
 
@@ -225,13 +342,13 @@ namespace StardewDruid.Dialogue
                     if (friendship >= 50)
                     {
 
-                        switch (random)
+                        switch (affinity)
                         {
                             case 0:
 
                                 NPC.doEmote(32, true);
 
-                                stringList.Add("Nice one Farmer "+ Game1.player.Name + ". I can picture you in a big show!");
+                                stringList.Add("Nice one "+ Game1.player.Name + ". I can picture you in a big show!");
 
                                 stringList.Add("I would go to see it. $h");
 
@@ -241,21 +358,19 @@ namespace StardewDruid.Dialogue
 
                                 NPC.showTextAboveHead("Hehe");
 
-                                stringList.Add("That was hilarious.");
-
-                                stringList.Add("Do it again for me sometime! $h");
+                                stringList.Add("That was fun. Do it again for me sometime! $h");
 
                                 break;
 
                             case 2:
 
-                                NPC.doEmote(24, true);
+                                NPC.doEmote(32, true);
 
-                                stringList.Add(context.First() + "! Now that was special.$h");
+                                stringList.Add(context.First().ToUpper() + "! Now that was special.$h");
 
                                 break;
 
-                            default:
+                            case 3:
 
                                 NPC.doEmote(32, true);
 
@@ -263,6 +378,25 @@ namespace StardewDruid.Dialogue
 
                                 break;
 
+                            case 4:
+
+                                NPC.doEmote(32, true);
+
+                                stringList.Add("I can sense there's more to this than a simple trick. $h");
+
+                                break;
+
+                            default:
+
+                                NPC.doEmote(32, true);
+
+                                stringList.Add("The great magician, the one known as the Fool.");
+
+                                stringList.Add("He suffered a legendary defeat at the throne of the King of Maples.");
+
+                                stringList.Add("His cheer and magic was lost to the world. $s");
+
+                                break;
                         }
 
                         break;
@@ -271,29 +405,34 @@ namespace StardewDruid.Dialogue
                     
                     if (friendship >= 25)
                     {
-                        switch (random)
+                        switch (affinity)
                         {
                             case 0:
-
-                                NPC.showTextAboveHead("What?");
-
-                                stringList.Add("I'm confused.");
-
-                                stringList.Add("I guess I missed the point of that.");
-
-                                break;
-
-                            case 1:
 
                                 NPC.doEmote(24, true);
 
                                 stringList.Add("I know you're trying.");
 
                                 stringList.Add("But maybe you're trying too hard to be funny? Just be yourself.");
+                                break;
+
+                            case 1:
+
+                                NPC.showTextAboveHead("What?");
+
+                                stringList.Add("I dont get what happened.");
 
                                 break;
 
                             case 2:
+
+                                NPC.doEmote(24, true);
+
+                                stringList.Add("Well that was an... experience. Now back to business.");
+
+                                break;
+
+                            case 3:
 
                                 NPC.doEmote(24, true);
 
@@ -303,14 +442,21 @@ namespace StardewDruid.Dialogue
 
                                 break;
 
-                            default:
+                            case 4:
 
                                 NPC.doEmote(24, true);
 
-                                stringList.Add("Well that was an... experience.");
+                                stringList.Add("That may have some potential. It definitely needs a lot of work, and a good deal of luck to pull off.");
 
                                 break;
 
+                            default:
+
+                                NPC.doEmote(32, true);
+
+                                stringList.Add("You seem to be quite comfortable playing with the forces of chance.");
+
+                                break;
                         }
 
                         
@@ -318,10 +464,19 @@ namespace StardewDruid.Dialogue
                     
                     }
 
-                    switch (random)
+                    switch (affinity)
                     {
 
                         case 0:
+
+
+                            NPC.doEmote(28, true);
+
+                            stringList.Add("Ughh. I think I'll be happy if random " + context.First() + " never happen to me again.$a");
+
+                            break;
+
+                        case 1:
 
                             NPC.doEmote(28, true);
 
@@ -331,7 +486,7 @@ namespace StardewDruid.Dialogue
 
                             break;
 
-                        case 1:
+                        case 2:
 
                             NPC.showTextAboveHead("Eeek!");
 
@@ -339,11 +494,19 @@ namespace StardewDruid.Dialogue
 
                             break;
 
-                        case 2:
+                        case 3:
+
+                            NPC.doEmote(28,true);
+
+                            stringList.Add("That isn't what I was hoping for. $s");
+
+                            break;
+
+                        case 4:
 
                             NPC.doEmote(28, true);
 
-                            stringList.Add("Ughh. I think I'll be happy if random " + context.First() + " never happen to me again.$a");
+                            stringList.Add("Maybe you could practice a different kind of talent. Something that would benefit the town. $s");
 
                             break;
 
@@ -351,7 +514,7 @@ namespace StardewDruid.Dialogue
 
                             NPC.doEmote(28, true);
 
-                            stringList.Add("("+NPC.Name+" grumbles)$a");
+                            stringList.Add("("+NPC.Name+" grumbles). The Fates should not be trifled with! $a");
 
                             break;
 
@@ -363,36 +526,54 @@ namespace StardewDruid.Dialogue
 
                     NPC.doEmote(8, true);
 
-                    switch (random)
+                    switch (affinity)
                     {
                         case 0:
 
-                            stringList.Add("Wow farmer "+Game1.player.Name+ ", you're very strong.");
+                            stringList.Add("Well "+Game1.player.Name+ ", I'm not sure how you did that, but it seemed dangerous.");
 
-                            stringList.Add("Please use your power to keep the valley safe.");
+                            stringList.Add("Please dont put the town in peril.");
 
                             break;
 
                         case 1:
 
-                            stringList.Add("And the grief of the Sisters will overwhelm the heavens and shower the land in a hail of fire.");
+                            stringList.Add("I remember an old story about a star falling to the ground.");
 
-                            stringList.Add("At least that's whats enscribed on the top of one of the library bookcases.");
+                            stringList.Add("I think it was a love story, but it was a long time ago when I heard it. $h");
 
                             break;
 
                         case 2:
 
-                            stringList.Add("The servants of the Lord of the Deep will cover the land in shadow.");
+                            stringList.Add("By Yoba. The sky opened up, and, fire came down, and, and, I blanked out.");
+                            
+                            break;
 
-                            stringList.Add("I can't remember the second part. Something to do with massive fireballs. $h");
+                        case 3:
+
+                            stringList.Add("Wow " + Game1.player.Name + ", that was a quite the display.");
+
+                            stringList.Add("Please use your power to keep the valley safe.");
+
+                            break;
+
+                        case 4:
+
+                            stringList.Add("Ah. Stars. Reminds me of a tale of hubris and forlorn love.");
+
+                            stringList.Add("The hero sought the favour of the stars, and when they answered his call, it started a fire that hurt his entire family. $s");
 
                             break;
 
                         default:
 
-                            stringList.Add("By Yoba. The sky opened up, and, fire came down, and, and, I blanked out.");
+                            stringList.Add("The servants of the Lord of the Deep will cover the land in shadow.");
 
+                            stringList.Add("And the grief of the Sisters will overwhelm the heavens and shower the land in a hail of fire.");
+
+                            stringList.Add("It used to be that most folk in the valley knew those words.");
+                            
                             break;
 
                     }
@@ -403,15 +584,9 @@ namespace StardewDruid.Dialogue
 
                     NPC.doEmote(16, true);
 
-                    switch (random)
+                    switch (affinity)
                     {
                         case 0:
-
-                            stringList.Add("rain and thunder every day! $a");
-
-                            break;
-
-                        case 1:
 
                             stringList.Add("Was that a bolt of lightning? ");
 
@@ -419,17 +594,36 @@ namespace StardewDruid.Dialogue
 
                             break;
 
+                        case 1:
+
+                            stringList.Add("Rain and thunder every day! $a");
+                            break;
+
                         case 2:
 
-                            stringList.Add("In the valley we say thunder is the voice of the Lady Beyond the Shore.");
-
-                            stringList.Add("Be careful, "+Game1.player.Name+", you don't want to catch her ire. $s");
+                            stringList.Add("It's like the clouds follow you around. $s");
 
                             break;
 
+                        case 3:
+
+                            stringList.Add("Where did that come from! You're full of surprises, " + Game1.player.Name);
+
+                            break;
+
+                        case 4:
+
+                            stringList.Add("That must be really useful for things that get in your way. Not so fun for bystanders though. $s");
+
+                            break;
+                        
                         default:
 
-                            stringList.Add("It's like the clouds follow you around. $s");
+                            stringList.Add("In the valley we say thunder is the voice of the Lady Beyond the Shore.");
+
+                            stringList.Add("Be careful, " + Game1.player.Name + ", you don't want to catch her ire. $s");
+
+                            stringList.Add("She awaits the time of her revenge.");
 
                             break;
 
@@ -446,34 +640,51 @@ namespace StardewDruid.Dialogue
                         {
                             NPC.doEmote(20, true);
 
-                            switch (random)
+                            switch (affinity)
                             {
                                 case 0:
 
-                                    stringList.Add("I want to visit sometime, and see all the fantastic things you've brought to life. $l");
+                                    stringList.Add("I give up trying to figure out how you're doing all this gardening.");
+
+                                    stringList.Add("You have flower petals all over you. It's ridiculous, but neat. $h");
 
                                     break;
 
                                 case 1:
 
-                                    stringList.Add("The valley is in good hands. $h");
+                                    stringList.Add("You're really good with nature. $h");
 
                                     break;
 
                                 case 2:
 
-                                    stringList.Add("You have flower petals all over you. $h");
+                                    stringList.Add("I should visit the farm sometime, and see all the fantastic things you've brought to life. $l");
+
+                                    break;
+
+                                case 3:
+
+                                    
+                                    stringList.Add("The valley has never felt more alive than since you moved here. $l");
+
+                                    break;
+
+                                case 4:
+
+                                    stringList.Add("I've noticed that you have a special connection to the life force of the valley. That means you have a special connection to all of us. $l");
 
                                     break;
 
                                 default:
 
-                                    stringList.Add("It's as if nature sings when you walk into town. $l");
+                                    stringList.Add("You have shown great aptitude for the sacred rites of the valley Druids.");
+
+                                    stringList.Add("The town doesn't know how blessed it is to have you here. $l");
 
                                     break;
+
                             }
 
-                        
                         }
                         
                         if (Game1.player.friendshipData[NPC.Name].Points >= 750)
@@ -481,19 +692,18 @@ namespace StardewDruid.Dialogue
                             
                             NPC.doEmote(32, true);
 
-                            switch (random)
+                            switch (affinity)
                             {
                                 case 0:
 
-                                    stringList.Add("Now I'm sure there's some kind of forest spirit at work. Trees are sprouting everything.");
+                                    stringList.Add("Trees are sprouting everywhere. It's a phenomenon that I can't explain.");
+
+                                    stringList.Add("It seems to coincide with your activity around town though. Do you have anything to say about that?");
 
                                     break;
-
                                 case 1:
 
-                                    stringList.Add("I saw the way you caught fish from the stream yesterday.");
-
-                                    stringList.Add("The fish must really love your voice or something. $h");
+                                    stringList.Add("The old folk think there some kind of forest spirit at work.");
 
                                     break;
 
@@ -503,60 +713,99 @@ namespace StardewDruid.Dialogue
 
                                     break;
 
-                                default:
+                                case 3:
 
-                                    stringList.Add("The valley has never felt more alive than since you moved here. $h");
+                                    stringList.Add("It's as if nature sings when you walk into town. $h");
 
                                     break;
+
+                                case 4:
+
+                                    stringList.Add("I saw the way you caught dinner from the stream yesterday.");
+
+                                    stringList.Add("The fish must really love your voice.");
+
+                                    break;
+
+                                default:
+
+                                    stringList.Add("The small creatures listen to the songs of the wild. $h");
+
+                                    break;
+                            
                             }
 
-                        
                         }
                     
                     }
-
-                    switch (random)
+                    else
                     {
-                        case 0:
 
-                            NPC.doEmote(8, true);
+                        switch (affinity)
+                        {
+                            case 0:
 
-                            stringList.Add("Does this place seem greener?");
+                                NPC.showTextAboveHead("Huh?");
 
-                            stringList.Add("The flowers and birds have come back. I think there are good things to come. $h");
+                                stringList.Add("Why are you speaking strange words and waving your hands like that.");
 
-                            break;
+                                stringList.Add("Is it some kind of farmer ritual?");
 
-                        case 1:
+                                break;
 
-                            NPC.showTextAboveHead("Huh?");
+                            case 1:
 
-                            stringList.Add("Why are you speaking strange words and waving your hands like that.");
+                                NPC.doEmote(8, true);
 
-                            stringList.Add("Is it some kind of farmer ritual?");
-                            
-                            break;
+                                stringList.Add("The flowers and birds have come back. I think the valley is happy. $h");
 
-                        case 2:
+                                break;
 
-                            stringList.Add("How many seeds do you have in your pocket?");
-                            
-                            stringList.Add("It seems you have an endless amount to throw around.");
+                            case 2:
 
-                            break;
+                                NPC.doEmote(8, true);
 
-                        default:
+                                stringList.Add("How many seeds do you have in your pocket?");
 
-                            NPC.doEmote(8, true);
+                                stringList.Add("It seems you have an endless amount to throw around.");
 
-                            stringList.Add("Did you see that? I could swear the valley shimmered for a moment.");
+                                break;
 
-                            break;
+                            case 3:
+
+                                NPC.doEmote(8, true);
+
+                                stringList.Add("Did you see that? I could swear the valley shimmered for a moment.");
+
+                                break;
+
+                            case 4:
+
+                                NPC.doEmote(8, true);
+
+                                stringList.Add("It's time someone took responsibility for the wild spaces.");
+
+                                stringList.Add("Most of us are very busy, and we've taken a lot for granted in our peaceful corner of the country.");
+
+                                break;
+
+                            default:
+
+                                NPC.doEmote(8, true);
+
+                                stringList.Add("I thought I just saw you dance in the style of the Old Kings.");
+
+                                stringList.Add("They've gone to sleep now, at rest after a terrible war, never to frolic again. /s");
+
+                                break;
+
+                        }
+
+
                     }
 
                     break;
 
-           
             }
             
             for (int index = stringList.Count - 1; index >= 0; --index)

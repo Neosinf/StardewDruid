@@ -191,7 +191,7 @@ namespace StardewDruid.Cast.Fates
         public void DeathSpray()
         {
 
-            ModUtility.AnimateDeathSpray(targetLocation, riteWitness.GetBoundingBox().Center.ToVector2(), Color.Gray * 0.5f);
+            ModUtility.AnimateDeathSpray(targetLocation, riteWitness.Position, Color.Gray * 0.5f);
 
         }
 

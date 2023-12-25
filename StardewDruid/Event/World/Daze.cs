@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -263,10 +264,7 @@ namespace StardewDruid.Event.World
                 foreach (Vector2 strikeVector in strikeVectors)
                 {
 
-                    //Dictionary<Vector2, string> groundCheck = ModUtility.GroundCheck(targetLocation, strikeVector, 0);
-
-                    //if (!safeGround.Contains(groundCheck[strikeVector]))
-                    if (!ModUtility.GroundCheck(targetLocation, strikeVector, false))
+                    if (ModUtility.GroundCheck(targetLocation, strikeVector) != "ground")
                     {
 
                         continue;
@@ -323,7 +321,30 @@ namespace StardewDruid.Event.World
 
             ModUtility.AnimateQuickWarp(targetLocation, targetPlayer.Position, "Void");
 
-            ModUtility.HitMonster(targetLocation, targetPlayer, victim, riteData.castDamage * 2, true);
+            if(targetPlayer.CurrentTool is MeleeWeapon meleeWeapon)
+            {
+
+                List<int> diff = new() { 0,0 };
+
+                int damage = riteData.castDamage * 2;
+
+                if (meleeWeapon.knockback.Value > 0)
+                {
+
+                    diff = ModUtility.CalculatePush(targetLocation, victim, targetPlayer.Position, 64);
+
+                }
+
+                if(meleeWeapon.critMultiplier.Value > 0)
+                {
+
+                    damage += (int)(riteData.castDamage / 100 * meleeWeapon.critMultiplier.Value);
+
+                }
+
+                ModUtility.HitMonster(targetLocation, targetPlayer, victim, damage, true, diffX: diff[0], diffY: diff[1]);
+
+            }
 
             CleanUp();
 

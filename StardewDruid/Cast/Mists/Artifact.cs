@@ -30,7 +30,7 @@ namespace StardewDruid.Cast.Mists
 
             Mod.instance.virtualHoe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
 
-            targetPlayer.Stamina += Math.Min(2, targetPlayer.MaxStamina - targetPlayer.Stamina);
+            //targetPlayer.Stamina += Math.Min(2, targetPlayer.MaxStamina - targetPlayer.Stamina);
 
             artifactSpot.performToolAction(Mod.instance.virtualHoe, targetLocation);
 

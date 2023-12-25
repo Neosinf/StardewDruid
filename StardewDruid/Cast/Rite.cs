@@ -1552,7 +1552,7 @@ namespace StardewDruid.Cast
             // ---------------------------------------------
             // Tile iteration
             // ---------------------------------------------
-
+            
             List<Vector2> tileVectors;
 
             for (int i = 0; i < 2; i++)
@@ -1646,7 +1646,7 @@ namespace StardewDruid.Cast
                                 }
 
                             }
-                            else if (targetObject.Name.Contains("Artifact Spot") && Mod.instance.virtualHoe.UpgradeLevel >= 3)
+                            else if (targetObject.Name.Contains("Artifact Spot")) //&& Mod.instance.virtualHoe.UpgradeLevel >= 3)
                             {
 
                                 effectCasts[tileVector] = new Cast.Mists.Artifact(tileVector, this);
@@ -2176,7 +2176,7 @@ namespace StardewDruid.Cast
 
                     }
 
-                    if (!ModUtility.GroundCheck(castLocation, whiskDestiny, false))
+                    if (ModUtility.GroundCheck(castLocation, whiskDestiny) != "ground")
                     {
 
                         continue;

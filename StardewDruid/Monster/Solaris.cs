@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Map;
+using StardewModdingAPI;
 using StardewValley;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,10 @@ namespace StardewDruid.Monster
 
     public class Solaris : StardewValley.Monsters.Monster
     {
+
+        public Texture2D monsterTexture;
+
+        public bool loadedOut;
 
         public List<string> ouchList;
 
@@ -164,6 +169,17 @@ namespace StardewDruid.Monster
 
             Sprite = MonsterData.MonsterSprite(spawnName);
 
+            LoadOut();
+
+        }
+
+        public void LoadOut()
+        {
+
+            monsterTexture = MonsterData.MonsterTexture(spawnName);
+
+            loadedOut = true;
+
         }
 
         public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who)
@@ -188,12 +204,19 @@ namespace StardewDruid.Monster
         public override void update(GameTime time, GameLocation location)
         {
 
-            if (Sprite.loadedTexture == null || Sprite.loadedTexture.Length == 0)
+            if (!Context.IsMainPlayer)
             {
 
-                Sprite.spriteTexture = MonsterData.MonsterTexture(spawnName);
+                if (Sprite.loadedTexture == null || Sprite.loadedTexture.Length == 0)
+                {
 
-                Sprite.loadedTexture = Sprite.textureName.Value;
+                    Sprite.spriteTexture = MonsterData.MonsterTexture(Name);
+
+                    Sprite.loadedTexture = Sprite.textureName.Value;
+
+                    LoadOut();
+
+                }
 
             }
 
@@ -233,14 +256,26 @@ namespace StardewDruid.Monster
 
         public override void drawAboveAllLayers(SpriteBatch b)
         {
-            if (Utility.isOnScreen(base.Position, 128))
+            if (!Utility.isOnScreen(base.Position, 128))
             {
 
-                b.Draw(Sprite.Texture, getLocalPosition(Game1.viewport) + new Vector2(32f, GetBoundingBox().Height / 2 - 32), Sprite.SourceRect, Color.White, 0f, new Vector2(8f, 16f), Math.Max(0.2f, scale) * 4f, flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, drawOnTop ? 0.991f : ((getStandingY() + 8) / 10000f)));
-
-                b.Draw(Game1.shadowTexture, getLocalPosition(Game1.viewport) + new Vector2(32f, GetBoundingBox().Height / 2), Game1.shadowTexture.Bounds, Color.White, 0f, new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y), 4f, SpriteEffects.None, (getStandingY() - 1) / 10000f);
+                return;
 
             }
+
+            if (!loadedOut)
+            {
+
+                LoadOut();
+
+            }
+
+            //b.Draw(Sprite.Texture, getLocalPosition(Game1.viewport) + new Vector2(32f, GetBoundingBox().Height / 2 - 32), Sprite.SourceRect, Color.White, 0f, new Vector2(8f, 16f), Math.Max(0.2f, scale) * 4f, flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, drawOnTop ? 0.991f : ((getStandingY() + 8) / 10000f)));
+
+            b.Draw(monsterTexture, getLocalPosition(Game1.viewport) + new Vector2(32f, GetBoundingBox().Height / 2 - 32), Sprite.SourceRect, Color.White, 0f, new Vector2(8f, 16f), Math.Max(0.2f, scale) * 4f, flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, Math.Max(0f, drawOnTop ? 0.991f : ((getStandingY() + 8) / 10000f)));
+
+            b.Draw(Game1.shadowTexture, getLocalPosition(Game1.viewport) + new Vector2(32f, GetBoundingBox().Height / 2), Game1.shadowTexture.Bounds, Color.White, 0f, new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y), 4f, SpriteEffects.None, (getStandingY() - 1) / 10000f);
+
         }
 
         public override void drawAboveAlwaysFrontLayer(SpriteBatch b)

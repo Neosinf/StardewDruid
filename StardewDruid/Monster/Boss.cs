@@ -544,6 +544,21 @@ namespace StardewDruid.Monster
 
         public override void update(GameTime time, GameLocation location)
         {
+
+            if (!Context.IsMainPlayer)
+            {
+
+                if (Sprite.loadedTexture == null || Sprite.loadedTexture.Length == 0)
+                {
+
+                    Sprite.spriteTexture = MonsterData.MonsterTexture(Name);
+
+                    Sprite.loadedTexture = Sprite.textureName.Value;
+
+                }
+            
+            }
+
             if (Mod.instance.CasterBusy())
             {
                 return;
@@ -555,18 +570,9 @@ namespace StardewDruid.Monster
 
             }
 
-            if (Sprite.loadedTexture == null || Sprite.loadedTexture.Length == 0)
-            {
-
-                Sprite.spriteTexture = MonsterData.MonsterTexture(Name);
-
-                Sprite.loadedTexture = Sprite.textureName.Value;
-
-            }
-
             if (!Context.IsMainPlayer)
             {
-                
+
                 base.update(time, location);
                 
                 FixDirection();
@@ -820,7 +826,7 @@ namespace StardewDruid.Monster
                 Vector2 vectorMultiple = new(vector2.X * num2, vector2.Y * num2);
                 Vector2 tileLocation = getTileLocation();
                 Vector2 neighbour = new(tileLocation.X + vectorMultiple.X, tileLocation.Y + vectorMultiple.Y);//Vector2.op_Addition(getTileLocation(), Vector2.op_Multiply(vector2, (float)num2));
-                if (ModUtility.GroundCheck(currentLocation, neighbour))
+                if (ModUtility.GroundCheck(currentLocation, neighbour) == "ground")
                 {
                     Rectangle boundingBox = Game1.player.GetBoundingBox();
                     int num3 = (int)(boundingBox.X - (double)Game1.player.Position.X);

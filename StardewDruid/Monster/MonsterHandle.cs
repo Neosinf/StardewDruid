@@ -245,7 +245,7 @@ namespace StardewDruid.Monster
                     continue;
                 }
 
-                if (!ModUtility.GroundCheck(riteData.castLocation, spawnVector))
+                if (ModUtility.GroundCheck(riteData.castLocation, spawnVector) != "ground")
                 {
                     continue;
                 }
@@ -282,7 +282,6 @@ namespace StardewDruid.Monster
             StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(spawnMob, spawnVector, riteData.combatModifier, Mod.instance.PartyHats());
 
             monsterSpawns.Add(theMonster);
-
 
             spawnTotal++;
 

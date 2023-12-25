@@ -349,20 +349,40 @@ namespace StardewDruid.Character
 
         public virtual bool TargetOpponent()
         {
+            
             if (timers.ContainsKey("cooldown"))
+            {
                 return false;
+            }
+                
             for (int index = targetOpponents.Count - 1; index >= 0; --index)
             {
+                
                 if (!ModUtility.MonsterVitals(targetOpponents[index], currentLocation))
+                {
+                    
                     targetOpponents.RemoveAt(index);
+                
+                }  
                 else if ((double)Vector2.Distance(targetOpponents[index].Position, Position) >= opponentThreshold)
+                {
+                    
                     targetOpponents.RemoveAt(index);
+                
+                }
+                    
             }
             if (targetOpponents.Count == 0)
+            {
                 return false;
+            }
+                
             VectorForTarget(targetOpponents.First().Position);
+
             timers["attack"] = 120;
+
             return true;
+
         }
 
         public virtual bool TargetTrack()
@@ -814,7 +834,7 @@ namespace StardewDruid.Character
             if (thisTile != nextTile)
             {
 
-                if (!ModUtility.GroundCheck(currentLocation, nextTile, true))
+                if (ModUtility.GroundCheck(currentLocation, nextTile, npc:true) != "ground")
                 {
 
                     TargetRandom();
@@ -993,42 +1013,32 @@ namespace StardewDruid.Character
 
         }
 
-        public virtual void DealDamageToMonster(
-          StardewValley.Monsters.Monster monsterCharacter,
-          bool kill = false,
-          int damage = -1,
-          bool push = true)
+        public virtual void DealDamageToMonster(StardewValley.Monsters.Monster monsterCharacter,bool kill = false,int damage = -1,bool push = true)
         {
             if (damage == -1)
-                damage = Mod.instance.DamageLevel() / 2;
-            if (!kill)
-                damage = Math.Min(damage, monsterCharacter.Health - 1);
-            int diffX = 0;
-            int diffY = 0;
-            if (!monsterCharacter.isGlider.Value && !MonsterData.CustomMonsters().Contains(monsterCharacter.GetType()) && push)
             {
-                float num1 = monsterCharacter.Position.X - Position.X;
-                float num2 = monsterCharacter.Position.Y - Position.Y;
-                int num3 = 1;
-                int num4 = 1;
-                if ((double)num2 < 0.0)
-                    num3 = -1;
-                if ((double)num1 < 0.0)
-                    num4 = -1;
-                if ((double)Math.Abs(num1) < (double)Math.Abs(num2))
-                {
-                    float num5 = Math.Abs(num1) / Math.Abs(num2);
-                    diffX = (int)(128 * num4 * (double)num5);
-                    diffY = 128 * num3;
-                }
-                else
-                {
-                    float num6 = Math.Abs(num2) / Math.Abs(num1);
-                    diffX = 128 * num4;
-                    diffY = (int)(128 * num3 * (double)num6);
-                }
+                damage = Mod.instance.DamageLevel() / 2;
+
             }
-            ModUtility.HitMonster(currentLocation, Game1.player, monsterCharacter, damage, false, diffX: diffX, diffY: diffY);
+                
+            if (!kill)
+            {
+
+                damage = Math.Min(damage, monsterCharacter.Health - 1);
+
+            }
+
+            List<int> pushList = new() { 0, 0 };
+
+            if (push)
+            {
+
+                pushList = ModUtility.CalculatePush(currentLocation, monsterCharacter, Position);
+
+            }
+
+            ModUtility.HitMonster(currentLocation, Game1.player, monsterCharacter, damage, false, diffX: pushList[0], diffY: pushList[1]);
+
         }
 
         public virtual void ReachedEventPosition()

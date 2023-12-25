@@ -169,11 +169,11 @@ namespace StardewDruid.Map
 
             StardewValley.AnimatedSprite characterSprite = new();
 
-            characterSprite.textureName.Value = "18465_" + characterName + "_Sprite";
+            characterSprite.textureName.Value = "18465_" + characterName;
 
             characterSprite.spriteTexture = MonsterTexture(characterName);
 
-            characterSprite.loadedTexture = "18465_" + characterName + "_Sprite";
+            characterSprite.loadedTexture = "18465_" + characterName;
 
             if (characterName.Contains("Zero"))
             {
@@ -194,6 +194,7 @@ namespace StardewDruid.Map
             else if (characterName.Contains("Reaper"))
             {
                 characterSprite.SpriteHeight = 48;
+
                 characterSprite.SpriteWidth = 64;
             }
             else

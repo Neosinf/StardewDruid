@@ -35,7 +35,7 @@ namespace StardewDruid.Cast.Mists
 
             }
 
-            ModUtility.DestroyStump(targetLocation, targetPlayer, resourceClump, targetVector, Mod.instance.virtualAxe, resourceType);
+            ModUtility.DestroyStump(targetLocation, targetPlayer, resourceClump, targetVector, resourceType);
 
             resourceClump = null;
 

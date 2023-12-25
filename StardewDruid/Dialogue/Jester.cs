@@ -228,7 +228,9 @@ namespace StardewDruid.Dialogue
 
         public void ReplyAfterQuarry()
         {
-            Game1.drawDialogue(npc, "The monsters that came out of that portal... they come from a realm adjacent to this one. (Jester smirks) I tried to go through myself, but something barred me from passing through. If I'm to pursue this mystery further, I'll have to figure out another way to the Ethereal plane. (Thank you for playing Stardew Druid: Rite of the Fates! Subscribe or join discord to get updates on the next installment - Neosinf)");
+            Game1.drawDialogue(npc, "The monsters that came out of that portal... they come from a realm adjacent to this one. " +
+                "(Jester smirks) I tried to go through myself, but something barred me from passing through. " +
+                "If I'm to pursue this mystery further, I'll have to figure out another way to the Ethereal plane. ");
         }
 
         public void ReplyThanatoshi()

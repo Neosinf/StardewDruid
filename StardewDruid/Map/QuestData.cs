@@ -46,8 +46,8 @@ namespace StardewDruid.Map
                                 staticData.questList[key] = true;
                             if (quest.taskFinish != null)
                                 staticData.taskList[quest.taskFinish] = 1;
-                            if (quest.questCharacter != null)
-                                staticData.characterList[quest.questCharacter] = "FarmCave";
+                            //if (quest.questCharacter != null)
+                            //    staticData.characterList[quest.questCharacter] = "FarmCave";
                         }
                     }
                 }
@@ -308,6 +308,7 @@ namespace StardewDruid.Map
         public static List<string> StageProgress()
         {
             int num = Mod.instance.CurrentProgress();
+
             List<string> stringList = new()
             {
                 "weald"
@@ -406,7 +407,7 @@ namespace StardewDruid.Map
                     triggerMarker = "icon",
                     triggerVector = (CharacterData.CharacterPosition() / 64f) + new Vector2(-1f, -2f),
                     questId = 18465001,
-                    questCharacter = "Effigy",
+                    //questCharacter = "Effigy",
                     questValue = 6,
                     questTitle = "The Druid's Effigy",
                     questDescription = "There was a note amongst Grandpa's old tools about the farmcave. He left it alone, out of reverence or fear of his predecessors and their ancient druidic traditions.",
@@ -785,7 +786,7 @@ namespace StardewDruid.Map
                     "Mountain"
                     },
                     triggerMarker = "character",
-                    questCharacter = "Jester",
+                    //questCharacter = "Jester",
                     questValue = 6,
                     questTitle = "Across The Bridge",
                     questDescription = "Now that the bridge across the ravine is restored, the Effigy senses a fateful encounter awaits across the divide.",
@@ -1335,7 +1336,7 @@ namespace StardewDruid.Map
                     "quest",
                     "Weald",
                     "The mountain spring, from an aquifer of special significance to the otherworld, has been polluted by rubbish dumped in the abandoned mineshafts.",
-                    "I reached a large cavern with a once pristine lake, and used the Rite of the Weald to purify it. There was so much trash, and so many bats. A big one in a skull mask claimed to serve a higher power, one with a vendetta against the polluters.",
+                    "I reached a large cavern with a once pristine lake, and used the Rite of the Weald to purify it. There was so much trash, and so many bats. A big one in a skull mask claimed to serve a higher power, one with a vendetta against the polluters. The residents of the mountain and their friends are pleased with the cleanup; Sebastian, Sam, Maru, Abigail, Robin, Demetrius, Linus, ????.",
                     "challengeEarth"
                     }
                 },
@@ -1474,7 +1475,7 @@ namespace StardewDruid.Map
                     "quest",
                     "Mists",
                     "I summoned monsters from beyond the veil, and while I drove them all back to the ethereal plane, one thing became clear, that shadowfolk have the means to invade the valley from places where the veil is thinnest. The Effigy believes the graveyard is one such place. I will go and confront the shadow menace.",
-                    "I confronted a small group of shadow scouts, and though they shot at me with bolts of darkness, the power of the Lady routed them. The leader spoke of a Deep One and a coming judgement. I must continue my Druidic apprenticeship so that I am strong enough to protect the Valley.",
+                    "I confronted a small group of shadow scouts, and though they shot at me with bolts of darkness, the power of the Lady routed them. The leader spoke of a Deep One and a coming judgement. I must continue my Druidic apprenticeship so that I am strong enough to protect the Valley. My victory in the graveyard will ensure the safety of most of the townsfolk; Alex, Elliott, Harvey, Emily, Penny, Caroline, Clint, Evelyn, George, Gus, Jodi, Lewis, Pam, Pierre, Vincent, ????.",
                     "challengeWater"
                     }
                 },
@@ -1513,7 +1514,7 @@ namespace StardewDruid.Map
                     "quest",
                     "Stars",
                     "Throughout my adventures I've engaged many a slime in combat. Unlike the bats and shadowfolk, I am uncertain of their origin or master, but while I spent time deep in the mountains looking for the lake of fire, a grand splattering of slime infested the forest. With the blessing of the Stars, I can confront even an army of jellies.",
-                    "The pumpkin visaged king of the slimes mocked my lieges for leaving the valley wasted and unguarded. I am no longer a greenhorned Druid, but a fully fledged master of the Druidic tradition. The circle of Druids is reborn in the valley, but what role will it play in today's modernised society, I do not know.",
+                    "The pumpkin visaged king of the slimes mocked my lieges for leaving the valley wasted and unguarded. I am no longer a greenhorned Druid, but a fully fledged master of the Druidic tradition. The circle of Druids is reborn in the valley, but what role will it play in today's modernised society, I do not know. My victory in the forest has helped some of the villagers return to it's glens; Shane, Leah, Haley, Marnie, Jas, The Wizard, Willy, ????",
                     "challengeStars"
                     }
                 },
@@ -1696,7 +1697,7 @@ namespace StardewDruid.Map
                     "quest",
                     "Fates",
                     "I am ready to honour my part of the bargain with the Jester of Fate. Now we go to the quarry to investigate traces of the fallen one. Could this mysterious quarry of Jester's be Lord Deep, the enigmatic master of those that have invaded the valley?",
-                    "I performed a Rite of the Stars where the fallen one had impacted the material world, and a portal to dark region of the otherworld manifested. Violent creatures of raw essence spilled forth until the portal collapsed upon itself. There were no indicators of the Fallen One's, or Lord Deep's, presence. My companion believes further clues lie in the realm of the undervalley.",
+                    "I performed a Rite of the Stars where the fallen one was said to have landed in the valley, and a portal to a dark region of the otherworld manifested. Violent creatures of raw essence spilled forth until the portal collapsed upon itself. There were no indicators of the Fallen One's, or Lord Deep's, presence. Jester believes further clues lie in the realm of the undervalley.",
                     "challengeFates"
                     }
                 },
@@ -1707,8 +1708,9 @@ namespace StardewDruid.Map
                     "The Fate Of Tyrannus",
                     "quest",
                     "Ether",
-                    "The Effigy has remembered that the undervalley was once the ether-drenched domain of Tyrannus Prime, the ancient Lord attended to by the cult of Calico. The Calico shamans gathered unto themselves a wealth of knowledge about otherworldly things, including the undervalley, and Jester has urged me to explore the skull caverns for clues as to their fate.",
-                    "The Rite of the Weald unveiled the entrance to the desecrated throne room of Tyrannus Prime. Once inside, I was set upon by the wraith of Thanatoshi, who's mind had deteriorated with the burden of unfulfilled purpose. It seems the wraith was tethered to this world by the power of Prime's dragon tooth, which has been fashioned into a weapon of ethereal might."
+                    "The Effigy has remembered that the undervalley was once the ether-drenched domain of Tyrannus Prime, the ancient Lord attended to by the cult of Calico. The cultist shamans gathered unto themselves a wealth of knowledge about otherworldly things, and now I go with Jester to the Skull Caverns to search for clues as to their fate.",
+                    "The Rite of the Weald unveiled the entrance to the desecrated throne room of Tyrannus Prime. Once inside, I was set upon by the wraith of Thanatoshi, who's mind had deteriorated with the burden of unfulfilled purpose. It seems the wraith was tethered to this world by the power of Prime's dragon tooth, which has been fashioned into a weapon of ethereal might.",
+                    "swordEther",
                     },
                     new()
                     {
@@ -1726,7 +1728,7 @@ namespace StardewDruid.Map
                     "Lesson: Dragon Form",
                     "lesson",
                     "Ether",
-                    "The Dragons have long been venerated as masters of the ether, the quintessential fifth element that defines the shape and nature of the spiritual domain. With the Dragontooth of Prime, I can adopt the guise of an Ancient One, and learn to master the ether myself.",
+                    "The Dragons have long been venerated as masters of the ether, the quintessential fifth element that defines the shape and nature of the spiritual domain. With the Dragontooth of Tyrannus Prime, I can adopt the guise of an Ancient One, and learn to master the ether myself.",
                     "Transform into a Dragon for one minute. Press the rite button again to detransform. Will also detransform when entering a new location.",
                     "lessonTransform",
                     "of 5 villagers impressed",
@@ -1763,8 +1765,21 @@ namespace StardewDruid.Map
                     "masterBlast",
                     "Blast range increased"
                     }
+                },
+                [31] = new()
+                {
+                    new()
+                    {
+                    "Thank you!",
+                    "effect",
+                    "Effigy",
+                    "Thank you for playing through Stardew Druid. " +
+                    "I hope you had as much fun playing as I have had modding and sharing with the community. " +
+                    "I have a lot more planned so please stay subscribed for future updates! " +
+                    "Much love, Neosinf.",
+                    "If you have the time, please consider endorsing the mod on Nexus and joining us on the Stardew Druid discord server!",
+                    }
                 }
-
             };
 
         }

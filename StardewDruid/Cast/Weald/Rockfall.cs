@@ -18,7 +18,7 @@ namespace StardewDruid.Cast.Weald
 
         public bool generateRock;
 
-        public bool generateHoed;
+        //public bool generateHoed;
 
         public int castDelay;
 
@@ -55,18 +55,18 @@ namespace StardewDruid.Cast.Weald
             if (backTile.TileIndexProperties.TryGetValue("Type", out var typeValue))
             {
 
-                if (typeValue == "Stone")
-                {
+                //if (typeValue == "Stone")
+                //{
 
                     generateRock = true;
 
-                }
-                else if (typeValue == "Dirt")
-                {
+                //}
+                //else if (typeValue == "Dirt")
+                //{
 
-                    generateHoed = true;
+                //    generateHoed = true;
 
-                }
+                //}
 
             }
 
@@ -82,27 +82,27 @@ namespace StardewDruid.Cast.Weald
 
             // ------------------------------ impacts
 
-            DelayedAction.functionAfterDelay(DebrisImpact, 575 + castDelay);
+            //DelayedAction.functionAfterDelay(DebrisImpact, 575 + castDelay);
 
-            if (generateRock)
-            {
+            //if (generateRock)
+            //{
 
                 DelayedAction.functionAfterDelay(RockImpact, 600 + castDelay);
 
-            }
+            //}
 
-            if (generateHoed)
-            {
+            //if (generateHoed)
+            //{
 
-                DelayedAction.functionAfterDelay(DirtImpact, 600 + castDelay);
+             //   DelayedAction.functionAfterDelay(DirtImpact, 600 + castDelay);
 
-            }
+            //}
 
             castFire = true;
 
         }
 
-        public void DebrisImpact()
+        /*public void DebrisImpact()
         {
             ModUtility.ImpactVector(targetLocation, targetVector);
 
@@ -122,49 +122,57 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-        }
+        }*/
 
         public void RockImpact()
         {
+
+            ModUtility.ImpactVector(targetLocation, targetVector);
+
+            ModUtility.Explode(targetLocation, targetVector, targetPlayer, 2, riteData.castDamage / 3, powerLevel:1, dirt:1);
+
+            if (!generateRock) { return; }
+
             int rockCut = randomIndex.Next(2);
 
-            int generateRock = 1 + randomIndex.Next(powerLevel) / 2;
+            int generateAmt = 1 + randomIndex.Next(powerLevel) / 2;
 
-            for (int i = 0; i < generateRock; i++)
+            for (int i = 0; i < generateAmt; i++)
             {
-                Throw throwObject;
+                //Throw throwObject;
                 if (i == 0)
                 {
 
                     if (targetPlayer.professions.Contains(21) && rockCut == 0)
                     {
 
-                        //Game1.createObjectDebris(382, (int)targetVector.X, (int)targetVector.Y);
-                        throwObject = new(targetPlayer, targetVector * 64, 382);
+                        Game1.createObjectDebris(382, (int)targetVector.X, (int)targetVector.Y);
+                        //throwObject = new(targetPlayer, targetVector * 64, 382);
 
-                        throwObject.ThrowObject();
+                        //throwObject.ThrowObject();
                     }
                     else if (targetPlayer.professions.Contains(19) && rockCut == 0)
                     {
 
-                        //Game1.createObjectDebris(debrisIndex, (int)targetVector.X, (int)targetVector.Y);
-                        throwObject = new(targetPlayer, targetVector * 64, debrisIndex);
+                        Game1.createObjectDebris(debrisIndex, (int)targetVector.X, (int)targetVector.Y);
+                        //throwObject = new(targetPlayer, targetVector * 64, debrisIndex);
 
-                        throwObject.ThrowObject();
+                        //throwObject.ThrowObject();
                     }
 
-                    //Game1.createObjectDebris(debrisIndex, (int)targetVector.X, (int)targetVector.Y);
-                    throwObject = new(targetPlayer, targetVector * 64, debrisIndex);
+                    Game1.createObjectDebris(debrisIndex, (int)targetVector.X, (int)targetVector.Y);
+                    //throwObject = new(targetPlayer, targetVector * 64, debrisIndex);
 
-                    throwObject.ThrowObject();
+                    //throwObject.ThrowObject();
                 }
                 else
                 {
 
-                    //Game1.createObjectDebris(390, (int)targetVector.X, (int)targetVector.Y);
-                    throwObject = new(targetPlayer, targetVector * 64, 390);
+                    Game1.createObjectDebris(390, (int)targetVector.X, (int)targetVector.Y);
+                    //throwObject = new(targetPlayer, targetVector * 64, 390);
 
-                    throwObject.ThrowObject();
+                    //throwObject.ThrowObject();
+                
                 }
 
             }
@@ -172,13 +180,13 @@ namespace StardewDruid.Cast.Weald
             if (!riteData.castTask.ContainsKey("masterRockfall"))
             {
 
-                Mod.instance.UpdateTask("lessonRockfall", generateRock);
+                Mod.instance.UpdateTask("lessonRockfall", generateAmt);
 
             }
 
         }
 
-        public void DirtImpact()
+        /*public void DirtImpact()
         {
 
             List<Vector2> tileVectors = new()
@@ -204,7 +212,7 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-        }
+        }*/
 
     }
 
