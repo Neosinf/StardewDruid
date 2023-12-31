@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewDruid.Event.World;
 using StardewDruid.Map;
+using StardewValley;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -42,6 +44,8 @@ namespace StardewDruid.Cast.Weald
             }
 
             StardewDruid.Cast.Throw throwObject = new(targetPlayer, targetVector * 64, randomFish, objectQuality);
+
+            Game1.player.checkForQuestComplete(Game1.getCharacterFromName("Willy"), randomFish, 1, throwObject.objectInstance, "fish", 7);
 
             throwObject.ThrowObject();
 

@@ -134,15 +134,6 @@ namespace StardewDruid.Monster
             {
                 deathAnimation();
 
-                if (dropHat)
-                {
-
-                    Item happyHat = new Hat(48);
-
-                    who.dropItem(happyHat);
-
-                }
-
             }
 
             return damage;

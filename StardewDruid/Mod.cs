@@ -40,11 +40,9 @@ namespace StardewDruid
 
         public Dictionary<string, Character.TrackHandle> trackRegister;
 
-        public List<string> warpCasts;
-
-        public List<string> fireCasts;
-
         public Dictionary<string, int> rockCasts;
+
+        public Dictionary<string,List<string>> specialCasts;
 
         public Dictionary<string, Dictionary<Vector2, string>> targetCasts;
 
@@ -464,9 +462,7 @@ namespace StardewDruid
 
             terrainCasts = new();
 
-            warpCasts = new();
-
-            fireCasts = new();
+            specialCasts = new();
 
             locationPoll = new();
 
@@ -880,15 +876,17 @@ namespace StardewDruid
             if (eventRegister.Count > 0 && !casterBusy)
             {
 
-                if (Game1.didPlayerJustLeftClick() || Game1.didPlayerJustRightClick() || Config.actionButtons.GetState() == SButtonState.Pressed)
+                if (Config.actionButtons.GetState() == SButtonState.Pressed || Config.specialButtons.GetState() == SButtonState.Pressed)
                 {
 
                     List<Type> typeList = new List<Type>();
 
+                    string buttonType = Config.actionButtons.GetState() == SButtonState.Pressed ? "Action" : "Special";
+
                     foreach (KeyValuePair<string, Event.EventHandle> eventEntry in eventRegister)
                     {
 
-                        if (!typeList.Contains(eventEntry.GetType()) && eventEntry.Value.EventPerformAction(e.Button))
+                        if (!typeList.Contains(eventEntry.GetType()) && eventEntry.Value.EventPerformAction(e.Button,buttonType))
                         {
 
                             typeList.Add(eventEntry.GetType());
@@ -918,11 +916,11 @@ namespace StardewDruid
 
                         Game1.activeClickableMenu = new Druid();
 
-                        return;
-
                     }
 
                 }
+
+                return;
 
             }
 
@@ -1291,7 +1289,7 @@ namespace StardewDruid
                 {
 
                     activeBlessing = weaponAttunement[toolIndex];
-
+                    
                     // player must have rite unlocked
                     if (!blessingList.Contains(activeBlessing))
                     {
@@ -1307,7 +1305,7 @@ namespace StardewDruid
                 }
 
             }
-
+            
             // create fresh cast sheet
             activeData = new ActiveData()
             {
@@ -1441,7 +1439,7 @@ namespace StardewDruid
 
             };
 
-            newRite.CastDamage(Config.combatDifficulty);
+            newRite.CastDamage();
 
             if (update)
             {
@@ -1524,6 +1522,13 @@ namespace StardewDruid
 
         }
 
+        public string CombatDifficulty()
+        {
+
+            return Config.combatDifficulty;
+
+        }
+
         public string CurrentBlessing()
         {
 
@@ -1558,6 +1563,24 @@ namespace StardewDruid
             eventRegister[placeHolder] = eventHandle;
 
             Helper.Multiplayer.SendMessage<StaticData>(new StaticData() { activeBlessing = placeHolder }, "EventRegister", new string[1] { ModManifest.UniqueID }, null);
+
+        }
+
+        public void AbortAllEvents()
+        {
+
+            foreach (KeyValuePair<string, Event.EventHandle> eventEntry in eventRegister)
+            {
+
+                eventRegister[eventEntry.Key].EventAbort();
+
+                eventRegister[eventEntry.Key].EventRemove();
+
+                Helper.Multiplayer.SendMessage<StaticData>(new StaticData() { activeBlessing = eventEntry.Key }, "EventRemove", new string[1] { ModManifest.UniqueID }, null);
+
+            }
+
+            eventRegister.Clear();
 
         }
 
@@ -1749,7 +1772,7 @@ namespace StardewDruid
 
             }
 
-            if (questData.questProgress == 1)
+            if (questData.questProgress <= 1)
             {
 
                 staticData.activeProgress = QuestData.AchieveProgress(quest);
@@ -2003,13 +2026,13 @@ namespace StardewDruid
             else
             {
 
-                Rite rite = NewRite();
+                //Rite rite = NewRite();
 
-                rite.castLocation = location;
+                //rite.castLocation = location;
 
-                rite.castVector = vector;
+                //rite.castVector = vector;
 
-                monsterHandle = new(vector, rite);
+                monsterHandle = new(vector, location, Rite.GetCombatModifier());
 
                 monsterHandles[location.Name] = monsterHandle;
 
@@ -2077,9 +2100,9 @@ namespace StardewDruid
 
                 bool sashimiPower = false;
 
-                List<int> grizzleList = Map.SpawnData.GrizzleList();
+                List<int> grizzleList = Map.SpawnData.RoughageList();
 
-                List<int> sashimiList = Map.SpawnData.SashimiList();
+                List<int> sashimiList = Map.SpawnData.LunchList();
 
                 Dictionary<int, int> coffeeList = Map.SpawnData.CoffeeList();
 
@@ -2200,7 +2223,20 @@ namespace StardewDruid
 
                                 Game1.buffsDisplay.tryToAddDrinkBuff(speedBuff);
 
-                                Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + 25);
+                                if(itemIndex == 349)
+                                {
+
+                                    Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + @checkItem.staminaRecoveredOnConsumption());
+
+                                    Game1.player.health = Math.Min(Game1.player.maxHealth, Game1.player.health + @checkItem.healthRecoveredOnConsumption());
+
+                                }
+                                else
+                                {
+
+                                    Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + 25);
+
+                                }
 
                                 consumeList.Add(checkItem.DisplayName);
 
@@ -2313,6 +2349,12 @@ namespace StardewDruid
 
         }
 
+        public string DifficultyLevel()
+        {
+
+            return Config.combatDifficulty;
+
+        }
 
     }
 

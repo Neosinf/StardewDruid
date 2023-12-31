@@ -71,7 +71,7 @@ namespace StardewDruid.Map
 
             }
 
-            return new Vector2(0);
+            return Vector2.Zero;
 
         }
 

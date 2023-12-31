@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Map;
 using StardewValley;
+using StardewValley.Network;
 using StardewValley.Projectiles;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,8 @@ namespace StardewDruid.Monster
     {
 
         private float firingTimer;
+
+        public int firingInterval;
 
         public float height;
 
@@ -46,7 +49,7 @@ namespace StardewDruid.Monster
 
         public float alpha = 1f;
 
-        public NetString netBirdType;
+        public NetString netBirdType = new("Ruby");
 
         public Color birdColor;
 
@@ -85,7 +88,9 @@ namespace StardewDruid.Monster
 
             birdItem = 64;
 
-            firingTimer = Game1.random.Next(2, 6) * 1000f;
+            firingInterval = 6;
+
+            firingTimer = Game1.random.Next(2, firingInterval) * 1000f;
 
             ouchList = new()
             {
@@ -94,10 +99,22 @@ namespace StardewDruid.Monster
 
             };
 
-            netBirdType.Set("Ruby");
-
             LoadOut();
+
         }
+
+        public void HardMode()
+        {
+
+            Health *= 3;
+            Health /= 2;
+            MaxHealth = Health;
+            DamageToFarmer *= 3;
+            DamageToFarmer /= 2;
+            firingInterval = 3;
+
+        }
+
 
         public void LoadOut()
         {
@@ -134,6 +151,18 @@ namespace StardewDruid.Monster
         {
 
         }
+
+        protected override void initNetFields()
+        {
+            base.initNetFields();
+
+            base.NetFields.AddFields(new INetSerializable[1]
+            {
+                 netBirdType,
+            });
+
+        }
+
 
         public void setBirdType(string birdType)
         {
@@ -340,7 +369,7 @@ namespace StardewDruid.Monster
 
                     base.currentLocation.playSound("fireball");
 
-                    firingTimer = Game1.random.Next(2, 6) * 1000f;
+                    firingTimer = Game1.random.Next(2, firingInterval) * 1000f;
 
                 }
 

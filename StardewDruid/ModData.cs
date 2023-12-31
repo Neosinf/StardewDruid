@@ -9,6 +9,8 @@ namespace StardewDruid
 
         public KeybindList actionButtons { get; set; }
 
+        public KeybindList specialButtons { get; set; }
+
         public KeybindList journalButtons { get; set; }
 
         public bool slotAttune { get; set; }
@@ -47,6 +49,7 @@ namespace StardewDruid
         {
             riteButtons = KeybindList.Parse("MouseX1,MouseX2,V,LeftShoulder");
             actionButtons = KeybindList.Parse("MouseLeft,C,ControllerX");
+            specialButtons = KeybindList.Parse("MouseRight,X,ControllerY");
             journalButtons = KeybindList.Parse("K");
             slotAttune = false;
             autoProgress = false;

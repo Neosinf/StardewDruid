@@ -21,12 +21,10 @@ namespace StardewDruid.Event.Challenge
 
         public BossBat bossMonster;
 
-        public List<Vector2> ladderPlacement;
-
         public Aquifer(Vector2 target, Rite rite, Quest quest)
             : base(target, rite, quest)
         {
-            ladderPlacement = new List<Vector2>();
+            
         }
 
         public override void EventTrigger()
@@ -170,11 +168,11 @@ namespace StardewDruid.Event.Challenge
 
         public override void EventRemove()
         {
-            if (ladderPlacement.Count > 0)
+            if (ladders.Count > 0)
             {
                 Layer layer = targetLocation.map.GetLayer("Buildings");
-                int x = (int)ladderPlacement.First<Vector2>().X;
-                int y = (int)ladderPlacement.First<Vector2>().Y;
+                int x = (int)ladders.First<Vector2>().X;
+                int y = (int)ladders.First<Vector2>().Y;
                 if (layer.Tiles[x, y] == null)
                 {
                     layer.Tiles[x, y] = new StaticTile(layer, targetLocation.map.TileSheets[0], 0, 173);
@@ -196,7 +194,9 @@ namespace StardewDruid.Event.Challenge
                 return;
 
             }
+            
             RemoveLadders();
+            
             monsterHandle.SpawnInterval();
 
             if (randomIndex.Next(2) == 0)
@@ -370,23 +370,6 @@ namespace StardewDruid.Event.Challenge
 
         }
 
-        public void RemoveLadders()
-        {
-            Layer layer = targetLocation.map.GetLayer("Buildings");
-            for (int index1 = 0; index1 < layer.LayerHeight; ++index1)
-            {
-                for (int index2 = 0; index2 < layer.LayerWidth; ++index2)
-                {
-                    if (layer.Tiles[index2, index1] != null && layer.Tiles[index2, index1].TileIndex == 173)
-                    {
-                        layer.Tiles[index2, index1] = null;
-                        Game1.player.TemporaryPassableTiles.Clear();
-                        if (ladderPlacement.Count == 0)
-                            ladderPlacement.Add(new Vector2(index2, index1));
-                    }
-                }
-            }
-        }
 
     }
 

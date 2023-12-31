@@ -112,6 +112,8 @@ namespace StardewDruid.Event
                 if (Game1.timeOfDay < questData.startTime)
                 {
 
+                    Mod.instance.CastMessage("Return later today");
+
                     return false;
 
                 }

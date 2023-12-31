@@ -22,7 +22,7 @@ namespace StardewDruid.Event.Challenge
         public override void EventTrigger()
         {
 
-            monsterHandle = new(targetVector, riteData);
+            monsterHandle = new(targetVector, riteData.castLocation, riteData.combatModifier);
 
             monsterHandle.spawnIndex = new() { 2, 3 };
 
@@ -32,8 +32,6 @@ namespace StardewDruid.Event.Challenge
             {
 
                 monsterHandle.spawnFrequency = 1;
-
-                monsterHandle.spawnAmplitude = 2;
 
             }
 

@@ -103,7 +103,12 @@ namespace StardewDruid.Journal
             base.snapToDefaultClickableComponent();
         }
 
-        public void setupPages() => pages = QuestData.RetrievePages();
+        public void setupPages()
+        {
+
+            pages = JournalData.RetrievePages();
+
+        }
 
         protected override void customSnapBehavior(int direction, int oldRegion, int oldID)
         {

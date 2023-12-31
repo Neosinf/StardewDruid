@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.BellsAndWhistles;
 
 #nullable disable
 namespace StardewDruid.Character
@@ -23,16 +24,30 @@ namespace StardewDruid.Character
 
         public override void draw(SpriteBatch b, float alpha = 1f)
         {
-            if (Context.IsMainPlayer && this.drawSlave)
+            if (Context.IsMainPlayer && drawSlave)
             {
-                foreach (NPC character in this.currentLocation.characters)
+                foreach (NPC character in currentLocation.characters)
                 {
-                    if (!(character is StardewDruid.Character.Character))
+                    //f (!(character is StardewDruid.Character.Actor))
                         character.drawAboveAlwaysFrontLayer(b);
                 }
-                this.drawAboveAlwaysFrontLayer(b);
+                //this.drawAboveAlwaysFrontLayer(b);
             }
             base.draw(b, alpha);
         }
+
+        public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
+        {
+            if (textAboveHeadTimer > 0 && textAboveHead != null)
+            {
+                
+                Vector2 vector = Game1.GlobalToLocal(new Vector2(getStandingX(), getStandingY() -128f));
+
+                SpriteText.drawStringWithScrollCenteredAt(b, textAboveHead, (int)vector.X, (int)vector.Y, "", textAboveHeadAlpha, textAboveHeadColor, 1, 999f);
+            
+            }
+
+        }
+
     }
 }

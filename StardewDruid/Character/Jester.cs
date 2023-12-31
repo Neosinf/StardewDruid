@@ -15,13 +15,18 @@ namespace StardewDruid.Character
     public class Jester : StardewDruid.Character.Character
     {
         public int xOffset;
-        public Vector2 facePosition;
-        public Vector2 beamPosition;
-        public Vector2 beamTargetOne;
-        public Vector2 beamTargetTwo;
-        public float beamRotation;
-        public bool flipBeam;
-        public bool flipFace;
+        //public Vector2 facePosition;
+        //public Vector2 beamPosition;
+        //public Vector2 beamTargetOne;
+        //public Vector2 beamTargetTwo;
+        //public float beamRotation;
+        //public bool flipBeam;
+        //public bool flipFace;
+        //public bool flipVert;
+
+        //public bool beamActive;
+        //public int beamTimer;
+        //public int beamMoment;
 
         public Jester()
         {
@@ -96,16 +101,104 @@ namespace StardewDruid.Character
                     new Vector2(Sprite.SpriteWidth / 2, Sprite.SpriteHeight * 3f / 4f),
                     4f,
                     flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    Math.Max(0f, drawOnTop ? 0.991f : (getStandingY() / 10000f)));
+                    Math.Max(0f, drawOnTop ? 0.991f : (getStandingY() / 10000f))
+                );
 
+            }
+
+            if (timers.ContainsKey("beam"))
+            {
+
+                DrawBeamEffect(b);
 
             }
 
         }
 
+        public void DrawBeamEffect(SpriteBatch b)
+        {
+
+            Rectangle box = GetBoundingBox();
+            float depth = 999f;
+            float rotation = 0f;
+            float fade = 1f;
+
+            Vector2 position = Vector2.Zero;
+
+            Rectangle rectangle = new(0, 128, 160, 32);
+
+            if (timers["beam"] >= 54)
+            {
+                rectangle.Y = 0;
+            }
+            else if (timers["beam"] >= 48)
+            {
+                rectangle.Y = 32;
+            }
+            else if (timers["beam"] >= 42)
+            {
+                rectangle.Y = 64;
+            }
+            else if (timers["beam"] >= 36)
+            {
+                rectangle.Y = 96;
+            }
+            else
+            {
+
+                fade = timers["beam"] / 360;
+
+            }
+
+            switch (moveDirection)
+            {
+                case 0:
+                    //position = new(box.Center.X - 48f - (float)Game1.viewport.X, box.Top - 496f - (float)Game1.viewport.Y);
+                    position = new(box.Center.X - (float)Game1.viewport.X, box.Top - (float)Game1.viewport.Y);
+                    depth = 0.0001f;
+                    rotation = ((float)Math.PI / 2) + (float)Math.PI;
+                    break;
+                case 1:
+                    position = new(box.Right - (float)Game1.viewport.X - 32f, box.Center.Y - (float)Game1.viewport.Y - 64f);
+                    break;
+                case 2:
+                    position = new(box.Center.X - (float)Game1.viewport.X + 32f, box.Center.Y - (float)Game1.viewport.Y);
+                    rotation = (float)Math.PI / 2;
+                    break;
+                default:
+                    //position = new(box.Left - 496f - (float)Game1.viewport.X, box.Center.Y - 80f - (float)Game1.viewport.Y);
+                    position = new(box.Left - (float)Game1.viewport.X - 32f, box.Center.Y - (float)Game1.viewport.Y);
+                    rotation = (float)Math.PI;
+                    break;
+
+            }
+
+            b.Draw(
+                Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "EnergyBeam.png")),
+                position,
+                rectangle,
+                Color.White * fade,
+                rotation,
+                Vector2.Zero,
+                3f,
+                SpriteEffects.None,
+                depth
+            );
+
+        }
+
         public override Rectangle GetBoundingBox()
         {
-            return new Rectangle((int)Position.X + 8, (int)Position.Y + 16, 48, 32);
+
+            if(moveDirection % 2 == 0)
+            {
+
+                return new Rectangle ((int)Position.X + 8, (int)Position.Y - 16, 48, 76);
+
+            }
+
+            return new Rectangle ((int)Position.X + 16, (int)Position.Y + 8, 96, 48);
+
         }
 
         public override Rectangle GetHitBox()
@@ -115,7 +208,7 @@ namespace StardewDruid.Character
 
         public override void AnimateMovement(GameTime time)
         {
-            if (timers.ContainsKey("attack") && targetOpponents.Count > 0 && (double)Vector2.Distance(Position, targetOpponents.First().Position) <= 96.0 && Sprite.CurrentFrame % 6 == 2 && Sprite.currentFrame >= 24)
+            if (timers.ContainsKey("attack") && targetOpponents.Count > 0 && (double)Vector2.Distance(Position, targetOpponents.First().Position) <= 96.0 && Sprite.CurrentFrame % 6 == 2 && Sprite.CurrentFrame >= 24)
             {
                 return;
             }
@@ -162,7 +255,9 @@ namespace StardewDruid.Character
                     break;
             }
             if (!timers.ContainsKey("sprint") && !timers.ContainsKey("attack"))
+            {
                 return;
+            }
             if (Sprite.CurrentFrame < 24)
             {
                 Sprite.CurrentFrame += 24;
@@ -189,10 +284,20 @@ namespace StardewDruid.Character
 
                 Vector2 vector2 = new(targetMonster.Position.X - Position.X - 32f, targetMonster.Position.Y - Position.Y);//Vector2.op_Subtraction(((StardewValley.Character)targetOpponents.First<Monster>()).Position, Vector2.op_Addition(Position, new Vector2(32f, 0.0f)));
                 
-                if ((double)Math.Abs(vector2.Y) <= 32.0 || (double)Math.Abs(vector2.X) <= 32.0)
+                if ((double)Math.Abs(vector2.Y) <= 64.0 || (double)Math.Abs(vector2.X) <= 64.0)
                 {
-                    
-                    TargetBeam();
+
+                    Halt();
+
+                    AnimateMovement(Game1.currentGameTime);
+
+                    timers["stop"] = 48;
+
+                    timers["beam"] = 60;
+
+                    timers["cooldown"] = 240;
+
+                    timers["busy"] = 300;
 
                 }
 
@@ -202,121 +307,77 @@ namespace StardewDruid.Character
 
         }
 
-        public void TargetBeam()
+        public override void update(GameTime time, GameLocation location)
         {
-            Halt();
-            flip = false;
-            timers["stop"] = 120;
-            timers["cooldown"] = 180;
-            timers["busy"] = 600;
-            flipFace = false;
-            flipBeam = false;
-            facePosition = Vector2.Zero;
-            string str = "RalphFace";
-            beamRotation = 0.0f;
-            float num = 999f;
+
+            base.update(time, location);
+
+            if (timers.ContainsKey("beam"))
+            {
+                if (timers["beam"] == 30)
+                {
+
+                    BeamAttack();
+
+                }
+
+            }
+        
+        }
+
+        public void BeamAttack()
+        {
+
+            Vector2 beamPoint = Vector2.Zero;
+
+            Rectangle beamBox = GetBoundingBox();
+
             switch (moveDirection)
             {
                 case 0:
-                    Sprite.AnimateUp(Game1.currentGameTime, 0, "");
-                    beamTargetOne = new(Position.X + 32f, Position.Y - 208f);//Vector2.op_Addition(Position, new Vector2(32f, -208f));
-                    beamTargetTwo = new(Position.X + 32f, Position.Y - 408f); //Vector2.op_Addition(Position, new Vector2(32f, -448f));
-                    beamPosition = new(Position.X - xOffset - 200, Position.Y - 320f); //Vector2.op_Addition(Position, new Vector2((float)(xOffset - 200), -320f));
-                    beamRotation = -1.57079637f;
-                    num = 0.0001f;
-                    if (altDirection == 3)
-                    {
-                        beamPosition = new(Position.X - xOffset - 136, Position.Y - 320f); //Vector2.op_Addition(Position, new Vector2((float)(xOffset - 136), -320f));
-                        flip = true;
-                        break;
-                    }
+
+                    beamPoint = new(beamBox.Center.X, beamBox.Top - 240);
+
                     break;
+
                 case 1:
-                    Sprite.AnimateRight(Game1.currentGameTime, 0, "");
-                    beamTargetOne = new(Position.X + 272f, Position.Y + 32f); //Vector2.op_Addition(Position, new Vector2(272f, 32f));
-                    beamTargetTwo = new(Position.X + 512f, Position.Y + 32f); //Vector2.op_Addition(Position, new Vector2(512f, 32f));
-                    facePosition = new(Position.X + xOffset + 68f, Position.Y - 52f); //Vector2.op_Addition(Position, new Vector2((float)(68 + xOffset), -52f));
-                    beamPosition = new(Position.X + xOffset + 96f, Position.Y - 48f); //Vector2.op_Addition(Position, new Vector2((float)(96 + xOffset), -48f));
+
+                    beamPoint = new(beamBox.Right + 240, beamBox.Center.Y);
+
                     break;
+
                 case 2:
-                    Sprite.AnimateDown(Game1.currentGameTime, 0, "");
-                    beamTargetOne = new(Position.X + 32f, Position.Y + 272f); //Vector2.op_Addition(Position, new Vector2(32f, 272f));
-                    beamTargetTwo = new(Position.X + 32f, Position.Y + 512f);//Vector2.op_Addition(Position, new Vector2(32f, 512f));
-                    facePosition = new(Position.X + xOffset + 12, Position.Y - 52f); //Vector2.op_Addition(Position, new Vector2((float)(12 + xOffset), -52f));
-                    beamPosition = new(Position.X + xOffset - 200, Position.Y - 186f); //Vector2.op_Addition(Position, new Vector2((float)(xOffset - 200), 186f));
-                    beamRotation = 1.57079637f;
-                    str = "RalphZero";
-                    if (altDirection == 3)
-                    {
-                        facePosition = new(Position.X + xOffset + 60f, Position.Y - 52f); //Vector2.op_Addition(Position, new Vector2((float)(60 + xOffset), -52f));
-                        beamPosition = new(Position.X + xOffset - 136f, Position.Y + 186f); //Vector2.op_Addition(Position, new Vector2((float)(xOffset - 136), 186f));
-                        flip = true;
-                        break;
-                    }
+
+                    beamPoint = new(beamBox.Center.X, beamBox.Bottom + 240);
+
                     break;
+
                 default:
-                    Sprite.AnimateLeft(Game1.currentGameTime, 0, "");
-                    beamTargetOne = new(Position.X - 208f, Position.Y + 32f); //Vector2.op_Addition(Position, new Vector2(-208f, 32f));
-                    beamTargetTwo = new(Position.X - 448f, Position.Y + 32f); //Vector2.op_Addition(Position, new Vector2(-448f, 32f));
-                    facePosition = new(Position.X + xOffset, Position.Y - 52f); //Vector2.op_Addition(Position, new Vector2((float)xOffset, -52f));
-                    beamPosition = new(Position.X + xOffset - 464, Position.Y - 56f); //Vector2.op_Addition(Position, new Vector2((float)(xOffset - 464), -56f));
-                    flipBeam = true;
-                    flipFace = true;
+
+                    beamPoint = new(beamBox.Left - 240, beamBox.Center.Y);
+
                     break;
+
             }
-            if (facePosition != Vector2.Zero)
-                currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(0, 600f, 1, 1, facePosition, true, flipFace)
-                {
-                    sourceRect = new Rectangle(0, 0, 32, 32),
-                    sourceRectStartingPos = new Vector2(0.0f, 0.0f),
-                    texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", str + ".png")),
-                    scale = 2f,
-                    timeBasedMotion = true,
-                    layerDepth = 998f
-                });
-            currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(0, 75f, 4, 1, beamPosition, false, flipBeam)
-            {
-                sourceRect = new Rectangle(0, 0, 160, 32),
-                sourceRectStartingPos = new Vector2(0.0f, 0.0f),
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "EnergyBeam.png")),
-                scale = 3f,
-                timeBasedMotion = true,
-                layerDepth = num,
-                rotation = beamRotation
-            });
-            currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(0, 75f, 2, 2, beamPosition, false, flipBeam)
-            {
-                sourceRect = new Rectangle(0, 96, 160, 32),
-                sourceRectStartingPos = new Vector2(0.0f, 96f),
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "EnergyBeam.png")),
-                scale = 3f,
-                timeBasedMotion = true,
-                layerDepth = num,
-                alphaFade = 1f / 500f,
-                rotation = beamRotation,
-                delayBeforeAnimationStart = 300
-            });
-            ApplyDazeEffect(targetOpponents.First());
 
-            DelayedAction.functionAfterDelay(ApplyBeamEffect, 300);
-        }
-
-        public void ApplyBeamEffect()
-        {
-            if (!ModUtility.MonsterVitals(targetOpponents.First(), currentLocation))
-                return;
-            for (int index = currentLocation.characters.Count - 1; index >= 0; --index)
+            for (int index = currentLocation.characters.Count - 1; index >= 0; index--)
             {
-                if (currentLocation.characters[index] is StardewValley.Monsters.Monster character && character != targetOpponents.First())
+
+                if (currentLocation.characters[index] is StardewValley.Monsters.Monster character)
                 {
-                    if ((double)Vector2.Distance(Position, beamTargetOne) < 128.0)
-                        base.DealDamageToMonster(character, true, Mod.instance.DamageLevel(), false);
-                    else if ((double)Vector2.Distance(Position, beamTargetTwo) < 128.0)
-                        base.DealDamageToMonster(character, true, Mod.instance.DamageLevel(), false);
+
+                    if (Vector2.Distance(character.Position, beamPoint) < 240f)
+                    {
+                        base.DealDamageToMonster(character, true, Mod.instance.DamageLevel() / 2, false);
+
+                    }
+
                 }
+
             }
-            base.DealDamageToMonster(targetOpponents.First(), true, Mod.instance.DamageLevel() * 2, false);
+
             currentLocation.playSoundPitched("flameSpellHit", 1200, 0);
+
         }
 
         public override bool checkAction(Farmer who, GameLocation l)
@@ -334,12 +395,27 @@ namespace StardewDruid.Character
             return true;
         }
 
+        public override void HitMonster(StardewValley.Monsters.Monster monsterCharacter)
+        {
+
+            DealDamageToMonster(monsterCharacter,true, Mod.instance.DamageLevel());
+
+        }
+
         public override void DealDamageToMonster(StardewValley.Monsters.Monster monster, bool kill = false, int damage = -1, bool push = true)
         {
-            base.DealDamageToMonster(monster, kill, damage, push);
+            
+            base.DealDamageToMonster(monster, true, damage, push);
+            
             if (Mod.instance.CurrentProgress() < 25)
+            {
+            
                 return;
+            
+            }
+                
             ApplyDazeEffect(monster);
+
         }
 
         public void ApplyDazeEffect(StardewValley.Monsters.Monster monster)

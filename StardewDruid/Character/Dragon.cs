@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
+using StardewDruid.Event.World;
 using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
@@ -11,7 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading;
+using static StardewValley.Minigames.BoatJourney;
 
 
 namespace StardewDruid.Character
@@ -56,6 +59,20 @@ namespace StardewDruid.Character
         public Dictionary<Vector2,TemporaryAnimatedSprite> burnZones;
         public int aoeTimer;
         public int burnDamage;
+
+        public bool terrainActive;
+        public bool swimActive;
+        public int swimCheckTimer;
+        public Texture2D floatTexture;
+        public List<Rectangle> floatFrames;
+        public Texture2D swimTexture;
+        public List<Rectangle> swimFrames;
+        public bool diveActive;
+        public int diveTimer;
+        public Vector2 divePosition;
+        public int diveMoment;
+        public List<Rectangle> diveFrames;
+        public List<Rectangle> bobberFrames;
 
         public Dragon()
         {
@@ -188,8 +205,86 @@ namespace StardewDruid.Character
             aoeZones = new();
 
             burnZones = new();
-
             burnDamage = Mod.instance.DamageLevel() / 5;
+
+            floatTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", Name + "Float.png"));
+
+            floatFrames = new List<Rectangle>()
+            {
+                new Rectangle(0, 0, 64, 64),
+                new Rectangle(0, 0, 64, 64),
+                new Rectangle(0, 0, 64, 64),
+                new Rectangle(0, 0, 64, 64),
+                new Rectangle(0, 64, 64, 64),
+                new Rectangle(0, 64, 64, 64),
+                new Rectangle(0, 64, 64, 64),
+                new Rectangle(0, 64, 64, 64),
+                new Rectangle(0, 128, 64, 64),
+                new Rectangle(0, 128, 64, 64),
+                new Rectangle(0, 128, 64, 64),
+                new Rectangle(0, 128, 64, 64),
+                new Rectangle(0, 64, 64, 64),
+                new Rectangle(0, 64, 64, 64),
+                new Rectangle(0, 64, 64, 64),
+                new Rectangle(0, 64, 64, 64),
+
+            };
+
+            swimTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "DragonSwim.png"));
+
+            swimFrames = new List<Rectangle>()
+            {
+                new Rectangle(0, 0, 64, 64),
+                new Rectangle(0, 0, 64, 64),
+                new Rectangle(64, 0, 64, 64),
+                new Rectangle(64, 0, 64, 64),
+                new Rectangle(0, 64, 64, 64),
+                new Rectangle(0, 64, 64, 64),
+                new Rectangle(64, 64, 64, 64),
+                new Rectangle(64, 64, 64, 64),
+                new Rectangle(0, 128, 64, 64),
+                new Rectangle(0, 128, 64, 64),
+                new Rectangle(64, 128, 64, 64),
+                new Rectangle(64, 128, 64, 64),
+                new Rectangle(0, 64, 64, 64),
+                new Rectangle(0, 64, 64, 64),
+                new Rectangle(64, 64, 64, 64),
+                new Rectangle(64, 64, 64, 64),
+            };
+
+            diveFrames = new List<Rectangle>()
+            {
+                new Rectangle(0, 192, 64, 64),
+                new Rectangle(0, 192, 64, 64),
+                new Rectangle(0, 192, 64, 64),
+                new Rectangle(0, 256, 64, 64),
+                new Rectangle(0, 256, 64, 64),
+                new Rectangle(0, 256, 64, 64),
+            };
+
+            bobberFrames = new List<Rectangle>()
+            {
+                new Rectangle(0, 192, 64, 64),
+                new Rectangle(64, 192, 64, 64),
+                new Rectangle(0, 192, 64, 64),                
+                new Rectangle(0, 256, 64, 64),
+                new Rectangle(64, 256, 64, 64),
+                new Rectangle(0, 256, 64, 64),
+            };
+
+            if (Mod.instance.CurrentProgress() >= 31)
+            {
+
+                terrainActive = true;
+
+            }
+
+            if (ModUtility.GroundCheck(currentLocation,getTileLocation()) == "water")
+            {
+
+                swimActive = true;
+
+            }
 
         }
 
@@ -232,32 +327,42 @@ namespace StardewDruid.Character
                 b.Draw(Game1.emoteSpriteSheet, localPosition, new Rectangle?(new Rectangle(CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16)), Color.White, 0.0f, Vector2.Zero, 4f, 0, drawLayer);
             }
 
-            //DrawZones(b, drawLayer);
+            Rectangle spriteRect = Sprite.SourceRect;
 
-            /*if (netDashActive)
+            if (diveActive)
             {
-                
-                b.Draw(flightTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - netFlightHeight), flightFrames[netDirection][netFlightFrame], Color.White, rotation, new Vector2(0.0f, 0.0f), 3f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
-                
-                b.Draw(shadowTexture, new Vector2(localPosition.X - 48f, localPosition.Y - 56f), shadowFrames[netDirection + 4], Color.White*0.35f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer - 1E-05f);
-                
-                if (netFireActive) { DrawFire(b, new(localPosition.X, localPosition.Y - netFlightHeight), netDirection, drawLayer, 6); }
+
+                //int diveFrame = 3 - ((int)(diveTimer / 30) % 4);
+
+                b.Draw(floatTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f - (2f* (diveMoment % 3))), diveFrames[diveMoment], Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
+
+                b.Draw(swimTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f - (2f * (diveMoment % 3))), bobberFrames[diveMoment], Color.White * 0.35f, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
                 return;
-                
-            }*/
+            }
+
+            if (swimActive)
+            {
+
+                b.Draw(floatTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f), floatFrames[Sprite.currentFrame], Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
+
+                b.Draw(swimTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f), swimFrames[Sprite.currentFrame], Color.White*0.35f, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
+
+                return;
+
+            }
 
             if (netFireActive)
             {
                 
-                b.Draw(breathTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f), Sprite.SourceRect, Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(breathTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f), spriteRect, Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip ? (SpriteEffects)1 : 0, drawLayer);
                 
                 DrawFire(b, localPosition,netDirection, drawLayer);
             
             }
             else
             {
-                b.Draw(Sprite.Texture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f),Sprite.SourceRect, Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(Sprite.Texture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f),spriteRect, Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip ? (SpriteEffects)1 : 0, drawLayer);
 
             }
 
@@ -335,7 +440,7 @@ namespace StardewDruid.Character
 
                 float drawLayer = Game1.player.getDrawLayer();
 
-                b.Draw(flightTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - netFlightHeight), flightFrames[netDirection][netFlightFrame], Color.White, rotation, new Vector2(0.0f, 0.0f), 3f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(flightTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - netFlightHeight), flightFrames[netDirection][netFlightFrame], Color.White, 0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
                 b.Draw(shadowTexture, new Vector2(localPosition.X - 48f, localPosition.Y - 56f), shadowFrames[netDirection + 4], Color.White * 0.35f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer - 1E-05f);
 
@@ -405,33 +510,86 @@ namespace StardewDruid.Character
                     {
                         textAboveHeadTimer -= time.ElapsedGameTime.Milliseconds;
                         if (textAboveHeadTimer > 500)
+                        {
                             textAboveHeadAlpha = Math.Min(1f, textAboveHeadAlpha + 0.1f);
+                        }
+                            
                         else
+                        {
                             textAboveHeadAlpha = Math.Max(0.0f, textAboveHeadAlpha - 0.04f);
+                        }
+                            
                     }
                 }
+
+                int stepAnimation = Game1.player.FarmerSprite.currentAnimationIndex % 4;
+
+                if (stepAnimation == 0)
+                {
+
+                    Game1.player.FarmerSprite.currentAnimationIndex++;
+
+                }
+                else if(stepAnimation == 3)
+                {
+
+                    Game1.player.FarmerSprite.currentAnimationIndex -= 2;
+
+                }
+
                 updateEmote(time);
+
                 if (currentLocation != Game1.player.currentLocation)
                 {
+
                     currentLocation.characters.Remove(this);
+
                     Game1.player.currentLocation.characters.Add(this);
+
                     currentLocation = Game1.player.currentLocation;
+
                 }
+
                 DefenseBuff();
+
                 moveDirection = Game1.player.FacingDirection;
+
                 if (flightActive)
+                {
                     UpdateFlight();
+                }
+                    
                 if (!flightActive)
+                {
                     UpdateFollow(time);
+                }
+                    
                 if (breathActive)
+                {
                     UpdateBreath();
+                }
+
+                if (swimActive)
+                {
+
+                    UpdateSwim();
+
+                }
+
+                if (diveActive)
+                {
+                    UpdateDive();
+                }
+                    
                 if(aoeZones.Count > 0)
                 {
                     UpdateZones();
                 }
 
                 Sprite.animateOnce(time);
+
             }
+
         }
 
         public void UpdateFollow(GameTime time)
@@ -502,10 +660,41 @@ namespace StardewDruid.Character
 
         public override void RightClickAction(SButton Button)
         {
+            
             rightButton = Button;
-            if (breathActive)
-                return;
-            PerformBreath();
+
+            if (swimActive)
+            {
+
+                if (ModUtility.GroundCheck(currentLocation, getTileLocation()) != "water")
+                {
+
+                    swimActive = false;
+
+                }
+                else
+                {
+
+                    if (!diveActive)
+                    {
+
+                        PerformDive();
+
+                    }
+
+                    return;
+
+                }
+
+            }
+
+            if (!breathActive)
+            {
+            
+                PerformBreath();
+            
+            }
+            
         }
 
         public void DefenseBuff()
@@ -520,19 +709,36 @@ namespace StardewDruid.Character
 
         public void PerformFlight()
         {
-            int num = FlightDestination();
-            if (num == 0)
+            if (diveActive)
+            {
+
+                return;
+
+            }
+
+            int flightRange = FlightDestination();
+            
+            if (flightRange == 0)
             {
                 return;
             }
+            
             flightActive = true;
+            
             flightDelay = 3;
+            
             netFlightFrame.Set(0);
-            flightTimer = flightIncrement * num;
+            
+            flightTimer = flightIncrement * flightRange;
+            
             flightInterval = new((flightTo.X - Position.X) / flightTimer, (flightTo.Y - Position.Y) / flightTimer); //Vector2.op_Division(Vector2.op_Subtraction(this.flightTo, ((StardewValley.Character) Game1.player).Position), (float) this.flightTimer);
+            
             flightPosition = Game1.player.Position;
+            
             strikeTimer = 12;
+            
             flightExtend = 0;
+        
         }
 
         public bool UpdateFlight()
@@ -553,16 +759,31 @@ namespace StardewDruid.Character
 
             if (flightTimer == 0)
             {
+                
                 flightActive = false;
 
                 netDashActive.Set(false);
 
+                swimActive = false;
+
+                if(flightTerrain == "water")
+                {
+
+                    swimActive = true;
+
+                }
+
                 if (Mod.instance.TaskList().ContainsKey("masterFlight"))
                 {
+                    
                     Rectangle hitBox = new((int)Position.X - 120, (int)Position.Y - 64, 240, 160);
+                    
                     PerformStrike(hitBox, Mod.instance.DamageLevel() * 2);
+                
                 }
+                
                 return false;
+           
             }
 
             Game1.player.temporarilyInvincible = true;
@@ -701,39 +922,61 @@ namespace StardewDruid.Character
 
                 Vector2 neighbour = Game1.player.getTileLocation() + (flightOffset * checkRange);
 
+                List<string> safeTerrain = new() { "ground", };
+
+                if (terrainActive)
+                {
+                    safeTerrain.Add("water");
+                }
+
                 string groundCheck = ModUtility.GroundCheck(currentLocation, neighbour);
 
-                if (groundCheck == "ground" || groundCheck == "water")
+                if (!safeTerrain.Contains(groundCheck))
                 {
 
-                    Rectangle boundingBox = Game1.player.GetBoundingBox();
+                    continue;
 
-                    int xOffset = boundingBox.X - (int)Game1.player.Position.X;
+                }
+                
+                if(groundCheck == "water")
+                {
 
-                    int yoffset = boundingBox.Y - (int)Game1.player.Position.Y;
-
-                    boundingBox.X = (int)(neighbour.X * 64.0) + xOffset;
-
-                    boundingBox.Y = (int)(neighbour.Y * 64.0) + yoffset;
-
-                    if (!currentLocation.isCollidingPosition(boundingBox, Game1.viewport, false, 0, false, Game1.player, false, false, false))
+                    if(!ModUtility.WaterCheck(currentLocation, neighbour,2))
                     {
 
-                        flightTo = new(neighbour.X * 64, neighbour.Y * 64);//Vector2.op_Multiply(neighbour, 64f);
-
-                        flightIncrement = increment;
-
-                        flightTerrain = groundCheck;
-
-                        netAlternative.Set(alternate);
-
-                        AnimateMovement(Game1.currentGameTime);
-
-                        return checkRange;
+                        continue;
 
                     }
 
                 }
+
+                Rectangle boundingBox = Game1.player.GetBoundingBox();
+
+                int xOffset = boundingBox.X - (int)Game1.player.Position.X;
+
+                int yoffset = boundingBox.Y - (int)Game1.player.Position.Y;
+
+                boundingBox.X = (int)(neighbour.X * 64.0) + xOffset;
+
+                boundingBox.Y = (int)(neighbour.Y * 64.0) + yoffset;
+
+                if (!currentLocation.isCollidingPosition(boundingBox, Game1.viewport, false, 0, false, Game1.player, false, false, false))
+                {
+
+                    flightTo = new(neighbour.X * 64, neighbour.Y * 64);//Vector2.op_Multiply(neighbour, 64f);
+
+                    flightIncrement = increment;
+
+                    flightTerrain = groundCheck;
+
+                    netAlternative.Set(alternate);
+
+                    AnimateMovement(Game1.currentGameTime);
+
+                    return checkRange;
+
+                }
+
 
             }
 
@@ -865,13 +1108,19 @@ namespace StardewDruid.Character
 
                 }
 
-                ModUtility.Explode(currentLocation, zero, Game1.player, 2, 0, powerLevel:3,dirt:2);
+                int blastRadius = Mod.instance.TaskList().ContainsKey("masterBlast") ? 2 : 1;
+
+                ModUtility.Explode(currentLocation, zero, Game1.player, blastRadius, 0, powerLevel:3,dirt:2);
 
                 aoeZones[zero*64] = 10;
 
+                TreasureZone(zero * 64);
+
                 List<Vector2> impactVectors;
 
-                for (int i = 0; i < 3; i++)
+                blastRadius++;
+
+                for (int i = 0; i < blastRadius; i++)
                 {
 
                     impactVectors = ModUtility.GetTilesWithinRadius(currentLocation, zero, i);
@@ -977,16 +1226,16 @@ namespace StardewDruid.Character
 
                     }
 
-                    float threshold = 160f;
+                    float threshold = Mod.instance.TaskList().ContainsKey("masterBlast") ? 160f : 96f;
 
                     if (monsterCharacter.Sprite.SpriteWidth > 16)
                     {
-                        threshold += 64f;
+                        threshold += 32f;
                     }
 
                     if (monsterCharacter.Sprite.SpriteWidth > 32)
                     {
-                        threshold += 64f;
+                        threshold += 32f;
                     }
 
                     for (int i = aoeZones.Count - 1; i >= 0; i--)
@@ -1009,12 +1258,195 @@ namespace StardewDruid.Character
 
             }
 
-            foreach(StardewValley.Monsters.Monster monster in monsters)
+            foreach (StardewValley.Monsters.Monster monster in monsters)
             {
 
                 ModUtility.HitMonster(currentLocation, Game1.player, monster, burnDamage, false);
 
             }
+
+        }
+
+        public void TreasureZone(Vector2 zone)
+        {
+
+            if (Mod.instance.eventRegister.ContainsKey("treasure"))
+            {
+
+                Treasure treasureEvent = Mod.instance.eventRegister["treasure"] as Treasure;
+
+                if (treasureEvent.expireEarly)
+                {
+
+                    return;
+
+                }
+
+                if (Vector2.Distance(zone, treasureEvent.treasurePosition) <= 128f)
+                {
+
+                    int treasureIndex = SpawnData.HighTreasure(treasureEvent.treasureTerrain);
+
+                    treasureEvent.TreasureClaim();
+
+                    Throw treasure = new(Game1.player, treasureEvent.treasurePosition, treasureIndex);
+
+                    treasure.throwFade = 0.0005f;
+
+                    treasure.throwHeight = 3;
+
+                    treasure.ThrowObject();
+
+                    Mod.instance.CastMessage("Found a " + treasure.objectInstance.Name);
+
+                }
+
+            }
+
+        }
+
+        public void UpdateSwim()
+        {
+
+            swimCheckTimer--;
+
+            if(swimCheckTimer <= 0)
+            {
+
+                if (ModUtility.GroundCheck(currentLocation, getTileLocation()) != "water")
+                {
+
+                    swimActive = false;
+
+                    return;
+
+                }
+
+                swimCheckTimer = 60;
+            
+            }
+
+        }
+
+        public void PerformDive()
+        {
+
+            diveActive = true;
+
+            diveTimer = 240;
+
+            divePosition = Game1.player.Position;
+
+            diveMoment = 0;
+
+            currentLocation.playSound("pullItemFromWater");
+
+            if (!Mod.instance.TaskList().ContainsKey("masterDive"))
+            {
+
+                Mod.instance.UpdateTask("lessonDive", 1);
+
+            }
+
+            currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(0, 125f, 8, 1, Position - new Vector2(64f, 160f), false, false)
+            {
+                sourceRect = new Rectangle(0, 0, 64, 64),
+                sourceRectStartingPos = new Vector2(0.0f, 0.0f),
+                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Splash.png")),
+                scale = 3f,
+                layerDepth = 999f,
+                alpha = 0.5f,
+            });
+
+        }
+        
+        public bool UpdateDive()
+        {
+            diveTimer--;
+
+            if (diveTimer <= 0)
+            {
+
+                diveActive = false;
+
+                return false;
+            
+            }
+
+            Game1.player.Position = divePosition;
+            Position = divePosition;
+
+            if(diveTimer == 120)
+            {
+
+                currentLocation.playSound("quickSlosh");
+
+                currentLocation.temporarySprites.Add(new TemporaryAnimatedSprite(0, 125f, 8, 1, Position - new Vector2(96f, 180f), false, false)
+                {
+                    sourceRect = new Rectangle(0, 0, 64, 64),
+                    sourceRectStartingPos = new Vector2(0.0f, 0.0f),
+                    texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Splash.png")),
+                    scale = 4f,
+                    layerDepth = 999f,
+                    alpha = 0.5f,
+                });
+
+                int treasureIndex = SpawnData.RandomTreasure(currentLocation, Mod.instance.TaskList().ContainsKey("masterDive"));
+
+                Vector2 treasurePosition = Position + new Vector2(64, 0);
+
+                if (Mod.instance.eventRegister.ContainsKey("treasure"))
+                {
+
+                     Treasure treasureEvent = Mod.instance.eventRegister["treasure"] as Treasure;
+
+                     if (treasureEvent.expireEarly)
+                     {
+
+
+                     }
+                     else if (Vector2.Distance(Position, treasureEvent.treasurePosition) <= 128f)
+                     {
+
+                         treasureIndex = SpawnData.HighTreasure(treasureEvent.treasureTerrain);
+
+                         treasureEvent.TreasureClaim();
+
+                         treasurePosition = treasureEvent.treasurePosition;
+
+                     }
+
+                }
+
+                Throw treasure = new(Game1.player, treasurePosition, treasureIndex);
+
+                if (treasure.objectInstance.Category == -4)
+                {
+
+                    treasure.UpdateQuality(2);
+
+                    Game1.player.checkForQuestComplete(Game1.getCharacterFromName("Willy"), treasureIndex, 1, treasure.objectInstance, "fish", 7);
+
+                }
+               
+                treasure.throwFade = 0.0005f;
+
+                treasure.throwHeight = 3;
+
+                treasure.ThrowObject();
+
+                Mod.instance.CastMessage("Dove for a " + treasure.objectInstance.Name);
+
+            }
+
+            if (diveTimer % 40 == 0)
+            {
+
+                diveMoment++;
+
+            }
+
+            return true;
 
         }
 
@@ -1062,5 +1494,21 @@ namespace StardewDruid.Character
             }
             
         }
+        
+        public override bool SafeExit()
+        {
+
+            if (swimActive)
+            {
+
+                return false;
+
+            }
+
+            return true;
+        
+        }
+
     }
+
 }

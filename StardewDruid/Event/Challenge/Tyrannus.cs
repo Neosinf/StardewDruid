@@ -23,9 +23,13 @@ namespace StardewDruid.Event.Challenge
         public Tyrannus(Vector2 target, Rite rite, Quest quest)
           : base(target, rite, quest)
         {
+            
             targetVector = target;
-            voicePosition = new(targetVector.X * 64f, (targetVector.Y * 64f) - 32f);//Vector2.op_Addition(Vector2.op_Multiply(targetVector, 64f), new Vector2(0.0f, -32f));
+
+            voicePosition = new(targetVector.X * 64f, (targetVector.Y * 64f) - 32f);
+
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 120.0;
+
         }
 
         public override void EventTrigger()
@@ -48,22 +52,6 @@ namespace StardewDruid.Event.Challenge
             targetLocation.playSoundPitched(new Random().Next(2) == 0 ? "boulderBreak" : "boulderCrack", 800, 0);
         }
 
-        public override bool EventActive()
-        {
-            if (targetPlayer.currentLocation == targetLocation && !eventAbort)
-            {
-                double totalSeconds = Game1.currentGameTime.TotalGameTime.TotalSeconds;
-                if (expireTime < totalSeconds || expireEarly)
-                    return EventExpire();
-                int num = (int)Math.Round(expireTime - totalSeconds);
-                if (activeCounter != 0 && num % 10 == 0 && num != 0)
-                    Game1.addHUDMessage(new HUDMessage(string.Format("{0} more minutes left!", num), "2"));
-                return true;
-            }
-            EventAbort();
-            return false;
-        }
-
         public override void RemoveMonsters()
         {
             if (bossMonster != null)
@@ -77,25 +65,33 @@ namespace StardewDruid.Event.Challenge
         public override void EventRemove()
         {
             base.EventRemove();
+
             if (!(targetLocation is MineShaft))
+            {
                 return;
+            }
+
             Vector2 ladderTile = bossTile;
+
             for (int index1 = 0; index1 < targetLocation.map.GetLayer("Buildings").LayerHeight; ++index1)
             {
                 for (int index2 = 0; index2 < targetLocation.map.GetLayer("Buildings").LayerWidth; ++index2)
                 {
                     if (targetLocation.map.GetLayer("Buildings").Tiles[index2, index1] != null && targetLocation.map.GetLayer("Buildings").Tiles[index2, index1].TileIndex == 115)
                     {
-                        // ISSUE: explicit constructor call
-                        //((Vector2)ref bossTile).\u002Ector((float)(index2 + 1), (float)(index1 + 1));
                         ladderTile = new(index2 + 1, index1 + 1);
                     }
                 }
             }
+
             Layer layer = targetLocation.map.GetLayer("Buildings");
+
             layer.Tiles[(int)ladderTile.X, (int)ladderTile.Y] = new StaticTile(layer, targetLocation.map.TileSheets[0], 0, 174);
+
             Game1.player.TemporaryPassableTiles.Add(new Microsoft.Xna.Framework.Rectangle((int)ladderTile.X * 64, (int)ladderTile.Y * 64, 64, 64));
+
             Mod.instance.CastMessage("A way down has appeared");
+
         }
 
         public override bool EventExpire()
@@ -115,11 +111,11 @@ namespace StardewDruid.Event.Challenge
                     Mod.instance.CompleteQuest(questData.name);
                     if (Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
                         Mod.instance.dialogue["Jester"].specialDialogue.Add("quests", new List<string>()
-            {
-              "Jester of Fate:^Thank you for helping me put Thanatoshi to rest.",
-              "I'm sorry about your kinsman.",
-              "I think this cutlass is to blame"
-            });
+                    {
+                      "Jester of Fate:^Thank you for helping me put Thanatoshi to rest.",
+                      "I'm sorry about your kinsman.",
+                      "I think this cutlass is to blame"
+                    });
                 }
                 else
                 {
@@ -133,8 +129,13 @@ namespace StardewDruid.Event.Challenge
         public override void EventInterval()
         {
             ++activeCounter;
+
+            RemoveLadders();
+
             if (eventLinger != -1 || activeCounter == 1)
+            {
                 return;
+            }
             if (activeCounter == 2)
             {
                 AddTomb();
@@ -150,7 +151,9 @@ namespace StardewDruid.Event.Challenge
                 targetPlayer.Position = new(targetVector.X * 64, targetVector.Y * 64);//Vector2.op_Multiply(targetVector, 64f);
                 bossMonster = MonsterData.CreateMonster(17, new Vector2(13f, 9f), riteData.combatModifier) as Reaper;
                 if (questData.name.Contains("Two"))
+                {
                     bossMonster.HardMode();
+                }
                 targetLocation.characters.Add(bossMonster);
                 bossMonster.currentLocation = riteData.castLocation;
                 bossMonster.update(Game1.currentGameTime, riteData.castLocation);

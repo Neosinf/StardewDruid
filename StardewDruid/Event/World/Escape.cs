@@ -93,7 +93,7 @@ namespace StardewDruid.Event.World
 
             if (Vector2.Distance(targetVector, riteData.caster.Position) <= 32 && Mod.instance.activeData.castLevel > activeCounter)
             {
-
+                
                 activeCounter++;
 
             }
@@ -222,9 +222,7 @@ namespace StardewDruid.Event.World
                     if (PerformXzone())
                     {
 
-                        EventRemove();
-
-                        expireEarly = true;
+                        Mod.instance.AbortAllEvents();
 
                     }
 
@@ -234,9 +232,7 @@ namespace StardewDruid.Event.World
                     if (PerformEscape())
                     {
 
-                        EventRemove();
-
-                        expireEarly = true;
+                        Mod.instance.AbortAllEvents();
 
                     }
                 }
@@ -268,19 +264,32 @@ namespace StardewDruid.Event.World
 
                 surveyed.Add(warp.TargetName);
 
+                Vector2 destination;
+
                 if (WarpData.WarpExclusions(targetLocation, warp))
                 {
 
-                    continue;
+                    destination = WarpData.WarpVectors(targetLocation);
+
+                    if (destination == Vector2.Zero)
+                    {
+
+                        continue;
+
+                    }
 
                 }
-
-                Vector2 destination = WarpData.WarpReverse(targetLocation, warp);
-
-                if (destination == Vector2.Zero)
+                else
                 {
 
-                    continue;
+                    destination = WarpData.WarpReverse(targetLocation, warp);
+
+                    if (destination == Vector2.Zero)
+                    {
+
+                        continue;
+
+                    }
 
                 }
 
@@ -315,7 +324,7 @@ namespace StardewDruid.Event.World
             if (destinations.Count > 0)
             {
                 Game1.flashAlpha = 1;
-
+                
                 riteData.caster.Position = destinations[0];
 
                 ModUtility.AnimateQuickWarp(targetLocation, destinations[0], "Escape");

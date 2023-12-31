@@ -30,6 +30,10 @@ namespace StardewDruid.Event.World
 
         public Dictionary<int, TemporaryAnimatedSprite> gravityAnimations;
 
+        public bool cometFall;
+
+        public int cometTimer;
+
         public Gravity(Vector2 target, Rite rite, int type)
             : base(target, rite)
         {
@@ -40,11 +44,7 @@ namespace StardewDruid.Event.World
 
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 6 + extend;
 
-            //source = Source;
-
             gravityAnchor = targetVector * 64;
-
-            //gravityCorner = gravityAnchor - new Vector2(32, 32);
 
             gravityCorner = gravityAnchor - new Vector2(64, 64);
 
@@ -396,19 +396,14 @@ namespace StardewDruid.Event.World
 
                     if (gravityVictims.Contains(monster))
                     {
+                        
                         continue;
+                    
                     }
 
                     float pullDistance = Vector2.Distance(monster.Position, gravityCenter);
 
-                    float pullLimit = 560f;
-
-                    if (riteData.castTask.ContainsKey("masterGravity"))
-                    {
-
-                        pullLimit = 720f;
-
-                    }
+                    float pullLimit = 516f;
 
                     if (pullDistance >= pullLimit)
                     {
@@ -419,9 +414,13 @@ namespace StardewDruid.Event.World
 
                     if (!MonsterData.CustomMonsters().Contains(monster.GetType()))
                     {
+                        
                         monster.Halt();
+                        
                         monster.stunTime = 1000 * (6 - this.activeCounter);
+
                     }
+                    
                     if (Mod.instance.CurrentProgress() >= 25)
                     {
 

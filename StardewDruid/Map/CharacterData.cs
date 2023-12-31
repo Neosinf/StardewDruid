@@ -16,14 +16,14 @@ namespace StardewDruid.Map
         public static void CharacterCheck(int progress)
         {
 
-            if(progress >= 1 && !Mod.instance.characters.ContainsKey("Effigy"))
+            if(progress >= 1 && Mod.instance.CharacterMap("Effigy") == null)
             {
 
                 Mod.instance.CharacterRegister("Effigy", "FarmCave");
 
             }
 
-            if (progress >= 20 && !Mod.instance.characters.ContainsKey("Jester"))
+            if (progress >= 20 && Mod.instance.CharacterMap("Jester") == null)
             {
 
                 Mod.instance.CharacterRegister("Jester", "FarmCave");

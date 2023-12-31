@@ -174,8 +174,14 @@ namespace StardewDruid.Event.Challenge
 
                 westBird.update(Game1.currentGameTime, riteData.castLocation);
 
-                fireBirds.Add(westBird);
+                if (!questData.name.Contains("Two"))
+                {
 
+                    westBird.HardMode();
+
+                }
+
+                fireBirds.Add(westBird);
 
                 // ---------------- East Bird
 

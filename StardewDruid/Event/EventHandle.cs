@@ -7,6 +7,7 @@ using StardewModdingAPI;
 using StardewValley;
 using System;
 using System.Collections.Generic;
+using xTile.Layers;
 
 namespace StardewDruid.Event
 {
@@ -45,6 +46,8 @@ namespace StardewDruid.Event
 
         public bool eventSync;
 
+        public List<Vector2> ladders;
+
         public EventHandle(Vector2 target, Rite rite)
         {
 
@@ -68,6 +71,8 @@ namespace StardewDruid.Event
 
             actors = new();
 
+            ladders = new();
+
         }
 
         public virtual void EventTrigger()
@@ -87,42 +92,56 @@ namespace StardewDruid.Event
         public virtual bool EventActive()
         {
 
-            if (targetPlayer.currentLocation == targetLocation && !eventAbort)
+            if (eventAbort)
             {
+                //Mod.instance.CastMessage("abort");
+                EventAbort();
 
-                double nowTime = Game1.currentGameTime.TotalGameTime.TotalSeconds;
+                return false;
 
-                if (expireTime >= nowTime && !expireEarly)
-                {
+            }
 
-                    int diffTime = (int)Math.Round(expireTime - nowTime);
 
-                    if (activeCounter != 0 && diffTime % 10 == 0 && diffTime != 0)
-                    {
+            if (targetPlayer.currentLocation.Name != targetLocation.Name)
+            {
+                //Mod.instance.CastMessage("location");
+                EventAbort();
 
-                        MinutesLeft(diffTime);
+                return false;
 
-                    }
+            }
 
-                    return true;
+            if (expireEarly)
+            {
+                //Mod.instance.CastMessage("early");
+                return EventExpire();
 
-                }
+            }
+
+            double nowTime = Game1.currentGameTime.TotalGameTime.TotalSeconds;
+
+            if (expireTime < nowTime)
+            {
+                //Mod.instance.CastMessage("expire");
 
                 return EventExpire();
 
             }
-            else
+
+            int diffTime = (int)Math.Round(expireTime - nowTime);
+
+            if (activeCounter != 0 && diffTime % 10 == 0 && diffTime != 0)
             {
 
-                EventAbort();
+                MinutesLeft(diffTime);
 
             }
 
-            return false;
+            return true;
 
         }
 
-        public virtual bool EventPerformAction(SButton Button)
+        public virtual bool EventPerformAction(SButton Button, string type = "Action")
         {
 
             return false;
@@ -139,6 +158,12 @@ namespace StardewDruid.Event
         {
 
             expireTime++;
+
+        }
+
+        public virtual void AttemptAbort()
+        {
+
 
         }
 
@@ -283,10 +308,45 @@ namespace StardewDruid.Event
 
         public void AddActor(Vector2 position, bool slave = false)
         {
+            
             Actor actor = CharacterData.DisembodiedVoice(this.targetLocation, position);
+
             actor.drawSlave = slave;
+
             targetLocation.characters.Add(actor);
+
             actors.Add(actor);
+
+        }
+
+        public void RemoveLadders()
+        {
+            Layer layer = targetLocation.map.GetLayer("Buildings");
+
+            for (int index1 = 0; index1 < layer.LayerHeight; ++index1)
+            {
+                
+                for (int index2 = 0; index2 < layer.LayerWidth; ++index2)
+                {
+                    
+                    if (layer.Tiles[index2, index1] != null && layer.Tiles[index2, index1].TileIndex == 173)
+                    {
+                        
+                        layer.Tiles[index2, index1] = null;
+                        
+                        Game1.player.TemporaryPassableTiles.Clear();
+                        
+                        if (ladders.Count == 0)
+                        {
+                            ladders.Add(new Vector2(index2, index1));
+                        }
+
+                    }
+                
+                }
+            
+            }
+        
         }
 
     }

@@ -50,6 +50,19 @@ namespace StardewDruid.Dialogue
 
                 }
 
+                if (npc.priorities.Contains("standby"))
+                {
+
+                    responseList.Add(new Response("continue", "Alright, let's go! (continue)"));
+
+                }
+                else if (npc.priorities.Contains("track"))
+                {
+                    
+                    responseList.Add(new Response("standby", "How about some self-reflection. (standby)"));
+
+                }
+
                 responseList.Add(new Response("rites", "I want to talk about some things (manage rites)"));
 
                 responseList.Add(new Response("none", "(say nothing)"));
@@ -76,6 +89,7 @@ namespace StardewDruid.Dialogue
                     DelayedAction.functionAfterDelay(ReplyAccept, 100);
                     break;
                 case "quests":
+                case "journey":
                     new Quests(npc).Approach();
                     break;
                 case "refuse":
@@ -95,6 +109,12 @@ namespace StardewDruid.Dialogue
                     break;
                 case "afterQuarry":
                     DelayedAction.functionAfterDelay(ReplyAfterQuarry, 100);
+                    break;
+                case "standby":
+                    DelayedAction.functionAfterDelay(ReplyStandby, 100);
+                    break;
+                case "continue":
+                    DelayedAction.functionAfterDelay(ReplyContinue, 100);
                     break;
             }
 
@@ -236,6 +256,20 @@ namespace StardewDruid.Dialogue
         public void ReplyThanatoshi()
         {
             Game1.drawDialogue(npc, "Thanatoshi is one of my distant kin. He fought in this valley, a long time ago, but I've never had the chance to ask him about why or what happened... he vanished.(Jester stares through you) It seems a dusty statue in a dungeon is all that remains of the deadly Thanatoshi...");
+        }
+
+        public void ReplyStandby()
+        {
+            string str = "(Jester sits and thinks about everything he's seen so far)";
+            npc.ActivateStandby();
+            Game1.drawDialogue(npc, str);
+        }
+
+        public void ReplyContinue()
+        {
+            string str = "I knew you would come back for me. It's destiny.";
+            npc.DeactivateStandby();
+            Game1.drawDialogue(npc, str);
         }
     }
 }

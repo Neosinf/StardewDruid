@@ -1,6 +1,10 @@
-﻿using StardewValley;
+﻿using GenericModConfigMenu;
+using StardewModdingAPI;
+using StardewValley;
 using StardewValley.Locations;
+using System;
 using System.Collections.Generic;
+using xTile.Dimensions;
 
 namespace StardewDruid.Map
 {
@@ -11,6 +15,7 @@ namespace StardewDruid.Map
             return new Dictionary<int, string>()
             {
                 [15] = "weald",
+                [44] = "weald",
                 [14] = "mists",
                 [9] = "stars",
                 [53] = "fates",
@@ -38,9 +43,9 @@ namespace StardewDruid.Map
 
         }
 
-        public static List<int> GrizzleList()
+        public static List<int> RoughageList()
         {
-            List<int> grizzleIndex = new()
+            List<int> roughageIndex = new()
             {
                 92, // Sap
                 766, // Slime
@@ -53,13 +58,13 @@ namespace StardewDruid.Map
                 831, // Taro Tuber
             };
 
-            return grizzleIndex;
+            return roughageIndex;
         }
 
-        public static List<int> SashimiList()
+        public static List<int> LunchList()
         {
 
-            List<int> sashimiIndex = new()
+            List<int> lunchIndex = new()
             {
                 399, // SpringOnion
                 403, // Snackbar
@@ -78,7 +83,7 @@ namespace StardewDruid.Map
                 851, // Magma Cap
             };
 
-            return sashimiIndex;
+            return lunchIndex;
 
         }
 
@@ -94,6 +99,7 @@ namespace StardewDruid.Map
                 [614] = 120000, // Tea
                 [395] = 90000, // Coffee
                 [253] = 300000, // Triple Espresso
+                [349] = 300000, //349: "Energy Tonic/500/200/Crafting/Energy Tonic/Restores a lot of energy./drink/0 0 0 0 0 0 0 0 0 0 0/0",
 
             };
 
@@ -751,6 +757,222 @@ namespace StardewDruid.Map
 
         }
 
+        public static int RandomPoolFish(GameLocation location)
+        {
+
+            Dictionary<int, int> objectIndexes;
+
+            if (location.Name.Contains("Beach"))
+            {
+
+                objectIndexes = new Dictionary<int, int>()
+                {
+
+                    [0] = 392, // nautilus shell
+                    [1] = 152, // seaweed
+                    [2] = 152, // seaweed
+                    [3] = 397, // urchin
+                    [4] = 718, // cockle
+                    [5] = 715, // lobster
+                    [6] = 720, // shrimp
+                    [7] = 719, // mussel
+                };
+
+            }
+            else
+            {
+
+                objectIndexes = new Dictionary<int, int>()
+                {
+
+                    [0] = 153, // algae
+                    [1] = 153, // algae
+                    [2] = 153, // algae
+                    [3] = 153, // algae
+                    [4] = 721, // snail 721
+                    [5] = 716, // crayfish 716
+                    [6] = 722, // periwinkle 722
+                    [7] = 717, // crab 717
+
+                };
+
+            }
+
+            int probability = new Random().Next(objectIndexes.Count);
+
+            int objectIndex = objectIndexes[probability];
+
+            return objectIndex;
+
+        }
+
+        public static int RandomTreasure(GameLocation location, bool rareTreasure = false)
+        {
+
+            Dictionary<int, int> objectIndexes;
+
+            if (location is Beach)
+            {
+
+                objectIndexes = new Dictionary<int, int>()
+                {
+                    [0] = 797, //"Pearl/2500/-300/Basic/Pearl/A rare treasure from the sea.///",
+                    [1] = 275, //"Artifact Trove/0/-300/Basic/Artifact Trove/A blacksmith can open this for you. These troves often contain ancient relics and curiosities./100 101 103 104 105 106 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 166 373 797//",
+                    [2] = 166, //"Treasure Chest/5000/-300/Basic/Treasure Chest/Wow, it's loaded with treasure! This is sure to fetch a good price./Day Night^Spring Summer Fall Winter//",
+                    [3] = 852, //"Dragon Tooth/500/-300/Basic/Dragon Tooth/These are rumored to be the teeth of ancient serpents. The enamel is made of pure iridium!///",
+                    [4] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
+                    [5] = 392, // nautilus shell
+                    [6] = 152, // seaweed
+                    [7] = 152, // seaweed
+                    [8] = 397, // urchin
+                    [9] = 718, // cockle
+                    [10] = 715, // lobster
+                    [11] = 720, // shrimp
+                    [12] = 719, // mussel
+                    [13] = 393, //"Coral/80/-300/Basic -23/Coral/A colony of tiny creatures that clump together to form beautiful structures.///",
+                    [14] = 394, //"Rainbow Shell/300/-300/Basic -23/Rainbow Shell/It's a very beautiful shell.///",
+                    [15] = 131, // sardine
+                    [16] = 147, // herring
+                    [17] = 129, // anchovy
+                    [18] = 701, // tilapia
+                    [19] = 150, // red snapper
+                    [20] = 148, // eel
+                    [21] = 149, // squid
+                    [22] = 151, // octopus
+                    [23] = 155, // super cucumber
+                    [24] = 128, // puff ball
+
+                };
+
+            }
+            else if (location is IslandLocation)
+            {
+
+                objectIndexes = new Dictionary<int, int>()
+                {
+
+                    [0] = 797, //"Pearl/2500/-300/Basic/Pearl/A rare treasure from the sea.///",
+                    [1] = 275, //"Artifact Trove/0/-300/Basic/Artifact Trove/A blacksmith can open this for you. These troves often contain ancient relics and curiosities./100 101 103 104 105 106 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 166 373 797//",
+                    [2] = 166, //"Treasure Chest/5000/-300/Basic/Treasure Chest/Wow, it's loaded with treasure! This is sure to fetch a good price./Day Night^Spring Summer Fall Winter//",
+                    [3] = 852, //"Dragon Tooth/500/-300/Basic/Dragon Tooth/These are rumored to be the teeth of ancient serpents. The enamel is made of pure iridium!///",
+                    [4] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
+                    [5] = 392, // nautilus shell
+                    [6] = 152, // seaweed
+                    [7] = 152, // seaweed
+                    [8] = 397, // urchin
+                    [9] = 718, // cockle
+                    [10] = 715, // lobster
+                    [11] = 720, // shrimp
+                    [12] = 719, // mussel
+                    [13] = 393, //"Coral/80/-300/Basic -23/Coral/A colony of tiny creatures that clump together to form beautiful structures.///",
+                    [14] = 394, //"Rainbow Shell/300/-300/Basic -23/Rainbow Shell/It's a very beautiful shell.///",
+                    [15] = 838, // blue discuss
+                    [16] = 837, // lionfish
+                    [17] = 267, // flounder
+                    [18] = 701, // tilapia
+                    [19] = 838, // blue discuss
+                    [20] = 837, // lionfish
+                    [21] = 267, // flounder
+                    [22] = 150, // red snapper
+
+                };
+
+            }
+            else
+            {
+
+                objectIndexes = new Dictionary<int, int>()
+                {
+
+                    [0] = 797, //"Pearl/2500/-300/Basic/Pearl/A rare treasure from the sea.///",
+                    [1] = 275, //"Artifact Trove/0/-300/Basic/Artifact Trove/A blacksmith can open this for you. These troves often contain ancient relics and curiosities./100 101 103 104 105 106 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 166 373 797//",
+                    [2] = 166, //"Treasure Chest/5000/-300/Basic/Treasure Chest/Wow, it's loaded with treasure! This is sure to fetch a good price./Day Night^Spring Summer Fall Winter//",
+                    [3] = 852, //"Dragon Tooth/500/-300/Basic/Dragon Tooth/These are rumored to be the teeth of ancient serpents. The enamel is made of pure iridium!///",
+                    [4] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
+                    [5] = 145, // carp
+                    [6] = 137, // smallmouth bass
+                    [7] = 142,  // sunfish
+                    [8] = 141, // perch
+                    [9] = 132,  // bream
+                    [10] = 153, // algae
+                    [11] = 153, // algae
+                    [12] = 721, // snail 721
+                    [13] = 716, // crayfish 716
+                    [14] = 722, // periwinkle 722
+                    [15] = 717, // crab 717
+                    [16] = 517, //"Glow Ring/200/-300/Ring/Glow Ring/Emits a constant light.///",
+                    [17] = 519, //"Magnet Ring/200/-300/Ring/Magnet Ring/Increases your radius for collecting items.///",
+                    [18] = 143, // cat fish
+                    [19] = 698, // sturgeon
+                    [20] = 140, // walleye
+                    [21] = 699, // tiger trout
+                    [22] = 158, // stone fish}
+
+                };
+
+            }
+
+            int bottom = rareTreasure ? 0 : 4;
+
+            int probability = new Random().Next(bottom,objectIndexes.Count);
+
+            int objectIndex = objectIndexes[probability];
+
+            return objectIndex;
+
+        }
+
+        public static int HighTreasure(string terrain)
+        {
+
+            Dictionary<int, int> objectIndexes;
+
+            switch (terrain)
+            {
+
+                case "ground":
+
+                    objectIndexes = new Dictionary<int, int>()
+                    {
+                        
+                        [0] = 166, //"Treasure Chest/5000/-300/Basic/Treasure Chest/Wow, it's loaded with treasure! This is sure to fetch a good price./Day Night^Spring Summer Fall Winter//",
+
+                    };
+
+                    break;
+
+                case "water":
+
+                    objectIndexes = new Dictionary<int, int>()
+                    {
+
+                        [0] = 797, //"Pearl/2500/-300/Basic/Pearl/A rare treasure from the sea.///",
+
+                    };
+
+                    break;
+
+                default:
+
+
+                    objectIndexes = new Dictionary<int, int>()
+                    {
+
+                        [0] = 852, //"Dragon Tooth/500/-300/Basic/Dragon Tooth/These are rumored to be the teeth of ancient serpents. The enamel is made of pure iridium!///",
+
+                    };
+
+                    break;
+            }
+
+            int probability = new Random().Next(objectIndexes.Count);
+
+            int objectIndex = objectIndexes[probability];
+
+            return objectIndex;
+
+        }
+
         public static List<string> RecipeList()
         {
             List<string> recipeList = new(){
@@ -811,6 +1033,7 @@ namespace StardewDruid.Map
                 ["whisk"] = false,
                 ["gravity"] = false,
                 ["teahouse"] = false,
+                ["treasure"] = false,
 
             };
 
@@ -973,6 +1196,13 @@ namespace StardewDruid.Map
             else
             {
                 return new();
+
+            }
+
+            if (playerLocation.Map.Layers[0].LayerWidth * playerLocation.Map.Layers[0].LayerHeight > 2000)
+            {
+
+                spawnIndex["treasure"] = true;
 
             }
 

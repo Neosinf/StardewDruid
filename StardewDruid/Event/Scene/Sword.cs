@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using GenericModConfigMenu;
+using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Map;
 using StardewValley;
@@ -123,6 +124,11 @@ namespace StardewDruid.Event.Scene
             //---------------------- throw Forest Sword
 
             swordIndex = 15;
+
+            if (Mod.instance.Helper.ModRegistry.IsLoaded("DaLion.Overhaul"))
+            {
+                swordIndex = 44;
+            }
 
             int delayThrow = 600;
 
@@ -301,6 +307,7 @@ namespace StardewDruid.Event.Scene
             Vector2 originVector = targetVector + new Vector2(5, 0);
 
             new Throw().ThrowSword(this.riteData.caster, this.swordIndex, originVector, delayThrow);
+
             //---------------------- meteor animation
 
             ModUtility.AnimateMeteor(riteData.castLocation, originVector, true);

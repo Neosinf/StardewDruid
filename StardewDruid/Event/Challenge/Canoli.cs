@@ -20,16 +20,16 @@ namespace StardewDruid.Event.Challenge
         public override void EventTrigger()
         {
 
-            monsterHandle = new(targetVector + new Vector2(0, 2), riteData);
+            monsterHandle = new(targetVector + new Vector2(0, 2), riteData.castLocation,riteData.combatModifier);
 
             monsterHandle.spawnFrequency = 1;
 
-            monsterHandle.spawnAmplitude = 2;
+            monsterHandle.spawnAmplitude = 1;
 
             if (questData.name.Contains("Two"))
             {
-
-                monsterHandle.spawnAmplitude = 3;
+                
+                monsterHandle.spawnCombat *= 2;
 
             }
 

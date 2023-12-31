@@ -15,6 +15,8 @@ namespace StardewDruid.Monster
         public int bobHeight;
         public Queue<Rectangle> blastZone;
         public int blastRadius;
+        public int ruffleTimer;
+        public int ruffleFrame;
 
         public Reaper()
         {
@@ -31,15 +33,24 @@ namespace StardewDruid.Monster
 
             characterTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", Name + ".png"));
 
+            flightFrames = new()
+            {
+                [0] = new() { new(0, 0, 64, 64), },
+                [1] = new() { new(64, 0, 64, 64), },
+                [2] = new() { new(256, 0, 64, 64), },
+                [3] = new() { new(320, 0, 64, 64), },
+
+            };
+
             loadedOut = true;
 
         }
 
         public override void BaseMode()
         {
-            Health = combatModifier * 12;
+            Health = combatModifier * 15;
             MaxHealth = Health;
-            DamageToFarmer = (int)(combatModifier * 0.1);
+            DamageToFarmer = (int)(combatModifier * 0.15);
             ouchList = new List<string>()
               {
                 "reap",
@@ -105,7 +116,7 @@ namespace StardewDruid.Monster
         public override Rectangle GetBoundingBox()
         {
             Vector2 position = Position;
-            return new Rectangle((int)position.X - 32, (int)position.Y - netFlightHeight.Value, 128, 144);
+            return new Rectangle((int)position.X - 32, (int)position.Y - netFlightHeight.Value - 32, 128, 128);
         }
 
         public override void draw(SpriteBatch b, float alpha = 1f)
@@ -129,34 +140,36 @@ namespace StardewDruid.Monster
             }
 
             Vector2 localPosition = getLocalPosition(Game1.viewport);
+            
             float drawLayer = Game1.player.getDrawLayer();
+            
             if (IsEmoting && !Game1.eventUp)
             {
                 localPosition.Y -= 32 + Sprite.SpriteHeight * 4;
                 b.Draw(Game1.emoteSpriteSheet, localPosition, new Rectangle?(new Rectangle(CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16)), Color.White, 0.0f, Vector2.Zero, 4f, 0, drawLayer);
             }
-            b.Draw(Game1.shadowTexture, new(localPosition.X, localPosition.Y + 128f), new Rectangle?(Game1.shadowTexture.Bounds), Color.White, 0.0f, Vector2.Zero, 4f, 0, Math.Max(0.0f, getStandingY() / 10000f) - 1E-06f);
+            
+            b.Draw(Game1.shadowTexture, new(localPosition.X, localPosition.Y + 96f), new Rectangle?(Game1.shadowTexture.Bounds), Color.White, 0.0f, Vector2.Zero, 4f, 0, Math.Max(0.0f, getStandingY() / 10000f) - 1E-06f);
+
             if (netDashActive)
             {
-                Rectangle rectangle = new(netFlightFrame * 64, 0, 64, 48);
+                //Rectangle rectangle = new(netFlightFrame * 64, 0, 64, 48);
+
                 //b.Draw(Sprite.Texture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f - netFlightHeight), new Rectangle?(rectangle), Color.White * 0.65f, rotation, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
-                b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f - netFlightHeight), new Rectangle?(rectangle), Color.White * 0.65f, rotation, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                //b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f - netFlightHeight), new Rectangle?(rectangle), Color.White * 0.65f, rotation, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - netFlightHeight - bobHeight), flightFrames[netFlightFrame][0], Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
             }
             else if (netFireActive)
-            {
-                if (bobHeight <= 0)
-                    ++bobHeight;
-                else if (bobHeight >= 64)
-                    --bobHeight;
+            {       
                 //b.Draw(Sprite.Texture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f - bobHeight), new Rectangle?(new Rectangle(256, 0, 64, 48)), Color.White * 0.65f, rotation, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
-                b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f - bobHeight), new Rectangle?(new Rectangle(256, 0, 64, 48)), Color.White * 0.65f, rotation, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - bobHeight), new Rectangle(128+(ruffleFrame*64), 0, 64, 64), Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
             }
             else
             {
                 //b.Draw(Sprite.Texture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f), new Rectangle?(new Rectangle(0, 0, 64, 48)), Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip ? (SpriteEffects)1 : 0, drawLayer);
-                b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f), new Rectangle?(new Rectangle(0, 0, 64, 48)), Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - bobHeight), new Rectangle(ruffleFrame*64, 0, 64, 64), Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip ? (SpriteEffects)1 : 0, drawLayer);
 
             }
 
@@ -164,10 +177,47 @@ namespace StardewDruid.Monster
 
         public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
         {
+            
             if (textAboveHeadTimer <= 0 || textAboveHead == null)
+            {
                 return;
+            }
             Vector2 localPosition = getLocalPosition(Game1.viewport);
-            SpriteText.drawStringWithScrollCenteredAt(b, textAboveHead, (int)localPosition.X, (int)localPosition.Y - 160, "", textAboveHeadAlpha, textAboveHeadColor, 1, (float)(getTileY() * 64 / 10000.0 + 1.0 / 1000.0 + getTileX() / 10000.0), false);
+
+            SpriteText.drawStringWithScrollCenteredAt(b, textAboveHead, (int)localPosition.X, (int)localPosition.Y - 224, "", textAboveHeadAlpha, textAboveHeadColor, 1, (float)(getTileY() * 64 / 10000.0 + 1.0 / 1000.0 + getTileX() / 10000.0), false);
+        
+        }
+
+        public override void update(GameTime time, GameLocation location)
+        {
+            base.update(time, location);
+
+            if (bobHeight <= 0)
+            {
+                bobHeight++;
+            }
+            else if (bobHeight >= 64)
+            {
+                bobHeight--;
+            }
+
+            ruffleTimer++;
+
+            if (ruffleTimer == 16)
+            {
+
+                ruffleFrame++;
+
+                if(ruffleFrame == 2)
+                {
+
+                    ruffleFrame = 0;
+                }
+
+                ruffleTimer = 0;
+
+            }
+
         }
 
         public override void SpecialAttack()

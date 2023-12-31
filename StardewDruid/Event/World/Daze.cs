@@ -191,8 +191,15 @@ namespace StardewDruid.Event.World
             return false;
         }
 
-        public override bool EventPerformAction(SButton Button)
+        public override bool EventPerformAction(SButton Button, string Type)
         {
+
+            if(Type != "Action")
+            {
+
+                return false;
+
+            }
 
             if (complete)
             {

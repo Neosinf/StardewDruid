@@ -26,11 +26,11 @@ namespace StardewDruid.Event.World
 
             portalConfig = PortalConfig();
 
-            Rite riteClone = riteData.ShallowClone();
+            int combatModifier = riteData.combatModifier;
 
-            riteClone.combatModifier *= 1 + portalConfig[5] / 4;
+            combatModifier *= 1 + portalConfig[5] / 4;
 
-            monsterHandle = new(targetVector, riteClone);
+            monsterHandle = new(targetVector, riteData.castLocation, combatModifier);
 
             monsterHandle.spawnFrequency = portalConfig[1];
 

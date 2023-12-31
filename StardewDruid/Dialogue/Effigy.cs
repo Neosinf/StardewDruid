@@ -1,8 +1,10 @@
 ﻿using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Locations;
 using StardewValley.Objects;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace StardewDruid.Dialogue
 {
@@ -26,11 +28,24 @@ namespace StardewDruid.Dialogue
                 string str = "Forgotten Effigy: ^Successor.";
                 List<Response> responseList = new List<Response>();
                 List<string> stringList = QuestData.StageProgress();
-                if (stringList.Contains("fates") || stringList.Contains("Jester"))
+                if (stringList.Contains("Jester"))
                 {
-                    responseList.Add(new Response("quests", "What threatens the valley? (quests)"));
+
+                    if((Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[1])
+                    {
+                        str = "Forgotten Effigy: ^Fate pulls at your thread.";
+                        responseList.Add(new Response("quests", "What do you mean?"));
+                    }
+                    else
+                    {
+                        responseList.Add(new Response("quests", "What threatens the valley? (quests)"));
+                    }
+
                     if (Context.IsMainPlayer)
+                    {
                         responseList.Add(new Response("relocate", "It's time for a change of scene"));
+                    }
+                        
                 }
                 else if (stringList.Contains("hidden"))
                     responseList.Add(new Response("quests", "Is the valley safe? (quests)"));
@@ -42,6 +57,20 @@ namespace StardewDruid.Dialogue
                     responseList.Add(new Response("quests", "I want to learn more about the weald (lessons)"));
                 if (Mod.instance.CurrentProgress() > 2)
                     responseList.Add(new Response("rites", "I have some requests (manage rites)"));
+
+                if (npc.priorities.Contains("standby"))
+                {
+
+                    responseList.Add(new Response("continue", "Thank you for keeping watch (continue)"));
+
+                }
+                else if (npc.priorities.Contains("track"))
+                {
+
+                    responseList.Add(new Response("standby", "Can you stand guard for a moment? (standby)"));
+
+                }
+
                 responseList.Add(new Response("none", "(say nothing)"));
                 Effigy effigy = this;
                 GameLocation.afterQuestionBehavior questionBehavior = new(AnswerApproach);
@@ -58,6 +87,7 @@ namespace StardewDruid.Dialogue
                     DelayedAction.functionAfterDelay(DialogueQuery, 100);
                     break;
                 case "quests":
+                case "journey":
                     new Quests(npc).Approach();
                     break;
                 case "relocate":
@@ -68,6 +98,12 @@ namespace StardewDruid.Dialogue
                     break;
                 case "rites":
                     new Rites(npc).Approach();
+                    break;
+                case "standby":
+                    DelayedAction.functionAfterDelay(ReplyStandby, 100);
+                    break;
+                case "continue":
+                    DelayedAction.functionAfterDelay(ReplyContinue, 100);
                     break;
             }
         }
@@ -127,24 +163,37 @@ namespace StardewDruid.Dialogue
             
             List<Response> responseList = new List<Response>();
             
-            string str = "Forgotten Effigy: ^Now that you have vanquished the twisted spectres of the past, it is safe for me to roam the wilds of the Valley once more. Where shall I await your command?^";
-            
-            if (npc.DefaultMap == "FarmCave")
+            string str = "Forgotten Effigy: ^Now that you have vanquished the twisted spectres of the past, it is safe for me to roam the wilds of the Valley once more. Where shall I await your command?";
+
+            bool flag = npc.priorities.Contains("track");
+
+            if (npc.DefaultMap == "FarmCave" || flag)
             {
-                responseList.Add(new Response("Farm", "My farm would benefit from your gentle stewardship. (The Effigy will target scarecrows with Rite of the Earth effects, automatically sewing seeds, fertilising and watering tilled earth around any scarecrow)"));
+                responseList.Add(new Response("Farm", "My farm would benefit from your gentle stewardship. (The Effigy will garden around scarecrows on the farm)"));
 
             }
             
-            if (npc.DefaultMap == "Farm")
+            if (npc.DefaultMap == "Farm" || flag)
             {
                 responseList.Add(new Response("FarmCave", "Shelter within the farm cave for the while."));
 
             }
-                
+
+            if (!flag && QuestData.StageProgress().Contains("fates"))
+            {
+
+                responseList.Add(new Response("Follow", "Come see the valley of the new farmer. (Effigy will follow you around)"));
+
+            }
+
             responseList.Add(new Response("return", "(nevermind)"));
+
             GameLocation.afterQuestionBehavior questionBehavior = new(AnswerRelocate);
+
             returnFrom = null;
+
             Game1.player.currentLocation.createQuestionDialogue(str, responseList.ToArray(), questionBehavior, npc);
+
         }
 
         public void AnswerRelocate(Farmer effigyVisitor, string effigyAnswer)
@@ -166,7 +215,26 @@ namespace StardewDruid.Dialogue
                     (npc as StardewDruid.Character.Effigy).SwitchRoamMode();
                     Mod.instance.CastMessage("The Effigy now roams the farm", -1);
                     break;
+                case "Follow":
+                    str = "I will see how you put the lessons of the First Farmer to use.";
+                    (npc as StardewDruid.Character.Effigy).SwitchFollowMode();
+                    Mod.instance.CastMessage("The Effigy joins you on your adventures", -1);
+                    break;
             }
+            Game1.drawDialogue(npc, str);
+        }
+
+        public void ReplyStandby()
+        {
+            string str = "Vigilance is a speciality of mine. (The Effigy does its best to stay as dumb and still as a scarecrow)";
+            npc.ActivateStandby();
+            Game1.drawDialogue(npc, str);
+        }
+
+        public void ReplyContinue()
+        {
+            string str = "Thank you for not stuffing me in a ceiling cavity.";
+            npc.DeactivateStandby();
             Game1.drawDialogue(npc, str);
         }
 

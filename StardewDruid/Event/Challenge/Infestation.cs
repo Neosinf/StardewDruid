@@ -3,6 +3,7 @@ using StardewDruid.Cast;
 using StardewDruid.Map;
 using StardewDruid.Monster;
 using StardewValley;
+using StardewValley.Objects;
 using System.Collections.Generic;
 
 namespace StardewDruid.Event.Challenge
@@ -81,7 +82,30 @@ namespace StardewDruid.Event.Challenge
 
                 UpdateFriendship(NPCIndex);
 
-                Mod.instance.dialogue["Effigy"].specialDialogue["journey"] = new() { "I sense a change", "I defeated the Pumpkin Slime. Now I'm covered in gunk." };
+                Mod.instance.dialogue["Effigy"].specialDialogue["journey"] = new() { "I sense a change", "I defeated the Pumpkin Slime. Now I'm covered in his gunk." };
+
+                Throw throwHat = new(Game1.player,targetVector*64,99);
+
+                throwHat.objectInstance = new Hat(48);
+
+                throwHat.ThrowObject();
+
+            }
+            else
+            {
+
+                List<int> eggList = new()
+                {
+                    413,
+                    437,
+                    439,
+                    680,
+                    857,
+                };
+
+                Throw throwEgg = new(Game1.player, targetVector * 64, randomIndex.Next(eggList.Count));
+
+                throwEgg.ThrowObject();
 
             }
 
@@ -117,13 +141,6 @@ namespace StardewDruid.Event.Challenge
                 StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(13, bossVector, riteData.combatModifier);
 
                 bossMonster = theMonster as BossSlime;
-
-                if (questData.name.Contains("Two"))
-                {
-
-                    bossMonster.dropHat = false;
-
-                }
 
                 bossMonster.posturing = true;
 

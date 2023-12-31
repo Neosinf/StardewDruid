@@ -35,13 +35,22 @@ namespace StardewDruid.Event.Challenge
                 new(50, 89),
             };
 
-            if (questData.name.Contains("Two"))
+           /*if (questData.name.Contains("Two"))
             {
                 challengeFrequency = 3;
                 challengeAmplitude = 2;
-            }
+            }*/
 
             SetupSpawn();
+
+            if (questData.name.Contains("Two"))
+            {
+
+                monsterHandle.spawnCombat *= 3;
+
+                monsterHandle.spawnCombat /= 2;
+
+            }
 
             Game1.addHUDMessage(new HUDMessage($"Defeat the shadows!", "2"));
 

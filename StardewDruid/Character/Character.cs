@@ -80,12 +80,20 @@ namespace StardewDruid.Character
 
         public override bool checkAction(Farmer who, GameLocation l)
         {
+            
             if (Mod.instance.eventRegister.ContainsKey("transform"))
             {
                 return false;
 
             }
-                
+            
+            if(who.CurrentTool is null)
+            {
+
+                return false;
+
+            }
+
             foreach (NPC character in currentLocation.characters)
             {
                 
@@ -98,11 +106,20 @@ namespace StardewDruid.Character
                     
             }
 
+            if (timers.ContainsKey("busy"))
+            {
+
+                return false;
+
+            }
+
             Halt();
 
             faceGeneralDirection(who.Position, 0, false);
 
             moveDirection = FacingDirection;
+
+            AnimateMovement(Game1.currentGameTime);
 
             switch (moveDirection)
             {
@@ -167,8 +184,11 @@ namespace StardewDruid.Character
             if (Context.IsMainPlayer)
             {
                 moveVectors.Clear();
-                timers.Clear();
+
+                ClearTimers();
+
                 timers["stop"] = 60;
+
             }
             moveDown = false;
             moveLeft = false;
@@ -218,28 +238,89 @@ namespace StardewDruid.Character
         {
 
             normalUpdate(time, location);
+
             if (!Context.IsMainPlayer)
+            {
+                
                 return;
+
+            }
+                
             for (int index = timers.Count - 1; index >= 0; --index)
             {
+                
                 KeyValuePair<string, int> keyValuePair = timers.ElementAt(index);
+                
                 timers[keyValuePair.Key]--;
+                
                 if (timers[keyValuePair.Key] <= 0)
+                {
+
+                    if (keyValuePair.Key == "standby")
+                    {
+
+                        DeactivateStandby();
+
+                    }
+
                     timers.Remove(keyValuePair.Key);
+
+                }
+
             }
+            
             if (!timers.ContainsKey("stop"))
             {
+                
                 if (moveVectors.Count > 0 && (double)Vector2.Distance(moveVectors.First(), Position) <= 16.0)
+                {
+                    
                     moveVectors.RemoveAt(0);
+
+                }
+
                 if (moveVectors.Count <= 0)
+                {
+                    
                     UpdateTarget();
+
+                }
+
                 MoveTowardsTarget(time);
+            
             }
+
             Sprite.animateOnce(time);
 
         }
 
-        public virtual Rectangle GetHitBox() => GetBoundingBox();
+        public virtual Rectangle GetHitBox()
+        {
+            return GetBoundingBox();
+        }
+
+        public virtual void ClearTimers()
+        {
+
+            Dictionary<string, int> newTimers = new();
+
+            List<string> keepTimers = new() { "cooldown", "busy", "standby", };
+            
+            foreach(KeyValuePair<string, int> timer in timers)
+            {
+
+                if (keepTimers.Contains(timer.Key))
+                {
+                    newTimers.Add(timer.Key,timer.Value);
+                }
+
+            }
+
+            timers.Clear();
+
+            timers = newTimers;
+
+        }
 
         public virtual void UpdateTarget()
         {
@@ -269,15 +350,16 @@ namespace StardewDruid.Character
 
                     case "frozen":
                     case "idle":
+                    case "standby":
 
-                        timers["stop"] = 1000;
+                        timers["stop"] = 600;
 
                         Sprite.CurrentFrame = 0;
 
                         if (new Random().Next(2) == 0 || priorities.Contains("idle"))
                         {
-                            
-                            timers["idle"] = 1000;
+
+                            timers["idle"] = 600;
 
                         }
 
@@ -293,6 +375,7 @@ namespace StardewDruid.Character
                         break;
 
                     case "track":
+                    
 
                         if (TargetTrack())
                         {
@@ -372,6 +455,7 @@ namespace StardewDruid.Character
                 }
                     
             }
+
             if (targetOpponents.Count == 0)
             {
                 return false;
@@ -388,27 +472,57 @@ namespace StardewDruid.Character
         public virtual bool TargetTrack()
         {
             if (!Mod.instance.trackRegister.ContainsKey(Name) || Mod.instance.trackRegister[Name].trackVectors.Count == 0)
+            {
                 return false;
+            }
+
             float num = Vector2.Distance(Position, Game1.player.Position);
+            
             if ((double)num <= 180.0 && !timers.ContainsKey("track"))
+            {
                 return false;
+            }
+                
             if ((double)Vector2.Distance(Mod.instance.trackRegister[Name].trackVectors.First<Vector2>(), Position) >= 180.0)
+            {
                 WarpToTarget();
+
+                return false;
+            }
+            
+            /*
             if (Mod.instance.trackRegister[Name].trackVectors.Count == 0)
             {
                 if (new Random().Next(2) != 0)
-                    return false;
+                { 
+                    
+                    return false; 
+                
+                }
+                
                 timers["stop"] = 300;
+                
                 timers["idle"] = 300;
+                
                 return true;
-            }
+            
+            }*/
+            
             VectorForTarget(Mod.instance.trackRegister[Name].NextVector(), -1f, false);
+            
             timers["track"] = 120;
+            
             if ((double)num > 480.0)
+            {
                 timers["sprint"] = 180;
+            }
             else
+            {
                 timers["hurry"] = 120;
+            }
+                
             return true;
+
         }
 
         public virtual void WarpToTarget()
@@ -552,8 +666,8 @@ namespace StardewDruid.Character
         {
             
             moveVectors.Clear();
-            
-            timers.Clear();
+
+            ClearTimers();
             
             Random random = new Random();
 
@@ -800,7 +914,7 @@ namespace StardewDruid.Character
                 foreach (StardewValley.Monsters.Monster monsterCharacter in damageMonsters)
                 {
 
-                    DealDamageToMonster(monsterCharacter);
+                    HitMonster(monsterCharacter);
 
                 }
 
@@ -924,6 +1038,26 @@ namespace StardewDruid.Character
               };
         }
 
+        public virtual void ActivateStandby(int length = 1200)
+        {
+            priorities = new List<string>()
+              {
+                "standby",
+                "track",
+              };
+            timers["standby"] = length;
+        }
+
+        public virtual void DeactivateStandby()
+        {
+            priorities = new List<string>()
+              {
+                "attack",
+                "track"
+              };
+            timers.Remove("standby");
+        }
+
         public virtual void SwitchRoamMode()
         {
             
@@ -1013,8 +1147,23 @@ namespace StardewDruid.Character
 
         }
 
+        public virtual void HitMonster(StardewValley.Monsters.Monster monsterCharacter)
+        {
+
+            DealDamageToMonster(monsterCharacter);
+
+        }
+
         public virtual void DealDamageToMonster(StardewValley.Monsters.Monster monsterCharacter,bool kill = false,int damage = -1,bool push = true)
         {
+
+            if (!ModUtility.MonsterVitals(monsterCharacter, currentLocation))
+            {
+
+                return;
+
+            }
+
             if (damage == -1)
             {
                 damage = Mod.instance.DamageLevel() / 2;
@@ -1077,8 +1226,17 @@ namespace StardewDruid.Character
         {
         }
 
+        public virtual bool SafeExit()
+        {
+
+            return true;
+
+        }
+
         public virtual void PlayerBusy()
         {
         }
+    
     }
+
 }

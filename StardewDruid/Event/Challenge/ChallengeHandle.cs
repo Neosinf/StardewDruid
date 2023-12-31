@@ -52,7 +52,7 @@ namespace StardewDruid.Event.Challenge
         public void SetupSpawn()
         {
 
-            monsterHandle = new(targetVector, riteData);
+            monsterHandle = new(targetVector, riteData.castLocation, riteData.combatModifier);
 
             monsterHandle.spawnIndex = challengeSpawn;
 

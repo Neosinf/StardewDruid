@@ -22,34 +22,63 @@ namespace StardewDruid.Event.Challenge
         public Museum(Vector2 target, Rite rite, Quest quest)
           : base(target, rite, quest)
         {
+            
             targetVector = target;
-            voicePosition = (targetVector*64f)+ new Vector2(0.0f, -32f);
+           
+            voicePosition = (targetVector*64f) - new Vector2(0.0f, 32f);
+
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 60.0;
+            
             returnPosition = rite.caster.Position;
-            Gunther = targetLocation.getCharacterFromName(nameof(Gunther));
+            
         }
 
         public override void EventTrigger()
         {
+            
             ModUtility.AnimateRadiusDecoration(targetLocation, targetVector, "Mists", 1f, 1f);
+
             ModUtility.AnimateBolt(targetLocation, targetVector);
+
             Mod.instance.RegisterEvent(this, "active");
+
             AddActor(voicePosition, true);
+
+            Gunther = targetLocation.getCharacterFromName(nameof(Gunther));
+
+            AddActor(Gunther.Position - new Vector2(0.0f, 32f));
+
         }
 
         public override bool EventActive()
         {
             if (targetPlayer.currentLocation == targetLocation && !eventAbort)
             {
+                
                 double totalSeconds = Game1.currentGameTime.TotalGameTime.TotalSeconds;
+                
                 if (expireTime < totalSeconds || expireEarly)
+                {
+                    
                     return EventExpire();
+
+                }
+
                 int num = (int)Math.Round(expireTime - totalSeconds);
+
                 if (activeCounter != 0 && num % 10 == 0 && num != 0)
-                    Game1.addHUDMessage(new HUDMessage(string.Format("{0} more minutes left!", num), "2"));
+                {
+
+                    Mod.instance.CastMessage(num.ToString()+" more minutes left!", 2);
+
+                }
+
                 return true;
+
             }
+
             EventAbort();
+
             return false;
         }
 
@@ -57,44 +86,73 @@ namespace StardewDruid.Event.Challenge
         {
             if (bossMonster != null)
             {
+                
                 riteData.castLocation.characters.Remove(bossMonster);
+                
                 bossMonster = null;
+            
             }
+            
             base.RemoveMonsters();
+
         }
 
         public override void EventRemove()
         {
+            
             ResetLocation();
+
+            //Mod.instance.ReassignQuest(questData.name);
+
             base.EventRemove();
+
         }
 
         public override bool EventExpire()
         {
             if (eventLinger == -1)
             {
+
                 RemoveMonsters();
+
                 ResetLocation();
+
                 eventLinger = 4;
+
                 return true;
+
             }
+
             if (eventLinger == 3)
             {
+                
                 if (expireEarly)
                 {
-                    GuntherVoice("A glorious battle");
+                    
+                    GuntherVoice("One for the books.");
+                    
                     Vector2 vector2 = Gunther.getTileLocation()+ new Vector2(0.0f, 1f);
+                    
                     if (!questData.name.Contains("Two"))
+                    {
                         Game1.createObjectDebris(74, (int)vector2.X, (int)vector2.Y, -1, 0, 1f, null);
+                    }
+                        
                     Mod.instance.CompleteQuest(questData.name);
+
                 }
                 else
                 {
                     GuntherVoice("ughh... what a mess");
+
                     Mod.instance.CastMessage("Try again tomorrow");
+
                 }
+
             }
+
             return base.EventExpire();
+
         }
 
         public override void EventInterval()
@@ -163,7 +221,7 @@ namespace StardewDruid.Event.Challenge
                         GuntherThrowRandomShit();
                         break;
                     case 25:
-                        GuntherVoice("I need a weapon... but I loaned them all to Zuzu Mid");
+                        GuntherVoice("Crikey! If only I didn't loan our weapon collection to Zuzu mid!");
                         break;
                     case 30:
                         GuntherVoice("Marlon has a lot to answer for");
@@ -187,10 +245,10 @@ namespace StardewDruid.Event.Challenge
                         GuntherVoice("Goodbye, priceless artifact. Sniff.");
                         GuntherThrowRandomShit();
                         break;
-                    case 55:
+                    case 54:
                         GuntherVoice("Leave the corpse. I might be able to sell it's parts.");
                         break;
-                    case 59:
+                    case 57:
                         GuntherVoice("This is going to cost the historic trust society");
                         GuntherThrowRandomShit();
                         expireEarly = true;
@@ -201,7 +259,7 @@ namespace StardewDruid.Event.Challenge
 
         public void GuntherVoice(string speech)
         {
-            Gunther.showTextAboveHead(speech, 3000, 2, 3000, 0);
+            actors[1].showTextAboveHead(speech, 3000, 2, 3000, 0);
         }
 
         public void GuntherThrowRandomShit()
@@ -238,7 +296,7 @@ namespace StardewDruid.Event.Challenge
                 124,
                 125,
                 126,
-                sbyte.MaxValue,
+                127,
                 579,
                 580,
                 581,
@@ -261,8 +319,12 @@ namespace StardewDruid.Event.Challenge
             targetLocation.loadMap(targetLocation.mapPath.Value, true);
             foreach (NPC character in targetLocation.characters)
             {
-                if (character.isVillager() && character.Name != "Gunther" && character.IsInvisible)
+                if (character.IsInvisible)
+                {
+
                     character.IsInvisible = false;
+                }
+                    
             }
             if (Game1.eventUp || Game1.fadeToBlack || Game1.currentMinigame != null || Game1.isWarping || Game1.killScreen || !(Game1.player.currentLocation is LibraryMuseum))
                 return;
@@ -278,31 +340,70 @@ namespace StardewDruid.Event.Challenge
 
         public void ModifyLocation()
         {
+
             modifiedLocation = true;
+
             targetLocation.temporarySprites.Clear();
+
             foreach (NPC character in targetLocation.characters)
             {
-                if (character.isVillager() && character.Name != "Gunther")
-                    character.IsInvisible = true;
+                //if (character.isVillager() && character.Name != "Gunther")
+                if (character is StardewValley.Monsters.Monster || character is StardewDruid.Character.Character || character.Name == "Gunther")
+                {
+                    continue;
+
+                }
+                
+                character.IsInvisible = true;
+
             }
-            Layer layer1 = targetLocation.map.GetLayer("Back");
+
+            Layer backLayer = targetLocation.map.GetLayer("Back");
+
             Layer layer2 = targetLocation.map.GetLayer("Buildings");
+
             Layer layer3 = targetLocation.map.GetLayer("Front");
+
             Layer layer4 = targetLocation.map.GetLayer("AlwaysFront");
+
             TileSheet tileSheet = targetLocation.map.TileSheets[1];
+
             Vector2 vector2_1 = new(targetVector.X - 8, targetVector.Y - 5);//Vector2.op_Subtraction(targetVector, new Vector2(8f, 5f));
-            for (int index1 = 0; index1 < 13; ++index1)
+
+            for (int index1 = 0; index1 < 14; ++index1)
             {
                 for (int index2 = 0; index2 < 13; ++index2)
                 {
                     Vector2 vector2_2 = new(vector2_1.X + index2, vector2_1.Y + index1);//Vector2.op_Addition(vector2_1, new Vector2(index2, index1));
+
                     if (layer2.Tiles[(int)vector2_2.X, (int)vector2_2.Y] != null)
                         layer2.Tiles[(int)vector2_2.X, (int)vector2_2.Y] = null;
+
                     if (layer3.Tiles[(int)vector2_2.X, (int)vector2_2.Y] != null)
                         layer3.Tiles[(int)vector2_2.X, (int)vector2_2.Y] = null;
+
                     if (layer4.Tiles[(int)vector2_2.X, (int)vector2_2.Y] != null)
                         layer4.Tiles[(int)vector2_2.X, (int)vector2_2.Y] = null;
-                    layer1.Tiles[(int)vector2_2.X, (int)vector2_2.Y] = randomIndex.Next(4) == 0 ? (randomIndex.Next(5) != 0 ? (randomIndex.Next(5) != 0 ? new StaticTile(layer1, tileSheet, 0, 607) : (Tile)new StaticTile(layer1, tileSheet, 0, 606)) : new StaticTile(layer1, tileSheet, 0, 639)) : new StaticTile(layer1, tileSheet, 0, 638);
+
+                    if( randomIndex.Next(4) == 0){
+
+                        backLayer.Tiles[(int)vector2_2.X, (int)vector2_2.Y] = new StaticTile(backLayer, tileSheet, 0, 607);
+                    }
+                    else if(randomIndex.Next(5) != 0)
+                    {
+                        backLayer.Tiles[(int)vector2_2.X, (int)vector2_2.Y] = new StaticTile(backLayer, tileSheet, 0, 606);
+                    }
+                    else if(randomIndex.Next(5) != 0)
+                    {
+                        backLayer.Tiles[(int)vector2_2.X, (int)vector2_2.Y] = new StaticTile(backLayer, tileSheet, 0, 639);
+                    }
+                    else
+                    {
+                        backLayer.Tiles[(int)vector2_2.X, (int)vector2_2.Y] = new StaticTile(backLayer, tileSheet, 0, 638);
+                    }
+
+                    backLayer.Tiles[(int)vector2_2.X, (int)vector2_2.Y].TileIndexProperties.Add("Type", new("stone"));
+
                 }
             }
         }

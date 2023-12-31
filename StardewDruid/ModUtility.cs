@@ -577,7 +577,7 @@ namespace StardewDruid
 
         }
 
-        public static void AnimateMeteor(GameLocation targetLocation, Vector2 targetVector, bool targetDirection)
+        public static void AnimateMeteor(GameLocation targetLocation, Vector2 targetVector, bool targetDirection, float epicness = 1f)
         {
 
             Microsoft.Xna.Framework.Rectangle meteorRectangle = new(0, 0, 32, 32);
@@ -613,9 +613,15 @@ namespace StardewDruid
 
             }
 
+            meteorPosition *= epicness;
+
+            meteorMotion *= epicness;
+
+            float meteorScale = 2f * epicness;
+
             float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString() + "5");
 
-            TemporaryAnimatedSprite warpAnimation = new(0, 750f, 1, 1, meteorPosition, false, false)
+            TemporaryAnimatedSprite meteorAnimation = new(0, 750f, 1, 1, meteorPosition, false, false)
             {
 
                 sourceRect = new(0, 0, 32, 32),
@@ -624,7 +630,7 @@ namespace StardewDruid
 
                 texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Fireball.png")),
 
-                scale = 2f,
+                scale = meteorScale,
 
                 motion = meteorMotion,
 
@@ -636,7 +642,7 @@ namespace StardewDruid
 
             };
 
-            targetLocation.temporarySprites.Add(warpAnimation);
+            targetLocation.temporarySprites.Add(meteorAnimation);
 
             /*TemporaryAnimatedSprite meteorAnimation = new("TileSheets\\Fireball", meteorRectangle, meteorInterval, 12, 1, meteorPosition, flicker: false, meteorRoll, animationSort, 0f, Color.White, 1.75f, 0f, 0f, 0f)
             {
@@ -766,7 +772,7 @@ namespace StardewDruid
 
         }
 
-        public static bool WaterCheck(GameLocation targetLocation, Vector2 targetVector)
+        public static bool WaterCheck(GameLocation targetLocation, Vector2 targetVector, int radius = 4)
         {
             bool check = true;
 
@@ -774,7 +780,7 @@ namespace StardewDruid
 
             Tile backTile;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < radius; i++)
             {
 
                 List<Vector2> neighbours = GetTilesWithinRadius(targetLocation, targetVector, i);
@@ -841,13 +847,6 @@ namespace StardewDruid
 
             }
 
-            if (backTile.TileIndexProperties.TryGetValue("Water", out _))
-            {
-
-                return "water";
-
-            }
-
             if (npc)
             {
                 PropertyValue barrier = null;
@@ -901,6 +900,13 @@ namespace StardewDruid
                 }
 
                 return "ground";
+
+            }
+
+            if (backTile.TileIndexProperties.TryGetValue("Water", out _))
+            {
+
+                return "water";
 
             }
 

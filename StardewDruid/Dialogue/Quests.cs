@@ -13,10 +13,11 @@ namespace StardewDruid.Dialogue
 
         public void Approach()
         {
-            string str1 = QuestData.StageProgress().Last<string>();
+            string stage = QuestData.StageProgress().Last<string>();
+
             if (npc is StardewDruid.Character.Effigy)
             {
-                switch (str1)
+                switch (stage)
                 {
                     case "none":
                     case "weald":
@@ -25,31 +26,45 @@ namespace StardewDruid.Dialogue
 
                         DelayedAction.functionAfterDelay(ProgressQuests, 100);
                         break;
+                    
                     case "hidden":
 
                         DelayedAction.functionAfterDelay(HiddenQuests, 100);
                         break;
+                    
                     case "Jester":
 
                         DelayedAction.functionAfterDelay(JesterQuest, 100);
                         break;
+                    
                     default:
 
                         DelayedAction.functionAfterDelay(CycleQuests, 100);
                         break;
                 }
+            
             }
+
             if (!(npc is StardewDruid.Character.Jester))
-                return;
-            string str2 = str1;
-            if (str2 == "fates" || str2 == "ether")
             {
+            
+                return;
+            
+            }
+
+            if (stage == "fates" || stage == "ether")
+            {
+            
                 DelayedAction.functionAfterDelay(ProgressQuests, 100);
+            
             }
             else
             {
+                
                 DelayedAction.functionAfterDelay(CycleQuests, 100);
+            
             }
+
         }
 
         public void ReturnTomorrow()
@@ -62,23 +77,33 @@ namespace StardewDruid.Dialogue
 
         public void ProgressQuests()
         {
+
             string quest = QuestData.NextProgress();
-            if (Mod.instance.QuestComplete(quest))
+
+            if (quest == "none" || Mod.instance.QuestComplete(quest))
             {
+                
                 ReturnTomorrow();
+            
             }
             else
             {
                 string str = Mod.instance.QuestDiscuss(quest);
+
                 Mod.instance.CastMessage("Druid journal has been updated");
+
                 Game1.drawDialogue(npc, str);
+
             }
+
         }
 
         public void HiddenQuests()
         {
             QuestData.NextProgress();
-            Game1.drawDialogue(npc, "Those with a twisted connection to the otherworld may remain tethered to the Valley long after their mortal vessel wastes away. Strike them with bolt and flame to draw out and disperse their corrupted energies. (Check your quest log for new challenges)");
+            Game1.drawDialogue(npc, "Those with a twisted connection to the otherworld may remain tethered to the Valley long after their mortal vessel wastes away. " +
+                "Strike them with bolt and flame to draw out and disperse their corrupted energies. " +
+                "(Check your quest log for new challenges)");
         }
 
         public void JesterQuest()
@@ -137,9 +162,9 @@ namespace StardewDruid.Dialogue
                     
                     Dictionary<string, string> dictionary = QuestData.SecondQuests();
                     
-                    List<string> stringList1 = new List<string>();
+                    List<string> questList = new List<string>();
                     
-                    List<string> stringList2 = new List<string>();
+                    List<string> validList = new List<string>();
                     
                     dialogueText = "May you be successful against the shadows of the otherworld.";
                     
@@ -170,38 +195,40 @@ namespace StardewDruid.Dialogue
 
                         if (!Mod.instance.QuestGiven(quest))
                         {
-                            
-                            stringList1.Add(quest);
+
+                            questList.Add(quest);
                         
                         }
-                        
-                        stringList2.Add(quest);
+
+                        validList.Add(quest);
                     
                     }
 
-                    if (stringList1.Count == 0)
+                    if (questList.Count == 0)
                     {
-                        
-                        stringList1 = stringList2;
+
+                        questList = validList;
 
                     }
                      
-                    if(stringList1.Count > 0)
+                    if(questList.Count > 0)
                     {
 
-                        string quest1 = stringList1[Game1.random.Next(stringList1.Count)];
+                        Mod.instance.lessons.Add(lessonText);
+
+                        string quest1 = questList[Game1.random.Next(questList.Count)];
 
                         Mod.instance.NewQuest(quest1);
 
-                        Mod.instance.lessons.Add(lessonText);
-                    
+                        //foreach (string quest in questList){ Mod.instance.NewQuest(quest);}
+
                     }
 
                     break;
                 
                 case "dragon":
 
-                    dialogueText = "May the Tyrant be buried under the weight of sand and might.";
+                    dialogueText = "The Tyrant must be put to rest.";
                     
                     Mod.instance.NewQuest("challengeSandDragonTwo");
                     
@@ -248,7 +275,9 @@ namespace StardewDruid.Dialogue
 
         public void AnswerJester(Farmer visitor, string answer)
         {
-            Game1.drawDialogue(npc, "I felt the industry of the forest spirits the night they toiled on the span across the mountain ravine. They restored not only a bridge over land but between two destinies. Should you decide to cross, a fateful encounter awaits you. (Should be worth checking out the bridge to the Quarry)");
+            Game1.drawDialogue(npc, "I felt the industry of the forest spirits the night they toiled on the span across the mountain ravine. " +
+                "They restored not only a bridge over land but between two destinies. " +
+                "Should you decide to cross, a fateful encounter awaits you. (Should be worth checking out the bridge to the Quarry)");
         }
     }
 }

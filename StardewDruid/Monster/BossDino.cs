@@ -130,14 +130,23 @@ namespace StardewDruid.Monster
         public override void draw(SpriteBatch b)
         {
             if (IsInvisible || !Utility.isOnScreen(Position, 128))
+            {
+
                 return;
+
+            }
+
             b.Draw(Sprite.Texture, getLocalPosition(Game1.viewport)+new Vector2(56f, (float)(16 + yJumpOffset)), new Rectangle?(Sprite.SourceRect), Color.White* 0.7f, rotation, new Vector2(16f, 16f), 7f, flip ? (SpriteEffects)1 : 0, 0.99f);
-            hatSourceRect = hatSourceRects[((NetFieldBase<int, NetInt>)facingDirection).Value];
-            hatOffset = hatOffsets[((NetFieldBase<int, NetInt>)facingDirection).Value];
+
+            hatSourceRect = hatSourceRects[FacingDirection];
+
+            hatOffset = hatOffsets[FacingDirection];
+
             float num1 = 0.0f;
+
             if (firingAction)
             {
-                if (hatRotates.ContainsKey(((NetFieldBase<int, NetInt>)facingDirection).Value))
+                if (hatRotates.ContainsKey(FacingDirection))
                 {
                     num1 = hatRotates[FacingDirection];
                     hatOffset = hatOffset + hatRotateOffsets[FacingDirection];
@@ -145,7 +154,8 @@ namespace StardewDruid.Monster
                 else
                     hatOffset = hatOffset- new Vector2(0.0f, 4f);
             }
-            if (((NetFieldBase<int, NetInt>)facingDirection).Value % 2 == 0)
+
+            if (FacingDirection % 2 == 0)
             {
                 switch (Sprite.currentFrame % 4)
                 {
@@ -170,7 +180,7 @@ namespace StardewDruid.Monster
                 }
             }
             float num2 = 0.991f;
-            if (((NetFieldBase<int, NetInt>)facingDirection).Value == 0)
+            if (FacingDirection == 0)
                 num2 = 0.989f;
             Vector2 vector2 = getLocalPosition(Game1.viewport)+ new Vector2(56f, (float)(16 + yJumpOffset)) +  hatOffset;
             b.Draw(hatsTexture, vector2, new Rectangle?(hatSourceRect), Color.White*0.6f, num1, new Vector2(8f, 12f), 8f, flip ? (SpriteEffects)1 : 0, num2);
@@ -200,7 +210,8 @@ namespace StardewDruid.Monster
                 if (nextChangeDirectionTime < 0)
                 {
                     nextChangeDirectionTime = Game1.random.Next(500, 1000);
-                    FacingDirection = FacingDirection + ((Game1.random.Next(0, 3) - 1) + 4) % 4;
+                    //FacingDirection = //FacingDirection + ((Game1.random.Next(0, 3) - 1) + 4) % 4;
+                    facePlayer(Game1.player);
                 }
                 if (nextWanderTime < 0)
                 {
@@ -213,13 +224,18 @@ namespace StardewDruid.Monster
                 if (wanderState)
                 {
                     moveLeft = moveUp = moveRight = moveDown = false;
-                    tryToMoveInDirection(((NetFieldBase<int, NetInt>)facingDirection).Value, false, DamageToFarmer, isGlider);
+                    tryToMoveInDirection(FacingDirection, false, DamageToFarmer, isGlider);
                 }
                 firingAction = false;
             }
+
             elapsedGameTime = time.ElapsedGameTime;
+
+
             int milliseconds1 = elapsedGameTime.Milliseconds;
+
             timeUntilNextAttack = timeUntilNextAttack - milliseconds1;
+
             if (attackState.Value == 0 && (double)Vector2.Distance(Position, Game1.player.Position) <= 560.0)
             {
                 firing.Set(false);

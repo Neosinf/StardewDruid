@@ -3,6 +3,7 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 
+
 namespace StardewDruid.Cast.Stars
 {
     internal class Meteor : CastHandle
@@ -10,9 +11,7 @@ namespace StardewDruid.Cast.Stars
 
         int targetDirection;
 
-        int meteorRange;
-
-        public Meteor(Vector2 target, Rite rite, int range = 2)
+        public Meteor(Vector2 target, Rite rite)
             : base(target, rite)
         {
 
@@ -20,19 +19,19 @@ namespace StardewDruid.Cast.Stars
 
             targetDirection = rite.direction;
 
-            meteorRange = range;
-
         }
 
         public override void CastEffect()
         {
 
-            //ModUtility.AnimateMeteorZone(targetLocation, targetVector, new Color(1f, 0.4f, 0.4f, 1));
-
             ModUtility.AnimateMeteor(targetLocation, targetVector, targetDirection < 2);
 
+            ModUtility.AnimateRadiusDecoration(targetLocation, targetVector, "Stars", 0.75f, 0.75f, 1000);
+
             DelayedAction.functionAfterDelay(MeteorImpact, 600);
+
             if (randomIndex.Next(2) == 0) { Game1.currentLocation.playSound("fireball"); }
+
             castFire = true;
 
         }
@@ -47,7 +46,9 @@ namespace StardewDruid.Cast.Stars
 
             }
 
-            List<Vector2> impactVectors = ModUtility.Explode(targetLocation, targetVector, targetPlayer, meteorRange, (int)(riteData.castDamage * 1.5), powerLevel:2);
+            float castDamage = riteData.castDamage * (0.05f * randomIndex.Next(5));
+
+            List<Vector2> impactVectors = ModUtility.Explode(targetLocation, targetVector, targetPlayer, 2, (int)castDamage, powerLevel:2);
 
             foreach(Vector2 vector in impactVectors)
             {

@@ -18,13 +18,15 @@ namespace StardewDruid.Event.Challenge
         public Quarry(Vector2 target, Rite rite, Quest quest)
             : base(target, rite, quest)
         {
+
             challengeAnimations = new();
+
         }
 
         public override void EventTrigger()
         {
 
-            monsterHandle = new(targetVector, riteData);
+            monsterHandle = new(targetVector, riteData.castLocation, riteData.combatModifier);
 
             monsterHandle.spawnIndex = new() { 51, 52, 53, 54, };
 
@@ -57,13 +59,13 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-
         }
 
         public override void EventRemove()
         {
 
             base.EventRemove();
+
             if (Mod.instance.characters.ContainsKey("Jester"))
             {
                 if (!keepJester)
@@ -76,6 +78,7 @@ namespace StardewDruid.Event.Challenge
 
                 }
             }
+
             if (challengeAnimations.Count > 0)
             {
 
@@ -92,13 +95,14 @@ namespace StardewDruid.Event.Challenge
 
         public override bool EventExpire()
         {
+            
             Mod.instance.CompleteQuest(questData.name);
-
-
 
             if (Mod.instance.characters.ContainsKey("Jester"))
             {
+
                 keepJester = true;
+
                 Mod.instance.characters["Jester"].timers.Clear();
 
                 Mod.instance.dialogue["Jester"].specialDialogue.Add("afterQuarry", new() {
@@ -106,7 +110,9 @@ namespace StardewDruid.Event.Challenge
                 "^I wasn't expecting the rite to produce a portal to the Undervalley. " +
                 "I don't think even Fortumei could have foreseen that.",
                 "Did you learn anything about the fallen one?" });
+
             }
+
             return false;
 
         }
@@ -125,6 +131,7 @@ namespace StardewDruid.Event.Challenge
 
             if (activeCounter < 7)
             {
+                
                 riteData.castLevel++;
 
                 riteData.CastStars();
@@ -270,6 +277,7 @@ namespace StardewDruid.Event.Challenge
 
             if (Mod.instance.characters.ContainsKey("Jester"))
             {
+                
                 Mod.instance.characters["Jester"].showTextAboveHead(speech, interval);
 
             }
