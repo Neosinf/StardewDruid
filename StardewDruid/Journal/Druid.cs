@@ -52,7 +52,8 @@ namespace StardewDruid.Journal
                 ["Stars"] = new Rectangle(24, 0, 8, 8),
                 ["Jester"] = new Rectangle(0, 8, 8, 8),
                 ["Fates"] = new Rectangle(8, 8, 8, 8),
-                ["Ether"] = new Rectangle(16, 8, 8, 8)
+                ["Ether"] = new Rectangle(16, 8, 8, 8),
+                ["Shadow"] = new Rectangle(24, 8, 8, 8)
             };
             Game1.playSound("bigSelect");
             setupPages();

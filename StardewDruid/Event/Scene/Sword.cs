@@ -221,6 +221,11 @@ namespace StardewDruid.Event.Scene
 
             swordIndex = 14;
 
+            if (Mod.instance.Helper.ModRegistry.IsLoaded("DaLion.Overhaul"))
+            {
+                swordIndex = 7;
+            }
+
             int delayThrow = 600;
 
             Vector2 originVector = targetVector + new Vector2(3, 4);

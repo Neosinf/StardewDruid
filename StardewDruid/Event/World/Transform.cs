@@ -238,7 +238,9 @@ namespace StardewDruid.Event.World
                         Mod.instance.UpdateTask("lessonTransform", 1);
                     
                     }
-                        
+
+                    ModUtility.GreetVillager(riteData.caster, character, 15);
+
                     Reaction.ReactTo(character, "Ether");
 
                 }

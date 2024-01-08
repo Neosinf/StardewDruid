@@ -31,43 +31,43 @@ namespace StardewDruid.Dialogue
                 if (stringList.Contains("Jester"))
                 {
 
-                    if((Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[1])
+                    if((Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[1] && QuestData.StageProgress().Last<string>() == "Jester")
                     {
-                        str = "Forgotten Effigy: ^Fate pulls at your thread.";
+                        str = "Forgotten Effigy: ^The Fates watch over you.";
                         responseList.Add(new Response("quests", "What do you mean?"));
                     }
                     else
                     {
-                        responseList.Add(new Response("quests", "What threatens the valley? (quests)"));
+                        responseList.Add(new Response("quests", "(quests) What threatens the valley?"));
                     }
 
                     if (Context.IsMainPlayer)
                     {
-                        responseList.Add(new Response("relocate", "It's time for a change of scene"));
+                        responseList.Add(new Response("relocate", "(move) It's time for a change of scene"));
                     }
                         
                 }
                 else if (stringList.Contains("hidden"))
-                    responseList.Add(new Response("quests", "Is the valley safe? (quests)"));
+                    responseList.Add(new Response("quests", "(quests) Is the valley safe?"));
                 else if (stringList.Contains("stars"))
-                    responseList.Add(new Response("quests", "I want to master the power of the stars (lessons)"));
+                    responseList.Add(new Response("quests", "(lessons) I want to master the power of the stars."));
                 else if (stringList.Contains("mists"))
-                    responseList.Add(new Response("quests", "What can you teach me about the mists? (lessons)"));
+                    responseList.Add(new Response("quests", "(lessons) What can you teach me about the mists?"));
                 else if (stringList.Contains("weald"))
-                    responseList.Add(new Response("quests", "I want to learn more about the weald (lessons)"));
+                    responseList.Add(new Response("quests", "(lessons) I want to learn more about the weald."));
                 if (Mod.instance.CurrentProgress() > 2)
-                    responseList.Add(new Response("rites", "I have some requests (manage rites)"));
+                    responseList.Add(new Response("rites", "(talk) I have some requests."));
 
                 if (npc.priorities.Contains("standby"))
                 {
 
-                    responseList.Add(new Response("continue", "Thank you for keeping watch (continue)"));
+                    responseList.Add(new Response("continue", "(continue) Thank you for keeping watch."));
 
                 }
                 else if (npc.priorities.Contains("track"))
                 {
 
-                    responseList.Add(new Response("standby", "Can you stand guard for a moment? (standby)"));
+                    responseList.Add(new Response("standby", "(standby) Can you stand guard for a moment?"));
 
                 }
 
@@ -125,7 +125,7 @@ namespace StardewDruid.Dialogue
         {
             List<Response> responseList = new List<Response>();
             string str = "Forgotten Effigy: ^I was crafted by the first farmer of the valley, a powerful friend of the otherworld. If you intend to succeed him, you will need to learn many lessons.";
-            responseList.Add(new Response("quests", "Ok. What is the first lesson? (start journey)"));
+            responseList.Add(new Response("quests", "(start journey) Ok. What is the first lesson?"));
             responseList.Add(new Response("none", "(say nothing)"));
             Effigy effigy = this;
             GameLocation.afterQuestionBehavior questionBehavior = new(AnswerApproach);

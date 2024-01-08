@@ -15,6 +15,10 @@ using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
+using xTile.Layers;
+using xTile.Tiles;
+using static StardewValley.Minigames.TargetGame;
 
 namespace StardewDruid
 {
@@ -76,11 +80,15 @@ namespace StardewDruid
 
         public Dictionary<string, StardewDruid.Dialogue.Dialogue> dialogue;
 
+        public List<string> limits;
+
         public List<string> lessons;
 
         public List<string> triggerList;
 
         public List<string> blessingList;
+
+        public List<string> locationList;
 
         public bool receivedData;
 
@@ -144,6 +152,8 @@ namespace StardewDruid
 
             questIndex = Map.QuestData.QuestList();
 
+            limits = new();
+
             lessons = new();
 
             characters = new();
@@ -196,23 +206,7 @@ namespace StardewDruid
             foreach (string lesson in this.lessons)
             {
 
-                switch (lesson)
-                {
-                    case "sync":
-                    case "farmhand":
-                    case "daily":
-                    case "dailytwo":
-
-                        break;
-
-                    default:
-
-                        staticData.activeProgress = QuestData.AchieveProgress(lesson);
-
-                        break;
-
-
-                }
+                staticData.activeProgress = QuestData.AchieveProgress(lesson);
 
             }
 
@@ -296,6 +290,23 @@ namespace StardewDruid
 
             Game1.objectDialoguePortraitPerson = null;
 
+            foreach(string locationName in locationList)
+            {
+
+                GameLocation customLocation = Game1.getLocationFromName(locationName);
+
+                if (customLocation != null)
+                {
+
+                    Game1.locations.Remove(customLocation);
+
+                    Game1.removeLocationFromLocationLookup(customLocation);
+
+                }
+
+            }
+
+            locationList.Clear();
 
             if (Game1.buffsDisplay.otherBuffs.Count > 0)
             {
@@ -414,9 +425,9 @@ namespace StardewDruid
 
                     if (e.Type == "FarmhandTrain")
                     {
-                        if (lessons.Contains("farmhand")) { return; }
+                        if (limits.Contains("farmhand")) { return; }
 
-                        lessons.Add("farmhand");
+                        limits.Add("farmhand");
 
                     }
 
@@ -467,6 +478,8 @@ namespace StardewDruid
             locationPoll = new();
 
             riteWitnesses = new();
+
+            locationList = new();
 
             // ---------------------- trigger assignment
 
@@ -529,7 +542,7 @@ namespace StardewDruid
 
             }
 
-            if (!lessons.Contains("sync"))
+            if (!limits.Contains("sync"))
             {
                 Dictionary<int, string> questIds = new();
 
@@ -603,7 +616,7 @@ namespace StardewDruid
 
                 }
 
-                lessons.Add("sync");
+                limits.Add("sync");
 
             }
 
@@ -676,26 +689,8 @@ namespace StardewDruid
 
             markerRegister.Clear();
 
-            /*if(triggerList.Count > 0)
-            {
-
-                Map.Quest questData = questIndex[triggerList.First()];
-
-                QuestData.MarkerInstance(Game1.player.currentLocation, questData);
-
-            }*/
-
-            //List<string> locationsDone = new();
-
             foreach (string castString in triggerList)
             {
-
-                //if (locationsDone.Contains(Game1.player.currentLocation.Name))
-                //{
-
-                 //   continue;
-
-                //}
 
                 Map.Quest questData = questIndex[castString];
 
@@ -938,6 +933,11 @@ namespace StardewDruid
             if (ritePressed)
             {
 
+                //Layer backLayer = Game1.player.currentLocation.Map.GetLayer("Back");
+                //Vector2 tilevector = Game1.player.getTileLocation();
+                //.ToString()
+                //Tile backTile = backLayer.Tiles[(int)tilevector.X, (int)tilevector.Y];
+                //Monitor.Log(backTile.TileIndex.ToString(), LogLevel.Debug);
                 ResetCast();
 
             }
@@ -1159,7 +1159,7 @@ namespace StardewDruid
             }
 
             // check player has enough energy for eventual costs
-            if (Game1.player.Stamina <= 32 || Game1.player.health <= 50)
+            if (Game1.player.Stamina <= 32 || Game1.player.health <= 25)
             {
 
                 AutoConsume();
@@ -1199,9 +1199,19 @@ namespace StardewDruid
         private bool CheckTrigger(Rite rite)
         {
 
+
+            if (Game1.eventUp || Game1.currentMinigame != null || Game1.isWarping || Game1.killScreen)
+            {
+
+                return false;
+
+            }
+
             if (eventRegister.ContainsKey("active") || eventSync.Contains("active"))
             {
+
                 return false;
+            
             }
 
             if (!LocationPoll("trigger"))
@@ -1233,7 +1243,7 @@ namespace StardewDruid
                 }
 
             }
-
+ 
             return false;
 
         }
@@ -1522,6 +1532,13 @@ namespace StardewDruid
 
         }
 
+        public int PowerLevel()
+        {
+
+            return Math.Max(1,Math.Min(5,(int)staticData.activeProgress / 5));
+
+        }
+
         public string CombatDifficulty()
         {
 
@@ -1572,15 +1589,11 @@ namespace StardewDruid
             foreach (KeyValuePair<string, Event.EventHandle> eventEntry in eventRegister)
             {
 
-                eventRegister[eventEntry.Key].EventAbort();
-
-                eventRegister[eventEntry.Key].EventRemove();
-
-                Helper.Multiplayer.SendMessage<StaticData>(new StaticData() { activeBlessing = eventEntry.Key }, "EventRemove", new string[1] { ModManifest.UniqueID }, null);
+                eventRegister[eventEntry.Key].eventAbort = true;
 
             }
 
-            eventRegister.Clear();
+            //eventRegister.Clear();
 
         }
 

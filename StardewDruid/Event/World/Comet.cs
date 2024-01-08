@@ -160,7 +160,7 @@ namespace StardewDruid.Event.World
 
                 Mod.instance.CastMessage("Meteor Impact");
 
-                List<Vector2> impactVectors = ModUtility.Explode(targetLocation, new(targetVector.X/64,targetVector.Y/64), targetPlayer, 8, riteData.castDamage*2, 3, 5);
+                List<Vector2> impactVectors = ModUtility.Explode(targetLocation, new(targetVector.X/64,targetVector.Y/64), targetPlayer, 8, riteData.castDamage * 3, 3, 5);
 
                 foreach (Vector2 vector in impactVectors)
                 {

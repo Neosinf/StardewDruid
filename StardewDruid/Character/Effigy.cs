@@ -359,7 +359,7 @@ namespace StardewDruid.Character
 
                 }
 
-                if (vector2List.Count >= 24)
+                if (vector2List.Count >= 30)
                 {
 
                     break;
@@ -540,7 +540,7 @@ namespace StardewDruid.Character
 
                     if (Vector2.Distance(character.Position, beamPoint) < 240f)
                     {
-                        base.DealDamageToMonster(character, true, Mod.instance.DamageLevel(), false);
+                        base.DealDamageToMonster(character, true, -1, false);
 
                     }
 
@@ -608,7 +608,7 @@ namespace StardewDruid.Character
             timers["cast"] = 30;
             Rite rite = Mod.instance.NewRite(false);
             bool Reseed = !Mod.instance.EffectDisabled("Seeds");
-            for (int level = 1; level < 5; ++level)
+            for (int level = 1; level < (Mod.instance.PowerLevel()+1); level++)
             {
                 foreach (Vector2 tilesWithinRadius in ModUtility.GetTilesWithinRadius(currentLocation, vector2, level))
                 {

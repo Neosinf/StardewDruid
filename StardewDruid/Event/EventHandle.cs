@@ -36,9 +36,11 @@ namespace StardewDruid.Event
 
         public MonsterHandle monsterHandle;
 
-        public List<Torch> torchList;
+        //public List<Torch> torchList;
 
-        public List<Actor> actors;
+        public List<StardewDruid.Event.Brazier> braziers;
+
+        public List<StardewDruid.Character.Actor> actors;
 
         public Vector2 voicePosition;
 
@@ -67,7 +69,7 @@ namespace StardewDruid.Event
 
             voicePosition = target * 64;
 
-            torchList = new();
+            braziers = new();
 
             actors = new();
 
@@ -94,17 +96,16 @@ namespace StardewDruid.Event
 
             if (eventAbort)
             {
-                //Mod.instance.CastMessage("abort");
+
                 EventAbort();
 
                 return false;
 
             }
 
-
             if (targetPlayer.currentLocation.Name != targetLocation.Name)
             {
-                //Mod.instance.CastMessage("location");
+
                 EventAbort();
 
                 return false;
@@ -113,7 +114,7 @@ namespace StardewDruid.Event
 
             if (expireEarly)
             {
-                //Mod.instance.CastMessage("early");
+
                 return EventExpire();
 
             }
@@ -122,18 +123,8 @@ namespace StardewDruid.Event
 
             if (expireTime < nowTime)
             {
-                //Mod.instance.CastMessage("expire");
 
                 return EventExpire();
-
-            }
-
-            int diffTime = (int)Math.Round(expireTime - nowTime);
-
-            if (activeCounter != 0 && diffTime % 10 == 0 && diffTime != 0)
-            {
-
-                MinutesLeft(diffTime);
 
             }
 
@@ -202,41 +193,27 @@ namespace StardewDruid.Event
 
         }
 
-        public virtual void EventRemove()
+        public virtual void RemoveBraziers()
         {
 
-            RemoveMonsters();
-
-            if (torchList.Count > 0)
+            if (braziers.Count > 0)
             {
 
-                foreach (Torch torch in torchList)
+                foreach (Brazier brazier in braziers)
                 {
 
-                    targetLocation.objects.Remove(torch.TileLocation);
-
-                    LightSource portalLight = torch.lightSource;
-
-                    if (targetLocation.hasLightSource(portalLight.Identifier))
-                    {
-
-                        targetLocation.removeLightSource(portalLight.Identifier);
-
-                    }
-
-                    if (Game1.currentLightSources.Contains(portalLight))
-                    {
-
-                        Game1.currentLightSources.Remove(portalLight);
-                    }
+                    brazier.shutdown();
 
                 }
 
-                torchList.Clear();
-
-                Game1.playSound("fireball");
+                braziers.Clear();
 
             }
+
+        }
+
+        public virtual void RemoveActors()
+        {
 
             if (actors.Count > 0)
             {
@@ -252,6 +229,19 @@ namespace StardewDruid.Event
 
 
             }
+
+
+        }
+
+
+        public virtual void EventRemove()
+        {
+
+            RemoveMonsters();
+
+            RemoveBraziers();
+
+            RemoveActors();
 
             if (soundTrack)
             {

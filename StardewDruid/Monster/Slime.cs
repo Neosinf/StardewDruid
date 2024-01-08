@@ -4,6 +4,7 @@ using StardewValley;
 using StardewValley.Monsters;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace StardewDruid.Monster
 {
@@ -43,6 +44,8 @@ namespace StardewDruid.Monster
             DamageToFarmer = 0;
 
             spawnDamage = (int)Math.Max(2, combatModifier * 0.075);
+
+            //DamageToFarmer = (int)Math.Max(2, combatModifier * 0.075);
 
             spawnBuff = true;
 
@@ -201,8 +204,10 @@ namespace StardewDruid.Monster
                 {
                     spawnBuff = false;
 
-                    DamageToFarmer = spawnDamage;
+                    base.DamageToFarmer = spawnDamage;
+
                 }
+
             }
 
             base.update(time, location);

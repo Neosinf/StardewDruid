@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static StardewValley.Minigames.TargetGame;
 
 #nullable disable
 namespace StardewDruid.Monster
@@ -27,51 +28,93 @@ namespace StardewDruid.Monster
         public Dictionary<int, List<Rectangle>> walkFrames;
         public int moveDirection;
         public int altDirection;
-        public bool haltActive;
-        public NetBool netHaltActive = new NetBool(false);
-        public int haltTimer;
-        public double angleDirection;
-        public Vector2 trackPosition;
+        //public bool haltActive;
+        //public NetBool netHaltActive = new NetBool(false);
+        //public int haltTimer;
+
+        public bool aoeAbility;
+
+        public enum behaviour
+        {
+            idle,
+            halt,
+            flight,
+            special,
+            follow,
+            aoe,
+        }
+
+        public behaviour behaviourActive;
+
+        public int behaviourTimer;
+
+        public enum temperment
+        {
+
+            aggressive,
+            cautious,
+            coward,
+
+        }
+
+        public temperment tempermentActive;
+
         public bool cooldownActive;
         public int cooldownTimer;
         public int cooldownInterval;
-        public Texture2D shadowTexture;
-        public List<Rectangle> shadowFrames;
+        public int ouchTimer;
+
+        // ============================= Flight
+
         public NetInt netFlightFrame = new NetInt(0);
         public NetInt netFlightHeight = new NetInt(0);
         public NetBool netDashActive = new NetBool(false);
         public Texture2D flightTexture;
         public Dictionary<int, List<Rectangle>> flightFrames;
-        public bool flightActive;
-        public int flightTimer;
+        //public bool flightActive;
+        //public int flightTimer;
         public Vector2 flightPosition;
         public Vector2 flightTo;
         public Vector2 flightInterval;
-        public bool flightFlip;
-        public int flightIncrement;
-        public int flightExtend;
-        public int flightHeight;
-        public int flightCeiling;
-        public int flightFloor;
-        public int flightLast;
-        public NetInt netFireFrame = new NetInt(0);
-        public NetBool netFireActive = new NetBool(false);
+        public bool flightFlip; // flips flight animation
+        public int flightIncrement; // flight timer intervals to adjust speed
+        public int flightHeight; // how high to raise the sprite on Y axis
+        public int flightCeiling; // lowest frame for flight cycle
+        public int flightFloor; // highest frame for flight cycle
+        public int flightLast; // last frame for flight cycle (strike, land)
+
+        // ============================= Special attack
+
+        public NetInt netSpecialFrame = new NetInt(0);
+        public NetBool netSpecialActive = new NetBool(false);
         public Texture2D specialTexture;
-        public bool specialActive;
-        public int specialTimer;
+        public Dictionary<int, List<Rectangle>> specialFrames;
+        //public bool specialActive;
+        //public int specialTimer;
+        public int specialThreshold;
+        public int specialInterval;
+        public int specialCountdown;
+        public int specialCeiling;
+        public int specialFloor;
+
+
+        // ============================= Follow behaviour
+
+        //public Vector2 followTarget;
+        //public bool followActive;
+        //public int followTimer;
+        public Vector2 followInterval;
+        public int followIncrement;
+        public int reachThreshold;
+        public int safeThreshold;
+
+        // ============================= Dragon Specific
+
         public Texture2D fireTexture;
         public Dictionary<int, List<Rectangle>> fireFrames;
         public List<Vector2> fireVectors;
-        public int fireTimer;
-        public int fireCeiling;
-        public int fireFloor;
-        public int fireInterval;
-        public Vector2 followTarget;
-        public bool followActive;
-        public int followTimer;
-        public Vector2 followInterval;
-        public int specialThreshold;
-        public int reachThreshold;
+        public Texture2D shadowTexture;
+        public List<Rectangle> shadowFrames;
 
         public Boss()
         {
@@ -85,14 +128,22 @@ namespace StardewDruid.Monster
             objectsToDrop.Clear();
             breather.Value = false;
             hideShadow.Value = true;
-            Sprite = CharacterData.CharacterSprite(Name);
+            Sprite = MonsterData.MonsterSprite(Name);
+            behaviourActive = behaviour.idle;
+            tempermentActive = temperment.cautious;
+            followIncrement = 2;
+            reachThreshold = 64;
+            safeThreshold = 520;
+            specialThreshold = 320;
             BaseMode();
             LoadOut();
         }
 
+        //=================== reconfigurable fields
+
         public virtual void BaseMode()
         {
-            Health = combatModifier * 12;
+            Health = combatModifier * 16;
             MaxHealth = Health;
             DamageToFarmer = (int)(combatModifier * 0.1);
             ouchList = new List<string>()
@@ -111,36 +162,84 @@ namespace StardewDruid.Monster
                 "Where are my servants?"
               };
             flightIncrement = 12;
-            fireInterval = 12;
+            specialInterval = 12;
             flightHeight = 8;
-            specialThreshold = 480;
-            reachThreshold = 64;
-            haltActive = true;
-            haltTimer = 20;
+            
+            //haltActive = true;
+            behaviourActive = behaviour.halt;
+            behaviourTimer = 20;
+            //haltTimer = 20;
             cooldownInterval = 60;
             cooldownTimer = cooldownInterval;
         }
 
+        public virtual void HardMode()
+        {
+            Health *= 3;
+            Health /= 2;
+            MaxHealth = Health;
+            DamageToFarmer *= 3;
+            DamageToFarmer /= 2;
+            specialInterval = 9;
+            ouchList = new List<string>()
+              {
+                "Ah ha ha ha ha",
+                "Such pitiful strikes",
+                "insolence!",
+                "The land has died... and so WILL YOU",
+                "CREEP"
+              };
+            dialogueList = new List<string>()
+              {
+                "Where are my servants",
+                "The shamans have failed me",
+                "The only recourse for humanity, is subjugation",
+                "Beg for my mercy",
+                "Kneel Before Tyrannus Steve!",
+                "I WILL BURNINATE... EVERYTHING"
+              };
+            cooldownInterval = 48;
+            tempermentActive = temperment.aggressive;
+        }
+
+        public virtual void ChaseMode()
+        {
+
+            Health = Health / 2;
+
+            MaxHealth = Health;
+
+            followIncrement = 2;
+
+            cooldownInterval = 120;
+
+            cooldownTimer = 120;
+
+            cooldownActive = true;
+
+            tempermentActive = temperment.coward;
+
+        }
+
         public virtual void LoadOut()
         {
-            walkFrames = new Dictionary<int, List<Rectangle>>();
-            foreach (KeyValuePair<int, int> keyValuePair in new Dictionary<int, int>()
+
+            if (!Context.IsMainPlayer)
             {
-                [0] = 2,
-                [1] = 1,
-                [2] = 0,
-                [3] = 3
-            })
-            {
-                walkFrames[keyValuePair.Key] = new List<Rectangle>();
-                for (int index = 0; index < 4; ++index)
+
+                if (Sprite.loadedTexture == null || Sprite.loadedTexture.Length == 0)
                 {
-                    Rectangle rectangle = new(0, 0, 64, 64);
-                    rectangle.X += 64 * index;
-                    rectangle.Y += 64 * keyValuePair.Value;
-                    walkFrames[keyValuePair.Key].Add(rectangle);
+
+                    Sprite.spriteTexture = MonsterData.MonsterTexture(Name);
+
+                    Sprite.loadedTexture = Sprite.textureName.Value;
+
                 }
+
             }
+
+            walkFrames = WalkFrames();
+
             shadowTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "DragonShadow.png"));
             shadowFrames = new List<Rectangle>()
               {
@@ -196,6 +295,7 @@ namespace StardewDruid.Monster
             flightCeiling = 4;
             flightFloor = 1;
             flightLast = 5;
+
             specialTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", Name + "Breath.png"));
             fireTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "DragonFire.png"));
             fireFrames = new Dictionary<int, List<Rectangle>>()
@@ -229,8 +329,8 @@ namespace StardewDruid.Monster
                 new Rectangle(192, 32, 64, 32)
                 }
             };
-            fireCeiling = 3;
-            fireFloor = 2;
+            specialCeiling = 3;
+            specialFloor = 2;
 
             characterTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", Name + ".png"));
 
@@ -238,32 +338,32 @@ namespace StardewDruid.Monster
 
         }
 
-        public virtual void HardMode()
+        public virtual Dictionary<int, List<Rectangle>> WalkFrames()
         {
-            Health *= 3;
-            Health /= 2;
-            MaxHealth = Health;
-            DamageToFarmer *= 3;
-            DamageToFarmer /= 2;
-            fireInterval = 9;
-            ouchList = new List<string>()
-              {
-                "Ah ha ha ha ha",
-                "Such pitiful strikes",
-                "insolence!",
-                "The land has died... and so WILL YOU",
-                "CREEP"
-              };
-                    dialogueList = new List<string>()
-              {
-                "Where are my servants",
-                "The shamans have failed me",
-                "The only recourse for humanity, is subjugation",
-                "Beg for my mercy",
-                "Kneel Before Tyrannus Steve!",
-                "I WILL BURNINATE... EVERYTHING"
-              };
-            cooldownInterval = 48;
+
+            Dictionary<int, List<Rectangle>> walkFrames = new();
+
+            foreach (KeyValuePair<int, int> keyValuePair in new Dictionary<int, int>()
+            {
+                [0] = 2,
+                [1] = 1,
+                [2] = 0,
+                [3] = 3
+            })
+            {
+                walkFrames[keyValuePair.Key] = new List<Rectangle>();
+                for (int index = 0; index < 4; ++index)
+                {
+                    Rectangle rectangle = new(0, 0, Sprite.SpriteWidth, Sprite.SpriteHeight);
+                    rectangle.X += Sprite.SpriteWidth * index;
+                    rectangle.Y += Sprite.SpriteHeight * keyValuePair.Value;
+                    walkFrames[keyValuePair.Key].Add(rectangle);
+                }
+            
+            }
+
+            return walkFrames;
+
         }
 
         public override Rectangle GetBoundingBox()
@@ -295,6 +395,7 @@ namespace StardewDruid.Monster
                 emotePosition.Y -= 32 + Sprite.SpriteHeight * 4;
                 b.Draw(Game1.emoteSpriteSheet, localPosition, new Rectangle?(new Rectangle(CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16)), Color.White, 0.0f, Vector2.Zero, 4f, 0, drawLayer);
             }
+
             if (netDashActive)
             {
                 
@@ -305,7 +406,7 @@ namespace StardewDruid.Monster
             }
             else
             {
-                if (netFireActive)
+                if (netSpecialActive)
                 {
                     
                     b.Draw(specialTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 192f), new Rectangle?(walkFrames[netDirection][netWalkFrame]), Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip ? (SpriteEffects)1 : 0, drawLayer);
@@ -315,8 +416,6 @@ namespace StardewDruid.Monster
                 }
                 else
                 {
-
-                    //b.Draw(Sprite.Texture, new Vector2(localPosition.X - 96f, localPosition.Y - 192f), new Rectangle?(walkFrames[netDirection][netWalkFrame]), Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip ? (SpriteEffects)1 : 0, drawLayer);
 
                     b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 192f), new Rectangle?(walkFrames[netDirection][netWalkFrame]), Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip ? (SpriteEffects)1 : 0, drawLayer);
 
@@ -379,12 +478,7 @@ namespace StardewDruid.Monster
             ModUtility.DamageFarmers(currentLocation, zone, (int)(DamageToFarmer * 0.4), this);
         }
 
-        public virtual void DrawFire(
-          SpriteBatch b,
-          Vector2 position,
-          int direction,
-          float depth,
-          int adjust = 0)
+        public virtual void DrawFire(SpriteBatch b,Vector2 position,int direction,float depth,int adjust = 0)
         {
             fireVectors = new List<Vector2>()
             {
@@ -423,7 +517,7 @@ namespace StardewDruid.Monster
             int index = num2 + adjust;
             b.Draw(fireTexture,
                 new(position.X + fireVectors[index].X, position.Y + fireVectors[index].Y),
-                fireFrames[direction][netFireFrame],
+                fireFrames[direction][netSpecialFrame],
                 Color.White * 0.65f,
                 0,
                 new Vector2(0.0f, 0.0f),
@@ -443,10 +537,12 @@ namespace StardewDruid.Monster
                  netFlightFrame,
                  netFlightHeight,
                  netDashActive,
-                 netFireFrame,
-                 netFireActive
+                 netSpecialFrame,
+                 netSpecialActive
             });
         }
+
+        //=================== overriden base fields
 
         public override void reloadSprite()
         {
@@ -479,27 +575,42 @@ namespace StardewDruid.Monster
 
         public override List<Item> getExtraDropItems() => new List<Item>();
 
-        public override int takeDamage(
-          int damage,
-          int xTrajectory,
-          int yTrajectory,
-          bool isBomb,
-          double addedPrecision,
-          Farmer who)
+        public override int takeDamage(int damage,int xTrajectory,int yTrajectory,bool isBomb,double addedPrecision,Farmer who)
         {
+            
             int damage1 = Math.Max(1, damage - resilience.Value);
+            
             Health -= damage1;
+            
             if (Game1.random.Next(5) == 0)
+            {
+                
                 setTrajectory(xTrajectory, yTrajectory);
+
+            }
+
             if (Health <= 0)
             {
+                
                 deathAnimation();
+                
                 defeated = true;
+            
             }
-            int index = Game1.random.Next(15);
-            if (index < ouchList.Count)
-                this.showTextAboveHead(ouchList[index], -1, 2, 3000, 0);
+
+            if(ouchTimer < (int)Game1.currentGameTime.TotalGameTime.TotalSeconds && ouchList.Count > 0)
+            {
+
+                int index = Game1.random.Next(ouchList.Count);
+
+                showTextAboveHead(ouchList[index], -1, 2, 3000, 0);
+
+                ouchTimer = (int)Game1.currentGameTime.TotalGameTime.TotalSeconds + 6;
+
+            }
+
             return damage1;
+
         }
 
         public override void behaviorAtGameTick(GameTime time)
@@ -518,26 +629,33 @@ namespace StardewDruid.Monster
         {
         }
 
+        //=================== behaviour methods
+
         public override void Halt()
         {
-            if (haltTimer <= 0)
+            //if (haltTimer <= 0)
+            if(behaviourTimer <= 0)
             {
-                haltActive = true;
-                haltTimer = 60;
-                if (Context.IsMainPlayer)
-                {
-                    netHaltActive.Set(true);
-                }
+                //haltActive = true;
+                behaviourActive = behaviour.halt;
+                behaviourTimer = 60;
+                
+                //haltTimer = 60;
+                //if (Context.IsMainPlayer)
+                //{
+                //    netHaltActive.Set(true);
+                //}
                     
             }
-            flightActive = false;
-            specialActive = false;
-            followActive = false;
+
+            //flightActive = false;
+            //specialActive = false;
+            //followActive = false;
             if (Context.IsMainPlayer)
             {
                 netWalkFrame.Set(0);
                 netDashActive.Set(false);
-                netFireActive.Set(false);
+                netSpecialActive.Set(false);
             }
 
         }
@@ -545,18 +663,10 @@ namespace StardewDruid.Monster
         public override void update(GameTime time, GameLocation location)
         {
 
-            if (!Context.IsMainPlayer)
+            if (!loadedOut)
             {
+                LoadOut();
 
-                if (Sprite.loadedTexture == null || Sprite.loadedTexture.Length == 0)
-                {
-
-                    Sprite.spriteTexture = MonsterData.MonsterTexture(Name);
-
-                    Sprite.loadedTexture = Sprite.textureName.Value;
-
-                }
-            
             }
 
             if (Mod.instance.CasterBusy())
@@ -564,42 +674,82 @@ namespace StardewDruid.Monster
                 return;
             }
 
-            if (!loadedOut)
-            {
-                LoadOut();
-
-            }
-
             if (!Context.IsMainPlayer)
             {
 
                 base.update(time, location);
                 
                 FixDirection();
+
+                return;
             
             }
-            else
-            {
-                
+            //else
+            //{
+
                 base.update(time, location);
 
                 ChooseBehaviour(time);
 
                 FixDirection();
 
-                if (haltActive) { UpdateHalt(time); }
-                    
-                if (flightActive) { UpdateFlight(time); }
-                    
-                if (followActive) { UpdateFollow(time); }
-                    
-                if (specialActive) { UpdateSpecial(); }
-                    
-                if (!cooldownActive) { return; }
+                switch (behaviourActive)
+                {
 
-                UpdateCooldown();
+                    case behaviour.halt:
 
-            }
+                        UpdateHalt(time);
+
+                        break;
+
+                    case behaviour.flight:
+
+                        UpdateFlight(time);
+
+                        break;
+
+                    case behaviour.follow:
+
+                        UpdateFollow(time);
+
+                        break;
+
+                    case behaviour.special:
+
+                        UpdateSpecial();
+
+                        break;
+
+                    case behaviour.aoe:
+
+                        UpdateAoe(time);
+
+                        break;
+
+                }
+
+                //if (haltActive) { UpdateHalt(time); }
+
+                //if (flightActive) { UpdateFlight(time); }
+
+                //if (followActive) { UpdateFollow(time); }
+
+                //if (specialActive) { UpdateSpecial(); }
+
+                behaviourTimer--;
+
+                if (cooldownActive)
+                {
+
+                    UpdateCooldown();
+
+                }
+
+                //if (!cooldownActive) { return; }
+
+                //UpdateCooldown();
+
+            //}
 
         }
 
@@ -607,182 +757,411 @@ namespace StardewDruid.Monster
         {
             if (xVelocity != 0.0 || yVelocity != 0.0)
             {
+                
                 xVelocity = 0.0f;
+                
                 yVelocity = 0.0f;
+                
                 Halt();
+            
             }
-            if (haltActive || flightActive || specialActive || followActive)
-                return;
-            Random random = new Random();
-            List<Farmer> source = TargetFarmers();
-            if (source.Count > 0)
+            
+            if (behaviourActive != behaviour.idle)
             {
-                Farmer farmer = source.First<Farmer>();
-                float num = Vector2.Distance(Position, farmer.Position);
-                TargetPlayer(farmer);
-                if (!cooldownActive)
-                {
-                    switch (random.Next(2))
-                    {
-                        case 0:
-                            if ((double)num < specialThreshold)
-                            {
-                                Halt();
-                                PerformSpecial();
-                                return;
-                            }
-                            PerformSpecial();
-                            break;
-                        case 1:
-                            PerformFlight();
-                            if (flightActive)
-                                return;
-                            break;
-                    }
-                }
-                PerformFollow(farmer.Position);
+                
+                return;
+
             }
-            else
+
+            Random random = new Random();
+
+            List<Farmer> source = TargetFarmers();
+
+            if (source.Count == 0)
+            {
+
                 PerformRandom();
+
+                return;
+            }
+
+            Farmer farmer = source.First();
+                
+            float threshold = Vector2.Distance(Position, farmer.Position);
+                
+            TargetPlayer(farmer);
+
+            int ability;
+
+            switch (tempermentActive)
+            {
+
+                case temperment.aggressive:
+
+                case temperment.cautious:
+
+                    if (!cooldownActive)
+                    {
+
+                        ability = aoeAbility ? 3 : 2;
+
+                        switch (random.Next(ability))
+                        {
+
+                            case 2:
+
+                                Halt();
+
+                                PerformAoe();
+
+                                return;
+
+                            case 1:
+
+                                PerformFlight();
+
+                                if (behaviourActive == behaviour.flight)
+                                {
+                                    return;
+                                }
+
+                                break;
+
+                            default:
+
+                                Halt();
+
+                                if(threshold < specialThreshold)
+                                {
+
+                                    PerformSpecial();
+                                
+                                }
+                                else
+                                {
+
+                                    PerformFollow(farmer.Position);
+
+                                }
+                                
+                                return;
+
+                        }
+
+                    }
+
+                    if(tempermentActive == temperment.aggressive)
+                    {
+                        PerformFollow(farmer.Position);
+                    }
+                    else
+                    {
+
+                        if(threshold > specialThreshold)
+                        {
+
+                            PerformFollow(farmer.Position);
+                        
+                        }
+                        else if(threshold <= reachThreshold)
+                        {
+
+                            PerformRetreat(farmer.Position);
+
+                        }
+                        else
+                        {
+
+                            PerformCircle(farmer.Position);
+
+                        }
+                        
+                    }
+
+                    break;
+
+                case temperment.coward:
+
+                    if (!cooldownActive && Vector2.Distance(farmer.Position, Position) < safeThreshold)
+                    {
+
+                        ability = aoeAbility ? 2 : 1;
+
+                        switch (random.Next(ability))
+                        {
+
+                            case 1:
+
+                                PerformAoe();
+
+                                break;
+
+                            default:
+
+                                PerformSpecial();
+
+                                break;
+
+                        }
+
+                        return;
+
+                    }
+
+                    PerformRetreat(farmer.Position);
+
+                    break;
+
+
+            }
+ 
         }
 
         public List<Farmer> TargetFarmers()
         {
+            
             List<Farmer> farmerList = new List<Farmer>();
-            float num1 = 1200f;
+            
+            float threshold = 1200f;
+            
             foreach (Farmer allFarmer in Game1.getAllFarmers())
             {
+                
                 if (allFarmer.currentLocation.Name == currentLocation.Name)
                 {
-                    float num2 = Vector2.Distance(Position, allFarmer.Position);
-                    if ((double)num2 <= (double)num1)
+                    
+                    float distance = Vector2.Distance(Position, allFarmer.Position);
+                    
+                    if (distance <= threshold)
                     {
                         farmerList.Clear();
                         farmerList.Add(allFarmer);
-                        num1 = num2;
+                        threshold = distance;
+                    
                     }
+                
                 }
+            
             }
+            
             return farmerList;
         }
 
         public void TargetPlayer(Farmer farmer)
         {
+            
             Vector2 vector2 = new(farmer.Position.X - Position.X, farmer.Position.Y - Position.Y);
+            
             float num1 = Math.Abs(vector2.X);
+            
             float num2 = Math.Abs(vector2.Y);
-            int num3 = vector2.X < 1.0 / 1000.0 ? -1 : 1;
-            int num4 = vector2.Y < 1.0 / 1000.0 ? -1 : 1;
+            
+            int num3 = vector2.X < 0.001f ? -1 : 1;
+            
+            int num4 = vector2.Y < 0.001f ? -1 : 1;
+            
             altDirection = 0;
-            if ((double)num1 > (double)num2)
+            
+            if (num1 > num2)
             {
+                
                 moveDirection = num3 < 0 ? 3 : 1;
+            
             }
             else
             {
+                
                 moveDirection = num4 < 0 ? 0 : 2;
+
                 altDirection = num3 < 0 ? 3 : 1;
+            
             }
+        
         }
 
         public void FixDirection()
         {
+            
             flip = false;
+
             if (!Context.IsMainPlayer)
             {
                 moveDirection = netDirection;
+
                 altDirection = netAlternative;
-                trackPosition = Position;
+
             }
             else
             {
+                
                 netDirection.Set(moveDirection);
+
                 netAlternative.Set(altDirection);
+
             }
+
             FacingDirection = moveDirection;
+
             switch (moveDirection)
             {
+                
                 case 0:
-                    if (altDirection != 3)
-                        break;
-                    flip = true;
+                    if (altDirection == 3)
+                    {
+                        flip = true;
+                    }
                     break;
                 case 2:
-                    if (altDirection != 3)
-                        break;
-                    flip = true;
+                    if (altDirection == 3)
+                    {
+                        flip = true;
+                    }
                     break;
+            
             }
+        
         }
 
         public void UpdateHalt(GameTime time)
         {
-            if (haltTimer % 20 == 0)
+
+            if(behaviourTimer % 20 == 0)
+            //if (haltTimer % 20 == 0)
             {
                 List<Farmer> source = TargetFarmers();
                 if (source.Count > 0)
                 {
                     TargetPlayer(source.First<Farmer>());
+
                     FixDirection();
+                
                 }
+            
             }
-            if (haltTimer <= 0)
+
+            if (behaviourTimer <= 0)
+            //if (haltTimer <= 0)
             {
-                haltActive = false;
-                netHaltActive.Set(false);
+                //haltActive = false;
+                behaviourActive = behaviour.idle;
+                
+                //netHaltActive.Set(false);
+            
             }
-            --haltTimer;
+            //--haltTimer;
         }
 
-        public void PerformFlight()
+        public void PerformFlight(int adjust = 0)
         {
-            int num = FlightDestination();
-            if (num == 0)
+            
+            int destination = FlightDestination(adjust);
+            
+            if (destination == 0)
+            {
                 return;
-            flightActive = true;
+            }
+            
+            //flightActive = true;
+            behaviourActive = behaviour.flight;
+
             netFlightFrame.Set(0);
-            flightTimer = flightIncrement * num;
-            flightInterval = new((flightTo.X - Position.X) / flightTimer, (flightTo.Y - Position.Y) / flightTimer);//Vector2.op_Division(Vector2.op_Subtraction(flightTo, Position), (float)flightTimer);
-            flightExtend = 0;
+            
+            //flightTimer = flightIncrement * num;
+            behaviourTimer = flightIncrement * destination;
+            
+            //flightInterval = new((flightTo.X - Position.X) / flightTimer, (flightTo.Y - Position.Y) / flightTimer);//Vector2.op_Division(Vector2.op_Subtraction(flightTo, Position), (float)flightTimer);
+            flightInterval = new((flightTo.X - Position.X) / behaviourTimer, (flightTo.Y - Position.Y) / behaviourTimer);
+
+            SoundFlight();
+
+        }
+
+        public virtual void SoundFlight()
+        {
+
+            currentLocation.playSound("batFlap");
+
         }
 
         public void UpdateFlight(GameTime time)
         {
+            
             netDashActive.Set(true);
-            --flightTimer;
-            if (flightTimer == 0)
+            
+            //flightTimer--;
+            
+            //if (flightTimer == 0)
+            if (behaviourTimer <= 0)
             {
-                flightActive = false;
+
+                //flightActive = false;
+                behaviourActive = behaviour.idle;
+
                 netDashActive.Set(false);
+
                 cooldownActive = true;
+                
                 cooldownTimer = cooldownInterval * 2;
+            
             }
             else
             {
                 if (flightHeight != -1)
                 {
-                    if (netFlightHeight < 16 * flightHeight && flightTimer > 16)
+                    
+                    //if (netFlightHeight < (16 * flightHeight) && flightTimer > 16)
+                    if (netFlightHeight < (16 * flightHeight) && behaviourTimer > 16)
+                    {
+                        
                         netFlightHeight.Set(netFlightHeight.Value + flightHeight);
-                    else if (netFlightHeight > 0 && flightTimer <= 16)
+
+                    }
+                    //else if (netFlightHeight > 0 && flightTimer <= 16)
+                    else if (netFlightHeight > 0 && behaviourTimer <= 16)
+                    {
+                        
                         netFlightHeight.Set(netFlightHeight.Value - flightHeight);
+                    
+                    }
+                        
                 }
+
                 Position += flightInterval;
-                if (flightTimer % flightIncrement != 0)
-                    return;
-                if (flightTimer == flightIncrement)
+
+                //if (flightTimer % flightIncrement != 0)
+                if (behaviourTimer % flightIncrement != 0)
                 {
+                    
+                    return;
+                
+                }
+ 
+                //if (flightTimer == flightIncrement)
+                if (behaviourTimer == flightIncrement)
+                {
+
                     netFlightFrame.Set(flightLast);
+
                 }
                 else
                 {
+                    
                     netFlightFrame.Set(netFlightFrame.Value + 1);
+                    
                     if (netFlightFrame.Value > flightCeiling)
+                    {
+                        
                         netFlightFrame.Set(flightFloor);
+                    
+                    }
+                        
                 }
+            
             }
+        
         }
 
-        public int FlightDestination()
+        public int FlightDestination(int adjust = 0)
         {
             Dictionary<int, Vector2> dictionary = new Dictionary<int, Vector2>()
             {
@@ -819,8 +1198,8 @@ namespace StardewDruid.Monster
                     break;
             }
             Vector2 vector2 = dictionary[key];
-            int num1 = 16;
-            for (int index = num1; index > 0; --index)
+
+            for (int index = 16; index > adjust; index--)
             {
                 int num2 = index <= 12 ? 17 - index : index - 12;
                 Vector2 vectorMultiple = new(vector2.X * num2, vector2.Y * num2);
@@ -845,69 +1224,272 @@ namespace StardewDruid.Monster
 
         public void PerformSpecial()
         {
-            specialActive = true;
-            specialTimer = 72;
-            netFireFrame.Set(-1);
-            fireTimer = fireInterval;
+            behaviourActive = behaviour.special;
+            //specialActive = true;
+            behaviourTimer = 72;
+            //specialTimer = 72;
+            netSpecialFrame.Set(-1);
+            specialCountdown = specialInterval;
+            SoundSpecial();
+        }
+
+        public virtual void SoundSpecial()
+        {
+
+            currentLocation.playSound("furnace");
+
         }
 
         public void UpdateSpecial()
         {
-            --specialTimer;
-            --fireTimer;
-            if (specialTimer == 0 || Game1.player.IsBusyDoingSomething())
+            
+            //specialTimer--;
+            
+            specialCountdown--;
+            
+            //if (specialTimer == 0 || Game1.player.IsBusyDoingSomething())
+            if (behaviourTimer <= 0 || Game1.player.IsBusyDoingSomething())
             {
-                specialActive = false;
+
+                //specialActive = false;
+                behaviourActive = behaviour.idle;
+
                 cooldownActive = true;
+                
                 cooldownTimer = cooldownInterval;
-                netFireActive.Set(false);
+                
+                netSpecialActive.Set(false);
+            
             }
             else
             {
-                if (specialTimer % 12 == 0)
+                
+                //if (specialTimer % 12 == 0)
+                if(behaviourTimer % 12 == 0)
                 {
-                    netFireActive.Set(true);
-                    netFireFrame.Set(netFireFrame.Value + 1);
-                    if (netFireFrame > fireCeiling)
-                        netFireFrame.Set(fireFloor);
+                    
+                    netSpecialActive.Set(true);
+                    
+                    netSpecialFrame.Set(netSpecialFrame.Value + 1);
+                    
+                    if (netSpecialFrame > specialCeiling)
+                    {
+                        
+                        netSpecialFrame.Set(specialFloor);
+                    
+                    }    
+                
                 }
-                if (fireTimer != 0)
+                
+                if (specialCountdown != 0)
+                {
                     return;
+                }
+                
                 SpecialAttack();
-                fireTimer = fireInterval;
+                
+                specialCountdown = specialInterval;
+            
             }
+        
         }
 
         public void PerformFollow(Vector2 target)
         {
-            float num = Vector2.Distance(Position, target);
-            if ((double)num > reachThreshold)
+            float distance = Vector2.Distance(Position, target);
+
+            if (distance > reachThreshold)
             {
-                followTarget = target;
-                followActive = true;
-                followTimer = 40;
-                followInterval = new((target.X - Position.X) / num * 2f, (target.Y - Position.Y) / num * 2f);//Vector2.op_Multiply(Vector2.op_Division(Vector2.op_Subtraction(target, Position), num), 2f);
+                
+                //followTarget = target;
+                behaviourActive = behaviour.follow;
+                //followActive = true;
+                
+                behaviourTimer = 36;
+                //followTimer = 40;
+                
+                followInterval = new((target.X - Position.X) / distance * followIncrement, (target.Y - Position.Y) / distance * followIncrement);//Vector2.op_Multiply(Vector2.op_Division(Vector2.op_Subtraction(target, Position), num), 2f);
+            
             }
             else
+            {
+                
                 Halt();
+            
+            }
+                
         }
+
+        public void PerformRetreat(Vector2 target)
+        {
+
+            int oldMove = moveDirection;
+
+            int oldAlt = altDirection;
+
+            moveDirection = (moveDirection + 2) % 4;
+            
+            altDirection = (altDirection + 2) % 4;
+
+            float distance = Vector2.Distance(Position, target);
+
+            int destination = FlightDestination(8);
+
+            if (destination != 0)
+            {
+                
+                if (distance > safeThreshold || new Random().Next(2) == 0)
+                {
+
+                    PerformFollow(flightTo);
+
+                    return;
+
+                }
+
+                behaviourActive = behaviour.flight;
+
+                netFlightFrame.Set(0);
+
+                behaviourTimer = flightIncrement * destination;
+
+                flightInterval = new((flightTo.X - Position.X) / behaviourTimer, (flightTo.Y - Position.Y) / behaviourTimer);
+
+                SoundFlight();
+
+                return;
+
+            }
+
+            moveDirection = oldMove;
+
+            altDirection = oldAlt;
+
+            PerformCircle(target);
+
+        }
+
+        public void PerformCircle(Vector2 target)
+        {
+
+            int oldMove = moveDirection;
+
+            int oldAlt = altDirection;
+
+            switch (moveDirection)
+            {
+
+                case 0:
+
+                    if (altDirection == 3)
+                    {
+
+                        altDirection = 1;
+
+                        break;
+
+                    }
+
+                    moveDirection = 1;
+
+                    break;
+
+                case 1:
+
+                    moveDirection = 2;
+
+                    altDirection = 1;
+
+                    break;
+
+                case 2:
+
+                    if(altDirection == 1)
+                    {
+
+                        altDirection = 3;
+
+                        break;
+
+                    }
+
+                    moveDirection = 3;
+
+                    break;
+
+                case 3:
+
+                    moveDirection = 0;
+
+                    altDirection = 3;
+
+                    break;
+
+            }
+
+            float distance = Vector2.Distance(Position, target);
+
+            int destination = FlightDestination(12);
+
+            if (destination != 0)
+            {
+
+                PerformFollow(flightTo);
+
+                return;
+
+            }
+
+            moveDirection = oldMove;
+
+            altDirection = oldAlt;
+
+        }
+
 
         public void UpdateFollow(GameTime time)
         {
-            --followTimer;
-            if (followTimer == 0)
-                followActive = false;
+            //--followTimer;
+            if (behaviourTimer <= 0)
+            {
+
+                behaviourActive = behaviour.idle;
+
+            }
+            //followActive = false;
             Position += followInterval;//Vector2.op_Addition(Position, followInterval);
-            if (followTimer % 12 != 0)
-                return;
+
+            if (behaviourTimer % 12 == 0)
+            //if (followTimer % 12 != 0)
+            {
+                
+                UpdateWalk();
+            
+            }
+
+        }
+
+        public void UpdateWalk()
+        {
+
             if (netWalkFrame.Value == 3)
+            {
+
                 netWalkFrame.Set(0);
+            
+            }
             else
+            {
+
                 netWalkFrame.Set(netWalkFrame.Value + 1);
+            
+            }
+
         }
 
         public void PerformRandom()
         {
+            
             Dictionary<int, Vector2> dictionary = new Dictionary<int, Vector2>()
             {
                 [0] = new Vector2(1f, -2f),
@@ -917,8 +1499,11 @@ namespace StardewDruid.Monster
                 [4] = new Vector2(-1f, 2f),
                 [5] = new Vector2(-2f, 0.0f)
             };
+            
             int key = new Random().Next(dictionary.Count);
+            
             Vector2 target = new(dictionary[key].X * 128f, dictionary[key].Y * 128);//Vector2.op_Multiply(dictionary[key], 128f);
+            
             switch (key)
             {
                 case 0:
@@ -946,17 +1531,47 @@ namespace StardewDruid.Monster
                     altDirection = 3;
                     break;
             }
+
             PerformFollow(target);
+
         }
 
         public void UpdateCooldown()
         {
-            --cooldownTimer;
+            cooldownTimer--;
+
             if (cooldownTimer == cooldownInterval * 0.5 && new Random().Next(3) == 0)
-                this.showTextAboveHead(dialogueList[Game1.random.Next(dialogueList.Count)], -1, 2, 3000, 0);
+            {
+                
+                showTextAboveHead(dialogueList[Game1.random.Next(dialogueList.Count)], -1, 2, 3000, 0);
+            
+            }
+                
             if (cooldownTimer > 0)
+            {
+                
                 return;
+            
+            }
+                
             cooldownActive = false;
+        
         }
+
+        public void PerformAoe()
+        { 
+            
+
+        
+        
+        }
+
+        public void UpdateAoe(GameTime time)
+        { 
+        
+        
+        }
+
     }
+
 }

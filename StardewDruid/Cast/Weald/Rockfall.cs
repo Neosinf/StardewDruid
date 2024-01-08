@@ -43,7 +43,7 @@ namespace StardewDruid.Cast.Weald
 
             Layer backLayer = riteData.castLocation.Map.GetLayer("Back");
 
-            Tile backTile = backLayer.PickTile(new Location(tileX * 64, tileY * 64), Game1.viewport.Size);
+            Tile backTile = backLayer.PickTile(new xTile.Dimensions.Location(tileX * 64, tileY * 64), Game1.viewport.Size);
 
             if (backTile == null)
             {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Map;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using System;
@@ -31,6 +32,20 @@ namespace StardewDruid.Monster
         public override void LoadOut()
         {
 
+            if (!Context.IsMainPlayer)
+            {
+
+                if (Sprite.loadedTexture == null || Sprite.loadedTexture.Length == 0)
+                {
+
+                    Sprite.spriteTexture = MonsterData.MonsterTexture(Name);
+
+                    Sprite.loadedTexture = Sprite.textureName.Value;
+
+                }
+
+            }
+
             characterTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", Name + ".png"));
 
             flightFrames = new()
@@ -48,9 +63,9 @@ namespace StardewDruid.Monster
 
         public override void BaseMode()
         {
-            Health = combatModifier * 15;
+            Health = combatModifier * 16;
             MaxHealth = Health;
-            DamageToFarmer = (int)(combatModifier * 0.15);
+            DamageToFarmer = (int)(combatModifier * 0.1);
             ouchList = new List<string>()
               {
                 "reap",
@@ -67,22 +82,22 @@ namespace StardewDruid.Monster
                 "The undervalley... I must...",
                 "I will reap, and reap, and reap"
               };
-            flightIncrement = 12;
+
             flightHeight = 4;
-            flightCeiling = 2;
             flightFloor = 2;
+            flightCeiling = 2; 
             flightLast = 3;
             flightIncrement = 9;
-            fireCeiling = 0;
-            fireFloor = 0;
             specialThreshold = 480;
-            reachThreshold = 64;
-            haltActive = true;
-            haltTimer = 20;
+            //reachThreshold = 64;
+            behaviourActive = behaviour.halt;
+            behaviourTimer = 20;
+            //haltActive = true;
+            //haltTimer = 20;
             cooldownTimer = 48;
             blastRadius = 1;
-            fireInterval = 24;
             cooldownInterval = 48;
+            specialInterval = 24;
         }
 
         public override void HardMode()
@@ -109,8 +124,10 @@ namespace StardewDruid.Monster
                 "ALL WILL BE REAPED"
               };
             blastRadius = 2;
-            fireInterval = 18;
             cooldownInterval = 40;
+            specialInterval = 18;
+
+            tempermentActive = temperment.aggressive;
         }
 
         public override Rectangle GetBoundingBox()
@@ -128,12 +145,6 @@ namespace StardewDruid.Monster
 
             if (!loadedOut)
             {
-
-                Sprite.spriteTexture = CharacterData.CharacterTexture(Name);
-
-                Sprite.textureName.Value = "18465_" + Name;
-
-                Sprite.loadedTexture = Sprite.textureName.Value;
 
                 LoadOut();
 
@@ -153,22 +164,19 @@ namespace StardewDruid.Monster
 
             if (netDashActive)
             {
-                //Rectangle rectangle = new(netFlightFrame * 64, 0, 64, 48);
-
-                //b.Draw(Sprite.Texture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f - netFlightHeight), new Rectangle?(rectangle), Color.White * 0.65f, rotation, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
-                //b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f - netFlightHeight), new Rectangle?(rectangle), Color.White * 0.65f, rotation, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                
                 b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - netFlightHeight - bobHeight), flightFrames[netFlightFrame][0], Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
             }
-            else if (netFireActive)
+            else if (netSpecialActive)
             {       
-                //b.Draw(Sprite.Texture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f - bobHeight), new Rectangle?(new Rectangle(256, 0, 64, 48)), Color.White * 0.65f, rotation, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                
                 b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - bobHeight), new Rectangle(128+(ruffleFrame*64), 0, 64, 64), Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip || netDirection == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
             }
             else
             {
-                //b.Draw(Sprite.Texture, new Vector2(localPosition.X - 96f, localPosition.Y - 48f), new Rectangle?(new Rectangle(0, 0, 64, 48)), Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip ? (SpriteEffects)1 : 0, drawLayer);
+                
                 b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - bobHeight), new Rectangle(ruffleFrame*64, 0, 64, 64), Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip ? (SpriteEffects)1 : 0, drawLayer);
 
             }
@@ -259,7 +267,7 @@ namespace StardewDruid.Monster
             {
                 sourceRect = new Rectangle(0, 0, 64, 64),
                 sourceRectStartingPos = new Vector2(0.0f, 0.0f),
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "EnergyBomb.png")),
+                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "PurpleBomb.png")),
                 scale = 2f + blastRadius,
                 timeBasedMotion = true,
                 layerDepth = 999f,
@@ -275,7 +283,7 @@ namespace StardewDruid.Monster
                 alphaFade = 0.03f,
                 Parent = currentLocation
             });
-            Rectangle rectangle = new((int)((zero.X - (double)blastRadius) * 64.0), (int)((zero.Y - (double)blastRadius) * 64.0), 64 + blastRadius * 128, 64 + blastRadius * 128);
+            Rectangle rectangle = new((int)((zero.X - (double)blastRadius) * 64.0) - 32, (int)((zero.Y - (double)blastRadius) * 64.0) - 32, 128 + (blastRadius * 128), 128 + (blastRadius * 128));
             blastZone.Enqueue(rectangle);
 
             DelayedAction.functionAfterDelay(TriggerBlast, 375);
@@ -283,7 +291,19 @@ namespace StardewDruid.Monster
 
         public void TriggerBlast()
         {
-            ModUtility.DamageFarmers(currentLocation, blastZone.Dequeue(), (int)(DamageToFarmer * 0.4), this);
+            ModUtility.DamageFarmers(currentLocation, blastZone.Dequeue(), (int)(DamageToFarmer * 0.6), this);
         }
+
+        public override void SoundSpecial()
+        {
+            
+        }
+
+        public override void SoundFlight()
+        {
+            
+        }
+
     }
+
 }

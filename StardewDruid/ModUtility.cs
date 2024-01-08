@@ -13,6 +13,7 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -710,68 +711,6 @@ namespace StardewDruid
 
         }
 
-        public static void BurnVector(GameLocation location, Vector2 position, Color color, int interval = 175, int length = 5, int loops = 1)
-        {
-
-            TemporaryAnimatedSprite fireAnimation = new(0,interval,length,loops,position, false, false)
-            {
-
-                sourceRect = new(0, 0, 32, 32),
-
-                sourceRectStartingPos = new Vector2(0,0),
-
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images","Fire.png")),
-
-                scale = 2f, //* size,
-
-                layerDepth = position.Y / 64000,
-
-                alphaFade = 0.001f,
-
-                color = color,
-
-            };
-
-            location.temporarySprites.Add(fireAnimation);
-
-        }
-
-        public static StardewValley.Torch StoneBrazier(GameLocation targetLocation, Vector2 targetVector)
-        {
-
-            /*Rectangle sourceRectForObject = new();
-
-            sourceRectForObject.X = 276;
-            sourceRectForObject.Y = 1965;
-            sourceRectForObject.Width = 8;
-            sourceRectForObject.Height = 8;
-
-            float animationSort = targetVector.X * 1000 + targetVector.Y + 2;
-
-            portalAnimation = new("LooseSprites\\Cursors", sourceRectForObject, 100f, 6, 9999, new((targetVector.X * 64f)+12f,(targetVector.Y * 64f)-56f), false, false, animationSort, 0f, Color.Blue, 6f, 0f, 0f, 0f);
-
-            targetLocation.temporarySprites.Add(portalAnimation);*/
-
-            StardewValley.Torch stoneBrazier = new(targetVector, 144, false);
-
-            int portalKey = (int)float.Parse(targetVector.X.ToString() + targetVector.Y.ToString());
-
-            LightSource portalLight = new(4, new((targetVector.X * 64f) + 12f, (targetVector.Y * 64f) - 56f), 2f, new Color(0, 80, 160), portalKey, LightSource.LightContext.None, 0L);
-
-            stoneBrazier.name = "PortalFlame";
-            stoneBrazier.CanBeSetDown = false;
-            stoneBrazier.Fragility = 2;
-            stoneBrazier.setHealth(9999);
-            stoneBrazier.isLamp.Value = true;
-            stoneBrazier.IsOn = true;
-            stoneBrazier.lightSource = portalLight;
-
-            targetLocation.objects.Add(targetVector, stoneBrazier);
-
-            return stoneBrazier;
-
-        }
-
         public static bool WaterCheck(GameLocation targetLocation, Vector2 targetVector, int radius = 4)
         {
             bool check = true;
@@ -788,7 +727,7 @@ namespace StardewDruid
                 foreach (Vector2 neighbour in neighbours)
                 {
 
-                    backTile = backLayer.PickTile(new Location((int)neighbour.X * 64, (int)neighbour.Y * 64), Game1.viewport.Size);
+                    backTile = backLayer.PickTile(new xTile.Dimensions.Location((int)neighbour.X * 64, (int)neighbour.Y * 64), Game1.viewport.Size);
 
                     if (backTile != null)
                     {
@@ -917,6 +856,29 @@ namespace StardewDruid
 
             }
 
+            if (targetLocation.IsOutdoors)
+            {
+
+                List<int> grounds = new() {304, 351, 404, 356, 300, 305, };
+
+                if (grounds.Contains(backTile.TileIndex))
+                {
+                    return "ground";
+
+                }
+
+            }
+
+            if(targetLocation is Caldera)
+            {
+
+                if(backTile.TileIndex == 28)
+                {
+                    return "ground";
+                }
+
+            }
+
             return "unknown";
 
         }
@@ -960,7 +922,7 @@ namespace StardewDruid
 
                 }
 
-                Tile buildingTile = buildingLayer.PickTile(new Location((int)neighbourVector.X * 64, (int)neighbourVector.Y * 64), Game1.viewport.Size);
+                Tile buildingTile = buildingLayer.PickTile(new xTile.Dimensions.Location((int)neighbourVector.X * 64, (int)neighbourVector.Y * 64), Game1.viewport.Size);
 
                 if (buildingTile != null)
                 {
@@ -987,7 +949,7 @@ namespace StardewDruid
                 if (pathsLayer != null)
                 {
 
-                    Tile pathsTile = buildingLayer.PickTile(new Location((int)neighbourVector.X * 64, (int)neighbourVector.Y * 64), Game1.viewport.Size);
+                    Tile pathsTile = buildingLayer.PickTile(new xTile.Dimensions.Location((int)neighbourVector.X * 64, (int)neighbourVector.Y * 64), Game1.viewport.Size);
 
                     if (pathsTile != null)
                     {
@@ -2442,6 +2404,8 @@ namespace StardewDruid
 
                         }
 
+                        Vector2 monsterPosition = monster.Position;
+
                         HitMonster(targetLocation, targetPlayer, monster, damage, critApplied, diffX: diff[0], diffY: diff[1]);
 
                     }
@@ -2918,7 +2882,7 @@ namespace StardewDruid
 
             float motionY = yOffset / 1000;
 
-            float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString()) + 2;
+            //float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString()) + 2;
 
             TemporaryAnimatedSprite warpAnimation = new(0, 1000f, 1, 1, playerPosition, false, false)
             {
@@ -2931,7 +2895,9 @@ namespace StardewDruid
                 scale = 0.75f,
                 scaleChange = 0.0005f,
 
-                layerDepth = animationSort,
+                //layerDepth = animationSort,
+
+                layerDepth = 0.001f,
 
                 motion = new Vector2(motionX, motionY),
 
@@ -2959,6 +2925,7 @@ namespace StardewDruid
 
             if (Monster.Health <= 0)
             {
+
                 return false;
 
             }

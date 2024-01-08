@@ -120,7 +120,7 @@ namespace StardewDruid.Cast.Weald
             if (targetPlayer.professions.Contains(16))
             {
 
-                objectQuality = 3;
+                objectQuality = 4;
 
             }
 

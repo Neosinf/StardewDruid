@@ -35,14 +35,17 @@ namespace StardewDruid.Event.Challenge
                 new(75, 81),
                 new(82, 81),
             };
+            
+            SetupSpawn();
 
             if (questData.name.Contains("Two"))
             {
-                challengeFrequency = 2;
-                challengeAmplitude = 3;
-            }
+                
+                monsterHandle.spawnCombat *= 3;
 
-            SetupSpawn();
+                monsterHandle.spawnCombat /= 2;
+
+            }
 
             Game1.addHUDMessage(new HUDMessage($"Defeat the slimes!", "2"));
 
@@ -71,14 +74,14 @@ namespace StardewDruid.Event.Challenge
         public override bool EventExpire()
         {
 
-            List<string> NPCIndex = VillagerData.VillagerIndex("forest");
-
-            Game1.addHUDMessage(new HUDMessage($"You have gained favour with those who love the forest", ""));
-
             Mod.instance.CompleteQuest(questData.name);
 
             if (!questData.name.Contains("Two"))
             {
+
+                List<string> NPCIndex = VillagerData.VillagerIndex("forest");
+
+                Game1.addHUDMessage(new HUDMessage($"You have gained favour with those who love the forest", ""));
 
                 UpdateFriendship(NPCIndex);
 
@@ -103,7 +106,7 @@ namespace StardewDruid.Event.Challenge
                     857,
                 };
 
-                Throw throwEgg = new(Game1.player, targetVector * 64, randomIndex.Next(eggList.Count));
+                Throw throwEgg = new(Game1.player, targetVector * 64, eggList[randomIndex.Next(eggList.Count)]);
 
                 throwEgg.ThrowObject();
 
@@ -115,7 +118,7 @@ namespace StardewDruid.Event.Challenge
 
         public override void EventInterval()
         {
-
+            
             activeCounter++;
 
             if (eventLinger != -1)

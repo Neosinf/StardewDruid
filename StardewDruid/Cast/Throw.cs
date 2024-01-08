@@ -38,6 +38,25 @@ namespace StardewDruid.Cast
 
             objectQuality = ObjectQuality;
 
+            if(objectQuality == 3)
+            {
+
+                objectQuality = 2;
+
+            }
+            else if(objectQuality > 4)
+            {
+
+                objectQuality = 4;
+
+            }
+            else if(objectQuality < 0)
+            {
+
+                objectQuality = 0;
+
+            }
+
             objectInstance = new StardewValley.Object(objectIndex, 1, false, -1, objectQuality);
 
             targetPlayer = Player;

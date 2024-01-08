@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
+using StardewDruid.Event.Challenge;
 using StardewDruid.Map;
 using StardewDruid.Monster;
 using StardewValley;
@@ -11,22 +12,21 @@ using xTile.Dimensions;
 using xTile.Layers;
 using xTile.Tiles;
 
-namespace StardewDruid.Event.Challenge
+namespace StardewDruid.Event.Boss
 {
-    public class Tyrannus : ChallengeHandle
+    public class SkullCavern : BossHandle
     {
-        public bool modifiedSandDragon;
         public Reaper bossMonster;
         public Vector2 bossTile;
         public bool adjustWarp;
 
-        public Tyrannus(Vector2 target, Rite rite, Quest quest)
+        public SkullCavern(Vector2 target, Rite rite, Quest quest)
           : base(target, rite, quest)
         {
-            
+
             targetVector = target;
 
-            voicePosition = new(targetVector.X * 64f, (targetVector.Y * 64f) - 32f);
+            voicePosition = new(targetVector.X * 64f, targetVector.Y * 64f - 32f);
 
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 120.0;
 
@@ -54,16 +54,22 @@ namespace StardewDruid.Event.Challenge
 
         public override void RemoveMonsters()
         {
+            
             if (bossMonster != null)
             {
                 targetLocation.characters.Remove(bossMonster);
+
                 bossMonster = null;
+
             }
+
             base.RemoveMonsters();
+
         }
 
         public override void EventRemove()
         {
+            
             base.EventRemove();
 
             if (!(targetLocation is MineShaft))
@@ -75,13 +81,20 @@ namespace StardewDruid.Event.Challenge
 
             for (int index1 = 0; index1 < targetLocation.map.GetLayer("Buildings").LayerHeight; ++index1)
             {
+                
                 for (int index2 = 0; index2 < targetLocation.map.GetLayer("Buildings").LayerWidth; ++index2)
                 {
+                    
                     if (targetLocation.map.GetLayer("Buildings").Tiles[index2, index1] != null && targetLocation.map.GetLayer("Buildings").Tiles[index2, index1].TileIndex == 115)
                     {
                         ladderTile = new(index2 + 1, index1 + 1);
+
+                        break;
+
                     }
+
                 }
+
             }
 
             Layer layer = targetLocation.map.GetLayer("Buildings");
@@ -98,32 +111,54 @@ namespace StardewDruid.Event.Challenge
         {
             if (eventLinger == -1)
             {
+                
                 RemoveMonsters();
-                eventLinger = 4;
+                
+                eventLinger = 3;
+                
                 return true;
+            
             }
-            if (eventLinger == 3)
+            
+            if (eventLinger == 2)
             {
+                
                 if (expireEarly)
                 {
+                    
                     if (!questData.name.Contains("Two"))
-                        new Throw().ThrowSword(Game1.player, 57, bossTile, 500);
-                    Mod.instance.CompleteQuest(questData.name);
-                    if (Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
-                        Mod.instance.dialogue["Jester"].specialDialogue.Add("quests", new List<string>()
                     {
-                      "Jester of Fate:^Thank you for helping me put Thanatoshi to rest.",
-                      "I'm sorry about your kinsman.",
-                      "I think this cutlass is to blame"
-                    });
+                        
+                        new Throw().ThrowSword(Game1.player, 57, bossTile, 500);
+                    
+                    }
+                        
+                    Mod.instance.CompleteQuest(questData.name);
+
+                    if (Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
+                    {
+                        Mod.instance.dialogue["Jester"].specialDialogue.Add("quests", new List<string>()
+                        {
+                          "Jester of Fate:^Thank you for helping me put Thanatoshi to rest.",
+                          "I'm sorry about your kinsman.",
+                          "I think this cutlass is to blame"
+                        });
+                    }
+
                 }
                 else
                 {
                     Mod.instance.CastMessage("Try again tomorrow");
+
                     Mod.instance.characters["Jester"].showTextAboveHead("Thanatoshi... why...", -1, 2, 3000, 0);
+
                 }
+
+            
             }
+
             return base.EventExpire();
+
         }
 
         public override void EventInterval()
@@ -136,6 +171,7 @@ namespace StardewDruid.Event.Challenge
             {
                 return;
             }
+            
             if (activeCounter == 2)
             {
                 AddTomb();
@@ -144,9 +180,12 @@ namespace StardewDruid.Event.Challenge
                 Game1.warpFarmer("UndergroundMine145", 13, 19, 2);
                 Game1.xLocationAfterWarp = 13;
                 Game1.yLocationAfterWarp = 19;
-                voicePosition = new(targetVector.X * 64, (targetVector.Y * 64) - 32f);//Vector2.op_Addition(Vector2.op_Multiply(targetVector, 64f), new Vector2(0.0f, -32f));
+                voicePosition = new(targetVector.X * 64, targetVector.Y * 64 - 32f);//Vector2.op_Addition(Vector2.op_Multiply(targetVector, 64f), new Vector2(0.0f, -32f));
+
+                return;
             }
-            else if (activeCounter == 3)
+            
+            if (activeCounter == 3)
             {
                 targetPlayer.Position = new(targetVector.X * 64, targetVector.Y * 64);//Vector2.op_Multiply(targetVector, 64f);
                 bossMonster = MonsterData.CreateMonster(17, new Vector2(13f, 9f), riteData.combatModifier) as Reaper;
@@ -159,34 +198,86 @@ namespace StardewDruid.Event.Challenge
                 bossMonster.update(Game1.currentGameTime, riteData.castLocation);
                 SetTrack("LavaMine");
                 bossTile = new Vector2(13f, 9f);
-            }
-            else
-            {
-                if (activeCounter == 5 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
-                    Mod.instance.characters["Jester"].showTextAboveHead("What a moment...", -1, 2, 3000, 0);
-                if (activeCounter == 10 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
-                    Mod.instance.characters["Jester"].showTextAboveHead("Thanatoshi?", -1, 3, 3000, 0);
-                if (activeCounter == 15 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
-                    Mod.instance.characters["Jester"].showTextAboveHead("Farmer, it's him, The Reaper of Fate", -1, 3, 3000, 0);
-                if (activeCounter == 20 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
-                    Mod.instance.characters["Jester"].showTextAboveHead("Thanatoshi, stop messing around!", -1, 3, 3000, 0);
-                if (activeCounter == 25 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
-                    Mod.instance.characters["Jester"].showTextAboveHead("I am a Fate too you know, the Jester?", -1, 2, 3000, 0);
-                if (activeCounter == 30 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
-                    Mod.instance.characters["Jester"].showTextAboveHead("It's no use, he's insane", -1, 2, 3000, 0);
-                if (activeCounter == 35 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
-                    Mod.instance.characters["Jester"].showTextAboveHead("That's... a cutlass... on the shaft", -1, 2, 3000, 0);
-                if (activeCounter == 40 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
-                    Mod.instance.characters["Jester"].showTextAboveHead("What has he done to himself?", -1, 2, 3000, 0);
-                if (activeCounter == 40 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
-                    Mod.instance.characters["Jester"].showTextAboveHead("I guess we have no choice...", -1, 2, 3000, 0);
-                if (activeCounter == 50 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
-                    Mod.instance.characters["Jester"].showTextAboveHead("For Fate and Fortune!", -1, 3, 3000, 0);
-                if (bossMonster.defeated || bossMonster.Health <= 0 || bossMonster == null || !targetLocation.characters.Contains(bossMonster))
-                    expireEarly = true;
+
+
+                StaticHandle staticHandle;
+
+                if (Mod.instance.eventRegister.ContainsKey("static"))
+                {
+
+                    staticHandle = Mod.instance.eventRegister["static"] as StaticHandle;
+
+                }
                 else
-                    bossTile = bossMonster.getTileLocation();
+                {
+
+                    staticHandle = new();
+
+                    staticHandle.EventTrigger();
+
+                }
+
+                staticHandle.AddBrazier(targetLocation, new(10, 9));
+
+                staticHandle.AddBrazier(targetLocation, new(7, 19));
+
+                staticHandle.AddBrazier(targetLocation, new(18, 9));
+
+                staticHandle.AddBrazier(targetLocation, new(21, 19));
+
+                return;
+
             }
+
+            if (activeCounter == 5 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
+                Mod.instance.characters["Jester"].showTextAboveHead("What a moment...", -1, 2, 3000, 0);
+
+            if (activeCounter == 10 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
+                Mod.instance.characters["Jester"].showTextAboveHead("Thanatoshi?", -1, 3, 3000, 0);
+
+            if (activeCounter == 15 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
+                Mod.instance.characters["Jester"].showTextAboveHead("Farmer, it's him, The Reaper of Fate", -1, 3, 3000, 0);
+
+            if (activeCounter == 20 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
+                Mod.instance.characters["Jester"].showTextAboveHead("Thanatoshi, stop messing around!", -1, 3, 3000, 0);
+
+            if (activeCounter == 25 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
+                Mod.instance.characters["Jester"].showTextAboveHead("I am a Fate too you know, the Jester?", -1, 2, 3000, 0);
+
+            if (activeCounter == 30 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
+                Mod.instance.characters["Jester"].showTextAboveHead("It's no use, he's insane", -1, 2, 3000, 0);
+
+            if (activeCounter == 35 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
+                Mod.instance.characters["Jester"].showTextAboveHead("That's... a cutlass... on the shaft", -1, 2, 3000, 0);
+
+            if (activeCounter == 40 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
+                Mod.instance.characters["Jester"].showTextAboveHead("What has he done to himself?", -1, 2, 3000, 0);
+
+            if (activeCounter == 40 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
+                Mod.instance.characters["Jester"].showTextAboveHead("I guess we have no choice...", -1, 2, 3000, 0);
+
+            if (activeCounter == 50 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
+                Mod.instance.characters["Jester"].showTextAboveHead("For Fate and Fortune!", -1, 3, 3000, 0);
+
+
+            if (activeCounter > 5)
+            {
+
+                if(!ModUtility.MonsterVitals(bossMonster, targetLocation))
+                {
+                    expireEarly = true;
+
+                }
+                else
+                {
+
+                    bossTile = new((int)(bossMonster.Position.X / 64), (int)(bossMonster.Position.Y / 64));
+
+                }
+                
+
+            }
+
         }
 
         public void AddTomb()
@@ -306,6 +397,9 @@ namespace StardewDruid.Event.Challenge
             layer3.Tiles[13, 13] = new StaticTile(layer3, tileSheet1, 0, 5);
             layer3.Tiles[13, 14] = new StaticTile(layer3, tileSheet1, 0, 21);
             layer2.Tiles[13, 15] = new StaticTile(layer2, tileSheet1, 0, 37);
+
         }
+
     }
+
 }

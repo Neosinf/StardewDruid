@@ -7,15 +7,15 @@ using System;
 using xTile.Layers;
 using xTile.Tiles;
 
-namespace StardewDruid.Event.Challenge
+namespace StardewDruid.Event.Boss
 {
-    public class SandDragon : ChallengeHandle
+    public class SandDragon : BossHandle
     {
 
         public bool modifiedSandDragon;
 
         //public BossDragon bossMonster;
-        public StardewDruid.Monster.Boss bossMonster;
+        public Monster.Boss bossMonster;
 
         public Vector2 returnPosition;
 
@@ -40,44 +40,7 @@ namespace StardewDruid.Event.Challenge
 
             ModUtility.AnimateMeteor(targetLocation, targetVector, true);
 
-            Mod.instance.RegisterEvent(this, "active");
-
-        }
-
-        public override bool EventActive()
-        {
-
-            if (targetPlayer.currentLocation == targetLocation && !eventAbort)
-            {
-
-                double nowTime = Game1.currentGameTime.TotalGameTime.TotalSeconds;
-
-                if (expireTime >= nowTime && !expireEarly)
-                {
-                    int diffTime = (int)Math.Round(expireTime - nowTime);
-
-                    if (activeCounter != 0 && diffTime % 10 == 0 && diffTime != 0)
-                    {
-
-                        Game1.addHUDMessage(new HUDMessage($"{diffTime} more minutes left!", "2"));
-
-                    }
-
-                    return true;
-
-                }
-
-                return EventExpire();
-
-            }
-            else
-            {
-
-                EventAbort();
-
-            }
-
-            return false;
+            base.EventTrigger();
 
         }
 
@@ -116,13 +79,13 @@ namespace StardewDruid.Event.Challenge
 
                 ResetSandDragon();
 
-                eventLinger = 4;
+                eventLinger = 3;
 
                 return true;
 
             }
 
-            if (eventLinger == 3)
+            if (eventLinger == 2)
             {
 
                 if (expireEarly)
@@ -204,7 +167,6 @@ namespace StardewDruid.Event.Challenge
 
                         Vector2 randomVector = targetVector + new Vector2(0, 1) - new Vector2(randomIndex.Next(7), randomIndex.Next(3));
 
-                        //ModUtility.AnimateMeteorZone(targetLocation, randomVector, Color.Red);
                         ModUtility.AnimateRadiusDecoration(targetLocation, randomVector, "Stars", 1f, 1f);
 
                         ModUtility.AnimateMeteor(targetLocation, randomVector, randomIndex.Next(2) == 0);
@@ -224,7 +186,7 @@ namespace StardewDruid.Event.Challenge
 
                 StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(16, targetVector + new Vector2(-5, 0), riteData.combatModifier);
 
-                bossMonster = theMonster as StardewDruid.Monster.Boss;
+                bossMonster = theMonster as Monster.Boss;
 
                 if (questData.name.Contains("Two"))
                 {
@@ -237,7 +199,7 @@ namespace StardewDruid.Event.Challenge
 
                 bossMonster.currentLocation = targetLocation;
 
-                bossMonster.update(Game1.currentGameTime, riteData.castLocation);
+                bossMonster.update(Game1.currentGameTime, targetLocation);
 
                 SetTrack("cowboy_boss");
 
@@ -245,7 +207,7 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            if (bossMonster.defeated || bossMonster.Health <= 0 || bossMonster == null || !riteData.castLocation.characters.Contains(bossMonster))
+            if (activeCounter > 11 && !ModUtility.MonsterVitals(bossMonster, targetLocation))
             {
 
                 expireEarly = true;
@@ -266,6 +228,8 @@ namespace StardewDruid.Event.Challenge
 
             targetLocation.loadMap(targetLocation.mapPath.Value, true);
 
+            modifiedSandDragon = false;
+
             if (Game1.eventUp || Game1.fadeToBlack || Game1.currentMinigame != null || Game1.isWarping || Game1.killScreen || Game1.player.currentLocation is not Desert)
             {
                 return;
@@ -284,8 +248,6 @@ namespace StardewDruid.Event.Challenge
                 soundTrack = false;
 
             }
-
-            modifiedSandDragon = false;
 
         }
 
@@ -356,15 +318,15 @@ namespace StardewDruid.Event.Challenge
                     }
 
 
-                    if (randomIndex.Next(4) != 0)
+                    if (randomIndex.Next(2) != 0)
                     {
                         backLayer.Tiles[(int)tileVector.X, (int)tileVector.Y] = new StaticTile(backLayer, desertSheet, BlendMode.Alpha, 65);
                     }
-                    else if (randomIndex.Next(5) == 0)
+                    else if (randomIndex.Next(3) == 0)
                     {
                         backLayer.Tiles[(int)tileVector.X, (int)tileVector.Y] = new StaticTile(backLayer, desertSheet, BlendMode.Alpha, 96);
                     }
-                    else if (randomIndex.Next(5) == 0)
+                    else if (randomIndex.Next(3) == 0)
                     {
                         backLayer.Tiles[(int)tileVector.X, (int)tileVector.Y] = new StaticTile(backLayer, desertSheet, BlendMode.Alpha, 97);
                     }

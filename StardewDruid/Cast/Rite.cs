@@ -907,7 +907,7 @@ namespace StardewDruid.Cast
                             continue;
                         }
 
-                        Tile buildingTile = buildingLayer.PickTile(new Location(tileX * 64, tileY * 64), Game1.viewport.Size);
+                        Tile buildingTile = buildingLayer.PickTile(new xTile.Dimensions.Location(tileX * 64, tileY * 64), Game1.viewport.Size);
 
                         if (buildingTile != null)
                         {
@@ -1105,7 +1105,7 @@ namespace StardewDruid.Cast
 
                         int tileY = (int)tileVector.Y;
 
-                        Tile backTile = backLayer.PickTile(new Location(tileX * 64, tileY * 64), Game1.viewport.Size);
+                        Tile backTile = backLayer.PickTile(new xTile.Dimensions.Location(tileX * 64, tileY * 64), Game1.viewport.Size);
 
                         if (backTile == null)
                         {
@@ -1593,16 +1593,23 @@ namespace StardewDruid.Cast
                             if (castLocation.IsFarm && targetObject.bigCraftable.Value && targetObject.ParentSheetIndex == 9)
                             {
 
-                                if (specialCasts.Contains("rod"))
+                                if (progressLevel < 10 || targetObject.MinutesUntilReady > 1)
                                 {
-
+                                    continue;
                                 }
-                                else if (progressLevel >= 10)
+
+                                for(int j = 0; j <= Mod.instance.PowerLevel(); j++)
                                 {
+                                    if (specialCasts.Contains("rod" + j.ToString()))
+                                    {
+
+                                        continue;
+
+                                    }
 
                                     effectCasts[tileVector] = new Cast.Mists.Rod(tileVector, this);
 
-                                    Mod.instance.specialCasts[locationName].Add("rod");
+                                    Mod.instance.specialCasts[locationName].Add("rod" + j.ToString());
 
                                     centerVectors.Add(tileVector);
 
@@ -1614,13 +1621,8 @@ namespace StardewDruid.Cast
 
                                 string fireLocation = castLocation.Name;
 
-                                if (specialCasts.Contains("campfire"))
+                                if (!specialCasts.Contains("campfire") && progressLevel >= 10)
                                 {
-
-                                }
-                                else if (progressLevel >= 10)
-                                {
-
                                     effectCasts[tileVector] = new Cast.Mists.Campfire(tileVector, this);
 
                                     Mod.instance.specialCasts[locationName].Add("campfire");
@@ -1651,12 +1653,12 @@ namespace StardewDruid.Cast
 
                                 string scid = "scarecrow_" + tileVector.X.ToString() + "_" + tileVector.Y.ToString();
 
-                                if (progressLevel >= 10 && !Game1.isRaining && !specialCasts.Contains("scid"))
+                                if (progressLevel >= 10 && !Game1.isRaining && !specialCasts.Contains(scid))
                                 {
 
-                                    effectCasts[tileVector] = new Cast.Mists.Scarecrow(tileVector, this, Math.Max(4, Mod.instance.virtualCan.UpgradeLevel));
+                                    effectCasts[tileVector] = new Cast.Mists.Scarecrow(tileVector, this);
 
-                                    Mod.instance.specialCasts[locationName].Add("scid");
+                                    Mod.instance.specialCasts[locationName].Add(scid);
 
                                     centerVectors.Add(tileVector);
 
@@ -2009,11 +2011,11 @@ namespace StardewDruid.Cast
 
                         string scid = "gravity_" + castLocation.Name + "_" + tileVector.X.ToString() + "_" + tileVector.Y.ToString();
 
-                        if (specialCasts.Contains("scid")) { continue; }
+                        if (specialCasts.Contains(scid)) { continue; }
 
                         effectCasts[tileVector] = new Cast.Fates.Gravity(tileVector, this, 0);
 
-                        Mod.instance.specialCasts[locationName].Add("scid");
+                        Mod.instance.specialCasts[locationName].Add(scid);
 
                         return;
 
@@ -2079,11 +2081,11 @@ namespace StardewDruid.Cast
 
                 string scid = "gravity_" + castLocation.Name + "_" + wellVector.X.ToString() + "_" + wellVector.Y.ToString();
 
-                if (specialCasts.Contains("scid")) { continue; }
+                if (specialCasts.Contains(scid)) { continue; }
 
                 effectCasts[wellVector] = new Cast.Fates.Gravity(wellVector, this, 0);
 
-                Mod.instance.specialCasts[locationName].Add("scid");
+                Mod.instance.specialCasts[locationName].Add(scid);
 
                 return;
 
@@ -2452,29 +2454,29 @@ namespace StardewDruid.Cast
 
                 }
 
-                if (!spawnIndex["treasure"])
+                if (!spawnIndex["crate"])
                 {
 
                     break;
 
                 }
 
-                if (specialCasts.Contains("treasure"))
+                if (specialCasts.Contains("crate"))
                 {
                 
                     break;
                 
                 }
                     
-                if(Mod.instance.eventRegister.ContainsKey("treasure"))
+                if(Mod.instance.eventRegister.ContainsKey("crate"))
                 {
 
-                    if (Mod.instance.eventRegister["treasure"].targetLocation.Name != castLocation.Name)
+                    if (Mod.instance.eventRegister["crate"].targetLocation.Name != castLocation.Name)
                     {
 
-                        Mod.instance.eventRegister["treasure"].EventAbort();
+                        Mod.instance.eventRegister["crate"].EventAbort();
 
-                        Mod.instance.eventRegister["treasure"].EventRemove();
+                        Mod.instance.eventRegister["crate"].EventRemove();
 
                     }
                     else
@@ -2486,7 +2488,7 @@ namespace StardewDruid.Cast
 
                 }
 
-                Treasure treasure = new Treasure(this);
+                Crate treasure = new Crate(this);
 
                 treasure.EventTrigger();
 

@@ -2,11 +2,13 @@
 using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Event;
+using StardewDruid.Event.Boss;
 using StardewDruid.Event.Challenge;
 using StardewDruid.Event.Scene;
 using StardewDruid.Journal;
 using StardewValley;
 using StardewValley.Locations;
+using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,7 @@ using System.Runtime.CompilerServices;
 using xTile.Layers;
 using xTile.ObjectModel;
 using xTile.Tiles;
+using static StardewValley.Minigames.TargetGame;
 
 namespace StardewDruid.Map
 {
@@ -96,44 +99,49 @@ namespace StardewDruid.Map
 
         public static void QuestHandle(Vector2 vector, Rite rite, Quest questData)
         {
+
             switch (questData.type)
             {
                 case "sword":
+                    
                     new Sword(vector, rite, questData).EventTrigger();
+                    
                     break;
+                
                 case "scythe":
+                    
                     new Scythe(vector, rite, questData).EventTrigger();
+                    
                     break;
+                
                 default:
-                    ChallengeInstance(vector, rite, questData).EventTrigger();
+
+                    string questName = questData.name.Replace("Two", "");
+
+                    switch (questName)
+                    {
+
+                        case "challengeEarth": new Aquifer(vector, rite, questData).EventTrigger(); break;
+                        case "challengeFates": new Quarry(vector, rite, questData).EventTrigger(); break;
+                        case "challengeStars": new Infestation(vector, rite, questData).EventTrigger(); break;
+                        case "challengeWater": new Graveyard(vector, rite, questData).EventTrigger(); break;
+                        case "challengeCanoli": new Canoli(vector, rite, questData).EventTrigger(); break;
+                        case "challengeMariner": new Mariner(vector, rite, questData).EventTrigger(); break;
+                        case "challengeGemShrine": new GemShrine(vector, rite, questData).EventTrigger(); break;
+
+                        case "challengeMuseum": new StardewDruid.Event.Boss.Museum(vector, rite, questData).EventTrigger(); break;
+                        case "challengeEther": new StardewDruid.Event.Boss.Crypt(vector, rite, questData).EventTrigger(); break;
+                        case "swordEther": new StardewDruid.Event.Boss.SkullCavern(vector, rite, questData).EventTrigger(); break;
+                        case "challengeSandDragon": new StardewDruid.Event.Boss.SandDragon(vector, rite, questData).EventTrigger(); break;
+
+                    }
+
                     break;
+            
             }
+        
         }
 
-        public static ChallengeHandle ChallengeInstance(Vector2 target, Rite rite, Quest quest)
-        {
-            string questName = quest.name.Replace("Two", "");
-
-            ChallengeHandle challengeHandle;
-
-            switch (questName)
-            {
-
-                case "swordEther": challengeHandle = new Tyrannus(target, rite, quest); break;
-                case "challengeFates": challengeHandle = new Quarry(target, rite, quest); break;
-                case "challengeStars": challengeHandle = new Infestation(target, rite, quest); break;
-                case "challengeWater": challengeHandle = new Graveyard(target, rite, quest); break;
-                case "challengeCanoli": challengeHandle = new Canoli(target, rite, quest); break;
-                case "challengeMuseum": challengeHandle = new Museum(target, rite, quest); break;
-                case "challengeMariner": challengeHandle = new Mariner(target, rite, quest); break;
-                case "challengeGemShrine": challengeHandle = new GemShrine(target, rite, quest); break;
-                case "challengeSandDragon": challengeHandle = new SandDragon(target, rite, quest); break;
-                default: challengeHandle = new Aquifer(target, rite, quest); break;
-
-
-            }
-            return challengeHandle;
-        }
 
         public static void MarkerInstance(GameLocation location, Quest quest)
         {
@@ -154,25 +162,60 @@ namespace StardewDruid.Map
             TriggerHandle triggerHandle;
 
             string questName = quest.name.Replace("Two", "");
-
+            Mod.instance.Monitor.Log("meow", StardewModdingAPI.LogLevel.Debug);
             switch (questName)
             {
                 case "approachJester":
+
                     CharacterData.CharacterLoad("Jester", "Mountain");
+
                     Mod.instance.characters["Jester"].SwitchFrozenMode();
+
                     triggerHandle = null;
+
                     break;
+
+                case "approachShadowtin":
+
+                    if(location is Location.Crypt)
+                    {
+                        CharacterData.CharacterLoad("Shadowtin", location.Name);
+                        
+                    }
+                    else
+                    {
+                        CharacterData.CharacterLoad("Shadowtin", "FarmCave");
+
+                    }
+
+                    Mod.instance.characters["Shadowtin"].SwitchFrozenMode();
+
+                    triggerHandle = null;
+
+                    break;
+
                 case "challengeEarth":
+
                     triggerHandle = new Trash(location, quest);
+
                     break;
+
                 case "approachEffigy":
+
                     triggerHandle = new Effigy(location, quest);
+
                     break;
+
                 case "challengeMuseum":
+
                     triggerHandle = new Feature(location, quest);
+
                     break;
+
                 default:
+
                     triggerHandle = new TriggerHandle(location, quest);
+
                     break;
             }
 
@@ -296,7 +339,9 @@ namespace StardewDruid.Map
                 [29] = new() { "lessonFlight" },
                 [30] = new() { "lessonBlast" },
                 [31] = new() { "lessonDive" },
-                [32] = new() { "lessonTreasure" }
+                [32] = new() { "lessonTreasure" },
+                [33] = new() { "challengeEther" },
+                [34] = new() { "approachShadowtin" },
             };
         }
 
@@ -365,7 +410,7 @@ namespace StardewDruid.Map
             { 
                 stringList.Add("ether"); 
             }
-            if (num > 32)
+            if (num > 34)
             {
                 stringList.Add("complete"); 
             }
@@ -374,7 +419,7 @@ namespace StardewDruid.Map
 
         public static int MaxProgress()
         {
-            return 33; //QuestProgress().Keys.ToList<int>().Last<int>() + 1;
+            return 35; //QuestProgress().Keys.ToList<int>().Last<int>() + 1;
 
         } 
 
@@ -399,7 +444,9 @@ namespace StardewDruid.Map
 
                     if (!(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[1])
                     {
+
                         return "none";
+
                     }
 
                 }
@@ -420,24 +467,39 @@ namespace StardewDruid.Map
 
         public static int AchieveProgress(string questCheck)
         {
+
             int num = Mod.instance.CurrentProgress();
+            
             foreach (KeyValuePair<int, List<string>> keyValuePair in QuestProgress())
             {
+                
                 if (keyValuePair.Key >= num)
                 {
+                    
                     foreach (string str in keyValuePair.Value)
                     {
+                        
                         if (!(str != questCheck))
                         {
+                            
                             num = keyValuePair.Key;
-                            ++num;
+                            
+                            num++;
+                            
                             Mod.instance.blessingList = RitesProgress();
+ 
                             return num;
+                        
                         }
+                    
                     }
+                
                 }
+            
             }
+            
             return num;
+        
         }
 
         public static Dictionary<string, Quest> QuestList()
@@ -450,7 +512,7 @@ namespace StardewDruid.Map
                     type = "Effigy",
                     triggerLocale = new List<Type>()
                     {
-                    typeof (FarmCave)
+                        typeof (FarmCave)
                     },
                     triggerMarker = "icon",
                     triggerVector = (CharacterData.CharacterPosition() / 64f) + new Vector2(-1f, -2f),
@@ -458,7 +520,7 @@ namespace StardewDruid.Map
                     //questCharacter = "Effigy",
                     questValue = 6,
                     questTitle = "The Druid's Effigy",
-                    questDescription = "There was a note amongst Grandpa's old tools about the farmcave. He left it alone, out of reverence or fear of his predecessors and their ancient druidic traditions.",
+                    questDescription = "There was a note amongst Grandpa's old tools about the farmcave. He never ventured there, out of reverence or fear of his predecessors and their ancient druidic traditions.",
                     questObjective = "Investigate the old farm cave. Press the rite button while the quest journal is open for the Stardew Druid journal.",
                     questReward = 100,
                     questProgress = 0
@@ -1025,6 +1087,7 @@ namespace StardewDruid.Map
                     questObjective = "Fly onto the water and perform ten dives with the special button/right click.",
                     questReward = 2500,
                     questProgress = 2,
+                    questDiscuss = "You might find this very unsettling, as I did when I learned of it's existence. Are you aware, that there is a strange technique that can be learned by some landborne creatures to stay alive in water. It's called swimming. It's unnatural.",
                     taskCounter = 10,
                     taskFinish = "masterDive"
                 },
@@ -1035,9 +1098,10 @@ namespace StardewDruid.Map
                     questValue = 6,
                     questTitle = "Druid Lesson 21: Treasure",
                     questDescription = "The ancient masters of the valley ensured the the secrets of their dominion were vaulted within the Ethereal world.",
-                    questObjective = "Search for the ether symbol on large map locations (a minimum map size applies). The color of the symbol will change depending on the terrain. Target the spot with blast or dive (special/right click button) to claim the dragon treasure.",
+                    questObjective = "Claim seven dragon treasures. Search for the ether symbol on large map locations (a minimum map size applies). The color of the symbol will change depending on the terrain. Target the spot with blast or dive (special/right click button) to claim the dragon treasure.",
                     questReward = 2600,
                     questProgress = 2,
+                    questDiscuss = "We're on a hunt for a way into the undervalley. Might as well hunt for Dragon treasure!",
                     taskCounter = 7,
                     taskFinish = "masterTreasure"
                 },
@@ -1045,28 +1109,47 @@ namespace StardewDruid.Map
                 {
                     name = "challengeEther",
                     type = "challenge",
+                    triggerLocation = new() { "Town" },
                     triggerBlessing = "ether",
-                    triggerLocation = new() { "Sewer" },
                     triggerMarker = "icon",
-                    triggerVector = new Vector2(20f, 5f),
-                    triggerColour = new Color(1f, 0.75f, 0.8f, 1f),
+                    triggerVector = new Vector2(47f, 88f),
+                    triggerColour = new Color(1f, 0.75f, 0.8f),
                     questId = 18465056,
                     questValue = 6,
-                    questTitle = "Servant of the Fallen One",
-                    questDescription = "Your investigation into the leylines of the valley has provided Jester with another clue about the whereabouts of the fallen one, and a dangerous figure that does it's bidding.",
-                    questObjective = "Perform a Rite of the Ether at the point of disturbance in the sewers.",
+                    questTitle = "The Ether Thieves",
+                    questDescription = "The thieves that looted the treasure caches have been tracked to their hideout, an old burial chamber underneath the town graveyard.",
+                    questObjective = "Perform a Rite of the Ether in the graveyard in Pelican Town.",
                     questReward = 15000,
-                    questProgress = 1
-                }
+                    questProgress = 1,
+                    questDiscuss = "Woodface showed me how to use my nose to track the scent of prey. Then he told me to hunt vermin like a good farmcat. Am I a just a joke to him? Because I like jokes. Anyway, I tracked a different kind of pest, the thieves who have been raiding our dragon treasure! Their hideout is in an old crypt underneath the town.",
+                },
+                ["approachShadowtin"] = new Quest()
+                {
+                    name = "approachShadowtin",
+                    type = "Shadowtin",
+                    triggerLocale = new() { typeof(StardewDruid.Location.Crypt),typeof(FarmCave),},
+                    triggerMarker = "character",
+                    questId = 18465057,
+                    questValue = 6,
+                    questTitle = "Shadowtin Bear, Professonal",
+                    questDescription = "Your encounter with the ether thieves left a good impression on their ringleader.",
+                    questObjective = "Introduce yourself to Shadowtin Bear. He will await you in the town crypt or in the farmcave.",
+                    questReward = 100,
+                    questProgress = 1,
+                    questDiscuss = "Hey, great news! I invited the big ether thief to join our undervalley-search-party. Now we're sure to find the way there.",
+
+                },
+
             };
 
-            foreach (KeyValuePair<string, string> secondQuest in SecondQuests())
+            foreach (KeyValuePair<string, string> secondQuest in SecondQuests(true))
             {
                 Quest quest = DeepClonerExtensions.ShallowClone<Quest>(dictionary[secondQuest.Key]);
                 quest.name = secondQuest.Key + "Two";
                 quest.questId += 100;
                 quest.questTitle = secondQuest.Value;
-                quest.questReward = 5000;
+                quest.questDescription = "This is a stronger version of the previous quest, with increased difficulty and better rewards.";
+                quest.questReward *= 2;
                 quest.questProgress = -1;
                 dictionary[quest.name] = quest;
             }
@@ -1100,7 +1183,10 @@ namespace StardewDruid.Map
 
         public static Dictionary<string, string> SecondQuests(bool all = false)
         {
-            Dictionary<string, string> dictionary1 = new Dictionary<string, string>()
+
+            int progress = Mod.instance.CurrentProgress();
+
+            Dictionary<string, string> challenges = new Dictionary<string, string>()
             {
                 
                 ["challengeEarth"] = "The Aquifer Revisited",
@@ -1120,52 +1206,66 @@ namespace StardewDruid.Map
             if (Game1.currentSeason != "winter" || all)
             {
 
-                dictionary1.Add("challengeMariner", "The Seafarer Revisited");
+                challenges.Add("challengeMariner", "The Seafarer Revisited");
 
             }
 
             if (Game1.player.hasOrWillReceiveMail("seenBoatJourney") || all)
             {
 
-                dictionary1.Add("challengeGemShrine", "The Shrine Revisited");
+                challenges.Add("challengeGemShrine", "The Shrine Revisited");
 
             }
 
-            if (StageProgress().Contains("ether") || all)
+            if (progress > 26 || all)
             {
 
-                dictionary1.Add("challengeFates", "The Fallen Revisited");
+                challenges.Add("challengeFates", "The Fallen Revisited");
+
+            }
+
+            if (progress > 27 || all)
+            {
+
+                challenges.Add("swordEther", "The Tomb Revisited");
+
+            }
+
+            if (progress > 33 || all)
+            {
+
+                challenges.Add("challengeEther", "The Thieves Revisited");
 
             }
 
             if (all)
             {
 
-                return dictionary1;
+                return challenges;
 
             }
 
-            Dictionary<string, string> dictionary2 = new Dictionary<string, string>();
+            Dictionary<string, string> enabled = new Dictionary<string, string>();
 
-            foreach (KeyValuePair<string, string> keyValuePair in dictionary1)
+            foreach (KeyValuePair<string, string> keyValuePair in challenges)
             {
                 
                 if (Mod.instance.QuestComplete(keyValuePair.Key))
                 {
-                    
-                    dictionary2.Add(keyValuePair.Key, keyValuePair.Value);
+
+                    enabled.Add(keyValuePair.Key, keyValuePair.Value);
                 
                 }
                 else if (!Mod.instance.QuestGiven(keyValuePair.Key))
                 {
-                    
-                    dictionary2.Add(keyValuePair.Key, keyValuePair.Value);
+
+                    enabled.Add(keyValuePair.Key, keyValuePair.Value);
                 
                 }
                     
             }
 
-            return dictionary2;
+            return enabled;
 
         }
 

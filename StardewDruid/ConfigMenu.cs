@@ -74,6 +74,36 @@ namespace StardewDruid
                 setValue: value => Config.autoProgress = value
             );
 
+            configMenu.AddNumberOption(
+                mod: mod.ModManifest,
+                name: () => "Set Progress",
+                tooltip: () => "Use to adjust progress level on game load. -1 is no change. Note that adjustments may clear or miss levels of progress.",
+                min: -1,
+                max: QuestData.MaxProgress(),
+                interval: 1,
+                getValue: () => Config.newProgress,
+                setValue: value => Config.newProgress = value
+            );
+
+            string[] textOption = { "easy", "medium", "hard", };
+
+            configMenu.AddTextOption(
+                mod: mod.ModManifest,
+                name: () => "Mod Difficulty",
+                tooltip: () => "Select difficulty level for mod-spawned monsters and other effects.",
+                allowedValues: textOption,
+                getValue: () => Config.combatDifficulty,
+                setValue: value => Config.combatDifficulty = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: mod.ModManifest,
+                name: () => "Maximum Damage",
+                tooltip: () => "Some spell effects have damage modifiers that consider player combat level, highest upgrade on Pickaxe, Axe, and applied enchantments. Enable to cast at max damage and effect everytime.",
+                getValue: () => Config.maxDamage,
+                setValue: value => Config.maxDamage = value
+            );
+
             string[] colourOption = { "Red", "Blue", "Green", "Purple", "Black" };
 
             configMenu.AddTextOption(
@@ -115,36 +145,6 @@ namespace StardewDruid
                 tooltip: () => "Enables automatic consumption of caffeinated items: Cola, Tea Leaves, Tea, Coffee Bean, Coffee, Triple Espresso, Energy Tonic; Triggers when casting with low stamina without an active drink buff.",
                 getValue: () => Config.consumeCaffeine,
                 setValue: value => Config.consumeCaffeine = value
-            );
-
-            configMenu.AddNumberOption(
-                mod: mod.ModManifest,
-                name: () => "Set Progress",
-                tooltip: () => "Use to adjust progress level on game load. -1 is no change. Note that adjustments may clear or miss levels of progress.",
-                min: -1,
-                max: QuestData.MaxProgress(),
-                interval: 1,
-                getValue: () => Config.newProgress,
-                setValue: value => Config.newProgress = value
-            );
-
-            configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => "Maximum Damage",
-                tooltip: () => "Some spell effects have damage modifiers that consider player combat level, highest upgrade on Pickaxe, Axe, and applied enchantments. Enable to cast at max damage and effect everytime.",
-                getValue: () => Config.maxDamage,
-                setValue: value => Config.maxDamage = value
-            );
-
-            string[] textOption = { "easy", "medium", "hard", };
-
-            configMenu.AddTextOption(
-                mod: mod.ModManifest,
-                name: () => "Mod Difficulty",
-                tooltip: () => "Select difficulty level for mod-spawned monsters and other effects.",
-                allowedValues: textOption,
-                getValue: () => Config.combatDifficulty,
-                setValue: value => Config.combatDifficulty = value
             );
 
             configMenu.AddBoolOption(

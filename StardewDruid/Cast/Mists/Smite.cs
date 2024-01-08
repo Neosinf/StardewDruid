@@ -50,7 +50,7 @@ namespace StardewDruid.Cast.Mists
 
             }
 
-            int damageApplied = randomIndex.Next(riteData.castDamage);
+            int damageApplied = riteData.castDamage;
 
             bool critApplied = false;
 

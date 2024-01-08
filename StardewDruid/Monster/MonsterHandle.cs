@@ -349,6 +349,14 @@ namespace StardewDruid.Monster
 
             // ----------------------------- animation
 
+            if (MonsterData.CustomMonsters().Contains(theMonster.GetType()))
+            {
+                monsterSpawn.InitiateMonster(150);
+
+                return theMonster;
+
+            }
+
             string textureName = theMonster.Sprite.textureName.Value;
 
             Rectangle targetRectangle = theMonster.Sprite.SourceRect;

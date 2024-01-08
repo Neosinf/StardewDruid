@@ -34,7 +34,15 @@ namespace StardewDruid.Cast.Weald
 
             experienceGain = 8;
 
-            if (randomIndex.Next(11 - targetPlayer.fishingLevel.Value) == 0)
+            if(11 - targetPlayer.fishingLevel.Value <= 0)
+            {
+
+                objectQuality = 2;
+
+                experienceGain = 16;
+
+            }
+            else if (randomIndex.Next(11 - targetPlayer.fishingLevel.Value) == 0)
             {
 
                 objectQuality = 2;

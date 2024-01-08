@@ -76,31 +76,31 @@ namespace StardewDruid.Map
 
                 // ------------------ Bosses
 
-                case 11: // Bat
+                case 11:
 
                     theMonster = new BossBat(spawnVector, combatModifier);
 
                     break;
 
-                case 12: // Shooter
+                case 12:
 
                     theMonster = new BossShooter(spawnVector, combatModifier);
 
                     break;
 
-                case 13: // Slime
+                case 13:
 
                     theMonster = new BossSlime(spawnVector, combatModifier);
 
                     break;
 
-                case 14: // Dino Monster
+                case 14:
 
                     theMonster = new BossDino(spawnVector, combatModifier);
 
                     break;
 
-                case 15: // firebird
+                case 15:
 
                     theMonster = new Firebird(spawnVector, combatModifier);
 
@@ -115,6 +115,24 @@ namespace StardewDruid.Map
                 case 17:
 
                     theMonster = new Reaper(spawnVector, combatModifier);
+
+                    break;
+
+                case 18:
+
+                    theMonster = new Shadowtin(spawnVector, combatModifier);
+
+                    break;
+
+                case 19:
+
+                    theMonster = new Scavenger(spawnVector, combatModifier);
+
+                    break;
+
+                case 20:
+
+                    theMonster = new Rogue(spawnVector, combatModifier);
 
                     break;
 
@@ -145,6 +163,8 @@ namespace StardewDruid.Map
                 typeof (BossDino),
                 typeof (Boss),
                 typeof (Reaper),
+                typeof (Scavenger),
+                typeof (Rogue),
                 typeof(StardewDruid.Monster.BossShooter),
                 typeof(StardewDruid.Monster.BossSlime),
                 typeof(StardewDruid.Monster.Firebird),

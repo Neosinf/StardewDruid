@@ -69,7 +69,7 @@ namespace StardewDruid.Event.Challenge
                 foreach (Vector2 castVector in castSelection)
                 {
 
-                    Tile backTile = backLayer.PickTile(new Location((int)castVector.X * 64, (int)castVector.Y * 64), Game1.viewport.Size);
+                    Tile backTile = backLayer.PickTile(new xTile.Dimensions.Location((int)castVector.X * 64, (int)castVector.Y * 64), Game1.viewport.Size);
 
                     if (backTile != null)
                     {

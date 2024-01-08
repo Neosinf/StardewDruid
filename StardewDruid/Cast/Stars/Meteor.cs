@@ -46,7 +46,7 @@ namespace StardewDruid.Cast.Stars
 
             }
 
-            float castDamage = riteData.castDamage * (0.05f * randomIndex.Next(5));
+            float castDamage = riteData.castDamage;
 
             List<Vector2> impactVectors = ModUtility.Explode(targetLocation, targetVector, targetPlayer, 2, (int)castDamage, powerLevel:2);
 
@@ -64,4 +64,5 @@ namespace StardewDruid.Cast.Stars
         }
 
     }
+
 }

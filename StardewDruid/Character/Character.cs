@@ -83,6 +83,9 @@ namespace StardewDruid.Character
             
             if (Mod.instance.eventRegister.ContainsKey("transform"))
             {
+
+                Mod.instance.CastMessage("Unable to converse while transformed");
+
                 return false;
 
             }
@@ -256,12 +259,12 @@ namespace StardewDruid.Character
                 if (timers[keyValuePair.Key] <= 0)
                 {
 
-                    if (keyValuePair.Key == "standby")
-                    {
+                    //if (keyValuePair.Key == "standby")
+                    //{
 
-                        DeactivateStandby();
+                    //    DeactivateStandby();
 
-                    }
+                   // }
 
                     timers.Remove(keyValuePair.Key);
 
@@ -549,6 +552,14 @@ namespace StardewDruid.Character
             Vector2 warpPosition = new(Position.X, Position.Y + 32f);
 
             ModUtility.AnimateQuickWarp(currentLocation, warpPosition, "Solar");
+
+            if (priorities.Contains("standby"))
+            {
+
+                DeactivateStandby();
+
+            }
+
         }
 
         public virtual bool TargetRoam()
@@ -1045,7 +1056,7 @@ namespace StardewDruid.Character
                 "standby",
                 "track",
               };
-            timers["standby"] = length;
+            //timers["standby"] = length;
         }
 
         public virtual void DeactivateStandby()
@@ -1055,7 +1066,7 @@ namespace StardewDruid.Character
                 "attack",
                 "track"
               };
-            timers.Remove("standby");
+            //timers.Remove("standby");
         }
 
         public virtual void SwitchRoamMode()

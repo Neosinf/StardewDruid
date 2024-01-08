@@ -322,9 +322,9 @@ namespace StardewDruid.Event.World
 
             targetPlayer.temporarilyInvincible = true;
 
-            targetPlayer.temporaryInvincibilityTimer = 0;
+            targetPlayer.temporaryInvincibilityTimer = 1;
 
-            targetPlayer.currentTemporaryInvincibilityDuration = 1200;
+            targetPlayer.currentTemporaryInvincibilityDuration = 600;
 
             ModUtility.AnimateQuickWarp(targetLocation, targetPlayer.Position, "Void");
 
@@ -333,7 +333,7 @@ namespace StardewDruid.Event.World
 
                 List<int> diff = new() { 0,0 };
 
-                int damage = riteData.castDamage * 2;
+                int damage = riteData.castDamage * 3 / 2;
 
                 if (meleeWeapon.knockback.Value > 0)
                 {

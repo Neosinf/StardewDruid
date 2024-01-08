@@ -697,11 +697,11 @@ namespace StardewDruid.Map
                     "lesson",
                     "Ether",
                     "I can concentrate the ether within myself, and expel it as a torrent of violent energy.",
-                    "Press the special button/right click to blast nearby foes. Uses cursor and directional targetting.",
+                    "Press the special button/right click to blast nearby foes. Creates a zone fire with a damage-over-time effect. Uses cursor and directional targetting.",
                     "lessonBlast",
                     "of 10 blasts performed",
                     "masterBlast",
-                    "Blast range increased"
+                    "Damage effect has a chance to immolate enemies and convert them into cooking items."
                     }
                 },
                 [31] = new()
@@ -727,7 +727,7 @@ namespace StardewDruid.Map
                     "lesson",
                     "Ether",
                     "The treasures of the ancient ones have been hoarded away in the ethereal plane.",
-                    "Search for the ether symbol on large map locations (Farm, Forest, Beach, Town, Mountain, RailRoad, Desert, Island). The color of the symbol will change depending on the terrain. Target the spot with blast or dive (special/right click button) to claim the dragon treasure.",
+                    "Claim 7 dragon treasures. Search for the ether symbol on large map locations (Forest, Beach, Mountain, RailRoad, Desert, Island etc). The color of the symbol will change depending on the terrain. Target the spot with blast or dive (special/right click button) to claim the dragon treasure. Be careful, you might have to fight, or race, to keep what you find.",
                     "lessonTreasure",
                     "of 7 treasures found",
                     "masterTreasure",
@@ -735,6 +735,30 @@ namespace StardewDruid.Map
                     }
                 },
                 [33] = new()
+                {
+                    new()
+                    {
+                    "The Ether Thieves",
+                    "quest",
+                    "Ether",
+                    "It was a moment of bizarre misfortune. As soon as I had uncovered a treasure sealed away by the ethereal power of the ancient ones, a shadowfolk appeared to snatch it away. Jester wasn't around to witness the initial invasion of the town by these fiends, but now he's more familiar with the territory, he's sniffed out a lead. Another tomb.",
+                    "The defunct town crypt was an ideal place for the shadowrogues to organise their operations in the material plane. They had laboured, most unsuccessfully, to gather ethereal matter and other supplies from this plane for the Deep One's cause. I challenged the ringleader, Shadowtin Bear, to a battle for the spoils he had accumulated. I triumphed, but the real trophy was Shadowtin's fealty, who is excited to ally with a Dragon, guise or not.",
+                    "challengeEther",
+                    },
+                },
+                [34] = new()
+                {
+                    new()
+                    {
+                    "Shadowtin Bear, Professonal",
+                    "quest",
+                    "Shadow",
+                    "The figure in the tin bear mask is a legend amongst the Shadowfolk. He has a fetish for rare collectibles, especially from the age of Dragons, and relishes the chance to partner with a Druid of my abilities. With Shadowtin's help, I hope to fulfil my promise to Jester to find the undervalley.",
+                    "Shadowtin can join your other allies on the farm, cave or at your side. He can use his Carnyx to stun enemies, or twirl it in a spin attack. Shadowtin will pick up nearby forageables for the player.",
+                    "approachShadowtin",
+                    },
+                },
+                [35] = new()
                 {
                     new()
                     {
@@ -747,6 +771,7 @@ namespace StardewDruid.Map
                     "Much love, Neosinf.",
                     "If you have the time, please consider endorsing the mod on Nexus and joining us on the Stardew Druid discord server!",
                     }
+
                 }
 
             };
@@ -783,7 +808,7 @@ namespace StardewDruid.Map
 
                 List<string> specialEntries = new()
                 {
-                    "I strolled alone, in the valley untouched by the war of our great kin, and came upon the spring that mirrors the celestial plane. I saw her reflection, and from the mirrored side, she saw mine.",
+                    "I strolled alone, in the valley untouched by the war of our great kin, and came upon a spring that mirrors the celestial plane. I saw her reflection, and from the mirrored side, she saw mine.",
                     "I made a garden for her here, where the fruits grow sweetest, and dyed the blossoms with all the burgeoning colours of my heart. Her light dappled over the grove, bringing it to life. She was pleased, and I was captivated.",
                     "I climbed the heights of the sacred mountain, and there, I constructed a marriage altar. I looked upward for many nights. Her light came again, and confirmed her own yearning. I convinced the Benevolus Prime to conduct a rite of union.",
                     "By the purity and power of our union, the barriers between us broke. Dear Lady, it is Yoba's will that I am with my love, and there is nothing more to explain.",

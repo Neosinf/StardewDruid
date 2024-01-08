@@ -3,6 +3,7 @@ using StardewDruid.Cast;
 using StardewDruid.Map;
 using StardewValley;
 using StardewValley.Characters;
+using System;
 using System.Collections.Generic;
 
 namespace StardewDruid.Event.Challenge
@@ -45,8 +46,6 @@ namespace StardewDruid.Event.Challenge
 
             Game1.addHUDMessage(new HUDMessage($"Challenge Initiated", ""));
 
-            //Mod.instance.lockoutRegister.Add("earth", true);
-
         }
 
         public void SetupSpawn()
@@ -69,9 +68,9 @@ namespace StardewDruid.Event.Challenge
             foreach (Vector2 torchVector in spawnTorches)
             {
 
-                Torch torch = ModUtility.StoneBrazier(riteData.castLocation, torchVector);
+                Brazier brazier = new(targetLocation, torchVector);
 
-                torchList.Add(torch);
+                braziers.Add(brazier);
 
             }
 
@@ -100,6 +99,15 @@ namespace StardewDruid.Event.Challenge
 
             }
 
+            int diffTime = (int)Math.Round(expireTime - Game1.currentGameTime.TotalGameTime.TotalSeconds);
+
+            if (activeCounter != 0 && diffTime % 10 == 0 && diffTime != 0)
+            {
+
+                MinutesLeft(diffTime);
+
+            }
+
             return base.EventActive();
 
         }
@@ -111,6 +119,17 @@ namespace StardewDruid.Event.Challenge
 
         }
 
+
+        public override bool EventExpire()
+        {
+
+            Mod.instance.CompleteQuest(questData.name);
+
+            RemoveMonsters();
+
+            return base.EventExpire();
+
+        }
 
         public void UpdateFriendship(List<string> NPCIndex)
         {
@@ -130,8 +149,6 @@ namespace StardewDruid.Event.Challenge
                 }
                 else
                 {
-
-                    //mod.Monitor.Log($"Unable to raise Friendship for {NPCName}", LogLevel.Debug);
 
                 }
 

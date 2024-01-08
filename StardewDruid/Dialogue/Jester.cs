@@ -26,18 +26,18 @@ namespace StardewDruid.Dialogue
             else
             {
                 
-                string str = "(Jester gives you a mischievious look)";
+                string str = "Jester gives you a mischievious look.";
 
                 List<Response> responseList = new List<Response>();
 
                 List<string> stringList = QuestData.StageProgress();
 
-                string questText = "I'm curious about what you have planned for today (quests)";
+                string questText = "(quests) I'm curious about what you have planned for today";
 
                 if (stringList.Contains("ether"))
                 {
 
-                    questText = "Let's continue our search for the undervalley (quests)";
+                    questText = "(quests) Let's continue our search for the undervalley";
 
                 }
 
@@ -46,24 +46,24 @@ namespace StardewDruid.Dialogue
                 if (Context.IsMainPlayer)
                 {
                     
-                    responseList.Add(new Response("relocate", "I've got an idea for you (relocate/follow)"));
+                    responseList.Add(new Response("relocate", "(move) I've got an idea for you."));
 
                 }
 
                 if (npc.priorities.Contains("standby"))
                 {
 
-                    responseList.Add(new Response("continue", "Alright, let's go! (continue)"));
+                    responseList.Add(new Response("continue", "(continue) Alright, let's go!"));
 
                 }
                 else if (npc.priorities.Contains("track"))
                 {
                     
-                    responseList.Add(new Response("standby", "How about some self-reflection. (standby)"));
+                    responseList.Add(new Response("standby", "(standby) How about some self-reflection."));
 
                 }
 
-                responseList.Add(new Response("rites", "I want to talk about some things (manage rites)"));
+                responseList.Add(new Response("rites", "(talk) I want to talk about some things."));
 
                 responseList.Add(new Response("none", "(say nothing)"));
 
@@ -85,30 +85,12 @@ namespace StardewDruid.Dialogue
                 case "rites":
                     new Rites(npc).Approach();
                     break;
-                case "accept":
-                    DelayedAction.functionAfterDelay(ReplyAccept, 100);
-                    break;
                 case "quests":
                 case "journey":
                     new Quests(npc).Approach();
                     break;
-                case "refuse":
-                     DelayedAction.functionAfterDelay(ReplyRefuse, 100);
-                    break;
-                case "introtwo":
-                    DelayedAction.functionAfterDelay(DialogueIntroTwo, 100);
-                    break;
                 case "relocate":
                     DelayedAction.functionAfterDelay(DialogueRelocate, 100);
-                    break;
-                case "Thanatoshi":
-                    DelayedAction.functionAfterDelay(ReplyThanatoshi, 100);
-                    break;
-                case "introthree":
-                    DelayedAction.functionAfterDelay(DialogueIntroThree, 100);
-                    break;
-                case "afterQuarry":
-                    DelayedAction.functionAfterDelay(ReplyAfterQuarry, 100);
                     break;
                 case "standby":
                     DelayedAction.functionAfterDelay(ReplyStandby, 100);
@@ -116,32 +98,60 @@ namespace StardewDruid.Dialogue
                 case "continue":
                     DelayedAction.functionAfterDelay(ReplyContinue, 100);
                     break;
+
+                case "Thanatoshi":
+                    DelayedAction.functionAfterDelay(ReplyThanatoshi, 100);
+                    break;
+                case "afterQuarry":
+                    DelayedAction.functionAfterDelay(ReplyAfterQuarry, 100);
+                    break;
+
             }
+
+        }
+
+        public void AnswerIntro(Farmer visitor, string answer)
+        {
+
+            switch (answer)
+            {
+                case "introtwo":
+                    DelayedAction.functionAfterDelay(DialogueIntroTwo, 100);
+                    return;
+                case "introthree":
+                    DelayedAction.functionAfterDelay(DialogueIntroThree, 100);
+                    return;
+                case "accept":
+                    DelayedAction.functionAfterDelay(ReplyAccept, 100);
+                    return;
+                case "refuse":
+                    DelayedAction.functionAfterDelay(ReplyRefuse, 100);
+                    return;
+            }
+
+            Game1.drawDialogue(npc, "(The strange cat shrugs back)");
 
         }
 
         public void DialogueIntro()
         {
-            Mod.instance.CompleteQuest("approachEffigy");
+            
             List<Response> responseList = new List<Response>();
             string str = "(The strange cat looks at you expectantly)";
             responseList.Add(new Response("introtwo", "Hello Kitty, are you far from home?"));
             responseList.Add(new Response("cancel", "(You hold out your empty hands and shrug)"));
-            Jester jester = this;
-            GameLocation.afterQuestionBehavior questionBehavior = new(AnswerApproach);
+            GameLocation.afterQuestionBehavior questionBehavior = new(AnswerIntro);
             Game1.player.currentLocation.createQuestionDialogue(str, responseList.ToArray(), questionBehavior, npc);
         }
 
         public void DialogueIntroTwo()
         {
-            Mod.instance.CompleteQuest("approachEffigy");
             List<Response> responseList = new List<Response>();
             string str = "Strange Cat: ^Far and not so far. I'm easily lost in this world. The patterns of the earth are strange enough, but the behaviour of humans... I'm muddled.";
             responseList.Add(new Response("introthree", "An otherworldly visitor might be disorientated by the natural laws of this world, laws that keep it ordered and safe."));
             responseList.Add(new Response("introthree", "Forest magic can really mess with one's perception of nature. It's wack."));
             responseList.Add(new Response("introthree", "(Say nothing and pretend the cat can't talk)"));
-            Jester jester = this;
-            GameLocation.afterQuestionBehavior questionBehavior = new(AnswerApproach);
+            GameLocation.afterQuestionBehavior questionBehavior = new(AnswerIntro);
             Game1.player.currentLocation.createQuestionDialogue(str, responseList.ToArray(), questionBehavior, npc);
         }
 
@@ -151,8 +161,7 @@ namespace StardewDruid.Dialogue
             string str = "Strange Cat: ^Well farmer, you have the scent of destiny about you, and some otherworldly ability too. If I, the Jester of Fate, teach you my special tricks, will you help me find my way?";
             responseList.Add(new Response("accept", "A representative of fate? This is truly fortuitous. I accept your proposal."));
             responseList.Add(new Response("refuse", "I'm not making any deals with a strange cat on a bridge built by forest spirits!"));
-            Jester jester = this;
-            GameLocation.afterQuestionBehavior questionBehavior = new(AnswerApproach);
+            GameLocation.afterQuestionBehavior questionBehavior = new(AnswerIntro);
             Game1.player.currentLocation.createQuestionDialogue(str, responseList.ToArray(), questionBehavior, npc);
         }
 
@@ -171,7 +180,7 @@ namespace StardewDruid.Dialogue
         public void CompleteIntro()
         {
             Mod.instance.CastMessage("Jester has moved to the farm cave", -1);
-            (npc as StardewDruid.Character.Jester).SwitchRoamMode();
+            (npc as StardewDruid.Character.Jester).SwitchDefaultMode();
             Mod.instance.CompleteQuest("approachJester");
             QuestData.NextProgress();
             Mod.instance.CharacterRegister(nameof(Jester), "FarmCave");

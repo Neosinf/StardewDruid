@@ -30,12 +30,21 @@ namespace StardewDruid.Map
 
             }
 
+            if (progress >= 35 && Mod.instance.CharacterMap("Shadowtin") == null)
+            {
+
+                Mod.instance.CharacterRegister("Shadowtin", "FarmCave");
+
+            }
+
         }
 
 
         public static void CharacterLoad(string characterName, string startMap)
         {
-            if (!Context.IsMainPlayer) { 
+            
+            if (!Context.IsMainPlayer)
+            { 
             
                 return; 
             
@@ -79,7 +88,7 @@ namespace StardewDruid.Map
                 Mod.instance.dialogue["Effigy"] = new Dialogue.Effigy() { npc = Mod.instance.characters["Effigy"] };
 
                 // Cave choice event triggered
-                if (Game1.player.caveChoice.Value == 0 && Game1.player.totalMoneyEarned > 25000)
+                if (Game1.player.caveChoice.Value == 0 && Game1.player.totalMoneyEarned > 25000 && Game1.player.totalMoneyEarned < 30000)
                 {
 
                     Mod.instance.dialogue["Effigy"].specialDialogue.Add("Demetrius", new() { "I had a peculiar visitor", "Did you meet Demetrius?", });
@@ -118,6 +127,36 @@ namespace StardewDruid.Map
 
             }
 
+            // ----------------------------- Shadowtin
+
+            if (characterName == "Shadowtin")
+            {
+
+                Vector2 position = CharacterPosition(startMap);
+
+                Shadowtin npcShadowtin = new(position, startMap);
+
+                GameLocation startLocation = Game1.getLocationFromName(startMap);
+
+                startLocation.characters.Add(npcShadowtin);
+
+                npcShadowtin.currentLocation = startLocation;
+
+                npcShadowtin.update(Game1.currentGameTime, startLocation);
+
+                if (startMap == "Farm")
+                {
+
+                    npcShadowtin.SwitchRoamMode();
+
+                }
+
+                Mod.instance.characters.Add("Shadowtin", npcShadowtin);
+
+                Mod.instance.dialogue["Shadowtin"] = new Dialogue.Shadowtin() { npc = Mod.instance.characters["Shadowtin"] };
+
+            }
+
         }
 
         public static Texture2D CharacterTexture(string characterName)
@@ -145,7 +184,6 @@ namespace StardewDruid.Map
 
                 case "Jester":
 
-
                     characterSprite.SpriteHeight = 32;
 
                     characterSprite.SpriteWidth = 32;
@@ -168,6 +206,14 @@ namespace StardewDruid.Map
                     characterSprite.SpriteHeight = 32;
 
                     characterSprite.SpriteWidth = 16;
+
+                    break;
+
+                case "Shadowtin":
+
+                    characterSprite.SpriteHeight = 32;
+
+                    characterSprite.SpriteWidth = 32;
 
                     break;
 
@@ -194,6 +240,7 @@ namespace StardewDruid.Map
             {
                 case "Jester":
                 case "Effigy":
+                case "Shadowtin":
 
                     characterPortrait = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", characterName + "Portrait.png"));
 
@@ -244,9 +291,11 @@ namespace StardewDruid.Map
 
                 case "Mountain":
 
-
                     return new Vector2(6176, 1728);
 
+                case "18465_Crypt":
+
+                    return new Vector2(1280, 320);
 
                 default:
 

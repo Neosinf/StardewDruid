@@ -398,7 +398,7 @@ namespace StardewDruid.Character
         public override void HitMonster(StardewValley.Monsters.Monster monsterCharacter)
         {
 
-            DealDamageToMonster(monsterCharacter,true, Mod.instance.DamageLevel());
+            DealDamageToMonster(monsterCharacter,true);
 
         }
 

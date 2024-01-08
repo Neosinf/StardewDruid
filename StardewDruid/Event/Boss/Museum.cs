@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
+using StardewDruid.Event.Challenge;
 using StardewDruid.Map;
 using StardewDruid.Monster;
 using StardewValley;
@@ -10,9 +11,9 @@ using xTile.Layers;
 using xTile.Tiles;
 
 #nullable disable
-namespace StardewDruid.Event.Challenge
+namespace StardewDruid.Event.Boss
 {
-    public class Museum : ChallengeHandle
+    public class Museum : BossHandle
     {
         public bool modifiedLocation;
         public BossDino bossMonster;
@@ -22,20 +23,20 @@ namespace StardewDruid.Event.Challenge
         public Museum(Vector2 target, Rite rite, Quest quest)
           : base(target, rite, quest)
         {
-            
+
             targetVector = target;
-           
-            voicePosition = (targetVector*64f) - new Vector2(0.0f, 32f);
+
+            voicePosition = targetVector * 64f - new Vector2(0.0f, 32f);
 
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 60.0;
-            
+
             returnPosition = rite.caster.Position;
-            
+
         }
 
         public override void EventTrigger()
         {
-            
+
             ModUtility.AnimateRadiusDecoration(targetLocation, targetVector, "Mists", 1f, 1f);
 
             ModUtility.AnimateBolt(targetLocation, targetVector);
@@ -54,12 +55,12 @@ namespace StardewDruid.Event.Challenge
         {
             if (targetPlayer.currentLocation == targetLocation && !eventAbort)
             {
-                
+
                 double totalSeconds = Game1.currentGameTime.TotalGameTime.TotalSeconds;
-                
+
                 if (expireTime < totalSeconds || expireEarly)
                 {
-                    
+
                     return EventExpire();
 
                 }
@@ -69,7 +70,7 @@ namespace StardewDruid.Event.Challenge
                 if (activeCounter != 0 && num % 10 == 0 && num != 0)
                 {
 
-                    Mod.instance.CastMessage(num.ToString()+" more minutes left!", 2);
+                    Mod.instance.CastMessage(num.ToString() + " more minutes left!", 2);
 
                 }
 
@@ -86,20 +87,20 @@ namespace StardewDruid.Event.Challenge
         {
             if (bossMonster != null)
             {
-                
+
                 riteData.castLocation.characters.Remove(bossMonster);
-                
+
                 bossMonster = null;
-            
+
             }
-            
+
             base.RemoveMonsters();
 
         }
 
         public override void EventRemove()
         {
-            
+
             ResetLocation();
 
             //Mod.instance.ReassignQuest(questData.name);
@@ -117,27 +118,27 @@ namespace StardewDruid.Event.Challenge
 
                 ResetLocation();
 
-                eventLinger = 4;
+                eventLinger = 3;
 
                 return true;
 
             }
 
-            if (eventLinger == 3)
+            if (eventLinger == 2)
             {
-                
+
                 if (expireEarly)
                 {
-                    
+
                     GuntherVoice("One for the books.");
-                    
-                    Vector2 vector2 = Gunther.getTileLocation()+ new Vector2(0.0f, 1f);
-                    
+
+                    Vector2 vector2 = Gunther.getTileLocation() + new Vector2(0.0f, 1f);
+
                     if (!questData.name.Contains("Two"))
                     {
                         Game1.createObjectDebris(74, (int)vector2.X, (int)vector2.Y, -1, 0, 1f, null);
                     }
-                        
+
                     Mod.instance.CompleteQuest(questData.name);
 
                 }
@@ -158,8 +159,12 @@ namespace StardewDruid.Event.Challenge
         public override void EventInterval()
         {
             ++activeCounter;
+
             if (eventLinger != -1)
+            {
                 return;
+            }
+
             if (activeCounter < 6)
             {
                 switch (activeCounter)
@@ -187,74 +192,85 @@ namespace StardewDruid.Event.Challenge
                         GuntherVoice("Protect the library!");
                         break;
                 }
+                
                 Vector2 vector2 = targetVector + new Vector2(0.0f, 1f) - new Vector2(randomIndex.Next(7), randomIndex.Next(3));
+                
                 ModUtility.AnimateRadiusDecoration(targetLocation, vector2, "Mists", 1f, 1f);
+                
                 ModUtility.AnimateBolt(targetLocation, vector2);
+
+                return;
+
             }
-            else if (activeCounter == 6)
+            
+            if (activeCounter == 6)
             {
                 ModifyLocation();
-                bossMonster = MonsterData.CreateMonster(14, targetVector+new Vector2(2f, 0.0f), riteData.combatModifier) as BossDino;
+                bossMonster = MonsterData.CreateMonster(14, targetVector + new Vector2(2f, 0.0f), riteData.combatModifier) as BossDino;
                 if (questData.name.Contains("Two"))
                     bossMonster.HardMode();
                 riteData.castLocation.characters.Add(bossMonster);
                 bossMonster.update(Game1.currentGameTime, riteData.castLocation);
                 SetTrack("heavy");
+
+                return;
             }
-            else if (bossMonster.defeated || bossMonster.Health <= 0 || bossMonster == null || !riteData.castLocation.characters.Contains(bossMonster))
+
+            switch (activeCounter)
             {
+                case 10:
+                    GuntherVoice("What have I got to throw here...");
+                    GuntherThrowRandomShit();
+                    break;
+                case 15:
+                    GuntherVoice("Pre-cretacious creep!");
+                    break;
+                case 20:
+                    GuntherVoice("It's defacing my inlaid hardwood panelling!");
+                    GuntherThrowRandomShit();
+                    break;
+                case 25:
+                    GuntherVoice("Crikey! If only I didn't loan our weapon collection to Zuzu mid!");
+                    break;
+                case 30:
+                    GuntherVoice("Marlon has a lot to answer for");
+                    GuntherThrowRandomShit();
+                    break;
+                case 35:
+                    GuntherVoice("Tell the guildmaster I wont accept any more cursed artifacts!");
+                    break;
+                case 40:
+                    GuntherVoice("How are you doing these amazing feats of magic?");
+                    GuntherThrowRandomShit();
+                    break;
+                case 41:
+                    bossMonster.showTextAboveHead("Stop throwing things at me old man!", -1, 2, 3000, 0);
+                    bossMonster.dialogueTimer = 300;
+                    break;
+                case 45:
+                    GuntherVoice("Can't you perform a rite of banishment or something?");
+                    break;
+                case 50:
+                    GuntherVoice("Goodbye, priceless artifact. Sniff.");
+                    GuntherThrowRandomShit();
+                    break;
+                case 54:
+                    GuntherVoice("Leave the corpse. I might be able to sell it's parts.");
+                    break;
+                case 57:
+                    GuntherVoice("This is going to cost the historic trust society");
+                    GuntherThrowRandomShit();
+                    expireEarly = true;
+                    break;
+            }
+
+            if (activeCounter > 8 && !ModUtility.MonsterVitals(bossMonster, targetLocation))
+            {
+
                 expireEarly = true;
+
             }
-            else
-            {
-                switch (activeCounter)
-                {
-                    case 10:
-                        GuntherVoice("What have I got to throw here...");
-                        GuntherThrowRandomShit();
-                        break;
-                    case 15:
-                        GuntherVoice("Pre-cretacious creep!");
-                        break;
-                    case 20:
-                        GuntherVoice("It's defacing my inlaid hardwood panelling!");
-                        GuntherThrowRandomShit();
-                        break;
-                    case 25:
-                        GuntherVoice("Crikey! If only I didn't loan our weapon collection to Zuzu mid!");
-                        break;
-                    case 30:
-                        GuntherVoice("Marlon has a lot to answer for");
-                        GuntherThrowRandomShit();
-                        break;
-                    case 35:
-                        GuntherVoice("Tell the guildmaster I wont accept any more cursed artifacts!");
-                        break;
-                    case 40:
-                        GuntherVoice("How are you doing these amazing feats of magic?");
-                        GuntherThrowRandomShit();
-                        break;
-                    case 41:
-                        bossMonster.showTextAboveHead("Stop throwing things at me old man!", -1, 2, 3000, 0);
-                        bossMonster.dialogueTimer = 300;
-                        break;
-                    case 45:
-                        GuntherVoice("Can't you perform a rite of banishment or something?");
-                        break;
-                    case 50:
-                        GuntherVoice("Goodbye, priceless artifact. Sniff.");
-                        GuntherThrowRandomShit();
-                        break;
-                    case 54:
-                        GuntherVoice("Leave the corpse. I might be able to sell it's parts.");
-                        break;
-                    case 57:
-                        GuntherVoice("This is going to cost the historic trust society");
-                        GuntherThrowRandomShit();
-                        expireEarly = true;
-                        break;
-                }
-            }
+
         }
 
         public void GuntherVoice(string speech)
@@ -324,7 +340,7 @@ namespace StardewDruid.Event.Challenge
 
                     character.IsInvisible = false;
                 }
-                    
+
             }
             if (Game1.eventUp || Game1.fadeToBlack || Game1.currentMinigame != null || Game1.isWarping || Game1.killScreen || !(Game1.player.currentLocation is LibraryMuseum))
                 return;
@@ -348,12 +364,12 @@ namespace StardewDruid.Event.Challenge
             foreach (NPC character in targetLocation.characters)
             {
                 //if (character.isVillager() && character.Name != "Gunther")
-                if (character is StardewValley.Monsters.Monster || character is StardewDruid.Character.Character || character.Name == "Gunther")
+                if (character is StardewValley.Monsters.Monster || character is Character.Character || character.Name == "Gunther")
                 {
                     continue;
 
                 }
-                
+
                 character.IsInvisible = true;
 
             }
@@ -385,15 +401,16 @@ namespace StardewDruid.Event.Challenge
                     if (layer4.Tiles[(int)vector2_2.X, (int)vector2_2.Y] != null)
                         layer4.Tiles[(int)vector2_2.X, (int)vector2_2.Y] = null;
 
-                    if( randomIndex.Next(4) == 0){
+                    if (randomIndex.Next(4) == 0)
+                    {
 
                         backLayer.Tiles[(int)vector2_2.X, (int)vector2_2.Y] = new StaticTile(backLayer, tileSheet, 0, 607);
                     }
-                    else if(randomIndex.Next(5) != 0)
+                    else if (randomIndex.Next(5) != 0)
                     {
                         backLayer.Tiles[(int)vector2_2.X, (int)vector2_2.Y] = new StaticTile(backLayer, tileSheet, 0, 606);
                     }
-                    else if(randomIndex.Next(5) != 0)
+                    else if (randomIndex.Next(5) != 0)
                     {
                         backLayer.Tiles[(int)vector2_2.X, (int)vector2_2.Y] = new StaticTile(backLayer, tileSheet, 0, 639);
                     }

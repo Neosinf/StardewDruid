@@ -52,9 +52,9 @@ namespace StardewDruid.Event.World
 
             };
 
-            Torch torch = ModUtility.StoneBrazier(targetLocation, targetVector);
+            Brazier brazier = new(targetLocation, targetVector);
 
-            torchList.Add(torch);
+            braziers.Add(brazier);
 
             Vector2 boltVector = new(targetVector.X, targetVector.Y - 1);
 
@@ -194,7 +194,7 @@ namespace StardewDruid.Event.World
 
                 RemoveMonsters();
 
-                eventLinger = 3;
+                eventLinger = 2;
 
                 return true;
 
@@ -213,6 +213,11 @@ namespace StardewDruid.Event.World
 
         public override void EventInterval()
         {
+            if(eventLinger != -1)
+            {
+                return;
+            }
+
             activeCounter++;
 
             monsterHandle.SpawnInterval();
