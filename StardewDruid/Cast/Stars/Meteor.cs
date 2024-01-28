@@ -2,6 +2,7 @@
 using StardewValley;
 using System;
 using System.Collections.Generic;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace StardewDruid.Cast.Stars
@@ -11,13 +12,17 @@ namespace StardewDruid.Cast.Stars
 
         int targetDirection;
 
-        public Meteor(Vector2 target, Rite rite)
+        float damage;
+
+        public Meteor(Vector2 target, Rite rite, float Damage)
             : base(target, rite)
         {
 
             castCost = Math.Max(6, 14 - Game1.player.CombatLevel);
 
             targetDirection = rite.direction;
+
+            damage = Damage;
 
         }
 
@@ -46,14 +51,14 @@ namespace StardewDruid.Cast.Stars
 
             }
 
-            float castDamage = riteData.castDamage;
+            ModUtility.DamageMonsters(targetLocation, ModUtility.MonsterProximity(targetLocation, targetVector * 64, 2, true), targetPlayer,(int)damage, true);
 
-            List<Vector2> impactVectors = ModUtility.Explode(targetLocation, targetVector, targetPlayer, 2, (int)castDamage, powerLevel:2);
+            List<Vector2> impactVectors = ModUtility.Explode(targetLocation, targetVector, targetPlayer, 2, powerLevel:2);
 
             foreach(Vector2 vector in impactVectors)
             {
                 
-                ModUtility.ImpactVector(targetLocation, vector);
+                ModUtility.AnimateDestruction(targetLocation, vector);
 
             }
 

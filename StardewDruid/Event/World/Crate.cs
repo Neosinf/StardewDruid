@@ -2,20 +2,23 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Map;
-using StardewDruid.Monster;
+using StardewDruid.Monster.Boss;
 using StardewValley;
+using StardewValley.Locations;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
-
+using xTile.Dimensions;
+using xTile.Layers;
+using xTile.Tiles;
 
 namespace StardewDruid.Event.World
 {
     public class Crate : EventHandle
     {
 
-        public Dictionary<int,TemporaryAnimatedSprite> animations;
+        public Dictionary<int, TemporaryAnimatedSprite> crateAnimations;
 
         public bool treasureValid;
 
@@ -43,7 +46,7 @@ namespace StardewDruid.Event.World
             : base(rite.castVector, rite)
         {
 
-            animations = new();
+            crateAnimations = new();
 
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 10;
 
@@ -58,7 +61,7 @@ namespace StardewDruid.Event.World
 
             int layerHeight = targetLocation.map.Layers[0].LayerHeight;
 
-            for(int i = 0; i < 5; i++)
+            for(int i = 0; i < 10; i++)
             {
 
                 int X = riteData.randomIndex.Next(3, layerWidth - 3);
@@ -136,7 +139,7 @@ namespace StardewDruid.Event.World
 
             targetLocation.temporarySprites.Add(radiusAnimation);
 
-            animations[0] = radiusAnimation;
+            crateAnimations[0] = radiusAnimation;
 
             Mod.instance.RegisterEvent(this,"crate");
 
@@ -155,20 +158,6 @@ namespace StardewDruid.Event.World
             }
 
             base.RemoveMonsters();
-
-        }
-
-        public void RemoveAnimations()
-        {
-
-            foreach(KeyValuePair<int,TemporaryAnimatedSprite> animation in animations)
-            {
-
-                targetLocation.temporarySprites.Remove(animation.Value);
-            
-            }
-
-            animations.Clear();
 
         }
 
@@ -256,7 +245,7 @@ namespace StardewDruid.Event.World
 
                         //chaseMonsters.Add(Mod.instance.SpawnMonster(targetLocation, treasureVector, new() {19, }, "random"));
 
-                        StardewValley.Monsters.Monster scavenger = MonsterData.CreateMonster(19, treasureVector, riteData.combatModifier);
+                        StardewValley.Monsters.Monster scavenger = MonsterData.CreateMonster(19, treasureVector);
 
                         chaseMonsters.Add(scavenger);
 
@@ -273,7 +262,7 @@ namespace StardewDruid.Event.World
                     {
 
                         //chaseMonsters.Add(Mod.instance.SpawnMonster(targetLocation, treasureVector, new() { 20, }, "random"));
-                        StardewValley.Monsters.Monster scavenger = MonsterData.CreateMonster(20, treasureVector, riteData.combatModifier);
+                        StardewValley.Monsters.Monster scavenger = MonsterData.CreateMonster(20, treasureVector);
 
                         chaseMonsters.Add(scavenger);
 
@@ -308,7 +297,7 @@ namespace StardewDruid.Event.World
             if (activeCounter % 4 == 0)
             {
 
-                animations[0].reset();
+                crateAnimations[0].reset();
 
             }
 
@@ -318,6 +307,23 @@ namespace StardewDruid.Event.World
         {
 
             claimCounter++;
+
+            if(targetLocation is MineShaft mineShaft)
+            {
+
+                Layer layer = targetLocation.map.GetLayer("Buildings");
+
+                layer.Tiles[(int)treasureVector.X, (int)treasureVector.Y] = new StaticTile(layer, targetLocation.map.TileSheets[0], 0, mineShaft.mineLevel > 120 ? 174 : 173);
+
+                Game1.player.TemporaryPassableTiles.Add(new Microsoft.Xna.Framework.Rectangle((int)treasureVector.X * 64, (int)treasureVector.Y * 64, 64, 64));
+
+                Mod.instance.CastMessage("A way down has appeared");
+
+                expireEarly = true;
+
+                return;
+
+            }
 
             if (claimCounter == 1)
             {
@@ -345,7 +351,7 @@ namespace StardewDruid.Event.World
 
                 targetLocation.temporarySprites.Add(crate);
 
-                animations[1] = crate;
+                crateAnimations[1] = crate;
 
             }
 
@@ -373,7 +379,7 @@ namespace StardewDruid.Event.World
 
                 targetLocation.temporarySprites.Add(crateOpen);
 
-                animations[4] = crateOpen;
+                crateAnimations[4] = crateOpen;
 
                 TemporaryAnimatedSprite crateGlitter = new(0, 300, 2, 2, treasurePosition - new Vector2(0, 64), false, false)
                 {
@@ -396,7 +402,7 @@ namespace StardewDruid.Event.World
 
                 targetLocation.temporarySprites.Add(crateGlitter);
 
-                animations[5] = crateGlitter;
+                crateAnimations[5] = crateGlitter;
 
             }
 

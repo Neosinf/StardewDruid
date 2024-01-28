@@ -106,22 +106,22 @@ namespace StardewDruid.Event
 
             }
 
-            if (questData.startTime != 0)
+            if (Vector2.Distance(rite.castVector, targetVector) <= 5f)
             {
 
-                if (Game1.timeOfDay < questData.startTime)
+                if (questData.startTime != 0)
                 {
 
-                    Mod.instance.CastMessage("Return later today");
+                    if (Game1.timeOfDay < questData.startTime)
+                    {
 
-                    return false;
+                        Mod.instance.CastMessage("Return later today");
+
+                        return false;
+
+                    }
 
                 }
-
-            }
-
-            if (questData.triggerAnywhere || Vector2.Distance(rite.castVector, targetVector) <= 5f)
-            {
 
                 EventRemove();
 
@@ -238,7 +238,7 @@ namespace StardewDruid.Event
 
             }
 
-            float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString()) + 2;
+            float animationSort = 999f;
 
             TemporaryAnimatedSprite targetAnimation = new(0, 5000f, 1, 1, animationPosition, false, false)
             {

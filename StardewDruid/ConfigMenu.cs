@@ -104,7 +104,7 @@ namespace StardewDruid
                 setValue: value => Config.maxDamage = value
             );
 
-            string[] colourOption = { "Red", "Blue", "Green", "Purple", "Black" };
+            string[] colourOption = { "Red", "Blue", "Purple", "Black" };
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
@@ -134,7 +134,7 @@ namespace StardewDruid
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => "Consume Lunch",
-                tooltip: () => "Enables automatic consumption of common sustenance items: SpringOnion, Snackbar, Mushrooms, Algae, Seaweed, Carrots, Sashimi, Salmonberry, Cheese; Triggers when casting with critically low stamina.",
+                tooltip: () => "Enables automatic consumption of common sustenance items: SpringOnion, Snackbar, Mushrooms, Algae, Seaweed, Carrots, Sashimi, Salmonberry, Cheese, Tonic, Salad; Triggers when casting with critically low stamina.",
                 getValue: () => Config.consumeQuicksnack,
                 setValue: value => Config.consumeQuicksnack = value
             );
@@ -153,6 +153,14 @@ namespace StardewDruid
                 tooltip: () => "Disables the Map-based cast restrictions so that any rite effect can be cast anywhere. Proceed with caution!",
                 getValue: () => Config.castAnywhere,
                 setValue: value => Config.castAnywhere = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: mod.ModManifest,
+                name: () => "Reverse Journal",
+                tooltip: () => "Reverse the order in which Stardew Druid journal entries are displayed. Default: oldest to newest. Enabled: newest to oldest.",
+                getValue: () => Config.reverseJournal,
+                setValue: value => Config.reverseJournal = value
             );
 
             configMenu.AddBoolOption(
@@ -179,13 +187,13 @@ namespace StardewDruid
                 setValue: value => Config.disableFish = value
             );
 
-            configMenu.AddBoolOption(
+            /*configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => "Disable Wild Spawn",
                 tooltip: () => "Disables wild monster spawn effect for Rite of the Weald, despite in game effect management. Disabling, saving in game, then reenabling will require additional re-enablement in game.",
                 getValue: () => Config.disableWildspawn,
                 setValue: value => Config.disableWildspawn = value
-            );
+            );*/
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,

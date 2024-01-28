@@ -1,10 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Netcode;
 using StardewDruid.Cast;
+using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Network;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
@@ -15,6 +19,11 @@ namespace StardewDruid.Character
         public List<Vector2> ritesDone;
         public int riteIcon;
         public bool showIcon;
+        public Texture2D bombTexture;
+        public Texture2D iconsTexture;
+
+        public NetBool netCastActive = new(false);
+        public Dictionary<int, Rectangle> castFrames;
 
         public Effigy()
         {
@@ -23,22 +32,83 @@ namespace StardewDruid.Character
         public Effigy(Vector2 position, string map)
           : base(position, map, nameof(Effigy))
         {
+
+            
+        }
+
+        public override void LoadOut()
+        {
+
+            barrages = new();
+
+            roamVectors = new List<Vector2>();
+
+            eventVectors = new List<Vector2>();
+
+            targetVectors = new();
+
+            opponentThreshold = 640;
+
+            gait = 1.2f;
+
+            modeActive = mode.random;
+
+            behaviourActive = behaviour.idle;
+
+            idleInterval = 120;
+
+            moveLength = 4;
+            moveInterval = 12;
+
+            specialInterval = 30;
+
+            walkFrames = WalkFrames(32, 16);
+
+            dashFrames = walkFrames;
+
+            specialFrames = new()
+            {
+                [0] = new(0, 192, 32, 32),
+                [1] = new(32, 192, 32, 32),
+            };
+
+            haltFrames = new()
+            {
+                [0] = new (0, 160, 32, 32),
+                [1] = new (32, 160, 32, 32),
+            };
+
+            castFrames = new()
+            {
+                [0] = new(32, 128, 16, 32),
+                [1] = new(16, 128, 16, 32),
+                [2] = new(0, 128, 16, 32),
+                [3] = new(48, 128, 16, 32),
+            };
+
             ritesDone = new List<Vector2>();
-            HideShadow = true;
+
+            bombTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "BlueBomb.png"));
+
+            iconsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Icons.png"));
+
+            loadedOut = true;
+
+        }
+
+        protected override void initNetFields()
+        {
+            base.initNetFields();
+            NetFields.AddFields(new INetSerializable[1]
+            {
+                 netCastActive
+
+            });
         }
 
         public override void draw(SpriteBatch b, float alpha = 1f)
         {
             
-            if (!Context.IsMainPlayer)
-            {
-                
-                base.draw(b, alpha);
-
-                return;
-
-            }
-
             if (IsInvisible || !Utility.isOnScreen(Position, 128))
             {
                 return;
@@ -53,275 +123,256 @@ namespace StardewDruid.Character
                 
             Vector2 localPosition = getLocalPosition(Game1.viewport);
 
-            if (timers.ContainsKey("idle"))
+            if (netHaltActive.Value)
             {
-                int num = timers["idle"] / 200 % 2 == 0 ? 0 : 32;
+
+                int chooseFrame = idleFrame.Value % 4;
+
+                if(chooseFrame < 2 || !currentLocation.IsOutdoors)
+                {
+                    b.Draw(
+                        Sprite.Texture,
+                        localPosition - new Vector2(0, 64),
+                        walkFrames[netDirection.Value][0],
+                        Color.White,
+                        0f,
+                        Vector2.Zero,
+                        4f,
+                        flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                        drawOnTop ? 0.991f : ((float)getStandingY() / 10000f)
+                        );
+
+                    DrawIcon(b, localPosition);
+
+                    DrawShadow(b, localPosition);
+
+                    return;
+
+                }
 
                 b.Draw(
                     Sprite.Texture,
-                    localPosition + new Vector2(32f, 16f),
-                    new Rectangle(num, 160, 32, 32),
+                    localPosition - new Vector2(32f, 64f),
+                    haltFrames[chooseFrame - 2],
                     Color.White,
                     0f,
-                    new Vector2(Sprite.SpriteWidth / 2, Sprite.SpriteHeight * 3f / 4f),
-                    Math.Max(0.2f, scale) * 4f,
+                    Vector2.Zero,
+                    4f,
                     flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                     Math.Max(0f, drawOnTop ? 0.991f : ((float)getStandingY() / 10000f))
                 );
 
+                b.Draw(
+                    Sprite.Texture,
+                    localPosition - new Vector2(chooseFrame > 0 ? 32f : 0, 64f) + new Vector2(2f,4f),
+                    haltFrames[chooseFrame-2],
+                    Color.Black * 0.25f,
+                    0f,
+                    Vector2.Zero,
+                    4f,
+                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    Math.Max(0f, drawOnTop ? 0.990f : ((float)getStandingY() / 10000f) - 0.001f)
+                );
+
+                return;
+            
+            }
+
+            if (netCastActive.Value)
+            {
+
+                b.Draw(
+                    Sprite.Texture,
+                    localPosition - new Vector2(0,64),
+                    castFrames[netDirection.Value],
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    4f,
+                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    drawOnTop ? 0.991f : ((float)getStandingY() / 10000f)
+                    );
+
+                DrawIcon(b, localPosition);
+
+                DrawShadow(b, localPosition);
+
                 return;
 
             }
-
-            if (timers.ContainsKey("beam"))
+            
+            if (netSpecialActive.Value)
             {
 
-                DrawBeamEffect(b);
+                b.Draw(
+                    Sprite.Texture,
+                    localPosition - new Vector2(32, 64),
+                    specialFrames[specialFrame.Value],
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    4f,
+                    netDirection.Value == 3 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    drawOnTop ? 0.991f : ((float)getStandingY() / 10000f)
+                    );
 
-                return;
-
-            }
-
-            Rectangle sourceRectangle = Sprite.SourceRect;
-
-            if (timers.ContainsKey("cast"))
-            {
-                switch (moveDirection)
+                if (specialFrame.Value == 0)
                 {
-                    case 0:
-                        sourceRectangle = new(32, 128, 16, 32);
-                        break;
-                    case 1:
-                        sourceRectangle = new(16, 128, 16, 32);
-                        break;
-                    case 2:
-                        sourceRectangle = new(0, 128, 16, 32);
-                        break;
-                    default:
-                        sourceRectangle = new(48, 128, 16, 32);
-                        break;
+
+                    b.Draw(
+                        bombTexture,
+                        localPosition + new Vector2(netDirection.Value == 3 ? 48f : -48f, -40f),
+                        new Rectangle(0, 0, 64, 64),
+                        Color.White,
+                        0f,
+                        Vector2.Zero,
+                        1f,
+                        SpriteEffects.None,
+                        Math.Max(0.0f, (getStandingY() / 10000f) + 0.0001f)
+                        );
 
                 }
+
+                DrawShadow(b, localPosition);
+
+                return;
 
             }
 
             b.Draw(
                 Sprite.Texture,
-                localPosition + new Vector2(32f, 16f),
-                sourceRectangle,
+                localPosition - new Vector2(0, 64),
+                walkFrames[netDirection.Value][moveFrame.Value],
                 Color.White,
                 0f,
-                new Vector2(Sprite.SpriteWidth / 2, Sprite.SpriteHeight * 3f / 4f),
-                Math.Max(0.2f, scale) * 4f,
+                Vector2.Zero,
+                4f,
                 flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 drawOnTop ? 0.991f : ((float)getStandingY() / 10000f)
                 );
 
-            b.Draw(
-                Game1.shadowTexture,
-                localPosition + new Vector2(32f, 40f),
-                Game1.shadowTexture.Bounds,
-                Color.White * 0.65f,
-                0f,
-                new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y),
-                4f,
-                SpriteEffects.None,
-                Math.Max(0.0f, (getStandingY() / 10000f) - 0.0001f)
-                );
+            DrawIcon(b, localPosition);
 
-            if (showIcon)
-            {
-                b.Draw(
-                    Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Icons.png")),
-                    localPosition + new Vector2(16,-16),
-                    new Rectangle((riteIcon % 4)*8, (riteIcon / 4)*8, 8, 8),
-                    Color.White,
-                    0f,
-                    new Vector2(0, 0),
-                    4f,
-                    SpriteEffects.None,
-                    drawOnTop ? 0.992f : ((float)getStandingY() / 10000f) + 0.001f
-                );
-
-            }
-
-
+            DrawShadow(b, localPosition);
 
         }
 
-        public void DrawBeamEffect(SpriteBatch b)
+        public void DrawIcon(SpriteBatch b, Vector2 localPosition)
         {
 
-
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
-
-            if (timers["beam"] >= 48)
+            if (netDirection.Value != 0 || netSpecialActive.Value)
             {
-                b.Draw(
-                    Sprite.Texture,
-                    localPosition + new Vector2(0, 16f),
-                    new Rectangle(0, 192, 32, 32),
-                    Color.White,
-                    0f,
-                    new Vector2(Sprite.SpriteWidth / 2, Sprite.SpriteHeight * 3f / 4f),
-                    4f,
-                    moveDirection == 3 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    drawOnTop ? 0.991f : ((float)getStandingY() / 10000f)
-                    );
-
-                b.Draw(
-                    Game1.shadowTexture,
-                    localPosition + new Vector2(0, 40f),
-                    Game1.shadowTexture.Bounds,
-                    Color.White * 0.65f,
-                    0f,
-                    new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y),
-                    4f,
-                    SpriteEffects.None,
-                    Math.Max(0.0f, (getStandingY() / 10000f) - 0.0001f)
-                    );
-
-                Rectangle beamRect = new Rectangle(0, 0, 64, 64);
-
-                if (timers["beam"] <= 51)
-                {
-                    beamRect.X += 192;
-                }
-                else if (timers["beam"] <= 54)
-                {
-                    beamRect.X += 128;
-                }
-                else if (timers["beam"] <= 57)
-                {
-                    beamRect.X += 64;
-                }
-
-                b.Draw(
-                    Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "EnergyBomb.png")),
-                    localPosition - new Vector2(96f, 64f),
-                    beamRect,
-                    Color.White,
-                    0f,
-                    new Vector2(0,0),
-                    1f,
-                    SpriteEffects.None,
-                    Math.Max(0.0f, (getStandingY() / 10000f) +0.0001f)
-                    );
-
                 return;
-
             }
 
-            Rectangle box = GetBoundingBox();
-            float depth = 999f;
-            float rotation = 0f;
-            float fade = 1f;
+            int riteIcon;
 
-            Vector2 position = Vector2.Zero;
-
-            Rectangle rectangle = new(0, 128, 160, 32);
-
-            if (timers["beam"] >= 42)
-            {
-                rectangle.Y = 0;
-            }
-            else if (timers["beam"] >= 36)
-            {
-                rectangle.Y = 32;
-            }
-            else if (timers["beam"] >= 30)
-            {
-                rectangle.Y = 64;
-            }
-            else if (timers["beam"] >= 24)
-            {
-                rectangle.Y = 96;
-            }
-            else
+            switch (Mod.instance.CurrentBlessing())
             {
 
-                fade = timers["beam"] / 240;
-
-            }
-
-            switch (moveDirection)
-            {
-                case 0:
-                    //position = new(box.Center.X - 48f - (float)Game1.viewport.X, box.Top - 496f - (float)Game1.viewport.Y);
-                    position = new(box.Center.X - (float)Game1.viewport.X, box.Top - (float)Game1.viewport.Y);
-                    depth = 0.0001f;
-                    rotation = ((float)Math.PI / 2) + (float)Math.PI;
+                case "mists":
+                    riteIcon = 2;
                     break;
-                case 1:
-                    position = new(box.Right - (float)Game1.viewport.X - 32f, box.Center.Y - (float)Game1.viewport.Y - 96f);
+                case "stars":
+                    riteIcon = 3;
                     break;
-                case 2:
-                    position = new(box.Center.X - (float)Game1.viewport.X + 32f, box.Center.Y - (float)Game1.viewport.Y);
-                    rotation = (float)Math.PI / 2;
+                case "fates":
+                    riteIcon = 4;
                     break;
-                default:
-                    //position = new(box.Left - 496f - (float)Game1.viewport.X, box.Center.Y - 80f - (float)Game1.viewport.Y);
-                    position = new(box.Left - (float)Game1.viewport.X - 32f, box.Center.Y - (float)Game1.viewport.Y);
-                    rotation = (float)Math.PI;
+                case "ether":
+                    riteIcon = 6;
+                    break;
+                default: // weald
+                    riteIcon = 1;
                     break;
 
             }
 
             b.Draw(
-                Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "EnergyBeam.png")),
-                position,
-                rectangle,
-                Color.White * fade,
-                rotation,
-                Vector2.Zero,
-                3f,
-                SpriteEffects.None,
-                depth
-            );
-
-            b.Draw(
-                Sprite.Texture,
-                localPosition + new Vector2(0, 16f),
-                new Rectangle(32,192,32,32),
+                iconsTexture,
+                localPosition + new Vector2(16, 1),
+                new Rectangle((riteIcon % 4) * 8, (riteIcon / 4) * 8, 8, 8),
                 Color.White,
                 0f,
-                new Vector2(Sprite.SpriteWidth / 2, Sprite.SpriteHeight * 3f / 4f),
+                new Vector2(0, 0),
                 4f,
-                moveDirection == 3 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                drawOnTop ? 0.991f : ((float)getStandingY() / 10000f)
-                );
+                SpriteEffects.None,
+                drawOnTop ? 0.992f : ((float)getStandingY() / 10000f) + 0.001f
+            );
 
+        }
+
+        public void DrawShadow(SpriteBatch b, Vector2 localPosition)
+        {
             b.Draw(
                 Game1.shadowTexture,
-                localPosition + new Vector2(0, 40f),
+                localPosition + new Vector2(6, 44f),
                 Game1.shadowTexture.Bounds,
                 Color.White * 0.65f,
                 0f,
-                new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y),
+                Vector2.Zero,
                 4f,
                 SpriteEffects.None,
                 Math.Max(0.0f, (getStandingY() / 10000f) - 0.0001f)
                 );
 
         }
+
 
         public override bool checkAction(Farmer who, GameLocation l)
         {
-            base.checkAction(who, l);
-            if (Context.IsMainPlayer)
+
+            if(!base.checkAction(who, l))
             {
-                AdjustJacket();
-            }
+
+                return false;
+
+            };
                 
             if (!Mod.instance.dialogue.ContainsKey(nameof(Effigy)))
             {
+
                 Dictionary<string, StardewDruid.Dialogue.Dialogue> dialogue = Mod.instance.dialogue;
+
                 StardewDruid.Dialogue.Effigy effigy = new StardewDruid.Dialogue.Effigy();
+
                 effigy.npc = this;
+
                 dialogue[nameof(Effigy)] = effigy;
+
             }
+
             Mod.instance.dialogue[nameof(Effigy)].DialogueApproach();
+
             return true;
+
+        }
+
+        public override void ResetActives()
+        {
+            base.ResetActives();
+
+            netCastActive.Set(false);
+
+        }
+
+        public override void UpdateBehaviour()
+        {
+
+            base.UpdateBehaviour();
+
+            if (netCastActive.Value)
+            {
+
+                if (!netSpecialActive.Value)
+                {
+
+                    netCastActive.Set(false);
+
+                }
+
+            }
+
         }
 
         public override List<Vector2> RoamAnalysis()
@@ -376,253 +427,129 @@ namespace StardewDruid.Character
         
         }
 
-        public override void AnimateMovement(GameTime time)
+        public override bool MonsterAttack(StardewValley.Monsters.Monster targetMonster)
         {
 
-            moveDown = false;
-            moveLeft = false;
-            moveRight = false;
-            moveUp = false;
-            FacingDirection = moveDirection;
-            showIcon = false;
-            switch (moveDirection)
+            float distance = Vector2.Distance(Position, targetMonster.Position);
+
+            if (distance >= 128f && distance <= 640f)
             {
-                case 0:
-                    Sprite.AnimateUp(time, 0, "");
-                    moveUp = true;
-                    AdjustJacket();
-                    break;
-                case 1:
-                    Sprite.AnimateRight(time, 0, "");
-                    moveRight = true;
-                    break;
-                case 2:
-                    Sprite.AnimateDown(time, 0, "");
-                    moveDown = true;
-                    break;
-                default:
-                    Sprite.AnimateLeft(time, 0, "");
-                    moveLeft = true;
-                    break;
-            }
-
-        }
-
-        public override bool TargetOpponent()
-        {
-            if (!base.TargetOpponent())
-            {
-
-                return false;
-
-            }
-
-            float distance = Vector2.Distance(Position, targetOpponents.First().Position);
-
-            if (distance >= 64f && distance <= 480f)
-            {
-
-                StardewValley.Monsters.Monster targetMonster = targetOpponents.First();
 
                 Vector2 vector2 = new(targetMonster.Position.X - Position.X - 32f, targetMonster.Position.Y - Position.Y);//Vector2.op_Subtraction(((StardewValley.Character)targetOpponents.First<Monster>()).Position, Vector2.op_Addition(Position, new Vector2(32f, 0.0f)));
 
-                if ((double)Math.Abs(vector2.Y) <= 72.0)
+                if ((double)Math.Abs(vector2.Y) <= 128.0)
                 {
 
-                    Halt();
+                    netDirection.Set(1);
 
-                    moveDirection = 1;
-
-                    if(vector2.X < 0.001)
+                    if (vector2.X < 0.001)
                     {
-                        moveDirection = 3;
+                        netDirection.Set(3);
 
                     }
 
-                    AnimateMovement(Game1.currentGameTime);
+                    netSpecialActive.Set(true);
 
-                    timers["stop"] = 48;
+                    behaviourActive = behaviour.special;
 
-                    timers["beam"] = 60;
+                    specialTimer = 60;
 
-                    timers["cooldown"] = 240;
+                    NextTarget(targetMonster.Position, -1);
 
-                    timers["busy"] = 300;
+                    ResetAll();
+
+                    BarrageHandle fireball = new(currentLocation, targetMonster.getTileLocation(), getTileLocation(), 2, 1, "Blue", -1, Mod.instance.DamageLevel(), 3, 2);
+
+                    fireball.type = BarrageHandle.barrageType.fireball;
+
+                    barrages.Add(fireball);
 
                 }
                 else
                 {
 
-                    Halt();
+                    netCastActive.Set(true);
 
-                    AnimateMovement(Game1.currentGameTime);
+                    behaviourActive = behaviour.special;
 
-                    timers["stop"] = 72;
+                    netSpecialActive.Set(true);
 
-                    timers["cast"] = 30;
+                    specialTimer = 30;
 
-                    timers["cooldown"] = 240;
+                    NextTarget(targetMonster.Position, -1);
 
-                    timers["busy"] = 300;
+                    ResetAll();
 
                     List<int> diff = ModUtility.CalculatePush(currentLocation, targetMonster, Position, 64);
 
                     ModUtility.HitMonster(currentLocation, Game1.player, targetMonster, Mod.instance.DamageLevel() / 2, false, diffX: diff[0], diffY: diff[1]);
 
                     ModUtility.AnimateBolt(currentLocation, new Vector2(targetMonster.getTileLocation().X, targetMonster.getTileLocation().Y - 1), 1200);
- 
-                }
-
-            }
-
-            return true;
-
-        }
-
-        public override void update(GameTime time, GameLocation location)
-        {
-
-            base.update(time, location);
-
-            if (timers.ContainsKey("beam"))
-            {
-                if (timers["beam"] == 30)
-                {
-
-                    BeamAttack();
 
                 }
 
-            }
-
-        }
-
-        public void BeamAttack()
-        {
-
-            Vector2 beamPoint = Vector2.Zero;
-
-            Rectangle beamBox = GetBoundingBox();
-
-            switch (moveDirection)
-            {
-                case 0:
-
-                    beamPoint = new(beamBox.Center.X, beamBox.Top - 240);
-
-                    break;
-
-                case 1:
-
-                    beamPoint = new(beamBox.Right + 240, beamBox.Center.Y);
-
-                    break;
-
-                case 2:
-
-                    beamPoint = new(beamBox.Center.X, beamBox.Bottom + 240);
-
-                    break;
-
-                default:
-
-                    beamPoint = new(beamBox.Left - 240, beamBox.Center.Y);
-
-                    break;
+                return true;
 
             }
 
-            for (int index = currentLocation.characters.Count - 1; index >= 0; index--)
-            {
-
-                if (currentLocation.characters[index] is StardewValley.Monsters.Monster character)
-                {
-
-                    if (Vector2.Distance(character.Position, beamPoint) < 240f)
-                    {
-                        base.DealDamageToMonster(character, true, -1, false);
-
-                    }
-
-                }
-
-            }
-
-            currentLocation.playSoundPitched("flameSpellHit", 1200, 0);
-
-        }
-
-        public void AdjustJacket()
-        {
-            if (moveDirection != 0 || Sprite.currentFrame < 8 || Sprite.currentFrame >= 12)
-            {
-                return;
-            }
-
-            showIcon = true;
-
-            switch (Mod.instance.CurrentBlessing())
-            {
-
-                case "mists":
-                    //Sprite.currentFrame += 12;
-                    riteIcon = 2;
-                    break;
-
-                case "stars":
-                    //Sprite.currentFrame += 20;
-                    riteIcon = 3;
-                    break;
-
-                case "fates":
-                    //Sprite.currentFrame += 28;
-                    riteIcon = 4;
-                    break;
-
-                case "ether":
-                    //Sprite.currentFrame += 28;
-                    riteIcon = 6;
-                    break;
-
-                default: // weald
-                    riteIcon = 1;
-                    break;
-
-            }
-            //Sprite.UpdateSourceRect();
-        }
-
-        public override void HitMonster(StardewValley.Monsters.Monster monsterCharacter)
-        {
-
-            return;
+            return false;
 
         }
 
         public override void ReachedRoamPosition()
         {
             Vector2 vector2 = new(roamVectors[roamIndex].X / 64f, roamVectors[roamIndex].Y / 64f);//Vector2.op_Division(roamVectors[roamIndex], 64f);
-            if (ritesDone.Contains(vector2) || !currentLocation.Objects.ContainsKey(vector2) || !currentLocation.Objects[vector2].IsScarecrow())
-                return;
-            Halt();
-            timers["cast"] = 30;
-            Rite rite = Mod.instance.NewRite(false);
-            bool Reseed = !Mod.instance.EffectDisabled("Seeds");
-            for (int level = 1; level < (Mod.instance.PowerLevel()+1); level++)
+
+            if(Game1.currentSeason == "winter")
             {
+                return;
+            }
+
+            if (ritesDone.Contains(vector2) || !currentLocation.Objects.ContainsKey(vector2) || !currentLocation.Objects[vector2].IsScarecrow())
+            {
+                return;
+            }
+
+            netCastActive.Set(true);
+
+            netSpecialActive.Set(true);
+
+            specialTimer = 30;
+
+            ResetAll();
+
+            Rite rite = Mod.instance.NewRite(false);
+
+            bool Reseed = !Mod.instance.EffectDisabled("Seeds");
+
+            for (int level = 1; level < (Mod.instance.PowerLevel()+2); level++)
+            {
+                
                 foreach (Vector2 tilesWithinRadius in ModUtility.GetTilesWithinRadius(currentLocation, vector2, level))
                 {
+                    
                     if (currentLocation.terrainFeatures.ContainsKey(tilesWithinRadius) && currentLocation.terrainFeatures[tilesWithinRadius].GetType().Name.ToString() == "HoeDirt")
+                    {
                         rite.effectCasts[tilesWithinRadius] = new StardewDruid.Cast.Weald.Crop(tilesWithinRadius, rite, Reseed, true);
+                    }
+
                 }
+            
             }
+            
             if (currentLocation.Name == Game1.player.currentLocation.Name && Utility.isOnScreen(Position, 128))
             {
+                
                 ModUtility.AnimateRadiusDecoration(currentLocation, vector2, "Weald", 1f, 1f, 1500f);
+                
                 Game1.player.currentLocation.playSoundPitched("discoverMineral", 1000, 0);
+            
             }
+            
             rite.CastEffect(false);
+            
             ritesDone.Add(vector2);
+        
         }
 
     }

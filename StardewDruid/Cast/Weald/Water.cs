@@ -53,7 +53,7 @@ namespace StardewDruid.Cast.Weald
 
             StardewDruid.Cast.Throw throwObject = new(targetPlayer, targetVector * 64, randomFish, objectQuality);
 
-            Game1.player.checkForQuestComplete(Game1.getCharacterFromName("Willy"), randomFish, 1, throwObject.objectInstance, "fish", 7);
+            Game1.player.checkForQuestComplete(null, randomFish, 1, throwObject.objectInstance, "fish", 7);
 
             throwObject.ThrowObject();
 

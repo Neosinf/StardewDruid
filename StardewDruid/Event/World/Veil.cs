@@ -67,7 +67,7 @@ namespace StardewDruid.Event.World
 
         }
 
-        public void RemoveAnimations()
+        public override void RemoveAnimations()
         {
             if (veilAnimations.Count > 0)
             {

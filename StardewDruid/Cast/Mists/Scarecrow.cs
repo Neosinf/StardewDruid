@@ -36,10 +36,10 @@ namespace StardewDruid.Cast.Mists
 
             float animationSort;
 
-            for (int i = 0; i < (Mod.instance.PowerLevel() + 1); i++)
+            for (int i = 1; i < (Mod.instance.PowerLevel() + 2); i++)
             {
 
-                List<Vector2> hoeVectors = ModUtility.GetTilesWithinRadius(targetLocation, targetVector, i + 1);
+                List<Vector2> hoeVectors = ModUtility.GetTilesWithinRadius(targetLocation, targetVector, i);
 
                 foreach (Vector2 hoeVector in hoeVectors)
                 {

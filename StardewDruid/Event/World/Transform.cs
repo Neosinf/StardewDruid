@@ -10,7 +10,7 @@ namespace StardewDruid.Event.World
 {
     public class Transform : EventHandle
     {
-        public StardewDruid.Character.Character avatar;
+        public StardewDruid.Character.Dragon avatar;
         public int toolIndex;
         public int attuneableIndex;
         public int extendTime;
@@ -37,7 +37,7 @@ namespace StardewDruid.Event.World
             
             Game1.displayFarmer = false;
             
-            avatar = new Dragon(riteData.caster.Position, riteData.caster.currentLocation.Name, Mod.instance.ColourPreference() + "Dragon");
+            avatar = new Dragon(riteData.caster, riteData.caster.Position, riteData.caster.currentLocation.Name, Mod.instance.ColourPreference() + "Dragon");
             
             avatar.currentLocation = Game1.player.currentLocation;
             
@@ -65,13 +65,6 @@ namespace StardewDruid.Event.World
             }
 
             if(avatar == null)
-            {
-
-                return false;
-
-            }
-
-            if (avatar.timers.ContainsKey("end"))
             {
 
                 return false;
@@ -137,7 +130,7 @@ namespace StardewDruid.Event.World
 
             avatar.ShutDown();
             
-            avatar.currentLocation.characters.Remove(avatar);
+            //avatar.currentLocation.characters.Remove(avatar);
             
             avatar = null;
 
@@ -230,7 +223,33 @@ namespace StardewDruid.Event.World
         {
             foreach (NPC character in avatar.currentLocation.characters)
             {
-                if (!(character is StardewValley.Monsters.Monster) && !(character is StardewDruid.Character.Character) && (double)Vector2.Distance(character.Position, avatar.Position) < 740.0 && !Mod.instance.WitnessedRite("ether", character) && character.isVillager())
+
+                if (character is StardewValley.Monsters.Monster)
+                {
+                    continue;
+                }
+
+                if (character is StardewDruid.Character.Character)
+                {
+                    continue;
+                }
+
+                if (character is StardewDruid.Character.Dragon)
+                {
+                    continue;
+                }
+
+                if(Mod.instance.WitnessedRite("ether", character))
+                {
+                    continue;
+                }
+
+                if (!character.isVillager())
+                {
+                    continue;
+                }
+
+                if ((double)Vector2.Distance(character.Position, avatar.Position) < 740.0)
                 {
                     if (!Mod.instance.TaskList().ContainsKey("masterTransform"))
                     {

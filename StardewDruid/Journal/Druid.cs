@@ -455,7 +455,7 @@ namespace StardewDruid.Journal
                     {
                         IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 396, 15, 15), questLogButtons[index].bounds.X, questLogButtons[index].bounds.Y, questLogButtons[index].bounds.Width, questLogButtons[index].bounds.Height, questLogButtons[index].containsPoint(Game1.getOldMouseX(), Game1.getOldMouseY()) ? Color.Wheat : Color.White, 4f, false, -1f);
                         if (pages[currentPage][index].active)
-                            SpriteText.drawString(b, "active", questLogButtons[index].bounds.Right - 160, questLogButtons[index].bounds.Y + 40, 999999, -1, 999999, 1f, 0.88f, false, -1, "", -1, 0);
+                            SpriteText.drawString(b, "*", questLogButtons[index].bounds.Right - 40, questLogButtons[index].bounds.Y + 40, 999999, -1, 999999, 1f, 0.88f, false, -1, "", -1, 0);
                         SpriteText.drawString(b, pages[currentPage][index].title, questLogButtons[index].bounds.X + 100, questLogButtons[index].bounds.Y + 24, 999999, -1, 999999, 1f, 0.88f, false, -1, "", -1, 0);
                         Utility.drawWithShadow(b, iconTexture, new Vector2(questLogButtons[index].bounds.X + 32, questLogButtons[index].bounds.Y + 28), iconFrames[pages[currentPage][index].icon], Color.White, 0.0f, Vector2.Zero, 5f, false, 0.99f, -1, -1, 0.35f);
                     }
@@ -521,8 +521,10 @@ namespace StardewDruid.Journal
                 forwardButton.draw(b);
                 b.Draw(targetTexture, new Vector2(endButton.bounds.X - 12, endButton.bounds.Y + 48), new Rectangle?(new Rectangle(0, 0, 64, 64)), endButton.scale > 4.0 ? new Color(0.0f, 1f, 0.0f, 1f) : new Color(0.5f, 1f, 0.5f, 1f), -1.57079637f, Vector2.Zero, 2f, 0, 999f);
             }
-            if (currentPage > 0)
+            if (currentPage > 0 && questPage == -1)
+            {
                 b.Draw(targetTexture, new Vector2(startButton.bounds.X + 60, startButton.bounds.Y - 8), new Rectangle?(new Rectangle(0, 0, 64, 64)), startButton.scale > 4.0 ? new Color(0.0f, 1f, 0.0f, 1f) : new Color(0.5f, 1f, 0.5f, 1f), 1.57079637f, Vector2.Zero, 2f, 0, 999f);
+            }
             backButton.draw(b);
             base.draw(b);
             Game1.mouseCursorTransparency = 1f;

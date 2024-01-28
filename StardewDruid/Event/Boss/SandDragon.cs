@@ -15,7 +15,7 @@ namespace StardewDruid.Event.Boss
         public bool modifiedSandDragon;
 
         //public BossDragon bossMonster;
-        public Monster.Boss bossMonster;
+        public StardewDruid.Monster.Boss.Dragon bossMonster;
 
         public Vector2 returnPosition;
 
@@ -63,7 +63,16 @@ namespace StardewDruid.Event.Boss
         public override void EventRemove()
         {
 
-            ResetSandDragon();
+            if (modifiedSandDragon)
+            {
+                
+                modifiedSandDragon = false;
+                
+                Location.LocationData.SandDragonReset();
+
+                EventQuery("LocationReset");
+
+            }
 
             base.EventRemove();
 
@@ -77,7 +86,18 @@ namespace StardewDruid.Event.Boss
 
                 RemoveMonsters();
 
-                ResetSandDragon();
+                if (modifiedSandDragon)
+                {
+                    
+                    modifiedSandDragon = false;
+                    
+                    Location.LocationData.SandDragonReset();
+
+                    EventQuery("LocationReset");
+
+                    EventReposition();
+
+                }
 
                 eventLinger = 3;
 
@@ -104,7 +124,7 @@ namespace StardewDruid.Event.Boss
 
                     Game1.createObjectDebris(681, (int)debrisVector.X, (int)debrisVector.Y);
 
-                    Mod.instance.CompleteQuest(questData.name);
+                    EventComplete();
 
                 }
                 else
@@ -119,6 +139,30 @@ namespace StardewDruid.Event.Boss
             }
 
             return base.EventExpire();
+
+        }
+
+        public void EventReposition()
+        {
+
+            if (Game1.eventUp || Game1.fadeToBlack || Game1.currentMinigame != null || Game1.isWarping || Game1.killScreen || Game1.player.currentLocation is not Desert)
+            {
+                return;
+
+            }
+
+            Game1.fadeScreenToBlack();
+
+            targetPlayer.Position = returnPosition;
+
+            if (soundTrack)
+            {
+
+                Game1.stopMusicTrack(Game1.MusicContext.Default);
+
+                soundTrack = false;
+
+            }
 
         }
 
@@ -149,17 +193,23 @@ namespace StardewDruid.Event.Boss
 
                         CastVoice("from the time when the shamans sang to us");
 
+                        targetLocation.playSoundPitched("DragonRoar", 1200);
+
                         break;
 
                     case 5:
 
                         CastVoice("and my kin held dominion");
 
+                        targetLocation.playSoundPitched("DragonRoar",800);
+
                         break;
 
                     case 7:
 
                         CastVoice("...my bones stir...");
+
+                        targetLocation.playSoundPitched("DragonRoar", 400);
 
                         break;
 
@@ -182,11 +232,15 @@ namespace StardewDruid.Event.Boss
             if (activeCounter == 9)
             {
 
-                ModifySandDragon();
+                modifiedSandDragon = true;
 
-                StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(16, targetVector + new Vector2(-5, 0), riteData.combatModifier);
+                Location.LocationData.SandDragonEdit();
 
-                bossMonster = theMonster as Monster.Boss;
+                EventQuery("LocationEdit");
+
+                StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(16, targetVector + new Vector2(-5, 0));
+
+                bossMonster = theMonster as StardewDruid.Monster.Boss.Dragon;
 
                 if (questData.name.Contains("Two"))
                 {
@@ -195,7 +249,7 @@ namespace StardewDruid.Event.Boss
 
                 }
 
-                riteData.castLocation.characters.Add(bossMonster);
+                targetLocation.characters.Add(bossMonster);
 
                 bossMonster.currentLocation = targetLocation;
 
@@ -216,131 +270,6 @@ namespace StardewDruid.Event.Boss
 
         }
 
-        public void ResetSandDragon()
-        {
-
-            if (!modifiedSandDragon)
-            {
-
-                return;
-
-            }
-
-            targetLocation.loadMap(targetLocation.mapPath.Value, true);
-
-            modifiedSandDragon = false;
-
-            if (Game1.eventUp || Game1.fadeToBlack || Game1.currentMinigame != null || Game1.isWarping || Game1.killScreen || Game1.player.currentLocation is not Desert)
-            {
-                return;
-
-            }
-
-            Game1.fadeScreenToBlack();
-
-            targetPlayer.Position = returnPosition;
-
-            if (soundTrack)
-            {
-
-                Game1.stopMusicTrack(Game1.MusicContext.Default);
-
-                soundTrack = false;
-
-            }
-
-        }
-
-        public void ModifySandDragon()
-        {
-
-            modifiedSandDragon = true;
-
-            // ----------------------------- clear sheet
-
-            Layer backLayer = targetLocation.map.GetLayer("Back");
-
-            Layer buildingsLayer = targetLocation.map.GetLayer("Buildings");
-
-            Layer frontLayer = targetLocation.map.GetLayer("Front");
-
-            Layer alwaysfrontLayer = targetLocation.map.GetLayer("AlwaysFront");
-
-            TileSheet desertSheet = targetLocation.map.GetTileSheet("desert-new");
-
-            Vector2 offsetVector = targetVector - new Vector2(8, 5);
-
-            for (int i = 0; i < 9; i++)
-            {
-
-                for (int j = 0; j < 10; j++)
-                {
-
-                    Vector2 tileVector = offsetVector + new Vector2(j, i);
-
-                    if (buildingsLayer.Tiles[(int)tileVector.X, (int)tileVector.Y] != null)
-                    {
-
-                        int tileIndex = buildingsLayer.Tiles[(int)tileVector.X, (int)tileVector.Y].TileIndex;
-
-                        if (tileIndex < 192 || tileIndex == 219)
-                        {
-                            buildingsLayer.Tiles[(int)tileVector.X, (int)tileVector.Y] = null;
-
-                        }
-
-                    }
-
-                    if (frontLayer.Tiles[(int)tileVector.X, (int)tileVector.Y] != null)
-                    {
-
-                        int tileIndex = frontLayer.Tiles[(int)tileVector.X, (int)tileVector.Y].TileIndex;
-
-                        if (tileIndex < 192 || tileIndex == 203)
-                        {
-                            frontLayer.Tiles[(int)tileVector.X, (int)tileVector.Y] = null;
-
-                        }
-
-                    }
-
-                    if (alwaysfrontLayer.Tiles[(int)tileVector.X, (int)tileVector.Y] != null)
-                    {
-
-                        int tileIndex = alwaysfrontLayer.Tiles[(int)tileVector.X, (int)tileVector.Y].TileIndex;
-
-                        if (tileIndex < 192)
-                        {
-                            alwaysfrontLayer.Tiles[(int)tileVector.X, (int)tileVector.Y] = null;
-
-                        }
-
-                    }
-
-
-                    if (randomIndex.Next(2) != 0)
-                    {
-                        backLayer.Tiles[(int)tileVector.X, (int)tileVector.Y] = new StaticTile(backLayer, desertSheet, BlendMode.Alpha, 65);
-                    }
-                    else if (randomIndex.Next(3) == 0)
-                    {
-                        backLayer.Tiles[(int)tileVector.X, (int)tileVector.Y] = new StaticTile(backLayer, desertSheet, BlendMode.Alpha, 96);
-                    }
-                    else if (randomIndex.Next(3) == 0)
-                    {
-                        backLayer.Tiles[(int)tileVector.X, (int)tileVector.Y] = new StaticTile(backLayer, desertSheet, BlendMode.Alpha, 97);
-                    }
-                    else
-                    {
-                        backLayer.Tiles[(int)tileVector.X, (int)tileVector.Y] = new StaticTile(backLayer, desertSheet, BlendMode.Alpha, 98);
-                    }
-
-                }
-
-            }
-
-        }
-
-
     }
+
 }

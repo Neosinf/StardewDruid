@@ -52,6 +52,12 @@ namespace StardewDruid.Event
 
             location.temporarySprites.Add(light);
 
+            Texture2D brazierTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Brazier.png"));
+
+            Texture2D fireTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "RedFire.png"));
+
+            Texture2D shadowTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Shadow.png"));
+
             brazier = new(0, 99999f, 1, 1, position  - new Vector2(0,64), false, false)
             {
 
@@ -59,7 +65,7 @@ namespace StardewDruid.Event
 
                 sourceRectStartingPos = new Vector2(0, 0),
 
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Brazier.png")),
+                texture = brazierTexture,
 
                 scale = 2f, //* size,
 
@@ -76,7 +82,7 @@ namespace StardewDruid.Event
 
                 sourceRectStartingPos = new Vector2(0, 32),
 
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Brazier.png")),
+                texture = brazierTexture,
 
                 scale = 2f, //* size,
 
@@ -93,7 +99,7 @@ namespace StardewDruid.Event
 
                 sourceRectStartingPos = new Vector2(0, 0),
 
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "RedFire.png")),
+                texture = fireTexture,
 
                 scale = 2f, //* size,
 
@@ -110,7 +116,7 @@ namespace StardewDruid.Event
 
                 sourceRectStartingPos = new Vector2(0, 0),
 
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Shadow.png")),
+                texture = shadowTexture,
 
                 scale = 2.5f, //* size,
 

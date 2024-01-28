@@ -32,25 +32,6 @@ namespace StardewDruid.Event
 
         }
 
-        public void ResetBrazier()
-        {
-
-            for (int i = braziers.Count - 1; i >= 0; i--)
-            {
-
-                Brazier brazier = braziers.ElementAt(i);
-
-                if (!brazier.reset())
-                {
-
-                    braziers.RemoveAt(i);
-
-                }
-
-            }
-
-        }
-
         public override bool EventActive()
         {
             
@@ -65,7 +46,7 @@ namespace StardewDruid.Event
             if(activeCounter == 10)
             {
 
-                ResetBrazier();
+                ResetBraziers();
 
                 activeCounter = 0;
 

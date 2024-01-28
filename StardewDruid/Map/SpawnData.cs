@@ -90,6 +90,8 @@ namespace StardewDruid.Map
                 424, // Cheese
                 24, // Parsnip
                 851, // Magma Cap
+                196, // Salad
+                349, // Tonic
             };
 
             return lunchIndex;
@@ -125,7 +127,16 @@ namespace StardewDruid.Map
 
                 treeIndex = new()
                     {
-                        6,8,9,
+                        6,8,
+                    };
+
+            }
+            else if (location is IslandLocation)
+            {
+
+                treeIndex = new()
+                    {
+                        8,9,
                     };
 
             }
@@ -522,6 +533,10 @@ namespace StardewDruid.Map
                         [2] = 815,
 
                     };
+                    if(Game1.currentSeason == "winter" && location is Woods)
+                    {
+                        randomCrops[3] = 416;
+                    }
 
                     randomCrop = randomCrops[Game1.random.Next(randomCrops.Count)];
 
@@ -1214,6 +1229,7 @@ namespace StardewDruid.Map
                 spawnIndex["portal"] = true;
                 spawnIndex["artifact"] = true;
                 spawnIndex["whisk"] = true;
+                spawnIndex["weeds"] = true;
 
             }
             else if (playerLocation is Woods || playerLocation.Name.Contains("Grampleton") || playerLocation is IslandEast || playerLocation is IslandShrine)
@@ -1227,13 +1243,6 @@ namespace StardewDruid.Map
                 spawnIndex["fishspot"] = true;
                 spawnIndex["weeds"] = true;
 
-                if (playerLocation.Map.Layers[0].LayerWidth * playerLocation.Map.Layers[0].LayerHeight > 2000)
-                {
-
-                    spawnIndex["crate"] = true;
-
-                }
-
             }
             else if (playerLocation is MineShaft || playerLocation is VolcanoDungeon || playerLocation is StardewDruid.Location.Crypt) //|| playerLocation.Name.Contains("Mine"))
             {
@@ -1241,6 +1250,19 @@ namespace StardewDruid.Map
                 if (playerLocation.Name.Contains("60") || playerLocation.Name.Contains("100"))
                 {
                     spawnIndex["fishspot"] = true;
+
+                }
+
+                if (playerLocation is MineShaft mineShaft)
+                {
+                    List<int> mineLevels = new() { 3, 7 };
+
+                    if (mineLevels.Contains(mineShaft.mineLevel % 10))
+                    {
+                        
+                        spawnIndex["crate"] = true;
+
+                    }
 
                 }
 

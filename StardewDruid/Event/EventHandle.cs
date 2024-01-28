@@ -5,14 +5,22 @@ using StardewDruid.Map;
 using StardewDruid.Monster;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Characters;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using xTile.Layers;
 
 namespace StardewDruid.Event
 {
     public class EventHandle
     {
+
+        public string eventId;
+
+        public double eventTime;
+
+        public bool eventLock;
 
         public int activeCounter;
 
@@ -42,16 +50,20 @@ namespace StardewDruid.Event
 
         public List<StardewDruid.Character.Actor> actors;
 
+        public List<TemporaryAnimatedSprite> animations;
+
         public Vector2 voicePosition;
 
         public bool soundTrack;
-
-        public bool eventSync;
 
         public List<Vector2> ladders;
 
         public EventHandle(Vector2 target, Rite rite)
         {
+
+            eventId = rite.castType;
+
+            eventTime = Game1.currentGameTime.TotalGameTime.TotalMilliseconds;
 
             riteData = rite;
 
@@ -74,6 +86,8 @@ namespace StardewDruid.Event
             actors = new();
 
             ladders = new();
+
+            animations = new();
 
         }
 
@@ -212,6 +226,25 @@ namespace StardewDruid.Event
 
         }
 
+        public void ResetBraziers()
+        {
+
+            for (int i = braziers.Count - 1; i >= 0; i--)
+            {
+
+                Brazier brazier = braziers.ElementAt(i);
+
+                if (!brazier.reset())
+                {
+
+                    braziers.RemoveAt(i);
+
+                }
+
+            }
+
+        }
+
         public virtual void RemoveActors()
         {
 
@@ -233,6 +266,24 @@ namespace StardewDruid.Event
 
         }
 
+        public virtual void RemoveAnimations()
+        {
+            
+            if (animations.Count > 0)
+            {
+                
+                foreach (TemporaryAnimatedSprite animation in animations)
+                {
+                    
+                    targetLocation.temporarySprites.Remove(animation);
+                
+                }
+
+                animations.Clear();
+            
+            }
+
+        }
 
         public virtual void EventRemove()
         {
@@ -242,6 +293,8 @@ namespace StardewDruid.Event
             RemoveBraziers();
 
             RemoveActors();
+
+            RemoveAnimations();
 
             if (soundTrack)
             {
@@ -256,20 +309,6 @@ namespace StardewDruid.Event
         {
 
             activeCounter++;
-
-            if (eventLinger != -1)
-            {
-
-                return;
-
-            }
-
-            if (monsterHandle != null)
-            {
-
-                monsterHandle.SpawnInterval();
-
-            }
 
         }
 

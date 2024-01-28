@@ -4,7 +4,7 @@ using StardewDruid.Character;
 using StardewDruid.Event.Challenge;
 using StardewDruid.Location;
 using StardewDruid.Map;
-using StardewDruid.Monster;
+using StardewDruid.Monster.Boss;
 using StardewValley;
 using StardewValley.Locations;
 using System;
@@ -20,7 +20,7 @@ namespace StardewDruid.Event.Boss
     public class Crypt : BossHandle
     {
 
-        public List<StardewDruid.Monster.Boss> bossMonsters;
+        public List<StardewDruid.Monster.Boss.Dragon> bossMonsters;
 
         public Crypt(Vector2 target, Rite rite, Quest quest)
           : base(target, rite, quest)
@@ -30,7 +30,7 @@ namespace StardewDruid.Event.Boss
 
             voicePosition = new(targetVector.X * 64f, targetVector.Y * 64f - 32f);
 
-            expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 120.0;
+            expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 90.0;
 
             bossMonsters = new();
 
@@ -51,7 +51,7 @@ namespace StardewDruid.Event.Boss
                 for (int i = bossMonsters.Count - 1; i >= 0; i--)
                 {
 
-                    StardewDruid.Monster.Boss boss = bossMonsters[i];
+                    StardewDruid.Monster.Boss.Dragon boss = bossMonsters[i];
 
                     boss.currentLocation.characters.Remove(boss);
 
@@ -100,7 +100,7 @@ namespace StardewDruid.Event.Boss
                 if (expireEarly)
                 {
 
-                    Mod.instance.CompleteQuest(questData.name);
+                    EventComplete();
 
                     QuestData.NextProgress();
 
@@ -133,6 +133,7 @@ namespace StardewDruid.Event.Boss
 
             Game1.yLocationAfterWarp = warpY;
 
+            EventQuery("LocationReturn");
 
         }
 
@@ -144,7 +145,9 @@ namespace StardewDruid.Event.Boss
             if (activeCounter == 1)
             {
 
-                AddCrypt();
+                Location.LocationData.CryptAdd();
+
+                targetLocation = Game1.getLocationFromName("18465_Crypt");
 
                 targetVector = new Vector2(20, 15);
 
@@ -152,7 +155,11 @@ namespace StardewDruid.Event.Boss
 
                 Game1.xLocationAfterWarp = 20;
 
-                Game1.yLocationAfterWarp = 9;
+                Game1.yLocationAfterWarp = 10;
+
+                EventQuery("LocationEdit");
+
+                EventQuery("LocationPortal");
 
                 voicePosition = new(targetVector.X * 64, targetVector.Y * 64 - 32f);
 
@@ -174,7 +181,7 @@ namespace StardewDruid.Event.Boss
                 }
                 else
                 {
-                    StardewDruid.Monster.Shadowtin bossShadowtin = MonsterData.CreateMonster(18, targetVector + new Vector2(0, 5f), riteData.combatModifier) as StardewDruid.Monster.Shadowtin;
+                    Monster.Boss.Shadowtin bossShadowtin = MonsterData.CreateMonster(18, targetVector + new Vector2(0, 5f)) as Monster.Boss.Shadowtin;
 
                     targetLocation.characters.Add(bossShadowtin);
 
@@ -189,7 +196,7 @@ namespace StardewDruid.Event.Boss
                 for(int j = 0; j < difficulty; j++)
                 {
 
-                    Scavenger bossScavenger = MonsterData.CreateMonster(19, targetVector + new Vector2(4 - (2* difficulty), 6f - (3 * difficulty)), riteData.combatModifier) as Scavenger;
+                    Scavenger bossScavenger = MonsterData.CreateMonster(19, targetVector + new Vector2(4 - (2* difficulty), 6f - (3 * difficulty))) as Scavenger;
 
                     if (questData.name.Contains("Two"))
                     {
@@ -205,7 +212,7 @@ namespace StardewDruid.Event.Boss
                     bossMonsters.Add(bossScavenger);
 
 
-                    Rogue bossRogue = MonsterData.CreateMonster(20, targetVector + new Vector2(-4 + (2 * difficulty), 6f - (3 * difficulty)), riteData.combatModifier) as Rogue;
+                    Rogue bossRogue = MonsterData.CreateMonster(20, targetVector + new Vector2(-4 + (2 * difficulty), 6f - (3 * difficulty))) as Rogue;
 
                     if (questData.name.Contains("Two"))
                     {
@@ -222,84 +229,86 @@ namespace StardewDruid.Event.Boss
 
                 }
 
+                braziers.Add(new(targetLocation, new(13, 13)));
 
-                StaticHandle staticHandle;
+                braziers.Add(new(targetLocation, new(13, 26)));
 
-                if (Mod.instance.eventRegister.ContainsKey("static"))
-                {
+                braziers.Add(new(targetLocation, new(26, 13)));
 
-                    staticHandle = Mod.instance.eventRegister["static"] as StaticHandle;
-
-                }
-                else
-                {
-
-                    staticHandle = new();
-
-                    staticHandle.EventTrigger();
-
-                }
-
-                staticHandle.AddBrazier(targetLocation, new(13, 13));
-
-                staticHandle.AddBrazier(targetLocation, new(13, 26));
-
-                staticHandle.AddBrazier(targetLocation, new(26, 13));
-
-                staticHandle.AddBrazier(targetLocation, new(26, 26));
+                braziers.Add(new(targetLocation, new(26, 26)));
 
                 return;
 
             }
 
-            if (activeCounter > 4)
-            {
-
-                for(int i = bossMonsters.Count - 1; i >= 0; i--)
-                {
-
-                    StardewDruid.Monster.Boss boss = bossMonsters[i];
-
-                    if (!ModUtility.MonsterVitals(boss, targetLocation))
-                    {
-                        bossMonsters.RemoveAt(i);
-                    }
-
-                }
-
-                if(bossMonsters.Count == 0)
-                {
-                    expireEarly = true;
-
-                }
-
-            }
-
-        }
-
-        public void AddCrypt()
-        {
-
-            GameLocation crypt = Game1.getLocationFromName("18465_Crypt");
-
-            if (crypt != null)
-            {
-
-                //Game1.locations.Remove(crypt);
-
-                //Game1.removeLocationFromLocationLookup(crypt);
-
-                targetLocation = crypt;
+            if (activeCounter < 5) {
 
                 return;
 
             }
 
-            targetLocation = new Location.Crypt("18465_Crypt");
+            for(int i = bossMonsters.Count - 1; i >= 0; i--)
+            {
 
-            Game1.locations.Add(targetLocation);
+                StardewDruid.Monster.Boss.Dragon boss = bossMonsters[i];
 
-            Mod.instance.locationList.Add("18465_Crypt");
+                if (!ModUtility.MonsterVitals(boss, targetLocation))
+                {
+                    bossMonsters.RemoveAt(i);
+                }
+
+            }
+
+            if(bossMonsters.Count == 0)
+            {
+                expireEarly = true;
+
+                return;
+
+            }
+
+
+            switch (activeCounter)
+            {
+
+                case 10: bossMonsters[0].showTextAboveHead("I can't believe it"); break;
+
+                case 14: bossMonsters[0].showTextAboveHead("A Dragon? Here? Now?"); break;
+
+                case 18: bossMonsters[0].showTextAboveHead("This changes everything"); break;
+
+                case 22: bossMonsters[0].showTextAboveHead("So you defeated the scouts"); break;
+
+                case 26: bossMonsters[0].showTextAboveHead("They shouldn't have invaded the surface"); break;
+
+                case 30: bossMonsters[0].showTextAboveHead("But the Deep one willed it"); break;
+
+                case 34: bossMonsters[0].showTextAboveHead("So they acquiesced"); break;
+
+                case 38: bossMonsters[0].showTextAboveHead("I found the squad leader's hat and crossbow"); break;
+
+                case 42: bossMonsters[0].showTextAboveHead("The power that slew him is unmistakable"); break;
+
+                case 46: bossMonsters[0].showTextAboveHead("The Lady Beyond punishes us still"); break;
+
+                case 60: bossMonsters[0].showTextAboveHead("How did you find this hideout?"); break;
+
+                case 64: bossMonsters[0].showTextAboveHead("We can't let you leave"); break;
+
+                case 68: bossMonsters[0].showTextAboveHead("Lord Deep will not be pleased"); break;
+
+                case 72: bossMonsters[0].showTextAboveHead("We haven't collected enough ether"); break;
+
+                case 76: bossMonsters[0].showTextAboveHead("The Starlet will fade without it"); break;
+            
+            }
+
+            if (activeCounter % 60 == 0)
+            {
+
+                ResetBraziers();
+
+            }
 
         }
 

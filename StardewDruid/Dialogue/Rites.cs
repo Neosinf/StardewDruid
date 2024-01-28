@@ -1,4 +1,5 @@
-﻿using StardewDruid.Map;
+﻿using StardewDruid.Character;
+using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Minigames;
@@ -84,7 +85,7 @@ namespace StardewDruid.Dialogue
 
             }
 
-            responseList.Add(new Response("none", "(nevermind)"));
+            responseList.Add(new Response("cancel", "(nevermind)"));
 
             GameLocation.afterQuestionBehavior questionBehavior = new(RitesAnswer);
             
@@ -202,7 +203,11 @@ namespace StardewDruid.Dialogue
                     break;
             }
             if (effigyAnswer != "cancel")
+            {
                 Mod.instance.ChangeBlessing(effigyAnswer);
+
+            }
+
             Game1.drawDialogue(npc, str);
         }
 
@@ -294,7 +299,7 @@ namespace StardewDruid.Dialogue
 
             }
             
-            responseList.Add(new Response("return", "(nevermind)"));
+            responseList.Add(new Response("cancel", "(nevermind)"));
             
             GameLocation.afterQuestionBehavior questionBehavior = new(AnswerEffects);
             
@@ -337,10 +342,6 @@ namespace StardewDruid.Dialogue
 
                 case "fates":
                     DelayedAction.functionAfterDelay(EffectsFates, 100);
-                    break;
-
-                case "return":
-                    Approach();
                     break;
 
             }
@@ -410,7 +411,7 @@ namespace StardewDruid.Dialogue
             }
             else
             {
-                Game1.drawDialogue(npc, "Of all the constructs embued with the power of the elderborn, I've never heard of one so loyal to his former master. I've done my own assessment of the quality of his make. The clothes and head-dress are cheap garbage. And threadbare. You'll probably need to replace them at some point. Or burn them. The real value in the Effigy is a fashioned inner core that is saturated with elder power. It's the heart, and the brain. A treasure from the elder age.");
+                Game1.drawDialogue(npc, "Of all the constructs embued with the power of the elderborn, I've never heard of one so loyal to his former master. I've done my own assessment of the quality of his make. The clothes and head-dress are cheap garbage. And threadbare. I suspect a large cat has been kneading them, as the back is scratched and covered in fur. You'll probably need to replace them at some point. Or burn them. The real value in the Effigy is a fashioned inner core that is saturated with elder power. It's the heart, and the brain. A treasure from the elder age.");
 
             }
 
@@ -430,7 +431,7 @@ namespace StardewDruid.Dialogue
             }
             else if (npc is StardewDruid.Character.Jester)
             {
-                Game1.drawDialogue(npc, "I think I get what he wants, I mean, trinkets and shiny things are great. But they aren't everything. He said he'd help us get to the undervalley, but he doesn't care about why we need to find the fallen one. Still, I think he has a part to play for Yoba in our great purpose. (Jester grins) You beat him up before you can do it again if he tries to double-cross us.");
+                Game1.drawDialogue(npc, "I think I get what he wants, I mean, trinkets and shiny things are great. But they aren't everything. He said he'd help us get to the undervalley, but he doesn't care about my sacred mission. Still, I think he has a part to play for Yoba in our great purpose. (Jester grins) You can just beat him up again if he tries to double-cross us.");
             }
             else
             {

@@ -34,13 +34,15 @@ namespace StardewDruid.Event.World
 
         public int cometTimer;
 
-        public Gravity(Vector2 target, Rite rite, int type)
+        public float damage;
+
+        public Gravity(Vector2 target, Rite rite, int type, float Damage)
             : base(target, rite)
         {
 
             int extend = type == 0 ? 6 : 0;
 
-            gravityType = type == 0 ? "Solar" : "Void";
+            gravityType = type == 1 ? "Void" : "Solar";
 
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 6 + extend;
 
@@ -54,6 +56,8 @@ namespace StardewDruid.Event.World
 
             gravityAnimations = new();
 
+            damage = Damage;
+        
         }
 
         public override void EventTrigger()
@@ -272,7 +276,7 @@ namespace StardewDruid.Event.World
 
                 float motionY = yOffset / 1000;
 
-                float animationSort = float.Parse("0.0" + targetVector.X.ToString() + targetVector.Y.ToString()) + 2;
+                float animationSort = 0.001f;
 
                 TemporaryAnimatedSprite startAnimation = new(0, 1000f, 1, 1, playerPosition, false, false)
                 {
@@ -341,6 +345,8 @@ namespace StardewDruid.Event.World
             int targetRadius = activeCounter - 1;
 
             List<Vector2> tileVectors = ModUtility.GetTilesWithinRadius(targetLocation, targetVector, targetRadius);
+
+            if(targetRadius == 1) { tileVectors.Add(targetVector); }
 
             foreach (Vector2 tileVector in tileVectors)
             {
@@ -432,7 +438,7 @@ namespace StardewDruid.Event.World
                             if (!Mod.instance.eventRegister.ContainsKey(eventName))
                             {
 
-                                Event.World.Daze dazeEvent = new(targetVector, riteData, monster, i, 0);
+                                Event.World.Daze dazeEvent = new(targetVector, riteData, monster, i, 0, damage);
 
                                 dazeEvent.EventTrigger();
 

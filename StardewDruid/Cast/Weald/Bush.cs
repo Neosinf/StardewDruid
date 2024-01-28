@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewDruid.Event.World;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using System.Collections.Generic;
@@ -38,12 +39,21 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if (randomIndex.Next(20) == 0 && riteData.spawnIndex["wildspawn"] && Mod.instance.EffectDisabled("Wildspawn"))
+            /*if (randomIndex.Next(10) == 0 && riteData.spawnIndex["wildspawn"] && Mod.instance.EffectDisabled("Wildspawn"))
             {
 
-                StardewValley.Monsters.Monster spawnMonster = Mod.instance.SpawnMonster(targetLocation, targetVector, new() { 99, }, "bush");
+                if (!Mod.instance.eventRegister.ContainsKey("wildspawn"))
+                {
 
-            }
+                    new Event.World.Wildspawn(targetVector, riteData).EventTrigger();
+
+                }
+
+                (Mod.instance.eventRegister["wildspawn"] as Wildspawn).SpawnMonster(targetLocation, targetVector, new() { 99, }, "bush");
+
+                //StardewValley.Monsters.Monster spawnMonster = Mod.instance.SpawnMonster(targetLocation, targetVector, new() { 99, }, "bush");
+
+            }*/
 
             bushFeature.performToolAction(null, 1, targetVector, null);
 
@@ -144,7 +154,7 @@ namespace StardewDruid.Cast.Weald
 
             castFire = true;
 
-            ModUtility.AnimateGrowth(targetLocation, targetVector, new(0.8f, 1, 0.8f, 1));
+            ModUtility.AnimateSparkles(targetLocation, targetVector, new(0.8f, 1, 0.8f, 1));
 
             targetPlayer.gainExperience(2, 2); // gain foraging experience
 

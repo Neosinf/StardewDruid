@@ -140,16 +140,16 @@ namespace StardewDruid.Event.Scene
 
             Color animateColor = new(0.8f, 1, 0.8f, 1);
 
-            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(-3, -3), animateColor);
-            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(-3, -4), animateColor);
-            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(-2, -5), animateColor);
-            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(-1, -6), animateColor);
-            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(0, -7), animateColor);
-            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(1, -7), animateColor);
-            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(2, -7), animateColor);
-            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(4, -5), animateColor);
-            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(5, -4), animateColor);
-            ModUtility.AnimateGrowth(riteData.castLocation, triggerVector + new Vector2(5, -3), animateColor);
+            ModUtility.AnimateSparkles(riteData.castLocation, triggerVector + new Vector2(-3, -3), animateColor);
+            ModUtility.AnimateSparkles(riteData.castLocation, triggerVector + new Vector2(-3, -4), animateColor);
+            ModUtility.AnimateSparkles(riteData.castLocation, triggerVector + new Vector2(-2, -5), animateColor);
+            ModUtility.AnimateSparkles(riteData.castLocation, triggerVector + new Vector2(-1, -6), animateColor);
+            ModUtility.AnimateSparkles(riteData.castLocation, triggerVector + new Vector2(0, -7), animateColor);
+            ModUtility.AnimateSparkles(riteData.castLocation, triggerVector + new Vector2(1, -7), animateColor);
+            ModUtility.AnimateSparkles(riteData.castLocation, triggerVector + new Vector2(2, -7), animateColor);
+            ModUtility.AnimateSparkles(riteData.castLocation, triggerVector + new Vector2(4, -5), animateColor);
+            ModUtility.AnimateSparkles(riteData.castLocation, triggerVector + new Vector2(5, -4), animateColor);
+            ModUtility.AnimateSparkles(riteData.castLocation, triggerVector + new Vector2(5, -3), animateColor);
 
         }
 

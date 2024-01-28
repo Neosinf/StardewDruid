@@ -26,18 +26,18 @@ namespace StardewDruid.Event.Challenge
         public override void EventTrigger()
         {
 
-            monsterHandle = new(targetVector, riteData.castLocation, riteData.combatModifier);
+            monsterHandle = new(targetVector, riteData.castLocation);
 
             monsterHandle.spawnIndex = new() { 51, 52, 53, 54, };
 
-            monsterHandle.spawnFrequency = 1;
+            monsterHandle.spawnFrequency = 2;
 
             if (questData.name.Contains("Two"))
             {
 
                 monsterHandle.spawnFrequency = 1;
 
-                monsterHandle.spawnAmplitude = 2;
+                //monsterHandle.spawnAmplitude = 2;
 
             }
 
@@ -53,9 +53,6 @@ namespace StardewDruid.Event.Challenge
                 StardewDruid.Character.Character jester = Mod.instance.characters["Jester"];
 
                 jester.SwitchFollowMode();
-
-                jester.WarpToTarget();
-
 
             }
 
@@ -96,14 +93,12 @@ namespace StardewDruid.Event.Challenge
         public override bool EventExpire()
         {
             
-            Mod.instance.CompleteQuest(questData.name);
+            EventComplete();
 
             if (Mod.instance.characters.ContainsKey("Jester"))
             {
 
                 keepJester = true;
-
-                Mod.instance.characters["Jester"].timers.Clear();
 
                 Mod.instance.dialogue["Jester"].specialDialogue.Add("afterQuarry", new() {
                 "Jester of Fate:" +
@@ -121,6 +116,8 @@ namespace StardewDruid.Event.Challenge
         {
 
             activeCounter++;
+
+            monsterHandle.SpawnCheck();
 
             if (eventLinger != -1)
             {
@@ -261,12 +258,6 @@ namespace StardewDruid.Event.Challenge
             {
 
                 monsterHandle.SpawnInterval();
-
-            }
-            else
-            {
-
-                monsterHandle.SpawnCheck();
 
             }
 

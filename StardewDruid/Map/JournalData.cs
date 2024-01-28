@@ -23,14 +23,14 @@ namespace StardewDruid.Map
 
             source.Add(new List<Page>());
 
+            List<Page> pageList = new();
+
             foreach (KeyValuePair<int, List<List<string>>> keyValuePair in dictionary1)
             {
                 if (keyValuePair.Key <= num)
                 {
                     foreach (List<string> stringList in keyValuePair.Value)
                     {
-                        if (source.Last<List<Page>>().Count<Page>() == 6)
-                            source.Add(new List<Page>());
 
                         switch (stringList[1])
                         {
@@ -47,7 +47,7 @@ namespace StardewDruid.Map
                                             page.objectives.Add(stringList[4]);
                                         else
                                             page.active = true;
-                                        source.Last<List<Page>>().Add(page);
+                                        pageList.Add(page);
                                         break;
                                     }
                                     break;
@@ -58,7 +58,7 @@ namespace StardewDruid.Map
                                 page1.description = stringList[3];
                                 if (num > keyValuePair.Key)
                                     page1.objectives.Add(stringList[4]);
-                                source.Last<List<Page>>().Add(page1);
+                                pageList.Add(page1);
                                 break;
 
                             case "lesson":
@@ -73,7 +73,7 @@ namespace StardewDruid.Map
                                     page2.objectives.Add("Mastery: " + stringList[8]);
                                 else
                                     page2.active = true;
-                                source.Last<List<Page>>().Add(page2);
+                                pageList.Add(page2);
                                 break;
 
                             case "effect":
@@ -95,7 +95,7 @@ namespace StardewDruid.Map
 
                                 }
 
-                                source.Last<List<Page>>().Add(new Page()
+                                pageList.Add(new Page()
                                 {
 
                                     title = stringList[0],
@@ -116,6 +116,26 @@ namespace StardewDruid.Map
                     break;
             }
 
+            if (Mod.instance.ReverseJournal())
+            {
+
+                pageList.Reverse();
+
+            }
+
+            foreach(Page page in pageList)
+            {
+                
+                if (source.Last().Count() == 6)
+                {
+                    source.Add(new List<Page>());
+
+                }
+
+                source.Last().Add(page);
+
+            }
+            
             return source;
 
         }
@@ -166,7 +186,7 @@ namespace StardewDruid.Map
                     "The offerings of the valley sustain me.",
                     "When enabled in the configuration, auto-consume will trigger when health or stamina falls below a certain threshold, and consume items from the inventory to provide a stamina/health boost and even a temporary speed buff.",
                     "Roughage items: Sap, Tree seeds, Slime, Batwings, Red mushrooms.",
-                    "Lunch items: SpringOnion, Snackbar, Mushrooms, Algae, Seaweed, Carrots, Sashimi, Salmonberry, Cheese.",
+                    "Lunch items: SpringOnion, Snackbar, Mushrooms, Algae, Seaweed, Carrots, Sashimi, Salmonberry, Cheese, Salad, Tonic.",
                     "Coffee/Speed items: Cola, Tea Leaves, Tea, Coffee Bean, Coffee, Triple Espresso, Energy Tonic."
                     },
                     new()
@@ -197,8 +217,8 @@ namespace StardewDruid.Map
                     "Lesson: Nature's Bounty",
                     "lesson",
                     "Weald",
-                    "The Effigy has shown me how to gather the bounty of the wild, though some bounties are guarded jealously by creatures of the forest.",
-                    "Extract foragables from large bushes, wood from trees, fibre from grass and small fish from water. Might disturb bats.",
+                    "The Effigy has shown me how to gather the bounty of the wild.", //, though some bounties are guarded jealously by creatures of the forest
+                    "Extract foragables from large bushes, wood from trees, fibre from grass and small fish from water.", // Might disturb bats.
                     "lessonCreature",
                     "of 20 bushes rustled with Rite",
                     "masterCreature",
@@ -228,7 +248,7 @@ namespace StardewDruid.Map
                     "lesson",
                     "Weald",
                     "I have learned that the Farmer and the Druid share the same vision for a prosperous and well fed community, and so the wild seed is domesticated.",
-                    "Cast over wild seeds sewn into tilled dirt to convert them into seasonal crops. Will also fertilise existing crops, and progress the growth rate of maturing fruit trees by one day (once per day).",
+                    "Cast over seasonal wild seeds sewn into tilled dirt to convert them into domestic crops. Will also fertilise and update the growth cycle of all crop seeds, and progress the growth rate of maturing fruit trees by one day (once per day).",
                     "lessonCrop",
                     "of 20 seeds converted",
                     "masterCrop",
@@ -333,7 +353,7 @@ namespace StardewDruid.Map
                     "effect",
                     "Mists",
                     "The Lady is fascinated by the industriousness of humanity, and incorporating common farm implements into the Rite of the Mists produces interesting results",
-                    "Strike scarecrows to produce a radial crop watering effect. Radius increases when watering can is upgraded to gold. Strike a lightning rod once a day to charge it."
+                    "Strike scarecrows to produce a radial crop watering effect. Radius increases after certain quest milestones. Strike a lightning rod once a day to charge it."
                     }
                 },
                 [11] = new()
@@ -505,7 +525,7 @@ namespace StardewDruid.Map
                     "effect",
                     "Effigy",
                     "After my efforts to settle the ghosts of the past, the valley enjoys a respite from evil. It is time for the Effigy to walk amongst the furrows and fields of it's former master's home.",
-                    "The Effigy can be invited to roam the farm, and will perform it's own version of Rite of the Weald where scarecrows have been placed. This version will plant new seed into empty tilled dirt, and water and fertilise existing crops in a radius around the scarecrow."
+                    "The Effigy can be invited to roam the farm, and will perform it's own version of Rite of the Weald where scarecrows have been placed. This version will plant new seed into empty tilled dirt, and water and fertilise existing crops in a radius around the scarecrow. The Effigy will use the first chest placed in the farmcave as an inventory."
                     }
                 },
                 [20] = new()
@@ -618,14 +638,6 @@ namespace StardewDruid.Map
                     "masterDaze",
                     "Strike range and damage increased"
                     },
-                    new()
-                    {
-                    "Effect: Polymorph",
-                    "effect",
-                    "Fates",
-                    "The imminence of Fate can overwhelm the paltry form of lesser creatures.",
-                    "Creatures left in a dazed state for approxiamately 6 seconds will morph into primitive beings of raw essence."
-                    },
                 },
                 [26] = new()
                 {
@@ -656,7 +668,7 @@ namespace StardewDruid.Map
                     "effect",
                     "Jester",
                     "Jester believes that his great purpose is intertwined with my own story. Despite the resoluton of our bargain, he will remain close by while he searches for a way to access the Undervalley.",
-                    "Jester can be invited to roam the farm, or accompany you on journeys through the valley. He will automatically target nearby enemies, and his leaping melee attack applies the Daze effect. If positioned at right angles to a foe he can perform a powerful energy beam attack."
+                    "Jester can be invited to roam the farm, or accompany you on journeys through the valley. He will automatically target nearby enemies, and his leaping melee attack applies the Daze effect. If positioned at right angles to a foe he can perform a powerful energy beam attack. Jester will use the second chest placed in the farmcave as an inventory if available."
                     }
                 },
                 [28] = new()
@@ -727,7 +739,7 @@ namespace StardewDruid.Map
                     "lesson",
                     "Ether",
                     "The treasures of the ancient ones have been hoarded away in the ethereal plane.",
-                    "Claim 7 dragon treasures. Search for the ether symbol on large map locations (Forest, Beach, Mountain, RailRoad, Desert, Island etc). The color of the symbol will change depending on the terrain. Target the spot with blast or dive (special/right click button) to claim the dragon treasure. Be careful, you might have to fight, or race, to keep what you find.",
+                    "Claim 7 dragon treasures. Search for the ether symbol on large map locations (Forest, Beach, Mountain, RailRoad, Desert, Island etc). The color of the symbol will change depending on the terrain. Move over the spot and either dig or dive (special/right click button) to claim the dragon treasure. Be careful, you might have to fight to keep the treasure contents.",
                     "lessonTreasure",
                     "of 7 treasures found",
                     "masterTreasure",
@@ -750,11 +762,11 @@ namespace StardewDruid.Map
                 {
                     new()
                     {
-                    "Shadowtin Bear, Professonal",
+                    "Shadowtin Bear, Professional",
                     "quest",
                     "Shadow",
                     "The figure in the tin bear mask is a legend amongst the Shadowfolk. He has a fetish for rare collectibles, especially from the age of Dragons, and relishes the chance to partner with a Druid of my abilities. With Shadowtin's help, I hope to fulfil my promise to Jester to find the undervalley.",
-                    "Shadowtin can join your other allies on the farm, cave or at your side. He can use his Carnyx to stun enemies, or twirl it in a spin attack. Shadowtin will pick up nearby forageables for the player.",
+                    "Shadowtin can join your other allies on the farm, cave or at your side. He can use his Carnyx to stun enemies, or twirl it in a spin attack. Shadowtin will pick up nearby forageables during idle moments when following the player. Shadowtin will use the third chest placed in the farmcave as an inventory if available.",
                     "approachShadowtin",
                     },
                 },

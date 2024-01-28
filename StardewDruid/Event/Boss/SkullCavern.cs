@@ -2,9 +2,10 @@
 using StardewDruid.Cast;
 using StardewDruid.Event.Challenge;
 using StardewDruid.Map;
-using StardewDruid.Monster;
+using StardewDruid.Monster.Boss;
 using StardewValley;
 using StardewValley.Locations;
+using StardewValley.Objects;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,9 @@ namespace StardewDruid.Event.Boss
     public class SkullCavern : BossHandle
     {
         public Reaper bossMonster;
+        public StardewDruid.Monster.Boss.Dragon secondMonster;
+        public bool secondFight;
+        public int secondCounter;
         public Vector2 bossTile;
         public bool adjustWarp;
 
@@ -25,8 +29,6 @@ namespace StardewDruid.Event.Boss
         {
 
             targetVector = target;
-
-            voicePosition = new(targetVector.X * 64f, targetVector.Y * 64f - 32f);
 
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 120.0;
 
@@ -63,6 +65,14 @@ namespace StardewDruid.Event.Boss
 
             }
 
+            if (secondMonster != null)
+            {
+                targetLocation.characters.Remove(secondMonster);
+
+                secondMonster = null;
+
+            }
+
             base.RemoveMonsters();
 
         }
@@ -77,33 +87,9 @@ namespace StardewDruid.Event.Boss
                 return;
             }
 
-            Vector2 ladderTile = bossTile;
+            Location.LocationData.SkullCavernExit();
 
-            for (int index1 = 0; index1 < targetLocation.map.GetLayer("Buildings").LayerHeight; ++index1)
-            {
-                
-                for (int index2 = 0; index2 < targetLocation.map.GetLayer("Buildings").LayerWidth; ++index2)
-                {
-                    
-                    if (targetLocation.map.GetLayer("Buildings").Tiles[index2, index1] != null && targetLocation.map.GetLayer("Buildings").Tiles[index2, index1].TileIndex == 115)
-                    {
-                        ladderTile = new(index2 + 1, index1 + 1);
-
-                        break;
-
-                    }
-
-                }
-
-            }
-
-            Layer layer = targetLocation.map.GetLayer("Buildings");
-
-            layer.Tiles[(int)ladderTile.X, (int)ladderTile.Y] = new StaticTile(layer, targetLocation.map.TileSheets[0], 0, 174);
-
-            Game1.player.TemporaryPassableTiles.Add(new Microsoft.Xna.Framework.Rectangle((int)ladderTile.X * 64, (int)ladderTile.Y * 64, 64, 64));
-
-            Mod.instance.CastMessage("A way down has appeared");
+            EventQuery("LocationExit");
 
         }
 
@@ -130,31 +116,38 @@ namespace StardewDruid.Event.Boss
                     {
                         
                         new Throw().ThrowSword(Game1.player, 57, bossTile, 500);
-                    
-                    }
-                        
-                    Mod.instance.CompleteQuest(questData.name);
 
-                    if (Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
-                    {
-                        Mod.instance.dialogue["Jester"].specialDialogue.Add("quests", new List<string>()
+                        if (Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
                         {
-                          "Jester of Fate:^Thank you for helping me put Thanatoshi to rest.",
-                          "I'm sorry about your kinsman.",
-                          "I think this cutlass is to blame"
-                        });
+                            
+                            Mod.instance.dialogue["Jester"].specialDialogue.Add("quests", new List<string>()
+                            {
+                              "Jester of Fate:^Thank you for helping me put Thanatoshi to rest.",
+                              "I'm sorry about your kinsman.",
+                              "I think this cutlass is to blame"
+                            });
+
+                        }
+
                     }
+
+                    EventComplete();
 
                 }
                 else
                 {
-                    Mod.instance.CastMessage("Try again tomorrow");
 
-                    Mod.instance.characters["Jester"].showTextAboveHead("Thanatoshi... why...", -1, 2, 3000, 0);
+                    if (!questData.name.Contains("Two"))
+                    {
+
+                        Mod.instance.characters["Jester"].showTextAboveHead("Thanatoshi... why...", -1, 2, 3000, 0);
+
+                    }
+
+                    Mod.instance.CastMessage("Try again tomorrow");
 
                 }
 
-            
             }
 
             return base.EventExpire();
@@ -171,59 +164,57 @@ namespace StardewDruid.Event.Boss
             {
                 return;
             }
+
+            if (secondFight)
+            {
+
+                SecondFight();
+
+                return;
+
+            }
             
             if (activeCounter == 2)
             {
-                AddTomb();
+                
+                Location.LocationData.SkullCavernAdd();
+                Location.LocationData.SkullCavernEdit();
+                targetLocation = Game1.getLocationFromName("UndergroundMine145");
                 targetVector = new Vector2(13f, 18f);
                 Game1.inMine = true;
                 Game1.warpFarmer("UndergroundMine145", 13, 19, 2);
                 Game1.xLocationAfterWarp = 13;
                 Game1.yLocationAfterWarp = 19;
-                voicePosition = new(targetVector.X * 64, targetVector.Y * 64 - 32f);//Vector2.op_Addition(Vector2.op_Multiply(targetVector, 64f), new Vector2(0.0f, -32f));
 
+                voicePosition = new(17 * 64f, 13 * 64f);
                 return;
             }
             
             if (activeCounter == 3)
             {
+
+                EventQuery("LocationEdit");
+                EventQuery("LocationPortal");
+
                 targetPlayer.Position = new(targetVector.X * 64, targetVector.Y * 64);//Vector2.op_Multiply(targetVector, 64f);
-                bossMonster = MonsterData.CreateMonster(17, new Vector2(13f, 9f), riteData.combatModifier) as Reaper;
+                bossMonster = MonsterData.CreateMonster(17, new Vector2(13f, 9f)) as Reaper;
                 if (questData.name.Contains("Two"))
                 {
                     bossMonster.HardMode();
                 }
                 targetLocation.characters.Add(bossMonster);
-                bossMonster.currentLocation = riteData.castLocation;
-                bossMonster.update(Game1.currentGameTime, riteData.castLocation);
+                bossMonster.currentLocation = targetLocation;
+                bossMonster.update(Game1.currentGameTime, targetLocation);
                 SetTrack("LavaMine");
                 bossTile = new Vector2(13f, 9f);
 
+                braziers.Add(new(targetLocation, new(10, 9)));
 
-                StaticHandle staticHandle;
+                braziers.Add(new(targetLocation, new(7, 19)));
 
-                if (Mod.instance.eventRegister.ContainsKey("static"))
-                {
+                braziers.Add(new(targetLocation, new(18, 9)));
 
-                    staticHandle = Mod.instance.eventRegister["static"] as StaticHandle;
-
-                }
-                else
-                {
-
-                    staticHandle = new();
-
-                    staticHandle.EventTrigger();
-
-                }
-
-                staticHandle.AddBrazier(targetLocation, new(10, 9));
-
-                staticHandle.AddBrazier(targetLocation, new(7, 19));
-
-                staticHandle.AddBrazier(targetLocation, new(18, 9));
-
-                staticHandle.AddBrazier(targetLocation, new(21, 19));
+                braziers.Add(new(targetLocation, new(21, 19)));
 
                 return;
 
@@ -259,13 +250,23 @@ namespace StardewDruid.Event.Boss
             if (activeCounter == 50 && Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
                 Mod.instance.characters["Jester"].showTextAboveHead("For Fate and Fortune!", -1, 3, 3000, 0);
 
-
             if (activeCounter > 5)
             {
 
                 if(!ModUtility.MonsterVitals(bossMonster, targetLocation))
                 {
-                    expireEarly = true;
+
+                    if (questData.name.Contains("Two"))
+                    {
+                        secondFight = true;
+
+                        SecondFight();
+
+                    }
+                    else
+                    {
+                        expireEarly = true;
+                    }
 
                 }
                 else
@@ -274,129 +275,128 @@ namespace StardewDruid.Event.Boss
                     bossTile = new((int)(bossMonster.Position.X / 64), (int)(bossMonster.Position.Y / 64));
 
                 }
-                
 
             }
 
+            if (activeCounter % 30 == 0)
+            {
+
+                ResetBraziers();
+
+            }
         }
 
-        public void AddTomb()
+        public void SecondFight()
         {
-            MineShaft mineShaft = new MineShaft(145);
-            MineShaft.activeMines.Clear();
-            MineShaft.activeMines.Add(mineShaft);
-            mineShaft.mapPath.Value = "Maps\\Mines\\33";
-            mineShaft.loadedMapNumber = 33;
-            mineShaft.updateMap();
-            mineShaft.mapImageSource.Value = "Maps\\Mines\\mine_desert_dark_dangerous";
-            mineShaft.Map.TileSheets[0].ImageSource = "Maps\\Mines\\mine_desert_dark_dangerous";
-            mineShaft.Map.LoadTileSheets(Game1.mapDisplayDevice);
-            mineShaft.mineLevel = 100;
-            mineShaft.chooseLevelType();
-            mineShaft.mineLevel = 145;
-            mineShaft.findLadder();
-            targetLocation = Game1.getLocationFromName("UndergroundMine145");
-            Layer layer1 = targetLocation.map.GetLayer("Back");
-            Layer layer2 = targetLocation.map.GetLayer("Buildings");
-            Layer layer3 = targetLocation.map.GetLayer("Front");
-            TileSheet tileSheet1 = new TileSheet("zestfordragontiles99999999", targetLocation.map, Path.Combine("Maps", "DesertTiles"), new Size(16, 23), new Size(1, 1));
-            targetLocation.map.AddTileSheet(tileSheet1);
-            TileSheet tileSheet2 = targetLocation.map.TileSheets[0];
-            layer1.Tiles[15, 11] = new StaticTile(layer1, tileSheet2, 0, 166);
-            layer1.Tiles[16, 11] = new StaticTile(layer1, tileSheet2, 0, 167);
-            layer1.Tiles[17, 11] = new StaticTile(layer1, tileSheet2, 0, 167);
-            layer1.Tiles[18, 11] = new StaticTile(layer1, tileSheet2, 0, 167);
-            layer1.Tiles[19, 11] = new StaticTile(layer1, tileSheet2, 0, 167);
-            layer1.Tiles[20, 11] = new StaticTile(layer1, tileSheet2, 0, 168);
-            layer1.Tiles[11, 12] = new StaticTile(layer1, tileSheet2, 0, 166);
-            layer1.Tiles[12, 12] = new StaticTile(layer1, tileSheet2, 0, 167);
-            layer1.Tiles[13, 12] = new StaticTile(layer1, tileSheet2, 0, 167);
-            layer1.Tiles[14, 12] = new StaticTile(layer1, tileSheet2, 0, 167);
-            layer1.Tiles[15, 12] = new StaticTile(layer1, tileSheet2, 0, 152);
-            layer1.Tiles[16, 12] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[17, 12] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[18, 12] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[19, 12] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[20, 12] = new StaticTile(layer1, tileSheet2, 0, 184);
-            layer1.Tiles[8, 13] = new StaticTile(layer1, tileSheet2, 0, 166);
-            layer1.Tiles[9, 13] = new StaticTile(layer1, tileSheet2, 0, 167);
-            layer1.Tiles[10, 13] = new StaticTile(layer1, tileSheet2, 0, 167);
-            layer1.Tiles[11, 13] = new StaticTile(layer1, tileSheet2, 0, 152);
-            layer1.Tiles[12, 13] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[13, 13] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[14, 13] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[15, 13] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[16, 13] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[17, 13] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[18, 13] = new StaticTile(layer1, tileSheet2, 0, 181);
-            layer1.Tiles[19, 13] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[20, 13] = new StaticTile(layer1, tileSheet2, 0, 184);
-            layer1.Tiles[8, 14] = new StaticTile(layer1, tileSheet2, 0, 182);
-            layer1.Tiles[9, 14] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[10, 14] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[11, 14] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[12, 14] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[13, 14] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[14, 14] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[15, 14] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[16, 14] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[17, 14] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[18, 14] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[19, 14] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[20, 14] = new StaticTile(layer1, tileSheet2, 0, 184);
-            layer1.Tiles[8, 15] = new StaticTile(layer1, tileSheet2, 0, 182);
-            layer1.Tiles[9, 15] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[10, 15] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[11, 15] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[12, 15] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[13, 15] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[14, 15] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[15, 15] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[16, 15] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[17, 15] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[18, 15] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[19, 15] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[20, 15] = new StaticTile(layer1, tileSheet2, 0, 184);
-            layer1.Tiles[8, 16] = new StaticTile(layer1, tileSheet2, 0, 182);
-            layer1.Tiles[9, 16] = new StaticTile(layer1, tileSheet2, 0, 181);
-            layer1.Tiles[10, 16] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[11, 16] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[12, 16] = new StaticTile(layer1, tileSheet2, 0, 181);
-            layer1.Tiles[13, 16] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[14, 16] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[15, 16] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[16, 16] = new StaticTile(layer1, tileSheet2, 0, 150);
-            layer1.Tiles[17, 16] = new StaticTile(layer1, tileSheet2, 0, 199);
-            layer1.Tiles[18, 16] = new StaticTile(layer1, tileSheet2, 0, 199);
-            layer1.Tiles[19, 16] = new StaticTile(layer1, tileSheet2, 0, 199);
-            layer1.Tiles[20, 16] = new StaticTile(layer1, tileSheet2, 0, 200);
-            layer1.Tiles[8, 17] = new StaticTile(layer1, tileSheet2, 0, 182);
-            layer1.Tiles[9, 17] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[10, 17] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[11, 17] = new StaticTile(layer1, tileSheet2, 0, 165);
-            layer1.Tiles[12, 17] = new StaticTile(layer1, tileSheet2, 0, 150);
-            layer1.Tiles[13, 17] = new StaticTile(layer1, tileSheet2, 0, 199);
-            layer1.Tiles[14, 17] = new StaticTile(layer1, tileSheet2, 0, 199);
-            layer1.Tiles[15, 17] = new StaticTile(layer1, tileSheet2, 0, 199);
-            layer1.Tiles[16, 17] = new StaticTile(layer1, tileSheet2, 0, 200);
-            layer1.Tiles[8, 18] = new StaticTile(layer1, tileSheet2, 0, 198);
-            layer1.Tiles[9, 18] = new StaticTile(layer1, tileSheet2, 0, 199);
-            layer1.Tiles[10, 18] = new StaticTile(layer1, tileSheet2, 0, 199);
-            layer1.Tiles[11, 18] = new StaticTile(layer1, tileSheet2, 0, 199);
-            layer1.Tiles[12, 18] = new StaticTile(layer1, tileSheet2, 0, 200);
-            layer3.Tiles[17, 13] = new StaticTile(layer3, tileSheet1, 0, 3);
-            layer3.Tiles[18, 13] = new StaticTile(layer3, tileSheet1, 0, 4);
-            layer2.Tiles[17, 14] = new StaticTile(layer2, tileSheet1, 0, 19);
-            layer2.Tiles[18, 14] = new StaticTile(layer2, tileSheet1, 0, 20);
-            layer3.Tiles[15, 13] = new StaticTile(layer3, tileSheet1, 0, 5);
-            layer3.Tiles[15, 14] = new StaticTile(layer3, tileSheet1, 0, 21);
-            layer2.Tiles[15, 15] = new StaticTile(layer2, tileSheet1, 0, 37);
-            layer3.Tiles[14, 13] = new StaticTile(layer3, tileSheet1, 0, 5);
-            layer3.Tiles[14, 14] = new StaticTile(layer3, tileSheet1, 0, 21);
-            layer2.Tiles[14, 15] = new StaticTile(layer2, tileSheet1, 0, 37);
-            layer3.Tiles[13, 13] = new StaticTile(layer3, tileSheet1, 0, 5);
-            layer3.Tiles[13, 14] = new StaticTile(layer3, tileSheet1, 0, 21);
-            layer2.Tiles[13, 15] = new StaticTile(layer2, tileSheet1, 0, 37);
+            
+            secondCounter++;
+
+            if (secondCounter < 9)
+            {
+
+                switch (secondCounter)
+                {
+
+                    case 1:
+
+                        CastVoice("...yesss...");
+
+                        targetLocation.playSoundPitched("DragonRoar", 1200);
+
+                        expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 120.0;
+
+                        break;
+
+                    case 3:
+
+                        CastVoice("you have done well, shaman");
+
+                        targetLocation.playSoundPitched("DragonRoar", 800);
+
+                        break;
+
+                    case 5:
+
+                        CastVoice("...I return...");
+
+                        targetLocation.playSoundPitched("DragonRoar", 400);
+
+                        break;
+
+                    case 7:
+
+                        secondMonster = MonsterData.CreateMonster(21, new Vector2(13f, 9f)) as Prime;
+
+                        targetLocation.characters.Add(secondMonster);
+
+                        secondMonster.currentLocation = riteData.castLocation;
+
+                        SetTrack("cowboy_boss");
+
+                        break;
+
+                }
+
+                return;
+            }
+
+            if(secondCounter == 15)
+            {
+                secondMonster.showTextAboveHead("For centuries I lingered in bone");
+            }
+
+            if (secondCounter == 20)
+            {
+                secondMonster.showTextAboveHead("As the reaper leeched my life force");
+            }
+
+            if (secondCounter == 25)
+            {
+                secondMonster.showTextAboveHead("But an ancient is never truly gone");
+            }
+
+            if (secondCounter == 30)
+            {
+                secondMonster.showTextAboveHead("As long as my ether remains");
+            }
+
+            if (secondCounter == 35)
+            {
+                secondMonster.showTextAboveHead("I will gather the essence of your soul");
+            }
+
+            if (secondCounter == 40)
+            {
+                secondMonster.showTextAboveHead("And fashion new form from your pieces");
+            }
+
+            if (secondCounter == 45)
+            {
+                secondMonster.showTextAboveHead("The Mistress of Fortune will face my wrath");
+            }
+
+            if (secondCounter == 50)
+            {
+                secondMonster.showTextAboveHead("I will make her my servant");
+            }
+
+            if (!ModUtility.MonsterVitals(secondMonster, targetLocation))
+            {
+                CastVoice("...rwwwghhhh...");
+
+                targetLocation.playSoundPitched("DragonRoar", 400);
+
+                expireEarly = true;
+
+            }
+
+
+            if (activeCounter % 30 == 0)
+            {
+
+                ResetBraziers();
+
+            }
 
         }
 

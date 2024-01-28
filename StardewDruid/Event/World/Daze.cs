@@ -32,9 +32,11 @@ namespace StardewDruid.Event.World
 
         public List<TemporaryAnimatedSprite> animation;
 
+        public float damage;
+
         //public List<TemporaryAnimatedSprite> animation;
 
-        public Daze(Vector2 target, Rite rite, StardewValley.Monsters.Monster Monster, int Slot, int Origin)
+        public Daze(Vector2 target, Rite rite, StardewValley.Monsters.Monster Monster, int Slot, int Origin, float Damage)
             : base(target, rite)
         {
 
@@ -63,7 +65,7 @@ namespace StardewDruid.Event.World
 
             }
 
-            morph = (!Map.MonsterData.CustomMonsters().Contains(Monster.GetType()) && riteData.castTask.ContainsKey("masterDaze"));
+            //morph = (!Map.MonsterData.CustomMonsters().Contains(Monster.GetType()) && riteData.castTask.ContainsKey("masterDaze"));
 
             animation = new List<TemporaryAnimatedSprite>();
 
@@ -75,6 +77,8 @@ namespace StardewDruid.Event.World
                 return;
 
             }
+
+            damage = Damage * 3 / 2;
 
             WarpAnimation();
 
@@ -105,7 +109,7 @@ namespace StardewDruid.Event.World
 
         }
 
-        public void MorphVictim()
+        /*public void MorphVictim()
         {
 
             if (morph && !complete)
@@ -115,20 +119,29 @@ namespace StardewDruid.Event.World
 
                 int monsterIndex = riteData.randomIndex.Next(2) == 0 ? 51 : 52;
 
-                StardewValley.Monsters.Monster spawnAttempt = Mod.instance.SpawnMonster(targetLocation, currentVector, new() { monsterIndex, });
-
-                if (spawnAttempt != null)
+                if (!Mod.instance.eventRegister.ContainsKey("wildspawn"))
                 {
+
+                    new Event.World.Wildspawn(targetVector, riteData).EventTrigger();
+
+                }
+
+                (Mod.instance.eventRegister["wildspawn"] as Wildspawn).SpawnMonster(targetLocation, currentVector, new() { monsterIndex, });
+
+                //StardewValley.Monsters.Monster spawnAttempt = Mod.instance.SpawnMonster(targetLocation, currentVector, new() { monsterIndex, });
+
+                //if (spawnAttempt != null)
+                //{
 
                     targetLocation.characters.Remove(victim);
 
                     victim = null;
 
-                }
+                //}
 
             }
 
-        }
+        }*/
 
         public override void EventTrigger()
         {
@@ -186,7 +199,7 @@ namespace StardewDruid.Event.World
 
             }
 
-            MorphVictim();
+            //MorphVictim();
 
             return false;
         }
@@ -333,8 +346,6 @@ namespace StardewDruid.Event.World
 
                 List<int> diff = new() { 0,0 };
 
-                int damage = riteData.castDamage * 3 / 2;
-
                 if (meleeWeapon.knockback.Value > 0)
                 {
 
@@ -345,11 +356,11 @@ namespace StardewDruid.Event.World
                 if(meleeWeapon.critMultiplier.Value > 0)
                 {
 
-                    damage += (int)(riteData.castDamage / 100 * meleeWeapon.critMultiplier.Value);
+                    damage += (damage / 100 * meleeWeapon.critMultiplier.Value);
 
                 }
 
-                ModUtility.HitMonster(targetLocation, targetPlayer, victim, damage, true, diffX: diff[0], diffY: diff[1]);
+                ModUtility.HitMonster(targetLocation, targetPlayer, victim, (int)damage, true, diffX: diff[0], diffY: diff[1]);
 
             }
 

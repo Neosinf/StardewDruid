@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Map;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Characters;
 using System;
@@ -37,6 +38,8 @@ namespace StardewDruid.Event.Challenge
 
             questData = quest;
 
+            eventId = quest.name;
+
         }
 
         public override void EventTrigger()
@@ -46,12 +49,31 @@ namespace StardewDruid.Event.Challenge
 
             Game1.addHUDMessage(new HUDMessage($"Challenge Initiated", ""));
 
+            /*if (Context.IsMultiplayer)
+            {
+
+                activeCounter = -1;
+
+                QueryData queryData = new()
+                {
+                    name = questData.name,
+                    value = questData.name,
+                    description = questData.questTitle,
+                    time = Game1.currentGameTime.TotalGameTime.TotalMilliseconds,
+                    location = riteData.castLocation.Name,
+                    expire = (int)expireTime,
+                };
+
+                Mod.instance.EventQuery(queryData);
+
+            }*/
+
         }
 
         public void SetupSpawn()
         {
 
-            monsterHandle = new(targetVector, riteData.castLocation, riteData.combatModifier);
+            monsterHandle = new(targetVector, riteData.castLocation);
 
             monsterHandle.spawnIndex = challengeSpawn;
 
@@ -62,6 +84,13 @@ namespace StardewDruid.Event.Challenge
             monsterHandle.spawnWithin = challengeWithin;
 
             monsterHandle.spawnRange = challengeRange;
+
+            if (questData.name.Contains("Two"))
+            {
+
+                monsterHandle.spawnCombat *= 2;
+
+            }
 
             List<Vector2> spawnTorches = challengeTorches;
 
@@ -108,8 +137,41 @@ namespace StardewDruid.Event.Challenge
 
             }
 
+            if (activeCounter % 30 == 0)
+            {
+                
+                if(braziers.Count > 0)
+                {
+                    
+                    foreach(Brazier brazier in braziers) {
+
+                        brazier.reset();
+                    
+                    }
+
+                }
+
+            }
+
+            if (Context.IsMultiplayer)
+            {
+
+                if (eventLock)
+                {
+
+                    return false;
+
+                }
+
+            }
+
             return base.EventActive();
 
+        }
+
+        public override void MinutesLeft(int minutes)
+        {
+            Game1.addHUDMessage(new HUDMessage($"Hold ground for another {minutes} minutes", "2"));
         }
 
         public override void EventAbort()
@@ -123,7 +185,7 @@ namespace StardewDruid.Event.Challenge
         public override bool EventExpire()
         {
 
-            Mod.instance.CompleteQuest(questData.name);
+            EventComplete();
 
             RemoveMonsters();
 
@@ -131,31 +193,60 @@ namespace StardewDruid.Event.Challenge
 
         }
 
-        public void UpdateFriendship(List<string> NPCIndex)
+        public virtual void EventComplete()
         {
 
-            foreach (string NPCName in NPCIndex)
+            Mod.instance.CompleteQuest(questData.name);
+
+            EventQuery();
+        
+        }
+
+        public virtual void EventQuery(string eventQuery = "EventComplete")
+        {
+
+            if (Context.IsMultiplayer)
             {
-
-                NPC characterFromName = Game1.getCharacterFromName(NPCName);
-
-                characterFromName ??= Game1.getCharacterFromName<Child>(NPCName, mustBeVillager: false);
-
-                if (characterFromName != null)
+                QueryData queryData = new()
                 {
+                    name = questData.name,
+                    value = questData.name,
+                    description = questData.questTitle,
+                    time = Game1.currentGameTime.TotalGameTime.TotalMilliseconds,
+                    location = riteData.castLocation.Name,
+                    expire = (int)expireTime,
+                };
 
-                    targetPlayer.changeFriendship(375, characterFromName);
-
-                }
-                else
-                {
-
-                }
+                Mod.instance.EventQuery(queryData, eventQuery);
 
             }
 
         }
 
+        public override void EventInterval()
+        {
+            
+            activeCounter++;
+
+            monsterHandle.SpawnCheck();
+
+            if (eventLinger != -1)
+            {
+
+                return;
+
+            }
+
+            monsterHandle.SpawnInterval();
+
+            if (activeCounter % 30 == 0)
+            {
+
+                ResetBraziers();
+
+            }
+
+        }
 
     }
 

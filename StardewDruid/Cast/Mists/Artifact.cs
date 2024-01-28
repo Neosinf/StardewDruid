@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewDruid.Character;
 using System;
 
 namespace StardewDruid.Cast.Mists
@@ -28,11 +29,9 @@ namespace StardewDruid.Cast.Mists
 
             }
 
-            Mod.instance.virtualHoe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+            targetLocation.digUpArtifactSpot((int)targetVector.X, (int)targetVector.Y, targetPlayer);
 
-            //targetPlayer.Stamina += Math.Min(2, targetPlayer.MaxStamina - targetPlayer.Stamina);
-
-            artifactSpot.performToolAction(Mod.instance.virtualHoe, targetLocation);
+            targetLocation.objects.Remove(targetVector);
 
             castFire = true;
 

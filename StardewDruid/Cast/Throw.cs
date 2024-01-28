@@ -202,7 +202,7 @@ namespace StardewDruid.Cast
                 if (objectInstance is StardewValley.Object)
                 {
 
-                    Game1.createObjectDebris(objectInstance.ParentSheetIndex, (int)spawnVector.X, (int)spawnVector.Y);
+                    Game1.createObjectDebris(objectInstance.ParentSheetIndex, (int)spawnVector.X, (int)spawnVector.Y,-1,objectQuality);
 
                 }
                 else

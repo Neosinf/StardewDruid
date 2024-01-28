@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Map;
-using StardewDruid.Monster;
+using StardewDruid.Monster.Template;
 using StardewValley;
 using StardewValley.Objects;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace StardewDruid.Event.Challenge
 
         public int trashCollected;
 
-        public BossBat bossMonster;
+        public BigBat bossMonster;
 
         public Aquifer(Vector2 target, Rite rite, Quest quest)
             : base(target, rite, quest)
@@ -137,16 +137,16 @@ namespace StardewDruid.Event.Challenge
 
                     Game1.addHUDMessage(new HUDMessage($"Collected {trashCollected} pieces of trash!", ""));
 
-                    List<string> NPCIndex = VillagerData.VillagerIndex("mountain");
-
-                    Game1.addHUDMessage(new HUDMessage($"You have gained favour with the mountain residents and their friends", ""));
-
-                    Mod.instance.CompleteQuest(questData.name);
+                    EventComplete();
 
                     if (!questData.name.Contains("Two"))
                     {
 
-                        UpdateFriendship(NPCIndex);
+                        List<string> NPCIndex = VillagerData.VillagerIndex("mountain");
+
+                        Game1.addHUDMessage(new HUDMessage($"You have gained favour with the mountain residents and their friends", ""));
+
+                        ModUtility.UpdateFriendship(Game1.player,NPCIndex);
 
                         Mod.instance.dialogue["Effigy"].specialDialogue["journey"] = new() { "I sense a change", "The rite disturbed the bats. ALL the bats." };
 
@@ -188,6 +188,8 @@ namespace StardewDruid.Event.Challenge
 
             activeCounter++;
 
+            monsterHandle.SpawnCheck();
+
             if (eventLinger != -1)
             {
 
@@ -216,11 +218,11 @@ namespace StardewDruid.Event.Challenge
 
             if (activeCounter == 20)
             {
-                StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(11, new(30, 13), riteData.combatModifier);
+                StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(11, new(30, 13));
 
-                bossMonster = theMonster as BossBat;
+                bossMonster = theMonster as BigBat;
 
-                bossMonster.posturing = true;
+                bossMonster.posturing.Set(true);
 
                 riteData.castLocation.characters.Add(bossMonster);
 
@@ -254,7 +256,9 @@ namespace StardewDruid.Event.Challenge
 
                     case 37: bossMonster.showTextAboveHead("...is angry..."); break;
 
-                    case 39: bossMonster.showTextAboveHead("CHEEEP"); bossMonster.posturing = false; bossMonster.focusedOnFarmers = true; break;
+                    case 39: bossMonster.showTextAboveHead("CHEEEP");
+                        bossMonster.posturing.Set(false);
+                        bossMonster.focusedOnFarmers = true; break;
 
                     case 56:
 
@@ -264,7 +268,7 @@ namespace StardewDruid.Event.Challenge
 
                     case 57:
 
-                        Cast.Weald.Rockfall rockFall = new(bossMonster.getTileLocation(), riteData);
+                        Cast.Weald.Rockfall rockFall = new(bossMonster.getTileLocation(), riteData, Mod.instance.DamageLevel());
 
                         rockFall.challengeCast = true;
 

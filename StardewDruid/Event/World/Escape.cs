@@ -235,6 +235,7 @@ namespace StardewDruid.Event.World
                         Mod.instance.AbortAllEvents();
 
                     }
+
                 }
 
             }
@@ -261,7 +262,7 @@ namespace StardewDruid.Event.World
                     continue;
 
                 }
-
+                
                 surveyed.Add(warp.TargetName);
 
                 Vector2 destination;

@@ -45,7 +45,7 @@ namespace StardewDruid.Monster
 
         public Random randomIndex;
 
-        public MonsterHandle(Vector2 target, GameLocation location, int combatModifier)
+        public MonsterHandle(Vector2 target, GameLocation location)
         {
 
             BaseTarget(target);
@@ -62,9 +62,9 @@ namespace StardewDruid.Monster
 
             spawnLocation = location;
 
-            spawnCombat = combatModifier;
-
             randomIndex = new();
+
+            spawnCombat = Mod.instance.CombatModifier();
 
             //riteData = rite;
 
@@ -79,10 +79,21 @@ namespace StardewDruid.Monster
 
         }
 
-        public void TargetToPlayer(Vector2 target)
+        public void TargetToPlayer(Vector2 target,bool precision = false)
         {
 
             Vector2 playerVector = Game1.player.getTileLocation();
+
+            if (precision)
+            {
+
+                spawnWithin = playerVector - new Vector2(1,1);
+
+                spawnRange = new Vector2(2, 2);
+
+                return;
+
+            }
 
             spawnWithin = playerVector + ((target - playerVector) / 2) - new Vector2(2, 2);
 
@@ -163,8 +174,6 @@ namespace StardewDruid.Monster
                 return 0;
 
             }
-
-            SpawnCheck();
 
             spawnCounter = 0;
 
@@ -291,7 +300,7 @@ namespace StardewDruid.Monster
 
             }
 
-            StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(spawnMob, spawnVector, spawnCombat, Mod.instance.PartyHats());
+            StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(spawnMob, spawnVector, spawnCombat);
 
             monsterSpawns.Add(theMonster);
 
@@ -316,7 +325,7 @@ namespace StardewDruid.Monster
 
             int spawnMob = spawnIndex[randomIndex.Next(spawnIndex.Count)];
 
-            StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(spawnMob, spawnVector, spawnCombat, Mod.instance.PartyHats());
+            StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(spawnMob, spawnVector, spawnCombat);
 
             Vector2 fromPosition = new(terrainVector.X * 64, terrainVector.Y * 64);
 
@@ -330,7 +339,7 @@ namespace StardewDruid.Monster
 
             float motionY = (toPosition.Y - fromPosition.Y) / 1000 - compensate;
 
-            float animationSort = float.Parse("0.0" + terrainVector.X.ToString() + terrainVector.Y.ToString());
+            float animationSort =(terrainVector.Y / 10000);
 
             Color monsterColor = Color.White;
 

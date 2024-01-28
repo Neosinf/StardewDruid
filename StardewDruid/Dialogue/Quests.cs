@@ -1,4 +1,5 @@
 ﻿using StardewDruid.Map;
+using StardewModdingAPI;
 using StardewValley;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,7 +66,7 @@ namespace StardewDruid.Dialogue
             
             }
 
-            if (!Mod.instance.limits.Contains(npc.Name))
+            if (!Mod.instance.limits.Contains(npc.Name) && Context.IsMainPlayer)
             {
                 
                 DelayedAction.functionAfterDelay(CycleQuests, 100);
@@ -167,9 +168,13 @@ namespace StardewDruid.Dialogue
 
         public void AnswerJester(Farmer visitor, string answer)
         {
-            Game1.drawDialogue(npc, "I felt the industry of the forest spirits the night they toiled on the span across the mountain ravine. " +
+            Game1.drawDialogue(npc,
+                "I have said little of why the monarchs fell into their long slumber, and why the circle of druids was established here to care for the sacred places in their stead. " +
+                "Amongst all the knowledge I still posess, these particular secrets are obscured. I can only say that traces of the remain towards the eastern face of the Mountain. " +
+                "Be careful. The secrets of the Mountain's past are known to be guarded by the Fates themselves.");
+            /*Game1.drawDialogue(npc, "I felt the industry of the forest spirits the night they toiled on the span across the mountain ravine. " +
                 "They restored not only a bridge over land but between two destinies. " +
-                "Should you decide to cross, a fateful encounter awaits you. (Should be worth checking out the bridge to the Quarry)");
+                "Should you decide to cross, a fateful encounter awaits you.");*/
         }
 
         public void CycleQuests()
@@ -196,17 +201,17 @@ namespace StardewDruid.Dialogue
 
             responseList.Add(new Response("accept", accept));
 
-            if (npc is StardewDruid.Character.Effigy && Mod.instance.QuestComplete("challengeSandDragon") && !Mod.instance.QuestGiven("challengeSandDragonTwo"))
+            if (npc is StardewDruid.Character.Effigy && Mod.instance.QuestComplete("challengeSandDragon") && !Mod.instance.QuestOpen("challengeSandDragonTwo"))
             {
                 responseList.Add(new Response("dragon", "(dragon fight) I want a rematch with that ghost dragon!"));
             }
 
-            if (npc is StardewDruid.Character.Jester && !Mod.instance.QuestGiven("challengeStarsTwo"))
+            if (npc is StardewDruid.Character.Jester && !Mod.instance.QuestOpen("challengeStarsTwo"))
             {
                 responseList.Add(new Response("slimes", "(slimes fight) Lets put ol' pumpkin head in his place."));
             }
 
-            if (npc is StardewDruid.Character.Jester && !Mod.instance.QuestGiven("challengeEtherTwo"))
+            if (npc is StardewDruid.Character.Shadowtin && !Mod.instance.QuestOpen("challengeEtherTwo"))
             {
                 responseList.Add(new Response("crypt", "(crypt fight) Lets see what the thieves have been up to."));
             }
@@ -292,7 +297,7 @@ namespace StardewDruid.Dialogue
 
                         string quest = keyValuePair.Key + "Two";
 
-                        if (!Mod.instance.QuestGiven(quest))
+                        if (!Mod.instance.QuestOpen(quest))
                         {
 
                             questList.Add(quest);
@@ -378,7 +383,6 @@ namespace StardewDruid.Dialogue
             }
 
             Game1.drawDialogue(npc, dialogueText);
-
 
         }
 

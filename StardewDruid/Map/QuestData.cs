@@ -6,6 +6,7 @@ using StardewDruid.Event.Boss;
 using StardewDruid.Event.Challenge;
 using StardewDruid.Event.Scene;
 using StardewDruid.Journal;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Quests;
@@ -142,9 +143,20 @@ namespace StardewDruid.Map
         
         }
 
-
         public static void MarkerInstance(GameLocation location, Quest quest)
         {
+
+            if (!Context.IsMainPlayer)
+            {
+
+                List<string> safeTriggers = new() { "sword", "scythe", };
+
+                if (!safeTriggers.Contains(quest.type))
+                {
+                    return;
+                }
+
+            }
 
             if (quest.triggerLocation != null && !quest.triggerLocation.Contains(location.Name))
             {
@@ -162,35 +174,45 @@ namespace StardewDruid.Map
             TriggerHandle triggerHandle;
 
             string questName = quest.name.Replace("Two", "");
-            Mod.instance.Monitor.Log("meow", StardewModdingAPI.LogLevel.Debug);
+
             switch (questName)
             {
                 case "approachJester":
 
-                    CharacterData.CharacterLoad("Jester", "Mountain");
-
-                    Mod.instance.characters["Jester"].SwitchFrozenMode();
-
                     triggerHandle = null;
+
+                        if (Context.IsMainPlayer)
+                        {
+
+                            if ((Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[1])
+                            {
+
+                                CharacterData.CharacterLoad("Jester", "Mountain");
+
+                                Mod.instance.characters["Jester"].SwitchSceneMode();
+
+                            }
+
+                        }
 
                     break;
 
                 case "approachShadowtin":
 
-                    if(location is Location.Crypt)
-                    {
-                        CharacterData.CharacterLoad("Shadowtin", location.Name);
-                        
-                    }
-                    else
-                    {
-                        CharacterData.CharacterLoad("Shadowtin", "FarmCave");
-
-                    }
-
-                    Mod.instance.characters["Shadowtin"].SwitchFrozenMode();
-
                     triggerHandle = null;
+
+                        if (location is Location.Crypt)
+                        {
+                            CharacterData.CharacterLoad("Shadowtin", location.Name);
+
+                        }
+                        else
+                        {
+                            CharacterData.CharacterLoad("Shadowtin", "FarmCave");
+
+                        }
+
+                        Mod.instance.characters["Shadowtin"].SwitchSceneMode();
 
                     break;
 
@@ -439,17 +461,6 @@ namespace StardewDruid.Map
 
             foreach (string quest in quests[progress])
             {
-                if (quest == "approachJester")
-                {
-
-                    if (!(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[1])
-                    {
-
-                        return "none";
-
-                    }
-
-                }
 
                 if (!Mod.instance.QuestGiven(quest))
                 {
@@ -459,6 +470,7 @@ namespace StardewDruid.Map
                 }
                     
                 str = quest;
+            
             }
 
             return str;
@@ -469,6 +481,8 @@ namespace StardewDruid.Map
         {
 
             int num = Mod.instance.CurrentProgress();
+
+            string rite = RitesProgress().Last();
             
             foreach (KeyValuePair<int, List<string>> keyValuePair in QuestProgress())
             {
@@ -479,7 +493,7 @@ namespace StardewDruid.Map
                     foreach (string str in keyValuePair.Value)
                     {
                         
-                        if (!(str != questCheck))
+                        if (str == questCheck)
                         {
                             
                             num = keyValuePair.Key;
@@ -487,6 +501,13 @@ namespace StardewDruid.Map
                             num++;
                             
                             Mod.instance.blessingList = RitesProgress();
+
+                            if(Mod.instance.blessingList.Last() != rite)
+                            {
+
+                                Mod.instance.ChangeBlessing(Mod.instance.blessingList.Last());
+
+                            }
  
                             return num;
                         
@@ -546,7 +567,7 @@ namespace StardewDruid.Map
                     name = "lessonVillager",
                     questId = 18465011,
                     questValue = 6,
-                    questTitle = "Druid Lesson One: Villagers",
+                    questTitle = "Druid Lesson 1: Villagers",
                     questDescription = "Demonstrate your command over nature to the locals.",
                     questObjective = "Perform a rite in range of four different villagers. (Doesn't have to be all at once).",
                     questReward = 100,
@@ -560,9 +581,9 @@ namespace StardewDruid.Map
                     name = "lessonCreature",
                     questId = 18465012,
                     questValue = 6,
-                    questTitle = "Druid Lesson Two: Creatures",
+                    questTitle = "Druid 2: Rustling",
                     questDescription = "The wild spaces hold many riches, and some are guarded jealously.",
-                    questObjective = "Rustle twenty bushes for forageables with Rite of the Weald. Might disturb bats. Unlocks wild seed gathering from grass.",
+                    questObjective = "Rustle twenty bushes for forageables with Rite of the Weald. Unlocks wild seed gathering from grass.",//Might disturb bats. 
                     questReward = 200,
                     questProgress = 2,
                     questDiscuss = "The valley springs into new life. Go now, sample its hidden bounty, and prepare to face those who guard its secrets.",
@@ -574,7 +595,7 @@ namespace StardewDruid.Map
                     name = "lessonForage",
                     questId = 18465013,
                     questValue = 6,
-                    questTitle = "Druid Lesson Three: Flowers",
+                    questTitle = "Druid 3: Flowers",
                     questDescription = "The Druid fills the barren spaces with life.",
                     questObjective = "Sprout ten forageables total in the Forest or elsewhere. Unlocks flowers.",
                     questReward = 300,
@@ -588,9 +609,9 @@ namespace StardewDruid.Map
                     name = "lessonCrop",
                     questId = 18465014,
                     questValue = 6,
-                    questTitle = "Druid Lesson Four: Crops",
+                    questTitle = "Druid 4: Crops",
                     questDescription = "The Farmer and the Druid share the same vision.",
-                    questObjective = "Convert twenty planted wild seeds into domestic crops. Unlocks quality conversions.",
+                    questObjective = "Convert twenty planted seasonal wild seeds into domestic crops. Updates growth cycle of all planted seeds. Unlocks quality conversions.",
                     questReward = 400,
                     questProgress = 2,
                     questDiscuss = "Your connection to the earth deepens. You may channel the power of the Two Kings for your own purposes.",
@@ -602,7 +623,7 @@ namespace StardewDruid.Map
                     name = "lessonRockfall",
                     questId = 18465015,
                     questValue = 6,
-                    questTitle = "Druid Lesson Five: Rocks",
+                    questTitle = "Druid 5: Rocks",
                     questDescription = "The Druid draws power from the deep rock.",
                     questObjective = "Gather one hundred stone from rockfalls in the mines. Unlocks rockfall damage to monsters.",
                     questReward = 500,
@@ -653,7 +674,7 @@ namespace StardewDruid.Map
                     name = "lessonTotem",
                     questId = 18465016,
                     questValue = 6,
-                    questTitle = "Druid Lesson Six: Hidden Power",
+                    questTitle = "Druid 6: Hidden Power",
                     questDescription = "The power of the valley gathers where ley lines intersect.",
                     questObjective = "Draw the power out of two different warp shrines. Unlocks chance for double extraction.",
                     questReward = 600,
@@ -667,9 +688,9 @@ namespace StardewDruid.Map
                     name = "lessonCookout",
                     questId = 18465017,
                     questValue = 6,
-                    questTitle = "Druid Lesson Seven: Cookouts",
+                    questTitle = "Druid 7: Cookouts",
                     questDescription = "Every Druid should know how to cook",
-                    questObjective = "Create two cookouts from campfires. Craft your own, or look around the Beach or Linus' tent. Unlocks extra recipes.",
+                    questObjective = "Create two cookouts by striking crafted campfires. Also works on the firepits at the Beach or by Linus' tent. Unlocks extra recipes. Strike scarecrows and Lightning rods for additional effects.",
                     questReward = 700,
                     questProgress = 2,
                     questDiscuss = "The Lady is fascinated by the industriousness of humanity. Combine your artifice with her blessing and reap the rewards.",
@@ -681,7 +702,7 @@ namespace StardewDruid.Map
                     name = "lessonFishspot",
                     questId = 18465018,
                     questValue = 6,
-                    questTitle = "Druid Lesson Eight: Fishing",
+                    questTitle = "Druid 8: Fishing",
                     questDescription = "Nature is always ready to test your skill. Create fishing spots by performing Rite of the Mists over open water.",
                     questObjective = "Cast on open water to create fishing spots and catch ten fish. Quest completion unlocks rarer fish.",
                     questReward = 800,
@@ -695,7 +716,7 @@ namespace StardewDruid.Map
                     name = "lessonSmite",
                     questId = 18465019,
                     questValue = 6,
-                    questTitle = "Druid Lesson Nine: Smite",
+                    questTitle = "Druid 9: Smite",
                     questDescription = "Call lightning down upon your enemies",
                     questObjective = "Smite enemies twenty times. Unlocks critical hits.",
                     questReward = 900,
@@ -709,7 +730,7 @@ namespace StardewDruid.Map
                     name = "lessonPortal",
                     questId = 18465020,
                     questValue = 6,
-                    questTitle = "Druid Lesson Ten: Summoning",
+                    questTitle = "Druid 10: Summoning",
                     questDescription = "Who knows what lies beyond the veil",
                     questObjective = "Create a portal in the backwoods, railroad or secret woods by placing down a candle torch and striking it with Rite of the Mists. Every candle included in the rite increases the challenge.",
                     questReward = 1000,
@@ -762,7 +783,7 @@ namespace StardewDruid.Map
                     name = "lessonMeteor",
                     questId = 18465021,
                     questValue = 6,
-                    questTitle = "Druid Lesson Eleven: Meteor Shower",
+                    questTitle = "Druid 11: Meteor Rain",
                     questDescription = "Call down a meteor shower to clear the area around you.",
                     questObjective = "Summon fifty meteors. Unlocks priority targetting of stone nodes and monsters.",
                     questReward = 1200,
@@ -899,8 +920,8 @@ namespace StardewDruid.Map
                     //questCharacter = "Jester",
                     questValue = 6,
                     questTitle = "Across The Bridge",
-                    questDescription = "Now that the bridge across the ravine is restored, the Effigy senses a fateful encounter awaits across the divide.",
-                    questObjective = "Investigate the bridge between the mountain pass and the quarry.",
+                    questDescription = "The Effigy senses a fateful encounter awaits on the bridge over the mountain ravine.",
+                    questObjective = "Investigate the bridge between the mountain pass and the quarry once it has been restored.",
                     questReward = 100,
                     questProgress = 1
                 },
@@ -915,7 +936,7 @@ namespace StardewDruid.Map
                     },
                     triggerMarker = "icon",
                     triggerVector = new Vector2(30f, 7f),
-                    triggerColour = new Color(1f, 0.8f, 0.4f, 1f),
+                    triggerColour = new Color(1f, 0.4f, 0.4f, 1f),
                     questValue = 6,
                     questTitle = "Instrument of Fate",
                     questDescription = "The Jester of Fate thinks it would be a good idea if you armed yourself with an instrument of Deat- uh - Fate.",
@@ -929,7 +950,7 @@ namespace StardewDruid.Map
                     name = "lessonWhisk",
                     questId = 18465041,
                     questValue = 6,
-                    questTitle = "Druid Lesson Twelve: Whisk",
+                    questTitle = "Druid 12: Whisk",
                     questDescription = "The denizens of the otherworld traverse the material plane in immaterial ways.",
                     questObjective = "Complete ten warp jumps. Press the rite button to launch a warp projectile, then press action to trigger the warp. Uses cursor targetting by default. Quest completion extends the jump range.",
                     questReward = 1600,
@@ -943,9 +964,9 @@ namespace StardewDruid.Map
                     name = "lessonTrick",
                     questId = 18465042,
                     questValue = 6,
-                    questTitle = "Druid Lesson Thirteen: Tricks!",
+                    questTitle = "Druid 13: Tricks!",
                     questDescription = "Apparently the wielders of fate are the greatest magicians.",
-                    questObjective = "Amuse or annoy five villagers with tricks. Quest completion enables a higher chance for good friendship. Requires solar or void essence as a source.",
+                    questObjective = "Amuse or annoy five villagers with tricks. Quest completion enables a higher chance for good friendship.",
                     questReward = 1700,
                     questProgress = 2,
                     questDiscuss = "(Jester's eyes sparkle) Magic tricks! Fates are known for being the best at making others happy. Or soaked.",
@@ -957,7 +978,7 @@ namespace StardewDruid.Map
                     name = "lessonEnchant",
                     questId = 18465043,
                     questValue = 6,
-                    questTitle = "Druid Lesson Fourteen: Enchant",
+                    questTitle = "Druid 14: Enchant",
                     questDescription = "Even a machine can answer to a higher purpose.",
                     questObjective = "Fill up ten farm machines with essence. Quest completion enables an instant complete effect for active machines. Requires solar or void essence as a source.",
                     questReward = 1800,
@@ -971,7 +992,7 @@ namespace StardewDruid.Map
                     name = "lessonGravity",
                     questId = 18465044,
                     questValue = 6,
-                    questTitle = "Druid Lesson Sixteen: Gravity",
+                    questTitle = "Druid 15: Gravity",
                     questDescription = "Nothing can escape the pull of fate.",
                     questObjective = "Summon five gravity wells by casting around scarecrows or monsters. Uses cursor targetting by default. Quest completion unlocks an additional comet effect when used in combination with Rite of the Stars.",
                     questReward = 1900,
@@ -985,7 +1006,7 @@ namespace StardewDruid.Map
                     name = "lessonDaze",
                     questId = 18465045,
                     questValue = 6,
-                    questTitle = "Druid Lesson Sixteen: Daze",
+                    questTitle = "Druid 16: Daze",
                     questDescription = "The feeble mind cannot fathom it's own fate.",
                     questObjective = "Daze monsters ten times. Jester attacks and gravity wells add a dazzle debuff to nearby monsters. A warp strike can be triggered with the action button. Quest completion enables random morph effects.",
                     questReward = 2000,
@@ -1040,7 +1061,7 @@ namespace StardewDruid.Map
                     name = "lessonTransform",
                     questId = 18465051,
                     questValue = 6,
-                    questTitle = "Druid Lesson 17: Transform",
+                    questTitle = "Druid 17: Transform",
                     questDescription = "Dragons were the ancient masters of the the ethereal plane. Now I have the means to become a master myself.",
                     questObjective = "The Rite of Ether transforms you into a Dragon! Impress or frighten five different villagers while in dragon form. Quest completion extends transformation time.",
                     questReward = 2200,
@@ -1054,9 +1075,9 @@ namespace StardewDruid.Map
                     name = "lessonFlight",
                     questId = 18465052,
                     questValue = 6,
-                    questTitle = "Druid Lesson 18: Flight",
+                    questTitle = "Druid 18: Flight",
                     questDescription = "Let your wings soar on the unseen streams of ether.",
-                    questObjective = "Attempt a flight distance of four seconds. Hold the rite button while moving left or right to do a sweeping flight, release to land. Quest completion enables damage to foes.",
+                    questObjective = "Attempt a flight distance of four seconds. Press the action/use tool while transformed to begin flight. Hold to extend. Release to land. Performs a tail sweep attack instead if enemies are within close range.",
                     questReward = 2300,
                     questProgress = 2,
                     questDiscuss = "Have you figured out how to fly yet? I tried to practice using my tail as a spring to jump over trees. But I kept falling asleep.",
@@ -1068,9 +1089,9 @@ namespace StardewDruid.Map
                     name = "lessonBlast",
                     questId = 18465053,
                     questValue = 6,
-                    questTitle = "Druid Lesson 19: Blast",
+                    questTitle = "Druid 19: Blast",
                     questDescription = "Dragons possessed the ability to harness and focus ethereal potential for their own purposes.",
-                    questObjective = "Perform ten breath attacks with the special button / right click. Targetting is based on the direction you are facing. Quest completion increases the effective radius.",
+                    questObjective = "Perform ten firebreath attacks with the special button / right click. Uses directional targetting. Quest completion enables monster immolation.",
                     questReward = 2400,
                     questProgress = 2,
                     questDiscuss = "I'm not sure if this will work for Ether, but I can show you how I blast-face with essence.",
@@ -1082,7 +1103,7 @@ namespace StardewDruid.Map
                     name = "lessonDive",
                     questId = 18465054,
                     questValue = 6,
-                    questTitle = "Druid Lesson 20: Dive",
+                    questTitle = "Druid 20: Dive",
                     questDescription = "It could be said that Dragons were the first to bury secrets in the depths.",
                     questObjective = "Fly onto the water and perform ten dives with the special button/right click.",
                     questReward = 2500,
@@ -1096,7 +1117,7 @@ namespace StardewDruid.Map
                     name = "lessonTreasure",
                     questId = 18465055,
                     questValue = 6,
-                    questTitle = "Druid Lesson 21: Treasure",
+                    questTitle = "Druid 21: Treasure",
                     questDescription = "The ancient masters of the valley ensured the the secrets of their dominion were vaulted within the Ethereal world.",
                     questObjective = "Claim seven dragon treasures. Search for the ether symbol on large map locations (a minimum map size applies). The color of the symbol will change depending on the terrain. Target the spot with blast or dive (special/right click button) to claim the dragon treasure.",
                     questReward = 2600,
@@ -1131,7 +1152,7 @@ namespace StardewDruid.Map
                     triggerMarker = "character",
                     questId = 18465057,
                     questValue = 6,
-                    questTitle = "Shadowtin Bear, Professonal",
+                    questTitle = "Shadowtin Bear, Professional",
                     questDescription = "Your encounter with the ether thieves left a good impression on their ringleader.",
                     questObjective = "Introduce yourself to Shadowtin Bear. He will await you in the town crypt or in the farmcave.",
                     questReward = 100,
@@ -1153,7 +1174,9 @@ namespace StardewDruid.Map
                 quest.questProgress = -1;
                 dictionary[quest.name] = quest;
             }
+
             return dictionary;
+        
         }
 
         public static List<string> ActiveSeconds()
@@ -1168,9 +1191,9 @@ namespace StardewDruid.Map
                 
                 string quest = keyValuePair.Key + "Two";
                 
-                if (Mod.instance.QuestGiven(quest) && !Mod.instance.QuestComplete(quest))
+                if (Mod.instance.QuestOpen(quest))
                 {
-                    
+
                     stringList.Add(quest);
 
                 }
@@ -1269,8 +1292,12 @@ namespace StardewDruid.Map
 
         }
 
-        public static Quest RetrieveQuest(string quest) => QuestList()[quest];
+        public static Quest RetrieveQuest(string quest)
+        {
 
+            return QuestList()[quest];
+
+        }
 
     }
 
