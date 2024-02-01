@@ -15,9 +15,6 @@ namespace StardewDruid.Monster.Boss
     public class Scavenger : Dragon
     {
 
-        public Queue<Vector2> blastZone;
-        public int blastRadius;
-
         public Scavenger()
         {
         }
@@ -36,16 +33,6 @@ namespace StardewDruid.Monster.Boss
             CatFlight();
 
             CatSpecial();
-
-            ouchList = new List<string>()
-              {
-                "meow meow",
-              };
-
-            dialogueList = new List<string>()
-              {
-                "meow",
-              };
 
             overHead = new(16, -128);
 
@@ -81,8 +68,6 @@ namespace StardewDruid.Monster.Boss
             flightLast = 5;
 
             flightIncrement = 9;
-
-            flightSound = "";
 
             flightFrames = new Dictionary<int, List<Rectangle>>()
             {
@@ -129,10 +114,6 @@ namespace StardewDruid.Monster.Boss
 
         public void CatSpecial()
         {
-            
-            blastRadius = 1;
-
-            blastZone = new();
 
             abilities = 2;
 
@@ -185,41 +166,10 @@ namespace StardewDruid.Monster.Boss
 
             MaxHealth = Health;
 
-            ouchList = new List<string>()
-              {
-                "meow meow",
-              };
-
-            dialogueList = new List<string>()
-              {
-                "meow",
-              };
-
-            blastRadius = 2;
-
             cooldownInterval = 60;
 
             tempermentActive = temperment.aggressive;
 
-        }
-
-        public override void ChaseMode()
-        {
-
-            base.ChaseMode();
-
-            ouchList = new List<string>()
-              {
-                "meow meow",
-              };
-
-            dialogueList = new List<string>()
-              {
-                "meow",
-                "mine mine!",
-                "rwwwwrr",
-                "where bear"
-              };
         }
 
         public override Rectangle GetBoundingBox()
@@ -256,8 +206,6 @@ namespace StardewDruid.Monster.Boss
             {
 
                 b.Draw(characterTexture, new Vector2(localPosition.X - 32f, localPosition.Y - 64f), new Rectangle?(specialFrames[netDirection.Value][0]), Color.White, 0.0f, new Vector2(0.0f, 0.0f), 4f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
-
-                //DrawBeamEffect(b);
 
             }
             else

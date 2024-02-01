@@ -38,11 +38,6 @@ namespace StardewDruid.Cast
 
         public int direction;
 
-        //public int castDamage;
-
-        //public int combatModifier;
-       // public int difficulty;
-
         public Dictionary<string, int> castTask;
 
         public Random randomIndex;
@@ -76,17 +71,6 @@ namespace StardewDruid.Cast
             castSource = new(0);
 
         }
-
-        //public void CastDamage()
-        //{
-
-            //castDamage = Mod.instance.DamageLevel();
-
-            //combatModifier = Mod.instance.CombatModifier();
-
-            //difficulty = Mod.instance.CombatModifier();
-
-        //}
 
         public static string GetSlotBlessing()
         {
@@ -567,6 +551,19 @@ namespace StardewDruid.Cast
                     Game1.player.currentLocation.playSoundPitched("discoverMineral", 700 + (pitchLevel * 200));
 
                 }
+
+            }
+
+            //---------------------------------------------
+            // Wisps
+            //---------------------------------------------
+
+            if (Mod.instance.TaskList().ContainsKey("masterWisps"))
+            {
+
+
+
+
 
             }
 

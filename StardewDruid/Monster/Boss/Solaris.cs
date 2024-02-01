@@ -84,7 +84,6 @@ namespace StardewDruid.Monster.Boss
             BaseWalk();
             BaseFlight();
             BaseSpecial();
-            BaseDialogue();
 
             abilities = 1;
 

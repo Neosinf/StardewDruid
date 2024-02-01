@@ -42,15 +42,6 @@ namespace StardewDruid.Monster.Boss
 
             overHead = new(16, -144);
 
-            ouchList = new List<string>()
-              {
-                "unbearable",
-                "the power",
-                "ooft",
-              };
-
-            dialogueList = new();
-
             loadedOut = true;
 
         }
@@ -70,8 +61,6 @@ namespace StardewDruid.Monster.Boss
             flightFloor = 1;
 
             flightLast = 4;
-
-            flightSound = "";
 
             flightTexture = characterTexture;
 
@@ -177,13 +166,6 @@ namespace StardewDruid.Monster.Boss
             Health /= 2;
 
             MaxHealth = Health;
-
-            ouchList = new List<string>()
-              {
-                "unbearable",
-                "the power",
-                "ooft",
-              };
 
             blastRadius = 2;
 

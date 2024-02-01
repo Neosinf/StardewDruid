@@ -80,8 +80,6 @@ namespace StardewDruid.Monster.Boss
             BaseFlight();
             
             BaseSpecial();
-            
-            BaseDialogue();
 
             Health /= 2;
 
@@ -190,7 +188,7 @@ namespace StardewDruid.Monster.Boss
 
                 //int newDamage = Health - 1;
 
-                showTextAboveHead("Tweeeeep!", duration: 3000);
+                DialogueData.DisplayText(this, 1, 0, "FireBird");
 
                 Game1.playSound("batFlap");
 

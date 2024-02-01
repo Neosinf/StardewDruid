@@ -35,6 +35,7 @@ namespace StardewDruid.Event.Boss
 
         public override void EventTrigger()
         {
+            cues = DialogueData.DialogueScene(questData.name);
 
             ModUtility.AnimateRadiusDecoration(targetLocation, targetVector, "Stars", 1f, 1f);
 
@@ -111,7 +112,8 @@ namespace StardewDruid.Event.Boss
                 if (expireEarly)
                 {
 
-                    CastVoice("the power of the shamans lingers");
+                    
+                    DialogueCue(DialogueData.DialogueNarrator(questData.name), new() { [0] = actors[0], }, 991);
 
                     Vector2 debrisVector = Game1.player.getTileLocation() + new Vector2(0, 1);
 
@@ -129,8 +131,7 @@ namespace StardewDruid.Event.Boss
                 }
                 else
                 {
-
-                    CastVoice("You're no match for me");
+                    DialogueCue(DialogueData.DialogueNarrator(questData.name), new() { [0] = actors[0], }, 992);
 
                     Mod.instance.CastMessage("Try again tomorrow");
 
@@ -180,18 +181,16 @@ namespace StardewDruid.Event.Boss
 
             if (activeCounter < 9)
             {
+                
+                DialogueCue(DialogueData.DialogueNarrator(questData.name), new() { [0] = actors[0], }, activeCounter);
 
                 switch (activeCounter)
                 {
                     case 1:
 
-                        CastVoice("a taste of the stars");
-
                         break;
 
                     case 3:
-
-                        CastVoice("from the time when the shamans sang to us");
 
                         targetLocation.playSoundPitched("DragonRoar", 1200);
 
@@ -199,15 +198,11 @@ namespace StardewDruid.Event.Boss
 
                     case 5:
 
-                        CastVoice("and my kin held dominion");
-
                         targetLocation.playSoundPitched("DragonRoar",800);
 
                         break;
 
                     case 7:
-
-                        CastVoice("...my bones stir...");
 
                         targetLocation.playSoundPitched("DragonRoar", 400);
 

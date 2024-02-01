@@ -49,7 +49,9 @@ namespace StardewDruid.Event
             missile,
             beam,
             burn,
-            fireball
+            fireball,
+            wisp,
+            bullet,
         }
 
         public barrageType type;

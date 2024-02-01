@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Event;
+using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Network;
@@ -39,6 +40,8 @@ namespace StardewDruid.Character
         public override void LoadOut()
         {
 
+            characterTexture = CharacterData.CharacterTexture(Name);
+
             barrages = new();
 
             roamVectors = new List<Vector2>();
@@ -49,7 +52,7 @@ namespace StardewDruid.Character
 
             opponentThreshold = 640;
 
-            gait = 1.2f;
+            gait = 2f;
 
             modeActive = mode.random;
 
@@ -114,10 +117,17 @@ namespace StardewDruid.Character
                 return;
             }
 
+            if(characterTexture == null)
+            {
+
+                return;
+
+            }
+
             if (base.IsEmoting && !Game1.eventUp)
             {
                 Vector2 localPosition2 = getLocalPosition(Game1.viewport);
-                localPosition2.Y -= 32 + Sprite.SpriteHeight * 4;
+                localPosition2.Y -= 160;
                 b.Draw(Game1.emoteSpriteSheet, localPosition2, new Microsoft.Xna.Framework.Rectangle(base.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, base.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, getStandingY() / 10000f);
             }
                 
@@ -131,7 +141,7 @@ namespace StardewDruid.Character
                 if(chooseFrame < 2 || !currentLocation.IsOutdoors)
                 {
                     b.Draw(
-                        Sprite.Texture,
+                        characterTexture,
                         localPosition - new Vector2(0, 64),
                         walkFrames[netDirection.Value][0],
                         Color.White,
@@ -151,7 +161,7 @@ namespace StardewDruid.Character
                 }
 
                 b.Draw(
-                    Sprite.Texture,
+                    characterTexture,
                     localPosition - new Vector2(32f, 64f),
                     haltFrames[chooseFrame - 2],
                     Color.White,
@@ -163,7 +173,7 @@ namespace StardewDruid.Character
                 );
 
                 b.Draw(
-                    Sprite.Texture,
+                    characterTexture,
                     localPosition - new Vector2(chooseFrame > 0 ? 32f : 0, 64f) + new Vector2(2f,4f),
                     haltFrames[chooseFrame-2],
                     Color.Black * 0.25f,
@@ -182,7 +192,7 @@ namespace StardewDruid.Character
             {
 
                 b.Draw(
-                    Sprite.Texture,
+                    characterTexture,
                     localPosition - new Vector2(0,64),
                     castFrames[netDirection.Value],
                     Color.White,
@@ -205,7 +215,7 @@ namespace StardewDruid.Character
             {
 
                 b.Draw(
-                    Sprite.Texture,
+                    characterTexture,
                     localPosition - new Vector2(32, 64),
                     specialFrames[specialFrame.Value],
                     Color.White,
@@ -240,7 +250,7 @@ namespace StardewDruid.Character
             }
 
             b.Draw(
-                Sprite.Texture,
+                characterTexture,
                 localPosition - new Vector2(0, 64),
                 walkFrames[netDirection.Value][moveFrame.Value],
                 Color.White,
@@ -317,7 +327,6 @@ namespace StardewDruid.Character
                 );
 
         }
-
 
         public override bool checkAction(Farmer who, GameLocation l)
         {

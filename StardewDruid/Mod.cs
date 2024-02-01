@@ -7,6 +7,7 @@ using StardewDruid.Event;
 using StardewDruid.Event.Challenge;
 using StardewDruid.Event.World;
 using StardewDruid.Journal;
+using StardewDruid.Location;
 using StardewDruid.Map;
 using StardewDruid.Monster;
 using StardewModdingAPI;
@@ -46,7 +47,7 @@ namespace StardewDruid
 
         public Dictionary<string, Event.EventHandle> eventRegister;
 
-        //public List<string> eventSync;
+        public Dictionary<int, string> clickRegister;
 
         public Dictionary<string, TriggerHandle> markerRegister;
 
@@ -81,8 +82,6 @@ namespace StardewDruid
         public int currentTool;
 
         public Dictionary<string, string> locationPoll;
-
-        //public Dictionary<string, MonsterHandle> monsterHandles;
 
         public Dictionary<string, StardewDruid.Character.Character> characters;
 
@@ -489,6 +488,8 @@ namespace StardewDruid
 
                     queryData = e.ReadAs<QueryData>();
 
+                    Location.LocationData.QuestComplete(queryData);
+
                     if (!QuestGiven(queryData.value))
                     {
 
@@ -576,6 +577,8 @@ namespace StardewDruid
             activeData = new ActiveData() { activeBlessing = staticData.activeBlessing };
 
             eventRegister = new();
+
+            clickRegister = new();
 
             markerRegister = new();
 
@@ -753,6 +756,7 @@ namespace StardewDruid
 
         public bool CasterBusy()
         {
+            
             if (Game1.eventUp)
             {
                 return true;
@@ -965,24 +969,51 @@ namespace StardewDruid
             bool casterBusy = CasterBusy();
 
             // action press
-            if (eventRegister.Count > 0 && !casterBusy)
+            if (clickRegister.Count > 0 && !casterBusy)
             {
 
                 if (Config.actionButtons.GetState() == SButtonState.Pressed || Config.specialButtons.GetState() == SButtonState.Pressed)
                 {
 
-                    List<Type> typeList = new List<Type>();
-
                     string buttonType = Config.actionButtons.GetState() == SButtonState.Pressed ? "Action" : "Special";
 
-                    foreach (KeyValuePair<string, Event.EventHandle> eventEntry in eventRegister)
+                    int cursor = 0;
+
+                    for (int i = 0; i < 20; i++)
                     {
 
-                        if (!typeList.Contains(eventEntry.GetType()) && eventEntry.Value.EventPerformAction(e.Button,buttonType))
+                        if (clickRegister.ContainsKey(i))
                         {
+                            
+                            string click = clickRegister[i];
 
-                            typeList.Add(eventEntry.GetType());
+                            if (eventRegister.ContainsKey(click))
+                            {
 
+                                if (eventRegister[click].EventPerformAction(e.Button, buttonType))
+                                {
+
+                                    break;
+
+                                }
+
+                            }
+                            else
+                            {
+
+                                clickRegister.Remove(i);
+
+                            }
+
+                            cursor++;
+
+                        }
+
+                        if(cursor == clickRegister.Count)
+                        {
+                            
+                            break;
+                        
                         }
 
                     }
@@ -1287,7 +1318,7 @@ namespace StardewDruid
 
             }
 
-            if (eventRegister.ContainsKey("active")) //|| //eventSync.Contains("active"))
+            if (eventRegister.ContainsKey("active"))
             {
 
                 return false;
@@ -1313,8 +1344,6 @@ namespace StardewDruid
                 {
 
                     markerRegister.Clear();
-
-                    //triggerList.Remove(marker.Key);
 
                     locationPoll["trigger"] = null;
 
@@ -1923,7 +1952,18 @@ namespace StardewDruid
             if (questData.questProgress <= 1)
             {
 
+                List<string> ritesList = QuestData.RitesProgress();
+
                 staticData.activeProgress = QuestData.AchieveProgress(quest);
+
+                blessingList = QuestData.RitesProgress();
+
+                if (blessingList.Count > ritesList.Count)
+                {
+
+                    ChangeBlessing(blessingList.Last());
+
+                }
 
             }
 

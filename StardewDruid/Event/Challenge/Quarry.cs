@@ -25,6 +25,7 @@ namespace StardewDruid.Event.Challenge
 
         public override void EventTrigger()
         {
+            cues = DialogueData.DialogueScene(questData.name);
 
             monsterHandle = new(targetVector, riteData.castLocation);
 
@@ -126,6 +127,13 @@ namespace StardewDruid.Event.Challenge
 
             }
 
+            if (Mod.instance.characters.ContainsKey("Jester"))
+            {
+
+                DialogueCue(DialogueData.DialogueNarrator(questData.name), new() { [0] = Mod.instance.characters["Jester"], }, activeCounter);
+
+            }
+
             if (activeCounter < 7)
             {
                 
@@ -184,21 +192,11 @@ namespace StardewDruid.Event.Challenge
                 if (activeCounter == 5)
                 {
 
-                    JesterVoice("uh... portal?", 3000);
-
                     SetTrack("tribal");
 
                 }
 
                 return;
-            }
-
-
-            if (activeCounter == 8)
-            {
-
-                JesterVoice("get ready for a fight!", 3000);
-
             }
 
             if (activeCounter == 20)
@@ -212,22 +210,6 @@ namespace StardewDruid.Event.Challenge
                     monsterHandle.SpawnGround(spawnVector, true);
 
                 }
-
-                JesterVoice("whoa that one's massive!", 3000);
-
-            }
-
-            if (activeCounter == 30)
-            {
-
-                JesterVoice("keep it up farmer!", 3000);
-
-            }
-
-            if (activeCounter == 34)
-            {
-
-                JesterVoice("meet your fate voidspawn!", 3000);
 
             }
 
@@ -243,15 +225,6 @@ namespace StardewDruid.Event.Challenge
 
                 }
 
-                JesterVoice("if only Lucky could see this", 3000);
-
-            }
-
-            if (activeCounter == 52)
-            {
-
-                JesterVoice("whew...the portal is closing", 3000);
-
             }
 
             if (activeCounter <= 56)
@@ -263,17 +236,6 @@ namespace StardewDruid.Event.Challenge
 
         }
 
-        public void JesterVoice(string speech, int interval)
-        {
-
-            if (Mod.instance.characters.ContainsKey("Jester"))
-            {
-                
-                Mod.instance.characters["Jester"].showTextAboveHead(speech, interval);
-
-            }
-
-        }
     
     }
 

@@ -32,7 +32,9 @@ namespace StardewDruid.Event.World
             animations.Add(ModUtility.AnimateFateTarget(targetLocation, origin, destination));
 
             Mod.instance.RegisterEvent(this, "whisk");
-
+        
+            Mod.instance.clickRegister[1] = "whisk";
+        
         }
 
         public override bool EventPerformAction(SButton Button, string Type)

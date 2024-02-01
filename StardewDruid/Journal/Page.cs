@@ -7,9 +7,14 @@ namespace StardewDruid.Journal
         public string title;
         public string description;
         public List<string> objectives;
+        public List<string> transcript;
         public string icon;
         public bool active;
 
-        public Page() => this.objectives = new List<string>();
+        public Page()
+        {
+            objectives = new();
+            transcript = new();
+        }
     }
 }
