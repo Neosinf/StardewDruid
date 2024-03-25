@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewValley;
 using System;
 using System.Collections.Generic;
+using static StardewValley.Minigames.TargetGame;
 
 namespace StardewDruid.Cast.Mists
 {
@@ -13,11 +15,11 @@ namespace StardewDruid.Cast.Mists
 
         public float damage;
 
-        public Smite(Vector2 target, Rite rite, StardewValley.Monsters.Monster TargetMonster, float Damage, int Colour = -1)
-            : base(target, rite)
+        public Smite(Vector2 target,  StardewValley.Monsters.Monster TargetMonster, float Damage, int Colour = -1)
+            : base(target)
         {
 
-            int castCombat = rite.caster.CombatLevel / 2;
+            int castCombat = Game1.player.CombatLevel / 2;
 
             castCost = Math.Max(6, 12 - castCombat);
 
@@ -41,7 +43,7 @@ namespace StardewDruid.Cast.Mists
 
             float critChance = 0.1f;
 
-            if (!riteData.castTask.ContainsKey("masterSmite"))
+            if (!Mod.instance.rite.castTask.ContainsKey("masterSmite"))
             {
 
                 Mod.instance.UpdateTask("lessonSmite", 1);

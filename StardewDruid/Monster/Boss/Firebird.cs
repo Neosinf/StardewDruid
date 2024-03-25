@@ -13,7 +13,7 @@ using static StardewValley.Objects.BedFurniture;
 
 namespace StardewDruid.Monster.Boss
 {
-    public class Firebird : Boss.Dragon
+    public class Firebird : Monster.Boss.Boss
     {
 
         public float height;
@@ -126,16 +126,6 @@ namespace StardewDruid.Monster.Boss
                 _ => 0,
             };
 
-            barrageColor = birdType switch
-            {
-                "Emerald" => "Green",
-                "Aquamarine" => "Blue",
-                "Ruby" => "Red",
-                "Amethyst" => "Purple",
-                "Topaz" => "Red",
-                _ => "Red",
-            };
-
             loadedOut = true;
 
         }
@@ -168,33 +158,16 @@ namespace StardewDruid.Monster.Boss
 
             behaviourTimer = 300;
 
-            //netSpecialActive.Set(true);
-
-            //if (netDashActive)
-           // {
-
-            //    return 0;
-
-            //}
-
             if (damage >= Health)
             {
-
-                //currentAnimation = flyAnimation;
-
-                //currentFrameIndex = 0;
-
-                //Health = 1;
-
-                //int newDamage = Health - 1;
 
                 DialogueData.DisplayText(this, 1, 0, "FireBird");
 
                 Game1.playSound("batFlap");
 
-                Vector2 birdVector = getTileLocation();
+                Vector2 birdVector = Tile;
 
-                Game1.createObjectDebris(birdItem, (int)birdVector.X, (int)birdVector.Y);
+                Game1.createObjectDebris(birdItem.ToString(), (int)birdVector.X, (int)birdVector.Y);
 
             }
 
@@ -225,7 +198,7 @@ namespace StardewDruid.Monster.Boss
 
             Random random = new Random();
 
-            List<Farmer> source = TargetFarmers();
+            List<Farmer> source = ModUtility.FarmerProximity(currentLocation,Position,20);
 
             if (source.Count == 0)
             {
@@ -247,11 +220,9 @@ namespace StardewDruid.Monster.Boss
 
             behaviourTimer = new Random().Next(5) * 60 + 120;
 
-            //currentLocation.playSound("furnace");
-
             List<Vector2> zero = BlastTarget();
 
-            BarrageHandle fireball = new(currentLocation, zero[0], zero[1] - new Vector2(0, 2), 2, 1, barrageColor, DamageToFarmer);
+            BarrageHandle fireball = new(currentLocation, zero[0], zero[1] - new Vector2(0, 2), 2, 1, DamageToFarmer);
 
             fireball.type = BarrageHandle.barrageType.fireball;
 

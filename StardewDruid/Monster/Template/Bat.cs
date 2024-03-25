@@ -2,6 +2,7 @@
 using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.BellsAndWhistles;
 using System;
 using System.Collections.Generic;
 
@@ -23,25 +24,25 @@ namespace StardewDruid.Monster.Template
 
             MaxHealth = Health;
 
-            DamageToFarmer = Math.Min(5, Math.Max(15, combatModifier));
-
+            DamageToFarmer = Math.Min(10, Math.Max(20, combatModifier));
+            
             objectsToDrop.Clear();
 
-            objectsToDrop.Add(767);
+            objectsToDrop.Add("767");
 
             if (Game1.random.Next(3) == 0)
             {
-                objectsToDrop.Add(767);
+                objectsToDrop.Add("767");
             }
             else if (Game1.random.Next(4) == 0 && combatModifier >= 120)
             {
-                objectsToDrop.Add(767);
+                objectsToDrop.Add("767");
             }
             else if (Game1.random.Next(5) == 0 && combatModifier >= 240)
             {
-                List<int> batElixers = new()
+                List<string> batElixers = new()
                 {
-                    772,773,879,
+                    "772","773","879",
                 };
 
                 objectsToDrop.Add(batElixers[Game1.random.Next(batElixers.Count)]);
@@ -59,6 +60,19 @@ namespace StardewDruid.Monster.Template
 
         }
 
+        public override void onDealContactDamage(Farmer who)
+        {
+
+            if ((who.health + who.buffs.Defense) - DamageToFarmer < 10)
+            {
+
+                who.health = (DamageToFarmer - who.buffs.Defense) + 10;
+
+                Mod.instance.CriticalCondition();
+
+            }
+
+        }
 
     }
 

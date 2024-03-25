@@ -4,6 +4,7 @@ using StardewDruid.Cast;
 using StardewDruid.Event;
 using StardewDruid.Event.Boss;
 using StardewDruid.Event.Challenge;
+using StardewDruid.Event.Other;
 using StardewDruid.Event.Scene;
 using StardewDruid.Journal;
 using StardewModdingAPI;
@@ -98,23 +99,36 @@ namespace StardewDruid.Map
             return staticData;
         }
 
-        public static void QuestHandle(Vector2 vector, Rite rite, Quest questData)
+        public static void QuestHandle(Vector2 vector, Quest questData)
         {
 
             switch (questData.type)
             {
                 case "sword":
                     
-                    new Sword(vector, rite, questData).EventTrigger();
+                    new StardewDruid.Event.Other.Sword(vector, questData).EventTrigger();
                     
                     break;
                 
                 case "scythe":
                     
-                    new Scythe(vector, rite, questData).EventTrigger();
+                    new Scythe(vector, questData).EventTrigger();
                     
                     break;
-                
+
+                case "heart":
+
+                    switch (questData.name)
+                    {
+
+                        case "heartEffigy": new Event.Scene.Beach(vector, questData).EventTrigger(); break;
+                        case "heartJester": new Event.Scene.Town(vector, questData).EventTrigger(); break;
+                        case "heartShadowtin": new Event.Scene.Woods(vector, questData).EventTrigger(); break;
+
+                    }
+
+                    break;
+
                 default:
 
                     string questName = questData.name.Replace("Two", "");
@@ -122,18 +136,18 @@ namespace StardewDruid.Map
                     switch (questName)
                     {
 
-                        case "challengeEarth": new Aquifer(vector, rite, questData).EventTrigger(); break;
-                        case "challengeFates": new Quarry(vector, rite, questData).EventTrigger(); break;
-                        case "challengeStars": new Infestation(vector, rite, questData).EventTrigger(); break;
-                        case "challengeWater": new Graveyard(vector, rite, questData).EventTrigger(); break;
-                        case "challengeCanoli": new Canoli(vector, rite, questData).EventTrigger(); break;
-                        case "challengeMariner": new Mariner(vector, rite, questData).EventTrigger(); break;
-                        case "challengeGemShrine": new GemShrine(vector, rite, questData).EventTrigger(); break;
+                        case "challengeEarth": new Aquifer(vector, questData).EventTrigger(); break;
+                        case "challengeFates": new Quarry(vector, questData).EventTrigger(); break;
+                        case "challengeStars": new Infestation(vector, questData).EventTrigger(); break;
+                        case "challengeWater": new Graveyard(vector, questData).EventTrigger(); break;
+                        case "challengeCanoli": new Canoli(vector, questData).EventTrigger(); break;
+                        case "challengeMariner": new Mariner(vector, questData).EventTrigger(); break;
+                        case "challengeGemShrine": new GemShrine(vector, questData).EventTrigger(); break;
 
-                        case "challengeMuseum": new StardewDruid.Event.Boss.Museum(vector, rite, questData).EventTrigger(); break;
-                        case "challengeEther": new StardewDruid.Event.Boss.Crypt(vector, rite, questData).EventTrigger(); break;
-                        case "swordEther": new StardewDruid.Event.Boss.SkullCavern(vector, rite, questData).EventTrigger(); break;
-                        case "challengeSandDragon": new StardewDruid.Event.Boss.SandDragon(vector, rite, questData).EventTrigger(); break;
+                        case "challengeMuseum": new StardewDruid.Event.Boss.Museum(vector, questData).EventTrigger(); break;
+                        case "challengeEther": new StardewDruid.Event.Boss.Crypt(vector, questData).EventTrigger(); break;
+                        case "swordEther": new StardewDruid.Event.Boss.SkullCavern(vector, questData).EventTrigger(); break;
+                        case "challengeSandDragon": new StardewDruid.Event.Boss.SandDragon(vector, questData).EventTrigger(); break;
 
                     }
 
@@ -153,6 +167,9 @@ namespace StardewDruid.Map
 
                 if (!safeTriggers.Contains(quest.type))
                 {
+
+                    Mod.instance.CastMessage("Note: Only the host can trigger some Druid quests");
+
                     return;
                 }
 
@@ -181,19 +198,20 @@ namespace StardewDruid.Map
 
                     triggerHandle = null;
 
-                        if (Context.IsMainPlayer)
+                    if (Context.IsMainPlayer)
+                    {
+                        object bridge = typeof(StardewValley.Locations.Mountain).GetField("bridgeRestored", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(Game1.getLocationFromName("Mountain"));
+
+                        if (bridge.ToString() == "True")
                         {
+    
+                            CharacterData.CharacterLoad("Jester", "Mountain");
 
-                            if ((Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[1])
-                            {
-
-                                CharacterData.CharacterLoad("Jester", "Mountain");
-
-                                Mod.instance.characters["Jester"].SwitchSceneMode();
-
-                            }
+                            Mod.instance.characters["Jester"].SwitchSitMode();
 
                         }
+
+                    }
 
                     break;
 
@@ -212,25 +230,25 @@ namespace StardewDruid.Map
 
                         }
 
-                        Mod.instance.characters["Shadowtin"].SwitchSceneMode();
+                        Mod.instance.characters["Shadowtin"].SwitchSitMode();
 
                     break;
 
                 case "challengeEarth":
 
-                    triggerHandle = new Trash(location, quest);
+                    triggerHandle = new StardewDruid.Event.Other.Trash(location, quest);
 
                     break;
 
                 case "approachEffigy":
 
-                    triggerHandle = new Effigy(location, quest);
+                    triggerHandle = new StardewDruid.Event.Other.Effigy(location, quest);
 
                     break;
 
                 case "challengeMuseum":
 
-                    triggerHandle = new Feature(location, quest);
+                    triggerHandle = new StardewDruid.Event.Other.Feature(location, quest);
 
                     break;
 
@@ -243,10 +261,13 @@ namespace StardewDruid.Map
 
             if (triggerHandle == null || !triggerHandle.SetMarker())
             {
+            
                 return;
+            
             }
 
-            Mod.instance.markerRegister[quest.name] = triggerHandle;
+            Mod.instance.markerRegister[location.Name].Add(triggerHandle);
+
         }
 
         public static Vector2 SpecialVector(GameLocation playerLocation, string questName)
@@ -255,17 +276,27 @@ namespace StardewDruid.Map
             switch (questName)
             {
                 case "challengeMariner":
-                    if (playerLocation is Beach beach && Game1.isRaining && !Game1.isFestival())
+                    
+                    if (playerLocation is StardewValley.Locations.Beach beach && Game1.isRaining && !Game1.isFestival())
                     {
-                        object obj = typeof(Beach).GetField("oldMariner", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(beach);
+                        
+                        object obj = typeof(StardewValley.Locations.Beach).GetField("oldMariner", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(beach);
+                        
                         if (obj != null)
-                            return (obj as NPC).getTileLocation();
+                        {
+                            return (obj as NPC).Tile;
+                        }
+ 
                         break;
+
                     }
+
                     break;
+
+                case "heartShadowtin":
                 case "challengeCanoli":
 
-                    if (playerLocation is Woods)
+                    if (playerLocation is StardewValley.Locations.Woods)
                     {
                         Layer layer = playerLocation.Map.GetLayer("Buildings");
 
@@ -322,6 +353,7 @@ namespace StardewDruid.Map
         {
             return new Dictionary<int, List<string>>()
             {
+                // weald arc
                 [0] = new() { "approachEffigy" },
                 [1] = new() { "swordEarth" },
                 [2] = new() { "lessonVillager" },
@@ -330,6 +362,7 @@ namespace StardewDruid.Map
                 [5] = new() { "lessonCrop" },
                 [6] = new() { "lessonRockfall" },
                 [7] = new() { "challengeEarth" },
+                // mists arc
                 [8] = new() { "swordWater" },
                 [9] = new() { "lessonTotem" },
                 [10] = new() { "lessonCookout" },
@@ -337,6 +370,7 @@ namespace StardewDruid.Map
                 [12] = new() { "lessonSmite" },
                 [13] = new() { "lessonPortal" },
                 [14] = new() { "challengeWater" },
+                // stars arc
                 [15] = new() { "swordStars" },
                 [16] = new() { "lessonMeteor" },
                 [17] = new() { "challengeStars" },
@@ -348,6 +382,7 @@ namespace StardewDruid.Map
                     "challengeGemShrine",
                     "challengeMuseum"
                 },
+                // fates arc
                 [19] = new() { "approachJester" },
                 [20] = new() { "swordFates" },
                 [21] = new() { "lessonWhisk" },
@@ -356,6 +391,7 @@ namespace StardewDruid.Map
                 [24] = new() { "lessonGravity" },
                 [25] = new() { "lessonDaze" },
                 [26] = new() { "challengeFates" },
+                // ether arc
                 [27] = new() { "swordEther" },
                 [28] = new() { "lessonTransform" },
                 [29] = new() { "lessonFlight" },
@@ -364,6 +400,10 @@ namespace StardewDruid.Map
                 [32] = new() { "lessonTreasure" },
                 [33] = new() { "challengeEther" },
                 [34] = new() { "approachShadowtin" },
+                // story arc
+                [35] = new() { "heartEffigy" },
+                [36] = new() { "heartJester" },
+                //[37] = new() { "heartShadowtin" },
             };
         }
 
@@ -432,16 +472,32 @@ namespace StardewDruid.Map
             { 
                 stringList.Add("ether"); 
             }
+            if (num > 33)
+            {
+                stringList.Add("Shadowtin"); 
+            }
             if (num > 34)
             {
-                stringList.Add("complete"); 
+                stringList.Add("beach");
+            }
+            if (num > 35)
+            {
+                stringList.Add("town");
+            }
+            /*if (num > 36)
+            {
+                stringList.Add("woods");
+            }*/
+            if (num > 36)
+            {
+                stringList.Add("complete");
             }
             return stringList;
         }
 
         public static int MaxProgress()
         {
-            return 35; //QuestProgress().Keys.ToList<int>().Last<int>() + 1;
+            return 37; //QuestProgress().Keys.ToList<int>().Last<int>() + 1;
 
         } 
 
@@ -577,7 +633,7 @@ namespace StardewDruid.Map
                     questObjective = "Rustle twenty bushes for forageables with Rite of the Weald. Unlocks wild seed gathering from grass.",//Might disturb bats. 
                     questReward = 200,
                     questProgress = 2,
-                    questDiscuss = "The valley springs into new life. Go now, sample its hidden bounty, and prepare to face those who guard its secrets.",
+                    questDiscuss = "The valley springs into new life. Go now, and sample its hidden bounty.",
                     taskCounter = 20,
                     taskFinish = "masterCreature"
                 },
@@ -776,9 +832,9 @@ namespace StardewDruid.Map
                     questValue = 6,
                     questTitle = "Druid 11: Meteor Rain",
                     questDescription = "Call down a meteor shower to clear the area around you.",
-                    questObjective = "Summon fifty meteors. Unlocks priority targetting of stone nodes and monsters.",
+                    questObjective = "Hit monsters ten times with meteors. Unlocks priority targetting of stone nodes and monsters.",
                     questReward = 1200,
-                    taskCounter = 50,
+                    taskCounter = 10,
                     taskFinish = "masterMeteor",
                     questProgress = 2,
                     questDiscuss = "Excellent. The Stars Beyond the Expanse have chosen a new champion to wield their power."
@@ -807,7 +863,7 @@ namespace StardewDruid.Map
                     type = "challenge",
                     triggerLocale = new List<Type>()
                     {
-                    typeof (Woods)
+                    typeof (StardewValley.Locations.Woods)
                     },
                     triggerMarker = "icon",
                     triggerBlessing = "mists",
@@ -826,7 +882,7 @@ namespace StardewDruid.Map
                     type = "challenge",
                     triggerLocale = new List<Type>()
                     {
-                    typeof (Beach)
+                    typeof (StardewValley.Locations.Beach)
                     },
                     triggerBlessing = "mists",
                     triggerMarker = "icon",
@@ -911,7 +967,7 @@ namespace StardewDruid.Map
                     //questCharacter = "Jester",
                     questValue = 6,
                     questTitle = "Across The Bridge",
-                    questDescription = "The Effigy senses a fateful encounter awaits on the bridge over the mountain ravine.",
+                    questDescription = "The Effigy believes traces of the Druid circle's forgotten history lie across the mountain ravine.",
                     questObjective = "Investigate the bridge between the mountain pass and the quarry once it has been restored.",
                     questReward = 100,
                     questProgress = 1
@@ -1151,7 +1207,60 @@ namespace StardewDruid.Map
                     questDiscuss = "Hey, great news! I invited the big ether thief to join our undervalley-search-party. Now we're sure to find the way there.",
 
                 },
+                ["heartEffigy"] = new Quest()
+                {
+                    name = "heartEffigy",
+                    type = "heart",
+                    triggerLocation = new() { "Beach", },
+                    triggerMarker = "icon",
+                    triggerVector = new Vector2(10f, 15f),
+                    questId = 18465061,
+                    questValue = 6,
+                    questTitle = "At The Beach",
+                    questDescription = "The Effigy has requested that you accompany him to the beach for a day.",
+                    questObjective = "Go to the beach with 5-6 hours to spare and perform any rite at the marker to trigger the quest. Observe and talk to the Effigy as they go about various activities to learn more about their mission.",
+                    questReward = 10000,
+                    questProgress = 1,
+                    questDiscuss = "I feel drawn to the shore, to the enduring sands and tidal pools once walked by the first farmer. Though it is not related to your quest to find the undervalley, I think it would be of benefit for you to accompany me.",
 
+                },
+                ["heartJester"] = new Quest()
+                {
+                    name = "heartJester",
+                    type = "heart",
+                    triggerLocation = new() { "Town", },
+                    triggerMarker = "icon",
+                    triggerVector = new Vector2(29f, 56f),
+                    triggerColour = new Color(1f, 0.4f, 0.4f, 1f),
+                    startTime = 1700,
+                    questId = 18465062,
+                    questValue = 6,
+                    questTitle = "Jesters In The Night",
+                    questDescription = "Jester would like a distraction from his present duties, and has requested that you accompany him to town for a day.",
+                    questObjective = "Go to Pelican Town after 5pm and perform any rite at the marker outside the clinic to trigger the quest. Observe and talk to the Jester of Fate as they go about various activities to learn more about their mission.",
+                    questReward = 10000,
+                    questProgress = 1,
+                    questDiscuss = "You know what Farmer, I think we need some respite from our relentless search for the undervalley. The town is a lively place! Lets go get up to some mischief and forget about our troubles for a while."
+
+                },
+                ["heartShadowtin"] = new Quest()
+                {
+                    name = "heartShadowtin",
+                    type = "heart",
+                    triggerLocale = new() { typeof(StardewValley.Locations.Woods), },
+                    triggerMarker = "icon",
+                    questId = 18465063,
+                    questValue = 6,
+                    questTitle = "Secrets And Statues",
+                    questDescription = "Shadowtin bear is eager to get started on his survey of the valley surface, and has requested that you accompany him to the Secret woods for a day.",
+                    questObjective = "Go to the Secret Woods with 5-6 hours to spare and perform any rite at the marker to trigger the quest. Observe and talk to the Shadowtin Bear as they go about various activities to learn more about their mission.",
+                    questReward = 10000,
+                    questProgress = 1,
+                    questDiscuss = "I have busied myself with the compilation and cross-examination of details about encounters you've had with phantoms of the old valley. " +
+                    "Despite the fact that the cosmic cat has a waffling manner, he briefly mentioned a shrine built to venerate his fallen kin, " +
+                    "and I have the inclination to see another familiar to you, one in the deeper part of the woods. Cannoli, former vintner of the Lord Deep.",
+
+                },
             };
 
             foreach (KeyValuePair<string, string> secondQuest in SecondQuests(true))

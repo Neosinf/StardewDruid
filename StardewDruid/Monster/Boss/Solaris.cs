@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace StardewDruid.Monster.Boss
 {
 
-    public class Solaris : Boss.Dragon
+    public class Solaris : Monster.Boss.Boss
     {
 
         public Solaris() { }
@@ -26,22 +26,22 @@ namespace StardewDruid.Monster.Boss
             if (realName.Value.Contains("Voidle"))
             {
 
-                objectsToDrop.Add(769);
+                objectsToDrop.Add("769");
 
                 if (Game1.random.Next(3) == 0)
                 {
-                    objectsToDrop.Add(769);
+                    objectsToDrop.Add("769");
                 }
 
             }
             else
             {
 
-                objectsToDrop.Add(768);
+                objectsToDrop.Add("768");
 
                 if (Game1.random.Next(3) == 0)
                 {
-                    objectsToDrop.Add(768);
+                    objectsToDrop.Add("768");
                 }
 
             }
@@ -95,7 +95,7 @@ namespace StardewDruid.Monster.Boss
             if (realName.Value.Contains("Zero"))
             {
                 
-                walkFrames = WalkFrames(16,16);
+                walkFrames = FrameSeries(16,16);
 
                 specialFrames = walkFrames;
 
@@ -111,7 +111,7 @@ namespace StardewDruid.Monster.Boss
             
             }
 
-            flightIncrement = 12;
+            flightInterval = 12;
 
             if (realName.Value.Contains("Zero"))
             {
@@ -173,9 +173,11 @@ namespace StardewDruid.Monster.Boss
 
             }
 
-            b.Draw(characterTexture, getLocalPosition(Game1.viewport) + new Vector2(32f, GetBoundingBox().Height / 2 - 32), new Rectangle?(walkFrames[netDirection.Value][netWalkFrame.Value]), Color.White * 0.85f, 0.0f, new Vector2(8f, 16f), Math.Max(0.2f, scale) * 4f, netAlternative.Value == 3 || netDirection.Value == 3 ? (SpriteEffects)1 : 0, Math.Max(0f, drawOnTop ? 0.991f : (getStandingY() + 8) / 10000f));
+            float drawLayer = (float)StandingPixel.Y / 10000f;
+            
+            b.Draw(characterTexture, getLocalPosition(Game1.viewport) + new Vector2(32f, GetBoundingBox().Height / 2 - 32), new Rectangle?(walkFrames[netDirection.Value][walkFrame]), Color.White * 0.85f, 0.0f, new Vector2(8f, 16f), Math.Max(0.2f, scale.Value) * 4f, netAlternative.Value == 3 || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
-            b.Draw(Game1.shadowTexture, getLocalPosition(Game1.viewport) + new Vector2(32f, GetBoundingBox().Height / 2), Game1.shadowTexture.Bounds, Color.White, 0f, new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y), 4f, SpriteEffects.None, (getStandingY() - 1) / 10000f);
+            b.Draw(Game1.shadowTexture, getLocalPosition(Game1.viewport) + new Vector2(32f, GetBoundingBox().Height / 2), Game1.shadowTexture.Bounds, Color.White, 0f, new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y), 4f, SpriteEffects.None, drawLayer);
 
         }
 
@@ -191,9 +193,11 @@ namespace StardewDruid.Monster.Boss
 
             }
 
-            b.Draw(characterTexture, getLocalPosition(Game1.viewport) + new Vector2(32f, GetBoundingBox().Height / 2 - 32), new Rectangle?(walkFrames[netDirection.Value][netWalkFrame.Value]), Color.White * 0.85f, 0.0f, new Vector2(8f, 16f), Math.Max(0.2f, scale) * 4f, netAlternative.Value == 3 || netDirection.Value == 3 ? (SpriteEffects)1 : 0, Math.Max(0f, drawOnTop ? 0.991f : (getStandingY() + 8) / 10000f));
+            float drawLayer = (float)StandingPixel.Y / 10000f;
 
-            b.Draw(Game1.shadowTexture, getLocalPosition(Game1.viewport) + new Vector2(32f, GetBoundingBox().Height / 2), Game1.shadowTexture.Bounds, Color.White, 0f, new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y), 4f, SpriteEffects.None, (getStandingY() - 1) / 10000f);
+            b.Draw(characterTexture, getLocalPosition(Game1.viewport) + new Vector2(32f, GetBoundingBox().Height / 2 - 32), new Rectangle?(walkFrames[netDirection.Value][walkFrame]), Color.White * 0.85f, 0.0f, new Vector2(8f, 16f), Math.Max(0.2f, scale.Value) * 4f, netAlternative.Value == 3 || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+
+            b.Draw(Game1.shadowTexture, getLocalPosition(Game1.viewport) + new Vector2(32f, GetBoundingBox().Height / 2), Game1.shadowTexture.Bounds, Color.White, 0f, new Vector2(Game1.shadowTexture.Bounds.Center.X, Game1.shadowTexture.Bounds.Center.Y), 4f, SpriteEffects.None, drawLayer);
 
         
         }

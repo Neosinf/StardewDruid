@@ -84,19 +84,19 @@ namespace StardewDruid.Monster.Template
 
             if (Game1.random.Next(3) == 0)
             {
-                objectsToDrop.Add(378);
+                objectsToDrop.Add("378");
             }
             else if (Game1.random.Next(4) == 0 && combatModifier >= 120)
             {
-                objectsToDrop.Add(380);
+                objectsToDrop.Add("380");
             }
             else if (Game1.random.Next(5) == 0 && combatModifier >= 240)
             {
-                objectsToDrop.Add(384);
+                objectsToDrop.Add("384");
             }
             else if (Game1.random.Next(6) == 0 && combatModifier >= 360)
             {
-                objectsToDrop.Add(386); // iridium
+                objectsToDrop.Add("386"); // iridium
             }
 
         }
@@ -302,6 +302,21 @@ namespace StardewDruid.Monster.Template
             if (!loadedout) { LoadOut(); }
             base.update(time, location);
         }
+
+        public override void onDealContactDamage(Farmer who)
+        {
+
+            if ((who.health + who.buffs.Defense) - DamageToFarmer < 10)
+            {
+
+                who.health = (DamageToFarmer - who.buffs.Defense) + 10;
+
+                Mod.instance.CriticalCondition();
+
+            }
+
+        }
+
     }
 
 }

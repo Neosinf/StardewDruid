@@ -9,11 +9,9 @@ namespace StardewDruid.Event.Challenge
     public class Canoli : ChallengeHandle
     {
 
-        public Canoli(Vector2 target, Rite rite, Quest quest)
-            : base(target, rite, quest)
+        public Canoli(Vector2 target,  Quest quest)
+            : base(target, quest)
         {
-
-            voicePosition = targetVector * 64 + new Vector2(-8, -56);
 
         }
 
@@ -21,7 +19,9 @@ namespace StardewDruid.Event.Challenge
         {
             cues = DialogueData.DialogueScene(questData.name);
 
-            monsterHandle = new(targetVector + new Vector2(0, 2), riteData.castLocation);
+            AddActor(targetVector * 64 + new Vector2(-8, -56));
+
+            monsterHandle = new(targetVector + new Vector2(0, 2), Mod.instance.rite.castLocation);
 
             monsterHandle.spawnFrequency = 1;
 
@@ -40,7 +40,7 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.spawnRange = new Vector2(8, 8);
 
-            StardewValley.Locations.Woods woodsLocation = riteData.castLocation as StardewValley.Locations.Woods;
+            StardewValley.Locations.Woods woodsLocation = Mod.instance.rite.castLocation as StardewValley.Locations.Woods;
 
             woodsLocation.temporarySprites.Add(new TemporaryAnimatedSprite(10, new Vector2(8f, 7f) * 64f, Color.White, 9, flipped: false, 50f));
             woodsLocation.temporarySprites.Add(new TemporaryAnimatedSprite(10, new Vector2(9f, 7f) * 64f, Color.Orange, 9, flipped: false, 70f));

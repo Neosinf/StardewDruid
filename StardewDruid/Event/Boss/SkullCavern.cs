@@ -3,6 +3,7 @@ using StardewDruid.Cast;
 using StardewDruid.Event.Challenge;
 using StardewDruid.Map;
 using StardewDruid.Monster.Boss;
+using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Objects;
@@ -18,14 +19,14 @@ namespace StardewDruid.Event.Boss
     public class SkullCavern : BossHandle
     {
         public Reaper bossMonster;
-        public StardewDruid.Monster.Boss.Dragon secondMonster;
+        public StardewDruid.Monster.Boss.Boss secondMonster;
         public bool secondFight;
         public int secondCounter;
         public Vector2 bossTile;
         public bool adjustWarp;
 
-        public SkullCavern(Vector2 target, Rite rite, Quest quest)
-          : base(target, rite, quest)
+        public SkullCavern(Vector2 target,  Quest quest)
+          : base(target, quest)
         {
 
             targetVector = target;
@@ -39,9 +40,9 @@ namespace StardewDruid.Event.Boss
 
             cues = DialogueData.DialogueScene(questData.name);
 
-            ModUtility.AnimateRadiusDecoration(targetLocation, targetVector, "Weald", 1f, 1f);
+            ModUtility.AnimateDecoration(targetLocation, targetVector*64, "Weald");
 
-            ModUtility.AnimateRockfalls(targetLocation, targetPlayer.getTileLocation());
+            ModUtility.AnimateRockfalls(targetLocation, targetPlayer.Tile);
 
             DelayedAction.functionAfterDelay(RockfallSounds, 575);
 
@@ -54,7 +55,7 @@ namespace StardewDruid.Event.Boss
 
         public void RockfallSounds()
         {
-            targetLocation.playSoundPitched(new Random().Next(2) == 0 ? "boulderBreak" : "boulderCrack", 800, 0);
+            targetLocation.playSound(new Random().Next(2) == 0 ? "boulderBreak" : "boulderCrack", targetVector*64, 800);
         }
 
         public override void RemoveMonsters()
@@ -124,12 +125,7 @@ namespace StardewDruid.Event.Boss
                         if (Mod.instance.characters["Jester"].currentLocation.Name == targetLocation.Name)
                         {
                             
-                            Mod.instance.dialogue["Jester"].specialDialogue.Add("quests", new List<string>()
-                            {
-                              "Jester of Fate:^Thank you for helping me put Thanatoshi to rest.",
-                              "I'm sorry about your kinsman.",
-                              "I think this cutlass is to blame"
-                            });
+                            Mod.instance.dialogue["Jester"].AddSpecial("Jester", "ThanatoshiThree");
 
                         }
 
@@ -184,7 +180,6 @@ namespace StardewDruid.Event.Boss
                 Location.LocationData.SkullCavernEdit();
                 targetLocation = Game1.getLocationFromName("UndergroundMine145");
                 targetVector = new Vector2(13f, 18f);
-                Game1.inMine = true;
                 Game1.warpFarmer("UndergroundMine145", 13, 19, 2);
                 Game1.xLocationAfterWarp = 13;
                 Game1.yLocationAfterWarp = 19;
@@ -192,7 +187,7 @@ namespace StardewDruid.Event.Boss
                 EventQuery("LocationEdit");
                 //EventQuery("LocationPortal");
 
-                voicePosition = new(17 * 64f, 13 * 64f);
+                AddActor(new(17 * 64f, 13 * 64f));
                 return;
             }
             
@@ -284,7 +279,7 @@ namespace StardewDruid.Event.Boss
 
                     case 1:
 
-                        targetLocation.playSoundPitched("DragonRoar", 1200);
+                        targetLocation.playSound("DragonRoar",targetVector*64, 1200);
 
                         expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 120.0;
 
@@ -292,13 +287,13 @@ namespace StardewDruid.Event.Boss
 
                     case 3:
 
-                        targetLocation.playSoundPitched("DragonRoar", 800);
+                        targetLocation.playSound("DragonRoar", targetVector * 64, 800);
 
                         break;
 
                     case 5:
 
-                        targetLocation.playSoundPitched("DragonRoar", 400);
+                        targetLocation.playSound("DragonRoar", targetVector * 64, 400);
 
                         break;
 
@@ -308,7 +303,7 @@ namespace StardewDruid.Event.Boss
 
                         targetLocation.characters.Add(secondMonster);
 
-                        secondMonster.currentLocation = riteData.castLocation;
+                        secondMonster.currentLocation = Mod.instance.rite.castLocation;
 
                         SetTrack("cowboy_boss");
 
@@ -323,7 +318,7 @@ namespace StardewDruid.Event.Boss
             {
                 DialogueCue(DialogueData.DialogueNarrator(questData.name), new() { [1] = actors[0], }, 992);
 
-                targetLocation.playSoundPitched("DragonRoar", 400);
+                targetLocation.playSound("DragonRoar", targetVector*64,400);
 
                 expireEarly = true;
 

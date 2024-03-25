@@ -113,7 +113,7 @@ namespace StardewDruid.Map
 
                 case 16:
 
-                    theMonster = new Dragon(spawnVector, combatModifier);
+                    theMonster = new Boss(spawnVector, combatModifier);
 
                     break;
 
@@ -146,6 +146,25 @@ namespace StardewDruid.Map
                     theMonster = new Prime(spawnVector, combatModifier);
 
                     break;
+
+                case 22:
+
+                    theMonster = new BlobSlime(spawnVector, combatModifier);
+
+                    break;
+
+                case 23:
+
+                    theMonster = new Shadowfox(spawnVector, combatModifier);
+
+                    break;
+
+                case 24:
+
+                    theMonster = new Goblin(spawnVector, combatModifier);
+
+                    break;
+
 
                 // ------------------ Firebird
 
@@ -218,16 +237,18 @@ namespace StardewDruid.Map
             List<System.Type> customMonsters = new()
             {
                 typeof(BigBat),
-                typeof (Dino),
-                typeof (Dragon),
-                typeof (Reaper),
-                typeof (Scavenger),
-                typeof (Rogue),
-                typeof (Prime),
+                typeof(Dino),
+                typeof(Boss),
+                typeof(Reaper),
+                typeof(Scavenger),
+                typeof(Rogue),
+                typeof(Prime),
                 typeof(Shooter),
                 typeof(BigSlime),
                 typeof(Firebird),
                 typeof(Monster.Boss.Solaris),
+                typeof(Goblin),
+                typeof(Shadowfox),
             };
 
             return customMonsters;

@@ -5,8 +5,8 @@ namespace StardewDruid.Cast.Weald
     internal class FruitTree : CastHandle
     {
 
-        public FruitTree(Vector2 target, Rite rite)
-            : base(target, rite)
+        public FruitTree(Vector2 target)
+            : base(target)
         {
 
             castCost = 0;
@@ -32,10 +32,12 @@ namespace StardewDruid.Cast.Weald
 
             StardewValley.TerrainFeatures.FruitTree treeFeature = targetLocation.terrainFeatures[targetVector] as StardewValley.TerrainFeatures.FruitTree;
 
-            treeFeature.performUseAction(targetVector, targetLocation);
+            treeFeature.performUseAction(targetVector);
 
             castFire = true;
 
+            Vector2 cursorVector = targetVector * 64 + new Vector2(0, 8);
+            ModUtility.AnimateCursor(targetLocation, cursorVector, cursorVector);
         }
 
     }

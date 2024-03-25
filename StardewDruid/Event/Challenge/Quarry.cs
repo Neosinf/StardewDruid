@@ -15,8 +15,8 @@ namespace StardewDruid.Event.Challenge
 
         public bool keepJester;
 
-        public Quarry(Vector2 target, Rite rite, Quest quest)
-            : base(target, rite, quest)
+        public Quarry(Vector2 target,  Quest quest)
+            : base(target, quest)
         {
 
             challengeAnimations = new();
@@ -27,7 +27,7 @@ namespace StardewDruid.Event.Challenge
         {
             cues = DialogueData.DialogueScene(questData.name);
 
-            monsterHandle = new(targetVector, riteData.castLocation);
+            monsterHandle = new(targetVector, Mod.instance.rite.castLocation);
 
             monsterHandle.spawnIndex = new() { 51, 52, 53, 54, };
 
@@ -101,11 +101,7 @@ namespace StardewDruid.Event.Challenge
 
                 keepJester = true;
 
-                Mod.instance.dialogue["Jester"].specialDialogue.Add("afterQuarry", new() {
-                "Jester of Fate:" +
-                "^I wasn't expecting the rite to produce a portal to the Undervalley. " +
-                "I don't think even Fortumei could have foreseen that.",
-                "Did you learn anything about the fallen one?" });
+                Mod.instance.dialogue["Jester"].AddSpecial("Jester", "ThanatoshiTwo");
 
             }
 
@@ -137,12 +133,9 @@ namespace StardewDruid.Event.Challenge
             if (activeCounter < 7)
             {
                 
-                riteData.castLevel++;
+                Vector2 meteorVector = new(-5 + randomIndex.Next(10), -5 + randomIndex.Next(10));
 
-                riteData.CastStars();
-
-                riteData.CastEffect(false);
-
+                new Cast.Stars.Meteor(meteorVector, Mod.instance.DamageLevel()).CastEffect();
 
                 if (activeCounter == 4)
                 {
@@ -150,11 +143,11 @@ namespace StardewDruid.Event.Challenge
                     TemporaryAnimatedSprite challengeAnimation = new(0, 99999f, 1, 1, targetVector * 64 - new Vector2(64, 64), false, false)
                     {
 
-                        sourceRect = new(0, 0, 64, 64),
+                        sourceRect = new(192, 0, 64, 64),
 
-                        sourceRectStartingPos = new Vector2(0, 0),
+                        sourceRectStartingPos = new Vector2(192,0),
 
-                        texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Portal.png")),
+                        texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Decorations.png")),
 
                         scale = 3f,
 

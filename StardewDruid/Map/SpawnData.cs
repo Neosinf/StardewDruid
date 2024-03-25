@@ -3,6 +3,7 @@ using StardewDruid.Event.Challenge;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
+using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
 using xTile.Dimensions;
@@ -52,7 +53,7 @@ namespace StardewDruid.Map
 
         }
 
-        public static List<int> RoughageList()
+        /*public static List<int> RoughageList()
         {
             List<int> roughageIndex = new()
             {
@@ -68,9 +69,9 @@ namespace StardewDruid.Map
             };
 
             return roughageIndex;
-        }
+        }*/
 
-        public static List<int> LunchList()
+        /*public static List<int> LunchList()
         {
 
             List<int> lunchIndex = new()
@@ -96,7 +97,7 @@ namespace StardewDruid.Map
 
             return lunchIndex;
 
-        }
+        }*/
 
         public static Dictionary<int, int> CoffeeList()
         {
@@ -830,12 +831,78 @@ namespace StardewDruid.Map
 
         }
 
+        public static int RandomBushForage(StardewValley.TerrainFeatures.Bush bush, int index)
+        {
+
+            int objectIndex;
+
+            if (index == 0)
+            {
+
+                switch (Game1.currentSeason)
+                {
+
+                    case "spring":
+
+                        objectIndex = 296; // salmonberry
+
+                        break;
+
+                    case "summer":
+
+                        objectIndex = 398; // grape
+
+                        break;
+
+                    case "fall":
+
+                        objectIndex = 410; // blackberry
+
+                        break;
+
+                    default:
+
+                        objectIndex = 414; // crystal fruit
+
+                        break;
+
+                }
+
+            }
+            else
+            {
+
+                Dictionary<int, int> objectIndexes = new()
+                {
+                    [0] = 257, // 257 morel
+                    [1] = 257, // 257 morel
+                    [2] = 281, // 281 chanterelle
+                    [3] = 404, // 404 mushroom
+                    [4] = 404, // 404 mushroom
+
+                };
+
+                objectIndex = objectIndexes[new Random().Next(objectIndexes.Count)];
+
+            }
+
+            if (bush.size.Value == 3)
+            {
+
+                objectIndex = 815;
+
+            }
+
+            return objectIndex;
+
+        }
+
         public static int RandomTreasure(GameLocation location, bool rareTreasure = false)
         {
 
             Dictionary<int, int> objectIndexes;
 
-            if (location is Beach)
+            if (location is Beach || (location is Farm && Game1.whichFarm == 6))
             {
 
                 objectIndexes = new Dictionary<int, int>()
@@ -866,6 +933,21 @@ namespace StardewDruid.Map
                     [23] = 155, // super cucumber
                     [24] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
                     [25] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
+                };
+
+            }
+            else if (location is Caldera)
+            {
+
+                objectIndexes = new Dictionary<int, int>()
+                {
+                    [0] = 848, // cinder shard,
+                    [1] = 848, // cinder shard,
+                    [2] = 162, // lava eel
+                    [3] = 162, // lava eel
+                    [4] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
+                    [5] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
+                    [6] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
                 };
 
             }
@@ -902,6 +984,7 @@ namespace StardewDruid.Map
                 };
 
             }
+
             else
             {
 
@@ -1115,6 +1198,7 @@ namespace StardewDruid.Map
 
         public static Dictionary<string, bool> SpawnTemplate()
         {
+            
             Dictionary<string, bool> spawnTemplate = new()
             {
 
@@ -1140,26 +1224,68 @@ namespace StardewDruid.Map
 
         }
 
+        public static Dictionary<string, bool> AnywhereTemplate(GameLocation playerLocation)
+        {
+
+            Dictionary<string, bool> spawnTemplate = new()
+            {
+
+                ["weeds"] = true,
+                ["forage"] = true,
+                ["flower"] = true,
+                ["grass"] = true,
+                ["trees"] = true,
+                ["fishup"] = true,
+                ["portal"] = true,
+                ["wildspawn"] = true,
+                ["fishspot"] = true,
+                ["cropseed"] = true,
+                ["artifact"] = true,
+                ["whisk"] = true,
+                ["gravity"] = true,
+                ["teahouse"] = false,
+                ["crate"] = false,
+
+            };
+
+            if (playerLocation.Map.Layers[0].LayerWidth * playerLocation.Map.Layers[0].LayerHeight > 2000)
+            {
+
+                spawnTemplate["crate"] = true;
+
+            }
+
+            if (playerLocation is Shed || playerLocation is Farm)
+            {
+                
+                spawnTemplate["teahouse"] = true;
+            
+            }
+
+            if (playerLocation is Beach || playerLocation is IslandSouth || playerLocation is IslandSouthEast || playerLocation is IslandSouthEastCave)
+            {
+
+                spawnTemplate["tree"] = false;
+
+            }
+
+            return spawnTemplate;
+
+        }
+
         public static Dictionary<string, bool> SpawnIndex(GameLocation playerLocation)
         {
 
             Dictionary<string, bool> spawnIndex;
 
-            spawnIndex = SpawnTemplate();
-
             if (Mod.instance.CastAnywhere())
             {
 
-                foreach (KeyValuePair<string, bool> keyValuePair in spawnIndex)
-                {
-
-                    spawnIndex[keyValuePair.Key] = true;
-
-                }
-
-                return spawnIndex;
+                return AnywhereTemplate(playerLocation);
 
             }
+
+            spawnIndex = SpawnTemplate();
 
             if (playerLocation is Farm || playerLocation.Name == "Custom_Garden")
             {
@@ -1331,8 +1457,8 @@ namespace StardewDruid.Map
             else if (playerLocation is Shed)
             {
 
-                spawnIndex["machine"] = true;
                 spawnIndex["teahouse"] = true;
+
             }
             else
             {

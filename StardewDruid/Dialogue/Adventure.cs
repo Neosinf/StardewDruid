@@ -211,7 +211,13 @@ namespace StardewDruid.Dialogue
             if(chests.Count == 0)
             {
 
-                Game1.drawDialogue(npc, rejection);
+                npc.CurrentDialogue.Push(
+                    new(
+                        npc, "0", rejection
+                    )
+                );
+
+                Game1.drawDialogue(npc);
 
                 return;
 
@@ -362,7 +368,7 @@ namespace StardewDruid.Dialogue
 
                     CharacterData.RelocateTo(npc.Name, "FarmCave");
 
-                    Mod.instance.CastMessage(title + " has moved to the farm cave", -1);
+                    Mod.instance.CastMessage(title + " has moved to the farm cave");
                     break;
 
                 case "Farm":
@@ -382,10 +388,9 @@ namespace StardewDruid.Dialogue
 
                     }
 
-
                     CharacterData.RelocateTo(npc.Name, "Farm");
 
-                    Mod.instance.CastMessage(title + " now roams the farm", -1);
+                    Mod.instance.CastMessage(title + " now roams the farm");
 
                     break;
 
@@ -406,28 +411,18 @@ namespace StardewDruid.Dialogue
 
                     }
 
-                    if (!Context.IsMainPlayer)
-                    {
+                    CharacterData.RelocateTo(npc.Name, "Follow");
 
-                        CharacterData.CharacterQuery(npc.Name, "CharacterFollow");
+                    Mod.instance.CastMessage(title + " joins you on your adventures");
 
-                        return;
-
-                    }
-                    else
-                    {
-
-                        npc.SwitchFollowMode();
-
-                    }
-
-                    Mod.instance.CastMessage(title + " joins you on your adventures", -1);
                     break;
             
             }
 
-            Game1.drawDialogue(npc, str);
-        
+            npc.CurrentDialogue.Push(new(npc, "0", str));
+
+            Game1.drawDialogue(npc);
+
         }
 
         public void ReplyStandby()
@@ -447,7 +442,9 @@ namespace StardewDruid.Dialogue
 
             }
 
-            Game1.drawDialogue(npc, str);
+            npc.CurrentDialogue.Push(new(npc, "0", str));
+
+            Game1.drawDialogue(npc);
 
             if (!Context.IsMainPlayer)
             {
@@ -479,7 +476,9 @@ namespace StardewDruid.Dialogue
 
             }
 
-            Game1.drawDialogue(npc, str);
+            npc.CurrentDialogue.Push(new(npc, "0", str));
+
+            Game1.drawDialogue(npc);
 
             if (!Context.IsMainPlayer)
             {

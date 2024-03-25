@@ -11,8 +11,8 @@ namespace StardewDruid.Cast.Mists
 
         private string resourceType;
 
-        public Stump(Vector2 target, Rite rite, ResourceClump ResourceClump, string ResourceType)
-            : base(target, rite)
+        public Stump(Vector2 target,  ResourceClump ResourceClump, string ResourceType)
+            : base(target)
         {
 
             resourceClump = ResourceClump;

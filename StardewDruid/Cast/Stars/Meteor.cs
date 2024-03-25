@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewValley;
+using StardewValley.Monsters;
 using System;
 using System.Collections.Generic;
 using static System.Net.Mime.MediaTypeNames;
@@ -14,13 +15,13 @@ namespace StardewDruid.Cast.Stars
 
         float damage;
 
-        public Meteor(Vector2 target, Rite rite, float Damage)
-            : base(target, rite)
+        public Meteor(Vector2 target,  float Damage)
+            : base(target)
         {
 
             castCost = Math.Max(6, 14 - Game1.player.CombatLevel);
 
-            targetDirection = rite.direction;
+            targetDirection = Game1.player.FacingDirection;
 
             damage = Damage;
 
@@ -31,11 +32,11 @@ namespace StardewDruid.Cast.Stars
 
             ModUtility.AnimateMeteor(targetLocation, targetVector, targetDirection < 2);
 
-            ModUtility.AnimateRadiusDecoration(targetLocation, targetVector, "Stars", 0.75f, 0.75f, 1000);
+            ModUtility.AnimateCursor(targetLocation, targetVector * 64, targetVector * 64, "Stars", 1000);
 
-            DelayedAction.functionAfterDelay(MeteorImpact, 600);
+            DelayedAction.functionAfterDelay(MeteorImpact, 1000);
 
-            if (randomIndex.Next(2) == 0) { Game1.currentLocation.playSound("fireball"); }
+            Game1.currentLocation.playSound("fireball");
 
             castFire = true;
 
@@ -51,18 +52,27 @@ namespace StardewDruid.Cast.Stars
 
             }
 
-            ModUtility.DamageMonsters(targetLocation, ModUtility.MonsterProximity(targetLocation, targetVector * 64, 2, true), targetPlayer,(int)damage, true);
+            List<StardewValley.Monsters.Monster> monsters = ModUtility.MonsterProximity(targetLocation, new() { targetVector * 64, }, 3, true);
 
-            List<Vector2> impactVectors = ModUtility.Explode(targetLocation, targetVector, targetPlayer, 2, powerLevel:2);
-
-            foreach(Vector2 vector in impactVectors)
+            if (!Mod.instance.TaskList().ContainsKey("masterMeteor"))
             {
-                
-                ModUtility.AnimateDestruction(targetLocation, vector);
+
+                for(int i = monsters.Count - 1; i >= 0; i--)               
+                {
+
+                    Mod.instance.UpdateTask("lessonMeteor", 1);
+
+                }
 
             }
 
-            if (randomIndex.Next(2) == 0) { Game1.currentLocation.playSound("flameSpellHit"); }
+            ModUtility.DamageMonsters(targetLocation, monsters, targetPlayer,(int)damage, true);
+
+            ModUtility.Explode(targetLocation, targetVector, targetPlayer, 3, powerLevel:3);
+
+            ModUtility.AnimateImpact(targetLocation, targetVector, 1, 2);
+
+            Game1.currentLocation.playSound("flameSpellHit");
 
             castFire = true;
 

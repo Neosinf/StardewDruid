@@ -9,8 +9,8 @@ namespace StardewDruid.Cast.Mists
 
         private ResourceClump resourceClump;
 
-        public Boulder(Vector2 target, Rite rite, ResourceClump ResourceClump)
-            : base(target, rite)
+        public Boulder(Vector2 target,  ResourceClump ResourceClump)
+            : base(target)
         {
 
             resourceClump = ResourceClump;

@@ -13,7 +13,7 @@ using System.IO;
 
 namespace StardewDruid.Monster.Boss
 {
-    public class Dino : Dragon
+    public class Dino : Boss
     {
 
 
@@ -94,7 +94,7 @@ namespace StardewDruid.Monster.Boss
 
             flightLast = 1;
 
-            flightIncrement = 9;
+            flightInterval = 9;
 
             flightTexture = characterTexture;
 
@@ -141,8 +141,6 @@ namespace StardewDruid.Monster.Boss
 
             barrageThreshold = 544;
 
-            barrageColor = "Blue";
-
             barrages = new();
 
             specialCeiling = 1;
@@ -181,6 +179,13 @@ namespace StardewDruid.Monster.Boss
                 }
             };
 
+            sweepSet = false;
+
+            sweepInterval = 12;
+
+            sweepTexture = characterTexture;
+
+            sweepFrames = walkFrames;
         }
 
 
@@ -214,7 +219,7 @@ namespace StardewDruid.Monster.Boss
 
             Vector2 localPosition = getLocalPosition(Game1.viewport);
 
-            float drawLayer = Game1.player.getDrawLayer();
+            float drawLayer = (float)StandingPixel.Y / 10000f;
 
             if (IsEmoting && !Game1.eventUp)
             {
@@ -232,15 +237,15 @@ namespace StardewDruid.Monster.Boss
             if (netFlightActive.Value)
             {
 
-                b.Draw(characterTexture, localPosition + new Vector2(56, 16 - netFlightHeight.Value), new Rectangle?(flightFrames[netDirection.Value][netFlightFrame.Value]), Color.White * 0.65f, 0, new Vector2(16f, 16f), 7f, SpriteEffects.None, drawLayer);
+                b.Draw(characterTexture, localPosition + new Vector2(56, 16 - flightHeight), new Rectangle?(flightFrames[netDirection.Value][flightFrame]), Color.White * 0.65f, 0, new Vector2(16f, 16f), 7f, SpriteEffects.None, drawLayer);
 
             }
             else if (netSpecialActive.Value)
             {
 
-                int specialUseFrame = netSpecialFrame.Value;
+                int specialUseFrame = specialFrame;
 
-                if (netSpecialFrame.Value > 1)
+                if (specialFrame > 1)
                 {
                     specialUseFrame = 1;
                 }
@@ -261,7 +266,7 @@ namespace StardewDruid.Monster.Boss
             else
             {
 
-                b.Draw(characterTexture, localPosition + new Vector2(56, 16), new Rectangle?(walkFrames[netDirection.Value][netWalkFrame.Value]), Color.White * 0.65f, 0.0f, new Vector2(16f, 16f), 7f, SpriteEffects.None, drawLayer);
+                b.Draw(characterTexture, localPosition + new Vector2(56, 16), new Rectangle?(walkFrames[netDirection.Value][walkFrame]), Color.White * 0.65f, 0.0f, new Vector2(16f, 16f), 7f, SpriteEffects.None, drawLayer);
 
             }
 
@@ -300,7 +305,7 @@ namespace StardewDruid.Monster.Boss
                 num2 = 0.989f;
             }
 
-            Vector2 vector2 = getLocalPosition(Game1.viewport) + new Vector2(56f, (float)(16 + yJumpOffset) - netFlightHeight.Value) + hatOffset;
+            Vector2 vector2 = getLocalPosition(Game1.viewport) + new Vector2(56f, (float)(16 + yJumpOffset) - flightHeight) + hatOffset;
 
             b.Draw(hatsTexture, vector2, new Rectangle?(hatSourceRect), Color.White * 0.6f, num1, new Vector2(8f, 12f), 8f, flip ? (SpriteEffects)1 : 0, num2);
 
@@ -311,15 +316,17 @@ namespace StardewDruid.Monster.Boss
             
             behaviourActive = behaviour.special;
 
-            behaviourTimer = 72;
+            behaviourTimer = 90;
 
             netSpecialActive.Set(true);
 
             List<Vector2> zero = BlastTarget();
 
-            BarrageHandle beam = new(currentLocation, zero[0], zero[1], 2, 0, "Blue", DamageToFarmer * 0.4f);
+            BarrageHandle beam = new(currentLocation, zero[0], Vector2.Zero, 2, 0, DamageToFarmer * 0.4f);
 
             beam.type = BarrageHandle.barrageType.beam;
+
+            beam.originPosition = Position;
 
             beam.monster = this;
 

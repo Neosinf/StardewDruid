@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewValley;
 using System.Collections.Generic;
 
 
@@ -7,22 +8,18 @@ namespace StardewDruid.Cast.Weald
     internal class Dirt : CastHandle
     {
 
-        private readonly Dictionary<string, bool> spawnIndex;
-
-        public Dirt(Vector2 target, Rite rite)
-            : base(target, rite)
+        public Dirt(Vector2 target)
+            : base(target)
         {
 
             castCost = 6;
 
-            if (rite.caster.ForagingLevel >= 8)
+            if (Game1.player.ForagingLevel >= 8)
             {
 
                 castCost = 4;
 
             }
-
-            spawnIndex = rite.spawnIndex;
 
         }
 
@@ -38,7 +35,7 @@ namespace StardewDruid.Cast.Weald
 
                 int procChance = 50 - 5 * hoeLevel;
 
-                if (randomIndex.Next(procChance) == 0 && spawnIndex["artifact"] && hoeLevel >= 3)
+                if (randomIndex.Next(procChance) == 0 && Mod.instance.rite.spawnIndex["artifact"] && hoeLevel >= 3)
                 {
 
                     int tileX = (int)targetVector.X;
@@ -51,7 +48,7 @@ namespace StardewDruid.Cast.Weald
                     )
                     {
 
-                        targetLocation.objects.Add(targetVector, new StardewValley.Object(targetVector, 590, 1));
+                        targetLocation.objects.Add(targetVector, new StardewValley.Object("590", 1));
 
                         castFire = true;
 
@@ -60,7 +57,7 @@ namespace StardewDruid.Cast.Weald
                 }
 
             }
-            else if (spawnIndex["trees"] && !Mod.instance.EffectDisabled("Trees")) // 1/10 tree
+            else if (Mod.instance.rite.spawnIndex["trees"] && !Mod.instance.EffectDisabled("Trees")) // 1/10 tree
             {
 
                 bool treeSpawn  = false;
@@ -69,7 +66,7 @@ namespace StardewDruid.Cast.Weald
                 {
                     case 0:
 
-                        if(riteData.castVector.Y < targetVector.Y)
+                        if(Mod.instance.rite.castVector.Y < targetVector.Y)
                         {
                             treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
 
@@ -79,7 +76,7 @@ namespace StardewDruid.Cast.Weald
 
                     case 1:
 
-                        if (riteData.castVector.X > targetVector.X)
+                        if (Mod.instance.rite.castVector.X > targetVector.X)
                         {
                             treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
 
@@ -88,7 +85,7 @@ namespace StardewDruid.Cast.Weald
                     
                     case 2:
 
-                        if (riteData.castVector.Y > targetVector.Y)
+                        if (Mod.instance.rite.castVector.Y > targetVector.Y)
                         {
                             treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
 
@@ -97,7 +94,7 @@ namespace StardewDruid.Cast.Weald
 
                     default:
 
-                        if (riteData.castVector.X < targetVector.X)
+                        if (Mod.instance.rite.castVector.X < targetVector.X)
                         {
                             treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
 

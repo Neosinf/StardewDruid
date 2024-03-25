@@ -2,6 +2,7 @@
 using StardewDruid.Cast;
 using StardewDruid.Map;
 using StardewValley;
+using StardewValley.GameData;
 using StardewValley.Locations;
 using System;
 using xTile.Layers;
@@ -15,21 +16,19 @@ namespace StardewDruid.Event.Boss
         public bool modifiedSandDragon;
 
         //public BossDragon bossMonster;
-        public StardewDruid.Monster.Boss.Dragon bossMonster;
+        public StardewDruid.Monster.Boss.Boss bossMonster;
 
         public Vector2 returnPosition;
 
-        public SandDragon(Vector2 target, Rite rite, Quest quest)
-            : base(target, rite, quest)
+        public SandDragon(Vector2 target,  Quest quest)
+            : base(target, quest)
         {
 
             targetVector = target;
 
-            voicePosition = targetVector * 64 + new Vector2(0, -32);
-
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 120;
 
-            returnPosition = rite.caster.Position;
+            returnPosition = Game1.player.Position;
 
         }
 
@@ -37,7 +36,9 @@ namespace StardewDruid.Event.Boss
         {
             cues = DialogueData.DialogueScene(questData.name);
 
-            ModUtility.AnimateRadiusDecoration(targetLocation, targetVector, "Stars", 1f, 1f);
+            AddActor(targetVector * 64 + new Vector2(0, -32));
+
+            ModUtility.AnimateCursor(targetLocation, targetVector * 64, targetVector * 64, "Stars");
 
             ModUtility.AnimateMeteor(targetLocation, targetVector, true);
 
@@ -51,7 +52,7 @@ namespace StardewDruid.Event.Boss
             if (bossMonster != null)
             {
 
-                riteData.castLocation.characters.Remove(bossMonster);
+                Mod.instance.rite.castLocation.characters.Remove(bossMonster);
 
                 bossMonster = null;
 
@@ -112,19 +113,18 @@ namespace StardewDruid.Event.Boss
                 if (expireEarly)
                 {
 
-                    
                     DialogueCue(DialogueData.DialogueNarrator(questData.name), new() { [0] = actors[0], }, 991);
 
-                    Vector2 debrisVector = Game1.player.getTileLocation() + new Vector2(0, 1);
+                    Vector2 debrisVector = Game1.player.Tile + new Vector2(0, 1);
 
                     if (!questData.name.Contains("Two"))
                     {
 
-                        Game1.createObjectDebris(74, (int)debrisVector.X, (int)debrisVector.Y);
+                        Game1.createObjectDebris("74", (int)debrisVector.X, (int)debrisVector.Y);
 
                     }
 
-                    Game1.createObjectDebris(681, (int)debrisVector.X, (int)debrisVector.Y);
+                    Game1.createObjectDebris("681", (int)debrisVector.X, (int)debrisVector.Y);
 
                     EventComplete();
 
@@ -159,7 +159,7 @@ namespace StardewDruid.Event.Boss
             if (soundTrack)
             {
 
-                Game1.stopMusicTrack(Game1.MusicContext.Default);
+                Game1.stopMusicTrack(MusicContext.Default);
 
                 soundTrack = false;
 
@@ -188,37 +188,34 @@ namespace StardewDruid.Event.Boss
                 {
                     case 1:
 
+                        targetLocation.playSound("DragonRoar", targetVector*64, 1500);
                         break;
 
                     case 3:
 
-                        targetLocation.playSoundPitched("DragonRoar", 1200);
+                        targetLocation.playSound("DragonRoar", targetVector * 64, 1200);
 
                         break;
 
                     case 5:
 
-                        targetLocation.playSoundPitched("DragonRoar",800);
+                        targetLocation.playSound("DragonRoar", targetVector * 64, 800);
 
                         break;
 
                     case 7:
 
-                        targetLocation.playSoundPitched("DragonRoar", 400);
-
-                        break;
-
-                    default:
-
-                        Vector2 randomVector = targetVector + new Vector2(0, 1) - new Vector2(randomIndex.Next(7), randomIndex.Next(3));
-
-                        ModUtility.AnimateRadiusDecoration(targetLocation, randomVector, "Stars", 1f, 1f);
-
-                        ModUtility.AnimateMeteor(targetLocation, randomVector, randomIndex.Next(2) == 0);
+                        targetLocation.playSound("DragonRoar", targetVector * 64, 400);
 
                         break;
 
                 }
+
+                Vector2 randomVector = targetVector + new Vector2(0, 1) - new Vector2(randomIndex.Next(7), randomIndex.Next(3));
+
+                ModUtility.AnimateCursor(targetLocation, randomVector * 64, randomVector * 64, "Stars");
+
+                ModUtility.AnimateMeteor(targetLocation, randomVector, randomIndex.Next(2) == 0);
 
                 return;
 
@@ -235,7 +232,7 @@ namespace StardewDruid.Event.Boss
 
                 StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(16, targetVector + new Vector2(-5, 0));
 
-                bossMonster = theMonster as StardewDruid.Monster.Boss.Dragon;
+                bossMonster = theMonster as StardewDruid.Monster.Boss.Boss;
 
                 if (questData.name.Contains("Two"))
                 {

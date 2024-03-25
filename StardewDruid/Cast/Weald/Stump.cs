@@ -11,8 +11,8 @@ namespace StardewDruid.Cast.Weald
 
         private string resourceType;
 
-        public Stump(Vector2 target, Rite rite, ResourceClump ResourceClump, string ResourceType)
-            : base(target, rite)
+        public Stump(Vector2 target,  ResourceClump ResourceClump, string ResourceType)
+            : base(target)
         {
 
             resourceClump = ResourceClump;
@@ -52,7 +52,8 @@ namespace StardewDruid.Cast.Weald
 
             targetPlayer.gainExperience(2, 2); // gain foraging experience
 
-            ModUtility.AnimateSparkles(targetLocation, targetVector, new(0.8f, 1, 0.8f, 1));
+            Vector2 cursorVector = targetVector * 64 + new Vector2(32, 40);
+            ModUtility.AnimateCursor(targetLocation, cursorVector, cursorVector);
 
         }
 

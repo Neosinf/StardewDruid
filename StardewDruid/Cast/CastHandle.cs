@@ -11,9 +11,7 @@ namespace StardewDruid.Cast
 
         public readonly Farmer targetPlayer;
 
-        public readonly GameLocation targetLocation;
-
-        public readonly Rite riteData;
+        public GameLocation targetLocation;
 
         public bool castFire { get; set; }
 
@@ -23,18 +21,16 @@ namespace StardewDruid.Cast
 
         public Random randomIndex;
 
-        public CastHandle(Vector2 Vector, Rite rite)
+        public CastHandle(Vector2 Vector)
         {
 
             targetVector = Vector;
 
-            randomIndex = rite.randomIndex;
+            randomIndex = Mod.instance.rite.randomIndex;
 
-            riteData = rite;
+            targetPlayer = Mod.instance.rite.caster;
 
-            targetPlayer = riteData.caster;
-
-            targetLocation = riteData.castLocation;
+            targetLocation = Mod.instance.rite.castLocation;
 
             castFire = false;
 
@@ -49,6 +45,6 @@ namespace StardewDruid.Cast
 
         }
 
-
     }
+
 }

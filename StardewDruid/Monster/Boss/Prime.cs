@@ -14,7 +14,7 @@ using System.Reflection;
 
 namespace StardewDruid.Monster.Boss
 {
-    public class Prime : Dragon
+    public class Prime : Boss
     {
 
         public Prime()

@@ -8,8 +8,8 @@ namespace StardewDruid.Cast.Mists
     internal class Lava : CastHandle
     {
 
-        public Lava(Vector2 target, Rite rite)
-            : base(target, rite)
+        public Lava(Vector2 target)
+            : base(target)
         {
 
         }

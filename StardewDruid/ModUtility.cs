@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Weald;
@@ -10,6 +11,7 @@ using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Buildings;
 using StardewValley.Characters;
+using StardewValley.GameData.FarmAnimals;
 using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Monsters;
@@ -27,8 +29,7 @@ using xTile.Dimensions;
 using xTile.Layers;
 using xTile.ObjectModel;
 using xTile.Tiles;
-using static StardewValley.FarmerSprite;
-using static System.Net.Mime.MediaTypeNames;
+
 
 namespace StardewDruid
 {
@@ -37,76 +38,365 @@ namespace StardewDruid
 
         //======================== Animations
 
-        public static void AnimateRadiusDecoration(GameLocation location, Vector2 vector, string name, float size, float change, float interval = 600f, float depth = 0.0001f)
+        public static List<TemporaryAnimatedSprite> AnimateDecoration(GameLocation location, Vector2 origin, string name = "Weald", float size = 1f, float interval = 1000f, float depth = 0.0001f)
         {
 
-            TemporaryAnimatedSprite radiusAnimation = new(0, interval, 1, 1, (vector * 64) + new Vector2(32, 32) - (new Vector2(32, 32) * size), false, false)
+            List<TemporaryAnimatedSprite> animations = new();
+
+            Vector2 originOffset = origin + new Vector2(32, 32) - (new Vector2(32, 32) * (3f * size));
+
+            Microsoft.Xna.Framework.Rectangle rect = new(0, 0, 64, 64);
+
+            Texture2D decorationTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Decorations.png"));
+
+            switch (name)
             {
 
-                sourceRect = new(0, 0, 64, 64),
+                case "Mists":
 
-                sourceRectStartingPos = new Vector2(0, 0),
+                    rect.X += 64;
 
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", name + ".png")),
+                    break;
 
-                scale = 1f, //* size,
+                case "Stars":
 
-                scaleChange = 0.004f * change,
+                    rect.X += 128;
 
-                motion = new Vector2(-0.128f, -0.128f) * change,
+                    break;
+
+                case "Fates":
+
+                    rect.X += 192;
+
+                    break;
+
+                case "Ether":
+
+                    rect.Y += 64;
+
+                    break;
+
+            }
+
+            TemporaryAnimatedSprite radiusAnimation = new(0, interval, 1, 1, originOffset, false, false)
+            {
+
+                sourceRect = rect,
+
+                sourceRectStartingPos = new Vector2(rect.X, rect.Y),
+
+                texture = decorationTexture,
+
+                scale = 3f * size,
 
                 timeBasedMotion = true,
 
                 layerDepth = depth,
 
-                rotationChange = 0.06f,
+                rotationChange = (float)(Math.PI / 120),
 
-                alphaFade = 0.0002f,
+                Parent = location,
+
+                alpha = 0.65f,
 
             };
 
             location.temporarySprites.Add(radiusAnimation);
 
+            animations.Add(radiusAnimation);
+
+            /*if(name != "Ether")
+            {
+
+                TemporaryAnimatedSprite glyphAnimation = new(0, interval, 1, 1, originOffset, false, false)
+                {
+
+                    sourceRect = new Microsoft.Xna.Framework.Rectangle(0, 64, 64, 64),
+
+                    sourceRectStartingPos = new Vector2(0, 64),
+
+                    texture = decorationTexture,
+
+                    scale = 3f * size,
+
+                    timeBasedMotion = true,
+
+                    layerDepth = depth + 0.0001f,
+
+                    rotationChange = 0 - (float)(Math.PI / 60),
+
+                    Parent = location,
+
+                    alpha = 0.45f,
+
+                };
+
+                location.temporarySprites.Add(glyphAnimation);
+
+                animations.Add(glyphAnimation);
+
+            }*/
+
+            return animations;
+
         }
 
-        public static void AnimateSprout(GameLocation location, Vector2 vector)
+        public static void AnimateQuickWarp(GameLocation location, Vector2 origin, bool reverse = false)
         {
 
-            TemporaryAnimatedSprite radiusAnimation = new(0, 1000f, 1, 1, (vector * 64) + new Vector2(16, 16), false, false)
+            Vector2 originOffset = origin - new Vector2(32, 32);
+
+            Microsoft.Xna.Framework.Rectangle rect = reverse ? new(0, 32, 32, 32) : new(0, 0, 32, 32);
+
+            TemporaryAnimatedSprite cursorAnimation = new(0, 75, 8, 1, originOffset, false, false)
+            {
+
+                sourceRect = rect,
+
+                sourceRectStartingPos = new Vector2(0, rect.Y),
+
+                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Warp.png")),
+
+                scale = 4f,
+
+                layerDepth = 0.001f,
+
+                alpha = 0.65f,
+
+            };
+
+            location.temporarySprites.Add(cursorAnimation);
+
+
+        }
+
+        public static TemporaryAnimatedSprite AnimateCursor(GameLocation location, Vector2 origin, Vector2 destination, string cursor = "Weald", float interval = 1200f, float scale = 3f)
+        {
+
+            Vector2 originOffset = origin + new Vector2(32,32) - new Vector2(16*scale, 16*scale);
+
+            Microsoft.Xna.Framework.Rectangle rect = new(0, 0, 32, 32);
+
+            switch (cursor)
+            {
+
+                case "Mists":
+
+                    rect.X += 32;
+
+                    break;
+
+                case "Stars":
+
+                    rect.X += 64;
+
+                    break;
+
+                case "Fates":
+
+                    rect.X += 96;
+
+                    break;
+
+                case "Comet":
+
+                    rect.X += 0;
+
+                    rect.Y += 32;
+
+                    break;
+
+                case "Barrage":
+                case "Missile":
+
+                    rect.X += 32;
+
+                    rect.Y += 32;
+
+                    break;
+
+                case "Target":
+
+                    rect.X += 64;
+
+                    rect.Y += 32;
+
+                    break;
+
+            }
+
+            TemporaryAnimatedSprite cursorAnimation = new(0, interval, 1, 1, originOffset, false, false)
+            {
+
+                sourceRect = rect,
+
+                sourceRectStartingPos = new Vector2(rect.X, rect.Y),
+
+                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Cursors.png")),
+
+                scale = scale,
+
+                layerDepth = 0.001f,
+
+                timeBasedMotion = true,
+
+                rotationChange = (float)(Math.PI / 60),
+
+                alpha = 0.65f,
+
+            };
+
+            if(cursor == "Barrage")
+            {
+
+                float xOffset = (destination.X - origin.X);
+
+                float yOffset = (destination.Y - origin.Y);
+
+                float motionX = xOffset / interval;
+
+                float compensate = 0.505f * 3;
+
+                float motionY = (yOffset / interval) - compensate;
+
+                cursorAnimation.motion = new Vector2(motionX, motionY);
+
+                cursorAnimation.acceleration = new Vector2(0f, (1 / interval) * 3);
+
+            }
+            else if (destination != origin)
+            {
+
+                float xOffset = (destination.X - origin.X);
+
+                float yOffset = (destination.Y - origin.Y);
+
+                float motionX = xOffset / interval;
+
+                float motionY = yOffset / interval;
+
+                cursorAnimation.motion = new Vector2(motionX, motionY);
+
+            }
+
+            location.temporarySprites.Add(cursorAnimation);
+
+            return cursorAnimation;
+
+        }
+
+        public static TemporaryAnimatedSprite AnimateCharge(GameLocation location, Vector2 origin, string cursor = "Weald")
+        {
+            
+            Vector2 originOffset = origin - new Vector2(24,24);
+
+            Microsoft.Xna.Framework.Rectangle rect = new(0, 64, 32, 32);
+
+            switch (cursor)
+            {
+
+                case "Chaos":
+
+                    rect.X += 96;
+
+                    rect.Y -= 32;
+
+                    break;
+
+                case "Mists":
+
+                    rect.X += 32;
+
+                    break;
+
+                case "Stars":
+
+                    rect.X += 64;
+
+                    break;
+
+                case "Fates":
+
+                    rect.X += 96;
+
+                    break;
+
+            }
+
+            TemporaryAnimatedSprite cursorAnimation = new(0, 2000, 1, 30, originOffset, false, false)
+            {
+
+                sourceRect = rect,
+
+                sourceRectStartingPos = new Vector2(rect.X, rect.Y),
+
+                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Cursors.png")),
+
+                scale = 3.5f,
+
+                layerDepth = 0.001f,
+
+                timeBasedMotion = true,
+
+                rotationChange = (float)(Math.PI / 120),
+
+                Parent = location,
+
+                alpha = 0.65f,
+
+            };
+
+            location.temporarySprites.Add(cursorAnimation);
+
+            return cursorAnimation;
+
+        }
+
+        public static void AnimateGlare(GameLocation location, Vector2 origin)
+        {
+
+            Vector2 originOffset = origin + new Vector2(16, 16);
+
+            TemporaryAnimatedSprite glareAnimation = new(0, 1000f, 1, 1, originOffset, false, false)
             {
 
                 sourceRect = new(0, 0, 32, 32),
 
                 sourceRectStartingPos = new Vector2(0, 0),
 
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Sprout.png")),
+                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Glare.png")),
 
-                scale = 1f, //* size,
+                scale = 1f,
 
-                scaleChange = 0.004f,
+                scaleChange = 0.002f,
 
-                motion = new Vector2(-0.064f, -0.064f),
+                motion = new Vector2(-0.032f, -0.032f),
+
+                layerDepth = 0.002f,
 
                 timeBasedMotion = true,
 
-                layerDepth = 0.0001f,
-
-                alphaFade = 0.001f,
-
-                //rotationChange = 0.08f,
+                alphaFade = 0.0005f,
 
             };
 
-            location.temporarySprites.Add(radiusAnimation);
+            location.temporarySprites.Add(glareAnimation);
 
         }
 
         public static void AnimateHands(Farmer player, int direction, int timeFrame)
         {
 
+            if (Mod.instance.DisableHands())
+            {
+
+                return;
+
+            }
+
             player.Halt();
 
-            AnimationFrame carryAnimation;
+            FarmerSprite.AnimationFrame carryAnimation;
 
             int frameIndex;
 
@@ -145,58 +435,49 @@ namespace StardewDruid
 
             carryAnimation = new(frameIndex, timeFrame, true, frameFlip);
 
-            player.FarmerSprite.animateOnce(new AnimationFrame[1] { carryAnimation });
-
+            player.FarmerSprite.animateOnce(new FarmerSprite.AnimationFrame[1] { carryAnimation });
 
         }
 
         public static void AnimateSparkles(GameLocation targetLocation, Vector2 targetVector, Microsoft.Xna.Framework.Color animationColor) // DruidCastGrowth (0.8f, 1, 0.8f, 1)
         {
 
-            Utility.sparkleWithinArea(new((int)(targetVector.X * 64 - 64), (int)(targetVector.Y * 64 - 64), 192, 192), 5, animationColor);
+            Microsoft.Xna.Framework.Rectangle bounds = new((int)(targetVector.X * 64 - 64), (int)(targetVector.Y * 64 - 64), 192, 192);
+
+            for (int i = 0; i < 5; i++)
+            {
+                int sparkleIndex = i % 2 == 0 ? 10 : 11;
+
+                TemporaryAnimatedSprite sparkle = new(sparkleIndex, new Vector2(Game1.random.Next(bounds.X, bounds.Right), Game1.random.Next(bounds.Y, bounds.Bottom)), animationColor)
+                {
+                    delayBeforeAnimationStart = i*50,
+                    texture = Game1.animations,
+                };
+
+                targetLocation.temporarySprites.Add(sparkle);
+
+            }
 
             return;
 
         }
 
-        public static void AnimateImpact(GameLocation targetLocation, Vector2 targetVector, int size, string bombColor = "Red")
+        public static void AnimateImpact(GameLocation targetLocation, Vector2 targetVector, int size, int frame = 0, string image = "Impact")
         {
-
-            /*TemporaryAnimatedSprite radiusAnimation = new(0, 100, 5, 1, (targetVector * 64) + new Vector2(32, 32) - (new Vector2(32, 32) * size), false, false)
-            {
-
-                sourceRect = new(0, 0, 32, 32),
-
-                sourceRectStartingPos = new Vector2(0, 0),
-
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images","Impact.png")),
-
-                scale = size*2,
-
-                timeBasedMotion = true,
-
-                layerDepth = 0.001f,
-
-                rotationChange = 0.06f,
-
-                alphaFade = 0.001f,
-
-            };
-
-            targetLocation.temporarySprites.Add(radiusAnimation);*/
 
             Vector2 zero64 = new(targetVector.X * 64, targetVector.Y * 64);
 
-            TemporaryAnimatedSprite bomb = new(0, 125f, 4, 1, new(zero64.X - 32 - (32 * size), zero64.Y - 32 - (32 * size)), false, false)
+            TemporaryAnimatedSprite bomb = new(0, 100f, 8-frame, 1, new(zero64.X - 32 - (32 * size), zero64.Y - 48 - (32 * size)), false, false)
             {
-                sourceRect = new(0, 0, 64, 64),
-                sourceRectStartingPos = new Vector2(0.0f, 0.0f),
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", bombColor + "Bomb.png")),
+                sourceRect = new(64*frame, 0, 64, 64),
+                sourceRectStartingPos = new Vector2(64 * frame, 0.0f),
+                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", image+".png")),
                 scale = 2f + size,
                 timeBasedMotion = true,
                 layerDepth = 999f,
                 rotationChange = 0.00628f,
-                alphaFade = 1f / 1000f
+                alpha = 0.35f,
+                //alphaFade = 1f / 2000f
             };
 
             targetLocation.temporarySprites.Add(bomb);
@@ -242,100 +523,88 @@ namespace StardewDruid
 
         }
 
-        public static void AnimateBolt(GameLocation targetLocation, Vector2 targetVector, int playSound = 800, int colour = -1)
+        public static void AnimateBolt(GameLocation location, Vector2 origin, int playSound = 800, int colour = -1)
         {
-
-            List<Color> colourProfile;
+            /*List<Color> colourProfile;
 
             switch (colour)
             {
                 case 768:
 
                     colourProfile = new()
-                    {
-                        new Color(0.1f, 0.1f, 0f, 1),
-                        new Color(0.1f, 0.1f, 0.5f, 1),
-                        Color.White,
-                    };
+                     {
+                         new Color(0.1f, 0.1f, 0f, 1),
+                         new Color(0.1f, 0.1f, 0.5f, 1),
+                         Color.White,
+                     };
                     break;
 
                 case 769:
 
                     colourProfile = new()
-                    {
-                        new Color(0f, 0f, 0.5f, 1),
-                        new Color(0.5f, 0.5f, 1f, 1),
-                        Color.White,
-                    };
+                     {
+                         new Color(0f, 0f, 0.5f, 1),
+                         new Color(0.5f, 0.5f, 1f, 1),
+                         Color.White,
+                     };
                     break;
 
                 default:
 
                     colourProfile = new()
-                    {
-                        new Color(0.8f, 0.8f, 1f, 1),
-                        new Color(0.9f, 0.9f, 1f, 1),
-                        Color.White,
-                    };
+                     {
+                         new Color(0.8f, 0.8f, 1f, 1),
+                         new Color(0.9f, 0.9f, 1f, 1),
+                         Color.White,
+                     };
                     break;
 
-            }
+            }*/
+
+            Vector2 originOffset = new((origin.X * 64) - 64, (origin.Y * 64) - 304);
+
+            TemporaryAnimatedSprite boltAnimation = new(0, 120, 5, 1, originOffset, false, (Game1.random.NextDouble() < 0.5) ? true : false)
+            {
+
+                sourceRect = new(0, 0, 64, 128),
+
+                sourceRectStartingPos = new Vector2(0, 0),
+
+                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Bolt.png")),
+
+                layerDepth = 999f,
+
+                alpha = 0.65f,
+
+                scale = 3f,
+
+                //color = colourProfile[1],
+
+            };
+
+            location.temporarySprites.Add(boltAnimation);
+
+            Vector2 lightOffset = new(origin.X * 64, (origin.Y * 64) - 192);
+
+            TemporaryAnimatedSprite lightAnimation = new(23, 500f, 1, 1, lightOffset, flicker: false, (Game1.random.NextDouble() < 0.5) ? true : false)
+            {
+                light = true,
+                lightRadius = 6,
+                lightcolor = Color.Black,
+                alpha = 0.5f,
+                alphaFade = 0.001f,
+                Parent = location,
+
+            };
+
+            location.temporarySprites.Add(lightAnimation);
 
             if (playSound >= 500)
             {
 
-                Game1.currentLocation.playSoundPitched("flameSpellHit", 800);
+                Game1.currentLocation.playSound("flameSpellHit", originOffset,800);
 
             }
-
-            Vector2 targetPosition = new(targetVector.X * 64, (targetVector.Y * 64) - 256);
-
-            // ------------------------- cloud
-
-            TemporaryAnimatedSprite boltCloud = new("TileSheets\\animations", new(128, 5 * 64, 64, 64), 333f, 3, 1, new Vector2(targetPosition.X + 8, targetPosition.Y), flicker: false, false, (targetPosition.Y + 32f) / 10000f + 0.001f, 0.02f, colourProfile[0], 0.875f, 0f, 0f, 0f);
-
-            targetLocation.temporarySprites.Add(boltCloud);
-
-            // ------------------------- glow
-
-            targetLocation.temporarySprites.Add(new TemporaryAnimatedSprite(362, 75f, 6, 1, targetPosition, flicker: false, flipped: false));
-
-            Microsoft.Xna.Framework.Rectangle sourceRect = new(644, 1078, 37, 57);
-
-            TemporaryAnimatedSprite boltAnimation;
-
-            // ------------------------- first bolt
-
-            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 1000f, 1, 1, targetPosition + new Vector2(0, 24f), flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.003f, 0.02f, colourProfile[0], 2f, 0f, 0f, 0f)
-            {
-                light = true,
-                lightRadius = 2f,
-                lightcolor = Color.Black
-            };
-
-            targetLocation.temporarySprites.Add(boltAnimation);
-
-            // ------------------------- second bolt
-
-            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 1000f, 1, 1, targetPosition + new Vector2(0, 100f), flicker: false, Game1.random.NextDouble() > 0.5, (targetPosition.Y + 32f) / 10000f + 0.003f, 0.0175f, colourProfile[1], 2f, 0f, 0f, 0f)
-            {
-                light = true,
-                lightRadius = 2f,
-                lightcolor = Color.Black
-            };
-
-            targetLocation.temporarySprites.Add(boltAnimation);
-
-            // ------------------------- third bolt
-
-            boltAnimation = new("LooseSprites\\Cursors", sourceRect, 1000f, 1, 1, targetPosition + new Vector2(0, 176f), flicker: false, Game1.random.NextDouble() < 0.5, (targetPosition.Y + 32f) / 10000f + 0.002f, 0.015f, colourProfile[2], 2f, 0f, 0f, 0f)
-            {
-                light = true,
-                lightRadius = 2f,
-                lightcolor = Color.Black
-            };
-
-            targetLocation.temporarySprites.Add(boltAnimation);
 
             return;
 
@@ -555,72 +824,57 @@ namespace StardewDruid
 
         }
 
-        public static void AnimateMeteor(GameLocation targetLocation, Vector2 targetVector, bool targetDirection, float epicness = 1f)
+        public static void AnimateMeteor(GameLocation targetLocation, Vector2 targetVector, bool targetDirection, float epicness = 0)
         {
 
-            Microsoft.Xna.Framework.Rectangle meteorRectangle = new(0, 0, 32, 32);
+            Vector2 targetPosition = targetVector * 64;
 
-            Vector2 meteorPosition;
+            float targetDepth = targetLocation.IsOutdoors ? (targetVector.Y / 10000) + 0.00001f : 999f;
 
-            Vector2 meteorMotion;
-
-            //bool meteorRoll;
-
-            switch (targetDirection)
+            for (int i = 1; i < 6; i++)
             {
 
-                case true:
+                int j = 6 - i;
 
-                    meteorPosition = new((targetVector.X - 4) * 64, (targetVector.Y - 8) * 64);
+                Vector2 meteorPosition = targetDirection ? new(targetPosition.X - (64 * j) - 32, targetPosition.Y - (128 * j) - 48) : new(targetPosition.X + (64 * j) - 32, targetPosition.Y - (128 * j) - 48);
 
-                    meteorMotion = new Vector2(0.32f, 0.64f);
+                if (!Utility.isOnScreen(meteorPosition,0))
+                {
+                    continue;
+                }
 
-                    // meteorRoll = false;
+                Vector2 meteorMotion = targetDirection ? new Vector2(0.32f, 0.64f) : new Vector2(-0.32f, 0.64f);
 
-                    break;
+                TemporaryAnimatedSprite meteorAnimation = new(0, 200 * j, 1, 1, meteorPosition, false, false)
+                {
 
-                default:
+                    sourceRect = new(0, 32, 32, 32),
 
-                    meteorPosition = new((targetVector.X + 4) * 64, (targetVector.Y - 8) * 64);
+                    sourceRectStartingPos = new Vector2(0, 32),
 
-                    meteorMotion = new Vector2(-0.32f, 0.64f);
+                    texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Cursors.png")),
 
-                    //meteorRoll = true;
+                    scale = 3f + epicness,
 
-                    break;
+                    layerDepth = targetDepth,
+
+                    timeBasedMotion = true,
+
+                    rotationChange = (float)(Math.PI / 60),
+
+                    alpha = 0.5f,
+
+                    motion = meteorMotion,
+
+                    delayBeforeAnimationStart = 200 * (i - 1),
+
+                };
+
+                targetLocation.temporarySprites.Add(meteorAnimation);
+
+                break;
 
             }
-
-            meteorPosition *= epicness;
-
-            meteorMotion *= epicness;
-
-            float meteorScale = 2f * epicness;
-
-            float animationSort = (targetVector.Y / 10000) + 0.00005f;
-
-            TemporaryAnimatedSprite meteorAnimation = new(0, 750f, 1, 1, meteorPosition, false, false)
-            {
-
-                sourceRect = new(0, 0, 32, 32),
-
-                sourceRectStartingPos = new Vector2(0, 0),
-
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Fireball.png")),
-
-                scale = meteorScale,
-
-                motion = meteorMotion,
-
-                timeBasedMotion = true,
-
-                rotationChange = -0.08f,
-
-                layerDepth = animationSort,
-
-            };
-
-            targetLocation.temporarySprites.Add(meteorAnimation);
 
         }
 
@@ -707,15 +961,15 @@ namespace StardewDruid
         public static void AnimateButterflySpray(GameLocation location, Vector2 vector)
         {
 
-            location.critters.Add(new Butterfly(vector, false));
+            location.critters.Add(new Butterfly(location,vector, false));
 
-            location.critters.Add(new Butterfly(vector - new Vector2(1, 0), false));
+            location.critters.Add(new Butterfly(location, vector - new Vector2(1, 0), false));
 
-            location.critters.Add(new Butterfly(vector + new Vector2(1, 0), false));
+            location.critters.Add(new Butterfly(location, vector + new Vector2(1, 0), false));
 
-            location.critters.Add(new Butterfly(vector - new Vector2(2, 0), false));
+            location.critters.Add(new Butterfly(location, vector - new Vector2(2, 0), false));
 
-            location.critters.Add(new Butterfly(vector + new Vector2(2, 0), false));
+            location.critters.Add(new Butterfly(location, vector + new Vector2(2, 0), false));
 
         }
 
@@ -764,32 +1018,6 @@ namespace StardewDruid
             }
 
             location.localSound("shadowDie");
-
-        }
-
-        public static void AnimateQuickWarp(GameLocation location, Vector2 position, string name = "Escape")
-        {
-
-            TemporaryAnimatedSprite firstWarp = new(0, 75f, 12, 1, position - new Vector2(16, 16), false, false)
-            {
-
-                sourceRect = new(0, 32, 32, 32),
-
-                sourceRectStartingPos = new Vector2(0, 32),
-
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", name + ".png")),
-
-                scale = 3f,
-
-                layerDepth = 999,
-
-                rotationChange = -0.8f,
-
-                alpha = 0.35f
-
-            };
-
-            location.temporarySprites.Add(firstWarp);
 
         }
 
@@ -899,81 +1127,6 @@ namespace StardewDruid
 
         }
 
-        public static TemporaryAnimatedSprite AnimateFateTarget(GameLocation location, Vector2 playerVector, Vector2 targetVector)
-        {
-
-            Vector2 targetPosition = targetVector - new Vector2(0, 32);
-
-            Vector2 playerPosition = playerVector - new Vector2(0, 32);
-
-            float xOffset = (targetPosition.X - playerPosition.X);
-
-            float yOffset = (targetPosition.Y - playerPosition.Y);
-
-            float motionX = xOffset / 1000;
-
-            float motionY = yOffset / 1000;
-
-            TemporaryAnimatedSprite warpAnimation = new(0, 1000f, 1, 1, playerPosition, false, false)
-            {
-
-                sourceRect = new(0, 0, 64, 64),
-
-                sourceRectStartingPos = new Vector2(0, 0),
-
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Warp.png")),
-
-                scale = 0.75f,
-                
-                scaleChange = 0.0005f,
-
-                layerDepth = 0.001f,
-
-                motion = new Vector2(motionX, motionY),
-
-                timeBasedMotion = true,
-
-                rotationChange = 0.08f,
-
-            };
-
-            location.temporarySprites.Add(warpAnimation);
-
-            return warpAnimation;
-
-        }
-
-        public static void AnimateDestruction(GameLocation targetLocation, Vector2 targetVector)
-        {
-
-            if (Game1.random.NextDouble() < 0.5)
-            {
-                TemporaryAnimatedSprite smallAnimation = new(362, Game1.random.Next(30, 90), 6, 1, new Vector2(targetVector.X * 64f, targetVector.Y * 64f), flicker: false, (Game1.random.NextDouble() < 0.5) ? true : false)
-                {
-                    //delayBeforeAnimationStart = Game1.random.Next(700)
-                    scale = Game1.random.Next(5, 10) * 0.1f,
-                    alpha = 0.65f,
-                };
-
-                targetLocation.temporarySprites.Add(smallAnimation);
-            }
-            else
-            {
-
-                TemporaryAnimatedSprite smallAnimation = new(5, new Vector2(targetVector.X * 64f, targetVector.Y * 64f), Color.White, 8, flipped: false, 50f)
-                {
-                    //delayBeforeAnimationStart = Game1.random.Next(200),
-                    //scale = (float)Game1.random.Next(5, 15) / 10f
-                    scale = Game1.random.Next(5, 10) * 0.1f,
-                    alpha = 0.65f,
-                };
-
-                targetLocation.temporarySprites.Add(smallAnimation);
-
-            }
-
-        }
-
         //======================== Gameworld Interactions
 
         public static bool RandomTree(GameLocation targetLocation, Vector2 targetVector)
@@ -981,7 +1134,7 @@ namespace StardewDruid
 
             int treeIndex = Map.SpawnData.RandomTree(targetLocation);
 
-            StardewValley.TerrainFeatures.Tree newTree = new(treeIndex, 1);
+            StardewValley.TerrainFeatures.Tree newTree = new(treeIndex.ToString(), 1);
 
             targetLocation.terrainFeatures.Add(targetVector, newTree);
 
@@ -1009,12 +1162,12 @@ namespace StardewDruid
 
             }
 
-            hoeDirt.destroyCrop(new Vector2(targetX, targetY), false, targetLocation);
+            hoeDirt.destroyCrop(true);
 
             if (generateItem == 829)
             {
 
-                StardewValley.Crop newGinger = new(true, 2, targetX, targetY);
+                StardewValley.Crop newGinger = new(true, "2", targetX, targetY, targetLocation);
 
                 hoeDirt.crop = newGinger;
 
@@ -1026,7 +1179,7 @@ namespace StardewDruid
 
             }
 
-            hoeDirt.plant(generateItem, targetX, targetY, targetPlayer, false, targetLocation);
+            hoeDirt.plant(generateItem.ToString(),targetPlayer, false);
 
             //hoeDirt.crop.updateDrawMath(new Vector2(targetX, targetY));
 
@@ -1035,12 +1188,12 @@ namespace StardewDruid
         public static bool GreetVillager(Farmer player, NPC villager, int friendShip = 0)
         {
 
-            villager.faceTowardFarmerForPeriod(3000, 4, false, player);
-
             bool friendCheck = player.hasPlayerTalkedToNPC(villager.Name);
 
             if (!friendCheck && player.friendshipData.ContainsKey(villager.Name))
             {
+
+                villager.faceTowardFarmerForPeriod(3000, 4, false, player);
 
                 player.friendshipData[villager.Name].TalkedToToday = true;
 
@@ -1107,27 +1260,22 @@ namespace StardewDruid
 
             }
 
-            if ((targetPlayer.professions.Contains(3) && !targetAnimal.isCoopDweller()) || (targetPlayer.professions.Contains(2) && targetAnimal.isCoopDweller()))
+            FarmAnimalData animalData = targetAnimal.GetAnimalData();
+
+            int num2 = animalData?.HappinessDrain ?? 0;
+
+            if (animalData != null && animalData.ProfessionForHappinessBoost >= 0 && targetPlayer.professions.Contains(animalData.ProfessionForHappinessBoost))
             {
 
                 targetAnimal.friendshipTowardFarmer.Value = Math.Min(1000, targetAnimal.friendshipTowardFarmer.Value + 15);
 
-                targetAnimal.happiness.Value = (byte)Math.Min(255, targetAnimal.happiness.Value + Math.Max(5, 40 - targetAnimal.happinessDrain.Value));
-
-            }
-
-            int num2 = 20;
-
-            if (targetAnimal.wasAutoPet.Value)
-            {
-
-                num2 = 32;
+                targetAnimal.happiness.Value = (byte)Math.Min(255, (int)targetAnimal.happiness.Value + Math.Max(5, 30 + num2));
 
             }
 
             targetAnimal.doEmote((targetAnimal.moodMessage.Value == 4) ? 12 : num2);
 
-            targetAnimal.happiness.Value = (byte)Math.Min(255, targetAnimal.happiness.Value + Math.Max(5, 40 - targetAnimal.happinessDrain.Value));
+            targetAnimal.happiness.Value = (byte)Math.Min(255, (int)targetAnimal.happiness.Value + Math.Max(5, 30 + num2));
 
             targetAnimal.makeSound();
 
@@ -1242,6 +1390,58 @@ namespace StardewDruid
 
             }
 
+
+            if (backTile.TileIndexProperties.TryGetValue("Water", out _))
+            {
+
+                return "water";
+
+            }
+
+            PropertyValue backing = null;
+
+            backTile.TileIndexProperties.TryGetValue("Type", out backing);
+
+            if (backing != null)
+            {
+
+                return "ground";
+
+            }
+
+            if (targetLocation.IsOutdoors)
+            {
+
+                List<int> grounds = new() {304, 351, 404, 356, 300, 305, };
+
+                if (grounds.Contains(backTile.TileIndex))
+                {
+                    return "ground";
+
+                }
+
+            }
+
+            if(targetLocation is Caldera)
+            {
+
+                if(backTile.TileIndex == 28)
+                {
+                    return "ground";
+                }
+
+            }
+
+            if (targetLocation is Sewer)
+            {
+
+                if (backTile.TileIndex == 34 || backTile.TileIndex == 41 || backTile.TileIndex == 42)
+                {
+                    return "ground";
+                }
+
+            }
+
             if (npc)
             {
 
@@ -1299,53 +1499,6 @@ namespace StardewDruid
 
             }
 
-            if (backTile.TileIndexProperties.TryGetValue("Water", out _))
-            {
-
-                return "water";
-
-            }
-
-            if (backTile.TileIndexProperties.TryGetValue("Type", out var typeValue))
-            {
-
-                return "ground";
-
-            }
-
-            if (targetLocation.IsOutdoors)
-            {
-
-                List<int> grounds = new() {304, 351, 404, 356, 300, 305, };
-
-                if (grounds.Contains(backTile.TileIndex))
-                {
-                    return "ground";
-
-                }
-
-            }
-
-            if(targetLocation is Caldera)
-            {
-
-                if(backTile.TileIndex == 28)
-                {
-                    return "ground";
-                }
-
-            }
-
-            if (targetLocation is Sewer)
-            {
-
-                if (backTile.TileIndex == 34 || backTile.TileIndex == 41 || backTile.TileIndex == 42)
-                {
-                    return "ground";
-                }
-
-            }
-
             return "unknown";
 
         }
@@ -1368,15 +1521,36 @@ namespace StardewDruid
 
                     }
 
-                    Vector2 originVector = bushFeature.tilePosition.Value;
+                    Vector2 originVector = bushFeature.Tile;
 
                     targetCasts[originVector] = "Bush";
 
-                    targetCasts[new Vector2(originVector.X + 1, originVector.Y)] = "Bush";
-
-                    targetCasts[new Vector2(originVector.X, originVector.Y + 1)] = "Bush";
-
-                    targetCasts[new Vector2(originVector.X + 1, originVector.Y + 1)] = "Bush";
+                    switch (bushFeature.size.Value)
+                    {
+                        case 0:
+                        case 3:
+                            targetCasts[new Vector2(originVector.X, originVector.Y + 1)] = "Bush";
+                            targetCasts[new Vector2(originVector.X, originVector.Y - 1)] = "Bush";
+                            break;
+                        case 1:
+                        case 4:
+                            targetCasts[new Vector2(originVector.X + 1, originVector.Y)] = "Bush";
+                            targetCasts[new Vector2(originVector.X, originVector.Y + 1)] = "Bush";
+                            targetCasts[new Vector2(originVector.X + 1, originVector.Y +1)] = "Bush";
+                            targetCasts[new Vector2(originVector.X, originVector.Y -1)] = "Bush";
+                            targetCasts[new Vector2(originVector.X + 1, originVector.Y -1)] = "Bush";
+                            break;
+                        case 2:
+                            targetCasts[new Vector2(originVector.X + 1, originVector.Y)] = "Bush";
+                            targetCasts[new Vector2(originVector.X + 2, originVector.Y)] = "Bush";
+                            targetCasts[new Vector2(originVector.X, originVector.Y + 1)] = "Bush";
+                            targetCasts[new Vector2(originVector.X + 1, originVector.Y +1)] = "Bush";
+                            targetCasts[new Vector2(originVector.X + 2, originVector.Y +1)] = "Bush";
+                            targetCasts[new Vector2(originVector.X, originVector.Y - 1)] = "Bush";
+                            targetCasts[new Vector2(originVector.X + 1, originVector.Y - 1)] = "Bush";
+                            targetCasts[new Vector2(originVector.X + 2, originVector.Y - 1)] = "Bush";
+                            break;
+                    }
 
                 }
 
@@ -1388,7 +1562,7 @@ namespace StardewDruid
                 foreach (ResourceClump resourceClump in targetLocation.resourceClumps)
                 {
 
-                    Vector2 originVector = resourceClump.tile.Value;
+                    Vector2 originVector = resourceClump.Tile;
 
                     targetCasts[originVector] = "Clump";
 
@@ -1401,13 +1575,13 @@ namespace StardewDruid
                 }
 
             }
-
+            /*
             if (targetLocation is Woods woodsLocation)
             {
                 foreach (ResourceClump resourceClump in woodsLocation.stumps)
                 {
 
-                    Vector2 originVector = resourceClump.tile.Value;
+                    Vector2 originVector = resourceClump.Tile;
 
                     targetCasts[originVector] = "Clump";
 
@@ -1419,7 +1593,7 @@ namespace StardewDruid
 
                 }
 
-            }
+            }*/
 
             if (targetLocation.furniture.Count > 0)
             {
@@ -1443,22 +1617,16 @@ namespace StardewDruid
                 }
 
             }
-
-            if (targetLocation is BuildableGameLocation farmLocation)
+            foreach (Building building in targetLocation.buildings)
             {
 
-                foreach (Building building in farmLocation.buildings)
+                for (int i = 0; i < building.tilesWide.Value; i++)
                 {
 
-                    for (int i = 0; i < building.tilesWide.Value; i++)
+                    for (int j = 0; j < building.tilesHigh.Value; j++)
                     {
 
-                        for (int j = 0; j < building.tilesHigh.Value; j++)
-                        {
-
-                            targetCasts[new Vector2(building.tileX.Value + i, building.tileY.Value + j)] = "Building";
-
-                        }
+                        targetCasts[new Vector2(building.tileX.Value + i, building.tileY.Value + j)] = "Building";
 
                     }
 
@@ -1530,6 +1698,21 @@ namespace StardewDruid
 
                     }
 
+                    if (targetLocation is Beach)
+                    {
+                        
+                        List<int> tidalList = new() { 60, 61, 62, 63, 77, 78, 79, 80, 94, 95, 96, 97, 104, 287, 288, 304, 305, 321, 362, 363 };
+
+                        if (tidalList.Contains(buildingTile.TileIndex))
+                        {
+
+                            neighbourList["Pool"].Add(neighbourVector);
+
+                            continue;
+
+                        }
+
+                    }
 
                 }
 
@@ -1682,7 +1865,6 @@ namespace StardewDruid
                     }
 
                 }
-
 
             }
 
@@ -2249,7 +2431,7 @@ namespace StardewDruid
 
                 pushList[1] = diffY;
 
-                monster.stunTime = 50;
+                monster.stunTime.Set(Math.Max(monster.stunTime.Value,500));
 
             }
 
@@ -2307,13 +2489,22 @@ namespace StardewDruid
             foreach (Farmer farmer in farmers)
             {
 
-                 farmer.takeDamage(damage, parry, monster);
+                if ((farmer.health + farmer.buffs.Defense) - damage < 10)
+                {
+
+                    Mod.instance.CriticalCondition();
+
+                    break;
+
+                }
+
+                farmer.takeDamage(damage, parry, monster);
 
             }
 
         }
 
-        public static List<StardewValley.Monsters.Monster> MonsterProximity(GameLocation targetLocation, Vector2 targetPosition, int radius, bool checkInvincible = false)
+        public static List<StardewValley.Monsters.Monster> MonsterProximity(GameLocation targetLocation, List<Vector2> targetPosition, int radius, bool checkInvincible = false)
         {
 
             List<StardewValley.Monsters.Monster> monsterList = new();
@@ -2350,11 +2541,9 @@ namespace StardewDruid
                         monsterThreshold += 32f;
                     }
 
-                    float monsterDifference = Vector2.Distance(monster.Position, targetPosition);
-
-                    if (monsterDifference < monsterThreshold)
+                    if (Proximation(monster.Position, targetPosition, monsterThreshold))
                     {
-                        
+
                         monsterList.Add(monster);
 
                     }
@@ -2364,6 +2553,27 @@ namespace StardewDruid
             }
 
             return monsterList;
+
+        }
+
+        public static bool Proximation(Vector2 position, List<Vector2> positions, float threshold)
+        {
+
+            foreach (Vector2 attempt in positions)
+            {
+
+                float difference = Vector2.Distance(position, attempt);
+
+                if (difference < threshold)
+                {
+
+                    return true;
+
+                }
+
+            }
+
+            return false;
 
         }
 
@@ -2495,13 +2705,13 @@ namespace StardewDruid
                 if (shellGone != null)
                 {
 
-                    if(!(NetBool)shellGone)
+                    if(!(shellGone as NetBool).Value)
                     {
                         FieldInfo shellField = reflectType.GetField("shellHealth", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
                         var shellHealth = shellField.GetValue(crabby);
                         
-                        for(int i = 0; i < (NetInt)shellHealth; i++)
+                        for(int i = 0; i < (shellHealth as NetInt).Value; i++)
                         {
 
                             crabby.hitWithTool(Mod.instance.virtualPick);
@@ -2521,7 +2731,7 @@ namespace StardewDruid
 
             }
 
-            foreach (BaseEnchantment enchantment in targetPlayer.enchantments)
+            foreach (StardewValley.Enchantments.BaseEnchantment enchantment in targetPlayer.enchantments)
             {
                 enchantment.OnCalculateDamage(targetMonster, targetLocation, targetPlayer, ref damageDealt);
             }
@@ -2543,7 +2753,7 @@ namespace StardewDruid
 
             targetLocation.debris.Add(new Debris(damageDealt, new Vector2(boundingBox.Center.X + 16, boundingBox.Center.Y), color, critApplied ? 1f + damageDealt / 300f : 1f, targetMonster));
 
-            foreach (BaseEnchantment enchantment2 in targetPlayer.enchantments)
+            foreach (StardewValley.Enchantments.BaseEnchantment enchantment2 in targetPlayer.enchantments)
             {
                 enchantment2.OnDealDamage(targetMonster, targetLocation, targetPlayer, ref damageDealt);
             }
@@ -2555,7 +2765,7 @@ namespace StardewDruid
 
                 if (Game1.player.team.specialOrders is not null)
                 {
-                    foreach (SpecialOrder specialOrder in Game1.player.team.specialOrders)
+                    foreach (StardewValley.SpecialOrders.SpecialOrder specialOrder in Game1.player.team.specialOrders)
                     {
                         if (specialOrder.onMonsterSlain != null)
                         {
@@ -2564,7 +2774,7 @@ namespace StardewDruid
                     }
                 }
 
-                foreach (BaseEnchantment enchantment3 in targetPlayer.enchantments)
+                foreach (StardewValley.Enchantments.BaseEnchantment enchantment3 in targetPlayer.enchantments)
                 {
                     enchantment3.OnMonsterSlay(targetMonster, targetLocation, targetPlayer);
                 }
@@ -2597,7 +2807,7 @@ namespace StardewDruid
 
                 if (targetMonster.isHardModeMonster.Value)
                 {
-                    Game1.stats.incrementStat("hardModeMonstersKilled", 1);
+                    Game1.stats.Increment("hardModeMonstersKilled", 1);
                 }
 
                 //targetLocation.characters.Remove(targetMonster);
@@ -2617,20 +2827,9 @@ namespace StardewDruid
 
             List<Vector2> returnVectors = new();
 
-            TemporaryAnimatedSprite bigAnimation = new(23, 9999f, 6, 1, new Vector2(targetVector.X * 64f, targetVector.Y * 64f), flicker: false, (Game1.random.NextDouble() < 0.5) ? true : false)
-            {
-                light = true,
-                lightRadius = radius + 1,
-                lightcolor = Color.Black,
-                alphaFade = 0.03f - 3f * 0.003f,
-                Parent = targetLocation
-            };
-
-            targetLocation.temporarySprites.Add(bigAnimation);
-
             // ----------------- clump destruction
 
-            if (targetLocation.resourceClumps.Count > 0 && powerLevel >= 3)
+            if (targetLocation.resourceClumps.Count > 0 && powerLevel >= 4)
             {
                 
                 for (int index = targetLocation.resourceClumps.Count - 1; index >= 0; --index)
@@ -2638,7 +2837,7 @@ namespace StardewDruid
                     
                     ResourceClump resourceClump = targetLocation.resourceClumps[index];
                     
-                    Vector2 targetVector1 = resourceClump.tile.Value;
+                    Vector2 targetVector1 = resourceClump.Tile;
                     
                     if ((double)Vector2.Distance(targetVector1, targetVector) <= radius + 1)
                     {
@@ -2660,7 +2859,7 @@ namespace StardewDruid
             
             }
             
-            if (targetLocation is Woods woods && powerLevel >= 3)
+            /*if (targetLocation is Woods woods && powerLevel >= 4)
             {
                
                 for (int index = woods.stumps.Count - 1; index >= 0; --index)
@@ -2679,7 +2878,7 @@ namespace StardewDruid
 
                 }
             
-            }
+            }*/
 
 
             // ----------------- object destruction
@@ -2727,10 +2926,12 @@ namespace StardewDruid
                             
                             if (powerLevel >= 2)
                             {
-                                
-                                Vector2 stoneVector = targetPlayer.getTileLocation();
 
-                                targetLocation.OnStoneDestroyed(@targetObject.ParentSheetIndex, (int)stoneVector.X, (int)stoneVector.Y, targetPlayer);
+                                //Vector2 stoneVector = targetPlayer.Tile;
+
+                                //targetLocation.OnStoneDestroyed(@targetObject.ParentSheetIndex, (int)stoneVector.X, (int)stoneVector.Y, targetPlayer);
+
+                                targetLocation.OnStoneDestroyed(@targetObject.ParentSheetIndex.ToString(), (int)tileVector.X, (int)tileVector.Y, targetPlayer);
 
                                 targetLocation.objects.Remove(tileVector);
 
@@ -2742,13 +2943,18 @@ namespace StardewDruid
                         else if (targetObject.Name.Contains("Twig"))
                         {
 
-                            for (int fibreDebris = 2; fibreDebris < i; fibreDebris++)
-                            {
+                            //for (int fibreDebris = 2; fibreDebris < i; fibreDebris++)
+                            //{
 
-                                Throw throwObject = new(targetPlayer, tileVector * 64, 388);
+                            //   Throw throwObject = new(targetPlayer, tileVector * 64, 388);
 
-                                throwObject.ThrowObject();
-                            }
+                            //    throwObject.ThrowObject();
+                            //}
+                            Throw throwObject = new(targetPlayer, tileVector * 64, 388);
+
+                            throwObject.ThrowObject();
+
+                            targetObject.onExplosion(targetPlayer);
 
                             targetLocation.objects.Remove(tileVector);
 
@@ -2762,6 +2968,8 @@ namespace StardewDruid
 
                             throwObject.ThrowObject();
 
+                            targetObject.onExplosion(targetPlayer);
+
                             targetLocation.objects.Remove(tileVector);
 
                             destroyVector = true;
@@ -2771,7 +2979,7 @@ namespace StardewDruid
                         {
                             targetObject.MinutesUntilReady = 1;
 
-                            targetObject.performToolAction(Pick, targetLocation);
+                            targetObject.performToolAction(Pick);
 
                             targetLocation.objects.Remove(tileVector);
 
@@ -2780,11 +2988,11 @@ namespace StardewDruid
                         else if (targetObject is BreakableContainer breakableContainer)
                         {
 
-                            breakableContainer.releaseContents(targetLocation, targetPlayer);
+                            breakableContainer.releaseContents(targetPlayer);
 
                             targetLocation.objects.Remove(tileVector);
 
-                            targetLocation.playSound("barrelBreak", 0);
+                            targetLocation.playSound("barrelBreak", tileVector*64);
 
                             destroyVector = true;
 
@@ -2795,7 +3003,7 @@ namespace StardewDruid
                             // do nothing
 
                         }
-                        else if (powerLevel >= 2)
+                        else if (powerLevel >= 3)
                         {
 
                             // ----------------- dislodge craftable
@@ -2805,9 +3013,9 @@ namespace StardewDruid
 
                                 Tool toolUse = (j == 0) ? Pick : Axe;
 
-                                if (targetLocation.objects.ContainsKey(tileVector) && targetObject.performToolAction(toolUse, targetLocation))
+                                if (targetLocation.objects.ContainsKey(tileVector) && targetObject.performToolAction(toolUse))
                                 {
-                                    targetObject.performRemoveAction(tileVector, targetLocation);
+                                    targetObject.performRemoveAction();
 
                                     targetObject.dropItem(targetLocation, tileVector * 64, tileVector * 64 + new Vector2(0, 32));
 
@@ -2824,7 +3032,7 @@ namespace StardewDruid
                     if (targetLocation.terrainFeatures.ContainsKey(tileVector))
                     {
 
-                        if (powerLevel >= 2)
+                        if (powerLevel >= 3)
                         {
 
                             if (targetLocation.terrainFeatures[tileVector] is StardewValley.TerrainFeatures.Tree)
@@ -2835,13 +3043,13 @@ namespace StardewDruid
                                 if (targetTree.growthStage.Value >= 5)
                                 {
 
-                                    targetTree.performToolAction(null, (int)targetTree.health.Value, tileVector, targetLocation);
+                                    targetTree.performToolAction(null, (int)targetTree.health.Value, tileVector);
 
                                 }
                                 else
                                 {
 
-                                    targetTree.performToolAction(Axe, 0, tileVector, targetLocation);
+                                    targetTree.performToolAction(Axe, 0, tileVector);
 
                                     targetLocation.terrainFeatures.Remove(tileVector);
 
@@ -3002,18 +3210,17 @@ namespace StardewDruid
                 pickaxe1.UpgradeLevel = 3;
                 targetPlayer.Stamina += Math.Min(2f, targetPlayer.MaxStamina - targetPlayer.Stamina);
                 pickaxe1.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
-                resourceClump.performToolAction(pickaxe1, 1, targetVector, targetLocation);
+                resourceClump.performToolAction(pickaxe1, 1, targetVector);
             }
             else
             {
                 //targetPlayer.Stamina += Math.Min(2f, targetPlayer.MaxStamina - targetPlayer.Stamina);
                 //Mod.instance.virtualPick.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
-                resourceClump.performToolAction(Mod.instance.virtualPick, 1, targetVector, targetLocation);
+                resourceClump.performToolAction(Mod.instance.virtualPick, 1, targetVector);
             }
             resourceClump.NeedsUpdate = false;
             targetLocation._activeTerrainFeatures.Remove(resourceClump);
             targetLocation.resourceClumps.Remove(resourceClump);
-            resourceClump.currentLocation = null;
 
             Throw throwObject;
 
@@ -3087,13 +3294,13 @@ namespace StardewDruid
                 Axe axe = new Axe();
                 axe.UpgradeLevel = 3;
                 axe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
-                resourceClump.performToolAction(axe, 1, targetVector, targetLocation);
+                resourceClump.performToolAction(axe, 1, targetVector);
             }
             else
             {
                 //targetPlayer.Stamina += Math.Min(2f, targetPlayer.MaxStamina - targetPlayer.Stamina);
                 //(Mod.instance.virtualAxe).DoFunction(targetLocation, 0, 0, 1, targetPlayer);
-                resourceClump.performToolAction(Mod.instance.virtualAxe, 1, targetVector, targetLocation);
+                resourceClump.performToolAction(Mod.instance.virtualAxe, 1, targetVector);
             }
             resourceClump.NeedsUpdate = false;
 
@@ -3111,7 +3318,7 @@ namespace StardewDruid
             }
             switch (resourceType)
             {
-                case "Woods":
+                /*case "Woods":
                     Woods woods = targetLocation as Woods;
                     if (!woods.stumps.Contains(resourceClump))
                         break;
@@ -3119,7 +3326,7 @@ namespace StardewDruid
                     break;
                 case "Log":
                     (targetLocation as Forest).log = null;
-                    break;
+                    break;*/
                 default:
                     if (targetLocation._activeTerrainFeatures.Contains(resourceClump))
                     {

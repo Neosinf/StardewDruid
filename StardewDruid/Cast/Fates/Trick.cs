@@ -13,20 +13,15 @@ namespace StardewDruid.Cast.Fates
 
         NPC riteWitness;
 
-        //int source;
-
         int friendship;
 
         private string trick;
 
-        //public Trick(Vector2 target, Rite rite, NPC witness, int Source)
-        public Trick(Vector2 target, Rite rite, NPC witness)
-            : base(target, rite)
+        public Trick(Vector2 target,  NPC witness)
+            : base(target)
         {
 
             riteWitness = witness;
-
-            //source = Source;
 
         }
 
@@ -39,7 +34,7 @@ namespace StardewDruid.Cast.Fates
 
             DelayedAction.functionAfterDelay(CastAfterDelay, 1000);
 
-            ModUtility.AnimateFateTarget(targetLocation, targetPlayer.Position, riteWitness.Position);
+            ModUtility.AnimateCursor(targetLocation, targetPlayer.Position, riteWitness.Position,"Fates");
 
             castFire = true;
 
@@ -48,11 +43,13 @@ namespace StardewDruid.Cast.Fates
         public void CastAfterDelay()
         {
 
+            if (riteWitness == null || targetLocation == null) { return; }
+
             friendship = 100;
 
             int friendshipRatio = 3;
 
-            if (!riteData.castTask.ContainsKey("masterTrick"))
+            if (!Mod.instance.rite.castTask.ContainsKey("masterTrick"))
             {
 
                 Mod.instance.UpdateTask("lessonTrick", 1);
@@ -69,22 +66,16 @@ namespace StardewDruid.Cast.Fates
 
             trick = "butterflies";
 
-            //switch (source)
-            //{
-            //  case 768:
-
             int interval = 2000;
 
             int trickInt = randomIndex.Next(6);
-
-            //trickInt = 3;
 
             switch (trickInt)
             {
 
                 case 0:
 
-                    ModUtility.AnimateMeteor(targetLocation, riteWitness.getTileLocation() - new Vector2(0, 1), true);
+                    ModUtility.AnimateMeteor(targetLocation, riteWitness.Tile - new Vector2(0, 1), true);
 
                     DelayedAction.functionAfterDelay(DeathSpray, 200);
 
@@ -96,7 +87,7 @@ namespace StardewDruid.Cast.Fates
 
                 case 1:
 
-                    ModUtility.AnimateBolt(targetLocation, riteWitness.getTileLocation() - new Vector2(0, 1));
+                    ModUtility.AnimateBolt(targetLocation, riteWitness.Tile - new Vector2(0, 1));
 
                     DelayedAction.functionAfterDelay(DeathSpray, 200);
 
@@ -108,7 +99,7 @@ namespace StardewDruid.Cast.Fates
 
                 case 2:
 
-                    ModUtility.AnimateRandomCritter(targetLocation, riteWitness.getTileLocation());
+                    ModUtility.AnimateRandomCritter(targetLocation, riteWitness.Tile);
 
                     friendship = randomIndex.Next(1, friendshipRatio) * 25;
 
@@ -118,7 +109,7 @@ namespace StardewDruid.Cast.Fates
 
                 case 3:
 
-                    Event.World.Levitate levitation = new(targetVector, riteData, riteWitness);
+                    Levitate levitation = new(targetVector, riteWitness);
 
                     levitation.EventTrigger();
 
@@ -130,7 +121,7 @@ namespace StardewDruid.Cast.Fates
 
                 case 4:
 
-                    ModUtility.AnimateRandomFish(targetLocation, riteWitness.getTileLocation());
+                    ModUtility.AnimateRandomFish(targetLocation, riteWitness.Tile);
 
                     friendship = randomIndex.Next(1, friendshipRatio) * 25;
 
@@ -140,7 +131,7 @@ namespace StardewDruid.Cast.Fates
 
                 default:
 
-                    ModUtility.AnimateButterflySpray(targetLocation, riteWitness.getTileLocation());
+                    ModUtility.AnimateButterflySpray(targetLocation, riteWitness.Tile);
 
                     friendship = randomIndex.Next(1, friendshipRatio) * 25;
                     break;
@@ -150,11 +141,11 @@ namespace StardewDruid.Cast.Fates
             TemporaryAnimatedSprite radiusAnimation = new(0, interval, 1, 1, riteWitness.Position - new Microsoft.Xna.Framework.Vector2(64,64), false, false)
             {
 
-                sourceRect = new(0, 0, 64, 64),
+                sourceRect = new(192, 0, 64, 64),
 
-                sourceRectStartingPos = new Vector2(0, 0),
+                sourceRectStartingPos = new Vector2(192, 0),
 
-                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images","Warp.png")),
+                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Decorations.png")),
 
                 scale = 3f, //* size,
 

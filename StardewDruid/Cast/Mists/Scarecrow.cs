@@ -9,11 +9,11 @@ namespace StardewDruid.Cast.Mists
     internal class Scarecrow : CastHandle
     {
 
-        public Scarecrow(Vector2 target, Rite rite)
-            : base(target, rite)
+        public Scarecrow(Vector2 target)
+            : base(target)
         {
 
-            castCost = Math.Max(12, 48 - rite.caster.FarmingLevel * 3);
+            castCost = Math.Max(12, 48 - Game1.player.FarmingLevel * 3);
 
         }
 

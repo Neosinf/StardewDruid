@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace StardewDruid
 {
-    public class ActiveData
+    /*public class ActiveData
     {
 
         public string activeBlessing = "none";
@@ -31,6 +31,6 @@ namespace StardewDruid
 
         public Dictionary<string, bool> spawnIndex = new();
 
-    }
+    }*/
 
 }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using StardewDruid.Event.World;
+using StardewValley;
 using System;
 using System.Collections.Generic;
 
@@ -8,11 +8,11 @@ namespace StardewDruid.Cast.Weald
     internal class Tree : CastHandle
     {
 
-        public Tree(Vector2 target, Rite rite)
-            : base(target, rite)
+        public Tree(Vector2 target)
+            : base(target)
         {
 
-            if (rite.caster.ForagingLevel >= 8)
+            if (Game1.player.ForagingLevel >= 8)
             {
 
                 castCost = 1;
@@ -38,50 +38,33 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if (riteData.spawnIndex["grass"] && !Mod.instance.EffectDisabled("Trees")) // 2/10 grass
+            if (!treeFeature.stump.Value && Mod.instance.rite.spawnIndex["grass"] && !Mod.instance.EffectDisabled("Grass")) // 2/10 grass
             {
 
-                Dictionary<string, List<Vector2>> neighbourList = ModUtility.NeighbourCheck(targetLocation, targetVector);
+                List<Vector2> surrounding = ModUtility.GetTilesWithinRadius(targetLocation, targetVector, 1);
 
-                if (neighbourList.Count == 0)
+                for(int i = 0; i < surrounding.Count; i++)
                 {
 
-                    List<Vector2> grassVectors = new();
+                    if(i % 2 == 1) { continue; }
 
-                    if (neighbourList.ContainsKey("Dirt"))
+                    if(randomIndex.Next(2) != 0)
                     {
-
-                        foreach (Vector2 neighbour in neighbourList["Dirt"])
-                        {
-                            grassVectors.Add(neighbour);
-
-                        }
-
+                        continue;
                     }
 
-                    if (neighbourList.ContainsKey("Grass"))
+                    if(ModUtility.NeighbourCheck(targetLocation, surrounding[i],0).Count > 0)
                     {
-
-                        foreach (Vector2 neighbour in neighbourList["Grass"])
-                        {
-                            grassVectors.Add(neighbour);
-
-                        }
-
+                        continue;
                     }
 
-                    foreach (Vector2 grassVector in grassVectors)
-                    {
+                    StardewValley.TerrainFeatures.Grass grassFeature = new(1, 4);
 
-                        StardewValley.TerrainFeatures.Grass grassFeature = new(1, 4);
+                    targetLocation.terrainFeatures.Add(surrounding[i], grassFeature);
 
-                        targetLocation.terrainFeatures.Add(grassVector, grassFeature);
+                    Microsoft.Xna.Framework.Rectangle tileRectangle = new((int)surrounding[i].X * 64 + 1, (int)surrounding[i].Y * 64 + 1, 62, 62);
 
-                        Microsoft.Xna.Framework.Rectangle tileRectangle = new((int)grassVector.X * 64 + 1, (int)grassVector.Y * 64 + 1, 62, 62);
-
-                        grassFeature.doCollisionAction(tileRectangle, 2, grassVector, null, targetLocation);
-
-                    }
+                    grassFeature.doCollisionAction(tileRectangle, 2, surrounding[i], Game1.player);
 
                 }
 
@@ -100,7 +83,7 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if (treeFeature.treeType.Value == 8) //mahogany
+            if (treeFeature.treeType.Value == "8") //mahogany
             {
 
                 debrisType = 709; debrisMax = 1;
@@ -114,7 +97,7 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if (treeFeature.treeType.Value == 7) // mushroom
+            if (treeFeature.treeType.Value == "7") // mushroom
             {
 
                 debrisType = 420; debrisMax = 1;
@@ -135,7 +118,7 @@ namespace StardewDruid.Cast.Weald
             if (!treeFeature.stump.Value)
             {
 
-                treeFeature.performUseAction(targetVector, targetLocation);
+                treeFeature.performUseAction(targetVector);
 
             }
 
@@ -144,6 +127,8 @@ namespace StardewDruid.Cast.Weald
             targetPlayer.gainExperience(2, 2); // gain foraging experience
 
 
+            Vector2 cursorVector = targetVector * 64 + new Vector2(0, 8);
+            ModUtility.AnimateCursor(targetLocation, cursorVector, cursorVector);
         }
 
     }

@@ -7,8 +7,8 @@ namespace StardewDruid.Cast.Mists
     internal class Artifact : CastHandle
     {
 
-        public Artifact(Vector2 target, Rite rite)
-            : base(target, rite)
+        public Artifact(Vector2 target)
+            : base(target)
         {
 
         }

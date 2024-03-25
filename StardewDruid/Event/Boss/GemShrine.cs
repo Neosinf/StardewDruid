@@ -13,15 +13,13 @@ namespace StardewDruid.Event.Boss
 
         public List<Firebird> fireBirds;
 
-        public GemShrine(Vector2 target, Rite rite, Quest quest)
-            : base(target, rite, quest)
+        public GemShrine(Vector2 target,  Quest quest)
+            : base(target, quest)
         {
 
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 90;
 
             fireBirds = new List<Firebird>();
-
-            voicePosition = new Vector2(24, 22) * 64;
 
         }
 
@@ -30,13 +28,15 @@ namespace StardewDruid.Event.Boss
             
             cues = DialogueData.DialogueScene(questData.name);
 
-            ModUtility.AnimateRadiusDecoration(targetLocation, targetVector, "Stars", 1f, 1f);
+            AddActor(new Vector2(24, 22) * 64);
+
+            ModUtility.AnimateCursor(targetLocation, targetVector*64, targetVector * 64, "Stars");
 
             ModUtility.AnimateMeteor(targetLocation, targetVector, true);
 
             Mod.instance.RegisterEvent(this, "active");
 
-            Game1.addHUDMessage(new HUDMessage($"Gem Shrine challenge initiated", ""));
+            Mod.instance.CastMessage("Gem Shrine challenge initiated");
 
         }
 
@@ -50,7 +50,7 @@ namespace StardewDruid.Event.Boss
                 foreach (Firebird fireBird in fireBirds)
                 {
 
-                    riteData.castLocation.characters.Remove(fireBird);
+                    Mod.instance.rite.castLocation.characters.Remove(fireBird);
 
                 }
 
@@ -67,19 +67,19 @@ namespace StardewDruid.Event.Boss
             {
                 if (expireEarly)
                 {
-
+                    
                     DialogueCue(DialogueData.DialogueNarrator(questData.name), new() { [0] = actors[0], }, 991);
 
                     if (!questData.name.Contains("Two"))
                     {
 
-                        Game1.createObjectDebris(74, 24, 21);
+                        Game1.createObjectDebris("74", 24, 21);
 
                     }
 
-                    Game1.createObjectDebris(69, 24, 21);
+                    Game1.createObjectDebris("69", 24, 21);
 
-                    Game1.createObjectDebris(835, 24, 21);
+                    Game1.createObjectDebris("835", 24, 21);
 
                     EventComplete();
 
@@ -148,15 +148,15 @@ namespace StardewDruid.Event.Boss
                     scale = 1.25f,
                 };
 
-                riteData.castLocation.temporarySprites.Add(smallAnimation);
+                Mod.instance.rite.castLocation.temporarySprites.Add(smallAnimation);
 
                 GemBirdType gemBirdType = GetBirdTypeForLocation("IslandWest");
 
                 Firebird westBird = MonsterData.CreateMonster(birdTypes[gemBirdType.ToString()], westVector) as Firebird;
 
-                riteData.castLocation.characters.Add(westBird);
+                Mod.instance.rite.castLocation.characters.Add(westBird);
 
-                westBird.update(Game1.currentGameTime, riteData.castLocation);
+                westBird.update(Game1.currentGameTime, Mod.instance.rite.castLocation);
 
                 if (!questData.name.Contains("Two"))
                 {
@@ -176,15 +176,15 @@ namespace StardewDruid.Event.Boss
                     scale = 1.25f,
                 };
 
-                riteData.castLocation.temporarySprites.Add(smallAnimation);
+                Mod.instance.rite.castLocation.temporarySprites.Add(smallAnimation);
 
                 gemBirdType = GetBirdTypeForLocation("IslandEast");
 
                 Firebird eastBird = MonsterData.CreateMonster(birdTypes[gemBirdType.ToString()], eastVector) as Firebird; ;
 
-                riteData.castLocation.characters.Add(eastBird);
+                Mod.instance.rite.castLocation.characters.Add(eastBird);
 
-                eastBird.update(Game1.currentGameTime, riteData.castLocation);
+                eastBird.update(Game1.currentGameTime, Mod.instance.rite.castLocation);
 
                 fireBirds.Add(eastBird);
 
@@ -198,15 +198,15 @@ namespace StardewDruid.Event.Boss
                     scale = 1.25f,
                 };
 
-                riteData.castLocation.temporarySprites.Add(smallAnimation);
+                Mod.instance.rite.castLocation.temporarySprites.Add(smallAnimation);
 
                 gemBirdType = GetBirdTypeForLocation("IslandSouth");
 
                 Firebird southBird = MonsterData.CreateMonster(birdTypes[gemBirdType.ToString()], southVector) as Firebird;
 
-                riteData.castLocation.characters.Add(southBird);
+                Mod.instance.rite.castLocation.characters.Add(southBird);
 
-                southBird.update(Game1.currentGameTime, riteData.castLocation);
+                southBird.update(Game1.currentGameTime, Mod.instance.rite.castLocation);
 
                 fireBirds.Add(southBird);
 
@@ -220,15 +220,15 @@ namespace StardewDruid.Event.Boss
                     scale = 1.25f,
                 };
 
-                riteData.castLocation.temporarySprites.Add(smallAnimation);
+                Mod.instance.rite.castLocation.temporarySprites.Add(smallAnimation);
 
                 gemBirdType = GetBirdTypeForLocation("IslandNorth");
 
                 Firebird northBird = MonsterData.CreateMonster(birdTypes[gemBirdType.ToString()], northVector) as Firebird;
 
-                riteData.castLocation.characters.Add(northBird);
+                Mod.instance.rite.castLocation.characters.Add(northBird);
 
-                northBird.update(Game1.currentGameTime, riteData.castLocation);
+                northBird.update(Game1.currentGameTime, Mod.instance.rite.castLocation);
 
                 fireBirds.Add(northBird);
 
@@ -240,9 +240,7 @@ namespace StardewDruid.Event.Boss
 
             if (activeCounter == 10)
             {
-
-                Game1.addHUDMessage(new HUDMessage($"Hit the birds to stop their fire attacks", ""));
-
+                Mod.instance.CastMessage("Hit the birds to stop their fire attacks");
             }
 
             int defeated = 0;
@@ -253,7 +251,7 @@ namespace StardewDruid.Event.Boss
                 if (!ModUtility.MonsterVitals(bird,targetLocation))
                 {
 
-                    riteData.castLocation.characters.Remove(bird);
+                    Mod.instance.rite.castLocation.characters.Remove(bird);
 
                     defeated++;
 

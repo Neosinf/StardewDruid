@@ -14,8 +14,6 @@ namespace StardewDruid.Cast.Weald
 
         public int powerLevel;
 
-        public bool challengeCast;
-
         public bool generateRock;
 
         //public bool generateHoed;
@@ -24,8 +22,8 @@ namespace StardewDruid.Cast.Weald
 
         public float damage;
 
-        public Rockfall(Vector2 target, Rite rite, float Damage)
-            : base(target, rite)
+        public Rockfall(Vector2 target,  float Damage)
+            : base(target)
         {
 
             castCost = 1;
@@ -45,7 +43,7 @@ namespace StardewDruid.Cast.Weald
 
             int tileY = (int)targetVector.Y;
 
-            Layer backLayer = riteData.castLocation.Map.GetLayer("Back");
+            Layer backLayer = Mod.instance.rite.castLocation.Map.GetLayer("Back");
 
             Tile backTile = backLayer.PickTile(new xTile.Dimensions.Location(tileX * 64, tileY * 64), Game1.viewport.Size);
 
@@ -63,7 +61,7 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            List<int> indexes = Map.SpawnData.RockFall(targetLocation, targetPlayer, Mod.instance.rockCasts[riteData.castLocation.Name]);
+            List<int> indexes = Map.SpawnData.RockFall(targetLocation, targetPlayer, Mod.instance.rockCasts[Mod.instance.rite.castLocation.Name]);
 
             int objectIndex = indexes[0];
 
@@ -85,9 +83,10 @@ namespace StardewDruid.Cast.Weald
         public void RockImpact()
         {
 
-            ModUtility.AnimateDestruction(targetLocation, targetVector);
+            //ModUtility.AnimateDestruction(targetLocation, targetVector);
+            ModUtility.AnimateImpact(targetLocation, targetVector,0,3);
 
-            ModUtility.DamageMonsters(targetLocation, ModUtility.MonsterProximity(targetLocation, targetVector * 64, 2, true), targetPlayer, (int)damage / 3, true);
+            ModUtility.DamageMonsters(targetLocation, ModUtility.MonsterProximity(targetLocation, new() { targetVector * 64, }, 2, true), targetPlayer, (int)damage / 3, true);
 
             ModUtility.Explode(targetLocation, targetVector, targetPlayer, 2, powerLevel:1, dirt:1);
 
@@ -105,29 +104,29 @@ namespace StardewDruid.Cast.Weald
                     if (targetPlayer.professions.Contains(21) && rockCut == 0)
                     {
 
-                        Game1.createObjectDebris(382, (int)targetVector.X, (int)targetVector.Y);
+                        Game1.createObjectDebris("382", (int)targetVector.X, (int)targetVector.Y);
  
                     }
                     else if (targetPlayer.professions.Contains(19) && rockCut == 0)
                     {
 
-                        Game1.createObjectDebris(debrisIndex, (int)targetVector.X, (int)targetVector.Y);
+                        Game1.createObjectDebris(debrisIndex.ToString(), (int)targetVector.X, (int)targetVector.Y);
 
                     }
 
-                    Game1.createObjectDebris(debrisIndex, (int)targetVector.X, (int)targetVector.Y);
+                    Game1.createObjectDebris( debrisIndex.ToString(), (int)targetVector.X, (int)targetVector.Y);
 
                 }
                 else
                 {
 
-                    Game1.createObjectDebris(390, (int)targetVector.X, (int)targetVector.Y);
+                    Game1.createObjectDebris("390", (int)targetVector.X, (int)targetVector.Y);
   
                 }
 
             }
 
-            if (!riteData.castTask.ContainsKey("masterRockfall"))
+            if (!Mod.instance.rite.castTask.ContainsKey("masterRockfall"))
             {
 
                 Mod.instance.UpdateTask("lessonRockfall", generateAmt);

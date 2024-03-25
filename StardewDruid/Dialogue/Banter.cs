@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Map;
 using StardewValley;
+using StardewValley.Extensions;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,8 @@ namespace StardewDruid.Dialogue
 
         public int banterType;
 
+        public Microsoft.Xna.Framework.Color color;
+
         public Banter(string name, Color colour, string message, int type = 0)
           : base(message)
         {
@@ -38,12 +41,12 @@ namespace StardewDruid.Dialogue
             
         }
 
-        public override void draw(SpriteBatch b, int i)
+        public override void draw(SpriteBatch b, int i, ref int heightUsed)
         {
-            
+
             Rectangle titleSafeArea = Game1.graphics.GraphicsDevice.Viewport.GetTitleSafeArea();
 
-            if(banterType == 0)
+            if (banterType == 0)
             {
 
                 string useName = banterName + ":";

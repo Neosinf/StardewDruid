@@ -20,21 +20,21 @@ namespace StardewDruid.Event.Boss
     public class Crypt : BossHandle
     {
 
-        public List<StardewDruid.Monster.Boss.Dragon> bossMonsters;
+        public List<StardewDruid.Monster.Boss.Boss> bossMonsters;
 
-        public Crypt(Vector2 target, Rite rite, Quest quest)
-          : base(target, rite, quest)
+        public Crypt(Vector2 target,  Quest quest)
+          : base(target, quest)
         {
 
             targetVector = target;
-
-            voicePosition = new(targetVector.X * 64f, targetVector.Y * 64f - 32f);
 
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 90.0;
 
             bossMonsters = new();
 
             cues = DialogueData.DialogueScene(questData.name);
+
+            AddActor(new (target.X * 64f, target.Y * 64f - 32f));
 
         }
 
@@ -53,7 +53,7 @@ namespace StardewDruid.Event.Boss
                 for (int i = bossMonsters.Count - 1; i >= 0; i--)
                 {
 
-                    StardewDruid.Monster.Boss.Dragon boss = bossMonsters[i];
+                    StardewDruid.Monster.Boss.Boss boss = bossMonsters[i];
 
                     boss.currentLocation.characters.Remove(boss);
 
@@ -159,7 +159,11 @@ namespace StardewDruid.Event.Boss
 
                 Game1.yLocationAfterWarp = 10;
 
-                voicePosition = new(targetVector.X * 64, targetVector.Y * 64 - 32f);
+                RemoveActors();
+
+                actors.Clear();
+
+                AddActor(new(targetVector.X * 64, targetVector.Y * 64 - 32f));
 
                 SetTrack("tribal");
 
@@ -188,18 +192,24 @@ namespace StardewDruid.Event.Boss
 
                     targetLocation.characters.Add(bossShadowtin);
 
-                    bossShadowtin.currentLocation = riteData.castLocation;
+                    bossShadowtin.currentLocation = Mod.instance.rite.castLocation;
 
-                    bossShadowtin.update(Game1.currentGameTime, riteData.castLocation);
+                    bossShadowtin.update(Game1.currentGameTime, Mod.instance.rite.castLocation);
 
                     bossMonsters.Add(bossShadowtin);
 
                 }
 
+                int monsterIndex;
+
                 for(int j = 0; j < difficulty; j++)
                 {
 
-                    Scavenger bossScavenger = MonsterData.CreateMonster(19, targetVector + new Vector2(4 - (2* difficulty), 6f - (3 * difficulty))) as Scavenger;
+                    monsterIndex = 19;
+
+                    if (j == 1) { monsterIndex = 23; }
+
+                    Scavenger bossScavenger = MonsterData.CreateMonster(monsterIndex, targetVector + new Vector2(4 - (2* difficulty), 6f - (3 * difficulty))) as Scavenger;
 
                     if (questData.name.Contains("Two"))
                     {
@@ -208,14 +218,17 @@ namespace StardewDruid.Event.Boss
 
                     targetLocation.characters.Add(bossScavenger);
 
-                    bossScavenger.currentLocation = riteData.castLocation;
+                    bossScavenger.currentLocation = Mod.instance.rite.castLocation;
 
-                    bossScavenger.update(Game1.currentGameTime, riteData.castLocation);
+                    bossScavenger.update(Game1.currentGameTime, Mod.instance.rite.castLocation);
 
                     bossMonsters.Add(bossScavenger);
 
+                    monsterIndex = 20;
 
-                    Rogue bossRogue = MonsterData.CreateMonster(20, targetVector + new Vector2(-4 + (2 * difficulty), 6f - (3 * difficulty))) as Rogue;
+                    if (j == 1) { monsterIndex = 24; }
+
+                    StardewDruid.Monster.Boss.Shadowtin bossRogue = MonsterData.CreateMonster(monsterIndex, targetVector + new Vector2(-4 + (2 * difficulty), 6f - (3 * difficulty))) as StardewDruid.Monster.Boss.Shadowtin;
 
                     if (questData.name.Contains("Two"))
                     {
@@ -224,9 +237,9 @@ namespace StardewDruid.Event.Boss
 
                     targetLocation.characters.Add(bossRogue);
 
-                    bossRogue.currentLocation = riteData.castLocation;
+                    bossRogue.currentLocation = Mod.instance.rite.castLocation;
 
-                    bossRogue.update(Game1.currentGameTime, riteData.castLocation);
+                    bossRogue.update(Game1.currentGameTime, Mod.instance.rite.castLocation);
 
                     bossMonsters.Add(bossRogue);
 
@@ -253,7 +266,7 @@ namespace StardewDruid.Event.Boss
             for(int i = bossMonsters.Count - 1; i >= 0; i--)
             {
 
-                StardewDruid.Monster.Boss.Dragon boss = bossMonsters[i];
+                StardewDruid.Monster.Boss.Boss boss = bossMonsters[i];
 
                 if (!ModUtility.MonsterVitals(boss, targetLocation))
                 {

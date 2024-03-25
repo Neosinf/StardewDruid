@@ -4,13 +4,15 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
+using StardewDruid.Cast.Ether;
+using StardewDruid.Cast.Mists;
 using StardewDruid.Event;
-using StardewDruid.Event.World;
 using StardewDruid.Map;
 using StardewDruid.Monster;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
+using StardewValley.Buffs;
 using StardewValley.Buildings;
 using StardewValley.Monsters;
 using StardewValley.Network;
@@ -31,8 +33,11 @@ namespace StardewDruid.Character
 
         public int moveDirection;
         public int altDirection;
+        public NetInt netDirection = new NetInt(0);
+        public NetInt netAlternative = new NetInt(0);
         public List<Event.BarrageHandle> barrages;
         public bool loadedOut;
+        public Vector2 setPosition;
 
         public Texture2D characterTexture;
         public Texture2D characterSpecial;
@@ -40,20 +45,18 @@ namespace StardewDruid.Character
         public int walkFrame;
         public int stationaryTimer;
         public Dictionary<int, List<Rectangle>> walkFrames;
-        public NetInt netWalkFrame = new NetInt(0);
-        public NetInt netDirection = new NetInt(0);
-        public NetInt netAlternative = new NetInt(0);
+
         public Texture2D shadowTexture;
         public bool endTransform;
         public List<Rectangle> shadowFrames;
         public SButton leftButton;
         public SButton rightButton;
 
-        public NetInt netFlightFrame = new NetInt(0);
-        public NetInt netFlightHeight = new NetInt(0);
         public NetBool netDashActive = new NetBool(false);
         public Texture2D flightTexture;
         public Texture2D flightSpecial;
+        public int flightFrame;
+        public int flightHeight;
         public Dictionary<int, List<Rectangle>> flightFrames;
         public bool flightActive;
         public int flightDelay;
@@ -70,7 +73,7 @@ namespace StardewDruid.Character
         public List<Rectangle> sweepFrames;
         public bool sweepActive;
         public NetBool netSweepActive = new NetBool(false);
-        public NetInt netSweepFrame = new NetInt(0);
+        public int sweepFrame;
         public int sweepDelay;
         public int sweepTimer;
         public bool cooldownActive;
@@ -84,16 +87,15 @@ namespace StardewDruid.Character
         public int fireTimer;
         public int roarTimer;
         public bool roarActive;
-        public string fireColor;
 
         public Dictionary<int, List<Rectangle>> breathFrames;
         public Dictionary<int, Vector2> breathVectors;
         public Dictionary<int, Vector2> breathVectorsFlip;
-        public NetInt netBreathFrame = new NetInt(0);
+        public int breathFrame;
         public Texture2D breathTexture;
+        public string breathColour;
 
         public NetBool netDigActive = new NetBool(false);
-        public NetInt netDigMoment = new NetInt(0);
         public bool digActive;
         public int digTimer;
         public Vector2 digPosition;
@@ -103,7 +105,6 @@ namespace StardewDruid.Character
         public Texture2D dirtTexture;
 
         public NetBool netDiveActive = new NetBool(false);
-        public NetInt netDiveMoment = new NetInt(0);
         public NetBool netSwimActive = new NetBool(false);
         public List<float> diveRotates;
         public bool terrainActive;
@@ -126,7 +127,7 @@ namespace StardewDruid.Character
         }
 
         public Dragon(Farmer Farmer, Vector2 position, string map, string Name)
-          : base(new AnimatedSprite(Path.Combine("Characters", "Abigail")), position, map, 2, Name, new Dictionary<int, int[]>(), CharacterData.CharacterPortrait(Name), false, null)
+          : base(new AnimatedSprite(Path.Combine("Characters", "Abigail")), position, map, 2, Name, CharacterData.CharacterPortrait(Name), false)
         {
             
             willDestroyObjectsUnderfoot = false;
@@ -146,7 +147,27 @@ namespace StardewDruid.Character
             netAnchor.Set(Farmer.UniqueMultiplayerID);
             
             moveDirection = Game1.player.FacingDirection;
-           
+
+            netDirection.Set(moveDirection);
+
+            FacingDirection = moveDirection;
+
+            if (Mod.instance.CurrentProgress() >= 31)
+            {
+
+                terrainActive = true;
+
+            }
+
+            if (ModUtility.GroundCheck(currentLocation, new Vector2((int)(Position.X / 64), (int)(Position.Y / 64))) == "water")
+            {
+
+                swimActive = true;
+
+                netSwimActive.Set(true);
+
+            }
+
             AnimateMovement(false);
             
             LoadOut();
@@ -271,8 +292,6 @@ namespace StardewDruid.Character
                 }
             };
 
-            fireColor = Name.Replace("Dragon", "");
-
             barrages = new();
 
             digFrames = new List<Rectangle>()
@@ -351,21 +370,25 @@ namespace StardewDruid.Character
                 {
                 new Rectangle(0, 256, 128, 128),
                 new Rectangle(128, 256, 128, 128),
+                new Rectangle(256, 256, 128, 128),
                 },
                 [1] = new List<Rectangle>()
                 {
                 new Rectangle(0, 128, 128, 128),
                 new Rectangle(128, 128, 128, 128),
+                new Rectangle(256, 128, 128, 128),
                 },
                 [2] = new List<Rectangle>()
                 {
                 new Rectangle(0, 0, 128, 128),
                 new Rectangle(128, 0, 128, 128),
+                new Rectangle(256, 0, 128, 128),
                 },
                 [3] = new List<Rectangle>()
                 {
                 new Rectangle(0, 128, 128, 128),
                 new Rectangle(128, 128, 128, 128),
+                new Rectangle(256, 128, 128, 128),
                 }
 
             };
@@ -394,49 +417,32 @@ namespace StardewDruid.Character
                 [7] = new(-88, 8),
             };
 
-            breathTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images",fireColor+"Breath.png"));
-
-            if (Mod.instance.CurrentProgress() >= 31)
+            if(Name == "BlackDragon" || Name == "BlueDragon")
             {
 
-                terrainActive = true;
+                breathColour = "Blue";
 
             }
 
-            if (ModUtility.GroundCheck(currentLocation, new Vector2((int)(Position.X / 64), (int)(Position.Y / 64))) == "water")
-            {
-
-                swimActive = true;
-
-                netSwimActive.Set(true);
-
-            }
+            breathTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images",breathColour+"DragonBreath.png"));
 
         }
 
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddFields(new INetSerializable[17]
-            {
-                 netAnchor,
-                 netDirection,
-                 netAlternative,
-                 netWalkFrame,
-                 netFlightFrame,
-                 netFlightHeight,
-                 netSweepActive,
-                 netSweepFrame,
-                 netDashActive,
-                 netSpecialActive,
-                 netBreathActive,
-                 netBreathFrame,
-                 netDigActive,
-                 netDigMoment,
-                 netDiveActive,
-                 netDiveMoment,
-                 netSwimActive,
-            });
+
+            NetFields.AddField(netAnchor);
+            NetFields.AddField(netDirection);
+            NetFields.AddField(netAlternative);
+            NetFields.AddField(netSweepActive);
+            NetFields.AddField(netDashActive);
+            NetFields.AddField(netSpecialActive);
+            NetFields.AddField(netBreathActive);
+            NetFields.AddField(netDigActive);
+            NetFields.AddField(netDiveActive);
+            NetFields.AddField(netSwimActive);
+
         }
 
         public override void draw(SpriteBatch b, float alpha = 1f)
@@ -499,9 +505,9 @@ namespace StardewDruid.Character
             if (netDiveActive.Value)
             {
 
-                b.Draw(floatTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f - (2f * (netDiveMoment.Value % 3))), diveFrames[netDiveMoment.Value], Color.White, 0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(floatTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f - (2f * (diveMoment % 3))), diveFrames[diveMoment], Color.White, 0f, new Vector2(0.0f, 0.0f), 3f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
-                b.Draw(swimTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f - (2f * (netDiveMoment.Value % 3))), bobberFrames[netDiveMoment.Value], Color.White * 0.35f, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(swimTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f - (2f * (diveMoment % 3))), bobberFrames[diveMoment], Color.White * 0.35f, 0.0f, new Vector2(0.0f, 0.0f), 3f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
                 return;
             }
@@ -509,11 +515,11 @@ namespace StardewDruid.Character
             if(netSwimActive.Value)
             {
                 
-                int swimFrame = (netDirection.Value * 2) + (netWalkFrame.Value % 2);
+                int swimFrame = (netDirection.Value * 2) + (walkFrame % 2);
 
-                b.Draw(floatTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f), floatFrames[netDirection.Value], Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(floatTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f), floatFrames[netDirection.Value], Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
-                b.Draw(swimTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f), swimFrames[swimFrame], Color.White * 0.35f, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(swimTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f), swimFrames[swimFrame], Color.White * 0.35f, 0.0f, new Vector2(0.0f, 0.0f), 3f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
                 return;
 
@@ -522,7 +528,7 @@ namespace StardewDruid.Character
             if (netDigActive.Value)
             {
 
-                int digFrame = netDigMoment.Value % 2;
+                int digFrame = digMoment % 2;
 
                 b.Draw(digTexture, new Vector2(localPosition.X - 224f, localPosition.Y - 160f), digFrames[digFrame], Color.White, 0f, new Vector2(0.0f, 0.0f), 3f, SpriteEffects.None, drawLayer);
 
@@ -560,9 +566,9 @@ namespace StardewDruid.Character
                         break;
                 }
 
-                int sweepFrame = (netDirection.Value + netSweepFrame.Value + sweepAdjust + 1) % 6;
+                int sweepingFrame = (netDirection.Value + sweepFrame + sweepAdjust + 1) % 6;
 
-                switch (sweepFrame)
+                switch (sweepingFrame)
                 {
                     case 0:
                     case 5:
@@ -575,30 +581,30 @@ namespace StardewDruid.Character
 
                 }
 
-                bool sweepFlip = sweepFrame > 2;
+                bool sweepFlip = sweepingFrame > 2;
 
                 if (netSpecialActive.Value)
                 {
 
-                    b.Draw(flightSpecial, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - netFlightHeight.Value), sweepFrames[sweepFrame], Color.White, 0f, new Vector2(0.0f, 0.0f), 3f, sweepFlip ? (SpriteEffects)1 : 0, drawLayer);
+                    b.Draw(flightSpecial, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - flightHeight), sweepFrames[sweepingFrame], Color.White, 0f, new Vector2(0.0f, 0.0f), 3f, sweepFlip ? (SpriteEffects)1 : 0, drawLayer);
 
                     if (netBreathActive.Value)
                     {
 
                         int breathDirection = 0;
 
-                        switch (sweepFrame) { case 0: breathDirection = 0; break; case 1: breathDirection = 1; break; case 2: breathDirection = 2; break; case 3: breathDirection = 2; break; case 4: breathDirection = 3; break; case 5: breathDirection = 0; break; }
+                        switch (sweepingFrame) { case 0: breathDirection = 0; break; case 1: breathDirection = 1; break; case 2: breathDirection = 2; break; case 3: breathDirection = 2; break; case 4: breathDirection = 3; break; case 5: breathDirection = 0; break; }
 
-                        Vector2 breathVector = sweepFrame >= 3 ? breathVectorsFlip[breathDirection + 4] : breathVectors[breathDirection + 4];
+                        Vector2 breathVector = sweepingFrame >= 3 ? breathVectorsFlip[breathDirection + 4] : breathVectors[breathDirection + 4];
 
-                        b.Draw(breathTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f) + (breathVector * 3), breathFrames[breathDirection][netBreathFrame], Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, sweepFrame >= 3 ? (SpriteEffects)1 : 0, drawLayer + (breathDirection == 2 ? 0.005f : -0.005f));
+                        b.Draw(breathTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f) + (breathVector * 3), breathFrames[breathDirection][breathFrame], Color.White * 0.75f, 0.0f, new Vector2(0.0f, 0.0f), 3f, sweepingFrame >= 3 ? (SpriteEffects)1 : 0, drawLayer + (breathDirection == 2 ? 0.005f : -0.005f));
 
                     }
 
                 }
                 else
                 {
-                    b.Draw(flightTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - netFlightHeight.Value), sweepFrames[sweepFrame], Color.White, 0f, new Vector2(0.0f, 0.0f), 3f, sweepFlip ? (SpriteEffects)1 : 0, drawLayer);
+                    b.Draw(flightTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - flightHeight), sweepFrames[sweepFrame], Color.White, 0f, new Vector2(0.0f, 0.0f), 3f, sweepFlip ? (SpriteEffects)1 : 0, drawLayer);
 
                 }
 
@@ -611,14 +617,14 @@ namespace StardewDruid.Character
             if (netSpecialActive.Value)
             {
 
-                b.Draw(characterSpecial, new Vector2(localPosition.X - 64f, localPosition.Y - 160f), walkFrames[netDirection.Value][netWalkFrame.Value], Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(characterSpecial, new Vector2(localPosition.X - 64f, localPosition.Y - 160f), walkFrames[netDirection.Value][walkFrame], Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
                 if(netBreathActive.Value)
                 {
 
-                    Vector2 breathVector = flip || netDirection.Value == 3 ? breathVectorsFlip[netDirection.Value] : breathVectors[netDirection.Value];
+                    Vector2 breathVector = (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? breathVectorsFlip[netDirection.Value] : breathVectors[netDirection.Value];
 
-                    b.Draw(breathTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f) + (breathVector*3), breathFrames[netDirection.Value][netBreathFrame], Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer + (netDirection.Value == 2 ? 0.005f : -0.005f));
+                    b.Draw(breathTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f) + (breathVector*3), breathFrames[netDirection.Value][breathFrame], Color.White * 0.75f, 0.0f, new Vector2(0.0f, 0.0f), 3f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer + (netDirection.Value == 2 ? 0.005f : -0.005f));
 
                 }
 
@@ -626,11 +632,11 @@ namespace StardewDruid.Character
             else
             {
 
-                b.Draw(characterTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f), walkFrames[netDirection.Value][netWalkFrame.Value], Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(characterTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 160f), walkFrames[netDirection.Value][walkFrame], Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
             }
 
-            b.Draw(shadowTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 40f), shadowFrames[netDirection.Value], Color.White * 0.25f, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 1E-05f);
+            b.Draw(shadowTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 40f), shadowFrames[netDirection.Value], Color.White * 0.25f, 0.0f, new Vector2(0.0f, 0.0f), 3f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 1E-05f);
 
         }
 
@@ -653,14 +659,14 @@ namespace StardewDruid.Character
                 if (netSpecialActive.Value)
                 {
 
-                    b.Draw(flightSpecial, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - netFlightHeight.Value), flightFrames[netDirection.Value][netFlightFrame.Value], Color.White, 0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                    b.Draw(flightSpecial, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - flightHeight), flightFrames[netDirection.Value][flightFrame], Color.White, 0f, new Vector2(0.0f, 0.0f), 3f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
                     if (netBreathActive.Value)
                     {
 
-                        Vector2 breathVector = flip || netDirection.Value == 3 ? breathVectorsFlip[netDirection.Value+4] : breathVectors[netDirection.Value+4];
+                        Vector2 breathVector = (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? breathVectorsFlip[netDirection.Value+4] : breathVectors[netDirection.Value+4];
 
-                        b.Draw(breathTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - netFlightHeight.Value) + (breathVector * 3), breathFrames[netDirection.Value][netBreathFrame], Color.White, 0.0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer + (netDirection.Value == 2 ? 0.005f : -0.005f));
+                        b.Draw(breathTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - flightHeight) + (breathVector * 3), breathFrames[netDirection.Value][breathFrame], Color.White*0.75f, 0.0f, new Vector2(0.0f, 0.0f), 3f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer + (netDirection.Value == 2 ? 0.005f : -0.005f));
 
                     }
 
@@ -668,11 +674,11 @@ namespace StardewDruid.Character
                 else
                 {
 
-                    b.Draw(flightTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - netFlightHeight.Value), flightFrames[netDirection.Value][netFlightFrame.Value], Color.White, 0f, new Vector2(0.0f, 0.0f), 3f, flip || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                    b.Draw(flightTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 160f - flightHeight), flightFrames[netDirection.Value][flightFrame], Color.White, 0f, new Vector2(0.0f, 0.0f), 3f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
                 }
 
-                b.Draw(shadowTexture, new Vector2(localPosition.X - 48f, localPosition.Y - 56f), shadowFrames[netDirection.Value + 4], Color.White * 0.25f, 0.0f, new Vector2(0.0f, 0.0f), 4f, flip || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 1E-05f);
+                b.Draw(shadowTexture, new Vector2(localPosition.X - 48f, localPosition.Y - 56f), shadowFrames[netDirection.Value + 4], Color.White * 0.25f, 0.0f, new Vector2(0.0f, 0.0f), 4f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 1E-05f);
 
             }
 
@@ -683,13 +689,13 @@ namespace StardewDruid.Character
 
             Vector2 local = Game1.GlobalToLocal(new Vector2(Position.X, Position.Y - 256f));
 
-            SpriteText.drawStringWithScrollCenteredAt(b, textAboveHead, (int)local.X, (int)local.Y, "", textAboveHeadAlpha, textAboveHeadColor, 1, (float)(getTileY() * 64 / 10000.0 + 1.0 / 1000.0 + getTileX() / 10000.0), false);
+            SpriteText.drawStringWithScrollCenteredAt(b, textAboveHead, (int)local.X, (int)local.Y, "", textAboveHeadAlpha, textAboveHeadColor, 1, (float)(Tile.Y * 64 / 10000.0 + 1.0 / 1000.0 + Tile.X / 10000.0), false);
 
         }
-        
-        public override void reloadSprite()
+
+        public override void reloadSprite(bool onlyAppearance = false)
         {
-            base.reloadSprite();
+            base.reloadSprite(onlyAppearance);
 
             Portrait = CharacterData.CharacterPortrait(Name);
         }
@@ -728,6 +734,8 @@ namespace StardewDruid.Character
             if (!avatar)
             {
 
+                UpdateMultiplayer();
+
                 return;
 
             }
@@ -751,6 +759,14 @@ namespace StardewDruid.Character
 
             if (Mod.instance.CasterBusy())
             {
+
+                specialActive = false;
+
+                specialTimer = 0;
+
+                netSpecialActive.Set(false);
+
+                netBreathActive.Set(false);
 
                 return;
 
@@ -870,15 +886,146 @@ namespace StardewDruid.Character
 
         }
 
+        public void UpdateMultiplayer()
+        {
+
+            if (netDashActive.Value)
+            {
+
+                flightTimer--;
+
+                if(flightTimer <= 0)
+                {
+
+                    flightFrame++;
+
+                    if (flightFrame > 4)
+                    {
+                        flightFrame = 1;
+
+                    }
+
+                    flightTimer = 12;
+                
+                }
+
+                return;
+
+            }
+            else
+            {
+                flightFrame = 0;
+
+                flightTimer = 12;
+
+            }
+
+            if (netSweepActive.Value)
+            {
+
+                sweepTimer--;
+
+                if (sweepTimer <= 0)
+                {
+
+                    sweepFrame++;
+
+                    if (sweepFrame > 4)
+                    {
+                        sweepFrame = 0;
+                    }
+
+                    sweepTimer = 9;
+
+                }
+
+                return;
+
+            }
+            else
+            {
+                sweepFrame = 0;
+
+                sweepTimer = 9;
+
+            }
+
+            if (setPosition != Position || netDirection.Value != moveDirection || netAlternative.Value != altDirection)
+            {
+
+                if(walkFrame == 0)
+                {
+
+                    walkFrame = 1;
+
+                    walkTimer = 9;
+
+                    stationaryTimer = 30;
+
+                }
+
+                walkTimer--;
+
+                if (walkTimer <= 0)
+                {
+
+                    moveDirection = netDirection.Value;
+
+                    altDirection = netAlternative.Value;
+
+                    setPosition = Position;
+
+                    walkFrame++;
+
+                    if (walkFrame > 6)
+                    {
+                    
+                        walkFrame = 1;
+                    
+                    }
+
+                    walkTimer = 9;
+
+                    stationaryTimer = 30;
+
+                }
+
+                return;
+
+            }
+
+            if (stationaryTimer > 0)
+            {
+
+                stationaryTimer--;
+
+                if (stationaryTimer == 0)
+                {
+
+                    walkFrame = 0;
+
+                    walkTimer = 0;
+
+                }
+
+            }
+
+        }
+
         public void UpdateFollow()
         {
+
             if (Position != Game1.player.Position)
             {
                 if (moveDirection % 2 == 1)
                 {
                     netAlternative.Set(Game1.player.Position.X > (double)Position.X ? 1 : 3);
                 }
-                    
+
+                netDirection.Set(moveDirection);
+
+                FacingDirection = moveDirection;
+
                 Position = Game1.player.Position;
 
                 AnimateMovement();
@@ -886,10 +1033,14 @@ namespace StardewDruid.Character
                 return;
 
             }
-            
-            if(netDirection.Value != moveDirection)
+
+            if (netDirection.Value != moveDirection)
             {
-                
+
+                netDirection.Set(moveDirection);
+
+                FacingDirection = moveDirection;
+
                 netAlternative.Set(netDirection.Value);
 
                 AnimateMovement();
@@ -906,7 +1057,9 @@ namespace StardewDruid.Character
                 if(stationaryTimer == 0)
                 {
 
-                    AnimateMovement(false);
+                    walkFrame = 0;
+
+                    walkTimer = 0;
 
                 }
 
@@ -916,25 +1069,6 @@ namespace StardewDruid.Character
 
         public void AnimateMovement(bool movement = true)
         {
-
-            if (!avatar)
-            {
-                moveDirection = netDirection.Value;
-            }
-            else
-            {
-                netDirection.Set(moveDirection);
-            }
-
-            FacingDirection = moveDirection;
-
-            flip = false;
-
-            if (moveDirection % 2 == 0 && netAlternative.Value == 3)
-            {
-                flip = true;
-
-            }
 
             if (movement)
             {
@@ -951,11 +1085,15 @@ namespace StardewDruid.Character
                         walkFrame = 1;
                     }
 
-                    netWalkFrame.Set(walkFrame);
-
                     walkTimer = 9;
 
                     stationaryTimer = 5;
+
+                    if (!avatar)
+                    {
+                        stationaryTimer = 30;
+
+                    }
 
                 }
 
@@ -969,25 +1107,6 @@ namespace StardewDruid.Character
 
             stationaryTimer = 0;
 
-            netWalkFrame.Set(0);
-
-        }
-
-        public void PlayerBusy()
-        {
-            
-            if (specialActive && specialDelay > 0)
-            {
-                specialActive = false;
-                netSpecialActive.Set(false);
-            }
-
-            if (flightActive && flightDelay > 0)
-            {
-                flightActive = false;
-                netDashActive.Set(false);
-            }
-            
         }
 
         public void LeftClickAction(SButton Button)
@@ -1036,12 +1155,15 @@ namespace StardewDruid.Character
 
         public void DefenseBuff()
         {
-            if (Game1.buffsDisplay.hasBuff(184655))
-                return;
-            Buff buff = new Buff("Dragon Scales", 3000, "Rite of the Ether", 10);
-            buff.buffAttributes[10] = 5;
-            buff.which = 184655;
-            Game1.buffsDisplay.addOtherBuff(buff);
+
+            BuffEffects buffEffect = new();
+
+            buffEffect.Defense.Set(5);
+
+            Buff speedBuff = new("184655", source: "Rite of the Ether", displaySource: "Rite of the Ether", duration: 3000, displayName: "Dragon Scales", description: "Rite of the Ether", effects: buffEffect);
+
+            anchor.buffs.Apply(speedBuff);
+
         }
 
         public void PerformFlight()
@@ -1071,7 +1193,7 @@ namespace StardewDruid.Character
 
             flightDelay = 3;
 
-            netFlightFrame.Set(0);
+            flightFrame = 0;
 
             flightTimer = flightIncrement * flightRange;
 
@@ -1083,12 +1205,21 @@ namespace StardewDruid.Character
 
             flightExtend = flightIncrement * 6;
 
+            if (!Mod.instance.eventRegister.ContainsKey("shield"))
+            {
+
+                ShieldEvent shieldEvent = new(Game1.player.Position);
+
+                shieldEvent.EventTrigger();
+
+            }
+            /*
             Game1.player.temporarilyInvincible = true;
 
             Game1.player.temporaryInvincibilityTimer = 0;
 
             Game1.player.currentTemporaryInvincibilityDuration = 100 * flightIncrement;
-
+            */
         }
 
         public void PerformSweep()
@@ -1098,16 +1229,25 @@ namespace StardewDruid.Character
 
             sweepDelay = 3;
 
-            netSweepFrame.Set(0);
+            sweepFrame = (0);
 
             sweepTimer = 25;
 
+            if (!Mod.instance.eventRegister.ContainsKey("shield"))
+            {
+
+                ShieldEvent shieldEvent = new(Game1.player.Position);
+
+                shieldEvent.EventTrigger();
+
+            }
+            /*
             Game1.player.temporarilyInvincible = true;
 
             Game1.player.temporaryInvincibilityTimer = 0;
 
             Game1.player.currentTemporaryInvincibilityDuration = 500;
-
+            */
         }
 
         public bool UpdateFlight()
@@ -1167,16 +1307,16 @@ namespace StardewDruid.Character
 
             }
 
-            if (netFlightHeight.Value < 128 && flightTimer > 16)
+            if (flightHeight < 128 && flightTimer > 16)
             {
 
-                netFlightHeight.Set(netFlightHeight.Value + 8);
+                flightHeight = (flightHeight + 8);
 
             }
-            else if (netFlightHeight.Value > 0 && flightTimer <= 16)
+            else if (flightHeight > 0 && flightTimer <= 16)
             {
 
-                netFlightHeight.Set(netFlightHeight.Value - 8);
+                flightHeight = (flightHeight - 8);
 
             }
 
@@ -1189,16 +1329,16 @@ namespace StardewDruid.Character
             if (flightTimer % flightIncrement == 0)
             {
 
-                if (netFlightFrame.Value == 4)
+                if (flightFrame == 4)
                 {
 
-                    netFlightFrame.Set(1);
+                    flightFrame=(1);
 
                 }
                 else
                 {
                     
-                    netFlightFrame.Set(netFlightFrame.Value + 1);
+                    flightFrame=(flightFrame + 1);
 
                 }
                     
@@ -1230,7 +1370,7 @@ namespace StardewDruid.Character
                 if (flightTimer == flightIncrement)
                 {
                     
-                    netFlightFrame.Set(0);
+                    flightFrame=(0);
 
                     Game1.player.temporarilyInvincible = true;
 
@@ -1281,7 +1421,7 @@ namespace StardewDruid.Character
 
                 netSweepActive.Set(true);
 
-                netFlightHeight.Set(0);
+                flightHeight =(0);
 
             }
 
@@ -1297,13 +1437,13 @@ namespace StardewDruid.Character
             if (sweepTimer > 12)
             {
 
-                netFlightHeight.Set(netFlightHeight.Value + 2);
+                flightHeight=(flightHeight + 2);
 
             }
             else
             {
 
-                netFlightHeight.Set(netFlightHeight.Value - 2);
+                flightHeight=(flightHeight - 2);
 
             }
 
@@ -1319,7 +1459,7 @@ namespace StardewDruid.Character
 
                 netSweepActive.Set(false);
 
-                netFlightHeight.Set(0);
+                flightHeight =(0);
 
                 return false;
 
@@ -1328,7 +1468,7 @@ namespace StardewDruid.Character
             if(sweepTimer % 5 == 0)
             {
 
-                netSweepFrame.Set(netSweepFrame.Value + 1);
+                sweepFrame++;
 
             }
 
@@ -1367,7 +1507,7 @@ namespace StardewDruid.Character
 
         public int FlightDestination()
         {
-            //Dictionary<int, Vector2> dictionary = new Dictionary<int, Vector2>()
+
             Dictionary<int, Vector2> flightVectors = new Dictionary<int, Vector2>()
             {
                 [0] = new Vector2(1f, -2f),
@@ -1375,7 +1515,9 @@ namespace StardewDruid.Character
                 [2] = new Vector2(2f, 0.0f),
                 [3] = new Vector2(1f, 2f),
                 [4] = new Vector2(-1f, 2f),
-                [5] = new Vector2(-2f, 0.0f)
+                [5] = new Vector2(-2f, 0.0f),
+                [6] = new Vector2(0f, -2f),
+                [7] = new Vector2(0f, 2f),
             };
 
             int key = 0;
@@ -1390,12 +1532,18 @@ namespace StardewDruid.Character
 
             }
 
+            bool cardinal = Mod.instance.Config.cardinalMovement;
+
             switch (moveDirection)
             {
                 case 0:
                     if (alternate == 3)
                     {
                         key = 1;
+                    }
+                    if (cardinal)
+                    {
+                        key = 6;
                     }
                     increment = 12;
                     break;
@@ -1407,6 +1555,10 @@ namespace StardewDruid.Character
                     if (alternate == 3)
                     {
                         key = 4;
+                    }
+                    if (cardinal)
+                    {
+                        key = 7;
                     }
                     increment = 12;
                     break;
@@ -1483,6 +1635,10 @@ namespace StardewDruid.Character
                     flightTerrain = groundCheck;
 
                     netAlternative.Set(alternate);
+
+                    netDirection.Set(moveDirection);
+
+                    FacingDirection = moveDirection;
 
                     AnimateMovement(false);
 
@@ -1630,8 +1786,6 @@ namespace StardewDruid.Character
 
                 digMoment = 0;
 
-                netDigMoment.Set(0);
-
             }
 
             digTimer--;
@@ -1655,8 +1809,6 @@ namespace StardewDruid.Character
             {
 
                 digMoment++;
-
-                netDigMoment.Set(digMoment);
 
             }
 
@@ -1737,32 +1889,11 @@ namespace StardewDruid.Character
 
             }
 
-            /*float absX = Math.Abs(diffPosition.X); // x position
-
-            float absY = Math.Abs(diffPosition.Y); // y position
-
-            if (absX > absY)
-            {
-
-                Game1.player.FacingDirection = diffPosition.X < 0.001f ? 3 : 1;
-
-            }
-            else
-            {
-
-                Game1.player.FacingDirection = diffPosition.Y < 0.001f ? 0 : 2;
-
-                altDirection = mousePosition.X > (double)Position.X ? 1 : 3;
-
-                netAlternative.Set(altDirection);
-
-            }
-
-            moveDirection = Game1.player.FacingDirection;*/
-
             Game1.player.FacingDirection = moveDirection;
 
             netDirection.Set(moveDirection);
+
+            FacingDirection = moveDirection;
 
             netAlternative.Set(altDirection);
 
@@ -1813,7 +1944,7 @@ namespace StardewDruid.Character
 
                             showTextAboveHead("RWWWRRR", duration: 2000);
 
-                            currentLocation.playSoundPitched("DragonRoar", 600);
+                            currentLocation.playSound("DragonRoar", Position, 600);
 
                         }
 
@@ -1890,12 +2021,17 @@ namespace StardewDruid.Character
 
             }
 
-            if(fireTimer % 8 == 0)
+            if(fireTimer % 12 == 0)
             {
 
-                int fireFrame = netBreathFrame.Value == 1 ? 0 : 1;
+                breathFrame++;
 
-                netBreathFrame.Set(fireFrame);
+                if(breathFrame == breathFrames[0].Count)
+                {
+
+                    breathFrame = 0;
+
+                }
 
             }
 
@@ -1917,7 +2053,7 @@ namespace StardewDruid.Character
 
                 if (roarTimer <= 0)
                 {
-                    currentLocation.playSoundPitched("furnace", 600);
+                    currentLocation.playSound("furnace", Position, 600);
 
                     roarTimer = 120;
                 }
@@ -1929,6 +2065,7 @@ namespace StardewDruid.Character
 
                     splash = new()
                     {
+                        zeroes[1],
                         zeroes[1] + new Vector2(3,-4),
                         zeroes[1] + new Vector2(-3,-4),
                         zeroes[1] + new Vector2(5,1),
@@ -1944,22 +2081,26 @@ namespace StardewDruid.Character
 
                     splash.Add(zeroes[0]);
 
+                    ModUtility.Explode(currentLocation, zeroes[2], Game1.player, 1, 4, 2);
+
                 }
 
-                for(int i = 0; i < splash.Count; i++)
+                for (int i = 0; i < splash.Count; i++)
                 {
                     
                     Vector2 burnVector = splash[i];
 
                     int damageLevel = Mod.instance.DamageLevel() / 2;
 
-                    ModUtility.DamageMonsters(currentLocation, ModUtility.MonsterProximity(currentLocation, burnVector * 64, 2, true), Game1.player, damageLevel, true);
+                    ModUtility.DamageMonsters(currentLocation, ModUtility.MonsterProximity(currentLocation, new() { burnVector * 64 }, 2, true), Game1.player, damageLevel, true);
 
-                    ModUtility.Explode(currentLocation, burnVector, Game1.player, 2, 3, 2);
+                    ModUtility.Explode(currentLocation, burnVector, Game1.player, 2, 4, 2);
 
-                    BarrageHandle burn = new(currentLocation, burnVector, minus, 2, 0, fireColor, -1, damageLevel / 2);
+                    BarrageHandle burn = new(currentLocation, burnVector, minus, 2, 0, -1, damageLevel / 2);
 
                     burn.type = BarrageHandle.barrageType.burn;
+
+                    burn.colour = breathColour;
 
                     barrages.Add(burn);
 
@@ -1984,19 +2125,39 @@ namespace StardewDruid.Character
 
             Vector2 start = tile;
 
+            Vector2 weak = tile;
+
             List<Vector2> zeroes = new();
+
+            bool cardinal = Mod.instance.Config.cardinalMovement;
 
             switch (netDirection.Value)
             {
                 case 0:
 
+
+                    if (cardinal)
+                    {
+                        start.Y -= 1;
+                        zero.Y -= 5;
+                        weak.Y -= 2;
+                        break;
+
+                    }
+
                     zero.X += 3;
 
                     zero.Y -= 4;
 
+                    weak.X += 1;
+
+                    weak.Y -= 2;
+
                     if (netAlternative.Value == 3 || flip)
                     {
                         zero.X -= 6;
+
+                        weak.X -= 2;
 
                         break;
 
@@ -2012,17 +2173,37 @@ namespace StardewDruid.Character
 
                     start.X += 1;
 
+                    weak.X += 2;
+
                     break;
 
                 case 2:
+
+                    if (cardinal)
+                    {
+
+                        zero.Y += 4;
+
+                        weak.Y += 1;
+
+                        break;
+
+                    }
 
                     zero.X += 3;
 
                     zero.Y += 3;
 
+                    weak.X += 1;
+
+                    weak.Y += 1;
+
                     if (netAlternative.Value == 3 || flip)
                     {
                         zero.X -= 6;
+                     
+                        weak.X -= 2;
+                        
                         break;
 
                     }
@@ -2036,6 +2217,8 @@ namespace StardewDruid.Character
 
                     start.X -= 1;
 
+                    weak.X -= 2;
+
                     break;
 
             }
@@ -2043,6 +2226,8 @@ namespace StardewDruid.Character
             zeroes.Add(zero);
 
             zeroes.Add(start);
+
+            zeroes.Add(weak);
 
             return zeroes;
 
@@ -2088,8 +2273,6 @@ namespace StardewDruid.Character
 
             diveMoment = 0;
 
-            netDiveMoment.Set(0);
-
             currentLocation.playSound("pullItemFromWater");
 
             if (!Mod.instance.TaskList().ContainsKey("masterDive"))
@@ -2132,8 +2315,6 @@ namespace StardewDruid.Character
 
                 diveMoment++;
 
-                netDiveMoment.Set(diveMoment);
-
             }
 
             if (diveTimer == 120)
@@ -2169,7 +2350,9 @@ namespace StardewDruid.Character
 
                     treasure.UpdateQuality(2);
 
-                    Game1.player.checkForQuestComplete(null, treasureIndex, 1, treasure.objectInstance, "fish", 7);
+                    //Game1.player.checkForQuestComplete(null, treasureIndex, 1, treasure.objectInstance, "fish", 7);
+
+                    Game1.player.checkForQuestComplete(null, treasureIndex, 1, null, null, 7);
 
                     Game1.player.gainExperience(1, 8); // gain fishing experience
 

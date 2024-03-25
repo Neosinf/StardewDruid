@@ -8,13 +8,13 @@ namespace StardewDruid.Cast.Weald
     internal class Lawn : CastHandle
     {
 
-        public Lawn(Vector2 target, Rite rite)
-            : base(target, rite)
+        public Lawn(Vector2 target)
+            : base(target)
         {
 
             castCost = 6;
 
-            if (rite.caster.ForagingLevel >= 8)
+            if (Game1.player.ForagingLevel >= 8)
             {
 
                 castCost = 4;
@@ -32,20 +32,16 @@ namespace StardewDruid.Cast.Weald
 
             int probability = randomIndex.Next(5);
 
-            if (probability == 0 && riteData.spawnIndex["flower"] && neighbourList.Count == 0 && riteData.castTask.ContainsKey("masterForage")) // 2/120 flower
+            if (probability == 0 && Mod.instance.rite.spawnIndex["flower"] && neighbourList.Count == 0 && Mod.instance.rite.castTask.ContainsKey("masterForage")) // 2/120 flower
             {
 
                 int randomCrop = SpawnData.RandomFlower();
 
                 StardewValley.Object newFlower = new(
-                        targetVector,
-                        randomCrop,
-                        null,
-                        canBeSetDown: false,
-                        canBeGrabbed: true,
-                        isHoedirt: false,
-                        isSpawnedObject: true
+                         randomCrop.ToString(), 1
                     );
+
+                newFlower.IsSpawnedObject = true;
 
                 targetLocation.dropObject(
                     newFlower,
@@ -56,21 +52,20 @@ namespace StardewDruid.Cast.Weald
 
                 castFire = true;
 
+                Vector2 cursorVector = targetVector * 64 + new Vector2(0, 8);
+                ModUtility.AnimateCursor(targetLocation, cursorVector, cursorVector);
+
             }
-            else if (probability == 1 && riteData.spawnIndex["forage"] && neighbourList.Count == 0) // 2/120 forage
+            else if (probability == 1 && Mod.instance.rite.spawnIndex["forage"] && neighbourList.Count == 0) // 2/120 forage
             {
 
                 int randomCrop = SpawnData.RandomForage(targetLocation);
 
                 StardewValley.Object newForage = new StardewValley.Object(
-                    targetVector,
-                    randomCrop,
-                    null,
-                    canBeSetDown: false,
-                    canBeGrabbed: true,
-                    isHoedirt: false,
-                    isSpawnedObject: true
+                    randomCrop.ToString(), 1
                 );
+
+                newForage.IsSpawnedObject = true;
 
                 targetLocation.dropObject(
                     newForage,
@@ -81,18 +76,21 @@ namespace StardewDruid.Cast.Weald
 
                 castFire = true;
 
-                if (!riteData.castTask.ContainsKey("masterForage"))
+                if (!Mod.instance.rite.castTask.ContainsKey("masterForage"))
                 {
 
                     Mod.instance.UpdateTask("lessonForage", 1);
 
                 }
 
+                Vector2 cursorVector = targetVector * 64 + new Vector2(0,8);
+                ModUtility.AnimateCursor(targetLocation, cursorVector, cursorVector);
+
             }
             else if (probability == 2)
             {
 
-                if (riteData.spawnIndex["artifact"] && Game1.currentSeason == "winter" && Mod.instance.virtualHoe.UpgradeLevel >= 3)
+                if (Mod.instance.rite.spawnIndex["artifact"] && Game1.currentSeason == "winter" && Mod.instance.virtualHoe.UpgradeLevel >= 3)
                 {
 
                     int tileX = (int)targetVector.X;
@@ -105,7 +103,7 @@ namespace StardewDruid.Cast.Weald
                     )
                     {
 
-                        targetLocation.objects.Add(targetVector, new StardewValley.Object(targetVector, 590, 1));
+                        targetLocation.objects.Add(targetVector, new StardewValley.Object("590", 1));
 
                         castFire = true;
 
@@ -115,7 +113,7 @@ namespace StardewDruid.Cast.Weald
 
 
             }
-            else if (riteData.spawnIndex["trees"] && neighbourList.Count == 0 && !forgotTrees) // 10/120 tree
+            else if (Mod.instance.rite.spawnIndex["trees"] && neighbourList.Count == 0 && !forgotTrees) // 10/120 tree
             {
 
                 bool treeSpawn = false;
@@ -124,7 +122,7 @@ namespace StardewDruid.Cast.Weald
                 {
                     case 0:
 
-                        if (riteData.castVector.Y < targetVector.Y)
+                        if (Mod.instance.rite.castVector.Y < targetVector.Y)
                         {
                             treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
 
@@ -134,7 +132,7 @@ namespace StardewDruid.Cast.Weald
 
                     case 1:
 
-                        if (riteData.castVector.X > targetVector.X)
+                        if (Mod.instance.rite.castVector.X > targetVector.X)
                         {
                             treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
 
@@ -143,7 +141,7 @@ namespace StardewDruid.Cast.Weald
 
                     case 2:
 
-                        if (riteData.castVector.Y > targetVector.Y)
+                        if (Mod.instance.rite.castVector.Y > targetVector.Y)
                         {
                             treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
 
@@ -152,7 +150,7 @@ namespace StardewDruid.Cast.Weald
 
                     default:
 
-                        if (riteData.castVector.X < targetVector.X)
+                        if (Mod.instance.rite.castVector.X < targetVector.X)
                         {
                             treeSpawn = ModUtility.RandomTree(targetLocation, targetVector);
 

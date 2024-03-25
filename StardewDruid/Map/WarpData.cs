@@ -42,7 +42,10 @@ namespace StardewDruid.Map
                     default_y = 29;
                 }
 
-                Point farmWarp = Game1.getFarm().GetMapPropertyPosition("WarpTotemEntry", default_x, default_y);
+                if (!Game1.getFarm().TryGetMapPropertyAs("WarpTotemEntry", out Point farmWarp, required: false))
+                {
+                    farmWarp = new Point(default_x, default_y);
+                }
 
                 return new Vector2(farmWarp.X, farmWarp.Y);
 
