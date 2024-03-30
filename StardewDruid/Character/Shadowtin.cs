@@ -7,6 +7,7 @@ using StardewDruid.Event;
 using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Monsters;
 using StardewValley.Network;
 using StardewValley.Objects;
 using System;
@@ -19,16 +20,9 @@ namespace StardewDruid.Character
     public class Shadowtin : StardewDruid.Character.Character
     {
 
-        public NetBool netSweepActive = new(false);
         public NetBool netForageActive = new(false);
-
-        public Dictionary<int, List<Rectangle>> sweepFrames;
-
         public Vector2 forageVector;
         public Dictionary<int, Rectangle> forageFrames;
-
-        public int sweepTimer;
-        public int sweepFrame;
 
         public Shadowtin()
         {
@@ -43,7 +37,6 @@ namespace StardewDruid.Character
         protected override void initNetFields()
         {
             base.initNetFields();
-            NetFields.AddField(netSweepActive, "netSweepActive");
             NetFields.AddField(netForageActive, "netForageActive");
 
         }
@@ -55,9 +48,7 @@ namespace StardewDruid.Character
 
             characterTexture = CharacterData.CharacterTexture(Name);
 
-            moveLength = 6;
-
-            walkFrames = WalkFrames(32, 32, 0, 128);
+            walkFrames = FrameSeries(32, 32, 0, 128, 6);
 
             haltFrames = new()
             {
@@ -205,41 +196,6 @@ namespace StardewDruid.Character
             };
 
             loadedOut = true;
-
-        }
-
-        public override Dictionary<int, List<Rectangle>> WalkFrames(int height, int width, int startX = 0, int startY = 0)
-        {
-
-            Dictionary<int, List<Rectangle>> walkFrames = new();
-
-            foreach (KeyValuePair<int, int> keyValuePair in new Dictionary<int, int>()
-            {
-                [0] = 2,
-                [1] = 1,
-                [2] = 0,
-                [3] = 3
-            })
-            {
-
-                walkFrames[keyValuePair.Key] = new List<Rectangle>();
-
-                for (int index = 0; index < moveLength; index++)
-                {
-
-                    Rectangle rectangle = new(startX, startY, width, height);
-
-                    rectangle.X += width * index;
-
-                    rectangle.Y += height * keyValuePair.Value;
-
-                    walkFrames[keyValuePair.Key].Add(rectangle);
-
-                }
-
-            }
-
-            return walkFrames;
 
         }
 
@@ -465,8 +421,6 @@ namespace StardewDruid.Character
 
             NextTarget(who.Position);
 
-            ResetAll();
-
             return true;
         
         }
@@ -475,114 +429,8 @@ namespace StardewDruid.Character
         {
             base.ResetActives();
 
-            netSweepActive.Set(false);
-
-            sweepTimer = 0;
-
             netForageActive.Set(false);
         
-        }
-
-        public override bool ChangeTarget()
-        {
-
-            if (netSweepActive.Value)
-            {
-                return false;
-            }
-
-            return base.ChangeTarget();
-
-        }
-
-        public override void UpdateMove()
-        {
-
-            base.UpdateMove();
-
-            if (netDashActive.Value)
-            {
-                
-                float distance = Vector2.Distance(Position, targetVectors.First());
-
-                if (distance < 320 && moveFrame > 2)
-                {
-
-                    moveFrame=(2);
-
-                }
-
-            }
-
-            if (netSweepActive.Value)
-            {
-
-                sweepTimer--;
-
-                if (sweepTimer % 6 == 0)
-                {
-
-                    int nextFrame = sweepFrame + 1;
-
-                    if (nextFrame > 3) { nextFrame = 0; }
-
-                    sweepFrame = (nextFrame);
-
-                }
-
-                if(sweepTimer == 12)
-                {
-
-                    List<StardewValley.Monsters.Monster> monsters = ModUtility.MonsterProximity(currentLocation, new() { Position, }, 2);
-
-                    foreach (StardewValley.Monsters.Monster monster in monsters)
-                    {
-
-                        DealDamageToMonster(monster);
-
-                    }
-
-                }
-
-                if (sweepTimer <= 0)
-                {
-
-                    netSweepActive.Set(false);
-
-                    sweepFrame = (0);
-
-                }
-
-            }
-
-        }
-
-        public override void UpdateMultiplayer()
-        {
-
-            base.UpdateMultiplayer();
-
-            if (netSweepActive.Value)
-            {
-
-                sweepTimer++;
-
-                if (sweepTimer == 6)
-                {
-
-                    sweepFrame++;
-
-                    if (sweepFrame == sweepFrames.Count)
-                    {
-                        sweepFrame = 0;
-                    }
-
-                    sweepTimer = 0;
-
-                }
-
-            }
-
         }
 
         public override void UpdateSpecial()
@@ -695,8 +543,6 @@ namespace StardewDruid.Character
 
                     specialFrame=(0);
 
-                    behaviourActive = behaviour.idle;
-
                     cooldownTimer = 120;
 
                 }
@@ -718,89 +564,6 @@ namespace StardewDruid.Character
                 }
 
             }
-
-            if (barrages.Count > 0)
-            {
-
-                UpdateBarrages();
-
-            }
-
-        }
-
-        public override bool MonsterAttack(StardewValley.Monsters.Monster targetMonster)
-        {
-
-            float distance = Vector2.Distance(Position, targetMonster.Position);
-
-            if (distance >= 128f && distance <= 640f)
-            {
-
-                if (new Random().Next(3) == 0  || ModUtility.GroundCheck(currentLocation, targetMonster.Tile) != "ground")
-                {
-
-                    netSpecialActive.Set(true);
-
-                    behaviourActive = behaviour.special;
-
-                    specialTimer = 60;
-
-                    NextTarget(targetMonster.Position, -1);
-
-                    ResetAll();
-
-                    BarrageHandle fireball = new(currentLocation, targetMonster.Tile, Tile, 2, 1, -1, Mod.instance.DamageLevel());
-
-                    fireball.type = BarrageHandle.barrageType.fireball;
-
-                    barrages.Add(fireball);
-
-                }
-                else
-                {
-
-                    behaviourActive = behaviour.dash;
-
-                    moveTimer = (int)(distance / gait * 5);
-
-                    netDashActive.Set(true);
-
-                    NextTarget(targetMonster.Position, -1);
-
-                }
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-        public override float MoveSpeed()
-        {
-            if (netSweepActive.Value)
-            {
-
-                return gait;
-
-            }
-
-            return base.MoveSpeed();
-        }
-
-        public override void HitMonster(StardewValley.Monsters.Monster monsterCharacter)
-        {
-
-            targetVectors.Clear();
-
-            netSweepActive.Set(true);
-
-            sweepFrame=(0);
-
-            sweepTimer = 24;
-
-            cooldownTimer = 120;
 
         }
 

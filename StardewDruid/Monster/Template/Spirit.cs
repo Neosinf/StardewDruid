@@ -31,7 +31,7 @@ namespace StardewDruid.Monster.Template
 
         public Spirit() { }
 
-        public Spirit(Vector2 position, int combatModifier)
+        public Spirit(Vector2 position, int combatModifier, bool champion = false)
             : base(position * 64, true)
         {
 
@@ -68,6 +68,11 @@ namespace StardewDruid.Monster.Template
                 objectsToDrop.Add("251"); // tea sapling
             }
 
+            if (champion)
+            {
+                isHardModeMonster.Set(true);
+
+            }
 
         }
 

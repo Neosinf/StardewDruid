@@ -24,7 +24,7 @@ namespace StardewDruid.Cast.Mists
 
             targetObject.shakeTimer = 1000;
 
-            ModUtility.AnimateBolt(targetLocation, targetVector);
+            ModUtility.AnimateBolt(targetLocation, targetVector * 64 + new Vector2(32));
 
             return;
 

@@ -42,7 +42,7 @@ namespace StardewDruid.Cast.Ether
 
         public bool chaseEvent;
 
-        public List<StardewValley.Monsters.Monster> chaseMonsters;
+        public List<StardewDruid.Monster.Boss.Boss> chaseMonsters;
 
         public int claimCounter;
 
@@ -254,58 +254,38 @@ namespace StardewDruid.Cast.Ether
 
                     chaseEvent = true;
 
-                    int monsterIndex;
+                    StardewDruid.Monster.Boss.Boss thief;
 
-                    if (randomIndex.Next(2) == 0)
+                    string smacktalk = "mine!";
+
+                    switch(randomIndex.Next(4))
                     {
-
-                        monsterIndex = 19;
-
-                        if (randomIndex.Next(2) == 0)
-                        {
-
-                            monsterIndex = 23;
-
-                        }
-
-                        StardewValley.Monsters.Monster scavenger = MonsterData.CreateMonster(monsterIndex, treasureVector);
-
-                        chaseMonsters.Add(scavenger);
-
-                        targetLocation.characters.Add(scavenger);
-
-                        scavenger.update(Game1.currentGameTime, targetLocation);
-
-                        (chaseMonsters[0] as Scavenger).ChaseMode();
-
-                        chaseMonsters[0].showTextAboveHead("mine!");
+                        case 1:
+                            thief = new Scavenger(treasureVector, Mod.instance.CombatModifier());
+                            break;
+                        case 2:
+                            thief = new Shadowfox(treasureVector, Mod.instance.CombatModifier());
+                            break;
+                        case 3:
+                            thief = new Goblin(treasureVector, Mod.instance.CombatModifier());
+                            smacktalk = "heh heh";
+                            break;
+                        default: //0
+                            thief = new Rogue(treasureVector, Mod.instance.CombatModifier());
+                            smacktalk = "heh heh";
+                            break;
 
                     }
-                    else
-                    {
 
-                        monsterIndex = 20;
+                    chaseMonsters.Add(thief);
 
-                        if (randomIndex.Next(2) == 0)
-                        {
+                    targetLocation.characters.Add(thief);
 
-                            monsterIndex = 24;
+                    thief.update(Game1.currentGameTime, targetLocation);
 
-                        }
+                    thief.ChaseMode();
 
-                        StardewValley.Monsters.Monster rogue = MonsterData.CreateMonster(monsterIndex, treasureVector);
-
-                        chaseMonsters.Add(rogue);
-
-                        targetLocation.characters.Add(rogue);
-
-                        rogue.update(Game1.currentGameTime, targetLocation);
-
-                        (chaseMonsters[0] as StardewDruid.Monster.Boss.Shadowtin).ChaseMode();
-
-                        chaseMonsters[0].showTextAboveHead("heh heh");
-
-                    }
+                    thief.showTextAboveHead(smacktalk);
 
                     Mod.instance.CastMessage("A thief has snatched the treasure!");
 

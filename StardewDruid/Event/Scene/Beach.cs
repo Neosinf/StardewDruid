@@ -141,13 +141,13 @@ namespace StardewDruid.Event.Scene
 
                     companion.specialTimer = 60;
 
-                    ModUtility.AnimateDecoration(targetLocation, companion.Position,"Weald");
+                    ModUtility.AnimateDecoration(targetLocation, companion.Position,"weald");
 
                     Vector2 cursor22 = (questData.triggerVector - new Vector2(6, 0)) * 64;
 
                     targetLocation.playSound("discoverMineral", cursor22, 800);
 
-                    ModUtility.AnimateCursor(targetLocation, cursor22, cursor22, "Weald");
+                    ModUtility.AnimateCursor(targetLocation, cursor22, "weald");
 
                     break;
 
@@ -172,7 +172,7 @@ namespace StardewDruid.Event.Scene
                         new(9,-2),
                     };
 
-                    ModUtility.AnimateDecoration(targetLocation, companion.Position, "Weald");
+                    ModUtility.AnimateDecoration(targetLocation, companion.Position, "weald");
 
 
                     for (int i = 0; i < vectors25.Count; i++)
@@ -180,7 +180,7 @@ namespace StardewDruid.Event.Scene
                         
                         Vector2 cursor25 = (questData.triggerVector - vectors25[i]) * 64;
 
-                        ModUtility.AnimateCursor(targetLocation, cursor25, cursor25, "Weald");
+                        ModUtility.AnimateCursor(targetLocation, cursor25, "weald");
 
                     }
 
@@ -189,8 +189,6 @@ namespace StardewDruid.Event.Scene
                 case 27:
 
                     companion.ResetActives();
-
-                    companion.behaviourActive = Character.Character.behaviour.hurry;
 
                     companion.eventVectors.Add(39, (campFire * 64) - new Vector2(0, 128));
 
@@ -259,13 +257,13 @@ namespace StardewDruid.Event.Scene
 
                     }
 
-                    ModUtility.AnimateDecoration(targetLocation, companion.Position, "Mists");
+                    ModUtility.AnimateDecoration(targetLocation, companion.Position, "mists");
 
                     Vector2 cursor56 = campFire * 64;
 
-                    ModUtility.AnimateCursor(targetLocation, cursor56, cursor56, "Mists");
+                    ModUtility.AnimateCursor(targetLocation, cursor56, "mists");
 
-                    ModUtility.AnimateBolt(targetLocation, campFire);
+                    ModUtility.AnimateBolt(targetLocation, campFire * 64 + new Vector2(32));
 
                     break;
 
@@ -273,7 +271,7 @@ namespace StardewDruid.Event.Scene
 
                     Game1.playSound("fireball");
 
-                    ModUtility.AnimateImpact(targetLocation, campFire, 1);
+                    ModUtility.AnimateImpact(targetLocation, campFire * 64 + new Vector2(32), 1);
 
                     break;
 
@@ -287,13 +285,13 @@ namespace StardewDruid.Event.Scene
 
                     companion.specialTimer = 60;
 
-                    ModUtility.AnimateDecoration(targetLocation, companion.Position, "Mists");
+                    ModUtility.AnimateDecoration(targetLocation, companion.Position, "mists");
 
                     Vector2 cursor60 = campFire * 64;
 
-                    ModUtility.AnimateCursor(targetLocation, cursor60, cursor60, "Mists");
+                    ModUtility.AnimateCursor(targetLocation, cursor60, "mists");
 
-                    ModUtility.AnimateBolt(targetLocation, campFire);
+                    ModUtility.AnimateBolt(targetLocation, campFire * 64 + new Vector2(32));
 
                     break;
 
@@ -301,7 +299,7 @@ namespace StardewDruid.Event.Scene
 
                     Game1.playSound("fireball");
 
-                    ModUtility.AnimateImpact(targetLocation, campFire, 2);
+                    ModUtility.AnimateImpact(targetLocation, campFire * 64 + new Vector2(32), 2);
 
                     break;
 
@@ -315,13 +313,13 @@ namespace StardewDruid.Event.Scene
 
                     companion.specialTimer = 60;
 
-                    ModUtility.AnimateDecoration(targetLocation, companion.Position, "Mists");
+                    ModUtility.AnimateDecoration(targetLocation, companion.Position, "mists");
 
                     Vector2 cursor64 = campFire * 64;
 
-                    ModUtility.AnimateCursor(targetLocation, cursor64, cursor64, "Mists");
+                    ModUtility.AnimateCursor(targetLocation, cursor64, "mists");
 
-                    ModUtility.AnimateBolt(targetLocation, campFire);
+                    ModUtility.AnimateBolt(targetLocation, campFire * 64 + new Vector2(32));
 
                     break;
 
@@ -329,7 +327,7 @@ namespace StardewDruid.Event.Scene
 
                     Game1.playSound("fireball");
 
-                    ModUtility.AnimateImpact(targetLocation, campFire, 3);
+                    ModUtility.AnimateImpact(targetLocation, campFire * 64 + new Vector2(32), 3);
 
                     new Throw(targetPlayer, campFire * 64 - new Vector2(128, 0), new StardewValley.Object("728", 1), campFire * 64) { throwHeight = 3, dontInventorise = true, throwScale = 3f }.AnimateObject();
 
@@ -341,7 +339,7 @@ namespace StardewDruid.Event.Scene
                     
                     Game1.playSound("fireball");
 
-                    ModUtility.AnimateImpact(targetLocation, campFire - new Vector2(2, 0), 1);
+                    ModUtility.AnimateImpact(targetLocation, (campFire - new Vector2(2, 0)) * 64 + new Vector2(32), 1);
 
                     break;
 
@@ -351,7 +349,7 @@ namespace StardewDruid.Event.Scene
 
                     Game1.playSound("fireball");
 
-                    ModUtility.AnimateImpact(targetLocation, campFire - new Vector2(4, 0), 1);
+                    ModUtility.AnimateImpact(targetLocation, (campFire - new Vector2(4, 0)) * 64 + new Vector2(32), 1);
 
                     break;
 
@@ -359,7 +357,7 @@ namespace StardewDruid.Event.Scene
 
                     Game1.playSound("fireball");
 
-                    ModUtility.AnimateImpact(targetLocation, campFire - new Vector2(6, 0), 2);
+                    ModUtility.AnimateImpact(targetLocation, (campFire - new Vector2(6, 0)) * 64 + new Vector2(32), 2);
 
                     break;
 
@@ -371,9 +369,7 @@ namespace StardewDruid.Event.Scene
 
                 case 88:
 
-                    StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(22, blobVector);
-
-                    blobking = theMonster as StardewDruid.Monster.Template.BlobSlime;
+                    blobking = new(blobVector*64,Mod.instance.CombatModifier());
 
                     blobking.posturing.Set(true);
 
@@ -397,29 +393,29 @@ namespace StardewDruid.Event.Scene
 
                     companion.ResetActives();
 
-                    companion.behaviourActive = Character.Character.behaviour.hurry;
-
                     companion.eventVectors.Add(85, (campFire + new Vector2(6,-1)) * 64);
 
                     break;
 
                 case 111:
 
-                    companion.behaviourActive = StardewDruid.Character.Character.behaviour.dash;
-
-                    companion.moveTimer = companion.moveInterval;
-
-                    companion.netAxeActive.Set(true);
+                    companion.moveTimer = companion.dashInterval;
 
                     companion.netDashActive.Set(true);
 
-                    companion.NextTarget(blobking.Position, -1);
+                    companion.dashSweep = true;
 
-                    ModUtility.AnimateMeteor(targetLocation, blobVector, true, 2);
+                    companion.NextTarget(blobking.Position - new Vector2(196,0), -1);
 
-                    ModUtility.AnimateDecoration(targetLocation, companion.Position, "Stars");
+                    //---------------------- meteor animation
 
-                    ModUtility.AnimateCursor(targetLocation, blobking.Position, blobking.Position, "Stars");
+                    SpellHandle meteor = new(Mod.instance.rite.castLocation, blobking.Position, Game1.player.Position);
+
+                    meteor.type = SpellHandle.barrages.meteor;
+
+                    Mod.instance.spellRegister.Add(meteor);
+
+                    ModUtility.AnimateDecoration(targetLocation, companion.Position, "stars");
 
                     break;
 
@@ -473,8 +469,6 @@ namespace StardewDruid.Event.Scene
                     }
 
                     companion.ResetActives();
-
-                    companion.behaviourActive = Character.Character.behaviour.hurry;
 
                     companion.eventVectors.Add(131, mistVector*64);
 

@@ -147,7 +147,9 @@ namespace StardewDruid.Event.Scene
 
                 case 7:
 
-                    companion.behaviourActive = StardewDruid.Character.Character.behaviour.still;
+                    companion.TargetIdle();
+
+                    companion.netStandbyActive.Set(true);
 
                     Mod.instance.dialogue["Jester"].AddSpecial("Jester", "townOne");
 
@@ -406,8 +408,6 @@ namespace StardewDruid.Event.Scene
 
                     buffinVector = companionVector + new Vector2(15, 3);
 
-                    buffin.behaviourActive = StardewDruid.Character.Character.behaviour.hurry;
-
                     buffin.eventVectors.Add(0, buffinVector * 64);
 
                     break;
@@ -419,8 +419,6 @@ namespace StardewDruid.Event.Scene
                     companion.ResetActives();
 
                     companionVector = companionVector + new Vector2(13, 3);
-
-                    companion.behaviourActive = StardewDruid.Character.Character.behaviour.hurry;
 
                     companion.eventVectors.Add(0, companionVector * 64);
 
@@ -577,8 +575,6 @@ namespace StardewDruid.Event.Scene
 
                     companion.ResetActives();
 
-                    companion.behaviourActive = StardewDruid.Character.Character.behaviour.dash;
-
                     Vector2 jesterRace = companion.Position + new Vector2(-240, 640);
                     
                     companion.eventVectors.Add(0, jesterRace);
@@ -598,8 +594,6 @@ namespace StardewDruid.Event.Scene
                     companionVector = jesterRace;
 
                     buffin.ResetActives();
-
-                    buffin.behaviourActive = StardewDruid.Character.Character.behaviour.dash;
 
                     Vector2 buffinRace = buffin.Position + new Vector2(-384, 640);
                     
@@ -751,9 +745,7 @@ namespace StardewDruid.Event.Scene
 
                     companion.ResetActives();
 
-                    companion.behaviourActive = StardewDruid.Character.Character.behaviour.dash;
-
-                    companion.moveTimer = companion.moveInterval;
+                    companion.moveTimer = companion.dashInterval;
 
                     companion.netDashActive.Set(true);
 
@@ -761,15 +753,13 @@ namespace StardewDruid.Event.Scene
 
                     buffin.ResetActives();
 
-                    buffin.behaviourActive = StardewDruid.Character.Character.behaviour.dash;
-
-                    buffin.moveTimer = buffin.moveInterval;
+                    buffin.moveTimer = buffin.dashInterval;
 
                     buffin.netDashActive.Set(true);
 
                     buffin.NextTarget(companion.Position - new Vector2(0, 32), -1);
 
-                    ModUtility.AnimateImpact(targetLocation, companion.Tile + new Vector2(5, 0), 3, 0, "Flashbang");
+                    ModUtility.AnimateImpact(targetLocation, companion.Position + new Vector2(352,32), 3, 0, "Flashbang");
 
                     break;
 
@@ -783,9 +773,7 @@ namespace StardewDruid.Event.Scene
 
                     companion.ResetActives();
 
-                    companion.behaviourActive = StardewDruid.Character.Character.behaviour.dash;
-
-                    companion.moveTimer = companion.moveInterval;
+                    companion.moveTimer = companion.dashInterval;
 
                     companion.netDashActive.Set(true);
 
@@ -793,15 +781,13 @@ namespace StardewDruid.Event.Scene
 
                     buffin.ResetActives();
 
-                    buffin.behaviourActive = StardewDruid.Character.Character.behaviour.dash;
-
-                    buffin.moveTimer = buffin.moveInterval;
+                    buffin.moveTimer = buffin.dashInterval;
 
                     buffin.netDashActive.Set(true);
 
                     buffin.NextTarget(companion.Position - new Vector2(0, 32), -1);
 
-                    ModUtility.AnimateImpact(targetLocation, companion.Tile+new Vector2(5,0), 3, 0, "Flashbang");
+                    ModUtility.AnimateImpact(targetLocation, companion.Position + new Vector2(-288,32), 3, 0, "Flashbang");
 
                     break;
 
@@ -837,39 +823,27 @@ namespace StardewDruid.Event.Scene
 
                     companion.netSpecialActive.Set(true);
 
-                    companion.behaviourActive = StardewDruid.Character.Character.behaviour.special;
-
                     companion.specialTimer = 60;
 
-                    Vector2 target = buffin.Tile;
+                    SpellHandle beam = new(companion.currentLocation, buffin.GetBoundingBox().Center.ToVector2(), companion.GetBoundingBox().Center.ToVector2(), 2, 1, -1, Mod.instance.DamageLevel());
 
-                    BarrageHandle beam = new(companion.currentLocation, target, Vector2.Zero, 2, 1, -1, Mod.instance.DamageLevel());
+                    beam.type = SpellHandle.barrages.beam;
 
-                    beam.type = BarrageHandle.barrageType.beam;
-
-                    beam.originPosition = companion.Position;
-
-                    companion.barrages.Add(beam);
+                    Mod.instance.spellRegister.Add(beam);
 
                     buffin.ResetActives();
 
                     buffin.netSpecialActive.Set(true);
 
-                    buffin.behaviourActive = StardewDruid.Character.Character.behaviour.special;
-
                     buffin.specialTimer = 60;
 
-                    target = companion.Tile;
+                    beam = new(buffin.currentLocation, companion.GetBoundingBox().Center.ToVector2(), buffin.GetBoundingBox().Center.ToVector2(), 2, 1, -1, Mod.instance.DamageLevel());
 
-                    beam = new(buffin.currentLocation, target, Vector2.Zero, 2, 1, -1, Mod.instance.DamageLevel());
+                    beam.type = SpellHandle.barrages.chaos;
 
-                    beam.type = BarrageHandle.barrageType.chaos;
+                    Mod.instance.spellRegister.Add(beam);
 
-                    beam.originPosition = buffin.Position;
-
-                    buffin.barrages.Add(beam);
-
-                    ModUtility.AnimateImpact(targetLocation, companion.Tile + new Vector2(6, 0), 3, 0, "Flashbang");
+                    ModUtility.AnimateImpact(targetLocation, companion.Position + new Vector2(416, 32), 3, 0, "Flashbang");
 
                     break;
 
@@ -944,7 +918,7 @@ namespace StardewDruid.Event.Scene
 
                     companion.Halt();
 
-                    companion.behaviourActive = StardewDruid.Character.Character.behaviour.still;
+                    companion.netStandbyActive.Set(true);
 
                     companion.moveDirection = 0;
 
@@ -960,7 +934,7 @@ namespace StardewDruid.Event.Scene
 
                     buffin.Halt();
 
-                    buffin.behaviourActive = StardewDruid.Character.Character.behaviour.still;
+                    buffin.netStandbyActive.Set(true);
 
                     buffin.moveDirection = 0;
 
@@ -1014,7 +988,7 @@ namespace StardewDruid.Event.Scene
 
                     buffin.Halt();
 
-                    buffin.behaviourActive = StardewDruid.Character.Character.behaviour.still;
+                    companion.netStandbyActive.Set(true);
 
                     buffin.moveDirection = 3;
 
@@ -1030,7 +1004,7 @@ namespace StardewDruid.Event.Scene
 
                     companion.Halt();
 
-                    companion.behaviourActive = StardewDruid.Character.Character.behaviour.still;
+                    companion.netStandbyActive.Set(true);
 
                     companion.moveDirection = 3;
 

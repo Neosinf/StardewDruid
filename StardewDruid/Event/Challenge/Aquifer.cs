@@ -32,7 +32,7 @@ namespace StardewDruid.Event.Challenge
 
             cues = DialogueData.DialogueScene(questData.name);
 
-            challengeSpawn = new() { 99, };
+            challengeSpawn = new() { 5, };
 
             challengeFrequency = 2;
 
@@ -223,9 +223,8 @@ namespace StardewDruid.Event.Challenge
 
             if (activeCounter == 20)
             {
-                StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(11, new(30, 13));
 
-                bossMonster = theMonster as BigBat;
+                bossMonster = new(new Vector2(30, 13),Mod.instance.CombatModifier());
 
                 bossMonster.posturing.Set(true);
 

@@ -494,7 +494,9 @@ namespace StardewDruid.Dialogue
 
                         Mod.instance.limits.Add(npc.Name);
 
-                        string quest1 = questList[Game1.random.Next(questList.Count)]; Mod.instance.NewQuest(quest1);
+                        string quest1 = questList[Game1.random.Next(questList.Count)]; 
+                        
+                        Mod.instance.NewQuest(quest1);
 
                         //foreach (string quest in questList){ Mod.instance.NewQuest(quest);}
 
@@ -528,7 +530,7 @@ namespace StardewDruid.Dialogue
 
                 case "crypt":
 
-                    dialogueText = "Now to the final resting place of the humanfolk.";
+                    dialogueText = "Let's see what the old gang's been up to";
 
                     Mod.instance.NewQuest("challengeEtherTwo");
 

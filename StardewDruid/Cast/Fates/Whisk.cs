@@ -5,7 +5,7 @@ namespace StardewDruid.Cast.Fates
     internal class Whisk : CastHandle
     {
 
-        Vector2 destination;
+        public Vector2 destination;
 
         public Whisk(Vector2 target,  Vector2 Destination)
             : base(target)
@@ -17,6 +17,7 @@ namespace StardewDruid.Cast.Fates
 
         public override void CastEffect()
         {
+            
             WhiskEvent whiskEvent = new(targetVector, destination);
 
             whiskEvent.EventTrigger();

@@ -49,7 +49,7 @@ namespace StardewDruid.Cast.Weald
             //List<Vector2> impactVectors = ModUtility.Explode(targetLocation, targetVector, targetPlayer, explodeRadius, powerLevel:2);
             ModUtility.Explode(targetLocation, targetVector, targetPlayer, explodeRadius, powerLevel:2);
 
-            ModUtility.AnimateImpact(targetLocation, targetVector, 1);
+            ModUtility.AnimateImpact(targetLocation, targetVector* 64 + new Vector2(32), 1);
 
             targetLocation.playSound("flameSpellHit");
 

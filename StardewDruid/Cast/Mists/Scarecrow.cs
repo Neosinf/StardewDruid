@@ -86,7 +86,7 @@ namespace StardewDruid.Cast.Mists
 
             castFire = true;
 
-            ModUtility.AnimateBolt(targetLocation, targetVector);
+            ModUtility.AnimateBolt(targetLocation, targetVector * 64 + new Vector2(32));
 
             Utility.addSprinklesToLocation(targetLocation, (int)targetVector.X - 1, (int)targetVector.Y - 1, 3, 3, 999, 333, Color.White);
 

@@ -57,7 +57,7 @@ namespace StardewDruid.Monster.Template
 
         public Golem() { }
 
-        public Golem(Vector2 vector, int combatModifier)
+        public Golem(Vector2 vector, int combatModifier, bool champion = false)
             : base(vector * 64, true)
         {
 
@@ -96,6 +96,11 @@ namespace StardewDruid.Monster.Template
                 objectsToDrop.Add("386"); // iridium
             }
 
+            if (champion)
+            {
+                isHardModeMonster.Set(true);
+
+            }
 
         }
 

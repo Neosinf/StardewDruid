@@ -48,7 +48,7 @@ namespace StardewDruid.Cast.Mists
 
             Vector2 boltVector = new(targetVector.X, targetVector.Y - 2);
 
-            ModUtility.AnimateBolt(targetLocation, boltVector);
+            ModUtility.AnimateBolt(targetLocation, boltVector * 64 + new Vector2(32));
 
             return;
 

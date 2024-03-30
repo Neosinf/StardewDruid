@@ -1,8 +1,11 @@
 ﻿using Force.DeepCloner;
+using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Ether;
+using StardewDruid.Character;
 using StardewDruid.Dialogue;
 using StardewDruid.Event;
 using StardewDruid.Event.Challenge;
@@ -13,7 +16,9 @@ using StardewDruid.Monster;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Buffs;
 using StardewValley.Events;
+using StardewValley.GameData.HomeRenovations;
 using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Network;
@@ -26,8 +31,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Xml.Linq;
+using xTile.Dimensions;
 using xTile.Layers;
+using xTile.ObjectModel;
 using xTile.Tiles;
+using static StardewDruid.Event.SpellHandle;
 using static StardewValley.Minigames.TargetGame;
 
 namespace StardewDruid
@@ -62,13 +70,15 @@ namespace StardewDruid
 
         public Dictionary<string, int> rockCasts;
 
-        public Dictionary<string,List<string>> specialCasts;
+        public Dictionary<string, List<string>> specialCasts;
 
         public Dictionary<string, Dictionary<Vector2, string>> targetCasts;
 
         public Dictionary<string, Dictionary<Vector2, string>> terrainCasts;
 
         public Dictionary<string, Dictionary<Vector2, int>> featureCasts;
+
+        public List<SpellHandle> spellRegister;
 
         public List<string> triggerCasts;
 
@@ -525,7 +535,7 @@ namespace StardewDruid
                         if(queryData.value == "damage")
                         {
                             
-                            CastMessage(queryData.name + " is in critical condition");
+                            CastMessage(queryData.name + " is in critical condition", 3, true);
 
                         }
 
@@ -563,6 +573,42 @@ namespace StardewDruid
 
                     break;
 
+                case "SpellHandle":
+
+                    queryData = e.ReadAs<QueryData>();
+
+                    if (queryData.longId == Game1.player.UniqueMultiplayerID)
+                    {
+
+                        break;
+
+                    }
+
+                    if(Game1.player.currentLocation.Name != queryData.location)
+                    {
+
+                        break;
+
+                    }
+
+                    List<int> spellData = System.Text.Json.JsonSerializer.Deserialize<List<int>>(queryData.value);
+
+                    SpellHandle spellEffect = new(
+                        Game1.player.currentLocation,
+                        new Vector2(spellData[0], spellData[1]),
+                        new Vector2(spellData[2], spellData[3]),
+                        spellData[4]
+                    );
+
+                    spellEffect.external = true;
+                    spellEffect.type = (barrages)Enum.Parse(typeof(barrages),spellData[5].ToString());
+                    spellEffect.scheme = (schemes)Enum.Parse(typeof(schemes), spellData[6].ToString());
+                    spellEffect.indicator = (indicators)Enum.Parse(typeof(indicators), spellData[7].ToString());
+
+                    spellRegister.Add(spellEffect);
+
+                    break;
+
             }
 
         }
@@ -589,6 +635,8 @@ namespace StardewDruid
             markerRegister = new();
 
             trackRegister = new();
+
+            spellRegister = new();
 
             rockCasts = new();
 
@@ -825,7 +873,7 @@ namespace StardewDruid
 
             }
 
-            updateEvent = 6;
+            rite.RiteBuff();
 
             if (!markerRegister.ContainsKey(Game1.player.currentLocation.Name))
             {
@@ -1077,10 +1125,67 @@ namespace StardewDruid
             if (ritePressed)
             {
 
-                //Layer backLayer = Game1.player.currentLocation.Map.GetLayer("Back");
-                //Vector2 tilevector = Game1.player.Tile;
-                //Tile backTile = backLayer.Tiles[(int)tilevector.X, (int)tilevector.Y];
-                //Monitor.Log(backTile.TileIndex.ToString(), LogLevel.Debug);
+                /*for(int i = 0; i < 3; i++)
+                {
+
+                    List<Vector2> tilevectors = ModUtility.GetTilesWithinRadius(Game1.player.currentLocation, Game1.player.Tile, i);
+
+                    foreach(Vector2 tilevector in tilevectors)
+                    {
+                        
+                        Monitor.Log("tile |" + tilevector.ToString(), LogLevel.Debug);
+
+                        Layer backLayer = Game1.player.currentLocation.Map.GetLayer("Back");
+                        Tile backTile = backLayer.Tiles[(int)tilevector.X, (int)tilevector.Y];
+
+                        if (backTile != null)
+                        {
+
+                            foreach (KeyValuePair<string, PropertyValue> property in backTile.TileIndexProperties)
+                            {
+                                Monitor.Log(property.Key + "|" + property.Value.Type.ToString() + "|" + property.Value.ToString(), LogLevel.Debug);
+                            }
+
+                            Monitor.Log(backTile.TileIndex.ToString() + "|" + backTile.TileSheet.ToString(), LogLevel.Debug);
+
+                        }
+
+                        Layer frontLayer = Game1.player.currentLocation.Map.GetLayer("Front");
+                        Tile frontTile = frontLayer.Tiles[(int)tilevector.X, (int)tilevector.Y];
+
+                        if (frontTile != null)
+                        {
+
+                            foreach (KeyValuePair<string, PropertyValue> property in frontTile.TileIndexProperties)
+                            {
+                                Monitor.Log(property.Key + "|" + property.Value.Type.ToString() + "|" + property.Value.ToString(), LogLevel.Debug);
+                            }
+
+                            Monitor.Log(frontTile.TileIndex.ToString() + "|" + frontTile.TileSheet.ToString(), LogLevel.Debug);
+
+                        }
+
+                        Layer buildingLayer = Game1.player.currentLocation.Map.GetLayer("Buildings");
+                        Tile buildingTile = buildingLayer.Tiles[(int)tilevector.X, (int)tilevector.Y];
+
+                        if (buildingTile != null)
+                        {
+                    
+                            foreach (KeyValuePair<string, PropertyValue> property in buildingTile.TileIndexProperties)
+                            {
+                                Monitor.Log(property.Key + "|"+ property.Value.Type.ToString()+ "|" + property.Value.ToString(), LogLevel.Debug);
+                            }
+
+                            Monitor.Log(buildingTile.TileIndex.ToString(), LogLevel.Debug);
+
+
+                        }
+
+                    }
+
+
+                }*/
+
                 rite.start();
 
             }
@@ -1130,6 +1235,20 @@ namespace StardewDruid
             {
 
                 return;
+
+            }
+
+            for (int j = spellRegister.Count - 1; j >= 0; j--)
+            {
+
+                SpellHandle barrage = spellRegister[j];
+
+                if (!barrage.Update())
+                {
+
+                    spellRegister.RemoveAt(j);
+
+                }
 
             }
 
@@ -1311,7 +1430,14 @@ namespace StardewDruid
             if (messageBuffer < Game1.currentGameTime.TotalGameTime.TotalSeconds || ignore)
             {
 
-                Game1.addHUDMessage(new HUDMessage(message,type));
+                HUDMessage hudmessage = new(message, type);
+
+                if(type == 0)
+                {
+                    hudmessage.noIcon = true;
+                }
+
+                Game1.addHUDMessage(hudmessage);
 
                 messageBuffer = Game1.currentGameTime.TotalGameTime.TotalSeconds + 6;
 
@@ -1553,7 +1679,7 @@ namespace StardewDruid
 
                 AbortAllEvents();
                     
-                CastMessage("Challenge aborted due to critical condition");
+                CastMessage("Challenge aborted due to critical condition", 3, true);
 
             }
             else if (Context.IsMultiplayer)
@@ -2042,48 +2168,24 @@ namespace StardewDruid
                         if (@checkItem.Category == -7 && !snack)
                         {
 
-                            /*if (@checkItem != null && @checkItem.HasContextTag("ginger_item") && Game1.player.hasBuff(25))
+                            if (@checkItem.HasContextTag("ginger_item"))
                             {
-                                Game1.buffsDisplay.removeOtherBuff(25);
+                                Game1.player.buffs.Remove("25");
                             }
 
-                            string[] array = Game1.objectInformation[@checkItem.ParentSheetIndex].Split('/');
-                            
-                            if (Convert.ToInt32(array[2]) > 0)
+                            foreach (Buff foodOrDrinkBuff in @checkItem.GetFoodOrDrinkBuffs())
                             {
-                                
-                                string[] array2 = ((array.Length > 7) ? array[7].Split(' ') : new string[12]
-                                {
-                                    "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",
-                                    "0", "0"
-                                });
+                                Game1.player.applyBuff(foodOrDrinkBuff);
+                            }
 
-                                @checkItem.ModifyItemBuffs(array2);
-
-                                int num = ((array.Length > 8) ? Convert.ToInt32(array[8]) : (-1));
-
-                                if ((@checkItem as StardewValley.Object).Quality != 0)
-                                {
-                                    num = (int)((float)num * 1.5f);
-                                }
-
-                                Buff buff = new Buff(Convert.ToInt32(array2[0]), Convert.ToInt32(array2[1]), Convert.ToInt32(array2[2]), Convert.ToInt32(array2[3]), Convert.ToInt32(array2[4]), Convert.ToInt32(array2[5]), Convert.ToInt32(array2[6]), Convert.ToInt32(array2[7]), Convert.ToInt32(array2[8]), Convert.ToInt32(array2[9]), Convert.ToInt32(array2[10]), (array2.Length > 11) ? Convert.ToInt32(array2[11]) : 0, num, array[0], array[4]);
-                                
-                                if (Utility.IsNormalObjectAtParentSheetIndex(@checkItem, 921))
-                                {
-                                    buff.which = 28;
-                                }
-
-                                if (array.Length > 6 && array[6].Equals("drink"))
-                                {
-                                    Game1.buffsDisplay.tryToAddDrinkBuff(buff);
-                                }
-                                else if (Convert.ToInt32(array[2]) > 0)
-                                {
-                                    Game1.buffsDisplay.tryToAddFoodBuff(buff, Math.Min(120000, (int)((float)Convert.ToInt32(array[2]) / 20f * 30000f)));
-                                }
-                            
-                            }*/
+                            if (@checkItem.QualifiedItemId == "(O)773")
+                            {
+                                Game1.player.health = Game1.player.maxHealth;
+                            }
+                            else if (@checkItem.QualifiedItemId == "(O)351")
+                            {
+                                Game1.player.exhausted.Value = false;
+                            }
 
                             Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + (@checkItem.staminaRecoveredOnConsumption() * 2));
 
@@ -2148,6 +2250,25 @@ namespace StardewDruid
                         if (checkIndex != -1 && !snack)
                         {
 
+                            if (@checkItem.HasContextTag("ginger_item"))
+                            {
+                                Game1.player.buffs.Remove("25");
+                            }
+
+                            foreach (Buff foodOrDrinkBuff in @checkItem.GetFoodOrDrinkBuffs())
+                            {
+                                Game1.player.applyBuff(foodOrDrinkBuff);
+                            }
+
+                            if (@checkItem.QualifiedItemId == "(O)773")
+                            {
+                                Game1.player.health = Game1.player.maxHealth;
+                            }
+                            else if (@checkItem.QualifiedItemId == "(O)351")
+                            {
+                                Game1.player.exhausted.Value = false;
+                            }
+
                             Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + @checkItem.staminaRecoveredOnConsumption());
 
                             Game1.player.health = Math.Min(Game1.player.maxHealth, Game1.player.health + @checkItem.healthRecoveredOnConsumption());
@@ -2168,13 +2289,13 @@ namespace StardewDruid
 
                     }
 
-                    /*if (Config.consumeCaffeine)
+                    if (Config.consumeCaffeine)
                     {
 
                         if (coffeeList.ContainsKey(itemIndex))
                         {
 
-                            if (Game1.buffsDisplay.drink == null)
+                            if (!Game1.player.buffs.IsApplied("184653"))
                             {
 
                                 int coffeeConsume = 1;
@@ -2190,15 +2311,13 @@ namespace StardewDruid
 
                                 }
 
-                                Buff speedBuff = new("Druidic Roastmaster", getSpeed, checkItem.DisplayName, 9);
+                                BuffEffects buffEffect = new();
 
-                                speedBuff.buffAttributes[9] = 1;
+                                buffEffect.Speed.Set(1);
 
-                                speedBuff.total = 1;
+                                Buff speedBuff = new("184653", source: checkItem.DisplayName, displaySource: checkItem.DisplayName, duration: getSpeed, displayName: "Druidic Roastmaster", description: "Increases Speed", effects: buffEffect);
 
-                                speedBuff.which = 184653;
-
-                                Game1.buffsDisplay.tryToAddDrinkBuff(speedBuff);
+                                Game1.player.buffs.Apply(speedBuff);
 
                                 if (itemIndex == 349)
                                 {
@@ -2229,7 +2348,7 @@ namespace StardewDruid
 
                         }
 
-                    }*/
+                    }
 
                 }
 

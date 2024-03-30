@@ -665,7 +665,7 @@ namespace StardewDruid.Map
                     "quest",
                     "Effigy",
                     "The Effigy tells me of a large volcanic island far out on the sea, where the central mountain hosted a fanatic cult of dwarven miners. They toiled without thought or care for the domain of the monarchs.",
-                    "I found a shrine deep in the jungle, dwarven built, with pedestals for gems of brilliant lustre. I touched the site with the power of the Star Sisters, and something ominous chided me for it. Then fire breathing birds appeared. I had savoured some of the local mushrooms, so there's a possibility I hallucinated the whole thing.",
+                    "I found a shrine deep in the jungle, dwarven built, with pedestals for gems of brilliant lustre. I touched the site with the power of the Star Sisters, and something ominous chided me for it. Then evil demon monkeys appeared. I had savoured some of the local magma mushrooms, so there's a possibility I hallucinated the whole thing.",
                     "challengeGemShrine"
                     },
                     new()

@@ -36,9 +36,9 @@ namespace StardewDruid.Event.Boss
         {
             cues = DialogueData.DialogueScene(questData.name);
 
-            ModUtility.AnimateCursor(targetLocation, targetVector*64, targetVector * 64, "Mists");
+            ModUtility.AnimateCursor(targetLocation, targetVector*64, "mists");
 
-            ModUtility.AnimateBolt(targetLocation, targetVector);
+            ModUtility.AnimateBolt(targetLocation, targetVector * 64 + new Vector2(32));
 
             Mod.instance.RegisterEvent(this, "active");
 
@@ -155,9 +155,9 @@ namespace StardewDruid.Event.Boss
                 
                 Vector2 vector2 = targetVector + new Vector2(0.0f, 1f) - new Vector2(randomIndex.Next(7), randomIndex.Next(3));
 
-                ModUtility.AnimateCursor(targetLocation, vector2 * 64, vector2 * 64, "Mists");
+                ModUtility.AnimateCursor(targetLocation, vector2 * 64, "mists");
 
-                ModUtility.AnimateBolt(targetLocation, vector2);
+                ModUtility.AnimateBolt(targetLocation, vector2 * 64 + new Vector2(32));
 
                 return;
 
@@ -187,7 +187,7 @@ namespace StardewDruid.Event.Boss
 
                 EventQuery("LocationEdit");
                 
-                bossMonster = MonsterData.CreateMonster(14, targetVector + new Vector2(2f, 0.0f)) as Monster.Boss.Dino;
+                bossMonster = new((targetVector + new Vector2(2f, 0.0f)),Mod.instance.CombatModifier());
                 
                 if (questData.name.Contains("Two"))
                 {

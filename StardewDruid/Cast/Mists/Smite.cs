@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewDruid.Event;
 using StardewValley;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,9 @@ namespace StardewDruid.Cast.Mists
 
         private StardewValley.Monsters.Monster targetMonster;
 
-        public int colour;
-
         public float damage;
 
-        public Smite(Vector2 target,  StardewValley.Monsters.Monster TargetMonster, float Damage, int Colour = -1)
+        public Smite(Vector2 target,  StardewValley.Monsters.Monster TargetMonster, float Damage)
             : base(target)
         {
 
@@ -24,8 +23,6 @@ namespace StardewDruid.Cast.Mists
             castCost = Math.Max(6, 12 - castCombat);
 
             targetMonster = TargetMonster;
-
-            colour = Colour;
 
             damage = Damage;
 
@@ -56,37 +53,15 @@ namespace StardewDruid.Cast.Mists
 
             }
 
-            int damageApplied = (int)(damage * 0.7);
+            SpellHandle bolt = new(targetLocation, targetVector * 64, Game1.player.Position, 1, 1, -1, damage);
 
-            bool critApplied = false;
+            bolt.type = SpellHandle.barrages.bolt;
 
-            float critDamage = ModUtility.CalculateCritical(damageApplied, critChance);
+            bolt.critical = critChance;
 
-            if (critDamage > 0)
-            {
+            bolt.monster = targetMonster;
 
-                damageApplied = (int)critDamage;
-
-                critApplied = true;
-
-            }
-
-            List<int> diff = ModUtility.CalculatePush(targetLocation, targetMonster, targetPlayer.Position, 64);
-
-            ModUtility.HitMonster(targetLocation, targetPlayer, targetMonster, damageApplied, critApplied, diffX: diff[0], diffY: diff[1]);
-
-            if (targetMonster.Health <= 0)
-            {
-
-                ModUtility.AnimateBolt(targetLocation, new Vector2(targetVector.X, targetVector.Y - 1), 1200, colour);
-
-            }
-            else
-            {
-
-                ModUtility.AnimateBolt(targetLocation, new Vector2(targetVector.X, targetVector.Y - 1), 600 + randomIndex.Next(1, 8) * 100, colour);
-
-            }
+            Mod.instance.spellRegister.Add(bolt);
 
             castFire = true;
 

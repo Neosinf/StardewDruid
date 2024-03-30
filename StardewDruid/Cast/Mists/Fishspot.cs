@@ -23,7 +23,7 @@ namespace StardewDruid.Cast.Mists
         public override void EventTrigger()
         {
 
-            ModUtility.AnimateBolt(targetLocation, targetVector);
+            ModUtility.AnimateBolt(targetLocation, targetVector * 64 + new Vector2(32));
 
             Utility.addSprinklesToLocation(targetLocation, (int)targetVector.X, (int)targetVector.Y, 3, 3, 999, 333, Color.White);
 

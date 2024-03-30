@@ -56,7 +56,7 @@ namespace StardewDruid.Monster.Template
 
         public Skeleton() { }
 
-        public Skeleton(Vector2 vector, int combatModifier)
+        public Skeleton(Vector2 vector, int combatModifier, bool champion = false)
             : base(vector * 64, false)
         {
 
@@ -99,6 +99,11 @@ namespace StardewDruid.Monster.Template
                 objectsToDrop.Add("386"); // iridium
             }
 
+            if (champion)
+            {
+                isHardModeMonster.Set(true);
+
+            }
         }
 
         public void LoadOut()

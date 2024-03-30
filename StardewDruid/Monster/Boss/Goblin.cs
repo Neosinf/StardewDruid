@@ -15,7 +15,7 @@ namespace StardewDruid.Monster.Boss
     {
 
         public Goblin(Vector2 vector, int CombatModifier)
-          : base(vector, CombatModifier /= 2, "Goblin")
+          : base(vector, CombatModifier, "Goblin")
         {
 
         }

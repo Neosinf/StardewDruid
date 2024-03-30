@@ -30,7 +30,7 @@ namespace StardewDruid.Monster.Template
 
         public Slime() { }
 
-        public Slime(Vector2 position, int combatModifier)
+        public Slime(Vector2 position, int combatModifier,bool champion = false)
             : base(position * 64, combatModifier * 10)
         {
 
@@ -65,6 +65,11 @@ namespace StardewDruid.Monster.Template
                 objectsToDrop.Add(slimeSyrups[Game1.random.Next(slimeSyrups.Count)]);
             }
 
+            if (champion)
+            {
+                isHardModeMonster.Set(true);
+
+            }
 
         }
 

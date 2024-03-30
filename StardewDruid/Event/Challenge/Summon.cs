@@ -43,15 +43,17 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.spawnIndex = new()
             {
-                0, 1, 2, 3, 4, 99,
+                
+                0, 1, 2, 3, 4, 5,
 
             };
 
-            monsterHandle.specialIndex = new()
+            if(Mod.instance.CurrentProgress() > 26)
             {
-                11, 12, 13,
 
-            };
+                monsterHandle.spawnIndex.Add(6);
+
+            }
 
             LightHandle brazier = new(targetLocation, targetVector);
 
@@ -59,7 +61,7 @@ namespace StardewDruid.Event.Challenge
 
             Vector2 boltVector = new(targetVector.X, targetVector.Y - 1);
 
-            ModUtility.AnimateBolt(targetLocation, boltVector);
+            ModUtility.AnimateBolt(targetLocation, boltVector * 64 + new Vector2(32));
 
             SetTrack("tribal");
 
@@ -89,7 +91,7 @@ namespace StardewDruid.Event.Challenge
 
                         StardewValley.Object targetObject = targetLocation.objects[tileVector];
 
-                        if (targetObject is Torch && targetObject.itemId.Contains("93")) // crafted candle torch
+                        if (targetObject.itemId.Contains("93")) // crafted candle torch
                         {
 
                             removeList.Add(tileVector);
@@ -117,12 +119,12 @@ namespace StardewDruid.Event.Challenge
                 [0] = new() { 1, 2, 1, 0, 60, 0, }, // 30 monsters,
                 [1] = new() { 2, 3, 2, 0, 72, 0, }, // 48 monsters, 
                 [2] = new() { 3, 1, 1, 0, 72, 1, }, // 72 monsters, 1.25x difficulty
-                [3] = new() { 4, 1, 1, 1, 72, 1, }, // 72 monsters, 1 boss, 1.25x difficulty
-                [4] = new() { 5, 2, 3, 1, 72, 1, }, // 108 monsters, 1 boss, 1.25x difficulty
-                [5] = new() { 6, 1, 1, 2, 96, 2, }, // 96 monsters, 2 bosses, 1.5x difficulty
-                [6] = new() { 7, 1, 1, 3, 120, 2, }, // 120 monsters, 3 bosses, 1.5x difficulty
-                [7] = new() { 8, 3, 2, 3, 144, 3, }, // 96 monsters, 3 bosses, 1.75x difficulty
-                [8] = new() { 9, 3, 2, 4, 180, 4, }, // 120 monsters, 4 bosses, 2x difficulty
+                [3] = new() { 4, 1, 1, 40, 72, 1, }, // 72 monsters, 1 boss, 1.25x difficulty
+                [4] = new() { 5, 2, 3, 40, 72, 1, }, // 108 monsters, 1 boss, 1.25x difficulty
+                [5] = new() { 6, 1, 1, 40, 96, 2, }, // 96 monsters, 2 bosses, 1.5x difficulty
+                [6] = new() { 7, 1, 1, 36, 120, 2, }, // 120 monsters, 3 bosses, 1.5x difficulty
+                [7] = new() { 8, 3, 2, 40, 144, 3, }, // 96 monsters, 3 bosses, 1.75x difficulty
+                [8] = new() { 9, 3, 2, 40, 180, 4, }, // 120 monsters, 4 bosses, 2x difficulty
 
             };
 

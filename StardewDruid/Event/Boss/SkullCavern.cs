@@ -19,7 +19,7 @@ namespace StardewDruid.Event.Boss
     public class SkullCavern : BossHandle
     {
         public Reaper bossMonster;
-        public StardewDruid.Monster.Boss.Boss secondMonster;
+        public StardewDruid.Monster.Boss.Dragon secondMonster;
         public bool secondFight;
         public int secondCounter;
         public Vector2 bossTile;
@@ -40,7 +40,7 @@ namespace StardewDruid.Event.Boss
 
             cues = DialogueData.DialogueScene(questData.name);
 
-            ModUtility.AnimateDecoration(targetLocation, targetVector*64, "Weald");
+            ModUtility.AnimateDecoration(targetLocation, targetVector*64, "weald");
 
             ModUtility.AnimateRockfalls(targetLocation, targetPlayer.Tile);
 
@@ -197,7 +197,7 @@ namespace StardewDruid.Event.Boss
                 targetPlayer.Position = new(targetVector.X * 64, targetVector.Y * 64);//Vector2.op_Multiply(targetVector, 64f);
                 EventQuery("LocationPortal");
 
-                bossMonster = MonsterData.CreateMonster(17, new Vector2(13f, 9f)) as Reaper;
+                bossMonster = new(new Vector2(13f, 9f),Mod.instance.CombatModifier());
                 if (questData.name.Contains("Two"))
                 {
                     bossMonster.HardMode();
@@ -299,7 +299,7 @@ namespace StardewDruid.Event.Boss
 
                     case 7:
 
-                        secondMonster = MonsterData.CreateMonster(21, new Vector2(13f, 9f)) as Prime;
+                        secondMonster = new(new Vector2(13f, 9f),Mod.instance.CombatModifier());
 
                         targetLocation.characters.Add(secondMonster);
 

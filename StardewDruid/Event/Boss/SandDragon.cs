@@ -16,7 +16,7 @@ namespace StardewDruid.Event.Boss
         public bool modifiedSandDragon;
 
         //public BossDragon bossMonster;
-        public StardewDruid.Monster.Boss.Boss bossMonster;
+        public StardewDruid.Monster.Boss.Dragon bossMonster;
 
         public Vector2 returnPosition;
 
@@ -38,9 +38,11 @@ namespace StardewDruid.Event.Boss
 
             AddActor(targetVector * 64 + new Vector2(0, -32));
 
-            ModUtility.AnimateCursor(targetLocation, targetVector * 64, targetVector * 64, "Stars");
+            Cast.Stars.Meteor meteorCast = new(targetVector, Mod.instance.DamageLevel());
 
-            ModUtility.AnimateMeteor(targetLocation, targetVector, true);
+            meteorCast.targetLocation = targetLocation;
+
+            meteorCast.CastEffect();
 
             base.EventTrigger();
 
@@ -211,11 +213,18 @@ namespace StardewDruid.Event.Boss
 
                 }
 
-                Vector2 randomVector = targetVector + new Vector2(0, 1) - new Vector2(randomIndex.Next(7), randomIndex.Next(3));
+                if(activeCounter % 2 == 0)
+                {
+                    
+                    Vector2 randomVector = targetVector - new Vector2(4, 4) + new Vector2(randomIndex.Next(8), randomIndex.Next(8));
 
-                ModUtility.AnimateCursor(targetLocation, randomVector * 64, randomVector * 64, "Stars");
+                    Cast.Stars.Meteor meteorCast = new(randomVector, Mod.instance.DamageLevel());
 
-                ModUtility.AnimateMeteor(targetLocation, randomVector, randomIndex.Next(2) == 0);
+                    meteorCast.targetLocation = targetLocation;
+
+                    meteorCast.CastEffect();
+
+                }
 
                 return;
 
@@ -230,9 +239,7 @@ namespace StardewDruid.Event.Boss
 
                 EventQuery("LocationEdit");
 
-                StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(16, targetVector + new Vector2(-5, 0));
-
-                bossMonster = theMonster as StardewDruid.Monster.Boss.Boss;
+                bossMonster = new(targetVector + new Vector2(-5, 0),Mod.instance.CombatModifier());
 
                 if (questData.name.Contains("Two"))
                 {

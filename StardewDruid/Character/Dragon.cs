@@ -35,7 +35,6 @@ namespace StardewDruid.Character
         public int altDirection;
         public NetInt netDirection = new NetInt(0);
         public NetInt netAlternative = new NetInt(0);
-        public List<Event.BarrageHandle> barrages;
         public bool loadedOut;
         public Vector2 setPosition;
 
@@ -80,7 +79,6 @@ namespace StardewDruid.Character
         public int cooldownTimer;
 
         public NetBool netSpecialActive = new NetBool(false);
-        public NetBool netBreathActive = new NetBool(false);
         public bool specialActive;
         public int specialDelay;
         public int specialTimer;
@@ -88,6 +86,7 @@ namespace StardewDruid.Character
         public int roarTimer;
         public bool roarActive;
 
+        public NetBool netBreathActive = new NetBool(false);
         public Dictionary<int, List<Rectangle>> breathFrames;
         public Dictionary<int, Vector2> breathVectors;
         public Dictionary<int, Vector2> breathVectorsFlip;
@@ -178,8 +177,6 @@ namespace StardewDruid.Character
         {
 
             anchor = Game1.getFarmer(netAnchor.Value);
-
-            barrages = new();
 
             loadedOut = true;
 
@@ -291,8 +288,6 @@ namespace StardewDruid.Character
                 new Rectangle(0, 0, 128, 64)
                 }
             };
-
-            barrages = new();
 
             digFrames = new List<Rectangle>()
             {
@@ -417,6 +412,8 @@ namespace StardewDruid.Character
                 [7] = new(-88, 8),
             };
 
+            breathColour = "Red";
+
             if(Name == "BlackDragon" || Name == "BlueDragon")
             {
 
@@ -432,16 +429,16 @@ namespace StardewDruid.Character
         {
             base.initNetFields();
 
-            NetFields.AddField(netAnchor);
-            NetFields.AddField(netDirection);
-            NetFields.AddField(netAlternative);
-            NetFields.AddField(netSweepActive);
-            NetFields.AddField(netDashActive);
-            NetFields.AddField(netSpecialActive);
-            NetFields.AddField(netBreathActive);
-            NetFields.AddField(netDigActive);
-            NetFields.AddField(netDiveActive);
-            NetFields.AddField(netSwimActive);
+            NetFields.AddField(netAnchor, "netAnchor");
+            NetFields.AddField(netDirection, "netDirection");
+            NetFields.AddField(netAlternative, "netAlternative");
+            NetFields.AddField(netSweepActive, "netSweepActive");
+            NetFields.AddField(netDashActive, "netDashActive");
+            NetFields.AddField(netSpecialActive, "netSpecialActive");
+            NetFields.AddField(netBreathActive, "netBreathActive");
+            NetFields.AddField(netDigActive, "netDigActive");
+            NetFields.AddField(netDiveActive, "netDiveActive");
+            NetFields.AddField(netSwimActive, "netSwimActive");
 
         }
 
@@ -532,7 +529,7 @@ namespace StardewDruid.Character
 
                 b.Draw(digTexture, new Vector2(localPosition.X - 224f, localPosition.Y - 160f), digFrames[digFrame], Color.White, 0f, new Vector2(0.0f, 0.0f), 3f, SpriteEffects.None, drawLayer);
 
-                b.Draw(shadowTexture, new Vector2(localPosition.X - 192f, localPosition.Y - 40f), shadowFrames[1], Color.White * 0.25f, 0.0f, new Vector2(0.0f, 0.0f), 3f, SpriteEffects.None, drawLayer - 1E-05f);
+                b.Draw(shadowTexture, new Vector2(localPosition.X - 192f, localPosition.Y - 40f), shadowFrames[1], Color.White * 0.15f, 0.0f, new Vector2(0.0f, 0.0f), 3f, SpriteEffects.None, drawLayer - 1E-05f);
 
                 return;
 
@@ -608,7 +605,7 @@ namespace StardewDruid.Character
 
                 }
 
-                b.Draw(shadowTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 40f), shadowFrames[shadowAdjust], Color.White * 0.25f, 0.0f, new Vector2(0.0f, 0.0f), 3f, sweepFlip ? (SpriteEffects)1 : 0, drawLayer - 1E-05f);
+                b.Draw(shadowTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 40f), shadowFrames[shadowAdjust], Color.White * 0.15f, 0.0f, new Vector2(0.0f, 0.0f), 3f, sweepFlip ? (SpriteEffects)1 : 0, drawLayer - 1E-05f);
 
                 return;
 
@@ -636,7 +633,7 @@ namespace StardewDruid.Character
 
             }
 
-            b.Draw(shadowTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 40f), shadowFrames[netDirection.Value], Color.White * 0.25f, 0.0f, new Vector2(0.0f, 0.0f), 3f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 1E-05f);
+            b.Draw(shadowTexture, new Vector2(localPosition.X - 64f, localPosition.Y - 40f), shadowFrames[netDirection.Value], Color.White * 0.15f, 0.0f, new Vector2(0.0f, 0.0f), 3f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 1E-05f);
 
         }
 
@@ -678,7 +675,7 @@ namespace StardewDruid.Character
 
                 }
 
-                b.Draw(shadowTexture, new Vector2(localPosition.X - 48f, localPosition.Y - 56f), shadowFrames[netDirection.Value + 4], Color.White * 0.25f, 0.0f, new Vector2(0.0f, 0.0f), 4f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 1E-05f);
+                b.Draw(shadowTexture, new Vector2(localPosition.X - 48f, localPosition.Y - 56f), shadowFrames[netDirection.Value + 4], Color.White * 0.15f, 0.0f, new Vector2(0.0f, 0.0f), 4f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 1E-05f);
 
             }
 
@@ -872,11 +869,6 @@ namespace StardewDruid.Character
             if (specialActive)
             {
                 UpdateSpecial();
-            }
-
-            if (barrages.Count > 0)
-            {
-                UpdateBarrages();
             }
 
             if (cooldownActive)
@@ -1160,7 +1152,7 @@ namespace StardewDruid.Character
 
             buffEffect.Defense.Set(5);
 
-            Buff speedBuff = new("184655", source: "Rite of the Ether", displaySource: "Rite of the Ether", duration: 3000, displayName: "Dragon Scales", description: "Rite of the Ether", effects: buffEffect);
+            Buff speedBuff = new("184655", source: "Rite of the Ether", displaySource: "Rite of the Ether", duration: 3000, displayName: "Dragon Scales", description: "Defense increased by transformation", effects: buffEffect);
 
             anchor.buffs.Apply(speedBuff);
 
@@ -2081,7 +2073,9 @@ namespace StardewDruid.Character
 
                     splash.Add(zeroes[0]);
 
-                    ModUtility.Explode(currentLocation, zeroes[2], Game1.player, 1, 4, 2);
+                    ModUtility.Explode(currentLocation, zeroes[2], Game1.player, 1, 4);
+
+                    ModUtility.Reave(currentLocation, zeroes[2], Game1.player, 2);
 
                 }
 
@@ -2094,15 +2088,22 @@ namespace StardewDruid.Character
 
                     ModUtility.DamageMonsters(currentLocation, ModUtility.MonsterProximity(currentLocation, new() { burnVector * 64 }, 2, true), Game1.player, damageLevel, true);
 
-                    ModUtility.Explode(currentLocation, burnVector, Game1.player, 2, 4, 2);
+                    ModUtility.Explode(currentLocation, burnVector, Game1.player, 2, 4);
 
-                    BarrageHandle burn = new(currentLocation, burnVector, minus, 2, 0, -1, damageLevel / 2);
+                    ModUtility.Reave(currentLocation, zeroes[2], Game1.player, 2);
 
-                    burn.type = BarrageHandle.barrageType.burn;
+                    SpellHandle burn = new(currentLocation, burnVector*64, minus*64, 2, 0, -1, damageLevel / 2);
 
-                    burn.colour = breathColour;
+                    burn.type = SpellHandle.barrages.burn;
 
-                    barrages.Add(burn);
+                    if(breathColour == "Blue")
+                    {
+
+                        burn.scheme = SpellHandle.schemes.ether;
+
+                    }
+
+                    Mod.instance.spellRegister.Add(burn);
 
                 }
 
@@ -2436,25 +2437,6 @@ namespace StardewDruid.Character
             Game1.player.checkForExhaustion(oldStamina);
 
             return true;
-
-        }
-
-        public virtual void UpdateBarrages()
-        {
-
-            for (int i = barrages.Count - 1; i >= 0; i--)
-            {
-
-                BarrageHandle barrage = barrages[i];
-
-                if (!barrage.Update())
-                {
-
-                    barrages.Remove(barrage);
-
-                }
-
-            }
 
         }
 

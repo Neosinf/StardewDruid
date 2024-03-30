@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace StardewDruid.Character
@@ -26,14 +27,12 @@ namespace StardewDruid.Character
         public List<Vector2> ritesDone;
         public int riteIcon;
         public bool showIcon;
-        public Texture2D dashTexture;
+        public Texture2D axeTexture;
         public Texture2D bombTexture;
         public Texture2D iconsTexture;
 
         public NetBool netCastActive = new(false);
-        public NetBool netAxeActive = new(false);
         public NetBool netLieActive = new(false);
-        public List<Rectangle> axeFrames;
         public Dictionary<int, Rectangle> castFrames;
 
         public Effigy()
@@ -54,9 +53,13 @@ namespace StardewDruid.Character
 
             LoadBase();
 
+            specialScheme = SpellHandle.schemes.stars;
+
+            specialIndicator = SpellHandle.indicators.stars;
+
             idleInterval = 120;
 
-            walkFrames = WalkFrames(32, 16);
+            walkFrames = FrameSeries(32, 16, 0, 0, 4);
 
             dashFrames = new()
             {
@@ -93,11 +96,15 @@ namespace StardewDruid.Character
             dashFloor = 0;
             dashCeiling = 3;
 
-            axeFrames = new() {
+            sweepFrames = new() {
+                [0] = new()
+                {
                 new(0, 0, 48, 48),
                 new(48, 0, 48, 48),
                 new(96, 0, 48, 48),
                 new(144, 0, 48, 48),
+                }
+
             };
 
             specialFrames = new()
@@ -128,7 +135,7 @@ namespace StardewDruid.Character
 
             iconsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Icons.png"));
 
-            dashTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "EffigyDash.png"));
+            axeTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "EffigyDash.png"));
 
             loadedOut = true;
 
@@ -139,7 +146,6 @@ namespace StardewDruid.Character
             base.initNetFields();
 
             NetFields.AddField(netCastActive);
-            NetFields.AddField(netAxeActive);
             NetFields.AddField(netLieActive);
 
         }
@@ -233,12 +239,12 @@ namespace StardewDruid.Character
 
             }
 
-            if (netAxeActive.Value)
+            if (netSweepActive.Value)
             {
                 b.Draw(
-                    dashTexture,
+                    axeTexture,
                     localPosition - new Vector2(64, 128),
-                    axeFrames[moveFrame],
+                    sweepFrames[0][sweepFrame],
                     Color.White,
                     0f,
                     Vector2.Zero,
@@ -378,12 +384,12 @@ namespace StardewDruid.Character
                 iconsTexture,
                 localPosition + new Vector2(16, 0),
                 new Rectangle((riteIcon % 4) * 8, (riteIcon / 4) * 8, 8, 8),
-                Color.White,
+                Color.White*0.75f,
                 0f,
                 new Vector2(0, 0),
                 4f,
                 SpriteEffects.None,
-                drawLayer + 0.001f
+                drawLayer + 0.0001f
             );
 
         }
@@ -494,8 +500,6 @@ namespace StardewDruid.Character
 
             NextTarget(who.Position);
 
-            ResetAll();
-
             return true;
 
         }
@@ -505,8 +509,6 @@ namespace StardewDruid.Character
             base.ResetActives();
 
             netCastActive.Set(false);
-
-            netAxeActive.Set(false);
 
             netLieActive.Set(false);
 
@@ -524,55 +526,6 @@ namespace StardewDruid.Character
                 {
 
                     netCastActive.Set(false);
-
-                }
-
-            }
-
-        }
-
-        public override void UpdateMove()
-        {
-
-            base.UpdateMove();
-
-            if (netAxeActive.Value)
-            {
-                
-                if (!netDashActive.Value)
-                {
-
-                    netAxeActive.Set(false);
-
-                }
-                else
-                {
-
-                    float distance = Vector2.Distance(Position, targetVectors.First());
-
-                    if (distance > 216 && moveFrame > 1)
-                    {
-
-                        moveFrame = (1);
-
-                        moveTimer = dashInterval;
-
-                    }
-
-                }
-
-            }
-            else if (netDashActive.Value)
-            {
-
-                float distance = Vector2.Distance(Position, targetVectors.First());
-
-                if (distance > 324 && moveFrame != 0)
-                {
-
-                    moveFrame = (0);
-
-                    moveTimer = 1;
 
                 }
 
@@ -632,95 +585,6 @@ namespace StardewDruid.Character
         
         }
 
-        public override bool MonsterAttack(StardewValley.Monsters.Monster targetMonster)
-        {
-
-            float distance = Vector2.Distance(Position, targetMonster.Position);
-
-            if (distance >= 128f && distance <= 640f)
-            {
-
-                Vector2 vector2 = new(targetMonster.Position.X - Position.X - 32f, targetMonster.Position.Y - Position.Y);//Vector2.op_Subtraction(((StardewValley.Character)targetOpponents.First<Monster>()).Position, Vector2.op_Addition(Position, new Vector2(32f, 0.0f)));
-
-                if ((double)Math.Abs(vector2.Y) <= (distance / 2))
-                {
-
-                    if(new Random().Next(2) == 0 || ModUtility.GroundCheck(currentLocation, targetMonster.Tile) != "ground")
-                    {
-                        
-                        netDirection.Set(1);
-
-                        if (vector2.X < 0.001)
-                        {
-                            
-                            netDirection.Set(3);
-
-                        }
-
-                        netSpecialActive.Set(true);
-
-                        behaviourActive = behaviour.special;
-
-                        specialTimer = 60;
-
-                        NextTarget(targetMonster.Position, -1);
-
-                        ResetAll();
-
-                        BarrageHandle fireball = new(currentLocation, targetMonster.Tile, Tile, 2, 1, -1, Mod.instance.DamageLevel(), 3, 2);
-
-                        fireball.type = BarrageHandle.barrageType.cometball;
-
-                        barrages.Add(fireball);
-
-                    }
-                    else
-                    {
-
-                        behaviourActive = behaviour.dash;
-
-                        moveTimer = moveInterval;
-
-                        netAxeActive.Set(true);
-
-                        netDashActive.Set(true);
-
-                        NextTarget(targetMonster.Position, -1);
-
-                    }
-
-                }
-                else
-                {
-
-                    netCastActive.Set(true);
-
-                    behaviourActive = behaviour.special;
-
-                    netSpecialActive.Set(true);
-
-                    specialTimer = 30;
-
-                    NextTarget(targetMonster.Position, -1);
-
-                    ResetAll();
-
-                    List<int> diff = ModUtility.CalculatePush(currentLocation, targetMonster, Position, 64);
-
-                    ModUtility.HitMonster(currentLocation, Game1.player, targetMonster, Mod.instance.DamageLevel() / 2, false, diffX: diff[0], diffY: diff[1]);
-
-                    ModUtility.AnimateBolt(currentLocation, new Vector2(targetMonster.Tile.X, targetMonster.Tile.Y - 1), 1200);
-
-                }
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
         public override void ReachedRoamPosition()
         {
             Vector2 vector2 = new(roamVectors[roamIndex].X / 64f, roamVectors[roamIndex].Y / 64f);//Vector2.op_Division(roamVectors[roamIndex], 64f);
@@ -745,13 +609,13 @@ namespace StardewDruid.Character
             
             }
 
+            ResetActives();
+
             netCastActive.Set(true);
 
             netSpecialActive.Set(true);
 
             specialTimer = 30;
-
-            ResetAll();
 
             bool Reseed = !Mod.instance.EffectDisabled("Seeds");
 
@@ -789,7 +653,7 @@ namespace StardewDruid.Character
             if (location == Game1.player.currentLocation.Name && Utility.isOnScreen(Position, 128))
             {
                 
-                ModUtility.AnimateDecoration(currentLocation, Position, "Weald", 1f);
+                ModUtility.AnimateDecoration(currentLocation, Position, "weald", 1f);
                 
                 Game1.player.currentLocation.playSound("discoverMineral", Position, 1000);
             

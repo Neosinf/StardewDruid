@@ -10,6 +10,7 @@ using StardewValley.Network;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace StardewDruid.Monster.Boss
 {
@@ -26,6 +27,17 @@ namespace StardewDruid.Monster.Boss
         public Reaper(Vector2 vector, int CombatModifier)
           : base(vector, CombatModifier, "Reaper")
         {
+
+        }
+
+        public override void BaseMode()
+        {
+
+            MaxHealth = Math.Max(5000, combatModifier * 400);
+
+            Health = MaxHealth;
+
+            DamageToFarmer = Math.Max(20, Math.Min(60, combatModifier * 3));
 
         }
 
@@ -74,17 +86,6 @@ namespace StardewDruid.Monster.Boss
 
             flightSpeed = 12;
 
-        }
-
-        public override void HardMode()
-        {
-            Health *= 3;
-            Health /= 2;
-            MaxHealth = Health;
-
-            cooldownInterval = 40;
-
-            tempermentActive = temperment.aggressive;
         }
 
         public override Rectangle GetBoundingBox()
@@ -166,28 +167,29 @@ namespace StardewDruid.Monster.Boss
 
         }
 
-        public override void PerformSpecial()
+        public override void PerformSpecial(Vector2 farmerPosition)
         {
-            behaviourActive = behaviour.special;
 
-            behaviourTimer = 72;
+            specialTimer = (specialCeiling + 1) * specialInterval;
 
             netSpecialActive.Set(true);
-
-            Vector2 omega = Tile;
 
             for (int i = 0; i < 3; i++)
             {
 
-                Vector2 zero = BlastTarget(2)[0];
+                Vector2 zero = BlastZero(2)[0];
 
-                BarrageHandle fireball = new(currentLocation, zero, omega, 2, 1, DamageToFarmer);
+                SpellHandle fireball = new(currentLocation, zero * 64, GetBoundingBox().Center.ToVector2(), 2, 1, DamageToFarmer);
 
-                fireball.type = BarrageHandle.barrageType.fireball;
+                fireball.type = SpellHandle.barrages.fireball;
+
+                fireball.scheme = SpellHandle.schemes.death;
+
+                fireball.indicator = SpellHandle.indicators.death;
 
                 fireball.monster = this;
 
-                barrages.Add(fireball);
+                Mod.instance.spellRegister.Add(fireball);
 
             }
 

@@ -26,7 +26,7 @@ namespace StardewDruid.Map
 
             Dictionary<int, Dictionary<int, string>> cues = DialogueScene(queryData.name);
 
-            int cueIndex = queryData.targetX;
+            int cueIndex = Convert.ToInt32(queryData.value);
 
             if (cues.ContainsKey(cueIndex))
             {

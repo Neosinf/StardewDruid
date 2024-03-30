@@ -59,7 +59,7 @@ namespace StardewDruid.Cast.Mists
 
             castCost = 0;
 
-            ModUtility.AnimateBolt(targetLocation, targetVector);
+            ModUtility.AnimateBolt(targetLocation, targetVector * 64 + new Vector2(32));
 
             return;
 

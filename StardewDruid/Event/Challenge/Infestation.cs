@@ -146,9 +146,7 @@ namespace StardewDruid.Event.Challenge
 
                 }
 
-                StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(13, bossVector);
-
-                bossMonster = theMonster as BigSlime;
+                bossMonster = new(bossVector, Mod.instance.CombatModifier());
 
                 bossMonster.posturing.Set(true);
 
@@ -197,35 +195,26 @@ namespace StardewDruid.Event.Challenge
 
                         Vector2 meteorVector = bossMonster.Tile;
 
+                        List<Vector2> meteors = new()
+                        {
 
-                        Vector2 meteor = (meteorVector + new Vector2(-2, 1)) * 64;
+                            (meteorVector + new Vector2(-2, 1)),
+                            (meteorVector + new Vector2(1, -2)),
+                            (meteorVector + new Vector2(2, 1)),
+                            (meteorVector + new Vector2(1, 2)),
 
-                        ModUtility.AnimateCursor(targetLocation, meteor, meteor, "Stars");
+                        };
+                        
+                        foreach (Vector2 meteor in meteors)
+                        {
 
-                        ModUtility.AnimateMeteor(Mod.instance.rite.castLocation, meteorVector + new Vector2(-2, 1), true);
+                            Cast.Stars.Meteor meteorCast = new(meteor, Mod.instance.DamageLevel());
 
+                            meteorCast.targetLocation = targetLocation;
 
-                        meteor = (meteorVector + new Vector2(1, -2)) * 64;
+                            meteorCast.CastEffect();
 
-                        ModUtility.AnimateCursor(targetLocation, meteor, meteor, "Stars");
-
-                        ModUtility.AnimateMeteor(Mod.instance.rite.castLocation, meteorVector + new Vector2(1, -2), true);
-
-
-                        meteor = (meteorVector + new Vector2(2, 1)) * 64;
-
-                        ModUtility.AnimateCursor(targetLocation, meteor, meteor, "Stars");
-
-                        ModUtility.AnimateMeteor(Mod.instance.rite.castLocation, meteorVector + new Vector2(2, 1), false);
-
-
-                        meteor = (meteorVector + new Vector2(1, 2)) * 64;
-
-                        ModUtility.AnimateCursor(targetLocation, meteor, meteor, "Stars");
-
-                        ModUtility.AnimateMeteor(Mod.instance.rite.castLocation, meteorVector + new Vector2(1, 2), false);
-
-                        DelayedAction.functionAfterDelay(MeteorImpact, 600);
+                        }
 
                         break;
 

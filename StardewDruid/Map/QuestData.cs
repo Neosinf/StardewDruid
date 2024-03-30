@@ -168,9 +168,8 @@ namespace StardewDruid.Map
                 if (!safeTriggers.Contains(quest.type))
                 {
 
-                    Mod.instance.CastMessage("Note: Only the host can trigger some Druid quests");
-
                     return;
+
                 }
 
             }
@@ -351,7 +350,7 @@ namespace StardewDruid.Map
 
         public static Dictionary<int, List<string>> QuestProgress()
         {
-            return new Dictionary<int, List<string>>()
+            Dictionary<int, List<string>> progression = new()
             {
                 // weald arc
                 [0] = new() { "approachEffigy" },
@@ -379,7 +378,6 @@ namespace StardewDruid.Map
                     "challengeCanoli",
                     "challengeMariner",
                     "challengeSandDragon",
-                    "challengeGemShrine",
                     "challengeMuseum"
                 },
                 // fates arc
@@ -405,6 +403,16 @@ namespace StardewDruid.Map
                 [36] = new() { "heartJester" },
                 //[37] = new() { "heartShadowtin" },
             };
+
+            if (Game1.player.hasOrWillReceiveMail("seenBoatJourney"))
+            {
+
+                progression[18].Add("challengeGemShrine");
+
+            }
+
+            return progression;
+
         }
 
         public static List<string> RitesProgress()
@@ -583,7 +591,7 @@ namespace StardewDruid.Map
                         typeof (FarmCave)
                     },
                     triggerMarker = "icon",
-                    triggerVector = (CharacterData.CharacterPosition() / 64f) + new Vector2(-1f, -2f),
+                    triggerVector = (WarpData.WarpStart() / 64f) + new Vector2(-1f, -2f),
                     questId = 18465001,
                     //questCharacter = "Effigy",
                     questValue = 6,
@@ -1263,8 +1271,35 @@ namespace StardewDruid.Map
                 },
             };
 
+            List<string> safeTriggers = new() { "sword", "scythe", };
+
+            foreach (KeyValuePair<string, Quest> quest in dictionary)
+            {
+
+                if (!Context.IsMainPlayer)
+                {
+
+                    if (!safeTriggers.Contains(quest.Value.type) && quest.Value.triggerMarker != null)
+                    {
+
+                        dictionary[quest.Key].questObjective = "(Only the multiplayer host can activate this quest event). " + dictionary[quest.Key].questObjective;
+
+                    }
+
+                }
+
+                if(Mod.instance.Config.adjustRewards != 100)
+                {
+
+                    dictionary[quest.Key].questReward = (int)(quest.Value.questReward * (Mod.instance.Config.adjustRewards / 100));
+
+                }
+
+            }
+
             foreach (KeyValuePair<string, string> secondQuest in SecondQuests(true))
             {
+
                 Quest quest = DeepClonerExtensions.ShallowClone<Quest>(dictionary[secondQuest.Key]);
                 quest.name = secondQuest.Key + "Two";
                 quest.questId += 100;
@@ -1373,19 +1408,13 @@ namespace StardewDruid.Map
             foreach (KeyValuePair<string, string> keyValuePair in challenges)
             {
                 
-                if (Mod.instance.QuestComplete(keyValuePair.Key))
+                if (Mod.instance.QuestOpen(keyValuePair.Key))
                 {
-
-                    enabled.Add(keyValuePair.Key, keyValuePair.Value);
-                
+                    continue;
                 }
-                else if (!Mod.instance.QuestGiven(keyValuePair.Key))
-                {
 
-                    enabled.Add(keyValuePair.Key, keyValuePair.Value);
-                
-                }
-                    
+                enabled.Add(keyValuePair.Key, keyValuePair.Value);
+
             }
 
             return enabled;

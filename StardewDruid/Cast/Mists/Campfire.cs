@@ -61,7 +61,7 @@ namespace StardewDruid.Cast.Mists
 
             Game1.playSound("fireball");
 
-            ModUtility.AnimateBolt(targetLocation, targetVector);
+            ModUtility.AnimateBolt(targetLocation, targetVector * 64 + new Vector2(32));
 
             castFire = true;
 

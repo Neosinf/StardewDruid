@@ -39,7 +39,7 @@ namespace StardewDruid.Map
 
             }
 
-            return Vector2.One;
+            return new Vector2(-1);
 
         }
 

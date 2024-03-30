@@ -17,8 +17,6 @@ namespace StardewDruid.Monster
 
         public List<int> spawnIndex;
 
-        public List<int> specialIndex;
-
         public int spawnFrequency;
 
         public int spawnAmplitude;
@@ -27,7 +25,7 @@ namespace StardewDruid.Monster
 
         public int spawnSpecial;
 
-        public int specialCounter;
+        public bool spawnChampion;
 
         public Vector2 spawnWithin;
 
@@ -161,7 +159,12 @@ namespace StardewDruid.Monster
 
             spawnCounter++;
 
-            specialCounter++;
+            if(spawnSpecial != 0 && spawnCounter % spawnSpecial == 0)
+            {
+
+                spawnChampion = true;
+
+            }
 
             if (spawnFrequency >= 3 && spawnCounter == 2 && !firstSpawn)
             {
@@ -194,26 +197,6 @@ namespace StardewDruid.Monster
                     spawnAmount++;
 
                     spawnTotal++;
-
-                }
-
-            }
-
-            if (specialCounter > 30 && spawnSpecial > 0)
-            {
-
-                spawnVector = SpawnVector();
-
-                if (spawnVector != new Vector2(-1))
-                {
-
-                    SpawnGround(spawnVector, true);
-
-                    spawnAmount++;
-
-                    spawnSpecial--;
-
-                    specialCounter = 0;
 
                 }
 
@@ -284,23 +267,14 @@ namespace StardewDruid.Monster
 
         }
 
-        public StardewValley.Monsters.Monster SpawnGround(Vector2 spawnVector, bool special = false)
+        public StardewValley.Monsters.Monster SpawnGround(Vector2 spawnVector)
         {
 
-            int spawnMob;
+            int spawnMob = spawnIndex[randomIndex.Next(spawnIndex.Count)];
 
-            if (special)
-            {
-                spawnMob = specialIndex[randomIndex.Next(specialIndex.Count)];
+            StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(spawnMob, spawnVector, spawnCombat, spawnChampion);
 
-            }
-            else
-            {
-                spawnMob = spawnIndex[randomIndex.Next(spawnIndex.Count)];
-
-            }
-
-            StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(spawnMob, spawnVector, spawnCombat);
+            if (spawnChampion) { spawnChampion = false; }
 
             monsterSpawns.Add(theMonster);
 
@@ -317,6 +291,23 @@ namespace StardewDruid.Monster
             // ------------------------------ monster
 
             return theMonster;
+
+        }
+
+        public void SpawnImport(StardewValley.Monsters.Monster theMonster)
+        {
+
+            monsterSpawns.Add(theMonster);
+
+            spawnTotal++;
+
+            MonsterSpawn monsterSpawn = new(spawnLocation, theMonster);
+
+            monsterSpawn.InitiateMonster(150);
+
+            spawnHandles.Add(monsterSpawn);
+
+            ModUtility.AnimateQuickWarp(spawnLocation, theMonster.Position - new Vector2(0, 32));
 
         }
 
@@ -358,7 +349,7 @@ namespace StardewDruid.Monster
 
             // ----------------------------- animation
 
-            if (MonsterData.CustomMonsters().Contains(theMonster.GetType()))
+            if (MonsterData.BossMonster(theMonster))
             {
                 monsterSpawn.InitiateMonster(150);
 

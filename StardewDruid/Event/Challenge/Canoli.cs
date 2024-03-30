@@ -62,7 +62,7 @@ namespace StardewDruid.Event.Challenge
             woodsLocation.map.GetLayer("Front").Tiles[8, 6].TileIndex = 1117;
             woodsLocation.map.GetLayer("Front").Tiles[9, 6].TileIndex = 1118;
 
-            ModUtility.AnimateBolt(targetLocation, targetVector + new Vector2(0, -1));
+            ModUtility.AnimateBolt(targetLocation, targetVector * 64 + new Vector2(32,-32));
 
             Mod.instance.RegisterEvent(this, "active");
 

@@ -44,7 +44,7 @@ namespace StardewDruid.Event.Other
             Game1.player.currentLocation.playSound("yoba");
 
             // ----- rock fall
-            ModUtility.AnimateDecoration(targetLocation, targetVector * 64, "Weald");
+            ModUtility.AnimateDecoration(targetLocation, targetVector * 64, "weald");
 
             ModUtility.AnimateRockfalls(targetLocation, Game1.player.Tile);
 
@@ -113,7 +113,7 @@ namespace StardewDruid.Event.Other
         public void AnimateEffigy()
         {
 
-            Vector2 EffigyPosition = CharacterData.CharacterPosition() - new Vector2(0, 704);
+            Vector2 EffigyPosition = WarpData.WarpStart() - new Vector2(0, 704);
 
             TemporaryAnimatedSprite EffigyAnimation = new(0, 1000f, 1, 1, EffigyPosition, false, false)
             {

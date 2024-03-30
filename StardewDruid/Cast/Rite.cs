@@ -6,11 +6,13 @@ using StardewDruid.Cast.Fates;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Stars;
 using StardewDruid.Dialogue;
+using StardewDruid.Event;
 using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buffs;
 using StardewValley.Characters;
+using StardewValley.GameData.HomeRenovations;
 using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
@@ -23,6 +25,7 @@ using System.Xml.Linq;
 using xTile.Dimensions;
 using xTile.Layers;
 using xTile.Tiles;
+using static StardewDruid.Event.SpellHandle;
 
 
 namespace StardewDruid.Cast
@@ -78,6 +81,10 @@ namespace StardewDruid.Cast
 
         public string chargeLocation;
 
+        Texture2D buffTexture;
+
+        public string appliedBuff;
+
         public Rite()
         {
 
@@ -90,6 +97,8 @@ namespace StardewDruid.Cast
             chargeAnimations = new();
 
             witnesses = new();
+
+            buffTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Displays.png"));
 
             reset();
 
@@ -349,7 +358,7 @@ namespace StardewDruid.Cast
 
                 }
 
-                if (Game1.player.Stamina <= 32 || Game1.player.health <= 25)
+                if (Game1.player.Stamina <= 32 || (Game1.player.health/Game1.player.maxHealth) <= 0.3)
                 {
 
                     Mod.instance.AutoConsume();
@@ -417,7 +426,7 @@ namespace StardewDruid.Cast
             if (castAnimations.Count == 0)
             {
 
-                decorations = ModUtility.AnimateDecoration(castLocation, caster.Position, castType[0].ToString().ToUpper() + castType.Substring(1),1f,2400);
+                decorations = ModUtility.AnimateDecoration(castLocation, caster.Position, castType,1f,2400);
 
                 castAnimations = decorations;
 
@@ -489,9 +498,13 @@ namespace StardewDruid.Cast
                             if (checkMonsters.Count > 0)
                             {
 
-                                ChaosEvent chaosEvent = new(Game1.player.Position, checkMonsters[0]);
+                                SpellHandle barrage = new(Game1.player.currentLocation, checkMonsters.First().Position, Game1.player.Position, 2, 1, -1, Mod.instance.DamageLevel(), 4);
 
-                                chaosEvent.EventTrigger();
+                                barrage.type = SpellHandle.barrages.chaos;
+
+                                barrage.LaunchChaos();
+
+                                Mod.instance.spellRegister.Add(barrage);
 
                             }
 
@@ -639,7 +652,7 @@ namespace StardewDruid.Cast
             if (chargeAnimations.Count == 0)
             {
 
-                TemporaryAnimatedSprite cursor = ModUtility.AnimateCharge(caster.currentLocation, caster.Position, chargeType[0].ToString().ToUpper() + chargeType.Substring(1));
+                TemporaryAnimatedSprite cursor = ModUtility.AnimateCharge(caster.currentLocation, caster.Position, chargeType);
 
                 chargeAnimations.Add(cursor);
 
@@ -1119,7 +1132,9 @@ namespace StardewDruid.Cast
 
                     buffEffect.Speed.Set(2);
 
-                    Buff speedBuff = new("184652",source: "Rite of the " + castType, displaySource: "Rite of the " + castType, duration:3000, displayName:"Druidic Freneticism",description:"Rite of the " + castType, effects: buffEffect);
+                    string riteDisplay = "Rite of the " + castType[0].ToString().ToUpper() + castType.Substring(1);
+
+                    Buff speedBuff = new("184652",source: riteDisplay, displaySource: riteDisplay, duration:3000, displayName:"Druidic Freneticism",description:"Speed increased when casting amongst Grass", effects: buffEffect);
 
                     caster.buffs.Apply(speedBuff);
 
@@ -1695,7 +1710,7 @@ namespace StardewDruid.Cast
 
                                         Mod.instance.targetCasts[locationName][tileVector] = "Tree";
 
-                                        ModUtility.AnimateCursor(castLocation, tileVector * 64, tileVector * 64);
+                                        ModUtility.AnimateCursor(castLocation, tileVector * 64);
 
                                         break;
 
@@ -1720,7 +1735,7 @@ namespace StardewDruid.Cast
 
                                         }
 
-                                        ModUtility.AnimateCursor(castLocation, tileVector * 64, tileVector * 64);
+                                        ModUtility.AnimateCursor(castLocation, tileVector * 64);
 
                                         break;
 
@@ -1959,7 +1974,6 @@ namespace StardewDruid.Cast
 
             }
 
-
             if (!Mod.instance.rockCasts.ContainsKey(castLocation.Name))
             {
 
@@ -2015,7 +2029,16 @@ namespace StardewDruid.Cast
 
                     newVector = castSelection[castIndex];
 
-                    effectCasts[newVector] = new Cast.Weald.Rockfall(newVector, damageLevel);
+                    string terrain = ModUtility.GroundCheck(castLocation, newVector);
+
+                    if (terrain != "ground" && terrain != "water")
+                    {
+
+                        continue;
+
+                    }
+
+                    effectCasts[newVector] = new Cast.Weald.Rockfall(newVector, damageLevel,terrain);
 
                     if(Mod.instance.CurrentProgress() >= 36)
                     {
@@ -2103,9 +2126,11 @@ namespace StardewDruid.Cast
 
             float castLimit = 5f;
 
+            Vector2 negativeVector = new(-1);
+
             Vector2 warpVector = Map.WarpData.WarpVectors(castLocation);
 
-            if (warpVector != Vector2.One && !specialCasts.Contains("warp"))
+            if (warpVector != negativeVector && !specialCasts.Contains("warp"))
             {
 
                 if (Vector2.Distance(castVector, warpVector) <= castLimit)
@@ -2128,7 +2153,7 @@ namespace StardewDruid.Cast
 
                 Vector2 fireVector = Map.FireData.FireVectors(castLocation);
 
-                if (fireVector != Vector2.One && !specialCasts.Contains("fire"))
+                if (fireVector != negativeVector && !specialCasts.Contains("fire"))
                 {
 
                     if (Vector2.Distance(castVector, fireVector) <= castLimit)
@@ -2437,22 +2462,38 @@ namespace StardewDruid.Cast
 
                                 }
                             }
-                            else if (targetObject is Torch && targetObject.itemId.Contains("93")) // crafted candle torch
+                            else if (targetObject.ItemId == "93") // crafted candle torch
                             {
 
-                                if (progressLevel >= 13 && !Mod.instance.eventRegister.ContainsKey("active"))
+                                /*if (!targetObject.ItemId.Contains("93"))
                                 {
-                                    
-                                    if (spawnIndex["portal"])
-                                    {
+                                    Mod.instance.Monitor.Log("Torch of item Id " + targetObject.ItemId + " cannot be used for summoning", LogLevel.Debug);
+                                    break;
 
-                                        effectCasts[tileVector] = new Cast.Mists.Summon(tileVector);
+                                }*/
 
-                                        centerVectors.Add(tileVector);
-
-                                    }
+                                if (Mod.instance.eventRegister.ContainsKey("active"))
+                                {
+                                    Mod.instance.Monitor.Log("Cannot conduct summoning because "+Mod.instance.eventRegister["active"].GetType().ToString()+" is active", LogLevel.Debug);
+                                    break;
 
                                 }
+
+                                if(progressLevel < 13)
+                                {
+                                    Mod.instance.Monitor.Log("Cannot conduct summoning because your progress level is too low", LogLevel.Debug);
+                                    break;
+                                }
+
+                                if (!spawnIndex["portal"])
+                                {
+                                    Mod.instance.Monitor.Log("Cannot conduct summoning because it isn't supported by this map type", LogLevel.Debug);
+                                    break;
+                                }
+
+                                effectCasts[tileVector] = new Cast.Mists.Summon(tileVector);
+
+                                centerVectors.Add(tileVector);
 
                             }
                             else if (targetObject.IsScarecrow())
@@ -2529,7 +2570,7 @@ namespace StardewDruid.Cast
 
                 Vector2 centerPosition = centerVector * 64;
 
-                ModUtility.AnimateCursor(castLocation, centerPosition, centerPosition, "Mists",600);
+                ModUtility.AnimateCursor(castLocation, centerPosition, "mists",600);
 
             }
 
@@ -2575,7 +2616,7 @@ namespace StardewDruid.Cast
 
             }
 
-            if (difficulty < 2)
+            if (difficulty < 3)
             {
 
                 foreach (NPC nonPlayableCharacter in castLocation.characters)
@@ -2596,7 +2637,7 @@ namespace StardewDruid.Cast
                         if(meteorVectors.Count > 0)
                         {
 
-                            if(Vector2.Distance(monsterVector,meteorVectors.First()) < 5)
+                            if(Vector2.Distance(monsterVector,meteorVectors.First()) < 4)
                             {
                                 
                                 continue;
@@ -2605,7 +2646,7 @@ namespace StardewDruid.Cast
 
                         }
 
-                        if (Vector2.Distance(castVector, monsterVector) > 5)
+                        if (Vector2.Distance(castVector, monsterVector) > 6)
                         {
 
                             continue;
@@ -2621,7 +2662,7 @@ namespace StardewDruid.Cast
 
             }
 
-            if(difficulty < 3 && (castLocation is MineShaft || castLocation is VolcanoDungeon))
+            if(difficulty < 2 && (castLocation is MineShaft || castLocation is VolcanoDungeon))
             {
 
                 for (int i = 2; i < 6; i++)
@@ -2752,6 +2793,7 @@ namespace StardewDruid.Cast
 
         public void CastComet()
         {
+            
             if (!castTask.ContainsKey("masterGravity"))
             {
 
@@ -2775,9 +2817,7 @@ namespace StardewDruid.Cast
 
             Vector2 cometVector = (Mod.instance.eventRegister["gravity"] as GravityEvent).targetVector;
 
-            Comet cometEvent = new(cometVector, Mod.instance.DamageLevel());
-
-            cometEvent.EventTrigger();
+            effectCasts[cometVector] = new Cast.Stars.Meteor(cometVector, Mod.instance.DamageLevel(), true);
 
         }
 
@@ -3376,6 +3416,127 @@ namespace StardewDruid.Cast
                 escapeEvent.EventTrigger();
 
             }
+
+        }
+
+        public void RiteBuff()
+        {
+
+            int toolIndex = Mod.instance.AttuneableWeapon();
+
+            if (toolIndex == -1)
+            {
+                Mod.instance.Monitor.Log("1", LogLevel.Debug);
+                RemoveBuff();
+                return;
+
+            }
+
+            string activeBlessing = Mod.instance.CurrentBlessing();
+
+            if (Mod.instance.CurrentProgress() <= 1)
+            {
+                Mod.instance.Monitor.Log("2", LogLevel.Debug);
+                RemoveBuff();
+                return;
+
+            }
+            else if (Mod.instance.Config.slotAttune)
+            {
+
+                activeBlessing = GetSlotBlessing();
+
+            }
+            else
+            {
+
+                if (Mod.instance.weaponAttunement.ContainsKey(toolIndex))
+                {
+
+                    activeBlessing = Mod.instance.weaponAttunement[toolIndex];
+
+                    if (!Mod.instance.blessingList.Contains(activeBlessing))
+                    {
+                        Mod.instance.Monitor.Log("3", LogLevel.Debug);
+                        RemoveBuff();
+                        return;
+
+                    }
+
+                }
+
+            }
+
+            if (activeBlessing == "none")
+            {
+                Mod.instance.Monitor.Log("4", LogLevel.Debug);
+                RemoveBuff();
+                return;
+
+            }
+
+            if(appliedBuff == activeBlessing)
+            {
+
+                if (Game1.player.buffs.IsApplied("184651"))
+                {
+                    return;
+
+                }
+
+            }
+
+            string display = "Rite of the " + activeBlessing[0].ToString().ToUpper() + activeBlessing.Substring(1);
+
+            int buffIndex = 0;
+
+            switch (activeBlessing)
+            {
+
+                case "mists":
+
+                    buffIndex = 1;
+
+                    break;
+
+                case "stars":
+
+                    buffIndex = 2;
+
+                    break;
+
+                case "fates":
+
+                    buffIndex = 3;
+
+                    break;
+
+                case "ether":
+
+                    buffIndex = 4;
+
+                    break;
+
+            }
+
+            appliedBuff = activeBlessing;
+
+            Buff riteBuff = new("184651", source: "Stardew Druid", displaySource: "Stardew Druid", duration: Buff.ENDLESS, iconTexture:buffTexture, iconSheetIndex: buffIndex, displayName: display, description: "Actively selected rite");
+
+            Game1.player.buffs.Apply(riteBuff);
+
+        }
+
+        public void RemoveBuff()
+        {
+
+            if (Game1.player.buffs.IsApplied("184651"))
+            {
+
+                Game1.player.buffs.Remove("184651");
+
+            }
+
 
         }
 

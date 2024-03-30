@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Event;
+using StardewDruid.Map;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Monsters;
@@ -33,6 +34,16 @@ namespace StardewDruid.Monster.Boss
         public Dino(Vector2 vector, int CombatModifier)
           : base(vector, CombatModifier, "Dinosaur")
         {
+
+        }
+        public override void BaseMode()
+        {
+
+            MaxHealth = Math.Max(4000, combatModifier * 300);
+
+            Health = MaxHealth;
+
+            DamageToFarmer = Math.Max(15, Math.Min(50, combatModifier * 2));
 
         }
 
@@ -131,8 +142,6 @@ namespace StardewDruid.Monster.Boss
 
             abilities = 2;
 
-            cooldownInterval = 60;
-
             reachThreshold = 64;
 
             safeThreshold = 544;
@@ -141,11 +150,11 @@ namespace StardewDruid.Monster.Boss
 
             barrageThreshold = 544;
 
-            barrages = new();
-
-            specialCeiling = 1;
+            specialCeiling = 3;
 
             specialFloor = 1;
+
+            specialInterval = 15;
 
             cooldownInterval = 60;
 
@@ -311,26 +320,20 @@ namespace StardewDruid.Monster.Boss
 
         }
 
-        public override void PerformSpecial()
+        public override void PerformSpecial(Vector2 farmerPosition)
         {
-            
-            behaviourActive = behaviour.special;
 
-            behaviourTimer = 90;
+            specialTimer = (specialCeiling + 1) * specialInterval;
 
             netSpecialActive.Set(true);
 
-            List<Vector2> zero = BlastTarget();
+            SpellHandle beam = new(currentLocation, farmerPosition, GetBoundingBox().Center.ToVector2(), 2, 0, DamageToFarmer * 0.4f);
 
-            BarrageHandle beam = new(currentLocation, zero[0], Vector2.Zero, 2, 0, DamageToFarmer * 0.4f);
-
-            beam.type = BarrageHandle.barrageType.beam;
-
-            beam.originPosition = Position;
+            beam.type = SpellHandle.barrages.beam;
 
             beam.monster = this;
 
-            barrages.Add(beam);
+            Mod.instance.spellRegister.Add(beam);
 
         }
 

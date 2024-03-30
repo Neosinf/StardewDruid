@@ -95,7 +95,7 @@ namespace StardewDruid.Map
 
                 Mod.instance.characters[characterName].DefaultMap = startMap;
 
-                Mod.instance.characters[characterName].DefaultPosition = CharacterPosition(startMap);
+                Mod.instance.characters[characterName].DefaultPosition = WarpData.WarpStart(startMap);
 
             }
 
@@ -134,7 +134,7 @@ namespace StardewDruid.Map
             if (characterName == "Effigy")
             {
 
-                Vector2 position = CharacterPosition(startMap);
+                Vector2 position = WarpData.WarpStart(startMap);
 
                 Effigy npcEffigy = new(position, startMap);
 
@@ -178,7 +178,7 @@ namespace StardewDruid.Map
             if (characterName == "Jester")
             {
 
-                Vector2 position = CharacterPosition(startMap);
+                Vector2 position = WarpData.WarpStart(startMap);
 
                 Jester npcJester = new(position, startMap);
 
@@ -214,7 +214,7 @@ namespace StardewDruid.Map
             if (characterName == "Shadowtin")
             {
 
-                Vector2 position = CharacterPosition(startMap);
+                Vector2 position = WarpData.WarpStart(startMap);
 
                 Shadowtin npcShadowtin = new(position, startMap);
 
@@ -323,53 +323,6 @@ namespace StardewDruid.Map
             }
 
             return disposition;
-
-        }
-
-        public static Vector2 CharacterPosition(string defaultMap = "FarmCave")
-        {
-
-            if(defaultMap == "Follow")
-            {
-
-                defaultMap = "Farm";
-
-            }
-
-            switch (defaultMap)
-            {
-
-                case "Mountain":
-
-                    return new Vector2(6176, 1728);
-
-                case "18465_Crypt":
-
-                    return new Vector2(1280, 448);
-
-                default:
-
-                    Dictionary<string, Vector2> farmPositions = new() { ["FarmCave"] = new Vector2(6, 6) * 64, ["Farm"] = Vector2.One * 64 };
-
-                    foreach (Warp warp in Game1.getFarm().warps)
-                    {
-
-                        if (warp.TargetName == "FarmCave")
-                        {
-
-                            Vector2 cavePosition = new Vector2(warp.TargetX, warp.TargetY - 2) * 64;
-
-                            Vector2 farmPosition = new Vector2(warp.X, warp.Y + 4) * 64;
-
-                            farmPositions = new() { ["FarmCave"] = cavePosition, ["Farm"] = farmPosition, };
-
-                        }
-
-                    }
-
-                    return farmPositions[defaultMap];
-
-            }
 
         }
 

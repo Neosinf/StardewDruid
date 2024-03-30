@@ -1364,7 +1364,7 @@ namespace StardewDruid.Map
                 spawnIndex["weeds"] = true;
 
             }
-            else if (playerLocation is Woods || playerLocation.Name.Contains("Grampleton") || playerLocation is IslandEast || playerLocation is IslandShrine)
+            else if (playerLocation is Woods || playerLocation is IslandEast || playerLocation is IslandShrine)
             {
 
                 spawnIndex["forage"] = true;

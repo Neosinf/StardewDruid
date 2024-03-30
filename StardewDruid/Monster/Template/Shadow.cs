@@ -13,7 +13,7 @@ namespace StardewDruid.Monster.Template
 
         public Shadow() { }
 
-        public Shadow(Vector2 position, int combatModifier)
+        public Shadow(Vector2 position, int combatModifier, bool champion = false)
             : base(position * 64)
         {
 
@@ -53,6 +53,11 @@ namespace StardewDruid.Monster.Template
                 objectsToDrop.Add(shadowGems[Game1.random.Next(shadowGems.Count)]);
             }
 
+            if (champion)
+            {
+                isHardModeMonster.Set(true);
+
+            }
         }
 
         public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who)

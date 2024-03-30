@@ -20,12 +20,6 @@ namespace StardewDruid
 
         public string location;
 
-        public int expire;
-
-        public int targetX;
-
-        public int targetY;
-
         public long longId;
 
         public QueryData()
@@ -34,4 +28,5 @@ namespace StardewDruid
         }
 
     }
+
 }

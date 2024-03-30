@@ -29,6 +29,25 @@ namespace StardewDruid.Monster.Boss
             
         }
 
+        public override void BaseMode()
+        {
+
+            if(realName.Value == "Shadowtin")
+            {
+                MaxHealth = Math.Max(10000, combatModifier * 500);
+
+                Health = MaxHealth;
+
+                DamageToFarmer = Math.Max(10, Math.Min(60, combatModifier * 3));
+
+                return;
+
+            }
+
+            base.BaseMode();
+
+        }
+
         public override void LoadOut()
         {
 
@@ -59,7 +78,7 @@ namespace StardewDruid.Monster.Boss
 
             walkInterval = 12;
 
-            followIncrement = 2;
+            gait = 2;
 
             overHead = new(0, -128);
 
@@ -145,8 +164,6 @@ namespace StardewDruid.Monster.Boss
 
             specialInterval = 30;
 
-            barrages = new();
-
             specialTexture = characterTexture;
 
             specialFrames = new Dictionary<int, List<Rectangle>>()
@@ -181,6 +198,8 @@ namespace StardewDruid.Monster.Boss
                 },
 
             };
+
+            specialScheme = SpellHandle.schemes.ether;
 
             sweepSet = true;
 
@@ -299,25 +318,6 @@ namespace StardewDruid.Monster.Boss
 
         }
 
-        public override void PerformSpecial()
-        {
-            behaviourActive = behaviour.special;
-
-            behaviourTimer = 60;
-
-            netSpecialActive.Set(true);
-
-            List<Vector2> zero = BlastTarget();
-
-            BarrageHandle fireball = new(currentLocation, zero[0], zero[1], 3, 1, DamageToFarmer);
-
-            fireball.type = BarrageHandle.barrageType.fireball;
-
-            fireball.monster = this;
-
-            barrages.Add(fireball);
-
-        }
     }
 
 }

@@ -14,11 +14,21 @@ namespace StardewDruid
 
         public KeybindList journalButtons { get; set; }
 
+        public bool disableHands { get; set; }
+
         public bool slotAttune { get; set; }
 
         public bool slotFreedom { get; set; }
 
         public bool autoProgress { get; set; }
+
+        public int newProgress { get; set; }
+
+        public bool maxDamage { get; set; }
+
+        public string combatDifficulty { get; set; }
+
+        public int adjustRewards { get; set; }
 
         public string colourPreference { get; set; }
 
@@ -32,19 +42,11 @@ namespace StardewDruid
 
         public bool consumeCaffeine { get; set; }
 
-        public int newProgress { get; set; }
-
         public bool castAnywhere { get; set; }
-
-        public bool maxDamage { get; set; }
-
-        public string combatDifficulty { get; set; }
 
         public bool reverseJournal { get; set; }
 
         public bool partyHats { get; set; }
-
-        public bool disableHands { get; set; }
 
         public bool disableSeeds { get; set; }
 
@@ -64,6 +66,9 @@ namespace StardewDruid
             slotAttune = false;
             slotFreedom = false;
             autoProgress = false;
+            maxDamage = false;
+            combatDifficulty = "medium";
+            adjustRewards = 100;
             colourPreference = "Red";
             cardinalMovement = false;
             newProgress = -1;
@@ -71,8 +76,6 @@ namespace StardewDruid
             consumeRoughage = true;
             consumeQuicksnack = true;
             consumeCaffeine = true;
-            maxDamage = false;
-            combatDifficulty = "medium";
             castAnywhere = false;
             reverseJournal = false;
             partyHats = false;

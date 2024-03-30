@@ -53,7 +53,7 @@ namespace StardewDruid.Cast.Weald
                 castFire = true;
 
                 Vector2 cursorVector = targetVector * 64 + new Vector2(0, 8);
-                ModUtility.AnimateCursor(targetLocation, cursorVector, cursorVector);
+                ModUtility.AnimateCursor(targetLocation, cursorVector);
 
             }
             else if (probability == 1 && Mod.instance.rite.spawnIndex["forage"] && neighbourList.Count == 0) // 2/120 forage
@@ -84,7 +84,7 @@ namespace StardewDruid.Cast.Weald
                 }
 
                 Vector2 cursorVector = targetVector * 64 + new Vector2(0,8);
-                ModUtility.AnimateCursor(targetLocation, cursorVector, cursorVector);
+                ModUtility.AnimateCursor(targetLocation, cursorVector);
 
             }
             else if (probability == 2)

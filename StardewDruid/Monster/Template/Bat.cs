@@ -14,7 +14,7 @@ namespace StardewDruid.Monster.Template
 
         public Bat() { }
 
-        public Bat(Vector2 vector, int combatModifier)
+        public Bat(Vector2 vector, int combatModifier, bool champion = false)
             : base(vector * 64, combatModifier * 10)
         {
 
@@ -49,6 +49,11 @@ namespace StardewDruid.Monster.Template
 
             }
 
+            if (champion)
+            {
+                isHardModeMonster.Set(true);
+
+            }
         }
 
         public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who)

@@ -12,17 +12,23 @@ using System.Reflection;
 
 namespace StardewDruid.Monster.Boss
 {
-    public class Rogue : Shadowtin
+    public class Demonki : Gargoyle
     {
 
-        public Rogue()
+        public Demonki()
         {
         }
 
-        public Rogue(Vector2 vector, int CombatModifier)
-          : base(vector, CombatModifier, "Rogue")
+        public Demonki(Vector2 vector, int CombatModifier)
+          : base(vector, CombatModifier, "Demonki")
         {
 
+        }
+
+        public override void GargoyleSpecial()
+        {
+            base.GargoyleSpecial();
+            specialScheme = SpellHandle.schemes.fire;
         }
 
     }

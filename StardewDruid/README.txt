@@ -1,5 +1,5 @@
 ﻿====================================
-Stardew Druid
+Stardew Druid - 1.6 Ready
 ====================================
 
 40+ quests, 3 unique NPCs, 25+ abilities, 2000+ lines of dialogue and lore, Stardew Druid is a unique kind of expansion created to satisfy a desire for adventure.
@@ -66,9 +66,14 @@ SETUP
 ==========================================
 
 Optimised for:  PC - Single Player - English
-SMAPI required
+SMAPI 4.0.1 required
 Generic Mod Configuration Menu recommended
 Expected to work without issue on multiplayer and with popular content mods
+2.0.1 is available on the Stardew Druid discord server as the last stable release for SDV 1.5.6
+
+IMPORTANT:
+1. In multiplayer, only the host can trigger some progression critical quests, including introductions to NPCs and challenges. This is to prevent NPC duplication amongst other things.
+2. This mod is known to conflict with mods that make changes to the farmer animation/draw cycle, such as fashion sense. If the mod crashes when attempting to trigger a quest event, set 'disable cast hands' to true in the config to disable the cast/trigger animation and avoid potential conflicts.
 
 -----------------------------------------
 CASTING LOCATIONS
@@ -76,7 +81,7 @@ CASTING LOCATIONS
 Stardew Druid attempts, when possible, to detect appropriate maps for casting, namely outdoor locations and mineshafts.
 No interior locations, except the Greenhouse in limited capacity, enable the player to reach the otherworld to cast rites.
 Some expansion mods may have exterior maps with names and properties that Stardew Druid is unable to detect, such as "Expansion_cliffside_resort".
-SVE and DeepWoods are the only Map expansion mods that Stardew Druid has optimised for at this stage.
+DeepWoods mod is the only Map expansion mods that Stardew Druid has optimised for at this stage.
 As expected Winter is a sad time for Rite of the Earth due to seasonal changes to Tree, Crop and Grass behaviour.
 Note: Enabling "Cast Anywhere" in configuration will enable rite casting in any location. Have tested, and can confirm, will spawn trees on the beach.
 
@@ -86,6 +91,69 @@ TOOl - RITE Behaviour
 Any of these four tools (Pickaxe, Axe, Hoe, WateringCan) or any Melee Weapon (Including Scythe) must be selected in toolbar to perform a rite (cast)
 Some of the main questlines offer melee weapons that are each aligned with a druidic theme
 Forest Sword will always activate Rite of the Earth regardless of what blessing has been chosen with the Effigy. This will be true for other weapons reference or gained in quests for new rites.
+
+-----------------------------------------
+PROGRESS LIST
+-----------------------------------------
+** Denotes companion and challenge quests that can only be activated by the Host in multiplayer
+
+Weald:
+0. Companion quest - discover new NPC "The Effigy" in the farmcave (where Demetrius sets up his experiment) **
+1. Quest to retrieve a weapon attuned for Rite of the Weald
+2. Effect: Explode weeds and twigs. Greet Villagers, Pets and Animals remotely, once a day
+3. Effect: Extract foragables from large bushes, wood from trees, fibre and seeds from grass and small fish from water. Might spawn monsters.
+4. Effect: Sprout trees, grass, seasonal forage and flowers in empty spaces.
+5. Effect: Increase the growth rate and quality of growing crops. Convert planted wild seeds into random cultivations.
+6. Effect: Shake loose rocks free from the ceilings of mine shafts. Explode gem ores. Charge up with a passive buff that adds a stamina drain to your attacks.
+7. Challenge quest for RotWeald **
+
+Mists:
+8. Quest to gain weapon attuned to Rite of the Mists
+9. Effect: Strike warp shrines once a day to extract totems, artifact spots to dig up items, and boulders and stumps to extract resources.
+10. Effect: Strike scarecrows, campfires and lightning rods to activate special functions. Villager firepits will work too..
+11. Effect: Strike deep water to produce a fishing-spot that yields rare species of fish, strike lava to create walkable terrain.
+12. Effect: Strike enemies for massive damage. Charge up with a passive buff that triggers healing mists on attacks.
+13. Effect: Strike candle torches to create monster portals. Only works in remote outdoor locations.
+14. Challenge Quest for RotMists **
+
+Stars:
+15. Quest to gain weapon attuned to Rite of the Stars
+16. Effect: Summon meteors. Charge up with a passive buff that adds extra burst damage and knockdown to your attacks.
+17. Challenge Quest for RotStars **
+18. Challenge Quests for Hidden threats to the valley **
+19. When at least one of the hidden threats are defeated, Effigy may be recruited on the farm as a gardener
+
+Fates: (Requires quarry bridge repaired)
+19. Companion quest - Discover new NPC "The Jester of Fate" **
+20. Quest to gain weapon attuned to Rite of the Fates
+21. Effect: Warp move ability. Hold the rite button to teleport to map exits/entrances based on the direction you are facing.
+22. Effect: Perform Magic tricks for villagers
+23. Effect: Use Solar and Void essence to power farm machines
+24. Effect: Create gravity wells to harvest crops and stun enemies.
+25. Effect: Perform warp strikes on dazed enemies. Charge up with a passive buff that provides a momentary invulnerability shield on attacks.
+26. Challenge Quest for RotFates **
+27. Jester may join you on your adventures. During idle moments Jester may rubup against animals or villagers to provide soft friendship points and tick the daily petted/talked-to game checks.
+27. Companions will offer a rotating list of quests at secondary difficulties. 
+
+Ether:
+27. Quest to gain weapon attuned to Rite of the Ether **
+28. Effect: Transform into a Dragon for one minute.
+29. Effect: In dragon form, Leftclick/UseTool/Action to fly.
+30. Effect: In dragon form, Rightclick/Check/Special to breathe fire.
+31. Effect: In dragon form, fly over water to land on the surface, Rightclick to dive for treasure
+32. Effect: In dragon form, search large maps for treasure indicators, Rightclick to collect. Provides a specialised journal update.
+33. Challenge Quest for RotEther **
+34. Companion quest - Discover new NPC "Shadowtin Bear", who will be immediately available for recruitment. Shadowtin will pick up forageables and dig up artifact spots during idle moments **
+
+Post-Ether content:
+35. Companion quest "At the Beach" that focusses on Effigy **
+35. RotWeald Effect: Wisps
+36. Companion quest "Jesters in the Night" that focusses on Jester **
+36. ChargeUp Effect: Chaos. Charge Stars then Mists, or vice versa, for a unique combat effect
+
+37. Everything unlocked. 
+**COMING SOON** Companion quest that focuses on Shadowtin!
+
 
 -----------------------------------------
 CONFIG FILE
@@ -114,109 +182,66 @@ Stardew Druid employs a 'pause and play single frame animation' for the farmer s
 
 -----------------------------------------
 Slot Attunement "slotAttune"
-Attunes blessings to slots 1,2,3,4 in the inventory, overrides patron selection and weapon attunement.
+Rite casts will be based on selected slot in the toolbar as opposed to weapon or tool attunement. Slot 1 Weald, Slot 2 Mists, Slot 3 Stars, Slot 4 Fates, Slot 5 Ether. Overrides patron selection and weapon attunement.
+These options can be further configured in the customData.json file that comes with the mod
+
+-----------------------------------------
+Slot Freedom "slotFreedom" (requires Slot Attunement)
+Invalid tool selections will be ignored when slot-attune is active. This enables the player to cast a rite without a proper tool selected in the inventory bar. Proceed with caution!
 
 -----------------------------------------
 Auto Progress "autoProgress"
 The mod will load the next lesson/quest at the start of each in game day, without the need to approach any of the quest NPCs.
+
+----------------------------------------- 
+Set Progress "setProgress" (newProgress in 1.6)
+Can be used to override the mod state on game load. -1 is the default for no effective change.
+
+-----------------------------------------
+Monster Difficulty "monsterDifficulty" (combatDifficulty in 1.6)
+Various modes to make mod-spawned monsters harder or easier to handle
+
+-----------------------------------------
+Adjust rewards (Percentage) "adjustRewards"
+Adjust monetary rewards that are provided on quest completion.
+
+-----------------------------------------
+Maximum Damage "maximumDamage"
+Some spell effects have damage modifiers that consider player combat level, highest upgrade on Pickaxe, Axe, and applied enchantments.
+Enable to apply max damage everytime
 
 -----------------------------------------
 Colour Preference "colourPreference"
 Determines the colour of the sprites used to animate transformations
 
 -----------------------------------------
-Cast Buffs "castBuffs"
-The castbuffs ease cast-running, when you cast continuously while running through the map, with three specialised effects
-- Enables automatic consumption of various items from inventory when casting with critically low stamina. The items can be of any
-  quality but must be in the first/top/upper section of your inventory toolbar - cast without stopping!
-- Enables magnetic buff of radius +3 tiles for 6 seconds during an cast to ease pick up of debris at the outer range of the rite
-- Enables speed buff of +2 for 6 seconds during cast while the farmer sprite is on a Grass tile - move through grass with ease!
+Cardinal Targetting
+Disables isometric (6 way) targetting for transformation effects. Might look a little misaligned with the transformation animations."
 
 -----------------------------------------
-Consume Roughage, Consume Lunch
+Auto Consume system
 When enabled allows automatic consumption of listed items from the inventory when attempting to cast Rites with critically low stamina
-Roughage: "consumeRoughage"
+These options can be further configured in the customData.json file that comes with the mod
+
+Slot Consume "slotConsume"
+Enables auto consumption of any edible item in the top 12 slots of the inventory, prioritising left to right
+
+Roughage "consumeRoughage"
 Autoconsume usually inedible but often inventory-crowding items: Sap, all TreeSeeds, Slime, Batwings, Red Mushroom, Taro Tuber.
-Lunch: "consumeQuickSnack"
+
+Lunch "consumeQuickSnack"
 Autoconsume common sustenance items: SpringOnion, Snackbar, Mushrooms, Algae, Seaweed, CaveCarrot, Sashimi, Salmonberry, Cheese.
-Caffeine: "consumeCaffeine"
+
+Caffeine "consumeCaffeine"
 Autoconsume common speed items: Joja Cola, Coffee items, Tea items, Ginger
 
 -----------------------------------------
 Cast Anywhere "castAnywhere"
-Cast any rite effect on any map. May have unintended consequences! Proceed with caution.
-
------------------------------------------ 
-Set Progress "setProgress"
-Can be used to override the mod state on game load. -1 is the default for no effective change.
-
-
-Weald:
-0. Discover new NPC "The Effigy"
-1. Quest to retrieve a weapon attuned for Rite of the Weald
-2. Effect: Explode weeds and twigs. Greet Villagers, Pets and Animals remotely, once a day
-3. Effect: Extract foragables from large bushes, wood from trees, fibre and seeds from grass and small fish from water. Might spawn monsters.
-4. Effect: Sprout trees, grass, seasonal forage and flowers in empty spaces.
-5. Effect: Increase the growth rate and quality of growing crops. Convert planted wild seeds into random cultivations.
-6. Effect: Shake loose rocks free from the ceilings of mine shafts. Explode gem ores.
-7. Challenge quest for RotWeald
-
-Mists:
-8. Quest to gain weapon attuned to Rite of the Mists
-9. Effect: Strike warp shrines once a day to extract totems, artifact spots to dig up items, and boulders and stumps to extract resources.
-10. Effect: Strike scarecrows, campfires and lightning rods to activate special functions. Villager firepits will work too..
-11. Effect: Strike deep water to produce a fishing-spot that yields rare species of fish, strike lava to create walkable terrain.
-12. Effect: Strike enemies for massive damage. Triggers a mist zone that buffs defense and provides regeneration.
-13. Effect: Strike candle torches to create monster portals. Only works in remote outdoor locations.
-14. Challenge Quest for RotMists
-
-Stars:
-15. Quest to gain weapon attuned to Rite of the Stars
-16. Effect: Summon meteors (This is the only ability for this rite)
-17. Challenge Quest for RotStars
-18. Challenge Quests for Hidden threats to the valley
-
-Fates: (Requires quarry bridge repaired)
-19. Discover new NPC "The Jester of Fate"
-20. Quest to gain weapon attuned to Rite of the Fates
-21. Effect: Warp move ability. Hold the rite button to teleport to map exits/entrances based on the direction you are facing.
-22. Effect: Perform Magic tricks for villagers
-23. Effect: Use Solar and Void essence to power farm machines
-24. Effect: Create gravity wells to harvest crops and stun enemies
-25. Effect: Perform warp strikes on dazed enemies
-26. Challenge Quest for RotFates
-
-Ether:
-27. Quest to gain weapon attuned to Rite of the Ether
-28. Effect: Transform into a Dragon for one minute.
-29. Effect: In dragon form, Leftclick/UseTool/Action to fly.
-30. Effect: In dragon form, Rightclick/Check/Special to breathe fire.
-31. Effect: In dragon form, fly over water to land on the surface, Rightclick to dive for treasure
-32. Effect: In dragon form, search large maps for treasure indicators, Rightclick to collect. Provides a specialised journal update.
-33. Challenge Quest for RotEther
-34. Discover new NPC "Shadowtin Bear"
-
-Companions:
-19. When the hidden threats are defeated, Effigy may be recruited on the farm as a gardener
-27. When the RotFates challenge is completed, Jester and/or Effigy may join you on your adventures, and each has two powerful attacks to assist you.
-27. Companions will offer a rotating list of quests at secondary difficulties. 
-35. Shadowtin Bear is available for recruitment. Shadowtin will pick up forageables and dig up artifact spots during idle moments when on adventures.
-35. Companion quest "At the Beach" that focusses on Effigy
-35. RotWeald Effect: Wisps - unlockable by triggering all the dialogue prompts during Effigy's companion quest.
-
-
-36. Everything unlocked. 
-
-**COMING SOON** Companion quest "Town Cat, Country Cat" that focusses on Jester
+Disables the Map-based cast restrictions so that any rite effect can be cast anywhere. Proceed with caution!
 
 -----------------------------------------
-Monster Difficulty "monsterDifficulty"
-Various modes to make mod-spawned monsters harder or easier to handle
-
------------------------------------------
-Maximum Damage "maximumDamage"
-Some spell effects have damage modifiers that consider player combat level, highest upgrade on Pickaxe, Axe, and applied enchantments.
-Enable to apply max damage everytime
+Reverse Journal "reverseJournal"
+Reverse the order in which Stardew Druid journal entries are displayed. Default: oldest to newest. Enabled: newest to oldest.
 
 -----------------------------------------
 Ostentatious Hats "partyHats"
@@ -257,4 +282,4 @@ OPENSOURCE
 Opensource repository
 https://github.com/Neosinf/StardewDruid
 GNU GPL 3 License
-Please note there is an exception to the license that covers all original artwork (pixel art) that is packaged with the mod.
+Please note there is an exception to the license that covers all original artwork (pixel art) that is packaged with the mod. 

@@ -2,9 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Map;
+using StardewDruid.Monster.Boss;
 using StardewValley;
 using System.Collections.Generic;
 using System.IO;
+using static StardewValley.IslandGemBird;
 
 namespace StardewDruid.Event.Challenge
 {
@@ -12,6 +14,8 @@ namespace StardewDruid.Event.Challenge
     {
 
         public List<TemporaryAnimatedSprite> challengeAnimations;
+
+        public int specialBoss;
 
         public bool keepJester;
 
@@ -29,19 +33,6 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle = new(targetVector, Mod.instance.rite.castLocation);
 
-            monsterHandle.spawnIndex = new() { 51, 52, 53, 54, };
-
-            monsterHandle.spawnFrequency = 2;
-
-            if (questData.name.Contains("Two"))
-            {
-
-                monsterHandle.spawnFrequency = 1;
-
-                //monsterHandle.spawnAmplitude = 2;
-
-            }
-
             monsterHandle.spawnWithin = targetVector + new Vector2(-5, -5);
 
             monsterHandle.spawnRange = new Vector2(11, 11);
@@ -53,7 +44,31 @@ namespace StardewDruid.Event.Challenge
 
                 StardewDruid.Character.Character jester = Mod.instance.characters["Jester"];
 
+                jester.ResetActives();
+
                 jester.SwitchFollowMode();
+
+                if (jester.currentLocation.Name != targetLocation.Name)
+                {
+
+                    jester.currentLocation.characters.Remove(jester);
+
+                    jester.currentLocation = targetLocation;
+
+                    jester.currentLocation.characters.Add(jester);
+
+                }
+
+                if (!Utility.isOnScreen(jester.Position,0))
+                {
+
+                    jester.Position = targetVector * 64 + new Vector2(0, 128);
+
+                    jester.update(Game1.currentGameTime, targetLocation);
+
+                    ModUtility.AnimateQuickWarp(targetLocation, jester.Position);
+
+                }
 
             }
 
@@ -135,7 +150,11 @@ namespace StardewDruid.Event.Challenge
                 
                 Vector2 meteorVector = new(-5 + randomIndex.Next(10), -5 + randomIndex.Next(10));
 
-                new Cast.Stars.Meteor(meteorVector, Mod.instance.DamageLevel()).CastEffect();
+                Cast.Stars.Meteor meteorCast = new(meteorVector+targetVector, Mod.instance.DamageLevel());
+
+                meteorCast.targetLocation = targetLocation;
+
+                meteorCast.CastEffect();
 
                 if (activeCounter == 4)
                 {
@@ -192,44 +211,68 @@ namespace StardewDruid.Event.Challenge
                 return;
             }
 
-            if (activeCounter == 20)
+            if (activeCounter <= 56 && activeCounter % 3 == 0)
             {
 
-                Vector2 spawnVector = monsterHandle.SpawnVector();
+                Vector2 monsterVector = monsterHandle.SpawnVector();
 
-                if (spawnVector != new Vector2(-1))
+                if(monsterVector != new Vector2(-1))
                 {
-                    monsterHandle.specialIndex = new() { 55, };
-                    monsterHandle.SpawnGround(spawnVector, true);
+
+                    Gargoyle newMonster;
+
+                    string scheme = "Solar";
+
+                    if (activeCounter > 20 && specialBoss < 1)
+                    {
+
+                        newMonster = new(monsterVector, Mod.instance.CombatModifier());
+
+                        newMonster.ChampionMode(2);
+
+                        specialBoss = 1;
+
+                    }
+                    else if (activeCounter > 40 && specialBoss < 2)
+                    {
+
+                        newMonster = new(monsterVector, Mod.instance.CombatModifier());
+
+                        newMonster.ChampionMode(2);
+
+                        scheme = "Void";
+
+                        specialBoss = 2;
+
+                    }
+                    else
+                    {
+
+                        newMonster = new(monsterVector, Mod.instance.CombatModifier());
+
+                        scheme = randomIndex.Next(2) == 0 ? "Solar" : "Void";
+
+                    }
+
+                    newMonster.netScheme.Set(scheme);
+
+                    newMonster.SchemeLoad();
+
+                    if (questData.name.Contains("Two"))
+                    {
+
+                        newMonster.HardMode();
+
+                    }
+
+                    monsterHandle.SpawnImport(newMonster);
 
                 }
-
-            }
-
-            if (activeCounter == 40)
-            {
-
-                Vector2 spawnVector = monsterHandle.SpawnVector();
-
-                if (spawnVector != new Vector2(-1))
-                {
-                    monsterHandle.specialIndex = new() { 56, };
-                    monsterHandle.SpawnGround(spawnVector, true);
-
-                }
-
-            }
-
-            if (activeCounter <= 56)
-            {
-
-                monsterHandle.SpawnInterval();
 
             }
 
         }
 
-    
     }
 
 }

@@ -384,8 +384,7 @@ namespace StardewDruid.Event
                             QueryData queryData = new()
                             {
                                 name = questData.name,
-                                value = questData.name,
-                                targetX = cueIndex,
+                                value = cueIndex.ToString(),
                             
                             };
 
@@ -486,9 +485,6 @@ namespace StardewDruid.Event
                     description = questData.questTitle,
                     time = Game1.currentGameTime.TotalGameTime.TotalMilliseconds,
                     location = Mod.instance.rite.castLocation.Name,
-                    expire = (int)expireTime,
-                    targetX = (int)targetVector.X,
-                    targetY = (int)targetVector.Y,
                 };
 
                 Mod.instance.EventQuery(queryData, eventQuery);

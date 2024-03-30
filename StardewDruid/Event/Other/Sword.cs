@@ -5,6 +5,7 @@ using StardewDruid.Map;
 using StardewValley;
 using StardewValley.Menus;
 using System.Collections.Generic;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace StardewDruid.Event.Other
 {
@@ -229,7 +230,7 @@ namespace StardewDruid.Event.Other
 
             //----------------------- strike animations
 
-            ModUtility.AnimateBolt(Mod.instance.rite.castLocation, originVector);
+            ModUtility.AnimateBolt(Mod.instance.rite.castLocation, originVector * 64 + new Vector2(32));
 
         }
 
@@ -310,7 +311,11 @@ namespace StardewDruid.Event.Other
 
             //---------------------- meteor animation
 
-            ModUtility.AnimateMeteor(Mod.instance.rite.castLocation, originVector, true);
+            SpellHandle meteor = new(Mod.instance.rite.castLocation, originVector * 64, Game1.player.Position);
+
+            meteor.type = SpellHandle.barrages.meteor;
+
+            Mod.instance.spellRegister.Add(meteor);
 
         }
 

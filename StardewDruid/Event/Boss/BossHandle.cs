@@ -96,7 +96,7 @@ namespace StardewDruid.Event.Boss
         public override void EventAbort()
         {
 
-            Mod.instance.CastMessage("Boss fight aborted, try again tomorrow!");
+            Mod.instance.CastMessage("Boss fight aborted, try again tomorrow!",3,true);
 
             base.EventAbort();
 

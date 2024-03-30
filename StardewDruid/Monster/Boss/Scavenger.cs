@@ -53,7 +53,7 @@ namespace StardewDruid.Monster.Boss
 
             walkInterval = 9;
 
-            followIncrement = 2;
+            gait = 2;
 
             idleFrames = FrameSeries(32, 32, 0, 0, 1);
 
@@ -136,8 +136,6 @@ namespace StardewDruid.Monster.Boss
             specialThreshold = 320;
 
             barrageThreshold = 544;
-
-            barrages = new();
 
             specialFrames = new Dictionary<int, List<Rectangle>>()
             {
@@ -231,25 +229,20 @@ namespace StardewDruid.Monster.Boss
 
         }
 
-        public override void PerformSpecial()
+        public override void PerformSpecial(Vector2 farmerPosition)
         {
-            behaviourActive = behaviour.special;
 
-            behaviourTimer = 72;
+            specialTimer = (specialCeiling + 1) * specialInterval;
 
             netSpecialActive.Set(true);
 
-            List<Vector2> zero = BlastTarget();
+            SpellHandle beam = new(currentLocation, farmerPosition, GetBoundingBox().Center.ToVector2(), 2, 0, DamageToFarmer * 0.4f);
 
-            BarrageHandle beam = new(currentLocation, zero[0], Vector2.Zero, 2, 0, DamageToFarmer * 0.4f);
-
-            beam.type = BarrageHandle.barrageType.beam;
-
-            beam.originPosition = Position;
+            beam.type = SpellHandle.barrages.beam;
 
             beam.monster = this;
 
-            barrages.Add(beam);
+            Mod.instance.spellRegister.Add(beam);
 
         }
 

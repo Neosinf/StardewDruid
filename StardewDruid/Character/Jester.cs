@@ -8,6 +8,7 @@ using StardewDruid.Cast.Weald;
 using StardewDruid.Dialogue;
 using StardewDruid.Event;
 using StardewDruid.Map;
+using StardewDruid.Monster.Boss;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buffs;
@@ -31,6 +32,8 @@ namespace StardewDruid.Character
         public NetBool netRubActive = new(false);
         public Dictionary<int, Rectangle> rubFrames;
 
+        public Texture2D iconTexture;
+
         public double luckTimer;
 
         public Jester()
@@ -48,15 +51,15 @@ namespace StardewDruid.Character
 
             characterTexture = CharacterData.CharacterTexture(Name);
 
+            iconTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Icons.png"));
+
             LoadBase();
 
             idleInterval = 90;
 
-            moveLength = 6;
+            walkFrames = FrameSeries(32, 32, 32, 0, 6);
 
-            walkFrames = WalkFrames(32, 32, 32);
-
-            dashFrames = WalkFrames(32, 32, 0, 128);
+            dashFrames = FrameSeries(32, 32, 0, 128, 6);
 
             haltFrames = new()
             {
@@ -92,6 +95,9 @@ namespace StardewDruid.Character
                 [3] = new() { new(128, 224, 32, 32), },
 
             };
+
+            sweepFrames = FrameSeries(32, 32, 0, 128, 3);
+
 
             rubFrames = new()
             {
@@ -145,23 +151,32 @@ namespace StardewDruid.Character
                 drawLayer - 0.0001f
                 );
 
-            if (netHaltActive.Value)
+            
+            if (netStandbyActive.Value)
             {
 
-                Rectangle sourceRectangle = haltFrames[netDirection.Value];
-
-                if(behaviourActive == behaviour.idle)
-                {
-                    int chooseFrame = idleFrame % idleFrames.Count;
-
-                    sourceRectangle = idleFrames[0][chooseFrame];
-
-                }
+                int chooseFrame = idleFrame % idleFrames.Count;
 
                 b.Draw(
                     characterTexture,
                     localPosition - new Vector2(32, 64f),
-                    sourceRectangle,
+                    idleFrames[0][chooseFrame],
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    4f,
+                    flip || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    drawLayer
+                );
+
+            }
+            else if (netHaltActive.Value)
+            {
+
+                b.Draw(
+                    characterTexture,
+                    localPosition - new Vector2(32, 64f),
+                    haltFrames[netDirection.Value],
                     Color.White,
                     0f,
                     Vector2.Zero,
@@ -219,22 +234,13 @@ namespace StardewDruid.Character
                 );
 
             }
-
             else
             {
-
-                Rectangle sourceRectangle = walkFrames[netDirection.Value][moveFrame];
-
-                if (behaviourActive == behaviour.dash)
-                {
-                    sourceRectangle = dashFrames[netDirection.Value][dashFrame];
-
-                }
 
                 b.Draw(
                     characterTexture,
                     localPosition - new Vector2(32, 64f),
-                    sourceRectangle,
+                    walkFrames[netDirection.Value][moveFrame],
                     Color.White,
                     0f,
                     Vector2.Zero,
@@ -255,7 +261,7 @@ namespace StardewDruid.Character
         public override Rectangle GetBoundingBox()
         {
 
-            if(netDirection.Value % 2 == 0)
+            if (netDirection.Value % 2 == 0)
             {
 
                 return new Rectangle((int)Position.X + 8, (int)Position.Y + 8, 48, 48);
@@ -265,6 +271,7 @@ namespace StardewDruid.Character
             return new Rectangle((int)Position.X - 16, (int)Position.Y + 8, 96, 48);
 
         }
+
 
         public override void UpdateMove()
         {
@@ -281,7 +288,8 @@ namespace StardewDruid.Character
 
                     buffEffect.LuckLevel.Set(1);
 
-                    Buff luckBuff = new("184656", source: "Jester of Fate", displaySource: "Jester of Fate", duration: 10000, displayName: "Jester's Luck", description: "Jester of Fate", effects: buffEffect);
+                    //Buff luckBuff = new("184656", source: "Jester of Fate", iconTexture: iconTexture, iconSheetIndex: 4, displaySource: "Jester of Fate", duration: 10000, displayName: "Jester's Luck", description: "Jester of Fate", effects: buffEffect);
+                    Buff luckBuff = new("184656", source: "Jester of Fate", displaySource: "Jester of Fate", duration: 10000, displayName: "Jester's Luck", description: "Luck increased by companion", effects: buffEffect);
 
                     Mod.instance.trackRegister["Jester"].followPlayer.buffs.Apply(luckBuff);
 
@@ -307,56 +315,23 @@ namespace StardewDruid.Character
 
         }
 
-        public override bool MonsterAttack(StardewValley.Monsters.Monster targetMonster)
+
+        public override void SpecialAttack(StardewValley.Monsters.Monster monster)
         {
 
-            float distance = Vector2.Distance(Position, targetMonster.Position);
+            ResetActives();
 
-            if (distance >= 128f && distance <= 640f)
-            {
+            netSpecialActive.Set(true);
 
-                if (new Random().Next(2) == 0 || ModUtility.GroundCheck(currentLocation, targetMonster.Tile) != "ground")
-                {
-                    
-                    netSpecialActive.Set(true);
+            specialTimer = 60;
 
-                    behaviourActive = behaviour.special;
+            NextTarget(monster.Position, -1);
 
-                    specialTimer = 60;
+            SpellHandle beam = new(currentLocation, monster.GetBoundingBox().Center.ToVector2(), GetBoundingBox().Center.ToVector2(), 2, 1, -1, Mod.instance.DamageLevel(), 3);
 
-                    NextTarget(targetMonster.Position, -1);
+            beam.type = SpellHandle.barrages.beam;
 
-                    ResetAll();
-
-                    Vector2 target = targetMonster.Tile;
-
-                    BarrageHandle beam = new(currentLocation, target, Vector2.Zero, 2, 1, -1, Mod.instance.DamageLevel());
-
-                    beam.type = BarrageHandle.barrageType.beam;
-
-                    beam.originPosition = Position;
-
-                    barrages.Add(beam);
-
-                }
-                else
-                {
-
-                    behaviourActive = behaviour.dash;
-
-                    moveTimer = moveInterval;
-
-                    netDashActive.Set(true);
-
-                    NextTarget(targetMonster.Position, -1);
-
-                }
-
-                return true;
-
-            }
-
-            return false;
+            Mod.instance.spellRegister.Add(beam);
 
         }
 
@@ -417,8 +392,6 @@ namespace StardewDruid.Character
 
             NextTarget(who.Position);
 
-            ResetAll();
-
             return true;
 
         }
@@ -445,7 +418,7 @@ namespace StardewDruid.Character
             if (!Mod.instance.eventRegister.ContainsKey("polymorph"))
             {
 
-                if (!MonsterData.CustomMonsters().Contains(monster.GetType()))
+                if (!MonsterData.BossMonster(monster))
                 {
 
                     Polymorph morph = new(Tile, monster);
@@ -468,6 +441,7 @@ namespace StardewDruid.Character
 
         public void ApplyDazeEffect(StardewValley.Monsters.Monster monster)
         {
+            
             if (Mod.instance.eventRegister.ContainsKey("gravity"))
             {
                 
@@ -505,7 +479,7 @@ namespace StardewDruid.Character
 
             Daze daze = new(Tile, monster, source.First<int>(),Mod.instance.DamageLevel());
             
-            if (!MonsterData.CustomMonsters().Contains(monster.GetType()))
+            if (!MonsterData.BossMonster(monster))
             {
                 
                 monster.Halt();

@@ -39,7 +39,7 @@ namespace StardewDruid
             );
             configMenu.AddKeybindList(
             mod: mod.ModManifest, 
-                name: () => "Action (Optional)",
+                name: () => "Action (SD Druid Only)",
                 tooltip: () => "Assigns an alternative keybind for the Action / Left Click / Use tool function, for the purposes of the mod only. This keybind does not override or re-map any keybinds in the base game. Useful for controllers with non-standard button maps.",
                   getValue: () => Config.actionButtons,
                 setValue: value => Config.actionButtons = value
@@ -47,7 +47,7 @@ namespace StardewDruid
 
             configMenu.AddKeybindList(
                 mod: mod.ModManifest,
-                name: () => "Special (Optional)",
+                name: () => "Special (SD Druid Only)",
                 tooltip: () => "Assigns an alternative keybind for the Check / Special / Right Click / Placedown function, for the purposes of the mod only. This keybind does not override or re-map any keybinds in the base game. Useful for controllers with non-standard button maps.",
                 getValue: () => Config.specialButtons,
                 setValue: value => Config.specialButtons = value
@@ -55,7 +55,7 @@ namespace StardewDruid
 
             configMenu.AddKeybindList(
                 mod: mod.ModManifest,
-                name: () => "Journal (Optional)",
+                name: () => "Journal (SD Druid Only)",
                 tooltip: () => "Keybind assignment to open the Stardew Druid journal while in world. The rite keybind can be used to open the journal from the game questlog.",
                 getValue: () => Config.journalButtons,
                 setValue: value => Config.journalButtons = value
@@ -113,6 +113,17 @@ namespace StardewDruid
                 allowedValues: textOption,
                 getValue: () => Config.combatDifficulty,
                 setValue: value => Config.combatDifficulty = value
+            );
+
+            configMenu.AddNumberOption(
+                mod: mod.ModManifest,
+                name: () => "Adjust rewards (Percentage)",
+                tooltip: () => "Adjust monetary rewards that are provided on quest completion.",
+                min: 10,
+                max: 200,
+                interval: 10,
+                getValue: () => Config.adjustRewards,
+                setValue: value => Config.adjustRewards = value
             );
 
             configMenu.AddBoolOption(
@@ -219,14 +230,6 @@ namespace StardewDruid
                 getValue: () => Config.disableFish,
                 setValue: value => Config.disableFish = value
             );
-
-            /*configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => "Disable Wild Spawn",
-                tooltip: () => "Disables wild monster spawn effect for Rite of the Weald, despite in game effect management. Disabling, saving in game, then reenabling will require additional re-enablement in game.",
-                getValue: () => Config.disableWildspawn,
-                setValue: value => Config.disableWildspawn = value
-            );*/
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,

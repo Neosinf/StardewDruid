@@ -71,7 +71,7 @@ namespace StardewDruid.Cast.Weald
 
             ModUtility.AnimateSplash(targetLocation, targetVector, targetDirection);
             Vector2 cursorVector = targetVector * 64;
-            ModUtility.AnimateCursor(targetLocation, cursorVector, cursorVector);
+            ModUtility.AnimateCursor(targetLocation, cursorVector);
         }
 
 

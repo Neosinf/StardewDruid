@@ -150,7 +150,7 @@ namespace StardewDruid.Cast.Fates
 
             activeCounter++;
 
-            if (activeCounter == 4)
+            /*if (activeCounter == 4)
             {
 
                 expireTime += 120;
@@ -183,7 +183,7 @@ namespace StardewDruid.Cast.Fates
 
                 monsterHandle.SpawnGround(spawnAt);
 
-            }
+            }*/
 
         }
 

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Event;
 using StardewDruid.Map;
+using StardewDruid.Monster.Boss;
 using StardewValley;
 using StardewValley.Characters;
 using StardewValley.GameData.Crops;
@@ -457,7 +458,7 @@ namespace StardewDruid.Cast.Fates
 
                     gravityVictims.Add(monster);
 
-                    if (!MonsterData.CustomMonsters().Contains(monster.GetType()))
+                    if (!MonsterData.BossMonster(monster))
                     {
 
                         monster.Halt();

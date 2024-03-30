@@ -128,7 +128,7 @@ namespace StardewDruid.Cast.Weald
 
 
             Vector2 cursorVector = targetVector * 64 + new Vector2(0, 8);
-            ModUtility.AnimateCursor(targetLocation, cursorVector, cursorVector);
+            ModUtility.AnimateCursor(targetLocation, cursorVector);
         }
 
     }

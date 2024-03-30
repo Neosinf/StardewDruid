@@ -208,7 +208,7 @@ namespace StardewDruid.Cast.Weald
                                     if (wisps[terrainVector].activation <= 0)
                                     {
 
-                                        ModUtility.AnimateDecoration(targetLocation, wisps[terrainVector].position, "Weald", 0.5f);
+                                        ModUtility.AnimateDecoration(targetLocation, wisps[terrainVector].position, "weald", 0.5f);
 
                                         wisps[terrainVector].activation = 1;
 
@@ -225,7 +225,7 @@ namespace StardewDruid.Cast.Weald
                                 if (wisps[terrainVector].activation <= 0)
                                 {
 
-                                    ModUtility.AnimateDecoration(targetLocation, wisps[terrainVector].position, "Mists", 0.5f);
+                                    ModUtility.AnimateDecoration(targetLocation, wisps[terrainVector].position, "mists", 0.5f);
 
                                     wisps[terrainVector].activation = 1;
 
@@ -235,7 +235,15 @@ namespace StardewDruid.Cast.Weald
 
                             case 3:
 
-                                new Stars.Comet(wisps[terrainVector].tile, damage).EventTrigger();
+                                SpellHandle meteor = new(targetLocation, wisps[terrainVector].tile * 64, Game1.player.Position, 5, 1, -1, damage*4, 4);
+
+                                meteor.environment = 8;
+
+                                meteor.terrain = 5;
+
+                                meteor.type = SpellHandle.barrages.meteor;
+
+                                Mod.instance.spellRegister.Add(meteor);
 
                                 wisps[terrainVector].timer = 0;
 

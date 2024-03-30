@@ -16,11 +16,11 @@ namespace StardewDruid.Cast.Fates
 
         public int whiskCounter;
 
+        public SpellHandle whiskSpell;
+
         public WhiskEvent(Vector2 target,  Vector2 Destination)
             : base(target)
         {
-
-            expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 2;
 
             origin = targetVector * 64f;
 
@@ -31,7 +31,19 @@ namespace StardewDruid.Cast.Fates
         public override void EventTrigger()
         {
 
-            animations.Add(ModUtility.AnimateCursor(targetLocation, origin, destination - new Vector2(0, 32), "Fates"));
+            expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 2;
+
+            SpellHandle whiskSpell = new(targetLocation, destination, origin,3);
+
+            whiskSpell.scheme = SpellHandle.schemes.fates;
+
+            whiskSpell.indicator = SpellHandle.indicators.fates;
+
+            whiskSpell.TargetCircle();
+
+            whiskSpell.LaunchMissile();
+
+            animations = whiskSpell.animations;
 
             Mod.instance.RegisterEvent(this, "whisk");
 
@@ -105,11 +117,13 @@ namespace StardewDruid.Cast.Fates
 
             Game1.flashAlpha = 1;
 
-            //ModUtility.AnimateQuickWarp(targetLocation, Mod.instance.rite.caster.Position - new Vector2(0, 32), true);
+            Vector2 distance = (destination - origin) / 13 * (whiskCounter + 1);
 
-            Mod.instance.rite.caster.Position = destination;
+            Vector2 arrive = origin + distance;
 
-            ModUtility.AnimateQuickWarp(targetLocation, destination);
+            Mod.instance.rite.caster.Position = arrive;
+
+            ModUtility.AnimateQuickWarp(targetLocation, arrive);
 
             RemoveAnimations();
 

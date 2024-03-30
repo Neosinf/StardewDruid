@@ -4,6 +4,7 @@ using StardewDruid.Cast;
 using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Companions;
 using StardewValley.Locations;
 using System;
 using System.Collections.Generic;
@@ -53,7 +54,7 @@ namespace StardewDruid.Cast.Mists
                     continue;
                 }
 
-                ModUtility.AnimateCursor(monster.currentLocation, monster.Position-new Vector2(16,16),monster.Position - new Vector2(16, 16), "Comet",600,3);
+                ModUtility.AnimateImpact(monster.currentLocation, monster.Position + new Vector2(32), 2, 0, "Flashbang");
 
                 monster.currentLocation.playSound("magma_sprite_hit");
 

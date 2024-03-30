@@ -123,9 +123,7 @@ namespace StardewDruid.Event.Challenge
             if (activeCounter == 1)
             {
 
-                StardewValley.Monsters.Monster theMonster = MonsterData.CreateMonster(12, new(47, 82));
-
-                bossMonster = theMonster as Shooter;
+                bossMonster = new(new Vector2(47, 82), Mod.instance.CombatModifier());
 
                 bossMonster.posturing.Set(true);
 
@@ -185,13 +183,13 @@ namespace StardewDruid.Event.Challenge
 
                     case 57:
 
-                        ModUtility.AnimateBolt(Mod.instance.rite.castLocation, bossMonster.Tile);
+                        ModUtility.AnimateBolt(Mod.instance.rite.castLocation, bossMonster.Position + new Vector2(32));
 
                         break;
 
                     case 59:
 
-                        ModUtility.AnimateBolt(Mod.instance.rite.castLocation, bossMonster.Tile);
+                        ModUtility.AnimateBolt(Mod.instance.rite.castLocation, bossMonster.Position + new Vector2(32));
 
                         bossMonster.takeDamage(bossMonster.MaxHealth + 5, 0, 0, false, 999, targetPlayer);
 
