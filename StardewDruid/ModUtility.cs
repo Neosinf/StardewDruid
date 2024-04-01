@@ -30,6 +30,7 @@ using xTile.Dimensions;
 using xTile.Layers;
 using xTile.ObjectModel;
 using xTile.Tiles;
+using static StardewValley.Minigames.TargetGame;
 
 namespace StardewDruid
 {
@@ -424,10 +425,10 @@ namespace StardewDruid
 
         }
 
-        public static void AnimateImpact(GameLocation targetLocation, Vector2 origin, int size, int frame = 0, string image = "Impact")
+        public static void AnimateImpact(GameLocation targetLocation, Vector2 origin, int size, int frame = 0, string image = "Impact", float interval = 100f)
         {
 
-            TemporaryAnimatedSprite bomb = new(0, 100f, 8-frame, 1, new(origin.X - 32 - (32 * size), origin.Y - 48 - (32 * size)), false, false)
+            TemporaryAnimatedSprite bomb = new(0, interval, 8-frame, 1, new(origin.X - 32 - (32 * size), origin.Y - 48 - (32 * size)), false, false)
             {
                 sourceRect = new(64*frame, 0, 64, 64),
                 sourceRectStartingPos = new Vector2(64 * frame, 0.0f),
@@ -486,9 +487,9 @@ namespace StardewDruid
         public static void AnimateBolt(GameLocation location, Vector2 origin, int playSound = 800)
         {
 
-            Vector2 originOffset = new(origin.X - 64, origin.Y - 304);
+            Vector2 originOffset = new(origin.X - 64, origin.Y - 320);
 
-            TemporaryAnimatedSprite boltAnimation = new(0, 120, 5, 1, originOffset, false, (Game1.random.NextDouble() < 0.5) ? true : false)
+            TemporaryAnimatedSprite boltAnimation = new(0, 75, 6, 1, originOffset, false, (Game1.random.NextDouble() < 0.5) ? true : false)
             {
 
                 sourceRect = new(0, 0, 64, 128),
@@ -525,7 +526,7 @@ namespace StardewDruid
             if (playSound >= 500)
             {
 
-                Game1.currentLocation.playSound("flameSpellHit", originOffset, 800);
+                Game1.currentLocation.playSound("flameSpellHit", origin, 800);
 
             }
 
@@ -2227,6 +2228,225 @@ namespace StardewDruid
             return vectorList;
 
         }
+
+        public static List<int> DirectionToCenter(GameLocation location, Vector2 position)
+        {
+
+            int layerWidth = location.map.Layers[0].LayerWidth;
+
+            int layerHeight = location.map.Layers[0].LayerHeight;
+
+            int midWidth = (layerWidth / 2) * 64;
+
+            int midHeight = (layerHeight / 2) * 64;
+
+            Vector2 centerPosition = new(midWidth, midHeight);
+
+            List<int> directions = DirectionToTarget(centerPosition, position);
+
+            return directions;
+
+        }
+
+        public static List<int> DirectionToTarget(Vector2 target, Vector2 origin)
+        {
+
+            List<int> directions = new();
+
+            int moveDirection;
+
+            int altDirection;
+
+            int diagonal;
+
+            Vector2 difference = new(target.X - origin.X, target.Y - origin.Y);
+
+            float absoluteX = Math.Abs(difference.X);
+
+            float absoluteY = Math.Abs(difference.Y);
+
+            int signX = difference.X < 0.001f ? -1 : 1;
+
+            int signY = difference.Y < 0.001f ? -1 : 1;
+
+            if (absoluteX > absoluteY)
+            {
+
+                moveDirection = 2 - signX;
+
+                altDirection = 1 + signY;
+
+            }
+            else
+            {
+                moveDirection = 1 + signY;
+
+                altDirection = 2 - signX;
+
+            }
+
+            double radian = Math.Abs(Math.Atan2(difference.Y, difference.X));
+
+            double pie = Math.PI / 8;
+
+            if (signY == 1)
+            {
+
+                diagonal = 6;
+
+                if(radian < pie)
+                {
+
+                    diagonal = 2;
+
+                }
+                else if(radian < pie * 3)
+                {
+
+                    diagonal = 1;
+
+                }
+                else if(radian < pie * 5)
+                {
+
+                    diagonal = 0;
+
+                }
+                else if(radian < pie * 7)
+                {
+
+                    diagonal = 7;
+
+                }
+
+
+            }
+            else
+            {
+
+                diagonal = 6;
+
+                if (radian < pie)
+                {
+
+                    diagonal = 2;
+
+                }
+                else if (radian < pie * 3)
+                {
+
+                    diagonal = 3;
+
+                }
+                else if (radian < pie * 5)
+                {
+
+                    diagonal = 4;
+
+                }
+                else if (radian < pie * 7)
+                {
+
+                    diagonal = 5;
+
+                }
+
+            }
+
+            directions.Add(moveDirection);
+
+            directions.Add(altDirection);
+
+            directions.Add(diagonal);
+
+            return directions;
+
+        }
+
+        public static Vector2 DirectionAsVector(int direction)
+        {
+
+            Vector2 move = new(0, -1);
+
+            switch (direction)
+            {
+
+                case 1: move = new(1, -1);  break;
+
+                case 2: move = new(1, 0); break;
+
+                case 3: move = new(1, 1); break;
+                
+                case 4: move = new(0, 1); break;
+                
+                case 5: move = new(-1, 1); break;
+                
+                case 6: move = new(-1, 0); break;
+                
+                case 7: move = new(-1, -1); break;
+
+            }
+
+            return move;
+
+        }
+
+        public static Queue<Vector2> GetOpenSet(GameLocation location, Vector2 origin, Vector2 path, Vector2 fork, int limit, int bias = -1)
+        {
+
+            Queue<Vector2> set = new();
+
+            if(Vector2.Distance(path, origin) < limit) { return set; }
+
+            List<Vector2> closed = GetTilesWithinRadius(location, path, 1, false);
+
+            List<Vector2> open = GetTilesWithinRadius(location, fork, 1, false);
+
+            List<int> directions = DirectionToTarget(path * 64, fork * 64);
+
+            int direction = directions[2];
+
+            int even = 1;
+
+            int odd = -1;
+
+            if((bias == -1 && new Random().Next(2) == 0) || bias >= 2)
+            {
+                even = -1;
+
+                odd = 1;
+              
+            }
+
+            List<int> series = new()
+            {
+                (direction + 8 + even) % 8,
+                (direction + 8 + odd ) % 8,
+                (direction + 8 + even * 2) % 8,
+                (direction + 8 + odd * 2) % 8,
+            };
+
+            set.Enqueue(open[direction]);
+
+            foreach(int next in series)
+            {
+
+                if (!closed.Contains(open[next]))
+                {
+
+                    set.Enqueue(open[next]);
+
+                }
+
+            }
+
+            return set;
+            
+        }
+
+        // ===================================================
+        // GAME WORLD INTERACTIONS
+        // ===================================================
 
         public static float CalculateCritical(float damage, float critChance = 0.1f, float critModifier = 2f)
         {

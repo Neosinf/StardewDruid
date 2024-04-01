@@ -118,7 +118,7 @@ namespace StardewDruid.Cast.Fates
 
                         SpellHandle meteor = new(targetLocation, riteWitness.Position - new Vector2(0, 32), targetPlayer.Position);
 
-                        meteor.type = SpellHandle.barrages.meteor;
+                        meteor.type = SpellHandle.spells.meteor;
 
                         Mod.instance.spellRegister.Add(meteor);
 
@@ -134,7 +134,7 @@ namespace StardewDruid.Cast.Fates
 
                         SpellHandle bolt = new(targetLocation, riteWitness.Position - new Vector2(0, 32), targetPlayer.Position);
 
-                        bolt.type = SpellHandle.barrages.bolt;
+                        bolt.type = SpellHandle.spells.bolt;
 
                         Mod.instance.spellRegister.Add(bolt);
 
@@ -216,7 +216,12 @@ namespace StardewDruid.Cast.Fates
             if(decimalCounter == reactionCounter)
             {
 
-                ModUtility.GreetVillager(targetPlayer, riteWitness, friendship);
+                if (targetPlayer.friendshipData.TryGetValue(riteWitness.Name, out var _))
+                {
+
+                    ModUtility.GreetVillager(targetPlayer, riteWitness, friendship);
+
+                }
 
                 List<string> context = new() { trick, };
 

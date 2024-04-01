@@ -601,7 +601,7 @@ namespace StardewDruid
                     );
 
                     spellEffect.external = true;
-                    spellEffect.type = (barrages)Enum.Parse(typeof(barrages),spellData[5].ToString());
+                    spellEffect.type = (spells)Enum.Parse(typeof(spells),spellData[5].ToString());
                     spellEffect.scheme = (schemes)Enum.Parse(typeof(schemes), spellData[6].ToString());
                     spellEffect.indicator = (indicators)Enum.Parse(typeof(indicators), spellData[7].ToString());
 
@@ -1977,7 +1977,23 @@ namespace StardewDruid
 
             if (staticData.taskList[quest] >= questData.taskCounter)
             {
+                
                 CompleteQuest(quest);
+            
+            }
+
+            int portion = (questData.taskCounter / 5);
+
+            if (portion != 0)
+            {
+
+                if (staticData.taskList[quest] % portion == 0)
+                {
+
+                    CastMessage(questData.questTitle + " " + ((staticData.taskList[quest] * 100) / questData.taskCounter).ToString() + " percent complete", 2, true);
+
+                }
+
             }
 
             rite.castTask = staticData.taskList;

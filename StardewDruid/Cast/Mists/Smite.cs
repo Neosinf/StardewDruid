@@ -55,7 +55,7 @@ namespace StardewDruid.Cast.Mists
 
             SpellHandle bolt = new(targetLocation, targetVector * 64, Game1.player.Position, 1, 1, -1, damage);
 
-            bolt.type = SpellHandle.barrages.bolt;
+            bolt.type = SpellHandle.spells.bolt;
 
             bolt.critical = critChance;
 

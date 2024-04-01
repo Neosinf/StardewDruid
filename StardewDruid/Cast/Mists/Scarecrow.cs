@@ -13,7 +13,7 @@ namespace StardewDruid.Cast.Mists
             : base(target)
         {
 
-            castCost = Math.Max(12, 48 - Game1.player.FarmingLevel * 3);
+            castCost = Math.Max(8, 32 - Game1.player.FarmingLevel * 3);
 
         }
 
@@ -36,7 +36,11 @@ namespace StardewDruid.Cast.Mists
 
             float animationSort;
 
-            for (int i = 1; i < (Mod.instance.PowerLevel() + 2); i++)
+            int radius = ((int)(Mod.instance.CurrentProgress() / 5) + 2);
+
+            radius = Math.Min(8, radius);
+
+            for (int i = 1; i < radius; i++)
             {
 
                 List<Vector2> hoeVectors = ModUtility.GetTilesWithinRadius(targetLocation, targetVector, i);

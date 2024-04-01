@@ -313,7 +313,7 @@ namespace StardewDruid.Event.Other
 
             SpellHandle meteor = new(Mod.instance.rite.castLocation, originVector * 64, Game1.player.Position);
 
-            meteor.type = SpellHandle.barrages.meteor;
+            meteor.type = SpellHandle.spells.meteor;
 
             Mod.instance.spellRegister.Add(meteor);
 

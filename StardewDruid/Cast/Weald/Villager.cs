@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Dialogue;
 using StardewValley;
+using System.Xml.Linq;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -22,19 +23,23 @@ namespace StardewDruid.Cast.Weald
 
             int friendship = 0;
 
-            if (Mod.instance.rite.castTask.ContainsKey("masterVillager"))
+            if (!Mod.instance.rite.castTask.ContainsKey("masterVillager"))
+            {
+
+                Mod.instance.UpdateTask("lessonVillager", 1);
+
+            }
+            else
             {
 
                 friendship = 25;
 
             }
 
-            bool greetVillager = ModUtility.GreetVillager(Mod.instance.rite.caster, riteWitness, friendship);
-
-            if (!Mod.instance.rite.castTask.ContainsKey("masterVillager") && greetVillager)
+            if (targetPlayer.friendshipData.TryGetValue(riteWitness.Name, out var _))
             {
 
-                Mod.instance.UpdateTask("lessonVillager", 1);
+                ModUtility.GreetVillager(targetPlayer, riteWitness, friendship);
 
             }
 

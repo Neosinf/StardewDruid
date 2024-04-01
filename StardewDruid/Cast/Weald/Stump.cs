@@ -15,6 +15,8 @@ namespace StardewDruid.Cast.Weald
             : base(target)
         {
 
+            castCost = 1;
+
             resourceClump = ResourceClump;
 
             resourceType = ResourceType;

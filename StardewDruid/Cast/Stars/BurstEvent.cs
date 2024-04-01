@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Event;
+using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Companions;
@@ -54,7 +55,7 @@ namespace StardewDruid.Cast.Mists
                     continue;
                 }
 
-                ModUtility.AnimateImpact(monster.currentLocation, monster.Position + new Vector2(32), 2, 0, "Flashbang");
+                ModUtility.AnimateImpact(monster.currentLocation, monster.Position + new Vector2(32), 1, 0, "Flashbang",60f);
 
                 monster.currentLocation.playSound("magma_sprite_hit");
 
@@ -71,8 +72,10 @@ namespace StardewDruid.Cast.Mists
         public void KnockVictim(StardewValley.Monsters.Monster monster)
         {
 
-            if(monster is StardewDruid.Monster.Boss.Boss)
+            if(MonsterData.BossMonster(monster))
             {
+
+                monster.stunTime.Set(Math.Max(monster.stunTime.Value, 500));
 
                 return;
 

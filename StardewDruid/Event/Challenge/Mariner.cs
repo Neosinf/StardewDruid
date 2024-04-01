@@ -208,7 +208,7 @@ namespace StardewDruid.Event.Challenge
 
                 SpellHandle missile = new(targetLocation, impact, impact - new Vector2(0, 640), 2, 1, Mod.instance.CombatModifier() * 2, Mod.instance.DamageLevel());
 
-                missile.type = SpellHandle.barrages.ballistic;
+                missile.type = SpellHandle.spells.ballistic;
 
                 missile.scheme = SpellHandle.schemes.death;
 

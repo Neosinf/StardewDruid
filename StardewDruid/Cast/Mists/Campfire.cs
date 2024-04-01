@@ -10,7 +10,7 @@ namespace StardewDruid.Cast.Mists
             : base(target)
         {
 
-            castCost = 0;
+            castCost = 24;
 
         }
 
@@ -64,8 +64,6 @@ namespace StardewDruid.Cast.Mists
             ModUtility.AnimateBolt(targetLocation, targetVector * 64 + new Vector2(32));
 
             castFire = true;
-
-            castCost = 24;
 
             castLimit = true;
 

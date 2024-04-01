@@ -1164,7 +1164,7 @@ namespace StardewDruid.Character
             if (SweepVictims().Count > 0)
             {
 
-                if (AccountStamina(20))
+                if (AccountStamina(12))
                 {
                     PerformSweep();
 
@@ -2094,7 +2094,7 @@ namespace StardewDruid.Character
 
                     SpellHandle burn = new(currentLocation, burnVector*64, minus*64, 2, 0, -1, damageLevel / 2);
 
-                    burn.type = SpellHandle.barrages.burn;
+                    burn.type = SpellHandle.spells.burn;
 
                     if(breathColour == "Blue")
                     {

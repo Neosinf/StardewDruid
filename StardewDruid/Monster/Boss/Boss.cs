@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using static StardewValley.Menus.CharacterCustomization;
 using static StardewValley.Minigames.TargetGame;
 
@@ -190,7 +191,9 @@ namespace StardewDruid.Monster.Boss
         public virtual void ChaseMode()
         {
 
-            gait = 2;
+            MaxHealth = (int)(MaxHealth * 0.65);
+
+            Health = MaxHealth;
 
             cooldownInterval = 120;
 
@@ -748,21 +751,21 @@ namespace StardewDruid.Monster.Boss
 
             if (netSweepActive.Value)
             {
-                
+
                 UpdateSweep();
 
             }
 
             if (netFlightActive.Value)
             {
-                
+
                 UpdateFlight();
 
             }
 
             if (netSpecialActive.Value)
             {
-                
+
                 UpdateSpecial();
             
             }
@@ -776,7 +779,7 @@ namespace StardewDruid.Monster.Boss
 
             if (netHaltActive.Value)
             {
-                
+
                 UpdateHalt();
 
             }
@@ -959,8 +962,10 @@ namespace StardewDruid.Monster.Boss
 
         public void UpdateWalk()
         {
-            
-            if(followIncrement == Vector2.Zero)
+
+            followTimer--;
+
+            if (followIncrement == Vector2.Zero)
             {
 
                 return;
@@ -968,8 +973,6 @@ namespace StardewDruid.Monster.Boss
             }
 
             Position += (followIncrement * WalkSpeed());
-
-            followTimer--;
 
             walkTimer++;
 
@@ -1610,9 +1613,11 @@ namespace StardewDruid.Monster.Boss
 
             SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 2, 1, DamageToFarmer);
 
-            fireball.type = SpellHandle.barrages.fireball;
+            fireball.type = SpellHandle.spells.fireball;
 
             fireball.scheme = specialScheme;
+
+            fireball.counter = -30;
 
             Mod.instance.spellRegister.Add(fireball);
 
@@ -1834,7 +1839,7 @@ namespace StardewDruid.Monster.Boss
 
                 SpellHandle missile = new(currentLocation, impact, impact - new Vector2(0, 640), 3, 1, DamageToFarmer);
 
-                missile.type = SpellHandle.barrages.ballistic;
+                missile.type = SpellHandle.spells.ballistic;
 
                 missile.scheme = specialScheme;
 

@@ -57,18 +57,15 @@ namespace StardewDruid.Character
 
             idleInterval = 90;
 
-            walkFrames = FrameSeries(32, 32, 32, 0, 6);
+            haltFrames = FrameSeries(32, 32, 0, 0, 1);
+
+            walkFrames = FrameSeries(32, 32, 32, 0, 6, haltFrames);
+            
+            walkLeft = 1;
+
+            walkRight = 4;
 
             dashFrames = FrameSeries(32, 32, 0, 128, 6);
-
-            haltFrames = new()
-            {
-                [0] = new(0, 64, 32, 32),
-                [1] = new(0, 32, 32, 32),
-                [2] = new(0, 0, 32, 32),
-                [3] = new(0, 96, 32, 32),
-
-            };
 
             idleFrames = new()
             {
@@ -96,8 +93,13 @@ namespace StardewDruid.Character
 
             };
 
-            sweepFrames = FrameSeries(32, 32, 0, 128, 3);
+            specialInterval = 30;
 
+            specialCeiling = 1;
+
+            specialFloor = 1;
+
+            sweepFrames = FrameSeries(32, 32, 0, 128, 3);
 
             rubFrames = new()
             {
@@ -176,7 +178,7 @@ namespace StardewDruid.Character
                 b.Draw(
                     characterTexture,
                     localPosition - new Vector2(32, 64f),
-                    haltFrames[netDirection.Value],
+                    haltFrames[netDirection.Value][0],
                     Color.White,
                     0f,
                     Vector2.Zero,
@@ -325,11 +327,11 @@ namespace StardewDruid.Character
 
             specialTimer = 60;
 
-            NextTarget(monster.Position, -1);
+            LookAtTarget(monster.Position);
 
             SpellHandle beam = new(currentLocation, monster.GetBoundingBox().Center.ToVector2(), GetBoundingBox().Center.ToVector2(), 2, 1, -1, Mod.instance.DamageLevel(), 3);
 
-            beam.type = SpellHandle.barrages.beam;
+            beam.type = SpellHandle.spells.beam;
 
             Mod.instance.spellRegister.Add(beam);
 

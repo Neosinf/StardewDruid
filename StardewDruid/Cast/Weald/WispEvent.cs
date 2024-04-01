@@ -241,7 +241,7 @@ namespace StardewDruid.Cast.Weald
 
                                 meteor.terrain = 5;
 
-                                meteor.type = SpellHandle.barrages.meteor;
+                                meteor.type = SpellHandle.spells.meteor;
 
                                 Mod.instance.spellRegister.Add(meteor);
 

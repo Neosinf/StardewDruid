@@ -28,7 +28,7 @@ namespace StardewDruid.Cast.Weald
 
             SpellHandle rockfall = new(targetLocation, targetVector * 64, Game1.player.Position, 2, 1, -1, damage/3, 1);
 
-            rockfall.type = SpellHandle.barrages.rockfall;
+            rockfall.type = SpellHandle.spells.rockfall;
 
             rockfall.terrain = 2;
 

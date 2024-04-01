@@ -498,9 +498,9 @@ namespace StardewDruid.Cast
                             if (checkMonsters.Count > 0)
                             {
 
-                                SpellHandle barrage = new(Game1.player.currentLocation, checkMonsters.First().Position, Game1.player.Position, 2, 1, -1, Mod.instance.DamageLevel(), 4);
+                                SpellHandle barrage = new(Game1.player.currentLocation, checkMonsters.First().Position, Game1.player.Position, 2, 1, -1, Mod.instance.DamageLevel() / 2, 2);
 
-                                barrage.type = SpellHandle.barrages.chaos;
+                                barrage.type = SpellHandle.spells.chaos;
 
                                 barrage.LaunchChaos();
 
@@ -1902,20 +1902,14 @@ namespace StardewDruid.Cast
 
                         }
 
-                        Dictionary<string, List<Vector2>> neighbourList;
-                        
-                        neighbourList = ModUtility.NeighbourCheck(castLocation, tileVector,0);
-
-                        if (neighbourList.Count > 0)
+                        if (ModUtility.NeighbourCheck(castLocation, tileVector, 0).Count > 0)
                         {
 
                             continue;
 
                         }
 
-                        neighbourList = ModUtility.NeighbourCheck(castLocation, tileVector);
-
-                        if (neighbourList.Count > 0)
+                        if (ModUtility.NeighbourCheck(castLocation, tileVector, 0).Count > 0)
                         {
 
                             continue;
@@ -3426,8 +3420,9 @@ namespace StardewDruid.Cast
 
             if (toolIndex == -1)
             {
-                Mod.instance.Monitor.Log("1", LogLevel.Debug);
+
                 RemoveBuff();
+
                 return;
 
             }
@@ -3436,8 +3431,9 @@ namespace StardewDruid.Cast
 
             if (Mod.instance.CurrentProgress() <= 1)
             {
-                Mod.instance.Monitor.Log("2", LogLevel.Debug);
+
                 RemoveBuff();
+
                 return;
 
             }
@@ -3457,8 +3453,9 @@ namespace StardewDruid.Cast
 
                     if (!Mod.instance.blessingList.Contains(activeBlessing))
                     {
-                        Mod.instance.Monitor.Log("3", LogLevel.Debug);
+
                         RemoveBuff();
+
                         return;
 
                     }
@@ -3469,8 +3466,9 @@ namespace StardewDruid.Cast
 
             if (activeBlessing == "none")
             {
-                Mod.instance.Monitor.Log("4", LogLevel.Debug);
+
                 RemoveBuff();
+
                 return;
 
             }

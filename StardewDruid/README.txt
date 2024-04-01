@@ -254,6 +254,60 @@ Disable/Enable effects
 3. Disable tree spawning and growth upticks
 4. Disable grass spawning
 
+=========================================
+STAMINA COSTS
+=========================================
+
+Weald
+-----------------------------------------
+Explode Weed        1
+Shake Fruit Tree    Free
+Extract Grass       Free
+Extract Tree        1
+Extract Bush        Maximum of: 2, 6 - (ForagingLevel/ 2)
+Extract Water       FishingLevel >= 6 ? 4 : 8
+Spawn Forage        ForagingLevel >= 6 ? 4 : 6
+Crop Growth         FarmingLevel >= 6 ? 1 : 2
+Sapling Growth		Maximum of: 2, 16 - FarmingLevel
+Rockfall            1
+Impress Villager	Free
+
+Mists
+-----------------------------------------
+Artifact Spot       8
+Boulder Sunder      Maximum of: 8, 32 - (MiningLevel * 3)
+Campfire            24
+Lava                Free
+Lightning Rod       Free
+Scarecrow           Maximum of: 12, 32 - (FarmingLevel * 3)﻿﻿Range: 2 + ( ModProgress / 5) tiles
+Smite               Maximum of: 6, 12 - (CombatLevel / 2)
+Stump Sunder        Maximum of: 8, 32 - (ForagingLevel * 3)
+Torch (Summon)      Free
+Shrine (Totem)      Free
+Tree Trunk          1
+Fish Spot           Maximum of: 8, 32 - (FishingLevel * 3)
+
+Stars
+-----------------------------------------
+Meteor              Maximum of: 6, 14 - CombatLevel
+
+Fates
+-----------------------------------------
+Enchant Machine     24, 1x Essence
+Gravity Well        Maximum of: 6, 12 - (CombatLevel / 2)
+Whisk				Free
+Trick				Free
+Teleport			Free
+Warp Strike			Free
+
+Ether
+-----------------------------------------
+Transform			Free
+Fly					Free
+Sweep Attack		﻿﻿12
+Fire Breath			5 (per tick)
+
+
 -----------------------------------------
 MULTIPLAYER
 -----------------------------------------

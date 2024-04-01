@@ -745,17 +745,17 @@ namespace StardewDruid.Event.Scene
 
                     companion.ResetActives();
 
-                    companion.moveTimer = companion.dashInterval;
-
                     companion.netDashActive.Set(true);
+
+                    companion.moveTimer = companion.moveInterval - (int)companion.MoveSpeed();
 
                     companion.NextTarget(buffin.Position - new Vector2(0,32), -1);
 
                     buffin.ResetActives();
 
-                    buffin.moveTimer = buffin.dashInterval;
-
                     buffin.netDashActive.Set(true);
+
+                    buffin.moveTimer = buffin.moveInterval - (int)buffin.MoveSpeed();
 
                     buffin.NextTarget(companion.Position - new Vector2(0, 32), -1);
 
@@ -773,17 +773,17 @@ namespace StardewDruid.Event.Scene
 
                     companion.ResetActives();
 
-                    companion.moveTimer = companion.dashInterval;
-
                     companion.netDashActive.Set(true);
+
+                    companion.moveTimer = companion.moveInterval - (int)companion.MoveSpeed();
 
                     companion.NextTarget(buffin.Position - new Vector2(0, 32), -1);
 
                     buffin.ResetActives();
 
-                    buffin.moveTimer = buffin.dashInterval;
-
                     buffin.netDashActive.Set(true);
+
+                    buffin.moveTimer = buffin.moveInterval - (int)buffin.MoveSpeed();
 
                     buffin.NextTarget(companion.Position - new Vector2(0, 32), -1);
 
@@ -827,7 +827,7 @@ namespace StardewDruid.Event.Scene
 
                     SpellHandle beam = new(companion.currentLocation, buffin.GetBoundingBox().Center.ToVector2(), companion.GetBoundingBox().Center.ToVector2(), 2, 1, -1, Mod.instance.DamageLevel());
 
-                    beam.type = SpellHandle.barrages.beam;
+                    beam.type = SpellHandle.spells.beam;
 
                     Mod.instance.spellRegister.Add(beam);
 
@@ -839,7 +839,7 @@ namespace StardewDruid.Event.Scene
 
                     beam = new(buffin.currentLocation, companion.GetBoundingBox().Center.ToVector2(), buffin.GetBoundingBox().Center.ToVector2(), 2, 1, -1, Mod.instance.DamageLevel());
 
-                    beam.type = SpellHandle.barrages.chaos;
+                    beam.type = SpellHandle.spells.chaos;
 
                     Mod.instance.spellRegister.Add(beam);
 

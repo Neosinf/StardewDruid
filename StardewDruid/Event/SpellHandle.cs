@@ -60,7 +60,7 @@ namespace StardewDruid.Event
 
         public bool external;
 
-        public enum barrages
+        public enum spells
         {
             ballistic,
             beam,
@@ -73,7 +73,7 @@ namespace StardewDruid.Event
             rockfall,
         }
 
-        public barrages type;
+        public spells type;
 
         public enum indicators
         {
@@ -127,7 +127,7 @@ namespace StardewDruid.Event
 
             impact = Destination;
 
-            type = barrages.fireball;
+            type = spells.fireball;
 
             scheme = schemes.fire;
 
@@ -181,7 +181,7 @@ namespace StardewDruid.Event
             switch (type)
             {
 
-                case barrages.meteor:
+                case spells.meteor:
 
                     if (counter == 1)
                     {
@@ -203,11 +203,13 @@ namespace StardewDruid.Event
                     if (counter == 60)
                     {
 
-                        RadialDamage();
+                        RadialDamage(radius);
 
-                        LightRadius(destination);
+                        RadialExplode(radius);
 
                         RadialImpact(radius);
+
+                        LightRadius(destination);
 
                         if (radius > 5)
                         {
@@ -233,7 +235,7 @@ namespace StardewDruid.Event
                     return true;
 
 
-                case barrages.bolt:
+                case spells.bolt:
 
                     if (counter == 1)
                     {
@@ -264,7 +266,7 @@ namespace StardewDruid.Event
 
                     return true;
 
-                case barrages.rockfall:
+                case spells.rockfall:
 
                     if (counter == 1)
                     {
@@ -278,9 +280,11 @@ namespace StardewDruid.Event
                     if (counter == 36)
                     {
 
-                        RadialDamage();
+                        RadialDamage(radius);
 
-                        RadialImpact();
+                        RadialExplode(radius);
+
+                        RadialImpact(radius);
 
                         RockDebris();
 
@@ -299,7 +303,7 @@ namespace StardewDruid.Event
 
                     return true;
 
-                case barrages.ballistic:
+                case spells.ballistic:
 
                     
                     if (counter == 1)
@@ -325,11 +329,13 @@ namespace StardewDruid.Event
                     if (counter == 120)
                     {
 
-                        RadialDamage();
+                        RadialDamage(radius);
+
+                        RadialExplode(radius);
+
+                        RadialImpact(radius);
 
                         LightRadius(destination);
-
-                        RadialImpact();
 
                         Game1.currentLocation.playSound("flameSpellHit",destination,800+new Random().Next(7)*100);
 
@@ -348,7 +354,7 @@ namespace StardewDruid.Event
 
                     return true;
 
-                case barrages.burn:
+                case spells.burn:
 
                     if (counter == 1)
                     {
@@ -383,7 +389,7 @@ namespace StardewDruid.Event
 
                     return true;
 
-                case barrages.fireball:
+                case spells.fireball:
 
                     if (counter == 1)
                     {
@@ -411,11 +417,14 @@ namespace StardewDruid.Event
 
                     if (counter == 70)
                     {
-                        RadialDamage();
 
-                        LightRadius(destination);
+                        RadialDamage(radius);
+
+                        RadialExplode(radius);
 
                         RadialImpact(radius-1);
+
+                        LightRadius(destination);
 
                         return true;
 
@@ -431,7 +440,7 @@ namespace StardewDruid.Event
                  
                     return true;
 
-                case barrages.beam:
+                case spells.beam:
 
                     if (counter == 1)
                     {
@@ -447,7 +456,11 @@ namespace StardewDruid.Event
                     if (counter == 30)
                     {
 
-                        RadialDamage();
+                        RadialDamage(radius);
+
+                        RadialExplode(radius);
+
+                        RadialFlashbang(radius);
 
                         LightRadius(destination);
 
@@ -465,7 +478,7 @@ namespace StardewDruid.Event
 
                     return true;
 
-                case barrages.chaos:
+                case spells.chaos:
 
                     if (counter == 1)
                     {
@@ -476,15 +489,26 @@ namespace StardewDruid.Event
 
                     }
 
-                    if (counter == 30)
+                    if(counter == 10)
                     {
 
-                        RadialDamage();
+                        GrazeDamage(1,2);
+
+                        Game1.currentLocation.playSound("flameSpellHit", impact, 600 + new Random().Next(1, 8) * 100);
+
+                    }
+
+                    if (counter == 15)
+                    {
+
+                        RadialDamage(radius);
+
+                        RadialExplode(radius);
+
+                        RadialFlashbang(radius);
 
                         LightRadius(destination);
-
-                        RadialImpact(3);
-
+                        
                         return true;
 
                     }
@@ -994,21 +1018,19 @@ namespace StardewDruid.Event
 
             Vector2 ratio = (destination - origin) / Vector2.Distance(origin, destination);
 
-            Vector2 diff = ratio * 240;
+            Vector2 diff = ratio * 192;
 
-            Vector2 terminus = origin + (ratio * 360);
-
-            Vector2 zone = new((int)(terminus.X / 64), (int)(terminus.Y / 64));
+            impact = origin + (ratio * 384);
 
             radius = 4;
 
             float rotate = (float)Math.Atan2(diff.Y, diff.X);
 
-            Vector2 setPosition = origin + diff - new Vector2(240, 96);
+            Vector2 setPosition = origin + diff - new Vector2(192, 96);
 
-            TemporaryAnimatedSprite beam = new(0, 120f, 5, 1, setPosition, false, false)
+            TemporaryAnimatedSprite beam = new(0, 75f, 6, 1, setPosition, false, false)
             {
-                sourceRect = new(0, 0, 160, 64),
+                sourceRect = new(0, 0, 128, 64),
                 sourceRectStartingPos = new Vector2(0.0f, 0.0f),
                 texture = beamTexture,
                 scale = 3f,
@@ -1024,29 +1046,27 @@ namespace StardewDruid.Event
 
         }
 
-        public void RadialDamage(int hit = 0)
+        public void RadialDamage(int zone = 2)
         {
-
-            int zone = radius;
-
-            if (type == barrages.burn)
-            {
-                zone = radius - 1;
-            }
 
             if (damageFarmers > 0)
             {
 
                 ModUtility.DamageFarmers(location, ModUtility.FarmerProximity(location, impact, zone, true), (int)damageFarmers, monster);
-                
+
             }
 
             if (damageMonsters > 0)
             {
-                    
-                ModUtility.DamageMonsters(location, ModUtility.MonsterProximity(location, new() { impact}, zone, true), Game1.player, (int)damageMonsters, true);
+
+                ModUtility.DamageMonsters(location, ModUtility.MonsterProximity(location, new() { impact }, zone, true), Game1.player, (int)damageMonsters, true);
 
             }
+
+        }
+
+        public void RadialExplode(int zone = 2)
+        {
 
             if (power > 0)
             {
@@ -1117,6 +1137,13 @@ namespace StardewDruid.Event
         {
 
             ModUtility.AnimateImpact(location, impact, reach);
+
+        }
+
+        public void RadialFlashbang(int reach = 1)
+        {
+
+            ModUtility.AnimateImpact(location, impact, reach, 0, "Flashbang", 75);
 
         }
 

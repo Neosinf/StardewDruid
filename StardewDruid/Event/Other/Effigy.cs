@@ -115,14 +115,14 @@ namespace StardewDruid.Event.Other
 
             Vector2 EffigyPosition = WarpData.WarpStart() - new Vector2(0, 704);
 
-            TemporaryAnimatedSprite EffigyAnimation = new(0, 1000f, 1, 1, EffigyPosition, false, false)
+            TemporaryAnimatedSprite EffigyAnimation = new(0, 1000f, 1, 1, EffigyPosition-new Vector2(36,72), false, false)
             {
 
-                sourceRect = new(0, 0, 16, 32),
+                sourceRect = new(0, 0, 32, 32),
 
                 texture = CharacterData.CharacterTexture("Effigy"),
 
-                scale = 4f,
+                scale = 4.25f,
 
                 motion = new Vector2(0, 0.64f),
 

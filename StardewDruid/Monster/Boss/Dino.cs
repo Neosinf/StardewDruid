@@ -329,7 +329,7 @@ namespace StardewDruid.Monster.Boss
 
             SpellHandle beam = new(currentLocation, farmerPosition, GetBoundingBox().Center.ToVector2(), 2, 0, DamageToFarmer * 0.4f);
 
-            beam.type = SpellHandle.barrages.beam;
+            beam.type = SpellHandle.spells.beam;
 
             beam.monster = this;
 

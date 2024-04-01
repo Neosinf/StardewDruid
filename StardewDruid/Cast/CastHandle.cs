@@ -34,7 +34,7 @@ namespace StardewDruid.Cast
 
             castFire = false;
 
-            castCost = 2;
+            castCost = 0;
 
             castLimit = false;
 

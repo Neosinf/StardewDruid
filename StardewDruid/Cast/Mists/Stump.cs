@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewValley;
 using StardewValley.TerrainFeatures;
 using System;
 
@@ -15,6 +16,8 @@ namespace StardewDruid.Cast.Mists
             : base(target)
         {
 
+            castCost = Math.Max(8, 32 - targetPlayer.ForagingLevel * 3);
+
             resourceClump = ResourceClump;
 
             resourceType = ResourceType;
@@ -23,10 +26,6 @@ namespace StardewDruid.Cast.Mists
 
         public override void CastEffect()
         {
-
-            int axeLevel = Mod.instance.virtualAxe.UpgradeLevel;
-
-            castCost = Math.Max(2, 36 - targetPlayer.ForagingLevel * axeLevel);
 
             if (resourceClump == null)
             {

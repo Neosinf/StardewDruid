@@ -12,6 +12,7 @@ namespace StardewDruid.Cast.Weald
         public Boulder(Vector2 target,  ResourceClump ResourceClump)
             : base(target)
         {
+            castCost = 1;
 
             resourceClump = ResourceClump;
 

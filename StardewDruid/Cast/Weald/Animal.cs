@@ -21,6 +21,7 @@ namespace StardewDruid.Cast.Weald
             ModUtility.PetAnimal(Mod.instance.rite.caster, riteWitness);
 
         }
+
     }
 
 }

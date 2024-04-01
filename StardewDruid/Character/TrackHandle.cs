@@ -158,32 +158,32 @@ namespace StardewDruid.Character
             if (Mod.instance.characters[trackFor].currentLocation.Name != followPlayer.currentLocation.Name)
             {
 
-                WarpToTarget();
+                if (WarpToTarget()) { return; }
 
             }
 
             if (!Utility.isOnScreen(Mod.instance.characters[trackFor].Position, 128))
             {
 
-                WarpToTarget();
+                if (WarpToTarget()) { return; }
 
             }
 
             if(Vector2.Distance(Mod.instance.characters[trackFor].Position, followPlayer.Position) > 800f)
             {
 
-                WarpToTarget();
+                if (WarpToTarget()) { return; }
 
             }
 
         }
 
-        public void WarpToTarget()
+        public bool WarpToTarget(bool next = true)
         {
 
             if(trackVectors.Count == 0)
             {
-                return;
+                return false;
             }
 
             if (Mod.instance.characters[trackFor].currentLocation.Name != followPlayer.currentLocation.Name)
@@ -197,13 +197,17 @@ namespace StardewDruid.Character
 
             }
 
-            Mod.instance.characters[trackFor].Position = NextVector();
+            Vector2 destination = next ? NextVector() : LastVector();
+
+            Mod.instance.characters[trackFor].Position = destination;
 
             ModUtility.AnimateQuickWarp(Mod.instance.characters[trackFor].currentLocation, Mod.instance.characters[trackFor].Position - new Vector2(0, 32));
 
             Mod.instance.characters[trackFor].DeactivateStandby();
 
             Mod.instance.characters[trackFor].ResetActives();
+
+            return true;
 
         }
 
@@ -234,7 +238,7 @@ namespace StardewDruid.Character
                 return Vector2.Zero;
             }
 
-            Vector2 trackVector = trackVectors[0];
+            Vector2 trackVector = trackVectors.First();
             
             trackVectors.RemoveAt(0);
 
@@ -244,6 +248,11 @@ namespace StardewDruid.Character
 
         public Vector2 LastVector()
         {
+
+            if (trackVectors.Count == 0)
+            {
+                return Vector2.Zero;
+            }
 
             Vector2 trackVector = trackVectors.Last();
 

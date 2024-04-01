@@ -520,7 +520,7 @@ namespace StardewDruid.Map
                     "The denizens of the deep water serve the Lady Beyond the Shore. Rarer, bigger fish will gather where the Rite of the Mists strikes the open water.",
                     "Strike water at least three tiles away from water edge to produce a fishing-spot that yields rare species of fish. Cast the fishing line and wait for the fish mini-game to trigger automatically, then reel the fish in.",
                     "lessonFishspot",
-                    "of 10 fish caught from fishing-spot",
+                    "of 10 catch attempts from fishing-spot",
                     "masterFishspot",
                     "Even rarer fish available to catch"
                     }

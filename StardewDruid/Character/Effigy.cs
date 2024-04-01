@@ -11,6 +11,7 @@ using StardewValley.GameData.FruitTrees;
 using StardewValley.Internal;
 using StardewValley.Monsters;
 using StardewValley.Network;
+using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
@@ -27,8 +28,7 @@ namespace StardewDruid.Character
         public List<Vector2> ritesDone;
         public int riteIcon;
         public bool showIcon;
-        public Texture2D axeTexture;
-        public Texture2D bombTexture;
+
         public Texture2D iconsTexture;
 
         public NetBool netCastActive = new(false);
@@ -46,101 +46,6 @@ namespace StardewDruid.Character
             
         }
 
-        public override void LoadOut()
-        {
-
-            characterTexture = CharacterData.CharacterTexture(Name);
-
-            LoadBase();
-
-            specialScheme = SpellHandle.schemes.stars;
-
-            specialIndicator = SpellHandle.indicators.stars;
-
-            idleInterval = 120;
-
-            walkFrames = FrameSeries(32, 16, 0, 0, 4);
-
-            dashFrames = new()
-            {
-                [0] = new(){
-                    new(64, 96, 32, 32),
-                    new(96, 64, 32, 32),
-                    new(64, 64, 32, 32),
-                    new(96, 96, 32, 32),
-                },
-                [1] = new()
-                {
-                    new(96, 64, 32, 32),
-                    new(64, 64, 32, 32),
-                    new(96, 96, 32, 32),
-                    new(64, 96, 32, 32),
-                },
-                [2] = new()
-                {
-                    new(64, 64, 32, 32),
-                    new(96, 96, 32, 32),
-                    new(64, 96, 32, 32),
-                    new(96, 64, 32, 32),
-                },
-                [3] = new()
-                {
-                    new(96, 96, 32, 32),
-                    new(64, 96, 32, 32),
-                    new(96, 64, 32, 32),
-                    new(64, 64, 32, 32),
-                }
-
-            };
-
-            dashFloor = 0;
-            dashCeiling = 3;
-
-            sweepFrames = new() {
-                [0] = new()
-                {
-                new(0, 0, 48, 48),
-                new(48, 0, 48, 48),
-                new(96, 0, 48, 48),
-                new(144, 0, 48, 48),
-                }
-
-            };
-
-            specialFrames = new()
-            {
-                [0] = new() { new(64, 32, 32, 32), new(96, 32, 32, 32), },
-                [1] = new() { new(64, 32, 32, 32), new(96, 32, 32, 32), },
-                [2] = new() { new(64, 32, 32, 32), new(96, 32, 32, 32), },
-                [3] = new() { new(64, 32, 32, 32), new(96, 32, 32, 32), },
-            };
-
-            haltFrames = new()
-            {
-                [0] = new(64, 0, 32, 32),
-                [1] = new(96, 0, 32, 32),
-            };
-
-            castFrames = new()
-            {
-                [0] = new(32, 128, 16, 32),
-                [1] = new(16, 128, 16, 32),
-                [2] = new(0, 128, 16, 32),
-                [3] = new(48, 128, 16, 32),
-            };
-
-            ritesDone = new List<Vector2>();
-
-            bombTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Cursors.png"));
-
-            iconsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Icons.png"));
-
-            axeTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "EffigyDash.png"));
-
-            loadedOut = true;
-
-        }
-
         protected override void initNetFields()
         {
             base.initNetFields();
@@ -150,15 +55,166 @@ namespace StardewDruid.Character
 
         }
 
+        public override void LoadOut()
+        {
+
+            LoadBase();
+
+            characterTexture = CharacterData.CharacterTexture(Name);
+
+            haltFrames = FrameSeries(32, 32, 0, 0, 1);
+
+            walkFrames = FrameSeries(32, 32, 0, 128, 6, haltFrames);
+
+            walkLeft = 1;
+
+            walkRight = 4;
+
+            specialScheme = SpellHandle.schemes.stars;
+
+            specialIndicator = SpellHandle.indicators.stars;
+
+            idleFrames = new()
+            {
+                [0] = new()
+                {
+                    new Rectangle(128, 0, 32, 32),
+                    new Rectangle(160, 0, 32, 32),
+                },
+                [1] = new()
+                {
+                    new Rectangle(128, 0, 32, 32),
+                    new Rectangle(160, 0, 32, 32),
+                },
+                [2] = new()
+                {
+                    new Rectangle(128, 0, 32, 32),
+                    new Rectangle(160, 0, 32, 32),
+                },
+                [3] = new()
+                {
+                    new Rectangle(128, 0, 32, 32),
+                    new Rectangle(160, 0, 32, 32),
+                },
+            };
+
+            specialFrames = new()
+            {
+                [0] = new()
+                {
+
+                    new(64, 64, 32, 32),
+                    new(96, 64, 32, 32),
+
+                },
+                [1] = new()
+                {
+
+                    new(64, 32, 32, 32),
+                    new(96, 32, 32, 32),
+
+                },
+                [2] = new()
+                {
+
+                    new(64, 0, 32, 32),
+                    new(96, 0, 32, 32),
+
+                },
+                [3] = new()
+                {
+
+                    new(64, 96, 32, 32),
+                    new(96, 96, 32, 32),
+
+                },
+
+            };
+
+            specialInterval = 30;
+            specialCeiling = 1;
+            specialFloor = 1;
+
+            dashCeiling = 2;
+            dashFloor = 1;
+
+            dashFrames = new()
+            {
+                [0] = new()
+                {
+                    new(0, 192, 32, 32),
+                    new(32, 64, 32, 32),
+                    new(32, 64, 32, 32),
+                },
+                [1] = new()
+                {
+                    new(0, 160, 32, 32),
+                    new(32, 32, 32, 32),
+                    new(32, 32, 32, 32),
+                },
+                [2] = new()
+                {
+                    new(0, 128, 32, 32),
+                    new(32, 0, 32, 32),
+                    new(32, 0, 32, 32),
+                },
+                [3] = new()
+                {
+                    new(0, 224, 32, 32),
+                    new(32, 96, 32, 32),
+                    new(32, 96, 32, 32),
+                },
+            };
+
+            sweepFrames = new()
+            {
+                [0] = new()
+                {
+                    new Rectangle(128, 320, 64, 64),
+                    new Rectangle(192, 320, 64, 64),
+                    new Rectangle(0, 320, 64, 64),
+                    new Rectangle(64, 320, 64, 64),
+                },
+                [1] = new()
+                {
+                    new Rectangle(0, 384, 64, 64),
+                    new Rectangle(64, 384, 64, 64),
+                    new Rectangle(128, 384, 64, 64),
+                    new Rectangle(192, 384, 64, 64),
+                },
+                [2] = new()
+                {
+                    new Rectangle(0, 256, 64, 64),
+                    new Rectangle(64, 256, 64, 64),
+                    new Rectangle(128, 256, 64, 64),
+                    new Rectangle(192, 256, 64, 64),
+                },
+                [3] = new()
+                {
+                    new Rectangle(0, 320, 64, 64),
+                    new Rectangle(64, 320, 64, 64),
+                    new Rectangle(128, 320, 64, 64),
+                    new Rectangle(192, 320, 64, 64),
+                },
+            };
+
+            ritesDone = new List<Vector2>();
+
+            iconsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Icons.png"));
+
+            loadedOut = true;
+
+        }
+
         public override void draw(SpriteBatch b, float alpha = 1f)
         {
-            
+
             if (IsInvisible || !Utility.isOnScreen(Position, 128))
             {
                 return;
             }
 
-            if(characterTexture == null)
+            if (characterTexture == null)
             {
 
                 return;
@@ -174,6 +230,19 @@ namespace StardewDruid.Character
                 b.Draw(Game1.emoteSpriteSheet, localPosition - new Vector2(0, 160), new Microsoft.Xna.Framework.Rectangle(base.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, base.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, drawLayer);
             }
 
+            b.Draw(
+                Game1.shadowTexture,
+                localPosition + new Vector2(6, 44f),
+                Game1.shadowTexture.Bounds,
+                Color.White * alpha, 0f,
+                Vector2.Zero,
+                4f,
+                SpriteEffects.None,
+                drawLayer - 0.0001f
+                );
+
+            DrawIcon(b, localPosition, drawLayer);
+
             if (netLieActive.Value)
             {
 
@@ -181,30 +250,24 @@ namespace StardewDruid.Character
 
                 return;
 
-            }
-
-            if (netHaltActive.Value)
+            } else if (netHaltActive.Value)
             {
 
-                int chooseFrame = idleFrame % 4;
+                int chooseFrame = idleFrame % 8;
 
-                if(chooseFrame < 2 || !currentLocation.IsOutdoors || netSceneActive.Value)
+                if (chooseFrame < 5 || !currentLocation.IsOutdoors || netSceneActive.Value)
                 {
                     b.Draw(
                         characterTexture,
-                        localPosition - new Vector2(0, 64),
-                        walkFrames[netDirection.Value][0],
+                        localPosition - new Vector2(36, 72f),
+                        haltFrames[netDirection.Value][0],
                         Color.White,
                         0f,
                         Vector2.Zero,
-                        4f,
-                        flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                        4.25f,
+                        flip || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                         drawLayer
-                        );
-
-                    DrawIcon(b, localPosition, drawLayer);
-
-                    DrawShadow(b, localPosition, drawLayer);
+                    );
 
                     return;
 
@@ -212,145 +275,89 @@ namespace StardewDruid.Character
 
                 DrawLieDown(b, localPosition, drawLayer);
 
-                return;
-            
             }
+            else if (netSweepActive.Value)
+            {
 
-            if (netCastActive.Value)
+                b.Draw(
+                     characterTexture,
+                     localPosition - new Vector2(104, 112f),
+                     sweepFrames[netDirection.Value][sweepFrame],
+                     Color.White,
+                     0f,
+                     Vector2.Zero,
+                     4.25f,
+                     flip || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                     drawLayer
+                 );
+
+            }
+            else if (netSpecialActive.Value)
             {
 
                 b.Draw(
                     characterTexture,
-                    localPosition - new Vector2(0,64),
-                    castFrames[netDirection.Value],
+                    localPosition - new Vector2(36, 72f),
+                    specialFrames[netDirection.Value][specialFrame],
                     Color.White,
-                    0f,
+                    0.0f,
                     Vector2.Zero,
-                    4f,
-                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    4.25f,
+                    flip || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0,
                     drawLayer
-                    );
-
-                DrawIcon(b, localPosition, drawLayer);
-
-                DrawShadow(b, localPosition, drawLayer);
-
-                return;
+                );
 
             }
-
-            if (netSweepActive.Value)
-            {
-                b.Draw(
-                    axeTexture,
-                    localPosition - new Vector2(64, 128),
-                    sweepFrames[0][sweepFrame],
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    4f,
-                    netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    drawLayer
-                    );
-
-                DrawShadow(b, localPosition, drawLayer);
-
-                return;
-            }
-
-            if (netDashActive.Value)
+            else if (netDashActive.Value)
             {
 
                 b.Draw(
                     characterTexture,
-                    localPosition - new Vector2(64,64),
+                    localPosition - new Vector2(36, 72f),
                     dashFrames[netDirection.Value][dashFrame],
                     Color.White,
                     0f,
                     Vector2.Zero,
-                    4f,
-                    netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    4.25f,
+                    flip || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                     drawLayer
-                    );
-
-                DrawIcon(b, localPosition, drawLayer);
-
-                DrawShadow(b, localPosition, drawLayer);
-
-                return;
+                );
 
             }
-
-            if (netSpecialActive.Value)
+            else
             {
 
                 b.Draw(
                     characterTexture,
-                    localPosition - new Vector2(32, 64),
-                    specialFrames[netDirection.Value][specialFrame],
+                    localPosition - new Vector2(36, 72f),
+                    walkFrames[netDirection.Value][moveFrame],
                     Color.White,
                     0f,
                     Vector2.Zero,
-                    4f,
-                    netDirection.Value == 3 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    4.25f,
+                    flip || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                     drawLayer
-                    );
-
-                if (specialFrame == 0)
-                {
-
-                    b.Draw(
-                        bombTexture,
-                        localPosition + new Vector2(netDirection.Value == 3 ? 48f : -48f, -40f),
-                        new Rectangle(0, 32, 32, 32),
-                        Color.White,
-                        0f,
-                        Vector2.Zero,
-                        2f,
-                        SpriteEffects.None,
-                        drawLayer + 0.0001f
-                        );
-
-                }
-
-                DrawShadow(b, localPosition, drawLayer);
-
-                return;
+                );
 
             }
 
-            b.Draw(
-                characterTexture,
-                localPosition - new Vector2(0, 64),
-                walkFrames[netDirection.Value][moveFrame],
-                Color.White,
-                0f,
-                Vector2.Zero,
-                4f,
-                flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                drawLayer
-                );
+        }
 
-            DrawIcon(b, localPosition, drawLayer);
+        public override Rectangle GetBoundingBox()
+        {
 
-            DrawShadow(b, localPosition, drawLayer);
+            return new Rectangle((int)Position.X + 8, (int)Position.Y + 8, 48, 48);
 
+        }
+
+        public override Rectangle GetHitBox()
+        {
+            return new Rectangle((int)Position.X - 32, (int)Position.Y - 32, 128, 128);
         }
 
         public void DrawIcon(SpriteBatch b, Vector2 localPosition, float drawLayer)
         {
-            if (netDashActive.Value)
-            {
-
-                if (castFrames[netDirection.Value].X != 64 && castFrames[netDirection.Value].Y != 96)
-                {
-
-                    return;
-
-                }
-
-            }
-            else if (netDirection.Value != 0 || netSpecialActive.Value)
+            if (netDirection.Value != 0)
             {
             
                 return;
@@ -382,31 +389,15 @@ namespace StardewDruid.Character
 
             b.Draw(
                 iconsTexture,
-                localPosition + new Vector2(16, 0),
+                localPosition + new Vector2(21, -16),
                 new Rectangle((riteIcon % 4) * 8, (riteIcon / 4) * 8, 8, 8),
-                Color.White*0.75f,
+                Color.White*0.65f,
                 0f,
                 new Vector2(0, 0),
-                4f,
+                3f,
                 SpriteEffects.None,
                 drawLayer + 0.0001f
             );
-
-        }
-
-        public void DrawShadow(SpriteBatch b, Vector2 localPosition, float drawLayer)
-        {
-            b.Draw(
-                Game1.shadowTexture,
-                localPosition + new Vector2(6, 44f),
-                Game1.shadowTexture.Bounds,
-                Color.White * 0.65f,
-                0f,
-                Vector2.Zero,
-                4f,
-                SpriteEffects.None,
-                drawLayer - 0.0001f
-                );
 
         }
 
@@ -418,7 +409,7 @@ namespace StardewDruid.Character
             b.Draw(
                 characterTexture,
                 localPosition - new Vector2(32f, 64f),
-                haltFrames[chooseFrame],
+                idleFrames[0][chooseFrame],
                 Color.White,
                 0f,
                 Vector2.Zero,
@@ -430,7 +421,7 @@ namespace StardewDruid.Character
             b.Draw(
                 characterTexture,
                 localPosition - new Vector2(30f, 60f),
-                haltFrames[chooseFrame],
+                idleFrames[0][chooseFrame],
                 Color.Black * 0.25f,
                 0f,
                 Vector2.Zero,
@@ -498,7 +489,7 @@ namespace StardewDruid.Character
 
             Halt();
 
-            NextTarget(who.Position);
+            LookAtTarget(who.Position);
 
             return true;
 
@@ -508,8 +499,6 @@ namespace StardewDruid.Character
         {
             base.ResetActives();
 
-            netCastActive.Set(false);
-
             netLieActive.Set(false);
 
         }
@@ -518,18 +507,6 @@ namespace StardewDruid.Character
         {
 
             base.UpdateBehaviour();
-
-            if (netCastActive.Value)
-            {
-
-                if (!netSpecialActive.Value)
-                {
-
-                    netCastActive.Set(false);
-
-                }
-
-            }
 
         }
 
@@ -611,9 +588,9 @@ namespace StardewDruid.Character
 
             ResetActives();
 
-            netCastActive.Set(true);
-
             netSpecialActive.Set(true);
+
+            specialFrame = 1;
 
             specialTimer = 30;
 

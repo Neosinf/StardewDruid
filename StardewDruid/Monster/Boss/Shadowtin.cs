@@ -34,7 +34,7 @@ namespace StardewDruid.Monster.Boss
 
             if(realName.Value == "Shadowtin")
             {
-                MaxHealth = Math.Max(10000, combatModifier * 500);
+                MaxHealth = Math.Max(8000, combatModifier * 400);
 
                 Health = MaxHealth;
 
@@ -50,10 +50,6 @@ namespace StardewDruid.Monster.Boss
 
         public override void LoadOut()
         {
-
-            Health *= 2;
-
-            MaxHealth *= 2;
 
             ShadowWalk();
 
@@ -154,6 +150,8 @@ namespace StardewDruid.Monster.Boss
 
             specialFloor = 0;
 
+            specialInterval = 30;
+
             reachThreshold = 64;
 
             safeThreshold = 544;
@@ -161,8 +159,6 @@ namespace StardewDruid.Monster.Boss
             specialThreshold = 320;
 
             barrageThreshold = 544;
-
-            specialInterval = 30;
 
             specialTexture = characterTexture;
 
@@ -290,9 +286,7 @@ namespace StardewDruid.Monster.Boss
             else if (netSpecialActive.Value)
             {
 
-                b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 64f), new Rectangle?(specialFrames[netDirection.Value][specialFrame]), Color.White, 0.0f, new Vector2(0.0f, 0.0f), 4f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
-                
-                shadowOffset = 64;
+                b.Draw(characterTexture, new Vector2(localPosition.X - 32f, localPosition.Y - 64f), new Rectangle?(specialFrames[netDirection.Value][specialFrame]), Color.White, 0.0f, new Vector2(0.0f, 0.0f), 4f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
 
             }
             else if (netFlightActive.Value)

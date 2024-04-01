@@ -410,7 +410,7 @@ namespace StardewDruid.Monster.Boss
 
             SpellHandle burn = new(currentLocation, zero[0] * 64, GetBoundingBox().Center.ToVector2(), 2, 0, DamageToFarmer * 0.2f);
 
-            burn.type = SpellHandle.barrages.burn;
+            burn.type = SpellHandle.spells.burn;
 
             burn.scheme = specialScheme;
 

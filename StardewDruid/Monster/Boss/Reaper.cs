@@ -181,7 +181,7 @@ namespace StardewDruid.Monster.Boss
 
                 SpellHandle fireball = new(currentLocation, zero * 64, GetBoundingBox().Center.ToVector2(), 2, 1, DamageToFarmer);
 
-                fireball.type = SpellHandle.barrages.fireball;
+                fireball.type = SpellHandle.spells.fireball;
 
                 fireball.scheme = SpellHandle.schemes.death;
 

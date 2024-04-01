@@ -99,7 +99,7 @@ namespace StardewDruid.Cast.Stars
 
             meteor.terrain = terrain;
 
-            meteor.type = SpellHandle.barrages.meteor;
+            meteor.type = SpellHandle.spells.meteor;
 
             Mod.instance.spellRegister.Add(meteor);
 

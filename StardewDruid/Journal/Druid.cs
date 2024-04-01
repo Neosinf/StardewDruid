@@ -448,7 +448,7 @@ namespace StardewDruid.Journal
             Rectangle bounds = viewport.Bounds;
             Color color = Color.Black * 0.75f;
             spriteBatch1.Draw(fadeToBlackRect, bounds, color);
-            SpriteText.drawStringWithScrollCenteredAt(b, "Stardew Druid", xPositionOnScreen + width / 2, yPositionOnScreen - 64, 16, 1f, null, 0, 0.88f, false);
+            SpriteText.drawStringWithScrollCenteredAt(b, "Stardew Druid", xPositionOnScreen + width / 2, yPositionOnScreen - 64);
             IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), xPositionOnScreen, yPositionOnScreen, width, height, Color.White, 4f, true, -1f);
             if (questPage == -1)
             {

@@ -48,16 +48,13 @@ namespace StardewDruid.Character
 
             characterTexture = CharacterData.CharacterTexture(Name);
 
-            walkFrames = FrameSeries(32, 32, 0, 128, 6);
+            haltFrames = FrameSeries(32, 32, 0, 0, 1);
 
-            haltFrames = new()
-            {
-                [0] = new(0, 64, 32, 32),
-                [1] = new(0, 32, 32, 32),
-                [2] = new(0, 0, 32, 32),
-                [3] = new(0, 96, 32, 32),
+            walkFrames = FrameSeries(32, 32, 0, 128, 6, haltFrames);
 
-            };
+            walkLeft = 1;
+
+            walkRight = 4;
 
             idleFrames = new()
             {
@@ -123,6 +120,10 @@ namespace StardewDruid.Character
                 },
 
             };
+
+            specialInterval = 30;
+            specialCeiling = 1;
+            specialFloor = 1;
 
             dashCeiling = 2;
             dashFloor = 1;
@@ -244,7 +245,7 @@ namespace StardewDruid.Character
                     b.Draw(
                         characterTexture,
                         localPosition - new Vector2(32, 64f),
-                        haltFrames[netDirection.Value],
+                        haltFrames[netDirection.Value][0],
                         Color.White,
                         0f,
                         Vector2.Zero,
@@ -291,7 +292,7 @@ namespace StardewDruid.Character
                 
                 b.Draw(
                     characterTexture,
-                    localPosition - new Vector2(64, 64f),
+                    localPosition - new Vector2(64, 64f), // -32 offset to be in middle of forage tile
                     forageFrames[specialFrame],
                     Color.White,
                     0.0f,
@@ -307,7 +308,7 @@ namespace StardewDruid.Character
 
                 b.Draw(
                     characterTexture,
-                    localPosition - new Vector2(96, 64f),
+                    localPosition - new Vector2(32, 64f),
                     specialFrames[netDirection.Value][specialFrame],
                     Color.White,
                     0.0f,
@@ -336,6 +337,7 @@ namespace StardewDruid.Character
             }
             else
             {
+
                 b.Draw(
                     characterTexture,
                     localPosition - new Vector2(32, 64f),
@@ -347,7 +349,7 @@ namespace StardewDruid.Character
                     flip || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                     drawLayer
                 );
-
+                
             }
 
         }
@@ -621,7 +623,7 @@ namespace StardewDruid.Character
 
             }
 
-            base.TargetRandom();
+            base.TargetRandom(level);
 
         }
 

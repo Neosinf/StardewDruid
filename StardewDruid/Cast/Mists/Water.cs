@@ -11,21 +11,13 @@ namespace StardewDruid.Cast.Mists
             : base(target)
         {
 
-            castCost = 8;
-
-            if (Game1.player.FishingLevel >= 6)
-            {
-
-                castCost = 4;
-
-            }
 
         }
 
         public override void CastEffect()
         {
 
-            castCost = Math.Max(8, 48 - (targetPlayer.FishingLevel * 3));
+            castCost = Math.Max(8, 32 - (targetPlayer.FishingLevel * 3));
 
             Fishspot fishspotEvent = new(targetVector);
 

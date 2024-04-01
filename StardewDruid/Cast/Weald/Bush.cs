@@ -17,14 +17,7 @@ namespace StardewDruid.Cast.Weald
         {
 
 
-            castCost = 6;
-
-            if (Game1.player.ForagingLevel >= 8)
-            {
-
-                castCost = 4;
-
-            }
+            castCost = Math.Max(2, 6 - (Game1.player.ForagingLevel/ 2));
 
             bushFeature = bush;
 

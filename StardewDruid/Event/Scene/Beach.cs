@@ -399,9 +399,9 @@ namespace StardewDruid.Event.Scene
 
                 case 111:
 
-                    companion.moveTimer = companion.dashInterval;
-
                     companion.netDashActive.Set(true);
+
+                    companion.moveTimer = companion.moveInterval - (int)companion.MoveSpeed();
 
                     companion.dashSweep = true;
 
@@ -411,7 +411,7 @@ namespace StardewDruid.Event.Scene
 
                     SpellHandle meteor = new(Mod.instance.rite.castLocation, blobking.Position, Game1.player.Position);
 
-                    meteor.type = SpellHandle.barrages.meteor;
+                    meteor.type = SpellHandle.spells.meteor;
 
                     Mod.instance.spellRegister.Add(meteor);
 
