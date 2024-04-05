@@ -6,6 +6,7 @@ using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 using xTile.Dimensions;
 
 namespace StardewDruid.Map
@@ -1278,7 +1279,7 @@ namespace StardewDruid.Map
 
             Dictionary<string, bool> spawnIndex;
 
-            if (Mod.instance.CastAnywhere())
+            if (Mod.instance.Config.castAnywhere)
             {
 
                 return AnywhereTemplate(playerLocation);
@@ -1389,7 +1390,13 @@ namespace StardewDruid.Map
                 {
                     List<int> mineLevels = new() { 3, 7 };
 
-                    if (mineLevels.Contains(mineShaft.mineLevel % 10))
+                    if(mineShaft.mineLevel == MineShaft.bottomOfMineLevel || mineShaft.mineLevel == MineShaft.quarryMineShaft)
+                    {
+                        
+
+
+                    }
+                    else if (mineLevels.Contains(mineShaft.mineLevel % 10))
                     {
                         
                         spawnIndex["crate"] = true;

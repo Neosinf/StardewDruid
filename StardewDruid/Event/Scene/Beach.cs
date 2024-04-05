@@ -135,8 +135,6 @@ namespace StardewDruid.Event.Scene
 
                 case 22:
 
-                    companion.netCastActive.Set(true);
-
                     companion.netSpecialActive.Set(true);
 
                     companion.specialTimer = 60;
@@ -152,8 +150,6 @@ namespace StardewDruid.Event.Scene
                     break;
 
                 case 25:
-
-                    companion.netCastActive.Set(true);
 
                     companion.netSpecialActive.Set(true);
 
@@ -239,8 +235,6 @@ namespace StardewDruid.Event.Scene
 
                     companion.ResetActives();
 
-                    companion.netCastActive.Set(true);
-
                     companion.netSpecialActive.Set(true);
 
                     companion.specialTimer = 60;
@@ -279,8 +273,6 @@ namespace StardewDruid.Event.Scene
 
                     companion.ResetActives();
 
-                    companion.netCastActive.Set(true);
-
                     companion.netSpecialActive.Set(true);
 
                     companion.specialTimer = 60;
@@ -306,8 +298,6 @@ namespace StardewDruid.Event.Scene
                 case 64:
 
                     companion.ResetActives();
-
-                    companion.netCastActive.Set(true);
 
                     companion.netSpecialActive.Set(true);
 
@@ -363,13 +353,13 @@ namespace StardewDruid.Event.Scene
 
                 case 82:
 
-                    companion.netLieActive.Set(true);
+                    companion.netStandbyActive.Set(true);
 
                     break;
 
                 case 88:
 
-                    blobking = new(blobVector*64,Mod.instance.CombatModifier());
+                    blobking = new(blobVector*64,Mod.instance.CombatDifficulty());
 
                     blobking.posturing.Set(true);
 
@@ -401,11 +391,11 @@ namespace StardewDruid.Event.Scene
 
                     companion.netDashActive.Set(true);
 
-                    companion.moveTimer = companion.moveInterval - (int)companion.MoveSpeed();
+                    companion.moveTimer = companion.moveInterval;
 
                     companion.dashSweep = true;
 
-                    companion.NextTarget(blobking.Position - new Vector2(196,0), -1);
+                    companion.PathTarget(blobking.Position - new Vector2(64,0), 0, 0);
 
                     //---------------------- meteor animation
 
@@ -494,8 +484,6 @@ namespace StardewDruid.Event.Scene
                     break;
 
                 case 148:
-
-                    companion.netCastActive.Set(true);
 
                     companion.netSpecialActive.Set(true);
 

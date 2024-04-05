@@ -27,6 +27,7 @@ using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
@@ -110,9 +111,66 @@ namespace StardewDruid
 
         public List<string> locationList;
 
+        public int PowerLevel
+        {
+            get
+            {
+                return Math.Max(1, Math.Min(5, (int)staticData.activeProgress / 5));
+            }
+
+        }
+
+        public int CurrentProgress
+        {
+            get
+            {
+                return staticData.activeProgress;
+            }
+        }
+
+        public Dictionary<string, bool> QuestList
+        {
+            get
+            {
+                return new Dictionary<string, bool>(staticData.questList);
+            }
+
+        }
+
+        public Dictionary<string, int> TaskList
+        {
+            get
+            {
+                return staticData.taskList;
+            }
+            
+        }
+
+        public string RiteButton
+        {
+            get
+            {
+                return Config.riteButtons.ToString();
+            }
+
+        }
+
+        public bool PartyHats
+        {
+            get
+            {
+                return Config.partyHats;
+            }
+
+        }
+
         public bool receivedData;
 
         internal static Mod instance;
+
+
+        public Dictionary<string, Dictionary<Vector2, double>> highlights = new();
+
 
         override public void Entry(IModHelper helper)
         {
@@ -823,7 +881,21 @@ namespace StardewDruid
 
         public bool CasterBusy()
         {
-            
+
+            if (Game1.isWarping)
+            {
+
+                if (eventRegister.ContainsKey("transform"))
+                {
+
+                    (eventRegister["transform"] as Cast.Ether.Transform).EventWarp();
+
+                }
+               
+                //ShutDown();
+                return true;
+            }
+
             if (Game1.eventUp)
             {
                 return true;
@@ -840,11 +912,6 @@ namespace StardewDruid
             }
 
             if (Game1.activeClickableMenu != null)
-            {
-                return true;
-            }
-
-            if (Game1.isWarping)
             {
                 return true;
             }
@@ -1269,8 +1336,11 @@ namespace StardewDruid
 
                 if (eventRegister.Count > 0)
                 {
-                    foreach (KeyValuePair<string, Event.EventHandle> eventEntry in eventRegister)
+                    
+                    for (int ev = eventRegister.Count - 1; ev >= 0; ev--)
                     {
+
+                        KeyValuePair<string, Event.EventHandle> eventEntry = eventRegister.ElementAt(ev);
 
                         eventEntry.Value.EventDecimal();
 
@@ -1281,9 +1351,9 @@ namespace StardewDruid
                 if (trackRegister.Count > 0)
                 {
                     
-                    for(int t = trackRegister.Count-1; t >= 0; t--)
+                    for(int tr = trackRegister.Count-1; tr >= 0; tr--)
                     {
-                        KeyValuePair<string, Character.TrackHandle> trackEntry = trackRegister.ElementAt(t);
+                        KeyValuePair<string, Character.TrackHandle> trackEntry = trackRegister.ElementAt(tr);
 
                         if (trackEntry.Value.followPlayer == null)
                         {
@@ -1513,27 +1583,27 @@ namespace StardewDruid
 
         }
 
-        public int DamageLevel()
+        public int CombatDamage()
         {
 
-            int damageLevel = 175;
+            int damageLevel = 250;
 
             if (!Config.maxDamage)
             {
 
-                damageLevel = 5 * Game1.player.CombatLevel;
+                damageLevel = 5 * Game1.player.CombatLevel; // 50
 
-                damageLevel += 2 * Game1.player.MiningLevel;
+                damageLevel += 2 * Game1.player.MiningLevel; // 20
 
-                damageLevel += 2 * Game1.player.ForagingLevel;
+                damageLevel += 2 * Game1.player.ForagingLevel; // 20
 
-                damageLevel += 1 * Game1.player.FarmingLevel;
+                damageLevel += 1 * Game1.player.FarmingLevel; // 10
 
-                damageLevel += 1 * Game1.player.FishingLevel;
+                damageLevel += 1 * Game1.player.FishingLevel; // 10
 
-                damageLevel += staticData.activeProgress * 2;
+                damageLevel += staticData.activeProgress * 2; // 80
 
-                if (Game1.player.CurrentTool is Tool currentTool)
+                if (Game1.player.CurrentTool is Tool currentTool) // 25
                 {
                     if (currentTool.enchantments.Count > 0)
                     {
@@ -1541,12 +1611,12 @@ namespace StardewDruid
                     }
                 }
 
-                if (Game1.player.professions.Contains(24))
+                if (Game1.player.professions.Contains(24)) // 15
                 {
                     damageLevel += 15;
                 }
 
-                if (Game1.player.professions.Contains(26))
+                if (Game1.player.professions.Contains(26)) // 15
                 {
                     damageLevel += 15;
                 }
@@ -1572,21 +1642,7 @@ namespace StardewDruid
         
         }
 
-        public int CurrentProgress()
-        {
-
-            return staticData.activeProgress;
-
-        }
-
-        public int PowerLevel()
-        {
-
-            return Math.Max(1,Math.Min(5,(int)staticData.activeProgress / 5));
-
-        }
-
-        public int CombatModifier()
+        public int CombatDifficulty()
         {
 
             int difficulty = 1;
@@ -1612,9 +1668,7 @@ namespace StardewDruid
 
             }
 
-            int progress = Math.Max(1,(int)staticData.activeProgress / 5);
-
-            return progress * difficulty;
+            return PowerLevel * difficulty;
 
         }
 
@@ -1631,13 +1685,6 @@ namespace StardewDruid
             staticData.activeBlessing = blessing;
 
             CastMessage("Active rite is now " + blessing + ", consult the Effigy to change");
-
-        }
-
-        public Dictionary<string, bool> QuestList()
-        {
-
-            return new Dictionary<string, bool>(staticData.questList);
 
         }
 
@@ -1934,11 +1981,6 @@ namespace StardewDruid
 
         }
 
-        public Dictionary<string, int> TaskList()
-        {
-            return staticData.taskList;
-        }
-
         public int UpdateTask(string quest, int update)
         {
 
@@ -2011,40 +2053,24 @@ namespace StardewDruid
 
         }
 
-        public string CastControl()
-        {
-
-            return Config.riteButtons.ToString();
-
-        }
-
         public void RiteTool()
         {
 
-            int level = Math.Min(5, Math.Max(1,staticData.activeProgress / 5));
-
-            if (Config.maxDamage)
-            {
-
-                level = 5;
-
-            }
-
             virtualPick = new Pickaxe();
             virtualPick.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
-            virtualPick.UpgradeLevel = level;
+            virtualPick.UpgradeLevel = 5;
 
             virtualAxe = new Axe();
             virtualAxe.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
-            virtualAxe.UpgradeLevel = level;
+            virtualAxe.UpgradeLevel = 5;
 
             virtualHoe = new Hoe();
             virtualHoe.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
-            virtualHoe.UpgradeLevel = level;
+            virtualHoe.UpgradeLevel = 5;
 
             virtualCan = new WateringCan();
             virtualCan.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
-            virtualCan.UpgradeLevel = level;
+            virtualCan.UpgradeLevel = 5;
 
             Game1.player.Stamina += Math.Min(8, Game1.player.MaxStamina - Game1.player.Stamina);
 
@@ -2382,26 +2408,6 @@ namespace StardewDruid
 
         }
 
-        public bool PartyHats()
-        {
-
-            return Config.partyHats;
-
-        }
-
-        public bool CastAnywhere()
-        {
-
-            return Config.castAnywhere;
-        }
-
-        public bool DisableHands()
-        {
-
-            return Config.disableHands;
-
-        }
-
         public void CharacterRegister(string character, string map)
         {
 
@@ -2436,13 +2442,6 @@ namespace StardewDruid
             }
 
             return colour;
-
-        }
-
-        public bool ReverseJournal()
-        {
-
-            return Config.reverseJournal;
 
         }
 

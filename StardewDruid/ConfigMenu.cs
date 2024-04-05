@@ -117,6 +117,17 @@ namespace StardewDruid
 
             configMenu.AddNumberOption(
                 mod: mod.ModManifest,
+                name: () => "Meteor Behaviour",
+                tooltip: () => "Adjust risk/reward setting for Stars: Meteor. See readme for specifics. 1 Intelligent targetting, lowest damage. 5 Completely random targets, highest damage.",
+                min: 1,
+                max: 5,
+                interval: 1,
+                getValue: () => Config.meteorBehaviour,
+                setValue: value => Config.meteorBehaviour = value
+            );
+
+            configMenu.AddNumberOption(
+                mod: mod.ModManifest,
                 name: () => "Adjust rewards (Percentage)",
                 tooltip: () => "Adjust monetary rewards that are provided on quest completion.",
                 min: 10,

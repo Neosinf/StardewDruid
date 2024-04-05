@@ -28,6 +28,8 @@ namespace StardewDruid
 
         public string combatDifficulty { get; set; }
 
+        public int meteorBehaviour { get; set; }
+
         public int adjustRewards { get; set; }
 
         public string colourPreference { get; set; }
@@ -68,6 +70,7 @@ namespace StardewDruid
             autoProgress = false;
             maxDamage = false;
             combatDifficulty = "medium";
+            meteorBehaviour = 1;
             adjustRewards = 100;
             colourPreference = "Red";
             cardinalMovement = false;

@@ -30,17 +30,6 @@ namespace StardewDruid.Monster.Boss
 
         }
 
-        public override void BaseMode()
-        {
-
-            MaxHealth = Math.Max(5000, combatModifier * 400);
-
-            Health = MaxHealth;
-
-            DamageToFarmer = Math.Max(20, Math.Min(60, combatModifier * 3));
-
-        }
-
         public override void LoadOut()
         {
 
@@ -187,7 +176,7 @@ namespace StardewDruid.Monster.Boss
 
                 fireball.indicator = SpellHandle.indicators.death;
 
-                fireball.monster = this;
+                fireball.boss = this;
 
                 Mod.instance.spellRegister.Add(fireball);
 

@@ -18,15 +18,15 @@ namespace StardewDruid.Map
 
             Dictionary<int, List<List<string>>> dictionary1 = JournalPages();
 
-            int num = Mod.instance.CurrentProgress();
+            int num = Mod.instance.CurrentProgress;
 
-            Dictionary<string, int> dictionary2 = Mod.instance.TaskList();
+            Dictionary<string, int> dictionary2 = Mod.instance.TaskList;
 
             source.Add(new List<Page>());
 
             List<Page> pageList = new();
 
-            Dictionary<string, int> taskList = Mod.instance.TaskList();
+            Dictionary<string, int> taskList = Mod.instance.TaskList;
 
             foreach (KeyValuePair<int, List<List<string>>> keyValuePair in dictionary1)
             {
@@ -253,7 +253,7 @@ namespace StardewDruid.Map
                     break;
             }
 
-            if (Mod.instance.ReverseJournal())
+            if (Mod.instance.Config.reverseJournal)
             {
 
                 pageList.Reverse();
@@ -556,9 +556,9 @@ namespace StardewDruid.Map
                     "lesson",
                     "Mists",
                     "The druids would attempt to commune with spirits at times when the barrier between the material and ethereal world had waned. The Lady's power can punch right through the veil.",
-                    "Strike candle torches that have been laid on the ground to produce a ritual of summoning, then fight off the monsters that step through the veil. The more candles included in the Rite (up to nine) the stronger the summoning, and the greater the reward.",
+                    "Strike candle torches that have been laid on the ground to produce a ritual of summoning, then fight off the monsters that step through the veil. The more candles included in the Rite (up to five, capped by Druid level) the stronger the summoning. The number of rounds is determined by summoning strength and Druid level / progression.",
                     "lessonPortal",
-                    "ritual attempted",
+                    " is the highest level achieved",
                     "masterPortal",
                     "You summoned creatures from beyond the veil and survived"
                     }
@@ -599,7 +599,7 @@ namespace StardewDruid.Map
                     "lessonMeteor",
                     "of 10 times monsters hit",
                     "masterMeteor",
-                    "Unlocks priority targetting of stone nodes and monsters"
+                    "Unlocks chance for an extra meteor to be summoned"
                     },
                     new()
                     {

@@ -467,7 +467,7 @@ namespace StardewDruid.Cast.Fates
 
                     }
 
-                    if (Mod.instance.CurrentProgress() >= 25)
+                    if (Mod.instance.CurrentProgress >= 25)
                     {
 
                         for (int i = 0; i < 5; i++)
@@ -530,11 +530,6 @@ namespace StardewDruid.Cast.Fates
                 quantityMax++;
             }
 
-            if (Mod.instance.virtualHoe.UpgradeLevel >= 3)
-            {
-                quantityMax++;
-            }
-
             if (soil.HasFertilizer())
             {
                 qualityMax++;
@@ -545,21 +540,14 @@ namespace StardewDruid.Cast.Fates
                 qualityMax++;
             }
 
-            if (Mod.instance.virtualCan.UpgradeLevel >= 3)
-            {
-                qualityMax++;
-            }
-
             Game1.player.currentLocation.playSound("harvest");
 
             int quantity = randomIndex.Next(1, 2 + quantityMax);
 
-            StardewValley.Object extract = null;
-
             for (int i = 0; i < quantity; i++)
             {
 
-                int quality = randomIndex.Next(0, 3 + qualityMax);
+                int quality = randomIndex.Next(0, 2 + qualityMax);
 
                 if (quality >= 3) { quality = 4; }
 
@@ -570,7 +558,7 @@ namespace StardewDruid.Cast.Fates
 
                 }
 
-                extract = crop.programColored.Value ? new ColoredObject(crop.indexOfHarvest.Value, 1, crop.tintColor.Value)
+                StardewValley.Object extract = crop.programColored.Value ? new ColoredObject(crop.indexOfHarvest.Value, 1, crop.tintColor.Value)
                 {
 
                     Quality = quality
@@ -584,18 +572,13 @@ namespace StardewDruid.Cast.Fates
 
                 }
 
-                PopulateObject(extract, tileVector);
-
-            }
-
-            if(extract != null)
-            {
-
                 int num6 = extract.Price;
 
                 float num7 = (float)(16.0 * Math.Log(0.018 * num6 + 1.0, Math.E));
 
                 Game1.player.gainExperience(0, (int)Math.Round(num7));
+
+                PopulateObject(extract, tileVector);
 
             }
 

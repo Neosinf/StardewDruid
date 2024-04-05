@@ -417,7 +417,7 @@ namespace StardewDruid.Map
 
         public static List<string> RitesProgress()
         {
-            int num = Mod.instance.CurrentProgress();
+            int num = Mod.instance.CurrentProgress;
 
             List<string> stringList = new();
             if (num > 1)
@@ -450,7 +450,7 @@ namespace StardewDruid.Map
 
         public static List<string> StageProgress()
         {
-            int num = Mod.instance.CurrentProgress();
+            int num = Mod.instance.CurrentProgress;
 
             List<string> stringList = new()
             {
@@ -513,7 +513,7 @@ namespace StardewDruid.Map
         {
             string str = "none";
 
-            int progress = Mod.instance.CurrentProgress();
+            int progress = Mod.instance.CurrentProgress;
 
             Dictionary<int, List<string>> quests = QuestProgress();
 
@@ -544,7 +544,7 @@ namespace StardewDruid.Map
         public static int AchieveProgress(string questCheck)
         {
 
-            int num = Mod.instance.CurrentProgress();
+            int num = Mod.instance.CurrentProgress;
 
             List<string> rites = RitesProgress();
 
@@ -1342,7 +1342,7 @@ namespace StardewDruid.Map
         public static Dictionary<string, string> SecondQuests(bool all = false)
         {
 
-            int progress = Mod.instance.CurrentProgress();
+            int progress = Mod.instance.CurrentProgress;
 
             Dictionary<string, string> challenges = new Dictionary<string, string>()
             {

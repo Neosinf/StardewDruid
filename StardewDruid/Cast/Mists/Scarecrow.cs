@@ -36,7 +36,7 @@ namespace StardewDruid.Cast.Mists
 
             float animationSort;
 
-            int radius = ((int)(Mod.instance.CurrentProgress() / 5) + 2);
+            int radius = ((int)(Mod.instance.PowerLevel) + 2);
 
             radius = Math.Min(8, radius);
 

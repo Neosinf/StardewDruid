@@ -33,7 +33,7 @@ namespace StardewDruid.Event.Boss
 
             AddActor(new Vector2(24, 22) * 64);
 
-            Cast.Stars.Meteor meteorCast = new(targetVector, Mod.instance.DamageLevel());
+            Cast.Stars.Meteor meteorCast = new(targetVector);
 
             meteorCast.targetLocation = targetLocation;
 
@@ -148,13 +148,11 @@ namespace StardewDruid.Event.Boss
 
                     GemBirdType gemBirdType = GetBirdTypeForLocation(gemPair.Key);
 
-                    StardewDruid.Monster.Boss.Demonki boss = new(gemPair.Value, Mod.instance.CombatModifier());
+                    StardewDruid.Monster.Boss.Demonki boss = new(gemPair.Value, Mod.instance.CombatDifficulty());
 
                     targetLocation.characters.Add(boss);
 
                     boss.update(Game1.currentGameTime, Mod.instance.rite.castLocation);
-
-                    boss.ChampionMode();
 
                     boss.netScheme.Set(gemBirdType.ToString());
 
@@ -163,7 +161,13 @@ namespace StardewDruid.Event.Boss
                     if (!questData.name.Contains("Two"))
                     {
 
-                        boss.HardMode();
+                        boss.SetMode(3);
+
+                    }
+                    else
+                    {
+
+                        boss.SetMode(2);
 
                     }
 

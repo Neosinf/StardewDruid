@@ -10,13 +10,10 @@ using StardewDruid.Cast;
 using StardewDruid.Map;
 using System.Linq;
 using StardewDruid.Cast.Ether;
-using Force.DeepCloner;
-using StardewDruid.Cast.Weald;
-using static System.Net.Mime.MediaTypeNames;
-using StardewValley.GameData.HomeRenovations;
-using System.Text.Json.Serialization;
-using System.Net.Http.Json;
 using StardewModdingAPI;
+using System.Threading;
+using StardewDruid.Cast.Stars;
+using StardewDruid.Monster;
 
 
 namespace StardewDruid.Event
@@ -48,13 +45,15 @@ namespace StardewDruid.Event
 
         public int debris;
 
-        public List<TemporaryAnimatedSprite> animations;
-        
-        public List<TemporaryAnimatedSprite> aoes;
+        public List<TemporaryAnimatedSprite> animations = new();
+
+        public List<TemporaryAnimatedSprite> aoes = new();
 
         public Vector2 impact;
 
-        public StardewValley.Monsters.Monster monster;
+        public StardewDruid.Monster.Boss.Boss boss;
+
+        public List<StardewValley.Monsters.Monster> monsters = new();
 
         public float critical;
 
@@ -62,6 +61,7 @@ namespace StardewDruid.Event
 
         public enum spells
         {
+            explode,
             ballistic,
             beam,
             burn,
@@ -71,6 +71,7 @@ namespace StardewDruid.Event
             meteor,
             bolt,
             rockfall,
+
         }
 
         public spells type;
@@ -78,6 +79,7 @@ namespace StardewDruid.Event
         public enum indicators
         {
             target,
+            weald,
             stars,
             fates,
             death,
@@ -95,6 +97,41 @@ namespace StardewDruid.Event
         }
 
         public schemes scheme;
+
+        public enum effects
+        {
+            sap,
+            drain,
+            knockdown,
+            slow,
+            burn,
+
+        }
+
+        public List<effects> added = new();
+
+        public enum displays
+        {
+            none,
+            Impact,
+            Flashbang,
+            Glare,
+            Sparkle,
+            Blaze,
+
+        }
+
+        public displays display;
+
+        public enum sounds
+        {
+            none,
+            explosion,
+            flameSpellHit,
+        }
+
+        public sounds sound;
+        
 
         public SpellHandle(GameLocation Location, Vector2 Destination, Vector2 Origin, int Radius = 2, int Missiles = 1, float Farmers = -1, float Monsters = -1, int Power = -1)
         {
@@ -121,10 +158,6 @@ namespace StardewDruid.Event
 
             missiles = Missiles;
 
-            animations = new();
-
-            aoes = new();
-
             impact = Destination;
 
             type = spells.fireball;
@@ -132,6 +165,8 @@ namespace StardewDruid.Event
             scheme = schemes.fire;
 
             indicator = indicators.target;
+
+            display = displays.none;
 
         }
 
@@ -178,8 +213,57 @@ namespace StardewDruid.Event
 
             }
 
+            if(counter % 10 == 0 && boss != null)
+            {
+
+                if (!ModUtility.MonsterVitals(boss, location))
+                {
+
+                    Shutdown();
+
+                    return false;
+
+                }
+
+            }
+
             switch (type)
             {
+
+                case spells.explode:
+
+                    if (counter == 1)
+                    {
+
+                        TargetCircle(0.35f);
+
+                        return true;
+
+                    }
+
+                    if (counter == 15)
+                    {
+
+                        ApplyDamage(impact, radius, damageFarmers, damageMonsters, false);
+
+                        RadialExplode();
+
+                        RadialDisplay();
+
+                        return true;
+
+                    }
+
+                    if (counter == 120)
+                    {
+
+                        Shutdown();
+
+                        return false;
+
+                    }
+
+                    return true;
 
                 case spells.meteor:
 
@@ -190,7 +274,18 @@ namespace StardewDruid.Event
 
                         scheme = schemes.stars;
 
-                        origin = destination - new Vector2 (320, 640);
+                        display = displays.Impact;
+
+                        if (radius > 5)
+                        {
+                            sound = sounds.explosion;
+                        }
+                        else
+                        {
+                            sound = sounds.flameSpellHit;
+                        }
+
+                        origin = destination - new Vector2(320, 640);
 
                         LaunchMissile();
 
@@ -203,22 +298,12 @@ namespace StardewDruid.Event
                     if (counter == 60)
                     {
 
-                        RadialDamage(radius);
+                        ApplyDamage(impact, radius, damageFarmers, damageMonsters,false);
 
-                        RadialExplode(radius);
+                        RadialExplode();
 
-                        RadialImpact(radius);
+                        RadialDisplay();
 
-                        LightRadius(destination);
-
-                        if (radius > 5)
-                        {
-                            Game1.currentLocation.playSound("explosion");
-                        }
-                        else
-                        {
-                            Game1.currentLocation.playSound("flameSpellHit");
-                        }
                         return true;
 
                     }
@@ -280,11 +365,11 @@ namespace StardewDruid.Event
                     if (counter == 36)
                     {
 
-                        RadialDamage(radius);
+                        ApplyDamage(impact, radius, damageFarmers, damageMonsters,false);
 
-                        RadialExplode(radius);
+                        RadialExplode();
 
-                        RadialImpact(radius);
+                        ModUtility.AnimateImpact(location, impact, 1);
 
                         RockDebris();
 
@@ -305,19 +390,21 @@ namespace StardewDruid.Event
 
                 case spells.ballistic:
 
-                    
+
                     if (counter == 1)
                     {
-                        
+
+                        display = displays.Impact;
+
                         AdjustTarget();
-                        
+
                         TargetCircle(2);
 
                         return true;
 
                     }
 
-                    if(counter == 60)
+                    if (counter == 60)
                     {
 
                         LaunchMissile();
@@ -329,15 +416,13 @@ namespace StardewDruid.Event
                     if (counter == 120)
                     {
 
-                        RadialDamage(radius);
+                        ApplyDamage(impact, radius, damageFarmers, damageMonsters, false);
 
-                        RadialExplode(radius);
+                        RadialExplode();
 
-                        RadialImpact(radius);
+                        RadialDisplay();
 
-                        LightRadius(destination);
-
-                        Game1.currentLocation.playSound("flameSpellHit",destination,800+new Random().Next(7)*100);
+                        Game1.currentLocation.playSound("flameSpellHit", destination, 800 + new Random().Next(7) * 100);
 
                         return true;
 
@@ -393,9 +478,15 @@ namespace StardewDruid.Event
 
                     if (counter == 1)
                     {
+
+                        display = displays.Impact;
+
                         AdjustTarget();
+
                         TargetCircle();
+
                         return true;
+
                     }
 
                     if (counter == 30)
@@ -409,7 +500,7 @@ namespace StardewDruid.Event
                     if (counter == 40)
                     {
 
-                        GrazeDamage(1,4);
+                        GrazeDamage(1, 4);
 
                         return true;
 
@@ -418,13 +509,11 @@ namespace StardewDruid.Event
                     if (counter == 70)
                     {
 
-                        RadialDamage(radius);
+                        ApplyDamage(impact, radius, damageFarmers, damageMonsters, false);
 
-                        RadialExplode(radius);
+                        RadialExplode();
 
-                        RadialImpact(radius-1);
-
-                        LightRadius(destination);
+                        RadialDisplay();
 
                         return true;
 
@@ -437,7 +526,7 @@ namespace StardewDruid.Event
 
                         return false;
                     }
-                 
+
                     return true;
 
                 case spells.beam:
@@ -449,22 +538,22 @@ namespace StardewDruid.Event
 
                         LightRadius(origin);
 
-                        return true;
+                    }
+
+                    if (counter == 20)
+                    {
+
+                        GrazeDamage(1, 2);
 
                     }
 
-                    if (counter == 30)
+                    if (counter == 40)
                     {
 
-                        RadialDamage(radius);
-
-                        RadialExplode(radius);
-
-                        RadialFlashbang(radius);
+                        ApplyDamage(impact, radius, damageFarmers, damageMonsters, true);
 
                         LightRadius(destination);
 
-                        return true;
                     }
 
                     if (counter == 90)
@@ -485,14 +574,12 @@ namespace StardewDruid.Event
 
                         LaunchChaos();
 
-                        return true;
-
                     }
 
-                    if(counter == 10)
+                    if (counter == 10)
                     {
 
-                        GrazeDamage(1,2);
+                        GrazeDamage(1, 2);
 
                         Game1.currentLocation.playSound("flameSpellHit", impact, 600 + new Random().Next(1, 8) * 100);
 
@@ -501,15 +588,9 @@ namespace StardewDruid.Event
                     if (counter == 15)
                     {
 
-                        RadialDamage(radius);
+                        ApplyDamage(impact, radius, damageFarmers, damageMonsters, true);
 
-                        RadialExplode(radius);
-
-                        RadialFlashbang(radius);
-
-                        LightRadius(destination);
-                        
-                        return true;
+                        LightRadius(impact);
 
                     }
 
@@ -523,7 +604,6 @@ namespace StardewDruid.Event
                     }
 
                     return true;
-
 
             }
 
@@ -558,7 +638,7 @@ namespace StardewDruid.Event
             }
         }
         
-        public void TargetCircle(int duration = 1)
+        public void TargetCircle(float duration = 1)
         {
 
             TemporaryAnimatedSprite innerCircle = ModUtility.AnimateCursor(location, destination, indicator.ToString(), duration*1000);
@@ -733,9 +813,9 @@ namespace StardewDruid.Event
             if (damageFarmers > 0)
             {
 
-                List<Farmer> farmerVictims = new();
+                List<Farmer> farmerVictims = ModUtility.FarmerProximity(location, burnVectors, radius, true);
 
-                foreach(Vector2 vector in burnVectors)
+                /* (Vector2 vector in burnVectors)
                 {
                     
                     List<Farmer> foundVictims = ModUtility.FarmerProximity(location, vector, radius, true);
@@ -757,9 +837,9 @@ namespace StardewDruid.Event
 
                     }
 
-                }
+                }*/
 
-                foreach(Farmer victim in  farmerVictims)
+                foreach (Farmer victim in  farmerVictims)
                 {
 
                     if(immolateEvent.farmerVictims.ContainsKey(victim))
@@ -986,11 +1066,15 @@ namespace StardewDruid.Event
 
             Texture2D beamTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Laser.png"));
 
-            Vector2 diff = (destination - origin) / Vector2.Distance(origin, destination) * 384;
+            Vector2 diff = (destination - origin) / Vector2.Distance(origin, destination);
+
+            Vector2 middle = diff * 336;
+
+            impact = origin + (diff * 560);
 
             float rotate = (float)Math.Atan2(diff.Y, diff.X);
 
-            Vector2 setPosition = origin + diff - new Vector2(320,64);
+            Vector2 setPosition = origin + middle - new Vector2(320,64);
 
             TemporaryAnimatedSprite beam = new(0, 125f, 8, 1, setPosition, false, false)
             {
@@ -1001,7 +1085,7 @@ namespace StardewDruid.Event
                 timeBasedMotion = true,
                 layerDepth = 999f,
                 rotation = rotate,
-                alpha = 0.75f,
+                alpha = 0.65f,
 
             };
 
@@ -1021,8 +1105,6 @@ namespace StardewDruid.Event
             Vector2 diff = ratio * 192;
 
             impact = origin + (ratio * 384);
-
-            radius = 4;
 
             float rotate = (float)Math.Atan2(diff.Y, diff.X);
 
@@ -1046,64 +1128,156 @@ namespace StardewDruid.Event
 
         }
 
-        public void RadialDamage(int zone = 2)
+        public void LaunchRockfall()
         {
 
-            if (damageFarmers > 0)
+            List<int> indexes = Map.SpawnData.RockFall(location, Game1.player, Mod.instance.rockCasts[Mod.instance.rite.castLocation.Name]);
+
+            int objectIndex = indexes[0];
+
+            int scatterIndex = indexes[1];
+
+            if (debris == 1)
             {
 
-                ModUtility.DamageFarmers(location, ModUtility.FarmerProximity(location, impact, zone, true), (int)damageFarmers, monster);
+                debris = indexes[2];
 
             }
 
-            if (damageMonsters > 0)
+            ModUtility.AnimateRockfall(location, destination / 64, 0, objectIndex, scatterIndex);
+
+        }
+
+        public void RadialDisplay()
+        {
+
+            LightRadius(impact);
+
+            if (display != displays.none)
             {
 
-                ModUtility.DamageMonsters(location, ModUtility.MonsterProximity(location, new() { impact }, zone, true), Game1.player, (int)damageMonsters, true);
+                ModUtility.AnimateImpact(location, impact, radius,0, display.ToString());
+
+            }
+
+            if(sound != sounds.none)
+            {
+
+                Game1.currentLocation.playSound(sound.ToString());
 
             }
 
         }
 
-        public void RadialExplode(int zone = 2)
+        public void GrazeDamage(int piece, int division, float reach = -1)
         {
 
-            if (power > 0)
+            if (external)
             {
 
-                ModUtility.Explode(location, impact/64, Game1.player, environment, power);
+                return;
 
             }
 
-            if(terrain > 0)
-            {
-                
-                ModUtility.Explode(location, impact/64, Game1.player, terrain);
-
-            }
-
-        }
-
-        public void GrazeDamage(int piece, int division)
-        {
-
-            Vector2 diff = (destination - origin) / division * piece;
+            Vector2 diff = (impact - origin) / division * piece;
 
             Vector2 current = origin + diff;
 
-            int zone = radius / 2;
-
-            if (damageFarmers > 0)
+            if(reach == -1)
             {
-
-                ModUtility.DamageFarmers(location, ModUtility.FarmerProximity(location, current, zone, true), (int)damageFarmers, monster);
+                reach = radius / 2;
 
             }
 
-            if (damageMonsters > 0)
+            ApplyDamage(current, reach, (int)(damageFarmers / 2), (int)(damageMonsters / 2), true);
+
+        }
+
+        public void ApplyDamage(Vector2 position, float reach, float hitfarmers, float hitmonsters, bool individuals = true)
+        {
+            
+            if (external)
             {
 
-                ModUtility.DamageMonsters(location, ModUtility.MonsterProximity(location, new() { current }, zone, true), Game1.player, (int)damageMonsters, true);
+                return;
+
+            }
+
+            if (hitfarmers > 0 && boss != null)
+            {
+
+                List<Farmer> farmers = ModUtility.FarmerProximity(location, new() { position }, reach, true);
+
+                if (farmers.Count > 0 && individuals && display != displays.none)
+                {
+
+                    foreach (Farmer farmer in farmers)
+                    {
+
+                        ModUtility.AnimateImpact(location, farmer.Position, 0, 2, display.ToString(), 50);
+
+                    }
+
+                }
+
+                ModUtility.DamageFarmers(location, farmers, (int)hitfarmers, boss);
+
+            }
+            
+            if (hitmonsters > 0)
+            {
+
+                if(monsters.Count == 0)
+                {
+                    
+                    monsters = ModUtility.MonsterProximity(location, new() { position }, reach, true);
+
+                }
+
+                if (monsters.Count > 0 && individuals && display != displays.none)
+                {
+                    
+                    foreach (StardewValley.Monsters.Monster victim in monsters)
+                    {
+
+                        if (!MonsterData.BossMonster(victim))
+                        {
+                            
+                            ModUtility.AnimateImpact(location, victim.Position, 0, 2, display.ToString(), 50);
+                        
+                        }
+
+                    }
+
+                }
+
+                ModUtility.DamageMonsters(location, monsters, Game1.player, (int)hitmonsters, true);
+
+                if(added.Count > 0)
+                {
+
+                    foreach(effects effect in added)
+                    {
+
+                        switch (effect)
+                        {
+                            case effects.sap:
+
+                                SapEffect(Mod.instance.PowerLevel);
+
+                                break;
+
+                            case effects.knockdown:
+
+                                KnockEffect(2000);
+
+                                break;
+
+                        }
+
+                    }
+
+                }
 
             }
 
@@ -1111,6 +1285,13 @@ namespace StardewDruid.Event
 
         public void LocalDamage()
         {
+
+            if (external)
+            {
+
+                return;
+
+            }
 
             int damageApplied = (int)(damageMonsters * 0.7);
 
@@ -1127,48 +1308,48 @@ namespace StardewDruid.Event
 
             }
 
-            List<int> diff = ModUtility.CalculatePush(location, monster, Game1.player.Position, 64);
+            List<int> diff = ModUtility.CalculatePush(location, monsters.First(), Game1.player.Position, 64);
 
-            ModUtility.HitMonster(location, Game1.player, monster, damageApplied, critApplied, diffX: diff[0], diffY: diff[1]);
-
-        }
-
-        public void RadialImpact(int reach = 1)
-        {
-
-            ModUtility.AnimateImpact(location, impact, reach);
+            ModUtility.HitMonster(location, Game1.player, monsters.First(), damageApplied, critApplied, diffX: diff[0], diffY: diff[1]);
 
         }
 
-        public void RadialFlashbang(int reach = 1)
+        public void RadialExplode()
         {
 
-            ModUtility.AnimateImpact(location, impact, reach, 0, "Flashbang", 75);
-
-        }
-
-        public void LaunchRockfall()
-        {
-
-            List<int> indexes = Map.SpawnData.RockFall(location, Game1.player, Mod.instance.rockCasts[Mod.instance.rite.castLocation.Name]);
-
-            int objectIndex = indexes[0];
-
-            int scatterIndex = indexes[1];
-
-            if(debris == 1)
+            if (external)
             {
 
-                debris = indexes[2];
+                return;
 
             }
 
-            ModUtility.AnimateRockfall(location, destination/64, 0, objectIndex, scatterIndex);
+            if (power > 0)
+            {
+
+                ModUtility.Explode(location, impact / 64, Game1.player, environment, power);
+
+            }
+
+            if (terrain > 0)
+            {
+
+                ModUtility.Reave(location, impact / 64, Game1.player, terrain);
+
+            }
 
         }
 
         public void RockDebris()
         {
+
+            if (external)
+            {
+
+                return;
+
+            }
+
             if (debris == 0)
             {
                 
@@ -1180,7 +1361,7 @@ namespace StardewDruid.Event
 
             int rockCut = randomIndex.Next(2);
 
-            int generateAmt = 1 + randomIndex.Next(Mod.instance.virtualPick.UpgradeLevel) / 2;
+            int generateAmt = Math.Max(1,randomIndex.Next(Mod.instance.PowerLevel));
 
             Vector2 targetVector = destination / 64;
 
@@ -1218,6 +1399,93 @@ namespace StardewDruid.Event
             {
 
                 Mod.instance.UpdateTask("lessonRockfall", generateAmt);
+
+            }
+
+        }
+
+        public void KnockEffect(int knock)
+        {
+
+            if (external)
+            {
+
+                return;
+
+            }
+
+            if (!Mod.instance.eventRegister.ContainsKey("knockout"))
+            {
+
+                Cast.Stars.Knockout Knockout = new();
+
+                Knockout.EventTrigger();
+
+            }
+
+            foreach (var monster in monsters)
+            {
+
+                if (!ModUtility.MonsterVitals(monster, monster.currentLocation))
+                {
+                    continue;
+                }
+
+                (Mod.instance.eventRegister["knockout"] as Knockout).AddVictim(monster, knock);
+
+            }
+
+
+        }
+
+        public void SapEffect(int drain)
+        {
+
+            if (external)
+            {
+
+                return;
+
+            }
+
+            int leech = 0;
+
+            foreach (var monster in monsters)
+            {
+
+                if (!ModUtility.MonsterVitals(monster, monster.currentLocation))
+                {
+                    continue;
+                }
+
+                ModUtility.AnimateGlare(monster.currentLocation, monster.Position, Color.Teal);
+
+                ModUtility.DamageMonsters(monster.currentLocation, new List<StardewValley.Monsters.Monster>() { monster }, Game1.player, drain);
+
+                leech += drain;
+
+            }
+
+            Mod.instance.CastMessage(leech.ToString() + " drained", 0, true);
+
+            int num = Math.Min(leech, Mod.instance.rite.caster.MaxStamina - (int)Mod.instance.rite.caster.stamina);
+
+            if (num > 0)
+            {
+
+                Mod.instance.rite.caster.stamina += num;
+
+                Rectangle healthBox = Mod.instance.rite.caster.GetBoundingBox();
+
+                location.debris.Add(
+                    new Debris(
+                        num,
+                        new Vector2(healthBox.Center.X + 16, healthBox.Center.Y),
+                        Color.Teal,
+                        0.75f,
+                        Mod.instance.rite.caster
+                    )
+                );
 
             }
 

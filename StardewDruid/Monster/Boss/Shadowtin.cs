@@ -15,9 +15,8 @@ namespace StardewDruid.Monster.Boss
     public class Shadowtin : Boss
     {
         
-        public Queue<Vector2> blastZone;
-        
-        public int blastRadius;
+        public Texture2D swipeTexture;
+        public Dictionary<int, List<Rectangle>> swipeFrames;
 
         public Shadowtin()
         {
@@ -29,22 +28,19 @@ namespace StardewDruid.Monster.Boss
             
         }
 
-        public override void BaseMode()
+        public override void SetMode(int mode)
         {
+            base.SetMode(mode);
 
-            if(realName.Value == "Shadowtin")
+            if (realName.Value == "Shadowtin")
             {
-                MaxHealth = Math.Max(8000, combatModifier * 400);
+                MaxHealth += 2;
 
                 Health = MaxHealth;
-
-                DamageToFarmer = Math.Max(10, Math.Min(60, combatModifier * 3));
 
                 return;
 
             }
-
-            base.BaseMode();
 
         }
 
@@ -138,13 +134,9 @@ namespace StardewDruid.Monster.Boss
         public void ShadowSpecial()
         {
 
-            blastZone = new();
-
-            blastRadius = 1;
-
             abilities = 2;
 
-            cooldownInterval = 60;
+            cooldownInterval = 180;
 
             specialCeiling = 1;
 
@@ -199,7 +191,7 @@ namespace StardewDruid.Monster.Boss
 
             sweepSet = true;
 
-            sweepInterval = 9;
+            sweepInterval = 8;
 
             sweepTexture = characterTexture;
 
@@ -235,30 +227,42 @@ namespace StardewDruid.Monster.Boss
                 },
             };
 
+            swipeTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Swipe.png"));
+
+            swipeFrames = new()
+            {
+                [0] = new()
+                {
+                    new Rectangle(128, 64, 64, 64),
+                    new Rectangle(192, 64, 64, 64),
+                    new Rectangle(0, 64, 64, 64),
+                    new Rectangle(64, 64, 64, 64),
+                },
+                [1] = new()
+                {
+                    new Rectangle(0, 128, 64, 64),
+                    new Rectangle(64, 128, 64, 64),
+                    new Rectangle(128, 128, 64, 64),
+                    new Rectangle(192, 128, 64, 64),
+                },
+                [2] = new()
+                {
+                    new Rectangle(0, 0, 64, 64),
+                    new Rectangle(64, 0, 64, 64),
+                    new Rectangle(128, 0, 64, 64),
+                    new Rectangle(192, 0, 64, 64),
+                },
+                [3] = new()
+                {
+                    new Rectangle(0, 64, 64, 64),
+                    new Rectangle(64, 64, 64, 64),
+                    new Rectangle(128, 64, 64, 64),
+                    new Rectangle(192, 64, 64, 64),
+                },
+            };
+
         }
 
-        public override void HardMode()
-        {
-
-            Health *= 3;
-
-            Health /= 2;
-
-            MaxHealth = Health;
-
-            blastRadius = 2;
-
-            cooldownInterval = 40;
-
-            tempermentActive = temperment.aggressive;
-
-        }
-
-        public override Rectangle GetBoundingBox()
-        {
-            Vector2 position = Position;
-            return new Rectangle((int)position.X - 16, (int)position.Y - flightHeight - 32, 96, 96);
-        }
 
         public override void draw(SpriteBatch b, float alpha = 1f)
         {
@@ -275,36 +279,46 @@ namespace StardewDruid.Monster.Boss
 
             int shadowOffset = 0;
 
+            int netScale = netMode.Value > 5 ? netMode.Value - 4 : netMode.Value;
+
+            Vector2 spritePosition = localPosition - new Vector2(20 + (netScale * 4), 40f + (netScale * 8) - flightHeight);
+
+            Vector2 sweepPosition = localPosition - new Vector2(72 + (netScale * 8), 96f + (netScale * 16) - flightHeight);
+
+            float spriteScale = 3.25f + (0.25f * netScale);
+
             if (netSweepActive.Value)
             {
 
-                b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 64f), new Rectangle?(sweepFrames[netDirection.Value][sweepFrame]), Color.White, 0.0f, new Vector2(0.0f, 0.0f), 4f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(characterTexture, sweepPosition, new Rectangle?(sweepFrames[netDirection.Value][sweepFrame]), Color.White, 0.0f, new Vector2(0.0f, 0.0f), spriteScale, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
 
-                shadowOffset = 64;
+                b.Draw(swipeTexture, sweepPosition, new Rectangle?(swipeFrames[netDirection.Value][sweepFrame]), Color.White*0.5f, 0.0f, new Vector2(0.0f, 0.0f), spriteScale, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
+                
+                shadowOffset = 56;
 
             }
             else if (netSpecialActive.Value)
             {
 
-                b.Draw(characterTexture, new Vector2(localPosition.X - 32f, localPosition.Y - 64f), new Rectangle?(specialFrames[netDirection.Value][specialFrame]), Color.White, 0.0f, new Vector2(0.0f, 0.0f), 4f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(characterTexture, spritePosition, new Rectangle?(specialFrames[netDirection.Value][specialFrame]), Color.White, 0.0f, new Vector2(0.0f, 0.0f), spriteScale, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
 
             }
             else if (netFlightActive.Value)
             {
 
-                b.Draw(characterTexture, new Vector2(localPosition.X - 32f, localPosition.Y - 64f - flightHeight), new Rectangle?(flightFrames[netDirection.Value][flightFrame]), Color.White, 0, new Vector2(0.0f, 0.0f), 4f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(characterTexture, spritePosition, new Rectangle?(flightFrames[netDirection.Value][flightFrame]), Color.White, 0, new Vector2(0.0f, 0.0f), spriteScale, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
 
             }
             else if (netHaltActive.Value)
             {
 
-                b.Draw(characterTexture, new Vector2(localPosition.X - 32f, localPosition.Y - 64f), new Rectangle?(idleFrames[netDirection.Value][0]), Color.White, 0.0f, new Vector2(0.0f, 0.0f), 4f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(characterTexture, spritePosition, new Rectangle?(idleFrames[netDirection.Value][0]), Color.White, 0.0f, new Vector2(0.0f, 0.0f), spriteScale, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
 
             }
             else
             {
 
-                b.Draw(characterTexture, new Vector2(localPosition.X - 32f, localPosition.Y - 64f), new Rectangle?(walkFrames[netDirection.Value][walkFrame]), Color.White, 0.0f, new Vector2(0.0f, 0.0f), 4f, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(characterTexture, spritePosition, new Rectangle?(walkFrames[netDirection.Value][walkFrame]), Color.White, 0.0f, new Vector2(0.0f, 0.0f), spriteScale, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
 
             }
 

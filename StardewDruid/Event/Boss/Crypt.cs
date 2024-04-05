@@ -188,7 +188,7 @@ namespace StardewDruid.Event.Boss
                 }
                 else
                 {
-                    Monster.Boss.Shadowtin bossShadowtin = new(targetVector + new Vector2(0, 5f),Mod.instance.CombatModifier());
+                    Monster.Boss.Shadowtin bossShadowtin = new(targetVector + new Vector2(0, 5f),Mod.instance.CombatDifficulty());
 
                     targetLocation.characters.Add(bossShadowtin);
 
@@ -212,18 +212,18 @@ namespace StardewDruid.Event.Boss
                     switch (randomIndex.Next(4))
                     {
                         case 1:
-                            thief = new Scavenger(startVector, Mod.instance.CombatModifier());
+                            thief = new Scavenger(startVector, Mod.instance.CombatDifficulty());
                             break;
                         case 2:
-                            thief = new Shadowfox(startVector, Mod.instance.CombatModifier());
+                            thief = new Shadowfox(startVector, Mod.instance.CombatDifficulty());
                             smacktalk = "arwooooo!";
                             break;
                         case 3:
-                            thief = new Goblin(startVector, Mod.instance.CombatModifier());
+                            thief = new Goblin(startVector, Mod.instance.CombatDifficulty());
                             smacktalk = "heh heh";
                             break;
                         default: //0
-                            thief = new Rogue(startVector, Mod.instance.CombatModifier());
+                            thief = new Rogue(startVector, Mod.instance.CombatDifficulty());
                             smacktalk = "heh heh";
                             break;
 
@@ -235,7 +235,9 @@ namespace StardewDruid.Event.Boss
 
                     if (questData.name.Contains("Two"))
                     {
-                        thief.HardMode();
+
+                        thief.SetMode(3);
+
                     }
 
                     thief.showTextAboveHead(smacktalk);

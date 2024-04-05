@@ -107,7 +107,7 @@ namespace StardewDruid.Monster.Template
         public void LoadOut()
         {
 
-            partyHats = Mod.instance.PartyHats();
+            partyHats = Mod.instance.PartyHats;
 
             hatsTexture = Game1.content.Load<Texture2D>("Characters\\Farmer\\hats");
 

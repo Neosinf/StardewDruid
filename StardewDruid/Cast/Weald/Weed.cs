@@ -1,4 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewDruid.Event;
+using StardewValley.BellsAndWhistles;
+using StardewValley.Locations;
+using StardewValley;
 using System;
 using System.Collections.Generic;
 
@@ -22,47 +26,20 @@ namespace StardewDruid.Cast.Weald
         public override void CastEffect()
         {
 
-            if (!targetLocation.objects.ContainsKey(targetVector))
-            {
+            int radius = 3 + Mod.instance.PowerLevel;
 
-                return;
+            SpellHandle explode = new(targetLocation, targetVector * 64, Game1.player.Position, radius, 1, -1, (int)(damage * 0.25), 2);
 
-            }
+            explode.type = SpellHandle.spells.explode;
 
-            int powerLevel = Mod.instance.virtualAxe.UpgradeLevel;
+            explode.sound = SpellHandle.sounds.flameSpellHit;
 
-            StardewValley.Object targetObject = targetLocation.objects[targetVector];
+            explode.display = SpellHandle.displays.Impact;
 
-            targetObject.Fragility = 0;
-
-            int explodeRadius = powerLevel < 2 ? 2 : powerLevel;
-
-            if (targetLocation is StardewValley.Locations.MineShaft && targetObject.name.Contains("Stone"))
-            {
-
-                explodeRadius = Math.Min(6, 2 + powerLevel);
-
-            }
-
-            ModUtility.DamageMonsters(targetLocation, ModUtility.MonsterProximity(targetLocation, new() { targetVector * 64 }, explodeRadius, true), targetPlayer, (int)(damage * 0.25));
-
-            //List<Vector2> impactVectors = ModUtility.Explode(targetLocation, targetVector, targetPlayer, explodeRadius, powerLevel:2);
-            ModUtility.Explode(targetLocation, targetVector, targetPlayer, explodeRadius, powerLevel:2);
-
-            ModUtility.AnimateImpact(targetLocation, targetVector* 64 + new Vector2(32), 1);
-
-            targetLocation.playSound("flameSpellHit");
-
-            /*foreach (Vector2 vector in impactVectors)
-            {
-                ModUtility.AnimateDestruction(targetLocation, vector);
-
-            }*/
+            Mod.instance.spellRegister.Add(explode);
 
             castFire = true;
 
-            //Vector2 cursorVector = targetVector * 64 + new Vector2(0, 8);
-            //ModUtility.AnimateCursor(targetLocation, cursorVector, cursorVector);
         }
 
     }

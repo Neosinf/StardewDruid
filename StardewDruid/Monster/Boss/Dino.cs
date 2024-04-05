@@ -19,13 +19,10 @@ namespace StardewDruid.Monster.Boss
 
 
         public Texture2D hatsTexture;
-        public Rectangle hatSourceRect;
-        public Vector2 hatOffset;
         public int hatIndex;
         public Dictionary<int, Rectangle> hatSourceRects;
-        public Dictionary<int, Vector2> hatOffsets;
-        public Dictionary<int, float> hatRotates;
-        public Dictionary<int, Vector2> hatRotateOffsets;
+        public Dictionary<int, List<Vector2>> hatOffsets;
+        public Dictionary<int, List<float>> hatRotates;
 
         public Dino()
         {
@@ -36,16 +33,7 @@ namespace StardewDruid.Monster.Boss
         {
 
         }
-        public override void BaseMode()
-        {
 
-            MaxHealth = Math.Max(4000, combatModifier * 300);
-
-            Health = MaxHealth;
-
-            DamageToFarmer = Math.Max(15, Math.Min(50, combatModifier * 2));
-
-        }
 
         public override void LoadOut()
         {
@@ -68,24 +56,28 @@ namespace StardewDruid.Monster.Boss
                 [0] = Game1.getSourceRectForStandardTileSheet(hatsTexture, hatIndex + 36, 20, 20)
             };
 
-            hatOffsets = new Dictionary<int, Vector2>()
+            hatOffsets = new Dictionary<int, List<Vector2>>()
             {
-                [2] = new Vector2(-16f, 0.0f),
-                [1] = new Vector2(36f, 2f),
-                [3] = new Vector2(-68f, 4f),
-                [0] = new Vector2(-16f, -32f)
+                [2] = new() { new Vector2(0, 0.0f), new Vector2(0, 0.0f), },
+                [1] = new (){ new Vector2(6f, 0f), new Vector2(16, 0f), },
+                [3] = new (){ new Vector2(-6f, 0f), new Vector2(-24, 0f), },
+                [0] = new (){ new Vector2(0, -32f), new Vector2(0, 0.0f), },
             };
 
-            hatRotates = new Dictionary<int, float>()
+            /*hatOffsets = new Dictionary<int, List<Vector2>>()
             {
-                [1] = 6f,
-                [3] = 0.4f
-            };
+                [2] = new() { new Vector2(-16f, 0.0f), new Vector2(-12f, 0.0f), new Vector2(-12f, 0.0f), },
+                [1] = new() { new Vector2(36f, 2f), new Vector2(36f, 6f), new Vector2(32, 4), },
+                [3] = new() { new Vector2(-68f, 4f), new Vector2(-68f, 8f), new Vector2(60, 20), },
+                [0] = new() { new Vector2(-16f, -32f), new Vector2(-12f, -32f), new Vector2(-12f, -32f), },
+            };*/
 
-            hatRotateOffsets = new Dictionary<int, Vector2>()
+            hatRotates = new Dictionary<int, List<float>>()
             {
-                [1] = new Vector2(-4f, -2f),
-                [3] = new Vector2(8f, -12f)
+                [2] = new() { 0f,0f,0f, },
+                [1] = new() { 0f, 0f, 6f, },
+                [3] = new() { 0f, 0f, 0.4f, },
+                [0] = new() { 0f, 0f, 0f, },
             };
 
             loadedOut = true;
@@ -156,7 +148,7 @@ namespace StardewDruid.Monster.Boss
 
             specialInterval = 15;
 
-            cooldownInterval = 60;
+            cooldownInterval = 180;
 
             cooldownTimer = cooldownInterval;
 
@@ -197,20 +189,6 @@ namespace StardewDruid.Monster.Boss
             sweepFrames = walkFrames;
         }
 
-
-        public override void HardMode()
-        {
-
-            Health *= 3;
-
-            Health /= 2;
-
-            MaxHealth = Health;
-
-            tempermentActive = temperment.aggressive;
-
-        }
-
         public override Rectangle GetBoundingBox()
         {
 
@@ -230,23 +208,34 @@ namespace StardewDruid.Monster.Boss
 
             float drawLayer = (float)StandingPixel.Y / 10000f;
 
-            if (IsEmoting && !Game1.eventUp)
-            {
-                Vector2 emotePosition = localPosition;
-                emotePosition.Y -= 32 + Sprite.SpriteHeight * 4;
-                b.Draw(Game1.emoteSpriteSheet, localPosition, new Rectangle?(new Rectangle(CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16)), Color.White, 0.0f, Vector2.Zero, 4f, 0, drawLayer);
-            }
+            DrawEmote(b, localPosition, drawLayer);
 
-            hatSourceRect = hatSourceRects[FacingDirection];
+            int netScale = netMode.Value > 5 ? netMode.Value = 1 : netMode.Value;
 
-            hatOffset = hatOffsets[FacingDirection];
+            Vector2 dinoPosition = new Vector2(localPosition.X - 32f - (16 * netScale), localPosition.Y - 64f - flightHeight - (32 * netScale));
 
-            float num1 = 0.0f;
+            Vector2 hatPosition = new Vector2(localPosition.X - 8 - (10 * netScale), localPosition.Y - 64f - flightHeight - (32 * netScale));
+
+            float dinoScale = 4f + (1f * netScale);
+
+            int hatFrame = walkFrame % 2 == 0 ? 0 : 1;
 
             if (netFlightActive.Value)
             {
 
-                b.Draw(characterTexture, localPosition + new Vector2(56, 16 - flightHeight), new Rectangle?(flightFrames[netDirection.Value][flightFrame]), Color.White * 0.65f, 0, new Vector2(16f, 16f), 7f, SpriteEffects.None, drawLayer);
+                b.Draw(
+                    characterTexture,
+                    dinoPosition, 
+                    flightFrames[netDirection.Value][flightFrame], 
+                    Color.White * 0.75f, 
+                    0,
+                    Vector2.Zero,
+                    dinoScale,
+                    SpriteEffects.None,
+                    drawLayer
+                );
+
+                hatFrame = flightFrame % 2 == 0 ? 0 : 1;
 
             }
             else if (netSpecialActive.Value)
@@ -257,66 +246,51 @@ namespace StardewDruid.Monster.Boss
                 if (specialFrame > 1)
                 {
                     specialUseFrame = 1;
+                    hatFrame = 2;
                 }
 
-                b.Draw(characterTexture, localPosition + new Vector2(56, 16), new Rectangle?(specialFrames[netDirection.Value][specialUseFrame]), Color.White * 0.65f, 0.0f, new Vector2(16f, 16f), 7f, SpriteEffects.None, drawLayer);
-
-                if (hatRotates.ContainsKey(FacingDirection))
-                {
-                    num1 = hatRotates[FacingDirection];
-                    hatOffset = hatOffset + hatRotateOffsets[FacingDirection];
-                }
-                else
-                {
-                    hatOffset = hatOffset - new Vector2(0.0f, 4f);
-                }
+                b.Draw(
+                    characterTexture,
+                    dinoPosition,
+                    specialFrames[netDirection.Value][specialUseFrame],
+                    Color.White * 0.75f,
+                    0.0f,
+                    Vector2.Zero,
+                    dinoScale,
+                    SpriteEffects.None,
+                    drawLayer
+                );
 
             }
             else
             {
 
-                b.Draw(characterTexture, localPosition + new Vector2(56, 16), new Rectangle?(walkFrames[netDirection.Value][walkFrame]), Color.White * 0.65f, 0.0f, new Vector2(16f, 16f), 7f, SpriteEffects.None, drawLayer);
+                b.Draw(
+                    characterTexture,
+                    dinoPosition,
+                    walkFrames[netDirection.Value][walkFrame],
+                    Color.White * 0.75f,
+                    0.0f,
+                    Vector2.Zero,
+                    dinoScale,
+                    SpriteEffects.None,
+                    drawLayer
+                   );
 
             }
 
             b.Draw(Game1.shadowTexture, new(localPosition.X, localPosition.Y + 32f), new Rectangle?(Game1.shadowTexture.Bounds), Color.White * 0.65f, 0.0f, Vector2.Zero, 4f, 0, drawLayer - 1E-06f);
 
-
-            if (FacingDirection % 2 == 0)
-            {
-                switch (Sprite.currentFrame % 4)
-                {
-                    case 1:
-                        hatOffset = hatOffset + new Vector2(4f, 0.0f);
-                        break;
-                    case 3:
-                        hatOffset = hatOffset - new Vector2(4f, 0.0f);
-                        break;
-                }
-            }
-            else
-            {
-                switch (Sprite.currentFrame % 4)
-                {
-                    case 1:
-                        hatOffset = hatOffset + new Vector2(0.0f, 4f);
-                        break;
-                    case 3:
-                        hatOffset = hatOffset + new Vector2(0.0f, 4f);
-                        break;
-                }
-            }
-
-            float num2 = 0.991f;
-
-            if (FacingDirection == 0)
-            {
-                num2 = 0.989f;
-            }
-
-            Vector2 vector2 = getLocalPosition(Game1.viewport) + new Vector2(56f, (float)(16 + yJumpOffset) - flightHeight) + hatOffset;
-
-            b.Draw(hatsTexture, vector2, new Rectangle?(hatSourceRect), Color.White * 0.6f, num1, new Vector2(8f, 12f), 8f, flip ? (SpriteEffects)1 : 0, num2);
+            b.Draw(
+                hatsTexture,
+                hatPosition + (hatOffsets[netDirection.Value][0] * (dinoScale-4)) + hatOffsets[netDirection.Value][1], //+ (hatOffsets[netDirection.Value][hatFrame] / 8 * dinoScale),
+                hatSourceRects[netDirection.Value],
+                Color.White * 0.6f,
+                hatRotates[netDirection.Value][hatFrame],
+                Vector2.Zero,
+                dinoScale,
+                flip ? (SpriteEffects)1 : 0,
+                netDirection.Value == 0 ? 0.989f : 0.991f);
 
         }
 
@@ -331,7 +305,7 @@ namespace StardewDruid.Monster.Boss
 
             beam.type = SpellHandle.spells.beam;
 
-            beam.monster = this;
+            beam.boss = this;
 
             Mod.instance.spellRegister.Add(beam);
 

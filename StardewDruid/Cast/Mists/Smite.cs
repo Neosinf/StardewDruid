@@ -59,7 +59,7 @@ namespace StardewDruid.Cast.Mists
 
             bolt.critical = critChance;
 
-            bolt.monster = targetMonster;
+            bolt.monsters.Add(targetMonster);
 
             Mod.instance.spellRegister.Add(bolt);
 

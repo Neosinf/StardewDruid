@@ -19,7 +19,7 @@ namespace StardewDruid.Cast.Mists
 
             VolcanoDungeon volcanoLocation = targetLocation as VolcanoDungeon;
 
-            int waterRadius = Math.Max(2, Mod.instance.virtualCan.UpgradeLevel / 2);
+            int waterRadius = Math.Min(5, Mod.instance.PowerLevel);
 
             for (int i = 0; i < waterRadius + 1; i++)
             {

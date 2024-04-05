@@ -223,7 +223,7 @@ namespace StardewDruid.Map
                         if (warp.TargetName == "FarmCave")
                         {
 
-                            Vector2 cavePosition = new Vector2(warp.TargetX, warp.TargetY - 2) * 64;
+                            Vector2 cavePosition = new Vector2(warp.TargetX-2, warp.TargetY - 3) * 64;
 
                             Vector2 farmPosition = new Vector2(warp.X, warp.Y + 5) * 64;
 

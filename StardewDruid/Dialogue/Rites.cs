@@ -175,27 +175,27 @@ namespace StardewDruid.Dialogue
             switch (answer)
             {
                 case "weald":
-                    Game1.addHUDMessage(new HUDMessage(Mod.instance.CastControl() + " to perform Rite of the Weald"));
+                    Game1.addHUDMessage(new HUDMessage(Mod.instance.RiteButton + " to perform Rite of the Weald"));
                     str = "The Kings of Oak and Holly come again.";
                     break;
                 case "mists":
-                    Game1.addHUDMessage(new HUDMessage(Mod.instance.CastControl() + " to perform Rite of the Mists"));
+                    Game1.addHUDMessage(new HUDMessage(Mod.instance.RiteButton + " to perform Rite of the Mists"));
                     str = "The Voice Beyond the Shore echoes around us.";
                     break;
                 case "stars":
-                    Game1.addHUDMessage(new HUDMessage(Mod.instance.CastControl() + " to perform Rite of the Stars"));
+                    Game1.addHUDMessage(new HUDMessage(Mod.instance.RiteButton + " to perform Rite of the Stars"));
                     str = "Life to ashes. Ashes to dust.";
                     break;
                 case "fates":
-                    Game1.addHUDMessage(new HUDMessage(Mod.instance.CastControl() + " to perform Rite of the Fates"));
+                    Game1.addHUDMessage(new HUDMessage(Mod.instance.RiteButton + " to perform Rite of the Fates"));
                     str = "The Fates peer through the veil. (Jester tries to be as expressionless as the Effigy)";
                     break;
                 case "ether":
-                    Game1.addHUDMessage(new HUDMessage(Mod.instance.CastControl() + " to perform Rite of the Ether"));
+                    Game1.addHUDMessage(new HUDMessage(Mod.instance.RiteButton + " to perform Rite of the Ether"));
                     str = "You're the master now, Farmer. The ancient ones have retreated from this world.";
                     break;
                 case "none":
-                    Game1.addHUDMessage(new HUDMessage(Mod.instance.CastControl() + " will do nothing"));
+                    Game1.addHUDMessage(new HUDMessage(Mod.instance.RiteButton + " will do nothing"));
                     str = !(npc is StardewDruid.Character.Jester) ? "The light fades away." : "Well I don't blame you. Much.";
                     break;
                 default:

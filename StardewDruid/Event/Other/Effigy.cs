@@ -96,7 +96,7 @@ namespace StardewDruid.Event.Other
 
                     CastVoice("Stand here and perform the rite", duration: 3000);
 
-                    Mod.instance.CastMessage($"{Mod.instance.CastControl()} with a tool in hand to perform a rite of the Weald", -1);
+                    Mod.instance.CastMessage(Mod.instance.RiteButton + " with a tool in hand to perform a rite of the Weald", -1);
 
                     break;
 

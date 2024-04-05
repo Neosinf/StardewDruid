@@ -7,6 +7,7 @@ using StardewModdingAPI;
 using StardewValley;
 using System.Collections.Generic;
 using System.IO;
+using static StardewDruid.Event.SpellHandle;
 
 namespace StardewDruid.Map
 {
@@ -18,9 +19,11 @@ namespace StardewDruid.Map
             if(combatModifier == -1)
             {
 
-                combatModifier = Mod.instance.CombatModifier();
+                combatModifier = Mod.instance.CombatDifficulty();
 
             }
+
+            System.Random randomise = new();
 
             StardewValley.Monsters.Monster theMonster;
 
@@ -28,53 +31,202 @@ namespace StardewDruid.Map
             {
                 
                 default:
-                case 0: // Green Slime
+                case 0: // Bat
 
-                    theMonster = new Slime(spawnVector, combatModifier, champion);
+                    if (champion)
+                    {
+
+                        theMonster = new BigBat(spawnVector, combatModifier);
+
+                        break;
+
+                    }
+
+                    theMonster = new Bat(spawnVector, combatModifier);
 
                     break;
 
                 case 1: // Shadow Brute
 
-                    theMonster = new Shadow(spawnVector, combatModifier, champion);
+                    if (champion)
+                    {
 
+                        theMonster = new Shooter(spawnVector, combatModifier);
 
-                    break;
+                        break;
 
-                case 2: // Skeleton
+                    }
 
-                    theMonster = new Skeleton(spawnVector, combatModifier, champion);
-
-                    break;
-
-                case 3: // Golem
-
-                    theMonster = new Golem(spawnVector, combatModifier, champion);
+                    theMonster = new Shadow(spawnVector, combatModifier);
 
                     break;
 
-                case 4: // DustSpirit
-
-                    theMonster = new Spirit(spawnVector, combatModifier, champion);
-
-                    break;
-
-                case 5: // Bat
-
-                    theMonster = new Bat(spawnVector, combatModifier, champion);
-
-                    break;
-
-                case 6:
-
-                    theMonster = new Gargoyle(spawnVector, combatModifier);
+                case 2: // Green Slime
 
                     if (champion)
                     {
 
-                        (theMonster as Gargoyle).ChampionMode();
+                        if(randomise.Next(2) == 0){
+
+                            
+                            theMonster = new BlobSlime(spawnVector, combatModifier);
+
+                        }
+                        else
+                        {
+
+                            theMonster = new BigSlime(spawnVector, combatModifier);
+
+                        }
+
+                        break;
 
                     }
+
+                    theMonster = new Slime(spawnVector, combatModifier);
+
+                    break;
+
+                case 3: // Skeleton
+
+                    theMonster = new Skeleton(spawnVector, combatModifier);
+
+                    break;
+
+                case 4: // Golem
+
+                    theMonster = new Golem(spawnVector, combatModifier);
+
+                    break;
+
+                case 5: // DustSpirit
+
+                    theMonster = new Spirit(spawnVector, combatModifier);
+
+                    break;
+
+                case 6: // Gargoyle
+
+                    theMonster = new Gargoyle(spawnVector, combatModifier);
+
+                    if (!champion)
+                    {
+
+                        (theMonster as Gargoyle).SetMode(0);
+
+                    }
+
+                    (theMonster as Boss).RandomTemperment();
+
+                    /*string scheme = randomise.Next(2) == 0 ? "Solar" : "Void";
+
+                    (theMonster as Gargoyle).netScheme.Set(scheme);
+
+                    (theMonster as Gargoyle).SchemeLoad();*/
+
+                    break;
+
+                case 7: // Demonki
+
+                    theMonster = new Demonki(spawnVector, combatModifier);
+
+                    if (!champion)
+                    {
+
+                        (theMonster as Demonki).SetMode(0);
+
+                    }
+
+                    (theMonster as Boss).RandomTemperment();
+
+                    break;
+
+                case 8:
+
+                    theMonster = new Dino(spawnVector, combatModifier);
+
+                    (theMonster as Dino).SetMode(0);
+
+                    if (champion)
+                    {
+
+                        (theMonster as Dino).SetMode(2);
+
+                    }
+
+                    (theMonster as Boss).RandomTemperment();
+
+                    break;
+
+                case 9:
+
+                    if(randomise.Next(2) == 0)
+                    {
+                        
+                        theMonster = new Scavenger(spawnVector, combatModifier);
+
+                    }
+                    else
+                    {
+
+                        theMonster = new Shadowfox(spawnVector, combatModifier);
+
+                    }
+
+                    (theMonster as Boss).SetMode(1);
+
+                    (theMonster as Boss).RandomTemperment();
+
+                    break;
+
+                case 10:
+
+                    if (randomise.Next(2) == 0)
+                    {
+
+                        theMonster = new Rogue(spawnVector, combatModifier);
+
+                    }
+                    else
+                    {
+
+                        theMonster = new Goblin(spawnVector, combatModifier);
+
+                    }
+
+                    (theMonster as Boss).SetMode(1);
+
+                    (theMonster as Boss).RandomTemperment();
+
+                    break;
+
+                case 11:
+
+                    string dragon = "Purple";
+
+                    switch (randomise.Next(4))
+                    {
+
+                        case 1:
+
+                            dragon = "Red"; break;
+
+                        case 2:
+
+                            dragon = "Blue"; break;
+
+                        case 3:
+
+                            dragon = "Black"; break;
+
+                    }
+
+
+                    theMonster = new Dragon(spawnVector, combatModifier, dragon+"Dragon");
+
+                    (theMonster as Dragon).SetMode(1);
+
+                    (theMonster as Boss).RandomTemperment();
 
                     break;
 

@@ -25,7 +25,7 @@ namespace StardewDruid.Event.Challenge
 
             cues = DialogueData.DialogueScene(questData.name);
 
-            challengeSpawn = new() { 0, };
+            challengeSpawn = new() { 2, };
             challengeFrequency = 1;
             challengeAmplitude = 1;
             challengeSeconds = 60;
@@ -140,13 +140,13 @@ namespace StardewDruid.Event.Challenge
 
                 Vector2 bossVector = monsterHandle.SpawnVector(12,76,72,5,4);
 
-                if(bossVector == new Vector2(-1))
+                if(bossVector.X < 0)
                 {
                     bossVector = new(78, 74);
 
                 }
 
-                bossMonster = new(bossVector, Mod.instance.CombatModifier());
+                bossMonster = new(bossVector, Mod.instance.CombatDifficulty());
 
                 bossMonster.posturing.Set(true);
 
@@ -208,7 +208,7 @@ namespace StardewDruid.Event.Challenge
                         foreach (Vector2 meteor in meteors)
                         {
 
-                            Cast.Stars.Meteor meteorCast = new(meteor, Mod.instance.DamageLevel());
+                            Cast.Stars.Meteor meteorCast = new(meteor);
 
                             meteorCast.targetLocation = targetLocation;
 

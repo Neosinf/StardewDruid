@@ -1,12 +1,19 @@
 ﻿
+using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Dialogue;
 using StardewDruid.Event;
+using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Minigames;
+using System;
+using System.Drawing;
+using System.IO;
+using xTile.Dimensions;
 
 namespace StardewDruid.Cast.Ether
 {
@@ -17,12 +24,14 @@ namespace StardewDruid.Cast.Ether
         public int attuneableIndex;
         public int extendTime;
         public int moveTimer;
-        public Vector2 castPosition;
         public int castTimer;
         public SButton leftButton;
         public bool leftActive;
         public SButton rightButton;
         public bool rightActive;
+
+        public bool warpTrigger;
+        public string warpLocation;
 
         public Transform(Vector2 target,  int extend)
           : base(target)
@@ -39,27 +48,28 @@ namespace StardewDruid.Cast.Ether
 
             expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + extendTime;
 
+            CreateAvatar();
+
+        }
+
+        public void CreateAvatar()
+        {
+
             Game1.displayFarmer = false;
 
             avatar = new Dragon(Mod.instance.rite.caster, Mod.instance.rite.caster.Position, Mod.instance.rite.caster.currentLocation.Name, Mod.instance.ColourPreference() + "Dragon");
 
             avatar.currentLocation = Game1.player.currentLocation;
 
-            Game1.currentLocation.characters.Add(avatar);
+            Game1.player.currentLocation.characters.Add(avatar);
 
-            Game1.currentLocation.playSound("warrior", Game1.player.Position, 700);
-
-            castPosition = Game1.player.Position;
+            Game1.player.currentLocation.playSound("warrior", Game1.player.Position, 700);
 
         }
 
+
         public override bool EventActive()
         {
-            if (Game1.player.currentLocation.Name != targetLocation.Name)
-            {
-                return false;
-
-            }
 
             if (expireEarly)
             {
@@ -97,6 +107,12 @@ namespace StardewDruid.Cast.Ether
 
         public override bool AttemptAbort()
         {
+            if (warpTrigger)
+            {
+
+                return false;
+
+            }
 
             if (avatar != null)
             {
@@ -206,12 +222,98 @@ namespace StardewDruid.Cast.Ether
         public override void EventDecimal()
         {
 
+            if(warpTrigger)
+            {
+
+                if(Game1.player.currentLocation.Name == warpLocation)
+                {
+                    warpTrigger = false;
+                    
+                    if (SpawnData.SpawnIndex(Game1.player.currentLocation).Count == 0)
+                    {
+
+                        expireEarly = true;
+
+                        return;
+
+                    }
+
+                    avatar.ShutDown();
+
+                    CreateAvatar();
+
+                    TemporaryAnimatedSprite radiusAnimation = new(0, 2000, 1, 1, avatar.Position - new Vector2(64, 64), false, false)
+                    {
+
+                        sourceRect = new(0, 64, 64, 64),
+
+                        sourceRectStartingPos = new Vector2(0, 64),
+
+                        texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Decorations.png")),
+
+                        scale = 3f,
+
+                        timeBasedMotion = true,
+
+                        layerDepth = 999f,
+
+                        rotationChange = (float)(Math.PI / 120),
+
+                        alpha = 0.65f,
+                    };
+
+                    targetLocation.temporarySprites.Add(radiusAnimation);
+
+                    animations.Add(radiusAnimation);
+
+                }
+
+            }
+
+            if (!EventActive()) { return; }
+
             if (Game1.player.CurrentToolIndex != 999 || Mod.instance.Helper.Input.IsDown(rightButton) || Mod.instance.Helper.Input.IsDown(leftButton))
             {
                 return;
             }
 
             Game1.player.CurrentToolIndex = toolIndex;
+
+        }
+
+        public virtual void EventWarp()
+        {
+
+            if (warpTrigger) { return; }
+
+            TemporaryAnimatedSprite radiusAnimation = new(0, 2000, 1, 1, avatar.Position - new Vector2(64,64), false, false)
+            {
+
+                sourceRect = new(0, 64, 64, 64),
+
+                sourceRectStartingPos = new Vector2(0, 64),
+
+                texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Decorations.png")),
+
+                scale = 3f,
+
+                timeBasedMotion = true,
+
+                layerDepth = 999f,
+
+                rotationChange = (float)(Math.PI / 120),
+
+                alpha = 0.65f,
+            };
+
+            targetLocation.temporarySprites.Add(radiusAnimation);
+
+            animations.Add(radiusAnimation);
+
+            warpTrigger = true;
+
+            warpLocation = Game1.locationRequest.Location.Name;
+
         }
 
         public override void EventInterval()
@@ -254,7 +356,7 @@ namespace StardewDruid.Cast.Ether
                         continue;
                     }
 
-                    if (!Mod.instance.TaskList().ContainsKey("masterTransform"))
+                    if (!Mod.instance.TaskList.ContainsKey("masterTransform"))
                     {
 
                         Mod.instance.UpdateTask("lessonTransform", 1);
@@ -270,6 +372,7 @@ namespace StardewDruid.Cast.Ether
             }
 
         }
+
 
     }
 

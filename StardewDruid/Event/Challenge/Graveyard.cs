@@ -123,7 +123,7 @@ namespace StardewDruid.Event.Challenge
             if (activeCounter == 1)
             {
 
-                bossMonster = new(new Vector2(47, 82), Mod.instance.CombatModifier());
+                bossMonster = new(new Vector2(47, 82), Mod.instance.CombatDifficulty());
 
                 bossMonster.posturing.Set(true);
 

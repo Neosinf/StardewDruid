@@ -16,9 +16,11 @@ namespace StardewDruid.Cast.Stars
 
         float damage;
 
+        int extra;
+
         bool comet;
 
-        public Meteor(Vector2 target,  float Damage, bool Comet = false)
+        public Meteor(Vector2 target,  float Damage = 0, int Extra = 0, bool Comet = false)
             : base(target)
         {
 
@@ -28,12 +30,14 @@ namespace StardewDruid.Cast.Stars
 
             comet = Comet;
 
+            extra = Extra;
+
         }
 
         public override void CastEffect()
         {
 
-            if (!Mod.instance.TaskList().ContainsKey("masterMeteor"))
+            if (!Mod.instance.TaskList.ContainsKey("masterMeteor"))
             {
 
                 List<StardewValley.Monsters.Monster> monsters = ModUtility.MonsterProximity(targetLocation, new() { targetVector * 64, }, 3, true);
@@ -47,7 +51,7 @@ namespace StardewDruid.Cast.Stars
 
             }
 
-            int radius = 3;
+            int radius = 3 + extra;
 
             int power = 3;
 

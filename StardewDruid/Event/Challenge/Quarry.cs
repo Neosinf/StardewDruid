@@ -150,7 +150,7 @@ namespace StardewDruid.Event.Challenge
                 
                 Vector2 meteorVector = new(-5 + randomIndex.Next(10), -5 + randomIndex.Next(10));
 
-                Cast.Stars.Meteor meteorCast = new(meteorVector+targetVector, Mod.instance.DamageLevel());
+                Cast.Stars.Meteor meteorCast = new(meteorVector+targetVector);
 
                 meteorCast.targetLocation = targetLocation;
 
@@ -216,7 +216,7 @@ namespace StardewDruid.Event.Challenge
 
                 Vector2 monsterVector = monsterHandle.SpawnVector();
 
-                if(monsterVector != new Vector2(-1))
+                if(monsterVector.X >= 0)
                 {
 
                     Gargoyle newMonster;
@@ -226,9 +226,20 @@ namespace StardewDruid.Event.Challenge
                     if (activeCounter > 20 && specialBoss < 1)
                     {
 
-                        newMonster = new(monsterVector, Mod.instance.CombatModifier());
+                        newMonster = new(monsterVector, Mod.instance.CombatDifficulty());
 
-                        newMonster.ChampionMode(2);
+                        if (questData.name.Contains("Two"))
+                        {
+
+                            newMonster.SetMode(3);
+
+                        }
+                        else
+                        {
+
+                            newMonster.SetMode(2);
+
+                        }
 
                         specialBoss = 1;
 
@@ -236,10 +247,21 @@ namespace StardewDruid.Event.Challenge
                     else if (activeCounter > 40 && specialBoss < 2)
                     {
 
-                        newMonster = new(monsterVector, Mod.instance.CombatModifier());
+                        newMonster = new(monsterVector, Mod.instance.CombatDifficulty());
 
-                        newMonster.ChampionMode(2);
+                        if (questData.name.Contains("Two"))
+                        {
 
+                            newMonster.SetMode(3);
+
+                        }
+                        else
+                        {
+
+                            newMonster.SetMode(2);
+                        
+                        }
+ 
                         scheme = "Void";
 
                         specialBoss = 2;
@@ -248,7 +270,7 @@ namespace StardewDruid.Event.Challenge
                     else
                     {
 
-                        newMonster = new(monsterVector, Mod.instance.CombatModifier());
+                        newMonster = new(monsterVector, Mod.instance.CombatDifficulty());
 
                         scheme = randomIndex.Next(2) == 0 ? "Solar" : "Void";
 
@@ -257,13 +279,6 @@ namespace StardewDruid.Event.Challenge
                     newMonster.netScheme.Set(scheme);
 
                     newMonster.SchemeLoad();
-
-                    if (questData.name.Contains("Two"))
-                    {
-
-                        newMonster.HardMode();
-
-                    }
 
                     monsterHandle.SpawnImport(newMonster);
 

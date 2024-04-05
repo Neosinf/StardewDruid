@@ -184,51 +184,9 @@ namespace StardewDruid.Cast.Fates
             if (Vector2.Distance(targetPlayer.Position, victim.Position) < 447)
             {
 
-                int direction = (targetPlayer.facingDirection.Value + 2) % 4;
+                int direction = ModUtility.DirectionToTarget(targetPlayer.Position, victim.Position)[2];
 
-                List<Vector2> strikeVectors = ModUtility.GetTilesWithinRadius(targetLocation, victim.Tile, 2, true, direction);
-
-                if (victim.Position.Y > targetPlayer.Position.Y)
-                {
-
-                    if (targetPlayer.facingDirection.Value == 1)
-                    {
-                        strikeVectors.Reverse();
-
-                    }
-
-                }
-                else
-                {
-                    if (targetPlayer.facingDirection.Value == 3)
-                    {
-                        strikeVectors.Reverse();
-
-                    }
-
-                }
-
-                if (victim.Position.X > targetPlayer.Position.X)
-                {
-
-                    if (targetPlayer.facingDirection.Value == 0)
-                    {
-                        strikeVectors.Reverse();
-
-                    }
-
-                }
-                else
-                {
-
-                    if (targetPlayer.facingDirection.Value == 2)
-                    {
-                        strikeVectors.Reverse();
-
-                    }
-
-                }
-
+                List<Vector2> strikeVectors = ModUtility.GetOccupiableTilesNearby(targetLocation, victim.Tile, direction, 1, 1);
 
                 float closestDistance = 9999f;
 

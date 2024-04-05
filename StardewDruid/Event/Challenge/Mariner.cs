@@ -30,7 +30,7 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle = new(targetVector, Mod.instance.rite.castLocation);
 
-            monsterHandle.spawnIndex = new() { 2, 3 };
+            monsterHandle.spawnIndex = new() { 3,4 };
 
             monsterHandle.spawnFrequency = 2;
 
@@ -206,7 +206,7 @@ namespace StardewDruid.Event.Challenge
 
                 Vector2 impact = cannons[k] * 64;
 
-                SpellHandle missile = new(targetLocation, impact, impact - new Vector2(0, 640), 2, 1, Mod.instance.CombatModifier() * 2, Mod.instance.DamageLevel());
+                SpellHandle missile = new(targetLocation, impact, impact - new Vector2(0, 640), 2, 1, Mod.instance.CombatDifficulty() * 2, Mod.instance.CombatDamage());
 
                 missile.type = SpellHandle.spells.ballistic;
 

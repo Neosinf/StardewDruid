@@ -81,7 +81,7 @@ namespace StardewDruid.Event
 
             Vector2 specialTrigger = QuestData.SpecialVector(targetLocation, questData.name);
 
-            if (specialTrigger != new Vector2(-1))
+            if (specialTrigger.X >= 0)
             {
 
                 targetVector = specialTrigger;

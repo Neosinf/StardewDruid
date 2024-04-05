@@ -22,8 +22,6 @@ namespace StardewDruid.Cast.Fates
 
         public int deathCounter;
 
-        public int reactionCounter;
-
         public TrickEvent(Vector2 target,  NPC witness)
             : base(target)
         {
@@ -34,14 +32,12 @@ namespace StardewDruid.Cast.Fates
 
             trick = "butterflies";
 
-            reactionCounter = 16;
-
         }
 
         public override void EventTrigger()
         {
 
-            expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 2;
+            expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 5;
 
             Mod.instance.RegisterEvent(this,"trick"+riteWitness.Name);
 
@@ -72,24 +68,35 @@ namespace StardewDruid.Cast.Fates
 
             decimalCounter++;
 
-            if(decimalCounter == 1)
+            if (decimalCounter == 1)
             {
 
-                SpellHandle whiskSpell = new(targetLocation, targetPlayer.Position, riteWitness.Position,3);
+                TemporaryAnimatedSprite radiusAnimation = new(0, 2000, 1, 1, riteWitness.Position - new Microsoft.Xna.Framework.Vector2(64, 64), false, false)
+                {
 
-                whiskSpell.scheme = SpellHandle.schemes.fates;
+                    sourceRect = new(192, 0, 64, 64),
 
-                whiskSpell.indicator = SpellHandle.indicators.fates;
+                    sourceRectStartingPos = new Vector2(192, 0),
 
-                whiskSpell.TargetCircle();
+                    texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Decorations.png")),
 
-                whiskSpell.LaunchMissile();
+                    scale = 3f, //* size,
 
-                animations = whiskSpell.animations;
+                    timeBasedMotion = true,
+
+                    layerDepth = 0.0001f,
+
+                    rotationChange = 0.06f,
+
+                };
+
+                targetLocation.temporarySprites.Add(radiusAnimation);
+
+                animations.Add(radiusAnimation);
 
             }
 
-            if(decimalCounter == 11)
+            if (decimalCounter == 11)
             {
 
                 int friendshipRatio = 3;
@@ -106,8 +113,6 @@ namespace StardewDruid.Cast.Fates
                     friendshipRatio = 5;
 
                 }
-
-                int interval = 2000;
 
                 int trickInt = randomIndex.Next(6);
 
@@ -187,33 +192,16 @@ namespace StardewDruid.Cast.Fates
                         break;
                 }
 
+            }
 
-                TemporaryAnimatedSprite radiusAnimation = new(0, interval, 1, 1, riteWitness.Position - new Microsoft.Xna.Framework.Vector2(64, 64), false, false)
-                {
+            if(decimalCounter == deathCounter)
+            {
 
-                    sourceRect = new(192, 0, 64, 64),
-
-                    sourceRectStartingPos = new Vector2(192, 0),
-
-                    texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Decorations.png")),
-
-                    scale = 3f, //* size,
-
-                    timeBasedMotion = true,
-
-                    layerDepth = 0.0001f,
-
-                    rotationChange = 0.06f,
-
-                };
-
-                targetLocation.temporarySprites.Add(radiusAnimation);
-
-                animations.Add(radiusAnimation);
+                ModUtility.AnimateDeathSpray(targetLocation, riteWitness.Position, Color.Gray * 0.5f);
 
             }
 
-            if(decimalCounter == reactionCounter)
+            if (decimalCounter == 21)
             {
 
                 if (targetPlayer.friendshipData.TryGetValue(riteWitness.Name, out var _))
@@ -227,17 +215,11 @@ namespace StardewDruid.Cast.Fates
 
                 StardewDruid.Dialogue.Reaction.ReactTo(riteWitness, "Fates", friendship, context);
 
-            }
-
-            if(decimalCounter == deathCounter)
-            {
-
-                ModUtility.AnimateDeathSpray(targetLocation, riteWitness.Position, Color.Gray * 0.5f);
+                expireEarly = true;
 
             }
 
         }
-
 
     }
 

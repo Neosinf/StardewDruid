@@ -31,11 +31,9 @@ namespace StardewDruid.Cast.Weald
             if (probability == 0)
             {
 
-                int hoeLevel = Mod.instance.virtualHoe.UpgradeLevel;
+                int procChance = 65 - Mod.instance.CurrentProgress;
 
-                int procChance = 50 - 5 * hoeLevel;
-
-                if (randomIndex.Next(procChance) == 0 && Mod.instance.rite.spawnIndex["artifact"] && hoeLevel >= 3)
+                if (randomIndex.Next(procChance) == 0 && Mod.instance.rite.spawnIndex["artifact"])
                 {
 
                     int tileX = (int)targetVector.X;

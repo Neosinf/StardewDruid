@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewDruid.Map;
 using StardewValley;
 using StardewValley.Locations;
 using System;
@@ -101,10 +102,10 @@ namespace StardewDruid.Character
 
             }
 
-            if ((double)Vector2.Distance(position, trackPlayer) >= 64.0)
+            if ((double)Vector2.Distance(position, trackPlayer) >= 128.0)
             {
 
-                if(trackPlayer != new Vector2(-1))
+                if(trackPlayer.X >= 0)
                 {
 
                     trackVectors.Add(trackPlayer);
@@ -118,7 +119,7 @@ namespace StardewDruid.Character
 
                 }
 
-                trackPlayer = position - (new Vector2(32,32) * offset);
+                trackPlayer = position + (new Vector2(32,32) * offset);
 
             }
 
@@ -162,7 +163,7 @@ namespace StardewDruid.Character
 
             }
 
-            if (!Utility.isOnScreen(Mod.instance.characters[trackFor].Position, 128))
+            /*if (!Utility.isOnScreen(Mod.instance.characters[trackFor].Position, 128))
             {
 
                 if (WarpToTarget()) { return; }
@@ -174,7 +175,7 @@ namespace StardewDruid.Character
 
                 if (WarpToTarget()) { return; }
 
-            }
+            }*/
 
         }
 
@@ -197,9 +198,16 @@ namespace StardewDruid.Character
 
             }
 
-            Vector2 destination = next ? NextVector() : LastVector();
+            Vector2 warppoint = WarpData.WarpStart(Mod.instance.characters[trackFor].currentLocation.Name);
 
-            Mod.instance.characters[trackFor].Position = destination;
+            if (warppoint.X < 0)
+            {
+                
+                warppoint = next ? NextVector() : LastVector();
+
+            }
+
+            Mod.instance.characters[trackFor].Position = warppoint;
 
             ModUtility.AnimateQuickWarp(Mod.instance.characters[trackFor].currentLocation, Mod.instance.characters[trackFor].Position - new Vector2(0, 32));
 
@@ -227,6 +235,49 @@ namespace StardewDruid.Character
             }
             
             trackVectors = vector2List;
+
+        }
+
+        public Vector2 ClosestVector(Vector2 origin)
+        {
+
+            if (trackVectors.Count == 0)
+            {
+            
+                return Vector2.Zero;
+            
+            }
+
+            if (trackVectors.Count == 1)
+            {
+
+                return NextVector();
+
+            }
+
+            int closest = 0;
+
+            float best = Vector2.Distance(origin,trackVectors.First());
+
+            for(int i = 1; i < trackVectors.Count; i++)
+            {
+
+                float distance = Vector2.Distance(trackVectors.ElementAt(i), origin);
+
+                if (distance < best)
+                {
+
+                    closest = i;
+
+                }
+
+            }
+
+            int truncate = trackVectors.Count - closest;
+
+            TruncateTo(truncate);
+
+            return NextVector();
 
         }
 

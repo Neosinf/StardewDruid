@@ -261,17 +261,17 @@ namespace StardewDruid.Cast.Ether
                     switch(randomIndex.Next(4))
                     {
                         case 1:
-                            thief = new Scavenger(treasureVector, Mod.instance.CombatModifier());
+                            thief = new Scavenger(treasureVector, Mod.instance.CombatDifficulty());
                             break;
                         case 2:
-                            thief = new Shadowfox(treasureVector, Mod.instance.CombatModifier());
+                            thief = new Shadowfox(treasureVector, Mod.instance.CombatDifficulty());
                             break;
                         case 3:
-                            thief = new Goblin(treasureVector, Mod.instance.CombatModifier());
+                            thief = new Goblin(treasureVector, Mod.instance.CombatDifficulty());
                             smacktalk = "heh heh";
                             break;
                         default: //0
-                            thief = new Rogue(treasureVector, Mod.instance.CombatModifier());
+                            thief = new Rogue(treasureVector, Mod.instance.CombatDifficulty());
                             smacktalk = "heh heh";
                             break;
 
@@ -283,7 +283,7 @@ namespace StardewDruid.Cast.Ether
 
                     thief.update(Game1.currentGameTime, targetLocation);
 
-                    thief.ChaseMode();
+                    thief.SetMode(5);
 
                     thief.showTextAboveHead(smacktalk);
 
@@ -330,7 +330,7 @@ namespace StardewDruid.Cast.Ether
 
             claimCounter++;
 
-            if (targetLocation is MineShaft mineShaft)
+            if (targetLocation is MineShaft mineShaft && mineShaft.mineLevel != MineShaft.bottomOfMineLevel && mineShaft.mineLevel != MineShaft.quarryMineShaft)
             {
 
                 Layer layer = targetLocation.map.GetLayer("Buildings");
@@ -444,12 +444,12 @@ namespace StardewDruid.Cast.Ether
         public void ReleaseTreasure()
         {
 
-            if (!Mod.instance.TaskList().ContainsKey("masterTreasure"))
+            if (!Mod.instance.TaskList.ContainsKey("masterTreasure"))
             {
 
                 Mod.instance.UpdateTask("lessonTreasure", 1);
 
-                int etherIndex = Mod.instance.TaskList()["lessonTreasure"] - 1;
+                int etherIndex = Mod.instance.TaskList["lessonTreasure"] - 1;
 
                 Dictionary<int, List<string>> etherPages = DialogueData.EtherPages();
 

@@ -136,7 +136,7 @@ namespace StardewDruid.Cast.Weald
 
             float threshold = 300;
 
-            float damage = Mod.instance.DamageLevel();
+            float damage = Mod.instance.CombatDamage();
 
             foreach (NPC nonPlayableCharacter in targetLocation.characters)
             {

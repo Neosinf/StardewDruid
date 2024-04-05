@@ -46,9 +46,9 @@ namespace StardewDruid.Cast.Mists
 
             treeFeature.health.Value = 1;
 
-            targetPlayer.Stamina += Math.Min(2, targetPlayer.MaxStamina - targetPlayer.Stamina);
-
             Mod.instance.virtualAxe.DoFunction(targetLocation, 0, 0, 1, targetPlayer);
+
+            targetPlayer.Stamina += Math.Min(2, targetPlayer.MaxStamina - targetPlayer.Stamina);
 
             treeFeature.performToolAction(Mod.instance.virtualAxe, 0, targetVector);
 

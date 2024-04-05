@@ -34,7 +34,7 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            monsterHandle.spawnIndex = new() { 4, };
+            monsterHandle.spawnIndex = new() { 5, };
 
             monsterHandle.spawnWithin = new(Math.Max(targetVector.X - 3, 0), targetVector.Y + 1);
 

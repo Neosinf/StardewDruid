@@ -15,6 +15,8 @@ namespace StardewDruid.Monster
 
         public List<StardewValley.Monsters.Monster> monsterSpawns;
 
+        public int monstersLeft;
+
         public List<int> spawnIndex;
 
         public int spawnFrequency;
@@ -23,17 +25,21 @@ namespace StardewDruid.Monster
 
         public int spawnCounter;
 
-        public int spawnSpecial;
-
         public bool spawnChampion;
+
+        public int championCounter;
+
+        public int championInterval;
+
+        public int championAmount;
+
+        public int championLimit;
 
         public Vector2 spawnWithin;
 
         public Vector2 spawnRange;
 
-        public bool firstSpawn;
-
-        public List<MonsterSpawn> spawnHandles;
+        //public List<MonsterSpawn> spawnHandles;
 
         public int spawnTotal;
 
@@ -54,7 +60,7 @@ namespace StardewDruid.Monster
 
             monsterSpawns = new();
 
-            spawnHandles = new();
+            //spawnHandles = new();
 
             spawnIndex = new() { 99, };
 
@@ -62,7 +68,7 @@ namespace StardewDruid.Monster
 
             randomIndex = new();
 
-            spawnCombat = Mod.instance.CombatModifier();
+            spawnCombat = Mod.instance.CombatDifficulty();
 
             //riteData = rite;
 
@@ -99,17 +105,19 @@ namespace StardewDruid.Monster
 
         }
 
-        public int ShutDown()
+        public void ShutDown()
         {
 
             SpawnCheck();
 
-            int monstersLeft = monsterSpawns.Count;
+            ModUtility.LogMonsters(monsterSpawns);
 
             for (int i = monsterSpawns.Count - 1; i >= 0; i--)
             {
 
                 ModUtility.AnimateQuickWarp(spawnLocation, monsterSpawns[i].Position, true);
+
+                monsterSpawns[i].Health = 0;
 
                 spawnLocation.characters.Remove(monsterSpawns[i]);
 
@@ -117,16 +125,18 @@ namespace StardewDruid.Monster
 
             }
 
-            spawnHandles = new();
+            //spawnHandles = new();
 
-            return monstersLeft;
+            return;
 
         }
 
         public void SpawnCheck()
         {
 
-            for (int i = spawnHandles.Count - 1; i >= 0; --i)
+            //monstersLeft = monsterSpawns.Count;
+
+            /*for (int i = spawnHandles.Count - 1; i >= 0; --i)
             {
 
                 if (spawnHandles[i].spawnComplete)
@@ -138,47 +148,64 @@ namespace StardewDruid.Monster
 
                 }
 
-            }
+            }*/
 
             for (int i = monsterSpawns.Count - 1; i >= 0; i--)
             {
 
-                if (monsterSpawns[i].Health <= 0 && (monsterSpawns[i].currentLocation == null || !monsterSpawns[i].currentLocation.characters.Contains(monsterSpawns[i])))
+                if (!ModUtility.MonsterVitals(monsterSpawns[i],spawnLocation))
                 {
                     
                     monsterSpawns.RemoveAt(i);
+
+                    //monstersLeft--;
 
                 }
 
             }
 
+            monstersLeft = monsterSpawns.Count;
+
         }
 
         public int SpawnInterval()
         {
+            
+            spawnCounter--;
 
-            spawnCounter++;
-
-            if(spawnSpecial != 0 && spawnCounter % spawnSpecial == 0)
-            {
-
-                spawnChampion = true;
-
-            }
-
-            if (spawnFrequency >= 3 && spawnCounter == 2 && !firstSpawn)
-            {
-                firstSpawn = true;
-
-            }
-            else if (spawnFrequency > spawnCounter)
+            if (spawnCounter > 0)
             {
 
                 return 0;
 
             }
 
-            spawnCounter = 0;
+            spawnCounter = spawnFrequency;
+
+            if (championInterval != 0)
+            {
+
+                if (championAmount == championLimit)
+                {
+
+                    championInterval = 0;
+
+                }
+
+                championCounter++;
+
+                if(championCounter == championInterval)
+                {
+
+                    spawnChampion = true;
+
+                    championAmount++;
+
+                    championCounter = 0;
+
+                }
+
+            }
 
             int spawnAmount = 0;
 
@@ -189,7 +216,7 @@ namespace StardewDruid.Monster
 
                 spawnVector = SpawnVector();
 
-                if (spawnVector != new Vector2(-1))
+                if (spawnVector.X >= 0)
                 {
 
                     SpawnGround(spawnVector);
@@ -278,13 +305,19 @@ namespace StardewDruid.Monster
 
             monsterSpawns.Add(theMonster);
 
+            spawnLocation.characters.Add(theMonster);
+
+            theMonster.currentLocation = spawnLocation;
+
+            theMonster.update(Game1.currentGameTime, spawnLocation);
+
             spawnTotal++;
 
-            MonsterSpawn monsterSpawn = new(spawnLocation, theMonster);
+            //MonsterSpawn monsterSpawn = new(spawnLocation, theMonster);
 
-            monsterSpawn.InitiateMonster(150);
+            //monsterSpawn.InitiateMonster(150);
 
-            spawnHandles.Add(monsterSpawn);
+            //spawnHandles.Add(monsterSpawn);
 
             ModUtility.AnimateQuickWarp(spawnLocation, spawnVector * 64 - new Vector2(0, 32));
 
@@ -299,19 +332,25 @@ namespace StardewDruid.Monster
 
             monsterSpawns.Add(theMonster);
 
+            spawnLocation.characters.Add(theMonster);
+
+            theMonster.currentLocation = spawnLocation;
+
+            theMonster.update(Game1.currentGameTime, spawnLocation);
+
             spawnTotal++;
 
-            MonsterSpawn monsterSpawn = new(spawnLocation, theMonster);
+            //MonsterSpawn monsterSpawn = new(spawnLocation, theMonster);
 
-            monsterSpawn.InitiateMonster(150);
+            //monsterSpawn.InitiateMonster(150);
 
-            spawnHandles.Add(monsterSpawn);
+            //spawnHandles.Add(monsterSpawn);
 
             ModUtility.AnimateQuickWarp(spawnLocation, theMonster.Position - new Vector2(0, 32));
 
         }
 
-        public StardewValley.Monsters.Monster SpawnTerrain(Vector2 spawnVector, Vector2 terrainVector, bool splash)
+        /*public StardewValley.Monsters.Monster SpawnTerrain(Vector2 spawnVector, Vector2 terrainVector, bool splash)
         {
 
             int spawnMob = spawnIndex[randomIndex.Next(spawnIndex.Count)];
@@ -387,7 +426,7 @@ namespace StardewDruid.Monster
 
             return theMonster;
 
-        }
+        }*/
 
     }
 

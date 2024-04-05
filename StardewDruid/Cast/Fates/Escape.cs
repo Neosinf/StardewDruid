@@ -160,7 +160,7 @@ namespace StardewDruid.Cast.Fates
 
                     destination = WarpData.WarpXZone(targetLocation,targetVector);
 
-                    if (destination != new Vector2(-1))
+                    if (destination.X >= 0)
                     {
 
                         Game1.flashAlpha = 1;
@@ -176,7 +176,7 @@ namespace StardewDruid.Cast.Fates
                 {
                     destination = WarpData.WarpEntrance(targetLocation, targetVector);
 
-                    if (destination != new Vector2(-1))
+                    if (destination.X >= 0)
                     {
                         Game1.flashAlpha = 1;
 

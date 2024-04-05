@@ -10,17 +10,20 @@ namespace StardewDruid.Cast.Mists
 
         private ResourceClump resourceClump;
 
-        private string resourceType;
-
-        public Stump(Vector2 target,  ResourceClump ResourceClump, string ResourceType)
+        public Stump(Vector2 target,  ResourceClump Resource)
             : base(target)
         {
 
             castCost = Math.Max(8, 32 - targetPlayer.ForagingLevel * 3);
 
-            resourceClump = ResourceClump;
+            if(Resource.parentSheetIndex.Value == ResourceClump.hollowLogIndex)
+            {
 
-            resourceType = ResourceType;
+                castCost = (int)(castCost * 1.5);
+
+            }
+
+            resourceClump = Resource;
 
         }
 
@@ -34,7 +37,7 @@ namespace StardewDruid.Cast.Mists
 
             }
 
-            ModUtility.DestroyStump(targetLocation, targetPlayer, resourceClump, targetVector, resourceType);
+            ModUtility.DestroyStump(targetLocation, targetPlayer, resourceClump, targetVector);
 
             resourceClump = null;
 

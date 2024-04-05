@@ -77,6 +77,8 @@ namespace StardewDruid.Cast
 
         public int chargeTimer;
 
+        public int chargeCooldown;
+
         public bool chargeActive;
 
         public string chargeLocation;
@@ -142,7 +144,7 @@ namespace StardewDruid.Cast
 
             castLocation = caster.currentLocation;
 
-            castTask = Mod.instance.TaskList();
+            castTask = Mod.instance.TaskList;
 
         }
 
@@ -162,7 +164,7 @@ namespace StardewDruid.Cast
 
             string activeBlessing = Mod.instance.CurrentBlessing();
 
-            if (Mod.instance.CurrentProgress() <= 1)
+            if (Mod.instance.CurrentProgress <= 1)
             {
 
                 activeBlessing = "none";
@@ -215,16 +217,7 @@ namespace StardewDruid.Cast
 
             castTool = toolIndex;
 
-            castLocation = caster.currentLocation;
-
-            spawnIndex = Map.SpawnData.SpawnIndex(castLocation);
-
-            if (spawnIndex.Count == 0 && Mod.instance.eventRegister.ContainsKey("active"))
-            {
-
-                spawnIndex = SpawnData.SpawnTemplate();
-
-            }
+            GetLocation();
 
             CastVector();
 
@@ -271,12 +264,19 @@ namespace StardewDruid.Cast
 
                 }
 
+                if(Game1.player.currentLocation.Name != castLocation.Name)
+                {
+
+                    GetLocation();
+
+                }
+
                 if (Mod.instance.Config.slotAttune)
                 {
 
                     string slot = GetSlotBlessing();
 
-                    if (castType != slot || Game1.player.currentLocation.Name != castLocation.Name)
+                    if (castType != slot)
                     {
 
                         if (!start())
@@ -296,7 +296,7 @@ namespace StardewDruid.Cast
 
                     int toolIndex = Mod.instance.AttuneableWeapon();
 
-                    if (castTool != toolIndex || Game1.player.currentLocation.Name != castLocation.Name)
+                    if (castTool != toolIndex)
                     {
 
                         if (!start())
@@ -330,7 +330,7 @@ namespace StardewDruid.Cast
                 if (castType == "none")
                 {
 
-                    if (Mod.instance.CurrentProgress() <= 1)
+                    if (Mod.instance.CurrentProgress <= 1)
                     {
 
                         Mod.instance.CastMessage(Mod.instance.Config.journalButtons.ToString() + " to open Druid Journal and get started");
@@ -358,7 +358,9 @@ namespace StardewDruid.Cast
 
                 }
 
-                if (Game1.player.Stamina <= 32 || (Game1.player.health/Game1.player.maxHealth) <= 0.3)
+                double staminadiff = (Game1.player.Stamina / Game1.player.MaxStamina);
+
+                if (staminadiff <= 0.3 || Game1.player.health <= 33)
                 {
 
                     Mod.instance.AutoConsume();
@@ -483,32 +485,42 @@ namespace StardewDruid.Cast
 
                 if (Mod.instance.AttuneableWeapon() == -1) { return; }
 
+                if (chargeCooldown > 0) { return; }
+
+                double staminadiff = (Game1.player.Stamina / Game1.player.MaxStamina);
+
+                if (staminadiff <= 0.3 || Game1.player.health <= 33)
+                {
+                    
+                    Mod.instance.AutoConsume();
+
+                }
+
                 int radius = Mod.instance.eventRegister.ContainsKey("transform") ? 2 : 1;
+
+                List<StardewValley.Monsters.Monster> checkMonsters;
 
                 switch (chargeType)
                 {
 
                     case "chaos":
 
-                        if (!Mod.instance.eventRegister.ContainsKey("chaos"))
+                        checkMonsters = GetMonstersAround(Game1.player.FacingDirection, 4, 3);
+
+                        if (checkMonsters.Count > 0)
                         {
 
-                            List<StardewValley.Monsters.Monster> checkMonsters = GetMonstersAround(Game1.player.FacingDirection, 4, 3);
+                            SpellHandle chaoseffect = new(Game1.player.currentLocation, checkMonsters.First().Position, Game1.player.Position, 2, 1, -1, Mod.instance.CombatDamage() / 2, 2);
 
-                            if (checkMonsters.Count > 0)
-                            {
+                            chaoseffect.type = SpellHandle.spells.chaos;
 
-                                SpellHandle barrage = new(Game1.player.currentLocation, checkMonsters.First().Position, Game1.player.Position, 2, 1, -1, Mod.instance.DamageLevel() / 2, 2);
+                            chaoseffect.display = displays.Flashbang;
 
-                                barrage.type = SpellHandle.spells.chaos;
-
-                                barrage.LaunchChaos();
-
-                                Mod.instance.spellRegister.Add(barrage);
-
-                            }
+                            Mod.instance.spellRegister.Add(chaoseffect);
 
                         }
+
+                        chargeCooldown = 30;
 
                         break;
 
@@ -517,7 +529,7 @@ namespace StardewDruid.Cast
                         if (!Mod.instance.eventRegister.ContainsKey("shield"))
                         {
 
-                            List<StardewValley.Monsters.Monster> checkMonsters = GetMonstersAround(Game1.player.FacingDirection, radius, radius);
+                            checkMonsters = GetMonstersAround(Game1.player.FacingDirection, radius, radius);
 
                             if (checkMonsters.Count > 0)
                             {
@@ -553,21 +565,28 @@ namespace StardewDruid.Cast
 
                     case "stars":
 
-                        if (!Mod.instance.eventRegister.ContainsKey("burst"))
+                        checkMonsters = GetMonstersAround(Game1.player.FacingDirection, radius, radius);
+
+                        if (checkMonsters.Count > 0)
                         {
 
-                            List<StardewValley.Monsters.Monster> checkMonsters = GetMonstersAround(Game1.player.FacingDirection, radius, radius);
+                            SpellHandle knockeffect = new(Game1.player.currentLocation, checkMonsters.First().Position, Game1.player.Position, 2, 1, -1, Mod.instance.CombatDamage() / 2, -1);
 
-                            if (checkMonsters.Count > 0)
-                            {
+                            knockeffect.type = SpellHandle.spells.explode;
 
-                                BurstEvent burstEvent = new(Game1.player.Position, checkMonsters);
+                            knockeffect.added.Add(effects.knockdown);
 
-                                burstEvent.EventTrigger();
+                            knockeffect.monsters = checkMonsters;
 
-                            }
+                            knockeffect.display = displays.Flashbang;
+
+                            knockeffect.counter = 1;
+
+                            Mod.instance.spellRegister.Add(knockeffect);
 
                         }
+
+                        chargeCooldown = 120;
 
                         break;
 
@@ -576,7 +595,7 @@ namespace StardewDruid.Cast
                         if (!Mod.instance.eventRegister.ContainsKey("veil"))
                         {
 
-                            List<StardewValley.Monsters.Monster> checkMonsters = GetMonstersAround(Game1.player.FacingDirection, radius, radius);
+                            checkMonsters = GetMonstersAround(Game1.player.FacingDirection, radius, radius);
 
                             if (checkMonsters.Count > 0)
                             {
@@ -593,21 +612,26 @@ namespace StardewDruid.Cast
 
                     default: // weald
 
-                        if (!Mod.instance.eventRegister.ContainsKey("sap"))
+                        checkMonsters = GetMonstersAround(Game1.player.FacingDirection, radius, radius);
+
+                        if (checkMonsters.Count > 0)
                         {
 
-                            List<StardewValley.Monsters.Monster> checkMonsters = GetMonstersAround(Game1.player.FacingDirection, radius, radius);
+                            SpellHandle sapeffect = new(Game1.player.currentLocation, checkMonsters.First().Position, Game1.player.Position, 2, 1, -1, Mod.instance.PowerLevel*3, -1);
 
-                            if (checkMonsters.Count > 0)
-                            {
+                            sapeffect.type = SpellHandle.spells.explode;
 
-                                SapEvent sapEvent = new(Game1.player.Position,checkMonsters);
+                            sapeffect.added.Add(effects.sap);
 
-                                sapEvent.EventTrigger();
+                            sapeffect.monsters = checkMonsters;
 
-                            }
+                            sapeffect.counter = 1;
+
+                            Mod.instance.spellRegister.Add(sapeffect);
 
                         }
+
+                        chargeCooldown = 30;
 
                         break;
 
@@ -627,7 +651,19 @@ namespace StardewDruid.Cast
 
             }
 
-            chargeTimer--;
+            if (chargeCooldown > 0)
+            {
+
+                chargeCooldown--;
+
+            }
+
+            if (chargeTimer > 0)
+            {
+
+                chargeTimer--;
+
+            }
 
             if (chargeTimer <= 0)
             {
@@ -701,7 +737,7 @@ namespace StardewDruid.Cast
         public void ChargeSet(string type)
         {
 
-            int progress = Mod.instance.CurrentProgress();
+            int progress = Mod.instance.CurrentProgress;
 
             switch (type)
             {
@@ -835,6 +871,22 @@ namespace StardewDruid.Cast
             }
 
             return slotBlessing;
+
+        }
+
+        public void GetLocation()
+        {
+            
+            castLocation = caster.currentLocation;
+
+            spawnIndex = Map.SpawnData.SpawnIndex(castLocation);
+
+            if (spawnIndex.Count == 0 && Mod.instance.eventRegister.ContainsKey("active"))
+            {
+
+                spawnIndex = SpawnData.SpawnTemplate();
+
+            }
 
         }
 
@@ -1055,7 +1107,7 @@ namespace StardewDruid.Cast
                                 Reaction.ReactTo(riteWitness, "Mists");
 
                             }
-                            else if (castType == "fates" && Mod.instance.CurrentProgress() >= 22)
+                            else if (castType == "fates" && Mod.instance.CurrentProgress >= 22)
                             {
 
 
@@ -1256,11 +1308,11 @@ namespace StardewDruid.Cast
 
             string locationName = castLocation.Name;
 
-            int progressLevel = Mod.instance.CurrentProgress();
+            int progressLevel = Mod.instance.CurrentProgress;
 
-            float damageLevel = Mod.instance.DamageLevel();
+            float damageLevel = Mod.instance.CombatDamage();
 
-            //Dictionary<string, int> taskList = Mod.instance.TaskList();
+            //Dictionary<string, int> taskList = Mod.instance.TaskList;
 
             //---------------------------------------------
             // Weald Sound
@@ -1590,14 +1642,9 @@ namespace StardewDruid.Cast
             // Radial casts
             // ---------------------------------------------
 
-            int castRadius = 3;
+            int castRadius = 2;
 
-            if (Mod.instance.virtualHoe.UpgradeLevel >= 3 || Mod.instance.virtualCan.UpgradeLevel >= 3)
-            {
-
-                castRadius++;
-
-            }
+            castRadius += Math.Min(4, (int)(Mod.instance.PowerLevel));
 
             for (int v = 0; v < centerVectors.Count; v++)
             {
@@ -1952,7 +1999,7 @@ namespace StardewDruid.Cast
 
                 }
 
-                ModUtility.AnimateGlare(castLocation, centerVector * 64);
+                ModUtility.AnimateGlare(castLocation, centerVector * 64, Color.White);
 
             }
 
@@ -1961,7 +2008,7 @@ namespace StardewDruid.Cast
         public void CastRockfall()
         {
 
-            if (Mod.instance.CurrentProgress() < 6)
+            if (Mod.instance.CurrentProgress < 6)
             {
 
                 return;
@@ -1983,7 +2030,7 @@ namespace StardewDruid.Cast
 
             int castSelect = castSelection.Count; // 12, 16, 24, 28, 32
 
-            float damageLevel = Mod.instance.DamageLevel();
+            float damageLevel = Mod.instance.CombatDamage();
 
             if (castSelect != 0)
             {
@@ -2034,7 +2081,7 @@ namespace StardewDruid.Cast
 
                     effectCasts[newVector] = new Cast.Weald.Rockfall(newVector, damageLevel,terrain);
 
-                    if(Mod.instance.CurrentProgress() >= 36)
+                    if(Mod.instance.CurrentProgress >= 36)
                     {
 
                         CastWisps(newVector);
@@ -2054,7 +2101,7 @@ namespace StardewDruid.Cast
         public void CastWisps(Vector2 vector)
         {
 
-            Vector2 wispVector = new((int)(vector.X / 12), (int)(vector.Y / 12));
+            Vector2 wispVector = new((int)(vector.X / 15), (int)(vector.Y / 15));
 
             if (!Mod.instance.eventRegister.ContainsKey("wisp"))
             {
@@ -2077,7 +2124,7 @@ namespace StardewDruid.Cast
 
             //int chargeLevel = (castLevel % 4) + 1;
 
-            int progressLevel = Mod.instance.CurrentProgress();
+            int progressLevel = Mod.instance.CurrentProgress;
 
             List<Vector2> centerVectors = new();
 
@@ -2179,10 +2226,10 @@ namespace StardewDruid.Cast
                         switch (resourceClump.parentSheetIndex.Value)
                         {
 
-                            case 600:
-                            case 602:
+                            case ResourceClump.stumpIndex:
+                            case ResourceClump.hollowLogIndex:
 
-                                effectCasts[featureVector] = new Cast.Mists.Stump(featureVector, resourceClump, "Farm");
+                                effectCasts[featureVector] = new Cast.Mists.Stump(featureVector, resourceClump);
 
                                 break;
 
@@ -2293,7 +2340,7 @@ namespace StardewDruid.Cast
 
                 int smiteCount = 0;
 
-                int smiteLimit = Mod.instance.PowerLevel();
+                int smiteLimit = Mod.instance.PowerLevel;
 
                 Vector2 castPosition = castVector * 64;
 
@@ -2301,7 +2348,7 @@ namespace StardewDruid.Cast
 
                 float smiteRange = Vector2.Distance(caster.Position, castPosition);
 
-                float damageLevel = Mod.instance.DamageLevel();
+                float damageLevel = Mod.instance.CombatDamage();
 
                 foreach (NPC nonPlayableCharacter in castLocation.characters)
                 {
@@ -2388,6 +2435,8 @@ namespace StardewDruid.Cast
             
             List<Vector2> tileVectors;
 
+            bool summonAttempt = false;
+
             //for (int i = 0; i < 2; i++)
             for (int i = 0; i < 4; i++)
             {
@@ -2398,7 +2447,7 @@ namespace StardewDruid.Cast
 
                 tileVectors = ModUtility.GetTilesWithinRadius(castLocation, castVector, i);
 
-                List<Vector2> betweenVectors = ModUtility.GetTilesBetweenVectors(castLocation, caster.Position, castVector*64);
+                List<Vector2> betweenVectors = ModUtility.GetTilesBetweenPositions(castLocation, caster.Position, castVector*64);
 
                 tileVectors.AddRange(betweenVectors);
 
@@ -2421,7 +2470,7 @@ namespace StardewDruid.Cast
                                     continue;
                                 }
 
-                                for(int j = 0; j <= Mod.instance.PowerLevel(); j++)
+                                for(int j = 0; j <= Mod.instance.PowerLevel; j++)
                                 {
                                     if (specialCasts.Contains("rod" + j.ToString()))
                                     {
@@ -2466,28 +2515,45 @@ namespace StardewDruid.Cast
 
                                 }*/
 
+                                if (summonAttempt)
+                                {
+
+                                    continue;
+
+                                }
+
                                 if (Mod.instance.eventRegister.ContainsKey("active"))
                                 {
-                                    Mod.instance.Monitor.Log("Cannot conduct summoning because "+Mod.instance.eventRegister["active"].GetType().ToString()+" is active", LogLevel.Debug);
+                                    //Mod.instance.Monitor.Log("Cannot conduct summoning because "+Mod.instance.eventRegister["active"].GetType().ToString()+" is active", LogLevel.Debug);
                                     break;
 
                                 }
 
                                 if(progressLevel < 13)
                                 {
-                                    Mod.instance.Monitor.Log("Cannot conduct summoning because your progress level is too low", LogLevel.Debug);
+                                    //Mod.instance.Monitor.Log("Cannot conduct summoning because your progress level is too low", LogLevel.Debug);
                                     break;
                                 }
 
                                 if (!spawnIndex["portal"])
                                 {
-                                    Mod.instance.Monitor.Log("Cannot conduct summoning because it isn't supported by this map type", LogLevel.Debug);
+                                    //Mod.instance.Monitor.Log("Cannot conduct summoning because it isn't supported by this map type", LogLevel.Debug);
                                     break;
+                                }
+
+                                if (ModUtility.GetOccupiedTilesWithinRadius(castLocation, tileVector, 2).Count > 0)
+                                {
+
+                                    Mod.instance.CastMessage("Not enough clear space for a summoning portal");
+                                    break;
+
                                 }
 
                                 effectCasts[tileVector] = new Cast.Mists.Summon(tileVector);
 
                                 centerVectors.Add(tileVector);
+
+                                summonAttempt = true;
 
                             }
                             else if (targetObject.IsScarecrow())
@@ -2507,7 +2573,7 @@ namespace StardewDruid.Cast
                                 }
 
                             }
-                            else if (targetObject.Name.Contains("Artifact Spot")) //&& Mod.instance.virtualHoe.UpgradeLevel >= 3)
+                            else if (targetObject.Name.Contains("Artifact Spot"))
                             {
 
                                 effectCasts[tileVector] = new Cast.Mists.Artifact(tileVector);
@@ -2575,42 +2641,61 @@ namespace StardewDruid.Cast
 
             List<Vector2> meteorVectors = new();
 
-            int difficulty = Mod.instance.DifficultyLevel();
-
-            if (!Mod.instance.TaskList().ContainsKey("masterMeteor"))
-            {
-
-                difficulty = 2;
-
-            }
+            int difficulty = Mod.instance.Config.meteorBehaviour;
 
             int meteorLimit = 1;
 
-            int meteorLevel = castLevel % 4;
-
-            if(meteorLevel == 0)
-            {
-
-                vectorList = new()
-                {
-                    new Vector2(3,-4),
-                    new Vector2(-3,-4),
-                    new Vector2(5,0),
-                    new Vector2(-5,0),
-                    new Vector2(3,4),
-                    new Vector2(-3,4),
-                };
-
-            }
-
-            if(meteorLevel > 1)
+            if (!Mod.instance.TaskList.ContainsKey("masterMeteor") && randomIndex.Next(2) == 0)
             {
 
                 meteorLimit = 2;
 
             }
 
-            if (difficulty < 3)
+            if(castLevel % 4 == 0 || vectorList.Count == 0)
+            {
+
+                if(difficulty == 5)
+                {
+                    
+                    vectorList = new();
+
+                    List<Vector2> innerTiles = ModUtility.GetTilesWithinRadius(castLocation, Vector2.Zero, 3, false);
+
+                    for (int iv = 0; iv < 3; iv++)
+                    {
+                        
+                        vectorList.Add(innerTiles[randomIndex.Next(innerTiles.Count)]);
+                        
+                    }
+
+                    List<Vector2> outerTiles = ModUtility.GetTilesWithinRadius(castLocation, Vector2.Zero, 4, false);
+
+                    for (int ov = 0; ov < 3; ov++)
+                    {
+                        
+                        vectorList.Add(outerTiles[randomIndex.Next(outerTiles.Count)]);
+
+                    }
+
+                }
+                else
+                {
+                    vectorList = new()
+                    {
+                        new Vector2(3,-4),
+                        new Vector2(-3,-4),
+                        new Vector2(5,0),
+                        new Vector2(-5,0),
+                        new Vector2(3,4),
+                        new Vector2(-3,4),
+                    };
+
+                }
+
+            }
+
+            if (difficulty == 1 || difficulty == 2)
             {
 
                 foreach (NPC nonPlayableCharacter in castLocation.characters)
@@ -2656,7 +2741,7 @@ namespace StardewDruid.Cast
 
             }
 
-            if(difficulty < 2 && (castLocation is MineShaft || castLocation is VolcanoDungeon))
+            if((difficulty == 1 || difficulty == 3) && (castLocation is MineShaft || castLocation is VolcanoDungeon))
             {
 
                 for (int i = 2; i < 6; i++)
@@ -2722,7 +2807,9 @@ namespace StardewDruid.Cast
                     for(int i = vectorList.Count - 1; i >= 0; i--)
                     {
 
-                        if(Vector2.Distance(meteorVector, vectorList[i]) <= 3)
+                        Vector2 tryVector = castVector + vectorList[i];
+
+                        if (Vector2.Distance(meteorVector, tryVector) <= 3)
                         {
 
                             vectorList.RemoveAt(i);
@@ -2753,10 +2840,41 @@ namespace StardewDruid.Cast
 
             }
 
+            float damage = Mod.instance.CombatDamage() * 0.75f;
+
+            int extra = 0;
+
+            switch (difficulty)
+            {
+                case 2:
+                case 3:
+
+                    damage *= 1.1f;
+
+                    break;
+
+                case 4:
+
+                    damage *= 1.25f;
+
+                    if (randomIndex.Next(3) == 0) { extra++; }
+
+                    break;
+
+                case 5:
+
+                    damage *= 1.6f;
+
+                    if(randomIndex.Next(2) == 0) { extra++; }
+
+                    break;
+
+            }
+
             foreach (Vector2 meteorVector in meteorVectors)
             {
 
-                effectCasts[meteorVector] = new Cast.Stars.Meteor(meteorVector, Mod.instance.DamageLevel());
+                effectCasts[meteorVector] = new Cast.Stars.Meteor(meteorVector, damage, extra);
 
             }
 
@@ -2811,7 +2929,7 @@ namespace StardewDruid.Cast
 
             Vector2 cometVector = (Mod.instance.eventRegister["gravity"] as GravityEvent).targetVector;
 
-            effectCasts[cometVector] = new Cast.Stars.Meteor(cometVector, Mod.instance.DamageLevel(), true);
+            effectCasts[cometVector] = new Cast.Stars.Meteor(cometVector, Mod.instance.CombatDamage(), 0, true);
 
         }
 
@@ -2820,7 +2938,7 @@ namespace StardewDruid.Cast
 
             string locationName = castLocation.Name;
 
-            int progressLevel = Mod.instance.CurrentProgress();
+            int progressLevel = Mod.instance.CurrentProgress;
 
             if (!Mod.instance.specialCasts.ContainsKey(locationName))
             {
@@ -2851,7 +2969,7 @@ namespace StardewDruid.Cast
 
                 List<Vector2> tileVectors = ModUtility.GetTilesWithinRadius(castLocation, castVector, castAttempt + 1); // 1, 2, 3, 4, 5, 6, 7, 8
 
-                List<Vector2> betweenVectors = ModUtility.GetTilesBetweenVectors(castLocation, caster.Position, castVector * 64);
+                List<Vector2> betweenVectors = ModUtility.GetTilesBetweenPositions(castLocation, caster.Position, castVector * 64);
 
                 tileVectors.AddRange(betweenVectors);
 
@@ -3289,7 +3407,7 @@ namespace StardewDruid.Cast
         public void CastEther()
         {
             
-            int progressLevel = Mod.instance.CurrentProgress();
+            int progressLevel = Mod.instance.CurrentProgress;
 
             if (!Mod.instance.specialCasts.ContainsKey(castLocation.Name))
             {
@@ -3388,7 +3506,7 @@ namespace StardewDruid.Cast
 
             }
 
-            for (int a = 0; a < 1; a++)
+            /*for (int a = 0; a < 1; a++)
             {
 
                 if (castLevel == 0) { 
@@ -3409,7 +3527,7 @@ namespace StardewDruid.Cast
 
                 escapeEvent.EventTrigger();
 
-            }
+            }*/
 
         }
 
@@ -3429,7 +3547,7 @@ namespace StardewDruid.Cast
 
             string activeBlessing = Mod.instance.CurrentBlessing();
 
-            if (Mod.instance.CurrentProgress() <= 1)
+            if (Mod.instance.CurrentProgress <= 1)
             {
 
                 RemoveBuff();

@@ -77,7 +77,7 @@ namespace StardewDruid.Dialogue
                     responseList.Add(new Response("quests", "(lessons) What can you teach me about the mists?"));
                 else if (stringList.Contains("weald"))
                     responseList.Add(new Response("quests", "(lessons) I want to learn more about the weald."));
-                if (Mod.instance.CurrentProgress() > 2)
+                if (Mod.instance.CurrentProgress > 2)
                     responseList.Add(new Response("rites", "(talk) I have some requests."));
 
                 responseList.Add(new Response("none", "(say nothing)"));

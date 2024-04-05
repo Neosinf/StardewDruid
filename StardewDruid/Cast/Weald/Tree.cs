@@ -72,8 +72,6 @@ namespace StardewDruid.Cast.Weald
 
             int debrisType = 388;
 
-            int debrisAxe = Mod.instance.virtualAxe.UpgradeLevel + 1;
-
             int debrisMax = 3;
 
             if (targetPlayer.professions.Contains(12))
@@ -106,7 +104,7 @@ namespace StardewDruid.Cast.Weald
 
             Dictionary<int, Throw> throwList = new();
 
-            for (int i = 0; i < randomIndex.Next(1, Math.Min(debrisMax, debrisAxe)); i++)
+            for (int i = 0; i < randomIndex.Next(1, Math.Min(debrisMax, (Mod.instance.PowerLevel))); i++)
             {
 
                 throwList[i] = new(targetPlayer, targetVector * 64, debrisType, 0);

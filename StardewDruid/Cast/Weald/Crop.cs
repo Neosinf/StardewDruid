@@ -116,7 +116,7 @@ namespace StardewDruid.Cast.Weald
             if (targetCrop.isWildSeedCrop() && targetCrop.currentPhase.Value <= 1 && (Game1.currentSeason != "winter" || targetLocation.isGreenhouse.Value))
             {
 
-                bool enableQuality = Mod.instance.TaskList().ContainsKey("masterCrop") ? true : false;
+                bool enableQuality = Mod.instance.TaskList.ContainsKey("masterCrop") ? true : false;
 
                 ModUtility.UpgradeCrop(hoeDirt, (int)targetVector.X, (int)targetVector.Y, targetPlayer, targetLocation, enableQuality);
 
@@ -131,7 +131,7 @@ namespace StardewDruid.Cast.Weald
 
                 castFire = true;
 
-                if (!Mod.instance.TaskList().ContainsKey("masterCrop"))
+                if (!Mod.instance.TaskList.ContainsKey("masterCrop"))
                 {
 
                     Mod.instance.UpdateTask("lessonCrop", 1);

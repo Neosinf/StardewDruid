@@ -197,10 +197,10 @@ namespace StardewDruid.Event.Boss
                 targetPlayer.Position = new(targetVector.X * 64, targetVector.Y * 64);//Vector2.op_Multiply(targetVector, 64f);
                 EventQuery("LocationPortal");
 
-                bossMonster = new(new Vector2(13f, 9f),Mod.instance.CombatModifier());
+                bossMonster = new(new Vector2(13f, 9f),Mod.instance.CombatDifficulty());
                 if (questData.name.Contains("Two"))
                 {
-                    bossMonster.HardMode();
+                    bossMonster.SetMode(3);
                 }
                 targetLocation.characters.Add(bossMonster);
                 bossMonster.currentLocation = targetLocation;
@@ -299,7 +299,9 @@ namespace StardewDruid.Event.Boss
 
                     case 7:
 
-                        secondMonster = new(new Vector2(13f, 9f),Mod.instance.CombatModifier());
+                        secondMonster = new(new Vector2(13f, 9f),Mod.instance.CombatDifficulty(),"BlackDragon");
+
+                        secondMonster.SetMode(4);
 
                         targetLocation.characters.Add(secondMonster);
 

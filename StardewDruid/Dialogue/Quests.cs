@@ -530,7 +530,7 @@ namespace StardewDruid.Dialogue
 
                 case "crypt":
 
-                    dialogueText = "Let's see what the old gang's been up to";
+                    dialogueText = "I doubt they've gotten up to much of anything. Not without my keen eye and firm hand to guide them.";
 
                     Mod.instance.NewQuest("challengeEtherTwo");
 

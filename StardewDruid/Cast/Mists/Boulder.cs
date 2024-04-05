@@ -22,15 +22,7 @@ namespace StardewDruid.Cast.Mists
         public override void CastEffect()
         {
 
-            int debrisMax = 1;
-
-            if (targetPlayer.professions.Contains(22))
-            {
-                debrisMax = 2;
-
-            }
-
-            ModUtility.DestroyBoulder(targetLocation, targetPlayer, resourceClump, targetVector, debrisMax);
+            ModUtility.DestroyBoulder(targetLocation, targetPlayer, resourceClump, targetVector);
 
             resourceClump = null;
 

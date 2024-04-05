@@ -187,11 +187,11 @@ namespace StardewDruid.Event.Boss
 
                 EventQuery("LocationEdit");
                 
-                bossMonster = new((targetVector + new Vector2(2f, 0.0f)),Mod.instance.CombatModifier());
+                bossMonster = new((targetVector + new Vector2(2f, 0.0f)),Mod.instance.CombatDifficulty());
                 
                 if (questData.name.Contains("Two"))
                 {
-                    bossMonster.HardMode();
+                    bossMonster.SetMode(3);
                 }
 
                 bossMonster.currentLocation = targetLocation;
@@ -311,7 +311,7 @@ namespace StardewDruid.Event.Boss
         public void GuntherApplyDamage()
         {
 
-            ModUtility.DamageMonsters(targetLocation, new() { bossMonster, }, targetPlayer, Mod.instance.DamageLevel());
+            ModUtility.DamageMonsters(targetLocation, new() { bossMonster, }, targetPlayer, Mod.instance.CombatDamage());
 
         }
 

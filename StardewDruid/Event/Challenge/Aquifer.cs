@@ -32,7 +32,7 @@ namespace StardewDruid.Event.Challenge
 
             cues = DialogueData.DialogueScene(questData.name);
 
-            challengeSpawn = new() { 5, };
+            challengeSpawn = new() { 0, };
 
             challengeFrequency = 2;
 
@@ -224,7 +224,7 @@ namespace StardewDruid.Event.Challenge
             if (activeCounter == 20)
             {
 
-                bossMonster = new(new Vector2(30, 13),Mod.instance.CombatModifier());
+                bossMonster = new(new Vector2(30, 13),Mod.instance.CombatDifficulty());
 
                 bossMonster.posturing.Set(true);
 

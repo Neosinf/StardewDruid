@@ -90,7 +90,9 @@ namespace StardewDruid.Cast.Weald
             else if (probability == 2)
             {
 
-                if (Mod.instance.rite.spawnIndex["artifact"] && Game1.currentSeason == "winter" && Mod.instance.virtualHoe.UpgradeLevel >= 3)
+                int procChance = 65 - Mod.instance.CurrentProgress;
+
+                if (randomIndex.Next(procChance) == 0 && Mod.instance.rite.spawnIndex["artifact"] && Game1.currentSeason == "winter")
                 {
 
                     int tileX = (int)targetVector.X;

@@ -103,7 +103,7 @@ namespace StardewDruid.Monster.Template
 
             hatSourceRect = Game1.getSourceRectForStandardTileSheet(hatsTexture, hatIndex, 20, 20);
 
-            partyHats = Mod.instance.PartyHats();
+            partyHats = Mod.instance.PartyHats;
 
             loadedout = true;
 

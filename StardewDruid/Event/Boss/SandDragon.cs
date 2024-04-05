@@ -38,7 +38,7 @@ namespace StardewDruid.Event.Boss
 
             AddActor(targetVector * 64 + new Vector2(0, -32));
 
-            Cast.Stars.Meteor meteorCast = new(targetVector, Mod.instance.DamageLevel());
+            Cast.Stars.Meteor meteorCast = new(targetVector);
 
             meteorCast.targetLocation = targetLocation;
 
@@ -218,7 +218,7 @@ namespace StardewDruid.Event.Boss
                     
                     Vector2 randomVector = targetVector - new Vector2(4, 4) + new Vector2(randomIndex.Next(8), randomIndex.Next(8));
 
-                    Cast.Stars.Meteor meteorCast = new(randomVector, Mod.instance.DamageLevel());
+                    Cast.Stars.Meteor meteorCast = new(randomVector);
 
                     meteorCast.targetLocation = targetLocation;
 
@@ -239,12 +239,18 @@ namespace StardewDruid.Event.Boss
 
                 EventQuery("LocationEdit");
 
-                bossMonster = new(targetVector + new Vector2(-5, 0),Mod.instance.CombatModifier());
+                bossMonster = new(targetVector + new Vector2(-5, 0),Mod.instance.CombatDifficulty());
 
                 if (questData.name.Contains("Two"))
                 {
 
-                    bossMonster.HardMode();
+                    bossMonster.SetMode(2);
+
+                }
+                else
+                {
+
+                    bossMonster.SetMode(3);
 
                 }
 
