@@ -2,8 +2,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using StardewDruid.Data;
 using StardewDruid.Event;
-using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using static StardewDruid.Event.SpellHandle;
 using static StardewValley.Menus.CharacterCustomization;
 using static StardewValley.Minigames.TargetGame;
 
@@ -94,6 +95,7 @@ namespace StardewDruid.Monster.Boss
         public Dictionary<int, List<Rectangle>> sweepFrames;
         public int sweepInterval;
         public Vector2 sweepIncrement;
+        public int sweepThreshold;
 
         // ============================= Flight
 
@@ -126,7 +128,6 @@ namespace StardewDruid.Monster.Boss
         public int specialFloor;
         public int specialInterval;
         public SpellHandle.schemes specialScheme;
-        public SpellHandle.indicators specialIndicator;
 
         // ============================= Barrage attack
 
@@ -333,7 +334,7 @@ namespace StardewDruid.Monster.Boss
         public void BaseWalk()
         {
             
-            characterTexture = MonsterData.MonsterTexture(realName.Value);
+            characterTexture = MonsterHandle.MonsterTexture(realName.Value);
 
             walkCeiling = 3;
 
@@ -387,13 +388,15 @@ namespace StardewDruid.Monster.Boss
 
             safeThreshold = 544;
 
-            specialThreshold = 320;
+            sweepThreshold = 192;
+
+            specialThreshold = 512;
+
+            barrageThreshold = 640;
 
             specialInterval = 12;
 
             specialScheme = SpellHandle.schemes.fire;
-
-            barrageThreshold = 544;
 
             specialTexture = characterTexture;
 
@@ -675,7 +678,7 @@ namespace StardewDruid.Monster.Boss
 
             specialFrame = 0;
 
-            cooldownTimer = 0;
+            //cooldownTimer = 0;
 
         }
 
@@ -723,7 +726,7 @@ namespace StardewDruid.Monster.Boss
         public virtual void LookAtFarmer()
         {
 
-            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 20);
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 20*64);
 
             if (targets.Count > 0)
             {
@@ -1159,9 +1162,9 @@ namespace StardewDruid.Monster.Boss
                 if (sweepTimer == sweepInterval)
                 {
 
-                    List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 1);
+                    List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 128f);
 
-                    ModUtility.DamageFarmers(currentLocation, targets, (int)(damageToFarmer.Value * 1.5), this, true);
+                    ModUtility.DamageFarmers(targets, (int)(damageToFarmer.Value * 1.5), this, true);
 
                 }
                 
@@ -1192,9 +1195,6 @@ namespace StardewDruid.Monster.Boss
             {
 
                 ClearMove();
-
-                SetCooldown(2);
-
 
             }
             else
@@ -1271,8 +1271,6 @@ namespace StardewDruid.Monster.Boss
             {
 
                 ClearSpecial();
-
-                SetCooldown(2);
 
             }
             else
@@ -1382,7 +1380,7 @@ namespace StardewDruid.Monster.Boss
 
             Random random = new Random();
 
-            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 20);
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 20*64);
 
             if (targets.Count == 0)
             {
@@ -1409,50 +1407,51 @@ namespace StardewDruid.Monster.Boss
 
                     case 2:
 
-                        if (threshold > specialThreshold && threshold < barrageThreshold)
+                        if(threshold > barrageThreshold)
+                        {
+       
+                            PerformFlight();
+
+                        }
+                        else if (threshold <= barrageThreshold)
                         {
 
                             PerformBarrage();
 
                         }
-                        else if (threshold < specialThreshold)
-                        {
 
-                            PerformSpecial(farmer.Position);
-
-                        }
-                        else
-                        {
-
-                            ChooseMovement(threshold, farmer.Position);
-
-                        }
 
                         return;
 
                     case 1:
+                        
+                        if (threshold > specialThreshold)
+                        {
 
-                        if (threshold < specialThreshold)
+                            PerformFlight();
+
+                        }
+                        else if (threshold <= specialThreshold)
                         {
 
                             PerformSpecial(farmer.Position);
 
                         }
-                        else
-                        {
 
-                            ChooseMovement(threshold, farmer.Position);
-
-                        }
 
                         return;
 
                     default:
 
-                        if (PerformSweep())
+                        if(threshold <= sweepThreshold)
                         {
+                            
+                            if (PerformSweep())
+                            {
 
-                            break;
+                                break;
+
+                            }
 
                         }
 
@@ -1568,7 +1567,7 @@ namespace StardewDruid.Monster.Boss
 
             if (!sweepSet) {  return false; }
 
-            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 2);
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 192);
 
             if (targets.Count > 0)
             {
@@ -1606,6 +1605,8 @@ namespace StardewDruid.Monster.Boss
             {
                 return;
             }
+
+            SetCooldown(1);
 
             netFlightActive.Set(true);
 
@@ -1792,13 +1793,19 @@ namespace StardewDruid.Monster.Boss
 
             netSpecialActive.Set(true);
 
-            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 2, 1, DamageToFarmer);
+            SetCooldown(1);
 
-            fireball.type = SpellHandle.spells.fireball;
+            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 128, DamageToFarmer);
+
+            fireball.type = SpellHandle.spells.missile;
 
             fireball.scheme = specialScheme;
 
-            fireball.counter = -30;
+            fireball.display = displays.Impact;
+
+            fireball.threshold = specialThreshold;
+
+            fireball.boss = this;
 
             Mod.instance.spellRegister.Add(fireball);
 
@@ -1990,7 +1997,7 @@ namespace StardewDruid.Monster.Boss
 
             netSpecialActive.Set(true);
 
-            SetCooldown(4);
+            SetCooldown(2);
 
             int castIndex;
 
@@ -2016,13 +2023,13 @@ namespace StardewDruid.Monster.Boss
 
                 Vector2 impact = newVector * 64;
 
-                SpellHandle missile = new(currentLocation, impact, impact - new Vector2(0, 640), 3, 1, DamageToFarmer);
+                SpellHandle missile = new(currentLocation, impact, impact, 256, DamageToFarmer);
 
                 missile.type = SpellHandle.spells.ballistic;
 
-                missile.scheme = specialScheme;
+                missile.display = SpellHandle.displays.Impact;
 
-                missile.indicator = specialIndicator;
+                missile.scheme = specialScheme;
 
                 missile.boss = this;
 

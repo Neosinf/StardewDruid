@@ -26,7 +26,7 @@ namespace StardewDruid.Cast
 
             targetVector = Vector;
 
-            randomIndex = Mod.instance.rite.randomIndex;
+            randomIndex = Mod.instance.randomIndex;
 
             targetPlayer = Mod.instance.rite.caster;
 

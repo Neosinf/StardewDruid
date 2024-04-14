@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewDruid.Data;
 using StardewValley.TerrainFeatures;
 using System.Collections.Generic;
 
@@ -55,7 +56,7 @@ namespace StardewDruid.Cast.Weald
             targetPlayer.gainExperience(2, 2); // gain foraging experience
 
             Vector2 cursorVector = targetVector * 64 + new Vector2(32, 40);
-            ModUtility.AnimateCursor(targetLocation, cursorVector);
+            Mod.instance.iconData.CursorIndicator(targetLocation, cursorVector, IconData.cursors.weald);
 
         }
 

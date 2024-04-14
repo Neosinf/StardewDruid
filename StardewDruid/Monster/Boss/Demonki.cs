@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Event;
-using StardewDruid.Map;
+
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Network;
@@ -28,7 +28,9 @@ namespace StardewDruid.Monster.Boss
         public override void GargoyleSpecial()
         {
             base.GargoyleSpecial();
+
             specialScheme = SpellHandle.schemes.fire;
+
         }
 
     }

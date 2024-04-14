@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Event;
-using StardewDruid.Map;
+
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
@@ -285,6 +285,8 @@ namespace StardewDruid.Monster.Boss
 
             breathColour = "Red";
 
+            specialScheme = SpellHandle.schemes.fire;
+
             if (realName.Value == "BlackDragon" || realName.Value == "BlueDragon")
             {
 
@@ -295,6 +297,7 @@ namespace StardewDruid.Monster.Boss
             }
 
             breathTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", breathColour + "DragonBreath.png"));
+
 
         }
 
@@ -436,13 +439,23 @@ namespace StardewDruid.Monster.Boss
 
             List<Vector2> zero = BlastZero();
 
-            SpellHandle burn = new(currentLocation, zero[0] * 64, GetBoundingBox().Center.ToVector2(), 2, 0, DamageToFarmer * 0.2f);
+            /*SpellHandle burn = new(currentLocation, zero[0] * 64, GetBoundingBox().Center.ToVector2(), 2, 0, DamageToFarmer * 0.2f);
 
             burn.type = SpellHandle.spells.burn;
 
             burn.scheme = specialScheme;
 
             burn.boss = this;
+
+            Mod.instance.spellRegister.Add(burn);*/
+
+            SpellHandle burn = new(Game1.player, zero[0] * 64, 128, DamageToFarmer);
+
+            burn.scheme = specialScheme;
+
+            burn.boss = this;
+
+            burn.added = new() { SpellHandle.effects.burn, };
 
             Mod.instance.spellRegister.Add(burn);
 

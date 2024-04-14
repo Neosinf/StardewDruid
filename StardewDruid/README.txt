@@ -217,8 +217,22 @@ Adjust monetary rewards that are provided on quest completion.
 
 -----------------------------------------
 Maximum Damage "maximumDamage"
-Some spell effects have damage modifiers that consider player combat level, highest upgrade on Pickaxe, Axe, and applied enchantments.
-Enable to apply max damage everytime
+Some spell effects have damage modifiers that consider player skill levels, druid level (mod progress) and applied enchantments.
+Enable to apply max damage everytime. Damage equates roughly to the power of one Stars: Meteor hit.
+
+Enabled Max Damage: 250
+
+Calculated damage:
++ 5 * Combat Level    ~ 50 at end game
++ 2 * Mining Level    ~ 20 at end game
++ 2 * Foraging Level  ~ 20 at end game
++ Farming Level   ~ 10 at end game
++ Fishing Level   ~ 10 at end game
++ 3 * SD Druid Progress level ~ 120 at end
++ 25 if selected tool is enchanted
++ 25 for Fighter Profession
++ 25 for Brute Profession
+= ~250-300 at end game, with more or less depending on Levels and SD Druid Progress
 
 -----------------------------------------
 Colour Preference "colourPreference"
@@ -252,6 +266,9 @@ Disables the Map-based cast restrictions so that any rite effect can be cast any
 -----------------------------------------
 Reverse Journal "reverseJournal"
 Reverse the order in which Stardew Druid journal entries are displayed. Default: oldest to newest. Enabled: newest to oldest.
+
+Active Journal "activeJournal"
+Show active quests on the front pages of the Stardew Druid journal. Default: active entries on front page. Disabled: no change in order.
 
 -----------------------------------------
 Ostentatious Hats "partyHats"

@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Event;
-using StardewDruid.Map;
+
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Monsters;
@@ -54,14 +54,6 @@ namespace StardewDruid.Monster.Boss
                 [1] = Game1.getSourceRectForStandardTileSheet(hatsTexture, hatIndex + 12, 20, 20),
                 [3] = Game1.getSourceRectForStandardTileSheet(hatsTexture, hatIndex + 24, 20, 20),
                 [0] = Game1.getSourceRectForStandardTileSheet(hatsTexture, hatIndex + 36, 20, 20)
-            };
-
-            hatOffsets = new Dictionary<int, List<Vector2>>()
-            {
-                [2] = new() { new Vector2(0, 0.0f), new Vector2(0, 0.0f), },
-                [1] = new (){ new Vector2(6f, 0f), new Vector2(16, 0f), },
-                [3] = new (){ new Vector2(-6f, 0f), new Vector2(-24, 0f), },
-                [0] = new (){ new Vector2(0, -32f), new Vector2(0, 0.0f), },
             };
 
             /*hatOffsets = new Dictionary<int, List<Vector2>>()
@@ -138,9 +130,11 @@ namespace StardewDruid.Monster.Boss
 
             safeThreshold = 544;
 
-            specialThreshold = 320;
+            sweepThreshold = 192;
 
-            barrageThreshold = 544;
+            specialThreshold = 512;
+
+            barrageThreshold = 640;
 
             specialCeiling = 3;
 
@@ -187,13 +181,18 @@ namespace StardewDruid.Monster.Boss
             sweepTexture = characterTexture;
 
             sweepFrames = walkFrames;
+
+            specialScheme = SpellHandle.schemes.ether;
+
         }
 
         public override Rectangle GetBoundingBox()
         {
 
-            Vector2 position = Position;
-            return new Rectangle((int)position.X - 48, (int)position.Y - 32, 160, 128);
+            int netScale = netMode.Value > 5 ? netMode.Value = 1 : netMode.Value;
+
+            return new Rectangle((int)Position.X - 13 - (14 * netScale), (int)Position.Y - 32 - flightHeight - (32 * netScale), 90 + (netScale * 28), 96 + (netScale * 32));
+
         }
 
         public override void draw(SpriteBatch b, float alpha = 1f)
@@ -204,6 +203,40 @@ namespace StardewDruid.Monster.Boss
                 return;
             }
 
+
+            hatOffsets = new Dictionary<int, List<Vector2>>()
+            {
+                [2] = new() {
+                    new Vector2(18,24),
+                    new Vector2(24,32),
+                    new Vector2(30,40),
+                    new Vector2(36,48),
+                    new Vector2(42,56),
+                },
+                [1] = new(){
+                    new Vector2(36, 3f),
+                    new Vector2(48, 4f),
+                    new Vector2(60, 5f),
+                    new Vector2(72, 6f),
+                    new Vector2(84, 7f),
+                },
+                [0] = new(){
+                    new Vector2(18,-9),
+                    new Vector2(24,-12),
+                    new Vector2(30,-15),
+                    new Vector2(36,-18),
+                    new Vector2(42,-21),
+                },
+                [3] = new(){
+                    new Vector2(-6, 3f),
+                    new Vector2(-8, 4f),
+                    new Vector2(-10, 5f),
+                    new Vector2(-12, 6f),
+                    new Vector2(-14, 7f),
+                },
+
+            };
+
             Vector2 localPosition = getLocalPosition(Game1.viewport);
 
             float drawLayer = (float)StandingPixel.Y / 10000f;
@@ -212,11 +245,9 @@ namespace StardewDruid.Monster.Boss
 
             int netScale = netMode.Value > 5 ? netMode.Value = 1 : netMode.Value;
 
-            Vector2 dinoPosition = new Vector2(localPosition.X - 32f - (16 * netScale), localPosition.Y - 64f - flightHeight - (32 * netScale));
+            Vector2 dinoPosition = new Vector2(localPosition.X - 16f - (16 * netScale), localPosition.Y - 32f - flightHeight - (32 * netScale));
 
-            Vector2 hatPosition = new Vector2(localPosition.X - 8 - (10 * netScale), localPosition.Y - 64f - flightHeight - (32 * netScale));
-
-            float dinoScale = 4f + (1f * netScale);
+            float dinoScale = 3f + netScale;
 
             int hatFrame = walkFrame % 2 == 0 ? 0 : 1;
 
@@ -283,7 +314,7 @@ namespace StardewDruid.Monster.Boss
 
             b.Draw(
                 hatsTexture,
-                hatPosition + (hatOffsets[netDirection.Value][0] * (dinoScale-4)) + hatOffsets[netDirection.Value][1], //+ (hatOffsets[netDirection.Value][hatFrame] / 8 * dinoScale),
+                dinoPosition + hatOffsets[netDirection.Value][netScale], //+ (hatOffsets[netDirection.Value][hatFrame] / 8 * dinoScale),
                 hatSourceRects[netDirection.Value],
                 Color.White * 0.6f,
                 hatRotates[netDirection.Value][hatFrame],
@@ -297,13 +328,17 @@ namespace StardewDruid.Monster.Boss
         public override void PerformSpecial(Vector2 farmerPosition)
         {
 
-            specialTimer = (specialCeiling + 1) * specialInterval;
+            specialTimer = 90;
 
             netSpecialActive.Set(true);
 
-            SpellHandle beam = new(currentLocation, farmerPosition, GetBoundingBox().Center.ToVector2(), 2, 0, DamageToFarmer * 0.4f);
+            SpellHandle beam = new(currentLocation, farmerPosition, GetBoundingBox().Center.ToVector2(), 128, DamageToFarmer * 0.4f);
 
             beam.type = SpellHandle.spells.beam;
+
+            beam.scheme = specialScheme;
+
+            beam.added = new() { SpellHandle.effects.burn };
 
             beam.boss = this;
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewDruid.Data;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
@@ -10,6 +11,8 @@ namespace StardewDruid.Character
 {
     public class Actor : StardewDruid.Character.Character
     {
+        new public CharacterData.characters characterType = CharacterData.characters.disembodied;
+
         public bool drawSlave;
 
         public Actor()
@@ -17,8 +20,8 @@ namespace StardewDruid.Character
 
         }
 
-        public Actor(Vector2 position, string map, string Name)
-          : base(position, map, Name)
+        public Actor(Data.CharacterData.characters type)
+          : base(type)
         {
         }
 

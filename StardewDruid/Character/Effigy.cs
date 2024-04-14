@@ -3,8 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Weald;
+using StardewDruid.Data;
 using StardewDruid.Event;
-using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.FruitTrees;
@@ -17,11 +17,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using static StardewDruid.Data.CharacterData;
 
 namespace StardewDruid.Character
 {
     public class Effigy : StardewDruid.Character.Character
     {
+        new public CharacterData.characters characterType = CharacterData.characters.effigy;
+
         public List<Vector2> ritesDone;
         public int riteIcon;
         public bool showIcon;
@@ -35,8 +38,8 @@ namespace StardewDruid.Character
         {
         }
 
-        public Effigy(Vector2 position, string map)
-          : base(position, map, nameof(Effigy))
+        public Effigy(characters type)
+          : base(type)
         {
 
             
@@ -53,7 +56,7 @@ namespace StardewDruid.Character
 
             LoadBase();
 
-            characterTexture = CharacterData.CharacterTexture(Name);
+            characterTexture = CharacterData.CharacterTexture(characterType);
 
             haltFrames = FrameSeries(32, 32, 0, 0, 1);
 
@@ -64,8 +67,6 @@ namespace StardewDruid.Character
             walkRight = 4;
 
             specialScheme = SpellHandle.schemes.stars;
-
-            specialIndicator = SpellHandle.indicators.stars;
 
             idleFrames = new()
             {
@@ -261,7 +262,9 @@ namespace StardewDruid.Character
 
             ritesDone = new List<Vector2>();
 
-            iconsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Icons.png"));
+            //iconsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Icons.png"));
+
+            iconsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "EffigyIcon.png"));
 
             loadedOut = true;
 
@@ -298,7 +301,6 @@ namespace StardewDruid.Character
             } else if (netHaltActive.Value)
             {
 
-
                 b.Draw(
                     characterTexture,
                     localPosition - new Vector2(32, 64f),
@@ -307,7 +309,7 @@ namespace StardewDruid.Character
                     0f,
                     Vector2.Zero,
                     4f,
-                    flip || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                     drawLayer
                 );
 
@@ -323,7 +325,7 @@ namespace StardewDruid.Character
                      0f,
                      Vector2.Zero,
                      4f,
-                     flip || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                     (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                      drawLayer
                  );
 
@@ -335,7 +337,7 @@ namespace StardewDruid.Character
                      0f,
                      Vector2.Zero,
                      4f,
-                     flip || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                     (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                      drawLayer
                  );
 
@@ -351,7 +353,7 @@ namespace StardewDruid.Character
                     0.0f,
                     Vector2.Zero,
                     4f,
-                    flip || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0,
+                    (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0,
                     drawLayer
                 );
 
@@ -367,7 +369,7 @@ namespace StardewDruid.Character
                     0f,
                     Vector2.Zero,
                     4f,
-                    flip || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                     drawLayer
                 );
 
@@ -375,7 +377,7 @@ namespace StardewDruid.Character
             else
             {
 
-                if (TightPosition() && currentLocation.IsOutdoors && (idleTimer > 0))
+                if (TightPosition() && currentLocation.IsOutdoors && (idleTimer > 0) && !netSceneActive.Value)
                 {
 
                     DrawStandby(b, localPosition, drawLayer);
@@ -392,7 +394,7 @@ namespace StardewDruid.Character
                     0f,
                     Vector2.Zero,
                     4f,
-                    flip || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                     drawLayer
                 );
 
@@ -426,7 +428,7 @@ namespace StardewDruid.Character
             
             }
 
-            int riteIcon;
+            /*int riteIcon;
 
             switch (Mod.instance.CurrentBlessing())
             {
@@ -447,7 +449,7 @@ namespace StardewDruid.Character
                     riteIcon = 1;
                     break;
 
-            }
+            }*/
 
             Vector2 offset = new(21, -16);
 
@@ -460,11 +462,12 @@ namespace StardewDruid.Character
             b.Draw(
                 iconsTexture,
                 localPosition + offset,
-                new Rectangle((riteIcon % 4) * 8, (riteIcon / 4) * 8, 8, 8),
+                //new Rectangle((riteIcon % 4) * 8, (riteIcon / 4) * 8, 8, 8),
+                new(0,0,12,12),
                 Color.White*0.65f,
                 0f,
                 new Vector2(0, 0),
-                3f,
+                2f,
                 SpriteEffects.None,
                 drawLayer + 0.0001f
             );
@@ -484,7 +487,7 @@ namespace StardewDruid.Character
                 0f,
                 Vector2.Zero,
                 4f,
-                flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                netDirection.Value == 1 || netAlternative.Value == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 drawLayer
             );
 
@@ -496,40 +499,11 @@ namespace StardewDruid.Character
                 0f,
                 Vector2.Zero,
                 4f,
-                flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                netDirection.Value == 1 || netAlternative.Value == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 drawLayer - 0.001f
             );
 
             return;
-
-        }
-
-        public override bool EngageDialogue()
-        {
-
-            if (!Mod.instance.dialogue.ContainsKey(nameof(Effigy)))
-            {
-
-                Dictionary<string, StardewDruid.Dialogue.Dialogue> dialogue = Mod.instance.dialogue;
-
-                StardewDruid.Dialogue.Effigy effigy = new StardewDruid.Dialogue.Effigy();
-
-                effigy.npc = this;
-
-                dialogue[nameof(Effigy)] = effigy;
-
-            }
-
-            if (netSceneActive.Value && Mod.instance.dialogue[nameof(Effigy)].specialDialogue.Count == 0)
-            {
-
-                return false;
-
-            }
-
-            Mod.instance.dialogue[nameof(Effigy)].DialogueApproach();
-
-            return true;
 
         }
 
@@ -665,9 +639,9 @@ namespace StardewDruid.Character
                 if (currentLocation.Name == Game1.player.currentLocation.Name && Utility.isOnScreen(Position, 128))
                 {
 
-                    ModUtility.AnimateDecoration(currentLocation, Position, "weald", 1f);
+                    Mod.instance.iconData.DecorativeIndicator(currentLocation, Position, IconData.decorations.weald, 1f);
 
-                    Game1.player.currentLocation.playSound("discoverMineral", Position, 1000);
+                    Game1.player.currentLocation.playSound("discoverMineral", null, 1000);
 
                 }
 
@@ -696,27 +670,42 @@ namespace StardewDruid.Character
             for (int level = 1; level < (Mod.instance.PowerLevel + 2); level++)
             {
 
-                foreach (Vector2 tilesWithinRadius in ModUtility.GetTilesWithinRadius(currentLocation, vector2, level))
+                foreach (Vector2 tileWithinRadius in ModUtility.GetTilesWithinRadius(currentLocation, vector2, level))
                 {
 
-                    if (Mod.instance.targetCasts[currentLocation.Name].ContainsKey(tilesWithinRadius))
+                    if (Mod.instance.targetCasts[currentLocation.Name].ContainsKey(tileWithinRadius))
                     {
 
                         continue;
 
                     }
 
-                    if (currentLocation.terrainFeatures.ContainsKey(tilesWithinRadius) && currentLocation.terrainFeatures[tilesWithinRadius].GetType().Name.ToString() == "HoeDirt")
+                    if (currentLocation.terrainFeatures.ContainsKey(tileWithinRadius))
                     {
-                        StardewDruid.Cast.Weald.Crop cropHustle = new(tilesWithinRadius, Reseed, true);
 
-                        cropHustle.targetLocation = currentLocation;
+                        if (currentLocation.terrainFeatures[tileWithinRadius] is StardewValley.TerrainFeatures.HoeDirt hoeDirtFeature)
+                        {
 
-                        casts.Add(cropHustle);
+                            if (hoeDirtFeature.crop != null)
+                            {
 
-                        Mod.instance.targetCasts[currentLocation.Name][tilesWithinRadius] = "Crop";
+                                StardewDruid.Cast.Weald.Crop cropHustle = new(tileWithinRadius, Reseed, true);
+
+                                cropHustle.targetLocation = currentLocation;
+
+                                casts.Add(cropHustle);
+
+                                Mod.instance.targetCasts[currentLocation.Name][tileWithinRadius] = "Crop" + hoeDirtFeature.crop.indexOfHarvest.Value.ToString();
+
+                            }
+
+                        }
+
+
                     }
+
                 }
+
             }
 
             string location = currentLocation.Name;

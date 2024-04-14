@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using StardewDruid.Map;
+using StardewDruid.Data;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;

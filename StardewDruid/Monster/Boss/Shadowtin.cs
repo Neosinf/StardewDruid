@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewDruid.Data;
 using StardewDruid.Event;
-using StardewDruid.Map;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Network;
@@ -62,7 +62,7 @@ namespace StardewDruid.Monster.Boss
         public virtual void ShadowWalk()
         {
             
-            characterTexture = MonsterData.MonsterTexture(realName.Value);
+            characterTexture = MonsterHandle.MonsterTexture(realName.Value);
 
             walkCeiling = 5;
 
@@ -260,6 +260,8 @@ namespace StardewDruid.Monster.Boss
                     new Rectangle(192, 64, 64, 64),
                 },
             };
+
+            specialScheme = SpellHandle.schemes.fire;
 
         }
 

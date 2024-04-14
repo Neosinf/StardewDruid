@@ -2,8 +2,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using StardewDruid.Data;
 using StardewDruid.Event;
-using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
@@ -89,7 +89,7 @@ namespace StardewDruid.Monster.Boss
         public void GargoyleWalk()
         {
 
-            characterTexture = MonsterData.MonsterTexture(realName.Value);
+            characterTexture = MonsterHandle.MonsterTexture(realName.Value);
 
             walkCeiling = 7;
 
@@ -275,8 +275,6 @@ namespace StardewDruid.Monster.Boss
             specialFrames = idleFrames;
 
             specialScheme = SpellHandle.schemes.ether;
-
-            specialIndicator = SpellHandle.indicators.target;
 
             sweepSet = false;
 

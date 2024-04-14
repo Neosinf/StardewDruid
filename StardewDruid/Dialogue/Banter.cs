@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using StardewDruid.Map;
+
 using StardewValley;
 using StardewValley.Extensions;
 using StardewValley.Menus;

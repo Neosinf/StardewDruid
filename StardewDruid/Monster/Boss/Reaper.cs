@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
+using StardewDruid.Data;
 using StardewDruid.Event;
-using StardewDruid.Map;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using static StardewDruid.Event.SpellHandle;
 
 namespace StardewDruid.Monster.Boss
 {
@@ -168,13 +169,17 @@ namespace StardewDruid.Monster.Boss
 
                 Vector2 zero = BlastZero(2)[0];
 
-                SpellHandle fireball = new(currentLocation, zero * 64, GetBoundingBox().Center.ToVector2(), 2, 1, DamageToFarmer);
+                SpellHandle fireball = new(currentLocation, zero * 64, GetBoundingBox().Center.ToVector2(), 128, DamageToFarmer);
 
-                fireball.type = SpellHandle.spells.fireball;
+                fireball.type = SpellHandle.spells.missile;
 
                 fireball.scheme = SpellHandle.schemes.death;
 
-                fireball.indicator = SpellHandle.indicators.death;
+                fireball.indicator = IconData.cursors.death;
+
+                fireball.display = displays.Death;
+
+                //fireball.sound = sounds.shadowDie;
 
                 fireball.boss = this;
 

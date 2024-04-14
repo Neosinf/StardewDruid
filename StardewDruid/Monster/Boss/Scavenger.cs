@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewDruid.Data;
 using StardewDruid.Event;
-using StardewDruid.Map;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Network;
@@ -45,7 +45,7 @@ namespace StardewDruid.Monster.Boss
         public void CatWalk()
         {
 
-            characterTexture = MonsterData.MonsterTexture(realName.Value);
+            characterTexture = MonsterHandle.MonsterTexture(realName.Value);
 
             walkCeiling = 5;
 
@@ -170,6 +170,9 @@ namespace StardewDruid.Monster.Boss
             sweepTexture = characterTexture;
 
             sweepFrames = walkFrames;
+
+            specialScheme = SpellHandle.schemes.ether;
+
         }
 
         public override void draw(SpriteBatch b, float alpha = 1f)
@@ -227,9 +230,11 @@ namespace StardewDruid.Monster.Boss
 
             netSpecialActive.Set(true);
 
-            SpellHandle beam = new(currentLocation, farmerPosition, GetBoundingBox().Center.ToVector2(), 2, 0, DamageToFarmer * 0.4f);
+            SpellHandle beam = new(currentLocation, farmerPosition, GetBoundingBox().Center.ToVector2(), 128, DamageToFarmer * 0.4f);
 
             beam.type = SpellHandle.spells.beam;
+
+            beam.scheme = SpellHandle.schemes.ether;
 
             beam.boss = this;
 

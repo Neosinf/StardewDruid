@@ -1,9 +1,5 @@
 ﻿using GenericModConfigMenu;
-using StardewDruid.Cast.Fates;
-using StardewDruid.Map;
-using StardewValley;
-using System.Runtime.Intrinsics.X86;
-using System;
+using StardewDruid.Data;
 
 namespace StardewDruid
 {
@@ -55,10 +51,18 @@ namespace StardewDruid
 
             configMenu.AddKeybindList(
                 mod: mod.ModManifest,
-                name: () => "Journal (SD Druid Only)",
-                tooltip: () => "Keybind assignment to open the Stardew Druid journal while in world. The rite keybind can be used to open the journal from the game questlog.",
+                name: () => "Quests Journal (SD Druid Only)",
+                tooltip: () => "Keybind assignment to open the Stardew Druid effects journal while in world. The rite keybind can be used to open the journal from the game questlog.",
                 getValue: () => Config.journalButtons,
                 setValue: value => Config.journalButtons = value
+            );
+
+            configMenu.AddKeybindList(
+                mod: mod.ModManifest,
+                name: () => "Effects Journal (SD Druid Only)",
+                tooltip: () => "Keybind assignment to open the Stardew Druid effects journal while in world.",
+                getValue: () => Config.effectsButtons,
+                setValue: value => Config.effectsButtons = value
             );
 
             configMenu.AddBoolOption(
@@ -85,7 +89,7 @@ namespace StardewDruid
                 setValue: value => Config.slotFreedom = value
             );
 
-            configMenu.AddBoolOption(
+            /*configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => "Auto Progress",
                 tooltip: () => "Automatically progress to the next stage of the questline after loading or starting a new day.",
@@ -98,11 +102,11 @@ namespace StardewDruid
                 name: () => "Set Progress",
                 tooltip: () => "Use to adjust progress level on game load. -1 is no change. Note that adjustments may clear or miss levels of progress.",
                 min: -1,
-                max: QuestData.MaxProgress(),
+                max: Mod.instance.questHandle.quests[eventId]Old.MaxProgress(),
                 interval: 1,
                 getValue: () => Config.newProgress,
                 setValue: value => Config.newProgress = value
-            );
+            );*/
 
             string[] textOption = { "easy", "medium", "hard", };
 
@@ -145,7 +149,7 @@ namespace StardewDruid
                 setValue: value => Config.maxDamage = value
             );
 
-            StardewDruid.CustomData Customisation = mod.Helper.Data.ReadJsonFile<CustomData>("customData.json");
+            CustomData Customisation = mod.Helper.Data.ReadJsonFile<CustomData>("customData.json");
 
             if (Customisation.colourPreferences == null || Customisation.colourPreferences.Count == 0) { 
                 
@@ -216,6 +220,14 @@ namespace StardewDruid
                 tooltip: () => "Reverse the order in which Stardew Druid journal entries are displayed. Default: oldest to newest. Enabled: newest to oldest.",
                 getValue: () => Config.reverseJournal,
                 setValue: value => Config.reverseJournal = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: mod.ModManifest,
+                name: () => "Active Journal",
+                tooltip: () => "Show active quests on the front pages of the Stardew Druid journal. Default: active entries on front page. Disabled: no change in order.",
+                getValue: () => Config.activeJournal,
+                setValue: value => Config.activeJournal = value
             );
 
             configMenu.AddBoolOption(

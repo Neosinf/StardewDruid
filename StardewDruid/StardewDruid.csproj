@@ -103,6 +103,9 @@
     <None Update="Images\EffigyDash.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Images\EffigyIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Images\Fates.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

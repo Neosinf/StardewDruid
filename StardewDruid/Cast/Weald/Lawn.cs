@@ -1,7 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
-using StardewDruid.Map;
+using StardewDruid.Data;
+using StardewDruid.Event.Scene;
+using StardewDruid.Journal;
 using StardewValley;
+using StardewValley.Locations;
 using System.Collections.Generic;
+using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -28,11 +32,11 @@ namespace StardewDruid.Cast.Weald
 
             bool forgotTrees = Mod.instance.EffectDisabled("Trees");
 
-            Dictionary<string, List<Vector2>> neighbourList = ModUtility.NeighbourCheck(targetLocation, targetVector);
+            Dictionary<string, List<Vector2>> neighbourList = ModUtility.NeighbourCheck(targetLocation, targetVector, 1, 0);
 
             int probability = randomIndex.Next(5);
 
-            if (probability == 0 && Mod.instance.rite.spawnIndex["flower"] && neighbourList.Count == 0 && Mod.instance.rite.castTask.ContainsKey("masterForage")) // 2/120 flower
+            if (probability == 0 && Mod.instance.rite.spawnIndex["flower"] && neighbourList.Count == 0 && Mod.instance.questHandle.IsComplete(QuestHandle.spawnLesson))
             {
 
                 int randomCrop = SpawnData.RandomFlower();
@@ -43,20 +47,31 @@ namespace StardewDruid.Cast.Weald
 
                 newFlower.IsSpawnedObject = true;
 
-                targetLocation.dropObject(
+                newFlower.Location = targetLocation;
+
+                newFlower.TileLocation = targetVector;
+
+                if (targetLocation.objects.TryAdd(targetVector, newFlower))
+                {
+
+                    castFire = true;
+
+                    Vector2 cursorVector = targetVector * 64 + new Vector2(0, 8);
+                    Mod.instance.iconData.CursorIndicator(targetLocation, cursorVector, IconData.cursors.weald);
+
+                }
+
+                /*targetLocation.dropObject(
                     newFlower,
                     new Vector2(targetVector.X * 64, targetVector.Y * 64),
                     Game1.viewport,
                     initialPlacement: true
-                );
+                );*/
 
-                castFire = true;
 
-                Vector2 cursorVector = targetVector * 64 + new Vector2(0, 8);
-                ModUtility.AnimateCursor(targetLocation, cursorVector);
 
             }
-            else if (probability == 1 && Mod.instance.rite.spawnIndex["forage"] && neighbourList.Count == 0) // 2/120 forage
+            else if (probability == 1 && Mod.instance.rite.spawnIndex["forage"] && neighbourList.Count == 0)
             {
 
                 int randomCrop = SpawnData.RandomForage(targetLocation);
@@ -67,24 +82,34 @@ namespace StardewDruid.Cast.Weald
 
                 newForage.IsSpawnedObject = true;
 
-                targetLocation.dropObject(
+                newForage.Location = targetLocation;
+
+                newForage.TileLocation = targetVector;
+
+                if (targetLocation.objects.TryAdd(targetVector, newForage))
+                {
+
+                    castFire = true;
+
+                    Vector2 cursorVector = targetVector * 64 + new Vector2(0, 8);
+
+                    Mod.instance.iconData.CursorIndicator(targetLocation, cursorVector, IconData.cursors.weald);
+
+                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.spawnLesson))
+                    {
+
+                        Mod.instance.questHandle.UpdateTask(QuestHandle.spawnLesson, 1);
+
+                    }
+
+                }
+
+                /*targetLocation.dropObject(
                     newForage,
                     new Vector2(targetVector.X * 64, targetVector.Y * 64),
                     Game1.viewport,
                     initialPlacement: true
-                );
-
-                castFire = true;
-
-                if (!Mod.instance.rite.castTask.ContainsKey("masterForage"))
-                {
-
-                    Mod.instance.UpdateTask("lessonForage", 1);
-
-                }
-
-                Vector2 cursorVector = targetVector * 64 + new Vector2(0,8);
-                ModUtility.AnimateCursor(targetLocation, cursorVector);
+                );*/
 
             }
             else if (probability == 2)
@@ -109,13 +134,17 @@ namespace StardewDruid.Cast.Weald
 
                         castFire = true;
 
+                        Vector2 cursorVector = targetVector * 64 + new Vector2(0, 8);
+
+                        Mod.instance.iconData.CursorIndicator(targetLocation, cursorVector, IconData.cursors.weald);
+
                     }
 
                 }
 
 
             }
-            else if (Mod.instance.rite.spawnIndex["trees"] && neighbourList.Count == 0 && !forgotTrees) // 10/120 tree
+            else if (Mod.instance.rite.spawnIndex["trees"] && neighbourList.Count == 0 && !forgotTrees)
             {
 
                 bool treeSpawn = false;

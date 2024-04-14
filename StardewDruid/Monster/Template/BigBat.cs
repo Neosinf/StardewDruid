@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
-using StardewDruid.Map;
+using StardewDruid.Data;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Network;

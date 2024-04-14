@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewDruid.Data;
 using StardewValley;
 using System;
 using System.Collections.Generic;
@@ -53,14 +54,14 @@ namespace StardewDruid.Cast.Weald
                         continue;
                     }
 
-                    if(ModUtility.NeighbourCheck(targetLocation, surrounding[i],0).Count > 0)
+                    if(ModUtility.NeighbourCheck(targetLocation, surrounding[i],0,0).Count > 0)
                     {
                         continue;
                     }
 
                     StardewValley.TerrainFeatures.Grass grassFeature = new(1, 4);
 
-                    targetLocation.terrainFeatures.Add(surrounding[i], grassFeature);
+                    //targetLocation.terrainFeatures.Add(surrounding[i], grassFeature);
 
                     Microsoft.Xna.Framework.Rectangle tileRectangle = new((int)surrounding[i].X * 64 + 1, (int)surrounding[i].Y * 64 + 1, 62, 62);
 
@@ -126,7 +127,7 @@ namespace StardewDruid.Cast.Weald
 
 
             Vector2 cursorVector = targetVector * 64 + new Vector2(0, 8);
-            ModUtility.AnimateCursor(targetLocation, cursorVector);
+            Mod.instance.iconData.CursorIndicator(targetLocation, cursorVector, IconData.cursors.weald);
         }
 
     }

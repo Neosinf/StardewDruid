@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using StardewDruid.Map;
+using StardewDruid.Data;
+using StardewDruid.Journal;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using System;
@@ -32,11 +33,12 @@ namespace StardewDruid.Cast.Weald
                 return;
          
             }
-         
-            if (!Mod.instance.rite.castTask.ContainsKey("masterCreature"))
+
+
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.bushLesson))
             {
 
-                Mod.instance.UpdateTask("lessonCreature", 1);
+                Mod.instance.questHandle.UpdateTask(QuestHandle.bushLesson, 1);
 
             }
 
