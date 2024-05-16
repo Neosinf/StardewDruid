@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
-using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -22,7 +22,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Timers;
-using static StardewDruid.Event.SpellHandle;
+using static StardewDruid.Cast.SpellHandle;
 using static StardewValley.Minigames.TargetGame;
 
 namespace StardewDruid.Character
@@ -43,7 +43,6 @@ namespace StardewDruid.Character
 
         public NetInt netDirection = new NetInt(0);
         public NetInt netAlternative = new NetInt(0);
-        public NetBool netFollowActive = new NetBool(false);
         public NetBool netWorkActive = new NetBool(false);
 
         public List<Vector2> roamVectors = new();
@@ -83,15 +82,19 @@ namespace StardewDruid.Character
 
         public Dictionary<int, List<Rectangle>> walkFrames = new();
         public Dictionary<int, List<Rectangle>> dashFrames = new();
+        public Dictionary<int, List<Rectangle>> smashFrames = new();
         public Dictionary<int, List<Rectangle>> idleFrames = new();
         public Dictionary<int, List<Rectangle>> haltFrames = new();
+        public Dictionary<int, List<Rectangle>> sweepFrames = new();
         public Dictionary<int, List<Rectangle>> specialFrames = new();
         public Dictionary<int, List<Rectangle>> workFrames = new();
+        public Dictionary<int, List<Rectangle>> alertFrames = new();
 
         public NetBool netHaltActive = new NetBool(false);
         public NetBool netStandbyActive = new NetBool(false);
         public int idleTimer;
         public int stationaryTimer;
+        public bool onAlert;
 
         public int collidePriority;
         public int collideTimer;
@@ -100,21 +103,26 @@ namespace StardewDruid.Character
         public int moveFrame;
         public bool moveRetreat;
         public bool walkSide;
-        public int walkLeft;
-        public int walkRight;
         public int lookTimer;
         public int followTimer;
         public int attentionTimer;
 
         public NetBool netDashActive = new NetBool(false);
         public int dashFrame;
-        public int dashFloor;
-        public int dashCeiling;
-        public bool dashSweep;
+        public int dashInterval;
+        public int dashPeak;
         public int dashHeight;
+        public NetInt netDashProgress = new NetInt(0);
 
-        public NetBool netSweepActive = new(false);
-        public Dictionary<int, List<Rectangle>> sweepFrames = new();
+        public Vector2 pathFrom;
+        public float pathTotal;
+        public float pathProgress;
+        public Vector2 pathIncrement;
+        public int pathSegment;
+
+        public NetBool netSmashActive = new NetBool(false);
+
+        public NetBool netSweepActive = new NetBool(false);
         public int sweepTimer;
         public int sweepFrame;
         public int sweepInterval;
@@ -125,7 +133,7 @@ namespace StardewDruid.Character
         public int specialCeiling;
         public int specialFloor;
         public int specialFrame;
-        public SpellHandle.schemes specialScheme;
+        public IconData.schemes specialScheme;
         public Vector2 workVector;
 
         public int cooldownTimer;
@@ -135,11 +143,8 @@ namespace StardewDruid.Character
 
         public int moveDirection;
         public int altDirection;
+        public int trackDashProgress;
         public Vector2 setPosition = Vector2.Zero;
-
-        public string previousLocation;
-        public Vector2 previousPosition = Vector2.Zero;
-        public mode previousMode;
         
         public Character()
         {
@@ -151,7 +156,7 @@ namespace StardewDruid.Character
                 CharacterData.CharacterStart(CharacterData.locations.home),
                 CharacterData.CharacterLocation(CharacterData.locations.home),
                 2, 
-                CharacterData.CharacterNames()[type], 
+                type.ToString(), 
                 CharacterData.CharacterPortrait(type), 
                 false
                 )
@@ -168,7 +173,7 @@ namespace StardewDruid.Character
             SettleOccupied();
 
             LoadOut();
-        
+
         }
 
         protected override void initNetFields()
@@ -176,18 +181,23 @@ namespace StardewDruid.Character
             base.initNetFields();
             NetFields.AddField(netDirection, "netDirection");
             NetFields.AddField(netAlternative, "netAlternative");
-            NetFields.AddField(netSpecialActive, "netSpecialActive");
-            NetFields.AddField(netDashActive, "netDashActive");
             NetFields.AddField(netHaltActive, "netHaltActive");
-            NetFields.AddField(netFollowActive, "netFollowActive");
             NetFields.AddField(netStandbyActive, "netStandbyActive");
             NetFields.AddField(netSceneActive, "netSceneActive");
+            NetFields.AddField(netDashActive, "netDashActive");
+            NetFields.AddField(netDashProgress, "netDashProgress");
+            NetFields.AddField(netSmashActive, "netSmashActive");
             NetFields.AddField(netSweepActive, "netSweepActive");
+            NetFields.AddField(netSpecialActive, "netSpecialActive");
             NetFields.AddField(netWorkActive, "netWorkActive");
         }
 
-        public virtual void LoadBase()
+        public virtual void LoadOut()
         {
+
+            characterTexture = CharacterData.CharacterTexture(characterType);
+
+            modeActive = mode.random;
 
             collidePriority = new Random().Next(20);
 
@@ -195,17 +205,66 @@ namespace StardewDruid.Character
 
             moveInterval = 12;
 
-            modeActive = mode.random;
+            haltFrames = FrameSeries(32, 32, 0, 0, 1);
 
-            walkLeft = 1;
+            walkFrames = FrameSeries(32, 32, 0, 128, 6, haltFrames);
 
-            walkRight = 3;
+            idleFrames = new()
+            {
+                [0] = new()
+                {
+                    new Rectangle(128, 0, 32, 32),
+                    new Rectangle(160, 0, 32, 32),
+                },
+                [1] = new()
+                {
+                    new Rectangle(128, 0, 32, 32),
+                    new Rectangle(160, 0, 32, 32),
+                },
+                [2] = new()
+                {
+                    new Rectangle(128, 0, 32, 32),
+                    new Rectangle(160, 0, 32, 32),
+                },
+                [3] = new()
+                {
+                    new Rectangle(128, 0, 32, 32),
+                    new Rectangle(160, 0, 32, 32),
+                },
+            };
 
-            dashFloor = 1;
+            specialFrames = new()
+            {
+                [0] = new()
+                {
 
-            dashCeiling = 4;
+                    new(64, 64, 32, 32),
+                    new(96, 64, 32, 32),
 
-            sweepInterval = 7;
+                },
+                [1] = new()
+                {
+
+                    new(64, 32, 32, 32),
+                    new(96, 32, 32, 32),
+
+                },
+                [2] = new()
+                {
+
+                    new(64, 0, 32, 32),
+                    new(96, 0, 32, 32),
+
+                },
+                [3] = new()
+                {
+
+                    new(64, 96, 32, 32),
+                    new(96, 96, 32, 32),
+
+                },
+
+            };
 
             specialInterval = 30;
 
@@ -213,30 +272,183 @@ namespace StardewDruid.Character
 
             specialFloor = 1;
 
-            cooldownInterval = 180;
+            specialScheme = IconData.schemes.stars;
 
-            specialScheme = SpellHandle.schemes.fire;
+            cooldownInterval = 300;
 
-        }
+            specialScheme = IconData.schemes.fire;
 
-        public virtual void LoadOut()
-        {
+            workFrames = specialFrames;
 
-            if(characterType == CharacterData.characters.none)
+            dashPeak = 128;
+
+            dashInterval = 9;
+
+            dashFrames = new()
             {
-                characterType = CharacterData.CharacterTypes()[Name];
+                [0] = new()
+                {
+                    new(0, 192, 32, 32),
+                },
+                [1] = new()
+                {
+                    new(0, 160, 32, 32),
+                },
+                [2] = new()
+                {
+                    new(0, 128, 32, 32),
+                },
+                [3] = new()
+                {
+                    new(0, 224, 32, 32),
+                },
+                [4] = new()
+                {
+                    new(32, 64, 32, 32),
+                },
+                [5] = new()
+                {
+                    new(32, 32, 32, 32),
+                },
+                [6] = new()
+                {
+                    new(32, 0, 32, 32),
+                },
+                [7] = new()
+                {
+                    new(32, 96, 32, 32),
+                },
+                [8] = new()
+                {
+                    new(96,192,32,32),
+                    new(128,192,32,32),
+                    new(160,192,32,32),
+                },
+                [9] = new()
+                {
+                    new(96,160,32,32),
+                    new(128,160,32,32),
+                    new(160,160,32,32),
+                },
+                [10] = new()
+                {
+                    new(96,128,32,32),
+                    new(128,128,32,32),
+                    new(160,128,32,32),
+                },
+                [11] = new()
+                {
+                    new(96,224,32,32),
+                    new(128,224,32,32),
+                    new(160,224,32,32),
+                },
+            };
 
-            }
+            smashFrames = new()
+            {
+                [0] = new()
+                {
+                    new(0, 320, 32, 32),new(32, 320, 32, 32),
+                },
+                [1] = new()
+                {
+                    new(0, 288, 32, 32),new(32, 288, 32, 32),
+                },
+                [2] = new()
+                {
+                    new(0, 256, 32, 32),new(32, 256, 32, 32),
+                },
+                [3] = new()
+                {
+                    new(0, 288, 32, 32),new(32, 288, 32, 32),
+                },
+                [4] = new()
+                {
+                    new(64, 320, 32, 32),
+                },
+                [5] = new()
+                {
+                    new(64, 288, 32, 32),
+                },
+                [6] = new()
+                {
+                    new(64, 256, 32, 32),
+                },
+                [7] = new()
+                {
+                    new(64, 288, 32, 32),
+                },
+                [8] = new()
+                {
+                    new(96, 320, 32, 32),
+                },
+                [9] = new()
+                {
+                    new(96, 288, 32, 32),
+                },
+                [10] = new()
+                {
+                    new(96, 256, 32, 32),
+                },
+                [11] = new()
+                {
+                    new(96, 288, 32, 32),
+                },
+            };
 
-            LoadBase();
+            sweepFrames = new()
+            {
+                [0] = new()
+                {
+                    new Rectangle(192, 288, 32, 32),
+                    new Rectangle(224, 288, 32, 32),
+                    new Rectangle(128, 288, 32, 32),
+                    new Rectangle(160, 288, 32, 32),
+                },
+                [1] = new()
+                {
+                    new Rectangle(128, 256, 32, 32),
+                    new Rectangle(160, 256, 32, 32),
+                    new Rectangle(192, 256, 32, 32),
+                    new Rectangle(224, 256, 32, 32),
+                },
+                [2] = new()
+                {
+                    new Rectangle(128, 288, 32, 32),
+                    new Rectangle(160, 288, 32, 32),
+                    new Rectangle(192, 288, 32, 32),
+                    new Rectangle(224, 288, 32, 32),
+                },
+                [3] = new()
+                {
+                    new Rectangle(128, 256, 32, 32),
+                    new Rectangle(160, 256, 32, 32),
+                    new Rectangle(192, 256, 32, 32),
+                    new Rectangle(224, 256, 32, 32),
+                },
+            };
 
-            characterTexture = CharacterData.CharacterTexture(characterType);
+            sweepInterval = 9;
 
-            haltFrames = FrameSeries(16, 32, 0, 0, 1);
-
-            walkFrames = FrameSeries(16, 32, 0, 0, 4);
-
-            dashFrames = walkFrames;
+            alertFrames = new()
+            {
+                [0] = new()
+                {
+                    new Rectangle(192, 320, 32, 32),
+                },
+                [1] = new()
+                {
+                    new Rectangle(160, 320, 32, 32),
+                },
+                [2] = new()
+                {
+                    new Rectangle(128, 320, 32, 32),
+                },
+                [3] = new()
+                {
+                    new Rectangle(224, 320, 32, 32),
+                },
+            };
 
             loadedOut = true;
 
@@ -291,12 +503,179 @@ namespace StardewDruid.Character
 
             if (IsInvisible || !Utility.isOnScreen(Position, 128))
             {
-                
+                return;
+            }
+
+            if (characterTexture == null)
+            {
+
                 return;
 
             }
 
+            Vector2 localPosition = getLocalPosition(Game1.viewport);
+
+            float drawLayer = (float)StandingPixel.Y / 10000f;
+
             DrawEmote(b);
+
+            if (netStandbyActive.Value)
+            {
+
+                DrawStandby(b, localPosition, drawLayer);
+
+                return;
+
+            }
+            else if (netHaltActive.Value)
+            {
+
+                b.Draw(
+                    characterTexture,
+                    localPosition - new Vector2(32, 64f),
+                    haltFrames[netDirection.Value][0],
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    4f,
+                    (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    drawLayer
+                );
+
+            }
+            else if (netSweepActive.Value)
+            {
+
+                Vector2 sweepVector = localPosition - new Vector2(32, 64f);
+
+                b.Draw(
+                     characterTexture,
+                     localPosition - new Vector2(32, 64f),
+                     sweepFrames[netDirection.Value][sweepFrame],
+                     Color.White,
+                     0f,
+                     Vector2.Zero,
+                     4f,
+                     (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                     drawLayer
+                 );
+
+                DrawWeapon(b, sweepVector, drawLayer, sweepFrames[netDirection.Value][sweepFrame]);
+
+            }
+            else if (netSpecialActive.Value)
+            {
+
+                b.Draw(
+                    characterTexture,
+                    localPosition - new Vector2(32, 64f),
+                    specialFrames[netDirection.Value][specialFrame],
+                    Color.White,
+                    0.0f,
+                    Vector2.Zero,
+                    4f,
+                    (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0,
+                    drawLayer
+                );
+
+            }
+            else if (netDashActive.Value)
+            {
+
+                int dashSeries = netDirection.Value + (netDashProgress.Value * 4);
+
+                int dashSetto = Math.Min(dashFrame, (dashFrames[dashSeries].Count - 1));
+
+                b.Draw(
+                    characterTexture,
+                    localPosition - new Vector2(32, 64f + dashHeight),
+                    dashFrames[dashSeries][dashSetto],
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    4f,
+                    (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    drawLayer
+                );
+
+            }
+            else if (netSmashActive.Value)
+            {
+                int smashSeries = netDirection.Value + (netDashProgress.Value * 4);
+
+                int smashSetto = Math.Min(dashFrame, (smashFrames[smashSeries].Count - 1));
+
+                Vector2 smashVector = localPosition - new Vector2(32, 64f + dashHeight);
+
+                b.Draw(
+                    characterTexture,
+                    smashVector,
+                    smashFrames[smashSeries][smashSetto],
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    4f,
+                    (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    drawLayer
+                );
+
+                DrawWeapon(b, smashVector, drawLayer, smashFrames[smashSeries][smashSetto]);
+
+            }
+            else
+            {
+
+                /*if (TightPosition() && currentLocation.IsOutdoors && (idleTimer > 0) && !netSceneActive.Value && (Game1.currentGameTime.TotalGameTime.TotalMinutes % 20 > 10))
+                {
+
+                    DrawStandby(b, localPosition, drawLayer);
+
+                    return;
+
+                }*/
+
+                if (onAlert)
+                {
+
+                    Vector2 alertVector = localPosition - new Vector2(32, 64f);
+
+                    Rectangle alertFrame = alertFrames[netDirection.Value][0];
+
+                    b.Draw(
+                         characterTexture,
+                         alertVector,
+                         alertFrame,
+                         Color.White,
+                         0f,
+                         Vector2.Zero,
+                         4f,
+                         (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                         drawLayer
+                     );
+
+                    DrawWeapon(b, alertVector, drawLayer, alertFrame);
+
+                }
+                else
+                {
+
+                    b.Draw(
+                        characterTexture,
+                        localPosition - new Vector2(32, 64f),
+                        walkFrames[netDirection.Value][moveFrame],
+                        Color.White,
+                        0f,
+                        Vector2.Zero,
+                        4f,
+                        (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                        drawLayer
+                    );
+
+                }
+
+            }
+
+            DrawShadow(b, localPosition, drawLayer);
 
         }
 
@@ -305,12 +684,42 @@ namespace StardewDruid.Character
 
             if (IsEmoting && !Game1.eventUp)
             {
-                Vector2 localPosition = getLocalPosition(Game1.viewport);
 
                 float drawLayer = (float)StandingPixel.Y / 10000f;
 
-                b.Draw(Game1.emoteSpriteSheet, localPosition - new Vector2(0, 160), new Microsoft.Xna.Framework.Rectangle(base.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, base.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, drawLayer);
+                b.Draw(Game1.emoteSpriteSheet, Game1.GlobalToLocal(Position)-new Vector2(0,144), new Microsoft.Xna.Framework.Rectangle(base.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, base.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, drawLayer);
+            
             }
+            else if (Mod.instance.dialogue.ContainsKey(characterType))
+            {
+
+                if(Mod.instance.dialogue[characterType].promptDialogue.Count > 0)
+                {
+
+                    float drawLayer = (float)StandingPixel.Y / 10000f;
+
+                    b.Draw(
+                        Mod.instance.iconData.displayTexture, 
+                        Game1.GlobalToLocal(Position) - new Vector2(0, 144), 
+                        Mod.instance.iconData.DisplayRect(IconData.displays.quest), 
+                        Color.White, 
+                        0f, 
+                        Vector2.Zero, 
+                        4f, 
+                        SpriteEffects.None, 
+                        drawLayer
+                    );
+
+                }
+
+            }
+
+        }
+
+        public virtual void DrawStandby(SpriteBatch b, Vector2 localPosition, float drawLayer)
+        {
+
+
 
         }
 
@@ -319,9 +728,9 @@ namespace StardewDruid.Character
 
             b.Draw(
                 Game1.shadowTexture,
-                localPosition + new Vector2(6 + offset, 44f),
+                localPosition + new Vector2(10 + offset, 44f),
                 Game1.shadowTexture.Bounds,
-                Color.White * 0.65f,
+                Color.White * 0.75f,
                 0f,
                 Vector2.Zero,
                 4f,
@@ -331,33 +740,22 @@ namespace StardewDruid.Character
 
         }
 
-        public int IdleFrame()
+        public virtual void DrawWeapon(SpriteBatch b, Vector2 localPosition, float drawLayer, Rectangle frame)
         {
 
-            int interval = 12000 / idleFrames[0].Count();
-
-            int timeLapse = (int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 12000);
-
-            if (timeLapse == 0) { return 0; }
-
-            int frame = (int)timeLapse / interval;
-
-            return frame;
 
         }
 
         public override Rectangle GetBoundingBox()
         {
-            
-            return new Rectangle((int)Position.X + 8, (int)Position.Y+ 8, 48, 48);
-        
+
+            return new Rectangle((int)Position.X + 8, (int)Position.Y + 8, 48, 48);
+
         }
 
         public virtual Rectangle GetHitBox()
         {
-            
-            return GetBoundingBox();
-        
+            return new Rectangle((int)Position.X - 32, (int)Position.Y - 32, 128, 128);
         }
 
         public override void reloadSprite(bool onlyAppearance = false)
@@ -430,13 +828,6 @@ namespace StardewDruid.Character
             
             }
 
-            if (!netSceneActive.Value)
-            {
-
-                Halt();
-
-            }
-
             LookAtTarget(who.Position, true);
 
             return true;
@@ -449,9 +840,7 @@ namespace StardewDruid.Character
             if (!Mod.instance.dialogue.ContainsKey(characterType))
             {
 
-                Mod.instance.dialogue[characterType] = new(this);
-
-                return true;
+                Mod.instance.dialogue[characterType] = new(characterType);
 
             }
 
@@ -481,6 +870,15 @@ namespace StardewDruid.Character
 
             }
 
+            if(Mod.instance.activeEvent.Count > 0)
+            {
+
+                return false;
+
+            }
+
+            Halt();
+
             Mod.instance.dialogue[characterType].DialogueApproach();
 
             return true;
@@ -491,7 +889,7 @@ namespace StardewDruid.Character
         {
 
             netHaltActive.Set(true);
-            //ModUtility.LogStrings(new() { Name, "idle", "halt"});
+
             TargetIdle();
 
         }
@@ -510,8 +908,6 @@ namespace StardewDruid.Character
             ResetTimers();
 
             SettleOccupied();
-
-            //targetVectors.Clear();
 
         }
 
@@ -563,6 +959,8 @@ namespace StardewDruid.Character
 
             idleTimer = 0;
 
+            onAlert = false;
+
         }
 
         public virtual void ClearMove()
@@ -581,32 +979,29 @@ namespace StardewDruid.Character
 
             }
 
+            if (netSmashActive.Value)
+            {
+
+                netSmashActive.Set(false);
+
+            }
+
+            netDashProgress.Set(0);
+
+            pathProgress = 0;
+
+            pathTotal = 0;
+
             dashFrame = 0;
 
             moveTimer = 0;
 
             moveFrame = 0;
 
-            dashSweep = false;
-
         }
 
         public virtual void ClearSweep(bool apply = false)
         {
-
-            if (apply)
-            {
-
-                List<StardewValley.Monsters.Monster> monsters = ModUtility.MonsterProximity(currentLocation, new() { Position, }, 128);
-
-                foreach (StardewValley.Monsters.Monster monster in monsters)
-                {
-
-                    DealDamageToMonster(monster, Mod.instance.CombatDamage() / 2);
-
-                }
-
-            }
 
             if (netSweepActive.Value)
             {
@@ -659,7 +1054,7 @@ namespace StardewDruid.Character
 
             netAlternative.Set(altDirection);
 
-            lookTimer = (int)(20f * MoveSpeed(Vector2.Distance(Position,target)));
+            lookTimer = (int)(2f * MoveSpeed(Vector2.Distance(Position,target)));
 
         }
 
@@ -671,7 +1066,7 @@ namespace StardewDruid.Character
         public override void behaviorOnFarmerPushing()
         {
             
-            if (netDashActive.Value || netSpecialActive.Value || netSceneActive.Value || netHaltActive.Value)
+            if (netDashActive.Value || netSpecialActive.Value || netSceneActive.Value || netHaltActive.Value || netStandbyActive.Value)
             {
 
                 return;
@@ -763,17 +1158,6 @@ namespace StardewDruid.Character
 
             }
 
-            /*Vector2 thisTile = new((int)(Position.X / 64), (int)(Position.Y / 64));
-
-            if (ModUtility.GroundCheck(currentLocation, thisTile, false) != "ground")
-            {
-
-                WarpToEntrance(thisTile);
-
-                return;
-
-            }*/
-
             if (modeActive == mode.scene)
             {
 
@@ -787,18 +1171,12 @@ namespace StardewDruid.Character
 
             ChooseBehaviour();
 
-            //MoveTowardsTarget();
-
             Traverse();
-
-            //ModUtility.LogStrings(new() { modeActive.ToString(),pathActive.ToString(),destination.ToString(),traversal.Count.ToString()});
 
         }
 
         // ========================================
         // SET BEHAVIOUR
-        // ========================================
-
         public virtual void ProgressScene()
         {
 
@@ -873,7 +1251,7 @@ namespace StardewDruid.Character
 
             eventVectors.Add(key, target);
 
-            destination = target / 64; //ModUtility.PositionToTile(target);
+            destination = ModUtility.PositionToTile(target); //target / 64; //ModUtility.PositionToTile(target);
 
             if (eventVectors.Count == 1)
             {
@@ -926,6 +1304,13 @@ namespace StardewDruid.Character
 
             }
 
+            if (netSmashActive.Value)
+            {
+
+                return false;
+
+            }
+
             if (destination != Vector2.Zero)
             {
 
@@ -953,7 +1338,9 @@ namespace StardewDruid.Character
                         
                         if (TrackToFar())
                         {
+                            
                             followTimer = 0;
+                            
                             ClearMove();
 
                             return true;
@@ -976,9 +1363,11 @@ namespace StardewDruid.Character
 
                     // need to stay where the action is
 
-                    if (TrackToFar())
+                    if (TrackToFar(640,7))
                     {
+                        
                         followTimer = 0;
+
                         ClearIdle();
 
                         return true;
@@ -1097,11 +1486,6 @@ namespace StardewDruid.Character
                 {
 
                     case mode.track:
-
-                        timer = 180; 
-
-                        break;
-
                     case mode.roam:
 
                         timer = 360;
@@ -1137,30 +1521,33 @@ namespace StardewDruid.Character
 
         public virtual bool TargetMonster()
         {
-            
-            if(cooldownTimer > 0)
-            {
 
-                return false;
-
-            }
 
             List<StardewValley.Monsters.Monster> monsters = ModUtility.MonsterProximity(currentLocation, new() { Position, }, 640f);
 
             if (monsters.Count > 0)
             {
 
-                foreach(StardewValley.Monsters.Monster monster in monsters)
+                if (cooldownTimer <= 0)
                 {
 
-                    if (MonsterAttack(monster))
+                    foreach (StardewValley.Monsters.Monster monster in monsters)
                     {
 
-                        return true;
+                        if (MonsterAttack(monster))
+                        {
+
+                            return true;
+
+                        }
 
                     }
 
                 }
+
+                onAlert = true;
+
+                return TargetIdle(180);
 
             }
 
@@ -1175,17 +1562,29 @@ namespace StardewDruid.Character
 
             string terrain = ModUtility.GroundCheck(currentLocation, new Vector2((int)(monster.Position.X/64),(int)(monster.Position.Y/64)));
 
-            if (new Random().Next(3) == 0 || terrain != "ground")
-            {
-
-                return SpecialAttack(monster);
-
-            }
-
             if (distance >= 192f)
             {
 
-                return CloseDistance(monster);
+                if(terrain != "ground")
+                {
+                    return SpecialAttack(monster);
+                }
+
+                switch (Mod.instance.randomIndex.Next(3))
+                {
+                    case 0:
+
+                        return SpecialAttack(monster);
+
+                    case 1:
+
+                        return SmashAttack(monster);
+
+                    default:
+
+                        return PathTarget(monster.Position, 2, 1);
+
+                }
 
             }
 
@@ -1193,16 +1592,19 @@ namespace StardewDruid.Character
 
         }
 
-        public virtual bool CloseDistance(StardewValley.Monsters.Monster monster)
+        public virtual bool SmashAttack(StardewValley.Monsters.Monster monster)
         {
 
             ResetActives();
 
             if (PathTarget(monster.Position, 2, 1))
             {
+                
                 pathActive = pathing.monster;
 
-                netDashActive.Set(true);
+                SetDash(monster.Position,true);
+
+                cooldownTimer = cooldownInterval;
 
                 return true;
 
@@ -1223,13 +1625,15 @@ namespace StardewDruid.Character
 
                 netSweepActive.Set(true);
 
+                cooldownTimer = cooldownInterval;
+
                 sweepFrame = 0;
 
                 sweepTimer = sweepFrames[0].Count() * sweepInterval;
 
-                int stun = Math.Max(monster.stunTime.Value, 500);
+                //int stun = Math.Max(monster.stunTime.Value, 500);
 
-                monster.stunTime.Set(stun);
+                //monster.stunTime.Set(stun);
 
                 return true;
 
@@ -1248,6 +1652,8 @@ namespace StardewDruid.Character
 
             specialTimer = 90;
 
+            cooldownTimer = cooldownInterval;
+
             LookAtTarget(monster.Position, true);
 
             SpellHandle fireball = new(Game1.player, new() { monster, }, Mod.instance.CombatDamage() / 2);
@@ -1258,7 +1664,7 @@ namespace StardewDruid.Character
 
             fireball.scheme = specialScheme;
             
-            fireball.display = displays.Impact;
+            fireball.display = IconData.impacts.impact;
 
             fireball.added = new() { SpellHandle.effects.aiming, };
 
@@ -1267,6 +1673,72 @@ namespace StardewDruid.Character
             Mod.instance.spellRegister.Add(fireball);
 
             return true;
+
+        }
+
+        public virtual void ConnectSweep()
+        {
+
+            foreach (StardewValley.Monsters.Monster monster in ModUtility.MonsterProximity(currentLocation, new() { Position, }, 192, true))
+            {
+
+                DealDamageToMonster(monster);
+
+            }
+
+        }
+
+        public virtual void SetDash(Vector2 target, bool smash = false)
+        {
+
+            LookAtTarget(target,true);
+
+            if (!smash)
+            {
+
+                netDashActive.Set(true);
+
+            }
+            else
+            {
+
+                netSmashActive.Set(true);
+
+            }
+
+            pathFrom = Position;
+
+            float pathDistance = Vector2.Distance(pathFrom, target);
+
+            pathIncrement = ModUtility.PathFactor(Position, target) * MoveSpeed(pathDistance);
+
+            pathProgress = (int)(Vector2.Distance(Position, target) / Vector2.Distance(new(0, 0), pathIncrement));
+
+            pathTotal = pathProgress;
+
+            pathSegment = dashInterval;
+
+            int pathRequirement;
+
+            if (!smash)
+            {
+
+                pathRequirement = dashFrames[0].Count + dashFrames[4].Count + dashFrames[8].Count;
+            }
+            else
+            {
+                pathRequirement = smashFrames[0].Count + smashFrames[4].Count + smashFrames[8].Count;
+
+            }
+
+            int pathSqueeze = (int)(pathProgress / pathRequirement);
+
+            if(pathSqueeze < dashInterval)
+            {
+
+                pathSegment = pathSqueeze;
+
+            }
 
         }
 
@@ -1323,9 +1795,9 @@ namespace StardewDruid.Character
 
                     LookAtTarget(Mod.instance.trackers[characterType].followPlayer.Position);
 
-                    ModUtility.AnimateQuickWarp(currentLocation, Position);
+                    Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position);
 
-                    ModUtility.AnimateQuickWarp(currentLocation, lastPosition, true);
+                    Mod.instance.iconData.AnimateQuickWarp(currentLocation, lastPosition, true);
 
                     return true;
 
@@ -1376,7 +1848,7 @@ namespace StardewDruid.Character
 
         }
 
-        public virtual bool TrackToFar(int limit = 960)
+        public virtual bool TrackToFar(int limit = 960, int nodeLimit = 20)
         {
 
             if (netStandbyActive.Value)
@@ -1386,7 +1858,14 @@ namespace StardewDruid.Character
 
             }
 
-            if(Vector2.Distance(Position, Mod.instance.trackers[characterType].followPlayer.Position) >= limit || !Utility.isOnScreen(Position, 128))
+            if (Mod.instance.trackers[characterType].nodes.Count >= nodeLimit)
+            {
+
+                return true;
+
+            }
+
+            if (Vector2.Distance(Position, Mod.instance.trackers[characterType].followPlayer.Position) >= limit || !Utility.isOnScreen(Position, 128))
             {
 
                 return true;
@@ -1523,10 +2002,8 @@ namespace StardewDruid.Character
 
         }
 
-
         // ========================================
         // UPDATE
-        // ========================================
 
         public virtual void UpdateBehaviour()
         {
@@ -1550,7 +2027,6 @@ namespace StardewDruid.Character
             {
 
                 hitTimer--;
-
 
             }
 
@@ -1604,6 +2080,10 @@ namespace StardewDruid.Character
             
             if (netHaltActive.Value)
             {
+                
+                idleTimer++;
+
+                CheckAlert();
 
                 return;
 
@@ -1675,20 +2155,38 @@ namespace StardewDruid.Character
 
                 moveTimer--;
 
-                if (netDashActive.Value)
+                if (netDashActive.Value || netSmashActive.Value)
                 {
-                    if (dashFrame < (dashCeiling / 2) && dashHeight < 128)
+                    if (netDashProgress.Value == 0 && dashHeight <= dashPeak)
                     {
 
                         dashHeight += 2;
 
                     }
-                    else if (dashHeight > 1)
+                    else if (netDashProgress.Value == 2 && dashHeight > 0)
                     {
 
-                        dashHeight -= 2;
+                        dashHeight -= Math.Min(dashHeight, 2);
 
                     }
+
+                    if (netDashProgress.Value != trackDashProgress)
+                    {
+
+                        dashFrame = 0;
+
+                        trackDashProgress = netDashProgress.Value;
+
+                        moveTimer = moveInterval;
+
+                    }
+
+                }
+                else if (dashHeight > 0)
+                {
+
+                    dashHeight -= Math.Min(dashHeight,2);
+
                 }
 
                 if (moveTimer <= 0)
@@ -1708,13 +2206,6 @@ namespace StardewDruid.Character
                     moveTimer -= 3;
 
                     dashFrame++;
-
-                    if (dashFrame > dashCeiling)
-                    {
-
-                        dashFrame = dashFloor;
-
-                    }
 
                     stationaryTimer = 30;
 
@@ -1776,13 +2267,6 @@ namespace StardewDruid.Character
         public virtual void UpdateIdle()
         {
 
-            if (idleTimer > 0)
-            {
-
-                idleTimer--;
-
-            }
-
             if (netHaltActive.Value)
             {
 
@@ -1794,6 +2278,43 @@ namespace StardewDruid.Character
                     ClearMove();
 
                     return;
+
+                }
+
+            }
+
+            if (idleTimer > 0)
+            {
+
+                idleTimer--;
+
+                CheckAlert();
+
+            }
+
+        }
+
+        public virtual void CheckAlert()
+        {
+
+            if (idleTimer % 10 == 0)
+            {
+
+                onAlert = false;
+
+                List<StardewValley.Monsters.Monster> monsters = ModUtility.MonsterProximity(currentLocation, new() { Position }, 960);
+
+                if (monsters.Count > 0)
+                {
+
+                    onAlert = true;
+
+                    if (Context.IsMainPlayer)
+                    {
+
+                        LookAtTarget(monsters.First().Position, true);
+
+                    }
 
                 }
 
@@ -1819,8 +2340,6 @@ namespace StardewDruid.Character
 
                     ClearSweep(true);
 
-                    cooldownTimer = cooldownInterval;
-
                 }
                 else
                 {
@@ -1833,7 +2352,7 @@ namespace StardewDruid.Character
                         if (sweepFrame == sweepFrames[0].Count)
                         {
 
-                            ClearSweep(true);
+                            ConnectSweep();
 
                         }
 
@@ -1866,6 +2385,96 @@ namespace StardewDruid.Character
 
             float distance = Vector2.Distance(Position, destination*64);
 
+
+            if (netDashActive.Value || netSmashActive.Value)
+            {
+
+                DashAscension();
+
+                if(pathProgress % pathSegment != 0)
+                {
+                    
+                    return;
+
+                }
+
+                dashFrame++;
+
+                if (netDashActive.Value)
+                {
+
+                    if (pathProgress + (pathSegment * dashFrames[0].Count) <= pathTotal)
+                    {
+                        
+                        if (netDashProgress.Value != 1)
+                        {
+
+                            netDashProgress.Set(1);
+
+                            dashFrame = 0;
+
+                        }
+
+                    }
+
+                    if(pathProgress <= (pathSegment * dashFrames[8].Count))
+                    {
+
+                        if(netDashProgress.Value != 2)
+                        {
+
+                            netDashProgress.Set(2);
+
+                            dashFrame = 0;
+
+                        }
+
+                    }
+
+                }
+
+                if (netSmashActive.Value)
+                {
+
+                    if (pathProgress + (pathSegment * smashFrames[0].Count) <= pathTotal)
+                    {
+
+                        if (netDashProgress.Value != 1)
+                        {
+
+                            netDashProgress.Set(1);
+
+                            dashFrame = 0;
+
+                        }
+
+                    }
+
+                    if (pathProgress <= (pathSegment * smashFrames[8].Count))
+                    {
+
+                        if (netDashProgress.Value != 2)
+                        {
+
+                            netDashProgress.Set(2);
+
+                        }
+
+                    }
+
+                    if(pathProgress == pathSegment)
+                    {
+
+                        ConnectSweep();
+
+                    }
+
+                }
+
+                return;
+
+            }
+
             if (moveTimer <= 0)
             {
 
@@ -1873,19 +2482,21 @@ namespace StardewDruid.Character
 
                 moveFrame++;
 
-                if(moveFrame == walkLeft)
+                int right = 1 + ((walkFrames.Count - 1) / 2);
+
+                if (moveFrame == 1)
                 {
 
                     if (walkSide)
                     {
 
-                        moveFrame = walkRight;
+                        moveFrame = 1 + ((walkFrames.Count - 1) / 2);
 
                     }
 
                 }
 
-                if (moveFrame == walkRight)
+                if (moveFrame == right)
                 {
 
                     walkSide = false;
@@ -1895,58 +2506,66 @@ namespace StardewDruid.Character
                 if (moveFrame >= walkFrames[0].Count)
                 {
 
-                    moveFrame = walkLeft;
+                    moveFrame = 1;
 
                     walkSide = true;
 
                 }
 
-                dashFrame++;
-
-                if (dashFrame > dashCeiling)
-                {
-
-                    dashFrame = dashFloor;
-
-                }
-
-                if (dashSweep)
-                {
-
-                    float moveSpeed = (int)MoveSpeed(distance);
-
-                    float sweepFactor = moveTimer * (sweepFrames[0].Count-1) * moveSpeed;
-
-                    if (distance <= sweepFactor)
-                    {
-
-                        netSweepActive.Set(true);
-
-                        sweepTimer = moveTimer * sweepFrames[0].Count;
-
-                        dashSweep = false;
-
-                    }
-
-                }
             }
 
-            if (netDashActive.Value)
+        }
+
+        public virtual void DashAscension()
+        {
+
+            if (dashPeak == 0)
             {
-                if (dashFrame < (dashCeiling / 2) && dashHeight < 128)
-                {
 
-                    dashHeight += 2;
-
-                }
-                else if (dashHeight > 1)
-                {
-
-                    dashHeight -= 2;
-
-                }
+                return;
 
             }
+
+            float distance = Vector2.Distance(pathFrom, destination*64);
+
+            float length = distance / 2;
+
+            float lengthSq = (length * length);
+
+            float heightFr = 4 * dashPeak;
+
+            float coefficient = lengthSq / heightFr;
+
+            int midpoint = (int)(pathTotal / 2);
+
+            float newHeight = 0;
+
+            if (pathProgress != midpoint)
+            {
+                float newLength;
+
+                if (pathProgress < midpoint)
+                {
+
+                    newLength = length * (midpoint - pathProgress) / midpoint;
+
+                }
+                else
+                {
+
+                    newLength = (length * (pathProgress - midpoint) / midpoint);
+
+                }
+
+                float newLengthSq = newLength * newLength;
+
+                float coefficientFr = (4 * coefficient);
+
+                newHeight = newLengthSq / coefficientFr;
+
+            }
+
+            dashHeight = dashPeak - (int)newHeight;
 
         }
 
@@ -1967,8 +2586,6 @@ namespace StardewDruid.Character
                 {
 
                     ClearSpecial();
-
-                    cooldownTimer = cooldownInterval;
 
                 }
                 else if (specialTimer % specialInterval == 0)
@@ -2023,21 +2640,21 @@ namespace StardewDruid.Character
 
         }
 
-        public virtual float MoveSpeed(float distance = 0, bool moveFrames = false)
+        public virtual float MoveSpeed(float distance = 0, bool useFrames = false)
         {
 
-            float moveSpeed = gait;
+            float useSpeed = gait;
 
-            float moveFrame = moveInterval;
+            float useFrame = moveInterval;
 
             switch (pathActive)
             {
 
                 case pathing.monster:
 
-                    moveSpeed = gait * 2f;
+                    useSpeed = gait * 2f;
 
-                    moveFrame -= 2;
+                    useFrame -= 2;
 
                     break;
 
@@ -2047,53 +2664,88 @@ namespace StardewDruid.Character
                     if (distance > 640)
                     {
 
-                        moveFrame -= 3;
+                        useFrame -= 3;
 
-                        moveSpeed = gait * 3f;
+                        useSpeed = gait * 3f;
 
                     }
                     else if (distance > 360)
                     {
 
-                        moveFrame -= 2;
+                        useFrame -= 2;
 
-                        moveSpeed = gait * 2.25f;
+                        useSpeed = gait * 2.25f;
 
                     }
                     else
                     {
-                        moveFrame -= 1;
+                        useFrame -= 1;
 
-                        moveSpeed = gait * 1.5f;
+                        useSpeed = gait * 1.5f;
 
                     }
 
                     break;
 
-
                 case pathing.player:
 
-                    if (distance > 640)
+                    if(modeActive == mode.track)
                     {
 
-                        moveFrame -= 3;
-
-                        moveSpeed = gait * 3f;
-                    
-                    }
-                    else if (distance > 360)
-                    {
-
-                        moveFrame -= 2;
-
-                        moveSpeed = gait * 2.25f;
+                        distance = Vector2.Distance(Position, Mod.instance.trackers[characterType].followPlayer.Position);
 
                     }
                     else
                     {
-                        moveFrame -= 1;
 
-                        moveSpeed = gait * 1.5f;
+                        distance = Vector2.Distance(Position, Game1.player.Position);
+
+                    }
+
+                    if (distance > 512)
+                    {
+
+                        useFrame -= 2;
+
+                        if (netDashActive.Value || netSmashActive.Value)
+                        {
+
+                            useSpeed = gait * 2f;
+
+                        }
+                        else
+                        {
+
+
+                            useSpeed = gait * 4f;
+
+                        }
+
+                    }
+                    else if (distance > 256)
+                    {
+
+                        useFrame -= 1;
+
+                        if (netDashActive.Value || netSmashActive.Value)
+                        {
+
+                            useSpeed = gait * 1.5f;
+
+                        }
+                        else
+                        {
+
+
+                            useSpeed = gait * 3f;
+
+                        }
+
+                    }
+                    else
+                    {
+
+                        useSpeed = gait;
 
                     }
 
@@ -2108,9 +2760,9 @@ namespace StardewDruid.Character
                     if (distance > 360)
                     {
 
-                        moveFrame -= 2;
+                        useFrame -= 2;
 
-                        moveSpeed *= 1.5f;
+                        useSpeed *= 1.5f;
 
                     }
 
@@ -2120,24 +2772,21 @@ namespace StardewDruid.Character
 
                     break;
 
-
             }
 
-            if (netDashActive.Value)
+            if (netDashActive.Value || netSmashActive.Value)
             {
 
-                moveSpeed *= 2.5f;
+                useSpeed *= 2.5f;
 
             }
 
-            return moveFrames ? moveFrame : moveSpeed;
+            return useFrames ? useFrame : useSpeed;
 
         }
 
-
         // ========================================
         // MOVEMENT
-        // ========================================
 
         public bool PathTarget(Vector2 target, int ability, int proximity, int direction = -1)
         {
@@ -2268,16 +2917,14 @@ namespace StardewDruid.Character
 
             KeyValuePair<Vector2,int> target = traversal.First();
 
-            LookAtTarget(target.Key * 64, false);
-
             if (target.Value == 2)
             {
 
-                ModUtility.AnimateQuickWarp(currentLocation, Position, true);
+                Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position, true);
 
                 Position = target.Key * 64;
 
-                ModUtility.AnimateQuickWarp(currentLocation, Position);
+                Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position);
 
                 occupied = target.Key;
 
@@ -2290,22 +2937,58 @@ namespace StardewDruid.Character
                 if(target.Value == 1 && !netDashActive.Value)
                 {
 
-                    netDashActive.Set(true);
+                    SetDash(target.Key * 64);
 
                 }
 
-                float speed = MoveSpeed(Vector2.Distance(Position, target.Key * 64));
-
-                Position = ModUtility.PathMovement(Position, target.Key*64, speed);
-
-                float remain = Vector2.Distance(Position, target.Key * 64);
-
-                if (remain <= 4f)
+                if(netDashActive.Value || netSmashActive.Value)
                 {
 
-                    occupied = target.Key;
+                    if(pathTotal <= 0)
+                    {
 
-                    traversal.Remove(target.Key);
+                        SetDash(target.Key * 64, netSmashActive.Value);
+
+                    }
+
+                    Position += pathIncrement;
+
+                    pathProgress--;
+
+                    if(pathProgress <= 0)
+                    {
+
+                        occupied = target.Key;
+
+                        traversal.Remove(target.Key);
+
+                    }
+
+                }
+                else
+                {
+
+                    if (!netSweepActive.Value)
+                    {
+
+                        LookAtTarget(target.Key * 64, false);
+
+                    };
+
+                    float speed = MoveSpeed(Vector2.Distance(Position, target.Key * 64));
+
+                    Position = ModUtility.PathMovement(Position, target.Key * 64, speed);
+
+                    float remain = Vector2.Distance(Position, target.Key * 64);
+
+                    if (remain <= 4f)
+                    {
+
+                        occupied = target.Key;
+
+                        traversal.Remove(target.Key);
+
+                    }
 
                 }
 
@@ -2337,7 +3020,7 @@ namespace StardewDruid.Character
             // Settle position slowly shifts the character towards the set occupied tile
             // This is because Position can be offset by the floating coordinates obtained from traversal
             // and the occupied tile position might not match up
-
+            /*
             Vector2 occupation = occupied * 64;
 
             if (Position != occupation)
@@ -2352,7 +3035,7 @@ namespace StardewDruid.Character
 
                 Position = ModUtility.PathMovement(Position, occupation, 2);
 
-            }
+            }*/
 
         }
 
@@ -2438,14 +3121,13 @@ namespace StardewDruid.Character
 
         // ========================================
         // ADJUST MODE
-        // ========================================
 
         public virtual void WarpToEntrance()
         {
 
             ResetActives();
 
-            ModUtility.AnimateQuickWarp(currentLocation, Position, true);
+            Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position, true);
 
             Vector2 warppoint = new Vector2(-1);
 
@@ -2459,7 +3141,7 @@ namespace StardewDruid.Character
 
                     LookAtTarget(Mod.instance.trackers[characterType].followPlayer.Position);
 
-                    ModUtility.AnimateQuickWarp(currentLocation, Position);
+                    Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position);
 
                     return;
                 
@@ -2502,7 +3184,7 @@ namespace StardewDruid.Character
 
                     Mod.instance.Monitor.Log(Name + " warped to the entrance of " + currentLocation.DisplayName + " because they got stuck", LogLevel.Debug);
 
-                    ModUtility.AnimateQuickWarp(currentLocation, Position);
+                    Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position);
 
                     return;
 
@@ -2566,7 +3248,7 @@ namespace StardewDruid.Character
 
                     }
 
-                    ModUtility.AnimateQuickWarp(currentLocation, Position);
+                    Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position);
 
                     return;
 
@@ -2615,8 +3297,6 @@ namespace StardewDruid.Character
 
             netStandbyActive.Set(false);
 
-            netFollowActive.Set(false);
-
             Mod.instance.trackers.Remove(characterType);
 
             switch (modechoice)
@@ -2642,8 +3322,6 @@ namespace StardewDruid.Character
 
                     modeActive = mode.track;
 
-                    netFollowActive.Set(true);
-
                     break;
 
                 case mode.scene:
@@ -2652,7 +3330,7 @@ namespace StardewDruid.Character
 
                     netSceneActive.Set(true);
 
-                    netStandbyActive.Set(true);
+                    //netStandbyActive.Set(true);
 
                     break;
 
@@ -2790,69 +3468,10 @@ namespace StardewDruid.Character
 
         }
 
-        public virtual void SummonToPlayer(Vector2 position)
-        {
-
-            if (modeActive == mode.roam && currentLocation is Farm)
-            {
-
-                if (PathTarget(position, 2, 2))
-                {
-
-                    pathActive = pathing.player;
-
-                    roamLapse = Math.Max(roamLapse,Game1.currentGameTime.TotalGameTime.TotalMinutes + 0.5);
-
-                }
-
-            }
-
-        }
-
         public virtual void TetherMiddle()
         {
             
             tether = new((int)(currentLocation.map.Layers[0].LayerWidth / 2), (int)(currentLocation.map.Layers[0].LayerHeight / 2));
-
-
-        }
-
-        public virtual List<Chest> CaveChests()
-        {
-
-            List<Chest> chests = new();
-
-            GameLocation farmcave = Game1.getLocationFromName("FarmCave");
-
-            int chestCount = 0;
-
-            foreach (Dictionary<Vector2, StardewValley.Object> dictionary in farmcave.Objects)
-            {
-
-                foreach (KeyValuePair<Vector2, StardewValley.Object> keyValuePair in dictionary)
-                {
-
-                    if (keyValuePair.Value is Chest foundChest)
-                    {
-
-                        chests.Add(foundChest);
-
-                        if (chestCount == 2)
-                        {
-
-                            break;
-
-                        }
-
-                        chestCount++;
-
-                    }
-
-                }
-
-            }
-
-            return chests;
 
         }
 

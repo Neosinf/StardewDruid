@@ -17,19 +17,6 @@ namespace StardewDruid.Data
         public static Vector2 WarpTiles(GameLocation location)
         {
 
-            /*Point farmWarp = Game1.getFarm().GetMapPropertyPosition("WarpTotemEntry", default_x, default_y);
-            
-            Dictionary<string, Vector2> warpPoints = new()
-            {
-                ["Farm"] = new Vector2(farmWarp.X, farmWarp.Y),
-                ["Mountain"] = new Vector2(31, 20),
-                ["Beach"] = new Vector2(20, 4),
-                ["Desert"] = new Vector2(35, 43),
-                ["IslandSouth"] = new Vector2(11, 11)
-            };
-
-            return warpPoints;*/
-
             if (location is Farm)
             {
 
@@ -80,7 +67,7 @@ namespace StardewDruid.Data
 
             }
 
-            return new Vector2(-1);
+            return Vector2.Zero;
 
         }
 
@@ -110,6 +97,32 @@ namespace StardewDruid.Data
             }
 
             return false;
+
+        }
+
+        public static Vector2 FireVectors(GameLocation location)
+        {
+
+            if (location is Mountain)
+            {
+
+                return new Vector2(29, 9);
+
+            }
+            else if (location is Beach)
+            {
+
+                return new Vector2(48, 20);
+
+            }
+            else if (location is Forest)
+            {
+
+                return new Vector2(47, 97);
+
+            }
+
+            return Vector2.Zero;
 
         }
 
@@ -214,7 +227,7 @@ namespace StardewDruid.Data
 
                 case Location.LocationData.druid_grove_name:
 
-                    return new Vector2(29,13) * 64;
+                    return new Vector2(36,15) * 64;
 
                 case "Farm":
                 case "FarmCave":
@@ -320,7 +333,7 @@ namespace StardewDruid.Data
 
                     newDistance = Vector2.Distance(origin, possibility);
 
-                    if (Mod.instance.rite.caster.getGeneralDirectionTowards(possibility, 0, false, false) == Mod.instance.rite.caster.facingDirection.Value && newDistance > furthestDistance)
+                    if (Game1.player.getGeneralDirectionTowards(possibility, 0, false, false) == Game1.player.facingDirection.Value && newDistance > furthestDistance)
                     {
 
                         destinations.Clear();
@@ -383,7 +396,7 @@ namespace StardewDruid.Data
 
             Vector2 destination = new Vector2(tileX, tileY) * 64;
 
-            //ModUtility.AnimateQuickWarp(targetLocation, destination);
+            //Mod.instance.iconData.AnimateQuickWarp(targetLocation, destination);
 
             return destination;
 
