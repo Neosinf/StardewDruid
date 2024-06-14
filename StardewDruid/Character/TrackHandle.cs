@@ -1,17 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using StardewDruid.Data;
 using StardewValley;
 using StardewValley.Locations;
 using System.Collections.Generic;
 using System.Linq;
+using static StardewValley.Minigames.TargetGame;
 
 
 namespace StardewDruid.Character
 {
     public class TrackHandle
     {
-        public CharacterData.characters trackFor;
+        public CharacterHandle.characters trackFor;
         
         public string trackLocation;
 
@@ -23,7 +23,7 @@ namespace StardewDruid.Character
 
         public int warpDelay;
 
-        public TrackHandle(CharacterData.characters For, Farmer follow = null)
+        public TrackHandle(CharacterHandle.characters For, Farmer follow = null)
         {
             
             if(follow == null)
@@ -62,6 +62,13 @@ namespace StardewDruid.Character
 
             }
 
+            if (warpDelay > 0)
+            {
+
+                warpDelay--;
+
+            }
+
             if (Mod.instance.characters[trackFor].currentLocation.Name != followPlayer.currentLocation.Name)
             {
 
@@ -75,8 +82,6 @@ namespace StardewDruid.Character
                 if(warpDelay > 0)
                 {
 
-                    warpDelay--;
-
                     return;
 
                 }
@@ -84,8 +89,10 @@ namespace StardewDruid.Character
                 // Player is not on the same map now
 
                 if (WarpToLocation())
-                { 
-                    
+                {
+
+                    nodes.Clear();
+
                     return; 
                 
                 }
@@ -188,23 +195,21 @@ namespace StardewDruid.Character
             if (WarpToPlayer(direction))
             {
 
-                Mod.instance.characters[trackFor].currentLocation.characters.Remove(Mod.instance.characters[trackFor]);
+                //Mod.instance.characters[trackFor].currentLocation.characters.Remove(Mod.instance.characters[trackFor]);
 
-                Mod.instance.characters[trackFor].currentLocation = followPlayer.currentLocation;
+                //Mod.instance.characters[trackFor].currentLocation = followPlayer.currentLocation;
 
-                Mod.instance.characters[trackFor].currentLocation.characters.Add(Mod.instance.characters[trackFor]);
+                //Mod.instance.characters[trackFor].currentLocation.characters.Add(Mod.instance.characters[trackFor]);
 
-                Mod.instance.iconData.AnimateQuickWarp(Mod.instance.characters[trackFor].currentLocation, Mod.instance.characters[trackFor].Position - new Vector2(0, 32));
+                //Mod.instance.iconData.AnimateQuickWarp(Mod.instance.characters[trackFor].currentLocation, Mod.instance.characters[trackFor].Position - new Vector2(0, 32));
 
                 //Mod.instance.characters[trackFor].DeactivateStandby();
 
-                Mod.instance.characters[trackFor].ResetActives();
+                //Mod.instance.characters[trackFor].ResetActives();
 
-                Mod.instance.characters[trackFor].attentionTimer = 360;
+                //Mod.instance.characters[trackFor].attentionTimer = 360;
 
-                Mod.instance.characters[trackFor].update(Game1.currentGameTime, Mod.instance.characters[trackFor].currentLocation);
-
-                warpDelay = 0;
+                //Mod.instance.characters[trackFor].update(Game1.currentGameTime, Mod.instance.characters[trackFor].currentLocation);
 
                 return true;
 
@@ -217,12 +222,17 @@ namespace StardewDruid.Character
         public bool WarpToPlayer(int direction = -1)
         {
 
+            if(warpDelay > 0)
+            {
+
+                return false;
+
+            }
+
             if (direction == -1 && nodes.Count > 0)
             {
 
                 direction = ModUtility.DirectionToTarget(followPlayer.Position, nodes.Keys.Last())[2];
-
-                nodes.Clear();
 
             }
 
@@ -237,17 +247,17 @@ namespace StardewDruid.Character
 
             // get player tile
 
-            Vector2 center = new Vector2((int)(followPlayer.Position.X / 64), (int)(followPlayer.Position.Y / 64));
+            Vector2 center = ModUtility.PositionToTile(followPlayer.Position);// new Vector2((int)(followPlayer.Position.X / 64), (int)(followPlayer.Position.Y / 64));
 
             // get occupiable tiles
 
-            List<Vector2> options = ModUtility.GetOccupiableTilesNearby(followPlayer.currentLocation, center, direction, 1, 1);
+            List<Vector2> options = ModUtility.GetOccupiableTilesNearby(followPlayer.currentLocation, center, direction, 1, 2);
 
             // check who else might warp there
 
             List<Vector2> occupied = new();
 
-            foreach (KeyValuePair<CharacterData.characters, StardewDruid.Character.Character> friends in Mod.instance.characters)
+            foreach (KeyValuePair<CharacterHandle.characters, StardewDruid.Character.Character> friends in Mod.instance.characters)
             {
 
                 if (friends.Key == trackFor) { continue; }
@@ -272,9 +282,17 @@ namespace StardewDruid.Character
 
                     if (occupied.Contains(warppoint)) { continue; }
 
-                    Mod.instance.characters[trackFor].Position = warppoint*64;
+                    //Mod.instance.characters[trackFor].Position = warppoint*64;
 
-                    Mod.instance.characters[trackFor].occupied = warppoint;
+                    //Mod.instance.characters[trackFor].occupied = warppoint;
+
+                    CharacterHandle.CharacterMoveTo(followPlayer.currentLocation, Mod.instance.characters[trackFor], warppoint * 64);
+
+                    Mod.instance.characters[trackFor].attentionTimer = 360;
+
+                    Mod.instance.characters[trackFor].LookAtTarget(Mod.instance.trackers[Mod.instance.characters[trackFor].characterType].followPlayer.Position);
+
+                    warpDelay = 30;
 
                     return true;
 

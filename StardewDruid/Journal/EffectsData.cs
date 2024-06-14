@@ -7,9 +7,13 @@ using StardewDruid.Dialogue;
 using StardewValley;
 using StardewValley.GameData.Characters;
 using StardewValley.Objects;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static StardewValley.Minigames.TargetGame;
+using static System.Net.Mime.MediaTypeNames;
+using System.Threading.Channels;
 
 namespace StardewDruid.Journal
 {
@@ -47,9 +51,10 @@ namespace StardewDruid.Journal
                 instruction = "Learn how to brew potions and tonics at the herbalism bench in the secluded farm grove. There are three lines of potion to brew, each with their own ingredients and special effects.",
                 details = new()
                 {
-                    "Ligna: special ingredients include roots, seeds and roughage, and higher potency will provide regeneration and better outcomes from rites.",
-                    "Impes: special ingredients include fungi, and higher potency will raise special attack and critical hits.",
-                    "Celeri: special ingredients include fish oil and seaweeds, and higher potency will raise movement speed, cast speed and also lower cooldowns."
+                    "Along your journey you will attain relics that will unlock higher levels of potency, up to level 5",
+                    "Ligna: special ingredients include roots, seeds and roughage, and higher potency will increase the damage and success-rate (better chance based outcomes) of rites.",
+                    "Impes: special ingredients include tubers, fungi and spices, and higher potency will strengthen charge effects and critical hits.",
+                    "Celeri: special ingredients include fish oil and seaweeds, and higher potency will raise movement speed, cast speed and lower charge effect cooldowns."
                 }
             };
 
@@ -145,7 +150,7 @@ namespace StardewDruid.Journal
                 title = "Cultivate",
                 icon = IconData.displays.weald,
                 description = "I have learned that the Farmer and the Druid share the same vision for a prosperous and well fed community, and so the wild seed is domesticated.",
-                instruction = "Farm/Greenhouse only. Cast and hold Rite of the Weald for 3-4 seconds while standing still, until the essence fills the rite indicator. When released, the cultivation effect will radiate in increasing magnitude from your position.",
+                instruction = "Farm/Greenhouse only. Cast and hold Rite of the Weald for 2-3 seconds while standing still, until the essence fills the rite indicator. When released, the cultivation effect will radiate in increasing magnitude from your position.",
                 details = new()
                 {
                     "Mastery: Wild seeds have a chance to convert into quality crops.",
@@ -154,8 +159,11 @@ namespace StardewDruid.Journal
                     "Effect: Progress the growth rate of maturing fruit trees and tea bushes by one day (once per day)",
                     "Note: Also triggers Rite of the Weald: Community effect",
                     "Cost: 2 stamina, halved at Farming Level 6",
-                    
-
+                    "Crop effect can be further adjusted in the configuration options",
+                    "Option 1: Major boost to growth rate, minor boost to quality",
+                    "Option 2: Balanced boost to growth rate and quality",
+                    "Option 3: Minor boost to growth rate, major boost to quality",
+                   
                 }
 
             };
@@ -204,7 +212,15 @@ namespace StardewDruid.Journal
                 title = "Cursor Targetting",
                 icon = IconData.displays.mists,
                 description = "The mists gather in front of me.",
-                instruction = "The Rite of Mists uses directional and cursor based targetting to effect a point ahead of or away from the player, as opposed to centered-on-player targetting, so the direction and position of the farmer and/or mouse cursor is important to get precise hits.",
+                instruction = "The Rite of Mists uses directional and cursor based logic to select a target point ahead of or away from the player",
+                details = new()
+                {
+                    "This is different to the centered-on-player targetting logic of Rite of the Weald",
+                    "Controllers: Will use directional targetting based on the direction the player is facing.",
+                    "Cursor Proximity: If the cursor is too close to the farmer position on screen the logic will default to directional targetting. " +
+                        "This is because it's too difficult for the logic to discern the vector of the cursor relative to the player.",
+                    "The direction and position of the farmer and/or mouse cursor is important to get precise hits."
+                }
 
             };
 
@@ -339,6 +355,66 @@ namespace StardewDruid.Journal
                 }
             };
 
+            // ====================================================================
+            // Stars Effects
+
+            effects[QuestHandle.questEffigy] = new() { summonWisps, summonEffigy };
+
+            Effect meteorRain = new()
+            {
+                title = "Meteor Rain",
+                icon = IconData.displays.stars,
+                description = "If nature extends to the celestial realm, then the stars themselves are it's greatest force, a force now granted to me in order to burn away the taint and decay of a stagnated world.",
+                instruction = "Cast Rite of the Stars to produce a meteor that strikes objects and monsters within the impact radius of a random point near the Farmer. Will dislodge most set down objects.",
+                details = new()
+                {
+                    "Cost: 12 - Player Combat Level, minimum 5",
+                    "Activate: Hold the rite button to continue to produce a shower of meteors around the Farmer",
+                    "Mastery: Chance for an additional meteor to be produced per cast cycle",
+                    "The damage and behaviour of meteor rain can be changed in the configuration options",
+                    "A melee weapon is required to cast meteors on farmland",
+                    "Option 1. Prioritises Monsters and Stone Nodes. If no target is available, will utilise a regular spatial pattern for optimal coverage. Normal damage. (default)",
+                    "Option 2. Prioritises Monsters, then follows spatial pattern, 1.1x damage",
+                    "Option 3. Prioritises Stone nodes, then follows spatial pattern, 1.1x damage",
+                    "Option 4. No prioritisation, follows spatial pattern, 1.25x damage, 33 % chance for large meteor",
+                    "Option 5. Completely random targetting, 1.6x damage, 50 % chance for large meteor",
+                }
+            };
+
+            Effect starBurst = new()
+            {
+                title = "Starburst",
+                icon = IconData.displays.stars,
+                description = "My weapons gleam with starlight.",
+                instruction = "While charged, melee attacks against monsters will deal a small measure of burst damage and knock them back.",
+                details = new()
+                {
+                    "Activate: Press the special button while casting Rite of the Stars to charge.",
+                    "Cooldown: 2 second",
+                    "Damage: Druid Level * 10",
+                    "Stun: knocks down smaller monsters for 2 seconds, stuns larger monsters for 0.5 seconds",
+                }
+            };
+
+            effects[QuestHandle.starsOne] = new() { meteorRain, starBurst, };
+
+            Effect gravityWell = new()
+            {
+                title = "Gravity Well",
+                icon = IconData.displays.stars,
+                description = "I have become familiar with the dark side of celestial magic, the anti-star, the ravenous void that pulls at the fabric of the material plane",
+                instruction = "Cast and hold the rite button to channel a gravity well at the cursor location.",
+                details = new()
+                {
+                    "Activate: Hold the rite button until the channel cursor expands past the rite indicator",
+                    "Mastery: A massive instance of meteor rain will be drawn to the black hole.",
+                    "Nearby harvestable crops will be harvested and pulled towards the scarecrow, with boosts to quantity and quality based on Weald:Cultivation settings.",
+                    "Monsters will be stunned and pulled in. Uses directional and cursor targetting.",
+                }
+            };
+
+            effects[QuestHandle.starsTwo] = new() { gravityWell, };
+
             /*Effect ritualSummon = new()
             {
                 title = "Ritual of Summoning",
@@ -356,7 +432,112 @@ namespace StardewDruid.Journal
 
             //effects[QuestHandle.questEffigy] = new() { wispSummon, ritualSummon, };
 
-            effects[QuestHandle.questEffigy] = new() { summonWisps, summonEffigy };
+            // ====================================================================
+            // Stars Effects
+
+            Effect summonJester = new()
+            {
+                title = "Adventures with Jester",
+                icon = IconData.displays.jester,
+                description = "Jester believes that his great purpose is intertwined with my own story. Despite the resoluton of our bargain, he will remain close by while he searches for his missing kin.",
+                instruction = "Approach the Jester of Fate and select (adventure) from the dialogue menu to give him instructions.",
+                details = new()
+                {
+                    "The 'Embossed Die of the Fates' can be used in the relics menu to summon Jester",
+                    "Jester can accompany you to other locations, and will perform his own attacks against nearby monsters.",
+                    "Jester can be invited to roam the farm, and will perform his version of Weald:Community when in proximity to villagers and farm animals, which provides a friendship boost to the target. ",
+                }
+            };
+
+            effects[QuestHandle.approachJester] = new() { summonJester, };
+
+            Effect whisk = new()
+            {
+                title = "Whisk",
+                icon = IconData.displays.fates,
+                description = "The Fates do not constrain themselves to the physical laws of this world.",
+                instruction = "Cast Rite of the Fates to fire a warp projectile, then warp along its path by pressing the rite button (again) or action button before the projectile expires.",
+                details = new()
+                {
+                    "Range: up to 16 tiles",
+                    "Mastery: Extends range by 8",
+                    "Rite Button (Second press): warps caster to warp terminal (furthest point) instantly",
+                    "Action button: warps caster to the current position of the warp projectile",
+                    "Cost: 12 stamina",
+                }
+            };
+
+            effects[QuestHandle.fatesOne] = new() { whisk, };
+
+            Effect warpstrike = new()
+            {
+                title = "Warpstrike",
+                icon = IconData.displays.fates,
+                description = "Meow. Nothing escapes fate. Meow. Jester's word's reverberate in my head as I dominate my fates-stricken foes.",
+                instruction = "Rite of the Fates: Whisk applies curses to monsters in the vicinity of the casting cursor. A whisk activation will trigger an extended warpstrike against any nearby cursed monsters.",
+                details = new()
+                {
+                    "Activation: Replaces whisk with a warpstrike if nearby cursed monsters are detected",
+                    "Mastery: Critical hits will trigger additional strikes against the same target.",
+                    "Cost (Curse): 12 per target cursed",
+                    "Cost (Warpstrike: Free",
+                }
+            };
+
+            Effect curses = new()
+            {
+                title = "Curses",
+                icon = IconData.displays.fates,
+                description = "I interact with the otherworld in ways that would frighten the Druids of antiquity.",
+                instruction = "While charged, attacks against monsters will apply one of four effects that correspond to the various factions of the Fae court.",
+                details = new()
+                {
+                    "Polymorph: Converts the monster into a thrall of the Artisans of Fate, with a random rescaling.",
+                    "Pickpocket: The touch of Chaos Causes the monster to drop a random item.",
+                    "Dazzle: Slows the monster and confuses their targetting as they grapple with the great mysteries of the Priesthood of Fate.",
+                    "Doom / Instant Death: The Morticians of Fate deal lethal damage to monsters after a countdown elapse or if they are under 7% of max health.",
+                    "Companion Combo: Jester's attacks will also apply these curses.",
+                }
+            };
+
+            effects[QuestHandle.fatesTwo] = new() { warpstrike, curses, };
+
+            Effect tricks = new()
+            {
+                title = "Tricks",
+                icon = IconData.displays.fates,
+                description = "Druids train for many years to master the oral tradition, not only to safeguard esoteric knowledge, but to entertain and inspire their communities. Now, with Jester's help, I can add special effects.",
+                instruction = "Villagers can be targetted with Rite of the Fates. A randomised effect will play that will either be disliked, liked or loved by the villager.",
+                details = new()
+                {
+                    "Targetting: Cursor and Directional Targetting",
+                    "Mastery: Unlocks more effects.",
+                    "Friendship: Provides -25 to +75 friendship based on whether the villager disliked or liked the effect.",
+                    "Cost: Free",
+                }
+            };
+
+            effects[QuestHandle.fatesThree] = new() { tricks, };
+
+            Effect enchant = new()
+            {
+                title = "Enchant",
+                icon = IconData.displays.fates,
+                description = "The otherworld has it's own devices of faye design, powered by Faeth, an essence distilled from light and void. Now I can experiment with using Faeth to power my own artifice.",
+                instruction = "Enchant one of various types of farm machine to produce a randomised product without standard inputs. Each enchantment consumes one Faeth.",
+                details = new()
+                {
+                    "Requires: 1 Faeth, brewable in the herbalism journal (page 2)",
+                    "Mastery: Extracts existing products from machines.",
+                    "Channel: Cast and hold Rite of the Fates for 2-3 seconds while standing still, until the essence fills the rite indicator. When released, the enchantment effect will radiate in increasing magnitude.",
+                    "Works on Deconstructors, Bone Mills, Kegs, Preserves Jars, Cheese Presses, Mayonnaise Machines, Looms, Oil Makers, Furnaces and Geode Crushers.",
+                    "Gathers outputs from surrounding machines.",
+                    "Cost: 24 stamina",
+                }
+            };
+
+            effects[QuestHandle.fatesFour] = new() { enchant, };
+
 
             return effects;
 

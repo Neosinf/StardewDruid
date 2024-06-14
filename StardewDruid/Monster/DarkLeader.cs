@@ -78,14 +78,6 @@ namespace StardewDruid.Monster
 
         }
 
-        public override void SetMode(int mode)
-        {
-            base.SetMode(mode);
-
-            abilities = 1;
-
-        }
-
         public virtual void BruteWalk()
         {
             
@@ -107,6 +99,7 @@ namespace StardewDruid.Monster
 
         public virtual void BruteFlight()
         {
+            flightSet = true;
 
             flightInterval = 9;
 
@@ -239,8 +232,6 @@ namespace StardewDruid.Monster
         public void BruteSpecial()
         {
 
-            abilities = 2;
-
             cooldownInterval = 180;
 
             specialCeiling = 1;
@@ -283,8 +274,6 @@ namespace StardewDruid.Monster
                 },
 
             };
-
-            specialScheme = IconData.schemes.fire;
 
             sweepSet = true;
 
@@ -336,8 +325,6 @@ namespace StardewDruid.Monster
 
             DrawEmote(b, localPosition, drawLayer);
 
-            int shadowOffset = 0;
-
             int netScale = netMode.Value > 5 ? netMode.Value - 4 : netMode.Value;
 
             Vector2 spritePosition = localPosition - new Vector2(20 + (netScale * 4), 40f + (netScale * 8) + flightHeight);
@@ -348,8 +335,6 @@ namespace StardewDruid.Monster
             {
 
                 b.Draw(characterTexture, spritePosition, new Rectangle?(sweepFrames[netDirection.Value][sweepFrame]), Color.White, 0.0f, new Vector2(0.0f, 0.0f), spriteScale, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
-
-                shadowOffset = 56;
 
             }
             else if (netSpecialActive.Value)
@@ -391,20 +376,7 @@ namespace StardewDruid.Monster
 
             }
 
-            b.Draw(Game1.shadowTexture, new(localPosition.X - shadowOffset, localPosition.Y + 40f), new Rectangle?(Game1.shadowTexture.Bounds), Color.White, 0.0f, Vector2.Zero, 4f, 0, drawLayer - 1E-06f);
-
-        }
-
-        public override void PerformSpecial(Vector2 target)
-        {
-
-            specialTimer = (specialCeiling + 1) * specialInterval;
-
-            netSpecialActive.Set(true);
-
-            SetCooldown(1);
-
-            TalkSmack();
+            b.Draw(Game1.shadowTexture, localPosition + new Vector2(10, 44f), new Rectangle?(Game1.shadowTexture.Bounds), Color.White, 0.0f, Vector2.Zero, 4f, 0, drawLayer - 1E-06f);
 
         }
 

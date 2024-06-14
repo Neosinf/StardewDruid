@@ -16,6 +16,7 @@ using StardewValley.Internal;
 using StardewValley.GameData.GiantCrops;
 using StardewValley.Quests;
 using StardewValley.GameData.WildTrees;
+using StardewValley.Objects;
 
 
 namespace StardewDruid.Cast.Weald
@@ -122,9 +123,20 @@ namespace StardewDruid.Cast.Weald
                     if (targets.ContainsKey(clumpTile))
                     {
 
-                        bountyProspects.Add(clumpTile, bounties.clump);
-
                         clumps.Add(clumpTile, resourceClump);
+
+                        if (resourceClump is GiantCrop)
+                        {
+
+                            debrisProspects.Add(clumpTile, debris.giant);
+
+                        }
+                        else
+                        {
+                            
+                            bountyProspects.Add(clumpTile, bounties.clump);
+
+                        }
 
                     }
 
@@ -132,7 +144,7 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if (location is Beach && !Mod.instance.Config.disableFish)
+            if (location is Beach && Mod.instance.rite.spawnIndex.fishes)
             {
 
                 Layer buildingLayer = location.map.GetLayer("Buildings");
@@ -170,7 +182,7 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if (Mod.instance.rite.spawnIndex.ContainsKey("fishup") && !Mod.instance.Config.disableFish)
+            if (Mod.instance.rite.spawnIndex.fishes)
             {
 
                 for (int f = targets.Count - 1; f >= 0; f--)
@@ -256,12 +268,6 @@ namespace StardewDruid.Cast.Weald
 
                         debrisProspects.Add(check.Key, debris.grass);
 
-                    }
-                    else if (terrainFeature is StardewValley.TerrainFeatures.GiantCrop)
-                    {
-
-                        debrisProspects.Add(check.Key, debris.giant);
-                        
                     }
 
                     continue;
@@ -360,7 +366,11 @@ namespace StardewDruid.Cast.Weald
 
                     case debris.grass:
 
-                        BountyGrass(prospect.Key);
+                        int yield = 1;
+                        if(debrisProspects.Count > 10) { yield++; }
+                        if(debrisProspects.Count > 20) { yield++; }
+
+                        BountyGrass(prospect.Key, yield);
 
                         Mod.instance.iconData.ImpactIndicator(location, prospect.Key * 64, IconData.impacts.glare, 1f, new() { color = Color.LightGreen });
 
@@ -605,7 +615,7 @@ namespace StardewDruid.Cast.Weald
         }
 
 
-        public void BountyGrass(Vector2 grassTile)
+        public void BountyGrass(Vector2 grassTile, int yield = 1)
         {
 
             if (Mod.instance.randomIndex.Next(200) == 0)
@@ -669,16 +679,11 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            for (int i = 0; i < Mod.instance.randomIndex.Next(1 + Mod.instance.PowerLevel); i++)
-            {
+            StardewValley.Object candidate = new(items[Mod.instance.randomIndex.Next(items.Count)], Mod.instance.randomIndex.Next(1,yield + (int)(Mod.instance.PowerLevel/2)));
 
-                StardewValley.Object candidate = new(items[Mod.instance.randomIndex.Next(items.Count)], 1);
+            new ThrowHandle(Game1.player, grassTile * 64, candidate).register();
 
-                new ThrowHandle(Game1.player, grassTile * 64, candidate).register();
-
-                extractDebris++;
-
-            }
+            extractDebris++;
 
         }
 
@@ -811,7 +816,7 @@ namespace StardewDruid.Cast.Weald
         public void BountyGiant(Vector2 giantTile)
         {
 
-            StardewValley.TerrainFeatures.GiantCrop giantFeature = location.terrainFeatures[giantTile] as StardewValley.TerrainFeatures.GiantCrop;
+            StardewValley.TerrainFeatures.GiantCrop giantFeature = clumps[giantTile] as GiantCrop;
 
             GiantCropData data = giantFeature.GetData();
 

@@ -16,6 +16,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Timers;
 using static StardewDruid.Cast.SpellHandle;
 using static StardewValley.Minigames.TargetGame;
 using static System.Formats.Asn1.AsnWriter;
@@ -26,8 +27,6 @@ namespace StardewDruid.Cast.Mists
     {
 
         public Dictionary<Vector2, WispHandle> wisps = new();
-
-        public bool chargeActivated;
 
         public int wispCounter;
 
@@ -44,7 +43,7 @@ namespace StardewDruid.Cast.Mists
 
         }
 
-        public Vector2 AddWisps(int index, int charge = 30)
+        public Vector2 AddWisps(int index, int charge = 120)
         {
 
             for (int i = 0; i < 3; i++)
@@ -68,12 +67,13 @@ namespace StardewDruid.Cast.Mists
 
                     string ground = ModUtility.GroundCheck(location, tryVector);
 
-                    Microsoft.Xna.Framework.Color colour = Mod.instance.iconData.schemeColours[IconData.schemes.mists];
+                    Microsoft.Xna.Framework.Color colour = Mod.instance.iconData.SchemeColour(IconData.schemes.Aquamarine);
 
                     if(ground == "water")
                     {
 
-                        colour = Mod.instance.iconData.schemeColours[IconData.schemes.fates];
+                        //colour = Mod.instance.iconData.SchemeColour(IconData.schemes.Topaz);
+                        colour = Microsoft.Xna.Framework.Color.White;
 
                     }
                     else if (ground != "ground")
@@ -95,7 +95,7 @@ namespace StardewDruid.Cast.Mists
 
                     wisps[wispVector] = new(location, tryVector, colour, charge);
 
-                    expireTime = Math.Max(expireTime, Game1.currentGameTime.TotalGameTime.TotalSeconds + charge);
+                    activeLimit = eventCounter + charge;
 
 
                 }
@@ -115,34 +115,14 @@ namespace StardewDruid.Cast.Mists
                 if (Mod.instance.Config.riteButtons.GetState() != SButtonState.Held)
                 {
 
-                    if (chargeActivated)
-                    {
-
-                        eventLocked = true;
-
-                    }
-                    else
-                    {
-                        return false;
-
-                    }
+                    return false;
 
                 }
 
                 if (Vector2.Distance(origin, Game1.player.Position) > 32)
                 {
 
-                    if (chargeActivated)
-                    {
-
-                        eventLocked = true;
-
-                    }
-                    else
-                    {
-                        return false;
-
-                    }
+                    return false;
 
                 }
 
@@ -214,36 +194,13 @@ namespace StardewDruid.Cast.Mists
             if(decimalCounter == 15)
             {
 
-                TemporaryAnimatedSprite skyAnimation = Mod.instance.iconData.SkyIndicator(location, origin, IconData.skies.moon, 3f, new() { interval = 2000, });
+                TemporaryAnimatedSprite skyAnimation = Mod.instance.iconData.SkyIndicator(location, origin, IconData.skies.moon, 3f, new() { interval = 1000, });
 
                 animations.Add(skyAnimation);
 
                 location.playSound("thunder");
 
-                chargeActivated = true;
-
-                wispCounter = Mod.instance.randomIndex.Next(8);
-
-            }
-
-            if(decimalCounter % 10 == 5)
-            {
-                
-                Vector2 wispVector = AddWisps(wispCounter % 8);
-
-                if(wispVector != Vector2.Zero)
-                {
-
-                    Mod.instance.iconData.AnimateBolt(location, wispVector * 64);
-
-                }
-
-                wispCounter += 2;
-
-            }
-
-            if (decimalCounter == 45)
-            {
+                WispArray();
 
                 eventLocked = true;
 
@@ -251,10 +208,33 @@ namespace StardewDruid.Cast.Mists
 
         }
 
+        public virtual void WispArray()
+        {
+
+            wispCounter = Mod.instance.randomIndex.Next(8);
+
+            Vector2 wispVector = AddWisps(wispCounter);
+
+            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+
+            wispVector = AddWisps((wispCounter + 2) % 8);
+
+            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+
+            wispVector = AddWisps((wispCounter + 4) % 8);
+
+            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+
+            wispVector = AddWisps((wispCounter + 6) % 8);
+
+            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+
+        }
+
 
         public override void EventInterval()
         {
-
+            
             if(!eventLocked)
             { 
                 
@@ -379,9 +359,9 @@ namespace StardewDruid.Cast.Mists
             {
                 texture = Game1.animations,
                 light = true,
-                lightRadius = 1,
+                lightRadius = 3,
                 lightcolor = Microsoft.Xna.Framework.Color.White,
-                alpha = 0.6f,
+                alpha = 0.5f,
                 Parent = location,
             };
 
@@ -404,14 +384,13 @@ namespace StardewDruid.Cast.Mists
 
                 layerDepth = 992f,
 
-                alpha = 0.6f,
+                alpha = 0.3f,
 
                 flipped = wispFlip,
 
                 color = colour,
 
             };
-
 
             location.temporarySprites.Add(wisp);
 
@@ -428,13 +407,15 @@ namespace StardewDruid.Cast.Mists
 
                 layerDepth = 992f,
 
-                alpha = 0.6f,
+                alpha = 0.4f,
 
                 flipped = wispFlip,
 
             };
 
             location.temporarySprites.Add(eyes);
+
+            //light = Mod.instance.iconData.ImpactIndicator(location, position, IconData.impacts.cloud, 2.5f, new() { alpha = 0.3f, interval = 125f, loops = timer, color = colour, });
 
             initiated = true;
 

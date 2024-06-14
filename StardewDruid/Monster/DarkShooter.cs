@@ -33,33 +33,7 @@ namespace StardewDruid.Monster
           : base(vector, CombatModifier, name)
         {
 
-            objectsToDrop.Clear();
-
-            objectsToDrop.Add("769");
-
-            if (Game1.random.Next(3) == 0)
-            {
-                objectsToDrop.Add("768");
-            }
-            else if (Game1.random.Next(4) == 0 && combatModifier >= 120)
-            {
-                List<string> shadowGems = new()
-                {
-                    "62","66","68","70",
-                };
-
-                objectsToDrop.Add(shadowGems[Game1.random.Next(shadowGems.Count)]);
-
-            }
-            else if (Game1.random.Next(5) == 0 && combatModifier >= 240)
-            {
-                List<string> shadowGems = new()
-                {
-                    "60","64","72",
-                };
-
-                objectsToDrop.Add(shadowGems[Game1.random.Next(shadowGems.Count)]);
-            }
+            SpawnData.MonsterDrops(this, SpawnData.drops.shadow);
 
         }
 
@@ -86,9 +60,8 @@ namespace StardewDruid.Monster
 
         public override void SetMode(int mode)
         {
+            
             base.SetMode(mode);
-
-            abilities = 2;
 
             tempermentActive = temperment.ranged;
 
@@ -115,6 +88,8 @@ namespace StardewDruid.Monster
 
         public virtual void ShooterFlight()
         {
+
+            flightSet = true;
 
             flightInterval = 9;
 
@@ -247,11 +222,9 @@ namespace StardewDruid.Monster
         public void ShooterSpecial()
         {
 
-            abilities = 2;
+            specialSet = true;
 
             cooldownInterval = 180;
-
-            specialScheme = IconData.schemes.fire;
 
             specialCeiling = 1;
 
@@ -293,6 +266,8 @@ namespace StardewDruid.Monster
                 },
 
             };
+
+            channelSet = true;
 
             channelFrames = new Dictionary<int, List<Rectangle>>()
             {
@@ -451,8 +426,6 @@ namespace StardewDruid.Monster
 
             DrawEmote(b, localPosition, drawLayer);
 
-            int shadowOffset = 0;
-
             int netScale = netMode.Value > 5 ? netMode.Value - 4 : netMode.Value;
 
             Vector2 spritePosition = localPosition - new Vector2(20 + (netScale * 4), 40f + (netScale * 8) + flightHeight);
@@ -463,8 +436,6 @@ namespace StardewDruid.Monster
             {
 
                 b.Draw(characterTexture, spritePosition, new Rectangle?(sweepFrames[netDirection.Value][sweepFrame]), Color.White, 0.0f, new Vector2(0.0f, 0.0f), spriteScale, (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, drawLayer);
-
-                shadowOffset = 56;
 
             }
             else if (netSpecialActive.Value)
@@ -536,11 +507,44 @@ namespace StardewDruid.Monster
 
             }
 
-            b.Draw(Game1.shadowTexture, new(localPosition.X - shadowOffset, localPosition.Y + 40f), new Rectangle?(Game1.shadowTexture.Bounds), Color.White, 0.0f, Vector2.Zero, 4f, 0, drawLayer - 1E-06f);
+            b.Draw(Game1.shadowTexture, localPosition + new Vector2(10, 44f), new Rectangle?(Game1.shadowTexture.Bounds), Color.White, 0.0f, Vector2.Zero, 4f, 0, drawLayer - 1E-06f);
 
         }
 
-        public override void PerformBarrage(Vector2 target)
+        public override bool PerformSpecial(Vector2 target)
+        {
+
+            specialTimer = (specialCeiling + 1) * specialInterval * 2;
+
+            netSpecialActive.Set(true);
+
+            SetCooldown(1);
+
+            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 192, GetThreat());
+
+            fireball.type = SpellHandle.spells.missile;
+
+            fireball.projectile = 2;
+
+            fireball.missile = IconData.missiles.cannonball;
+
+            fireball.display = IconData.impacts.impact;
+
+            fireball.boss = this;
+
+            fireball.indicator = IconData.cursors.scope;
+
+            fireball.scheme = IconData.schemes.ember;
+
+            fireball.added = new() { SpellHandle.effects.embers, };
+
+            Mod.instance.spellRegister.Add(fireball);
+
+            return true;
+
+        }
+
+        public override bool PerformChannel(Vector2 target)
         {
 
             specialTimer = (specialCeiling + 1) * specialInterval * 2;
@@ -549,21 +553,27 @@ namespace StardewDruid.Monster
 
             SetCooldown(2);
 
-            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 256, DamageToFarmer);
+            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 256, GetThreat());
 
             fireball.type = SpellHandle.spells.ballistic;
 
             fireball.projectile = 3;
 
-            fireball.scheme = specialScheme;
+            fireball.missile = IconData.missiles.cannonball;
 
             fireball.display = IconData.impacts.impact;
 
             fireball.boss = this;
 
-            fireball.added = new() { SpellHandle.effects.burn, };
+            fireball.indicator = IconData.cursors.scope;
+
+            fireball.scheme = IconData.schemes.ember;
+
+            fireball.added = new() { SpellHandle.effects.embers, };
 
             Mod.instance.spellRegister.Add(fireball);
+
+            return true;
 
         }
 

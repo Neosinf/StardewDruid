@@ -22,28 +22,19 @@ namespace StardewDruid.Event.Scene
 
         }
 
-        public override bool TriggerMarker()
-        {
-            
-            if (!base.TriggerMarker())
-            {
-
-                return false;
-
-            }
-
-            AddActor(0,origin - new Vector2(48, 48));
-
-            return true;
-
-        }
-
         public override void TriggerInterval()
         {
 
             base.TriggerInterval();
 
             int actionCycle = triggerCounter % 20;
+
+            if (actors.Count == 0)
+            {
+
+                AddActor(0, origin - new Vector2(48, 48));
+
+            }
 
             switch (actionCycle)
             {
@@ -69,7 +60,7 @@ namespace StardewDruid.Event.Scene
 
                     CastVoice(0, "Stand here and perform the rite", duration: 3000);
 
-                    Mod.instance.CastMessage(Mod.instance.Config.riteButtons.ToString() + " with a tool in hand to perform a rite of the Weald", -1);
+                    Mod.instance.CastDisplay(Mod.instance.Config.riteButtons.ToString() + " with a tool in hand to perform a rite of the Weald");
 
                     break;
 
@@ -94,7 +85,7 @@ namespace StardewDruid.Event.Scene
 
             Mod.instance.RegisterEvent(this, eventId, true);
 
-            expireTime = Game1.currentGameTime.TotalGameTime.TotalSeconds + 600.0;
+            activeLimit = eventCounter + 302;
 
             ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 
@@ -114,7 +105,7 @@ namespace StardewDruid.Event.Scene
         public override void EventAbort()
         {
 
-            CharacterData.CharacterRemove(CharacterData.characters.Effigy);
+            CharacterHandle.CharacterRemove(CharacterHandle.characters.Effigy);
 
             base.EventAbort();
 
@@ -139,8 +130,8 @@ namespace StardewDruid.Event.Scene
 
             if(Game1.activeClickableMenu != null)
             {
-                
-                expireTime++;
+
+                activeLimit += 1;
 
                 return;
 
@@ -164,7 +155,7 @@ namespace StardewDruid.Event.Scene
 
                         sourceRect = new(0, 0, 32, 32),
 
-                        texture = CharacterData.CharacterTexture(CharacterData.characters.Effigy),
+                        texture = CharacterHandle.CharacterTexture(CharacterHandle.characters.Effigy),
 
                         scale = 4.25f,
 
@@ -184,21 +175,20 @@ namespace StardewDruid.Event.Scene
 
                     RemoveActors();
 
-                    CharacterData.CharacterLoad(CharacterData.characters.Effigy, StardewDruid.Character.Character.mode.scene);
+                    CharacterHandle.CharacterLoad(CharacterHandle.characters.Effigy, StardewDruid.Character.Character.mode.scene);
 
                     narrators = new()
                     {
-                        [0] = new("The Forgotten Effigy", Microsoft.Xna.Framework.Color.Green),
+                        [0] = "The Forgotten Effigy",
+                    };
 
-                    }; ;
-
-                    companions.Add(0,Mod.instance.characters[CharacterData.characters.Effigy]);
+                    companions.Add(0,Mod.instance.characters[CharacterHandle.characters.Effigy]);
 
                     companions[0].netStandbyActive.Set(false);
 
                     companions[0].currentLocation = location;
 
-                    companions[0].Position = origin + new Vector2(128,64);
+                    companions[0].Position = origin + new Vector2(64,0);
 
                     companions[0].currentLocation.characters.Add(companions[0]);
 
@@ -228,9 +218,21 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
+                case 10:
+
+                    activeCounter = 100;
+
+                    break;
+
                 case 101:
 
                     DialogueSetups(companions[0], 2);
+
+                    break;
+
+                case 105:
+
+                    activeCounter = 200;
 
                     break;
 
@@ -238,15 +240,19 @@ namespace StardewDruid.Event.Scene
 
                     DialogueSetups(companions[0], 3);
 
-                    companions[0].TargetEvent(203, companions[0].Position + new Vector2(0, 192));
+                    companions[0].TargetEvent(300, companions[0].Position + new Vector2(0, 192));
 
                     break;
 
-                case 203:
+                case 205:
+
+                    activeCounter = 300;
+
+                    break;
+
+                case 301:
 
                     eventComplete = true;
-
-                    expireEarly = true;
 
                     break;
 
@@ -258,12 +264,12 @@ namespace StardewDruid.Event.Scene
         {
             switch (index)
             {
-                case 203:
+                case 300:
 
                     if (!eventComplete)
                     {
 
-                        activeCounter = 202;
+                        activeCounter = Math.Max(300, activeCounter);
 
                         EventInterval();
 
@@ -297,7 +303,7 @@ namespace StardewDruid.Event.Scene
 
                 case 3:
 
-                    intro = "An interesting proposition. Meet me in the grove outside, and we will test your aptitude for the otherworld.";
+                    intro = "Meet me in the grove outside, and we will test your aptitude for the otherworld.";
 
                     DialogueDraw(npc, intro);
 
@@ -314,15 +320,15 @@ namespace StardewDruid.Event.Scene
 
                     responseList.Add(new Response("1a", "Who stuck you in the ceiling?"));
                     responseList.Add(new Response("1a", "I inherited this plot from my grandfather. His notes didn't say anything about a magic scarecrow."));
-                    responseList.Add(new Response("1b", "(Say nothing)"));
+                    responseList.Add(new Response("1a", "(Say nothing)"));
 
                     break;
 
                 case 2:
 
+                    responseList.Add(new Response("2a", "I would love to know more about the traditions of my forebearers."));
                     responseList.Add(new Response("2a", "I want to be like the farmers of old and form a circle"));
-                    responseList.Add(new Response("2a", "Do you think I could become...(dramatic pause)... a Stardew Druid?"));
-                    responseList.Add(new Response("2b", "(Say nothing)"));
+                    responseList.Add(new Response("2a", "(Say nothing)"));
 
                     break;
 
@@ -342,6 +348,7 @@ namespace StardewDruid.Event.Scene
             switch (dialogueId)
             {
 
+                case "1a":
                 default:
 
                     activeCounter = Math.Max(100, activeCounter);

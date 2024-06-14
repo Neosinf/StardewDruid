@@ -4,7 +4,6 @@ using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
-using StardewDruid.Data;
 using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewValley;
@@ -25,7 +24,7 @@ namespace StardewDruid.Character
     public class Cuchulan : StardewDruid.Character.Character
     {
         
-        new public CharacterData.characters characterType = CharacterData.characters.Cuchulan;
+        new public CharacterHandle.characters characterType = CharacterHandle.characters.Cuchulan;
 
         public Texture2D hatsTexture;
 
@@ -33,7 +32,7 @@ namespace StardewDruid.Character
         {
         }
 
-        public Cuchulan(CharacterData.characters type)
+        public Cuchulan(CharacterHandle.characters type)
           : base(type)
         {
 

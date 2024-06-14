@@ -26,6 +26,8 @@ namespace StardewDruid.Cast.Weald
 
         public int radialCounter = 0;
 
+        public int castCost = 0;
+
         public Cultivate()
         {
 
@@ -98,6 +100,13 @@ namespace StardewDruid.Cast.Weald
 
                     Mod.instance.spellRegister.Add(spellHandle);
 
+                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour))
+                    {
+
+                        Mod.instance.questHandle.UpdateTask(QuestHandle.wealdFour, 1);
+
+                    }
+
                 }
 
                 return;
@@ -111,21 +120,32 @@ namespace StardewDruid.Cast.Weald
             if (radialCounter == 9)
             {
 
-                expireEarly = true;
+                eventComplete = true;
             
             }
 
         }
 
+        public override void EventRemove()
+        {
+            base.EventRemove();
+
+            Mod.instance.rite.castCost = castCost;
+
+            Mod.instance.rite.ApplyCost();
+
+        }
+
         public void Cultivation()
         {
-
+            
             int cultivationCost = 2;
 
-            if(Game1.player.FarmingLevel > 5)
+            if (Game1.player.FarmingLevel > 5)
             {
 
                 cultivationCost = 1;
+
             }
 
             if (!Mod.instance.rite.targetCasts.ContainsKey(location.Name))
@@ -323,13 +343,6 @@ namespace StardewDruid.Cast.Weald
 
                         }
 
-                        if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour))
-                        {
-
-                            Mod.instance.questHandle.UpdateTask(QuestHandle.wealdFour, 1);
-
-                        }
-
                     }
 
                     if (hoeDirt.crop.currentPhase.Value <= 1)
@@ -362,7 +375,7 @@ namespace StardewDruid.Cast.Weald
                     if (!inabsentia)
                     {
 
-                        Mod.instance.rite.castCost += cultivationCost;
+                        castCost += cultivationCost;
 
                     }
 
@@ -414,7 +427,7 @@ namespace StardewDruid.Cast.Weald
                     if (!inabsentia)
                     {
 
-                        Mod.instance.rite.castCost += cultivationCost;
+                        castCost += cultivationCost;
 
                     }
 
@@ -452,7 +465,7 @@ namespace StardewDruid.Cast.Weald
                     if (!inabsentia)
                     {
 
-                        Mod.instance.rite.castCost += cultivationCost;
+                        castCost += cultivationCost;
 
                     }
 

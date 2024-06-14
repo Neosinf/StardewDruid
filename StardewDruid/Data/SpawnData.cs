@@ -1,16 +1,170 @@
 ﻿using GenericModConfigMenu;
 using StardewDruid.Cast;
+using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
+using static StardewDruid.Cast.Rite;
 
 namespace StardewDruid.Data
 {
     static class SpawnData
     {
+
+        public enum drops
+        {
+            none,
+            bat,
+            shadow,
+            slime,
+            phantom,
+            seafarer,
+            dragon,
+
+        }
+
+        public static void MonsterDrops(StardewValley.Monsters.Monster monster, drops drop)
+        {
+
+            switch (drop)
+            {
+
+                case drops.bat:
+
+                    monster.objectsToDrop.Clear();
+
+                    monster.objectsToDrop.Add("767");
+
+                    if (Game1.random.Next(3) == 0)
+                    {
+                        monster.objectsToDrop.Add("767");
+                    }
+                    else if (Game1.random.Next(4) == 0 && Mod.instance.PowerLevel >= 3)
+                    {
+                        monster.objectsToDrop.Add("767");
+                    }
+                    else if (Game1.random.Next(5) == 0 && Mod.instance.PowerLevel >= 5)
+                    {
+                        List<string> batElixers = new()
+                        {
+                            "772","773","879",
+                        };
+
+                        monster.objectsToDrop.Add(batElixers[Game1.random.Next(batElixers.Count)]);
+
+                    }
+
+                    break;
+
+                case drops.shadow:
+
+                    monster.objectsToDrop.Clear();
+
+                    monster.objectsToDrop.Add("769");
+
+                    if (Game1.random.Next(3) == 0)
+                    {
+                        monster.objectsToDrop.Add("768");
+                    }
+                    else if (Game1.random.Next(4) == 0 && Mod.instance.PowerLevel >= 3)
+                    {
+                        List<string> shadowGems = new()
+                        {
+                            "62","66","68","70",
+                        };
+
+                        monster.objectsToDrop.Add(shadowGems[Game1.random.Next(shadowGems.Count)]);
+
+                    }
+                    else if (Game1.random.Next(5) == 0 && Mod.instance.PowerLevel >= 5)
+                    {
+                        List<string> shadowGems = new()
+                        {
+                            "60","64","72",
+                        };
+
+                        monster.objectsToDrop.Add(shadowGems[Game1.random.Next(shadowGems.Count)]);
+                    }
+
+                    break;
+
+                case drops.slime:
+
+
+                    monster.objectsToDrop.Add("766");
+
+                    if (Game1.random.Next(3) == 0)
+                    {
+                        monster.objectsToDrop.Add("766");
+                    }
+                    else if (Game1.random.Next(4) == 0 && Mod.instance.PowerLevel >= 3)
+                    {
+                        monster.objectsToDrop.Add("766");
+
+                    }
+                    else if (Game1.random.Next(5) == 0 && Mod.instance.PowerLevel >= 5)
+                    {
+                        List<string> slimeSyrups = new()
+                        {
+                            "724","725","726","247","184","419",
+                        };
+
+                        monster.objectsToDrop.Add(slimeSyrups[Game1.random.Next(slimeSyrups.Count)]);
+                    }
+
+                    break;
+
+                case drops.phantom:
+
+                    monster.objectsToDrop.Clear();
+
+                    if (Game1.random.Next(3) == 0)
+                    {
+                        monster.objectsToDrop.Add("378");
+                    }
+                    else if (Game1.random.Next(4) == 0 && Mod.instance.PowerLevel >= 3)
+                    {
+                        monster.objectsToDrop.Add("380");
+                    }
+                    else if (Game1.random.Next(5) == 0 && Mod.instance.PowerLevel >= 4)
+                    {
+                        monster.objectsToDrop.Add("384");
+                    }
+                    else if (Game1.random.Next(6) == 0 && Mod.instance.PowerLevel >= 5)
+                    {
+                        monster.objectsToDrop.Add("386"); // iridium
+                    }
+
+                    break;
+
+                case drops.seafarer:
+
+                    monster.objectsToDrop.Clear();
+
+                    switch (Game1.random.Next(4))
+                    {
+                        case 0: monster.objectsToDrop.Add("797"); break;
+
+                        case 1: monster.objectsToDrop.Add("166"); break;
+
+                        case 2: monster.objectsToDrop.Add("265"); break;
+
+                        case 3: monster.objectsToDrop.Add("275"); break;
+
+                    }
+
+                    break;
+
+            }
+
+            return;
+
+        }
+
         public static Dictionary<int, Rite.rites> WeaponAttunement(bool reserved = false)
         {
 
@@ -24,7 +178,7 @@ namespace StardewDruid.Data
 
             weapons[15] = Rite.rites.weald;
             weapons[14] = Rite.rites.mists;
-            weapons[9] = Rite.rites.stars;
+            weapons[3] = Rite.rites.stars;
             weapons[53] = Rite.rites.fates;
             weapons[57] = Rite.rites.ether;
 
@@ -491,6 +645,16 @@ namespace StardewDruid.Data
 
                     break;
 
+                case "winter":
+
+                    objectIndexes = new()
+                    {
+                        [0] = 421, // crocus
+                        [1] = 421, // crocus
+                    };
+
+                    break;
+
                 default: //"fall":
 
                     objectIndexes = new()
@@ -629,7 +793,7 @@ namespace StardewDruid.Data
                 {
 
                     indexes.Add("150"); // red snapper
-                    indexes.Add("SeaJelly"); // red snapper
+                    indexes.Add("SeaJelly");
 
                 }
 
@@ -644,7 +808,7 @@ namespace StardewDruid.Data
                 {
 
                     indexes.Add("132"); // bream
-                    indexes.Add("RiverJelly"); // red snapper
+                    indexes.Add("RiverJelly");
                 }
 
                 switch (Game1.currentSeason)
@@ -653,10 +817,10 @@ namespace StardewDruid.Data
                     case "spring":
 
                         indexes.Add("137"); // smallmouth bass
-                        indexes.Add("142"); // sunfish
+                        indexes.Add("145"); // sunfish
                         break;
                     case "summer":
-                        indexes.Add("142"); // sunfish
+                        indexes.Add("145"); // sunfish
                         indexes.Add("138"); // rainbow trout
                         break;
 
@@ -679,11 +843,11 @@ namespace StardewDruid.Data
                 {
 
                     indexes.Add("132"); // bream
-                    indexes.Add("CaveJelly"); // red snapper
+                    indexes.Add("CaveJelly");
 
                 }
 
-                indexes.Add("145"); // carp
+                indexes.Add("142"); // carp
 
             }
 
@@ -932,7 +1096,7 @@ namespace StardewDruid.Data
             Dictionary<int, int> objectIndexes = new()
             {
                 [0] = 257, // 257 morel
-                [1] = 281, // 281 chanterelle
+                [1] = 404, // 404 mushroom
                 [2] = 404, // 404 mushroom
                 [3] = seasonal,
                 [4] = seasonal,
@@ -1081,14 +1245,35 @@ namespace StardewDruid.Data
 
         }
 
-        public static int HighTreasure(string terrain)
+        public static StardewValley.Item CrateTreasure(GameLocation location, Microsoft.Xna.Framework.Vector2 vector)
         {
+
+            if(location is Vault)
+            {
+
+                switch (vector.Y)
+                {
+                    default:
+                    case 1:
+
+                        return new MeleeWeapon("9");
+
+                    case 2:
+
+                        return new StardewValley.Object("336", 5);
+
+                    case 3:
+
+                        return new StardewValley.Object("74", 1);
+
+                }
+
+            }
 
             Dictionary<int, int> objectIndexes;
 
-            switch (terrain)
+            switch (ModUtility.GroundCheck(location,ModUtility.PositionToTile(vector)))
             {
-
 
                 case "water":
 
@@ -1120,7 +1305,7 @@ namespace StardewDruid.Data
 
             int objectIndex = objectIndexes[probability];
 
-            return objectIndex;
+            return new StardewValley.Object(objectIndex.ToString(), 1);
 
         }
 
@@ -1248,191 +1433,174 @@ namespace StardewDruid.Data
 
         }
 
-        public static Dictionary<string, bool> SpawnTemplate()
+    }
+
+    public class SpawnIndex
+    {
+        public bool cast;
+        public bool weeds;
+        public bool forage;
+        public bool flower;
+        public bool grass;
+        public bool trees;
+        public bool fishes;
+        public bool fishspot;
+        public bool seed;
+        public bool crate;
+
+        public SpawnIndex()
         {
-
-            Dictionary<string, bool> spawnTemplate = new()
-            {
-
-                ["weeds"] = false,
-                ["forage"] = false,
-                ["flower"] = false,
-                ["grass"] = false,
-                ["trees"] = false,
-                ["fishup"] = false,
-                ["wildspawn"] = false,
-                ["fishspot"] = false,
-                ["cropseed"] = false,
-                ["whisk"] = false,
-                ["gravity"] = false,
-                ["teahouse"] = false,
-                ["crate"] = false,
-
-            };
-
-            return spawnTemplate;
-
-        }
-
-        public static Dictionary<string, bool> AnywhereTemplate(GameLocation playerLocation)
-        {
-
-            Dictionary<string, bool> spawnTemplate = new()
-            {
-
-                ["weeds"] = true,
-                ["forage"] = true,
-                ["flower"] = true,
-                ["grass"] = true,
-                ["trees"] = true,
-                ["fishup"] = true,
-                ["wildspawn"] = true,
-                ["fishspot"] = true,
-                ["cropseed"] = true,
-                ["artifact"] = true,
-                ["whisk"] = true,
-                ["gravity"] = true,
-                ["teahouse"] = false,
-                ["crate"] = false,
-
-            };
-
-            if (playerLocation.Map.Layers[0].LayerWidth * playerLocation.Map.Layers[0].LayerHeight > 2000)
-            {
-
-                spawnTemplate["crate"] = true;
-
-            }
-
-            if (playerLocation is Shed || playerLocation is Farm)
-            {
-
-                spawnTemplate["teahouse"] = true;
-
-            }
-
-            if (playerLocation is Beach || playerLocation is IslandSouth || playerLocation is IslandSouthEast || playerLocation is IslandSouthEastCave)
-            {
-
-                spawnTemplate["tree"] = false;
-
-            }
-
-            return spawnTemplate;
-
-        }
-
-        public static Dictionary<string, bool> SpawnIndex(GameLocation playerLocation)
-        {
-
-            Dictionary<string, bool> spawnIndex;
 
             if (Mod.instance.Config.castAnywhere)
             {
 
-                return AnywhereTemplate(playerLocation);
+                SpawnAnywhere();
 
             }
 
-            spawnIndex = SpawnTemplate();
+        }
 
-            if (playerLocation is Farm || playerLocation.Name == "Custom_Garden")
+        public void SpawnAnywhere()
+        {
+
+            cast = true;
+
+            weeds = true;
+
+            forage = true;
+
+            flower = true;
+
+            grass = true;
+
+            trees = true;
+
+            fishes = true;
+
+            fishspot = true;
+
+            seed = true;
+
+            if (Game1.player.currentLocation.Map.Layers[0].LayerWidth * Game1.player.currentLocation.Map.Layers[0].LayerHeight > 2000)
             {
 
-                spawnIndex["weeds"] = true;
-                spawnIndex["forage"] = true;
-                spawnIndex["flower"] = true;
-                spawnIndex["grass"] = true;
-                spawnIndex["trees"] = true;
-                spawnIndex["fishup"] = true;
-                spawnIndex["wildspawn"] = true;
-                spawnIndex["cropseed"] = true;
-                spawnIndex["whisk"] = true;
-                spawnIndex["gravity"] = true;
+                crate = true;
 
             }
-            else if (playerLocation.isGreenhouse.Value)
+
+            if (Game1.player.currentLocation is Beach || Game1.player.currentLocation is IslandSouth || Game1.player.currentLocation is IslandSouthEast || Game1.player.currentLocation is IslandSouthEastCave)
             {
 
-                spawnIndex["cropseed"] = true;
-                spawnIndex["teahouse"] = true;
+                trees = false;
 
             }
-            else if (playerLocation is IslandWest || playerLocation is IslandNorth)
-            {
-                spawnIndex["fishup"] = true;
-                spawnIndex["fishspot"] = true;
-                spawnIndex["wildspawn"] = true;
-                spawnIndex["cropseed"] = true;
-                spawnIndex["trees"] = true;
-                spawnIndex["weeds"] = true;
-                spawnIndex["artifact"] = true;
-                spawnIndex["whisk"] = true;
-                spawnIndex["gravity"] = true;
 
-                if (playerLocation is IslandWest)
+        }
+
+
+        public SpawnIndex(GameLocation location)
+        {
+
+            if (Mod.instance.Config.castAnywhere)
+            {
+                
+                SpawnAnywhere();
+
+                return;
+
+            }
+
+            cast = true;
+
+            if (location is Farm || location.Name == "Custom_Garden")
+            {
+
+                weeds = true;
+                forage = true;
+                flower = true;
+                grass = true;
+                trees = true;
+                fishes = true;
+                seed = true;
+
+            }
+            else if (location.isGreenhouse.Value || location is Shed || location is AnimalHouse)
+            {
+
+                seed = true;
+
+            }
+            else if (location is IslandWest || location is IslandNorth)
+            {
+                fishes = true;
+                fishspot = true;
+                seed = true;
+                trees = true;
+                weeds = true;
+
+                if (location is IslandWest)
                 {
 
-                    spawnIndex["crate"] = true;
+                    crate = true;
 
                 }
 
             }
-            else if (playerLocation is Forest || playerLocation is Mountain || playerLocation is Desert || playerLocation is BusStop || playerLocation is BugLand)
+            else if (location is Forest || location is Mountain || location is Desert || location is BusStop || location is BugLand)
             {
-                spawnIndex["weeds"] = true;
-                spawnIndex["forage"] = true;
-                spawnIndex["flower"] = true;
-                spawnIndex["grass"] = true;
-                spawnIndex["trees"] = true;
-                spawnIndex["fishup"] = true;
-                spawnIndex["wildspawn"] = true;
-                spawnIndex["fishspot"] = true;
-                spawnIndex["artifact"] = true;
-                spawnIndex["whisk"] = true;
+                weeds = true;
+                forage = true;
+                flower = true;
+                grass = true;
+                trees = true;
+                fishes = true;
+                fishspot = true;
 
-                if (playerLocation.Map.Layers[0].LayerWidth * playerLocation.Map.Layers[0].LayerHeight > 2000)
+
+                if (location.Map.Layers[0].LayerWidth * location.Map.Layers[0].LayerHeight > 2000)
                 {
 
-                    spawnIndex["crate"] = true;
+                    crate = true;
 
                 }
 
             }
-            else if (playerLocation.Name.Contains("Backwoods") || playerLocation is Railroad)
+            else if (location.Name.Contains("Backwoods") || location is Railroad)
             {
 
-                spawnIndex["forage"] = true;
-                spawnIndex["flower"] = true;
-                spawnIndex["grass"] = true;
-                spawnIndex["trees"] = true;
-                spawnIndex["wildspawn"] = true;
-                spawnIndex["artifact"] = true;
-                spawnIndex["whisk"] = true;
-                spawnIndex["weeds"] = true;
+                forage = true;
+                flower = true;
+                grass = true;
+                trees = true;
+                weeds = true;
 
             }
-            else if (playerLocation is Woods || playerLocation is IslandEast || playerLocation is IslandShrine || playerLocation is StardewDruid.Location.Grove)
+            else if (location is Woods || location is IslandEast || location is IslandShrine || location is StardewDruid.Location.Grove)
             {
 
-                spawnIndex["forage"] = true;
-                spawnIndex["flower"] = true;
-                spawnIndex["grass"] = true;
-                spawnIndex["wildspawn"] = true;
-                spawnIndex["fishspot"] = true;
-                spawnIndex["weeds"] = true;
+                forage = true;
+                flower = true;
+                grass = true;
+                fishspot = true;
+                weeds = true;
 
             }
-            else if (playerLocation is MineShaft || playerLocation is VolcanoDungeon || playerLocation is Location.Crypt) //|| playerLocation.Name.Contains("Mine"))
+            else if (
+                location is MineShaft ||
+                location is VolcanoDungeon ||
+                location is StardewDruid.Location.Chapel ||
+                location is StardewDruid.Location.Vault ||
+                location is StardewDruid.Location.Court
+                ) //|| location.Name.Contains("Mine"))
             {
 
-                if (playerLocation.Name.Contains("20") || playerLocation.Name.Contains("60") || playerLocation.Name.Contains("100"))
+                if (location.Name.Contains("20") || location.Name.Contains("60") || location.Name.Contains("100"))
                 {
-                    spawnIndex["fishspot"] = true;
+                    fishspot = true;
 
                 }
 
-                if (playerLocation is MineShaft mineShaft)
+                if (location is MineShaft mineShaft)
                 {
                     List<int> mineLevels = new() { 3, 7 };
 
@@ -1445,94 +1613,101 @@ namespace StardewDruid.Data
                     else if (mineLevels.Contains(mineShaft.mineLevel % 10))
                     {
 
-                        spawnIndex["crate"] = true;
+                        crate = true;
 
                     }
 
                 }
 
-                spawnIndex["weeds"] = true;
+                weeds = true;
 
             }
-            else if (playerLocation is Beach || playerLocation is IslandSouth || playerLocation is IslandSouthEast || playerLocation is IslandSouthEastCave || playerLocation is StardewDruid.Location.Atoll)
+            else if (location is Beach || location is IslandSouth || location is IslandSouthEast || location is IslandSouthEastCave || location is StardewDruid.Location.Atoll)
             {
 
-                spawnIndex["wildspawn"] = true;
-                spawnIndex["fishup"] = true;
-                spawnIndex["fishspot"] = true;
-                spawnIndex["artifact"] = true;
-                spawnIndex["whisk"] = true;
-                spawnIndex["weeds"] = true;
+                fishes = true;
+                fishspot = true;
+                weeds = true;
 
-                if (playerLocation is Beach || playerLocation is IslandSouth || playerLocation is IslandSouthEast)
+                if (location is Beach || location is IslandSouth || location is IslandSouthEast)
                 {
 
-                    spawnIndex["crate"] = true;
+                    crate = true;
 
                 }
 
             }
-            else if (playerLocation is Town)
+            else if (location is Town)
             {
-                spawnIndex["weeds"] = true;
-                spawnIndex["forage"] = true;
-                spawnIndex["flower"] = true;
-                spawnIndex["fishup"] = true;
-                spawnIndex["fishspot"] = true;
-                spawnIndex["artifact"] = true;
-                spawnIndex["whisk"] = true;
+                weeds = true;
+                forage = true;
+                flower = true;
+                fishes = true;
+                fishspot = true;
 
             }
-            else if (playerLocation.Name.Contains("DeepWoods"))
+            else if (location.Name.Contains("DeepWoods"))
             {
 
-                spawnIndex["wildspawn"] = true;
-                spawnIndex["fishspot"] = true;
+                fishspot = true;
 
-                if (playerLocation.Map.Layers[0].LayerWidth * playerLocation.Map.Layers[0].LayerHeight > 2000)
+                if (location.Map.Layers[0].LayerWidth * location.Map.Layers[0].LayerHeight > 2000)
                 {
 
-                    spawnIndex["crate"] = true;
+                    crate = true;
 
                 }
 
             }
-            else if (playerLocation is AnimalHouse)
+            else if (location is Caldera || location is Sewer)
             {
 
-                spawnIndex["hay"] = true;
+                fishspot = true;
 
             }
-            else if (playerLocation is Caldera || playerLocation is Sewer)
+            else if (location.Name.Contains("Saloon"))
             {
 
-                spawnIndex["fishspot"] = true;
-
-            }
-            else if (playerLocation is Shed)
-            {
-
-                spawnIndex["teahouse"] = true;
-
-            }
-            else if(playerLocation.Name.Contains("Saloon"))
-            {
-
-                spawnIndex["crate"] = true;
+                crate = true;
 
             }
             else
             {
-                
-                return new();
+
+                cast = false;
 
             }
 
-            return spawnIndex;
+            if (Mod.instance.Config.disableGrass)
+            {
+
+                grass = false;
+
+            }
+
+            if (Mod.instance.Config.disableTrees)
+            {
+
+                trees = false;
+
+            }
+
+            if (Mod.instance.Config.disableFish)
+            {
+
+                fishes = false;
+
+            }
+
+            if (Mod.instance.Config.disableSeeds)
+            {
+
+                seed = false;
+
+            }
 
         }
 
     }
-
 
 }

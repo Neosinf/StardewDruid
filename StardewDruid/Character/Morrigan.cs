@@ -4,7 +4,6 @@ using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
-using StardewDruid.Data;
 using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewValley;
@@ -25,7 +24,7 @@ namespace StardewDruid.Character
     public class Morrigan : StardewDruid.Character.Character
     {
         
-        new public CharacterData.characters characterType = CharacterData.characters.Morrigan;
+        new public CharacterHandle.characters characterType = CharacterHandle.characters.Morrigan;
 
         public Texture2D hatsTexture;
 
@@ -33,7 +32,7 @@ namespace StardewDruid.Character
         {
         }
 
-        public Morrigan(CharacterData.characters type)
+        public Morrigan(CharacterHandle.characters type)
           : base(type)
         {
 

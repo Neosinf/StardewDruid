@@ -33,26 +33,7 @@ namespace StardewDruid.Monster
 
             overHead = new(16, -128);
 
-            objectsToDrop.Add("767");
-
-            if (Game1.random.Next(3) == 0)
-            {
-                objectsToDrop.Add("767");
-            }
-            else if (Game1.random.Next(4) == 0 && combatModifier >= 120)
-            {
-                objectsToDrop.Add("767");
-            }
-            else if (Game1.random.Next(5) == 0 && combatModifier >= 240)
-            {
-                List<string> batElixers = new()
-                {
-                    "772","773","879",
-                };
-
-                objectsToDrop.Add(batElixers[Game1.random.Next(batElixers.Count)]);
-
-            }
+            SpawnData.MonsterDrops(this,SpawnData.drops.bat);
 
         }
 
@@ -66,6 +47,19 @@ namespace StardewDruid.Monster
             BatSpecial();
 
             loadedOut = true;
+
+        }
+
+        public override void SetMode(int mode)
+        {
+            base.SetMode(mode);
+
+            if(mode >= 1)
+            {
+
+                specialSet = true;
+
+            }
 
         }
 
@@ -152,11 +146,14 @@ namespace StardewDruid.Monster
 
         public void BatFlight()
         {
+
+            flightSet = true;
+
             flightSpeed = 12;
 
             flightHeight = 2;
 
-            flightDefault = 1;
+            flightDefault = 2;
 
             flightInterval = 9;
 
@@ -240,6 +237,10 @@ namespace StardewDruid.Monster
                 }
             };
 
+            smashSet = true;
+
+            smashFrames = flightFrames;
+
         }
 
         public virtual void BatSpecial()
@@ -265,7 +266,7 @@ namespace StardewDruid.Monster
 
             specialFrames = idleFrames;
 
-            sweepSet = false;
+            sweepSet = true;
 
             sweepInterval = 12;
 
@@ -282,6 +283,19 @@ namespace StardewDruid.Monster
             int netScale = netMode.Value > 5 ? netMode.Value - 4 : netMode.Value;
 
             return new Rectangle((int)position.X - 28 - (4 * netScale), (int)position.Y - flightHeight - 24 - (int)(Math.Abs(hoverHeight) * hoverElevate) - (8 * netScale), 120 + (8 * netScale), 104 + (8 * netScale));
+        }
+
+        public override void deathIsNoEscape()
+        {
+
+            Microsoft.Xna.Framework.Rectangle box = GetBoundingBox();
+
+            SpellHandle death = new(new(box.Center.X, box.Top), 128, IconData.impacts.deathwhirl, new());
+
+            death.scheme = IconData.schemes.death;
+
+            Mod.instance.spellRegister.Add(death);
+
         }
 
         public override void draw(SpriteBatch b, float alpha = 1f)
@@ -345,7 +359,8 @@ namespace StardewDruid.Monster
             b.Draw(Game1.shadowTexture, new(localPosition.X, localPosition.Y + 64f), Game1.shadowTexture.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, 0, drawLayer - 1E-06f);
 
         }
-        public override void PerformSpecial(Vector2 farmerPosition)
+
+        public override bool PerformSpecial(Vector2 farmerPosition)
         {
 
             specialTimer = 180;
@@ -354,19 +369,51 @@ namespace StardewDruid.Monster
 
             SetCooldown(1);
 
-            SpellHandle beam = new(currentLocation, farmerPosition, GetBoundingBox().Center.ToVector2(), 192, DamageToFarmer);
+            SpellHandle beam = new(currentLocation, farmerPosition, GetBoundingBox().Center.ToVector2(), 192, GetThreat());
 
             beam.type = SpellHandle.spells.echo;
 
             beam.display = IconData.impacts.flashbang;
 
-            beam.scheme = IconData.schemes.psychic;
+            beam.scheme = IconData.schemes.Amethyst;
 
-            beam.indicator = IconData.cursors.arrow;
+            beam.indicator = IconData.cursors.scope;
+
+            beam.scheme = IconData.schemes.Amethyst;
+
+            beam.added = new() { SpellHandle.effects.aiming, };
 
             beam.boss = this;
 
             Mod.instance.spellRegister.Add(beam);
+
+            return true;
+
+        }
+
+        public override void ConnectSweep()
+        {
+
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 128f);
+
+            if (targets.Count > 0)
+            {
+
+                SpellHandle bang = new(currentLocation, targets.First().Position, GetBoundingBox().Center.ToVector2(), 128, GetThreat() / 2);
+
+                bang.type = SpellHandle.spells.explode;
+
+                bang.display = IconData.impacts.flashbang;
+
+                bang.scheme = IconData.schemes.Amethyst;
+
+                bang.instant = true;
+
+                bang.boss = this;
+
+                Mod.instance.spellRegister.Add(bang);
+
+            }
 
         }
 

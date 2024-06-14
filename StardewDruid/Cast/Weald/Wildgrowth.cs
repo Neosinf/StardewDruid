@@ -14,6 +14,7 @@ using StardewValley.BellsAndWhistles;
 using static StardewValley.Minigames.CraneGame;
 using xTile.Layers;
 using static StardewDruid.Cast.Weald.Wildbounty;
+using StardewValley.Objects;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -111,7 +112,7 @@ namespace StardewDruid.Cast.Weald
                 if (neighbours.Count > 0)
                 {
 
-                    if (Mod.instance.Config.disableGrass || !Mod.instance.rite.spawnIndex["grass"])
+                    if (!Mod.instance.rite.spawnIndex.grass)
                     {
                         
                         continue;
@@ -125,7 +126,7 @@ namespace StardewDruid.Cast.Weald
 
                         if(neighbour.Key != "Grass" && neighbour.Key != "Tree")
                         {
-                            Mod.instance.Monitor.Log(neighbour.Key, StardewModdingAPI.LogLevel.Debug);
+                           
                             goodNeighbours = false;
 
                             break;
@@ -194,7 +195,7 @@ namespace StardewDruid.Cast.Weald
 
                         }
 
-                        if (Mod.instance.rite.spawnIndex["trees"] && !Mod.instance.Config.disableTrees && treeDirection)
+                        if (Mod.instance.rite.spawnIndex.trees && treeDirection)
                         {
 
                             spawnProspects[check.Key].Add(spawns.tree);
@@ -202,17 +203,10 @@ namespace StardewDruid.Cast.Weald
                             activeProspects[check.Key] = true;
                         }
 
-                        if (Mod.instance.rite.spawnIndex["forage"] && !Mod.instance.rite.terrainCasts[location.Name].ContainsKey(forageVector))
+                        if (Mod.instance.rite.spawnIndex.forage && !Mod.instance.rite.terrainCasts[location.Name].ContainsKey(forageVector))
                         {
 
                             spawnProspects[check.Key].Add(spawns.forage);
-
-                            if (Mod.instance.questHandle.IsComplete(QuestHandle.wealdThree))
-                            {
-
-                                spawnProspects[check.Key].Add(spawns.flower);
-
-                            }
 
                             activeProspects[check.Key] = true;
 
@@ -242,13 +236,17 @@ namespace StardewDruid.Cast.Weald
 
                         break;
 
-                    case spawns.flower:
-
-                        SpawnFlower(prospect.Key);
-
-                        break;
-
                     case spawns.forage:
+
+                        if (Mod.instance.questHandle.IsComplete(QuestHandle.wealdThree))
+                        {
+
+                            if (Mod.instance.randomIndex.Next(3) == 0)
+                            {
+                                SpawnFlower(prospect.Key);
+                            }
+
+                        }
 
                         SpawnForage(prospect.Key);
 
@@ -293,7 +291,7 @@ namespace StardewDruid.Cast.Weald
 
             grassFeature.doCollisionAction(tileRectangle, 2, tile, Game1.player);
 
-            Mod.instance.iconData.CursorIndicator(location, tile * 64, IconData.cursors.weald, new());
+            Mod.instance.iconData.CursorIndicator(location, tile * 64 + new Vector2(0,8), IconData.cursors.weald, new());
 
         }
 
@@ -305,7 +303,7 @@ namespace StardewDruid.Cast.Weald
 
             spawnTree++;
 
-            Mod.instance.iconData.CursorIndicator(location, tile * 64, IconData.cursors.weald, new());
+            Mod.instance.iconData.CursorIndicator(location, tile * 64 + new Vector2(0, 8), IconData.cursors.weald, new());
 
         }
 
@@ -331,7 +329,7 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            Mod.instance.iconData.CursorIndicator(location, tile * 64, IconData.cursors.weald, new());
+            Mod.instance.iconData.CursorIndicator(location, tile * 64 + new Vector2(0, 8), IconData.cursors.weald, new());
 
         }
 
@@ -355,7 +353,7 @@ namespace StardewDruid.Cast.Weald
                 spawnForage++;
             }
 
-            Mod.instance.iconData.CursorIndicator(location, tile * 64, IconData.cursors.weald, new());
+            Mod.instance.iconData.CursorIndicator(location, tile * 64 + new Vector2(0, 8), IconData.cursors.weald, new());
 
         }
 

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Audio;
 using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Dialogue;
+using StardewDruid.Journal;
 using StardewDruid.Monster;
 using StardewValley;
 using System;
@@ -17,122 +18,67 @@ namespace StardewDruid.Data
     public static class DialogueData
     {
 
-        public static Random random = new();
-
-        public static void QueryDisplay(QueryData queryData)
+        public static Dictionary<int, string> DialogueNarrators(string scene)
         {
-
-            Dictionary<int, Narrator> narrators = DialogueNarrators(queryData.name);
-
-            Dictionary<int, Dictionary<int, string>> cues = DialogueScene(queryData.name);
-
-            int cueIndex = Convert.ToInt32(queryData.value);
-
-            if (cues.ContainsKey(cueIndex))
-            {
-
-                foreach (KeyValuePair<int, string> cue in cues[cueIndex])
-                {
-
-                    if (narrators.ContainsKey(cue.Key))
-                    {
-
-                        narrators[cue.Key].DisplayHUD(cue.Value);
-
-                    }
-
-                }
-
-            }
-
-        }
-
-        public static Dictionary<int, Narrator> DialogueNarrators(string scene)
-        {
-            Dictionary<int, Narrator> sceneNarrators = new();
+            Dictionary<int, string> sceneNarrators = new();
 
             switch (scene)
             {
 
-                case "challengeWeald":
+                case QuestHandle.challengeWeald:
 
-                    sceneNarrators = new() { [0] = new("Clericbat", Color.DarkSlateGray), };
+                    sceneNarrators = new() { [0] = "Clericbat", };
 
                     break;
 
-                case "challengeMists":
+                case QuestHandle.challengeMists:
 
                     sceneNarrators = new() { 
-                        [0] = new("Shadow Sergeant", Color.DarkSlateGray), 
-                        [1] = new("Shadow Thug", Color.Navy),
-                        [2] = new("Shadow Leader", Color.Maroon),
-                        [3] = new("The Effigy", Color.Green),
+                        [0] = "Shadow Sergeant", 
+                        [1] = "Shadow Thug",
+                        [2] = "Shadow Leader",
+                        [3] = "The Effigy",
                     };
 
                     break;
 
-                case "challengeStars":
+                case QuestHandle.challengeStars:
 
-                    sceneNarrators = new() { [0] = new("The Jellyking", Color.OrangeRed), };
-
-                    break;
-
-                case "challengeMariner":
-                case "challengeMarinerTwo":
-
-                    sceneNarrators = new() { [0] = new("Phantom Mariner", Color.Blue), };
+                    sceneNarrators = new()
+                    {
+                        [0] = "The Jellyking",
+                        [1] = "The Effigy",
+                    };
 
                     break;
 
-                case "challengeCanoli":
-                case "challengeCanoliTwo":
+                case QuestHandle.challengeAtoll:
 
-                    sceneNarrators = new() { [0] = new("Phantom Gardener", Color.DarkSlateGray), };
-
-                    break;
-
-                case "challengeMuseum":
-                case "challengeMueumTwo":
-
-                    sceneNarrators = new() { [0] = new("Gunther", Color.DarkSlateGray), [1] = new("Phantom Dinosaur", Color.DarkSlateGray), };
+                    sceneNarrators = new()
+                    {
+                        [0] = "Captain of the Drowned",
+                        [1] = "The Effigy",
+                    };
 
                     break;
 
-                case "challengeGemShrine":
-                case "challengeGemShrineTwo":
+                case QuestHandle.challengeDragon:
 
-                    sceneNarrators = new() { [0] = new("Phantom Voice", Color.DarkSlateGray), };
-
-                    break;
-
-                case "challengeSandDragon":
-                case "challengeSandDragonTwo":
-
-                    sceneNarrators = new() { [0] = new("Phantom Tyrant", Color.DarkSlateGray), };
+                    sceneNarrators = new()
+                    {
+                        [0] = "Lesser Dragon",
+                    };
 
                     break;
 
-                case "challengeFates":
-                case "challengeFatesTwo":
-                case "swordFates":
+                case QuestHandle.swordFates:
 
-                    sceneNarrators = new() { [0] = new("The Jester of Fate", new Color(1f, 0.8f, 0.4f, 1f)), };
-
-                    break;
-
-                case "swordEther":
-                case "swordEtherTwo":
-
-                    sceneNarrators = new() { [0] = new("The Jester of Fate", new Color(1f, 0.8f, 0.4f, 1f)), [1] = new("Tyrannus Prime", Color.DarkSlateGray), };
+                    sceneNarrators = new()
+                    {
+                        [0] = "The Jester of Fate",
+                    };
 
                     break;
-
-                case "challengeEther":
-
-                    sceneNarrators = new() { [0] = new("Shadowtin Bear", Color.Purple), };
-
-                    break;
-
 
             };
 
@@ -148,111 +94,224 @@ namespace StardewDruid.Data
             switch (scene)
             {
 
-                case "challengeWeald":
+                case QuestHandle.challengeWeald:
 
                     sceneDialogue = new()
                     {
 
-                        [22] = new() { [0] = "trespasser", },
-                        [24] = new() { [0] = "filthy two legger", },
-                        [26] = new() { [0] = "cheeep cheep", },
-                        [28] = new() { [0] = "you and your kind", },
-                        [30] = new() { [0] = "have defiled the sacred waters", },
-                        [32] = new() { [0] = "cheeep cheep", },
-                        [34] = new() { [0] = "our Lady of Mists", },
-                        [37] = new() { [0] = "demands retribution!", },
+                        [22] = new() { [0] = "Trespasser", },
+                        [24] = new() { [0] = "Filthy two legger", },
+                        [26] = new() { [0] = "Cheeep cheep", },
+                        [28] = new() { [0] = "You and your kind", },
+                        [30] = new() { [0] = "Have defiled the sacred waters", },
+                        [32] = new() { [0] = "Cheeep cheep", },
+                        [34] = new() { [0] = "Our Lady of Mists", },
+                        [37] = new() { [0] = "Demands retribution!", },
                         [39] = new() { [0] = "CHEEEP", },
-                        [56] = new() { [0] = "these damned rocks", },
+                        [56] = new() { [0] = "These damned rocks", },
                         [58] = new() { [0] = "CHEEE--- aack", },
                     };
 
                     break;
 
-                case "challengeMists":
+                case QuestHandle.challengeMists:
 
                     sceneDialogue = new()
                     {
 
-                        [2] = new() { [0] = "ah whats that then", },
-                        [4] = new() { [1] = "one of them twinkle fingers", },
-                        [6] = new() { [0] = "oh oh oh alright lads get em", },
-                        [9] = new() { [0] = "loading charge", },
-                        [11] = new() { [3] = "beware those explosive rounds",},
-                        [13] = new() { [0] = "blasted thing jammed!", },
-                        [18] = new() { [0] = "loading again", },
-                        [20] = new() { [3] = "we must prevent such callous destruction", },
-                        [22] = new() { [0] = "ah whiffed it", },
-                        [25] = new() { [0] = "stop waffling and pin them down", },
-                        [28] = new() { [1] = "its no good. Twinkly's too tricky", },
-                        [31] = new() { [0] = "ughhh... alright loading again", },
+                        [2] = new() { [0] = "Ah whats that then", },
+                        [4] = new() { [1] = "One of them twinkle fingers", },
+                        [6] = new() { [0] = "Alright lads get em", },
+                        [9] = new() { [0] = "Loading charge", },
+                        [11] = new() { [3] = "Beware those explosive rounds",},
+                        [13] = new() { [0] = "Blasted thing jammed!", },
+                        [18] = new() { [0] = "Loading again", },
+                        [20] = new() { [3] = "We must prevent such callous destruction", },
+                        [22] = new() { [0] = "Ah whiffed it", },
+                        [25] = new() { [0] = "Stop waffling and pin them down", },
+                        [28] = new() { [1] = "Its no good. Twinkly's too tricky", },
+                        [31] = new() { [0] = "Ughhh... alright loading again", },
                         [35] = new() { [0] = "I'M UNDER PRESSURE HERE", },
-                        [38] = new() { [1] = "dont feel so good bout this", },
-                        [40] = new() { [0] = "you'd rather anger the Deep one?", },
-                        [42] = new() { [1] = "sod that, I'd rather fight", },
-                        [44] = new() { [0] = "preparing incendiary", },
-                        [48] = new() { [0] = "this isn't going well", },
-                        [51] = new() { [2] = "attempting a capture are we", },
-                        [53] = new() { [3] = "that is the mercenary that hunted me", },
-                        [55] = new() { [0] = "trying, boss", },
-                        [57] = new() { [2] = "aim higher", },
-                        [59] = new() { [0] = "uh, sorry boss", },
-                        [61] = new() { [2] = "we're too exposed here, call them all back", },
-                        [63] = new() { [0] = "you heard the boss!", },
-                        [65] = new() { [2] = "watch yourself, farmer", },
+                        [38] = new() { [1] = "Dont feel so good bout this", },
+                        [40] = new() { [0] = "You'd rather anger the Deep one?", },
+                        [42] = new() { [1] = "Sod that, I'd rather fight", },
+                        [44] = new() { [0] = "Preparing incendiary", },
+                        [48] = new() { [0] = "This isn't going well", },
+                        [51] = new() { [2] = "Attempting a capture are we", },
+                        [53] = new() { [3] = "That is the mercenary that hunted me", },
+                        [55] = new() { [0] = "Trying, boss", },
+                        [57] = new() { [2] = "Aim higher", },
+                        [59] = new() { [0] = "Uh, sorry boss", },
+                        [61] = new() { [2] = "We're too exposed here, call them all back", },
+                        [63] = new() { [0] = "You heard the boss!", },
+                        [65] = new() { [2] = "Watch yourself, farmer", },
 
                     };
                     
                     break;
-
-                case "challengeStars":
+                
+                case QuestHandle.challengeStars:
 
                     sceneDialogue = new()
                     {
+
+                        [3] = new() { [1] = "The infestation must be contained here", },
+
+                        [12] = new() { [1] = "A larger threat approaches. An old enemy", },
 
                         [15] = new() { [0] = "HOW BORING", },
-                        [18] = new() { [0] = "the monarchs must be asleep.", },
-                        [21] = new() { [0] = "if they send only a farmer", },
-                        [24] = new() { [0] = "to face the onslaught...", },
+                        [18] = new() { [0] = "The monarchs must be asleep.", },
+                        [21] = new() { [0] = "If they send only a farmer", },
+                        [24] = new() { [0] = "To face the onslaught...", },
                         [27] = new() { [0] = "OF THE MIGHTY SLIME", },
-                        [30] = new() { [0] = "you will be consumed", },
-                        [33] = new() { [0] = "along with the whole valley", },
-                        [36] = new() { [0] = "ALL WILL BE JELLY", },
-                        [55] = new() { [0] = "bloop?", },
-                        [56] = new() { [0] = "that's a lot of star power", },
-                        [58] = new() { [0] = "!!!!", },
+
+                        [30] = new() { [1] = "Arrogance! You are far diminished since the last age", },
+                        [33] = new() { [1] = "A sad reflection in a murky puddle", },
+
+                        [36] = new() { [0] = "You're too late", },
+                        [39] = new() { [0] = "The slumber of the kings has led to stagnation", },
+                        [42] = new() { [0] = "The land must be destroyed to be renewed", },
+
+                        [45] = new() { [1] = "No, the circle will be renewed", },
+
+                        [48] = new() { [0] = "You will be consumed", },
+                        [51] = new() { [0] = "Along with the whole valley", },
+                        [54] = new() { [0] = "ALL WILL BE JELLY", },
+
+                        [58] = new() { [1] = "Your jelly is overrated", },
 
                     };
 
                     break;
 
-                case "challengeMariner":
-                case "challengeMarinerTwo":
+                case QuestHandle.challengeAtoll:
 
                     sceneDialogue = new()
                     {
 
-                        [1] = new() { [0] = "oi matey!", },
-                        [3] = new() { [0] = "ya dare wield the Lady's power here?", },
-                        [5] = new() { [0] = "the deep one take you!", },
+                        [1] = new() { [0] = "Oi matey!", },
+                        [4] = new() { [0] = "Ya dare wield the Lady's power here?", },
+                        [7] = new() { [0] = "The Fates take you!", },
+                        // cannons
+                        [16] = new() { [0] = "The Lady is not a friend to the drowned", },
+                        [19] = new() { [0] = "She buried us with our boats on this shore", },
+                        [22] = new() { [0] = "And the fae won't let us cross over", },
+                        [25] = new() { [0] = "Until the ol' sea witch gets what's owed", },
+                        // cannons
+                        [34] = new() { [0] = "Then the waves will no longer wash our tattered bones", },
+                        [37] = new() { [0] = "An we'll sink into the warm embrace of the earth", },
+                        [40] = new() { [0] = "I think it's time ye join us, matey", },
+                        // cannons
+                        [49] = new() { [0] = "Yeaarggh", },
+                        [52] = new() { [1] = "Bizarre... the Justiciar of Fate", },
+                        [55] = new() { [1] = "Why would he refuse them passage to the afterlife", },
 
-                        [12] = new() { [0] = "ya can't touch me! I be a reflection!", },
-                        [15] = new() { [0] = "this ere beach is for private members!", },
-                        [24] = new() { [0] = "the Lady is not a friend to the drowned", },
-                        [27] = new() { [0] = "she buried us with our boats on this shore", },
-                        [30] = new() { [0] = "but soon Lord Deep will avenge us!", },
-                        [33] = new() { [0] = "he'll swallow the ol' sea witch whole", },
-                        [36] = new() { [0] = "then the waves will no longer wash our tattered bones", },
-                        [39] = new() { [0] = "an we'll sink into the warm embrace of the earth", },
-
-                        [991] = new() { [0] = "aye... maybe as strong as Deep himself...", },
-                        [992] = new() { [0] = "eh. take this an sod off.", },
-                        [993] = new() { [0] = "haha! not good enough even for the Lady", },
                         [994] = new() { [0] = "CANNONS AT THE READY!", },
                         [995] = new() { [0] = "FIRE!", },
+
                     };
 
                     break;
 
+                case QuestHandle.challengeDragon:
+
+                    sceneDialogue = new()
+                    {
+
+                        [1] = new() { [0] = "(menacing chuckles)", },
+                        [4] = new() { [0] = "Something new stumbles into my lair", },
+                        [7] = new() { [0] = "Ah... I smell... the " + Mod.instance.rite.castType.ToString(), },
+
+                        [27] = new() { [0] = "I dared to harness a power", },
+                        [30] = new() { [0] = "That would make me the envy of all guardians", },
+                        [33] = new() { [0] = "My ambition angered the Fates", },
+                        [36] = new() { [0] = "And they trapped me in a prison of my own hubris", },
+
+                        [54] = new() { [0] = "You should be grateful", },
+                        [57] = new() { [0] = "You'll soon be naught but dust and ash", },
+                        [60] = new() { [0] = "Better by my hands than by the Reapers", },
+
+                        [81] = new() { [0] = "Your death might please the high priestess", },
+                        [84] = new() { [0] = "Perhaps I will be favoured", },
+                        [87] = new() { [0] = "Maybe even freed", },
+                        [90] = new() { [0] = "Oh to be free of fate", },
+                        [93] = new() { [0] = "Yes. Now, DIE", },
+
+                    };
+
+                    break;
+
+                case QuestHandle.swordFates:
+
+                    sceneDialogue = new()
+                    {
+
+                        [2] = new() { [0] = "DUNGEON TIME!", },
+                        [5] = new() { [0] = "Uh... did you just see a ghost? I just saw a ghost.", },
+                        [8] = new() { [0] = "Ok time to run", },
+                        [11] = new() { [0] = "Well this is a great start", },
+
+                        [27] = new() { [0] = "Well I know we are definitely on the right path", },
+                        [30] = new() { [0] = "These spectres bear traces of judgement", },
+                        [33] = new() { [0] = "Fragments of souls convicted by the Reaper", },
+                        [36] = new() { [0] = "They will linger in undeath until their sentence is up", },
+
+                        [54] = new() { [0] = "Ah is there an end to this place?", },
+                        [57] = new() { [0] = "Why is everything so grey", },
+                        [60] = new() { [0] = "Then again I am colourblind to half the rainbow", },
+
+                        [81] = new() { [0] = "I think we're getting closer!", },
+                        [84] = new() { [0] = "Dont think there will be anything spooky at the end of this... right?", },
+
+                        [91] = new() { [0] = "There... Thanatoshi... the Reaper", },
+                        [94] = new() { [0] = "Hey farmer, there's something back here", },
+                        [97] = new() { [0] = "Fate wins again!", },
+                        [121] = new() { [0] = "Oh... wow", },
+
+                    };
+
+                    break;
+
+                case QuestHandle.questJester:
+
+                    sceneDialogue = new()
+                    {
+
+                        [901] = new() { [3] = "Well, by the look of it, the palentological hypothesis is...", },
+                        [903] = new() { [0] = "Meow", },
+                        [904] = new() { [3] = "That it's very old. Pre-catastrophe, perhaps.", },
+                        [906] = new() { [1] = "Jest? (cough) bark", },
+                        [907] = new() { [3] = "I'm more of a mythologist myself", },
+                        [910] = new() { [3] = "Could be a legendary saurus, once the dominant species", },
+                        [912] = new() { [0] = "Meowwwww", },
+                        [913] = new() { [3] = "Before the advent of dragons", },
+                        [915] = new() { [1] = "Bark. Borinnnng...", },
+                        [916] = new() { [3] = "Huh? Did your fox just speak?", },
+                        [919] = new() { [0] = "I sense... sadness... and rage", },
+                        [922] = new() { [4] = "(grizzled roaring)", },
+                        [923] = new() { [3] = "Ahhh! Protect the library!", },
+                        [925] = new() { [4] = "Why am I here", },
+                        [928] = new() { [3] = "What have I got to throw here...", },
+                        [931] = new() { [4] = "I should be at rest, I should be...", },
+                        [934] = new() { [3] = "It's defacing my inlaid hardwood panelling!", },
+                        [937] = new() { [4] = "The power of the Stars has seeped into the land", },
+                        [940] = new() { [4] = "The Fates continue to shun us", },
+                        [943] = new() { [0] = "Dear ancient lizard, I am an envoy of Fate, the Jester", },
+                        [946] = new() { [4] = "What, furred one? You are naught but a morsel", },
+                        [949] = new() { [3] = "Crikey! If only I didn't loan our weapon collection to Zuzu mid!", },
+                        [952] = new() { [4] = "Have the dragons abandoned this world?", },
+                        [955] = new() { [4] = "The furries have taken dominion", },
+                        [958] = new() { [3] = "Tell the guildmaster I wont accept any more cursed artifacts!", },
+                        [961] = new() { [3] = "Farmer??! Can't you perform a rite of banishment or something?", },
+                        [963] = new() { [1] = "The blue guy has a good idea!", },
+                        [965] = new() { [3] = "This is going to cost the historic trust society", },
+                        [968] = new() { [0] = "Well that was fun. But it's a bit smokey in here.", },
+                        
+                    };
+
+                    break;
+
+                    /*
                 case "challengeCanoli":
                 case "challengeCanoliTwo":
 
@@ -461,50 +520,10 @@ namespace StardewDruid.Data
                     };
 
                     break;
-
+                */
             };
 
             return sceneDialogue;
-
-        }
-
-        public static List<string> DialogueHard(string monster)
-        {
-            List<string> hardDialogue = new();
-
-            switch (monster)
-            {
-
-                case "PurpleDragon":
-
-                    hardDialogue = new(){
-
-                        "Where are my servants",
-                        "The shamans have failed me",
-                        "The only recourse for humanity, is subjugation",
-                        "Beg for my mercy",
-                        "Kneel Before Tyrannus!",
-                        "I WILL BURN... EVERYTHING",
-
-                    };
-
-                    break;
-
-                case "Rogue":
-
-                    hardDialogue = new(){
-
-                        "get out of here",
-                        "how did you find us?",
-                        "no mercy",
-                        "into the shadows I go"
-
-                    };
-
-                    break;
-            }
-
-            return hardDialogue;
 
         }
 
@@ -580,297 +599,61 @@ namespace StardewDruid.Data
 
         }
 
-        public static List<string> DialogueHurt(string monster)
+        public static void DisplayText(StardewValley.Monsters.Monster monster, int chance = 3, int type = 0)
         {
 
-            List<string> hurtDialogue = new();
-
-            switch (monster)
-            {
-
-                case "Dust Spirit":
-
-                    hurtDialogue = new(){
-
-                    "ow ow",
-                    "ouchies",
-                    "meep meep?",
-                    "meep",
-                    "MEEEP",
-
-                    };
-
-                    break;
-
-                case "Green Slime":
-
-                    hurtDialogue = new(){
-
-                    "blup blup",
-                    "bloop",
-
-                    };
-
-                    break;
-
-                case "Shadow Sniper":
-
-                    hurtDialogue = new(){
-
-                    "ooft",
-                    "a worthy opponent",
-                    "deep deep!"
-
-                    };
-
-                    break;
-
-                case "Skeleton":
-                case "Stone Golem":
-                    hurtDialogue = new(){
-
-                    "deep",
-                    "yeoww",
-                    "crikey!",
-                    "DEEP",
-                    "shivers",
-                    "timbers",
-                    "yarr",
-
-                    };
-
-                    break;
-
-                case "Shadow Brute":
-
-                    hurtDialogue = new(){
-                    "oooft",
-                    "deep",
-
-                    };
-
-                    break;
-
-                case "Big Slime":
-
-                    hurtDialogue = new(){
-                    "bloop",
-                    "bloop bloop",
-                    "jelly superiority!",
-
-                    };
-
-                    break;
-
-                case "Bat":
-
-                    hurtDialogue = new(){
-                    "flap flap",
-                    "flippity",
-                    "cheeep"
-
-                    };
-
-                    break;
-
-                case "FireBird":
-
-                    hurtDialogue = new(){
-                    "Tweep",
-                    "TWEEEEPPPP",
-
-                    };
-
-                    break;
-
-                case "PurpleDragon":
-
-                    hurtDialogue = new(){
-                    "Ah ha ha ha ha",
-                    "Such pitiful strikes",
-                    "insolence!",
-                    "I'll Answer That... With FIRE!",
-                    "The land has died... and so WILL YOU",
-                    "CREEP"
-                    };
-
-                    break;
-
-                case "BlackDragon":
-
-                    hurtDialogue = new(){
-
-                        "Ah ha ha ha ha",
-                        "PATHETIC",
-                        "You're nothing. NOTHING.",
-                    };
-
-                    break;
-                case "ShadowTin":
-
-                    hurtDialogue = new(){
-                    "unbearable",
-                    "the power",
-                    "ooft",
-                    };
-
-                    break;
-
-                case "Scavenger":
-
-                    hurtDialogue = new(){
-                    "meow meow",
-                    "meow",
-                    };
-
-                    break;
-
-                case "Shadowfox":
-
-                    hurtDialogue = new(){
-                    "rawfff",
-                    "*whines*",
-                    };
-
-                    break;
-
-                case "Rogue":
-
-                    hurtDialogue = new(){
-
-                        "ooft",
-                        "ouch!",
-                        "shadows take you"
-
-                    };
-
-                    break;
-                case "Reaper":
-
-                    hurtDialogue = new(){
-
-                        "reap",
-                        "...you cannot defy fate...",
-                        "ENOUGH"
-
-                    };
-
-                    break;
-
-                case "Dinosaur":
-
-                    hurtDialogue = new(){
-                        "ouch",
-                        "croak",
-                        "can't you aim for the helmet?"
-
-                    };
-
-                    break;
-
-
-
-            }
-
-            return hurtDialogue;
-
-        }
-
-        public static List<string> DialoguePanic(string monster)
-        {
-            List<string> panicDialogue = new();
-
-            switch (monster)
-            {
-
-                case "Skeleton":
-                case "Stone Golem":
-                    panicDialogue = new(){
-
-                        "cover!",
-                        "RUN",
-                        "crikey!",
-                        "CANNONBALL",
-                    };
-
-                    break;
-
-                case "Scavenger":
-
-                    panicDialogue = new(){
-
-                        "meow",
-                        "mine mine!",
-                        "rwwwwrr",
-                        "where bear"
-                    };
-
-                    break;
-
-                case "ShadowFox":
-                    panicDialogue = new(){
-
-                        "rawff",
-                        "no touchy!",
-                        "rwwwwrr",
-                        "what does the fox say"
-                    };
-
-                    break;
-                case "Rogue":
-                case "Ranger":
-
-                    panicDialogue = new(){
-                        "go away!",
-                        "the Ether belongs to Lord Deep",
-                        "thanks for finding the treasure for me",
-                        "where's Shadowtin when I need him"
-
-                    };
-
-                    break;
-            }
-
-            return panicDialogue;
-
-        }
-
-        public static void DisplayText(StardewValley.Monsters.Monster monster, int chance = 3, int type = 0, string name = "0")
-        {
-
-            if (name == "0")
-            {
-
-                name = monster.Name;
-
-            }
-
-            List<string> textList;
+            List<string> textList = new();
 
             switch (type)
             {
 
-                case 3: // hardList
-
-                    textList = DialogueHard(name);
-
-                    break;
-
                 case 2: // panicList
 
-                    textList = DialoguePanic(name);
+                    if(monster is Phantom)
+                    {
+                        textList = new(){
+
+                            "cover!",
+                            "RUN",
+                            "crikey!",
+                            "CANNONBALL",
+                        };
+
+                    }
 
                     break;
 
                 case 1: // smacklist
 
-                    textList = DialogueSmack(name);
+                    textList = new();
+
+                    if (monster is Dragon)
+                    {
+                        textList = new(){
+                            "the circle is weak",
+                            "you'll never compare to the druids of old",
+                            "the valley is cursed"
+                        };
+
+                    }
 
                     break;
 
                 default: // 0 ouchlist
 
-                    textList = DialogueHurt(name);
+                    textList = new();
+
+                    if (monster is Dragon)
+                    {
+                        textList = new(){
+                            "Ah ha ha ha ha",
+                            "Such pitiful strikes",
+                            "insolence!",
+                            "I'll Answer That... With FIRE!",
+                            "The old ways have died... and so WILL YOU",
+                        };
+
+                    }
 
                     break;
 
@@ -883,16 +666,22 @@ namespace StardewDruid.Data
 
             }
 
-            if (random.Next(chance) != 0)
+            if(chance != -1)
             {
+                
+                if (Mod.instance.randomIndex.Next(chance) != 0)
+                {
 
-                return;
+                    return;
+                }
+
+
             }
 
-            monster.showTextAboveHead(textList[random.Next(textList.Count)], duration: 2000);
+            monster.showTextAboveHead(textList[Mod.instance.randomIndex.Next(textList.Count)], duration: 2000);
 
         }
-
+        /*
         public static Dictionary<int, List<string>> EtherPages()
         {
 
@@ -953,7 +742,7 @@ namespace StardewDruid.Data
 
             }
 
-        }
+        }*/
 
 
     }

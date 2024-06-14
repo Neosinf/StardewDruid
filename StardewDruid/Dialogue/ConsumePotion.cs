@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using StardewValley.Extensions;
 using System.Reflection;
 using StardewDruid.Journal;
+using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Dialogue
 {
@@ -24,7 +25,7 @@ namespace StardewDruid.Dialogue
         {
 
             herbal = Herbal;
-
+            
         }
 
         public override void draw(SpriteBatch b, int i, ref int heightUsed)
@@ -57,10 +58,9 @@ namespace StardewDruid.Dialogue
             b.Draw(Game1.mouseCursors, new Vector2(vector.X + 104f + x, vector.Y), new Rectangle(323, 360, 6, 24), Color.White * transparency, 0f, Vector2.Zero, 4f, SpriteEffects.None, 1f);
 
             vector.X += 16f;
-
             vector.Y += 16f;
 
-            Microsoft.Xna.Framework.Color colour = Mod.instance.iconData.schemeColours[herbal.scheme];
+            Microsoft.Xna.Framework.Color colour = Mod.instance.iconData.SchemeColour(herbal.scheme);
             
             b.Draw(Mod.instance.iconData.relicsTexture, vector + new Vector2( 2f, 4f), Mod.instance.iconData.RelicRectangles(herbal.container), Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 3f, 0, 0.900f);
             
