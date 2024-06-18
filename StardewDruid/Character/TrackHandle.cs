@@ -4,6 +4,7 @@ using StardewValley;
 using StardewValley.Locations;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using static StardewValley.Minigames.TargetGame;
 
 
@@ -286,11 +287,13 @@ namespace StardewDruid.Character
 
                     //Mod.instance.characters[trackFor].occupied = warppoint;
 
-                    CharacterHandle.CharacterMoveTo(followPlayer.currentLocation, Mod.instance.characters[trackFor], warppoint * 64);
+                    CharacterMover mover = new(trackFor);
+
+                    mover.WarpSet(followPlayer.currentLocation.Name, warppoint * 64, true);
+
+                    Mod.instance.movers[trackFor] = mover;
 
                     Mod.instance.characters[trackFor].attentionTimer = 360;
-
-                    Mod.instance.characters[trackFor].LookAtTarget(Mod.instance.trackers[Mod.instance.characters[trackFor].characterType].followPlayer.Position);
 
                     warpDelay = 30;
 

@@ -90,8 +90,8 @@ namespace StardewDruid.Journal
         {
             [0] = IconData.relics.herbalism_mortar,
             [1] = IconData.relics.herbalism_pan,
-            [2] = IconData.relics.herbalism_lantern,
-            [3] = IconData.relics.herbalism_cup,
+            [2] = IconData.relics.herbalism_still,
+            [3] = IconData.relics.herbalism_crucible,
 
         };
 

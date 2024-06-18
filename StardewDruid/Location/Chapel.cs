@@ -247,7 +247,8 @@ namespace StardewDruid.Location
 
             if (value2.Width > 0 && globalPosition.Width > 0)
             {
-                b.Draw(_dayParallaxTexture, Game1.GlobalToLocal(Game1.viewport, globalPosition), value2, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0f);
+                Microsoft.Xna.Framework.Color rain = Game1.isRaining ? Color.LightSkyBlue : Color.White;
+                b.Draw(_dayParallaxTexture, Game1.GlobalToLocal(Game1.viewport, globalPosition), value2, rain, 0f, Vector2.Zero, SpriteEffects.None, 0f);
                 b.Draw(_nightParallaxTexture, Game1.GlobalToLocal(Game1.viewport, globalPosition), value2, Color.White * value, 0f, Vector2.Zero, SpriteEffects.None, 0f);
             }
         }

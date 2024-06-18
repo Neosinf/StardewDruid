@@ -443,8 +443,10 @@ namespace StardewDruid.Character
                     }
                     else
                     {
-                        
-                        textAboveHeadAlpha = Math.Max(0.0f, textAboveHeadAlpha - 0.04f);
+
+                        float newAlpha = textAboveHeadAlpha - 0.04f;
+
+                        textAboveHeadAlpha = newAlpha < 0f ? 0f : newAlpha;
                     
                     }
 
@@ -821,6 +823,14 @@ namespace StardewDruid.Character
                 return;
             }
 
+
+            if (!Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherOne))
+            {
+
+                Mod.instance.questHandle.UpdateTask(Journal.QuestHandle.etherOne, 1);
+
+            }
+
             flightActive = true;
 
             flightDelay = 3;
@@ -829,7 +839,7 @@ namespace StardewDruid.Character
 
             flightTimer = flightIncrement * flightRange;
 
-            flightInterval = new((flightTo.X - Position.X) / flightTimer, (flightTo.Y - Position.Y) / flightTimer); //Vector2.op_Division(Vector2.op_Subtraction(this.flightTo, ((StardewValley.Character) Game1.player).Position), (float) this.flightTimer);
+            flightInterval = new((flightTo.X - Position.X) / flightTimer, (flightTo.Y - Position.Y) / flightTimer);
 
             flightPosition = Game1.player.Position;
 
@@ -837,21 +847,12 @@ namespace StardewDruid.Character
 
             flightExtend = flightIncrement * 6;
 
-            /*if (!Mod.instance.eventRegister.ContainsKey("shield"))
-            {
-
-                ShieldEvent shieldEvent = new(Game1.player.Position);
-
-                shieldEvent.EventTrigger();
-
-            }
-            
             Game1.player.temporarilyInvincible = true;
 
             Game1.player.temporaryInvincibilityTimer = 0;
 
             Game1.player.currentTemporaryInvincibilityDuration = 100 * flightIncrement;
-            */
+
         }
 
         public void PerformSweep()
@@ -865,21 +866,6 @@ namespace StardewDruid.Character
 
             sweepTimer = 25;
 
-            /*if (!Mod.instance.eventRegister.ContainsKey("shield"))
-            {
-
-                ShieldEvent shieldEvent = new(Game1.player.Position);
-
-                shieldEvent.EventTrigger();
-
-            }
-            
-            Game1.player.temporarilyInvincible = true;
-
-            Game1.player.temporaryInvincibilityTimer = 0;
-
-            Game1.player.currentTemporaryInvincibilityDuration = 500;
-            */
         }
 
         public bool UpdateFlight()
@@ -985,16 +971,7 @@ namespace StardewDruid.Character
                         flightTimer = flightIncrement * num;
                         
                         flightInterval = new((flightTo.X - Position.X) / flightTimer, (flightTo.Y - Position.Y) / flightTimer);
-                        
-                        ++flightExtend;
 
-                        /*if (flightExtend > 16 && !Mod.instance.TaskList.ContainsKey("masterFlight"))
-                        {
-                            
-                            Mod.instance.UpdateTask("lessonFlight", 1);
-
-                        }*/
-                            
                     }
                 
                 }
@@ -1021,17 +998,21 @@ namespace StardewDruid.Character
         public void FlightStrike()
         {
 
-            //if (Mod.instance.TaskList.ContainsKey("masterFlight"))
-            //{
 
-                Rectangle hitBox = new((int)Position.X - 96, (int)Position.Y - 64, 256, 128);
+            if (!Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherOne))
+            {
 
-                SpellHandle sweep = new(Game1.player, ModUtility.MonsterIntersect(currentLocation, hitBox, true), Mod.instance.CombatDamage() * 3 / 2);
+                return;
 
-                sweep.instant = true;
+            }
 
-                Mod.instance.spellRegister.Add(sweep);
-            //}
+            Rectangle hitBox = new((int)Position.X - 96, (int)Position.Y - 64, 256, 128);
+
+            SpellHandle sweep = new(Game1.player, ModUtility.MonsterIntersect(currentLocation, hitBox, true), Mod.instance.CombatDamage() * 3 / 2);
+
+            sweep.instant = true;
+
+            Mod.instance.spellRegister.Add(sweep);
 
         }
 
@@ -1254,20 +1235,22 @@ namespace StardewDruid.Character
 
                 }
 
+                Vector2 neighbourPosition = neighbour * 64;
+
                 Rectangle boundingBox = Game1.player.GetBoundingBox();
 
                 int xOffset = boundingBox.X - (int)Game1.player.Position.X;
 
                 int yoffset = boundingBox.Y - (int)Game1.player.Position.Y;
 
-                boundingBox.X = (int)(neighbour.X * 64.0) + xOffset;
+                boundingBox.X = (int)neighbourPosition.X + xOffset;
 
-                boundingBox.Y = (int)(neighbour.Y * 64.0) + yoffset;
+                boundingBox.Y = (int)neighbourPosition.Y + yoffset;
 
                 if (!currentLocation.isCollidingPosition(boundingBox, Game1.viewport, false, 0, false, Game1.player, false, false, false))
                 {
 
-                    flightTo = new(neighbour.X * 64, neighbour.Y * 64);//Vector2.op_Multiply(neighbour, 64f);
+                    flightTo = neighbourPosition;
 
                     flightIncrement = increment;
 
@@ -1338,35 +1321,36 @@ namespace StardewDruid.Character
 
             }
 
-            /*if (Mod.instance.eventRegister.ContainsKey("crate"))
+            if (Mod.instance.eventRegister.ContainsKey("crate"))
             {
 
-                Crate treasureEvent = Mod.instance.eventRegister["crate"] as Crate;
-
-                if (treasureEvent.chaseEvent)
+                if(Mod.instance.eventRegister["crate"] is Cast.Ether.Crate treasureEvent)
                 {
 
-                    return false;
-
-                }
-
-                if (Vector2.Distance(Position, treasureEvent.treasurePosition) <= 128f)
-                {
-
-                    if (!treasureEvent.treasureClaim && activate)
+                    if (!treasureEvent.eventActive)
                     {
 
-                        treasureEvent.treasureClaim = true;
+                        if (Vector2.Distance(Position, treasureEvent.origin) <= 128f)
+                        {
+
+                            if (activate)
+                            {
+
+                                treasureEvent.EventActivate();
+
+                            }
+
+                            digPosition = treasureEvent.origin;
+
+                            return true;
+
+                        }
 
                     }
 
-                    digPosition = treasureEvent.treasurePosition;
+                };
 
-                    return true;
-
-                }
-
-            }*/
+            }
 
             return false;
 
@@ -1392,6 +1376,13 @@ namespace StardewDruid.Character
                 }
 
                 FaceCursorTarget();
+
+            }
+
+            if (!Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherTwo))
+            {
+
+                Mod.instance.questHandle.UpdateTask(Journal.QuestHandle.etherTwo, 1);
 
             }
 
@@ -1625,13 +1616,6 @@ namespace StardewDruid.Character
 
                 specialTimer = 48;
 
-                /*if (!Mod.instance.TaskList.ContainsKey("masterBlast"))
-                {
-
-                    Mod.instance.UpdateTask("lessonBlast", 1);
-
-                }*/
-
             }
 
             specialTimer--;
@@ -1665,14 +1649,14 @@ namespace StardewDruid.Character
 
                 List<Vector2> zeroes = BlastTarget();
 
-                //if (RoarCheck(zeroes[0]) || !AccountStamina(5))
-                //{
+                if (RoarCheck(zeroes[0]) || !AccountStamina(5))
+                {
 
-                //    fireTimer = 24;
+                    fireTimer = 24;
 
-                 //   return true;
+                    return true;
 
-                //};
+                };
 
                 Vector2 minus = new((int)(Position.X / 64), (int)(Position.Y / 64));
 
@@ -1706,10 +1690,6 @@ namespace StardewDruid.Character
 
                     splash.Add(zeroes[0]);
 
-                    //ModUtility.Explode(currentLocation, zeroes[2], Game1.player, 1, 4);
-
-                    //ModUtility.Reave(currentLocation, zeroes[2], Game1.player, 2);
-
                 }
 
                 for (int i = 0; i < splash.Count; i++)
@@ -1733,7 +1713,12 @@ namespace StardewDruid.Character
 
                     burn.environment = 2;
 
-                    burn.added = new() { SpellHandle.effects.embers, };
+                    if(Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherTwo)){
+
+
+                        burn.added = new() { SpellHandle.effects.embers, };
+
+                    }
 
                     Mod.instance.spellRegister.Add(burn);
 
@@ -1908,12 +1893,12 @@ namespace StardewDruid.Character
 
             currentLocation.playSound("pullItemFromWater");
 
-            /*if (!Mod.instance.TaskList.ContainsKey("masterDive"))
+            if (!Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherThree))
             {
 
-                Mod.instance.UpdateTask("lessonDive", 1);
+                Mod.instance.questHandle.UpdateTask(Journal.QuestHandle.etherThree, 1);
 
-            }*/
+            }
 
             Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 32), IconData.impacts.splash, 3f, new() { interval = 100f, alpha = 0.5f, layer = 999f,});
 
@@ -1949,6 +1934,7 @@ namespace StardewDruid.Character
 
 
                 Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 32), IconData.impacts.splash, 3f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
+                
                 Mod.instance.iconData.ImpactIndicator(currentLocation, Position + new Vector2(64, -32), IconData.impacts.fish, 2f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
 
                 if (TreasureZone(true))
@@ -1960,21 +1946,20 @@ namespace StardewDruid.Character
 
                 Vector2 treasurePosition = Position + new Vector2(64, 0);
 
-                int treasureIndex = SpawnData.RandomTreasure(currentLocation, true);//Mod.instance.TaskList.ContainsKey("masterDive"));
+                StardewValley.Object treasureItem = SpawnData.RandomTreasure(currentLocation, Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherThree));
 
-                ThrowHandle treasure = new(Game1.player, treasurePosition, treasureIndex);
+                ThrowHandle treasure = new(Game1.player, treasurePosition, treasureItem);
 
                 if (treasure.item.Category == -4)
                 {
 
-                    treasure.setQuality(2);
+                    //treasure.setQuality(2);
 
                     //Game1.player.checkForQuestComplete(null, treasureIndex, 1, treasure.objectInstance, "fish", 7);
 
-                    Game1.player.checkForQuestComplete(null, treasureIndex, 1, null, null, 7);
+                    Game1.player.checkForQuestComplete(null, treasureItem.ParentSheetIndex, 1, null, null, 7);
 
                     Game1.player.gainExperience(1, 8); // gain fishing experience
-
 
                 }
 

@@ -13,8 +13,10 @@ using xTile.Tiles;
 
 namespace StardewDruid.Event.Access
 {
-    public class AccessHandle : EventHandle
+    public class AccessHandle
     {
+
+        public GameLocation location;
 
         public Vector2 stair;
 
@@ -31,8 +33,6 @@ namespace StardewDruid.Event.Access
         public void AccessSetup(string Entrance, string Access, Vector2 Stair, Vector2 Exit)
         {
 
-            triggerEvent = true;
-
             stair = Stair;
 
             entrance = Entrance;
@@ -41,46 +41,21 @@ namespace StardewDruid.Event.Access
 
             exit = Exit;
 
-            origin = (stair - new Vector2(6,0)) * 64;
-
-            eventId = entrance + "_" + access;
-
-            Mod.instance.RegisterEvent(this, eventId);
-
         }
 
-        public override bool TriggerLocation()
-        {
- 
-            if (Game1.player.currentLocation.Name == entrance)
-            {
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-        public override bool TriggerCheck()
+        public virtual void AccessCheck(GameLocation Location)
         {
 
-            if (Vector2.Distance(Game1.player.Position, origin) > (3 * 64))
+            location = Location;
+
+            if (CheckStair())
             {
 
-                return false;
+                return;
 
             }
 
-            if (Vector2.Distance(Game1.player.Position, stair * 64) < 192)
-            {
-
-                return false;
-
-            }
-
-            if (!CheckStair())
+            if (Utility.isOnScreen(stair * 64,64))
             {
 
                 ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
@@ -89,13 +64,11 @@ namespace StardewDruid.Event.Access
 
                 location.playSound("boulderBreak");
 
-                AccessStair();
-
-                AccessWarps();
-
             }
 
-            return true;
+            AccessStair();
+
+            AccessWarps();
 
         }
 
@@ -115,25 +88,6 @@ namespace StardewDruid.Event.Access
             }
 
             return false;
-
-        }
-
-        public override void TriggerInterval()
-        {
-
-            if (CheckStair()) {  
-                
-                return; 
-            
-            }
-
-            triggerCounter++;
-
-            TemporaryAnimatedSprite targetAnimation = Mod.instance.iconData.AnimateTarget(location, origin, IconData.schemes.grannysmith, triggerCounter % 6);
-
-            animations.Add(targetAnimation);
-
-            return;
 
         }
 
@@ -176,6 +130,7 @@ namespace StardewDruid.Event.Access
 
             buildings.Tiles[tilex + 2, tiley + 1] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 72);
 
+            location.localSound("secret1");
 
         }
 

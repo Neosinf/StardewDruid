@@ -106,21 +106,14 @@ namespace StardewDruid.Cast.Fates
         public override bool EventPerformAction(SButton Button, actionButtons Action = actionButtons.action)
         {
 
+            if (Action == actionButtons.special)
+            {
+
+                return true;
+
+            }
+
             if (!StaticActive())
-            {
-
-                return false;
-
-            }
-
-            if(Action == actionButtons.special)
-            {
-
-                return false;
-
-            }
-
-            if(strikeTimer > 0)
             {
 
                 return false;
@@ -130,13 +123,8 @@ namespace StardewDruid.Cast.Fates
             if (whiskreturn)
             {
 
-                if (PerformStrike())
-                {
-
-                    return true;
-
-                }
-
+                PerformStrike();
+   
                 return false;
 
             }
@@ -167,13 +155,13 @@ namespace StardewDruid.Cast.Fates
             if (PerformStrike())
             {
 
-                return true;
+                return false;
 
             }
 
             PerformWarp();
 
-            return true;
+            return false;
 
         }
 
@@ -323,6 +311,9 @@ namespace StardewDruid.Cast.Fates
                 return;
 
             }
+
+
+
 
             for(int s = warpSpells.Count - 1; s >= 0; s--) 
             {

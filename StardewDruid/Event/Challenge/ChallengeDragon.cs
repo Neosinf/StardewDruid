@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using static StardewDruid.Cast.SpellHandle;
 using static StardewDruid.Data.IconData;
 
@@ -18,6 +19,8 @@ namespace StardewDruid.Event.Challenge
 {
     public class ChallengeDragon : EventHandle
     {
+
+        public int activeSection;
 
         public StardewDruid.Monster.Dragon terror;
 
@@ -28,19 +31,17 @@ namespace StardewDruid.Event.Challenge
         public ChallengeDragon()
         {
 
-            activeLimit = 120;
-
-            mainEvent = true;
-
         }
 
         public override bool TriggerActive()
         {
 
-            if (base.TriggerActive())
+            if (TriggerLocation())
             {
 
                 EventActivate();
+
+                return true;
 
             }
 
@@ -51,32 +52,55 @@ namespace StardewDruid.Event.Challenge
         public override void EventActivate()
         {
 
+            mainEvent = true;
+
             base.EventActivate();
 
             EventBar("The Terror Beneath",0);
 
             eventProximity = -1;
 
+            activeLimit = 120;
+
             cues = DialogueData.DialogueScene(eventId);
 
             narrators = DialogueData.DialogueNarrators(eventId);
 
-            if (Mod.instance.trackers.ContainsKey(CharacterHandle.characters.Effigy))
+        }
+
+        public override bool AttemptReset()
+        {
+
+            if(location.Name == LocationData.druid_vault_name)
             {
 
-                voices[1] = Mod.instance.characters[CharacterHandle.characters.Effigy];
+                Game1.player.warpFarmer(warpExit, 2);
 
-                Mod.instance.characters[CharacterHandle.characters.Effigy].Halt();
-
-                Mod.instance.characters[CharacterHandle.characters.Effigy].idleTimer = 300;
+                Mod.instance.CastMessage("You managed to escape! Enter the lair to try again.", 3);
 
             }
 
-            location.warps.Clear();
+            EventRemove();
 
-            warpExit = new Warp(26, 32, "Mine", 17, 6, flipFarmer: false);
+            eventActive = false;
+
+            eventAbort = false;
+
+            triggerEvent = true;
+
+            activeCounter = 0;
+
+            return true;
 
         }
+
+        public override bool EventExpire()
+        {
+            
+            return AttemptReset();
+
+        }
+
 
         public override void EventRemove()
         {
@@ -108,7 +132,7 @@ namespace StardewDruid.Event.Challenge
 
             activeCounter++;
 
-            if(terror != null)
+            if (terror != null)
             {
 
                 if (!ModUtility.MonsterVitals(terror, location))
@@ -134,8 +158,21 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            if(activeCounter == 1)
+            if (activeCounter == 1)
             {
+
+                foreach(KeyValuePair< CharacterHandle.characters,TrackHandle> tracker in Mod.instance.trackers)
+                {
+
+                    Mod.instance.characters[tracker.Key].Halt();
+
+                    Mod.instance.characters[tracker.Key].idleTimer = 300;
+
+                }
+
+                location.warps.Clear();
+
+                warpExit = new Warp(26, 32, "Mine", 17, 6, flipFarmer: false);
 
                 terror = new(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
 
@@ -169,16 +206,6 @@ namespace StardewDruid.Event.Challenge
             {
 
                 location.playSound("DragonRoar");
-
-            }
-            
-
-            if(activeCounter == 120)
-            {
-
-                Game1.player.warpFarmer(warpExit, 2);
-
-                Mod.instance.CastMessage("You managed to escape! Try again tomorrow.", 3);
 
             }
 

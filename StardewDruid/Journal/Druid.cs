@@ -768,7 +768,26 @@ namespace StardewDruid.Journal
                                 if (Mod.instance.relicsData.reliquary[pages[currentPage][index]].function)
                                 {
 
-                                    Mod.instance.relicsData.RelicFunction(pages[currentPage][index]);
+                                    int function = Mod.instance.relicsData.RelicFunction(pages[currentPage][index]);
+
+                                    switch (function)
+                                    {
+
+                                        case 1:
+
+                                            exitThisMenu();
+
+                                            break;
+
+                                        case 2:
+
+                                            questPage = index;
+
+                                            openDetailPage();
+
+                                            break;
+
+                                    }
 
                                 }
 
@@ -790,28 +809,9 @@ namespace StardewDruid.Journal
                         if (pages.Count > 0 && pages[currentPage].Count > index && questLogButtons[index].containsPoint(x, y))
                         {
 
-                            Game1.playSound("smallSelect");
-
                             questPage = index;
 
-                            scrollAmount = 0.0f;
-
-                            SetScrollBarFromAmount();
-
-                            if (!Game1.options.SnappyMenus)
-                            {
-
-                                return;
-
-                            }
-
-                            currentlySnappedComponent = getComponentWithID(102);
-
-                            currentlySnappedComponent.rightNeighborID = -7777;
-
-                            currentlySnappedComponent.downNeighborID = 104;
-
-                            snapCursorToCurrentSnappedComponent();
+                            openDetailPage();
 
                             return;
 
@@ -985,6 +985,32 @@ namespace StardewDruid.Journal
 
             }
         
+        }
+
+        public void openDetailPage()
+        {
+
+            Game1.playSound("smallSelect");
+
+            scrollAmount = 0.0f;
+
+            SetScrollBarFromAmount();
+
+            if (!Game1.options.SnappyMenus)
+            {
+
+                return;
+
+            }
+
+            currentlySnappedComponent = getComponentWithID(102);
+
+            currentlySnappedComponent.rightNeighborID = -7777;
+
+            currentlySnappedComponent.downNeighborID = 104;
+
+            snapCursorToCurrentSnappedComponent();
+
         }
 
         public override void receiveRightClick(int x, int y, bool playSound = true)
@@ -1572,6 +1598,19 @@ namespace StardewDruid.Journal
 
             }
             else
+            if (type == journalTypes.relics)
+            {
+
+                title = Mod.instance.relicsData.reliquary[pages[currentPage][questPage]].title;
+
+                description = Mod.instance.relicsData.reliquary[pages[currentPage][questPage]].description;
+
+                explanation = "Contents:";
+
+                objectives = Mod.instance.relicsData.reliquary[pages[currentPage][questPage]].narrative;
+
+            }
+            else
             {
                 string questId = pages[currentPage][questPage];
 
@@ -2111,14 +2150,18 @@ namespace StardewDruid.Journal
             if (cornerX > Game1.graphics.GraphicsDevice.Viewport.Width - 512)
             {
 
-                cornerX = Math.Max(cornerX- 576,0);
+                int tryCorner = cornerX - 576;
+
+                cornerX = tryCorner < 0 ? 0 : tryCorner;
 
             }
 
             if(cornerY > Game1.graphics.GraphicsDevice.Viewport.Height - contentHeight - 48)
             {
 
-                cornerY = Math.Max(cornerY -(int)(contentHeight + 64f),0);
+                int tryCorner = cornerY - (int)(contentHeight + 64f);
+
+                cornerY = tryCorner < 0 ? 0 : tryCorner;
 
             }
 

@@ -504,7 +504,7 @@ namespace StardewDruid.Location
                     if (offset == 1)
                     {
 
-                        buildings.Tiles[array[0], code.Key] = new StaticTile(back, dangerous, BlendMode.Alpha, back.Tiles[array[0], code.Key].TileIndex);
+                        buildings.Tiles[array[0], code.Key] = new StaticTile(buildings, dangerous, BlendMode.Alpha, back.Tiles[array[0], code.Key].TileIndex);
 
                     }
 

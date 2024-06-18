@@ -8,6 +8,7 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
+using xTile.Dimensions;
 using static StardewDruid.Cast.Rite;
 
 namespace StardewDruid.Data
@@ -857,7 +858,7 @@ namespace StardewDruid.Data
 
         }
 
-        public static int RandomHighFish(GameLocation location, bool enableRare)
+        public static string RandomHighFish(GameLocation location, bool enableRare)
         {
 
             Dictionary<int, int> objectIndexes;
@@ -972,7 +973,40 @@ namespace StardewDruid.Data
 
             int randomFish = objectIndexes[Game1.random.Next(objectIndexes.Count)];
 
-            return randomFish;
+            return randomFish.ToString();
+
+        }
+
+        public static string RandomJunkItem(GameLocation location)
+        {
+
+            Dictionary<int, int> objectIndexes = new ()
+            {
+
+                [0] = 275, //"Artifact Trove/0/-300/Basic/Artifact Trove/A blacksmith can open this for you. These troves often contain ancient relics and curiosities./100 101 103 104 105 106 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 166 373 797//",
+                [1] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
+                [2] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
+                [3] = 397, // urchin
+                [4] = 394, //"Rainbow Shell/300/-300/Basic -23/Rainbow Shell/It's a very beautiful shell.///",
+                [5] = 393, //"Coral/80/-300/Basic -23/Coral/A colony of tiny creatures that clump together to form beautiful structures.///",
+            };
+        
+            if (location is Caldera)
+            {
+
+                objectIndexes = new Dictionary<int, int>()
+                {
+                    [0] = 848, // cinder shard,
+                    [1] = 848, // cinder shard,
+                    [2] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
+                    [3] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
+                };
+
+            }
+
+            int randomFish = objectIndexes[Game1.random.Next(objectIndexes.Count)];
+
+            return randomFish.ToString();
 
         }
 
@@ -1113,135 +1147,41 @@ namespace StardewDruid.Data
 
         }
 
-        public static int RandomTreasure(GameLocation location, bool rareTreasure = false)
+        public static StardewValley.Object RandomTreasure(GameLocation location, bool rareTreasure = false)
         {
 
-            Dictionary<int, int> objectIndexes;
+            int options = 3;
 
-            if (location is Beach || location is Farm && Game1.whichFarm == 6)
+            if (rareTreasure) { options++; }
+
+            switch (Mod.instance.randomIndex.Next(options))
             {
+                default:
+                case 0:
 
-                objectIndexes = new Dictionary<int, int>()
-                {
-                    [0] = 797, //"Pearl/2500/-300/Basic/Pearl/A rare treasure from the sea.///",
-                    [1] = 275, //"Artifact Trove/0/-300/Basic/Artifact Trove/A blacksmith can open this for you. These troves often contain ancient relics and curiosities./100 101 103 104 105 106 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 166 373 797//",
-                    [2] = 166, //"Treasure Chest/5000/-300/Basic/Treasure Chest/Wow, it's loaded with treasure! This is sure to fetch a good price./Day Night^Spring Summer Fall Winter//",
-                    [3] = 128, // puff ball
-                    [4] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
-                    [5] = 392, // nautilus shell
-                    [6] = 152, // seaweed
-                    [7] = 152, // seaweed
-                    [8] = 397, // urchin
-                    [9] = 718, // cockle
-                    [10] = 715, // lobster
-                    [11] = 720, // shrimp
-                    [12] = 719, // mussel
-                    [13] = 393, //"Coral/80/-300/Basic -23/Coral/A colony of tiny creatures that clump together to form beautiful structures.///",
-                    [14] = 394, //"Rainbow Shell/300/-300/Basic -23/Rainbow Shell/It's a very beautiful shell.///",
-                    [15] = 131, // sardine
-                    [16] = 147, // herring
-                    [17] = 129, // anchovy
-                    [18] = 701, // tilapia
-                    [19] = 150, // red snapper
-                    [20] = 148, // eel
-                    [21] = 149, // squid
-                    [22] = 151, // octopus
-                    [23] = 155, // super cucumber
-                    [24] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
-                    [25] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
-                };
+                    string low =  RandomLowFish(location);
+
+                    return new StardewValley.Object(low, 1, quality: 4);
+                
+                case 1:
+
+                    string junk = RandomJunkItem(location);
+
+                    return new StardewValley.Object(junk, Mod.instance.randomIndex.Next(3));
+
+                case 2:
+
+                    string pool = RandomPoolFish(location);
+
+                    return new StardewValley.Object(pool, Mod.instance.randomIndex.Next(2));
+
+                case 3:
+
+                    string fish = RandomHighFish(location,true);
+
+                    return new StardewValley.Object(fish, 1, quality: 4);
 
             }
-            else if (location is Caldera)
-            {
-
-                objectIndexes = new Dictionary<int, int>()
-                {
-                    [0] = 848, // cinder shard,
-                    [1] = 848, // cinder shard,
-                    [2] = 162, // lava eel
-                    [3] = 162, // lava eel
-                    [4] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
-                    [5] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
-                    [6] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
-                };
-
-            }
-            else if (location is IslandLocation)
-            {
-
-                objectIndexes = new Dictionary<int, int>()
-                {
-
-                    [0] = 797, //"Pearl/2500/-300/Basic/Pearl/A rare treasure from the sea.///",
-                    [1] = 275, //"Artifact Trove/0/-300/Basic/Artifact Trove/A blacksmith can open this for you. These troves often contain ancient relics and curiosities./100 101 103 104 105 106 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 166 373 797//",
-                    [2] = 166, //"Treasure Chest/5000/-300/Basic/Treasure Chest/Wow, it's loaded with treasure! This is sure to fetch a good price./Day Night^Spring Summer Fall Winter//",
-                    [3] = 150, // red snapper = 852
-                    [4] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
-                    [5] = 392, // nautilus shell
-                    [6] = 152, // seaweed
-                    [7] = 152, // seaweed
-                    [8] = 397, // urchin
-                    [9] = 718, // cockle
-                    [10] = 715, // lobster
-                    [11] = 720, // shrimp
-                    [12] = 719, // mussel
-                    [13] = 393, //"Coral/80/-300/Basic -23/Coral/A colony of tiny creatures that clump together to form beautiful structures.///",
-                    [14] = 394, //"Rainbow Shell/300/-300/Basic -23/Rainbow Shell/It's a very beautiful shell.///",
-                    [15] = 838, // blue discuss
-                    [16] = 837, // lionfish
-                    [17] = 267, // flounder
-                    [18] = 701, // tilapia
-                    [19] = 838, // blue discuss
-                    [20] = 837, // lionfish
-                    [21] = 267, // flounder
-                    [22] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
-                    [23] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
-                };
-
-            }
-
-            else
-            {
-
-                objectIndexes = new Dictionary<int, int>()
-                {
-
-                    [0] = 797, //"Pearl/2500/-300/Basic/Pearl/A rare treasure from the sea.///",
-                    [1] = 275, //"Artifact Trove/0/-300/Basic/Artifact Trove/A blacksmith can open this for you. These troves often contain ancient relics and curiosities./100 101 103 104 105 106 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 166 373 797//",
-                    [2] = 166, //"Treasure Chest/5000/-300/Basic/Treasure Chest/Wow, it's loaded with treasure! This is sure to fetch a good price./Day Night^Spring Summer Fall Winter//",
-                    [3] = 158, // stone fish
-                    [4] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
-                    [5] = 145, // carp
-                    [6] = 137, // smallmouth bass
-                    [7] = 142,  // sunfish
-                    [8] = 141, // perch
-                    [9] = 132,  // bream
-                    [10] = 153, // algae
-                    [11] = 153, // algae
-                    [12] = 721, // snail 721
-                    [13] = 716, // crayfish 716
-                    [14] = 722, // periwinkle 722
-                    [15] = 717, // crab 717
-                    [16] = 517, //"Glow Ring/200/-300/Ring/Glow Ring/Emits a constant light.///",
-                    [17] = 519, //"Magnet Ring/200/-300/Ring/Magnet Ring/Increases your radius for collecting items.///",
-                    [18] = 143, // cat fish
-                    [19] = 698, // sturgeon
-                    [20] = 140, // walleye
-                    [21] = 699, // tiger trout
-                    [22] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
-                    [23] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
-                };
-
-            }
-
-            int bottom = rareTreasure ? 0 : 4;
-
-            int probability = new Random().Next(bottom, objectIndexes.Count);
-
-            int objectIndex = objectIndexes[probability];
-
-            return objectIndex;
 
         }
 
@@ -1270,42 +1210,35 @@ namespace StardewDruid.Data
 
             }
 
-            Dictionary<int, int> objectIndexes;
-
-            switch (ModUtility.GroundCheck(location,ModUtility.PositionToTile(vector)))
+            switch (Mod.instance.randomIndex.Next(6))
             {
-
-                case "water":
-
-                    objectIndexes = new Dictionary<int, int>()
-                    {
-
-                        [0] = 797, //"Pearl/2500/-300/Basic/Pearl/A rare treasure from the sea.///",
-
-                        [1] = 852, //"Dragon Tooth/500/-300/Basic/Dragon Tooth/These are rumored to be the teeth of ancient serpents. The enamel is made of pure iridium!///",
-                    };
-
-                    break;
-
+                
                 default:
+                case 0:
 
-                    objectIndexes = new Dictionary<int, int>()
-                    {
+                    return new StardewValley.Object("166", 1); //"Treasure Chest/5000/-300/Basic/Treasure Chest/Wow, it's loaded with treasure! This is sure to fetch a good price./Day Night^Spring Summer Fall Winter//",
 
-                        [0] = 166, //"Treasure Chest/5000/-300/Basic/Treasure Chest/Wow, it's loaded with treasure! This is sure to fetch a good price./Day Night^Spring Summer Fall Winter//",
+                case 1:
 
-                        [1] = 852, //"Dragon Tooth/500/-300/Basic/Dragon Tooth/These are rumored to be the teeth of ancient serpents. The enamel is made of pure iridium!///",
-                    };
+                    return new StardewValley.Object("336", 5); // Gold bars
 
-                    break;
+                case 2:
+
+                    return new StardewValley.Object("74", 1); // Prismatic Shard
+
+                case 3:
+
+                    return new StardewValley.Object("797", 1); //"Pearl/2500/-300/Basic/Pearl/A rare treasure from the sea.///",
+
+                case 4:
+
+                    return new StardewValley.Object("852", 2); //"Dragon Tooth/500/-300/Basic/Dragon Tooth/These are rumored to be the teeth of ancient serpents. The enamel is made of pure iridium!///",
+
+                case 5:
+
+                    return new StardewValley.Object("275", 3); //"Artifact Trove/0/-300/Basic/Artifact Trove/A blacksmith can open this for you. These troves often contain ancient relics and curiosities./100 101 103 104 105 106 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 166 373 797//",
 
             }
-
-            int probability = new Random().Next(objectIndexes.Count);
-
-            int objectIndex = objectIndexes[probability];
-
-            return new StardewValley.Object(objectIndex.ToString(), 1);
 
         }
 
@@ -1437,6 +1370,9 @@ namespace StardewDruid.Data
 
     public class SpawnIndex
     {
+        public bool anywhere;
+        public string locale;
+
         public bool cast;
         public bool weeds;
         public bool forage;
@@ -1462,6 +1398,8 @@ namespace StardewDruid.Data
 
         public void SpawnAnywhere()
         {
+
+            anywhere = true;
 
             cast = true;
 
@@ -1511,6 +1449,8 @@ namespace StardewDruid.Data
             }
 
             cast = true;
+
+            locale = location.Name;
 
             if (location is Farm || location.Name == "Custom_Garden")
             {

@@ -4,20 +4,19 @@ using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewDruid.Render;
 using StardewValley;
-using System;
 
 namespace StardewDruid.Monster
 {
-    public class DarkLeader : DarkRogue
+    public class DarkGoblin : DarkRogue
     {
 
-        public DarkLeader()
+        public DarkGoblin()
         {
 
 
         }
 
-        public DarkLeader(Vector2 vector, int CombatModifier, string name = "Shadowtin")
+        public DarkGoblin(Vector2 vector, int CombatModifier, string name = "DarkGoblin")
           : base(vector, CombatModifier, name)
         {
 
@@ -47,7 +46,7 @@ namespace StardewDruid.Monster
 
             weaponRender = new();
 
-            weaponRender.LoadWeapon(WeaponRender.weapons.carnyx);
+            weaponRender.LoadWeapon(WeaponRender.weapons.axe);
 
             overHead = new(16, -144);
 

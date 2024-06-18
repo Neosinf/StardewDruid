@@ -40,6 +40,8 @@ namespace StardewDruid.Monster
         public override void LoadOut()
         {
 
+            characterTexture = MonsterHandle.MonsterTexture(realName.Value);
+
             BatWalk();
 
             BatFlight();
@@ -71,8 +73,6 @@ namespace StardewDruid.Monster
             baseJuice = 2;
 
             basePulp = 20;
-
-            characterTexture = MonsterHandle.MonsterTexture(realName.Value);
 
             hoverInterval = 12;
 
@@ -256,21 +256,11 @@ namespace StardewDruid.Monster
 
             cooldownTimer = cooldownInterval;
 
-            //reachThreshold = 96;
-
-            //safeThreshold = 544;
-
-            //specialThreshold = 448;
-
-            //barrageThreshold = 640;
-
             specialFrames = idleFrames;
 
             sweepSet = true;
 
             sweepInterval = 12;
-
-            sweepTexture = characterTexture;
 
             sweepFrames = walkFrames;
 

@@ -7,6 +7,7 @@ using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Delegates;
 using StardewValley.Locations;
 using StardewValley.Minigames;
 using StardewValley.Monsters;
@@ -17,13 +18,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Security.Cryptography.X509Certificates;
-using System.Xml.Linq;
-using xTile;
-using xTile.Dimensions;
-using static StardewDruid.Character.CharacterHandle;
+
 
 namespace StardewDruid.Character
 {
@@ -230,128 +225,27 @@ namespace StardewDruid.Character
 
         }
 
-        public static void CharacterWarp(Character entity, locations destination)
+        public static void CharacterWarp(Character entity, locations destination, bool instant = false)
         {
 
             string destiny = CharacterLocation(destination);
 
             Vector2 position = CharacterStart(destination);
 
-            GameLocation target;
+            CharacterMover mover = new(entity.characterType);
 
-            if (Mod.instance.locations.ContainsKey(destiny))
+            mover.WarpSet(destiny, position, true);
+
+            if (instant)
             {
 
-                target = Mod.instance.locations[destiny];
+                mover.Update();
 
-            }
-            else
-            {
-
-                target = Game1.getLocationFromName(CharacterLocation(destination));
+                return;
 
             }
 
-            CharacterMoveTo(target, entity, position);
-
-        }
-
-        public static void CharacterMoveTo(GameLocation target, Character entity, Vector2 position, bool animate = true)
-        {
-
-            if (entity.currentLocation != null)
-            {
-
-                Mod.instance.iconData.AnimateQuickWarp(entity.currentLocation, entity.Position, true);
-
-                entity.currentLocation.characters.Remove(entity);
-
-            }
-
-            foreach (GameLocation location in (IEnumerable<GameLocation>)Game1.locations)
-            {
-
-                if (location.characters.Count > 0)
-                {
-                    
-                    for (int index = location.characters.Count - 1; index >= 0; --index)
-                    {
-
-                        if (location.characters[index] is StardewDruid.Character.Character registry)
-                        {
-
-                            if(registry.Name == entity.Name)
-                            {
-
-                                if(location.Name == target.Name)
-                                {
-
-                                    entity.Position = position;
-
-                                    entity.SettleOccupied();
-
-                                    entity.currentLocation = target;
-
-                                    Mod.instance.iconData.AnimateQuickWarp(entity.currentLocation, entity.Position);
-
-                                    return;
-
-                                }
-
-                                location.characters.Remove(registry);
-
-                                target.characters.Add(entity);
-
-                                entity.Position = position;
-
-                                entity.SettleOccupied();
-
-                                entity.currentLocation = target;
-
-                                Mod.instance.iconData.AnimateQuickWarp(entity.currentLocation, entity.Position);
-
-                                return;
-
-                            }
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            target.characters.Add(entity);
-
-            entity.Position = position;
-
-            entity.SettleOccupied();
-
-            entity.currentLocation = target;
-
-            Mod.instance.iconData.AnimateQuickWarp(entity.currentLocation, entity.Position);
-
-        }
-
-        public static void CharacterRemove(characters character)
-        {
-
-            if (Mod.instance.characters.ContainsKey(character))
-            {
-
-                Character entity = Mod.instance.characters[character];
-
-                if (entity.currentLocation != null)
-                {
-                    
-                    entity.currentLocation.characters.Remove(entity);
-
-                }
-
-                Mod.instance.characters.Remove(character);
-
-            }
+            Mod.instance.movers[entity.characterType] = mover;
 
         }
 
@@ -382,17 +276,6 @@ namespace StardewDruid.Character
             switch (character)
             {
 
-                case characters.Buffin:
-
-
-                    Mod.instance.characters[characters.Buffin] = new Buffin(characters.Buffin);
-
-                    Mod.instance.dialogue[characters.Buffin] = new(characters.Buffin);
-
-                    Mod.instance.characters[characters.Buffin].SwitchToMode(mode, Game1.player);
-
-                    break;
-
                 case characters.Revenant:
 
 
@@ -412,6 +295,28 @@ namespace StardewDruid.Character
                     Mod.instance.dialogue[characters.Jester] = new(characters.Jester);
 
                     Mod.instance.characters[characters.Jester].SwitchToMode(mode, Game1.player);
+
+                    break;
+
+                case characters.Buffin:
+
+
+                    Mod.instance.characters[characters.Buffin] = new Buffin(characters.Buffin);
+
+                    Mod.instance.dialogue[characters.Buffin] = new(characters.Buffin);
+
+                    Mod.instance.characters[characters.Buffin].SwitchToMode(mode, Game1.player);
+
+                    break;
+
+                case characters.Shadowtin:
+
+
+                    Mod.instance.characters[characters.Shadowtin] = new Shadowtin(characters.Shadowtin);
+
+                    Mod.instance.dialogue[characters.Shadowtin] = new(characters.Shadowtin);
+
+                    Mod.instance.characters[characters.Shadowtin].SwitchToMode(mode, Game1.player);
 
                     break;
 
@@ -457,17 +362,21 @@ namespace StardewDruid.Character
                 case characters.shadowtin:
 
                     return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", CharacterNames()[character] + "Portrait.png"));*/
-                case characters.Buffin:
+                case characters.Revenant:
 
-                    return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "BuffinPortrait.png"));
+                    return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "RevenantPortrait.png"));
 
                 case characters.Jester:
 
                     return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "JesterPortrait.png"));
 
-                case characters.Revenant:
+                case characters.Buffin:
 
-                    return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "RevenantPortrait.png"));
+                    return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "BuffinPortrait.png"));
+
+                case characters.Shadowtin:
+
+                    return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ShadowtinPortrait.png"));
 
                 default:
 
@@ -494,22 +403,38 @@ namespace StardewDruid.Character
                 speed = 2,
 
             };
-            
-            if (character == characters.Jester)
+
+            if (character == characters.Revenant)
             {
 
                 disposition.id += 1;
-                disposition.Birthday_Season = "fall";
+                disposition.Birthday_Day = 15;
 
             }
-            /*
-            if (characterName == "Shadowtin")
+
+            if (character == characters.Jester)
             {
 
                 disposition.id += 2;
+                disposition.Birthday_Season = "fall";
+
+            }
+
+            if (character == characters.Buffin)
+            {
+
+                disposition.id += 3;
+                disposition.Birthday_Season = "spring";
+
+            }
+
+            if (character == characters.Shadowtin)
+            {
+
+                disposition.id += 4;
                 disposition.Birthday_Season = "winter";
 
-            }*/
+            }
 
             return disposition;
 
@@ -587,6 +512,10 @@ namespace StardewDruid.Character
                         case characters.Buffin:
 
                             return "You would make a great servant of chaos, Farmer.";
+
+                        case characters.Shadowtin:
+
+                            return "(Shadowtin's ethereal eyes shine through a cold metal mask)";
 
                         case characters.energies:
 
@@ -705,10 +634,21 @@ namespace StardewDruid.Character
 
                         case characters.Jester:
 
-                            if (Mod.instance.questHandle.IsComplete(QuestHandle.questEffigy) && Context.IsMainPlayer)
+                            if (Context.IsMainPlayer)
                             {
 
                                 return "(adventure) Let's talk adventure.";
+
+                            }
+
+                            break;                        
+                        
+                        case characters.Shadowtin:
+                            
+                            if (Context.IsMainPlayer)
+                            {
+
+                                return "(adventure) Lets talk about our partnership.";
 
                             }
 
@@ -1005,6 +945,53 @@ namespace StardewDruid.Character
 
                                     return generate;
 
+                                case characters.Shadowtin:
+
+                                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.challengeFates))
+                                    {
+
+                                        break;
+
+                                    }
+
+                                    generate.intro = "Shadowtin Bear: What do you propose?"; ;
+
+                                    generate.responses.Add("(inventory) I want to check your inventory.");
+
+                                    generate.answers.Add("0");
+
+                                    if (Mod.instance.characters[character].modeActive != Character.mode.track)
+                                    {
+
+                                        generate.responses.Add("(follow) Let us continue our investigation.");
+
+                                        generate.answers.Add("1");
+
+                                    }
+
+                                    if (Mod.instance.characters[character].modeActive != Character.mode.roam)
+                                    {
+
+                                        generate.responses.Add("(work) There's plenty of research material on the farm.");
+
+                                        generate.answers.Add("2");
+
+                                    }
+
+                                    if (Mod.instance.characters[character].modeActive != Character.mode.home
+                                        && Mod.instance.characters[character].currentLocation.Name != CharacterLocation(locations.grove))
+                                    {
+
+                                        generate.responses.Add("(rest) That's enough treasure hunting for now.");
+
+                                        generate.answers.Add("3");
+
+                                    }
+
+                                    generate.lead = true;
+
+                                    return generate;
+
                                 case characters.waves:
 
                                     generate.intro = "Murmurs of the waves: Still yourself, and let the rolling motions of the mists carry you home.";
@@ -1050,6 +1037,12 @@ namespace StardewDruid.Character
 
                                             break;
 
+                                        case characters.Shadowtin:
+
+                                            generate.intro = "Indeed. How about we split the spoils fifty fifty.";
+
+                                            break;
+
                                     }
 
                                     Mod.instance.characters[character].SwitchToMode(Character.mode.track, Game1.player);
@@ -1073,6 +1066,11 @@ namespace StardewDruid.Character
 
                                             break;
 
+                                        case characters.Shadowtin:
+
+                                            generate.intro = "Lets see how profitable this agricultural venture is.";
+
+                                            break;
                                     }
 
                                     Mod.instance.characters[character].SwitchToMode(Character.mode.roam, Game1.player);
@@ -1096,6 +1094,11 @@ namespace StardewDruid.Character
 
                                             break;
 
+                                        case characters.Shadowtin:
+
+                                            generate.intro = "Good idea. I require a quiet, shaded place to ruminate.";
+
+                                            break;
                                     }
 
                                     Mod.instance.characters[character].SwitchToMode(Character.mode.home, Game1.player);
@@ -1312,7 +1315,7 @@ namespace StardewDruid.Character
                                 case 1:
 
                                     generate.intro = "A soft sound of contentment fills your ear. You're startled. You look back and forth but find no other creature but yourself at the stone table. " +
-                                        "Even stranger, you know the craft of the druids that stood before this bowl in ages past. " +
+                                        "Even stranger, you have acquired the forgotten knowledge of herbalism, with all the craft secrets of the druids that stood before this bowl in ages past. " +
                                         "With a bit of amateur effort, three stoppered flasks, each with a small amount of herbal remedy, dangle from your belt. " +
                                         "The bowl is pleased. (Herbalism journal unlocked)";
 
@@ -1475,6 +1478,164 @@ namespace StardewDruid.Character
 
         }
 
+
+    }
+
+    public class CharacterMover
+    {
+
+        public CharacterHandle.characters character;
+
+        public enum moveType
+        {
+
+            from,
+            to,
+            remove,
+
+        }
+
+        public moveType type;
+
+        public string locale;
+
+        public Vector2 position;
+
+        public bool animate;
+
+        public CharacterMover(CharacterHandle.characters CharacterType)
+        {
+
+            character = CharacterType;
+
+        }
+
+        public void Update()
+        {
+
+            Character entity = Mod.instance.characters[character];
+
+            GameLocation target;
+
+            if (Mod.instance.locations.ContainsKey(locale))
+            {
+
+                target = Mod.instance.locations[locale];
+
+            }
+            else
+            {
+
+                target = Game1.getLocationFromName(locale);
+
+            }
+
+            switch (type)
+            {
+
+                case moveType.from:
+
+                    target.characters.Remove(entity);
+
+                    break;
+
+                case moveType.to:
+
+                    Warp(target, entity, position);
+
+                    break;
+
+                case moveType.remove:
+
+                    RemoveAll(entity);
+
+                    break;
+
+            }
+
+
+        }
+
+        public void WarpSet(string Target, Vector2 Position, bool Animate = true)
+        {
+
+            type = moveType.to;
+
+            locale = Target;
+
+            position = Position;
+
+            animate = Animate;
+
+        }
+
+
+        public static void Warp(GameLocation target, Character entity, Vector2 position, bool animate = true)
+        {
+
+            if (entity.currentLocation != null)
+            {
+
+                if (animate)
+                {
+
+                    Mod.instance.iconData.AnimateQuickWarp(entity.currentLocation, entity.Position, true);
+
+                }
+
+                entity.currentLocation.characters.Remove(entity);
+
+            }
+
+            entity.ResetActives(true);
+
+            target.characters.Add(entity);
+
+            entity.currentLocation = target;
+
+            entity.Position = position;
+
+            entity.SettleOccupied();
+
+            if (animate)
+            {
+
+                Mod.instance.iconData.AnimateQuickWarp(entity.currentLocation, entity.Position);
+
+            }
+
+        }
+
+        public void RemovalSet(string From)
+        {
+
+            type = moveType.from;
+
+            locale = From;
+
+        }
+
+        public void RemoveAll(Character entity)
+        {
+
+            foreach (GameLocation location in (IEnumerable<GameLocation>)Game1.locations)
+            {
+
+                if (location.characters.Count > 0)
+                {
+
+                    if (location.characters.Contains(entity))
+                    {
+
+                        location.characters.Remove(entity);
+
+                    }
+
+                }
+
+            }
+
+        }
 
     }
 

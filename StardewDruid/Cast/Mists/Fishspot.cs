@@ -172,7 +172,7 @@ namespace StardewDruid.Cast.Mists
 
                 }
 
-                int objectIndex = SpawnData.RandomHighFish(Game1.player.currentLocation, enableRare);
+                string objectIndex = SpawnData.RandomHighFish(Game1.player.currentLocation, enableRare);
 
                 int animationRow = 10;
 
@@ -206,7 +206,7 @@ namespace StardewDruid.Cast.Mists
                     0f
                 );
 
-                fishingRod.startMinigameEndFunction(new StardewValley.Object(objectIndex.ToString(),1));
+                fishingRod.startMinigameEndFunction(new StardewValley.Object(objectIndex,1));
 
                 Game1.player.currentLocation.temporarySprites.Add(newAnimation);
 

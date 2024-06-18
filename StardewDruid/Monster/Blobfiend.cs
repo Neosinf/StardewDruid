@@ -68,6 +68,8 @@ namespace StardewDruid.Monster
         public override void LoadOut()
         {
 
+            characterTexture = MonsterHandle.MonsterTexture(realName.Value);
+
             baseJuice = 3;
 
             basePulp = 25;
@@ -84,9 +86,6 @@ namespace StardewDruid.Monster
 
         public void BlobWalk()
         {
-
-
-            characterTexture = MonsterHandle.MonsterTexture(realName.Value);
 
             walkInterval = 12;
 
@@ -148,8 +147,6 @@ namespace StardewDruid.Monster
             flightPeak = 192;
                 
             flightDefault = 1;
-
-            flightTexture = characterTexture;
 
             flightFrames = new()
             {
@@ -245,8 +242,6 @@ namespace StardewDruid.Monster
             sweepSet = true;
 
             sweepInterval = 8;
-
-            sweepTexture = characterTexture;
 
             sweepFrames = specialFrames;
 

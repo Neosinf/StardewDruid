@@ -189,8 +189,6 @@ namespace StardewDruid.Location
 
                     Mod.instance.locations.Add(druid_chapel_name, chapel);
 
-                    new Event.Access.AccessHandle().AccessSetup("UndergroundMine60", druid_chapel_name, new(24, 13), new(27, 30));
-
                     return;
 
                 case druid_vault_name:
@@ -200,8 +198,6 @@ namespace StardewDruid.Location
                     Game1.locations.Add(vault);
 
                     Mod.instance.locations.Add(druid_vault_name, vault);
-
-                    new Event.Access.AccessHandle().AccessSetup("UndergroundMine100", druid_vault_name, new(24, 13), new(27, 30));
 
                     return;
 
@@ -224,7 +220,17 @@ namespace StardewDruid.Location
                     Mod.instance.locations.Add(druid_archaeum_name, archaeum);
 
                     return;
-                    
+
+                case druid_tomb_name:
+
+                    GameLocation tomb = new Location.Tomb(druid_tomb_name);
+
+                    Game1.locations.Add(tomb);
+
+                    Mod.instance.locations.Add(druid_tomb_name, tomb);
+
+                    return;
+
             }
 
         }

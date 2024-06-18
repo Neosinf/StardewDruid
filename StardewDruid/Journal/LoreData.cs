@@ -284,7 +284,7 @@ namespace StardewDruid.Journal
                 story = stories.Shadowtin_Jester_1,
                 character = characters.Jester,
                 question = "Shadowtin doesn't believe in luck. Or chance. Or fortune.",
-                answer = "I think I get what he wants, I mean, trinkets and shiny things are great. But they aren't everything. He said he'd help us get to the undervalley, but he doesn't care about my sacred mission. " +
+                answer = "I think I get what he wants, I mean, trinkets and shiny things are great. But they aren't everything. He said he'd help me uncover the secret of the Fallen Star, but he doesn't care about my sacred mission. " +
                 "Still, I think he has a part to play for Yoba in our great purpose. (Jester grins) You can just beat him up again if he tries to double-cross us.",
 
             };
@@ -334,6 +334,8 @@ namespace StardewDruid.Journal
                 "All Shadowfolk prize such treasures, and it's a very competitive society, so I have to carry mine with me at all times.",
 
             };
+
+            //I believe that, in his quest for Justice, he cursed all his followers to become spectres. Perhaps to guard his secrets, or worse, to harbour the essence of their souls.
 
             return storylist;
 

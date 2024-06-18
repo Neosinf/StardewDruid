@@ -179,6 +179,8 @@ namespace StardewDruid.Cast.Effect
 
         public SpellHandle spell;
 
+        public bool cooldown;
+
         public CurseTarget(GameLocation Location, StardewValley.Monsters.Monster Victim, int Timer, SpellHandle.effects Type = SpellHandle.effects.knock)
         {
 
@@ -317,12 +319,32 @@ namespace StardewDruid.Cast.Effect
 
             spell.Shutdown();
 
-            timer = 0;
+            timer = 300;
+
+            cooldown = true;
             
         }
 
         public bool Update()
         {
+
+            timer--;
+
+            if (timer <= 0)
+            {
+
+                if (cooldown)
+                {
+
+                    return false;
+
+                }
+
+                ShutDown();
+
+                return true;
+
+            }
 
             if (!ModUtility.MonsterVitals(victim, location))
             {
@@ -351,17 +373,6 @@ namespace StardewDruid.Cast.Effect
                     return false;
 
                 }
-
-            }
-
-            timer--;
-
-            if(timer <= 0)
-            {
-
-                ShutDown();
-
-                return false;
 
             }
 

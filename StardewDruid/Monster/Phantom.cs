@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Data;
+using StardewDruid.Render;
 using StardewValley;
 using System;
 using System.Collections.Generic;
@@ -18,12 +19,7 @@ namespace StardewDruid.Monster
     public class Phantom : Boss
     {
 
-
-        public Texture2D weaponTexture;
-        public Dictionary<int, List<Rectangle>> weaponFrames;
-
-        public Texture2D swipeTexture;
-        public Dictionary<int, List<Rectangle>> swipeFrames;
+        public WeaponRender weaponRender;
 
         public Texture2D hatsTexture;
 
@@ -137,8 +133,6 @@ namespace StardewDruid.Monster
             flightSpeed = 9;
 
             flightPeak = 128;
-
-            flightTexture = characterTexture;
 
             flightFrames = new Dictionary<int, List<Rectangle>>()
             {
@@ -263,8 +257,6 @@ namespace StardewDruid.Monster
 
             sweepInterval = 8;
 
-            sweepTexture = characterTexture;
-
             sweepFrames = new()
             {
                 [0] = new()
@@ -297,82 +289,6 @@ namespace StardewDruid.Monster
                 },
             };
 
-
-            weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponCutlass.png"));
-
-            weaponFrames = new()
-            {
-                [256] = new()
-                {
-                    new Rectangle(0, 0, 64, 64),
-                    new Rectangle(64, 0, 64, 64),
-                    new Rectangle(128, 0, 64, 64),
-                    new Rectangle(192, 0, 64, 64),
-                    new Rectangle(0, 192, 64, 64),
-                    new Rectangle(64, 192, 64, 64),
-                    new Rectangle(128, 192, 64, 64),
-                    new Rectangle(192, 192, 64, 64),
-                },
-                [288] = new()
-                {
-                    new Rectangle(0, 128, 64, 64),
-                    new Rectangle(64, 128, 64, 64),
-                    new Rectangle(128, 128, 64, 64),
-                    new Rectangle(192, 128, 64, 64),
-                    new Rectangle(0, 256, 64, 64),
-                    new Rectangle(64, 256, 64, 64),
-                    new Rectangle(128, 256, 64, 64),
-                    new Rectangle(192, 256, 64, 64),
-                },
-                [320] = new()
-                {
-                    new Rectangle(0, 64, 64, 64),
-                    new Rectangle(64, 64, 64, 64),
-                    new Rectangle(128, 64, 64, 64),
-                    new Rectangle(192, 64, 64, 64),
-                    new Rectangle(0, 320, 64, 64),
-                    new Rectangle(64, 320, 64, 64),
-                    new Rectangle(128, 320, 64, 64),
-                    new Rectangle(64, 320, 64, 64),
-                },
-            };
-
-            swipeTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponSwipe.png"));
-
-            swipeFrames = new()
-            {
-                [256] = new()
-                {
-                    new Rectangle(0, 0, 64, 64),
-                    new Rectangle(64, 0, 64, 64),
-                    new Rectangle(128, 0, 64, 64),
-                    new Rectangle(192, 0, 64, 64),
-                    new Rectangle(0, 192, 64, 64),
-                    new Rectangle(64, 192, 64, 64),
-                    new Rectangle(128, 192, 64, 64),
-                    new Rectangle(192, 192, 64, 64),
-                },
-                [288] = new()
-                {
-                    new Rectangle(0, 128, 64, 64),
-                    new Rectangle(64, 128, 64, 64),
-                    new Rectangle(128, 128, 64, 64),
-                    new Rectangle(192, 128, 64, 64),
-                    new Rectangle(0, 256, 64, 64),
-                    new Rectangle(64, 256, 64, 64),
-                    new Rectangle(128, 256, 64, 64),
-                    new Rectangle(192, 256, 64, 64),
-                },
-                [320] = new()
-                {
-                    new Rectangle(0, 64, 64, 64),
-                    new Rectangle(64, 64, 64, 64),
-                    new Rectangle(128, 64, 64, 64),
-                    new Rectangle(192, 64, 64, 64),
-
-                },
-            };
-
         }
 
         public void PhantomSpecial()
@@ -385,8 +301,6 @@ namespace StardewDruid.Monster
             specialFloor = 0;
 
             specialInterval = 30;
-
-            specialTexture = characterTexture;
 
             specialFrames = new Dictionary<int, List<Rectangle>>()
             {
@@ -423,6 +337,13 @@ namespace StardewDruid.Monster
 
         }
 
+        public virtual void PhantomWeapon()
+        {
+            weaponRender = new();
+
+            weaponRender.LoadWeapon(WeaponRender.weapons.cutlass);
+
+        }
 
         public override void draw(SpriteBatch b, float alpha = 1f)
         {
@@ -477,7 +398,7 @@ namespace StardewDruid.Monster
 
                 if (netDirection.Value == 3) { mirrored = true; }
 
-                DrawWeapon(b, spritePosition, (spriteScale / 4f), drawLayer, sweepFrames[netDirection.Value][sweepFrame]);
+                weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { scale = (spriteScale / 4f), source = sweepFrames[netDirection.Value][sweepFrame] });
 
             }
             else if (netSpecialActive.Value)
@@ -506,7 +427,7 @@ namespace StardewDruid.Monster
 
                 if (netDirection.Value == 3) { mirrored = true; }
 
-                DrawWeapon(b, spritePosition, (spriteScale / 4f), drawLayer, smashFrames[setFlightSeries][setFlightFrame]);
+                weaponRender.DrawWeapon(b, spritePosition,  drawLayer, new() { scale = (spriteScale / 4f), source = smashFrames[setFlightSeries][setFlightFrame] });
 
             }
             else if (netHaltActive.Value)
@@ -525,51 +446,6 @@ namespace StardewDruid.Monster
             b.Draw(Game1.shadowTexture, localPosition + new Vector2(10, 44f), new Rectangle?(Game1.shadowTexture.Bounds), fadeout, 0.0f, Vector2.Zero, 4f, 0, drawLayer - 1E-06f);
 
             DrawHat(b, spritePosition, (spriteScale / 4f), drawLayer);
-
-        }
-
-        public virtual void DrawWeapon(SpriteBatch b, Vector2 spriteVector, float scale, float drawLayer, Rectangle frame)
-        {
-
-            b.Draw(
-                 weaponTexture,
-                 spriteVector - new Vector2(64 * scale, 64f * scale),
-                 weaponFrames[frame.Y][frame.X == 0 ? 0 : frame.X / 32],
-                 Color.White * fadeFactor,
-                 0f,
-                 Vector2.Zero,
-                 4f*scale,
-                 (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                 drawLayer + 0.0001f
-             );
-
-            int swipeIndex = frame.X == 0 ? 0 : frame.X / 32;
-
-            if (swipeFrames[frame.Y].Count <= swipeIndex)
-            {
-
-                return;
-
-            }
-
-            if (netSmashActive.Value && netFlightProgress.Value < 2)
-            {
-
-                return;
-
-            }
-
-            b.Draw(
-                 swipeTexture,
-                 spriteVector - new Vector2(64 * scale, 64f * scale),
-                 swipeFrames[frame.Y][swipeIndex],
-                 Color.White * 0.45f,
-                 0f,
-                 Vector2.Zero,
-                 4f * scale,
-                 (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                 drawLayer + 0.0002f
-             );
 
         }
 

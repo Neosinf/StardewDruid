@@ -150,6 +150,7 @@ namespace StardewDruid.Cast
             doom,
             immolate,
             blind,
+            capture,
         }
 
         public List<effects> added = new();
@@ -167,6 +168,8 @@ namespace StardewDruid.Cast
             dropItemInWater,
             discoverMineral,
             swordswipe,
+            thunder_small,
+            thunder,
         }
 
         public sounds sound = sounds.none;
@@ -528,6 +531,8 @@ namespace StardewDruid.Cast
                         RadialDisplay();
 
                         ApplyDamage(impact, radius, -1, damageMonsters, monsters);
+
+                        ApplyEffects(impact);
 
                     }
 
@@ -1476,7 +1481,7 @@ namespace StardewDruid.Cast
 
             }
 
-            construct = Mod.instance.iconData.BoltAnimation(location, new Vector2(destination.X, destination.Y - 64), scheme, projectile > 1);
+            construct = Mod.instance.iconData.BoltAnimation(location, new Vector2(destination.X, destination.Y - 64), scheme, projectile);
 
             animations.AddRange(construct);
 
@@ -1904,6 +1909,12 @@ namespace StardewDruid.Cast
 
                         break;
 
+                    case effects.capture:
+
+                        CaptureEffect();
+
+                        break;
+
 
                 }
 
@@ -2117,7 +2128,7 @@ namespace StardewDruid.Cast
 
             }
 
-            int drain = Math.Min(10, (int)(Mod.instance.CombatDamage() * impes));
+            int drain = Math.Min(10, (int)(damageMonsters * impes));
 
             int num = Math.Min(drain, Game1.player.maxHealth - Game1.player.health);
 
@@ -2285,6 +2296,45 @@ namespace StardewDruid.Cast
             }
 
             harvest.AddTarget(location, ModUtility.PositionToTile(impact));
+
+        }
+
+        public void CaptureEffect()
+        {
+
+            foreach(StardewDruid.Character.Character character in ModUtility.GetFriendsInLocation(location))
+            {
+
+                if (character.netDazeActive.Value)
+                {
+
+                    continue;
+
+                }
+
+                if (!character.ChangeBehaviour(true))
+                {
+
+                    continue;
+
+                }
+
+                if(Vector2.Distance(character.Position,impact) <= radius + 32)
+                {
+
+                    character.ResetActives();
+
+                    character.netHaltActive.Set(true);
+
+                    character.LookAtTarget(origin);
+
+                    character.netDazeActive.Set(true);
+
+                    character.idleTimer = radius * 2;
+
+                }
+
+            }
 
         }
 

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,6 +22,9 @@ namespace StardewDruid.Render
             axe,
             estoc,
             carnyx,
+            scythe,
+
+            bazooka,
         }
 
         public Texture2D weaponTexture;
@@ -31,10 +35,16 @@ namespace StardewDruid.Render
         public Dictionary<int, List<Rectangle>> swipeFrames;
         public Dictionary<int, List<float>> swipeOffsets;
 
+        public Texture2D firearmTexture;
+        public Dictionary<int, List<Rectangle>> firearmFrames;
+
+        public bool melee;
+        public bool firearm;
 
         public WeaponRender()
         {
 
+            melee = true;
 
             weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponSword.png"));
 
@@ -78,6 +88,41 @@ namespace StardewDruid.Render
                     new Rectangle(64, 320, 64, 64),
                     new Rectangle(128, 320, 64, 64),
                     new Rectangle(64, 320, 64, 64),
+                },
+
+            };
+
+            firearmFrames = new()
+            {
+                [0] = new()
+                {
+                    new(),
+                    new(),
+                    new(),
+                    new(),
+                    new(0, 128, 64, 64),
+                    new(64, 128, 64, 64),
+
+                },
+                [32] = new()
+                {
+                    new(),
+                    new(),
+                    new(),
+                    new(),
+                    new(0, 64, 64, 64),
+                    new(64, 64, 64, 64),
+
+                },
+                [64] = new()
+                {
+                    new(),
+                    new(),
+                    new(),
+                    new(),
+                    new(0, 0, 64, 64),
+                    new(64, 0, 64, 64),
+
                 },
             };
 
@@ -206,26 +251,44 @@ namespace StardewDruid.Render
 
             switch (weapon)
             {
-
+                default:
                 case weapons.none:
+                    melee = false;
+                    break;
+
                 case weapons.sword:
                     weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponSword.png"));
+                    melee = true;
                     break;
 
                 case weapons.cutlass:
                     weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponCutlass.png"));
+                    melee = true;
                     break;
 
                 case weapons.axe:
                     weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponAxe.png"));
+                    melee = true;
                     break;
 
                 case weapons.estoc:
                     weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponEstoc.png"));
+                    melee = true;
                     break;
 
                 case weapons.carnyx:
                     weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponCarnyx.png"));
+                    melee = true;
+                    break;
+
+                case weapons.scythe:
+                    weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponScythe.png"));
+                    melee = true;
+                    break;
+
+                case weapons.bazooka:
+                    firearmTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "FirearmBazooka.png"));
+                    firearm = true;
                     break;
 
             }
@@ -235,6 +298,8 @@ namespace StardewDruid.Render
         public virtual void DrawWeapon(SpriteBatch b, Vector2 spriteVector, float drawLayer, WeaponAdditional additional)
         {
 
+            if (!melee) { return; }
+
             b.Draw(
                  weaponTexture,
                  spriteVector - new Vector2(64, 64f),
@@ -242,7 +307,7 @@ namespace StardewDruid.Render
                  Color.White,
                  0f,
                  Vector2.Zero,
-                4f,
+                additional.scale,
                 additional.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 drawLayer + weaponOffsets[additional.source.Y][additional.source.X == 0 ? 0 : additional.source.X / 32]
             );
@@ -251,6 +316,8 @@ namespace StardewDruid.Render
 
         public virtual void DrawSwipe(SpriteBatch b, Vector2 spriteVector, float drawLayer, WeaponAdditional additional)
         {
+
+            if (!melee) { return; }
 
             int swipeIndex = additional.source.X == 0 ? 0 : additional.source.X / 32;
 
@@ -268,14 +335,33 @@ namespace StardewDruid.Render
                  Color.White * 0.65f,
                  0f,
                  Vector2.Zero,
-                4f,
+                additional.scale,
                 additional.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 drawLayer + swipeOffsets[additional.source.Y][swipeIndex]
             );
 
         }
+        public virtual void DrawFirearm(SpriteBatch b, Vector2 spriteVector, float drawLayer, WeaponAdditional additional)
+        {
+
+            if (!firearm) { return; }
+
+            b.Draw(
+                 firearmTexture,
+                 spriteVector - new Vector2(64, 64f),
+                 firearmFrames[additional.source.Y][additional.source.X == 0 ? 0 : additional.source.X / 32],
+                 Color.White,
+                 0f,
+                 Vector2.Zero,
+                additional.scale,
+                additional.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                drawLayer + 0.002f
+            );
+
+        }
 
     }
+
 
     public class WeaponAdditional
     {
@@ -283,6 +369,8 @@ namespace StardewDruid.Render
         public Microsoft.Xna.Framework.Rectangle source;
 
         public bool flipped;
+
+        public float scale = 4f;
 
     }
 

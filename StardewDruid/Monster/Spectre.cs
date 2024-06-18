@@ -230,8 +230,6 @@ namespace StardewDruid.Monster
 
             sweepInterval = 12;
 
-            sweepTexture = characterTexture;
-
             sweepFrames = walkFrames;
 
         }
@@ -305,7 +303,7 @@ namespace StardewDruid.Monster
         public override bool PerformSpecial(Vector2 target)
         {
 
-            specialTimer = (specialCeiling + 1) * specialInterval * 2;
+            specialTimer = (specialCeiling + 1) * specialInterval;
 
             netSpecialActive.Set(true);
 

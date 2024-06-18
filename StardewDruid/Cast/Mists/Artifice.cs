@@ -208,7 +208,9 @@ namespace StardewDruid.Cast.Mists
 
                                     ArtificeScarecrow(location,tileVector);
 
-                                    Mod.instance.rite.castCost += Math.Max(8, 32 - Game1.player.FarmingLevel * 3);
+                                    int tryCost = 32 - Game1.player.FarmingLevel * 3;
+
+                                    Mod.instance.rite.castCost += tryCost < 8 ? 8 : tryCost;
 
                                     Mod.instance.rite.specialCasts[locationName].Add(scid);
 
@@ -252,7 +254,18 @@ namespace StardewDruid.Cast.Mists
                                 }
 
                             }
-                            //else if(targetObject.QualifiedItemId.Contains("93"))
+                            /*else if (targetObject.QualifiedItemId.Contains("93"))
+                            {
+
+                                Game1.warpFarmer(LocationData.druid_tomb_name, 27, 30, 1);
+
+                                Game1.xLocationAfterWarp = 27;
+
+                                Game1.yLocationAfterWarp = 30;
+
+                                Game1.facingDirectionAfterWarp = 0;
+
+                            }*/
 
                             continue;
 

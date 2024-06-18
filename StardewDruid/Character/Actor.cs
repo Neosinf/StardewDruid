@@ -116,7 +116,9 @@ namespace StardewDruid.Character
                         }
                         else
                         {
-                            textAboveHeadAlpha = Math.Max(0f, textAboveHeadAlpha - 0.04f);
+                            float newAlpha = textAboveHeadAlpha - 0.04f;
+
+                            textAboveHeadAlpha = newAlpha < 0f ? 0f : newAlpha;
                         }
                     }
                 }

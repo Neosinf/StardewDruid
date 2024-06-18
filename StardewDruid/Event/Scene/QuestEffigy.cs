@@ -92,7 +92,7 @@ namespace StardewDruid.Event.Scene
 
         }
 
-        public override void EventAbort()
+        public override bool AttemptReset()
         {
 
             companions[0].SwitchToMode(Character.Character.mode.random, Game1.player);
@@ -111,7 +111,7 @@ namespace StardewDruid.Event.Scene
 
             Mod.instance.CastMessage("Event aborted, try again tomorrow", 3, true);
 
-            base.EventAbort();
+            return false;
 
         }
 
@@ -158,7 +158,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-                    CharacterHandle.CharacterMoveTo(location, companions[0], beachWarp * 64);
+                    CharacterMover.Warp(location, companions[0], beachWarp * 64);
 
                     companions[0].netDirection.Set(3);
 
@@ -739,7 +739,7 @@ namespace StardewDruid.Event.Scene
 
                     (Mod.instance.locations[LocationData.druid_atoll_name] as Atoll).ambientDarkness = true;
 
-                    CharacterHandle.CharacterMoveTo(Mod.instance.locations[LocationData.druid_atoll_name], companions[0], new Vector2(16, 11) * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_atoll_name], companions[0], new Vector2(16, 11) * 64, false);
 
                     break;
 

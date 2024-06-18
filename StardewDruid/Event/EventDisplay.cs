@@ -118,6 +118,15 @@ namespace StardewDruid.Event
 
         }
 
+        public virtual void shutdown()
+        {
+
+            time = 0;
+
+            level = 0;
+
+        }
+
         public override void draw(SpriteBatch b, int j, ref int heightUsed)
         {
 

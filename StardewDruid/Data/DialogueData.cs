@@ -27,7 +27,9 @@ namespace StardewDruid.Data
 
                 case QuestHandle.challengeWeald:
 
-                    sceneNarrators = new() { [0] = "Clericbat", };
+                    sceneNarrators = new() { 
+                        [0] = "Clericbat",
+                    };
 
                     break;
 
@@ -76,6 +78,31 @@ namespace StardewDruid.Data
                     sceneNarrators = new()
                     {
                         [0] = "The Jester of Fate",
+                    };
+
+                    break;
+
+                case QuestHandle.challengeFates:
+
+                    sceneNarrators = new()
+                    {
+                        [0] = "The Effigy",
+                        [1] = "Jester",
+                        [2] = "Buffin",
+                        [3] = "Shadow Leader",
+                        [4] = "Shadow Sergeant",
+                        [5] = "Shadow Goblin",
+                        [6] = "Shadow Rogue",
+                    };
+
+                    break;
+
+                case QuestHandle.swordEther:
+
+                    sceneNarrators = new()
+                    {
+                        [0] = "The Jester of Fate",
+                        [1] = "Thanatoshi, Twilight Reaper",
                     };
 
                     break;
@@ -311,6 +338,115 @@ namespace StardewDruid.Data
 
                     break;
 
+
+                case QuestHandle.challengeFates:
+                    /*
+                    sceneNarrators = new()
+                    {
+                        [0] = "The Effigy",
+                        [1] = "Jester",
+                        [2] = "Buffin",
+                        [3] = "Shadow Leader",
+                        [4] = "Shadow Sergeant",
+                        [5] = "Shadow Goblin",
+                        [6] = "Shadow Rogue",
+                    };*/
+                    sceneDialogue = new()
+                    {
+
+                        [2] = new() { [3] = "Hmm. The druids got a step ahead of us", },
+                        [5] = new() { [0] = "Caution, interloper. We will not tolerate any more trespasses", },
+                        [8] = new() { [3] = "You have developed some courage since our first encounter", },
+                        [11] = new() { [0] = "That was before the successor ascended to archdruid of the circle", },
+                        [14] = new() { [1] = "Yea, tell them woodface! Who's hiding in caves now?", },
+                        [17] = new() { [3] = "Strange thing to say, but no matter", },
+                        [20] = new() { [3] = "Surrender, and we will deal with you fairly, with your circle intact", },
+                        [23] = new() { [2] = "YOUR TERMS ARE UNACCEPTABLE! EN GARDE!", },
+                        [26] = new() { [1] = "Buffin, wait! Why is she always so feisty", },
+                        
+                        [30] = new() { [4] = "Sir they're fielding... animals", },
+                        [33] = new() { [3] = "Unexpected, but we're still better prepared", },
+
+                        [40] = new() { [1] = "Fear not Buffy, I will protect thee", },
+                        [43] = new() { [2] = "I don't think they are in the mood for tricks, Jester", },
+
+                        [50] = new() { [6] = "Shadows take thee, twinkle fingers", },
+                        [53] = new() { [0] = "By decree of the Kings and the Lady Beyond", },
+                        [56] = new() { [0] = "The sacred spaces shall not bear those of ill intent", },
+
+                        [60] = new() { [3] = "Sergeant, command your brutes to suppress the golem", },
+                        [63] = new() { [3] = "I will engage the Druid", },
+
+                        [70] = new() { [2] = "Grrrr....Bark bark!", },
+                        [73] = new() { [1] = "Purrrrrr... (hack) I mean, WOOF!", },
+                        [76] = new() { [5] = "Stay back beasts!", },
+
+                        [80] = new() { [4] = "I'm almost spent on ammunition", },
+                        [83] = new() { [3] = "Those creatures are clearly not of the earthly variety", },
+                        [86] = new() { [3] = "I suspect the Fates work against us. Retreat!", },
+
+                        [90] = new() { [3] = "We're beaten. I should treaty with the druids", },
+                        [93] = new() { [4] = "Sir, the other humans won't pay if we expose ourselves", },
+                        [96] = new() { [3] = "You're still concerned with compensation?", },
+                        [99] = new() { [5] = "We put our trust in coin... and dragon magic.", },
+                        [102] = new() { [6] = "This is it for me. Too many set backs. Too many wounded.", },
+                        [105] = new() { [5] = "Yea I'm done with Bear. ", },
+                        [108] = new() { [4] = "You're a great scholar, sir, but...", },
+                        [111] = new() { [4] = "We need a better point man.", },
+                        [114] = new() { [5] = "The Deep One will know what to do", },
+                        [117] = new() { [3] = "You're making a mistake! He is the Lord of ruin, our ruin.", },
+                        [120] = new() { [6] = "Pfft. He's got the power. What can you do.", },
+                        [123] = new() { [5] = "See ya Bear.", },
+
+                        [126] = new() { [1] = "I feel bad for Burgundy Bear. He's professional", },
+                        [129] = new() { [2] = "His humiliation is almost complete. Now for the coup de grace", },
+                        [132] = new() { [0] = "Well Successor... you may determine the vanquished's fate", },
+
+                    };
+
+                    break;
+
+                case "swordEther":
+
+                    sceneDialogue = new()
+                    {
+                        [3] = new() { [1] = "You", },
+                        [6] = new() { [1] = "You bear the scent... OF HERESY", },
+                        [9] = new() { [0] = "What a moment...", },
+                        [12] = new() { [0] = "Thanatoshi?", },
+
+                        [15] = new() { [0] = "The dragon's power is mine to use!", },
+                        [18] = new() { [0] = "I will reap, and reap, and reap", },
+
+                        [21] = new() { [0] = "Farmer, it's him, The Reaper", },
+                        [24] = new() { [0] = "Thanatoshi!", },
+                        [27] = new() { [0] = "It is I, your kin, the Jester", },
+                        [30] = new() { [0] = "Stop this madness!", },
+                        [33] = new() { [0] = "It's no use, he won't listen", },
+
+                        [42] = new() { [0] = "The seal to the undervalley will not withstand me", },
+                        [45] = new() { [0] = "I will remain true to my purpose", },
+                        [48] = new() { [0] = "Yoba will forgive me", },
+                        [51] = new() { [0] = "Justice will favour me", },
+
+                        [60] = new() { [0] = "That's... a cutlass... on the shaft", },
+                        [63] = new() { [0] = "What has he done to himself?", },
+
+                        [75] = new() { [0] = "Are you a spy of the star general", },
+                        [78] = new() { [0] = "He cannot hope to match me now", },
+                        [81] = new() { [0] = "Now...", },
+                        [84] = new() { [0] = "How long has it been since I saw...", },
+
+                        [93] = new() { [0] = "I guess we have no choice...", },
+                        [96] = new() { [0] = "For Fate and Fortune!", },
+
+                        [991] = new() { [0] = "Thanatoshi... why...", },
+                        [992] = new() { [0] = "Masayoshi... why...", },
+                    };
+
+                    break;
+
+
                     /*
                 case "challengeCanoli":
                 case "challengeCanoliTwo":
@@ -341,38 +477,6 @@ namespace StardewDruid.Data
 
                     break;
 
-                case "challengeMuseum":
-                case "challengeMuseumTwo":
-
-                    sceneDialogue = new()
-                    {
-                        [1] = new() { [0] = "Farmer? What's this?", },
-                        [4] = new() { [1] = "croak", },
-                        [3] = new() { [0] = "Oh... oh no no no", },
-                        [4] = new() { [1] = "CROAK", },
-                        [5] = new() { [0] = "Protect the library!", },
-
-                        [10] = new() { [0] = "What have I got to throw here...", },
-                        [15] = new() { [0] = "Pre-cretacious creep!", },
-                        [20] = new() { [0] = "It's defacing my inlaid hardwood panelling!", },
-
-                        [25] = new() { [0] = "Crikey! If only I didn't loan our weapon collection to Zuzu mid!", },
-                        [30] = new() { [0] = "Marlon has a lot to answer for", },
-                        [35] = new() { [0] = "Tell the guildmaster I wont accept any more cursed artifacts!", },
-                        [40] = new() { [0] = "How are you doing these amazing feats of magic?", },
-
-                        [42] = new() { [1] = "Stop throwing your trash at me old man!", },
-                        [45] = new() { [0] = "Can't you perform a rite of banishment or something?", },
-                        [50] = new() { [0] = "Goodbye, priceless artifact. Sniff.", },
-                        [54] = new() { [0] = "Leave the corpse. I might be able to sell it's parts.", },
-                        [57] = new() { [0] = "This is going to cost the historic trust society", },
-
-                        [991] = new() { [0] = "One for the books.", },
-                        [992] = new() { [0] = "ughh... what a mess", },
-                    };
-
-                    break;
-
                 case "challengeGemShrine":
                 case "challengeGemShrineTwo":
 
@@ -398,42 +502,6 @@ namespace StardewDruid.Data
 
                     break;
 
-                case "challengeSandDragon":
-                case "challengeSandDragonTwo":
-
-                    sceneDialogue = new()
-                    {
-                        [1] = new() { [0] = "a taste of the stars", },
-                        [3] = new() { [0] = "from the time when the shamans sang to us", },
-                        [5] = new() { [0] = "and my kin held dominion", },
-                        [7] = new() { [0] = "...my bones stir...", },
-
-                        [991] = new() { [0] = "the power of the shamans lingers", },
-                        [992] = new() { [0] = "You're no match for me", },
-
-                    };
-
-                    break;
-
-                case "challengeFates":
-                case "challengeFatesTwo":
-
-                    sceneDialogue = new()
-                    {
-
-                        [5] = new() { [0] = "uh... portal?", },
-                        [8] = new() { [0] = "get ready for a fight!", },
-                        [20] = new() { [0] = "whoa... that one is massive!", },
-
-                        [30] = new() { [0] = "keep it up farmer!", },
-                        [34] = new() { [0] = "meet your fate voidspawn!", },
-                        [40] = new() { [0] = "if only Lucky could see this", },
-                        [52] = new() { [0] = "whew...the portal is finally closing", },
-
-                    };
-
-                    break;
-
                 case "swordEther":
                 case "swordEtherTwo":
 
@@ -452,6 +520,14 @@ namespace StardewDruid.Data
                         [50] = new() { [0] = "I guess we have no choice...", },
                         [55] = new() { [0] = "For Fate and Fortune!", },
 
+
+                        [1] = new() { [0] = "a taste of the stars", },
+                        [3] = new() { [0] = "from the time when the shamans sang to us", },
+                        [5] = new() { [0] = "and my kin held dominion", },
+                        [7] = new() { [0] = "...my bones stir...", },
+
+                        [991] = new() { [0] = "the power of the shamans lingers", },
+                        [992] = new() { [0] = "You're no match for me", },
                         [201] = new() { [1] = "...yesss...", },
                         [203] = new() { [1] = "you have done well, shaman", },
                         [205] = new() { [1] = "...I return...", },
@@ -470,132 +546,10 @@ namespace StardewDruid.Data
 
                     break;
 
-                case "challengeEther":
-
-                    sceneDialogue = new()
-                    {
-
-
-                        [10] = new() { [0] = "I can't believe it", },
-
-                        [14] = new() { [0] = "A Dragon? Here? Now?", },
-
-                        [18] = new() { [0] = "This changes everything", },
-
-                        [22] = new() { [0] = "So you defeated the scouts", },
-
-                        [26] = new() { [0] = "They shouldn't have invaded the surface", },
-
-                        [30] = new() { [0] = "But the Deep one willed it", },
-
-                        [34] = new() { [0] = "So they acquiesced", },
-
-                        [38] = new() { [0] = "I found the squad leader's hat and crossbow", },
-
-                        [42] = new() { [0] = "The power that slew him is unmistakable", },
-
-                        [46] = new() { [0] = "The Lady Beyond punishes us still", },
-
-                        [60] = new() { [0] = "How did you find this hideout?", },
-
-                        [64] = new() { [0] = "We can't let you leave", },
-
-                        [68] = new() { [0] = "Lord Deep will not be pleased", },
-
-                        [72] = new() { [0] = "We haven't collected enough ether", },
-
-                        [76] = new() { [0] = "The Starlet will fade without it", },
-
-                    };
-
-                    break;
-
-                case "swordFates":
-
-                    sceneDialogue = new()
-                    {
-
-                        [1] = new() { [0] = "so Thanatoshi was here.", },
-
-                    };
-
-                    break;
                 */
             };
 
             return sceneDialogue;
-
-        }
-
-        public static List<string> DialogueSmack(string monster)
-        {
-            List<string> smackDialogue = new();
-
-            switch (monster)
-            {
-
-                case "PurpleDragon":
-
-                    smackDialogue = new(){
-
-                        "behold",
-                        "I am your new master",
-                        "Kneel Before Tyrannus!",
-                        "Why do you resist",
-                        "Where are my servants?",
-
-                    };
-
-                    break;
-
-                case "Rogue":
-
-                    smackDialogue = new(){
-
-                        "get out of here",
-                        "how did you find us?",
-                        "no mercy",
-                        "into the shadows I go"
-
-                    };
-
-                    break;
-
-                case "Reaper":
-
-                    smackDialogue = new(){
-
-                        "Do not touch the Prime!",
-                        "How long has it been since I saw...",
-                        "The dragon's power is mine to use!",
-                        "I will not stray from my purpose",
-                        "Are you a spy of the fallen one?",
-                        "The undervalley... I must...",
-                        "I will reap, and reap, and reap",
-                        "FORTUMEI... PLEASE... I BEG YOU",
-                        "ALL WILL BE REAPED"
-                    };
-
-                    break;
-
-                case "Dinosaur":
-
-                    smackDialogue = new()
-                    {
-                        "Why am I here",
-                        "The power of the Stars has seeped into the land",
-                        "I should be at rest, I should be...",
-                        "Surrender, and I'll give you a pony ride",
-                        "STOP MOVING. JUST BURN.",
-                        "My helmet provides +3 Intelligence!"
-
-                    };
-
-                    break;
-
-            }
-
-            return smackDialogue;
 
         }
 

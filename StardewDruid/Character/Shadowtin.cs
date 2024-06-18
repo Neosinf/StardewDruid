@@ -24,18 +24,18 @@ using static StardewDruid.Cast.SpellHandle;
 
 namespace StardewDruid.Character
 {
-    public class Effigy : StardewDruid.Character.Character
+    public class Shadowtin : StardewDruid.Character.Character
     {
 
         public WeaponRender weaponRender;
 
         public List<Vector2> ritesDone = new();
 
-        public Effigy()
+        public Shadowtin()
         {
         }
 
-        public Effigy(CharacterHandle.characters type)
+        public Shadowtin(CharacterHandle.characters type)
           : base(type)
         {
 
@@ -45,14 +45,45 @@ namespace StardewDruid.Character
         public override void LoadOut()
         {
             
-            characterType = CharacterHandle.characters.Effigy;
+            characterType = CharacterHandle.characters.Shadowtin;
 
             weaponRender = new();
 
-            weaponRender.LoadWeapon(WeaponRender.weapons.sword);
+            weaponRender.LoadWeapon(WeaponRender.weapons.carnyx);
 
             base.LoadOut();
 
+            idleFrames = new()
+            {
+                [0] = new()
+                {
+                    new Rectangle(128, 320, 64, 64),
+                    new Rectangle(192, 320, 64, 64),
+                    new Rectangle(0, 320, 64, 64),
+                    new Rectangle(64, 320, 64, 64),
+                },
+                [1] = new()
+                {
+                    new Rectangle(192, 320, 64, 64),
+                    new Rectangle(0, 320, 64, 64),
+                    new Rectangle(64, 320, 64, 64),
+                    new Rectangle(128, 320, 64, 64),
+                },
+                [2] = new()
+                {
+                    new Rectangle(0, 320, 64, 64),
+                    new Rectangle(64, 320, 64, 64),
+                    new Rectangle(128, 320, 64, 64),
+                    new Rectangle(192, 320, 64, 64),
+                },
+                [3] = new()
+                {
+                    new Rectangle(64, 320, 64, 64),
+                    new Rectangle(128, 320, 64, 64),
+                    new Rectangle(192, 320, 64, 64),
+                    new Rectangle(0, 320, 64, 64),
+                },
+            };
         }
 
         public override void draw(SpriteBatch b, float alpha = 1)
@@ -90,7 +121,7 @@ namespace StardewDruid.Character
             }
             else if (netHaltActive.Value)
             {
-                
+
                 if (onAlert && idleTimer > 0)
                 {
 
@@ -232,7 +263,6 @@ namespace StardewDruid.Character
             DrawShadow(b, localPosition, drawLayer);
 
         }
-
         public override void DrawAlert(SpriteBatch b, Vector2 localPosition, float drawLayer)
         {
 
@@ -264,157 +294,74 @@ namespace StardewDruid.Character
             int chooseFrame = IdleFrame();
 
             b.Draw(
-                characterTexture,
-                localPosition - new Vector2(32f, 64f),
-                idleFrames[0][chooseFrame],
-                Color.White,
-                0f,
-                Vector2.Zero,
-                4f,
-                netDirection.Value == 1 || netAlternative.Value == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                drawLayer
-            );
-
-            b.Draw(
-                characterTexture,
-                localPosition - new Vector2(30f, 60f),
-                idleFrames[0][chooseFrame],
-                Color.Black * 0.25f,
-                0f,
-                Vector2.Zero,
-                4f,
-                netDirection.Value == 1 || netAlternative.Value == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                drawLayer - 0.001f
-            );
+                 characterTexture,
+                 localPosition - new Vector2(88, 112f),
+                 idleFrames[netDirection.Value][chooseFrame],
+                 Color.White,
+                 0f,
+                 Vector2.Zero,
+                 3.75f,
+                 flip || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                 drawLayer
+             );
 
             return;
 
         }
 
-        public override List<Vector2> RoamAnalysis()
-        {
-
-            List<Vector2> collection = base.RoamAnalysis();
-
-            if (Game1.currentSeason == "winter")
-            {
-                
-                return collection;
-
-            }
-
-            List<Vector2> scarelist = new List<Vector2>();
-
-            int takeABreak = 0;
-
-            foreach (Dictionary<Vector2, StardewValley.Object> dictionary in currentLocation.Objects)
-            {
-                
-                foreach (KeyValuePair<Vector2, StardewValley.Object> keyValuePair in dictionary)
-                {
-                    
-                    if (keyValuePair.Value.IsScarecrow())
-                    {
-
-                        Vector2 scareVector = new(keyValuePair.Key.X * 64f, keyValuePair.Key.Y * 64f);
-
-                        scarelist.Add(scareVector);
-
-                        takeABreak++;
-
-                    }
-
-                    if (takeABreak >= 4)
-                    {
-
-                        scarelist.Add(new Vector2(-1f));
-
-                        takeABreak = 0;
-
-                    }
-
-                }
-
-                if (scarelist.Count >= 30)
-                {
-
-                    break;
-
-                }
-                    
-            }
-
-            scarelist.AddRange(collection);
-            
-            return scarelist;
-        
-        }
-
         public override bool TargetWork()
         {
 
-            if (Game1.currentSeason == "winter")
-            {
-                return false;
-            }
+            Vector2 currentVector = new((int)(Position.X / 64), (int)(Position.Y / 64));
 
-            if(!currentLocation.IsFarm && !currentLocation.IsGreenhouse)
-            {
+            List<Vector2> objectVectors = new List<Vector2>();
 
-                return false;
-
-            }
-
-            if (currentLocation.objects.Count() < 0)
-            {
-                return false;
-            }
-            
-            List<Vector2> tileVectors;
-
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 6; i++)
             {
 
-                tileVectors = ModUtility.GetTilesWithinRadius(currentLocation, occupied, i);
+                if (currentLocation.objects.Count() == 0)
+                {
+                    break;
 
-                foreach (Vector2 scarevector in tileVectors)
+                }
+
+                objectVectors = ModUtility.GetTilesWithinRadius(currentLocation, currentVector, i); ;
+
+                foreach (Vector2 objectVector in objectVectors)
                 {
 
-                    if (ritesDone.Contains(scarevector))
+                    if (currentLocation.objects.ContainsKey(objectVector))
                     {
 
-                        continue;
+                        StardewValley.Object targetObject = currentLocation.objects[objectVector];
 
-                    }
-
-                    if (currentLocation.objects.ContainsKey(scarevector))
-                    {
-
-                        if (currentLocation.Objects[scarevector].IsScarecrow())
+                        if (targetObject.Name.Contains("Artifact Spot") || targetObject.isForage())
                         {
 
-                            ResetActives();
+                            workVector = objectVector;
 
-                            LookAtTarget(scarevector * 64,true);
+                            Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position, true);
 
-                            netSpecialActive.Set(true);
+                            Position = (workVector * 64);
+
+                            SettleOccupied();
+
+                            Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position);
 
                             netWorkActive.Set(true);
 
-                            specialTimer = 90;
+                            netSpecialActive.Set(true);
 
-                            workVector = scarevector;
-
-                            ritesDone.Add(scarevector);
+                            specialTimer = 60;
 
                             return true;
 
                         }
 
                     }
-                
+
                 }
-            
+
             }
 
             return false;
@@ -424,125 +371,52 @@ namespace StardewDruid.Character
         public override void PerformWork()
         {
 
-            if(specialTimer == 80)
+            if (specialTimer == 30)
             {
 
-                if (currentLocation.Name == Game1.player.currentLocation.Name && Utility.isOnScreen(Position, 128))
+                if (currentLocation.objects.ContainsKey(workVector))
                 {
 
-                    Mod.instance.iconData.DecorativeIndicator(currentLocation, Position, IconData.decorations.weald, 3f, new());
+                    StardewValley.Object targetObject = currentLocation.objects[workVector];
 
-                    TemporaryAnimatedSprite skyAnimation = Mod.instance.iconData.SkyIndicator(currentLocation, Position, IconData.skies.valley, 1f, new() { interval = 1000, });
+                    if (targetObject.Name.Contains("Artifact Spot"))
+                    {
 
-                    skyAnimation.scaleChange = 0.002f;
+                        currentLocation.digUpArtifactSpot((int)workVector.X, (int)workVector.Y, Game1.player);
 
-                    skyAnimation.motion = new(-0.064f, -0.064f);
+                        currentLocation.objects.Remove(workVector);
 
-                    skyAnimation.timeBasedMotion = true;
+                    }
+                    else if (targetObject.isForage())
+                    {
 
-                    Game1.player.currentLocation.playSound("discoverMineral", null, 1000);
+                        if (!Mod.instance.chests.ContainsKey(CharacterHandle.characters.Shadowtin))
+                        {
+
+                            Mod.instance.chests[CharacterHandle.characters.Shadowtin] = new();
+
+                        }
+
+                        Chest chest = Mod.instance.chests[CharacterHandle.characters.Shadowtin];
+
+                        StardewValley.Item objectInstance = targetObject.getOne();
+
+                        if (chest.addItem(objectInstance) != null)
+                        {
+
+                            ThrowHandle throwItem = new(Game1.player, Position, objectInstance);
+
+                        }
+
+                        currentLocation.objects.Remove(workVector);
+
+                    }
 
                 }
 
             }
 
-            if(specialTimer == 50 && !Mod.instance.Config.disableSeeds)
-            {
-
-                Cultivate cultivateEvent = new();
-
-                cultivateEvent.EventSetup(workVector * 64, "effigy_cultivate_" + workVector.ToString());
-
-                cultivateEvent.inabsentia = true;
-
-                cultivateEvent.EventActivate();
-
-            }
-
-            if(specialTimer == 20 && !Game1.IsRainingHere(currentLocation))
-            {
-
-                Artifice artificeHandle = new();
-
-                artificeHandle.ArtificeScarecrow(currentLocation, workVector);
-
-            }
-
         }
-
-        public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
-        {
-
-            ResetActives();
-
-            netSpecialActive.Set(true);
-
-            specialTimer = 90;
-
-            cooldownTimer = cooldownInterval;
-
-            LookAtTarget(monster.Position, true);
-
-            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 192, -1, Mod.instance.CombatDamage() / 2);
-
-            int outdoors = currentLocation.IsOutdoors ? 2 : 3;
-
-            switch (Mod.instance.randomIndex.Next(outdoors))
-            {
-
-                case 2:
-
-                    special.type = SpellHandle.spells.orbital;
-
-                    special.missile = IconData.missiles.rockfall;
-
-                    special.sound = sounds.boulderBreak;
-
-                    Mod.instance.iconData.DecorativeIndicator(currentLocation, Position, IconData.decorations.weald, 3f, new());
-
-                    break;
-
-                case 1:
-
-                    special.type = SpellHandle.spells.bolt;
-
-                    Mod.instance.iconData.DecorativeIndicator(currentLocation, Position, IconData.decorations.mists, 3f, new());
-
-                    break;
-
-                case 0:
-
-                    special.type = SpellHandle.spells.orbital;
-
-                    special.missile = IconData.missiles.meteor;
-
-                    special.projectile = 3;
-
-                    special.sound = sounds.flameSpellHit;
-
-                    Mod.instance.iconData.DecorativeIndicator(currentLocation, Position, IconData.decorations.stars, 3f, new());
-
-                    break;
-
-
-            }
-
-            special.display = IconData.impacts.impact;
-
-            special.power = 3;
-
-            Mod.instance.spellRegister.Add(special);
-
-            return true;
-
-        }
-        public override void NewDay()
-        {
-
-            ritesDone.Clear();
-
-        }
-
 
     }
 

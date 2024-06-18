@@ -12,6 +12,7 @@ using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.GameData.Buildings;
 using StardewValley.GameData.Characters;
+using StardewValley.GameData.Movies;
 using StardewValley.Locations;
 using StardewValley.Tools;
 using System.Collections.Generic;
@@ -1047,7 +1048,7 @@ namespace StardewDruid.Journal
 
                 description = "The Effigy recommends that I apprentice myself to a master of starcraft, that I might gain power enough to match the Deep One.",
 
-                instruction = "The Star Chapel can be accessed from floor sixty (level 60) of the local mines. Cast any rite at the target marker to unearth the entrance.",
+                instruction = "The Star Chapel can be accessed by using the Guardian Lantern in the relics journal while on floor sixty (level 60) of the local mines.",
 
                 explanation = "Like all the powers granted to the Druids of the Valley, the light of the celestials comes with the burden of service. " +
                         "The search for the Stars' missing kin aligns with my greater purpose to preserve the tenuous balance between the realms.",
@@ -1070,8 +1071,9 @@ namespace StardewDruid.Journal
                         prompt = true,
                         intro = "By my assessment, your present abilities will not be enough to overcome the comparable forces of the Deep One. I know of only one more blessing available to us, the power of the celestials. " +
                         "It is dangerous, difficult to wield, and incongrous with the harmonies of the Weald and Mists, but I believe in your potential. " +
-                        "You must undertake a pilgrimage to a chapel carved into the high side of the mountain, and there you will find the last Holy Warrior of the Star Guardians. Show him this lantern, and he will know your purpose." +
-                        "I have not visited him for a long, long time. Not since the church of bats appeared, actually. " +
+                        "You must undertake a pilgrimage to a chapel carved into the high side of the mountain, and there you will find the last Holy Warrior of the Guardians of the Star. " +
+                        "The way will be revealed to you by the light of this lantern. Show it to the warrior, and he will know your purpose." +
+                        "I have not visited him for a long, long time. Not since the church of bats was founded, as they are irritated by my presence, and I do not wish to disturb them, or anyone. " +
                         "(New quest received)",
 
                     }
@@ -1085,7 +1087,7 @@ namespace StardewDruid.Journal
                         intro = "You have an aura of divine favour.",
                         responses = new()
                         {
-                            "The revenant of the last Star Guardian has agreed to teach me starcraft.",
+                            "The revenant of the last Guardian of the Star has agreed to teach me starcraft.",
                             "How long will it take for me to become as ancient and awkward as you and your friends?",
                         },
                         outro = "The revenant has waited a long time for a resolution to his plight, something I have been unable to give. Now our hopes are vested with you. ",
@@ -1141,6 +1143,7 @@ namespace StardewDruid.Journal
                         prompt = true,
                         intro = "So you want to call down the wrath of the heavens. Well farmer, its pretty simple. You pray and hope that the starfire will fall where you want it to. " +
                         "It's the celestials that will answer your call, for they have committed themselves to the work of our warrior order, and our work is far from finished. " +
+                        "The rite can be quite taxing, so I say make yourself a couple of tonics using this old still here. It's in pretty good knick, only had to wipe the guana off every few seasons." +
                         "(New lesson received)",
 
                     }
@@ -1320,8 +1323,8 @@ namespace StardewDruid.Journal
 
                 title = "The Lost Seafarers",
 
-                description = "The spectre of the old mariner is said to haunt the eastern beaches on days where the Lady's storms and squalls rock the shoreline. " +
-                "The wisps of the mists are sensitive to the restless spirits of the drowned, and call on the new circle of druids to deal with the disturbance.",
+                description = "Local folklore suggests that spectres of drowned seafarers haunt the eastern beaches on days where the Lady's storms and squalls rock the shoreline. " +
+                "The wisps of the mists are sensitive to the restless spirits of the drowned, and their whispers entreat the Effigy to investigate the Atoll for such disturbances.",
 
                 instruction = "Perform a Rite of the Mists on the Atoll (accessible from the dinghy on the far eastern side of the Beach).",
 
@@ -1381,14 +1384,15 @@ namespace StardewDruid.Journal
 
                 give = Quest.questGivers.dialogue,
 
-
                 trigger = true,
 
                 triggerLocation = LocationData.druid_vault_name,
 
                 triggerTime = 0,
 
-                origin = new Vector2(27, 15f) * 64,
+                triggerScheme = IconData.schemes.Ruby,
+
+                origin = new Vector2(27, 15) * 64,
 
                 // -----------------------------------------------
 
@@ -1396,9 +1400,9 @@ namespace StardewDruid.Journal
 
                 description = "The Revenant says that an ancient evil stalks the lava caverns deep beneath the rock. A long time ago, a guardian-druid like myself went to confront the creature and never returned.",
 
-                instruction = "Access the lair of the terror by casting a rite at the target location on level 100 of the mines.",
+                instruction = "Access the lair of the terror by using the Luminous Water of the Sacred Spring relic in the journal on level 100 of the mines.",
 
-                explanation = "The terror beneath the mountain was a lesser Dragon in service to the Reaper of Fate. I brought the beast low and found the lava-tinged relics of the missing Star Guardian.", 
+                explanation = "The terror beneath the mountain was a lesser Dragon in service to the Reaper of Fate. I brought the beast low and found the lava-tinged relics of the missing Star Guardian.",
 
                 details = new(),
 
@@ -1420,7 +1424,7 @@ namespace StardewDruid.Journal
                         "One of our order actually participated in the formation of the circle of druids. He had the talent for the powers, so to speak, kind of like you do, and carried a runestone around with him. " +
                         "He undertook a mission to confront a terror deep within the mountains and never returned. I think the Fates had a hand in his disappearance, " +
                         "another punishment inflicted upon our guardian order for our role in the old war. If you can find his remains, you might find the old runestone. " +
-                        "^(New Quest Received)",
+                        "(New Quest Received)",
 
                     },
 
@@ -1480,14 +1484,14 @@ namespace StardewDruid.Journal
                 title = "Fate Jests",
 
                 description = "My work with the power of the Stars has caught the attention of the Fates, the primeval beings that serve under the creator Yoba. " +
-                "Long ago, the Fae Court issued a warrant to arrest and trial the fallen star, the very one that was a catalyst for the ancient war between elderborn and dragons. " +
+                "Long ago, the Fae Court issued a warrant to arrest and trial the Fallen Star, the very one that was a catalyst for the ancient war between elderborn and dragons. " +
                 "The Reaper of Fate tried in vain to administer the arrest, but did not succeed, and even after an age has passed, the charges still stand. " +
                 "As the bearer of the sacred duty of the Star Guardians, though I have never met the Fallen Star, and have no clue as to their whereabouts, I am obliged to meet an envoy of the Fates to discuss the matter.",
 
                 instruction = "Meet the envoy of the Fates near the bridge by the adventurer's guild.",
 
                 explanation = "I was surprised by the nature of the envoy of fate sent to treaty with me. The Jester of Fate appears to be interested in the unknown plight of his predecessor, " +
-                "the fabled Reaper, who has not reported to the Fae Court since he was tasked with finding the 'fallen star'." +
+                "the fabled Reaper, who has not reported to the Fae Court since he was tasked with finding the Fallen Star." +
                 "Jester has only one lead, an old valley legend about a den of death on the eastward side of the mountain, beyond the ravine and abandoned quarry. " +
                 "Jester needs the services of someone with 'earth sense', and so a deal was struck, that I might learn some mysteries of the Fates in exchange for my services.",
 
@@ -1586,8 +1590,8 @@ namespace StardewDruid.Journal
                 instruction = "Travel to the quarry tunnel entrance and perform a rite at the quest marker to summon Jester to explore with you.",
 
                 explanation = "We entered the dungeon, and immediately faced a host of disturbed spectres, all bearing traces of the Reaper's power. Our pursuers chased us all the way to a statue of the reaper himself at a dead-end. " +
-                    "Jester recognised some of the signs marked onto the surrounding walls and managed to trigger the mechanism for a secret exit. We found ourselves in a cavern furnished with monuments to the Fates and Chaos. " +
-                    "It appears Thanatoshi, the Reaper of Fate, might have founded a forbidden assembly in his time spent in the valley.",
+                    "Jester recognised some of the signs marked onto the surrounding walls and managed to trigger the mechanism for a secret exit.We found ourselves in a cavern furnished with monuments to strange entities. " +
+                    "It appears we have discovered the forgotten court of Fates and Chaos, established to administer the fallen dominion of the Two Kings in the aftermath of the War for the Star.",
 
                 progression = null,
 
@@ -1606,7 +1610,7 @@ namespace StardewDruid.Journal
                     {
                         prompt = true,
                         intro = "Summon me when you get inside the quarry tunnel, and we can combine the awesome power of our noses. With one cosmic cat snout and one big human honker at our disposal, we'll sniff out my kinsman in no time! " +
-                        "^(New quest received)",
+                        "(New quest received)",
 
                     }
                 },
@@ -1616,7 +1620,7 @@ namespace StardewDruid.Journal
                     [CharacterHandle.characters.Jester] = new()
                     {
                         prompt = true,
-                        intro = "The High Priestess forbids the Fates from gathering a bunch of world-born together in any way. If Thanatoshi really got a cult going here in the valley, then he'll have a lot to answer for when he gets back to court."
+                        intro = "Those monuments were not entirely like the real thing but I guess if you're a human artist who's never glimpsed the divine, you do what you can."
 
                     }
                 },
@@ -1660,7 +1664,7 @@ namespace StardewDruid.Journal
                         prompt = true,
                         intro = "Here farmer, take this stress-relieving device. Now you can see like a Warble, now you can move like a warble! " +
                         "It's fun, but also a bit, well, (Jester grins). I'm sure you'll get used to it. " +
-                        "^(New lesson received)",
+                        "(New lesson received)",
 
                     }
                 },
@@ -1702,7 +1706,7 @@ namespace StardewDruid.Journal
                         prompt = true,
                         intro = "(Jester sighs) I'm having a hard time getting on with the monsters of this plane. " +
                         "I reach out to them, to try to open their mind to the mysteries of Fate, but they are never the same afterwards. " +
-                        "^(New lesson received)",
+                        "(New lesson received)",
 
                     }
                 },
@@ -1724,7 +1728,7 @@ namespace StardewDruid.Journal
 
                 title = "Lesson Fourteen: Tricks!",
 
-                description = "Jester has a nuanced sense of humour. I hope that translates well into humane amuseme with the benign magical mysteries I will perform for the townsfolk.",
+                description = "Jester has a nuanced sense of humour. I hope that humour translates well in the benign magical mysteries I will peform for the townsfolk.",
 
                 instruction = "Amuse or annoy five villagers with tricks produced by Rite of the Fates. Uses cursor and directional targetting. Quest completion enables more tricks.",
 
@@ -1741,7 +1745,7 @@ namespace StardewDruid.Journal
                     {
                         prompt = true,
                         intro = "(Jester's eyes sparkle) Magic tricks! Fates are known for being the best at making others happy. Or soaked. Try it out yourself, and then we'll go on the town! " +
-                        "^(New lesson received)",
+                        "(New lesson received)",
 
                     }
                 },
@@ -1815,7 +1819,13 @@ namespace StardewDruid.Journal
                     {
                         prompt = true,
                         intro = "Did we even get to trick anyone? I guess I wasn't really in the mood for pranks.",
-                    }
+                    },
+                    [CharacterHandle.characters.Buffin] = new()
+                    {
+                        prompt = true,
+                        intro = "I'll always remember the joy of seeing an ancient reptile smash through that funnily dressed man's wooden palace.",
+                    },
+
                 },
 
             };
@@ -1875,7 +1885,7 @@ namespace StardewDruid.Journal
                         intro = "Faeth, in the hands of a human? The artisans will be furious to see a mortal in possession of their sacred liquor. " +
                         "Then again, you seem remarkably unfazed by the emotions of the court, so I agree to lend you this common court cup. " +
                         "Remember to visit me again! I am willing to trade trifles of the Fates for stories of your exploits or random trinkets in your bag. " +
-                        "^(New lesson received)",
+                        "(New lesson received)",
                     },
 
                 },
@@ -1902,15 +1912,15 @@ namespace StardewDruid.Journal
 
                 triggerLocation = LocationData.druid_court_name,
 
-                triggerTime = 1700,
+                triggerTime = 0,
 
                 triggerRite = Rite.rites.none,
 
                 triggerScheme = IconData.schemes.Void,
 
-                origin = new Vector2(16, 24) * 64,
+                origin = new Vector2(30, 20) * 64,
 
-                title = "The Shadow Rogues",
+                title = "The Court of Shadows",
 
                 description = "One late afternoon in the Court of Fates and Chaos, whilst Buffin and Jester chatted about the latest intrigues of the Fae court, " +
                 "and the light began to dwindle over the great monuments, they spied a solitary pair of pale eyes in the burgeoning shadows.",
@@ -1918,13 +1928,12 @@ namespace StardewDruid.Journal
                 instruction = "Cast Rite of the Fates after 5pm at the trigger marker within the Court of Fates and Chaos",
 
                 explanation =
-                        "I took up a comfortable position within the Court of Fates and Chaos and waited for the light to dim. " +
+                        "I took up a defensible within the Court of Fates and Chaos and waited for the light to dim. " +
                         "The Shadowfolk mercenary company I drove from the town a couple of weeks ago emerged en-masse from the tunnel system that adjoins the cavern. " +
                         "It was a brutal melee, as the shadowfolk's voided nature made them resilient to the blessed weapons and powers of my allied forces. " +
-                        "Yet the mercenaries did not have the conviction to see the fight through, and broke ranks just before we surrounded their leader. " +
-                        "The mercenary captain surrendered, and introduced himself as Shadowtin Bear, treasure hunter and aspirant historian. " +
-                        "The Effigy believed we should strip Shadowtin of his belongings and send him back to Lord Deep in shame, " +
-                        "but Jester had a different idea, and believed it the will of the Fates that Shadowtin should redeem himself as our ally.",
+                        "Yet the mercenaries did not have the conviction to see the fight through, and abandoned their leader to face the reckoning of the circle. " +
+                        "The mercenary captain introduced himself as Shadowtin Bear, treasure hunter and aspirant historian. " +
+                        "The shadowfolk goals in the valley appear to be parallel to Jester's, and my companion suggested that Shadowtin should redeem himself as our ally.",
 
                 reward = 10000,
 
@@ -1937,24 +1946,139 @@ namespace StardewDruid.Journal
                         questContext = 1,
                         intro = "There's something nice about that old cave with the big statues, but lately it's felt a bit, uh, unhomely. " +
                         "Like it's not a special place for an important envoy of the Fates to receive visitors from court. " +
-                        "(Jester scrunches his face in thought) Buffin would be able to explain better than me, she actually saw the thing."
+                        "(Jester scrunches his face in thought) Buffin would be able to explain better than me."
                     },
                     [CharacterHandle.characters.Buffin] = new()
                     {
                         prompt = true,
-                        intro = "This might be the most exciting development since the dinosaur crashed through that wooden palace of books, farmer. I think we encountered creatures of the Void, spawn of the darkened expanse of the celestial plane. " +
-                        "The mundanity of the mortal plane is protected by the Priesthood of the Fates, and there just so happens to be a member available to you to fend off these shadow invaders, if he could be relied on to take his duties seriously. " +
-                        "You might require the aid of the animated scarecrow too.",
+                        intro = "Farmer! Beware of... the spawn of the void! Creatures of the darkened plane, lurking somewhere nearby. " +
+                        "Rally your allies, for you must challenge the shadowy foe for dominion of the cave and my honour. " +
+                        "(Buffin grins) I hear they have a techno-punk aesthetic, and that will be cool to see square off against your, uh, country style. " +
+                        "(New challenge quest received)"
+                    },
+
+                },
+
+                after = new()
+                {
+
+                    [CharacterHandle.characters.Buffin] = new()
+                    {
+                        prompt = true,
+                        intro = "I am very pleased with what transpired here. " +
+                        "During the performance, I sensed the great Stream of Chaos linger over the battlefield, and I perceived an imminent shift, a change of fortune, allegiance, or treachery. " +
+                        "There's a reason the unexpected happens, farmer.",
                     },
 
                 },
 
             };
 
-            quests.Add(fatesFour.name, fatesFour);
+            quests.Add(challengeFates.name, challengeFates);
 
-            /*  
-             *  lore = new()
+            // =====================================================
+            // SWORD ETHER (CUTLASS)
+
+            Quest swordEther= new()
+            {
+
+                name = QuestHandle.swordEther,
+
+                type = Quest.questTypes.sword,
+
+                icon = IconData.displays.ether,
+
+                // -----------------------------------------------
+
+                give = Quest.questGivers.dialogue,
+
+                trigger = true,
+
+                triggerLocation = LocationData.druid_tomb_name,
+
+                triggerTime = 0,
+
+                triggerRite = Rite.rites.none,
+
+                triggerScheme = IconData.schemes.ether,
+
+                origin = new Vector2(27, 15) * 64,
+
+                // -----------------------------------------------
+
+                title = "The Tomb of Tyrannus",
+
+                description = "Shadowtin Bear has divulged the intentions of Lord Deep and his shadowy allies. " +
+                "They hunt for the power of the ancient race of Dragons, who were diminished in their vain war against the Elderborn for the Fallen Star. " +
+                "The best lead is the Tomb of the Tyrannus, once master of the shamans of Calico, and the Revenant has provided the means to reach it.",
+
+                instruction = "Travel to the entrance of the Skull Cavern in Calico Desert, and use the Ceremonial Lantern in the relics journal to access the Tomb.",
+
+                explanation = "We were set upon by the wraith of Thanatoshi, who had been trapped within the sealed tomb at the culmination of his mad quest to find the missing Starborn. " +
+                "Though the reaper's mind had deteriorated with the burden of unfulfilled purpose, he continued to tether himself to this world by the power of a Tyrant dragon tooth, which has been fashioned into a weapon of ethereal might.",
+
+                progression = null,
+
+                requirement = 0,
+
+                reward = 10000,
+
+                details = new(),
+
+                // -----------------------------------------------
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Effigy] = new()
+                    {
+                        prompt = true,
+                        questContext = 1,
+                        intro = "I confess, this partnership with the mercenary captain infuriates me. " +
+                        "If it was my decision, he would be stripped of his ill-gotten trinkets and sent him back to Lord Deep in shame, as a warning to those that would disturb the sanctity of the valley. " +
+                        "Perhaps that is merely vindictiveness on my part. I have no recourse for this... anger I feel. I have little comprehension of the events described in the text the captain provided, but perhaps our revenant friend would be able to assist. " +
+                        "He is more clear-headed, if only because his skull is empty.",
+
+
+                    },
+                    [CharacterHandle.characters.Revenant] = new()
+                    {
+                        prompt = true,
+                        intro = "So farmer, how goes your adventures with the new envoy of Fates?",
+                        responses = new()
+                        {
+                            "I've got a journal from a former Guardian of the Star, and has a few details about what happened when the old war ended.",
+                            "I'm often asked if I have a Large Cat permit, and Jester often interjects 'Large Cat? Where?'",
+                        },
+                        answers = new(){
+                            "Ah. so all this time, that annal was hiding in the haunted halls of the followers of the Reaper. Those guys were a bunch of crazies. " +
+                            "They styled the Reaper of Fate as the great avenger of humanity, and made sure the veterans of the war couldn't live in peace. " +
+                            "That's one of the reasons why your Lady Beyond left for the Isle. Once there were no more Elderborn around, the crazies started to point fingers at the circle, at those that revere the Old Monarchs and the Stars. " +
+                            "So good Knight Wyrven left to confront them. Shortly afterwards, the Reaper attacked us openly. I was cursed, and all our secrets were laid bare, including the location of the Tyrant Djinn's tomb. " +
+                            "Now, this lamp here is one of the few things that remains of ancient Calico culture. You'll find the tomb in the cavern of skulls in the desert waste. " +
+                            "This guiding lamp is yours, but it comes with a warning, too. The place was given the skull moniker for good reason. "+
+                            "(New quest received)",
+                        },
+
+                    },
+
+                },
+
+                after = new()
+                {
+                    [CharacterHandle.characters.Revenant] = new()
+                    {
+                        prompt = true,
+                        intro = "You have vanquished the Reaper, but my curse remains. What duty have I yet to fulfill, and to who, the Fates, or the Stars?"
+                    },
+                    [CharacterHandle.characters.Jester] = new()
+                    {
+                        prompt = true,
+                        intro = "(Jester's eyes have turned a sullen green) I want to go home. Buffin was right."
+                    },
+                },
+
+                lore = new()
                 {
 
                     LoreData.stories.Effigy_Shadowtin_1,
@@ -1969,7 +2093,201 @@ namespace StardewDruid.Journal
                     LoreData.stories.Ether_Jester,
                     LoreData.stories.Ether_Shadowtin,
 
-                }*/
+                }
+
+            };
+
+            quests.Add(swordEther.name, swordEther);
+
+
+
+            // =====================================================
+            // ETHER LESSONS
+
+            Quest etherOne = new()
+            {
+
+                name = QuestHandle.etherOne,
+
+                icon = IconData.displays.ether,
+
+                type = Quest.questTypes.lesson,
+
+                give = Quest.questGivers.dialogue,
+
+                title = "Lesson Sixteen: Dragon Form",
+
+                description = "I can feel the streams of ether rushing softly under my finger tips, and then my wing tips as I allow them to lift me into the sky.",
+
+                instruction = "The Rite of Ether transforms you into a Dragon! Press and hold the action button while moving to do a sweeping flight, release to land. Practice flight ten times to increase flight range.",
+
+                progression = "flights attempted",
+
+                requirement = 10,
+
+                reward = 1000,
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Jester] = new()
+                    {
+                        prompt = true,
+                        questContext = 1,
+                        intro = "Thanatoshi... (Jester casts his sights downward) " +
+                        "He must have tried to use the tooth of the Prime to divine a path to the Fallen Star, but it proved too much for him, and drove him mad. " +
+                        "(Jester looks hopefully at you) I think it's Yoba's that you found the dragontooth, farmer. You'll find a way where Thanatoshi and I couldn't.",
+
+                    },
+                    [CharacterHandle.characters.Shadowtin] = new()
+                    {
+                        prompt = true,
+                        questContext = 1,
+                        intro = "The shamans of the Calico civilisation practiced the ancient art of transfiguration. " +
+                        "They liked to become large cats, mostly, in deference to their dragon overlord. " +
+                        "I suspect that the instrument you acquired from the Reaper of Fate carries the ether-bound memories of all the shapeshifters and the Tyrant Djinn himself. " +
+                        "Thus, the guise of an ancient one seems a natural result from it's use. " +
+                        "That's my theory anyway. (New lesson received)",
+
+                    },
+
+                },
+
+            };
+
+            quests.Add(etherOne.name, etherOne);
+
+            Quest etherTwo = new()
+            {
+
+                name = QuestHandle.etherTwo,
+
+                icon = IconData.displays.ether,
+
+                type = Quest.questTypes.lesson,
+
+                give = Quest.questGivers.dialogue,
+
+                title = "Lesson Seventeen: Dragon Breath",
+
+                description = "I draw the ether in, then expel it as a torrent of violent energy.",
+
+                instruction = "Perform ten firebreath attacks with the special button / right click. Uses directional targetting. Quest completion enables monster immolation.",
+
+                progression = "firebreath attacks",
+
+                requirement = 20,
+
+                reward = 1000,
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Shadowtin] = new()
+                    {
+                        prompt = true,
+                        intro = "Ether is extremely volatile when compelled into a material state. In the darkened realm, we employ it's use in all manner of combustion powered machinery. " +
+                        "The light produced is gentle to our eyes. Be careful with your channelling, and don't practice near any incendiaries!" +
+                        "(New lesson received)",
+
+                    }
+                },
+
+            };
+
+            quests.Add(etherTwo.name, etherTwo);
+
+            Quest etherThree = new()
+            {
+
+                name = QuestHandle.etherThree,
+
+                icon = IconData.displays.ether,
+
+                type = Quest.questTypes.lesson,
+
+                give = Quest.questGivers.dialogue,
+
+                title = "Lesson Eighteen: Dragon Dive",
+
+                description = "The ether flows everywhere, through the thickened forest, the rugged mountain, and the frigid depths",
+
+                instruction = "Fly onto the water and perform ten dives with the special button/right click.",
+
+                progression = "dive attempts",
+
+                requirement = 10,
+
+                reward = 1000,
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Shadowtin] = new()
+                    {
+                        prompt = true,
+                        intro = "You might find this very unsettling, as I did when I learned of it's existence. Are you aware, that there is a strange technique that can be learned by some landborne creatures to stay alive in water. It's called swimming. It's unnatural. " +
+                        "(New lesson received)",
+
+                    }
+                },
+
+            };
+
+            quests.Add(etherThree.name, etherThree);
+
+
+            Quest etherFour = new()
+            {
+
+                name = QuestHandle.etherFour,
+
+                icon = IconData.displays.ether,
+
+                type = Quest.questTypes.lesson,
+
+                give = Quest.questGivers.dialogue,
+
+                title = "Lesson Nineteen: Dragon Treasure",
+
+                description = "The ancient ones hoarded their immeasurable treasures in vaults of the ethereal realm, where only they could enjoy them.",
+
+                instruction = "Claim 7 dragon treasures. Search for the ether symbol on large map locations (Forest, Beach, Mountain, RailRoad, Desert, Island etc).  Move over the spot and either dig or dive (special/right click button) to claim the dragon treasure. Be careful, you might have to fight to keep the treasure contents.",
+
+                progression = "treasures claimed",
+
+                requirement = 7,
+
+                reward = 1000,
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Shadowtin] = new()
+                    {
+                        prompt = true,
+                        intro = "Many of the testimonies from the time of the ancient war have been stored in caches throughout the valley, " +
+                        "sealed with weaves of ether by the Circle of Druids, to keep them from the zealots that served the Mortician's of Fate. " +
+                        "The Circle hoped for a descendant strong enough to ascend to dragon form and break the seals. " +
+                        "I believe some of those secrets should reveal the history and plight of my folk, and you're just what we need to reclaim them. " +
+                        "(New lesson received)",
+
+                    },
+                    [CharacterHandle.characters.Jester] = new()
+                    {
+                        prompt = true,
+                        intro = "Woodface showed me how to use my nose to track the scent of prey. Then he told me to hunt vermin like a good farmcat. " +
+                        "Am I a just a joke to him? Because I like jokes. Anyway, I tracked a different kind of pest, Shadowtin's old gang! " +
+                        "They have been out searching for dragon treasure, using a tracking device they got from the dark plane. I think we should find it before they do. " +
+                        "(New lesson received)",
+
+                    }
+
+                },
+
+            };
+
+            quests.Add(etherFour.name, etherFour);
 
             return quests;
 

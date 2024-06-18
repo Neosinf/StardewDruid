@@ -342,7 +342,7 @@ namespace StardewDruid.Event
 
         }
 
-        public void ResetToTrigger()
+        public virtual void ResetToTrigger()
         {
 
             EventRemove();
@@ -410,9 +410,7 @@ namespace StardewDruid.Event
             if (eventAbort)
             {
 
-                EventAbort();
-
-                return false;
+                return AttemptReset();
 
             }
             
@@ -422,9 +420,7 @@ namespace StardewDruid.Event
                 if (Game1.player.currentLocation.Name != location.Name)
                 {
 
-                    EventAbort();
-
-                    return false;
+                    return AttemptReset();
 
                 }
 
@@ -433,7 +429,7 @@ namespace StardewDruid.Event
             if (eventComplete)
             {
 
-                return EventExpire();
+                return EventComplete();
 
             }
 
@@ -457,7 +453,7 @@ namespace StardewDruid.Event
 
                         Mod.instance.CastDisplay("Left event zone", 3);
 
-                        return false;
+                        return AttemptReset();
 
                     }
                     else
@@ -481,16 +477,17 @@ namespace StardewDruid.Event
 
         }
 
-        public virtual bool AttemptAbort()
+        public virtual bool AttemptReset()
         {
 
-            return true;
+            return false;
 
         }
 
-        public virtual void EventAbort()
+        public virtual bool EventComplete()
         {
 
+            return false;
 
         }
 

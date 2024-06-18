@@ -521,7 +521,9 @@ namespace StardewDruid.Cast.Weald
                             if (Vector2.Distance(bushFeature.getBoundingBox().Center.ToVector2(),origin) <= 512)
                             {
 
-                                int newdate = Math.Max(1, (bushFeature.datePlanted.Value - 1));
+                                int trydate = (bushFeature.datePlanted.Value - 1);
+
+                                int newdate = trydate < 1 ? 1 : trydate;
 
                                 bushFeature.datePlanted.Set(newdate);
 

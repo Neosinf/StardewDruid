@@ -76,6 +76,8 @@ namespace StardewDruid
 
         public Dictionary<string, List<ReactionData.reactions>> reactions = new();
 
+        public Dictionary<CharacterHandle.characters,CharacterMover> movers = new();
+
         public double messageBuffer;
 
         public double consumeBuffer;
@@ -412,7 +414,7 @@ namespace StardewDruid
 
                     if (location.characters.Count > 0)
                     {
-                        for (int index = location.characters.Count - 1; index >= 0; --index)
+                        for (int index = location.characters.Count - 1; index >= 0; index--)
                         {
                             NPC npc = location.characters[index];
 
@@ -422,17 +424,6 @@ namespace StardewDruid
                             }
 
                         }
-
-                    }
-
-                }
-
-                foreach (KeyValuePair<CharacterHandle.characters, StardewDruid.Character.Character> character in characters)
-                {
-
-                    if (character.Value.currentLocation != null)
-                    {
-                        character.Value.currentLocation.characters.Remove(character.Value);
 
                     }
 
@@ -780,18 +771,7 @@ namespace StardewDruid
                     if (exitAll)
                     {
 
-                        if (eventEntry.AttemptAbort())
-                        {
-
-                            eventEntry.EventAbort();
-
-                            eventEntry.EventRemove();
-
-                            removal.Add(eventHandle.Key);
-
-                            continue;
-
-                        }
+                        eventEntry.eventAbort = true;
 
                     }
 
@@ -806,9 +786,14 @@ namespace StardewDruid
 
                     }
 
-                    eventEntry.EventTimer();
+                    if (eventEntry.eventActive)
+                    {
 
-                    eventEntry.EventInterval();
+                        eventEntry.EventTimer();
+
+                        eventEntry.EventInterval();
+
+                    }
 
                 }
                 else if (eventEntry.triggerEvent)
@@ -824,12 +809,7 @@ namespace StardewDruid
                     if (exitAll || Game1.player.currentLocation is null)
                     {
 
-                        /*if (eventEntry.triggerActive)
-                        {
-
-                            eventEntry.TriggerRemove();
-
-                        }*/
+                        continue;
 
                     }
                     else
@@ -1097,6 +1077,17 @@ namespace StardewDruid
             // caster is busy
             bool business = CasterBusy();
 
+            for (int c = movers.Count - 1; c >= 0; c--)
+            {
+
+                KeyValuePair<CharacterHandle.characters, CharacterMover> mover = movers.ElementAt(c);
+
+                mover.Value.Update();
+
+                movers.Remove(mover.Key);
+
+            }
+
             for (int j = spellRegister.Count - 1; j >= 0; j--)
             {
 
@@ -1123,7 +1114,9 @@ namespace StardewDruid
 
                 if (throwing.counter == 0 && business)
                 {
+                    
                     continue;
+                
                 }
 
                 if (!throwing.update())
@@ -1601,9 +1594,12 @@ namespace StardewDruid
                 
                 }
 
-                eventRegister[placeHolder].EventAbort();
+                if (eventRegister[placeHolder].AttemptReset())
+                {
 
-                eventRegister[placeHolder].EventRemove();
+                    return;
+
+                }
 
             }
 

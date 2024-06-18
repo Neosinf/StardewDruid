@@ -17,7 +17,7 @@ namespace StardewDruid.Event.Challenge
 
         public StardewDruid.Monster.DarkShooter bossShooter;
 
-        public StardewDruid.Monster.DarkLeader bossLeader;
+        public StardewDruid.Monster.DarkRogue bossLeader;
 
         public int destructionAverted;
 
@@ -333,7 +333,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 50:
 
-                    DarkLeader leader = new(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+                    DarkRogue leader = new(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
 
                     leader.SetMode(2);
 

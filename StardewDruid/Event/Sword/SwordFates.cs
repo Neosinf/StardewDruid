@@ -318,8 +318,6 @@ namespace StardewDruid.Event.Sword
 
                     CourtAccess.AccessSetup("UndergroundMine77377", LocationData.druid_court_name, new(29, 8), new(45, 20));
 
-                    CourtAccess.triggerEvent = false;
-
                     CourtAccess.location = location;
 
                     CourtAccess.AccessStair();
@@ -328,12 +326,9 @@ namespace StardewDruid.Event.Sword
 
                     TunnelAccess.AccessSetup(LocationData.druid_court_name, "UndergroundMine77377", new(43, 20), new(29, 10));
 
-                    TunnelAccess.triggerEvent = false;
-
                     TunnelAccess.location = Mod.instance.locations[LocationData.druid_court_name];
 
                     TunnelAccess.AccessStair();
-                    //CourtAccess.AccessWarps();
 
                     break;
 
@@ -355,7 +350,7 @@ namespace StardewDruid.Event.Sword
 
                     location = Mod.instance.locations[LocationData.druid_court_name];
 
-                    CharacterHandle.CharacterMoveTo(Mod.instance.locations[LocationData.druid_court_name], companions[0], new Vector2(41, 18) * 64);
+                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_court_name], companions[0], new Vector2(41, 18) * 64);
 
                     break;
 
@@ -423,9 +418,21 @@ namespace StardewDruid.Event.Sword
 
                     eventComplete = true;
 
-                    (Mod.instance.eventRegister[LocationData.druid_court_name + '_' + "UndergroundMine77377"] as AccessHandle).AccessWarps();
+                    Event.Access.AccessHandle CourtAccess = new();
 
-                    (Mod.instance.eventRegister["UndergroundMine77377" + '_' + LocationData.druid_court_name] as AccessHandle).AccessWarps();
+                    CourtAccess.AccessSetup("UndergroundMine77377", LocationData.druid_court_name, new(29, 8), new(45, 20));
+
+                    CourtAccess.location = location;
+
+                    CourtAccess.AccessWarps();
+
+                    Event.Access.AccessHandle TunnelAccess = new();
+
+                    TunnelAccess.AccessSetup(LocationData.druid_court_name, "UndergroundMine77377", new(43, 20), new(29, 10));
+
+                    TunnelAccess.location = Mod.instance.locations[LocationData.druid_court_name];
+
+                    TunnelAccess.AccessWarps();
 
                     break;
 
@@ -457,13 +464,16 @@ namespace StardewDruid.Event.Sword
 
                 case 3:
 
-                    intro = "These monuments are arranged like the court of the Fates. The Artisans, the Priesthood, The Morticians, and Chaos. Not entirely like the real thing but I guess if you're a human sculpter who's never glimpsed the divine, you do what you can.";
+                    intro = "These monuments are arranged like the court of the Fates. The Artisans, the Priesthood, The Morticians, and Chaos. " +
+                        "I think I know this place. The Justiciar of the Morticians came here to fix all the problems caused by the dragons and elderfolk and humans. " +
+                        "This was where Thanatoshi was sent after the fallen Star. This is the last place he was seen.";
 
                     break;
 
                 case 4:
 
-                    intro = "I hope that statue in the tunnel isn't all that's left of the great Thanatoshi, otherwise that's a bit stink. This whole thing gives me the wierd feels. How about we go back to your place and practice tricks until I feel better.";
+                    intro = "I hope that statue in the tunnel isn't all that's left of the great Thanatoshi, otherwise that's a bit stink. This whole thing gives me the wierd feels. " +
+                        "I think the switch opened a door to the outside in the south part of this cave. How about we go back to your place and practice tricks until I feel better.";
 
                     DialogueDraw(npc, intro);
 

@@ -87,39 +87,27 @@ namespace StardewDruid.Cast.Ether
 
         }
 
-        public override bool AttemptAbort()
+        public override bool AttemptReset()
         {
             
             if (warpTrigger)
             {
 
-                return false;
+                return true;
 
             }
 
             if (avatar != null)
             {
 
-                if (avatar.SafeExit())
-                {
-
-                    EventRemove();
-
-                    eventComplete = true;
-
-                    return true;
-
-                }
-
-                return false;
+                return !avatar.SafeExit();
 
             }
 
-            eventComplete = true;
-
-            return true;
+            return false;
 
         }
+
 
         public override void EventRemove()
         {
@@ -213,6 +201,7 @@ namespace StardewDruid.Cast.Ether
 
                 if(Game1.player.currentLocation.Name == warpLocation)
                 {
+                   
                     warpTrigger = false;
 
                     SpawnIndex spawnCheck = new(Game1.player.currentLocation);
@@ -229,8 +218,6 @@ namespace StardewDruid.Cast.Ether
                     avatar.ShutDown();
 
                     CreateAvatar();
-
-                    Mod.instance.rite.CreateTreasure();
 
                     Mod.instance.iconData.DecorativeIndicator(Game1.player.currentLocation, avatar.Position - new Vector2(64, 64), IconData.decorations.ether, 3f, new() { interval = 2000, });
 
@@ -265,32 +252,19 @@ namespace StardewDruid.Cast.Ether
         public override void EventInterval()
         {
 
-            foreach (NPC character in Game1.player.currentLocation.characters)
+            if (warpTrigger) { return; }
+            
+            if((int)Game1.currentGameTime.TotalGameTime.TotalSeconds % 3 != 0)
             {
 
-                if (character is StardewValley.Monsters.Monster)
-                {
+                return;
 
-                    continue;
-                }
+            }
 
-                if (character is Character.Character)
-                {
+            Mod.instance.rite.CreateTreasure();
 
-                    continue;
-                }
-
-                if (character is Dragon)
-                {
-
-                    continue;
-                }
-
-                if (!character.IsVillager)
-                {
-
-                    continue;
-                }
+            foreach (NPC character in ModUtility.GetFriendsInLocation(Game1.player.currentLocation,true))
+            {
 
                 float distance = Vector2.Distance(character.Position, Game1.player.Position);
 
@@ -302,20 +276,9 @@ namespace StardewDruid.Cast.Ether
                         continue;
                     }
 
-                    /*if (!Mod.instance.TaskList.ContainsKey("masterTransform"))
-                    {
-
-                        Mod.instance.UpdateTask("lessonTransform", 1);
-
-                    }*/
-
-                    //ModUtility.GreetVillager(Game1.player, character, 15);
-
                     character.faceTowardFarmerForPeriod(3000, 4, false, Game1.player);
 
                     Game1.player.changeFriendship(15, character);
-
-                    ReactionData.ReactTo(character, ReactionData.reactions.dragon, 15);
 
 
                 }

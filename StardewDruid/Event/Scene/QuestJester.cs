@@ -78,7 +78,7 @@ namespace StardewDruid.Event.Scene
 
             companions[0].eventName = eventId;
 
-            CharacterHandle.CharacterMoveTo(location, companions[0], origin + new Vector2(128, 128));
+            CharacterMover.Warp(location, companions[0], origin + new Vector2(128, 128));
 
             companions[0].netDirection.Set(1);
 
@@ -88,7 +88,7 @@ namespace StardewDruid.Event.Scene
 
         }
 
-        public override void EventAbort()
+        public override bool AttemptReset()
         {
 
             companions[0].SwitchToMode(Character.Character.mode.random, Game1.player);
@@ -115,7 +115,7 @@ namespace StardewDruid.Event.Scene
 
             Mod.instance.CastMessage("Event aborted, try again tomorrow", 3, true);
 
-            base.EventAbort();
+            return false;
 
         }
 
@@ -218,7 +218,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[2].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-                    CharacterHandle.CharacterMoveTo(location, companions[2], marlonVector);
+                    CharacterMover.Warp(location, companions[2], marlonVector);
 
                     companions[2].eventName = eventId;
 
@@ -455,7 +455,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-                    CharacterHandle.CharacterMoveTo(location, companions[1], BuffinPosition);
+                    CharacterMover.Warp(location, companions[1], BuffinPosition);
 
                     companions[1].eventName = eventId;
 
@@ -740,11 +740,11 @@ namespace StardewDruid.Event.Scene
 
                     location = Mod.instance.locations[LocationData.druid_archaeum_name];
 
-                    CharacterHandle.CharacterMoveTo(Mod.instance.locations[LocationData.druid_archaeum_name], companions[0], new Vector2(24, 15) * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_archaeum_name], companions[0], new Vector2(24, 15) * 64, false);
 
                     companions[0].netStandbyActive.Set(true);
 
-                    CharacterHandle.CharacterMoveTo(Mod.instance.locations[LocationData.druid_archaeum_name], companions[1], new Vector2(31, 15) * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_archaeum_name], companions[1], new Vector2(31, 15) * 64, false);
 
                     companions[1].netStandbyActive.Set(true);
 
@@ -756,7 +756,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[3].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-                    CharacterHandle.CharacterMoveTo(location, companions[3], GuntherPosition);
+                    CharacterMover.Warp(location, companions[3], GuntherPosition);
 
                     companions[3].eventName = eventId;
 
@@ -828,13 +828,13 @@ namespace StardewDruid.Event.Scene
 
                 case 918:
 
-                    Mod.instance.spellRegister.Add(new(new Vector2(27,15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, projectile = 0 });
+                    Mod.instance.spellRegister.Add(new(new Vector2(27,15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, projectile = 1 });
 
                     break;
 
                 case 920:
 
-                    Mod.instance.spellRegister.Add(new(new Vector2(27,15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, projectile = 0 });
+                    Mod.instance.spellRegister.Add(new(new Vector2(27,15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, projectile = 1 });
 
                     break;
 
@@ -947,11 +947,11 @@ namespace StardewDruid.Event.Scene
 
                     location = Game1.getLocationFromName("Town");
 
-                    CharacterHandle.CharacterMoveTo(location, companions[0], companionVector, false);//new Vector2(100, 56) * 64, false);
+                    CharacterMover.Warp(location, companions[0], companionVector, false);//new Vector2(100, 56) * 64, false);
 
                     buffinVector = companionVector + new Vector2(192, 0);
 
-                    CharacterHandle.CharacterMoveTo(location, companions[1], buffinVector, false);//new Vector2(102, 56) * 64, false);
+                    CharacterMover.Warp(location, companions[1], buffinVector, false);//new Vector2(102, 56) * 64, false);
 
                     companions[0].netDirection.Set(1);
 
@@ -1629,6 +1629,8 @@ namespace StardewDruid.Event.Scene
 
             StardewValley.NPC npc = companions[0];
 
+            string response;
+
             switch (dialogue)
             {
 
@@ -1636,14 +1638,9 @@ namespace StardewDruid.Event.Scene
 
                     activeCounter = Math.Max(99, activeCounter);
 
-                    npc.CurrentDialogue.Push(
-                        new(
-                            npc, "0",
-                            "I wonder if the pelicans were still around, would they be able to tell us where the fallen star is."
-                        )
-                    );
+                    response = "I wonder if the pelicans were still around, would they be able to tell us where the fallen star is.";
 
-                    Game1.drawDialogue(npc);
+                    DialogueDraw(npc, response);
 
                     break;
 
@@ -1651,21 +1648,16 @@ namespace StardewDruid.Event.Scene
 
                     activeCounter = Math.Max(199, activeCounter);
 
-                    npc.CurrentDialogue.Push(
-                        new(
-                            npc, "0",
-                            "When I first came to the valley, I started at the last known position of Thanatoshi before he vanished in his pursuit of the fallen one. " +
+                    response = "When I first came to the valley, I started at the last known position of Thanatoshi before he vanished in his pursuit of the fallen one. " +
                             "Even after a week I couldn't find a clue to his whereabouts. So I cried a little. I even yelled a bit. Well sort of cat-screamed. " +
                             "I guess kind of loudly, because the one-eyed cheese-eating adventure man told me to shut up. " +
                             "Then he offered me a spot to sleep by a warm fire, and I learned from him about the star crater, and that long tunnel of death we explored. " +
                             "Yet, while he talked, I could also hear the faint whispers of the priesthood. " +
                             "The oracles predict that the one eyed warrior will never cease his crusade against the shadows of the valley. " +
                             "One day he will lie in an unmarked grave, buried respectfully by the young shadow brute who bests him. " +
-                            "Pretty grim. But hey, the priesthood doesn't always get things right. "
-                        )
-                    );
+                            "Pretty grim. But hey, the priesthood doesn't always get things right. ";
 
-                    Game1.drawDialogue(npc);
+                    DialogueDraw(npc, response);
 
                     break;
 
@@ -1673,15 +1665,10 @@ namespace StardewDruid.Event.Scene
 
                     activeCounter = Math.Max(299, activeCounter);
 
-                    npc.CurrentDialogue.Push(
-                        new(
-                            npc, "0",
-                            "Sounds like something the Buffoonette of Chaos would do. " +
-                            "Most fates get confused or angry by her attempts at fun. I'm one of her only friends."
-                        )
-                    );
+                    response = "Sounds like something the Buffoonette of Chaos would do. " +
+                            "Most fates get confused or angry by her attempts at fun. I'm one of her only friends.";
 
-                    Game1.drawDialogue(npc);
+                    DialogueDraw(npc, response);
 
                     break;
 
@@ -1690,15 +1677,10 @@ namespace StardewDruid.Event.Scene
                     //activeCounter = Math.Max(399, activeCounter);
                     activeCounter = Math.Max(799, activeCounter);
 
-                    npc.CurrentDialogue.Push(
-                        new(
-                            npc, "0",
-                            "Heh, it didn't seem like Buffin put in much effort. She's usually very foxy. " +
-                            "I guess there's something else going on with her. There always is."
-                        )
-                    );
+                    response = "Heh, it didn't seem like Buffin put in much effort. She's usually very foxy. " +
+                            "I guess there's something else going on with her. There always is.";
 
-                    Game1.drawDialogue(npc);
+                    DialogueDraw(npc, response);
 
                     break;
 
@@ -1706,16 +1688,11 @@ namespace StardewDruid.Event.Scene
 
                     activeCounter = Math.Max(499, activeCounter);
 
-                    npc.CurrentDialogue.Push(
-                        new(
-                            npc, "0",
-                            "Buffin serves the Stream of Chaos, who occupies one of the four seats of the Fates. " +
+                    response = "Buffin serves the Stream of Chaos, who occupies one of the four seats of the Fates. " +
                             "The stream has an influence on some of the more, uh, fun aspects of the mysteries of the Fates, so things like this tend to happen when we get together. " +
-                            "(Jester sighs) This isn't what the high priestess expects of me."
-                        )
-                    );
+                            "(Jester sighs) This isn't what the high priestess expects of me.";
 
-                    Game1.drawDialogue(npc);
+                    DialogueDraw(npc, response);
 
                     break;
 
@@ -1723,17 +1700,13 @@ namespace StardewDruid.Event.Scene
 
                     activeCounter = Math.Max(699, activeCounter);
 
-                    npc.CurrentDialogue.Push(
-                        new(
-                            npc, "0",
-                            "The faithful certainly took it as a joke. One heckler said the earth cats would chase me away. " +
+                    response = "The faithful certainly took it as a joke. One heckler said the earth cats would chase me away. " +
                             "An oracle foretold that my sparkly star cape would be torn to shreds. " +
                             "Buffin showed the court an image of me in tears, stuck in a ditch. All of which ended up happening for real but besides that, Fortumei took me at my word. " +
-                            "I'm more then a joke."
-                        )
-                    );
+                            "I'm more then a joke.";
 
-                    Game1.drawDialogue(npc);
+
+                    DialogueDraw(npc, response);
 
                     break;
 

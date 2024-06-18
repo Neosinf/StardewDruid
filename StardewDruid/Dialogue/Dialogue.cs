@@ -349,7 +349,22 @@ namespace StardewDruid.Dialogue
             if (special.answers.Count > 0)
             {
 
-                RunSpecialAnswer(special.answers[id]);
+                string answer;
+
+                if (special.answers.Count <= id)
+                {
+
+                    answer = special.answers.First();
+
+                }
+                else
+                {
+
+                    answer = special.answers[id];
+
+                }
+
+                RunSpecialAnswer(answer);
 
                 return;
 

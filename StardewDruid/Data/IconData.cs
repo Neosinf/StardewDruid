@@ -254,6 +254,7 @@ namespace StardewDruid.Data
             atoll,
             chapel,
             court,
+            tomb,
 
         }
 
@@ -274,6 +275,10 @@ namespace StardewDruid.Data
         public const string court_assetName = "Sheets/Court";
 
         public const string court_tilesheet = "Sheets/Court.png";
+
+        public const string tomb_assetName = "Sheets/Tomb";
+
+        public const string tomb_tilesheet = "Sheets/Tomb.png";
 
         public enum relics
         {
@@ -297,15 +302,21 @@ namespace StardewDruid.Data
             vial4,
             vial5,
             effigy_crest,
-            jester_box, 
-            warble_eye, 
+            jester_dice,
+            shadowtin_tome,
             companion_3, 
             companion_4, 
             companion_5,
+            wayfinder_lantern,
+            wayfinder_water,
+            wayfinder_eye,
+            wayfinder_ceremonial,
+            warp_4,
+            warp_5,
             herbalism_mortar,
             herbalism_pan,
-            herbalism_lantern,
-            herbalism_cup,
+            herbalism_still,
+            herbalism_crucible,
             herbalism_1,
             herbalism_2,
             runestones_spring,
@@ -320,6 +331,11 @@ namespace StardewDruid.Data
             avalant_casing,
             avalant_needle,
             avalant_measure,
+            book_wyrven,
+            texts_1,
+            texts_2, texts_3, texts_4,
+            texts_5,
+            courtesan_pin,
 
         }
 
@@ -342,6 +358,10 @@ namespace StardewDruid.Data
         public Texture2D warpstrikeTexture;
 
         public Texture2D echoTexture;
+
+        public Texture2D wispTexture;
+
+        public Texture2D shieldTexture;
 
         public enum schemes
         {
@@ -463,6 +483,8 @@ namespace StardewDruid.Data
 
             sheetTextures[tilesheets.court] = Mod.instance.Helper.ModContent.Load<Texture2D>(court_tilesheet);
 
+            sheetTextures[tilesheets.tomb] = Mod.instance.Helper.ModContent.Load<Texture2D>(tomb_tilesheet);
+
             relicColumns = 6;
 
             relicsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Relics.png"));
@@ -483,6 +505,9 @@ namespace StardewDruid.Data
 
             echoTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Echo.png"));
 
+            wispTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Wisp.png"));
+
+            shieldTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Shield.png"));
 
         }
 
@@ -1040,7 +1065,13 @@ namespace StardewDruid.Data
 
             Microsoft.Xna.Framework.Color schemeLight = new(Math.Min((int)schemeColour.R + 32, 255), Math.Min((int)schemeColour.G + 32, 255), Math.Min((int)schemeColour.B + 32, 255));
 
-            Microsoft.Xna.Framework.Color schemeDark = new(Math.Max((int)schemeColour.R - 48, 0), Math.Max((int)schemeColour.G - 48, 0), Math.Max((int)schemeColour.B - 48, 0));
+            int trydarkR = (int)schemeColour.R - 48;
+
+            int trydarkG = (int)schemeColour.G - 48;
+
+            int trydarkB= (int)schemeColour.B - 48;
+
+            Microsoft.Xna.Framework.Color schemeDark = new(trydarkR < 0 ? 0 : trydarkR, trydarkG < 0 ? 0 : trydarkG, trydarkB < 0 ? 0 : trydarkB);
 
             schemes rockScheme = schemes.rock;
 
@@ -1281,21 +1312,23 @@ namespace StardewDruid.Data
 
         }
 
-        public List<TemporaryAnimatedSprite> BoltAnimation(GameLocation location, Vector2 origin, IconData.schemes scheme = schemes.bolt, bool clouds = true)
+        public List<TemporaryAnimatedSprite> BoltAnimation(GameLocation location, Vector2 origin, IconData.schemes scheme = schemes.bolt, int size = 2)
         {
 
             List<TemporaryAnimatedSprite> animations = new();
+
+            float boltScale = 1.5f + 0.5f * size;
 
             int viewY = Game1.viewport.Y;
 
             int offset = 0;
 
-            Vector2 originOffset = new((int)origin.X - 64, (int)origin.Y - 912);
+            Vector2 originOffset = new((int)origin.X + 32 - (int)(32 * boltScale), (int)origin.Y + 48 - (int)(384 * boltScale));
 
             if ((int)originOffset.Y < viewY && (int)origin.Y - viewY >= 192)
             {
 
-                offset = (int)((viewY - (int)originOffset.Y) / 3);
+                offset = (int)((viewY - (int)originOffset.Y) / boltScale);
 
                 originOffset.Y = viewY;
 
@@ -1314,9 +1347,9 @@ namespace StardewDruid.Data
 
                 texture = boltTexture,
 
-                layerDepth = 803f,
+                layerDepth = 802f,
 
-                scale = 2.5f,
+                scale = boltScale,
 
             };
 
@@ -1337,7 +1370,7 @@ namespace StardewDruid.Data
 
                 layerDepth = 801f,
 
-                scale = 2.5f,
+                scale = boltScale,
 
                 color = gradientColours[scheme][0],
 
@@ -1360,7 +1393,7 @@ namespace StardewDruid.Data
 
                 layerDepth = 800f,
 
-                scale = 2.5f,
+                scale = boltScale,
 
                 color = gradientColours[scheme][1],
 
@@ -1372,7 +1405,7 @@ namespace StardewDruid.Data
 
             // ---------------------- clouds
 
-            if (!clouds)
+            if (size <= 1)
             {
 
                 return animations;
@@ -1382,7 +1415,8 @@ namespace StardewDruid.Data
             TemporaryAnimatedSprite bolt4 = CreateImpact(
                 location,
                 originOffset + new Vector2(64, -64),
-                impacts.clouds, 6f,
+                impacts.clouds, 
+                boltScale + 3.5f,
                 new() {
                     color = gradientColours[scheme][2],
                     girth = 2,
@@ -1397,7 +1431,8 @@ namespace StardewDruid.Data
             TemporaryAnimatedSprite bolt5 = CreateImpact(
                 location,
                 originOffset + new Vector2(80, -32),
-                impacts.clouds, 5f,
+                impacts.clouds, 
+                boltScale + 2.5f,
                 new()
                 {
                     color = gradientColours[scheme][0],
@@ -1413,7 +1448,8 @@ namespace StardewDruid.Data
             TemporaryAnimatedSprite bolt6 = CreateImpact(
                 location,
                 originOffset + new Vector2(96, 0),
-                impacts.clouds, 3f,
+                impacts.clouds, 
+                boltScale+0.5f,
                 new()
                 {
                     girth = 2,

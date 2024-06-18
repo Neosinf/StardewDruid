@@ -102,27 +102,27 @@ namespace StardewDruid.Event.Scene
 
         }
 
-        public override void EventAbort()
+        public override bool AttemptReset()
         {
 
-            CharacterHandle.CharacterRemove(CharacterHandle.characters.Effigy);
-
-            base.EventAbort();
-
-        }
-
-        public override void EventRemove()
-        {
-
-            if (eventComplete)
+            if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Effigy))
             {
 
-                Mod.instance.questHandle.CompleteQuest(eventId);
+                Mod.instance.characters[CharacterHandle.characters.Effigy].currentLocation.characters.Remove(Mod.instance.characters[CharacterHandle.characters.Effigy]);
+
+                Mod.instance.characters.Remove(CharacterHandle.characters.Effigy);
 
             }
 
-            base.EventRemove();
+            ResetToTrigger();
 
+            return true;
+
+        }
+
+        public override void EventCompleted()
+        {
+            Mod.instance.questHandle.CompleteQuest(eventId);
         }
 
         public override void EventInterval()

@@ -58,7 +58,7 @@ namespace StardewDruid.Event.Scene
 
             CharacterHandle.CharacterLoad(CharacterHandle.characters.Jester, StardewDruid.Character.Character.mode.scene);
 
-            CharacterHandle.CharacterMoveTo(location, Mod.instance.characters[CharacterHandle.characters.Jester], origin);
+            CharacterMover.Warp(location, Mod.instance.characters[CharacterHandle.characters.Jester], origin);
 
             Mod.instance.characters[CharacterHandle.characters.Jester].netStandbyActive.Set(true);
 
@@ -110,11 +110,11 @@ namespace StardewDruid.Event.Scene
 
                 case 6:
 
-                    ThrowHandle throwRelic = new(Game1.player, origin, IconData.relics.jester_box);
+                    ThrowHandle throwRelic = new(Game1.player, origin, IconData.relics.jester_dice);
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.jester_box.ToString());
+                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.jester_dice.ToString());
 
                     Mod.instance.questHandle.CompleteQuest(eventId);
 

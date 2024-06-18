@@ -449,7 +449,7 @@ namespace StardewDruid.Journal
                 }
             };
 
-            effects[QuestHandle.approachJester] = new() { summonJester, };
+            effects[QuestHandle.approachJester] = new() { summonJester, };            
 
             Effect whisk = new()
             {
@@ -538,6 +538,102 @@ namespace StardewDruid.Journal
 
             effects[QuestHandle.fatesFour] = new() { enchant, };
 
+            Effect summonShadowtin = new()
+            {
+                title = "The Shadow Scholar",
+                icon = IconData.displays.shadowtin,
+                description = "The figure in the tin bear mask is a legend amongst the Shadowfolk. He has a fetish for rare collectibles, especially from the age of Dragons, and relishes the chance to further explore the forgotten history of the valley.",
+                instruction = "Approach Shadowtin Bear and select (adventure) from the dialogue menu to give him instructions.",
+                details = new()
+                {
+                    "The 'Compendium on the Ancient War' can be used in the relics menu to summon Shadowtin",
+                    "Shadowtin can join your other allies on the farm, grove or at your side. He can use his Carnyx to stun enemies, or twirl it in a spin attack.",
+                    "Shadowtin will pick up nearby forageables during idle moments when at work or when following the player.",
+                }
+            };
+
+            effects[QuestHandle.challengeFates] = new() { summonShadowtin, };
+
+            // ====================================================
+            // Dragon Effects
+
+            Effect dragonForm = new()
+            {
+                title = "Dragon Form",
+                icon = IconData.displays.ether,
+                description = "The Dragons have long been venerated as masters of the ether, the quintessential fifth element that defines the shape and nature of the spiritual domain. With the Dragontooth of Tyrannus Prime, I can adopt the guise of an Ancient One, and learn to master the ether myself.",
+                instruction = "Press the rite button to transform into a Dragon. Press the rite button again to detransform.",
+                details = new()
+                {
+                    "Dragon form should maintain through map transitions, but will exit for events or locations that are restricted.",
+                }
+            };
+
+            Effect dragonFlight = new()
+            {
+                title = "Dragon Flight",
+                icon = IconData.displays.ether,
+                description = "I can feel the streams of ether rushing softly under my finger tips, and then my wing tips as I allow them to lift me into the sky.",
+                instruction = "While in dragon form, press the action button/left click to perform a sweeping flight.",
+                details = new()
+                {
+                    "Targetting: Flies in the direction the farmer is facing.",
+                    "Monster Proximity: Will instead perform a sweeping tail attack when in close proximity to monsters.",
+                    "Direction: Uses isometric lines by default, can be changed to strictly cardinal lines in the config.",
+                    "Mastery: Nearby foes are damaged on take off and landing.",
+                }
+            };
+
+            effects[QuestHandle.etherOne] = new() { dragonForm, dragonFlight, };
+
+            Effect dragonBreath = new()
+            {
+                title = "Dragon Breath",
+                icon = IconData.displays.ether,
+                description = "I draw the ether in, then expel it as a torrent of violent energy.",
+                instruction = "While in dragon form, Press the special button/right click to perform a dragon breath attack.",
+                details = new()
+                {
+                    "Targetting: Uses cursor and directional targetting.",
+                    "Potency: Powerful enough to destroy terrain and reave dirt",
+                    "Mastery: Damage effect creates a zone of fire that applies the 'Burn' status" +
+                    "Mastery (Burn): has a chance to immolate enemies and convert them into cooking items."
+                }
+            };
+
+            effects[QuestHandle.etherTwo] = new() { dragonBreath, };
+
+            Effect dragonDive = new()
+            {
+                title = "Dragon Dive",
+                icon = IconData.displays.ether,
+                description = "It is time to bring blessings to the world under the waters.",
+                instruction = "While in dragon form, use Dragon Flight near water to fly into and out of swim mode. ",
+                details = new()
+                {
+                    "Dive: Press the special button/right click while swimming to dive for treasure." ,
+                    "Mastery: Dives have a chance for higher quality fish",
+                }
+            };
+
+            effects[QuestHandle.etherThree] = new() { dragonDive, };
+
+            Effect dragonTreasure = new()
+            {
+                title = "Dragon Treasure",
+                icon = IconData.displays.ether,
+                description = "The treasures of antiquity were sealed away with ethereal binds, all in the hope that a master of the ether would arise from the ranks of the Druids to reclaim them.",
+                instruction = "While in dragon form, treasure markers will appear once day on large maps, these can be activated with the Special button/ right click to claim the treasure. ",
+                details = new()
+                {
+                    "Location: Search for the ether symbol on large map locations (Forest, Beach, Mountain, RailRoad, Desert, Island etc).",
+                    "Activate: Move over the spot and either dig or dive (special/right click button) to claim the dragon treasure.",
+                    "Thieves: There is a chance a monster will attempt to abscond with the treasure.",
+                    "Mastery: Treasure caches provide Ether",
+                }
+            };
+
+            effects[QuestHandle.etherFour] = new() { dragonTreasure, };
 
             return effects;
 

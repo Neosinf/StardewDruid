@@ -244,14 +244,14 @@ namespace StardewDruid.Cast.Mists
 
             activeCounter++;
 
-            if (activeCounter % 3 != 0)
+            if (activeCounter % 6 != 0)
             {
 
                 return;
 
             }
 
-            float damage = Mod.instance.CombatDamage() / 2;
+            List<StardewValley.Monsters.Monster> victims = new();
 
             for (int i = wisps.Count - 1; i >= 0; i--)
             {
@@ -265,40 +265,42 @@ namespace StardewDruid.Cast.Mists
 
                 }
 
-                if (activeCounter % 6 == 0)
+                if (!moment.Value.reset())
                 {
-                    if (!moment.Value.reset())
-                    {
 
-                        wisps.Remove(moment.Key);
-
-                        continue;
-
-                    }
-
-                }
-
-                List<StardewValley.Monsters.Monster> victims = ModUtility.MonsterProximity(Game1.player.currentLocation, new() { moment.Value.position, }, 256, true);
-
-                if(victims.Count == 0)
-                {
+                    wisps.Remove(moment.Key);
 
                     continue;
 
                 }
 
-                foreach (StardewValley.Monsters.Monster victim in victims)
+                List<StardewValley.Monsters.Monster> closeby = ModUtility.MonsterProximity(Game1.player.currentLocation, new() { moment.Value.position, }, 256, true);
+
+                if (closeby.Count > 0)
                 {
+                    
+                    victims.AddRange(closeby);
 
-                    SpellHandle bolt = new(Game1.player, new() { victim, }, damage);
-
-                    bolt.type = SpellHandle.spells.bolt;
-
-                    bolt.added = new() { effects.push };
-
-                    Mod.instance.spellRegister.Add(bolt);
-
+                    moment.Value.flashed();
+                
                 }
+
+            }
+
+            if(victims.Count > 0)
+            {
+                
+                SpellHandle bolt = new(Game1.player, new() { victims[Mod.instance.randomIndex.Next(victims.Count)], }, Mod.instance.CombatDamage()*2);
+
+                bolt.type = SpellHandle.spells.bolt;
+
+                bolt.projectile = 4;
+
+                bolt.sound = sounds.thunder;
+
+                bolt.added = new() { effects.push, effects.drain };
+
+                Mod.instance.spellRegister.Add(bolt);
 
             }
 
@@ -321,6 +323,8 @@ namespace StardewDruid.Cast.Mists
 
         public TemporaryAnimatedSprite light;
 
+        public TemporaryAnimatedSprite flash;
+
         public int timer;
 
         public bool initiated;
@@ -332,6 +336,8 @@ namespace StardewDruid.Cast.Mists
         public int activation;
 
         public Microsoft.Xna.Framework.Color colour;
+
+        public bool flip;
 
         public WispHandle(GameLocation Location, Vector2 Tile, Microsoft.Xna.Framework.Color Colour, int Timer = -1)
         {
@@ -347,6 +353,8 @@ namespace StardewDruid.Cast.Mists
             randomIndex = new();
 
             colour = Colour;
+
+            flip = randomIndex.Next(2) == 0;
 
             initiate();
 
@@ -367,8 +375,6 @@ namespace StardewDruid.Cast.Mists
 
             location.temporarySprites.Add(light);
 
-            bool wispFlip = randomIndex.Next(2) == 0;
-
             Texture2D wispTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Wisp.png"));
 
             wisp = new(0, 250f, 8, timer / 2, position - new Vector2(32, 64), false, false)
@@ -378,7 +384,7 @@ namespace StardewDruid.Cast.Mists
 
                 sourceRectStartingPos = new Vector2(0,0),
 
-                texture = wispTexture,
+                texture = Mod.instance.iconData.wispTexture,
 
                 scale = 4, //* size,
 
@@ -386,7 +392,7 @@ namespace StardewDruid.Cast.Mists
 
                 alpha = 0.3f,
 
-                flipped = wispFlip,
+                flipped =flip,
 
                 color = colour,
 
@@ -401,7 +407,7 @@ namespace StardewDruid.Cast.Mists
 
                 sourceRectStartingPos = new Vector2(0, 32),
 
-                texture = wispTexture,
+                texture = Mod.instance.iconData.wispTexture,
 
                 scale = 4, //* size,
 
@@ -409,7 +415,7 @@ namespace StardewDruid.Cast.Mists
 
                 alpha = 0.4f,
 
-                flipped = wispFlip,
+                flipped = flip,
 
             };
 
@@ -418,6 +424,34 @@ namespace StardewDruid.Cast.Mists
             //light = Mod.instance.iconData.ImpactIndicator(location, position, IconData.impacts.cloud, 2.5f, new() { alpha = 0.3f, interval = 125f, loops = timer, color = colour, });
 
             initiated = true;
+
+        }
+
+        public void flashed()
+        {
+
+            flash = new(0, 250f, 4, 1, position - new Vector2(32, 64), false, false)
+            {
+
+                sourceRect = new(wisp.sourceRect.X,wisp.sourceRect.Y,32,32),
+
+                sourceRectStartingPos = new Vector2(0, 0),
+
+                texture = Mod.instance.iconData.wispTexture,
+
+                scale = 4, //* size,
+
+                layerDepth = 994f,
+
+                alpha = 0.3f,
+
+                alphaFade = 0.3f / 1000f,
+
+                flipped = flip,
+
+            };
+
+            location.temporarySprites.Add(flash);
 
         }
 
@@ -467,6 +501,12 @@ namespace StardewDruid.Cast.Mists
                 {
 
                     location.temporarySprites.Remove(eyes);
+
+                }
+                if (flash != null)
+                {
+
+                    location.temporarySprites.Remove(flash);
 
                 }
 

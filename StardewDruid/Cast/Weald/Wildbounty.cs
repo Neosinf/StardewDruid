@@ -435,23 +435,6 @@ namespace StardewDruid.Cast.Weald
             if (bushFeature.size.Value == 3)
             {
 
-                int age = bushFeature.getAge();
-
-                if (age < 20)
-                {
-
-                    int newage = age++;
-
-                    int newdate = Math.Max(1, (int)Game1.stats.DaysPlayed - newage);
-
-                    location.largeTerrainFeatures.Remove(bushFeature);
-
-                    location.largeTerrainFeatures.Add(new StardewValley.TerrainFeatures.Bush(bushTile, 3, location, newdate));
-
-
-
-                }
-
                 bountyProspects.Add(bushTile, bounties.tea);
 
                 return;

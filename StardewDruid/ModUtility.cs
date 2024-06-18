@@ -38,6 +38,7 @@ using xTile.Dimensions;
 using xTile.Layers;
 using xTile.ObjectModel;
 using xTile.Tiles;
+using static StardewDruid.Character.CharacterHandle;
 
 
 
@@ -2582,6 +2583,48 @@ namespace StardewDruid
 
         }
 
+        public static List<StardewDruid.Character.Character> CompanionProximity(GameLocation targetLocation, List<Vector2> targetPosition, float threshold, bool checkInvincible = false)
+        {
+
+            if (targetLocation == null || Mod.instance.trackers.Count == 0)
+            {
+
+                return new();
+
+            }
+
+            Dictionary<StardewDruid.Character.Character, float> companionList = new();
+
+            threshold = Math.Max(64, threshold);
+
+            foreach (KeyValuePair<CharacterHandle.characters,TrackHandle> tracker in Mod.instance.trackers)
+            {
+
+                float distance = Proximation(Mod.instance.characters[tracker.Key].Position, targetPosition, threshold);
+
+                if (distance != -1)
+                {
+
+                    companionList.Add(Mod.instance.characters[tracker.Key], distance);
+
+                }
+
+            }
+
+            List<StardewDruid.Character.Character> ordered = new();
+
+            foreach (KeyValuePair<StardewDruid.Character.Character, float> kvp in companionList.OrderBy(key => key.Value))
+            {
+
+                ordered.Add(kvp.Key);
+
+            }
+
+            return ordered;
+
+        }
+
+
         public static void DamageFarmers(List<Farmer> farmers, int damage, StardewValley.Monsters.Monster monster, bool parry = false)
         {
 
@@ -2593,7 +2636,7 @@ namespace StardewDruid
             foreach (Farmer farmer in farmers)
             {
 
-                if (farmer.health < 10 && Mod.instance.activeEvent.Count > 0)
+                if (farmer.health < (10+ farmer.buffs.Defense) && Mod.instance.activeEvent.Count > 0)
                 {
 
                     Mod.instance.CriticalCondition();
@@ -2616,7 +2659,7 @@ namespace StardewDruid
             foreach (NPC nPC in location.characters)
             {
 
-                if (nPC is StardewValley.Monsters.Monster monster)
+                if (nPC is StardewValley.Monsters.Monster)
                 {
 
                     continue;
@@ -2625,9 +2668,16 @@ namespace StardewDruid
 
                 if (nPC is StardewDruid.Character.Character)
                 {
-
+                    
                     continue;
+                
+                }
 
+                if (nPC is StardewDruid.Character.Dragon)
+                {
+                    
+                    continue;
+                
                 }
 
                 StardewValley.GameData.Characters.CharacterData data = nPC.GetData();
@@ -2824,6 +2874,18 @@ namespace StardewDruid
                     {
 
                         continue;
+
+                    }
+
+                    if(monster is StardewDruid.Monster.Boss boss)
+                    {
+
+                        if (boss.netPosturing.Value || boss.netWoundedActive.Value)
+                        {
+
+                            continue;
+
+                        }
 
                     }
                     
