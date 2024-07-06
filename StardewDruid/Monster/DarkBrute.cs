@@ -30,9 +30,11 @@ namespace StardewDruid.Monster
 
             baseJuice = 3;
             
-            basePulp = 30;
+            basePulp = 25;
 
             cooldownInterval = 180;
+
+            groupMode = true;
 
             DarkWalk();
 

@@ -40,7 +40,7 @@ namespace StardewDruid.Render
 
         public Color tertiary = new(39, 170, 225);
 
-        public IconData.schemes fire = IconData.schemes.ember;
+        public IconData.schemes fire = IconData.schemes.stars;
 
         public enum dragonIndexes
         {
@@ -890,8 +890,29 @@ namespace StardewDruid.Render
 
         }
 
-        public void LoadColourScheme(IconData.schemes scheme)
+        public void LoadConfigScheme()
         {
+
+            LoadColourScheme((IconData.schemes)Mod.instance.Config.dragonScheme, (IconData.schemes)Mod.instance.Config.dragonBreath);
+
+        }
+
+        public void LoadColourScheme(IconData.schemes scheme, IconData.schemes breath)
+        {
+            
+            if (!Mod.instance.iconData.gradientColours.ContainsKey(scheme))
+            {
+
+                scheme = IconData.schemes.dragon_red;
+
+            }
+
+            if (!Mod.instance.iconData.gradientColours.ContainsKey(fire))
+            {
+
+                scheme = IconData.schemes.stars;
+
+            }
 
             List<Color> colors = Mod.instance.iconData.gradientColours[scheme];
 
@@ -900,6 +921,19 @@ namespace StardewDruid.Render
             secondary = colors[1];
 
             tertiary = colors[2];
+
+            fire = breath;
+
+        }
+
+        public void GhostScheme()
+        {
+
+            primary *= 0.75f;
+
+            secondary *= 0.75f;
+
+            tertiary *= 0.75f;
 
         }
 
@@ -917,6 +951,8 @@ namespace StardewDruid.Render
 
             }
 
+            b.Draw(characterTexture, spriteShadow, RectangleShadowIndex(shadowFrames[additional.direction][0]), Color.White * 0.15f, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer - 0.0002f);
+
             b.Draw(characterTexture, spritePosition, RectangleDragonIndex(backFrames[additional.direction][0]), primary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer - 0.0001f);
 
             b.Draw(characterTexture, spritePosition, RectangleDragonIndex(legFrames[additional.direction][additional.frame]), primary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
@@ -927,13 +963,11 @@ namespace StardewDruid.Render
 
             b.Draw(characterTexture, spritePosition, RectangleDragonIndex(headFrames[additional.direction][additional.version], 1, 448), secondary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
 
-            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(headFrames[additional.direction][additional.version], 1, 704), tertiary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
+            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(headFrames[additional.direction][additional.version], 1, 704), tertiary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
 
-            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(bodyFrames[additional.direction][0]), primary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
+            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(bodyFrames[additional.direction][0]), primary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0002f);
 
-            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(bodyFrames[additional.direction][0], 1, 448), secondary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
-
-            b.Draw(characterTexture, spriteShadow, RectangleShadowIndex(shadowFrames[additional.direction][0]), Color.White * 0.15f, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer - 0.0002f);
+            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(bodyFrames[additional.direction][0], 1, 448), secondary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0002f);
 
             if (additional.breath)
             {
@@ -1048,7 +1082,16 @@ namespace StardewDruid.Render
 
             b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashBodyFrames[additional.direction][additional.frame], 2, 256), secondary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
 
-            b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashWingFrames[additional.direction][additional.frame]), primary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
+            Vector2 flightPosition = new(spritePosition.X, spritePosition.Y);
+
+            if(additional.direction % 2 == 1 && additional.frame != 0)
+            {
+                flightPosition.X += additional.direction == 3? additional.scale * 3 : additional.scale * -3;
+                flightPosition.Y -= additional.scale * 8;
+
+            }
+
+            b.Draw(dashTexture, flightPosition, RectangleDashIndex(dashWingFrames[additional.direction][additional.frame]), primary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
 
             if (additional.breath)
             {
@@ -1080,19 +1123,23 @@ namespace StardewDruid.Render
 
             b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashWingFrames[1][0]), primary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0003f);
 
-            b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashLegFrames[4][additional.frame]), primary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
+            //b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashLegFrames[4][additional.frame]), primary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
 
-            b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashLegFrames[4][additional.frame], 2, 256), secondary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
+            //b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashLegFrames[4][additional.frame], 2, 256), secondary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
 
             b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashBodyFrames[4][additional.frame]), primary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0002f);
 
             b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashBodyFrames[4][additional.frame], 2, 256), secondary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0002f);
 
-            b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashHeadFrames[4][0], 1), primary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
+            Vector2 headPosition = new(spritePosition.X, spritePosition.Y);
 
-            b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashHeadFrames[4][0], 1, 128), secondary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
+            if (!additional.flip) { headPosition.X += 64 * additional.scale; }
 
-            b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashHeadFrames[4][0], 1, 256), tertiary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
+            b.Draw(dashTexture, headPosition, RectangleDashIndex(dashHeadFrames[4][0], 1), primary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
+
+            b.Draw(dashTexture, headPosition, RectangleDashIndex(dashHeadFrames[4][0], 1, 128), secondary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
+
+            b.Draw(dashTexture, headPosition, RectangleDashIndex(dashHeadFrames[4][0], 1, 256), tertiary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
 
             b.Draw(dashTexture, spriteShadow, RectangleDashIndex(dashShadowFrames[1][0]), Color.White * 0.15f, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer - 0.0001f);
 
@@ -1226,7 +1273,9 @@ namespace StardewDruid.Render
         public virtual void drawBreath(SpriteBatch b, Vector2 spritePosition, DragonAdditional additional)
         {
 
-            int breathFrame = Game1.currentGameTime.TotalGameTime.Milliseconds % 500 / 125;
+            additional.scale -= 0.5f;
+
+            int breathFrame = Game1.currentGameTime.TotalGameTime.Milliseconds % 600 / 150;
 
             float rotation = 0f;
 
@@ -1288,13 +1337,13 @@ namespace StardewDruid.Render
 
             List<Color> colours = Mod.instance.iconData.gradientColours[fire];
 
-            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 0, 192, 192), Color.White * 0.65f, rotation, new Vector2(96), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0005f);
+            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 0, 192, 192), Color.White * 0.9f, rotation, new Vector2(96), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0005f);
 
-            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 192, 192, 192), colours[0] * 0.9f, rotation, new Vector2(96), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0005f);
+            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 192, 192, 192), Color.White , rotation, new Vector2(96), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0005f);
 
-            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 384, 192, 192), colours[1] * 0.9f, rotation, new Vector2(96), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0005f);
+            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 384, 192, 192), colours[0], rotation, new Vector2(96), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0005f);
 
-            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 576, 192, 192), colours[2] * 0.9f, rotation, new Vector2(96), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0005f);
+            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 576, 192, 192), colours[1], rotation, new Vector2(96), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0005f);
 
         }
 

@@ -1,7 +1,7 @@
 ﻿using StardewValley;
 using System.Collections.Generic;
 
-namespace StardewDruid.Compat.v100
+namespace StardewDruid.v100
 {
     class StaticData
     {

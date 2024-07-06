@@ -120,10 +120,10 @@ namespace StardewDruid.Cast.Weald
 
                     Vector2 clumpTile = resourceClump.Tile;
 
-                    if (targets.ContainsKey(clumpTile))
+                    if (targets.ContainsKey(clumpTile) && !clumps.ContainsKey(clumpTile))
                     {
 
-                        clumps.Add(clumpTile, resourceClump);
+                        clumps[clumpTile] = resourceClump;
 
                         if (resourceClump is GiantCrop)
                         {

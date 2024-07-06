@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
+using StardewDruid.Cast.Ether;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
@@ -39,8 +40,13 @@ namespace StardewDruid.Character
 
         public override void LoadOut()
         {
+            
+            if(characterType == CharacterHandle.characters.none)
+            {
+                
+                characterType = CharacterHandle.characters.Jester;
 
-            characterType = CharacterHandle.characters.Jester;
+            }
 
             characterTexture = CharacterHandle.CharacterTexture(characterType);
 
@@ -148,7 +154,7 @@ namespace StardewDruid.Character
 
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = (float)StandingPixel.Y / 10000f;
 
@@ -271,17 +277,13 @@ namespace StardewDruid.Character
             else
             {
 
-                if (TightPosition() && idleTimer > 0 && currentLocation.IsOutdoors && !netSceneActive.Value)
+                if (TightPosition() && idleTimer > 0 && !netSceneActive.Value)
                 {
 
                     DrawStandby(b, localPosition, drawLayer);
 
-                    DrawShadow(b, localPosition, drawLayer);
-
-                    return;
-
                 }
-
+                else
                 if (pathActive == pathing.running)
                 {
                     b.Draw(
@@ -422,7 +424,7 @@ namespace StardewDruid.Character
 
             swipeEffect.sound = sounds.swordswipe;
 
-            swipeEffect.display = IconData.impacts.deathwhirl;
+            swipeEffect.display = IconData.impacts.skull;
 
             if (Mod.instance.questHandle.IsGiven(Journal.QuestHandle.fatesTwo))
             {
@@ -460,6 +462,66 @@ namespace StardewDruid.Character
 
         }
 
+
+        public override List<Vector2> RoamAnalysis()
+        {
+
+            List<Vector2> collection = base.RoamAnalysis();
+
+            if (Game1.currentSeason == "winter")
+            {
+
+                return collection;
+
+            }
+
+            List<Vector2> scarelist = new List<Vector2>();
+
+            int takeABreak = 0;
+
+            foreach (Dictionary<Vector2, StardewValley.Object> dictionary in currentLocation.Objects)
+            {
+
+                foreach (KeyValuePair<Vector2, StardewValley.Object> keyValuePair in dictionary)
+                {
+
+                    if (
+                        keyValuePair.Value.Name.Contains("Artifact Spot") ||
+                        keyValuePair.Value.isForage() ||
+                        keyValuePair.Value.QualifiedItemId == "(BC)9" ||
+                        keyValuePair.Value.QualifiedItemId == "(BC)10" ||
+                        keyValuePair.Value.QualifiedItemId == "(BC)MushroomLog" ||
+                        keyValuePair.Value.IsTapper()
+                    )
+                    {
+
+                        Vector2 scareVector = new(keyValuePair.Key.X * 64f, keyValuePair.Key.Y * 64f);
+
+                        scarelist.Add(scareVector);
+
+                        takeABreak++;
+
+                    }
+
+                    if (takeABreak >= 4)
+                    {
+
+                        scarelist.Add(new Vector2(-1f));
+
+                        takeABreak = 0;
+
+                    }
+
+                }
+
+            }
+
+            scarelist.AddRange(collection);
+
+            return scarelist;
+
+        }
+
         public override bool TargetWork()
         {
 
@@ -479,7 +541,7 @@ namespace StardewDruid.Character
                         continue;
                     }
 
-                    if (rubVictim is StardewDruid.Character.Dragon)
+                    if (rubVictim is Dragon)
                     {
                         continue;
                     }

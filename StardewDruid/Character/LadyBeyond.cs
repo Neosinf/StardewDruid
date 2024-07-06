@@ -21,18 +21,16 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace StardewDruid.Character
 {
-    public class Morrigan : StardewDruid.Character.Character
+    public class LadyBeyond : StardewDruid.Character.Character
     {
-        
-        new public CharacterHandle.characters characterType = CharacterHandle.characters.Morrigan;
 
         public Texture2D hatsTexture;
 
-        public Morrigan()
+        public LadyBeyond()
         {
         }
 
-        public Morrigan(CharacterHandle.characters type)
+        public LadyBeyond(CharacterHandle.characters type)
           : base(type)
         {
 
@@ -61,7 +59,7 @@ namespace StardewDruid.Character
 
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = (float)StandingPixel.Y / 10000f;
 

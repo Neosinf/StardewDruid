@@ -50,8 +50,6 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.none,
 
-                triggerScheme = IconData.schemes.weald,
-
                 origin = new Vector2(7,7)*64,
 
                 // -----------------------------------------------
@@ -62,7 +60,7 @@ namespace StardewDruid.Journal
                     "\"For the new farmer. Before my forefathers came to the valley, the secluded grove behind the farm was a frequent meeting ground for a circle of Druids. " +
                     "An eeriness hangs over the place, so I have kept my father's tradition of leaving it well enough alone. Perhaps you should too.\"",
 
-                instruction = "Investigate the secluded grove and old farm cave. Press " + Mod.instance.Config.riteButtons.ToString() + " to cast a rite at the quest icon.",
+                instruction = "Investigate the secluded grove and old farm cave. Press one of " + Mod.instance.Config.riteButtons.ToString() + " to cast a rite at the quest icon.",
 
                 explanation = "I heard a voice in the cave, and it bid me to speak words in a forgotten dialect. " +
                     "I raised my hands, recited a chant, and a wooden effigy crashed to the floor, which then started to talk! " +
@@ -100,8 +98,6 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.none,
 
-                triggerScheme = IconData.schemes.weald,
-
                 origin = new Vector2(21, 10) * 64,
 
                 // -----------------------------------------------
@@ -111,7 +107,7 @@ namespace StardewDruid.Journal
                 description = "The Effigy says I need the favour of the Kings of Oak and Holly to begin my apprencticeship to the circle of Druids. " +
                 "He instructed me to pay homage to the forgotten monarchs at a sacred place in the secluded grove.",
 
-                instruction = "Investigate the standing stones in the grove west of the farmcave. Press " + Mod.instance.Config.riteButtons.ToString() + " to cast a rite at the quest icon.",
+                instruction = "Investigate the standing stones in the grove west of the farmcave. Press one of " + Mod.instance.Config.riteButtons.ToString() + " to cast a rite at the quest icon.",
 
                 explanation = "The voices that spoke from beyond the standing stones made me a squire, and the sword I received seems to brim with woodland magic.",
 
@@ -149,18 +145,13 @@ namespace StardewDruid.Journal
                             "So it is real. The power of the Druids.",
                             "I have a sword shaped like a branch. It's a stick of power."
                         },
-                        outro = "The energies of the Weald are unsettling. And dumb as rocks. Seek them out again if you would like to dedicate a different implement to the work of the Kings.",
-
+                        answers = new(){
+                            "The energies of the Weald are unsettling. And dumb as rocks. Seek them out again if you would like to dedicate a different implement to the work of the Kings.",
+                        }
                     }
                 },
 
                 // -----------------------------------------------
-
-                lore = new()
-                {
-                    LoreData.stories.Weald_Effigy,
-                    LoreData.stories.Effigy_self_1,
-                }
 
             };
 
@@ -303,7 +294,7 @@ namespace StardewDruid.Journal
 
                 description = "Years of stagnation have starved the valley of it's wilderness. I now have the means and power to recolour the barren spaces with new plant-life.",
 
-                instruction = "Perform Rite of the Weald: Wild Growth to sprout twenty forageables total in the Forest or elsewhere. Unlocks flowers.",
+                instruction = "Perform Rite of the Weald: Wild Growth to sprout twenty forageables total in the Forest or anywhere with lawn (grass tiles). Unlocks flowers.",
 
                 progression = "forageables spawned",
 
@@ -344,11 +335,11 @@ namespace StardewDruid.Journal
 
                 description = "My connection to the otherworld deepens. I may channel the power of the Two Kings to enhance the quality and growth of my crops.",
 
-                instruction = "Hold the rite button for 2-3 seconds while standing still to channel this effect. Complete 10 times. Converts planted seasonal wild seeds into domestic crops. Updates growth cycle of all planted seeds. Unlocks quality conversions.",
+                instruction = "While on the farm, hold the rite button for 2-3 seconds while standing still to channel this effect. Complete 5 times. Converts planted seasonal wild seeds into domestic crops. Updates growth cycle of all planted seeds. Unlocks quality conversions.",
 
                 progression = "cultivation rites completed",
 
-                requirement = 10,
+                requirement = 5,
 
                 reward = 1000,
 
@@ -434,8 +425,6 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.weald,
 
-                triggerScheme = IconData.schemes.weald,
-
                 origin = new Vector2(25f, 13f) * 64,
 
                 // -----------------------------------------------
@@ -488,8 +477,9 @@ namespace StardewDruid.Journal
                             "The rite disturbed some bats. BIG BATS.",
                             "I removed the pollutants from the aquifer. The water quality of the mountain springs has already started to recover."
                         },
-                        outro = "You have my gratitude. And there are still many more sacred places to restore.",
-
+                        answers = new(){
+                            "You have my gratitude. And there are still many more sacred places to restore.",
+                        }
                     }
                 },
 
@@ -521,8 +511,6 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.none,
 
-                triggerScheme = IconData.schemes.blueberry,
-
                 origin = new Vector2(30,19) * 64,
 
                 // -----------------------------------------------
@@ -532,7 +520,7 @@ namespace StardewDruid.Journal
                 description = "The Effigy believes the religious coven of large bats serve none other than the Lady Beyond the Shore. " +
                 "She has granted me an audience on a small atoll accessed from the furthest side of the beach. I'll have to repair the bridge to the tidal pools to reach it.",
 
-                instruction = "Travel to the beach south of Pelican town, past the small wooden bridge, the tidal pools, and across the sandbridge to the atoll. " +
+                instruction = "Travel to the beach south of Pelican town, past the small wooden bridge, the tidal pools, and onto a dinghy you can use to access the atoll. " +
                 "Cast the Rite of the Weald at the statue there.",
 
                 explanation = "I called out across the waves, imagining my voice travelling over the gem sea to an isle of mystery and magic. " +
@@ -557,6 +545,7 @@ namespace StardewDruid.Journal
                         intro = "The purification of the sacred waters has pleased a distant patron of the mists, the Lady Beyond the Shore. " +
                         "Perhaps you cannot hear her voice as I can, but it harkens to you. " +
                         "There is a special place east of the local shoreline where you can answer her call. " +
+                        "The servants of the Mists supply a vessel to cross the waters to the atoll, and this relic can be used to summon them if necessary. " +
                         "(New quest received)",
 
                     }
@@ -573,17 +562,13 @@ namespace StardewDruid.Journal
                             "The Lady has a beautiful voice. Bit loud though.",
                             "There was a bolt of lightning. There was a voice, like thunder. There was a gannet, it went 'squawk'. I wasn't scared though.",
                         },
-                        outro = "It takes a lot of power to speak over the distance between the valley and the isle of mists.",
-
+                        answers = new()
+                        {
+                            "It takes a lot of power to speak over the distance between the valley and the isle of mists.",
+                        },
                     }
                 },
 
-                lore = new()
-                {
-
-                    LoreData.stories.Mists_Effigy,
-
-                }
 
             };
 
@@ -649,7 +634,7 @@ namespace StardewDruid.Journal
 
                 description = "The raw energy provided by the mists is precise enough to charge artifacts with special power.",
 
-                instruction = "Rite of Mists has special interactions with various map-specific and crafted items, including warp statues, lightning rods, scarecrows and torch candles. " +
+                instruction = "Rite of Mists has special interactions with various map-specific and crafted items, including warp statues, lightning rods and scarecrows." +
                 "Perform ten of these interactions. See the Druid Effects journal for details.",
 
                 progression = "special interactions performed",
@@ -784,8 +769,6 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.none,
 
-                triggerScheme = IconData.schemes.weald,
-
                 origin = new Vector2(12f, 13f) * 64,
 
                 // -----------------------------------------------
@@ -863,8 +846,6 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.mists,
 
-                triggerScheme = IconData.schemes.blueberry,
-
                 origin = new Vector2(47f, 88f) * 64,
 
                 // -----------------------------------------------
@@ -918,10 +899,12 @@ namespace StardewDruid.Journal
                     [CharacterHandle.characters.Effigy] = new()
                     {
                         prompt = true,
-                        intro = "So they were acting on behalf of the Deep one. Hmmm. " +
-                        "Lord Deep was an elderborn noble who fell into obscurity in the aftermath of the war. " +
-                        "Or so my mentors told me. It appears he has gathered a small measure of power and resources. " +
-                        "He might send more forces to the surface to disturb the sacred places of the valley. We must be vigilant.",
+                        intro = //"So they were acting on behalf of the Deep one. Hmmm. " +
+                        //"Lord Deep was an elderborn noble who fell into obscurity in the aftermath of the war. " +
+                        //"Or so my mentors told me. It appears he has gathered a small measure of power and resources. " +
+                        "Whomever the Deep one is, his interest in the valley has caused no small measure of trouble. " +
+                        "I wonder if his presence here relates to the re-emergence of the Jelly fiend, and the desecration of the aquifer. " +
+                        "He might send more forces to the surface to disturb the sacred places. We must be vigilant.",
                     }
                 },
 
@@ -929,90 +912,6 @@ namespace StardewDruid.Journal
 
             quests.Add(challengeMists.name, challengeMists);
 
-
-            // =====================================================
-            // RELICS QUESTS
-
-            Quest relicWeald = new()
-            {
-
-                name = QuestHandle.relicWeald,
-
-                type = Quest.questTypes.relics,
-
-                icon = IconData.displays.weald,
-
-                // -----------------------------------------------
-
-                give = Quest.questGivers.none,
-
-                trigger = true,
-
-                triggerLocation = "CommunityCenter",
-
-                triggerTime = 0,
-
-                triggerRite = Rite.rites.weald,
-
-                triggerScheme = IconData.schemes.grannysmith,
-
-                origin = new Vector2(14, 22) * 64,
-
-                // -----------------------------------------------
-
-                title = "The Runestones",
-
-                description = "I have gathered all the runestones crafted by the founding members of the circle of druids. " +
-                "Ironically, during the course of the recovery of the runestones, I gained enough experience to master the powers my forebearers sought to acquire, and so the runestones themselves offer little use to me now. " +
-                "Perhaps they might attain some status, and inspire some new art, if I put them on display in the craftsroom of the local community center.",
-
-                instruction = "Perform a Rite of the Weald in the craftroom in the community center.",
-
-                explanation = "I placed the runestones in organised positions around the craftsroom, and incidentally created a happy zone of harmonised energies.",
-
-            };
-
-            quests.Add(relicWeald.name, relicWeald);
-
-            Quest relicMists = new()
-            {
-
-                name = QuestHandle.relicMists,
-
-                type = Quest.questTypes.relics,
-
-                icon = IconData.displays.mists,
-
-                // -----------------------------------------------
-
-                give = Quest.questGivers.none,
-
-                trigger = true,
-
-                triggerLocation = "CommunityCenter",
-
-                triggerTime = 0,
-
-                triggerRite = Rite.rites.mists,
-
-                triggerScheme = IconData.schemes.blueberry,
-
-                origin = new Vector2(40, 9) * 64,
-
-                // -----------------------------------------------
-
-                title = "The Avalant",
-
-                description = "I have gathered all the major components of the Avalant, an ancient navigation device used for passage to a city drowned within the abyssal trench. " +
-                "I do not have the means to explore the trench, but I could use the components to spruce up the disused fishtank in the community center.",
-
-                instruction = "Perform a Rite of Mists at the fish tank in the community center.",
-
-                explanation = "Through artifice bolstered by the power of the Lady Beyond the Shore, the repairs have been completed.",
-
-            };
-
-            quests.Add(relicMists.name, relicMists);
 
             // =====================================================
             // SWORD STARS
@@ -1030,7 +929,7 @@ namespace StardewDruid.Journal
 
                 give = Quest.questGivers.dialogue,
 
-                trigger = false,
+                trigger = true,
 
                 triggerLocation = Location.LocationData.druid_chapel_name,
 
@@ -1038,15 +937,13 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.stars,
 
-                triggerScheme = IconData.schemes.apple,
-
                 origin = new Vector2(27, 16) * 64,
 
                 // -----------------------------------------------
 
                 title = "The Star Chapel",
 
-                description = "The Effigy recommends that I apprentice myself to a master of starcraft, that I might gain power enough to match the Deep One.",
+                description = "The Effigy recommends that I apprentice myself to a master of starcraft, that I might gain power enough to protect the sacred Spaces against the Deep one.",
 
                 instruction = "The Star Chapel can be accessed by using the Guardian Lantern in the relics journal while on floor sixty (level 60) of the local mines.",
 
@@ -1090,20 +987,13 @@ namespace StardewDruid.Journal
                             "The revenant of the last Guardian of the Star has agreed to teach me starcraft.",
                             "How long will it take for me to become as ancient and awkward as you and your friends?",
                         },
-                        outro = "The revenant has waited a long time for a resolution to his plight, something I have been unable to give. Now our hopes are vested with you. ",
+                        answers = new()
+                        {
+                            "The revenant has waited a long time for a resolution to his plight, something I have been unable to give. Now our hopes are vested with you. ",
+                        }
 
                     }
                 },
-
-                lore = new()
-                {
-
-                    LoreData.stories.Stars_Effigy,
-                    LoreData.stories.Stars_Revenant,
-
-                    LoreData.stories.Revenant_self_1,
-
-                }
 
             };
 
@@ -1231,8 +1121,6 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.stars,
 
-                triggerScheme = IconData.schemes.apple,
-
                 origin = new Vector2(79f, 78f) * 64,
 
                 // -----------------------------------------------
@@ -1315,8 +1203,6 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.mists,
 
-                triggerScheme = IconData.schemes.blueberry,
-
                 origin = new Vector2(28, 10f) * 64,
 
                 // -----------------------------------------------
@@ -1390,8 +1276,6 @@ namespace StardewDruid.Journal
 
                 triggerTime = 0,
 
-                triggerScheme = IconData.schemes.Ruby,
-
                 origin = new Vector2(27, 15) * 64,
 
                 // -----------------------------------------------
@@ -1446,7 +1330,9 @@ namespace StardewDruid.Journal
                     [CharacterHandle.characters.Revenant] = new()
                     {
                         prompt = true,
-                        intro = "Hail to you, dragon slayer. Judging by the fact you have his relics, I'd say the old champion of our order has passed on. It is a small comfort to know he is no longer bound to the Fates.",
+                        intro = "Hail to you, dragon slayer. Judging by the fact you have his relics, I'd say the old champion of our order has passed on. " +
+                        "I was his squire, so it is a small comfort to know he has not been bound by the Fates. " +
+                        "You get the title of Knight Guardian, though there's not much point in a ceremony for it, unless you want to host a congregation of winged rodents.",
                     },
                 },
 
@@ -1532,22 +1418,10 @@ namespace StardewDruid.Journal
                     [CharacterHandle.characters.Effigy] = new()
                     {
                         prompt = true,
-                        intro = "The Fae Court sent a mere low-ranking courtier to entreat with you, and not even of their nobility, but one of their anthropomorphic entertainers. It seems almost farcical. I'm unsure what to make of this occurance.",
+                        intro = "The Fae Court sent a mere low-ranking courtier to entreat with you, and not even of their nobility, but one of their anthropomorphic entertainers. It seems almost farcical. I'm unsure what to make of this occurrence.",
                     },
                 },
 
-                lore = new()
-                {
-
-                    LoreData.stories.Effigy_Jester_1,
-
-                    LoreData.stories.Jester_Effigy_1,
-                    LoreData.stories.Jester_self_1,
-
-                    LoreData.stories.Fates_Effigy,
-                    LoreData.stories.Fates_Jester,
-
-                }
             };
 
             quests.Add(approachJester.name, approachJester);
@@ -1575,8 +1449,6 @@ namespace StardewDruid.Journal
                 triggerTime = 0,
 
                 triggerRite = Rite.rites.none,
-
-                triggerScheme = IconData.schemes.fates,
 
                 origin = new Vector2(27, 99) * 64,
 
@@ -1778,8 +1650,6 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.none,
 
-                triggerScheme = IconData.schemes.Void,
-
                 origin = new Vector2(29f, 56f) * 64,
 
                 // -----------------------------------------------
@@ -1823,7 +1693,7 @@ namespace StardewDruid.Journal
                     [CharacterHandle.characters.Buffin] = new()
                     {
                         prompt = true,
-                        intro = "I'll always remember the joy of seeing an ancient reptile smash through that funnily dressed man's wooden palace.",
+                        intro = "I'll always remember the joy of seeing an ancient reptile smash through that funnily dressed man's palace of books.",
                     },
 
                 },
@@ -1882,9 +1752,8 @@ namespace StardewDruid.Journal
                     [CharacterHandle.characters.Buffin] = new()
                     {
                         prompt = true,
-                        intro = "Faeth, in the hands of a human? The artisans will be furious to see a mortal in possession of their sacred liquor. " +
-                        "Then again, you seem remarkably unfazed by the emotions of the court, so I agree to lend you this common court cup. " +
-                        "Remember to visit me again! I am willing to trade trifles of the Fates for stories of your exploits or random trinkets in your bag. " +
+                        intro = "Jester thinks you're competent enough to handle Faeth. I like to imagine how the Artisans will react to the sight of a mortal in possession of their sacred liquor. " +
+                        "Of course you'll need this trinket to contain the melted essence. Remember to visit me again tomorrow! I would very much like to know the results. " +
                         "(New lesson received)",
                     },
 
@@ -1902,7 +1771,7 @@ namespace StardewDruid.Journal
 
                 name = QuestHandle.challengeFates,
 
-                icon = IconData.displays.buffin,
+                icon = IconData.displays.fates,
 
                 type = Quest.questTypes.challenge,
 
@@ -1912,11 +1781,9 @@ namespace StardewDruid.Journal
 
                 triggerLocation = LocationData.druid_court_name,
 
-                triggerTime = 0,
+                triggerTime = 1700,
 
                 triggerRite = Rite.rites.none,
-
-                triggerScheme = IconData.schemes.Void,
 
                 origin = new Vector2(30, 20) * 64,
 
@@ -1928,7 +1795,7 @@ namespace StardewDruid.Journal
                 instruction = "Cast Rite of the Fates after 5pm at the trigger marker within the Court of Fates and Chaos",
 
                 explanation =
-                        "I took up a defensible within the Court of Fates and Chaos and waited for the light to dim. " +
+                        "The Circle of Druids gathered within the Court of Fates and Chaos and waited for the light to dim. " +
                         "The Shadowfolk mercenary company I drove from the town a couple of weeks ago emerged en-masse from the tunnel system that adjoins the cavern. " +
                         "It was a brutal melee, as the shadowfolk's voided nature made them resilient to the blessed weapons and powers of my allied forces. " +
                         "Yet the mercenaries did not have the conviction to see the fight through, and abandoned their leader to face the reckoning of the circle. " +
@@ -1976,6 +1843,7 @@ namespace StardewDruid.Journal
 
             quests.Add(challengeFates.name, challengeFates);
 
+
             // =====================================================
             // SWORD ETHER (CUTLASS)
 
@@ -2000,8 +1868,6 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.none,
 
-                triggerScheme = IconData.schemes.ether,
-
                 origin = new Vector2(27, 15) * 64,
 
                 // -----------------------------------------------
@@ -2010,7 +1876,7 @@ namespace StardewDruid.Journal
 
                 description = "Shadowtin Bear has divulged the intentions of Lord Deep and his shadowy allies. " +
                 "They hunt for the power of the ancient race of Dragons, who were diminished in their vain war against the Elderborn for the Fallen Star. " +
-                "The best lead is the Tomb of the Tyrannus, once master of the shamans of Calico, and the Revenant has provided the means to reach it.",
+                "The best lead is the Tomb of Tyrannus Jin, once master of the shamans of Calico, and the Revenant has provided the means to reach it.",
 
                 instruction = "Travel to the entrance of the Skull Cavern in Calico Desert, and use the Ceremonial Lantern in the relics journal to access the Tomb.",
 
@@ -2036,7 +1902,8 @@ namespace StardewDruid.Journal
                         questContext = 1,
                         intro = "I confess, this partnership with the mercenary captain infuriates me. " +
                         "If it was my decision, he would be stripped of his ill-gotten trinkets and sent him back to Lord Deep in shame, as a warning to those that would disturb the sanctity of the valley. " +
-                        "Perhaps that is merely vindictiveness on my part. I have no recourse for this... anger I feel. I have little comprehension of the events described in the text the captain provided, but perhaps our revenant friend would be able to assist. " +
+                        "Perhaps that is merely vindictiveness on my part. I have no recourse for this... anger I feel. " +
+                        "I have little comprehension of the events described in the text the captain provided, but perhaps our revenant friend would be able to assist. " +
                         "He is more clear-headed, if only because his skull is empty.",
 
 
@@ -2054,7 +1921,7 @@ namespace StardewDruid.Journal
                             "Ah. so all this time, that annal was hiding in the haunted halls of the followers of the Reaper. Those guys were a bunch of crazies. " +
                             "They styled the Reaper of Fate as the great avenger of humanity, and made sure the veterans of the war couldn't live in peace. " +
                             "That's one of the reasons why your Lady Beyond left for the Isle. Once there were no more Elderborn around, the crazies started to point fingers at the circle, at those that revere the Old Monarchs and the Stars. " +
-                            "So good Knight Wyrven left to confront them. Shortly afterwards, the Reaper attacked us openly. I was cursed, and all our secrets were laid bare, including the location of the Tyrant Djinn's tomb. " +
+                            "So good Knight Wyrven left to confront them. Shortly afterwards, the Reaper attacked us openly. I was cursed, and all our secrets were laid bare, including the location of the Tyrant of Calico's tomb. " +
                             "Now, this lamp here is one of the few things that remains of ancient Calico culture. You'll find the tomb in the cavern of skulls in the desert waste. " +
                             "This guiding lamp is yours, but it comes with a warning, too. The place was given the skull moniker for good reason. "+
                             "(New quest received)",
@@ -2069,37 +1936,18 @@ namespace StardewDruid.Journal
                     [CharacterHandle.characters.Revenant] = new()
                     {
                         prompt = true,
-                        intro = "You have vanquished the Reaper, but my curse remains. What duty have I yet to fulfill, and to who, the Fates, or the Stars?"
+                        intro = "You have vanquished the Reaper, but my curse remains. (Revenant turns to the chapel altar) That can only mean, the duty I have yet to fulfil. But when, when will I be free to pass on. Only the oracles know."
                     },
                     [CharacterHandle.characters.Jester] = new()
                     {
                         prompt = true,
-                        intro = "(Jester's eyes have turned a sullen green) I want to go home. Buffin was right."
+                        intro = "(Jester's eyes have turned a sullen green) I want to go home... Buffin was right."
                     },
                 },
-
-                lore = new()
-                {
-
-                    LoreData.stories.Effigy_Shadowtin_1,
-
-                    LoreData.stories.Jester_Shadowtin_1,
-
-                    LoreData.stories.Shadowtin_Effigy_1,
-                    LoreData.stories.Shadowtin_Jester_1,
-                    LoreData.stories.Shadowtin_self_1,
-
-                    LoreData.stories.Ether_Effigy,
-                    LoreData.stories.Ether_Jester,
-                    LoreData.stories.Ether_Shadowtin,
-
-                }
 
             };
 
             quests.Add(swordEther.name, swordEther);
-
-
 
             // =====================================================
             // ETHER LESSONS
@@ -2115,7 +1963,7 @@ namespace StardewDruid.Journal
 
                 give = Quest.questGivers.dialogue,
 
-                title = "Lesson Sixteen: Dragon Form",
+                title = "Lesson 16: Dragon Form",
 
                 description = "I can feel the streams of ether rushing softly under my finger tips, and then my wing tips as I allow them to lift me into the sky.",
 
@@ -2130,24 +1978,13 @@ namespace StardewDruid.Journal
                 before = new()
                 {
 
-                    [CharacterHandle.characters.Jester] = new()
-                    {
-                        prompt = true,
-                        questContext = 1,
-                        intro = "Thanatoshi... (Jester casts his sights downward) " +
-                        "He must have tried to use the tooth of the Prime to divine a path to the Fallen Star, but it proved too much for him, and drove him mad. " +
-                        "(Jester looks hopefully at you) I think it's Yoba's that you found the dragontooth, farmer. You'll find a way where Thanatoshi and I couldn't.",
-
-                    },
                     [CharacterHandle.characters.Shadowtin] = new()
                     {
                         prompt = true,
-                        questContext = 1,
                         intro = "The shamans of the Calico civilisation practiced the ancient art of transfiguration. " +
                         "They liked to become large cats, mostly, in deference to their dragon overlord. " +
-                        "I suspect that the instrument you acquired from the Reaper of Fate carries the ether-bound memories of all the shapeshifters and the Tyrant Djinn himself. " +
-                        "Thus, the guise of an ancient one seems a natural result from it's use. " +
-                        "That's my theory anyway. (New lesson received)",
+                        "It seems you have an affinity for the technique, as you have acquired it by proxy, even without studying this Dragonomicon. " +
+                        "(New lesson received)",
 
                     },
 
@@ -2168,11 +2005,11 @@ namespace StardewDruid.Journal
 
                 give = Quest.questGivers.dialogue,
 
-                title = "Lesson Seventeen: Dragon Breath",
+                title = "Lesson 17: Dragon Breath",
 
                 description = "I draw the ether in, then expel it as a torrent of violent energy.",
 
-                instruction = "Perform ten firebreath attacks with the special button / right click. Uses directional targetting. Quest completion enables monster immolation.",
+                instruction = "Perform twenty firebreath attacks with the special button / right click. Uses directional targetting. Quest completion enables monster immolation.",
 
                 progression = "firebreath attacks",
 
@@ -2187,7 +2024,7 @@ namespace StardewDruid.Journal
                     {
                         prompt = true,
                         intro = "Ether is extremely volatile when compelled into a material state. In the darkened realm, we employ it's use in all manner of combustion powered machinery. " +
-                        "The light produced is gentle to our eyes. Be careful with your channelling, and don't practice near any incendiaries!" +
+                        "The light produced is gentle to our eyes. Be careful with your channelling, and don't practice near any incendiaries! " +
                         "(New lesson received)",
 
                     }
@@ -2208,9 +2045,9 @@ namespace StardewDruid.Journal
 
                 give = Quest.questGivers.dialogue,
 
-                title = "Lesson Eighteen: Dragon Dive",
+                title = "Lesson 18: Dragon Dive",
 
-                description = "The ether flows everywhere, through the thickened forest, the rugged mountain, and the frigid depths",
+                description = "The ether flows everywhere, through the thickened forest, the rugged mountain, and the frigid depths.",
 
                 instruction = "Fly onto the water and perform ten dives with the special button/right click.",
 
@@ -2237,6 +2074,92 @@ namespace StardewDruid.Journal
             quests.Add(etherThree.name, etherThree);
 
 
+            // =====================================================
+            // QUEST SHADOWTIN
+
+            Quest questShadowtin = new()
+            {
+
+                name = QuestHandle.questShadowtin,
+
+                type = Quest.questTypes.heart,
+
+                icon = IconData.displays.shadowtin,
+
+                // -----------------------------------------------
+
+                give = Quest.questGivers.dialogue,
+
+                trigger = true,
+
+                triggerLocation = "Forest",
+
+                triggerTime = 0,
+
+                triggerRite = Rite.rites.none,
+
+                origin = new Vector2(60f, 20f) * 64,
+
+                // -----------------------------------------------
+
+                title = "The Shadow Scholar",
+
+                description = "Shadowtin has busied himself with the measurement of streams of ether manipulated by my transformative powers. " +
+                "This research has led him to a nexus of streams within Cindersap Forest, a remote bunker secured by a lock-system of dwarven design. " +
+                "Shadowtin has managed to source an access key, and would like me to be present when he investigates the secrets of the bunker.",
+
+                instruction = "Meet Shadowtin Bear outside Marnie's Ranch in Cindersap Forest with 5 - 6 hours to spare. Perform any rite at the marker to trigger the quest.",
+
+                explanation = "Shadowtin managed to open the door to the nexus bunker with an accesskey from the local dwarf merchant. Inside was a large ether-fuelled machine. " +
+                "Incidentally, the place was booby-trapped with a contraption that turned Shadowtin into a panicked feline. " +
+                "The local wizard discovered the ruckus and demanded a duel to test our worthiness of the secrets of the machine, a shrine engine that powers the Valley warp network. " +
+                "I defeated the wizard, and he revealed that he had discovered a specification for the machine in a recently unearthed cache nearby. " +
+                "We investigated the site, only to find the hollowed skull of a pumpkin demon, with a note from a past Druid of the Circle, but nothing else to further Shadowtin's cause. " +
+                "Shadowtin's former gang approached, with the dwarf as hostage. " +
+                "Shadowtin traded a map of ether-currents for the dwarf's safety, a valuable exchange, as the map indicates the locations of other ether-sealed caches littered throughout the valley. " +
+                "The race to uncover the buried secrets of the Circle of Druids begins.",
+
+                reward = 5000,
+
+                // -----------------------------------------------
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Shadowtin] = new()
+                    {
+                        prompt = true,
+                        intro = "Archdruid. I noticed how your transformation has an odd effect on the currents of ether that flow through the valley. " +
+                        "I never thought to study them before, but with your inspiration, I have managed to make a crude chart. " +
+                        "(Shadowtin presents an articulate map of ether flows with intricate signs and labels) " +
+                        "It appears the currents converge at a nexus, at this point in the nearby Forest. " +
+                        "There's a concealed bunker there, secured with a lock-system of dwarven origin, but I have managed to source an access key from one of my mercenary contacts." +
+                        "I doubt the truths I seek lay inside, but regardless, I think it would be beneficial to the circle to be present for the discovery. " +
+                        "Though I would recommend leaving our friends at home, as they might scare my contact. (New quest recieved)",
+
+                    },
+                    [CharacterHandle.characters.Jester] = new()
+                    { 
+                        prompt = true,
+                        questContext = 1,
+                        intro = "Metalface is planning for an adventure, and I was excited about it, but when I asked him where we were going he said somewhere that doesn't allow pets. " +
+                        "I said that Fates aren't allowed to keep pets either, then he seemed to get annoyed. Maybe you can talk to him and clear up this whole misunderstanding.",
+                    
+                    },
+
+                },
+
+                after = new()
+                {
+
+
+                },
+
+            };
+
+            quests.Add(questShadowtin.name, questShadowtin);
+
+
             Quest etherFour = new()
             {
 
@@ -2248,17 +2171,88 @@ namespace StardewDruid.Journal
 
                 give = Quest.questGivers.dialogue,
 
-                title = "Lesson Nineteen: Dragon Treasure",
+                title = "Lesson 19: Dragon Treasure",
 
                 description = "The ancient ones hoarded their immeasurable treasures in vaults of the ethereal realm, where only they could enjoy them.",
 
-                instruction = "Claim 7 dragon treasures. Search for the ether symbol on large map locations (Forest, Beach, Mountain, RailRoad, Desert, Island etc).  Move over the spot and either dig or dive (special/right click button) to claim the dragon treasure. Be careful, you might have to fight to keep the treasure contents.",
+                instruction = "Claim 5 dragon treasures. Search for the ether symbol on these large map locations: Cindersap Forest, Beach, Mountain, Desert, Island-West, Atoll and Bug-Land.  " +
+                "Move over the spot and either dig or dive (special/right click button) to claim the dragon treasure. Be careful, you might have to fight to keep the treasure contents. Mastery spawns dig spots in mineshafts.",
 
                 progression = "treasures claimed",
 
-                requirement = 7,
+                requirement = 5,
 
                 reward = 1000,
+
+                before = new()
+                {
+                    
+                    [CharacterHandle.characters.Jester] = new()
+                    {
+                        prompt = true,
+                        questContext = 1,
+                        intro = "Woodface showed me how to use my nose to track the scent of prey. Then he told me to hunt vermin like a good farmcat. " +
+                        "Am I a just a joke to him? Because I like jokes. Anyway, I tracked a different kind of pest, Shadowtin's old gang! " +
+                        "They have been out searching for dragon troves, using what looks to me like an ancient treasure map. We should ask our friend how to beat his pals to the prizes. " +
+                        "(Shadowtin has a new lesson)",
+
+                    },
+
+                    [CharacterHandle.characters.Shadowtin] = new()
+                    {
+                        prompt = true,
+                        intro = 
+
+                        "About the map. I hope to make amends for its loss by offering you this ether-pressure gauge, which should help you locate more nodes of concentrated ether. " +
+                        "I suspect that a lot of the hidden troves contain treasures sealed by Dragons and their servants, " +
+                        "who would have taught the technique to your forebearers, so your bound to find more than just books and weird skulls." +
+                        "The gauge might also help with some of your more audacious alchemical experiments. " +
+                        "(New lesson received)",
+
+                    },
+
+
+                },
+
+            };
+
+            quests.Add(etherFour.name, etherFour);
+
+            // =====================================================
+            // Challenge Ether
+
+            Quest challengeEther = new()
+            {
+
+                name = QuestHandle.challengeEther,
+
+                icon = IconData.displays.ether,
+
+                type = Quest.questTypes.challenge,
+
+                give = Quest.questGivers.dialogue,
+
+                trigger = true,
+
+                triggerLocation = LocationData.druid_gate_name,
+
+                triggerRite = Rite.rites.none,
+
+                origin = new Vector2(28, 9) * 64,
+
+                title = "The Sealed Gate",
+
+                description = "The Effigy suggests that I explore the forlorn woodland estate of the Two Kings, a place frequently mentioned in the texts cached by the Lady Beyond. " +
+                "The estate interior is secured by an ancient gate, brandished in iconography associated with the Mother of Crows, " +
+                "the venerable Artisan of the Fates, the first patron of the Circle.",
+
+                instruction = "Cast any rite at the Sealed Gate, accessible from the path in the northern part of the Druid's Grove.",
+
+                explanation =
+                        "I prayed before the ancient gate, and entreated the Crowmother for her blessing, but it was not a Fate that answered, but a fiend.",
+
+
+                reward = 10000,
 
                 before = new()
                 {
@@ -2266,28 +2260,203 @@ namespace StardewDruid.Journal
                     [CharacterHandle.characters.Shadowtin] = new()
                     {
                         prompt = true,
-                        intro = "Many of the testimonies from the time of the ancient war have been stored in caches throughout the valley, " +
-                        "sealed with weaves of ether by the Circle of Druids, to keep them from the zealots that served the Mortician's of Fate. " +
-                        "The Circle hoped for a descendant strong enough to ascend to dragon form and break the seals. " +
-                        "I believe some of those secrets should reveal the history and plight of my folk, and you're just what we need to reclaim them. " +
-                        "(New lesson received)",
+                        questContext = 1,
+                        intro = "Archdruid. You've done well to gather so many texts and relics from the Circle's past. " +
+                        "It seems we have assembled all the pieces of a shattered picture, but I struggle to see how it all fits back together. " +
+                        "The cat and fox seem more interested in playing an adolescent game called shadows and searchlights. I always end up being the shadow. " +
+                        "The Effigy is familiar with one detail from our investigation. The 'Mother of Crows'. Something about that name has stirred the scarecrow. " +
+                        "(The Effigy has a new quest)",
 
                     },
-                    [CharacterHandle.characters.Jester] = new()
+                    [CharacterHandle.characters.Effigy] = new()
                     {
                         prompt = true,
-                        intro = "Woodface showed me how to use my nose to track the scent of prey. Then he told me to hunt vermin like a good farmcat. " +
-                        "Am I a just a joke to him? Because I like jokes. Anyway, I tracked a different kind of pest, Shadowtin's old gang! " +
-                        "They have been out searching for dragon treasure, using a tracking device they got from the dark plane. I think we should find it before they do. " +
-                        "(New lesson received)",
+                        intro = "Successor, though I think the personal endeavours of the Envoy and Scholar should be of no concern to the circle, it, well, it pleases me to provide counsel where I can. ",
+                        responses = new()
+                        {
 
-                    }
+                            "I'm glad to hear you want to help our friends. The fellowship of the members of our circle is it's own gift, as powerful as any blessing from our patrons.",
+                            "You're going to talk about the first farmer again, aren't you.",
 
+                        },
+                        answers = new()
+                        {
+                            "Within the ruined estate of the sleeping monarchs, deep in the woodlands, stands a gate designed by the Mother of Crows, with a mural that venerates her careful work. " +
+                            "The first time I visited the estate, it was already a field of scorched rubble, and the crowmother had long since returned to the Fae Court. " +
+                            "The first farmer and other Druids held the opinion that the place should be left destitute and never mentioned again. " +
+                            "From the testimonies in texts you recovered, I have gained a better understanding of their prejudice towards the place, as many desired to forget the terrors of the war and the fall of the elder-kingdom. " +
+                            "Now its time for the circle to reclaim the seat of the Weald. " +
+                            "The path lies under the brambled walls of the woodlands north of the sacred grove."
+
+                        }
+
+                    },
                 },
+
 
             };
 
-            quests.Add(etherFour.name, etherFour);
+            quests.Add(challengeEther.name, challengeEther);
+
+
+            // =====================================================
+            // RELICS QUESTS
+
+            Quest relicWeald = new()
+            {
+
+                name = QuestHandle.relicWeald,
+
+                type = Quest.questTypes.relics,
+
+                icon = IconData.displays.weald,
+
+                // -----------------------------------------------
+
+                give = Quest.questGivers.none,
+
+                trigger = true,
+
+                triggerLocation = "CommunityCenter",
+
+                triggerTime = 0,
+
+                triggerRite = Rite.rites.weald,
+
+                origin = new Vector2(14, 22) * 64,
+
+                // -----------------------------------------------
+
+                title = "The Runestones",
+
+                description = "I have gathered all the runestones crafted by the founding members of the circle of druids. " +
+                "Ironically, during the course of the recovery of the runestones, I gained enough experience to master the powers my forebearers sought to acquire, and so the runestones themselves offer little use to me now. " +
+                "Perhaps they might attain some status, and inspire some new art, if I put them on display in the craftsroom of the local community center.",
+
+                instruction = "Perform a Rite of the Weald in the craftroom in the community center.",
+
+                explanation = "I placed the runestones in organised positions around the craftsroom, and incidentally created a happy zone of harmonised energies. Then the forest spirits took the runestones off the wall and decorated the craftroom with pictures of happy apples.",
+
+            };
+
+            quests.Add(relicWeald.name, relicWeald);
+
+            Quest relicMists = new()
+            {
+
+                name = QuestHandle.relicMists,
+
+                type = Quest.questTypes.relics,
+
+                icon = IconData.displays.mists,
+
+                // -----------------------------------------------
+
+                give = Quest.questGivers.none,
+
+                trigger = true,
+
+                triggerLocation = "CommunityCenter",
+
+                triggerTime = 0,
+
+                triggerRite = Rite.rites.mists,
+
+                origin = new Vector2(40, 9) * 64,
+
+                // -----------------------------------------------
+
+                title = "The Avalant",
+
+                description = "I have gathered all the major components of the Avalant, an ancient navigation device used for passage to a city drowned within the abyssal trench. " +
+                "I do not have the means to explore the trench, but I could use the components to spruce up the disused fishtank in the community center.",
+
+                instruction = "Perform a Rite of Mists at the fish tank in the community center.",
+
+                explanation = "Through artifice bolstered by the power of the Lady Beyond the Shore, the repairs have been completed to the derelict fish tank. Then the forest spirits replaced it with a better model.",
+
+            };
+
+            quests.Add(relicMists.name, relicMists);
+
+
+            Quest relicFates = new()
+            {
+
+                name = QuestHandle.relicFates,
+
+                type = Quest.questTypes.relics,
+
+                icon = IconData.displays.fates,
+
+                // -----------------------------------------------
+
+                give = Quest.questGivers.none,
+
+                trigger = true,
+
+                triggerLocation = "CommunityCenter",
+
+                triggerTime = 0,
+
+                triggerRite = Rite.rites.fates,
+
+                origin = new Vector2(45, 12) * 64,
+
+                // -----------------------------------------------
+
+                title = "Keepsake Boxes",
+
+                description = "There are many memories plastered on the walls and bulletin board of the community center, and all of them will have a home in the keepsake boxes left behind by the Fates that once served this very community.",
+
+                instruction = "Perform a Rite of the Fates at the bulletin board in the community center.",
+
+                explanation = "As I placed the last wall-dried photograph away, I sensed a spell of goodwill had just spouted and spread over the community. Then I raced after a forest spirit who tried to put the keepsake boxes in storage.",
+
+            };
+
+            quests.Add(relicFates.name, relicFates);
+
+
+            Quest relicEther = new()
+            {
+
+                name = QuestHandle.relicEther,
+
+                type = Quest.questTypes.relics,
+
+                icon = IconData.displays.ether,
+
+                // -----------------------------------------------
+
+                give = Quest.questGivers.none,
+
+                trigger = true,
+
+                triggerLocation = "CommunityCenter",
+
+                triggerTime = 0,
+
+                triggerRite = Rite.rites.ether,
+
+                origin = new Vector2(14, 4) * 64,
+
+                // -----------------------------------------------
+
+                title = "Antiquated Recipes",
+
+                description = "Fearing zealots, the Lady Beyond stashed away several important texts, including testimonies of the war for the fallen star, and the efforts of the first circle to restore the Weald. " +
+                "Though I have recovered these records, there is not much that would make sense to the community of today, save for some cooking and gardening instructions. I'll add them to the cooking digests in the community pantry. ",
+
+                instruction = "Perform a Rite of the Ether in the pantry in the community center.",
+
+                explanation = "I added the ether-smudged book of recipes, tips and poetry to the other digests in the disused pantry. " +
+                "It felt right, like a piece missing from the community's collection had finally been restored. Then all the shelves collapsed and I had to call the forest spirit repair service.",
+
+            };
+
+            quests.Add(relicEther.name, relicEther);
+
 
             return quests;
 
@@ -2335,8 +2504,6 @@ namespace StardewDruid.Journal
 
         public Rite.rites triggerRite = Rite.rites.none;
 
-        public IconData.schemes triggerScheme = IconData.schemes.none;
-
         // -----------------------------------------------
         // journal
 
@@ -2364,11 +2531,6 @@ namespace StardewDruid.Journal
         public Dictionary<CharacterHandle.characters, Dialogue.DialogueSpecial> before = new();
 
         public Dictionary<CharacterHandle.characters, Dialogue.DialogueSpecial> after = new();
-
-        // -----------------------------------------------
-        // lore
-
-        public List<LoreData.stories> lore = new();
 
     }
 

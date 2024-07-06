@@ -481,7 +481,7 @@ namespace StardewDruid.Cast.Weald
             // Large Feature iteration
             // ---------------------------------------------
 
-            if(radialCounter != 8)
+            if (radialCounter != 8)
             {
 
                 return;

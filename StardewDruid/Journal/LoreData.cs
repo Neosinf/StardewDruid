@@ -26,15 +26,19 @@ namespace StardewDruid.Journal
 
                 case characters.Jester:
 
-                    return "(lore) What is the mission of the Jester of Fate?";
+                    return "(lore) I have some questions about your quest";
 
                 case characters.Revenant:
 
                     return "(lore) After so many years, you must have a lot to talk about.";
 
+                case characters.Buffin:
+
+                    return "(lore) I'm eager to know the Chaos perspective on things happening around here";
+
                 case characters.Shadowtin:
 
-                    return "(lore) Do you have time to talk about the Undervalley?";
+                    return "(lore) Do you have time to talk?";
 
             }
 
@@ -59,6 +63,10 @@ namespace StardewDruid.Journal
 
                     return "The Revenant: The bats are chatty. So I never want for something to talk to. Or yell at.";
 
+                case characters.Buffin:
+
+                    return "The Buffoonette of Chaos: Sure... listening to the Stream's opinions is like hearing a cryptic riddle spoken underwater.";
+
                 case characters.Shadowtin:
 
                     return "Shadowtin Bear: Certainly. As long as the discussion relates to treasure. Or Dragons.";
@@ -69,34 +77,165 @@ namespace StardewDruid.Journal
 
         public enum stories
         {
+            //------------------           
             
-            Weald_Effigy,
-
-            Mists_Effigy,
-            
+            Effigy_Weald,
             Effigy_self_1,
-            Effigy_Jester_1,
-            Effigy_Shadowtin_1,
 
-            Stars_Effigy,
-            Stars_Revenant,
+            //------------------
 
+            Effigy_Mists,
+
+            //------------------
+            
+            Effigy_self_2,
+
+            //------------------
+
+            Effigy_Stars,
+            Revenant_Stars,
             Revenant_self_1,
 
-            Jester_Effigy_1,
-            Jester_self_1,
-            Jester_Shadowtin_1,
+            //------------------
 
-            Fates_Effigy,
-            Fates_Jester,
-            
-            Shadowtin_Effigy_1,
-            Shadowtin_Jester_1,
+            Effigy_Jester,
+            Jester_Effigy,
+            Jester_self_1,
+            Jester_Fates,
+            Revenant_Fates,
+
+            //------------------
+
+            Effigy_Buffin,
+            Jester_Buffin,
+            Revenant_court,
+            Revenant_Marlon,
+
+            //------------------
+
+            Effigy_Shadowtin,
+            Jester_Shadowtin,
+            Shadowtin_Effigy,
+            Shadowtin_Jester,
             Shadowtin_self_1,
+            Buffin_court,
+
+            //------------------
+
+            Effigy_Ether,
+            Jester_Ether,
+            Shadowtin_Ether,
+            Revenant_Ether,
+            Buffin_Ether,
+
+            //------------------
+
+            Effigy_Circle,
+            Effigy_Circle_2,
+            Jester_Circle,
+            Revenant_Circle,
+            Buffin_Circle,
+            Shadowtin_Circle,
+
+        }
+
+        public static Dictionary<string,List<stories>> StorySets()
+        {
             
-            Ether_Effigy,
-            Ether_Jester,
-            Ether_Shadowtin,
+            Dictionary<string, List<stories>> storySets = new()
+            {
+
+                [QuestHandle.swordWeald] = new(){
+                    LoreData.stories.Effigy_Weald,
+                    LoreData.stories.Effigy_self_1,
+                },
+
+                [QuestHandle.swordMists] = new(){
+                    LoreData.stories.Effigy_Mists,
+                },
+
+                [QuestHandle.questEffigy] = new(){
+                    LoreData.stories.Effigy_self_2,
+                },
+
+                [QuestHandle.swordStars] = new(){
+
+                    LoreData.stories.Effigy_Stars,
+
+                    LoreData.stories.Revenant_Stars,
+                    LoreData.stories.Revenant_self_1,
+                },
+
+                [QuestHandle.approachJester] = new(){
+
+                    LoreData.stories.Effigy_Jester,
+
+                    LoreData.stories.Jester_Effigy,
+                    LoreData.stories.Jester_self_1,
+                    LoreData.stories.Jester_Fates,
+
+                    LoreData.stories.Revenant_Fates,
+                },
+
+                [QuestHandle.questJester] = new(){
+
+                    LoreData.stories.Effigy_Buffin,
+
+                    LoreData.stories.Jester_Buffin,
+
+                    LoreData.stories.Revenant_court,
+
+                    LoreData.stories.Revenant_Marlon,
+
+
+                },
+
+                [QuestHandle.challengeEther] = new(){
+                    
+                    LoreData.stories.Effigy_Shadowtin,
+
+                    LoreData.stories.Jester_Shadowtin,
+
+                    LoreData.stories.Shadowtin_Effigy,
+                    LoreData.stories.Shadowtin_Jester,
+                    LoreData.stories.Shadowtin_self_1,
+
+                    LoreData.stories.Buffin_court,
+
+                },
+
+                [QuestHandle.swordEther] = new(){
+
+                    LoreData.stories.Jester_Ether,
+
+                    LoreData.stories.Effigy_Ether,
+
+                    LoreData.stories.Shadowtin_Ether,
+
+                    LoreData.stories.Revenant_Ether,
+
+                    LoreData.stories.Buffin_Ether,
+                
+                },
+
+                [QuestHandle.questShadowtin] = new(){
+
+                    LoreData.stories.Effigy_Circle,
+                    LoreData.stories.Effigy_Circle_2,
+
+                    LoreData.stories.Jester_Circle,
+                    
+                    LoreData.stories.Revenant_Circle,
+
+                    LoreData.stories.Buffin_Circle,
+
+                    LoreData.stories.Shadowtin_Circle,
+                
+                },
+
+            };
+
+            return storySets;
 
         }
 
@@ -108,34 +247,16 @@ namespace StardewDruid.Journal
             // ===========================================
             // Weald
 
-            storylist[stories.Weald_Effigy] = new()
+            storylist[stories.Effigy_Weald] = new()
             {
-                story = stories.Weald_Effigy,
+                story = stories.Effigy_Weald,
                 character = characters.Effigy,
                 question = "What role do the Two Kings play?",
                 answer = "In times past, the King of Oaks and the King of Holly would war upon the Equinox. " +
-                                "Their warring would conclude for the sake of new life in Spring. When need arose, they lent their strength to a conflict from which neither could fully recover. " +
-                                "They rest now, dormant. May those awake guard the change of seasons.",
+                "Their warring would conclude for the sake of new life in Spring. When need arose, they lent their strength to a conflict from which neither could fully recover. " +
+                "They rest now, dormant. May those awake guard the change of seasons.",
 
             };
-
-            // ===========================================
-            // Mists
-
-            storylist[stories.Mists_Effigy] = new()
-            {
-                story = stories.Mists_Effigy,
-                character = characters.Effigy,
-                question = "Who is the Lady Beyond the Shore?",
-                answer = "The Lady of the Isle of Mists is as beautiful and distant as the sunset on the Gem Sea. She was once a courtier of the Two Kings, from a time before the war. " +
-                                "The first farmer was closest to her in counsel and in conviction. She helped establish the circle and remained here a shortwhile before she was called to the Isle. " +
-                                "(The Effigy's eyes flicker a brilliant turqoise). " +
-                                "There is a feeling that comes with my memories of that time, a feeling I cannot describe.",
-
-            };
-
-            // ===========================================
-            // Effigy
 
             storylist[stories.Effigy_self_1] = new()
             {
@@ -143,53 +264,63 @@ namespace StardewDruid.Journal
                 character = characters.Effigy,
                 question = "I want to know more about the First Farmer",
                 answer = "The first farmer was blessed by the elderborn, the monarchs of the valley, to cultivate and protect this special land. " +
-                                "He used this blessing to construct me, and showed me how I could preserve his techniques for a future successor. " +
-                                "Though my friend is long gone, I remain, because the power of the elders remain. For now.",
+                    "He and the Circle elders taught me their techniques and stories, that I might be a repository of tradition for future generations of the circle. " +
+                    "Though my former mentors long gone, I remain, because the power of the elders remain. For now.",
 
             };
 
-            storylist[stories.Effigy_Jester_1] = new()
+            // ===========================================
+            // Mists
+
+            storylist[stories.Effigy_Mists] = new()
             {
-                story = stories.Effigy_Jester_1,
-                character = characters.Jester,
-                question = "Do you think the Effigy could learn the mysteries of the fates?",
-                answer = "As powerful as he is, I think he's set in his ways. Set in the past. Well at least I think that's why he doesn't like my tricks. " +
-                            "He talks about the first of the valley farmers all the time. They must have have been good friends. Has he asked you to build a pyre yet? (Jester gives a mischievous smirk)",
+                story = stories.Effigy_Mists,
+                character = characters.Effigy,
+                question = "Who is the Lady Beyond the Shore?",
+                answer = "The Lady of the Isle of Mists is as beautiful and distant as the sunset on the Gem Sea. She was once a courtier of the Two Kings, from a time before the war. " +
+                "The first farmer was closest to her in counsel and in conviction. She helped establish the circle and remained here a shortwhile before she was called to the Isle. " +
+                "(The Effigy's eyes flicker a brilliant turqoise). There is a feeling that comes with my memories of that time, a feeling I cannot describe.",
 
             };
 
-            storylist[stories.Effigy_Shadowtin_1] = new()
+            // ===========================================
+            // Effigy Quest
+
+            storylist[stories.Effigy_self_2] = new()
             {
-                story = stories.Effigy_Shadowtin_1,
-                character = characters.Shadowtin,
-                question = "From your perspective, the Effigy must seem a strange mystical artifact",
-                answer = "Of all the constructs embued with the power of the elderborn, I've never heard of one so loyal to his former master. " +
-                "I've done my own assessment of the quality of his make. The clothes and head-dress are cheap garbage. And threadbare. " +
-                "I suspect a large cat has been kneading them, as the back is scratched and covered in fur. " +
-                "You'll probably need to replace them at some point. Or burn them. The real value in the Effigy is a fashioned inner core that is saturated with elder power. " +
-                "It's the heart, and the brain. A treasure from the elder age.",
+                story = stories.Effigy_self_2,
+                character = characters.Effigy,
+                question = "What happened after the Lady Beyond left the circle",
+                answer = "The Lady never returned to the valley. We received a single letter, to inform us she had become the Mistress of the Isles, " +
+                    "having settled her kin into their enduring slumber, and she continued to fulfill her duty to the Weald and to Yoba. " +
+                    "After a time, I began to hear her voice in the storms, and mist would blanket the valley at odd times. " +
+                    "It became a mark of her presence, a sign of her enduring affection for the sacred places. " +
+                    "The energies of the waves used to serve the Kings, now they are her servants. " +
+                    "The circle weakened in her absence. The First Farmer's attention shifted to other matters, and he began to neglect his duty. " +
+                    "He became obsessed with fanciful ideas, and a desire for something beyond his grasp. Then he left. " +
+                    "For a long time I was alert for his return. " +
+                    "Then, after a century, when it certain he no longer walked this world, I shut myself away. ",
 
             };
-
 
             // ===========================================
             // Stars
 
-            storylist[stories.Stars_Effigy] = new()
+            storylist[stories.Effigy_Stars] = new()
             {
-                story = stories.Stars_Effigy,
+                story = stories.Effigy_Stars,
                 character = characters.Effigy,
                 question = "Do the Stars have names?",
                 answer = "The Stars have no names that can be uttered by earthly dwellers. " +
-                                "They exist in the Great Expanse of the celestial realm, and care not for the life of our world, though their light sustains much of it. " +
-                                "The Stars that have shone on you belong to a broken constellation of Sisters, who all mourn for one who fell to our realm. " +
-                                "In fact, the circle of druids afforded a worldly name to the missing star-born. (Effigy's flaming eyes flicker). I have been forbidden to share it.",
+                    "They exist in the Great Expanse of the celestial realm, and care not for the life of our world, though their light sustains much of it. " +
+                    "The Stars that have shone on you belong to a broken constellation of Sisters, who all mourn for one who fell to our realm. " +
+                    "In fact, the circle of druids afforded a worldly name to the missing star-born. (Effigy's flaming eyes flicker). Merra. ",
 
             };
 
-            storylist[stories.Stars_Revenant] = new()
+            storylist[stories.Revenant_Stars] = new()
             {
-                story = stories.Stars_Revenant,
+                story = stories.Revenant_Stars,
                 character = characters.Revenant,
                 question = "Tell me how you ended up like this",
                 answer = "Well now. It's hard to believe, seeing as they are so pretty and we're so, well, plain, but a star came here once. " +
@@ -202,9 +333,6 @@ namespace StardewDruid.Journal
                         "So I remain here, a feeble skeleton of a man, while the reaper is still out there, still looking for the star that fell so long ago."
 
             };
-
-            // ===========================================
-            // Revenant
 
             storylist[stories.Revenant_self_1] = new()
             {
@@ -221,29 +349,25 @@ namespace StardewDruid.Journal
             // ===========================================
             // Fates
 
-            storylist[stories.Fates_Jester] = new()
+            storylist[stories.Effigy_Jester] = new()
             {
-                story = stories.Fates_Jester,
-                character = characters.Jester,
-                question = "Tell me more about your kin, the Fates",
-                answer = "Every Fate has a special role we're given by Fortumei, the greatest of us, priestess of Yoba. " +
-                "Some of us are fairies, and care for the fates of plants and little things. " +
-                "For my contribution, well, I've had some pretty cool moments... (Jester is pensive as his voice trails off)",
+                story = stories.Effigy_Jester,
+                character = characters.Effigy,
+                question = "What do you know of Jester and the Fates?",
+                answer = "Jester serves the Priesthood of the Fates. They weave the cords of destiny into the great tapestry that is the story of the world. " +
+                            "It is said that the clergy serve a special purpose known only to Yoba, and so they often appear to work by mystery and happenchance, by whim even. " +
+                            "(Effigy motions ever so slightly in the direction of Jester) They should not be underestimated or trifled with. " +
+                            "No matter how whimsical they appear, their adherance to the decrees of their high priestess is absolute.",
 
             };
 
-            // ===========================================
-            // Jester
-
-            storylist[stories.Jester_Effigy_1] = new()
+            storylist[stories.Jester_Effigy] = new()
             {
-                story = stories.Jester_Effigy_1,
-                character = characters.Effigy,
-                question = "What do you know of Jester and the Fates?",
-                answer = "The Fates weave the cords of destiny into the great tapestry that is the story of the world. " +
-                            "It is said that they each serve a special purpose known only to Yoba, and so they often appear to work by mystery and happenchance, by whim even. " +
-                            "(Effigy motions ever so slightly in the direction of Jester) They should not be underestimated or trifled with. " +
-                            "No matter how whimsical they appear, their adherance to the decrees of their high priestess is absolute.",
+                story = stories.Jester_Effigy,
+                character = characters.Jester,
+                question = "Do you think the Effigy could learn the mysteries of the fates?",
+                answer = "As powerful as he is, I think he's set in his ways. Set in the past. Well at least I think that's why he doesn't like my tricks. " +
+                            "He talks about the first of the valley farmers all the time. They must have have been good friends. Has he asked you to build a pyre yet? (Jester gives a mischievous smirk)",
 
             };
 
@@ -256,22 +380,88 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Jester_Shadowtin_1] = new()
+            storylist[stories.Jester_Fates] = new()
             {
-                story = stories.Jester_Shadowtin_1,
-                character = characters.Shadowtin,
-                question = "Jester has no care for treasures.",
-                answer = "He claims to be a powerful agent of destiny, but he's as blind as a newborn kitten, and naive about the horrors that await him on his quest into the undervalley. " +
-                "I doubt he's been sent by Yoba. I doubt Yoba still cares about any of us."
+                story = stories.Jester_Fates,
+                character = characters.Jester,
+                question = "Tell me more about your kin, the Fates",
+                answer = "Every Fate of the Priesthood has a special role we're given by Fortumei, the greatest of us, priestess of Yoba. " +
+                "Some of us are like the fae from your legends, haunting creepy woods and caring for the lives of plants and little things. " +
+                "For my contribution, well, I've had some pretty cool moments... (Jester is pensive as his voice trails off)",
+
+            };
+
+            storylist[stories.Revenant_Fates] = new()
+            {
+                story = stories.Revenant_Fates,
+                character = characters.Revenant,
+                question = "Any information you can give me to help Jester find Thanatoshi?",
+                answer = "Not really, knight guardian, but I hope for my own sake as much as your friend's that he can find the mad reaper, so you can plead with him to let me pass on from this plane. " +
+                "Just, be careful. The Priesthood of the Fates are the nice guys. The others, the crafters, the morbid ones, and that great crazy thing they call Chaos, they might not be so happy for you to stick your nose into forgotten affairs. " +
+                "Envoys of all the sects were here once, in the valley, somewhere on the banks of the river. " +
+                "They couldn't agree amongst themselves what to do about the mess the elderfolk and dragons made of this world, and that was when the Reaper took it upon himself to administer his own kind of justice. (Revenant silently turns to the great open window)",
+
+            };
+
+            // ===========================================
+            // Jester Quest
+
+            storylist[stories.Effigy_Buffin] = new()
+            {
+                story = stories.Effigy_Buffin,
+                character = characters.Effigy,
+                question = "I think the Fates sent another envoy, unofficially. Another court entertainer.",
+                answer = "I have started to suspect that the assignment of such indistinguished individuals as envoys of the Fae Court was intentional. The jurisdiction of the Fates has ended, and they cannot act openly. " +
+                "So it is a time for subterfuge and the gathering of information, of an outward display of weakness and whimsy, so that the seats of the Fae Court might prepare to maneuver in secret. " +
+                "The Morticians are not known for subtleties, but if the Artisans, the most curious of all the sects, send an undistinguished envoy, then we'll have certainty. " +
+                "The mysterious games of the Fates are in play in the valley.",
+            };
+
+            storylist[stories.Jester_Buffin] = new()
+            {
+                story = stories.Jester_Buffin,
+                character = characters.Jester,
+                question = "Doesn't it strike you as a little odd that Buffin's still here?",
+                answer = "It's how it's always been, farmer. You know, she's a mere moment older than me. When she was born, the artisans knew she would be claimed by Chaos, which is obvious, from the way she looks. And walks. " +
+                "Anyway, the great oracle, Senkenomei, foresaw how great of an agent of Chaos Buffin would be, and panicked, because balance, or something, so she asked for the next Fate born to be dedicated to the priesthood, to become... A Hero Of Fortune. " +
+                "Guess who that was? I'll give you a hint, it wasn't someone the the oracle wanted at first, because that someone is not priestly in any way, but she grew fond of me eventually. " +
+                "From that time forth Buffin's been a constant friend because we thought why hate eachother just because of some stupid rule about balance. Still. Anything I do she has to do the same or better. That's why she's here. " +
+                "She's probably trying to outdo me right now in some manner. But she still can't reach the places I do when I lick myself!",
+ 
+
+            };
+
+            storylist[stories.Revenant_court] = new()
+            {
+                story = stories.Revenant_court,
+                character = characters.Revenant,
+                question = "I've seen the sculpted likeness of the first envoys of the Fates. What were they really like?",
+                answer = "Eh, the monuments are more symbollic than anything. I remember the Artisan being a bit of a hag. The Justiciar was like Thanatoshi, another seven foot tall staff-wielding thug. " +
+                "The Hound of Chaos, well, the moniker is deceptive, because that creature was massive. The point is, they weren't cute little creatures of the forest like the sculptor would have you believe. " +
+                "The Fae Court sent envoys strong enough to wrestle dragons and arrest celestials. " +
+                "We could not defy them, and even your scarecrow friend was forbidden to approach them, lest they capture him and 'undo' all of the hardwork that went into making him. " +
+                "I managed to avoid them all until, well, you've heard that story already. Don't be in any hurry to meet the Reaper.",
+
+            };
+
+            storylist[stories.Revenant_Marlon] = new()
+            {
+                story = stories.Revenant_Marlon,
+                character = characters.Revenant,
+                question = "Do you follow the exploits of today's adventurer's guild? The Jester of Fate delivered a portent for one of the members, Marlon.",
+                answer = "Every time an iteration of some monster-slaying club shows up here I have to convince them that I'm not some evil that arises from my coffin at dusk to feast on the blood of innocents. " +
+                "I am familiar with the two veterans of the current guild. They rely on me to parlay with the church of bats. Or they'll stay a while and listen while I identify some rare item for them. In regards to the foretelling, " +
+                "that's probably a burden the envoy wasn't supposed to share with you, knight druid, though I doubt that the Jester is disciplined in the discretion of the Priesthood, unless, well, " +
+                "there's the possibility that the vision was his. If so, he probably knows how it might or might not work out for Marlon, and may even have some sway. We can only hope he's wise enough to make the right call when it matters.",
 
             };
 
             // ===========================================
             // Shadowtin
 
-            storylist[stories.Shadowtin_Effigy_1] = new()
+            storylist[stories.Effigy_Shadowtin] = new()
             {
-                story = stories.Shadowtin_Effigy_1,
+                story = stories.Effigy_Shadowtin,
                 character = characters.Effigy,
                 question = "Our circle now has it's own treasure hunter",
                 answer = "All manner of otherfolk traded and befriended with the first farmer, but he always had the most trouble with the shadowfolk. " +
@@ -279,9 +469,9 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Shadowtin_Jester_1] = new()
+            storylist[stories.Jester_Shadowtin] = new()
             {
-                story = stories.Shadowtin_Jester_1,
+                story = stories.Jester_Shadowtin,
                 character = characters.Jester,
                 question = "Shadowtin doesn't believe in luck. Or chance. Or fortune.",
                 answer = "I think I get what he wants, I mean, trinkets and shiny things are great. But they aren't everything. He said he'd help me uncover the secret of the Fallen Star, but he doesn't care about my sacred mission. " +
@@ -289,6 +479,28 @@ namespace StardewDruid.Journal
 
             };
 
+            storylist[stories.Shadowtin_Effigy] = new()
+            {
+                story = stories.Shadowtin_Effigy,
+                character = characters.Shadowtin,
+                question = "From your perspective, the Effigy must seem a strange mystical artifact",
+                answer = "Of all the constructs embued with the power of the elderborn, I've never heard of one so loyal to his former master. " +
+                "I've done my own assessment of the quality of his make. The clothes and head-dress are cheap garbage. And threadbare. " +
+                "I suspect a large cat has been kneading them, as the back is scratched and covered in fur. " +
+                "You'll probably need to replace them at some point. Or burn them. The real value in the Effigy is a fashioned inner core that is saturated with elder power. " +
+                "It's the heart, and the brain. A treasure from the elder age.",
+
+            };
+
+            storylist[stories.Shadowtin_Jester] = new()
+            {
+                story = stories.Shadowtin_Jester,
+                character = characters.Shadowtin,
+                question = "Jester has no care for treasures.",
+                answer = "He claims to be a powerful agent of destiny, but he's as blind as a newborn kitten, and naive about the horrors that await him on his quest for the Fallen Star. " +
+                "I doubt he's been sent by Yoba. I doubt Yoba still cares about any of us."
+
+            };
 
             storylist[stories.Shadowtin_self_1] = new()
             {
@@ -301,41 +513,146 @@ namespace StardewDruid.Journal
 
             };
 
+            storylist[stories.Buffin_court] = new()
+            {
+                story = stories.Buffin_court,
+                character = characters.Buffin,
+                question = "What role did Chaos play in the low court?",
+                answer = "Well my great great predecessor, Carnevellion, was the likeness of that big hunky statue with the large mouth. They called him the Hound of Chaos. " +
+                "It's a little regarded fact that none of the original envoys returned to report on their administration of the valley. " +
+                "We only know Thanatoshi is out there, because the morticians do not decease like other entities, their essense must be forcefully returned to the heavenly fields by one of their number. " +
+                "It's an unofficial bet, but I'll find the bones of the Hound before Jester finds the Reaper. Then I might be able to answer your question. What happened here all those centuries ago?",
+
+            };
+
 
             // ===========================================
             // Ether
 
-            storylist[stories.Ether_Effigy] = new()
+            storylist[stories.Effigy_Ether] = new()
             {
-                story = stories.Ether_Effigy,
+                story = stories.Effigy_Ether,
                 character = characters.Effigy,
-                question = "Who were the Masters of the Ether?",
-                answer = "I know very little of Dragonkind and their ilk. They were the first servants of Yoba, and perhaps they disappointed their creator. " +
-                "Their bones have become the foundation of the other world, their potent life essence has become the streams of ether that flow through the planes."
+                question = "What do you know of Dragonkind?",
+                answer = "The Lady Beyond declined to dwell on the nature of the aggressors of a war that claimed her kin. What I know of Dragonkind comes from the poetry of myth. " +
+                "They were the first servants of Yoba, and had diminished long before the event that marks the nadir of their noble race. " +
+                "Their bones have become the foundation of the otherworld, their potent life essence has become the streams of ether that flow through the planes. "
 
             };
 
-            storylist[stories.Ether_Jester] = new()
+            storylist[stories.Jester_Ether] = new()
             {
-                story = stories.Ether_Jester,
+                story = stories.Jester_Ether,
                 character = characters.Jester,
-                question = "Where are the Dragons?",
+                question = "Any thoughts on the Ancient ones?",
                 answer = "We're talking about creatures that could reforge the world itself, Farmer. They don't like our kind, otherfolk or humanfolk. " +
                 "Actually I'm... (Jester's hairs raise across it's backside) kind of scared of them. I'm glad you have my back!",
 
             };
 
-            storylist[stories.Ether_Shadowtin] = new()
+            storylist[stories.Shadowtin_Ether] = new()
             {
-                story = stories.Ether_Shadowtin,
+                story = stories.Shadowtin_Ether,
                 character = characters.Shadowtin,
                 question = "So what dragon treasures have you found?",
-                answer = "I've found this cloak, and this carnyx, and this bear mask. The Dragons would demand the best tributes, from the greatest artisans, with the finest materials available. " +
-                "All Shadowfolk prize such treasures, and it's a very competitive society, so I have to carry mine with me at all times.",
+                answer = "I've found this cloak, and this carnyx, and this bear mask. The Dragons would demand the best tributes, of craftsmanship that would inspire an Artisan of the Fates, with the finest materials available. " +
+                "All Shadowfolk prize ethereal technology, and it's a very competitive society, so I have to carry mine with me at all times.",
 
             };
 
-            //I believe that, in his quest for Justice, he cursed all his followers to become spectres. Perhaps to guard his secrets, or worse, to harbour the essence of their souls.
+            storylist[stories.Revenant_Ether] = new()
+            {
+                story = stories.Revenant_Ether,
+                character = characters.Revenant,
+                question = "Did you ever get to fight a dragon?",
+                answer = "Heh heh. Not a chance, the low-born guards like me could only man the ramparts and the great machines designed to strike them from the sky. " +
+                "The elders had magic to stun and wound the ancient ones, and survive the heat from the hellscape made in the dragons' wake, but it was a lost cause until, well, until someone arrived that could match their strength. " +
+                "I admit, the form you're able to take now, it's terrifying, but if you can imagine being several times bigger, with a mind that holds the wisdom of ages and a soul that's even older, then you'll have an idea what the original dragons were like. " +
+                "I would not want to see them take to the skies of our realm again, that's for sure.",
+
+            };
+
+            storylist[stories.Buffin_Ether] = new()
+            {
+                story = stories.Buffin_Ether,
+                character = characters.Buffin,
+                question = "Is chaos older than the dragons?",
+                answer = "Chaos has 'been' since the beginning, since the void, since the ether, which spawned a multitude of ancient races, of which the dragons either devoured or subjugated, in their ascent to become the single masters of the ether. " +
+                "But they could never tame Chaos, and perhaps some might have served it, if they weren't so arrogant. The Saurus though, the other great race of lizards, they favoured the Stream. They all perished though. " +
+                "A shame, but such is the nature of chaos, it possesses no permanence. It is the true opposition of destiny woven by the Fate Priesthood.",
+
+            };
+
+
+            // ===========================================
+            // Ether
+
+            storylist[stories.Effigy_Circle] = new()
+            {
+                story = stories.Effigy_Circle,
+                character = characters.Effigy,
+                question = "About the old circle, what can you tell me of Knight Wyrven",
+                answer = "Good Knight Wyrven was the most senior of the Guardians that survived the war. In those times all the disparate factions of humans banded together to settle disputes and rebuild communities. " +
+                "Then the Fates arrived, and their interference unsettled Wyrven the most. He believed humanity should be completely autonomous, and from the few interactions I had with him, it appeared to me he sought the power to claim that autonomy. " +
+                "He was most interested in the shapeshifting traditions of calico, and visited the valley to converse with those shamans that forsook their dragon-serving traditions to become Druids. I'm not sure if his efforts proved worthwhile.",
+
+            };
+
+
+            storylist[stories.Effigy_Circle_2] = new()
+            {
+                story = stories.Effigy_Circle_2,
+                character = characters.Effigy,
+                question = "About the old circle, what can you tell me of the brothers Cannoli and Gelatin?",
+                answer = "The brothers were stewards of the Weald. They served in the kitchens during the conflict, and when the circle was founded, their knowledge of all the different varieties of flora and fauna proved invaluable to our efforts. " +
+                "Cannoli even claimed he and Gelatin were pastry chefs to the royal court, in the personal service of the elderborn prince of the Isles. " +
+                "Despite their oaths to the Weald, the brothers fell to wickedness, and had to be put down by Wyrven's guardians, though I never got to witness the fight, or attend the funerary rites. " +
+                "It was about the time the Fates and their zealots began to openly oppose the circle. Wyrven and the rest retreated to the mountain. The First Farmer told me to hide. " +
+                "Though it pains me to admit my suspicions, it appears he abandoned the circle, to pursue unrequited love across the gem sea. When I finally emerged from the cave, the circle was gone.",
+
+            };
+
+            storylist[stories.Jester_Circle] = new()
+            {
+                story = stories.Jester_Ether,
+                character = characters.Jester,
+                question = "I think you were right about Shadowtin, he's proven himself",
+                answer = "When we were fighting him and his buddies, I pounced on burgundy boy as soon as I could. " +
+                "I thought I would rip off his mask and reveal his face to the world, and it would be like an awesome moment, with him yelling, and me saying some punch line in a deep, serious voice like, 'Face us with your real face, Shadowman'. " +
+                "Anyway, soon as I touched him I saw a vision of him and you, working together, except he was a cat, like me, so I thought maybe that means we will combine our powers and become a super team. So that's why I wanted to give him a chance. I'm glad I was right.",
+
+            };
+
+            storylist[stories.Revenant_Circle] = new()
+            {
+                story = stories.Revenant_Ether,
+                character = characters.Revenant,
+                question = "The Mother of Crows. Why would you keep the identity of the Artisan of Fate, the one that accompanied Thanatoshi and the other original envoys, a secret?",
+                answer = "Because she swore me to secrecy. I still cannot reveal the few details I know about what transpired when the Crowmother was here, and why, or who, for that matter. " +
+                    "I am bound by dual terms, to the Artisans and the Morticians, as you know now, that is how the Fates operate, always a dichotomy, tied at both ends. " +
+                    "I can only say that the crowmother will return for the rite of bones. How that's going to happen is beyond me. " +
+                    "She was old when she left, and even fates have limited life spans according to their purpose, so she'll be ancient bones by now, maybe even the bones referred to in the foretelling. " +
+                    "I hope you sort this all out soon, knight druid. ",
+
+            };
+
+            storylist[stories.Buffin_Circle] = new()
+            {
+                story = stories.Buffin_Ether,
+                character = characters.Buffin,
+                question = "Did the Great Stream witness what happened here after the War for the Star?",
+                answer = "This is what I remember from the account scrawled on one of the walls of the Chaos sanitarium, written by the Watcher who surmised these events from the patterns of the Stream. " +
+                "When the dragons perished, waves of liberated, ethereal energy swept across the realms, and from this, the artisans set to work, capturing and organising this energy into new forms. " +
+                "The Stream observed this artifice, and was displeased, as the designs possessed no nuances of interest, for they were boring, mechanical and utilitarian. " +
+                "So the Stream sabotaged the craft, and from the imperfections, the elementals emerged, and were unleashed upon this world. It was the advent of the arcane epoch. " +
+                "As was the intention of Chaos, many of the mortal races were threatened by the new, subsuming powers, and were forced to adapt to survive. " +
+                "But the Artisans opposed the initiative of Chaos, and provided gifts of knowledge and inspiration, that some races might harness the elementals for their own purposes, and achieve the zenith of their civilisations. " +
+                "I believe the engine you beheld is one such divinely inspired device. It is a precursor to the marvels of Stellarfolk and Shadowfolk engineering. " +
+                "Still, The Stream resented the development of such organised systems, and presented it's own gifts, in dreams and mysteries, to the first mortals to learn the arcane arts, to rival the technomancers. " +
+                "Is that sufficient to explain the elemental wars or have you not learned about that yet?",
+
+            };
+
 
             return storylist;
 

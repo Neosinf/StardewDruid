@@ -52,6 +52,8 @@ namespace StardewDruid.Monster
 
             fadeFactor = 0.6f;
 
+            cooldownInterval = 180;
+
             PhantomWalk();
 
             PhantomFlight();
@@ -59,6 +61,8 @@ namespace StardewDruid.Monster
             PhantomSweep();
 
             PhantomSpecial();
+
+            PhantomWeapon();
 
             overHead = new(16, -144);
 
@@ -127,6 +131,8 @@ namespace StardewDruid.Monster
 
         public virtual void PhantomFlight()
         {
+            
+            flightSet = true;
 
             flightInterval = 9;
 
@@ -294,8 +300,6 @@ namespace StardewDruid.Monster
         public void PhantomSpecial()
         {
 
-            cooldownInterval = 180;
-
             specialCeiling = 1;
 
             specialFloor = 0;
@@ -347,22 +351,21 @@ namespace StardewDruid.Monster
 
         public override void draw(SpriteBatch b, float alpha = 1f)
         {
+            
             if (IsInvisible || !Utility.isOnScreen(Position, 128))
             {
                 return;
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = (float)StandingPixel.Y / 10000f;
 
             DrawEmote(b, localPosition, drawLayer);
 
-            int netScale = netMode.Value > 5 ? netMode.Value - 4 : netMode.Value;
+            float spriteScale = GetScale();
 
-            Vector2 spritePosition = localPosition - new Vector2(20 + (netScale * 4), 40f + (netScale * 8) + flightHeight);
-
-            float spriteScale = 3.25f + (0.25f * netScale);
+            Vector2 spritePosition = GetPosition(localPosition, spriteScale);
 
             Color fadeout = Color.White * fadeFactor;
 

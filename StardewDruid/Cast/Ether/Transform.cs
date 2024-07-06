@@ -3,12 +3,12 @@ using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
-using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
 using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Buffs;
 using StardewValley.Minigames;
 using System;
 using System.Drawing;
@@ -41,9 +41,13 @@ namespace StardewDruid.Cast.Ether
         public override void EventActivate()
         {
 
+            eventId = "transform";
+
             Mod.instance.RegisterEvent(this, "transform");
 
-            Mod.instance.RegisterClick("transform", 0);
+            EventClicks(actionButtons.action);
+
+            EventClicks(actionButtons.special);
 
             CreateAvatar();
 
@@ -63,6 +67,22 @@ namespace StardewDruid.Cast.Ether
             Game1.player.currentLocation.characters.Add(avatar);
 
             Game1.player.currentLocation.playSound("warrior", null, 700);
+
+            BuffEffects buffEffect = new();
+
+            buffEffect.Defense.Set(5);
+
+            Buff speedBuff = new("184655", 
+                source: DialogueData.RiteNames(Rite.rites.ether),
+                displaySource: DialogueData.RiteNames(Rite.rites.ether),
+                duration: Buff.ENDLESS, 
+                displayName: DialogueData.Strings(DialogueData.stringkeys.dragonBuff),
+                description: DialogueData.Strings(DialogueData.stringkeys.dragonBuffDescription),
+                effects: buffEffect);
+
+            Game1.player.buffs.Apply(speedBuff);
+
+            Mod.instance.iconData.DecorativeIndicator(Game1.player.currentLocation, Game1.player.Position,IconData.decorations.ether, 3f, new() { interval = 1200, });
 
         }
 
@@ -131,6 +151,13 @@ namespace StardewDruid.Cast.Ether
             avatar.ShutDown();
 
             avatar = null;
+
+            if (Game1.player.buffs.IsApplied("184655"))
+            {
+
+                Game1.player.buffs.Remove("184655");
+
+            }
 
         }
 
@@ -219,8 +246,6 @@ namespace StardewDruid.Cast.Ether
 
                     CreateAvatar();
 
-                    Mod.instance.iconData.DecorativeIndicator(Game1.player.currentLocation, avatar.Position - new Vector2(64, 64), IconData.decorations.ether, 3f, new() { interval = 2000, });
-
                 }
 
             }
@@ -268,7 +293,7 @@ namespace StardewDruid.Cast.Ether
 
                 float distance = Vector2.Distance(character.Position, Game1.player.Position);
 
-                if (distance < 640f)
+                if (distance < 448f)
                 {
 
                     if (Mod.instance.Witnessed(ReactionData.reactions.dragon, character))
@@ -280,13 +305,13 @@ namespace StardewDruid.Cast.Ether
 
                     Game1.player.changeFriendship(15, character);
 
+                    ReactionData.ReactTo(character, ReactionData.reactions.dragon, 15);
 
                 }
 
             }
 
         }
-
 
     }
 

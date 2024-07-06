@@ -10,12 +10,18 @@ using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
 using StardewDruid.Event;
+using StardewDruid.Event.Access;
 using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Buffs;
+using StardewValley.Characters;
+using StardewValley.Constants;
+using StardewValley.GameData.Characters;
+using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Minigames;
 using StardewValley.Quests;
@@ -23,8 +29,11 @@ using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection.Metadata;
+using System.Security.Cryptography.X509Certificates;
 using xTile;
 using xTile.Dimensions;
 using xTile.Display;
@@ -33,7 +42,9 @@ using xTile.ObjectModel;
 using xTile.Tiles;
 using static StardewDruid.Cast.ThrowHandle;
 using static StardewDruid.Journal.Druid;
+using static StardewDruid.Journal.HerbalData;
 using static StardewValley.Menus.CharacterCustomization;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace StardewDruid
@@ -47,6 +58,8 @@ namespace StardewDruid
         public bool modReady;
 
         public bool receivedData;
+
+        public bool synchroniseData;
 
         internal static Mod instance;
 
@@ -68,7 +81,7 @@ namespace StardewDruid
 
         public Dictionary<string, string> activeEvent = new();
 
-        public Dictionary<int, string> clickRegister = new();
+        public Dictionary<EventHandle.actionButtons,string> clickRegister = new();
 
         public List<SpellHandle> spellRegister = new();
 
@@ -104,8 +117,6 @@ namespace StardewDruid
 
         public Dictionary<string, GameLocation> locations = new();
 
-        //public Dictionary<string, List<LocationTile>> tiles = new();
-
         public Random randomIndex = new();
 
         public int version = 220;
@@ -114,10 +125,10 @@ namespace StardewDruid
         {
             get
             {
-                /*if(save.milestone > QuestHandle.milestones.fates_challenge)
+                if(save.milestone > QuestHandle.milestones.fates_challenge)
                 {
                     return 5;
-                }*/
+                }
                 if (save.milestone > QuestHandle.milestones.stars_threats)
                 {
                     return 4;
@@ -183,50 +194,43 @@ namespace StardewDruid
 
             helper.Events.Content.AssetRequested += OnAssetRequested;
 
+            helper.Events.Display.RenderedStep += OnRenderedStep;
+
         }
 
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
-            if (e.Name.IsEquivalentTo(IconData.druid_assetName))
+
+            if (e.Name.StartsWith("StardewDruid.Tilesheets."))
             {
-               // e.LoadFromModFile<Texture2D>(IconData.druid_tilesheet, AssetLoadPriority.Medium);
+
+                string tilesheetId = e.Name.ToString().Replace("StardewDruid.Tilesheets.", "");
+
+                IconData.tilesheets tilesheet = Enum.Parse<IconData.tilesheets>(tilesheetId);
+
                 e.LoadFrom(
                     () => {
-                        return Helper.ModContent.Load<Texture2D>(IconData.druid_tilesheet);
+                        return Mod.instance.iconData.sheetTextures[tilesheet];
                     },
                     AssetLoadPriority.Medium
                 );
             }
-            if (e.Name.IsEquivalentTo(IconData.atoll_assetName))
+
+            if (e.Name.StartsWith("StardewDruid.Characters."))
             {
-                //e.LoadFromModFile<Texture2D>(IconData.chapel_tilesheet, AssetLoadPriority.Medium);
+
+                string characterId = e.Name.ToString().Replace("StardewDruid.Characters.", "");
+
+                CharacterHandle.characters character = Enum.Parse<CharacterHandle.characters>(characterId);
+
                 e.LoadFrom(
                     () => {
-                        return Helper.ModContent.Load<Texture2D>(IconData.atoll_tilesheet);
+                        return CharacterHandle.CharacterTexture(character);
                     },
                     AssetLoadPriority.Medium
                 );
             }
-            if (e.Name.IsEquivalentTo(IconData.chapel_assetName))
-            {
-                //e.LoadFromModFile<Texture2D>(IconData.chapel_tilesheet, AssetLoadPriority.Medium);
-                e.LoadFrom(
-                    () => {
-                        return Helper.ModContent.Load<Texture2D>(IconData.chapel_tilesheet);
-                    },
-                    AssetLoadPriority.Medium
-                );
-            }
-            if (e.Name.IsEquivalentTo(IconData.court_assetName))
-            {
-                //e.LoadFromModFile<Texture2D>(IconData.chapel_tilesheet, AssetLoadPriority.Medium);
-                e.LoadFrom(
-                    () => {
-                        return Helper.ModContent.Load<Texture2D>(IconData.court_tilesheet);
-                    },
-                    AssetLoadPriority.Medium
-                );
-            }
+
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -234,7 +238,7 @@ namespace StardewDruid
 
             Config = Helper.ReadConfig<ModData>();
 
-            ConfigMenu.MenuConfig(this);
+            ModConfig.MenuConfig(this);
 
             SoundData.AddSounds();
 
@@ -244,6 +248,8 @@ namespace StardewDruid
 
         private void SaveLoaded(object sender, SaveLoadedEventArgs e)
         {
+
+            rite = new();
 
             eventRegister = new();
 
@@ -269,10 +275,44 @@ namespace StardewDruid
 
             locations = new();
 
+            questHandle = new QuestHandle();
+
+            herbalData = new HerbalData();
+
+            relicsData = new RelicData();
+
+            virtualPick = new Pickaxe();
+
+            virtualPick.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
+
+            virtualPick.UpgradeLevel = 5;
+
+            virtualAxe = new Axe();
+
+            virtualAxe.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
+
+            virtualAxe.UpgradeLevel = 5;
+
+            virtualHoe = new Hoe();
+
+            virtualHoe.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
+
+            virtualHoe.UpgradeLevel = 5;
+
+            virtualCan = new WateringCan();
+
+            virtualCan.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
+
+            virtualCan.UpgradeLevel = 5;
+
+            Game1.player.Stamina += Math.Min(8, Game1.player.MaxStamina - Game1.player.Stamina);
+
             if (!Context.IsMainPlayer)
             {
 
-                Helper.Multiplayer.SendMessage(new QueryData(), "SaveRequest", modIDs: new[] { this.ModManifest.UniqueID });
+                save = new();
+
+                Helper.Multiplayer.SendMessage(new QueryData(), QueryData.queries.RequestProgress.ToString(), modIDs: new[] { this.ModManifest.UniqueID });
 
                 return;
 
@@ -280,25 +320,59 @@ namespace StardewDruid
 
             save = Helper.Data.ReadSaveData<StardewDruid.Data.StaticData>("saveData_" + version.ToString());
 
-            save ??= VersionData.Reconfigure();
+            if(save == null)
+            { 
+                
+                save = new(); 
+            
+            }
 
-            questHandle = new QuestHandle();
+            if (Config.convert219)
+            {
 
-            herbalData = new HerbalData();
+                save = VersionData.Reconfigure();
 
-            relicsData = new RelicData();
+                if(save.milestone != QuestHandle.milestones.none)
+                {
+                    
+                    questHandle.Promote(save.milestone);
 
+                }
+
+                Config.convert219 = false;
+
+                Config.setOnce = false;
+
+                Config.setMilestone = 0;
+
+                save.set = (int)save.milestone;
+
+                SaveConfig();
+
+            }
+            else
             if (Config.setMilestone != 0)
             {
 
                 if (save.set != Config.setMilestone)
                 {
 
-                    save = new();
+                    save.progress = new();
+
+                    save.reliquary = new();
+
+                    save.characters = new();
+
+                    save.milestone = (QuestHandle.milestones)Config.setMilestone;
 
                     save.set = Config.setMilestone;
 
-                    questHandle.Promote((QuestHandle.milestones)Config.setMilestone);
+                    if (save.milestone != QuestHandle.milestones.none)
+                    {
+
+                        questHandle.Promote(save.milestone);
+
+                    }
 
                     if (Config.setOnce)
                     {
@@ -307,10 +381,9 @@ namespace StardewDruid
 
                         Config.setMilestone = 0;
 
-                        Helper.Data.WriteJsonFile("config.json",Config);
+                        SaveConfig();
 
                     }
-
 
                 }
 
@@ -326,6 +399,28 @@ namespace StardewDruid
             Helper.Data.WriteJsonFile("saveData.json", save);
 
             ReadyState();
+
+        }
+
+        public void ReadyState()
+        {
+
+            modReady = true;
+
+            rite.reset();
+
+            questHandle.Ready();
+
+            relicsData.Ready();
+            
+            return;
+
+        }
+
+        public void SaveConfig()
+        {
+
+            Helper.Data.WriteJsonFile("config.json", Config);
 
         }
 
@@ -458,6 +553,17 @@ namespace StardewDruid
 
             }
 
+            if (!Context.IsMainPlayer)
+            {
+
+                modReady = false;
+
+                Helper.Multiplayer.SendMessage(new QueryData(), QueryData.queries.RequestProgress.ToString(), modIDs: new[] { this.ModManifest.UniqueID });
+
+                return;
+
+            }
+
             foreach (KeyValuePair<CharacterHandle.characters, StardewDruid.Character.Character> character in characters)
             {
 
@@ -467,12 +573,15 @@ namespace StardewDruid
 
             }
 
+            rite = new();
+
             ReadyState();
 
         }
 
         public void OnModMessageReceived(object sender, ModMessageReceivedEventArgs e)
         {
+            
             if (e.FromModID != ModManifest.UniqueID)
             {
 
@@ -480,164 +589,209 @@ namespace StardewDruid
 
             }
 
-            QueryData queryData;
-
-            switch (e.Type)
+            if (e.FromPlayerID == Game1.player.UniqueMultiplayerID)
             {
 
-                case "SaveRequest":
+                return;
+
+            }
+
+            QueryData.queries queryType;
+
+            try
+            {
+
+                queryType = Enum.Parse<QueryData.queries>(e.Type);
+
+            }
+            catch
+            {
+
+                return;
+
+            }
+
+            // Synchronise progress
+
+            switch (queryType)
+            {
+
+                case QueryData.queries.RequestProgress:
 
                     if (!Context.IsMainPlayer) { return; }
 
-                    Helper.Multiplayer.SendMessage(save, "SaveSynchronise", modIDs: new[] { this.ModManifest.UniqueID });
+                    Helper.Multiplayer.SendMessage(
+                        save, 
+                        QueryData.queries.SyncProgress.ToString(), 
+                        modIDs: new[] { this.ModManifest.UniqueID }, 
+                        playerIDs: new[] { Game1.player.UniqueMultiplayerID }
+                    );
 
-                    Console.WriteLine($"Sent Stardew Druid data to Farmer ID {e.FromPlayerID}");
+                    return;
 
-                    break;
-
-                case "SaveSynchronise":
+                case QueryData.queries.SyncProgress:
 
                     if (Context.IsMainPlayer) { return; }
 
-                    save = e.ReadAs<StaticData>();
+                    StaticData progress = e.ReadAs<StaticData>();
+
+                    save.reliquary = progress.reliquary;
+
+                    save.progress = progress.progress;
+
+                    save.milestone = progress.milestone;
+
+                    if (!receivedData)
+                    {
+
+                        save.attunement = progress.attunement;
+
+                        save.herbalism = progress.herbalism;
+
+                        save.potions = progress.potions;
+
+                        receivedData = true;
+
+                    }
 
                     ReadyState();
 
-                    receivedData = true;
+                    Console.WriteLine(DialogueData.Strings(DialogueData.stringkeys.receivedData) + e.FromPlayerID);
 
-                    Console.WriteLine($"Received Stardew Druid data for Farmer ID {e.FromPlayerID}");
+                    return;
 
-                    break;
 
-                case "QuestUpdate":
+            }
 
-                    if (!Context.IsMainPlayer) { return; }
+            // Synchronise all players
 
-                    queryData = e.ReadAs<QueryData>();
+            QueryData queryData = e.ReadAs<QueryData>();
+
+            switch (queryType)
+            {
+
+                case QueryData.queries.QuestUpdate:
 
                     questHandle.UpdateTask(queryData.name, Convert.ToInt32(queryData.value));
 
-                    break;
+                    return;
 
-                case "QuestComplete":
+                case QueryData.queries.SpellHandle:
 
-                    if (Context.IsMainPlayer) { return; }
-
-                    queryData = e.ReadAs<QueryData>();
-
-                    questHandle.CompleteQuest(queryData.name);
-
-                    break;
-
-                case "EventAbort":
-
-                    if (!Context.IsMainPlayer) { return; }
-
-                    if (activeEvent.Count == 0) { return; }
-
-                    queryData = e.ReadAs<QueryData>();
-
-                    if(queryData.location == Game1.player.currentLocation.Name)
-                    {
-
-                        AbortAllEvents();
-
-                        if(queryData.value == "damage")
-                        {
-                            
-                            CastMessage(queryData.name + " is in critical condition", 3, true);
-
-                        }
-
-                    }
-
-                    break;
-
-                case "EventDisplay":
-
-                    if (Context.IsMainPlayer) { return; }
-
-                    queryData = e.ReadAs<QueryData>();
-
-                    CastDisplay(queryData.name, queryData.value);
-
-                    break;
-
-                /*case "DialogueEvent":
-
-                    if (Context.IsMainPlayer) { return; }
-
-                    queryData = e.ReadAs<QueryData>();
-
-                    CharacterData.characters character = (CharacterData.characters)Enum.Parse(typeof(CharacterData.characters), queryData.location);
-
-                    if (dialogue.ContainsKey(character))
-                    {
-
-                        dialogue[character].AddEventDialogue(queryData.name,Convert.ToInt32(queryData.value));
-
-                    }
-
-                    break;*/
-
-                case "SpellHandle":
-
-                    queryData = e.ReadAs<QueryData>();
-
-                    if (queryData.longId == Game1.player.UniqueMultiplayerID)
-                    {
-
-                        break;
-
-                    }
-
-                    if(Game1.player.currentLocation.Name != queryData.location)
-                    {
-
-                        break;
-
-                    }
+                    if (Game1.player.currentLocation.Name != queryData.location){ return; }
 
                     List<int> spellData = System.Text.Json.JsonSerializer.Deserialize<List<int>>(queryData.value);
 
                     SpellHandle spellEffect = new(Game1.player.currentLocation, spellData);
-                        
+
                     spellRegister.Add(spellEffect);
 
-                    break;
+                    return;
+
+            }
+
+
+            // Send prompts to farmhands
+
+            if (Context.IsMainPlayer)
+            { 
+                
+                return; 
+            
+            }
+
+            switch (queryType)
+            {
+
+                case QueryData.queries.EventDisplay:
+
+                    if(queryData.location == Game1.player.currentLocation.Name)
+                    {
+
+                        CastDisplay(queryData.name, queryData.value);
+
+                    }
+
+                    return;
+
+                case QueryData.queries.EventDialogue:
+
+                    if (queryData.location != Game1.player.currentLocation.Name)
+                    {
+                        return;
+
+                    }
+
+                    NPC npc = Game1.player.currentLocation.getCharacterFromName(queryData.name);
+
+                    if(npc == null)
+                    {
+
+                        return;
+
+                    }
+
+                    Game1.currentSpeaker = npc;
+
+                    StardewValley.Dialogue dialogue = new(npc, "0", queryData.value);
+
+                    Game1.activeClickableMenu = new DialogueBox(dialogue);
+
+                    Game1.player.Halt();
+
+                    Game1.player.CanMove = false;
+
+                    return;
+
+                case QueryData.queries.ThrowRelic:
+
+                    new ThrowHandle(Game1.player,Game1.player.Position - new Vector2(0,640),(IconData.relics)Convert.ToInt32(queryData.value)).register();
+
+                    return;
+
+                case QueryData.queries.ThrowSword:
+
+                    new ThrowHandle(Game1.player, Game1.player.Position - new Vector2(0, 640), (SpawnData.swords)Convert.ToInt32(queryData.value)).register();
+
+                    return;
+
+                case QueryData.queries.AccessHandle:
+
+                    AccessHandle access = new();
+
+                    GameLocation location = Game1.getLocationFromName(queryData.name);
+
+                    List<string> accessData = System.Text.Json.JsonSerializer.Deserialize<List<string>>(queryData.value);
+
+                    access.AccessSetup(accessData);
+
+                    access.AccessCheck(location);
+
+                    return;
 
             }
 
         }
 
-        public void ReadyState()
+        public bool CasterGone()
         {
 
-            modReady = true;
+            if (Game1.eventUp)
+            {
+                return true;
+            }
 
-            rite = new();
+            if (Game1.currentMinigame != null)
+            {
+                return true;
+            }
 
-            virtualPick = new Pickaxe();
-            virtualPick.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
-            virtualPick.UpgradeLevel = 5;
+            if (Game1.killScreen)
+            {
+                return true;
+            }
 
-            virtualAxe = new Axe();
-            virtualAxe.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
-            virtualAxe.UpgradeLevel = 5;
-
-            virtualHoe = new Hoe();
-            virtualHoe.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
-            virtualHoe.UpgradeLevel = 5;
-
-            virtualCan = new WateringCan();
-            virtualCan.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
-            virtualCan.UpgradeLevel = 5;
-
-            Game1.player.Stamina += Math.Min(8, Game1.player.MaxStamina - Game1.player.Stamina);
-
-            questHandle.Ready();
-
-            return;
+            return false;
 
         }
 
@@ -658,7 +812,7 @@ namespace StardewDruid
 
             }
 
-            if (Game1.eventUp)
+            if (Game1.paused)
             {
                 return true;
             }
@@ -668,7 +822,17 @@ namespace StardewDruid
                 return true;
             }
 
-            if (Game1.currentMinigame != null)
+            if (Game1.overlayMenu != null)
+            {
+                return true;
+            }
+
+            if (Game1.isTimePaused)
+            {
+                return true;
+            }
+
+            if (!Game1.game1.IsActive)
             {
                 return true;
             }
@@ -678,14 +842,21 @@ namespace StardewDruid
                 return true;
             }
 
-            if (Game1.killScreen)
+            if (Game1.player.freezePause > 0)
             {
                 return true;
             }
 
-            if (Game1.player.freezePause > 0)
+            if (Context.IsMultiplayer)
             {
-                return true;
+
+                if (Game1.netWorldState.Value.IsTimePaused)
+                {
+
+                    return true;
+
+                }
+
             }
 
             return false;
@@ -702,7 +873,19 @@ namespace StardewDruid
 
             }
 
-            rite.RiteBuff();
+            if (Context.IsMultiplayer)
+            {
+
+                if (synchroniseData)
+                {
+                    
+                    Helper.Multiplayer.SendMessage(save, QueryData.queries.SyncProgress.ToString(), modIDs: new[] { this.ModManifest.UniqueID });
+
+                    synchroniseData = false;
+
+                }
+
+            }
 
             if (eventRegister.Count == 0)
             {
@@ -711,13 +894,7 @@ namespace StardewDruid
             
             }
 
-            if(Context.IsMultiplayer && Game1.netWorldState.Value.IsTimePaused)
-            {
-
-                return;
-
-            }
-            else if (Game1.paused || Game1.freezeControls || Game1.overlayMenu != null || Game1.isTimePaused || Game1.activeClickableMenu != null || !Game1.game1.IsActive)
+            if (CasterBusy())
             {
 
                 return;
@@ -726,7 +903,7 @@ namespace StardewDruid
 
             bool exitAll = false;
 
-            if (Game1.eventUp || Game1.currentMinigame != null || Game1.isWarping || Game1.killScreen)
+            if (CasterGone())
             {
 
                 exitAll = true;
@@ -742,30 +919,7 @@ namespace StardewDruid
                 
                 Event.EventHandle eventEntry = eventHandle.Value;
 
-                if (eventEntry.staticEvent)
-                {
-
-                    if (eventEntry.eventComplete)
-                    {
-
-                        removal.Add(eventHandle.Key);
-
-                    }
-                    else if (exitAll)
-                    {
-
-                        eventEntry.ReturnToStatic();
-
-                    }
-                    else if (eventEntry.StaticActive())
-                    {
-
-                        eventEntry.StaticInterval();
-
-                    }
-
-                }
-                else if (eventEntry.eventActive)
+                if (eventEntry.eventActive)
                 {
 
                     if (exitAll)
@@ -849,168 +1003,110 @@ namespace StardewDruid
                 return;
 
             }
-            //new Event.Challenge.ChallengeStars().EventSetup(Game1.player.Position, QuestHandle.challengeStars, true);
-            bool casterBusy = CasterBusy();
 
-            EventHandle.actionButtons actionPressed = ActionButtonPressed();
-
-            // action press
-            if (clickRegister.Count > 0 && !casterBusy && actionPressed != EventHandle.actionButtons.none)
-            {
-                int cursor = 0;
-
-                for (int i = 0; i < 20; i++)
-                {
-
-                    if (clickRegister.ContainsKey(i))
-                    {
-                            
-                        string click = clickRegister[i];
-
-                        if (eventRegister.ContainsKey(click))
-                        {
-
-                            if (eventRegister[click].EventPerformAction(e.Button, actionPressed))
-                            {
-
-                                break;
-
-                            }
-
-                        }
-                        else
-                        {
-
-                            clickRegister.Remove(i);
-
-                        }
-
-                        cursor++;
-
-                    }
-
-                    if(cursor == clickRegister.Count)
-                    {
-                            
-                        break;
-                        
-                    }
-
-                }
-
-            }
-
-            rite.charge(actionPressed);
-
-            bool ritePressed = RiteButtonPressed();
-
-            Druid.journalTypes journalPressed = Journal.Druid.JournalButtonPressed();
-
-            if (casterBusy)
+            if (CasterGone())
             {
 
                 rite.shutdown();
 
-                if (Game1.activeClickableMenu != null)
+                return;
+
+            }
+
+            //new Event.Challenge.ChallengeStars().EventSetup(Game1.player.Position, QuestHandle.challengeStars, true);
+            EventHandle.actionButtons actionPressed = ActionButtonPressed();
+
+            if (!CasterBusy()) {
+
+                // action press
+                if (clickRegister.ContainsKey(actionPressed))
                 {
 
-                    if (ritePressed)
+                    if (eventRegister.ContainsKey(clickRegister[actionPressed]))
                     {
-                        
-                        if (Game1.activeClickableMenu is QuestLog)
+
+                        if (eventRegister[clickRegister[actionPressed]].EventPerformAction(e.Button, actionPressed))
                         {
 
-                            Game1.activeClickableMenu = new Druid();
+                            if (eventRegister[clickRegister[actionPressed]].eventComplete)
+                            {
 
-                        }
-                        else if(Game1.activeClickableMenu is Druid)
-                        {
+                                eventRegister[clickRegister[actionPressed]].EventRemove();
 
-                            Game1.activeClickableMenu.exitThisMenu(true);
+                                eventRegister.Remove(clickRegister[actionPressed]);
+
+                                clickRegister.Remove(actionPressed);
+
+                            }
+
+                            return;
 
                         }
 
                     }
-
-                    if(journalPressed != journalTypes.none)
+                    else
                     {
                         
-                        if (Game1.activeClickableMenu is Druid druidJournal)
-                        {
-
-                            if (druidJournal.type == journalPressed)
-                            {
-
-                                druidJournal.exitThisMenu(true);
-
-                            }
-                            else
-                            {
-
-                                druidJournal.switchTo(journalPressed);
-
-                            }
-
-                        }
+                        clickRegister.Remove(actionPressed);
 
                     }
 
                 }
+                else
+                {
 
-                return;
+                    clickRegister.Remove(actionPressed);
+
+                    rite.click(actionPressed);
+
+                }
 
             }
+            else
+            {
+                
+                rite.shutdown();
+
+            }
+
+            Druid.journalTypes journalPressed = Journal.Druid.JournalButtonPressed();
+
 
             if (journalPressed != journalTypes.none)
             {
 
                 rite.shutdown();
-
-                Game1.activeClickableMenu = new Druid(journalPressed);
-
-                return;
-
-            }
-
-            if (ritePressed)
-            {
-
-                rite.start();
-
-                /*Monitor.Log(Game1.player.currentLocation.Name, LogLevel.Debug);
-
-                for (int i = 0; i < Game1.player.currentLocation.map.Layers.Count; i++)
+                
+                if (Game1.activeClickableMenu != null)
                 {
-                    
-                    Layer layer = Game1.player.currentLocation.map.Layers.ElementAt(i);
 
-                    Monitor.Log(layer.Id, LogLevel.Debug);
-
-                    for (int y = 0; y < layer.LayerHeight; y++)
+                    if (Game1.activeClickableMenu is Druid druidJournal)
                     {
 
-                        string debug = "";
-
-                        for(int x = 0; x < layer.LayerWidth; x++)
+                        if (druidJournal.type == journalPressed)
                         {
 
-                            if(layer.Tiles[x, y] != null)
-                            {
+                            druidJournal.exitThisMenu(true);
 
-                                debug += layer.Tiles[x, y].TileIndex.ToString();
+                        }
+                        else
+                        {
 
-
-                            }
-
-                            debug += ",";
+                            druidJournal.switchTo(journalPressed);
 
                         }
 
-                        Monitor.Log(debug,LogLevel.Debug);
-
                     }
 
-                }*/
+                }
+                else
+                {
+                    
+                    Game1.activeClickableMenu = new Druid(journalPressed);
+
+                }
+
+                return;
 
             }
 
@@ -1033,21 +1129,14 @@ namespace StardewDruid
 
             }
 
-            if (RiteButtonPressed())
+            if (Config.riteButtons.GetState() == SButtonState.Pressed)
             {
 
                 return EventHandle.actionButtons.rite;
 
             }
-
+            
             return EventHandle.actionButtons.none;
-
-        }
-
-        public bool RiteButtonPressed()
-        {
-
-            return Config.riteButtons.GetState() == SButtonState.Pressed;
 
         }
 
@@ -1062,20 +1151,12 @@ namespace StardewDruid
 
             }
 
-            /*if (tiles.ContainsKey(Game1.player.currentLocation.Name))
+            if (CasterGone())
             {
 
-                foreach(LocationTile tile in tiles[Game1.player.currentLocation.Name])
-                {
+                return;
 
-                    tile.Draw((Game1.mapDisplayDevice as StardewModdingAPI.Framework.Rendering.SDisplayDevice).SpriteBatchAlpha);
-
-                }
-
-            }*/
-
-            // caster is busy
-            bool business = CasterBusy();
+            }
 
             for (int c = movers.Count - 1; c >= 0; c--)
             {
@@ -1087,6 +1168,9 @@ namespace StardewDruid
                 movers.Remove(mover.Key);
 
             }
+
+            // caster is busy
+            bool business = CasterBusy();
 
             for (int j = spellRegister.Count - 1; j >= 0; j--)
             {
@@ -1150,6 +1234,15 @@ namespace StardewDruid
             }
 
             rite.update();
+
+            if (e.IsMultipleOf(27))
+            {
+
+                rite.RiteBuff();
+
+                herbalData.HerbalBuff();
+
+            }
 
             //===========================================
             // Every tenth of a second
@@ -1227,6 +1320,15 @@ namespace StardewDruid
                         {
                             
                             eventEntry.Value.EventDecimal();
+
+                            if (eventEntry.Value.eventComplete)
+                            {
+                                
+                                eventRegister[eventEntry.Key].EventRemove();
+
+                                eventRegister.Remove(eventEntry.Key);
+
+                            }
                         
                         }
 
@@ -1302,6 +1404,47 @@ namespace StardewDruid
             }
 
             return false;
+
+        }
+
+        public void OnRenderedStep(object sender, RenderedStepEventArgs e)
+        {
+
+            if (!Context.IsWorldReady || !modReady)
+            {
+
+                return;
+
+            }
+
+            if(e.Step != StardewValley.Mods.RenderSteps.World_Sorted)
+            {
+                return;
+
+            }
+
+            if (CasterBusy() || CasterGone())
+            {
+
+                return;
+
+            }
+
+            for (int er = eventRegister.Count - 1; er >= 0; er--)
+            {
+                
+                KeyValuePair<string, Event.EventHandle> eventHandle = eventRegister.ElementAt(er);
+
+                if (eventHandle.Value.triggerField != null)
+                {
+                    
+                    eventHandle.Value.triggerField.draw(e.SpriteBatch);
+
+                }
+
+            }
+
+            rite.draw(e.SpriteBatch);
 
         }
 
@@ -1422,7 +1565,7 @@ namespace StardewDruid
         public int CombatDamage()
         {
 
-            int damageLevel = 250;
+            int damageLevel = 300;
 
             if (!Config.maxDamage)
             {
@@ -1437,24 +1580,24 @@ namespace StardewDruid
 
                 damageLevel += 1 * Game1.player.FishingLevel; // 10
 
-                damageLevel += save.progress.Count * 3; // 120
+                damageLevel += save.progress.Count * 5; // 120
 
                 if (Game1.player.CurrentTool is Tool currentTool) // 25
                 {
                     if (currentTool.enchantments.Count > 0)
                     {
-                        damageLevel += 25;
+                        damageLevel += 30;
                     }
                 }
 
                 if (Game1.player.professions.Contains(24)) // 25
                 {
-                    damageLevel += 25;
+                    damageLevel += 30;
                 }
 
                 if (Game1.player.professions.Contains(26)) // 25
                 {
-                    damageLevel += 25;
+                    damageLevel += 30;
                 }
 
             }
@@ -1601,125 +1744,11 @@ namespace StardewDruid
 
                 }
 
+                eventRegister[placeHolder].EventRemove();
+
             }
 
             eventRegister[placeHolder] = eventHandle;
-
-        }
-
-        public void RegisterClick(string eventName, int place)
-        {
-
-            while(clickRegister.ContainsKey(place))
-            {
-
-                if(clickRegister[place] == eventName)
-                {
-
-                    return;
-
-                }
-
-                place++;
-
-            }
-
-            clickRegister[place] = eventName;
-
-        }
-
-        public void EventQuery(QueryData querydata,string query = "QuestComplete")
-        {
-
-            Helper.Multiplayer.SendMessage<QueryData>(
-                querydata,
-                query,
-                new string[1] { ModManifest.UniqueID },
-                null
-            );
-
-        }
-
-        public bool Witnessed(ReactionData.reactions type, NPC witness, bool update = false)
-        {
-            
-            return Witnessed(type, witness.Name, update);
-
-        }
-
-        public bool Witnessed(ReactionData.reactions type, string name, bool update = false)
-        {
-
-            if (!reactions.ContainsKey(name))
-            {
-
-                reactions[name] = new()
-                {
-                    type,
-
-                };
-
-                return false;
-
-            }
-
-            if (!reactions[name].Contains(type))
-            {
-
-                if (update)
-                {
-
-                    reactions[name].Add(type);
-
-                }
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        public void CriticalCondition()
-        {
-
-            if (Context.IsMainPlayer)
-            {
-
-                //if (!eventRegister.ContainsKey("active")) { return; }
-                if(activeEvent.Count == 0) { return; }
-
-                AbortAllEvents();
-                    
-                CastMessage("Challenge aborted due to critical condition", 3, true);
-
-            }
-            else if (Context.IsMultiplayer)
-            {
-                QueryData queryData = new()
-                {
-                    name = Game1.player.Name,
-                    value = "damage",
-                    time = Game1.currentGameTime.TotalGameTime.TotalMilliseconds,
-                    location = Game1.player.currentLocation.Name,
-                };
-
-                EventQuery(queryData, "EventAbort");
-
-            }
-
-        }
-
-        public void AbortAllEvents()
-        {
-
-            foreach (KeyValuePair<string, Event.EventHandle> eventEntry in eventRegister)
-            {
-
-                eventRegister[eventEntry.Key].eventAbort = true;
-
-            }
 
         }
 
@@ -1740,7 +1769,87 @@ namespace StardewDruid
 
             }
 
-            Helper.Multiplayer.SendMessage(save, "SaveSynchronise", modIDs: new[] { this.ModManifest.UniqueID });
+            synchroniseData = true;
+
+        }
+
+        public void EventQuery(QueryData querydata,QueryData.queries query)
+        {
+
+            Helper.Multiplayer.SendMessage<QueryData>(
+                querydata,
+                query.ToString(),
+                new string[1] { ModManifest.UniqueID },
+                null
+            );
+
+        }
+
+        public bool Witnessed(ReactionData.reactions type, NPC witness)
+        {
+            
+            return Witnessed(type, witness.Name);
+
+        }
+
+        public bool Witnessed(ReactionData.reactions type, string name)
+        {
+
+            if (!reactions.ContainsKey(name))
+            {
+
+                reactions[name] = new();
+
+                return false;
+
+            }
+
+            if (reactions[name].Contains(type))
+            {
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+        public void AddWitness(ReactionData.reactions type, string name)
+        {
+
+            Witnessed(type, name);
+
+            reactions[name].Add(type);
+
+        }
+
+
+        public void CriticalCondition()
+        {
+
+            if (Context.IsMainPlayer)
+            {
+
+                if(activeEvent.Count == 0) { return; }
+
+                AbortAllEvents();
+                    
+                CastMessage(DialogueData.Strings(DialogueData.stringkeys.challengeAborted), 3, true);
+
+            }
+
+        }
+
+        public void AbortAllEvents()
+        {
+
+            foreach (KeyValuePair<string, Event.EventHandle> eventEntry in eventRegister)
+            {
+
+                eventRegister[eventEntry.Key].eventAbort = true;
+
+            }
 
         }
 
@@ -1886,15 +1995,23 @@ namespace StardewDruid
 
             };
 
-            for (int i = 0; i < Game1.player.Items.Count; i++)
+            List<int> indexes = new()
+            {
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+            };
+
+            if (Config.slotReverse)
             {
 
-                if (i >= 12)
+                indexes = new()
                 {
+                    11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
+                };
 
-                    break;
+            }
 
-                }
+            foreach(int i in indexes)
+            {
 
                 if (slots[i] != "lunch")
                 {
@@ -1922,72 +2039,82 @@ namespace StardewDruid
 
                 //Item checkItem = checkSlot.getOne();
 
-                if (@checkItem.Edibility > 0)
+                if (@checkItem.Edibility <= 0)
                 {
 
-                    if (@checkItem.HasContextTag("ginger_item"))
-                    {
-                        Game1.player.buffs.Remove("25");
-                    }
-
-                    foreach (Buff foodOrDrinkBuff in @checkItem.GetFoodOrDrinkBuffs())
-                    {
-                        Game1.player.applyBuff(foodOrDrinkBuff);
-                    }
-
-                    if (@checkItem.QualifiedItemId == "(O)773")
-                    {
-                        Game1.player.health = Game1.player.maxHealth;
-                    }
-                    else if (@checkItem.QualifiedItemId == "(O)351")
-                    {
-                        Game1.player.exhausted.Value = false;
-                    }
-
-                    Microsoft.Xna.Framework.Color messageColour = Microsoft.Xna.Framework.Color.White;
-
-                    if (Game1.player.MaxStamina > Game1.player.Stamina)
-                    {
-
-                        Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + (@checkItem.staminaRecoveredOnConsumption()));
-
-                    }
-
-                    if (Game1.player.maxHealth > Game1.player.health)
-                    {
-
-                        Game1.player.health = Math.Min(Game1.player.maxHealth, Game1.player.health + @checkItem.healthRecoveredOnConsumption());
-
-                    }
-
-                    Game1.player.Items[i].Stack -= 1;
-
-                    if (Game1.player.Items[i].Stack <= 0)
-                    {
-                        Game1.player.Items[i] = null;
-
-                    }
-
-                    //Microsoft.Xna.Framework.Rectangle healthBox = Game1.player.GetBoundingBox();
-
-                    //Game1.player.currentLocation.debris.Add(
-                    //    new Debris(checkItem.DisplayName, 1, new Vector2(healthBox.Center.X + 16, healthBox.Center.Y), Microsoft.Xna.Framework.Color.Goldenrod, 0.75f,0f)
-                    //);
-
-                    if (consumeBuffer < Game1.currentGameTime.TotalGameTime.TotalSeconds)
-                    {
-
-                        ConsumeEdible hudmessage = new("Consumed " + checkItem.DisplayName + " for " + @checkItem.staminaRecoveredOnConsumption().ToString() + " stamina", checkItem);
-
-                        Game1.addHUDMessage(hudmessage);
-
-                        consumeBuffer = Game1.currentGameTime.TotalGameTime.TotalSeconds + 5;
-
-                    }
-
-                    break;
+                    continue;
 
                 }
+
+                int itemStamina = @checkItem.staminaRecoveredOnConsumption();
+
+                if (itemStamina <= 0)
+                {
+                    return;
+                }
+
+                int itemHealth = @checkItem.healthRecoveredOnConsumption();
+
+                if(itemHealth <= 0)
+                {
+                    return;
+                }
+
+                if (@checkItem.HasContextTag("ginger_item"))
+                {
+                    Game1.player.buffs.Remove("25");
+                }
+
+                foreach (Buff foodOrDrinkBuff in @checkItem.GetFoodOrDrinkBuffs())
+                {
+                    Game1.player.applyBuff(foodOrDrinkBuff);
+                }
+
+                if (@checkItem.QualifiedItemId == "(O)773")
+                {
+                    Game1.player.health = Game1.player.maxHealth;
+                }
+                else if (@checkItem.QualifiedItemId == "(O)351")
+                {
+                    Game1.player.exhausted.Value = false;
+                }
+
+                Microsoft.Xna.Framework.Color messageColour = Microsoft.Xna.Framework.Color.White;
+
+                if (Game1.player.MaxStamina > Game1.player.Stamina)
+                {
+
+                    Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + itemStamina);
+
+                }
+
+                if (Game1.player.maxHealth > Game1.player.health)
+                {
+
+                    Game1.player.health = Math.Min(Game1.player.maxHealth, Game1.player.health + itemHealth);
+
+                }
+
+                Game1.player.Items[i].Stack -= 1;
+
+                if (Game1.player.Items[i].Stack <= 0)
+                {
+                    Game1.player.Items[i] = null;
+
+                }
+
+                if (consumeBuffer < Game1.currentGameTime.TotalGameTime.TotalSeconds)
+                {
+
+                    ConsumeEdible hudmessage = new(checkItem.DisplayName + " " + @checkItem.staminaRecoveredOnConsumption().ToString() + " " + DialogueData.Strings(DialogueData.stringkeys.stamina), checkItem);
+
+                    Game1.addHUDMessage(hudmessage);
+
+                    consumeBuffer = Game1.currentGameTime.TotalGameTime.TotalSeconds + 5;
+
+                }
+
+                break;
 
             }
 

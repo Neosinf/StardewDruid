@@ -1,4 +1,4 @@
-﻿using GenericModConfigMenu;
+﻿
 using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Data;
@@ -45,7 +45,7 @@ namespace StardewDruid.Event.Relics
             if ((Game1.getLocationFromName("CommunityCenter") as CommunityCenter).numberOfCompleteBundles() == 0)
             {
                 
-                Mod.instance.CastDisplay("The forest spirits have not left instructions for how to fix this yet");
+                Mod.instance.CastDisplay(DialogueData.Strings(DialogueData.stringkeys.noInstructions));
 
                 return false;
 
@@ -119,8 +119,12 @@ namespace StardewDruid.Event.Relics
 
                         communityCenter.bundleRewards[bundleId] = true;
 
-                        communityCenter.bundles.FieldDict[bundleId][0] = true;
+                        for (int i = 0; i < communityCenter.bundles[bundleId].Length; i++)
+                        {
 
+                            communityCenter.bundles.FieldDict[bundleId][i] = true;
+
+                        }
                     }
 
                 }
@@ -131,7 +135,7 @@ namespace StardewDruid.Event.Relics
 
                 communityCenter.areaCompleteReward(2);
 
-                Mod.instance.questHandle.CompleteQuest(eventId);
+                eventComplete = true;
 
             }
 

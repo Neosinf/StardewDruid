@@ -20,15 +20,11 @@ namespace StardewDruid.Event.Challenge
 
         public int activeSection;
 
-        public Dictionary<int,StardewDruid.Monster.Boss> bosses = new();
-
         public List<Vector2> spawnPoints = new();
 
         public List<Vector2> retreatPoints = new();
 
         public Dictionary<int, int> previousModes = new();
-
-        public Dictionary<int, EventDisplay> eventDisplays = new();
 
         public ChallengeFates()
         {
@@ -43,10 +39,6 @@ namespace StardewDruid.Event.Challenge
         {
 
             base.EventActivate();
-
-            narrators = DialogueData.DialogueNarrators(eventId);
-
-            cues = DialogueData.DialogueScene(eventId);
 
             eventProximity = -1;
 
@@ -72,6 +64,8 @@ namespace StardewDruid.Event.Challenge
 
             };
 
+            HoldCompanions();
+
         }
 
         public override void EventRemove()
@@ -83,17 +77,6 @@ namespace StardewDruid.Event.Challenge
                 location.updateWarps();
 
             }
-
-            for (int b = bosses.Count - 1; b >= 0; b--)
-            {
-
-                Boss boss = bosses[b];
-
-                location.characters.Remove(boss);
-
-            }
-
-            bosses.Clear();
 
             for (int c = companions.Count - 1; c >= 0; c--)
             {
@@ -146,19 +129,48 @@ namespace StardewDruid.Event.Challenge
 
             // ========================== Leader
 
-            DarkLeader darkLeader = new DarkLeader(spawnPoints[0], Mod.instance.CombatDifficulty());
 
-            bosses[0] = darkLeader;
+            if (Mod.instance.questHandle.IsComplete(eventId))
+            {
 
-            darkLeader.SetMode(3);
+                DarkBrute darkBrute = new DarkBrute(spawnPoints[0], Mod.instance.CombatDifficulty());
 
-            darkLeader.netPosturing.Set(true);
+                bosses[0] = darkBrute;
 
-            location.characters.Add(darkLeader);
+                darkBrute.SetMode(4);
 
-            darkLeader.update(Game1.currentGameTime, location);
+                darkBrute.groupMode = true;
 
-            voices[3] = darkLeader;
+                darkBrute.netPosturing.Set(true);
+
+                location.characters.Add(darkBrute);
+
+                darkBrute.update(Game1.currentGameTime, location);
+
+                voices[3] = darkBrute;
+
+
+            }
+            else
+            {
+
+                DarkLeader darkLeader = new DarkLeader(spawnPoints[0], Mod.instance.CombatDifficulty());
+
+                bosses[0] = darkLeader;
+
+                darkLeader.SetMode(3);
+
+                darkLeader.groupMode = true;
+
+                darkLeader.netPosturing.Set(true);
+
+                location.characters.Add(darkLeader);
+
+                darkLeader.update(Game1.currentGameTime, location);
+
+                voices[3] = darkLeader;
+
+            }
 
             Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, IconData.impacts.puff, 2f, new() { scheme = IconData.schemes.Void, });
 
@@ -169,6 +181,8 @@ namespace StardewDruid.Event.Challenge
             bosses[1] = darkShooter;
 
             darkShooter.SetMode(3);
+
+            darkShooter.groupMode = true;
 
             darkShooter.netPosturing.Set(true);
 
@@ -188,6 +202,8 @@ namespace StardewDruid.Event.Challenge
 
             darkGoblin.SetMode(3);
 
+            darkGoblin.groupMode = true;
+
             darkGoblin.netPosturing.Set(true);
 
             location.characters.Add(darkGoblin);
@@ -206,6 +222,8 @@ namespace StardewDruid.Event.Challenge
 
             darkRogue.SetMode(3);
 
+            darkRogue.groupMode = true;
+
             darkRogue.netPosturing.Set(true);
 
             location.characters.Add(darkRogue);
@@ -221,6 +239,8 @@ namespace StardewDruid.Event.Challenge
             monsterHandle = new(origin, location);
 
             monsterHandle.spawnSchedule = new();
+
+            monsterHandle.spawnGroup = true;
 
             for (int i = 1; i <= 12; i++)
             {
@@ -247,59 +267,28 @@ namespace StardewDruid.Event.Challenge
 
             // ========================== Leader
 
-            EventDisplay bossBar = Mod.instance.CastDisplay("Shadowfolk Leader", "Shadowfolk Leader");
-
-            bossBar.boss = bosses[0];
-
-            bossBar.type = EventDisplay.displayTypes.bar;
-
-            bossBar.colour = Microsoft.Xna.Framework.Color.Red;
+            BossBar(0, 3);
 
             bosses[0].netPosturing.Set(false);
 
-            eventDisplays[0] = bossBar;
-
             // ========================== Shooter
 
-            EventDisplay bossBar1 = Mod.instance.CastDisplay("Shadowfolk Bomber", "Shadowfolk Bomber");
-
-            bossBar1.boss = bosses[1];
-
-            bossBar1.type = EventDisplay.displayTypes.bar;
-
-            bossBar1.colour = Microsoft.Xna.Framework.Color.Red;
+            BossBar(1, 4);
 
             bosses[1].netPosturing.Set(false);
 
-            eventDisplays[1] = bossBar1;
-
             // ========================== Goblin
 
-            EventDisplay bossBar2 = Mod.instance.CastDisplay("Shadowfolk Goblin", "Shadowfolk Goblin");
-
-            bossBar2.boss = bosses[2];
-
-            bossBar2.type = EventDisplay.displayTypes.bar;
-
-            bossBar2.colour = Microsoft.Xna.Framework.Color.Red;
+            BossBar(2, 5);
 
             bosses[2].netPosturing.Set(false);
 
-            eventDisplays[2] = bossBar2;
 
             // ========================== Rogue
 
-            EventDisplay bossBar3 = Mod.instance.CastDisplay("Shadowfolk Rogue", "Shadowfolk Rogue");
-
-            bossBar3.boss = bosses[3];
-
-            bossBar3.type = EventDisplay.displayTypes.bar;
-
-            bossBar3.colour = Microsoft.Xna.Framework.Color.Red;
+            BossBar(3, 6);
 
             bosses[3].netPosturing.Set(false);
-
-            eventDisplays[3] = bossBar3;
 
         }
 
@@ -348,62 +337,37 @@ namespace StardewDruid.Event.Challenge
 
             voices[2] = companions[2];
 
+            if (Mod.instance.questHandle.IsComplete(eventId))
+            {
+
+                companions[3] = Mod.instance.characters[CharacterHandle.characters.Shadowtin];
+
+                companions[3].SwitchToMode(Character.Character.mode.scene, Game1.player);
+
+                CharacterMover.Warp(location, companions[3], Game1.player.Position - new Vector2(64, 128));
+
+                companions[3].LookAtTarget(bosses[0].Position);
+
+                companions[3].eventName = eventId;
+
+                voices[7] = companions[3];
+
+            }
+
         }
 
 
         public void FreeCompanions()
         {
-
-            companions[0].SwitchToMode(Character.Character.mode.track, Game1.player);
-
-            companions[1].SwitchToMode(Character.Character.mode.track, Game1.player);
-
-            companions[2].SwitchToMode(Character.Character.mode.track, Game1.player);
-
-        }
-
-        public void DialogueCueWithFeeling(int cueIndex)
-        {
-
-            if (cues.ContainsKey(cueIndex))
+            
+            for (int c = companions.Count - 1; c >= 0; c--)
             {
 
-                foreach (KeyValuePair<int, string> cue in cues[cueIndex])
-                {
-
-                    if (voices.ContainsKey(cue.Key))
-                    {
-
-                        if(voices[cue.Key] is StardewDruid.Character.Character companion)
-                        {
-
-                            companion.netSpecialActive.Set(true);
-
-                            companion.specialTimer = 2 * companion.specialInterval;
-
-                        }
-                        else if (voices[cue.Key] is StardewDruid.Monster.Boss boss)
-                        {
-
-                            boss.netSpecialActive.Set(true);
-
-                            boss.specialFrame = 1;
-
-                            boss.specialTimer = boss.specialInterval;
-                        
-                        }
-
-                    }
-
-                }
+                companions[c].SwitchToMode(Character.Character.mode.track, Game1.player);
 
             }
-            
-            
-            DialogueCue(cueIndex);
 
         }
-
 
         public void EventPartOne()
         {
@@ -436,7 +400,7 @@ namespace StardewDruid.Event.Challenge
             if (activeCounter == 24)
             {
 
-                EventBar("The Court of Shadows", 0);
+                EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
                 EngageBosses();
 
@@ -455,10 +419,10 @@ namespace StardewDruid.Event.Challenge
 
             int defeated = 0;
 
-            for (int b = bosses.Count - 1; b >= 0; b--)
+            foreach(KeyValuePair<int, Boss> bossPair in bosses)
             {
 
-                Boss boss = bosses[b];
+                Boss boss = bossPair.Value;
 
                 if (boss.netPosturing.Value)
                 {
@@ -469,12 +433,12 @@ namespace StardewDruid.Event.Challenge
 
                 }
 
-                if (!ModUtility.MonsterVitals(boss,location) || activeCounter == 89)
+                if (boss.netWoundedActive.Value || !ModUtility.MonsterVitals(boss,location) || activeCounter == 89)
                 {
 
                     boss.ResetActives();
 
-                    boss.Position = retreatPoints[b] * 64;
+                    boss.Position = retreatPoints[bossPair.Key] * 64;
 
                     boss.Health = boss.MaxHealth;
 
@@ -483,8 +447,6 @@ namespace StardewDruid.Event.Challenge
                     boss.netWoundedActive.Set(true);
 
                     boss.SetDirection(retreatPoints[0]*64);
-
-                    eventDisplays[b].shutdown();
 
                     Mod.instance.iconData.AnimateQuickWarp(location, boss.Position);
 
@@ -498,6 +460,17 @@ namespace StardewDruid.Event.Challenge
             {
 
                 monsterHandle.ShutDown();
+
+                if (Mod.instance.questHandle.IsComplete(eventId))
+                {
+                    
+                    activeCounter = 150;
+
+                    eventComplete = true; 
+                    
+                    return;
+
+                }
 
                 activeSection = 2;
 
@@ -568,121 +541,17 @@ namespace StardewDruid.Event.Challenge
 
                 case 145: DialogueSetups(companions[1], 2); companions[3].LookAtTarget(Game1.player.Position); break;
 
-                case 150: eventComplete = true; break;
-
-            }
-
-        }
-
-        public override void EventCompleted()
-        {
-
-            ThrowHandle throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Shadowtin].Position, IconData.relics.shadowtin_tome);
-
-            throwRelic.register();
-
-            Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.shadowtin_tome.ToString());
-
-            Mod.instance.questHandle.CompleteQuest(eventId);
-
-        }
-
-        public override void DialogueSetups(StardewDruid.Character.Character npc, int dialogueId)
-        {
-
-            string intro;
-
-            switch (dialogueId)
-            {
-                default:
-                case 1:
-
-                    intro = "Shadow Leader: ^My name is Shadowtin Bear. I am foremost a scholar of antiquity, but I was responsible for my company's operations on the surfaceland, and for that, I accept the consequence of my defeat.";
-
-                    break;
-
-                case 2:
-
-                    intro = "The Jester of Fate: ^He's tracking my kinsman! This is good for us, farmer, we might have finally found someone who can figure out where Thanatoshi went.";
-
-                    break;
-
-            }
-
-            List<Response> responseList = new();
-
-            switch (dialogueId)
-            {
-                default:
-                case 1: 
-
-                    responseList.Add(new Response("1a", "Shadowtin, why did you infiltrate the valley?").SetHotKey(Microsoft.Xna.Framework.Input.Keys.Enter));
-                    responseList.Add(new Response("1a", "Antiquity indeed. Your tactics were certainly outdated."));
-                    responseList.Add(new Response("1a", "(Say nothing)").SetHotKey(Microsoft.Xna.Framework.Input.Keys.Escape));
-
-                    break;
-
-                case 2:
-
-                    responseList.Add(new Response("2a", "I feel inclined to deny your masters any power that might threaten peace in the valley. You will aid us instead.").SetHotKey(Microsoft.Xna.Framework.Input.Keys.Enter));
-                    responseList.Add(new Response("2a", "I fought a dragon once. How long ago was that? Seems like I'm always fighting when I'd rather make friends. Welcome new friend."));
-                    responseList.Add(new Response("2a", "(Say nothing)").SetHotKey(Microsoft.Xna.Framework.Input.Keys.Escape));
-
-                    break;
-
-            }
-
-            GameLocation.afterQuestionBehavior questionBehavior = new(DialogueResponses);
-
-            Game1.player.currentLocation.createQuestionDialogue(intro, responseList.ToArray(), questionBehavior, npc);
-
-            return;
-
-        }
-
-        public override void DialogueResponses(Farmer visitor, string dialogue)
-        {
-
-            StardewValley.NPC npc = companions[0];
-
-            string response;
-
-            switch (dialogue)
-            {
-
-                case "1a":
-
-                    activeCounter = Math.Max(144, activeCounter);
-
-                    response = "If you're familiar with the old legends, this is where the stars fell in the war that claimed the Dragons. " +
-                        "We're searching for remnants of that war. Specifically, the power of the ancient ones over the Ether. " +
-                        "Our efforts have been fruitless, save for a cache of writings and other ornaments we found in the nearby tunnels. " +
-                        "It appears to have been a repository for human followers of the Reaper of Fate. " +
-                        "One of the texts mentions the tomb of Tyrannus Jin, once dragon king of this land, but there are no descriptions of its location.";
-
-                    DialogueDraw(companions[3],response);
-
-                    break;
-
-                case "2a":
-
-                    activeCounter = Math.Max(149, activeCounter);
-
-                    response = "I'm surprised that you would consider me for a partnership, but I will accept, gratefully. " +
-                        "I have my own reasons for studying the forgotten war between dragons and elderborn, and if I get the opportunity to pursue my research, then I will. " +
-                        "I also expect I will have to face my former masters at some point. Until then, my allegiance is yours. " +
-                        "As a token of my goodwill, I entrust to you the old text I spoke of, and the compendium of my own research. " +
-                        "The text also made mention of the circle of druids, and are part of the reason I wanted to capture one of your number for questioning.";
-
-                    DialogueDraw(companions[3], response);
+                case 149:
 
                     ThrowHandle throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Shadowtin].Position, IconData.relics.book_wyrven);
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.book_wyrven.ToString());
-
                     break;
+
+                case 150: 
+                   
+                    eventComplete = true; break;
 
             }
 

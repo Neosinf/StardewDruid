@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Mists;
+using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Event;
 using StardewDruid.Monster;
@@ -22,7 +23,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
-namespace StardewDruid.Character
+namespace StardewDruid.Cast.Ether
 {
     public class Dragon : NPC
     {
@@ -32,6 +33,7 @@ namespace StardewDruid.Character
         public bool avatar;
 
         public DragonRender dragonRender;
+        public float dragonScale;
 
         public int moveDirection;
         public int altDirection;
@@ -101,31 +103,32 @@ namespace StardewDruid.Character
         public Vector2 divePosition;
         public int diveMoment;
 
-
         public Dragon()
         {
         }
 
         public Dragon(Farmer Farmer, Vector2 position, string map, string Name)
-          : base(new AnimatedSprite(Path.Combine("Characters", "Abigail")), position, map, 2, Name, CharacterHandle.CharacterPortrait(CharacterHandle.characters.none), false)
+          : base(new AnimatedSprite("StardewDruid.Characters.Dragon") { SpriteWidth = 64, SpriteHeight = 64, }, position, map, 2, Name, CharacterHandle.CharacterPortrait(CharacterHandle.characters.none), false)
         {
-            
+
             willDestroyObjectsUnderfoot = false;
-            
+
+            SimpleNonVillagerNPC = true;
+
             DefaultMap = map;
-            
+
             DefaultPosition = position;
-            
+
             HideShadow = true;
-            
+
             breather.Value = false;
 
             avatar = true;
-            
+
             anchor = Farmer;
-           
+
             netAnchor.Set(Farmer.UniqueMultiplayerID);
-            
+
             moveDirection = Game1.player.FacingDirection;
 
             netDirection.Set(moveDirection);
@@ -135,7 +138,7 @@ namespace StardewDruid.Character
             //if (Mod.instance.CurrentProgress >= 31)
             //{
 
-                terrainActive = true;
+            terrainActive = true;
 
             //}
 
@@ -149,17 +152,25 @@ namespace StardewDruid.Character
             }
 
             AnimateMovement(false);
-            
+
             LoadOut();
-        
+
         }
+
+        public override bool IsVillager { get { return false; } }
+
+        public override bool CanSocialize { get { return false; } }
 
         public void LoadOut()
         {
 
             anchor = Game1.getFarmer(netAnchor.Value);
 
+            dragonScale = 3.5f;
+
             dragonRender = new();
+
+            dragonRender.LoadConfigScheme();
 
             loadedOut = true;
 
@@ -200,17 +211,17 @@ namespace StardewDruid.Character
             {
 
                 return;
-            
+
             }
 
             if (!Utility.isOnScreen(Position, 128))
             {
 
                 return;
-            
+
             }
-                
-            if(avatar && Game1.displayFarmer)
+
+            if (avatar && Game1.displayFarmer)
             {
 
                 return;
@@ -224,24 +235,24 @@ namespace StardewDruid.Character
 
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            bool flippant = ((netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3);
+            bool flippant = netDirection.Value % 2 == 0 && netAlternative.Value == 3 || netDirection.Value == 3;
 
             float drawLayer = anchor.getDrawLayer() + 0.0001f;
 
             if (netDiveActive.Value)
             {
 
-                dragonRender.drawDive(b, localPosition, new() { direction = netDirection.Value, scale = 3f, frame = diveMoment, flip = flippant, layer = drawLayer, });
+                dragonRender.drawDive(b, localPosition, new() { direction = netDirection.Value, scale = dragonScale, frame = diveMoment, flip = flippant, layer = drawLayer, });
 
                 return;
             }
 
-            if(netSwimActive.Value)
+            if (netSwimActive.Value)
             {
 
-                dragonRender.drawSwim(b, localPosition, new() { direction = netDirection.Value, scale = 3f, frame = walkFrame, flip = flippant, layer = drawLayer, });
+                dragonRender.drawSwim(b, localPosition, new() { direction = netDirection.Value, scale = dragonScale, frame = walkFrame, flip = flippant, layer = drawLayer, });
 
                 return;
 
@@ -252,7 +263,7 @@ namespace StardewDruid.Character
 
                 int digFrame = digMoment % 2;
 
-                dragonRender.drawDig(b, localPosition, new() { direction = netDirection.Value, scale = 3f, frame = digFrame, flip = flippant, layer = drawLayer, });
+                dragonRender.drawDig(b, localPosition, new() { direction = netDirection.Value, scale = dragonScale, frame = digFrame, flip = flippant, layer = drawLayer, });
 
                 return;
 
@@ -264,13 +275,13 @@ namespace StardewDruid.Character
                 if (netSpecialActive.Value)
                 {
 
-                    dragonRender.drawSweep(b, localPosition, new() { direction = netDirection.Value, scale = 3f, version = 1, frame = sweepFrame, flip = flippant, layer = drawLayer, });
+                    dragonRender.drawSweep(b, localPosition, new() { direction = netDirection.Value, scale = dragonScale, version = 1, frame = sweepFrame, flip = flippant, layer = drawLayer, });
 
                 }
                 else
                 {
 
-                    dragonRender.drawSweep(b, localPosition, new() { direction = netDirection.Value, scale = 3f, frame = sweepFrame, flip = flippant, layer = drawLayer, });
+                    dragonRender.drawSweep(b, localPosition, new() { direction = netDirection.Value, scale = dragonScale, frame = sweepFrame, flip = flippant, layer = drawLayer, });
 
                 }
 
@@ -281,13 +292,13 @@ namespace StardewDruid.Character
             if (netSpecialActive.Value)
             {
 
-                dragonRender.drawWalk(b, localPosition, new() { direction = netDirection.Value, scale = 3f, version = 1, breath = netBreathActive.Value, frame = walkFrame, flip = flippant, layer = drawLayer, });
+                dragonRender.drawWalk(b, localPosition, new() { direction = netDirection.Value, scale = dragonScale, version = 1, breath = netBreathActive.Value, frame = walkFrame, flip = flippant, layer = drawLayer, });
 
             }
             else
             {
 
-                dragonRender.drawWalk(b, localPosition, new() { direction = netDirection.Value, scale = 3f, frame = walkFrame, flip = flippant, layer = drawLayer, });
+                dragonRender.drawWalk(b, localPosition, new() { direction = netDirection.Value, scale = dragonScale, frame = walkFrame, flip = flippant, layer = drawLayer, });
 
             }
 
@@ -305,23 +316,23 @@ namespace StardewDruid.Character
 
             if (netDashActive.Value)
             {
-                
-                Vector2 localPosition = Position - new Vector2((float)Game1.viewport.X,(float)Game1.viewport.Y);
 
-                bool flippant = ((netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3);
+                Vector2 localPosition = Position - new Vector2(Game1.viewport.X, Game1.viewport.Y);
+
+                bool flippant = netDirection.Value % 2 == 0 && netAlternative.Value == 3 || netDirection.Value == 3;
 
                 float drawLayer = anchor.getDrawLayer() + 0.0001f;
 
                 if (netSpecialActive.Value)
                 {
 
-                    dragonRender.drawFlight(b, localPosition, new() { direction = netDirection.Value, version = 1, breath = netBreathActive.Value, flight = flightHeight, scale = 3f, frame = flightFrame, flip = flippant, layer = drawLayer, });
+                    dragonRender.drawFlight(b, localPosition, new() { direction = netDirection.Value, version = 1, breath = netBreathActive.Value, flight = flightHeight, scale = dragonScale, frame = flightFrame, flip = flippant, layer = drawLayer, });
 
                 }
                 else
                 {
 
-                    dragonRender.drawFlight(b, localPosition, new() { direction = netDirection.Value, flight = flightHeight, scale = 3f, frame = flightFrame, flip = flippant, layer = drawLayer, });
+                    dragonRender.drawFlight(b, localPosition, new() { direction = netDirection.Value, flight = flightHeight, scale = dragonScale, frame = flightFrame, flip = flippant, layer = drawLayer, });
 
                 }
 
@@ -329,10 +340,9 @@ namespace StardewDruid.Character
 
         }
 
-
         public override void reloadSprite(bool onlyAppearance = false)
         {
-            
+
             base.reloadSprite(onlyAppearance);
 
             Portrait = CharacterHandle.CharacterPortrait(CharacterHandle.characters.none);
@@ -356,9 +366,9 @@ namespace StardewDruid.Character
 
             if (!loadedOut)
             {
-                
+
                 LoadOut();
-            
+
             }
 
             if (anchor == null)
@@ -379,7 +389,7 @@ namespace StardewDruid.Character
 
             }
 
-            if (Game1.isWarping)
+            if (Mod.instance.CasterGone())
             {
 
                 return;
@@ -423,23 +433,23 @@ namespace StardewDruid.Character
 
             if (textAboveHeadTimer > 0)
             {
-                
+
                 if (textAboveHeadPreTimer > 0)
                 {
-                    
+
                     textAboveHeadPreTimer -= time.ElapsedGameTime.Milliseconds;
-                
+
                 }
                 else
                 {
-                    
+
                     textAboveHeadTimer -= time.ElapsedGameTime.Milliseconds;
 
                     if (textAboveHeadTimer > 500)
                     {
-                        
+
                         textAboveHeadAlpha = Math.Min(1f, textAboveHeadAlpha + 0.1f);
-                    
+
                     }
                     else
                     {
@@ -447,7 +457,7 @@ namespace StardewDruid.Character
                         float newAlpha = textAboveHeadAlpha - 0.04f;
 
                         textAboveHeadAlpha = newAlpha < 0f ? 0f : newAlpha;
-                    
+
                     }
 
                 }
@@ -470,8 +480,6 @@ namespace StardewDruid.Character
             }
 
             updateEmote(time);
-
-            DefenseBuff();
 
             moveDirection = Game1.player.FacingDirection;
 
@@ -503,7 +511,7 @@ namespace StardewDruid.Character
 
             }
 
-            if(!flightActive)
+            if (!flightActive)
             {
                 UpdateFollow();
             }
@@ -528,7 +536,7 @@ namespace StardewDruid.Character
 
                 flightTimer--;
 
-                if(flightTimer <= 0)
+                if (flightTimer <= 0)
                 {
 
                     flightFrame++;
@@ -540,7 +548,7 @@ namespace StardewDruid.Character
                     }
 
                     flightTimer = 12;
-                
+
                 }
 
                 return;
@@ -548,6 +556,7 @@ namespace StardewDruid.Character
             }
             else
             {
+                
                 flightFrame = 0;
 
                 flightTimer = 12;
@@ -587,7 +596,9 @@ namespace StardewDruid.Character
             if (setPosition != Position || netDirection.Value != moveDirection || netAlternative.Value != altDirection)
             {
 
-                if(walkFrame == 0)
+                CheckSwim();
+
+                if (walkFrame == 0)
                 {
 
                     walkFrame = 1;
@@ -613,9 +624,9 @@ namespace StardewDruid.Character
 
                     if (walkFrame > 6)
                     {
-                    
+
                         walkFrame = 1;
-                    
+
                     }
 
                     walkTimer = 9;
@@ -664,6 +675,8 @@ namespace StardewDruid.Character
 
                 AnimateMovement();
 
+                CheckSwim();
+
                 return;
 
             }
@@ -683,12 +696,12 @@ namespace StardewDruid.Character
 
             }
 
-            if(stationaryTimer > 0)
+            if (stationaryTimer > 0)
             {
 
                 stationaryTimer--;
 
-                if(stationaryTimer == 0)
+                if (stationaryTimer == 0)
                 {
 
                     walkFrame = 0;
@@ -696,6 +709,27 @@ namespace StardewDruid.Character
                     walkTimer = 0;
 
                 }
+
+            }
+
+        }
+
+        public void CheckSwim()
+        {
+            
+            if (netDashActive.Value)
+            {
+                
+                return;
+
+            }
+
+            if (ModUtility.GroundCheck(currentLocation, ModUtility.PositionToTile(Position)) == "water")
+            {
+
+                swimActive = true;
+
+                netSwimActive.Set(true);
 
             }
 
@@ -787,32 +821,15 @@ namespace StardewDruid.Character
 
         }
 
-        public void DefenseBuff()
-        {
-
-            BuffEffects buffEffect = new();
-
-            buffEffect.Defense.Set(5);
-
-            Buff speedBuff = new("184655", source: "Rite of the Ether", displaySource: "Rite of the Ether", duration: 3000, displayName: "Dragon Scales", description: "Defense increased by transformation", effects: buffEffect);
-
-            anchor.buffs.Apply(speedBuff);
-
-        }
-
         public void PerformFlight()
         {
 
-            if (SweepVictims().Count > 0)
+            if (ModUtility.MonsterProximity(Game1.player.currentLocation, new() { Game1.player.Position, }, 160).Count > 0)
             {
 
-                if (AccountStamina(12))
-                {
-                    PerformSweep();
+                PerformSweep();
 
-                    return;
-
-                }
+                return;
 
             }
 
@@ -823,13 +840,14 @@ namespace StardewDruid.Character
                 return;
             }
 
-
             if (!Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherOne))
             {
 
                 Mod.instance.questHandle.UpdateTask(Journal.QuestHandle.etherOne, 1);
 
             }
+
+            strikeTimer = 56;
 
             flightActive = true;
 
@@ -843,8 +861,6 @@ namespace StardewDruid.Character
 
             flightPosition = Game1.player.Position;
 
-            strikeTimer = 56;
-
             flightExtend = flightIncrement * 6;
 
             Game1.player.temporarilyInvincible = true;
@@ -852,6 +868,7 @@ namespace StardewDruid.Character
             Game1.player.temporaryInvincibilityTimer = 0;
 
             Game1.player.currentTemporaryInvincibilityDuration = 100 * flightIncrement;
+
 
         }
 
@@ -862,7 +879,7 @@ namespace StardewDruid.Character
 
             sweepDelay = 3;
 
-            sweepFrame = (0);
+            sweepFrame = 0;
 
             sweepTimer = 25;
 
@@ -870,8 +887,10 @@ namespace StardewDruid.Character
 
         public bool UpdateFlight()
         {
+
             if (flightDelay > 0)
             {
+
                 flightDelay--;
 
                 return true;
@@ -879,6 +898,8 @@ namespace StardewDruid.Character
             }
 
             netDashActive.Set(true);
+
+            Game1.player.temporarySpeedBuff = 5f;
 
             flightTimer--;
 
@@ -910,8 +931,6 @@ namespace StardewDruid.Character
 
                     netSwimActive.Set(true);
 
-                    swimCheckTimer = 60;
-
                 }
 
                 if (strikeTimer == 0)
@@ -921,6 +940,8 @@ namespace StardewDruid.Character
 
                 }
 
+                Game1.player.temporarySpeedBuff = 0;
+
                 return false;
 
             }
@@ -928,13 +949,13 @@ namespace StardewDruid.Character
             if (flightHeight < 128 && flightTimer > 16)
             {
 
-                flightHeight = (flightHeight + 8);
+                flightHeight = flightHeight + 8;
 
             }
             else if (flightHeight > 0 && flightTimer <= 16)
             {
 
-                flightHeight = (flightHeight - 8);
+                flightHeight = flightHeight - 8;
 
             }
 
@@ -950,45 +971,45 @@ namespace StardewDruid.Character
                 if (flightFrame == 4)
                 {
 
-                    flightFrame=(1);
+                    flightFrame = 1;
 
                 }
                 else
                 {
-                    
-                    flightFrame=(flightFrame + 1);
+
+                    flightFrame = flightFrame + 1;
 
                 }
-                    
+
                 if (Mod.instance.Helper.Input.IsDown(leftButton))
                 {
-                    
+
                     int num = FlightDestination();
-                    
+
                     if (num != 0)
                     {
-                        
+
                         flightTimer = flightIncrement * num;
-                        
+
                         flightInterval = new((flightTo.X - Position.X) / flightTimer, (flightTo.Y - Position.Y) / flightTimer);
 
                     }
-                
+
                 }
-                
+
                 if (flightTimer == flightIncrement)
                 {
-                    
-                    flightFrame=(0);
+
+                    flightFrame = 0;
 
                     Game1.player.temporarilyInvincible = true;
 
                     Game1.player.temporaryInvincibilityTimer = 0;
 
                     Game1.player.currentTemporaryInvincibilityDuration = 500;
-                
+
                 }
-            
+
             }
 
             return true;
@@ -998,7 +1019,6 @@ namespace StardewDruid.Character
         public void FlightStrike()
         {
 
-
             if (!Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherOne))
             {
 
@@ -1006,13 +1026,13 @@ namespace StardewDruid.Character
 
             }
 
-            Rectangle hitBox = new((int)Position.X - 96, (int)Position.Y - 64, 256, 128);
-
-            SpellHandle sweep = new(Game1.player, ModUtility.MonsterIntersect(currentLocation, hitBox, true), Mod.instance.CombatDamage() * 3 / 2);
+            SpellHandle sweep = new(Game1.player, Game1.player.Position, 160, Mod.instance.CombatDamage() * 3 / 2);
 
             sweep.instant = true;
 
             Mod.instance.spellRegister.Add(sweep);
+
+            Mod.instance.rite.dispense(160);
 
         }
 
@@ -1027,7 +1047,7 @@ namespace StardewDruid.Character
 
             }
 
-            if(sweepTimer == 25)
+            if (sweepTimer == 25)
             {
 
                 if (Game1.player.CurrentTool is MeleeWeapon)
@@ -1037,7 +1057,7 @@ namespace StardewDruid.Character
 
                 netSweepActive.Set(true);
 
-                flightHeight =(0);
+                flightHeight = 0;
 
             }
 
@@ -1053,13 +1073,13 @@ namespace StardewDruid.Character
             if (sweepTimer > 12)
             {
 
-                flightHeight=(flightHeight + 2);
+                flightHeight = flightHeight + 2;
 
             }
             else
             {
 
-                flightHeight=(flightHeight - 2);
+                flightHeight = flightHeight - 2;
 
             }
 
@@ -1075,13 +1095,13 @@ namespace StardewDruid.Character
 
                 netSweepActive.Set(false);
 
-                flightHeight =(0);
+                flightHeight = 0;
 
                 return false;
 
             }
 
-            if(sweepTimer % 5 == 0)
+            if (sweepTimer % 5 == 0)
             {
 
                 sweepFrame++;
@@ -1105,23 +1125,16 @@ namespace StardewDruid.Character
 
         }
 
-        public List<StardewValley.Monsters.Monster> SweepVictims()
-        {
-            
-            Rectangle hitBox = new((int)Position.X - 96, (int)Position.Y - 64, 256, 192);
-
-            return ModUtility.MonsterIntersect(currentLocation, hitBox, true);
-        
-        }
-
         public void SweepStrike()
         {
-            
-            SpellHandle sweep = new(Game1.player, SweepVictims(), Mod.instance.CombatDamage() * 3 / 2);
+
+            SpellHandle sweep = new(Game1.player, Game1.player.Position, 160, Mod.instance.CombatDamage() * 3 / 2);
 
             sweep.instant = true;
 
             Mod.instance.spellRegister.Add(sweep);
+
+            Mod.instance.rite.dispense(160);
 
         }
 
@@ -1205,7 +1218,7 @@ namespace StardewDruid.Character
 
                 }
 
-                Vector2 neighbour = tile + (flightOffset * checkRange);
+                Vector2 neighbour = tile + flightOffset * checkRange;
 
                 List<string> safeTerrain = new() { "ground", };
 
@@ -1228,7 +1241,7 @@ namespace StardewDruid.Character
 
                     if (!ModUtility.WaterCheck(currentLocation, neighbour, 2))
                     {
-
+                        
                         continue;
 
                     }
@@ -1302,9 +1315,9 @@ namespace StardewDruid.Character
                             {
 
                                 currentLocation.digUpArtifactSpot((int)tileVector.X, (int)tileVector.Y, anchor);
-                                
+
                                 currentLocation.objects.Remove(tileVector);
-                            
+
                             }
 
                             digPosition = tileVector * 64f;
@@ -1324,7 +1337,7 @@ namespace StardewDruid.Character
             if (Mod.instance.eventRegister.ContainsKey("crate"))
             {
 
-                if(Mod.instance.eventRegister["crate"] is Cast.Ether.Crate treasureEvent)
+                if (Mod.instance.eventRegister["crate"] is Crate treasureEvent)
                 {
 
                     if (!treasureEvent.eventActive)
@@ -1361,7 +1374,7 @@ namespace StardewDruid.Character
 
             if (!flightActive)
             {
-                
+
                 if (TreasureZone())
                 {
 
@@ -1395,7 +1408,7 @@ namespace StardewDruid.Character
             netSpecialActive.Set(true);
 
         }
-        
+
         public void UpdateDig()
         {
             if (specialDelay > 0)
@@ -1407,7 +1420,7 @@ namespace StardewDruid.Character
 
             }
 
-            if(digTimer == -1)
+            if (digTimer == -1)
             {
 
                 netDigActive.Set(true);
@@ -1424,15 +1437,15 @@ namespace StardewDruid.Character
             {
 
                 digActive = false;
-                
+
                 netDigActive.Set(false);
-                
+
                 return;
 
             }
 
             Game1.player.Position = digPosition;
-            
+
             Position = digPosition;
 
             if (digTimer % 12 == 0)
@@ -1469,21 +1482,21 @@ namespace StardewDruid.Character
 
             float rotate = (float)Math.Atan2(diffPosition.Y, diffPosition.X);
 
-            if(rotate < 0.0001f)
+            if (rotate < 0.0001f)
             {
 
                 rotate = (float)(Math.PI * 2) + rotate;
 
             }
 
-            if(rotate < 0.525 || rotate > 5.75)
+            if (rotate < 0.525 || rotate > 5.75)
             {
 
                 moveDirection = 1;
                 altDirection = 0;
 
             }
-            else if(rotate < 1.575)
+            else if (rotate < 1.575)
             {
 
                 moveDirection = 2;
@@ -1511,7 +1524,7 @@ namespace StardewDruid.Character
                 altDirection = 3;
 
             }
-            else if(rotate < 5.775)
+            else if (rotate < 5.775)
             {
 
                 moveDirection = 0;
@@ -1541,30 +1554,8 @@ namespace StardewDruid.Character
             if (currentLocation.characters.Count > 0)
             {
 
-                foreach (NPC witness in currentLocation.characters)
+                foreach (NPC witness in ModUtility.GetFriendsInLocation(Game1.player.currentLocation, false))
                 {
-
-                    if (witness is StardewValley.Monsters.Monster)
-                    {
-                        continue;
-                    }
-
-                    if (witness is StardewDruid.Character.Character)
-                    {
-                        continue;
-                    }
-
-                    if (witness is StardewDruid.Character.Dragon)
-                    {
-                        continue;
-                    }
-
-                    if (witness.IsInvisible)
-                    {
-
-                        continue;
-                    
-                    }
 
                     if (Vector2.Distance(witness.Position, target) < 320)
                     {
@@ -1694,16 +1685,16 @@ namespace StardewDruid.Character
 
                 for (int i = 0; i < splash.Count; i++)
                 {
-                    
+
                     Vector2 burnVector = splash[i];
 
-                    SpellHandle burn = new(Game1.player,burnVector * 64,192,Mod.instance.CombatDamage() / 3);
+                    SpellHandle burn = new(Game1.player, burnVector * 64, 256, Mod.instance.CombatDamage());
 
                     burn.type = SpellHandle.spells.explode;
 
-                    burn.scheme = IconData.schemes.ember;
+                    burn.scheme = dragonRender.fire;
 
-                    burn.display = IconData.impacts.combustion;
+                    //burn.display = IconData.impacts.combustion;
 
                     burn.instant = true;
 
@@ -1711,9 +1702,10 @@ namespace StardewDruid.Character
 
                     burn.terrain = 2;
 
-                    burn.environment = 2;
+                    burn.explosion = 2;
 
-                    if(Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherTwo)){
+                    if (Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherTwo))
+                    {
 
 
                         burn.added = new() { SpellHandle.effects.embers, };
@@ -1743,8 +1735,6 @@ namespace StardewDruid.Character
 
             Vector2 start = tile;
 
-            Vector2 weak = tile;
-
             List<Vector2> zeroes = new();
 
             bool cardinal = Mod.instance.Config.cardinalMovement;
@@ -1757,25 +1747,18 @@ namespace StardewDruid.Character
                     if (cardinal)
                     {
                         start.Y -= 1;
-                        zero.Y -= 5;
-                        weak.Y -= 2;
+                        zero.Y -= 4;
                         break;
 
                     }
 
                     zero.X += 3;
 
-                    zero.Y -= 4;
-
-                    weak.X += 1;
-
-                    weak.Y -= 2;
+                    zero.Y -= 3;
 
                     if (netAlternative.Value == 3 || flip)
                     {
                         zero.X -= 6;
-
-                        weak.X -= 2;
 
                         break;
 
@@ -1791,8 +1774,6 @@ namespace StardewDruid.Character
 
                     start.X += 1;
 
-                    weak.X += 2;
-
                     break;
 
                 case 2:
@@ -1802,7 +1783,6 @@ namespace StardewDruid.Character
 
                         zero.Y += 4;
 
-                        weak.Y += 1;
 
                         break;
 
@@ -1812,16 +1792,10 @@ namespace StardewDruid.Character
 
                     zero.Y += 3;
 
-                    weak.X += 1;
-
-                    weak.Y += 1;
-
                     if (netAlternative.Value == 3 || flip)
                     {
                         zero.X -= 6;
-                     
-                        weak.X -= 2;
-                        
+
                         break;
 
                     }
@@ -1835,8 +1809,6 @@ namespace StardewDruid.Character
 
                     start.X -= 1;
 
-                    weak.X -= 2;
-
                     break;
 
             }
@@ -1844,8 +1816,6 @@ namespace StardewDruid.Character
             zeroes.Add(zero);
 
             zeroes.Add(start);
-
-            zeroes.Add(weak);
 
             return zeroes;
 
@@ -1900,7 +1870,7 @@ namespace StardewDruid.Character
 
             }
 
-            Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 32), IconData.impacts.splash, 3f, new() { interval = 100f, alpha = 0.5f, layer = 999f,});
+            Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 32), IconData.impacts.splash, 3f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
 
         }
 
@@ -1934,7 +1904,7 @@ namespace StardewDruid.Character
 
 
                 Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 32), IconData.impacts.splash, 3f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
-                
+
                 Mod.instance.iconData.ImpactIndicator(currentLocation, Position + new Vector2(64, -32), IconData.impacts.fish, 2f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
 
                 if (TreasureZone(true))
@@ -1953,13 +1923,9 @@ namespace StardewDruid.Character
                 if (treasure.item.Category == -4)
                 {
 
-                    //treasure.setQuality(2);
+                    Game1.player.checkForQuestComplete(null, -1, 1, null, treasureItem.QualifiedItemId, 7);
 
-                    //Game1.player.checkForQuestComplete(null, treasureIndex, 1, treasure.objectInstance, "fish", 7);
-
-                    Game1.player.checkForQuestComplete(null, treasureItem.ParentSheetIndex, 1, null, null, 7);
-
-                    Game1.player.gainExperience(1, 8); // gain fishing experience
+                    Game1.player.gainExperience(1, 16); // gain fishing experience
 
                 }
 
@@ -1969,7 +1935,7 @@ namespace StardewDruid.Character
 
                 treasure.register();
 
-                Mod.instance.CastMessage("Dove for a " + treasure.item.Name);
+                //Mod.instance.CastMessage("Dove for a " + treasure.item.Name);
 
             }
 
@@ -1985,9 +1951,11 @@ namespace StardewDruid.Character
 
                 Game1.player.Position = flightTo;
 
+                Game1.player.temporarySpeedBuff = 0;
+
             }
 
-            DelayedAction.functionAfterDelay(RemoveInstance,1);
+            DelayedAction.functionAfterDelay(RemoveInstance, 1);
 
         }
 
@@ -2025,7 +1993,7 @@ namespace StardewDruid.Character
             if (Game1.player.Stamina <= cost)
             {
 
-                Mod.instance.CastMessage("Not enough energy to perform skill", 3);
+                Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.energySkill), 3);
 
                 return false;
 

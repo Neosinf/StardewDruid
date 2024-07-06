@@ -179,8 +179,6 @@ namespace StardewDruid.Cast.Effect
 
         public SpellHandle spell;
 
-        public bool cooldown;
-
         public CurseTarget(GameLocation Location, StardewValley.Monsters.Monster Victim, int Timer, SpellHandle.effects Type = SpellHandle.effects.knock)
         {
 
@@ -199,7 +197,7 @@ namespace StardewDruid.Cast.Effect
 
                 case SpellHandle.effects.blind:
 
-                    (victim as StardewDruid.Monster.Boss).SetCooldown(3);
+                    (victim as StardewDruid.Monster.Boss).debuffJuice = 0.5f;
 
                     display = displays.daze;
 
@@ -220,11 +218,16 @@ namespace StardewDruid.Cast.Effect
 
                     }
 
-                    string drop = victim.objectsToDrop[Mod.instance.randomIndex.Next(victim.objectsToDrop.Count)];
+                    if (victim.objectsToDrop.Count > 0)
+                    {
 
-                    StardewValley.Object dropItem = new StardewValley.Object(drop, 1);
+                        string drop = victim.objectsToDrop[Mod.instance.randomIndex.Next(victim.objectsToDrop.Count)];
 
-                    Game1.createItemDebris(dropItem, victim.Position + new Vector2(0, 32), 2, location, -1);
+                        StardewValley.Object dropItem = new StardewValley.Object(drop, 1);
+
+                        Game1.createItemDebris(dropItem, victim.Position + new Vector2(0, 32), 2, location, -1);
+
+                    }
 
                     display = displays.herbalism;
 
@@ -302,6 +305,11 @@ namespace StardewDruid.Cast.Effect
             
             switch (type)
             {
+                case SpellHandle.effects.blind:
+
+                    (victim as StardewDruid.Monster.Boss).debuffJuice = 0f;
+
+                    break;
 
                 case SpellHandle.effects.knock:
 
@@ -319,10 +327,6 @@ namespace StardewDruid.Cast.Effect
 
             spell.Shutdown();
 
-            timer = 300;
-
-            cooldown = true;
-            
         }
 
         public bool Update()
@@ -332,13 +336,6 @@ namespace StardewDruid.Cast.Effect
 
             if (timer <= 0)
             {
-
-                if (cooldown)
-                {
-
-                    return false;
-
-                }
 
                 ShutDown();
 
@@ -436,7 +433,10 @@ namespace StardewDruid.Cast.Effect
 
             SpellHandle death = new(Game1.player, new() { victim }, 999);
 
-            death.display = impacts.deathbomb;
+            //death.display = impacts.deathbomb;
+            death.display = impacts.bomb;
+
+            death.scheme = schemes.fates;
 
             Mod.instance.spellRegister.Add(death);
 
@@ -448,7 +448,9 @@ namespace StardewDruid.Cast.Effect
             if (new Random().Next(5) == 0)
             {
 
-                Mod.instance.iconData.ImpactIndicator(location, victim.Position, IconData.impacts.immolation, 2f, new());
+                //Mod.instance.iconData.ImpactIndicator(location, victim.Position, IconData.impacts.deathbomb, 4f, new() { scheme = schemes.stars,});
+
+                Mod.instance.iconData.ImpactIndicator(location, victim.Position, IconData.impacts.bomb, 4f, new() { scheme = schemes.stars, });
 
                 int barbeque = SpawnData.RandomBarbeque();
 

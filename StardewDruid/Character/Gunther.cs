@@ -82,50 +82,9 @@ namespace StardewDruid.Character
                 return;
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = (float)StandingPixel.Y / 10000f;
-
-            /*int hatIndex = 145;
-
-            Vector2 hatOffset = new Vector2(0, -80f);
-
-            switch (netDirection.Value)
-            {
-
-                case 0: 
-                    hatIndex = 181;
-                    
-                    hatOffset.Y -= 4;
-
-                    hatOffset.X -= 4;
-
-                    if (netAlternative.Value != 3)
-                    {
-
-                        hatOffset.X -= 8;
-
-                    }
-                    
-                    break;
-                case 1: hatIndex = 157; break;
-                case 2: 
-                    
-                    hatIndex = 145;
-
-                    hatOffset.Y -= 4;
-
-                    if (netAlternative.Value != 3) {
-
-                        hatOffset.X -= 4;
-                   
-                    } 
-
-                    break;
-
-                case 3: hatIndex = 169; break;
-
-            }*/
 
             b.Draw(
                 characterTexture,
@@ -145,7 +104,6 @@ namespace StardewDruid.Character
         {
             return false;
         }
-
 
         public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
         {

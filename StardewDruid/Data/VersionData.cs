@@ -1,5 +1,4 @@
-﻿using StardewDruid.Compat.v100;
-using StardewDruid.Journal;
+﻿using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
 using System;
@@ -25,7 +24,7 @@ namespace StardewDruid.Data
 
             }
 
-            StardewDruid.Compat.v100.StaticData v100 = Mod.instance.Helper.Data.ReadSaveData<StardewDruid.Compat.v100.StaticData>("staticData");
+            v100.StaticData v100 = Mod.instance.Helper.Data.ReadSaveData<v100.StaticData>("staticData");
 
             if (v100 != null)
             {
@@ -75,6 +74,7 @@ namespace StardewDruid.Data
                 }
 
                 // ---------------------------------------------
+
 
                 Dictionary<string, string> questIds = new()
                 {
@@ -134,7 +134,6 @@ namespace StardewDruid.Data
                     ["18465057"] = "approachShadowtin",
                     ["18465061"] = "heartEffigy",
                     ["18465062"] = "heartJester",
-
 
                 };
 
@@ -215,11 +214,12 @@ namespace StardewDruid.Data
                     }
 
                 }
-                /*
+                
                 v220.milestone = QuestHandle.milestones.effigy;
 
                 Dictionary<int, QuestHandle.milestones> progression = new()
                 {
+                    
                     [0] = QuestHandle.milestones.weald_weapon,
                     [1] = QuestHandle.milestones.weald_lessons,
                     [6] = QuestHandle.milestones.weald_challenge,
@@ -236,10 +236,7 @@ namespace StardewDruid.Data
                     [25] = QuestHandle.milestones.fates_challenge,
                     [26] = QuestHandle.milestones.ether_weapon,
                     [27] = QuestHandle.milestones.ether_lessons,
-                    [32] = QuestHandle.milestones.ether_challenge,
-                    [33] = QuestHandle.milestones.shadowtin,
-                    [33] = QuestHandle.milestones.effigy_heart,
-                    [33] = QuestHandle.milestones.jester_heart,
+                    [33] = QuestHandle.milestones.quest_shadowtin,
 
                 };
 
@@ -253,7 +250,9 @@ namespace StardewDruid.Data
 
                     }
 
-                }*/
+                }
+
+                Mod.instance.Helper.Data.WriteSaveData<v100.StaticData>("staticData",null);
 
             }
 

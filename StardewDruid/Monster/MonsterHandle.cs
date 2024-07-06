@@ -51,6 +51,7 @@ namespace StardewDruid.Monster
 
             batwing,
             blobfiend,
+            dustfiend,
             darkbrute,
             darkshooter,
             spectre,
@@ -86,6 +87,8 @@ namespace StardewDruid.Monster
         public bool spawnWater;
 
         public bool spawnVoid;
+
+        public bool spawnGroup;
 
         public MonsterHandle(Vector2 target, GameLocation location)
         {
@@ -296,9 +299,11 @@ namespace StardewDruid.Monster
         public StardewValley.Monsters.Monster SpawnGround(Vector2 spawnVector, SpawnHandle spawnProfile)
         {
 
-            StardewValley.Monsters.Monster theMonster = CreateMonster(spawnProfile.boss, spawnVector, spawnCombat, spawnProfile.difficulty, spawnProfile.temperment);
+            StardewDruid.Monster.Boss theMonster = CreateMonster(spawnProfile.boss, spawnVector, spawnCombat, spawnProfile.difficulty, spawnProfile.temperment);
 
             monsterSpawns.Add(theMonster);
+
+            theMonster.groupMode = spawnGroup;
 
             spawnLocation.characters.Add(theMonster);
 
@@ -364,6 +369,12 @@ namespace StardewDruid.Monster
                 case bosses.blobfiend:
 
                     theMonster = new Blobfiend(spawnVector, combatModifier);
+
+                    break;
+
+                case bosses.dustfiend:
+
+                    theMonster = new Dustfiend(spawnVector, combatModifier);
 
                     break;
 

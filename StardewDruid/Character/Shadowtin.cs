@@ -9,6 +9,8 @@ using StardewDruid.Event;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Buildings;
+using StardewValley.Extensions;
 using StardewValley.GameData.FruitTrees;
 using StardewValley.Internal;
 using StardewValley.Monsters;
@@ -29,7 +31,7 @@ namespace StardewDruid.Character
 
         public WeaponRender weaponRender;
 
-        public List<Vector2> ritesDone = new();
+        public Dictionary<string,Dictionary<Vector2,int>> workVectors = new();
 
         public Shadowtin()
         {
@@ -57,33 +59,99 @@ namespace StardewDruid.Character
             {
                 [0] = new()
                 {
-                    new Rectangle(128, 320, 64, 64),
-                    new Rectangle(192, 320, 64, 64),
-                    new Rectangle(0, 320, 64, 64),
-                    new Rectangle(64, 320, 64, 64),
+                    new Rectangle(192, 288, 32, 32),
+                    new Rectangle(224, 288, 32, 32),
+                    new Rectangle(128, 288, 32, 32),
+                    new Rectangle(160, 288, 32, 32),
                 },
                 [1] = new()
                 {
-                    new Rectangle(192, 320, 64, 64),
-                    new Rectangle(0, 320, 64, 64),
-                    new Rectangle(64, 320, 64, 64),
-                    new Rectangle(128, 320, 64, 64),
+                    new Rectangle(224, 288, 32, 32),
+                    new Rectangle(128, 288, 32, 32),
+                    new Rectangle(160, 288, 32, 32),
+                    new Rectangle(192, 288, 32, 32),
                 },
                 [2] = new()
                 {
-                    new Rectangle(0, 320, 64, 64),
-                    new Rectangle(64, 320, 64, 64),
-                    new Rectangle(128, 320, 64, 64),
-                    new Rectangle(192, 320, 64, 64),
+                    new Rectangle(128, 288, 32, 32),
+                    new Rectangle(160, 288, 32, 32),
+                    new Rectangle(192, 288, 32, 32),
+                    new Rectangle(224, 288, 32, 32),
                 },
                 [3] = new()
                 {
-                    new Rectangle(64, 320, 64, 64),
-                    new Rectangle(128, 320, 64, 64),
-                    new Rectangle(192, 320, 64, 64),
-                    new Rectangle(0, 320, 64, 64),
+                    new Rectangle(160, 288, 32, 32),
+                    new Rectangle(192, 288, 32, 32),
+                    new Rectangle(224, 288, 32, 32),
+                    new Rectangle(128, 288, 32, 32),
                 },
             };
+
+            workFrames = new Dictionary<int, List<Rectangle>>()
+            {
+                [0] = new()
+                {
+
+                    new(128, 64, 32, 32),
+                    new(160, 64, 32, 32),
+
+                },
+                [1] = new()
+                {
+
+                    new(128, 32, 32, 32),
+                    new(160, 32, 32, 32),
+
+                },
+                [2] = new()
+                {
+
+                    new(128, 0, 32, 32),
+                    new(160, 0, 32, 32),
+
+                },
+                [3] = new()
+                {
+
+                    new(128, 32, 32, 32),
+                    new(160, 32, 32, 32),
+
+                },
+
+            };
+
+            alertFrames = new()
+            {
+                [0] = new()
+                {
+                    new Rectangle(192, 288, 32, 32),
+                    new Rectangle(224, 288, 32, 32),
+                    new Rectangle(128, 288, 32, 32),
+                    new Rectangle(160, 288, 32, 32),
+                },
+                [1] = new()
+                {
+                    new Rectangle(224, 288, 32, 32),
+                    new Rectangle(128, 288, 32, 32),
+                    new Rectangle(160, 288, 32, 32),
+                    new Rectangle(192, 288, 32, 32),
+                },
+                [2] = new()
+                {
+                    new Rectangle(128, 288, 32, 32),
+                    new Rectangle(160, 288, 32, 32),
+                    new Rectangle(192, 288, 32, 32),
+                    new Rectangle(224, 288, 32, 32),
+                },
+                [3] = new()
+                {
+                    new Rectangle(160, 288, 32, 32),
+                    new Rectangle(192, 288, 32, 32),
+                    new Rectangle(224, 288, 32, 32),
+                    new Rectangle(128, 288, 32, 32),
+                },
+            };
+
         }
 
         public override void draw(SpriteBatch b, float alpha = 1)
@@ -101,7 +169,7 @@ namespace StardewDruid.Character
 
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = (float)StandingPixel.Y / 10000f;
 
@@ -115,8 +183,6 @@ namespace StardewDruid.Character
             {
 
                 DrawStandby(b, localPosition, drawLayer);
-
-                return;
 
             }
             else if (netHaltActive.Value)
@@ -263,12 +329,15 @@ namespace StardewDruid.Character
             DrawShadow(b, localPosition, drawLayer);
 
         }
+        
         public override void DrawAlert(SpriteBatch b, Vector2 localPosition, float drawLayer)
         {
 
             Vector2 alertVector = localPosition - new Vector2(32, 64f);
 
-            Rectangle alertFrame = alertFrames[netDirection.Value][0];
+            int chooseFrame = IdleFrame();
+
+            Rectangle alertFrame = alertFrames[netDirection.Value][chooseFrame];
 
             bool flippant = (netDirection.Value % 2 == 0 && netAlternative.Value == 3);
 
@@ -291,26 +360,37 @@ namespace StardewDruid.Character
         public override void DrawStandby(SpriteBatch b, Vector2 localPosition, float drawLayer)
         {
 
-            int chooseFrame = IdleFrame();
+            DrawAlert(b, localPosition, drawLayer);
 
-            b.Draw(
-                 characterTexture,
-                 localPosition - new Vector2(88, 112f),
-                 idleFrames[netDirection.Value][chooseFrame],
-                 Color.White,
-                 0f,
-                 Vector2.Zero,
-                 3.75f,
-                 flip || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                 drawLayer
-             );
+        }
 
-            return;
+        public override void NewDay()
+        {
+            
+            base.NewDay();
+            
+            workVectors = new();
 
         }
 
         public override bool TargetWork()
         {
+
+            if (!Mod.instance.chests.ContainsKey(CharacterHandle.characters.Shadowtin))
+            {
+
+                Mod.instance.chests[CharacterHandle.characters.Shadowtin] = new();
+
+            }
+
+            Chest chest = Mod.instance.chests[CharacterHandle.characters.Shadowtin];
+
+            if (!workVectors.ContainsKey(currentLocation.Name))
+            {
+
+                workVectors[currentLocation.Name] = new();
+
+            }
 
             Vector2 currentVector = new((int)(Position.X / 64), (int)(Position.Y / 64));
 
@@ -333,9 +413,18 @@ namespace StardewDruid.Character
                     if (currentLocation.objects.ContainsKey(objectVector))
                     {
 
+                        if (workVectors[currentLocation.Name].ContainsKey(objectVector))
+                        {
+
+                            continue;
+
+                        }
+
+                        workVectors[currentLocation.Name][objectVector] = 1;
+
                         StardewValley.Object targetObject = currentLocation.objects[objectVector];
 
-                        if (targetObject.Name.Contains("Artifact Spot") || targetObject.isForage())
+                        if (ValidWorkTarget(targetObject))
                         {
 
                             workVector = objectVector;
@@ -368,6 +457,90 @@ namespace StardewDruid.Character
 
         }
 
+        public override List<Vector2> RoamAnalysis()
+        {
+
+            List<Vector2> collection = base.RoamAnalysis();
+
+            if (Game1.currentSeason == "winter")
+            {
+
+                return collection;
+
+            }
+
+            List<Vector2> scarelist = new List<Vector2>();
+
+            if(currentLocation is Farm farm)
+            {
+
+                for(int i = 0; i < 2; i++)
+                {
+
+                    foreach (Building building in farm.buildings)
+                    {
+
+                        if (building.buildingType.Contains("Coop") || building.buildingType.Contains("Barn"))
+                        {
+
+                            Vector2 scareVector = new(building.tileX.Value * 64f, building.tileY.Value * 64f);
+
+                            scarelist.Add(scareVector);
+
+                            scarelist.Add(new Vector2(-1f));
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            scarelist.AddRange(collection);
+
+            return scarelist;
+
+        }
+
+        public bool ValidWorkTarget(StardewValley.Object targetObject)
+        {
+
+            if (targetObject.Name.Contains("Artifact Spot"))
+            {
+
+                return true;
+            
+            }
+
+            if (targetObject.isForage())
+            {
+
+                return true;
+
+            }
+
+            if (
+                targetObject.QualifiedItemId == "(BC)9" ||
+                targetObject.QualifiedItemId == "(BC)10" ||
+                targetObject.QualifiedItemId == "(BC)MushroomLog" ||
+                targetObject.IsTapper()
+                )
+            {
+
+                if (targetObject.heldObject.Value != null && targetObject.MinutesUntilReady == 0)
+                {
+
+                    return true;
+                
+                }
+
+            }
+
+            return false;
+
+        }
+
         public override void PerformWork()
         {
 
@@ -376,6 +549,8 @@ namespace StardewDruid.Character
 
                 if (currentLocation.objects.ContainsKey(workVector))
                 {
+
+                    Chest chest = Mod.instance.chests[CharacterHandle.characters.Shadowtin];
 
                     StardewValley.Object targetObject = currentLocation.objects[workVector];
 
@@ -386,29 +561,87 @@ namespace StardewDruid.Character
 
                         currentLocation.objects.Remove(workVector);
 
+                        return;
+
                     }
-                    else if (targetObject.isForage())
+                    
+                    if (targetObject.isForage())
                     {
 
-                        if (!Mod.instance.chests.ContainsKey(CharacterHandle.characters.Shadowtin))
-                        {
-
-                            Mod.instance.chests[CharacterHandle.characters.Shadowtin] = new();
-
-                        }
-
-                        Chest chest = Mod.instance.chests[CharacterHandle.characters.Shadowtin];
-
                         StardewValley.Item objectInstance = targetObject.getOne();
+
+                        objectInstance.Quality = 4;
 
                         if (chest.addItem(objectInstance) != null)
                         {
 
-                            ThrowHandle throwItem = new(Game1.player, Position, objectInstance);
+                            if (Mod.instance.trackers.ContainsKey(characterType) && currentLocation.Name == Game1.player.currentLocation.Name)
+                            {
+
+                                ThrowHandle throwItem = new(Game1.player, Position, objectInstance);
+
+                                Mod.instance.throwRegister.Add(throwItem);
+
+                            }
+                            else
+                            {
+                                return;
+
+                            }
 
                         }
 
                         currentLocation.objects.Remove(workVector);
+
+                        return;
+
+                    }
+
+                    if (
+                        targetObject.QualifiedItemId == "(BC)9" ||
+                        targetObject.QualifiedItemId == "(BC)10" ||
+                        targetObject.QualifiedItemId == "(BC)MushroomLog" ||
+                        targetObject.IsTapper()
+                        )
+                    {
+
+                        if (targetObject.heldObject.Value != null && targetObject.MinutesUntilReady == 0)
+                        {
+
+                            StardewValley.Item objectInstance = targetObject.heldObject.Value.getOne();
+
+                            if(targetObject.QualifiedItemId == "(BC)MushroomLog")
+                            {
+
+                                objectInstance.Quality = 4;
+
+                            }
+
+                            if (chest.addItem(objectInstance) != null)
+                            {
+
+                                if (Mod.instance.trackers.ContainsKey(characterType) && currentLocation.Name == Game1.player.currentLocation.Name)
+                                {
+
+                                    ThrowHandle throwItem = new(Game1.player, Position, objectInstance);
+
+                                    Mod.instance.throwRegister.Add(throwItem);
+
+                                }
+                                else
+                                {
+                                    return;
+
+                                }
+                            
+                            }
+
+                            targetObject.heldObject.Value = null;
+
+
+                        }
+
+                        return;
 
                     }
 

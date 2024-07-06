@@ -27,11 +27,7 @@ namespace StardewDruid.Event.Challenge
 
         public int trashCollected;
 
-        public Batwing bossMonster;
-
         public List<TemporaryAnimatedSprite> trashAnimations = new();
-
-        public Vector2 relicPosition;
 
         public ChallengeWeald()
         {
@@ -134,10 +130,12 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.spawnSchedule = new();
 
+            int monsterRange = 2;
+
             for (int i = 1; i <= 55; i += 4)
             {
 
-                monsterHandle.spawnSchedule.Add(i, new() { new(MonsterHandle.bosses.batwing,4,Mod.instance.randomIndex.Next(2)) });
+                monsterHandle.spawnSchedule.Add(i, new() { new(MonsterHandle.bosses.batwing,4,Mod.instance.randomIndex.Next(monsterRange)) });
 
             }
 
@@ -149,9 +147,9 @@ namespace StardewDruid.Event.Challenge
 
             eventProximity = 640;
 
-            EventBar("The Polluted Aquifer", 0);
+            EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
-            Mod.instance.CastDisplay("Remain on the rite circle to increase trash collection", 2);
+            DialogueCue(900);
 
             SetTrack("tribal");
 
@@ -229,22 +227,6 @@ namespace StardewDruid.Event.Challenge
 
         }
 
-        public override void RemoveMonsters()
-        {
-
-            if (bossMonster != null)
-            {
-
-                Mod.instance.rite.castLocation.characters.Remove(bossMonster);
-
-                bossMonster = null;
-
-            }
-
-            base.RemoveMonsters();
-
-        }
-
         public void RemoveTrashAnimations()
         {
             
@@ -283,6 +265,22 @@ namespace StardewDruid.Event.Challenge
             
             monsterHandle.SpawnInterval();
 
+            if (bosses.Count > 0)
+            {
+
+                if (!ModUtility.MonsterVitals(bosses[0], location))
+                {
+
+                    bosses[0].currentLocation.characters.Remove(bosses[0]);
+
+                    bosses.Clear();
+
+                    cues.Clear();
+
+                }
+
+            }
+
             if (activeCounter % 2 == 0 && Vector2.Distance(Game1.player.Position,origin) <= 256)
             {
 
@@ -302,29 +300,25 @@ namespace StardewDruid.Event.Challenge
             if (activeCounter == 20)
             {
 
-                bossMonster = new(new Vector2(30, 11),Mod.instance.CombatDifficulty());
+                bosses[0] = new Batwing(new Vector2(30, 11),Mod.instance.CombatDifficulty());
 
-                bossMonster.SetMode(2);
+                bosses[0].SetMode(3);
 
-                bossMonster.netPosturing.Set(true);
+                bosses[0].netPosturing.Set(true);
 
-                bossMonster.netDirection.Set(2);
+                bosses[0].netDirection.Set(2);
 
-                bossMonster.netAlternative.Set(3);
+                bosses[0].netAlternative.Set(3);
 
-                bossMonster.netScheme.Set(1);
+                bosses[0].netScheme.Set(1);
 
-                bossMonster.tempermentActive = Boss.temperment.cautious;
+                bosses[0].tempermentActive = Boss.temperment.cautious;
 
-                Mod.instance.rite.castLocation.characters.Add(bossMonster);
+                Mod.instance.rite.castLocation.characters.Add(bosses[0]);
 
-                bossMonster.update(Game1.currentGameTime, Mod.instance.rite.castLocation);
+                bosses[0].update(Game1.currentGameTime, Mod.instance.rite.castLocation);
 
-                cues = DialogueData.DialogueScene(eventId);
-
-                narrators = DialogueData.DialogueNarrators(eventId);
-
-                voices[0] = bossMonster;
+                voices[0] = bosses[0];
 
             }
 
@@ -333,7 +327,7 @@ namespace StardewDruid.Event.Challenge
                 return;
             }
 
-            if (ModUtility.MonsterVitals(bossMonster,location))
+            if (bosses.Count > 0)
             {
 
                 DialogueCue(activeCounter);
@@ -343,25 +337,17 @@ namespace StardewDruid.Event.Challenge
 
                     case 39:
 
-                        bossMonster.netPosturing.Set(false);
+                        bosses[0].netPosturing.Set(false);
 
-                        bossMonster.focusedOnFarmers = true;
-
-                        EventDisplay bar = Mod.instance.CastDisplay(narrators[0], narrators[0]);
-
-                        bar.boss = bossMonster;
-
-                        bar.type = EventDisplay.displayTypes.bar;
-
-                        bar.colour = Microsoft.Xna.Framework.Color.Red;
+                        BossBar(0, 0);
 
                         break;
 
                     case 56:
 
-                        bossMonster.Halt();
+                        bosses[0].Halt();
 
-                        SpellHandle rockSpell = new(Game1.player, bossMonster.Position, 256, 999);
+                        SpellHandle rockSpell = new(Game1.player, bosses[0].Position, 256, 999);
 
                         rockSpell.display = IconData.impacts.impact;
 
@@ -383,19 +369,11 @@ namespace StardewDruid.Event.Challenge
 
                         break;
 
-                    case 59:
-
-                        bossMonster.takeDamage(999, 0, 0, false, 999, Game1.player);
-
-                        break;
-
                     default: 
                         
                         break;
 
                 }
-
-                relicPosition = bossMonster.Position;
 
             }
 
@@ -444,14 +422,14 @@ namespace StardewDruid.Event.Challenge
 
             ThrowHandle throwObject;
 
-            if (trashCollected == 8)
+            if (eventRating == 8 && !Mod.instance.questHandle.IsComplete(eventId))
             {
 
                 throwObject = new(Game1.player, origin, new Ring("517"));
 
 
             }
-            else if (trashCollected == 16)
+            else if (eventRating == 16 && !Mod.instance.questHandle.IsComplete(eventId))
             {
 
                 throwObject = new(Game1.player, origin, new Ring("519"));
@@ -468,32 +446,9 @@ namespace StardewDruid.Event.Challenge
 
             location.playSound("pullItemFromWater");
 
-            //Mod.instance.iconData.ImpactIndicator(location, splash, IconData.impacts.sparkle, 5f, new());
-
             Mod.instance.iconData.ImpactIndicator(location, splash, IconData.impacts.fish, 3f, new());
 
-            trashCollected++;
-
-        }
-
-        public override void EventCompleted()
-        {
-
-            int friendship = 100;
-            
-            friendship += trashCollected * 8;
-
-            Mod.instance.CastDisplay($"Collected {trashCollected} pieces of trash, gained " + friendship + " friendship with mountain residents", 2);
-
-            VillagerData.CommunityFriendship("mountain", friendship);
-
-            ThrowHandle throwRelic = new(Game1.player, relicPosition, IconData.relics.runestones_spring);
-
-            throwRelic.register();
-
-            Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.runestones_spring.ToString());
-
-            Mod.instance.questHandle.CompleteQuest(eventId);
+            eventRating++;
 
         }
 

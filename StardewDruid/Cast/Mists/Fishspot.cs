@@ -127,8 +127,6 @@ namespace StardewDruid.Cast.Mists
 
                             throwRelic.register();
 
-                            Mod.instance.relicsData.ReliquaryUpdate(fishRelic.ToString());
-
                         }
 
                     }

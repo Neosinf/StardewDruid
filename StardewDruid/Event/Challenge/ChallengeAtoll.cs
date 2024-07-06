@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Cast.Mists;
@@ -15,7 +16,9 @@ using StardewValley.TerrainFeatures;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using xTile;
 using static StardewDruid.Cast.SpellHandle;
 using static StardewDruid.Data.IconData;
 
@@ -23,10 +26,6 @@ namespace StardewDruid.Event.Challenge
 {
     public class ChallengeAtoll : EventHandle
     {
-
-        public StardewDruid.Monster.Phantom bossPhantom;
-
-        public Vector2 relicPosition = Vector2.Zero;
 
         public List<Vector2> cannonPositions = new();
 
@@ -52,10 +51,10 @@ namespace StardewDruid.Event.Challenge
             {
 
                 monsterHandle.spawnSchedule.Add(
-                    i, 
-                    new() { 
-                        new(MonsterHandle.bosses.phantom, Boss.temperment.random, Boss.difficulty.medium), 
-                        new(MonsterHandle.bosses.phantom, Boss.temperment.random, Boss.difficulty.medium), 
+                    i,
+                    new() {
+                    new(MonsterHandle.bosses.phantom, Boss.temperment.random, Boss.difficulty.medium),
+                    new(MonsterHandle.bosses.phantom, Boss.temperment.random, Boss.difficulty.medium),
                     }
                 );
 
@@ -65,15 +64,13 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.spawnRange = new(16, 7);
 
-            EventBar("The Lost Seafarers",0);
+            monsterHandle.spawnGroup = true;
+
+            EventBar(Mod.instance.questHandle.quests[eventId].title,0);
 
             SetTrack("PIRATE_THEME");
 
             eventProximity = -1;
-
-            cues = DialogueData.DialogueScene(eventId);
-
-            narrators = DialogueData.DialogueNarrators(eventId);
 
             ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 
@@ -86,11 +83,9 @@ namespace StardewDruid.Event.Challenge
 
                 voices[1] = Mod.instance.characters[CharacterHandle.characters.Effigy];
 
-                Mod.instance.characters[CharacterHandle.characters.Effigy].Halt();
-
-                Mod.instance.characters[CharacterHandle.characters.Effigy].idleTimer = 300;
-
             }
+
+            HoldCompanions();
 
             location.playSound("thunder_small");
 
@@ -132,17 +127,6 @@ namespace StardewDruid.Event.Challenge
         public override void RemoveMonsters()
         {
 
-            if (bossPhantom != null)
-            {
-
-                bossPhantom.currentLocation.characters.Remove(bossPhantom);
-
-                bossPhantom.currentLocation = null;
-
-                bossPhantom = null;
-
-            }
-
             if (location != null)
             {
 
@@ -161,23 +145,17 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.SpawnCheck();
 
-            if (bossPhantom != null)
+            if (bosses.Count > 0)
             {
 
-                if (!ModUtility.MonsterVitals(bossPhantom, location))
+                if (!ModUtility.MonsterVitals(bosses[0], location))
                 {
 
-                    bossPhantom.currentLocation.characters.Remove(bossPhantom);
+                    bosses[0].currentLocation.characters.Remove(bosses[0]);
 
-                    bossPhantom = null;
+                    bosses.Clear();
 
                     cues.Clear();
-
-                }
-                else
-                {
-
-                    relicPosition = bossPhantom.Position;
 
                 }
 
@@ -188,41 +166,33 @@ namespace StardewDruid.Event.Challenge
 
                 case 1:
 
-                    bossPhantom = new(ModUtility.PositionToTile(origin) - new Vector2(3, 2), Mod.instance.CombatDifficulty());
+                    bosses[0] = new Phantom(ModUtility.PositionToTile(origin) - new Vector2(3, 2), Mod.instance.CombatDifficulty());
 
-                    bossPhantom.SetMode(3);
+                    bosses[0].SetMode(3);
 
-                    bossPhantom.netPosturing.Set(true);
+                    bosses[0].netPosturing.Set(true);
 
-                    location.characters.Add(bossPhantom);
+                    location.characters.Add(bosses[0]);
 
-                    bossPhantom.update(Game1.currentGameTime, location);
+                    bosses[0].update(Game1.currentGameTime, location);
 
-                    bossPhantom.LookAtFarmer();
+                    bosses[0].LookAtFarmer();
 
-                    bossPhantom.fadeFactor = 0.75f;
+                    (bosses[0] as Phantom).fadeFactor = 0.75f;
 
-                    voices[0] = bossPhantom;
+                    voices[0] = bosses[0];
 
-                    SpawnData.MonsterDrops(bossPhantom, SpawnData.drops.seafarer);
+                    SpawnData.MonsterDrops(bosses[0], SpawnData.drops.seafarer);
 
                     break;
 
                 case 49:
 
-                    bossPhantom.netPosturing.Set(false);
+                    bosses[0].netPosturing.Set(false);
 
-                    bossPhantom.specialInterval = 30;
+                    bosses[0].specialInterval = 30;
 
-                    EventDisplay bossBar = Mod.instance.CastDisplay(narrators[0], narrators[0]);
-
-                    bossBar.boss = bossPhantom;
-
-                    bossBar.type = EventDisplay.displayTypes.bar;
-
-                    bossBar.colour = Microsoft.Xna.Framework.Color.Red;
-
-                    bossPhantom.focusedOnFarmers = true;
+                    BossBar(0, 0);
 
                     break;
 
@@ -262,18 +232,6 @@ namespace StardewDruid.Event.Challenge
 
         }
 
-        public override void EventCompleted()
-        {
-
-            ThrowHandle throwRelic = new(Game1.player, relicPosition, IconData.relics.runestones_farm);
-
-            throwRelic.register();
-
-            Mod.instance.questHandle.CompleteQuest(eventId);
-
-        }
-
-
         public void CannonsToFire()
         {
 
@@ -284,7 +242,7 @@ namespace StardewDruid.Event.Challenge
 
                 Vector2 impact = cannonPositions[k] * 64;
 
-                SpellHandle missile = new(location, impact, new(impact.X > 27*64 ? 55*64 : 0,impact.Y), 192, bossPhantom.GetThreat(), Mod.instance.CombatDamage());
+                SpellHandle missile = new(location, impact, new(impact.X > 27 * 64 ? 55 * 64 : 0, impact.Y), 192, bosses[0].GetThreat(), Mod.instance.CombatDamage());
 
                 missile.type = SpellHandle.spells.ballistic;
 
@@ -298,7 +256,7 @@ namespace StardewDruid.Event.Challenge
 
                 missile.indicator = IconData.cursors.death;
 
-                if(k % 2 == 0)
+                if (k % 2 == 0)
                 {
 
                     missile.sound = sounds.explosion;
@@ -309,17 +267,25 @@ namespace StardewDruid.Event.Challenge
 
             }
 
+            List<string> textList = new()
+            {
+                 cues[991][0],
+                 cues[992][0],
+                 cues[993][0],
+                 cues[994][0],
+
+            };
             foreach (StardewValley.Monsters.Monster monsterSpawn in monsterHandle.monsterSpawns)
             {
 
                 if (monsterSpawn is Phantom phantom)
                 {
 
-                    DialogueData.DisplayText(phantom, -1, 2);
-
+                    phantom.showTextAboveHead(textList[Mod.instance.randomIndex.Next(textList.Count)], duration: 2000);
                 }
-
+            
             }
+
         }
 
         public void CannonsAtTheReady()
@@ -327,11 +293,11 @@ namespace StardewDruid.Event.Challenge
 
             DialogueCue(994);
 
-            bossPhantom.netSpecialActive.Set(true);
+            bosses[0].netSpecialActive.Set(true);
 
-            bossPhantom.specialTimer = 300;
+            bosses[0].specialTimer = 300;
 
-            bossPhantom.specialInterval = 180;
+            bosses[0].specialInterval = 180;
 
             for (int k = 0; k < cannonPositions.Count; k++)
             {
@@ -343,6 +309,15 @@ namespace StardewDruid.Event.Challenge
                 animations.Add(Mod.instance.iconData.CursorIndicator(location, impact, IconData.cursors.death, addEffects));
 
             }
+            
+            List<string> textList = new()
+            {
+                 cues[991][0],
+                 cues[992][0],
+                 cues[993][0],
+                 cues[994][0],
+
+            };
 
             foreach (StardewValley.Monsters.Monster monsterSpawn in monsterHandle.monsterSpawns)
             {
@@ -350,8 +325,8 @@ namespace StardewDruid.Event.Challenge
                 if (monsterSpawn is Phantom phantom)
                 {
 
-                    DialogueData.DisplayText(phantom, -1, 2);
-
+                    phantom.showTextAboveHead(textList[Mod.instance.randomIndex.Next(textList.Count)], duration: 2000);
+                
                 }
 
             }

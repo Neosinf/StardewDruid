@@ -36,6 +36,8 @@ namespace StardewDruid.Cast.Effect
         public Ember()
         {
 
+            inabsentia = true;
+
         }
 
         public override void EventInterval()
@@ -49,7 +51,7 @@ namespace StardewDruid.Cast.Effect
 
                 KeyValuePair<Vector2, EmberTarget> ember = embers.ElementAt(e);
 
-                if(ember.Value.expire <= Game1.currentGameTime.TotalGameTime.TotalSeconds)
+                if(ember.Value.expire <= Game1.currentGameTime.TotalGameTime.TotalSeconds || ember.Value.location.Name != Game1.player.currentLocation.Name)
                 {
 
                     ember.Value.Shutdown();
@@ -77,24 +79,19 @@ namespace StardewDruid.Cast.Effect
 
         }
 
-        public void RadialTarget(GameLocation location, Vector2 origin, int damageFarmers, int damageMonsters, IconData.schemes scheme = schemes.ember, int Time = 3)
+        public void RadialTarget(GameLocation location, Vector2 origin, int damageFarmers, int damageMonsters, IconData.schemes scheme = schemes.stars, int Time = 3)
         {
 
-            if(location.Name != location.Name)
-            {
-
-                EventLocation();
-
-            }
+            location = Game1.player.currentLocation;
 
             if(scheme == schemes.none)
             {
 
-                scheme = schemes.ember;
+                scheme = schemes.stars;
 
             }
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 4; i++)
             {
 
                 List<Vector2> burnVectors = ModUtility.GetTilesWithinRadius(location, origin, i);
@@ -163,7 +160,7 @@ namespace StardewDruid.Cast.Effect
 
         public double expire;
 
-        public EmberTarget(GameLocation Location, Vector2 Tile, int Grade = 0, int vsFarmer = 0, int vsMonster = 0, IconData.schemes Scheme = IconData.schemes.ember, int Time = 3)
+        public EmberTarget(GameLocation Location, Vector2 Tile, int Grade = 0, int vsFarmer = 0, int vsMonster = 0, IconData.schemes Scheme = IconData.schemes.stars, int Time = 3)
         {
 
             location = Location;
@@ -190,6 +187,13 @@ namespace StardewDruid.Cast.Effect
             offset = new Vector2(-16 + Mod.instance.randomIndex.Next(5) * 8, -16 + Mod.instance.randomIndex.Next(5) * 8);
 
             scale = 1.75f + Mod.instance.randomIndex.Next(4) * 0.25f;
+
+            if(grade == 3)
+            {
+                scale -= 0.5f;
+                offset += new Vector2(8);
+
+            }
 
             animations = Mod.instance.iconData.EmberConstruct(location, scheme, tile * 64 + offset, 1.75f, grade, Time);
 

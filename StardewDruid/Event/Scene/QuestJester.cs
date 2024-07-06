@@ -39,6 +39,8 @@ namespace StardewDruid.Event.Scene
 
         public Vector2 relicPosition;
 
+        public Event.Access.AccessHandle MuseumAccess;
+
         public QuestJester()
         {
             
@@ -61,13 +63,11 @@ namespace StardewDruid.Event.Scene
 
             base.EventActivate();
 
-            narrators = new()
+            locales = new()
             {
-                [0] = "Jester",
-                [1] = "Buffin",
-                [2] = "Marlon",
-                [3] = "Gunther",
-                [4] = "Summoned Saurus",
+                "Town",
+                LocationData.druid_archaeum_name,
+
             };
 
             companions[0] = Mod.instance.characters[CharacterHandle.characters.Jester] as StardewDruid.Character.Jester;
@@ -91,34 +91,11 @@ namespace StardewDruid.Event.Scene
         public override bool AttemptReset()
         {
 
-            companions[0].SwitchToMode(Character.Character.mode.random, Game1.player);
-
-            if (companions.ContainsKey(1))
-            {
-                Mod.instance.iconData.AnimateQuickWarp(location, companions[1].Position, true);
-
-                companions[1].currentLocation.characters.Remove(companions[1]);
-
-                companions.Remove(1);
-
-            }
-
-            if (companions.ContainsKey(2))
-            {
-                Mod.instance.iconData.AnimateQuickWarp(location, companions[2].Position, true);
-
-                companions[2].currentLocation.characters.Remove(companions[2]);
-
-                companions.Remove(2);
-
-            }
-
-            Mod.instance.CastMessage("Event aborted, try again tomorrow", 3, true);
+            Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.abortTomorrow), 3, true);
 
             return false;
 
         }
-
 
         public override void RemoveMonsters()
         {
@@ -175,19 +152,13 @@ namespace StardewDruid.Event.Scene
                 case 1:
 
 
-                    DialogueCue(0,"So much human stuff happens here");
-
-                    break;
-
-                case 3:
-
-                    Mod.instance.CastDisplay("Talk to the Jester when the green speech icon appears");
+                    DialogueCue(1);
 
                     break;
 
                 case 4:
 
-                    DialogueCue( 0, "I smell something familiar");
+                    DialogueCue( 2 );
 
                     companionVector = origin + new Vector2(320, 64);
 
@@ -228,13 +199,13 @@ namespace StardewDruid.Event.Scene
 
                     location.playSound("doorOpen");
 
-                    DialogueCue(2, "Heh. Folks just like the sound of Pelican Town, is all");
+                    DialogueCue(3);
 
                     break;
 
                 case 103:
 
-                    DialogueCue(0, "Hello old man");
+                    DialogueCue(4);
 
                     companions[0].Position = companions[2].Position - new Vector2(48,0);
 
@@ -264,13 +235,13 @@ namespace StardewDruid.Event.Scene
 
                 case 106:
 
-                    DialogueCue(2, "So, cat'o'fates, how was the mountain?");
+                    DialogueCue(5);
 
                     break;
 
                 case 109:
 
-                    DialogueCue(0, "The fallen one eludes me yet");
+                    DialogueCue(6);
 
                     break;
 
@@ -278,19 +249,19 @@ namespace StardewDruid.Event.Scene
 
                     companions[2].netDirection.Set(2);
 
-                    DialogueCue(2, "Ah. I'm sorry I was of no use to your search");
+                    DialogueCue(7);
 
                     break;
 
                 case 115:
 
-                    DialogueCue(0, "What? Without your help I would have remained in that ditch");
+                    DialogueCue(8);
 
                     break;
 
                 case 118:
 
-                    DialogueCue(2, "Only keeping the adventurer's oaths. Hiccup.");
+                    DialogueCue(9);
                     break;
 
                 case 121:
@@ -299,48 +270,48 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].netStandbyActive.Set(false);
 
-                    DialogueCue(0, "Are you well? Looks like cheese poisoning");
+                    DialogueCue(10);
                     break;
 
                 case 124:
 
                     companions[2].netDirection.Set(3);
 
-                    DialogueCue(2, "I was found unconscious on the path");
+                    DialogueCue(11);
                     break;
 
                 case 125:
 
-                    DialogueCue(0, "!");
+                    DialogueCue(12);
                     break;
 
                 case 127:
 
                     companions[2].netDirection.Set(2);
 
-                    DialogueCue(2, "Doc had to perform emergency surgery");
+                    DialogueCue(13);
                     break;
 
                 case 130:
 
                     companions[0].netStandbyActive.Set(true);
 
-                    DialogueCue(0, "That's happened to farmer a few times");
+                    DialogueCue(14);
                     break;
 
                 case 133:
 
-                    DialogueCue(2, "Maru fed me two chunks of iridium cheddar to aid recovery...");
+                    DialogueCue(15);
                     break;
 
                 case 134:
 
-                    DialogueCue(0, "x");
+                    DialogueCue(16);
                     break;
 
                 case 136:
 
-                    DialogueCue(0, "Gross, but effective");
+                    DialogueCue(17);
 
                     break;
 
@@ -348,15 +319,15 @@ namespace StardewDruid.Event.Scene
 
                     companions[2].netDirection.Set(3);
 
-                    DialogueCue(2, "So, as I'm finding it hard to move, I have an errand for you.");
+                    DialogueCue(18);
 
                     break;
 
                 case 142:
 
-                    DialogueCue(2, "I took this off a shadow raider.");
+                    DialogueCue(19);
 
-                    ThrowHandle throwRelic = new(companions[2].Position, companions[0].Position, IconData.relics.saurus_skull);
+                    ThrowHandle throwRelic = new(companions[2].Position, companions[0].Position, IconData.relics.skull_saurus);
 
                     throwRelic.impact = IconData.impacts.puff;
 
@@ -366,9 +337,9 @@ namespace StardewDruid.Event.Scene
 
                 case 145:
 
-                    DialogueCue(0, "Well that is gross.");
+                    DialogueCue(20);
 
-                    Microsoft.Xna.Framework.Rectangle relicRect = Mod.instance.iconData.RelicRectangles(IconData.relics.saurus_skull);
+                    Microsoft.Xna.Framework.Rectangle relicRect = Mod.instance.iconData.RelicRectangles(IconData.relics.skull_saurus);
 
                     TemporaryAnimatedSprite animation = new(0, 5000, 1, 1, companions[0].Position + new Vector2(32,32), false, false)
                     {
@@ -385,19 +356,19 @@ namespace StardewDruid.Event.Scene
 
                 case 148:
 
-                    DialogueCue(2, "Lots of shadowfolk topside these days, all graverobbers and thieves.");
+                    DialogueCue(21);
 
                     break;
 
                 case 151:
 
-                    DialogueCue(2, "Gunther's waiting for it at the museum.");
+                    DialogueCue(22 );
 
                     break;
 
                 case 154:
 
-                    DialogueCue(2, "Goodbye cat'o'fates, goodbye farmer");
+                    DialogueCue(23 );
 
                     companions[2].TargetEvent(302, origin + new Vector2 (448, 64));
 
@@ -405,7 +376,7 @@ namespace StardewDruid.Event.Scene
 
                 case 156:
 
-                    DialogueCue(0, "Farewell friend");
+                    DialogueCue(24 );
 
                     companions[2].currentLocation.characters.Remove(companions[2]);
 
@@ -437,13 +408,13 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].TargetEvent(0, companionVector, true);
 
-                    DialogueCue(0, "Time to get this lumbering thing to the blue man");
+                    DialogueCue(25);
 
                     break;
 
                 case 203:
 
-                    DialogueCue(0, "Guess tricks will have to wait");
+                    DialogueCue(26);
 
                     break;
 
@@ -469,13 +440,11 @@ namespace StardewDruid.Event.Scene
 
                 case 206:
 
-                    DialogueCue(1, "!");
+                    DialogueCue(27);
 
                     break;
 
                 case 207:
-
-                    DialogueCue(0, "!");
 
                     buffinVector = companionVector + new Vector2(960, 192);
 
@@ -485,7 +454,7 @@ namespace StardewDruid.Event.Scene
 
                 case 209:
 
-                    DialogueCue(0, "Buffin!");
+                    DialogueCue(28);
 
                     companionVector = companionVector + new Vector2(832, 192);
 
@@ -503,7 +472,7 @@ namespace StardewDruid.Event.Scene
 
                 case 212:
 
-                    DialogueCue(0, "?");
+                    DialogueCue(29);
 
                     Mod.instance.iconData.AnimateQuickWarp(location, companions[1].Position + new Vector2(0.0f, -196f));
 
@@ -557,7 +526,7 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.iconData.AnimateQuickWarp(location, companions[1].Position - new Vector2(0.0f, 32f));
 
-                    DialogueCue(1, "I've come to challenge you, Jester");
+                    DialogueCue(30);
 
                     break;
 
@@ -569,7 +538,7 @@ namespace StardewDruid.Event.Scene
 
                 case 303:
 
-                    DialogueCue(0, "Of course you have");
+                    DialogueCue(31);
 
                     break;
 
@@ -581,61 +550,61 @@ namespace StardewDruid.Event.Scene
 
                 case 306:
 
-                    DialogueCue(0, "What's the contest then, Buffin?");
+                    DialogueCue(32);
 
                     break;
 
                 case 309:
 
-                    DialogueCue(1, "I'll let you decide");
+                    DialogueCue(33);
 
                     break;
 
                 case 312:
 
-                    DialogueCue(0, "And the stakes?");
+                    DialogueCue(34 );
 
                     break;
 
                 case 315:
 
-                    DialogueCue(1, "A boon, by the laws of the fates");
+                    DialogueCue(35 );
 
                     break;
 
                 case 318:
 
-                    DialogueCue(0, "Hmmm. A race then. Terrestrial");
+                    DialogueCue(36);
 
                     break;
 
                 case 321:
 
-                    DialogueCue(1, "So no warp tricks? Suits me");
+                    DialogueCue(37 );
 
                     break;
 
                 case 324:
 
-                    DialogueCue(0, "Past the manor, over the bridge, to the museum");
+                    DialogueCue(38 );
 
                     break;
 
                 case 327:
 
-                    DialogueCue(1, "I'll make you choke on my tail fluff");
+                    DialogueCue(39 );
 
                     break;
 
                 case 330:
 
-                    DialogueCue(0, "Try to keep up Farmer. GO!");
+                    DialogueCue(40);
 
                     break;
 
                 case 331:
 
-                    Mod.instance.CastDisplay("Wait for Jester by the museum");
+                    DialogueCue(41);
 
                     // Jester route
 
@@ -683,13 +652,25 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
+                case 333:
+
+                    DialogueCue(42);
+
+                    break;
+
+                case 335:
+
+                    DialogueCue(43);
+
+                    break;
+
                 case 370:
 
                     companions[0].netStandbyActive.Set(true);
 
                     companions[0].netDirection.Set(1);
 
-                    Mod.instance.CastDisplay("Jester has reached the town museum");
+                    DialogueCue(44);
 
                     DialogueLoad(0, 4);
 
@@ -714,17 +695,29 @@ namespace StardewDruid.Event.Scene
 
                 case 800:
 
+                    Vector2 archaeum = companions[0].Position + new Vector2(320, -64);
+
+                    MuseumAccess = new();
+
+                    MuseumAccess.AccessSetup("Town", LocationData.druid_archaeum_name, ModUtility.PositionToTile(archaeum), new Vector2(24, 15));
+
+                    MuseumAccess.location = location;
+
+                    MuseumAccess.AccessStair();
+
+                    location.localSound("secret1");
+
                     DialogueClear(0);
 
                     companions[0].netStandbyActive.Set(false);
 
-                    companions[0].TargetEvent(203, companions[0].Position + new Vector2(128,-192), true);
+                    companions[0].TargetEvent(203, archaeum, true);
 
                     companions[1].netStandbyActive.Set(false);
 
-                    companions[1].TargetEvent(203, companions[0].Position + new Vector2(128, -128), true);
+                    companions[1].TargetEvent(0, archaeum, true);
 
-                    DialogueCue(0, "This place smells like bread and jam");
+                    DialogueCue(45);
 
                     break;
 
@@ -764,6 +757,8 @@ namespace StardewDruid.Event.Scene
 
                     voices[3] = companions[3];
 
+                    MuseumAccess.AccessWarps();
+
                     break;
 
                 case 811:
@@ -795,9 +790,7 @@ namespace StardewDruid.Event.Scene
 
                 case 900:
 
-                    cues = DialogueData.DialogueScene(eventId);
-
-                    Microsoft.Xna.Framework.Rectangle relicRectTwo = Mod.instance.iconData.RelicRectangles(IconData.relics.saurus_skull);
+                    Microsoft.Xna.Framework.Rectangle relicRectTwo = Mod.instance.iconData.RelicRectangles(IconData.relics.skull_saurus);
 
                     TemporaryAnimatedSprite animationTwo = new(0, 20000, 1, 1, new Vector2(27,15)*64 + new Vector2(32), false, false)
                     {
@@ -850,9 +843,13 @@ namespace StardewDruid.Event.Scene
 
                     dinosaur.SetMode(3);
 
+                    dinosaur.netScheme.Set(1);
+
                     dinosaur.netPosturing.Set(true);
 
                     location.characters.Add(dinosaur);
+
+                    dinosaur.dragonRender.GhostScheme();
 
                     dinosaur.update(Game1.currentGameTime, location);
 
@@ -911,7 +908,7 @@ namespace StardewDruid.Event.Scene
 
                     dinosaur = null;
 
-                    ThrowHandle newThrowRelic = new( relicPosition, companions[1].Position, IconData.relics.saurus_skull);
+                    ThrowHandle newThrowRelic = new( relicPosition, companions[1].Position, IconData.relics.skull_saurus);
 
                     newThrowRelic.impact = IconData.impacts.puff;
 
@@ -933,7 +930,19 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 970:
+                case 969:
+
+                    companions[0].ResetActives();
+
+                    companions[0].TargetEvent(0, new Vector2(27, 32) * 64);
+
+                    companions[1].ResetActives();
+
+                    companions[1].TargetEvent(0, new Vector2(27, 32) * 64);
+
+                    break;
+
+                case 972:
 
                     Vector2 outsideTile = ModUtility.PositionToTile(companionVector);
 
@@ -959,15 +968,13 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 971:
-                case 972:
                 case 973:
                 case 974:
+                case 975:
+                case 976:
 
-                    if (Game1.player.currentLocation.Name == LocationData.druid_archaeum_name)
+                    if (Game1.player.currentLocation.Name == "Town")
                     {
-
-                        inabsentia = false;
 
                         activeCounter = 399;
 
@@ -975,9 +982,7 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 975:
-
-                    inabsentia = false;
+                case 977:
 
                     activeCounter = 399;
 
@@ -996,7 +1001,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].netDirection.Set(3);
 
-                    DialogueCue(1, "Time to head back, Jester");
+                    DialogueCue(46);
 
                     break;
 
@@ -1004,43 +1009,43 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].netDirection.Set(1);
 
-                    DialogueCue(0, "What?");
+                    DialogueCue(47);
 
                     break;
 
                 case 406:
 
-                    DialogueCue(1, "It's time to return to court");
+                    DialogueCue(48);
 
                     break;
 
                 case 409:
 
-                    DialogueCue(0, "...why would I go back. I have my mission");
+                    DialogueCue(49 );
 
                     break;
 
                 case 412:
 
-                    DialogueCue(1, "It's where you belong. It's where we both belong");
+                    DialogueCue(50);
 
                     break;
 
                 case 415:
 
-                    DialogueCue(0, "I think I belong here.");
+                    DialogueCue(51 );
 
                     break;
 
                 case 418:
 
-                    DialogueCue(1, "Where you keep making a fool of yourself?");
+                    DialogueCue(52);
 
                     break;
 
                 case 421:
 
-                    DialogueCue(1, "Admit it, Fortumei stuffed up again");
+                    DialogueCue(53 );
 
                     companions[0].doEmote(16);
 
@@ -1048,25 +1053,25 @@ namespace StardewDruid.Event.Scene
 
                 case 424:
 
-                    DialogueCue(0, "Do not besmirch the High Priestess!");
+                    DialogueCue(54);
 
                     break;
 
                 case 427:
 
-                    DialogueCue(1, "Why not, they all say it");
+                    DialogueCue(55);
 
                     break;
 
                 case 430:
 
-                    DialogueCue(0, "Who cares what they say. Only She knows Yoba's will");
+                    DialogueCue(56);
 
                     break;
 
                 case 433:
 
-                    DialogueCue(1, "I think it's time to make good on that boon you owe me");
+                    DialogueCue(57);
 
                     companions[1].Position = companions[1].Position + new Vector2(196, 0);
 
@@ -1076,7 +1081,7 @@ namespace StardewDruid.Event.Scene
 
                 case 436:
 
-                    DialogueCue(0, "I don't think so");
+                    DialogueCue(58);
 
                     companions[0].Position = companions[0].Position + new Vector2(-196, 0);
 
@@ -1112,7 +1117,7 @@ namespace StardewDruid.Event.Scene
 
                 case 441:
 
-                    DialogueCue(1, "You're nothing next to Chaos");
+                    DialogueCue(59);
 
                     companions[0].ResetActives(true);
 
@@ -1132,7 +1137,7 @@ namespace StardewDruid.Event.Scene
 
                 case 444:
 
-                    DialogueCue(0, "BEHOLD! My new trick...");
+                    DialogueCue(60);
 
                     companions[0].ResetActives(true);
 
@@ -1202,7 +1207,7 @@ namespace StardewDruid.Event.Scene
 
                             Vector2 burnVector = cornerVector + new Vector2((i * 64), (j * 64)) - new Vector2(16 * Mod.instance.randomIndex.Next(0, 4), 16 * Mod.instance.randomIndex.Next(0, 4));
 
-                            Mod.instance.iconData.EmberConstruct(location, IconData.schemes.ember, burnVector, Mod.instance.randomIndex.Next(2,5), Mod.instance.randomIndex.Next(3), 60, 999f);
+                            Mod.instance.iconData.EmberConstruct(location, IconData.schemes.stars, burnVector, Mod.instance.randomIndex.Next(2,5), Mod.instance.randomIndex.Next(3), 60, 999f);
 
                             if(i % 3 == 0 && j % 3 == 0)
                             {
@@ -1252,7 +1257,7 @@ namespace StardewDruid.Event.Scene
 
                 case 449:
 
-                    DialogueCue(1, "Pretty");
+                    DialogueCue(61);
 
                     break;
 
@@ -1283,19 +1288,19 @@ namespace StardewDruid.Event.Scene
 
                 case 501:
 
-                    DialogueCue(1, "Jester...");
+                    DialogueCue(62);
 
                     break;
 
                 case 504:
 
-                    DialogueCue(0, "Hey Buffin, wanna sit on a bridge for a while?");
+                    DialogueCue(63);
 
                     break;
 
                 case 507:
 
-                    DialogueCue(1, "I'm sorry for what happened at court");
+                    DialogueCue(64 );
 
                     companionVector = companionVector += new Vector2(-1280, 128);
 
@@ -1309,13 +1314,13 @@ namespace StardewDruid.Event.Scene
 
                 case 510:
 
-                    DialogueCue(0, "Yea. I was sad for a long time");
+                    DialogueCue(65 );
 
                     break;
 
                 case 520:
 
-                    DialogueCue(1, "I panicked when you volunteered yourself");
+                    DialogueCue(66);
 
                     companions[0].netStandbyActive.Set(true);
 
@@ -1329,85 +1334,85 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].netDirection.Set(3);
 
-                    DialogueCue(0, "To be honest. I was joking when I offered to go");
+                    DialogueCue(67 );
 
                     break;
 
                 case 526:
 
-                    DialogueCue(1, "What? You weren't serious?");
+                    DialogueCue(68 );
 
                     break;
 
                 case 529:
 
-                    DialogueCue(0, "I didn't think it would go this far");
+                    DialogueCue(69 );
 
                     break;
 
                 case 532:
 
-                    DialogueCue(1, "BUT WHAT ABOUT THE REAPER");
+                    DialogueCue(70);
 
                     break;
 
                 case 535:
 
-                    DialogueCue(0, "Oh. Yea. I thought he would be easier to find");
+                    DialogueCue(71 );
 
                     break;
 
                 case 538:
 
-                    DialogueCue(0, "Imagine if I brought him home. The celebrations...");
+                    DialogueCue(72 );
 
                     break;
 
                 case 541:
 
-                    DialogueCue(1, "Have you found anything?");
+                    DialogueCue(73);
 
                     break;
 
                 case 544:
 
-                    DialogueCue(0, "We found a hundred of his victims");
+                    DialogueCue(74 );
 
                     break;
 
                 case 546:
 
-                    DialogueCue(1, "!");
+                    DialogueCue(75 );
 
                     break;
 
                 case 548:
 
-                    DialogueCue(0, "They chased us the entire length of a dungeon");
+                    DialogueCue(76);
 
                     break;
 
                 case 550:
 
-                    DialogueCue(1, "Oh my Chaos");
+                    DialogueCue(77 );
 
                     break;
 
                 case 553:
 
-                    DialogueCue(0, "Yea. At the end of it was statue made in Thanatoshi's honour");
+                    DialogueCue(78 );
 
                     break;
 
                 case 556:
 
-                    DialogueCue(0, "Was a bit weird");
+                    DialogueCue(79);
 
                     break;
 
                 case 559:
 
-                    DialogueCue(1, "Jester, I can promise to sing your praises at court");
+                    DialogueCue(80);
 
                     break;
 
@@ -1417,7 +1422,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].TargetEvent(0, companions[0].Position + new Vector2(32, 0));
 
-                    DialogueCue(1, "But I'll be watching you");
+                    DialogueCue(81);
 
                     break;
 
@@ -1425,7 +1430,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].netStandbyActive.Set(false);
 
-                    DialogueCue(0, "It is good to see you Buffin");
+                    DialogueCue(82);
 
                     break;
 
@@ -1451,7 +1456,7 @@ namespace StardewDruid.Event.Scene
 
                 case 700:
 
-                    DialogueCue(0, "Good night Farmer. Thank you for coming");
+                    DialogueCue(83);
 
                     companions[0].SwitchToMode(Character.Character.mode.random,Game1.player);
 
@@ -1462,13 +1467,6 @@ namespace StardewDruid.Event.Scene
                     break;
 
             }
-
-        }
-
-        public override void EventCompleted()
-        {
-            
-            Mod.instance.questHandle.CompleteQuest(eventId);
 
         }
 
@@ -1512,204 +1510,6 @@ namespace StardewDruid.Event.Scene
 
                     break;
             
-            }
-
-        }
-
-        public override void DialogueSetups(StardewDruid.Character.Character npc, int dialogueId)
-        {
-
-            string intro;
-
-            switch (dialogueId)
-            {
-                default:
-                case 1:
-
-                    intro = "Jester of Fate: ^So this is the town of pelicans. I guess the humans killed all the birds when they took it over.";
-
-                    break;
-
-                case 2:
-
-                    intro = "Jester of Fate: ^He's one of the good ones, farmer. Makes me sad.";
-
-                    break;
-
-                case 3:
-
-                    intro = "Jester of Fate: ^Any clue where that cosmic fox went?";
-
-                    break;
-
-                case 4:
-
-                    intro = "Jester of Fate: ^I have no idea who actually won.";
-
-                    break;
-
-                case 5:
-
-                    intro = "Jester of Fate: ^I think we went too far.";
-
-                    break;
-
-                case 6:
-
-                    intro = "Jester of Fate: ^When Fortumei asked for a volunteer to take up Thanatoshi's cause, the only answer was silence. " +
-                        "So I jested. I proclaimed, with big bravado, that I would get the job done.";
-
-                    break;
-
-
-            }
-
-            List<Response> responseList = new();
-
-            switch (dialogueId)
-            {
-                default:
-                case 1: //townOne
-
-                    responseList.Add(new Response("townOne", "Not quite... it's probable that the town founders were the Pelican family."));
-                    responseList.Add(new Response("townOne", "Indeed. It was quite an effort for us humans to overthrow our big billed overlords."));
-
-                    break;
-
-                case 2:
-
-                    responseList.Add(new Response("townTwo", "Why would you be sad about Marlon?"));
-                    responseList.Add(new Response("townTwo", "It is a shame that there aren't more capes and eyepatches in the valley."));
-
-                    break;
-
-                case 3:
-
-                    responseList.Add(new Response("townThree", "Probably eating cookies and sipping whiskey with the Muellers."));
-                    responseList.Add(new Response("townThree", "Within the insatiable maw of the town dog from which there is no escape."));
-                    responseList.Add(new Response("townThree", "Just check the trash. Everyone else does... right?"));
-
-                    break;
-
-                case 4:
-
-                    responseList.Add(new Response("townFour", "I saw both of you arrive after me."));
-                    responseList.Add(new Response("townFour", "Buffin is quicker on the ground."));
-                    responseList.Add(new Response("townFour", "You Jester, you're a powerhouse of motion when you want to be."));
-
-                    break;
-
-                case 5:
-
-                    responseList.Add(new Response("townFive", "Don't worry. The Junimos have a knack for fixing this kind of thing."));
-                    responseList.Add(new Response("townFive", "I don't see Gunther's precious wooden panelling being consumed by the flame. Is that even a real fire?"));
-                    //responseList.Add(new Response("townFive", "What kind of power does Buffin wield?"));
-
-                    break;
-
-                case 6:
-
-                    responseList.Add(new Response("townSix", "You've done pretty well considering you never intended to get this far. Do you have any regrets?"));
-                    responseList.Add(new Response("townSix", "That must have been quite the scene, with all those important Fates looking at you. Maybe some saw a fool, but some saw a hero. I see a hero."));
-
-                    break;
-
-            }
-
-            GameLocation.afterQuestionBehavior questionBehavior = new(DialogueResponses);
-
-            Game1.player.currentLocation.createQuestionDialogue(intro, responseList.ToArray(), questionBehavior, npc);
-
-            return;
-
-        }
-
-        public override void DialogueResponses(Farmer visitor, string dialogue)
-        {
-
-            StardewValley.NPC npc = companions[0];
-
-            string response;
-
-            switch (dialogue)
-            {
-
-                case "townOne":
-
-                    activeCounter = Math.Max(99, activeCounter);
-
-                    response = "I wonder if the pelicans were still around, would they be able to tell us where the fallen star is.";
-
-                    DialogueDraw(npc, response);
-
-                    break;
-
-                case "townTwo":
-
-                    activeCounter = Math.Max(199, activeCounter);
-
-                    response = "When I first came to the valley, I started at the last known position of Thanatoshi before he vanished in his pursuit of the fallen one. " +
-                            "Even after a week I couldn't find a clue to his whereabouts. So I cried a little. I even yelled a bit. Well sort of cat-screamed. " +
-                            "I guess kind of loudly, because the one-eyed cheese-eating adventure man told me to shut up. " +
-                            "Then he offered me a spot to sleep by a warm fire, and I learned from him about the star crater, and that long tunnel of death we explored. " +
-                            "Yet, while he talked, I could also hear the faint whispers of the priesthood. " +
-                            "The oracles predict that the one eyed warrior will never cease his crusade against the shadows of the valley. " +
-                            "One day he will lie in an unmarked grave, buried respectfully by the young shadow brute who bests him. " +
-                            "Pretty grim. But hey, the priesthood doesn't always get things right. ";
-
-                    DialogueDraw(npc, response);
-
-                    break;
-
-                case "townThree":
-
-                    activeCounter = Math.Max(299, activeCounter);
-
-                    response = "Sounds like something the Buffoonette of Chaos would do. " +
-                            "Most fates get confused or angry by her attempts at fun. I'm one of her only friends.";
-
-                    DialogueDraw(npc, response);
-
-                    break;
-
-                case "townFour":
-
-                    //activeCounter = Math.Max(399, activeCounter);
-                    activeCounter = Math.Max(799, activeCounter);
-
-                    response = "Heh, it didn't seem like Buffin put in much effort. She's usually very foxy. " +
-                            "I guess there's something else going on with her. There always is.";
-
-                    DialogueDraw(npc, response);
-
-                    break;
-
-                case "townFive":
-
-                    activeCounter = Math.Max(499, activeCounter);
-
-                    response = "Buffin serves the Stream of Chaos, who occupies one of the four seats of the Fates. " +
-                            "The stream has an influence on some of the more, uh, fun aspects of the mysteries of the Fates, so things like this tend to happen when we get together. " +
-                            "(Jester sighs) This isn't what the high priestess expects of me.";
-
-                    DialogueDraw(npc, response);
-
-                    break;
-
-                case "townSix":
-
-                    activeCounter = Math.Max(699, activeCounter);
-
-                    response = "The faithful certainly took it as a joke. One heckler said the earth cats would chase me away. " +
-                            "An oracle foretold that my sparkly star cape would be torn to shreds. " +
-                            "Buffin showed the court an image of me in tears, stuck in a ditch. All of which ended up happening for real but besides that, Fortumei took me at my word. " +
-                            "I'm more then a joke.";
-
-
-                    DialogueDraw(npc, response);
-
-                    break;
-
             }
 
         }

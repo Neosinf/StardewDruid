@@ -72,7 +72,7 @@ namespace StardewDruid.Cast.Fates
                 if (decimalCounter == 5)
                 {
 
-                    TemporaryAnimatedSprite skyAnimation = Mod.instance.iconData.SkyIndicator(location, origin, IconData.skies.temple, 1f, new() { interval = 1000, });
+                    TemporaryAnimatedSprite skyAnimation = Mod.instance.iconData.SkyIndicator(location, origin, IconData.skies.sunset, 1f, new() { interval = 1000, });
 
                     skyAnimation.scaleChange = 0.002f;
 
@@ -126,9 +126,11 @@ namespace StardewDruid.Cast.Fates
             if (faeth > 0)
             {
 
-                string message = "Consumed " + faeth + " Faeth";
+                Herbal resource = Mod.instance.herbalData.herbalism[herbals.faeth.ToString()];
 
-                ConsumePotion hudmessage = new(message, Mod.instance.herbalData.herbalism[herbals.faeth.ToString()]);
+                string message = "-" + faeth + " " + resource.title;
+
+                DisplayPotion hudmessage = new(message, resource);
 
                 Game1.addHUDMessage(hudmessage);
 
@@ -155,6 +157,13 @@ namespace StardewDruid.Cast.Fates
             foreach (Vector2 tile in affected)
             {
 
+                if (!Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.faeth))
+                {
+
+                    break;
+
+                }
+                
                 if (Mod.instance.save.herbalism[HerbalData.herbals.faeth] == 0)
                 {
 
@@ -253,12 +262,13 @@ namespace StardewDruid.Cast.Fates
 
                     Mod.instance.save.herbalism[HerbalData.herbals.faeth] -= 1;
 
-                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.fatesThree))
+                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.fatesFour))
                     {
 
-                        Mod.instance.questHandle.UpdateTask(QuestHandle.fatesThree, 1);
+                        Mod.instance.questHandle.UpdateTask(QuestHandle.fatesFour, 1);
 
                     }
+
                     Vector2 cursorVector = tile * 64 + new Vector2(32, 32);
 
                     Microsoft.Xna.Framework.Color colour = Mod.instance.iconData.gradientColours[IconData.schemes.fates][Mod.instance.randomIndex.Next(3)];

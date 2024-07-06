@@ -29,9 +29,9 @@ namespace StardewDruid.Monster
 
             baseMode = 3;
 
-            baseJuice = 3;
-            
-            basePulp = 40;
+            baseJuice = 4;
+
+            basePulp = 35;
 
             cooldownInterval = 180;
 

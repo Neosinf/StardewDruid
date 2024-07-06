@@ -32,7 +32,7 @@ namespace StardewDruid.Monster
 
             basePulp = 20;
 
-            cooldownInterval = 180;
+            cooldownInterval = 150;
 
             DarkWalk();
 
@@ -86,7 +86,7 @@ namespace StardewDruid.Monster
 
             fireball.indicator = IconData.cursors.scope;
 
-            fireball.scheme = IconData.schemes.ember;
+            fireball.scheme = IconData.schemes.stars;
 
             fireball.added = new() { SpellHandle.effects.embers, };
 
@@ -119,7 +119,7 @@ namespace StardewDruid.Monster
 
             fireball.indicator = IconData.cursors.scope;
 
-            fireball.scheme = IconData.schemes.ember;
+            fireball.scheme = IconData.schemes.stars;
 
             fireball.added = new() { SpellHandle.effects.embers, };
 

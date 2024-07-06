@@ -59,10 +59,21 @@ namespace StardewDruid.Data
 
         }
 
+        public enum portraits
+        {
+            neutral,
+            happy,
+            sad,
+            unique,
+            love,
+            angry
+
+        }
+
         public static void ReactTo(NPC NPC, reactions reaction, int friendship = 0, List<int> context = null)
         {
 
-            Mod.instance.Witnessed(reaction, NPC, true);
+            Mod.instance.AddWitness(reaction, NPC.Name);
 
             List<string> stringList = VillagerData.CustomReaction(reaction, NPC.Name);
 
@@ -102,6 +113,8 @@ namespace StardewDruid.Data
 
             }
 
+            Dictionary<portraits,string> shots = VillagerData.ReactionPortraits(NPC.Name);
+
             switch (reaction)
             {
 
@@ -110,7 +123,7 @@ namespace StardewDruid.Data
                     if (Game1.player.friendshipData.ContainsKey(NPC.Name))
                     {
 
-                        if (Game1.player.friendshipData[NPC.Name].Points >= 1000)
+                        if (Game1.player.friendshipData[NPC.Name].Points >= 1500)
                         {
 
                             NPC.doEmote(20, true);
@@ -121,19 +134,19 @@ namespace StardewDruid.Data
 
                                     stringList.Add("I read somewhere about the return of Dragons.");
 
-                                    stringList.Add("I couldn't make sense of it, but I trust you. $h");
+                                    stringList.Add("I couldn't make sense of it, but I trust you. "+shots[portraits.happy]+"");
 
                                     break;
 
                                 case 1:
 
-                                    stringList.Add("It's great to see a friendly Dragon. $l");
+                                    stringList.Add("It's great to see a friendly Dragon. "+shots[portraits.love]+"");
 
                                     break;
 
                                 case 2:
 
-                                    stringList.Add(" I think I saw you fly. You're brave to go so high! $h");
+                                    stringList.Add(" I think I saw you fly. You're brave to go so high! "+shots[portraits.happy]+"");
 
                                     break;
 
@@ -142,7 +155,7 @@ namespace StardewDruid.Data
 
                                     stringList.Add("Your scales glitter in the light of the " + place + ".");
 
-                                    stringList.Add("It's really something! $l");
+                                    stringList.Add("It's really something! "+shots[portraits.love]+"");
 
                                     break;
 
@@ -150,17 +163,17 @@ namespace StardewDruid.Data
 
                                     stringList.Add("A Dragon warrior is a great boon to the forces of light.");
 
-                                    stringList.Add("I count on you to protect the " + place + " from evil. $h");
+                                    stringList.Add("I count on you to protect the " + place + " from evil. "+shots[portraits.happy]+"");
 
                                     break;
 
                                 default:
 
-                                    stringList.Add("The Prime Tyrannus created a mystical kingdom of ether called the Undervalley");
+                                    stringList.Add("The Tyrant of Calico created a mystical kingdom on top of a nexus of ether");
 
-                                    stringList.Add("The tyrant king extended his reach towards the celestial plane, but was cast out by a powerful shadow.");
+                                    stringList.Add("He extended his reach towards the celestial plane, but was cast down by a powerful hero of the Stars.");
 
-                                    stringList.Add("He terrorised the denizens of the Calico basin for a time, until he faded into obscurity.");
+                                    stringList.Add("Or so the legend goes.");
 
                                     break;
                             }
@@ -169,7 +182,7 @@ namespace StardewDruid.Data
 
                         }
 
-                        if (Game1.player.friendshipData[NPC.Name].Points >= 500)
+                        if (Game1.player.friendshipData[NPC.Name].Points >= 1000)
                         {
 
                             NPC.doEmote(32, true);
@@ -181,7 +194,7 @@ namespace StardewDruid.Data
 
                                     stringList.Add("I don't know if I'll ever get used to seeing you like this.");
 
-                                    stringList.Add("I'm sure one day it will be wierd to see you as a human. $h");
+                                    stringList.Add("I'm sure one day it will be weird to see you as a human. "+shots[portraits.happy]+"");
 
                                     break;
 
@@ -189,7 +202,7 @@ namespace StardewDruid.Data
 
                                     stringList.Add("Is it fun to be a Dragon?");
 
-                                    stringList.Add("You must eat a lot of barbeque. $h");
+                                    stringList.Add("You must eat a lot of barbeque. "+shots[portraits.happy]+"");
 
                                     break;
 
@@ -205,7 +218,7 @@ namespace StardewDruid.Data
 
                                     stringList.Add("Can you breath fire? Can you fly?");
 
-                                    stringList.Add("Tell me everything! $h");
+                                    stringList.Add("Tell me everything! "+shots[portraits.happy]+"");
 
                                     break;
 
@@ -246,7 +259,7 @@ namespace StardewDruid.Data
 
                             stringList.Add("Oh... it's " + Game1.player.Name);
 
-                            stringList.Add("How did you become a... big lizard? $s");
+                            stringList.Add("How did you become a... big lizard? "+shots[portraits.sad]+"");
 
                             break;
 
@@ -261,7 +274,7 @@ namespace StardewDruid.Data
 
                             NPC.showTextAboveHead(alertListTwo[new Random().Next(3)]);
 
-                            stringList.Add("(" + NPC.Name + " trembles with fear and uncertainty). $s");
+                            stringList.Add("(" + NPC.Name + " trembles with fear and uncertainty). "+shots[portraits.sad]+"");
 
                             break;
 
@@ -271,7 +284,7 @@ namespace StardewDruid.Data
 
                             stringList.Add("Oh... hi there big friend...");
 
-                            stringList.Add("If you're looking for a horde of treasure... maybe try the mountain... or even further away. $s");
+                            stringList.Add("If you're looking for a horde of treasure... maybe try the mountain... or even further away. "+shots[portraits.sad]+"");
 
                             break;
 
@@ -307,7 +320,7 @@ namespace StardewDruid.Data
 
                             stringList.Add("Ancient ones have not roamed the " + place + " in centuries");
 
-                            stringList.Add("This might be an omen of troubling times to come. $s");
+                            stringList.Add("This might be an omen of troubling times to come. "+shots[portraits.sad]+"");
 
                             break;
                     }
@@ -341,14 +354,14 @@ namespace StardewDruid.Data
 
                                 NPC.doEmote(20, true);
 
-                                stringList.Add("I just had an out of body experience. My perception of reality is all messed up. $h");
+                                stringList.Add("I just had an out of body experience. My perception of reality is all messed up. "+shots[portraits.happy]+"");
 
                                 break;
 
                             case 1:
                                 NPC.doEmote(20, true);
 
-                                stringList.Add("I think " + trick + " is my new favourite trick. $l");
+                                stringList.Add("I think " + trick + " is my new favourite trick. "+shots[portraits.love]+"");
 
 
                                 break;
@@ -358,7 +371,7 @@ namespace StardewDruid.Data
 
                                 NPC.showTextAboveHead("Bravo!");
 
-                                stringList.Add("You've become a master entertainer! $l");
+                                stringList.Add("You've become a master entertainer! "+shots[portraits.love]+"");
 
                                 break;
 
@@ -366,7 +379,7 @@ namespace StardewDruid.Data
 
                                 NPC.doEmote(20, true);
 
-                                stringList.Add("I really want to be able to do that kind of thing. $l");
+                                stringList.Add("I really want to be able to do that kind of thing. "+shots[portraits.love]+"");
 
                                 break;
 
@@ -374,7 +387,7 @@ namespace StardewDruid.Data
 
                                 NPC.doEmote(20, true);
 
-                                stringList.Add("Ah, so there's a little bit of magic in our town magician (wink). $l");
+                                stringList.Add("Ah, so there's a little bit of magic in our town magician (wink). "+shots[portraits.love]+"");
 
                                 break;
 
@@ -384,7 +397,7 @@ namespace StardewDruid.Data
 
                                 stringList.Add("You've become a master manipulater of the chaos of chance.");
 
-                                stringList.Add("I suspect a Fate watches over you. $h");
+                                stringList.Add("I suspect a Fate watches over you. "+shots[portraits.happy]+"");
 
                                 break;
 
@@ -405,7 +418,7 @@ namespace StardewDruid.Data
 
                                 stringList.Add("Nice one " + Game1.player.Name + ". I can picture you in a big show!");
 
-                                stringList.Add("I would go to see it. $h");
+                                stringList.Add("I would go to see it. "+shots[portraits.happy]+"");
 
                                 break;
 
@@ -413,7 +426,7 @@ namespace StardewDruid.Data
 
                                 NPC.showTextAboveHead("Hehe");
 
-                                stringList.Add("That was fun. Do it again for me sometime! $h");
+                                stringList.Add("That was fun. Do it again for me sometime! "+shots[portraits.happy]+"");
 
                                 break;
 
@@ -421,7 +434,7 @@ namespace StardewDruid.Data
 
                                 NPC.doEmote(32, true);
 
-                                stringList.Add(trick.ToUpper() + "! Now that was special.$h");
+                                stringList.Add(trick.ToUpper() + "! Now that was special."+shots[portraits.happy]+"");
 
                                 break;
 
@@ -429,7 +442,7 @@ namespace StardewDruid.Data
 
                                 NPC.doEmote(32, true);
 
-                                stringList.Add("That was great! You've brightened my day.$h");
+                                stringList.Add("That was great! You've brightened my day."+shots[portraits.happy]+"");
 
                                 break;
 
@@ -437,7 +450,7 @@ namespace StardewDruid.Data
 
                                 NPC.doEmote(32, true);
 
-                                stringList.Add("I can sense there's more to this than a simple trick. $h");
+                                stringList.Add("I can sense there's more to this than a simple trick. "+shots[portraits.happy]+"");
 
                                 break;
 
@@ -449,7 +462,7 @@ namespace StardewDruid.Data
 
                                 stringList.Add("He suffered a legendary defeat at the throne of the King of Maples.");
 
-                                stringList.Add("His cheer and magic was lost to the world. $s");
+                                stringList.Add("His cheer and magic was lost to the world. "+shots[portraits.sad]+"");
 
                                 break;
                         }
@@ -530,13 +543,13 @@ namespace StardewDruid.Data
                             if (NPC is Child)
                             {
 
-                                stringList.Add("I don't think I like that trick. $s");
+                                stringList.Add("I don't think I like that trick. "+shots[portraits.sad]+"");
 
                             }
                             else
                             {
 
-                                stringList.Add("Ughh. I think I'll be happy if " + trick + " never happen to me again.$a");
+                                stringList.Add("Ughh. I think I'll be happy if " + trick + " never happen to me again."+shots[portraits.angry]+"");
 
                             }
 
@@ -546,7 +559,7 @@ namespace StardewDruid.Data
 
                             NPC.doEmote(28, true);
 
-                            stringList.Add("Let's not talk about this again.$s");
+                            stringList.Add("Let's not talk about this again."+shots[portraits.sad]+"");
 
                             stringList.Add("It's all in the past.");
 
@@ -556,7 +569,7 @@ namespace StardewDruid.Data
 
                             NPC.showTextAboveHead("Eeek!");
 
-                            stringList.Add("No thanks. I don't need any more mischief in my life.$s");
+                            stringList.Add("No thanks. I don't need any more mischief in my life."+shots[portraits.sad]+"");
 
                             break;
 
@@ -564,7 +577,7 @@ namespace StardewDruid.Data
 
                             NPC.doEmote(28, true);
 
-                            stringList.Add("That isn't what I was hoping for. $s");
+                            stringList.Add("That isn't what I was hoping for. "+shots[portraits.sad]+"");
 
                             break;
 
@@ -572,7 +585,7 @@ namespace StardewDruid.Data
 
                             NPC.doEmote(28, true);
 
-                            stringList.Add("Maybe you could practice a different kind of talent. Something that would benefit the town. $s");
+                            stringList.Add("Maybe you could practice a different kind of talent. Something that would benefit the town. "+shots[portraits.sad]+"");
 
                             break;
 
@@ -580,7 +593,7 @@ namespace StardewDruid.Data
 
                             NPC.doEmote(28, true);
 
-                            stringList.Add("(" + NPC.Name + " grumbles). The Fates should not be trifled with! $a");
+                            stringList.Add("(" + NPC.Name + " grumbles). The Fates should not be trifled with! "+shots[portraits.angry]+"");
 
                             break;
 
@@ -607,7 +620,7 @@ namespace StardewDruid.Data
 
                             stringList.Add("I remember an old story about a star falling to the ground.");
 
-                            stringList.Add("I think it was a love story, but it was a long time ago when I heard it. $h");
+                            stringList.Add("I think it was a love story, but it was a long time ago when I heard it. "+shots[portraits.happy]+"");
 
                             break;
 
@@ -629,7 +642,7 @@ namespace StardewDruid.Data
 
                             stringList.Add("Your ability reminds me of a tale of hubris and forlorn love.");
 
-                            stringList.Add("The hero sought the favour of the Stars, and when they answered his call, it started a fire that hurt his entire family. $s");
+                            stringList.Add("The hero sought the favour of the Stars, and when they answered his call, it started a fire that hurt his entire family. "+shots[portraits.sad]+"");
 
                             break;
 
@@ -666,13 +679,13 @@ namespace StardewDruid.Data
                             if (NPC is Child)
                             {
 
-                                stringList.Add("I always hear a scary thunder sound whenever you're around $s");
+                                stringList.Add("I always hear a scary thunder sound whenever you're around "+shots[portraits.sad]+"");
 
                             }
                             else
                             {
 
-                                stringList.Add("Rain and thunder every day! $a");
+                                stringList.Add("Rain and thunder every day! "+shots[portraits.angry]+"");
 
                             }
 
@@ -680,7 +693,7 @@ namespace StardewDruid.Data
 
                         case 2:
 
-                            stringList.Add("It's like the clouds follow you around. $s");
+                            stringList.Add("It's like the clouds follow you around. "+shots[portraits.sad]+"");
 
                             break;
 
@@ -692,7 +705,7 @@ namespace StardewDruid.Data
 
                         case 4:
 
-                            stringList.Add("That must be really useful for things that get in your way. Not so fun for bystanders though. $s");
+                            stringList.Add("That must be really useful for things that get in your way. Not so fun for bystanders though. "+shots[portraits.sad]+"");
 
                             break;
 
@@ -700,7 +713,7 @@ namespace StardewDruid.Data
 
                             stringList.Add("Many say thunder is the voice of the Lady Beyond the Shore.");
 
-                            stringList.Add("Be careful, " + Game1.player.Name + ", you don't want to catch her ire. $s");
+                            stringList.Add("Be careful, " + Game1.player.Name + ", you don't want to catch her ire. "+shots[portraits.sad]+"");
 
                             stringList.Add("She awaits the time of her revenge.");
 
@@ -722,32 +735,32 @@ namespace StardewDruid.Data
 
                                 stringList.Add("I give up trying to figure out how you're doing all this gardening.");
 
-                                stringList.Add("You have flower petals all over you. It's ridiculous, but neat. $h");
+                                stringList.Add("You have flower petals all over you. It's ridiculous, but neat. "+shots[portraits.happy]+"");
 
                                 break;
 
                             case 1:
 
-                                stringList.Add("You're really good with nature. $h");
+                                stringList.Add("You're really good with nature. "+shots[portraits.happy]+"");
 
                                 break;
 
                             case 2:
 
-                                stringList.Add("I should visit the farm sometime, and see all the fantastic things you've brought to life. $l");
+                                stringList.Add("I should visit the farm sometime, and see all the fantastic things you've brought to life. "+shots[portraits.love]+"");
 
                                 break;
 
                             case 3:
 
 
-                                stringList.Add("The " + place + " has never felt more alive than since you moved here. $l");
+                                stringList.Add("The " + place + " has never felt more alive than since you moved here. "+shots[portraits.love]+"");
 
                                 break;
 
                             case 4:
 
-                                stringList.Add("I've noticed that you have a special connection to the life force of the " + place + ". That means you have a special connection to all of us. $l");
+                                stringList.Add("I've noticed that you have a special connection to the life force of the " + place + ". That means you have a special connection to all of us. "+shots[portraits.love]+"");
 
                                 break;
 
@@ -755,7 +768,7 @@ namespace StardewDruid.Data
 
                                 stringList.Add("You have shown great aptitude for the sacred rites of the " + place + " Druids.");
 
-                                stringList.Add("The town doesn't know how blessed it is to have you here. $l");
+                                stringList.Add("The town doesn't know how blessed it is to have you here. "+shots[portraits.love]+"");
 
                                 break;
 
@@ -784,13 +797,13 @@ namespace StardewDruid.Data
 
                             case 2:
 
-                                stringList.Add("There are gardens sprouting up everywhere this season. $h");
+                                stringList.Add("There are gardens sprouting up everywhere this season. "+shots[portraits.happy]+"");
 
                                 break;
 
                             case 3:
 
-                                stringList.Add("It's as if nature sings when you walk into town. $h");
+                                stringList.Add("It's as if nature sings when you walk into town. "+shots[portraits.happy]+"");
 
                                 break;
 
@@ -804,7 +817,7 @@ namespace StardewDruid.Data
 
                             default:
 
-                                stringList.Add("The small creatures listen to the songs of the wild. $h");
+                                stringList.Add("The small creatures listen to the songs of the wild. "+shots[portraits.happy]+"");
 
                                 break;
 
@@ -820,12 +833,18 @@ namespace StardewDruid.Data
 
                                 NPC.showTextAboveHead("Huh?");
 
-                                switch (new Random().Next(2))
+                                switch (new Random().Next(3))
                                 {
 
                                     case 0:
 
                                         stringList.Add("Why are you speaking strange words and waving your hands like that. Is it some kind of farmer ritual?");
+
+                                        break;
+
+                                    case 1:
+
+                                        stringList.Add("Strange, but, all the broadleaf weeds on the village green look like they contracted some kind of explosive disease. They're all mulch.");
 
                                         break;
 
@@ -842,18 +861,24 @@ namespace StardewDruid.Data
 
                                 NPC.doEmote(8, true);
 
-                                switch(new Random().Next(2))
+                                switch(new Random().Next(3))
                                 {
 
                                     case 0:
 
-                                        stringList.Add("The flowers and birds have come back. I think the " + place + " is happy. $h");
+                                        stringList.Add("The flowers and birds have come back. I think the " + place + " is happy. "+shots[portraits.happy]);
+
+                                        break;
+
+                                    case 1:
+
+                                        stringList.Add("Mmm. I can smell sweet berries. I didn't know it was time to pick them." + shots[portraits.happy]);
 
                                         break;
 
                                     default:
 
-                                        stringList.Add("The air is light and sparkly today. $h");
+                                        stringList.Add("The air is light and sparkly today. "+shots[portraits.happy]+"");
 
                                         break;
                                 }
@@ -864,9 +889,34 @@ namespace StardewDruid.Data
 
                                 NPC.doEmote(8, true);
 
-                                stringList.Add("How many seeds do you have in your pocket?");
+                                switch (new Random().Next(3))
+                                {
 
-                                stringList.Add("It seems you have an endless amount to throw around.");
+                                    case 0:
+
+                                        
+                                        stringList.Add("I think we have a new gardener. Someone's been along the paths, picking up twigs and planting flowers. " + shots[portraits.happy]);
+
+                                        break;
+
+                                    case 1:
+
+                                        stringList.Add("I heard your Grandfather talking about the backside of your farm one night");
+
+                                        stringList.Add("Creepy caves, strange voices, and occultic symbols on the rocks and trees.");
+
+                                        stringList.Add("Think he told tall tales to keep unwanted guests away from the place." + shots[portraits.happy]);
+
+                                        break;
+
+                                    default:
+
+                                        stringList.Add("How many seeds do you have in your pocket?");
+
+                                        stringList.Add("It seems you have an endless amount to throw around.");
+
+                                        break;
+                                }
 
                                 break;
 
@@ -874,7 +924,30 @@ namespace StardewDruid.Data
 
                                 NPC.doEmote(8, true);
 
-                                stringList.Add("Did you see that? I could swear the " + place + " shimmered for a moment.");
+                                switch (new Random().Next(3))
+                                {
+
+                                    case 0:
+
+                                        stringList.Add("If I seem dazed, it's because for a while there was a dark thought on my mind." + shots[portraits.sad]);
+                                        stringList.Add("Then you appeared, and all I can think about is how beautiful the day is. Wierd, huh."+ shots[portraits.happy]);
+
+                                        break;
+
+                                    case 1:
+
+                                        stringList.Add("I grew up hearing some pretty fantastic stories about this valley from my parents. ");
+                                        stringList.Add("Secret woodland groves, lakes of fire under the mountain, shrines of forbidden magic. " + shots[portraits.happy]);
+                                        stringList.Add("I've only been able to explore some of it. Tell me if you come across anything truly special, " + Game1.player.Name);
+
+                                        break;
+
+                                    default:
+
+                                        stringList.Add("Did you see that? I could swear the " + place + " shimmered for a moment.");
+
+                                        break;
+                                }
 
                                 break;
 
@@ -882,9 +955,35 @@ namespace StardewDruid.Data
 
                                 NPC.doEmote(8, true);
 
-                                stringList.Add("It's time someone took responsibility for the wild spaces.");
+                                switch (new Random().Next(3))
+                                {
 
-                                stringList.Add("Most of us are very busy, and we've taken a lot for granted in our peaceful corner of the country.");
+                                    case 0:
+
+                                        stringList.Add("Do you believe that the elementals of the world exist, "+Game1.player.Name + "?");
+
+                                        stringList.Add("They only reveal themselves to those that are aware of their presence.");
+
+                                        break;
+
+                                    case 1:
+
+                                        stringList.Add("There are energies that flow through the fields and woodlands of the valley.");
+
+                                        stringList.Add("Sometimes in quiet moments I can hear their rustles and whispers." + shots[portraits.happy]);
+
+                                        stringList.Add("It would be a true gift to be able to speak back to them.");
+
+                                        break;
+
+                                    default:
+
+                                        stringList.Add("It's time someone took responsibility for the wild spaces.");
+
+                                        stringList.Add("Most of us are very busy, and we've taken a lot for granted in our peaceful corner of the country.");
+
+                                        break;
+                                }
 
                                 break;
 
@@ -892,9 +991,27 @@ namespace StardewDruid.Data
 
                                 NPC.doEmote(8, true);
 
-                                stringList.Add("I thought I just saw you dance in the style of the Old Kings.");
+                                switch (new Random().Next(3))
+                                {
+                                    case 0:
 
-                                stringList.Add("They've gone to sleep now, at rest after a terrible war, never to frolic again. $s");
+                                        stringList.Add("I'm happy that the circle has returned to the valley." + shots[portraits.happy]);
+
+                                        stringList.Add("Shadows have descended on the sacred spaces, and the phantoms of the past have begun to stir." + shots[portraits.unique]);
+
+                                        break;
+
+                                    default:
+
+                                        stringList.Add("I thought I just saw you dance in the style of the Old Kings.");
+
+                                        stringList.Add("They've gone to sleep now, at rest after a terrible war, never to frolic again. " + shots[portraits.sad]);
+
+                                        stringList.Add("\"Until the crows come home for the golden bones...\"" + shots[portraits.unique]);
+
+                                        break;
+                                
+                                }
 
                                 break;
 

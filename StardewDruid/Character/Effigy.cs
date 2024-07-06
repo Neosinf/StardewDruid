@@ -51,6 +51,8 @@ namespace StardewDruid.Character
 
             weaponRender.LoadWeapon(WeaponRender.weapons.sword);
 
+            weaponRender.swordScheme = IconData.schemes.sword_stars;
+
             base.LoadOut();
 
         }
@@ -70,7 +72,7 @@ namespace StardewDruid.Character
 
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = (float)StandingPixel.Y / 10000f;
 
@@ -85,6 +87,7 @@ namespace StardewDruid.Character
 
                 DrawStandby(b, localPosition, drawLayer);
 
+                // Custom shadow render
                 return;
 
             }

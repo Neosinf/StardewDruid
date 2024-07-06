@@ -39,7 +39,12 @@ namespace StardewDruid.Character
         public override void LoadOut()
         {
 
-            characterType = CharacterHandle.characters.Buffin;
+            if (characterType == CharacterHandle.characters.none)
+            {
+
+                characterType = Enum.Parse<CharacterHandle.characters>(Name);
+
+            }
 
             characterTexture = CharacterHandle.CharacterTexture(characterType);
 
@@ -55,7 +60,7 @@ namespace StardewDruid.Character
 
             haltFrames = FrameSeries(32, 32, 0, 0, 1);
 
-            alertFrames = haltFrames;
+            alertFrames = FrameSeries(32, 32, 0, 0, 1);
 
             walkFrames = FrameSeries(32, 32, 0, 0, 7);
 
@@ -106,7 +111,7 @@ namespace StardewDruid.Character
 
             dashInterval = 9;
 
-            dashFrames = new(sweepFrames);
+            dashFrames = FrameSeries(32, 32, 0, 128, 3);
 
             dashFrames[4] = new() { new(64, 192, 32, 32), };
             dashFrames[5] = new() { new(64, 160, 32, 32), };
@@ -139,7 +144,7 @@ namespace StardewDruid.Character
 
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = (float)StandingPixel.Y / 10000f;
 
@@ -149,10 +154,6 @@ namespace StardewDruid.Character
             {
 
                 DrawStandby(b, localPosition, drawLayer);
-
-                DrawShadow(b, localPosition, drawLayer);
-
-                return;
 
             }
             else if (netHaltActive.Value)
@@ -262,17 +263,13 @@ namespace StardewDruid.Character
             else
             {
 
-                if (TightPosition() && idleTimer > 0 && currentLocation.IsOutdoors && !netSceneActive.Value)
+                if (TightPosition() && idleTimer > 0 && !netSceneActive.Value)
                 {
 
                     DrawStandby(b, localPosition, drawLayer);
 
-                    DrawShadow(b, localPosition, drawLayer);
-
-                    return;
-
-                }
-
+                } 
+                else
                 if (pathActive == pathing.running)
                 {
                     b.Draw(

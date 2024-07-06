@@ -1,19 +1,13 @@
-﻿using GenericModConfigMenu;
+﻿
 using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Data;
-using StardewDruid.Dialogue;
-using StardewDruid.Event.Access;
 using StardewDruid.Location;
 using StardewDruid.Monster;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Enchantments;
-using StardewValley.GameData.Characters;
 using StardewValley.Locations;
-using StardewValley.Menus;
-using StardewValley.Minigames;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -30,6 +24,10 @@ namespace StardewDruid.Event.Sword
         public Vector2 statueVector;
 
         public Dictionary<Vector2, Tile> heldTiles = new();
+
+        public Event.Access.AccessHandle CourtAccess;
+
+        public Event.Access.AccessHandle TunnelAccess;
 
         public SwordFates()
         {
@@ -107,11 +105,12 @@ namespace StardewDruid.Event.Sword
 
         }
 
-
         public override void EventActivate()
         {
 
             base.EventActivate();
+
+            locales = new() { "UndergroundMine77377", LocationData.druid_court_name, };
 
             monsterHandle = new(origin, location);
 
@@ -136,7 +135,7 @@ namespace StardewDruid.Event.Sword
 
             activeLimit = 90;
 
-            EventBar("The Reaper's Trail", 0);
+            EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
         }
 
@@ -188,10 +187,6 @@ namespace StardewDruid.Event.Sword
 
                     companions[0] = Mod.instance.characters[CharacterHandle.characters.Jester];
 
-                    narrators = DialogueData.DialogueNarrators(eventId);
-
-                    cues = DialogueData.DialogueScene(eventId);
-
                     voices[0] = companions[0];
                     
                     break;
@@ -204,7 +199,7 @@ namespace StardewDruid.Event.Sword
                 
                 case 10:
 
-                    Mod.instance.CastDisplay("Get to the end of the tunnel before time runs out!", 2);
+                    DialogueCue(900);
 
                     location.playSound("ghost");
                         
@@ -232,7 +227,7 @@ namespace StardewDruid.Event.Sword
 
                 }
 
-                Mod.instance.CastDisplay("Get to the end of the tunnel before time runs out!", 2);
+                DialogueCue(900);
 
             }
 
@@ -259,8 +254,6 @@ namespace StardewDruid.Event.Sword
             if (Game1.player.currentLocation.Name == LocationData.druid_court_name)
             {
 
-                inabsentia = false;
-
                 activeCounter = 120;
 
                 return;
@@ -286,6 +279,11 @@ namespace StardewDruid.Event.Sword
 
                     if (!Game1.player.mailReceived.Contains("gotGoldenScythe"))
                     {
+                        
+                        ThrowHandle swordThrow = new(Game1.player, companions[0].Position, SpawnData.swords.scythe);
+
+                        swordThrow.register();
+
                         Game1.playSound("parry");
 
                         Game1.player.mailReceived.Add("gotGoldenScythe");
@@ -302,19 +300,13 @@ namespace StardewDruid.Event.Sword
 
                         location.setMapTileIndex(30, 56, 278, "Buildings");
 
-                        StardewValley.Tools.MeleeWeapon scythe = new("53");
-
-                        ThrowHandle swordThrow = new(Game1.player, companions[0].Position, scythe);
-
-                        swordThrow.register();
-                    
                     }
 
                     break;
 
                 case 98:
 
-                    Event.Access.AccessHandle CourtAccess = new();
+                    CourtAccess = new();
 
                     CourtAccess.AccessSetup("UndergroundMine77377", LocationData.druid_court_name, new(29, 8), new(45, 20));
 
@@ -322,9 +314,9 @@ namespace StardewDruid.Event.Sword
 
                     CourtAccess.AccessStair();
 
-                    Event.Access.AccessHandle TunnelAccess = new();
+                    TunnelAccess = new();
 
-                    TunnelAccess.AccessSetup(LocationData.druid_court_name, "UndergroundMine77377", new(43, 20), new(29, 10));
+                    TunnelAccess.AccessSetup(LocationData.druid_court_name, "UndergroundMine77377", new(45, 20), new(29, 10));
 
                     TunnelAccess.location = Mod.instance.locations[LocationData.druid_court_name];
 
@@ -340,23 +332,19 @@ namespace StardewDruid.Event.Sword
 
                 case 102:
 
-                    Game1.warpFarmer(LocationData.druid_court_name, 43, 20, 1);
+                    Game1.warpFarmer(LocationData.druid_court_name, 41, 20, 1);
 
-                    Game1.xLocationAfterWarp = 43;
+                    Game1.xLocationAfterWarp = 41;
 
                     Game1.yLocationAfterWarp = 20;
 
-                    inabsentia = true;
-
                     location = Mod.instance.locations[LocationData.druid_court_name];
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_court_name], companions[0], new Vector2(41, 18) * 64);
+                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_court_name], companions[0], new Vector2(40, 18) * 64);
 
                     break;
 
                 case 106:
-
-                    inabsentia = false;
 
                     activeCounter = 120;
 
@@ -384,7 +372,13 @@ namespace StardewDruid.Event.Sword
 
                     companions[0].LookAtTarget(Game1.player.Position);
 
-                    DialogueSetups(companions[0], 1);
+                    DialogueLoad(0, 1);
+
+                    break;
+
+                case 128:
+
+                    DialogueNext(companions[0]);
 
                     break;
 
@@ -392,7 +386,13 @@ namespace StardewDruid.Event.Sword
 
                     companions[0].LookAtTarget(Game1.player.Position);
 
-                    DialogueSetups(companions[0], 2);
+                    DialogueLoad(0,2);
+
+                    break;
+
+                case 135:
+
+                    DialogueNext(companions[0]);
 
                     break;
 
@@ -400,152 +400,29 @@ namespace StardewDruid.Event.Sword
 
                     companions[0].LookAtTarget(Game1.player.Position);
 
-                    DialogueSetups(companions[0], 3);
+                    DialogueLoad(0, 3);
+
+                    break;
+
+                case 145:
+
+                    DialogueNext(companions[0]);
 
                     break;
 
                 case 151:
 
-                    companions[0].LookAtTarget(Game1.player.Position);
-
-                    DialogueSetups(companions[0], 4);
-
-                    break;
-
-                case 152:
-
-                    Mod.instance.questHandle.CompleteQuest(eventId);
-
-                    eventComplete = true;
-
-                    Event.Access.AccessHandle CourtAccess = new();
-
-                    CourtAccess.AccessSetup("UndergroundMine77377", LocationData.druid_court_name, new(29, 8), new(45, 20));
-
-                    CourtAccess.location = location;
-
                     CourtAccess.AccessWarps();
-
-                    Event.Access.AccessHandle TunnelAccess = new();
-
-                    TunnelAccess.AccessSetup(LocationData.druid_court_name, "UndergroundMine77377", new(43, 20), new(29, 10));
-
-                    TunnelAccess.location = Mod.instance.locations[LocationData.druid_court_name];
 
                     TunnelAccess.AccessWarps();
 
+                    eventComplete = true;
+
                     break;
 
 
             }
 
-
-        }
-
-        public override void DialogueSetups(StardewDruid.Character.Character npc, int dialogueId)
-        {
-
-            string intro;
-
-            switch (dialogueId)
-            {
-
-                default: // introOne
-
-                    intro = "The Jester of Fate: Are you as creeped out as I am farmer?";
-
-                    break;
-
-                case 2:
-
-                    intro = "The Jester of Fate: You know what, after all that, I'm actually relieved we didnt run into Thanatoshi, because, to be honest, it's all a bit overwhelming. And what would I say if we even find him? ";
-
-                    break;
-
-                case 3:
-
-                    intro = "These monuments are arranged like the court of the Fates. The Artisans, the Priesthood, The Morticians, and Chaos. " +
-                        "I think I know this place. The Justiciar of the Morticians came here to fix all the problems caused by the dragons and elderfolk and humans. " +
-                        "This was where Thanatoshi was sent after the fallen Star. This is the last place he was seen.";
-
-                    break;
-
-                case 4:
-
-                    intro = "I hope that statue in the tunnel isn't all that's left of the great Thanatoshi, otherwise that's a bit stink. This whole thing gives me the wierd feels. " +
-                        "I think the switch opened a door to the outside in the south part of this cave. How about we go back to your place and practice tricks until I feel better.";
-
-                    DialogueDraw(npc, intro);
-
-                    return;
-
-            }
-
-            List<Response> responseList = new();
-
-            switch (dialogueId)
-            {
-
-                default: //introOne
-
-                    responseList.Add(new Response("1a", "After a hundred descents into the mines, I have become a master dungeon-explorer."));
-                    responseList.Add(new Response("1a", "I saw a lot of body-less heads but not a lot of headless bodies. I suspect someone's stealing bodies."));
-                    responseList.Add(new Response("1a", "(Say nothing)"));
-
-                    break;
-
-                case 2:
-
-                    responseList.Add(new Response("2a", "Odd to think the locals produced this. I assume most of them are unaware of the mysteries of the Fates."));
-                    responseList.Add(new Response("2a", "I don't want to throw shade at the Fates and all, but I'm getting really big cult vibes from this setup."));
-                    responseList.Add(new Response("2a", "(Say nothing)"));
-
-                    break;
-
-                case 3:
-
-                    responseList.Add(new Response("2a", "He's cursed a great number of souls, innocent or not, and I intend to hold him accountable."));
-                    responseList.Add(new Response("2a", "Judging by his likeness in stone, I imagine he'll be warm and approachable."));
-                    responseList.Add(new Response("2a", "(Say nothing)"));
-
-                    break;
-
-            }
-
-            GameLocation.afterQuestionBehavior questionBehavior = new(DialogueResponses);
-
-            Game1.player.currentLocation.createQuestionDialogue(intro, responseList.ToArray(), questionBehavior, npc);
-
-            return;
-
-        }
-
-        public override void DialogueResponses(Farmer visitor, string dialogueId)
-        {
-
-            switch (dialogueId)
-            {
-
-                case "1a":
-                default:
-
-                    activeCounter = Math.Max(130, activeCounter);
-
-                    break;
-
-                case "2a":
-
-                    activeCounter = Math.Max(140, activeCounter);
-
-                    break;
-
-                case "3a":
-
-                    activeCounter = Math.Max(150, activeCounter);
-
-                    break;
-
-            }
 
         }
 

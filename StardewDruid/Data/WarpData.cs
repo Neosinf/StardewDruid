@@ -66,6 +66,42 @@ namespace StardewDruid.Data
                 return new Vector2(11, 11);
 
             }
+            else if(location.Name is "Lumisteria.MtVapius_Hamlet")
+            {
+
+                return new Vector2(16, 60);
+
+            }
+            else if (location.Name is "Custom_Cape")
+            {
+
+                return new Vector2(4, 2);
+
+            }
+            else if (location.Name is "Custom_CapeStardew")
+            {
+
+                return new Vector2(21, 94);
+
+            }
+            else if (location.Name is "Custom_Ridgeside_Ridge")
+            {
+
+                return new Vector2(18, 9);
+
+            }
+            else if (location.Name is "EastScarp_Village")
+            {
+
+                return new Vector2(24, 96);
+
+            }
+            else if (location.Name is "Fellowclown.PC_OldGraveYard")
+            {
+
+                return new Vector2(17, 44);
+
+            }
 
             return Vector2.Zero;
 
@@ -161,7 +197,7 @@ namespace StardewDruid.Data
 
         }
 
-        public static int WarpTotems(GameLocation location)
+        public static string WarpTotems(GameLocation location)
         {
             /*Dictionary<string, int> warpTotems = new()
             {
@@ -174,32 +210,68 @@ namespace StardewDruid.Data
 
             return warpTotems;*/
 
-            if (location is Farm)
+            if (location is IslandSouth)
             {
 
-                return 688;
+                return "886";
 
             }
             else if (location is Mountain)
             {
 
-                return 689;
+                return "689";
 
             }
             else if (location is Beach)
             {
 
-                return 690;
+                return "690";
 
             }
             else if (location is Desert)
             {
 
-                return 261;
+                return "261";
+
+            }
+            else if (location.Name is "Lumisteria.MtVapius_Hamlet")
+            {
+
+                return "Lumisteria.MtVapius_OwlCarving";
+
+            }
+            else if (location.Name is "Custom_Cape")
+            {
+
+                return "dreamy.kickitspot_CapeWarpTotem";
+
+            }
+            else if (location.Name is "Custom_CapeStardew")
+            {
+
+                return "dreamy.kickitspot_SeaCapeWarpTotem";
+
+            }
+            else if (location.Name is "Custom_Ridgeside_Ridge")
+            {
+
+                return "Rafseazz.RSVCP_Warp_Totem__Ridgeside";
+
+            }
+            else if (location.Name is "EastScarp_Village")
+            {
+
+                return "EastScarp_Scarp_Warp_Totem";
+
+            }
+            else if (location.Name is "Fellowclown.PC_OldGraveYard")
+            {
+
+                return "Fellowclown.PC_WarpTotem";
 
             }
 
-            return 886;
+            return "688";
 
 
         }

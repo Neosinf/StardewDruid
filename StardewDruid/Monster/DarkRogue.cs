@@ -6,6 +6,7 @@ using StardewDruid.Render;
 using StardewValley;
 using System;
 using System.Collections.Generic;
+using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Monster
 {
@@ -23,19 +24,19 @@ namespace StardewDruid.Monster
         public DarkRogue(Vector2 vector, int CombatModifier, string name = "DarkRogue")
           : base(vector, CombatModifier, name)
         {
+            
             SpawnData.MonsterDrops(this, SpawnData.drops.shadow);
 
         }
-
 
         public override void LoadOut()
         {
 
             baseMode = 3;
 
-            baseJuice = 4;
+            baseJuice = 3;
             
-            basePulp = 50;
+            basePulp = 30;
 
             cooldownInterval = 180;
 
@@ -110,6 +111,8 @@ namespace StardewDruid.Monster
 
         public virtual void DarkFlight()
         {
+
+            flightSet = true;
 
             flightInterval = 9;
 
@@ -361,12 +364,52 @@ namespace StardewDruid.Monster
 
         }
 
+        public void DarkBarrage()
+        {
+
+            channelSet = true;
+
+            channelFrames = new Dictionary<int, List<Rectangle>>()
+            {
+                [0] = new()
+                {
+
+                    new(64, 64, 32, 32),
+                    new(96, 64, 32, 32),
+
+                },
+                [1] = new()
+                {
+
+                    new(64, 32, 32, 32),
+                    new(96, 32, 32, 32),
+
+                },
+                [2] = new()
+                {
+
+                    new(64, 0, 32, 32),
+                    new(96, 0, 32, 32),
+
+                },
+                [3] = new()
+                {
+
+                    new(64, 96, 32, 32),
+                    new(96, 96, 32, 32),
+
+                },
+
+            };
+
+
+
+        }
+
         public virtual void DarkBlast()
         {
 
             specialSet = true;
-
-            cooldownInterval = 180;
 
             specialCeiling = 1;
 
@@ -413,43 +456,51 @@ namespace StardewDruid.Monster
             {
 
                 [0] = new()
-            {
-                new(160, 64, 32, 32),
-                new(160, 64, 32, 32),
-                new(160, 64, 32, 32),
-                new(128, 64, 32, 32),
+                {
+                    new(160, 64, 32, 32),
+                    new(160, 64, 32, 32),
+                    new(160, 64, 32, 32),
+                    new(128, 64, 32, 32),
 
-            },
-                [1] = new()
-            {
-                new(160, 32, 32, 32),
-                new(160, 32, 32, 32),
-                new(160, 32, 32, 32),
-                new(128, 32, 32, 32),
+                },
+                    [1] = new()
+                {
+                    new(160, 32, 32, 32),
+                    new(160, 32, 32, 32),
+                    new(160, 32, 32, 32),
+                    new(128, 32, 32, 32),
 
-            },
-                [2] = new()
-            {
-                new(160, 0, 32, 32),
-                new(160, 0, 32, 32),
-                new(160, 0, 32, 32),
-                new(128, 0, 32, 32),
+                },
+                    [2] = new()
+                {
+                    new(160, 0, 32, 32),
+                    new(160, 0, 32, 32),
+                    new(160, 0, 32, 32),
+                    new(128, 0, 32, 32),
 
-            },
-                [3] = new()
-            {
-                new(160, 32, 32, 32),
-                new(160, 32, 32, 32),
-                new(160, 32, 32, 32),
-                new(128, 32, 32, 32),
+                },
+                    [3] = new()
+                {
+                    new(160, 32, 32, 32),
+                    new(160, 32, 32, 32),
+                    new(160, 32, 32, 32),
+                    new(128, 32, 32, 32),
 
-            },
+                },
 
             };
 
 
         }
 
+        public override float GetScale()
+        {
+
+            float spriteScale = 3.25f + (0.25f * netMode.Value);
+
+            return spriteScale;
+
+        }
 
         public override void draw(SpriteBatch b, float alpha = 1f)
         {
@@ -458,17 +509,15 @@ namespace StardewDruid.Monster
                 return;
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = (float)StandingPixel.Y / 10000f;
 
             DrawEmote(b, localPosition, drawLayer);
 
-            int netScale = netMode.Value > 5 ? netMode.Value - 4 : netMode.Value;
+            float spriteScale = GetScale();
 
-            Vector2 spritePosition = localPosition - new Vector2(20 + (netScale * 4), 40f + (netScale * 8) + flightHeight);
-
-            float spriteScale = 3.25f + (0.25f * netScale);
+            Vector2 spritePosition = GetPosition(localPosition, spriteScale);
 
             bool flippant = (netDirection.Value % 2 == 0 && netAlternative.Value == 3);
 
@@ -616,7 +665,7 @@ namespace StardewDruid.Monster
 
                 b.Draw(
                     characterTexture,
-                    localPosition - new Vector2(32, 64f),
+                    spritePosition,
                     walkFrames[netDirection.Value][walkFrame],
                     Color.White,
                     0f,
@@ -625,11 +674,49 @@ namespace StardewDruid.Monster
                     flippant ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                     drawLayer
                 );
-
-    
             }
 
-            b.Draw(Game1.shadowTexture, localPosition + new Vector2(10, 44f), new Rectangle?(Game1.shadowTexture.Bounds), Color.White, 0.0f, Vector2.Zero, 4f, 0, drawLayer - 1E-06f);
+            if (netShieldActive.Value)
+            {
+
+                DrawShield(b, spritePosition, spriteScale, drawLayer);
+
+            }
+
+            Vector2 shadowPosition = new(spritePosition.X + (spriteScale*4), spritePosition.Y + (spriteScale * 18));
+
+            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White*0.35f, 0.0f, Vector2.Zero, spriteScale /2, 0, drawLayer - 1E-06f);
+
+        }
+
+        public virtual void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, IconData.schemes scheme = schemes.Void)
+        {
+
+            b.Draw(
+                Mod.instance.iconData.shieldTexture,
+                spritePosition - new Vector2(8*spriteScale,8*spriteScale),
+                new Microsoft.Xna.Framework.Rectangle(0, 0, 48, 48),
+                Mod.instance.iconData.schemeColours[scheme] * 0.2f,
+                0f,
+                Vector2.Zero,
+                spriteScale,
+                0,
+                drawLayer + 0.0004f
+            );
+
+            int sparkle = (int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 1000) / 200;
+
+            b.Draw(
+                Mod.instance.iconData.shieldTexture,
+                spritePosition - new Vector2(8 * spriteScale, 8 * spriteScale),
+                new Microsoft.Xna.Framework.Rectangle(48 + (48 * sparkle), 0, 48, 48),
+                Color.White * 0.6f,
+                0f,
+                Vector2.Zero,
+                spriteScale,
+                0,
+                drawLayer + 0.0005f
+            );
 
         }
 
@@ -654,7 +741,7 @@ namespace StardewDruid.Monster
 
             fireball.boss = this;
 
-            fireball.scheme = IconData.schemes.ember;
+            fireball.scheme = IconData.schemes.stars;
 
             Mod.instance.spellRegister.Add(fireball);
 

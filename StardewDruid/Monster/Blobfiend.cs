@@ -6,6 +6,7 @@ using StardewDruid.Data;
 using StardewDruid.Journal;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
+using StardewValley.Extensions;
 using StardewValley.Monsters;
 using StardewValley.Network;
 using StardewValley.Projectiles;
@@ -31,8 +32,8 @@ namespace StardewDruid.Monster
         {
         }
 
-        public Blobfiend(Vector2 vector, int CombatModifier)
-          : base(vector, CombatModifier, "Blobfiend")
+        public Blobfiend(Vector2 vector, int CombatModifier, string name = "Blobfiend")
+          : base(vector, CombatModifier, name)
         {
 
             SpawnData.MonsterDrops(this, SpawnData.drops.slime);
@@ -41,14 +42,19 @@ namespace StardewDruid.Monster
 
         public override void RandomTemperment()
         {
-
-            Random random = new();
-
-            int newScheme = random.Next(0, 6);
-
-            netScheme.Set(newScheme);
+            
+            RandomScheme();
 
             base.RandomTemperment();
+
+        }
+
+        public virtual void RandomScheme()
+        {
+
+            int newScheme = Mod.instance.randomIndex.Next(0, 6);
+
+            netScheme.Set(newScheme);
 
         }
 
@@ -247,10 +253,40 @@ namespace StardewDruid.Monster
 
         }
 
+        public override void deathIsNoEscape()
+        {
+
+            Microsoft.Xna.Framework.Rectangle box = GetBoundingBox();
+
+            SpellHandle death = new(new(box.Center.X, box.Top), 64 + (int)(GetScale() * 32f), IconData.impacts.skull, new());
+
+            death.scheme = GetScheme();
+
+            Mod.instance.spellRegister.Add(death);
+
+        }
+
+
+        public override float GetScale()
+        {
+
+            return 2f + netMode.Value;
+
+        }
+
         public override Rectangle GetBoundingBox()
         {
-            
-            Rectangle box = base.GetBoundingBox();
+
+            Vector2 spritePosition = GetPosition(Position);
+
+            float spriteScale = GetScale();
+
+            Rectangle box = new(
+                (int)(spritePosition.X - (spriteScale * 10)),
+                (int)(spritePosition.Y - (spriteScale * 8)),
+                (int)(spriteScale * 40f),
+                (int)(spriteScale * 40f)
+            );
 
             if (leapAttack)
             {
@@ -265,19 +301,6 @@ namespace StardewDruid.Monster
 
         }
 
-        public override void deathIsNoEscape()
-        {
-
-            Microsoft.Xna.Framework.Rectangle box = GetBoundingBox();
-
-            SpellHandle death = new(new(box.Center.X, box.Top), 128, IconData.impacts.deathwhirl, new());
-
-            death.scheme = GetScheme();
-
-            Mod.instance.spellRegister.Add(death);
-
-        }
-
         public override void draw(SpriteBatch b)
         {
 
@@ -286,7 +309,7 @@ namespace StardewDruid.Monster
                 return;
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = ((float)Position.Y + 32f) / 10000f;
 
@@ -294,11 +317,11 @@ namespace StardewDruid.Monster
 
             Color schemeColor = Mod.instance.iconData.SchemeColour(GetScheme());
 
-            int netScale = netMode.Value > 5 ? netMode.Value - 4 : netMode.Value;
+            float spriteSize = GetScale();
 
-            Vector2 spritePosition;
+            Vector2 spritePosition = GetPosition(localPosition, spriteSize);
 
-            float spriteSize = 2f + (float)netScale;
+            Vector2 shadowPosition = GetPosition(localPosition, spriteSize, true);
 
             Rectangle shadowRect;
 
@@ -310,36 +333,11 @@ namespace StardewDruid.Monster
 
                 int setFlightFrame = Math.Min(flightFrame, (flightFrames[setFlightSeries].Count - 1));
 
-                /*List<int> blobHeights = new()
-                {
-                    0 * netScale,
-                    2 * netScale,
-                    4 * netScale,
-                    6 * netScale,
-                    8 * netScale,
-                    8 * netScale,
-                    6 * netScale,
-                    4 * netScale,
-                    2 * netScale,
-                    0 * netScale,
-                };*/
+                Rectangle flightRect = flightFrames[setFlightSeries][setFlightFrame];
 
-                spritePosition = new Vector2(localPosition.X + 32 - 24 * spriteSize, localPosition.Y + 64 - flightHeight - 48 * spriteSize);
+                b.Draw(characterTexture, spritePosition, flightRect, schemeColor * 0.5f, 0.0f, Vector2.Zero, spriteSize, 0, drawLayer - 0.002f);
 
-                b.Draw(characterTexture, spritePosition, flightFrames[setFlightSeries][setFlightFrame], schemeColor * 0.5f, 0.0f, Vector2.Zero, spriteSize, 0, drawLayer - 0.002f);
-
-                shadowRect = flightFrames[setFlightSeries][setFlightFrame];
-
-                /*if (flightFrame > 1)
-                {
-                    
-                    int slimeInterval = (int)((Game1.currentGameTime.ElapsedGameTime.TotalMilliseconds % 1000) / 166.66);
-
-                    Rectangle slimeRect = new(slimeInterval * 48, 288, 48, 48);
-
-                    b.Draw(characterTexture, spritePosition, slimeRect, schemeColor * 0.5f, 0.0f, Vector2.Zero, spriteSize, 0, drawLayer - 0.002f);
-
-                }*/
+                shadowRect = flightFrames[setFlightSeries][setFlightFrame].Clone();
 
                 if (netSmashActive.Value)
                 {
@@ -351,13 +349,11 @@ namespace StardewDruid.Monster
             }
             else {
 
-                float hovering = (Math.Abs(hoverHeight) * hoverElevate);
+                Rectangle idleRect = idleFrames[netDirection.Value][hoverFrame];
 
-                spritePosition = new Vector2(localPosition.X + 32 - 24 * spriteSize, localPosition.Y + 64f - hovering - (48 * spriteSize));
+                b.Draw(characterTexture, spritePosition, idleRect, schemeColor * 0.5f, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, 0, drawLayer - 0.002f);
 
-                b.Draw(characterTexture, spritePosition, idleFrames[netDirection.Value][hoverFrame], schemeColor * 0.5f, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, 0, drawLayer - 0.002f);
-
-                shadowRect = idleFrames[netDirection.Value][hoverFrame];
+                shadowRect = idleFrames[netDirection.Value][hoverFrame].Clone();
 
                 if (netSpecialActive.Value)
                 {
@@ -370,9 +366,9 @@ namespace StardewDruid.Monster
 
             shadowRect.Y += 48;
 
-            b.Draw(characterTexture, new Vector2(localPosition.X + 32 - 24 * spriteSize, localPosition.Y + 64f - (48f * spriteSize)), shadowRect, schemeColor * 0.35f, 0.0f, Vector2.Zero, spriteSize, 0, drawLayer - 0.003f);
+            b.Draw(characterTexture, shadowPosition, shadowRect, schemeColor * 0.35f, 0.0f, Vector2.Zero, spriteSize, 0, drawLayer - 0.003f);
 
-            if (netScale >= 2)
+            if (netMode.Value >= 2)
             {
 
                 faceOffset += 96;
@@ -463,13 +459,13 @@ namespace StardewDruid.Monster
         public override void ConnectSweep()
         {
 
-           // Microsoft.Xna.Framework.Rectangle box = GetBoundingBox();
+            Microsoft.Xna.Framework.Rectangle box = GetBoundingBox();
 
-            float damageFactor = leapAttack ? 3f : 1.5f;
-
-            SpellHandle slimebomb = new(currentLocation, Position, Position, 64+(64*netMode.Value), (int)(damageToFarmer.Value * damageFactor));
+            SpellHandle slimebomb = new(currentLocation, box.Center.ToVector2(), box.Center.ToVector2(), 96 +(int)(24 * GetScale()), GetThreat());
 
             slimebomb.type = spells.explode;
+
+            slimebomb.instant = true;
 
             slimebomb.scheme = GetScheme();
 
@@ -484,7 +480,7 @@ namespace StardewDruid.Monster
         public override void shedChunks(int number, float scale)
         {
 
-            Mod.instance.iconData.ImpactIndicator(currentLocation, Position, IconData.impacts.splatter, 1f+(0.25f * netMode.Value), new() { frame = 4, interval = 50, color = Mod.instance.iconData.SchemeColour((IconData.schemes)netScheme.Value) });
+            Mod.instance.iconData.ImpactIndicator(currentLocation, Position, IconData.impacts.splatter, 1f+(0.25f * netMode.Value), new() { frame = 4, interval = 50, color = Mod.instance.iconData.SchemeColour(GetScheme()) });
 
         }
 
@@ -512,7 +508,7 @@ namespace StardewDruid.Monster
 
             SetCooldown(1);
 
-            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 192, GetThreat());
+            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 128 + (int)(32 * GetScale()), GetThreat());
 
             fireball.type = spells.missile;
 

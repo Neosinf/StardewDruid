@@ -8,17 +8,25 @@ using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Delegates;
+using StardewValley.GameData.Minecarts;
 using StardewValley.Locations;
 using StardewValley.Minigames;
 using StardewValley.Monsters;
+using StardewValley.Network;
 using StardewValley.Objects;
 using StardewValley.Quests;
+using StardewValley.TerrainFeatures;
+using StardewValley.TokenizableStrings;
 using StardewValley.Tools;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.IO;
-
+using System.Linq;
+using xTile.Dimensions;
+using xTile.Tiles;
+using static StardewDruid.Character.Character;
 
 namespace StardewDruid.Character
 {
@@ -47,26 +55,32 @@ namespace StardewDruid.Character
             Shadowtin,
 
             // map interaction
+            disembodied,
             energies,
             waves,
             herbalism,
+            monument_artisans,
+            monument_priesthood,
+            monument_morticians,
+            monument_chaos,
 
             // event
-            disembodied,
             Marlon,
             Gunther,
-            Cuchulan,
-            Morrigan,
+            Wizard,
+            FirstFarmer,
+            LadyBeyond,
+            Dwarf,
+            Shadowcat,
+            Dragon,
         }
 
         public enum subjects
         {
-            approach,
             quests,
             lore,
             relics,
             adventure,
-            nevermind,
             attune,
         }
 
@@ -113,7 +127,7 @@ namespace StardewDruid.Character
 
                 case locations.grove:
 
-                    return new Vector2(36, 15) * 64;
+                    return new Vector2(39, 15) * 64;
 
                 case locations.chapel:
 
@@ -121,13 +135,32 @@ namespace StardewDruid.Character
 
                 case locations.farm:
 
+                    Vector2 farmTry;
+
+                    GameLocation farm = Game1.getFarm();
+
                     FarmHouse homeOfFarmer = Utility.getHomeOfFarmer(Game1.player);
 
                     if (homeOfFarmer != null)
                     {
                         Point frontDoorSpot = homeOfFarmer.getFrontDoorSpot();
 
-                        return frontDoorSpot.ToVector2() + new Vector2(0, 128);
+                        farmTry = frontDoorSpot.ToVector2() + new Vector2(0, 128);
+
+                    } 
+                    else
+                    {
+
+                        farmTry = WarpData.WarpTiles(farm);
+
+                    }
+
+                    List<Vector2> tryVectors = ModUtility.GetOccupiableTilesNearby(farm, ModUtility.PositionToTile(farmTry), -1, 0, 2);
+
+                    if(tryVectors.Count > 0)
+                    {
+
+                        return tryVectors[Mod.instance.randomIndex.Next(tryVectors.Count)] * 64;
 
                     }
 
@@ -161,7 +194,7 @@ namespace StardewDruid.Character
 
                 case locations.farm:
 
-                    return "Farm";
+                    return Game1.getFarm().Name;
 
             }
 
@@ -340,10 +373,20 @@ namespace StardewDruid.Character
 
             switch (character)
             {
-                /*case characters.jester:
-                case characters.shadowtin:
+                case characters.disembodied:
+                case characters.energies:
+                case characters.waves:
+                case characters.herbalism:
+                case characters.monument_artisans:
+                case characters.monument_priesthood:
+                case characters.monument_morticians:
+                case characters.monument_chaos:
 
-                    return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", CharacterNames()[character] + ".png"));*/
+                    return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images","DarkRogue.png"));
+
+                case characters.Dwarf:
+
+                    return Mod.instance.Helper.GameContent.Load<Texture2D>(Path.Combine("Characters", "Dwarf"));
 
                 default:
 
@@ -377,6 +420,14 @@ namespace StardewDruid.Character
                 case characters.Shadowtin:
 
                     return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ShadowtinPortrait.png"));
+
+                case characters.Dwarf:
+
+                    return Mod.instance.Helper.GameContent.Load<Texture2D>(Path.Combine("Portraits", "Dwarf"));
+
+                case characters.Wizard:
+
+                    return Mod.instance.Helper.GameContent.Load<Texture2D>(Path.Combine("Portraits", "Wizard"));
 
                 default:
 
@@ -440,112 +491,136 @@ namespace StardewDruid.Character
 
         }
 
-        public static void CharacterQuery(characters character, string eventQuery = "CharacterFollow")
+        public static string DialogueApproach(characters character)
         {
 
-            if (Context.IsMultiplayer)
+            switch (character)
             {
 
-                QueryData queryData = new()
-                {
-                    name = character.ToString(),
-                    longId = Game1.player.UniqueMultiplayerID,
-                    value = eventQuery,
-                };
+                case characters.Effigy:
 
-                Mod.instance.EventQuery(queryData, "CharacterCommand");
+                    if (Mod.instance.save.milestone == QuestHandle.milestones.weald_weapon || Mod.instance.save.milestone == QuestHandle.milestones.mists_weapon)
+                    {
+
+                        return "The Effigy: Successor, remember to retain discipline in your training, and visit me tomorrow for new instruction";
+
+                    }
+
+                    return "The Effigy: Greetings, successor";
+
+                case characters.Revenant:
+
+                    if (Mod.instance.save.milestone == QuestHandle.milestones.stars_weapon)
+                    {
+
+                        return "The Revenant: Fortumei bless you, warrior. Come see me again tomorrow, I might have more to teach you.";
+
+                    }
+                    return "The Revenant: Hail, adventurer.";
+
+                case characters.Jester:
+
+                    if (Mod.instance.save.milestone == QuestHandle.milestones.fates_weapon)
+                    {
+
+                        return "The Jester of Fate: That's all for today friend. Now what can I find to rub up against...";
+
+                    }
+
+                    if (Mod.instance.save.milestone == QuestHandle.milestones.fates_enchant)
+                    {
+
+                        return "The Jester of Fate: Did you go see Buffin at the court of Fates and Chaos? She has the best stuff.";
+
+                    }
+
+                    return "The Jester of Fate: Hey friend.";
+
+                case characters.Buffin:
+
+                    return "You would make a great servant of chaos, Farmer.";
+
+                case characters.Shadowtin:
+
+                    return "(Shadowtin's ethereal eyes shine through a cold metal mask)";
+
+                case characters.energies:
+
+                    return "Energies of the Weald: Squire (squire) (squire) (squire)";
+
+                case characters.waves:
+
+                    return "Murmurs of the Waves: Yes, friend";
+
+                case characters.herbalism:
+
+                    return "An old stone bench used by the old Druids for crafting herbal remedies";
+
+                case characters.monument_artisans:
+
+                    return "The beak has not been worn down with the passage of time.";
+
+                case characters.monument_priesthood:
+
+                    return "The cat presides over the court";
+
+                case characters.monument_morticians:
+
+                    return "The giant owl appears to watch the entrance to the cavern, as if waiting for something to arrive, or watching something leave.";
+
+                case characters.monument_chaos:
+
+                    return "It's unnerving to see a canine so large sit so still.";
 
             }
 
+            return null;
+
         }
 
-        public static string DialogueString(characters character, subjects subject)
+        public static string DialogueNevermind(characters character)
+        {
+
+
+            return "(nevermind)";
+
+
+        }
+
+        public static string DialogueOption(characters character, subjects subject)
         {
 
             switch (subject)
             {
 
-                case subjects.approach:
+                case subjects.quests:
 
-                    switch (character)
+                    if (Mod.instance.questHandle.IsQuestGiver(character))
                     {
 
-                        case characters.Effigy:
-
-                            if (Mod.instance.save.milestone == QuestHandle.milestones.weald_weapon || Mod.instance.save.milestone == QuestHandle.milestones.mists_weapon)
-                            {
-
-                                return "The Effigy: Successor, remember to retain discipline in your training, and visit me tomorrow for new instruction";
-
-                            }
-
-                            return "The Effigy: Greetings, successor";
-
-                        case characters.Revenant:
-
-                            if (Mod.instance.save.milestone == QuestHandle.milestones.stars_weapon)
-                            {
-
-                                return "The Revenant: Fortumei bless you, warrior. Come see me again tomorrow, I might have more to teach you.";
-
-                            }
-                            return "The Revenant: Hail, adventurer.";
-
-                        case characters.Jester:
-
-                            if (Mod.instance.save.milestone == QuestHandle.milestones.fates_weapon)
-                            {
-
-                                return "The Jester of Fate: That's all for today friend. Now what can I find to rub up against...";
-
-                            }
-
-                            if (Mod.instance.save.milestone == QuestHandle.milestones.fates_enchant)
-                            {
-
-                                return "The Jester of Fate: Did you go see Buffin at the court of Fates and Chaos? She has the best stuff.";
-
-                            }
-
-                            return "The Jester of Fate: Hey friend.";
-
-                        case characters.Buffin:
-
-                            return "You would make a great servant of chaos, Farmer.";
-
-                        case characters.Shadowtin:
-
-                            return "(Shadowtin's ethereal eyes shine through a cold metal mask)";
-
-                        case characters.energies:
-
-                            return "Energies of the Weald: Squire (echo) squire squire squire...";
-
-                        case characters.waves:
-
-                            return "Murmurs of the Waves: Yes, friend";
-
-                        case characters.herbalism:
-
-                            return "A mortar and pestle used for crafting herbal remedies";
-
+                        return "(quests) Can you please repeat the instructions?";
 
                     }
 
-                    break;
+                    return null;
 
                 case subjects.lore:
 
-                    foreach(LoreData.stories story in Mod.instance.questHandle.stories)
+                    if(Mod.instance.questHandle.lorekey != null)
                     {
 
-                        if (Mod.instance.questHandle.lores.ContainsKey(story))
+                        foreach (LoreData.stories story in Mod.instance.questHandle.loresets[Mod.instance.questHandle.lorekey])
                         {
 
-                            if (Mod.instance.questHandle.lores[story].character == character)
+                            if (Mod.instance.questHandle.lores.ContainsKey(story))
                             {
 
-                                return LoreData.RequestLore(character);
+                                if (Mod.instance.questHandle.lores[story].character == character)
+                                {
+
+                                    return LoreData.RequestLore(character);
+
+                                }
 
                             }
 
@@ -612,6 +687,73 @@ namespace StardewDruid.Character
 
                             return null;
 
+                        case characters.Revenant:
+
+                            int books = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.books);
+
+                            if (books == -1)
+                            {
+
+                                return null;
+
+                            }
+
+                            if (books == 4)
+                            {
+
+                                return "(relics) I've managed to find three manuscripts hidden by the first farmer before he disappeared.";
+
+                            }
+                            else if (books >= 1)
+                            {
+
+                                return "(relics) How many records from the founding of the circle are missing?";
+
+                            }
+
+                            return null;
+
+                        case characters.Buffin:
+
+                            int boxes = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.boxes);
+
+                            if (boxes == -1)
+                            {
+
+                                return null;
+
+                            }
+
+                            if (boxes == 4)
+                            {
+
+                                return "(relics) These ornament boxes, they're all empty";
+
+                            }
+                            else if (boxes >= 1)
+                            {
+
+                                return "(relics) The Reaper of Fate kept this small box on him. Is it of value to the Fates?";
+
+                            }
+
+                            return null;
+
+                        case characters.monument_artisans:
+
+                            return "You take out your strongest tool, and strike as hard as you can.";
+
+                        case characters.monument_priesthood:
+
+                            return "You raise your hand towards the feline's gentle features.";
+
+                        case characters.monument_morticians:
+
+                            return "You marvel at the colouring and lustre of the owl's feathers. You reach out, expecting a surface as cool and smooth as ivory.";
+
+                        case characters.monument_chaos:
+
+                            return "You lift the back of your hand towards the enlarged snout.";
                     }
 
                     break;
@@ -658,6 +800,15 @@ namespace StardewDruid.Character
 
                             return "(warp) Why is the monument to the lady all the way out here?";
 
+                        case characters.Buffin:
+
+                            return "(warp) What is it like to be a servant of Chaos, Buffin? I imagine your duties take you to all sorts of random places.";
+
+                        case characters.Revenant:
+
+                            return "(warp) It was worth the treacherous ascent to witness the unfurling of the curtain of the sky. " +
+                                "The stage is set with the heroes of the constellations, and their radiance inspires me. Can I sleep here?";
+
                     }
 
                     break;
@@ -683,6 +834,10 @@ namespace StardewDruid.Character
 
                             return AttunementIntro(Rite.rites.fates);
 
+                        case characters.Shadowtin:
+
+                            return AttunementIntro(Rite.rites.ether);
+
                         case characters.herbalism:
 
                             if (Mod.instance.questHandle.IsComplete(QuestHandle.herbalism))
@@ -704,11 +859,6 @@ namespace StardewDruid.Character
 
                     break;
 
-
-                case subjects.nevermind:
-
-                    return "(nevermind)";
-
             }
 
             return null;
@@ -723,28 +873,40 @@ namespace StardewDruid.Character
             switch (subject)
             {
 
+                case subjects.quests:
+
+
+                    Mod.instance.questHandle.DialogueReload(character);
+
+                    return null;
+
                 case subjects.lore:
 
-                    foreach (LoreData.stories story in Mod.instance.questHandle.stories)
+                    if (Mod.instance.questHandle.lorekey != null)
                     {
-
-                        if (Mod.instance.questHandle.lores.ContainsKey(story))
+                        foreach (LoreData.stories story in Mod.instance.questHandle.loresets[Mod.instance.questHandle.lorekey])
                         {
 
-                            if (Mod.instance.questHandle.lores[story].character == character)
+                            if (Mod.instance.questHandle.lores.ContainsKey(story))
                             {
 
-                                generate.intro = LoreData.CharacterLore(character);
+                                if (Mod.instance.questHandle.lores[story].character == character)
+                                {
 
-                                generate.responses.Add(Mod.instance.questHandle.lores[story].question);
+                                    generate.intro = LoreData.CharacterLore(character);
 
-                                generate.answers.Add(Mod.instance.questHandle.lores[story].answer);
+                                    generate.responses.Add(Mod.instance.questHandle.lores[story].question);
+
+                                    generate.answers.Add(Mod.instance.questHandle.lores[story].answer);
+
+                                }
 
                             }
 
                         }
 
                     }
+
 
                     break;
 
@@ -770,17 +932,23 @@ namespace StardewDruid.Character
                                 generate.intro = "Whispering on the wind: (laughs) You already possess conduits for the energies represented in the runes. Well, I can't remember what the cat means. " +
                                     "Sighs of the Earth: The calico shamans served the ancient ones, the dragons. Their wild shape-shifting has been forgotten to time and ruin. The runestones are useless to you now.";
 
-                                generate.responses.Add("Oh. Well the craftsmanship is rather neat. I think I'll use them to redecorate the craftroom at the community center.");
-
-                                generate.answers.Add("Rustling in the woodland: When sourcing materials for your redecoration project, consider nearby sources and support your local woodlands! We have the best timber products on the market. " +
-                                    "(New quest recieved)");
-
                                 if (!Game1.MasterPlayer.mailReceived.Contains("JojaMember") && !(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[1])
                                 {
-                                    Mod.instance.questHandle.AssignQuest(QuestHandle.relicWeald);
-                                }
 
-                                Mod.instance.relicsData.FinishRelicQuest(RelicData.relicsets.runestones);
+                                    Mod.instance.questHandle.AssignQuest(QuestHandle.relicWeald);
+
+                                    generate.responses.Add("Oh. Well the craftsmanship is rather neat. I think I'll use them to redecorate the craftroom at the community center.");
+
+                                    generate.answers.Add("Rustling in the woodland: When sourcing materials for your redecoration project, consider nearby sources and support your local woodlands! We have the best timber products on the market. " +
+                                        "(New quest recieved)");
+
+                                }
+                                else
+                                {
+
+                                    Mod.instance.questHandle.CompleteQuest(QuestHandle.relicWeald);
+
+                                }
 
                             }
                             else if (runestones >= 1)
@@ -810,18 +978,22 @@ namespace StardewDruid.Character
                                 generate.intro = "Murmurs of the Waves: Indeed. The finned faithful will be very pleased... to be rid of the ruinous device! " +
                                     "You see, it points towards the broken forgehall of the drowned city, deep within the abyssal trench, where mortals cannot tread. It is useless to you.";
 
-                                generate.responses.Add("The parts appear to be quite sea-resistant. Perhaps I can use them to repair the community center fishtank.");
-
-                                generate.answers.Add("Fish... Tank? We weren't aware the little creatures had armed themselves with war machines. " +
-                                    "We will warn the guardians of the depths to prepare for a fish uprising! But do as you will with the Avalant. " +
-                                    "(New Quest Received)");
-
                                 if (!Game1.MasterPlayer.mailReceived.Contains("JojaMember") && !(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[2])
                                 {
                                     Mod.instance.questHandle.AssignQuest(QuestHandle.relicMists);
-                                }
 
-                                Mod.instance.relicsData.FinishRelicQuest(RelicData.relicsets.avalant);
+                                    generate.responses.Add("The parts appear to be quite sea-resistant. Perhaps I can use them to repair the community center fishtank.");
+
+                                    generate.answers.Add("Fish... Tank? We weren't aware the little creatures had armed themselves with war machines. " +
+                                        "We will warn the guardians of the depths to prepare for a fish uprising! But do as you will with the Avalant. " +
+                                        "(New Quest Received)");
+                                }
+                                else
+                                {
+
+                                    Mod.instance.questHandle.CompleteQuest(QuestHandle.relicMists);
+
+                                }
 
                             }
                             else if (avalant >= 1)
@@ -831,6 +1003,237 @@ namespace StardewDruid.Character
                                     "It was broken, but can be restored. The finned faithful carry the pieces from the sea to the sacred spring. " +
                                     "Continue to use the power of the lady to fish the waters, and you might collect all the scattered pieces.";
 
+                            }
+
+                            return generate;
+
+                        case characters.Revenant:
+
+                            int books = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.books);
+
+                            if (books == -1)
+                            {
+
+                                return generate;
+
+                            }
+
+                            if (books == 4)
+                            {
+
+                                generate.intro = "";
+
+
+                                if (!Game1.MasterPlayer.mailReceived.Contains("JojaMember") && !(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[0])
+                                {
+                                    
+                                    Mod.instance.questHandle.AssignQuest(QuestHandle.relicEther);
+
+                                    generate.intro = "The Revenant: ";
+                                    
+                                    generate.responses.Add("I guess there's no great mystery to glean from these texts, but at least I can add the recipes to the digests in the community pantry.");
+
+                                    generate.answers.Add("Even the one for Fish Stew? Some of the ideas of my day are best left in the past. (New Quest Received)");
+
+                                }
+                                else
+                                {
+
+                                    Mod.instance.questHandle.CompleteQuest(QuestHandle.relicEther);
+
+                                }
+
+                                generate.intro += "I think the Lady Beyond must have stashed these texts, farmer. The letters were penned by the prince of the sunken city, heir to the Isle of Mists, and the one who seduced our fair Starborn. " +
+                                    "I have nothing to say about the tome. The green book might have been too personal to leave intact, as it's been scrubbed down to just the boring parts. Recipes and potting tips. ";
+
+                            }
+                            else if (books >= 1)
+                            {
+
+                                generate.intro = "All the annals are accounted for, but if you find any manuscripts that weren't profaned by those crazies, bring them to me, might be good for a memory or a laugh.";
+
+                            }
+
+                            return generate;
+
+                        case characters.Buffin:
+
+                            int boxes = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.boxes);
+
+                            if (boxes == -1)
+                            {
+
+                                return generate;
+
+                            }
+
+                            if (boxes == 4)
+                            {
+                                generate.intro = "";
+
+                                if (!Game1.MasterPlayer.mailReceived.Contains("JojaMember") && !(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[5])
+                                {
+
+                                    Mod.instance.questHandle.AssignQuest(QuestHandle.relicFates);
+
+                                    generate.intro = "Buffin, Agent of Chaos: ";
+
+                                    generate.responses.Add("I guess I understand. There's a bulletin board layered with all kinds of moments like that, only perceptable, put on paper and print stock. I think these boxes would be perfect to put the memories of the community in.");
+
+                                    generate.answers.Add("You make me smile, farmer. There's so much goodwill the Fates have for the people of this valley, though we are limited in how we can share it, and the desperate, cruel legacy of Thanatoshi hasn't helped. I count you as a friend to the Fae and blessed by Yoba. " +
+                                        "(New quest recieved)");
+
+                                }
+                                else
+                                {
+
+                                    Mod.instance.questHandle.CompleteQuest(QuestHandle.relicFates);
+
+                                }
+
+                                generate.intro += "Nonsense, farmer, they're full. Full of imperceptible wonders. Good will, happy memories and lessons learned by the Fates that experienced life on this realm.";
+
+                            }
+                            else if (boxes >= 1)
+                            {
+
+                                generate.intro = "Very valuable, farmer, for the Fate that possessed it. These trinkets are keepsakes of home, to comfort those of us on assignment to the realms. " +
+                                    "This belonged to a kindred spirit of Thanatoshi's. Masayoshi, the Justiciar of Fate at a moment in the history of this world. " +
+                                    "Imagine the bond they shared, to exchange boxes with one another. (Buffin looks towards the monuments) " +
+                                    "You'll have to convince the stone guardians to relinquish their secrets if you want the complete set. The Artisans are fond of tools, the Morticians, bones, probably, and Chaos... animals, of course!";
+
+                            }
+
+                            return generate;
+
+
+                        case characters.monument_artisans:
+                            
+                            switch (Mod.instance.relicsData.ArtisanRelicQuest())
+                            {
+
+                                case 0:
+
+                                    generate.intro = "The tool almost flies out of your hands with the rebound. It didn't even impact the surface of the monument. You may need an implement with a lustre that delights the Artisans. (Come back with an iridium tool) ";
+
+                                    break;
+
+                                case 1:
+
+                                    generate.intro = "Your strike lands and a marvelous clang echoes through the cavern, singing the praises of a beautiful implement.";
+
+                                    ThrowHandle throwNotes = new(Game1.player, Game1.player.Position + new Vector2(-64, -256), IconData.relics.box_artisan);
+
+                                    throwNotes.register();
+
+                                    break;
+
+                                default:
+
+                                    generate.intro = "Verse 1 of 4. Cracks have appeared in the stonework of the court monuments.";
+
+                                    break;
+
+                            }
+
+                            return generate;
+
+                        case characters.monument_priesthood:
+
+                            int priestProgress = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.boxes);
+
+                            if (!Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.faeth))
+                            {
+
+                                Mod.instance.save.herbalism[HerbalData.herbals.faeth] = 0;
+
+                            }
+
+                            if (Mod.instance.save.herbalism[HerbalData.herbals.faeth] == 0)
+                            {
+
+                                int faethBlessing = Mod.instance.randomIndex.Next(1, 4);
+
+                                Mod.instance.CastMessage("You have received " + faethBlessing.ToString() + " faeth");
+
+                                Mod.instance.save.herbalism[HerbalData.herbals.faeth] = faethBlessing;
+
+                                generate.intro = "The Priestess bestows you with a small gift of Faeth";
+
+                                return generate;
+
+                            }
+
+                            if (priestProgress >= 0)
+                            {
+
+                                generate.intro = "The shadow cast by the cat shifts over your hands, as if reading your fortune from the lines in your palms. " +
+                                    "You now know that you are to find one that is lost, where three have stayed one has strayed far away.";
+
+                            }
+                            else
+                            {
+
+                                generate.intro = "Verse 2 of 4. The one that was lost has returned, and their silent vigil has concluded.";
+
+                            }
+
+                            return generate;
+
+
+                        case characters.monument_morticians:
+
+                            switch (Mod.instance.relicsData.MorticianRelicQuest())
+                            {
+
+                                case 0:
+
+                                    generate.intro = "You do not recognise the material of the owl's feathers. Perhaps you do not know the Mortician's art. (Come back with a 'Prehistoric' or 'Fossilised' bone item) ";
+
+                                    break;
+
+                                case 1:
+
+                                    generate.intro = "Your hands have honoured the bones of those that have passed on. ";
+
+                                    ThrowHandle throwNotes = new(Game1.player, Game1.player.Position + new Vector2(64, -256), IconData.relics.box_mortician);
+
+                                    throwNotes.register();
+                                    break;
+                                default:
+                                    generate.intro = "Verse 3 of 4. Their eyes now shut to the cares of this world.";
+
+                                    break;
+                            }
+
+                            return generate;
+
+                        case characters.monument_chaos:
+
+                            switch (Mod.instance.relicsData.ChaosRelicQuest())
+                            {
+
+                                case 0:
+
+                                    generate.intro = "Your hands do not smell sweet to the hungry fox. (Come back when you have built a Deluxe Barn or Deluxe Coop) ";
+
+                                    break;
+
+                                case 1:
+
+                                    generate.intro = "The fox's grin appears to widen. Your hands have touched the splendid creatures. ";
+
+                                    ThrowHandle throwNotes = new(Game1.player, Game1.player.Position + new Vector2(64,-256), IconData.relics.box_chaos);
+
+                                    throwNotes.register();
+
+                                    break;
+
+                                default:
+
+                                    generate.intro = "Verse 4 of 4. They are free to crumble into the unburdened nothing of dust.";
+
+                                    break;
                             }
 
                             return generate;
@@ -1004,6 +1407,32 @@ namespace StardewDruid.Character
 
                                     return generate;
 
+
+                                case characters.Buffin:
+
+                                    generate.intro = "Buffoonette of Chaos: Indeed they do, and I'm glad you asked me to demonstrate. Now, close your eyes. Prepare for your mind to be swept along the Great Stream.";
+
+                                    generate.responses.Add("Sorry, Buffin, what did you just say?");
+
+                                    generate.answers.Add("11");
+
+                                    generate.lead = true;
+
+                                    return generate;
+
+                                case characters.Revenant:
+
+                                    generate.intro = "The Revenant: Best you be off home farmer, you don't want to be around when the bats have their rave. " +
+                                        "There's a cart-line that extends from here all the way to the main network. It was working well the last time I used it, but tell me if it requires any repairs.";
+
+                                    generate.responses.Add("Has it been inspected recent- (Revenant pushes you into the cart bed and disengages the brake-lever)");
+
+                                    generate.answers.Add("12");
+
+                                    generate.lead = true;
+
+                                    return generate;
+
                             }
 
                             break;
@@ -1106,6 +1535,75 @@ namespace StardewDruid.Character
                                     return generate;
 
                                 case 10:
+                                case 11:
+                                case 12:
+
+                                    if (index == 12)
+                                    {
+
+                                        Dictionary<string, MinecartNetworkData> dictionary = DataLoader.Minecarts(Game1.content);
+
+                                        if (dictionary.TryGetValue("Default", out var network))
+                                        {
+
+                                            MinecartNetworkData minecartNetworkData = network;
+
+                                            if (minecartNetworkData != null && minecartNetworkData.Destinations?.Count > 0)
+                                            {
+
+                                                foreach (MinecartDestinationData destination in network.Destinations)
+                                                {
+
+                                                    if (string.Equals(destination.Id, "Bus", StringComparison.OrdinalIgnoreCase))
+                                                    {
+
+                                                        Game1.player.currentLocation.MinecartWarp(destination);
+                                                        return generate;
+
+
+                                                    }
+
+                                                }
+
+                                            }
+
+                                        }
+
+                                    }
+
+
+                                    if(index == 11 && Mod.instance.randomIndex.Next(2) == 0)
+                                    {
+
+                                        for(int i = 0; i < 4; i++)
+                                        {
+
+                                            GameLocation location = Game1.locations.ElementAt(Mod.instance.randomIndex.Next(Game1.locations.Count()));
+
+                                            Vector2 tile = location.getRandomTile();
+
+                                            if(ModUtility.TileAccessibility(location,tile) != 0)
+                                            {
+
+                                                continue;
+
+                                            }
+
+                                            Mod.instance.iconData.ImpactIndicator(Game1.player.currentLocation, Game1.player.Position, IconData.impacts.bomb, 4, new());
+
+                                            Game1.player.playNearbySoundAll("wand");
+
+                                            Game1.warpFarmer(location.Name, (int)tile.X, (int)tile.Y, 2);
+
+                                            Game1.xLocationAfterWarp = (int)tile.X;
+
+                                            Game1.yLocationAfterWarp = (int)tile.Y;
+
+                                            return generate;
+
+                                        }
+
+                                    }
 
                                     Wand wand = new();
 
@@ -1114,6 +1612,7 @@ namespace StardewDruid.Character
                                     wand.DoFunction(Game1.player.currentLocation, 0, 0, 0, Game1.player);
 
                                     return generate;
+
 
                             }
 
@@ -1275,6 +1774,43 @@ namespace StardewDruid.Character
                             }
 
                             return generate;
+
+                        case characters.Shadowtin:
+
+                            attuneUpdate = AttunementUpdate(Rite.rites.ether);
+
+                            switch (attuneUpdate)
+                            {
+
+                                case 0:
+
+                                    generate.intro = "This " + Game1.player.CurrentTool.Name + " resists attunement";
+
+                                    break;
+
+                                case 1:
+
+                                    generate.intro = "I suspect that the instrument you acquired from the Reaper of Fate carries the ether-bound memories of the Tyrant of Calico and all the shapeshifters who served under him. " +
+                                                    "Thus, the guise of an ancient one seems a natural result from it's use. That's my theory anyway.";
+
+                                    break;
+
+                                case 2:
+
+                                    generate.intro = "This " + Game1.player.CurrentTool.Name + " does not touch the Ether now, Farmer";
+
+                                    break;
+
+                                case 3:
+
+                                    generate.intro = "This " + Game1.player.CurrentTool.Name + " will now whistle through the streams of Ether";
+
+                                    break;
+
+                            }
+
+                            return generate;
+
 
                         case characters.herbalism:
 

@@ -85,7 +85,7 @@ namespace StardewDruid.Monster
 
             dragonRender = new();
 
-            dragonRender.LoadColourScheme(IconData.schemes.GreenDragon);
+            dragonRender.LoadColourScheme(IconData.schemes.dragon_green,IconData.schemes.stars);
 
             loadedOut = true;
 
@@ -129,7 +129,7 @@ namespace StardewDruid.Monster
                 return;
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = (float)StandingPixel.Y / 10000f;
 
@@ -261,9 +261,9 @@ namespace StardewDruid.Monster
 
             beam.type = SpellHandle.spells.beam;
 
-            beam.scheme = IconData.schemes.ember;
+            beam.scheme = IconData.schemes.stars;
 
-            beam.display = IconData.impacts.combustion;
+            beam.display = IconData.impacts.impact;
 
             beam.added = new() { SpellHandle.effects.embers, };
 

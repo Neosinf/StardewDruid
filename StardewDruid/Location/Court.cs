@@ -19,26 +19,11 @@ using StardewValley.TerrainFeatures;
 using System.Threading;
 using xTile;
 using StardewDruid.Character;
-using static StardewDruid.Cast.Rite;
-using StardewDruid.Cast;
-using System.Reflection.Emit;
 
 namespace StardewDruid.Location
 {
-    public class Court : GameLocation
+    public class Court : DruidLocation
     {
-
-        public List<Location.WarpTile> warpSets = new();
-
-        public List<Location.LocationTile> locationTiles = new();
-
-        public Dictionary<Vector2, CharacterHandle.characters> dialogueTiles = new();
-
-        public Dictionary<Vector2, int> lightFields = new();
-
-        public Dictionary<Vector2, int> darkFields = new();
-
-        public bool ambientDarkness;
 
         public Texture2D dungeonTexture;
 
@@ -47,7 +32,7 @@ namespace StardewDruid.Location
         public Court() { }
 
         public Court(string Name)
-            : base("Maps\\Shed", Name)
+            : base(Name)
         {
 
         }
@@ -56,91 +41,6 @@ namespace StardewDruid.Location
         {
 
             base.draw(b);
-
-            Dictionary<Vector2, int> occupied = new();
-
-            foreach (Farmer character in farmers)
-            {
-
-                Vector2 check = ModUtility.PositionToTile(character.Position);
-
-                for (int i = 0; i < 2; i++)
-                {
-
-                    List<Vector2> around = ModUtility.GetTilesWithinRadius(this, check, i);
-
-                    foreach (Vector2 tile in around)
-                    {
-
-                        occupied[tile] = (int)check.Y + 1;
-
-                    }
-
-                }
-
-            }
-
-            foreach (LocationTile tile in locationTiles)
-            {
-
-                if (Utility.isOnScreen(tile.position, 64))
-                {
-
-                    float opacity = 1f;
-
-                    if (occupied.ContainsKey(tile.tile))
-                    {
-
-                        if (occupied[tile.tile] < (int)tile.tile.Y + tile.offset)
-                        {
-
-                            opacity = 0.75f;
-
-                        }
-
-                    }
-
-                    Microsoft.Xna.Framework.Vector2 position = new(tile.position.X - (float)Game1.viewport.X, tile.position.Y - (float)Game1.viewport.Y);
-
-                    b.Draw(Mod.instance.iconData.sheetTextures[IconData.tilesheets.court], position, tile.rectangle, Microsoft.Xna.Framework.Color.White * opacity, 0f, Vector2.Zero, 4, tile.flip ? (SpriteEffects)1 : 0, tile.layer + (tile.offset * 0.0064f));
-
-                    if (tile.shadow)
-                    {
-
-                        b.Draw(Mod.instance.iconData.sheetTextures[IconData.tilesheets.court], position + new Vector2(2, 11), tile.rectangle, Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 4, tile.flip ? (SpriteEffects)1 : 0, tile.layer - 0.001f);
-
-                    }
-
-                }
-
-            }
-
-            foreach (KeyValuePair<Vector2, int> light in lightFields)
-            {
-
-                if (Utility.isOnScreen(light.Key, 64 * light.Value))
-                {
-
-                    Texture2D texture2D = Game1.sconceLight;
-
-                    Microsoft.Xna.Framework.Vector2 position = new(light.Key.X - (float)Game1.viewport.X, light.Key.Y - (float)Game1.viewport.Y);
-
-                    b.Draw(
-                        texture2D,
-                        position,
-                        texture2D.Bounds,
-                        Microsoft.Xna.Framework.Color.LightGoldenrodYellow * 0.5f,
-                        0f,
-                        new Vector2(texture2D.Bounds.Width / 2, texture2D.Bounds.Height / 2),
-                        0.25f * light.Value,
-                        SpriteEffects.None,
-                        0.9f
-                    );
-
-                }
-
-            }
-
 
             Microsoft.Xna.Framework.Vector2 waterfallposition = new((19 *64) - (float)Game1.viewport.X,-32-(float)Game1.viewport.Y);
 
@@ -199,25 +99,11 @@ namespace StardewDruid.Location
 
             Game1.ambientLight = new(64, 64, 32);
 
-            //base._updateAmbientLighting();
-
-        }
-
-        public override void drawWaterTile(SpriteBatch b, int x, int y)
-        {
-            base.drawWaterTile(b, x, y);  
         }
 
         public override void OnMapLoad(xTile.Map map)
         {
-            /*
-             
-             225
-             250
-             275
-             300
-             
-             */
+
 
             xTile.Dimensions.Size tileSize = map.GetLayer("Back").TileSize;
 
@@ -247,7 +133,7 @@ namespace StardewDruid.Location
 
             newMap.AddTileSheet(dangerous); //map.TileSheets[1].ImageSource
 
-            locationTiles = new();
+            terrainTiles = new();
 
             waterTiles = new(56, 34);
 
@@ -475,17 +361,10 @@ namespace StardewDruid.Location
             codes = new()
             {
 
-                [3] = new() { new() { 32, 4 }, new() { 33, 5 }, new() { 34, 6 }, new() { 35, 7 }, },
-                [4] = new() { new() { 32, 20 }, new() { 33, 21 }, new() { 34, 22 }, new() { 35, 23 }, new() { 37, 8 }, new() { 38, 9 }, new() { 39, 10 }, new() { 40, 11 }, },
-                [5] = new() { new() { 28, 1 }, new() { 29, 2 }, new() { 30, 3 }, new() { 32, 36 }, new() { 33, 37 }, new() { 34, 38 }, new() { 35, 39 }, new() { 37, 24 }, new() { 38, 25 }, new() { 39, 26 }, new() { 40, 27 }, },
-                [6] = new() { new() { 27, 16 }, new() { 28, 17 }, new() { 29, 18 }, new() { 30, 19 }, new() { 32, 52 }, new() { 33, 53 }, new() { 34, 54 }, new() { 35, 55 }, new() { 37, 40 }, new() { 38, 41 }, new() { 39, 42 }, new() { 40, 43 }, new() { 42, 12 }, new() { 43, 13 }, new() { 44, 14 }, new() { 45, 15 }, },
-                [7] = new() { new() { 27, 32 }, new() { 28, 33 }, new() { 29, 34 }, new() { 30, 35 }, new() { 32, 68 }, new() { 33, 69 }, new() { 34, 70 }, new() { 35, 71 }, new() { 37, 56 }, new() { 38, 57 }, new() { 39, 58 }, new() { 40, 59 }, new() { 42, 28 }, new() { 43, 29 }, new() { 44, 30 }, new() { 45, 31 }, },
-                [8] = new() { new() { 27, 48 }, new() { 28, 49 }, new() { 29, 50 }, new() { 30, 51 }, new() { 32, 84 }, new() { 33, 85 }, new() { 34, 86 }, new() { 35, 87 }, new() { 37, 72 }, new() { 38, 73 }, new() { 39, 74 }, new() { 40, 75 }, new() { 42, 44 }, new() { 43, 45 }, new() { 44, 46 }, new() { 45, 47 }, },
-                [9] = new() { new() { 27, 64 }, new() { 28, 65 }, new() { 29, 66 }, new() { 30, 67 }, new() { 32, 100 }, new() { 33, 101 }, new() { 34, 102 }, new() { 35, 103 }, new() { 37, 88 }, new() { 38, 89 }, new() { 39, 90 }, new() { 40, 91 }, new() { 42, 60 }, new() { 43, 61 }, new() { 44, 62 }, new() { 45, 63 }, },
-                [10] = new() { new() { 27, 80 }, new() { 28, 81 }, new() { 29, 82 }, new() { 30, 83 }, new() { 32, 116 }, new() { 33, 117 }, new() { 34, 118 }, new() { 35, 119 }, new() { 37, 104 }, new() { 38, 105 }, new() { 39, 106 }, new() { 40, 107 }, new() { 42, 76 }, new() { 43, 77 }, new() { 44, 78 }, new() { 45, 79 }, },
-                [11] = new() { new() { 27, 96 }, new() { 28, 97 }, new() { 29, 98 }, new() { 30, 99 }, new() { 37, 120 }, new() { 38, 121 }, new() { 39, 122 }, new() { 40, 123 }, new() { 42, 92 }, new() { 43, 93 }, new() { 44, 94 }, new() { 45, 95 }, },
-                [12] = new() { new() { 27, 112 }, new() { 28, 113 }, new() { 29, 114 }, new() { 30, 115 }, new() { 42, 108 }, new() { 43, 109 }, new() { 44, 110 }, new() { 45, 111 }, },
-                [13] = new() { new() { 42, 124 }, new() { 43, 125 }, new() { 44, 126 }, new() { 45, 127 }, },
+                [3] = new() { new() { 32, 2 }, },
+                [4] = new() { new() { 37, 3 }, },
+                [5] = new() { new() { 27, 1 }, },
+                [6] = new() { new() { 42, 4 }, },
 
             };
 
@@ -495,20 +374,17 @@ namespace StardewDruid.Location
                 foreach (List<int> array in code.Value)
                 {
 
-                    Vector2 codeVector = new(array[1] % 16, (int)(array[1] / 16));
+                    TerrainTile tTile = new(IconData.tilesheets.court, array[1], new Vector2(array[0], code.Key) * 64);
 
-                    int offset = 8 - (int)codeVector.Y;
-
-                    LocationTile lTile = new(array[0], code.Key, (int)codeVector.X, (int)codeVector.Y, offset, offset == 1, IconData.tilesheets.court);
-
-                    if (offset == 1)
+                    foreach(Vector2 bottom in tTile.baseTiles)
                     {
 
-                        buildings.Tiles[array[0], code.Key] = new StaticTile(buildings, dangerous, BlendMode.Alpha, back.Tiles[array[0], code.Key].TileIndex);
+                        buildings.Tiles[(int)bottom.X,(int)bottom.Y] = new StaticTile(buildings, dangerous, BlendMode.Alpha, back.Tiles[(int)bottom.X, (int)bottom.Y].TileIndex);
+
 
                     }
 
-                    locationTiles.Add(lTile);
+                    terrainTiles.Add(tTile);
 
                 }
 
@@ -536,7 +412,11 @@ namespace StardewDruid.Location
                 foreach (List<int> array in code.Value)
                 {
 
-                    lightFields.Add(new Vector2(array[0], code.Key) * 64 + new Vector2(0, 32),4+Mod.instance.randomIndex.Next(3));
+                    LightField light = new(new Vector2(array[0], code.Key) * 64 + new Vector2(0, 32));
+
+                    light.luminosity = 4 + Mod.instance.randomIndex.Next(3);
+
+                    lightFields.Add(light);
 
                 }
 
@@ -544,65 +424,66 @@ namespace StardewDruid.Location
 
             this.map = newMap;
 
-            dungeonTexture = Game1.temporaryContent.Load<Texture2D>(dungeon.ImageSource);
-
             waterfallTexture = Game1.temporaryContent.Load<Texture2D>("Maps\\spring_Waterfalls");
 
         }
 
-        public override bool CanItemBePlacedHere(Vector2 tile, bool itemIsPassable = false, CollisionMask collisionMask = CollisionMask.All, CollisionMask ignorePassables = ~CollisionMask.Objects, bool useFarmerTile = false, bool ignorePassablesExactly = false)
+        public void AddDialogueTiles()
         {
+            if (dialogueTiles.Count > 0) { return; }
 
-            return false;
+            Dictionary<int, List<List<int>>> codes = new()
+            {
+                [8] = new() { },
+                [9] = new() { new() { 33, 2 }, new() { 34, 2 }, },
+                [10] = new() { new() { 33, 2 }, new() { 34, 2 }, new() { 38, 3 }, new() { 39, 3 }, },
+                [11] = new() { new() { 28, 1 }, new() { 29, 1 }, new() { 38, 3 }, new() { 39, 3 }, },
+                [12] = new() { new() { 28, 1 }, new() { 29, 1 }, new() { 43, 4 }, new() { 44, 4 }, },
+                [13] = new() { new() { 43, 4 }, new() { 44, 4 }, },
+                [14] = new() { },
+                [15] = new() { },
+            };
 
-        }
 
-        public override bool isActionableTile(int xTile, int yTile, Farmer who)
-        {
-
-            Vector2 actionTile = new(xTile, yTile);
-
-            if (dialogueTiles.ContainsKey(actionTile))
+            foreach (KeyValuePair<int, List<List<int>>> code in codes)
             {
 
-                return true;
-
-            }
-
-            return base.isActionableTile(xTile, yTile, who);
-
-        }
-
-        public override bool checkAction(xTile.Dimensions.Location tileLocation, xTile.Dimensions.Rectangle viewport, Farmer who)
-        {
-
-            Vector2 actionTile = new(tileLocation.X, tileLocation.Y);
-
-            if (dialogueTiles.ContainsKey(actionTile) && Mod.instance.activeEvent.Count == 0)
-            {
-
-                CharacterHandle.characters characterType = dialogueTiles[actionTile];
-
-                if (!Mod.instance.dialogue.ContainsKey(characterType))
+                foreach (List<int> array in code.Value)
                 {
 
-                    Mod.instance.dialogue[characterType] = new(characterType);
+
+                    switch (array[1])
+                    {
+                        case 1:
+
+                            dialogueTiles.Add(new Vector2(array[0], code.Key), CharacterHandle.characters.monument_artisans);
+
+                            break;
+
+                        case 2:
+                            dialogueTiles.Add(new Vector2(array[0], code.Key), CharacterHandle.characters.monument_priesthood);
+                            break;
+
+                        case 3:
+                            dialogueTiles.Add(new Vector2(array[0], code.Key), CharacterHandle.characters.monument_morticians);
+                            break;
+
+                        default:
+                        case 4:
+                            dialogueTiles.Add(new Vector2(array[0], code.Key), CharacterHandle.characters.monument_chaos);
+                            break;
+
+
+                    }
 
                 }
 
-                Mod.instance.dialogue[characterType].DialogueApproach();
-
-                return true;
-
             }
-
-            return base.checkAction(tileLocation, viewport, who);
 
         }
 
         public override void updateWarps()
         {
-            //warps.Clear();
 
             if (warpSets.Count > 0)
             {

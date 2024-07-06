@@ -40,6 +40,8 @@ namespace StardewDruid.Monster
         public override void LoadOut()
         {
 
+            cooldownInterval = 240;
+
             GhostWalk();
 
             GhostFlight();
@@ -57,7 +59,7 @@ namespace StardewDruid.Monster
 
             baseJuice = 2;
 
-            basePulp = 25;
+            basePulp = 20;
 
             characterTexture = MonsterHandle.MonsterTexture(realName.Value);
 
@@ -220,8 +222,6 @@ namespace StardewDruid.Monster
 
             specialInterval = 9;
 
-            cooldownInterval = 240;
-
             cooldownTimer = cooldownInterval;
 
             specialFrames = idleFrames;
@@ -234,13 +234,11 @@ namespace StardewDruid.Monster
 
         }
 
-        public override Rectangle GetBoundingBox()
+        public override float GetScale()
         {
-            Vector2 position = Position;
 
-            int netScale = netMode.Value > 5 ? netMode.Value - 4 : netMode.Value;
+            return 3f + netMode.Value * 0.5f;
 
-            return new Rectangle((int)position.X - 28 - (4 * netScale), (int)position.Y - flightHeight - 24 - (int)(Math.Abs(hoverHeight) * hoverElevate) - (8 * netScale), 120 + (8 * netScale), 104 + (8 * netScale));
         }
 
         public override void draw(SpriteBatch b, float alpha = 1f)
@@ -259,19 +257,19 @@ namespace StardewDruid.Monster
                 return;
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = StandingPixel.Y / 10000f;
 
             DrawEmote(b, localPosition, drawLayer);
 
-            int netScale = netMode.Value > 5 ? netMode.Value - 4 : netMode.Value;
-
-            Vector2 spritePosition = new Vector2(localPosition.X - 16f - 8 * netScale, localPosition.Y - 32f - flightHeight - (Math.Abs(hoverHeight) * hoverElevate) - 16 * netScale);
-
-            float spriteSize = 3f + netScale * 0.5f;
-
             Color fadeout = Color.White * 0.75f;
+
+            float spriteScale = GetScale();
+
+            Vector2 spritePosition = GetPosition(localPosition, spriteScale);
+
+            bool flippity = netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3;
 
             if (netFlightActive.Value)
             {
@@ -280,23 +278,50 @@ namespace StardewDruid.Monster
 
                 int setFlightFrame = Math.Min(flightFrame, (flightFrames[setFlightSeries].Count - 1));
 
-                b.Draw(characterTexture, spritePosition, flightFrames[setFlightSeries][setFlightFrame], fadeout, 0, new Vector2(0.0f, 0.0f), spriteSize, netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(
+                    characterTexture,
+                    spritePosition,
+                    flightFrames[setFlightSeries][setFlightFrame],
+                    fadeout,
+                    0,
+                    Vector2.Zero,
+                    spriteScale,
+                    flippity ? (SpriteEffects)1 : 0,
+                    drawLayer);
 
             }
             else if (netSpecialActive.Value)
             {
 
-                b.Draw(characterTexture, spritePosition, flightFrames[netDirection.Value + 8][specialFrame], fadeout, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(
+                    characterTexture,
+                    spritePosition,
+                    flightFrames[netDirection.Value + 8][specialFrame],
+                    fadeout,
+                    0,
+                    Vector2.Zero,
+                    spriteScale,
+                    flippity ? (SpriteEffects)1 : 0,
+                    drawLayer);
 
             }
             else
             {
 
-                b.Draw(characterTexture, spritePosition, idleFrames[netDirection.Value][hoverFrame], fadeout, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(
+                    characterTexture,
+                    spritePosition,
+                    idleFrames[netDirection.Value][hoverFrame],
+                    fadeout,
+                    0,
+                    Vector2.Zero,
+                    spriteScale,
+                    flippity ? (SpriteEffects)1 : 0,
+                    drawLayer);
 
             }
 
-            b.Draw(Game1.shadowTexture, new(localPosition.X, localPosition.Y + 64f), Game1.shadowTexture.Bounds, fadeout, 0.0f, Vector2.Zero, 4f, 0, drawLayer - 1E-06f);
+            b.Draw(Game1.shadowTexture, new(localPosition.X, localPosition.Y + 64f), Game1.shadowTexture.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, 0, drawLayer - 1E-06f);
 
         }
 
@@ -317,7 +342,7 @@ namespace StardewDruid.Monster
 
             fireball.missile = IconData.missiles.death;
 
-            fireball.display = IconData.impacts.death;
+            fireball.display = IconData.impacts.skull;
 
             fireball.boss = this;
 
@@ -326,7 +351,6 @@ namespace StardewDruid.Monster
             return true;
 
         }
-
 
         public override void ConnectSweep()
         {

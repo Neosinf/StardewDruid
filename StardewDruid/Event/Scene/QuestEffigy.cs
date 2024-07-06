@@ -8,6 +8,7 @@ using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Journal;
 using StardewDruid.Location;
+using StardewDruid.Monster;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData;
@@ -19,15 +20,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Timers;
-using static System.Net.Mime.MediaTypeNames;
 
 
 namespace StardewDruid.Event.Scene
 {
     public class QuestEffigy : EventHandle
     {
-
-        public StardewDruid.Monster.Blobfiend blobking;
 
         public Vector2 beachWarp;
 
@@ -62,6 +60,13 @@ namespace StardewDruid.Event.Scene
 
             base.EventActivate();
 
+            locales = new()
+            {
+                "Beach",
+                LocationData.druid_atoll_name,
+
+            };
+
             beachWarp = new Vector2(10f, 15f);
 
             campFire = new Vector2(48, 20);
@@ -74,62 +79,20 @@ namespace StardewDruid.Event.Scene
 
             mistVector = new Vector2(25, 15);
 
-            narrators = new()
-            {
-                [0] = "The Effigy",
-                [1] = "The Jellyking",
-                [2] = "First Farmer",
-                [3] = "Lady Beyond",
-            }; ;
-
-            companions[0] = Mod.instance.characters[CharacterHandle.characters.Effigy] as StardewDruid.Character.Effigy;
-
-            voices[0] = companions[0];
-
             ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 
             location.playSound("discoverMineral");
+
+            (Mod.instance.locations[LocationData.druid_atoll_name] as Atoll).ambientDarkness = true;
 
         }
 
         public override bool AttemptReset()
         {
 
-            companions[0].SwitchToMode(Character.Character.mode.random, Game1.player);
-
-            //(Mod.instance.locations[LocationData.druid_atoll_name] as Atoll).ambientDarkness = false;
-
-            if(companions.Count > 1)
-            {
-
-                companions[2].currentLocation.characters.Remove(companions[2]);
-                companions[3].currentLocation.characters.Remove(companions[3]);
-
-                companions.Remove(2);
-                companions.Remove(3);
-            }
-
-            Mod.instance.CastMessage("Event aborted, try again tomorrow", 3, true);
+            Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.abortTomorrow), 3, true);
 
             return false;
-
-        }
-
-        public override void RemoveMonsters()
-        {
-
-            if (blobking != null)
-            {
-
-                blobking.currentLocation.characters.Remove(blobking);
-
-                blobking.currentLocation = null;
-
-                blobking = null;
-
-            }
-
-            base.RemoveMonsters();
 
         }
 
@@ -147,6 +110,13 @@ namespace StardewDruid.Event.Scene
 
             activeCounter++;
 
+            if (activeCounter > 500)
+            {
+
+                DialogueCue(activeCounter);
+
+            }
+
             switch (activeCounter)
             {
 
@@ -156,6 +126,10 @@ namespace StardewDruid.Event.Scene
 
                 case 1:
 
+                    companions[0] = Mod.instance.characters[CharacterHandle.characters.Effigy] as StardewDruid.Character.Effigy;
+
+                    voices[0] = companions[0];
+
                     companions[0].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
                     CharacterMover.Warp(location, companions[0], beachWarp * 64);
@@ -164,7 +138,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].eventName = eventId;
 
-                    DialogueCue(0, "A great day for the beach");
+                    DialogueCue(1);
 
                     //activeCounter = 300;
 
@@ -174,13 +148,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].netStandbyActive.Set(true);
 
-                    DialogueCue(0, "As my old friend would say");
-
-                    break;
-
-                case 4:
-
-                    Mod.instance.CastDisplay("Talk to the Effigy when the green speech icon appears");
+                    DialogueCue(2);
 
                     break;
 
@@ -190,7 +158,7 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 18: activeCounter = 100; break;
+                case 16: activeCounter = 100; break;
 
 
                 // ------------------------------------------
@@ -207,7 +175,7 @@ namespace StardewDruid.Event.Scene
 
                 case 102:
 
-                    DialogueCue(0, "Time to reminisce");
+                    DialogueCue(3);
 
                     companions[0].TargetEvent(110, companions[0].Position + new Vector2(-128, 0), true);
 
@@ -215,7 +183,7 @@ namespace StardewDruid.Event.Scene
 
                 case 112:
 
-                    DialogueCue(0, "With an old angler technique");
+                    DialogueCue(4);
 
                     companions[0].netSpecialActive.Set(true);
 
@@ -238,7 +206,7 @@ namespace StardewDruid.Event.Scene
 
                 case 118:
 
-                    DialogueCue(0, "DENIZENS OF THE SHALLOWS, HEED MY VOICE");
+                    DialogueCue(5);
 
                     companions[0].netSpecialActive.Set(true);
 
@@ -273,7 +241,7 @@ namespace StardewDruid.Event.Scene
 
                 case 121:
 
-                    DialogueCue(0, "!");
+                    DialogueCue(6);
 
                     break;
 
@@ -302,7 +270,7 @@ namespace StardewDruid.Event.Scene
                     if (activeCounter == 124)
                     {
 
-                        DialogueCue(0, "Hasten away!");
+                        DialogueCue(7);
 
                         companions[0].netDirection.Set(1);
 
@@ -362,7 +330,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueClear(0);
 
-                    DialogueCue(0, "Let us make a fish stew");
+                    DialogueCue(7);
 
                     Vector2 cursor56 = campFire * 64;
 
@@ -405,7 +373,7 @@ namespace StardewDruid.Event.Scene
 
                 case 205:
 
-                    DialogueCue(0, "I would often prepare this for friends");
+                    DialogueCue(9);
 
                     Game1.playSound("fireball");
 
@@ -436,7 +404,7 @@ namespace StardewDruid.Event.Scene
 
                 case 208:
 
-                    DialogueCue(0, "BY THE POWER BEYOND THE SHORE");
+                    DialogueCue(10);
 
                     break;
 
@@ -471,7 +439,7 @@ namespace StardewDruid.Event.Scene
 
                 case 213:
 
-                    DialogueCue(0, "Perfection");
+                    DialogueCue(11);
 
                     new ThrowHandle(campFire * 64, campFire * 64 - new Vector2(128, 0), new StardewValley.Object("728", 1)).register();
 
@@ -531,7 +499,7 @@ namespace StardewDruid.Event.Scene
 
                 case 252:
 
-                    DialogueCue(0, "This stream is a new feature");
+                    DialogueCue(12);
 
                     break;
 
@@ -550,21 +518,21 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].netStandbyActive.Set(true);
 
-                    DialogueCue(0, "We would often gaze at the sky"); 
+                    DialogueCue(13 ); 
                     
                     break;
 
                 case 305: 
                     
-                    DialogueCue(0, "That big cloud might have once been a dragon"); 
+                    DialogueCue(14 ); 
                     
                     break;
 
                 case 308: 
                     
-                    DialogueCue(0, "Things are simpler now"); 
+                    DialogueCue(15); 
  
-                    blobking = new(blobVector, Mod.instance.CombatDifficulty());
+                    Blobfiend blobking = new Blobfiend(blobVector, Mod.instance.CombatDifficulty());
 
                     blobking.netScheme.Set(2);
 
@@ -580,32 +548,34 @@ namespace StardewDruid.Event.Scene
 
                     voices[1] = blobking;
 
+                    bosses.Add(0,blobking);
+
                     break;
 
-                case 311: DialogueCue(1, "Ha ha ha. The wooden puppet returns."); break;
+                case 311: DialogueCue(16); break;
 
                 case 313:
 
                     companions[0].netStandbyActive.Set(false);
 
-                    companions[0].LookAtTarget(blobking.Position);
+                    companions[0].LookAtTarget(bosses[0].Position);
 
                     break;
 
-                case 314: DialogueCue(0, "Jellyking. The wretched fiend"); break;
-                case 317: DialogueCue(1, "I heard your creaky, broken voice"); break;
-                case 320: DialogueCue(1, "And came to laugh at you"); break;
-                case 323: DialogueCue(0, "Have you no fear?"); break;
-                case 326: DialogueCue(1, "Your friends are gone, your power spent"); break;
-                case 329: DialogueCue(1, "You can no longer guard the change"); break;
+                case 314: DialogueCue(17); break;
+                case 317: DialogueCue(18 ); break;
+                case 320: DialogueCue(19 ); break;
+                case 323: DialogueCue(20); break;
+                case 326: DialogueCue(21 ); break;
+                case 329: DialogueCue(22); break;
 
                 case 332:
 
-                    DialogueCue(0, "Enough of you!");
+                    DialogueCue(23);
 
                     companions[0].netSmashActive.Set(true);
 
-                    companions[0].TargetEvent(340, blobking.Position - new Vector2(64, 0), true);
+                    companions[0].TargetEvent(340, bosses[0].Position - new Vector2(64, 0), true);
 
                     SetTrack("Cowboy_undead");
 
@@ -615,13 +585,13 @@ namespace StardewDruid.Event.Scene
 
                 case 341:
 
-                    DialogueCue(1, "!");
+                    DialogueCue(24);
 
-                    blobking.netPosturing.Set(false);
+                    bosses[0].netPosturing.Set(false);
 
-                    blobking.Health = 9999;
+                    bosses[0].Health = 9999;
 
-                    blobking.MaxHealth = 9999;
+                    bosses[0].MaxHealth = 9999;
 
                     companions[0].SwitchToMode(Character.Character.mode.track, Game1.player);
 
@@ -629,31 +599,31 @@ namespace StardewDruid.Event.Scene
 
                 case 345:
 
-                    DialogueCue(1, "Creak creak creak goes the little wooden man");
+                    DialogueCue(25 );
 
                     break;
 
                 case 348:
 
-                    DialogueCue(0, "You are nothing but a slimey abberation");
+                    DialogueCue(26);
 
                     break;
 
                 case 351:
 
-                    DialogueCue(0, "How have you survived so many long, barren winters");
+                    DialogueCue(27 );
 
                     break;
 
                 case 354:
 
-                    DialogueCue(1, "I have been resurrected by a new power, a hungry power");
+                    DialogueCue(28 );
 
                     break;
 
                 case 357:
 
-                    DialogueCue(0, "Face my judgement, Jelly-fiend");
+                    DialogueCue(29 );
 
                     break;
 
@@ -665,11 +635,11 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].specialTimer = 90;
 
-                    companions[0].LookAtTarget(blobking.Position, true);
+                    companions[0].LookAtTarget(bosses[0].Position, true);
 
                     Mod.instance.iconData.DecorativeIndicator(location, companions[0].Position, IconData.decorations.stars, 3f, new() { interval = 1200, });
 
-                    SpellHandle meteor = new(location, blobking.Position, Game1.player.Position);
+                    SpellHandle meteor = new(location, bosses[0].Position, Game1.player.Position);
 
                     meteor.type = SpellHandle.spells.orbital;
 
@@ -679,13 +649,13 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.spellRegister.Add(meteor);
 
-                    DialogueCue(1, "Ha ha ha. Too slow, scarecrow.");
+                    DialogueCue(30);
 
-                    blobking.ResetActives();
+                    bosses[0].ResetActives();
 
-                    blobking.netAlternative.Set(1);
+                    bosses[0].netAlternative.Set(1);
 
-                    blobking.PerformFlight(new(blobking.Position.X + 1280, blobking.Position.Y + 192),0);
+                    bosses[0].PerformFlight(new(bosses[0].Position.X + 1280, bosses[0].Position.Y + 192),0);
 
                     break;
 
@@ -695,9 +665,9 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].netDirection.Set(2);
 
-                    location.characters.Remove(blobking);
+                    location.characters.Remove(bosses[0]);
 
-                    blobking = null;
+                    bosses.Clear();
 
                     voices.Remove(1);
 
@@ -721,7 +691,9 @@ namespace StardewDruid.Event.Scene
 
                 case 402:
 
-                    DialogueCue(0, "I feel drawn to the atoll");
+                    DialogueCue(31);
+
+                    inabsentia = true;
 
                     break;
 
@@ -733,11 +705,7 @@ namespace StardewDruid.Event.Scene
 
                     Game1.yLocationAfterWarp = 10;
 
-                    inabsentia = true;
-
                     location = Mod.instance.locations[LocationData.druid_atoll_name];
-
-                    (Mod.instance.locations[LocationData.druid_atoll_name] as Atoll).ambientDarkness = true;
 
                     CharacterMover.Warp(Mod.instance.locations[LocationData.druid_atoll_name], companions[0], new Vector2(16, 11) * 64, false);
 
@@ -781,7 +749,7 @@ namespace StardewDruid.Event.Scene
 
                 case 452:
 
-                    DialogueCue(0, "This is the shore I remember");
+                    DialogueCue(32 );
 
                     Wisps wispNew = new();
 
@@ -821,9 +789,9 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 455: DialogueCue(0, "We are not alone it seems"); break;
+                case 455: DialogueCue(33); break;
 
-                case 458: DialogueCue(0, "Hmmm... why there are so many?"); break;
+                case 458: DialogueCue(34); break;
 
                 case 461:
 
@@ -847,12 +815,6 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 502:
-
-                    DialogueCue(0, "It seems the wisps would remind me of something");
-
-                    break;
-
                 case 504:
 
                     companions[0].netDirection.Set(0);
@@ -860,8 +822,6 @@ namespace StardewDruid.Event.Scene
                     break;
 
                 case 505:
-
-                    DialogueCue(0, "A fragment of the past");
 
                     companions[0].netSpecialActive.Set(true);
 
@@ -909,7 +869,7 @@ namespace StardewDruid.Event.Scene
 
                     }
 
-                    TemporaryAnimatedSprite cloudAnimation = Mod.instance.iconData.ImpactIndicator(
+                    TemporaryAnimatedSprite cloudAnimation = Mod.instance.iconData.CreateImpact(
                         
                         location, 
                         (mistVector + new Vector2(1,-3)) * 64, 
@@ -918,7 +878,7 @@ namespace StardewDruid.Event.Scene
                         new() { interval = 125f, loops = 13*5, flip = true, alpha = 0.1f, layer = mistCorner.Y / 10000 }
                      );
 
-                    companions[2] = new Cuchulan(CharacterHandle.characters.Cuchulan);
+                    companions[2] = new FirstFarmer(CharacterHandle.characters.FirstFarmer);
 
                     voices[2] = companions[2];
 
@@ -938,22 +898,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[2].Position = (mistVector + new Vector2(-2, -3)) * 64;
 
-                    /*AddActor(2, farmerVector);
-
-                    voices[2] = actors[2];
-
-                    TemporaryAnimatedSprite farmerSprite = new TemporaryAnimatedSprite(0, 5000f, 1, 12, farmerVector - new Vector2(32, 0), false, false)
-                    {
-                        sourceRect = new Microsoft.Xna.Framework.Rectangle(0, 0, 32, 32),
-                        sourceRectStartingPos = new Vector2(0.0f, 0.0f),
-                        texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "FirstFarmer.png")),
-                        scale = 4f,
-                        layerDepth = 992f,
-                        alpha = 0.5f,
-                    };
-                    location.temporarySprites.Add(farmerSprite);*/
-
-                    companions[3] = new Morrigan(CharacterHandle.characters.Morrigan);
+                    companions[3] = new LadyBeyond(CharacterHandle.characters.LadyBeyond);
 
                     voices[3] = companions[3];
 
@@ -975,96 +920,57 @@ namespace StardewDruid.Event.Scene
 
                     companions[3].Position = (mistVector + new Vector2(2, -2)) * 64;
 
-
-                    /*AddActor(3, ladyVector);
-
-                    voices[3] = actors[3];
-
-                    TemporaryAnimatedSprite ladySprite = new TemporaryAnimatedSprite(0, 5000f, 1, 11, ladyVector - new Vector2(32, 0), false, false)
-                    {
-                        sourceRect = new Microsoft.Xna.Framework.Rectangle(0, 0, 32, 32),
-                        sourceRectStartingPos = new Vector2(0.0f, 0.0f),
-                        texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "LadyBeyond.png")),
-                        scale = 4f,
-                        layerDepth = 992f,
-                        alpha = 0.5f,
-                        flipped = true,
-
-                    };
-                    location.temporarySprites.Add(ladySprite);*/
-
                     break;
-
 
                 case 508: 
-                    DialogueCue(3, "You seem upset"); companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90;
+                    companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90;
                     break;
                 case 511: 
-                    DialogueCue(2, "It's just a bit... sudden."); companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90;
+                    companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90;
                     break;
                 case 514: 
-                    DialogueCue(3, "The health of my kin deteriorates."); companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90;
-                    break;
-                case 517: 
-                    DialogueCue(3, "I would have realised sooner...");
-                    break;
-                case 520: 
-                    DialogueCue(3, "...had I not been... distracted"); 
+                    companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90;
                     break;
                 case 523: 
-                    DialogueCue(2, "So you'll go across the sea then"); companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90;
+                    companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90;
                     break;
                 case 526: 
-                    DialogueCue(3, "I must care for them in their slumber"); companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90; 
+                    companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90; 
                     break;
                 case 529: 
-                    DialogueCue(2, "What about the valley, our circle?"); companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90;
+                    companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90;
                     break;
                 case 532: 
-                    DialogueCue(3, "You have talents, space... and our friend"); companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90;
+                    companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90;
                     break;
                 case 535: 
-                    DialogueCue(2, "He needs you more than he does me"); companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90; 
+                    companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90; 
                     break;
                 case 538: 
-                    DialogueCue(3, "You must continue to mentor him"); companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90;
-                    break;
-                case 541: 
-                    DialogueCue(3, "Keep him safe from the Fates");
-                    break;
-                case 544: 
-                    DialogueCue(3, "Show him the beauty of the valley"); 
+                    companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90;
                     break;
                 case 547: 
-                    DialogueCue(2, "It's not enough for me"); companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90;
+                    companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90;
                     break;
                 case 550: 
-                    DialogueCue(3, "??");
                     break;
                 case 553: 
-                    DialogueCue(2, "Please. Stay."); companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90;
+                    companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90;
                     break;
                 case 556: 
-                    DialogueCue(3, "I have given you all the time I can"); companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90;
+                    companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90;
                     break;
                 case 559: 
-                    DialogueCue(3, "Goodbye, farmer");
                     companions[3].netDirection.Set(2);
                     break;
                 case 561: 
-                    DialogueCue(2, "Lady...");
                     companions[2].netDirection.Set(2);
                     companions[3].currentLocation.characters.Remove(companions[3]);
                     companions.Remove(3);
                     break;
                 case 564: 
-                    DialogueCue(0, "He was never the same after this");
                     companions[2].currentLocation.characters.Remove(companions[2]);
                     companions.Remove(2);
-
-                    break;
-                case 567:
-                    DialogueCue(0, "Will I ever understand why?");
                     break;
                 case 570:
 
@@ -1082,25 +988,23 @@ namespace StardewDruid.Event.Scene
 
                     DialogueClear(0);
 
-                    DialogueCue(0, "This is for you.");
+                    DialogueCue(35);
 
                     ThrowHandle throwRelic = new(Game1.player, companions[0].Position, IconData.relics.effigy_crest);
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.effigy_crest.ToString());
-
                     break;
 
                 case 604:
 
-                    DialogueCue(0, "At least this I know after the many years...");
+                    DialogueCue(36);
 
                     break;
 
                 case 607:
 
-                    DialogueCue(0, "The valley is beautiful");
+                    DialogueCue(37);
 
                     break;
 
@@ -1110,16 +1014,11 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.questHandle.CompleteQuest(eventId);
 
-                    EventQuery();
-
                     companions[0].SwitchToMode(Character.Character.mode.random, Game1.player);
 
                     eventComplete = true;
 
-                    //(Mod.instance.locations[LocationData.druid_atoll_name] as Atoll).ambientDarkness = false;
-
                     break;
-
 
             }
 
@@ -1130,12 +1029,6 @@ namespace StardewDruid.Event.Scene
 
             switch (index)
             {
-
-                case 100: // first dialogue
-
-                    activeCounter = Math.Max(100, activeCounter);
-
-                    break;
 
                 case 110: // cast position
 
@@ -1149,21 +1042,9 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 200: // second dialogue
+                case 300: // Skygazing position
 
-                    activeCounter = Math.Max(200, activeCounter);
-
-                    break;
-
-                case 250:
-
-                    activeCounter = Math.Max(250, activeCounter);
-
-                    break;
-
-                case 300: // third dialogue
-
-                    activeCounter = Math.Max(300, activeCounter);
+                    activeCounter = 300;
 
                     break;
 
@@ -1173,209 +1054,17 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 400: // fourth dialogue
-
-                    activeCounter = Math.Max(400, activeCounter);
-
-                    break;
-
                 case 420: // mist position
 
                     activeCounter = 420;
 
                     break;
 
-                case 500: // fifth dialogue
-
-                    activeCounter = Math.Max(500, activeCounter);
-
-                    break;
-
-                case 600: // six dialogue
-
-                    activeCounter = Math.Max(600, activeCounter);
-
-                    break;
 
             }
 
         }
 
-
-        public override void DialogueSetups(StardewDruid.Character.Character npc, int dialogueId)
-        {
-
-            string intro;
-
-            switch (dialogueId)
-            {
-                default: // beachOne
-
-                    intro = "Here again. At the hem of the valley.";
-
-                    break;
-
-                case 2:
-
-                    intro = "I've only ever possessed a small amount of talent in invoking the energies of the Weald.";
-
-                    break;
-
-                case 3:
-
-                    intro = "That peculiar cooking technique was taught to me by the Lady herself. " +
-                        "It was a favourite of the first farmer's. He was her champion.";
-
-                    break;
-
-                case 4:
-
-                    intro = "That menace. I swear that when I find the means, I will turn him to juice and rind. I always react poorly to his words.";
-
-                    break;
-
-                case 5:
-
-                    intro = "The rolling energies of the mists gather here."; 
-
-                    break;
-
-                case 6:
-
-                    intro = "I witnessed this, many ages ago, when I was still new to this world. " +
-                        "I was unable to assist my friend with his troubles, and I was unable to advance the cause of the circle on my own.";
-
-                    break;
-
-
-            }
-
-            List<Response> responseList = new();
-
-            switch (dialogueId)
-            {
-
-                default: //beachOne
-
-                    responseList.Add(new Response("1a", "Is the beach how you remember it?"));
-
-                    break;
-
-                case 2:
-
-                    responseList.Add(new Response("2a", "I thought what you just did was great."));
-                    responseList.Add(new Response("2a", "I'm surprised you consider yourself untalented in the Weald."));
-
-                    break;
-
-                case 3:
-
-                    responseList.Add(new Response("3a", "You once told me the first farmer knew her."));
-                    responseList.Add(new Response("3a", "So it's true then, you were created with the Lady's power?"));
-
-                    break;
-
-                case 4:
-
-                    responseList.Add(new Response("4a", "Sociopathic slime monsters tend to talk smack."));
-                    responseList.Add(new Response("4a", "That blob was the most disgusting thing I've ever seen... today."));
-
-                    break;
-
-                case 5:
-
-                    responseList.Add(new Response("5a", "Are those... wisps?"));
-
-                    break;
-
-                case 6:
-
-                    responseList.Add(new Response("6a", "You kept the circle active in the valley all this time."));
-                    responseList.Add(new Response("6a", "Your friend was heartbroken. Such is life. His burdens are no longer yours to bear."));
-
-                    break;
-
-            }
-
-            GameLocation.afterQuestionBehavior questionBehavior = new(DialogueResponses);
-
-            Game1.player.currentLocation.createQuestionDialogue(intro, responseList.ToArray(), questionBehavior, npc);
-
-            return;
-
-        }
-
-        public override void DialogueResponses(Farmer visitor, string dialogueId)
-        {
-
-            StardewValley.NPC npc = companions[0];
-
-            switch (dialogueId)
-            {
-                default: //beachOne
-
-                    activeCounter = Math.Max(100, activeCounter);
-
-                    DialogueDraw(npc, "The sands and waves glimmer as they once did, but I think I remember them differently. " +
-                            "Perhaps they will appear more familiar when I've spent some time here.");
-
-                    break;
-
-                case "2a":
-
-                    activeCounter = Math.Max(200, activeCounter);
-
-                    DialogueDraw(npc, "I feel a resistance when I entreat the aid of the Two Kings. A slowness to respond. " +
-                        "Yes. The farm and grove of my former masters want for a better caretaker.");
-
-                    break;
-
-                case "3a":
-
-                    activeCounter = Math.Max(250, activeCounter);
-
-                    DialogueDraw(npc, "The first farmer and the Lady worked together in the aftermath of the war to revitalise the valley. " +
-                            "From the moment I awoke in this form, the circle of druids has been my mission, and my home. We built a little utopia in the valley, the first farm. " +
-                            "Then we rested and talked about the legends of our time. " +
-                            "But the dragons disappeared, and the elderborn departed, and the humans were left with all their creations. I have lost count of the days since that time.");
-
-                    break;
-
-                case "4a":
-
-                    activeCounter = Math.Max(400, activeCounter);
-
-                    DialogueDraw(npc, "Though it pains me to admit, the Jellyking spoke the truth about my present position. I am not an adequate guardian of the change. " +
-                            "Such duties have fallen to others, such as yourself, and the wizard and his ally. " +
-                            "Even the slime can see it. I have failed the duty given to me by the first farmer.");
-
-                    break;
-
-                case "5a":
-
-                    activeCounter = Math.Max(500, activeCounter);
-
-                    DialogueDraw(npc, "The will of the sleeping monarchs, their dreams and promises, become the wisps. " +
-                            "In a gentle moment, they revealed themselves to me, and continued to keep me company in the long period that I awaited for my friend's successor. " +
-                            "Now they reveal themselves to you too. It is a special privilege.");
-
-                    break;
-
-                case "6a":
-
-                    activeCounter = Math.Max(600, activeCounter);
-
-                    DialogueDraw(npc, "The Lady fulfilled her duty to the Weald and to Yoba. " +
-                            "After a time, I began to hear her voice in the storms, and mist would blanket the valley at odd times. " +
-                            "It became a mark of her presence, a sign of her enduring affection for the sacred places. " +
-                            "The circle weakened in her absence. The First Farmer's attention shifted to other matters, and he began to neglect his duty. " +
-                            "He became obsessed with fanciful ideas, and a desire for something beyond his grasp. Then he left.");
-
-                    break;
-
-            }
-
-        }
     }
 
 }

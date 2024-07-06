@@ -244,7 +244,7 @@ namespace StardewDruid.Cast.Mists
 
             activeCounter++;
 
-            if (activeCounter % 6 != 0)
+            if (activeCounter % 5 != 0)
             {
 
                 return;

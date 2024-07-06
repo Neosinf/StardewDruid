@@ -3,8 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Dialogue;
+using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Minigames;
 using StardewValley.Monsters;
 using StardewValley.Objects;
 using StardewValley.Projectiles;
@@ -18,6 +20,7 @@ using System.Text;
 using System.Threading.Tasks;
 using xTile.Dimensions;
 using static StardewDruid.Data.IconData;
+using static StardewValley.Menus.CharacterCustomization;
 using static System.Formats.Asn1.AsnWriter;
 
 namespace StardewDruid.Data
@@ -43,6 +46,8 @@ namespace StardewDruid.Data
             death,
             shadow,
             target,
+
+            divineCharge,
 
         }
 
@@ -95,7 +100,6 @@ namespace StardewDruid.Data
 
         public int displayColumns;
 
-
         public enum decorations
         {
             none,
@@ -122,6 +126,23 @@ namespace StardewDruid.Data
 
         };
 
+        public Dictionary<Rite.rites, displays> riteDisplays = new()
+        {
+
+            [Rite.rites.none] = displays.chaos,
+
+            [Rite.rites.weald] = displays.weald,
+
+            [Rite.rites.mists] = displays.mists,
+
+            [Rite.rites.stars] = displays.stars,
+
+            [Rite.rites.fates] = displays.fates,
+
+            [Rite.rites.ether] = displays.ether,
+
+        };
+
         public Texture2D decorationTexture;
 
         public int decorationColumns;
@@ -142,17 +163,18 @@ namespace StardewDruid.Data
             splatter,
             puff,
             cinder,
-            slash,
+            skull,
 
-            death,
-            deathwhirl,
-            immolation,
+            //death,
+            //whirl,
 
             nature,
             bomb,
-            combustion,
             boltswirl,
             deathbomb,
+            mists,
+            //gore,
+            //deathwhirl,
 
         }
 
@@ -160,18 +182,16 @@ namespace StardewDruid.Data
 
         public Texture2D impactsTextureTwo;
 
-        public Texture2D impactsTextureThree;
+        //public Texture2D impactsTextureThree;
 
         public enum skies
         {
             none,
-            night,
-            sunset,
             valley,
             mountain,
-            temple,
             moon,
-
+            night,
+            sunset,
         }
 
         public Texture2D skyTexture;
@@ -250,35 +270,17 @@ namespace StardewDruid.Data
         public enum tilesheets
         {
             none,
-            druid,
+            grove,
             atoll,
             chapel,
             court,
             tomb,
+            engineum,
+            gate,
 
         }
 
         public Dictionary<tilesheets, Texture2D> sheetTextures = new();
-
-        public const string druid_assetName = "Sheets/Druid";
-
-        public const string druid_tilesheet = "Sheets/Druid.png";
-
-        public const string atoll_assetName = "Sheets/Atoll";
-
-        public const string atoll_tilesheet = "Sheets/Atoll.png";
-
-        public const string chapel_assetName = "Sheets/Chapel";
-
-        public const string chapel_tilesheet = "Sheets/Chapel.png";
-
-        public const string court_assetName = "Sheets/Court";
-
-        public const string court_tilesheet = "Sheets/Court.png";
-
-        public const string tomb_assetName = "Sheets/Tomb";
-
-        public const string tomb_tilesheet = "Sheets/Tomb.png";
 
         public enum relics
         {
@@ -304,26 +306,26 @@ namespace StardewDruid.Data
             effigy_crest,
             jester_dice,
             shadowtin_tome,
-            companion_3, 
-            companion_4, 
+            dragon_form,
+            stardew_druid, 
             companion_5,
+            wayfinder_censer,
             wayfinder_lantern,
             wayfinder_water,
             wayfinder_eye,
             wayfinder_ceremonial,
-            warp_4,
-            warp_5,
+            wayfinder_dwarf,
             herbalism_mortar,
             herbalism_pan,
             herbalism_still,
             herbalism_crucible,
-            herbalism_1,
+            herbalism_gauge,
             herbalism_2,
             runestones_spring,
             runestones_farm,
             runestones_moon,
             runestones_cat, 
-            saurus_skull, 
+            runestones_5,
             runestones_6,
             avalant_disc,
             avalant_chassis,
@@ -332,10 +334,19 @@ namespace StardewDruid.Data
             avalant_needle,
             avalant_measure,
             book_wyrven,
-            texts_1,
-            texts_2, texts_3, texts_4,
+            book_letters,
+            book_manual, 
+            book_druid, 
+            book_chart,
             texts_5,
-            courtesan_pin,
+            box_measurer,
+            box_mortician,
+            box_artisan,
+            box_chaos,
+            box_4,
+            box_5,
+            skull_saurus,
+            skull_gelatin,
 
         }
 
@@ -356,6 +367,10 @@ namespace StardewDruid.Data
         public Texture2D crateTexture;
 
         public Texture2D warpstrikeTexture;
+        
+        public Texture2D warpswordTexture;
+        
+        public Texture2D warpswipeTexture;
 
         public Texture2D echoTexture;
 
@@ -363,20 +378,27 @@ namespace StardewDruid.Data
 
         public Texture2D shieldTexture;
 
+        public Microsoft.Xna.Framework.Rectangle shadowRectangle;
+
         public enum schemes
         {
             none,
 
-            ember,
-            ether,
-            bolt,
-            fates,
             weald,
+            mists,
+            stars,
+            fates,
+            ether,
+
+            death,
+            golden,
+            snazzle,
+            stardew,
 
             rock,
             rockTwo,
             rockThree,
-            death,
+
             Emerald,
             Aquamarine,
             Ruby,
@@ -392,8 +414,17 @@ namespace StardewDruid.Data
             blueberry,
             melon,
 
-            RedDragon,
-            GreenDragon,
+            dragon_custom,
+            dragon_red,
+            dragon_blue,
+            dragon_black,
+            dragon_green,
+            dragon_purple,
+
+            sword_steel,
+            sword_stars,
+            sword_lightsaber,
+            sword_warp,
 
 
         }
@@ -402,15 +433,21 @@ namespace StardewDruid.Data
         {
             [schemes.none] = Microsoft.Xna.Framework.Color.White,
 
-            [schemes.ember] = new(255, 173, 84),
-            [schemes.ether] = new(84, 163, 218),
-            [schemes.bolt] = new(75, 138, 187),
+            [schemes.weald] =  Microsoft.Xna.Framework.Color.Green,
+            [schemes.mists] =  new(83, 96, 150),
+            [schemes.stars] =  new(231, 102, 84),
             [schemes.fates] = new(119, 75, 131),
+            [schemes.ether] = new(13, 114, 185),
+
+            [schemes.death] = new(70, 60, 70),
+            [schemes.golden] = new(251, 201, 38),
+            [schemes.snazzle] = new(214, 0, 175),
+            [schemes.stardew] = new(210,164,89),
 
             [schemes.rock] = new(120, 154, 160),
             [schemes.rockTwo] = new(196, 164, 122),
             [schemes.rockThree] = new(144, 126, 144),
-            [schemes.death] = new(70, 60, 70),
+
             [schemes.Emerald] = new(67, 255, 83),
             [schemes.Aquamarine] = new(74, 243, 255),
             [schemes.Ruby] = new(255, 38, 38),
@@ -431,22 +468,44 @@ namespace StardewDruid.Data
         public Dictionary<IconData.schemes, List<Microsoft.Xna.Framework.Color>> gradientColours = new()
         {
             [schemes.none] = new() { Microsoft.Xna.Framework.Color.White, Microsoft.Xna.Framework.Color.Gray, Microsoft.Xna.Framework.Color.DarkGray, },
-            [schemes.ember] = new() { new(255, 230, 166), new(255, 173, 84), new(231, 102, 84), },
-            [schemes.ether] = new() { new(111, 203, 220), new(84,163,218), new(13, 114, 185), },
-            [schemes.bolt] = new() { new(75, 138, 187), new(70, 81, 144), new(83,96,150), },
-            [schemes.fates] = new() { new(119, 75, 131), new(59, 55, 100), new(37,34,74), new(236, 118, 124), },
+
             [schemes.weald] = new() { Microsoft.Xna.Framework.Color.White, Microsoft.Xna.Framework.Color.LightGreen, Microsoft.Xna.Framework.Color.Green },
-            [schemes.RedDragon] = new() { new(190, 30, 45), new(191, 142, 93), new(39, 170, 225) },
-            [schemes.GreenDragon] = new() { new(121,172,66), new(207,165,73), new(248, 149, 32) },
+            [schemes.mists] = new() { new(75, 138, 187), new(70, 81, 144), new(83,96,150), },
+            [schemes.stars] = new() { new(255, 230, 166), new(255, 173, 84), new(231, 102, 84), },
+            [schemes.fates] = new() { new(119, 75, 131), new(59, 55, 100), new(37,34,74), new(236, 118, 124), },
+            [schemes.ether] = new() { new(111, 203, 220), new(84, 163, 218), new(13, 114, 185), },
+
+            [schemes.golden] = new() { new(255, 250, 194), new(255, 232, 155), new(251, 201, 38), },
+            [schemes.snazzle] = new() { new(214, 0, 175), new(155, 0, 126), new(37, 34, 74), },
+
+            [schemes.dragon_red] = new() { new(190, 30, 45), new(191, 142, 93), new(39, 170, 225) },
+            [schemes.dragon_green] = new() { new(121,172,66), new(207,165,73), new(248, 149, 32) },
+            [schemes.dragon_blue] = new() { new(53, 70, 179), new(147, 149, 151), new(247, 148, 29) },
+            [schemes.dragon_black] = new() { new(57, 52, 53), new(69, 186, 235), new(146,86,163) },
+            [schemes.dragon_purple] = new() { new(159, 80, 191), new(69, 186, 235), new(0, 167, 157) },
+
+            [schemes.sword_steel] = new() { new(200,212,212), new(68, 80, 80), new(48, 60, 60) },
+            [schemes.sword_stars] = new() { new(255, 230, 166),  new(231, 102, 84), new(255, 173, 84), },
+            [schemes.sword_lightsaber] = new() { new(214, 0, 175), new(16, 16, 16), new(37, 34, 74), },
+            [schemes.sword_warp] = new() { new(159, 80, 191), new(16, 16, 16), new(37, 34, 74), },
         };
 
-        public Dictionary<Rite.rites, IconData.schemes> RiteScheme = new()
+        public Dictionary<IconData.schemes,string> DragonOptions = new()
         {
-            [Rite.rites.weald] = schemes.grannysmith,
-            [Rite.rites.mists] = schemes.bolt,
-            [Rite.rites.stars] = schemes.apple,
-            [Rite.rites.fates] = schemes.plum,
-            [Rite.rites.ether] = schemes.ether,
+            [schemes.dragon_custom] = "Custom",
+            [schemes.dragon_red] = "Red",
+            [schemes.dragon_blue] = "Blue",
+            [schemes.dragon_black] = "Black",
+            [schemes.dragon_green] = "Green",
+            [schemes.dragon_purple] = "Purple",
+
+        };
+
+        public Dictionary<IconData.schemes, string> BreathOptions = new()
+        {
+            [schemes.stars] = "Stars",
+            [schemes.fates] = "Fates",
+            [schemes.ether] = "Ether",
 
         };
 
@@ -469,21 +528,25 @@ namespace StardewDruid.Data
 
             impactsTextureTwo = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ImpactsTwo.png"));
 
-            impactsTextureThree = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ImpactsThree.png"));
+            //impactsTextureThree = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ImpactsThree.png"));
 
             skyTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Skies.png"));
 
             missileTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Missiles.png"));
 
-            sheetTextures[tilesheets.druid] = Mod.instance.Helper.ModContent.Load<Texture2D>(druid_tilesheet);
+            sheetTextures[tilesheets.grove] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Grove.png"));
 
-            sheetTextures[tilesheets.atoll] = Mod.instance.Helper.ModContent.Load<Texture2D>(atoll_tilesheet);
+            sheetTextures[tilesheets.atoll] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Atoll.png"));
 
-            sheetTextures[tilesheets.chapel] = Mod.instance.Helper.ModContent.Load<Texture2D>(chapel_tilesheet);
+            sheetTextures[tilesheets.chapel] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Chapel.png"));
 
-            sheetTextures[tilesheets.court] = Mod.instance.Helper.ModContent.Load<Texture2D>(court_tilesheet);
+            sheetTextures[tilesheets.court] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Court.png"));
 
-            sheetTextures[tilesheets.tomb] = Mod.instance.Helper.ModContent.Load<Texture2D>(tomb_tilesheet);
+            sheetTextures[tilesheets.tomb] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Tomb.png"));
+
+            sheetTextures[tilesheets.engineum] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Engineum.png"));
+
+            sheetTextures[tilesheets.gate] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Gate.png"));
 
             relicColumns = 6;
 
@@ -501,13 +564,33 @@ namespace StardewDruid.Data
 
             crateTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "DragonCrate.png"));
 
-            warpstrikeTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Warpstrike.png"));
+            warpstrikeTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Reaper.png"));
+
+            warpswordTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponSword.png"));
+
+            warpswipeTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponSwipe.png"));
 
             echoTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Echo.png"));
 
             wispTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Wisp.png"));
 
             shieldTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Shield.png"));
+
+            shadowRectangle = new(((int)cursors.shadow - 1) % cursorColumns * 48, ((int)cursors.shadow - 1) / cursorColumns * 48, 48, 48);
+
+            CustomDragonScheme();
+
+        }
+
+        public void CustomDragonScheme()
+        {
+
+            gradientColours[schemes.dragon_custom] = new()
+            {
+                new(Mod.instance.Config.dragonPrimaryR,Mod.instance.Config.dragonPrimaryG,Mod.instance.Config.dragonPrimaryB),
+                new(Mod.instance.Config.dragonSecondaryR,Mod.instance.Config.dragonSecondaryG,Mod.instance.Config.dragonSecondaryB),
+                new(Mod.instance.Config.dragonTertiaryR,Mod.instance.Config.dragonTertiaryG,Mod.instance.Config.dragonTertiaryB),
+            };
 
         }
 
@@ -530,7 +613,7 @@ namespace StardewDruid.Data
 
             if (id == cursors.none) { return new(); }
 
-            int slot = Convert.ToInt32(id) - 1;
+            int slot = (int)id - 1;
 
             return new(slot % cursorColumns * 48, slot / cursorColumns * 48, 48, 48);
 
@@ -703,26 +786,29 @@ namespace StardewDruid.Data
 
         }
 
-        public TemporaryAnimatedSprite ImpactIndicator(GameLocation location, Vector2 origin, impacts impact, float size, ImpactAdditional additional)
+        public void ImpactIndicator(GameLocation location, Vector2 origin, impacts impact, float size, ImpactAdditional additional)
         {
+
+            //List<Microsoft.Xna.Framework.Color> colours;
+
             switch (impact)
             {
 
                 case impacts.none:
 
-                    return null;
+                    return;
 
                 case impacts.impact:
 
                     additional.alpha = 0.85f;
 
-                    return null;
+                    break;
 
                 case impacts.glare:
 
                     additional.light = 0.01f;
 
-                    additional.alpha = 0.85f;
+                    //additional.alpha = 0.85f;
 
                     break;
 
@@ -742,21 +828,13 @@ namespace StardewDruid.Data
 
                     break;
 
-                case impacts.death:
+                //case impacts.death:
 
-                    additional.color = SchemeColour(additional.scheme);
+                //    additional.color = SchemeColour(additional.scheme);
 
-                    additional.alpha = 0.65f;
+                //    additional.alpha = 0.65f;
 
-                    break;
-
-                case impacts.deathwhirl:
-
-                    additional.color = SchemeColour(additional.scheme);
-
-                    additional.alpha = 0.7f;
-
-                    break;
+                //    break;
 
                 case impacts.clouds:
 
@@ -772,9 +850,9 @@ namespace StardewDruid.Data
 
                     additional.layerOffset = 0.001f;
 
-                    CreateImpact(location, origin, IconData.impacts.cinder, size + 2, additional);
+                    //CreateImpact(location, origin, IconData.impacts.cinder, size + 2, additional);
 
-                    additional.layerOffset = -0.001f;
+                    //additional.layerOffset = -0.001f;
 
                     CreateImpact(location, origin, IconData.impacts.puff, size + 1, additional);
 
@@ -782,21 +860,9 @@ namespace StardewDruid.Data
 
                     additional.layerOffset = 0f;
 
-                    return CreateImpact(location, origin, IconData.impacts.impact, size, additional);
+                    CreateImpact(location, origin, IconData.impacts.impact, size, additional);
 
-                case impacts.combustion:
-
-                    additional.light = 0f;
-
-                    additional.layerOffset = 0.001f;
-
-                    CreateImpact(location, origin, IconData.impacts.cinder, size + 1f, additional);
-
-                    additional.light = 0.005f;
-
-                    additional.layerOffset = 0f;
-
-                    return CreateImpact(location, origin, IconData.impacts.puff, size + 0.5f, additional);
+                    return;
 
                 case impacts.nature:
 
@@ -823,31 +889,42 @@ namespace StardewDruid.Data
 
                     additional.light = 0.005f;
 
-                    return CreateImpact(location, origin, IconData.impacts.sparkle, size, additional);
+                    CreateImpact(location, origin, IconData.impacts.sparkle, size, additional);
+                    return;
 
                 case impacts.boltswirl:
 
-                    additional.color = Microsoft.Xna.Framework.Color.White;
+                    additional.interval = 80;
 
                     additional.light = 0f;
 
-                    additional.alpha = 0.7f;
+                    additional.color = Microsoft.Xna.Framework.Color.White;
 
-                    additional.interval = 100;
+                    additional.alpha = 0.3f;
 
                     additional.layer = 997f;
 
                     CreateImpact(location, origin, IconData.impacts.spiral, 4f, additional);
 
-                    additional.color = gradientColours[schemes.bolt][0];
+                    additional.color = gradientColours[schemes.mists][0];
 
-                    additional.alpha = 0.4f;
+                    additional.alpha = 0.2f;
+
+                    additional.layer = 996f;
+
+                    CreateImpact(location, origin, IconData.impacts.spiral, 6f, additional);
+
+                    additional.color = gradientColours[schemes.mists][1];
+
+                    additional.alpha = 0.1f;
 
                     additional.layer = 995f;
 
                     additional.light = 0.005f;
 
-                    return CreateImpact(location, origin, IconData.impacts.spiral, 6f, additional);
+                    CreateImpact(location, origin, IconData.impacts.spiral, 8f, additional);
+
+                    return;
 
                 case impacts.deathbomb:
 
@@ -855,29 +932,158 @@ namespace StardewDruid.Data
 
                     additional.light = 0f;
 
-                    additional.layerOffset = 0.001f;
-
-                    additional.color = gradientColours[schemes.fates][0];
-
-                    CreateImpact(location, origin, IconData.impacts.cinder, size + 2, additional);
-
-                    additional.layerOffset = -0.001f;
-
-                    additional.color = gradientColours[schemes.fates][1];
-
-                    CreateImpact(location, origin, IconData.impacts.puff, size + 1, additional);
+                    CreateImpact(location, origin, IconData.impacts.puff, size, additional);
 
                     additional.light = 0.005f;
 
-                    additional.layerOffset = 0f;
+                    additional.layerOffset = 0.005f;
 
-                    additional.color = gradientColours[schemes.fates][2];
+                    //additional.color = Microsoft.Xna.Framework.Color.Black;
 
-                    return CreateImpact(location, origin, IconData.impacts.death, size, additional);
+                    TemporaryAnimatedSprite skull = CreateImpact(location, origin, IconData.impacts.skull, size+1f, additional);
+
+                    skull.alphaFade = 0.001f;
+
+                    return;
+
+                /*case impacts.deathbomb:
+
+                    if (gradientColours.ContainsKey(additional.scheme))
+                    {
+
+                        colours = gradientColours[additional.scheme];
+
+                    }
+                    else
+                    {
+
+                        colours = ConvertToGradient(additional.scheme);
+
+                    }
+
+                    additional.alpha = 0.85f;
+
+                    additional.light = 0f;
+
+                    additional.layerOffset = 0.001f;
+
+                    additional.color = colours[0];
+
+                    CreateImpact(location, origin, IconData.impacts.puff, size+1f, additional);
+
+                    additional.layerOffset = -0.001f;
+
+                    additional.color = colours[1];
+
+                    CreateImpact(location, origin, IconData.impacts.puff, size, additional);
+
+                    additional.light = 0.005f;
+
+                    additional.layerOffset = 0.0032f;
+
+                    additional.color = colours[2];
+
+                    CreateImpact(location, origin - new Vector2(0,32), IconData.impacts.death, size, additional);
+
+                    return;*/
+
+                /*case impacts.deathwhirl:
+
+                    if (gradientColours.ContainsKey(additional.scheme))
+                    {
+
+                        colours = gradientColours[additional.scheme];
+
+                    }
+                    else
+                    {
+
+                        colours = ConvertToGradient(additional.scheme);
+
+                    }
+
+                    additional.alpha = 0.85f;
+
+                    additional.light = 0f;
+
+                    additional.color = colours[0];
+
+                    CreateImpact(location, origin, IconData.impacts.whirl, size + 1, additional);
+
+                    additional.layerOffset = 0.001f;
+
+                    additional.color = colours[1];
+
+                    CreateImpact(location, origin, IconData.impacts.whirl, size, additional);
+
+                    additional.light = 0.005f;
+
+                    additional.layerOffset = 0.002f;
+
+                    additional.color = colours[2];
+
+                    CreateImpact(location, origin, IconData.impacts.whirl, size -1, additional);
+                    return;*/
+
+                case impacts.mists:
+
+                    AnimateMistic();
+
+                    additional.alpha = 0.1f;
+
+                    CreateImpact(location, Game1.player.Position - new Vector2(0,64), IconData.impacts.spiral, 5f, additional);
+                    return;
+
+               /* case impacts.gore:
+
+                    if (gradientColours.ContainsKey(additional.scheme))
+                    {
+
+                        colours = gradientColours[additional.scheme];
+
+                    }
+                    else
+                    {
+
+                        colours = ConvertToGradient(additional.scheme);
+
+                    }
+
+                    additional.alpha = 0.9f;
+
+                    additional.light = 0f;
+
+                    additional.color = colours[2];
+
+                    CreateImpact(location, origin, IconData.impacts.cinder, size + 2, additional);
+
+                    additional.layerOffset = 0.001f;
+
+                    additional.color = colours[1];
+
+                    additional.flip = true;
+
+                    CreateImpact(location, origin, IconData.impacts.cinder, size+1, additional);
+
+                    additional.light = 0.005f;
+
+                    additional.layerOffset = 0.002f;
+
+                    additional.color = colours[0];
+
+                    additional.flip = false;
+
+                    CreateImpact(location, origin, IconData.impacts.cinder, size, additional);
+
+                    //CreateImpact(location, origin, IconData.impacts.splash, size, additional);
+
+                    //CreateImpact(location, origin, IconData.impacts.splatter, size + 1, additional);
+
+                    return;*/
 
             }
 
-            return CreateImpact(location, origin, impact, size, additional);
+            CreateImpact(location, origin, impact, size, additional);
 
 
         }
@@ -914,11 +1120,11 @@ namespace StardewDruid.Data
 
                 sheet = impactsTextureTwo;
             }
-            else if (Y >= 12)
-            {
+            //else if (Y >= 12)
+            //{
 
-                sheet = impactsTextureThree;
-            }
+            //    sheet = impactsTextureThree;
+            //}
 
             return sheet;
 
@@ -1061,17 +1267,7 @@ namespace StardewDruid.Data
 
             Microsoft.Xna.Framework.Color coreColour = Microsoft.Xna.Framework.Color.White;
 
-            Microsoft.Xna.Framework.Color schemeColour = SchemeColour(scheme);
-
-            Microsoft.Xna.Framework.Color schemeLight = new(Math.Min((int)schemeColour.R + 32, 255), Math.Min((int)schemeColour.G + 32, 255), Math.Min((int)schemeColour.B + 32, 255));
-
-            int trydarkR = (int)schemeColour.R - 48;
-
-            int trydarkG = (int)schemeColour.G - 48;
-
-            int trydarkB= (int)schemeColour.B - 48;
-
-            Microsoft.Xna.Framework.Color schemeDark = new(trydarkR < 0 ? 0 : trydarkR, trydarkG < 0 ? 0 : trydarkG, trydarkB < 0 ? 0 : trydarkB);
+            List<Microsoft.Xna.Framework.Color> gradient;
 
             schemes rockScheme = schemes.rock;
 
@@ -1086,11 +1282,11 @@ namespace StardewDruid.Data
 
                     missileAnimations.Add(MissileAnimation(location,missileIndexes.blazeCore1,setat,scale,interval,frames,loops,depth,coreColour,0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.ember][0], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.stars][0], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.ember][1], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.stars][1], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.ember][2], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.stars][2], 0.75f));
 
                     break;
 
@@ -1100,11 +1296,11 @@ namespace StardewDruid.Data
 
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, coreColour, 1f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.ember][0], 1f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.stars][0], 1f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.ember][1], 1f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.stars][1], 1f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.ember][2], 1f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.stars][2], 1f));
 
                     missileIndexes meteorite = missileIndexes.meteor1;
 
@@ -1149,13 +1345,15 @@ namespace StardewDruid.Data
 
                 case missiles.slimeball:
 
+                    gradient = ConvertToGradient(scheme);
+
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, coreColour, 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, schemeLight, 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, gradient[0], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.trail1, setat, scale, interval, frames, loops, depth, schemeColour, 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.trail1, setat, scale, interval, frames, loops, depth, gradient[1], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.trailOutline1, setat, scale, interval, frames, loops, depth, schemeDark, 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.trailOutline1, setat, scale, interval, frames, loops, depth, gradient[2], 0.75f));
 
                     break;
 
@@ -1163,11 +1361,11 @@ namespace StardewDruid.Data
 
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, coreColour, 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.ember][0], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.stars][0], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.ember][1], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.stars][1], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.ember][2], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.stars][2], 0.75f));
 
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.cannonball, setat, (int)(scale * 0.75f), interval * frames * loops, 1, 1, depth + 0.0001f, SchemeColour(schemes.death), 0.75f));
 
@@ -1175,11 +1373,13 @@ namespace StardewDruid.Data
 
                 case missiles.death:
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, schemeDark, 0.9f));
+                    gradient = ConvertToGradient(scheme);
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, schemeColour, 0.9f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, gradient[2], 0.9f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, schemeLight, 0.9f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, gradient[1], 0.9f));
+
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, gradient[0], 0.9f));
 
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, coreColour, 0.9f));
 
@@ -1216,6 +1416,26 @@ namespace StardewDruid.Data
             }
 
             return missileAnimations;
+
+        }
+
+        public List<Microsoft.Xna.Framework.Color> ConvertToGradient(schemes scheme)
+        {
+
+            Microsoft.Xna.Framework.Color schemeColour = SchemeColour(scheme);
+
+            Microsoft.Xna.Framework.Color schemeLight = new(Math.Min((int)schemeColour.R + 32, 255), Math.Min((int)schemeColour.G + 32, 255), Math.Min((int)schemeColour.B + 32, 255));
+
+            int trydarkR = (int)schemeColour.R - 24;
+
+            int trydarkG = (int)schemeColour.G - 24;
+
+            int trydarkB = (int)schemeColour.B - 24;
+
+            Microsoft.Xna.Framework.Color schemeDark = new(trydarkR < 0 ? 0 : trydarkR, trydarkG < 0 ? 0 : trydarkG, trydarkB < 0 ? 0 : trydarkB);
+
+            return new() { schemeLight, schemeColour, schemeDark, };
+
 
         }
 
@@ -1259,6 +1479,12 @@ namespace StardewDruid.Data
 
                 layer = origin.Y / 10000;
 
+            }
+
+            if (grade == 3)
+            {
+
+                grade = Mod.instance.randomIndex.Next(2) + 1;
             }
 
             emberAnimations.Add(emberAnimation(location, origin, scale, grade, 0, gradientColours[scheme][2], layer, 0.65f, Time));
@@ -1312,7 +1538,7 @@ namespace StardewDruid.Data
 
         }
 
-        public List<TemporaryAnimatedSprite> BoltAnimation(GameLocation location, Vector2 origin, IconData.schemes scheme = schemes.bolt, int size = 2)
+        public List<TemporaryAnimatedSprite> BoltAnimation(GameLocation location, Vector2 origin, IconData.schemes scheme = schemes.mists, int size = 2)
         {
 
             List<TemporaryAnimatedSprite> animations = new();
@@ -1323,9 +1549,9 @@ namespace StardewDruid.Data
 
             int offset = 0;
 
-            Vector2 originOffset = new((int)origin.X + 32 - (int)(32 * boltScale), (int)origin.Y + 48 - (int)(384 * boltScale));
+            Vector2 originOffset = new((int)origin.X + 32 - (int)(32 * boltScale), (int)origin.Y + 48 - (int)(400 * boltScale));
 
-            if ((int)originOffset.Y < viewY && (int)origin.Y - viewY >= 192)
+            if ((int)originOffset.Y < viewY && (int)origin.Y - viewY >= 200)
             {
 
                 offset = (int)((viewY - (int)originOffset.Y) / boltScale);
@@ -1338,16 +1564,16 @@ namespace StardewDruid.Data
 
             bool flippit = (Game1.random.NextDouble() < 0.5) ? true : false;
 
-            TemporaryAnimatedSprite bolt1 = new(0, 500, 1, 999, originOffset + new Vector2(-32 + Mod.instance.randomIndex.Next(5) * 16, 0), false, flippit)
+            TemporaryAnimatedSprite bolt1 = new(0, 500, 1, 999, originOffset, false, flippit)
             {
 
-                sourceRect = new(randSet1, offset, 48, 385 - offset),
+                sourceRect = new(randSet1, offset, 48, 400 - offset),
 
                 sourceRectStartingPos = new Vector2(randSet1, offset),
 
                 texture = boltTexture,
 
-                layerDepth = 802f,
+                layerDepth = 803f,
 
                 scale = boltScale,
 
@@ -1357,12 +1583,33 @@ namespace StardewDruid.Data
 
             animations.Add(bolt1);
 
-            int randSet2 = 48 * Mod.instance.randomIndex.Next(4);
-
-            TemporaryAnimatedSprite bolt2 = new(0, 500, 1, 999, originOffset + new Vector2(-32 + Mod.instance.randomIndex.Next(5) * 16, 0), false, (Game1.random.NextDouble() < 0.5) ? true : false)
+            TemporaryAnimatedSprite boltX = new(0, 500, 1, 999, originOffset, false, flippit)
             {
 
-                sourceRect = new(192 + randSet2, offset, 48, 385 - offset),
+                sourceRect = new(192 + randSet1, offset, 48, 400 - offset),
+
+                sourceRectStartingPos = new Vector2(192 + randSet1, offset),
+
+                texture = boltTexture,
+
+                layerDepth = 802f,
+
+                scale = boltScale,
+
+                color = gradientColours[scheme][0],
+
+            };
+
+            location.temporarySprites.Add(boltX);
+
+            animations.Add(boltX);
+
+            int randSet2 = 48 * Mod.instance.randomIndex.Next(4);
+
+            TemporaryAnimatedSprite bolt2 = new(0, 500, 1, 999, originOffset - new Vector2(2 * boltScale, 0), false, (Game1.random.NextDouble() < 0.5) ? true : false)
+            {
+
+                sourceRect = new(384 + randSet2, offset, 48, 400 - offset),
 
                 sourceRectStartingPos = new Vector2(192 + randSet2, offset),
 
@@ -1382,10 +1629,10 @@ namespace StardewDruid.Data
 
             int randSet3 = 48 * Mod.instance.randomIndex.Next(4);
 
-            TemporaryAnimatedSprite bolt3 = new(0, 500, 1, 999, originOffset, false, (Game1.random.NextDouble() < 0.5) ? true : false)
+            TemporaryAnimatedSprite bolt3 = new(0, 500, 1, 999, originOffset + new Vector2(2*boltScale,0), false, (Game1.random.NextDouble() < 0.5) ? true : false)
             {
 
-                sourceRect = new(384 + randSet3, offset, 48, 385 - offset),
+                sourceRect = new(576 + randSet3, offset, 48, 385 - offset),
 
                 sourceRectStartingPos = new Vector2(384 + randSet3, offset),
 
@@ -1414,9 +1661,9 @@ namespace StardewDruid.Data
 
             TemporaryAnimatedSprite bolt4 = CreateImpact(
                 location,
-                originOffset + new Vector2(64, -64),
+                originOffset + new Vector2(32, -24),
                 impacts.clouds, 
-                boltScale + 3.5f,
+                boltScale + 1f,
                 new() {
                     color = gradientColours[scheme][2],
                     girth = 2,
@@ -1430,9 +1677,9 @@ namespace StardewDruid.Data
 
             TemporaryAnimatedSprite bolt5 = CreateImpact(
                 location,
-                originOffset + new Vector2(80, -32),
+                originOffset + new Vector2(48, -12),
                 impacts.clouds, 
-                boltScale + 2.5f,
+                boltScale +0.5f,
                 new()
                 {
                     color = gradientColours[scheme][0],
@@ -1440,23 +1687,23 @@ namespace StardewDruid.Data
                     layer = 804f,
                     interval = 200,
                     frames = 4,
-                    alpha = 0.8f,
+                    alpha = 0.7f,
                 });
 
             animations.Add(bolt5);
 
             TemporaryAnimatedSprite bolt6 = CreateImpact(
                 location,
-                originOffset + new Vector2(96, 0),
+                originOffset + new Vector2(64, 0),
                 impacts.clouds, 
-                boltScale+0.5f,
+                boltScale,
                 new()
                 {
                     girth = 2,
                     layer = 805f,
                     interval = 200,
                     frames = 4,
-                    alpha = 0.9f,
+                    alpha = 0.7f,
                 });
 
             animations.Add(bolt6);
@@ -1509,6 +1756,87 @@ namespace StardewDruid.Data
 
         }
 
+        /*public List<TemporaryAnimatedSprite> ZapAnimation(GameLocation location, Vector2 origin, Vector2 destination, IconData.schemes scheme = schemes.golden, int size = 2)
+        {
+
+            List<TemporaryAnimatedSprite> animations = new();
+
+            float boltScale = 1.5f + (0.5f * size);
+
+            float distance = Vector2.Distance(origin, destination);
+
+            Vector2 diff = destination - origin;
+
+            Vector2 point = diff / distance;
+
+            Vector2 middle = origin + (point * 72 * boltScale);
+
+            Vector2 end = origin + (point * 136 * boltScale);
+
+            float rotate = (float)Math.Atan2(diff.Y, diff.X) - (float)(Math.PI / 2);
+
+            Vector2 originOffset = new(middle.X - (24*boltScale), middle.Y - (64*boltScale));
+
+            Microsoft.Xna.Framework.Rectangle sourceRect2 = new(192, Mod.instance.randomIndex.Next(3) * 128, 48, 128);
+
+            TemporaryAnimatedSprite bolt2 = new(0, 75,4,1, originOffset, false, false)
+            {
+
+                sourceRect = sourceRect2,
+
+                sourceRectStartingPos = new Vector2(sourceRect2.X, sourceRect2.Y),
+
+                texture = boltTexture,
+
+                layerDepth = 801f,
+
+                scale = boltScale,
+
+                color = Microsoft.Xna.Framework.Color.White,
+
+                rotation = rotate,
+
+            };
+
+            location.temporarySprites.Add(bolt2);
+
+            animations.Add(bolt2);
+
+            Microsoft.Xna.Framework.Rectangle sourceRect3 = new(384, Mod.instance.randomIndex.Next(3)*128, 48, 128);
+
+            TemporaryAnimatedSprite bolt3 = new(0, 75, 4, 1, originOffset, false, false)
+            {
+
+                sourceRect = sourceRect3,
+
+                sourceRectStartingPos = new Vector2(sourceRect3.X, sourceRect3.Y),
+
+                texture = boltTexture,
+
+                layerDepth = 800f,
+
+                scale = boltScale,
+
+                color = gradientColours[scheme][2],
+
+                rotation = rotate,
+
+            };
+
+            location.temporarySprites.Add(bolt3);
+
+            animations.Add(bolt3);
+
+            CreateImpact(location, end, IconData.impacts.electric, size, new(){ interval = 50, color = gradientColours[scheme][2], });
+
+            CreateImpact(location, end, IconData.impacts.electric, size+0.5f, new(){ interval = 50, color = gradientColours[scheme][1], });
+
+            CreateImpact(location, end, IconData.impacts.electric, size+1f, new(){ interval = 50, color = Microsoft.Xna.Framework.Color.White, });
+
+            return animations;
+
+        }*/
+
         public void AnimateQuickWarp(GameLocation location, Vector2 origin, bool reverse = false)
         {
 
@@ -1535,42 +1863,6 @@ namespace StardewDruid.Data
 
             location.temporarySprites.Add(cursorAnimation);
 
-
-        }
-
-        public TemporaryAnimatedSprite AnimateTarget(GameLocation location, Vector2 origin, IconData.schemes scheme, int counter)
-        {
-
-            Vector2 originOffset = origin - new Vector2(32, 8 * (counter < 3 ? counter : 6 - counter));
-
-            Vector2 animationMotion = new Vector2(0, counter < 3 ? -0.008f : 0.008f);
-
-            Microsoft.Xna.Framework.Rectangle cursorRect = CursorRect(cursors.target);
-
-            TemporaryAnimatedSprite targetAnimation = new(0, 1000f, 1, 1, originOffset, false, false)
-            {
-
-                sourceRect = cursorRect,
-
-                sourceRectStartingPos = new Vector2(cursorRect.X, cursorRect.Y),
-
-                texture = cursorTexture,
-
-                layerDepth = 999f,
-
-                scale = 2f,
-
-                motion = animationMotion,
-
-                timeBasedMotion = true,
-
-                color = SchemeColour(scheme),
-
-            };
-
-            location.temporarySprites.Add(targetAnimation);
-
-            return targetAnimation;
 
         }
         
@@ -1602,176 +1894,194 @@ namespace StardewDruid.Data
 
         }
 
-        public TemporaryAnimatedSprite AnimateWarpStrike(GameLocation location, Vector2 origin, int direction, int alternative = 0)
+        public List<TemporaryAnimatedSprite> AnimateWarpStrike(GameLocation location, Vector2 origin, int direction, IconData.schemes scheme = schemes.sword_steel)
         {
 
-            Vector2 offset = origin - new Vector2(96, 96);
+            List<TemporaryAnimatedSprite> animations = new();
 
-            bool flip = false;
+            Microsoft.Xna.Framework.Rectangle source = WeaponRender.StrikeRectangle(direction);
 
-            Microsoft.Xna.Framework.Rectangle source = new(0, 0, 64, 64);
+            Vector2 center = WeaponRender.StrikePosition(origin, direction) - new Vector2(32);
 
-            switch (direction)
-            {
+            bool flip = WeaponRender.StrikeFlip(direction);
 
-                case 0:
+            float layer = center.Y / 10000;
 
-                    offset.Y += 96;
+            int interval = 150;
 
-                    source.Y += 256;
+            // strike
 
-                    flip = true;
-
-                    break;
-
-                case 1:
-
-                    offset.X -= 64;
-
-                    offset.Y += 64;
-
-                    source.Y += 128;
-
-                    break;
-
-                case 2:
-
-                    offset.X -= 96;
-
-                    source.Y += 64;
-
-                    break;
-
-                case 3:
-
-                    offset.X -= 64;
-
-                    offset.Y -= 96;
-
-                    break;
-
-                case 4:
-
-                    offset.Y -= 96;
-
-                    source.Y += 256;
-
-                    break;
-
-                case 5:
-
-                    offset.X += 64;
-
-                    offset.Y -= 96;
-
-                    flip = true;
-
-                    break;
-
-                case 6:
-
-                    offset.X += 96;
-
-                    source.Y += 192;
-
-                    flip = true;
-
-                    break;
-
-                case 7:
-
-                    offset.X += 64;
-
-                    offset.Y += 64;
-
-                    flip = true;
-
-                    source.Y += 128;
-
-                    break;
-
-            }
-
-            TemporaryAnimatedSprite strike = new(0, 75, 4, 1, offset, false, flip)
+            TemporaryAnimatedSprite strike = new(0, interval, 4, 1, center, false, flip)
             {
                 sourceRect = source,
                 sourceRectStartingPos = new Vector2(source.X, source.Y),
                 texture = warpstrikeTexture,
                 scale = 4f,
-                layerDepth = 0.8f,
+                layerDepth = layer + 0.001f,
                 alpha = 0.75f,
             };
 
             location.temporarySprites.Add(strike);
 
-            return strike;
+            animations.Add(strike);
+
+            // weapon 1
+
+            Microsoft.Xna.Framework.Rectangle weaponSource = WeaponRender.WeaponRectangle(source);
+
+            float layerOffset = WeaponRender.WeaponOffset(source);
+
+            center.X -= 64;
+
+            center.Y -= 64;
+
+            TemporaryAnimatedSprite weapon = new(0, interval, 4, 1, center, false, flip)
+            {
+                sourceRect = weaponSource,
+                sourceRectStartingPos = new Vector2(weaponSource.X, weaponSource.Y),
+                texture = warpswordTexture,
+                color = gradientColours[scheme][0],
+                scale = 4f,
+                layerDepth = layer + 0.001f + layerOffset,
+                alpha = 0.75f,
+            };
+
+            location.temporarySprites.Add(weapon);
+
+            animations.Add(weapon);
+
+            // weapon 2
+
+            weaponSource.X += 256;
+
+            TemporaryAnimatedSprite weaponTwo = new(0, interval, 4, 1, center, false, flip)
+            {
+                sourceRect = weaponSource,
+                sourceRectStartingPos = new Vector2(weaponSource.X, weaponSource.Y),
+                texture = warpswordTexture,
+                color = gradientColours[scheme][1],
+                scale = 4f,
+                layerDepth = layer + 0.001f + layerOffset,
+                alpha = 0.75f,
+            };
+
+            location.temporarySprites.Add(weaponTwo);
+
+            animations.Add(weaponTwo);
+
+            // weapon 3
+
+            weaponSource.X += 256;
+
+            TemporaryAnimatedSprite weaponThree = new(0, interval, 4, 1, center, false, flip)
+            {
+                sourceRect = weaponSource,
+                sourceRectStartingPos = new Vector2(weaponSource.X, weaponSource.Y),
+                texture = warpswordTexture,
+                color = gradientColours[scheme][2],
+                scale = 4f,
+                layerDepth = layer + 0.001f + layerOffset,
+                alpha = 0.75f,
+            };
+
+            location.temporarySprites.Add(weaponThree);
+
+            animations.Add(weaponThree);
+
+            // swipe
+
+            layerOffset = WeaponRender.SwipeOffset(source);
+
+            Microsoft.Xna.Framework.Rectangle swipeSource = WeaponRender.SwipeRectangle(source);
+
+            TemporaryAnimatedSprite swipe = new(0, interval, 4, 1, center, false, flip)
+            {
+                sourceRect = swipeSource,
+                sourceRectStartingPos = new Vector2(swipeSource.X, swipeSource.Y),
+                texture = warpswipeTexture,
+                color = gradientColours[scheme][0],
+                scale = 4f,
+                layerDepth = layer + 0.001f + layerOffset,
+                alpha = 0.5f,
+            };
+
+            location.temporarySprites.Add(swipe);
+
+            animations.Add(swipe);
+
+            return animations;
 
         }
 
-        public TemporaryAnimatedSprite AnimateWarpSlash(GameLocation location, Vector2 origin)
+        public void AdjustWarpStrke(List<TemporaryAnimatedSprite> animations,Vector2 origin,int direction)
         {
 
-            Vector2 impact = origin - new Vector2(32, 32);
+            Vector2 center = WeaponRender.StrikePosition(origin, direction) - new Vector2(32);
 
-            Microsoft.Xna.Framework.Rectangle swipe = new(0, 320, 64, 64);
+            animations[0].position = center;
 
-            int frames = 3;
+            float layerOffset = WeaponRender.WeaponOffset(animations[0].sourceRect);
 
-            switch (Mod.instance.randomIndex.Next(3))
+            center.X -= 64;
+
+            center.Y -= 64;
+
+            for(int i = 1; i < animations.Count - 1; i++)
             {
 
-                case 2:
+                animations[i].position = center;
 
-                    swipe.X = 6 * 64;
-
-                    frames = 2;
-
-                    break;
-
-                case 1:
-
-                    swipe.X = 3 * 64;
-
-                    break;
+                animations[i].layerDepth = animations[0].layerDepth + layerOffset;
 
             }
 
-            TemporaryAnimatedSprite slash = new(0, 125, frames, 1, impact, false, false)
-            {
-                sourceRect = swipe,
-                sourceRectStartingPos = new Vector2(swipe.X, swipe.Y),
-                texture = impactsTextureTwo,
-                scale = 2f,
-                layerDepth = 0.9f,
-                alpha = 0.75f,
-                timeBasedMotion = true,
-                delayBeforeAnimationStart = 200,
-            };
+            layerOffset = WeaponRender.SwipeOffset(animations[0].sourceRect);
 
-            location.temporarySprites.Add(slash);
+            animations[4].position = center;
 
-            swipe.X += (frames - 1) * 64;
-
-            TemporaryAnimatedSprite slashTwo = new(0, 1000, 1, 1, impact, false, false)
-            {
-                sourceRect = swipe,
-                sourceRectStartingPos = new Vector2(swipe.X, swipe.Y),
-                texture = impactsTextureTwo,
-                scale = 2f,
-                layerDepth = 0.9f,
-                alpha = 0.75f,
-                alphaFade = 0.000375f,
-                motion = new(0.016f, 0.016f),
-                timeBasedMotion = true,
-                delayBeforeAnimationStart = 200 + (frames * 125),
-            };
-
-            location.temporarySprites.Add(slashTwo);
-
-            return slash;
+            animations[4].layerDepth = animations[0].layerDepth + layerOffset;
 
         }
 
+        public void AnimateMistic()
+        {
+
+            Vector2 mistCorner = Game1.player.Position - new Vector2(96, 128);
+
+            for (int i = 0; i < 4; i++)
+            {
+
+                for (int j = 0; j < 4; j++)
+                {
+
+                    if ((i == 0 || i == 5) && (j == 0 || j == 5))
+                    {
+                        continue;
+                    }
+
+                    Vector2 glowVector = mistCorner + new Vector2(i * 32, j * 32);
+
+                    TemporaryAnimatedSprite glowSprite = new TemporaryAnimatedSprite(0, 3000f, 1, 1, glowVector, false, false)
+                    {
+                        sourceRect = new Microsoft.Xna.Framework.Rectangle(88, 1779, 30, 30),
+                        sourceRectStartingPos = new Vector2(88, 1779),
+                        texture = Game1.mouseCursors,
+                        motion = new(0.016f * (Mod.instance.randomIndex.Next(2) == 0 ? 1 : -1) * Mod.instance.randomIndex.Next(1, 4), 0.016f * (Mod.instance.randomIndex.Next(2) == 0 ? 1 : -1) * Mod.instance.randomIndex.Next(1, 4)),
+                        scale = 4f,
+                        layerDepth = 999f,
+                        timeBasedMotion = true,
+                        alpha = 0.7f,
+                        alphaFade = 0.0005f,
+                        color = new Microsoft.Xna.Framework.Color(0.75f, 0.75f, 1f, 1f),
+                    };
+
+                    Game1.player.currentLocation.temporarySprites.Add(glowSprite);
+
+                }
+
+            }
+
+        }
 
     }
 

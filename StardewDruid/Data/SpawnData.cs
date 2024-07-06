@@ -1,19 +1,18 @@
-﻿using GenericModConfigMenu;
-using StardewDruid.Cast;
+﻿using StardewDruid.Cast;
+using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Enchantments;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
-using xTile.Dimensions;
-using static StardewDruid.Cast.Rite;
 
 namespace StardewDruid.Data
 {
-    static class SpawnData
+    public static class SpawnData
     {
 
         public enum drops
@@ -25,6 +24,73 @@ namespace StardewDruid.Data
             phantom,
             seafarer,
             dragon,
+            dust,
+            rex,
+        }
+
+        public enum swords
+        {
+            forest,
+            neptune,
+            holy,
+            lava,
+            scythe,
+            cutlass,
+        }
+
+        public static MeleeWeapon SpawnSword(swords sword)
+        {
+
+            switch (sword)
+            {
+                default:
+                case swords.forest:
+
+                    if (Mod.instance.Helper.ModRegistry.IsLoaded("DaLion.Overhaul"))
+                    {
+                        return new MeleeWeapon("44");
+                    }
+
+                    return new MeleeWeapon("15");
+
+                case swords.neptune:
+
+                    if (Mod.instance.Helper.ModRegistry.IsLoaded("DaLion.Overhaul"))
+                    {
+                        return new MeleeWeapon("7");
+                    }
+
+                    return new MeleeWeapon("14");
+
+                case swords.holy:
+
+                    StardewValley.Tools.MeleeWeapon holyBlade = new("3");
+
+                    holyBlade.enchantments.Add(new BugKillerEnchantment());
+
+                    holyBlade.enchantments.Add(new CrusaderEnchantment());
+
+                    RubyEnchantment powerEnchantment = new();
+
+                    powerEnchantment.SetLevel(holyBlade, 3);
+
+                    holyBlade.enchantments.Add(powerEnchantment);
+
+                    return holyBlade;
+
+                case swords.lava:
+
+                    return new MeleeWeapon("9");
+
+                case swords.scythe:
+
+                    return new MeleeWeapon("53");
+
+                case swords.cutlass:
+
+                    return new MeleeWeapon("57");
+
+            }
 
         }
 
@@ -160,6 +226,53 @@ namespace StardewDruid.Data
 
                     break;
 
+                case drops.dust:
+
+                    monster.objectsToDrop.Clear();
+
+                    if (Game1.random.Next(3) == 0)
+                    {
+                        monster.objectsToDrop.Add("382"); // coal
+
+                    }
+                    else if (Game1.random.Next(4) == 0 && Mod.instance.PowerLevel >= 3)
+                    {
+                        monster.objectsToDrop.Add("395"); // coffee (edible)
+
+                    }
+                    else if (Game1.random.Next(5) == 0 && Mod.instance.PowerLevel >= 4)
+                    {
+                        monster.objectsToDrop.Add("251"); // tea sapling
+                    }
+
+                    break;
+
+                case drops.rex:
+
+                    monster.objectsToDrop.Clear();
+
+                    List<string> dropList = new()
+                    {
+                        "580", //: "Prehistoric Tibia/100/-300/Arch/Prehistoric Tibia/A thick and sturdy leg bone./Forest .01//",
+                        "583", //: "Prehistoric Rib/100/-300/Arch/Prehistoric Rib/Little gouge marks on the side suggest that this rib was someone's dinner./Farm .01//",
+                        "584", //: "Prehistoric Vertebra/100/-300/Arch/Prehistoric Vertebra/A segment of some prehistoric creature's spine./BusStop .01//",
+
+                    };
+
+                    monster.objectsToDrop.Add(dropList[Mod.instance.randomIndex.Next(dropList.Count)]);
+
+                    if (Game1.random.Next(3) == 0 && Mod.instance.PowerLevel >= 3)
+                    {
+                        monster.objectsToDrop.Add("107"); // dino egg
+
+                    }
+                    else if (Game1.random.Next(4) == 0 && Mod.instance.PowerLevel >= 4)
+                    {
+                        monster.objectsToDrop.Add("72"); // diamond
+                    }
+
+                    break;
+
             }
 
             return;
@@ -211,72 +324,6 @@ namespace StardewDruid.Data
             };
 
             return stoneIndex;
-
-        }
-
-        /*public static List<int> RoughageList()
-        {
-            List<int> roughageIndex = new()
-            {
-                92, // Sap
-                766, // Slime
-                311, // PineCone
-                310, // MapleSeed
-                309, // Acorn
-                292, // Mahogany
-                767, // BatWings
-                420, // RedMushroom
-                831, // Taro Tuber
-            };
-
-            return roughageIndex;
-        }*/
-
-        /*public static List<int> LunchList()
-        {
-
-            List<int> lunchIndex = new()
-            {
-                399, // SpringOnion
-                403, // Snackbar
-                404, // FieldMushroom
-                257, // Morel
-                281, // Chanterelle
-                152, // Seaweed
-                153, // Algae
-                157, // white Algae
-                78, // Carrot
-                227, // Sashimi
-                296, // Salmonberry
-                410, // Blackberry
-                424, // Cheese
-                24, // Parsnip
-                851, // Magma Cap
-                196, // Salad
-                349, // Tonic
-            };
-
-            return lunchIndex;
-
-        }*/
-
-        public static Dictionary<int, int> CoffeeList()
-        {
-
-            Dictionary<int, int> coffeeList = new()
-            {
-                [167] = 60000, // Joja Cola
-                [433] = 20000, // Coffee Beans
-                [829] = 60000, // Ginger
-                [815] = 60000, // Tea Leaves
-                [614] = 120000, // Tea
-                [395] = 90000, // Coffee
-                [253] = 300000, // Triple Espresso
-                [349] = 300000, //349: "Energy Tonic/500/200/Crafting/Energy Tonic/Restores a lot of energy./drink/0 0 0 0 0 0 0 0 0 0 0/0",
-
-            };
-
-            return coffeeList;
 
         }
 
@@ -749,18 +796,49 @@ namespace StardewDruid.Data
 
         }
 
+        public static int ForestWaterCheck(GameLocation location)
+        {
+
+            if(location is not Forest)
+            {
+                
+                return 0;
+
+            }
+
+            int Y = (int)Game1.player.Tile.Y;
+
+            if (Y > 100)
+            {
+
+                return 3;
+
+            } else if (Y > 50)
+            {
+
+                return 2;
+
+            }
+
+            return 1;
+
+        }
+
         public static string RandomLowFish(GameLocation location)
         {
             List<string> indexes = new();
 
-            if (location is Beach)
+
+            int forest = ForestWaterCheck(location);
+
+            if (location is Beach || location is Atoll || forest == 3)
             {
 
                 if (Game1.isRaining)
                 {
 
                     indexes.Add("150"); // red snapper
-                    indexes.Add("SeaJelly"); // red snapper
+                    if (Mod.instance.randomIndex.Next(3) == 0) { indexes.Add("SeaJelly"); }
 
                 }
 
@@ -794,7 +872,10 @@ namespace StardewDruid.Data
                 {
 
                     indexes.Add("150"); // red snapper
-                    indexes.Add("SeaJelly");
+                    if (Mod.instance.randomIndex.Next(3) == 0)
+                    {
+                        indexes.Add("SeaJelly");
+                    }
 
                 }
 
@@ -809,7 +890,10 @@ namespace StardewDruid.Data
                 {
 
                     indexes.Add("132"); // bream
-                    indexes.Add("RiverJelly");
+                    if (Mod.instance.randomIndex.Next(3) == 0)
+                    {
+                        indexes.Add("RiverJelly");
+                    }
                 }
 
                 switch (Game1.currentSeason)
@@ -817,7 +901,12 @@ namespace StardewDruid.Data
 
                     case "spring":
 
-                        indexes.Add("137"); // smallmouth bass
+                        if(forest != 1)
+                        {
+                            indexes.Add("137"); // smallmouth bass
+
+                        }
+
                         indexes.Add("145"); // sunfish
                         break;
                     case "summer":
@@ -826,7 +915,12 @@ namespace StardewDruid.Data
                         break;
 
                     case "fall":
-                        indexes.Add("137"); // smallmouth bass
+
+                        if (forest != 1)
+                        {
+                            indexes.Add("137"); // smallmouth bass
+
+                        }
                         indexes.Add("141"); // perch
                         break;
 
@@ -844,7 +938,10 @@ namespace StardewDruid.Data
                 {
 
                     indexes.Add("132"); // bream
-                    indexes.Add("CaveJelly");
+                    if (Mod.instance.randomIndex.Next(3) == 0)
+                    {
+                        indexes.Add("CaveJelly");
+                    }
 
                 }
 
@@ -864,6 +961,8 @@ namespace StardewDruid.Data
             Dictionary<int, int> objectIndexes;
 
             int seasonStar;
+
+            int forest = ForestWaterCheck(location);
 
             if (location is Woods || location is Desert || location is Caldera || location is MineShaft)
             {
@@ -900,7 +999,7 @@ namespace StardewDruid.Data
 
                 }
             }
-            else if (location is Beach || location is IslandLocation)
+            else if (location is Beach || location is IslandLocation || location is Atoll || forest == 3)
             {
 
                 switch (Game1.currentSeason)
@@ -986,11 +1085,20 @@ namespace StardewDruid.Data
                 [0] = 275, //"Artifact Trove/0/-300/Basic/Artifact Trove/A blacksmith can open this for you. These troves often contain ancient relics and curiosities./100 101 103 104 105 106 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 166 373 797//",
                 [1] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
                 [2] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
-                [3] = 397, // urchin
-                [4] = 394, //"Rainbow Shell/300/-300/Basic -23/Rainbow Shell/It's a very beautiful shell.///",
-                [5] = 393, //"Coral/80/-300/Basic -23/Coral/A colony of tiny creatures that clump together to form beautiful structures.///",
             };
         
+            if(location is Beach || location is IslandLocation || location is Atoll)
+            {
+
+                objectIndexes = new()
+                {
+                    [0] = 397, // urchin
+                    [1] = 394, //"Rainbow Shell/300/-300/Basic -23/Rainbow Shell/It's a very beautiful shell.///",
+                    [2] = 393, //"Coral/80/-300/Basic -23/Coral/A colony of tiny creatures that clump together to form beautiful structures.///",
+                };
+
+            }
+
             if (location is Caldera)
             {
 
@@ -999,7 +1107,6 @@ namespace StardewDruid.Data
                     [0] = 848, // cinder shard,
                     [1] = 848, // cinder shard,
                     [2] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
-                    [3] = 167, //"Joja Cola/25/5/Fish -20/Joja Cola/The flagship product of Joja corporation./drink/0 0 0 0 0 0 0 0 0 0 0/0",
                 };
 
             }
@@ -1034,7 +1141,7 @@ namespace StardewDruid.Data
             {
                 fishIndex = 164; // sand fish
             }
-            else if (location is Beach)
+            else if (location is Beach || location is Atoll)
             {
                 fishIndex = 128; // puff ball 
             }
@@ -1129,17 +1236,18 @@ namespace StardewDruid.Data
             }
             Dictionary<int, int> objectIndexes = new()
             {
-                [0] = 257, // 257 morel
-                [1] = 404, // 404 mushroom
-                [2] = 404, // 404 mushroom
+
+                [0] = 404, // 404 mushroom
+                [1] = seasonal,
+                [2] = seasonal,
                 [3] = seasonal,
-                [4] = seasonal,
-                [5] = seasonal,
-                [6] = seasonal,
-                [7] = seasonal,
-                [8] = seasonal,
 
             };
+
+            if (Mod.instance.randomIndex.Next(3) == 0)
+            {
+                objectIndexes[4] = 257;
+            }
 
             int objectIndex = objectIndexes[new Random().Next(objectIndexes.Count)];
 
@@ -1167,13 +1275,13 @@ namespace StardewDruid.Data
 
                     string junk = RandomJunkItem(location);
 
-                    return new StardewValley.Object(junk, Mod.instance.randomIndex.Next(3));
+                    return new StardewValley.Object(junk, Mod.instance.randomIndex.Next(1,4));
 
                 case 2:
 
                     string pool = RandomPoolFish(location);
 
-                    return new StardewValley.Object(pool, Mod.instance.randomIndex.Next(2));
+                    return new StardewValley.Object(pool, Mod.instance.randomIndex.Next(1,3));
 
                 case 3:
 
@@ -1185,7 +1293,7 @@ namespace StardewDruid.Data
 
         }
 
-        public static StardewValley.Item CrateTreasure(GameLocation location, Microsoft.Xna.Framework.Vector2 vector)
+        public static void CrateTreasure(GameLocation location, Microsoft.Xna.Framework.Vector2 origin, Microsoft.Xna.Framework.Vector2 vector)
         {
 
             if(location is Vault)
@@ -1195,16 +1303,16 @@ namespace StardewDruid.Data
                 {
                     default:
                     case 1:
-
-                        return new MeleeWeapon("9");
+                        new ThrowHandle(Game1.player, origin, swords.lava).register();
+                        return;
 
                     case 2:
-
-                        return new StardewValley.Object("336", 5);
+                        new ThrowHandle(Game1.player, origin, new StardewValley.Object("336", 5)).register();
+                        return;
 
                     case 3:
-
-                        return new StardewValley.Object("74", 1);
+                        new ThrowHandle(Game1.player, origin, new StardewValley.Object("74", 1)).register();
+                        return;
 
                 }
 
@@ -1215,34 +1323,34 @@ namespace StardewDruid.Data
                 
                 default:
                 case 0:
-
-                    return new StardewValley.Object("166", 1); //"Treasure Chest/5000/-300/Basic/Treasure Chest/Wow, it's loaded with treasure! This is sure to fetch a good price./Day Night^Spring Summer Fall Winter//",
+                    new ThrowHandle(Game1.player, origin, new StardewValley.Object("166", 1)).register();
+                    return; //"Treasure Chest/5000/-300/Basic/Treasure Chest/Wow, it's loaded with treasure! This is sure to fetch a good price./Day Night^Spring Summer Fall Winter//",
 
                 case 1:
-
-                    return new StardewValley.Object("336", 5); // Gold bars
+                    new ThrowHandle(Game1.player, origin, new StardewValley.Object("336", 5)).register();
+                    return; // Gold bars
 
                 case 2:
-
-                    return new StardewValley.Object("74", 1); // Prismatic Shard
+                    new ThrowHandle(Game1.player, origin, new StardewValley.Object("74", 1)).register();
+                    return; // Prismatic Shard
 
                 case 3:
-
-                    return new StardewValley.Object("797", 1); //"Pearl/2500/-300/Basic/Pearl/A rare treasure from the sea.///",
+                    new ThrowHandle(Game1.player, origin, new StardewValley.Object("797", 1)).register();
+                    return; //"Pearl/2500/-300/Basic/Pearl/A rare treasure from the sea.///",
 
                 case 4:
-
-                    return new StardewValley.Object("852", 2); //"Dragon Tooth/500/-300/Basic/Dragon Tooth/These are rumored to be the teeth of ancient serpents. The enamel is made of pure iridium!///",
+                    new ThrowHandle(Game1.player, origin, new StardewValley.Object("852", 2)).register();
+                    return; //"Dragon Tooth/500/-300/Basic/Dragon Tooth/These are rumored to be the teeth of ancient serpents. The enamel is made of pure iridium!///",
 
                 case 5:
-
-                    return new StardewValley.Object("275", 3); //"Artifact Trove/0/-300/Basic/Artifact Trove/A blacksmith can open this for you. These troves often contain ancient relics and curiosities./100 101 103 104 105 106 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 166 373 797//",
+                    new ThrowHandle(Game1.player, origin, new StardewValley.Object("275", 3)).register();
+                    return; //"Artifact Trove/0/-300/Basic/Artifact Trove/A blacksmith can open this for you. These troves often contain ancient relics and curiosities./100 101 103 104 105 106 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 166 373 797//",
 
             }
 
         }
 
-        public static List<string> RecipeList()
+        public static void LearnRecipe()
         {
             List<string> recipeList = new(){
                 "Salad",
@@ -1259,7 +1367,28 @@ namespace StardewDruid.Data
                 "Pale Broth",
             };
 
-            return recipeList;
+            int learnedRecipes = 0;
+
+            foreach (string recipe in recipeList)
+            {
+
+                if (!Game1.player.cookingRecipes.ContainsKey(recipe))
+                {
+
+                    Game1.player.cookingRecipes.Add(recipe, 0);
+
+                    learnedRecipes++;
+
+                }
+
+            }
+
+            if (learnedRecipes >= 1)
+            {
+
+                Game1.addHUDMessage(new HUDMessage(learnedRecipes + " " + DialogueData.Strings(DialogueData.stringkeys.learnRecipes), 2));
+
+            }
 
         }
 
@@ -1419,7 +1548,7 @@ namespace StardewDruid.Data
 
             seed = true;
 
-            if (Game1.player.currentLocation.Map.Layers[0].LayerWidth * Game1.player.currentLocation.Map.Layers[0].LayerHeight > 2000)
+            if (Game1.player.currentLocation.Map.Layers[0].LayerWidth * Game1.player.currentLocation.Map.Layers[0].LayerHeight > 1600)
             {
 
                 crate = true;
@@ -1434,7 +1563,6 @@ namespace StardewDruid.Data
             }
 
         }
-
 
         public SpawnIndex(GameLocation location)
         {
@@ -1452,7 +1580,7 @@ namespace StardewDruid.Data
 
             locale = location.Name;
 
-            if (location is Farm || location.Name == "Custom_Garden")
+            if (location.IsOutdoors && location.IsFarm)
             {
 
                 weeds = true;
@@ -1486,8 +1614,9 @@ namespace StardewDruid.Data
                 }
 
             }
-            else if (location is Forest || location is Mountain || location is Desert || location is BusStop || location is BugLand)
+            else if (location is Forest || location is Mountain || location is Desert || location is BugLand)
             {
+                
                 weeds = true;
                 forage = true;
                 flower = true;
@@ -1496,16 +1625,10 @@ namespace StardewDruid.Data
                 fishes = true;
                 fishspot = true;
 
-
-                if (location.Map.Layers[0].LayerWidth * location.Map.Layers[0].LayerHeight > 2000)
-                {
-
-                    crate = true;
-
-                }
+                crate = true;
 
             }
-            else if (location.Name.Contains("Backwoods") || location is Railroad)
+            else if (location.Name.Contains("Backwoods") || location is Railroad || location is BusStop || location is Grove || location is Gate)
             {
 
                 forage = true;
@@ -1515,7 +1638,7 @@ namespace StardewDruid.Data
                 weeds = true;
 
             }
-            else if (location is Woods || location is IslandEast || location is IslandShrine || location is StardewDruid.Location.Grove)
+            else if (location is Woods || location is IslandEast || location is IslandShrine)
             {
 
                 forage = true;
@@ -1525,56 +1648,23 @@ namespace StardewDruid.Data
                 weeds = true;
 
             }
-            else if (
-                location is MineShaft ||
-                location is VolcanoDungeon ||
-                location is StardewDruid.Location.Chapel ||
-                location is StardewDruid.Location.Vault ||
-                location is StardewDruid.Location.Court
-                ) //|| location.Name.Contains("Mine"))
-            {
 
-                if (location.Name.Contains("20") || location.Name.Contains("60") || location.Name.Contains("100"))
-                {
-                    fishspot = true;
-
-                }
-
-                if (location is MineShaft mineShaft)
-                {
-                    List<int> mineLevels = new() { 3, 7 };
-
-                    if (mineShaft.mineLevel == MineShaft.bottomOfMineLevel || mineShaft.mineLevel == MineShaft.quarryMineShaft)
-                    {
-
-
-
-                    }
-                    else if (mineLevels.Contains(mineShaft.mineLevel % 10))
-                    {
-
-                        crate = true;
-
-                    }
-
-                }
-
-                weeds = true;
-
-            }
-            else if (location is Beach || location is IslandSouth || location is IslandSouthEast || location is IslandSouthEastCave || location is StardewDruid.Location.Atoll)
+            else if (location is Beach || location is Atoll)
             {
 
                 fishes = true;
                 fishspot = true;
                 weeds = true;
+                crate = true;
 
-                if (location is Beach || location is IslandSouth || location is IslandSouthEast)
-                {
 
-                    crate = true;
+            } 
+            else if (location is IslandSouth || location is IslandSouthEast || location is IslandSouthEastCave || location is Atoll)
+            {
 
-                }
+                fishes = true;
+                fishspot = true;
+                weeds = true;
 
             }
             else if (location is Town)
@@ -1599,16 +1689,51 @@ namespace StardewDruid.Data
                 }
 
             }
+            else if (
+                location is MineShaft ||
+                location is VolcanoDungeon
+                )
+            {
+
+                if (location.Name.Contains("20") || location.Name.Contains("60") || location.Name.Contains("100"))
+                {
+                    fishspot = true;
+
+                }
+
+                if (location is MineShaft mineShaft)
+                {
+
+                    List<int> mineLevels = new() { 3, 7 };
+
+                    if (mineShaft.mineLevel == MineShaft.bottomOfMineLevel || mineShaft.mineLevel == MineShaft.quarryMineShaft)
+                    {
+
+
+
+                    }
+                    else if (mineLevels.Contains(mineShaft.mineLevel % 10) && Mod.instance.questHandle.IsComplete(QuestHandle.etherFour))
+                    {
+
+                        crate = true;
+
+                    }
+
+                }
+
+                weeds = true;
+
+            }
             else if (location is Caldera || location is Sewer)
             {
 
                 fishspot = true;
 
             }
-            else if (location.Name.Contains("Saloon"))
+            else if (location.Name.Contains("Saloon") || location is DruidLocation)
             {
 
-                crate = true;
+                cast = true;
 
             }
             else

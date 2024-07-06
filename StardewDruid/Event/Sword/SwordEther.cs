@@ -5,6 +5,7 @@ using StardewDruid.Data;
 using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewDruid.Monster;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
 using System;
@@ -19,10 +20,6 @@ namespace StardewDruid.Event.Sword
     {
 
         public int activeSection;
-
-        public StardewDruid.Monster.Reaper reaper;
-
-        public Vector2 relicPosition = Vector2.Zero;
 
         public Warp warpExit;
 
@@ -41,8 +38,6 @@ namespace StardewDruid.Event.Sword
 
                 EventActivate();
 
-                return true;
-
             }
 
             return false;
@@ -58,13 +53,7 @@ namespace StardewDruid.Event.Sword
 
             EventBar("The Tomb of Tyrannus",0);
 
-            eventProximity = -1;
-
             activeLimit = 120;
-
-            cues = DialogueData.DialogueScene(eventId);
-
-            narrators = DialogueData.DialogueNarrators(eventId);
 
             if (!Mod.instance.trackers.ContainsKey(CharacterHandle.characters.Jester))
             {
@@ -73,16 +62,9 @@ namespace StardewDruid.Event.Sword
 
             }
 
+            HoldCompanions();
+
             voices[0] = Mod.instance.characters[CharacterHandle.characters.Jester];
-
-            foreach (KeyValuePair<CharacterHandle.characters, TrackHandle> tracker in Mod.instance.trackers)
-            {
-
-                Mod.instance.characters[tracker.Key].Halt();
-
-                Mod.instance.characters[tracker.Key].idleTimer = 300;
-
-            }
 
             location.warps.Clear();
 
@@ -93,7 +75,14 @@ namespace StardewDruid.Event.Sword
         public override bool AttemptReset()
         {
 
-            if(location.Name == LocationData.druid_tomb_name)
+            if (!eventActive)
+            {
+
+                return true;
+
+            }
+
+            if(Game1.player.currentLocation.Name == LocationData.druid_tomb_name)
             {
                 
                 DialogueCue(991);
@@ -108,11 +97,7 @@ namespace StardewDruid.Event.Sword
 
             eventActive = false;
 
-            eventAbort = false;
-
             triggerEvent = true;
-
-            activeCounter = 0;
 
             return true;
 
@@ -125,39 +110,16 @@ namespace StardewDruid.Event.Sword
 
         }
 
-        public override void EventRemove()
-        {
-
-            if (reaper != null)
-            {
-
-                reaper.currentLocation.characters.Remove(reaper);
-
-                reaper.currentLocation = null;
-
-                reaper = null;
-
-            }
-
-            if (location != null)
-            {
-
-                location.updateWarps();
-
-            }
-
-            base.EventRemove();
-
-        }
-
         public override void EventInterval()
         {
 
             activeCounter++;
 
-            if (reaper != null)
+            if (bosses.Count > 0)
             {
-                
+
+                Boss reaper = bosses[0];
+
                 if (reaper.netWoundedActive.Value)
                 {
 
@@ -168,19 +130,24 @@ namespace StardewDruid.Event.Sword
 
                         woundedCounter = 4;
 
+                        activeLimit += 4;
+
                     }
 
                     woundedCounter--;
 
-                    if(woundedCounter <= 1)
+                    if (woundedCounter <= 1)
                     {
 
-                        Mod.instance.iconData.ImpactIndicator(location, reaper.Position, IconData.impacts.deathbomb, 5f, new());
+                        //Mod.instance.iconData.ImpactIndicator(location, reaper.Position, IconData.impacts.deathbomb, 5f, new());
+
+                        Mod.instance.iconData.ImpactIndicator(location, reaper.Position, IconData.impacts.deathbomb, 5f, new() { });
 
                         reaper.currentLocation.characters.Remove(reaper);
 
-                        reaper = null;
+                        bosses.Clear();
 
+                        eventComplete = true;
 
                     }
 
@@ -192,15 +159,9 @@ namespace StardewDruid.Event.Sword
 
                     reaper.netWoundedActive.Set(true);
 
-                    eventComplete = true;
+                    reaper.Health = reaper.MaxHealth;
 
                     return;
-
-                }
-                else
-                {
-
-                    relicPosition = reaper.Position;
 
                 }
 
@@ -210,42 +171,27 @@ namespace StardewDruid.Event.Sword
             {
 
 
-                reaper = new(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+                bosses[0] = new StardewDruid.Monster.Reaper(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
 
-                reaper.netScheme.Set(2);
+                bosses[0].netScheme.Set(2);
 
-                reaper.SetMode(3);
+                bosses[0].SetMode(3);
 
-                reaper.netHaltActive.Set(true);
+                bosses[0].netHaltActive.Set(true);
 
-                reaper.idleTimer = 300;
+                bosses[0].idleTimer = 300;
 
-                location.characters.Add(reaper);
+                location.characters.Add(bosses[0]);
 
-                reaper.update(Game1.currentGameTime, location);
+                bosses[0].update(Game1.currentGameTime, location);
 
-                reaper.setWounded = true;
+                bosses[0].setWounded = true;
 
-                voices[1] = reaper;
+                voices[1] = bosses[0];
 
-                EventDisplay bossBar = Mod.instance.CastDisplay(narrators[0], narrators[0]);
+                BossBar(0, 1);
 
-                bossBar.boss = reaper;
-
-                bossBar.type = EventDisplay.displayTypes.bar;
-
-                bossBar.colour = Microsoft.Xna.Framework.Color.Red;
-
-            }
-
-            if(activeCounter == 120)
-            {
-
-                DialogueCue(991);
-
-                Game1.player.warpFarmer(warpExit, 2);
-
-                Mod.instance.CastMessage("You managed to escape! Try again tomorrow.", 3);
+                HoldCompanions();
 
             }
 
@@ -253,24 +199,6 @@ namespace StardewDruid.Event.Sword
 
         }
 
-        public override void EventCompleted()
-        {
-
-            ThrowHandle swordThrow = new(Game1.player, relicPosition, new StardewValley.Tools.MeleeWeapon("57"));
-
-            swordThrow.register();
-
-            ThrowHandle throwNotes = new(Game1.player, relicPosition, IconData.relics.courtesan_pin);
-
-            throwNotes.delay = 120;
-
-            throwNotes.register();
-
-            Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.courtesan_pin.ToString());
-
-            Mod.instance.questHandle.CompleteQuest(eventId);
-
-        }
 
     }
 

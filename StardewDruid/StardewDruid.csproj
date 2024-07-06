@@ -22,6 +22,9 @@
     <None Update="Images\BuffinPortrait.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Images\Carnyx.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Images\DarkBrute.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -46,6 +49,9 @@
     <None Update="Images\DragonDash.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Images\Dustfiend.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Images\Embers.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -56,9 +62,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Images\Gunther.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Images\ImpactsThree.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Images\ImpactsTwo.png">
@@ -205,7 +208,7 @@
     <None Update="Images\Fates.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Images\Cuchulan.png">
+    <None Update="Images\FirstFarmer.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Images\Flashbang.png">
@@ -253,7 +256,7 @@
     <None Update="Images\Impacts.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Images\Morrigan.png">
+    <None Update="Images\LadyBeyond.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Images\Laser.png">
@@ -355,7 +358,7 @@
     <None Update="Images\Rogue.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Images\Scavenger.png">
+    <None Update="Images\Shadowcat.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Images\Shadow.png">
@@ -409,6 +412,9 @@
     <None Update="Images\Wisp.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Images\Wizard.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="README.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -421,7 +427,13 @@
     <None Update="Sheets\Court.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Sheets\Druid.png">
+    <None Update="Sheets\Grove.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Sheets\Engineum.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Sheets\Gate.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Sheets\Tomb.png">
@@ -436,7 +448,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Sheets\" />
     <Folder Include="Sounds\" />
   </ItemGroup>
 

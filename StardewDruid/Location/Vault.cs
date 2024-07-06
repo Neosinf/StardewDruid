@@ -8,145 +8,25 @@ using System.Threading.Tasks;
 using xTile.Layers;
 using xTile.Tiles;
 using Microsoft.Xna.Framework;
-using StardewModdingAPI;
-using StardewValley.Buildings;
-using StardewValley.Objects;
-using System.Runtime.Intrinsics.X86;
-using StardewValley.GameData.Locations;
+
 using Microsoft.Xna.Framework.Graphics;
-using StardewDruid.Data;
-using StardewValley.TerrainFeatures;
-using System.Threading;
-using xTile;
 using StardewDruid.Character;
-using static StardewDruid.Cast.Rite;
 using StardewDruid.Cast;
-using System.Reflection.Emit;
+
 
 namespace StardewDruid.Location
 {
-    public class Vault : GameLocation
+    public class Vault : DruidLocation
     {
 
-        public List<Location.WarpTile> warpSets = new();
 
-        public List<Location.LocationTile> locationTiles = new();
-
-        public Dictionary<Vector2, CharacterHandle.characters> dialogueTiles = new();
-
-        public Dictionary<Vector2, int> lightFields = new();
-
-        public Dictionary<Vector2, int> darkFields = new();
-
-        public Dictionary<Vector2, int> crateTiles = new();
-
-        public bool ambientDarkness;
-
-        public Texture2D dungeonTexture;
+        Texture2D dungeonTexture;
 
         public Vault() { }
 
         public Vault(string Name)
-            : base("Maps\\Shed", Name)
+            : base(Name)
         {
-
-        }
-
-        public override void draw(SpriteBatch b)
-        {
-
-            base.draw(b);
-
-            foreach (KeyValuePair<Vector2, int> light in lightFields)
-            {
-
-                if (Utility.isOnScreen(light.Key, 64 * light.Value))
-                {
-
-                    Texture2D texture2D = Game1.sconceLight;
-
-                    Microsoft.Xna.Framework.Vector2 position = new(light.Key.X - (float)Game1.viewport.X, light.Key.Y - (float)Game1.viewport.Y);
-
-                    b.Draw(
-                        texture2D,
-                        position,
-                        texture2D.Bounds,
-                        Microsoft.Xna.Framework.Color.LightCoral * 0.75f,
-                        0f,
-                        new Vector2(texture2D.Bounds.Width / 2, texture2D.Bounds.Height / 2),
-                        0.25f * light.Value,
-                        SpriteEffects.None,
-                        0.9f
-                    );
-
-                }
-
-            }
-
-            foreach (KeyValuePair<Vector2, int> crate in crateTiles)
-            {
-
-                if(crate.Value < 0)
-                {
-
-                    if(crate.Value == -1)
-                    {
-
-                        Vector2 crateOpen = crate.Key * 64;
-
-                        if (Utility.isOnScreen(crateOpen, 64))
-                        {
-                            
-                            Microsoft.Xna.Framework.Vector2 position = new(crateOpen.X - (float)Game1.viewport.X, crateOpen.Y - (float)Game1.viewport.Y - 64);
-
-                            b.Draw(
-                                Mod.instance.iconData.crateTexture,
-                                position,
-                                new(64, 0, 32, 64),
-                                Color.White,
-                                0f,
-                                Vector2.Zero,
-                                2f,
-                                SpriteEffects.None,
-                                crateOpen.Y / 10000
-                            );
-                        
-                        }
-
-                    }
-                    else
-                    {
-
-                        crateTiles[crate.Key] += 1;
-
-                    }
-
-                    continue;
-
-                }
-
-                Vector2 cratePosition = crate.Key * 64;
-
-                if (Utility.isOnScreen(cratePosition, 64))
-                {
-
-                    Microsoft.Xna.Framework.Vector2 position = new(cratePosition.X - (float)Game1.viewport.X, cratePosition.Y - (float)Game1.viewport.Y - 64);
-
-                    b.Draw(
-                        Mod.instance.iconData.crateTexture,
-                        position,
-                        new(0,0,32,64),
-                        Color.White,
-                        0f,
-                        Vector2.Zero,
-                        2f,
-                        SpriteEffects.None,
-                        cratePosition.Y / 10000
-                    );
-
-                }
-
-            }
 
         }
 
@@ -198,8 +78,6 @@ namespace StardewDruid.Location
             TileSheet outdoor = new(LocationData.druid_vault_name + "_dungeon", newMap, "Maps\\Mines\\volcano_dungeon", new(16, 36), tileSize);
 
             newMap.AddTileSheet(outdoor); //map.TileSheets[1].ImageSource
-
-            locationTiles = new();
 
             waterTiles = new(56, 34);
 
@@ -410,15 +288,20 @@ namespace StardewDruid.Location
 
             };
 
-            lightFields = new();
-
             foreach (KeyValuePair<int, List<List<int>>> code in codes)
             {
 
                 foreach (List<int> array in code.Value)
                 {
 
-                    lightFields.Add(new Vector2(array[0], code.Key) * 64 + new Vector2(0, 32),4+Mod.instance.randomIndex.Next(3));
+
+                    LightField light = new(new Vector2(array[0], code.Key) * 64, 6, Microsoft.Xna.Framework.Color.PeachPuff);
+
+                    light.lightType = LightField.lightTypes.brazier;
+
+                    light.lightFrame = Mod.instance.randomIndex.Next(4);
+
+                    lightFields.Add(light);
 
                 }
 
@@ -427,41 +310,6 @@ namespace StardewDruid.Location
             this.map = newMap;
 
             dungeonTexture = Game1.temporaryContent.Load<Texture2D>(outdoor.ImageSource);
-
-        }
-
-        public override bool CanItemBePlacedHere(Vector2 tile, bool itemIsPassable = false, CollisionMask collisionMask = CollisionMask.All, CollisionMask ignorePassables = ~CollisionMask.Objects, bool useFarmerTile = false, bool ignorePassablesExactly = false)
-        {
-
-            return false;
-
-        }
-
-        public override bool isActionableTile(int xTile, int yTile, Farmer who)
-        {
-
-            Vector2 actionTile = new(xTile, yTile);
-
-            if (dialogueTiles.ContainsKey(actionTile))
-            {
-
-                return true;
-
-            }
-
-            if (crateTiles.ContainsKey(actionTile))
-            {
-                
-                if (crateTiles[actionTile] >= 0)
-                {
-
-                    return true;
-
-                }
-
-            }
-
-            return base.isActionableTile(xTile, yTile, who);
 
         }
 
@@ -483,31 +331,6 @@ namespace StardewDruid.Location
                 }
 
                 Mod.instance.dialogue[characterType].DialogueApproach();
-
-                return true;
-
-            }
-
-            if (crateTiles.ContainsKey(actionTile))
-            {
-                if (crateTiles[actionTile] < 0)
-                {
-
-                    return false;
-
-                }
-
-                SpellHandle crate = new(this, new(0,crateTiles[actionTile]), actionTile * 64);
-
-                crate.type = SpellHandle.spells.crate;
-
-                crate.counter = 60;
-
-                crate.Update();
-
-                Mod.instance.spellRegister.Add(crate);
-
-                crateTiles[actionTile] = -210;
 
                 return true;
 
@@ -558,7 +381,9 @@ namespace StardewDruid.Location
         public void AddCrateTile(int x, int y, int id)
         {
 
-            crateTiles.Add(new(x, y), id);
+            Vector2 tile = new(x, y);
+
+            crateTiles[tile] = new(tile*64, 0, id);
 
             map.Layers[1].Tiles[x,y] = new StaticTile(map.Layers[1], map.Layers[0].Tiles[x,y].TileSheet, BlendMode.Alpha, map.Layers[0].Tiles[x, y].TileIndex);
 

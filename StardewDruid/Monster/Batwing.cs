@@ -42,6 +42,8 @@ namespace StardewDruid.Monster
 
             characterTexture = MonsterHandle.MonsterTexture(realName.Value);
 
+            cooldownInterval = 120;
+
             BatWalk();
 
             BatFlight();
@@ -252,8 +254,6 @@ namespace StardewDruid.Monster
 
             specialInterval = 9;
 
-            cooldownInterval = 120;
-
             cooldownTimer = cooldownInterval;
 
             specialFrames = idleFrames;
@@ -266,26 +266,11 @@ namespace StardewDruid.Monster
 
         }
 
-        public override Rectangle GetBoundingBox()
+        public override float GetScale()
         {
-            Vector2 position = Position;
-
-            int netScale = netMode.Value > 5 ? netMode.Value - 4 : netMode.Value;
-
-            return new Rectangle((int)position.X - 28 - (4 * netScale), (int)position.Y - flightHeight - 24 - (int)(Math.Abs(hoverHeight) * hoverElevate) - (8 * netScale), 120 + (8 * netScale), 104 + (8 * netScale));
-        }
-
-        public override void deathIsNoEscape()
-        {
-
-            Microsoft.Xna.Framework.Rectangle box = GetBoundingBox();
-
-            SpellHandle death = new(new(box.Center.X, box.Top), 128, IconData.impacts.deathwhirl, new());
-
-            death.scheme = IconData.schemes.death;
-
-            Mod.instance.spellRegister.Add(death);
-
+            
+            return 3f + netMode.Value * 0.5f;
+        
         }
 
         public override void draw(SpriteBatch b, float alpha = 1f)
@@ -304,17 +289,17 @@ namespace StardewDruid.Monster
                 return;
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = StandingPixel.Y / 10000f;
 
             DrawEmote(b, localPosition, drawLayer);
 
-            int netScale = netMode.Value > 5 ? netMode.Value - 4 : netMode.Value;
+            float spriteScale = GetScale();
 
-            Vector2 spritePosition = new Vector2(localPosition.X - 16f - 8 * netScale, localPosition.Y - 32f - flightHeight - (Math.Abs(hoverHeight) * hoverElevate) - 16 * netScale);
+            Vector2 spritePosition = GetPosition(localPosition, spriteScale);
 
-            float spriteSize = 3f + netScale * 0.5f;
+            bool flippity = netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3;
 
             if (netFlightActive.Value)
             {
@@ -323,26 +308,62 @@ namespace StardewDruid.Monster
 
                 int setFlightFrame = Math.Min(flightFrame, (flightFrames[setFlightSeries].Count - 1));
 
-                b.Draw(characterTexture, spritePosition, flightFrames[setFlightSeries][setFlightFrame], Color.White, 0, new Vector2(0.0f, 0.0f), spriteSize, netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(
+                    characterTexture, 
+                    spritePosition, 
+                    flightFrames[setFlightSeries][setFlightFrame], 
+                    Color.White, 
+                    0, 
+                    Vector2.Zero, 
+                    spriteScale, 
+                    flippity ? (SpriteEffects)1 : 0, 
+                    drawLayer);
 
             }
             else if (netSpecialActive.Value)
             {
 
-                b.Draw(characterTexture, spritePosition, flightFrames[netDirection.Value + 8][specialFrame], Color.White, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(
+                    characterTexture,
+                    spritePosition,
+                   flightFrames[netDirection.Value + 8][specialFrame],
+                    Color.White,
+                    0,
+                    Vector2.Zero,
+                    spriteScale,
+                    flippity ? (SpriteEffects)1 : 0,
+                    drawLayer);
 
             }
             else
             {
 
-                b.Draw(characterTexture, spritePosition, idleFrames[netDirection.Value][hoverFrame], Color.White, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(
+                    characterTexture,
+                    spritePosition,
+                    idleFrames[netDirection.Value][hoverFrame],
+                    Color.White,
+                    0,
+                    Vector2.Zero,
+                    spriteScale,
+                    flippity ? (SpriteEffects)1 : 0,
+                    drawLayer);
 
             }
 
             if(netScheme.Value == 1)
             {
 
-                b.Draw(characterTexture, spritePosition, schemeFrames[netDirection.Value][0], Color.White, 0, new Vector2(0.0f, 0.0f), spriteSize, netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                b.Draw(
+                    characterTexture,
+                    spritePosition,
+                    schemeFrames[netDirection.Value][0],
+                    Color.White,
+                    0,
+                    Vector2.Zero,
+                    spriteScale,
+                    flippity ? (SpriteEffects)1 : 0,
+                    drawLayer);
 
             }
 

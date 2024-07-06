@@ -23,69 +23,14 @@ using StardewDruid.Character;
 
 namespace StardewDruid.Location
 {
-    public class Archaeum : GameLocation
+    public class Archaeum : DruidLocation
     {
-
-        public List<Location.WarpTile> warpSets = new();
-
-        public List<Location.LocationTile> locationTiles = new();
-
-        public Dictionary<Vector2, CharacterHandle.characters> dialogueTiles = new();
-
-        public Dictionary<Vector2, int> lightFields = new();
-
-        public Dictionary<Vector2, int> darkFields = new();
-
-        public bool ambientDarkness;
 
         public Archaeum() { }
 
         public Archaeum(string Name)
-            : base("Maps\\Shed", Name)
+            : base(Name)
         {
-
-        }
-
-        public override void draw(SpriteBatch b)
-        {
-
-            base.draw(b);
-
-            foreach (KeyValuePair<Vector2, int> light in lightFields)
-            {
-
-                if (Utility.isOnScreen(light.Key, 64 * light.Value))
-                {
-
-                    Texture2D texture2D = Game1.sconceLight;
-
-                    Microsoft.Xna.Framework.Vector2 position = new(light.Key.X - (float)Game1.viewport.X, light.Key.Y - (float)Game1.viewport.Y);
-
-                    b.Draw(
-                        texture2D,
-                        position,
-                        texture2D.Bounds,
-                        Microsoft.Xna.Framework.Color.LightGoldenrodYellow * 0.5f,
-                        0f,
-                        new Vector2(texture2D.Bounds.Width / 2, texture2D.Bounds.Height / 2),
-                        0.25f * light.Value,
-                        SpriteEffects.None,
-                        0.9f
-                    );
-
-                }
-
-            }
-
-
-        }
-
-        protected override void _updateAmbientLighting()
-        {
-
-            Game1.ambientLight = new(64, 64, 32);
-
-            //base._updateAmbientLighting();
 
         }
 
@@ -128,7 +73,9 @@ namespace StardewDruid.Location
 
             newMap.AddTileSheet(interior); //map.TileSheets[1].ImageSource
 
-            locationTiles = new();
+            internalDarkness = true;
+
+            IsOutdoors = false;
 
             Dictionary<int, List<List<int>>> codes = new()
             {
@@ -275,76 +222,8 @@ namespace StardewDruid.Location
                 }
 
             }
-            codes = new()
-            {
-
-            };
-
-            lightFields = new();
-
-            foreach (KeyValuePair<int, List<List<int>>> code in codes)
-            {
-
-                foreach (List<int> array in code.Value)
-                {
-
-                    lightFields.Add(new Vector2(array[0], code.Key) * 64 + new Vector2(0, 32),4+Mod.instance.randomIndex.Next(3));
-
-                }
-
-            }
 
             this.map = newMap;
-
-        }
-
-        public override bool CanItemBePlacedHere(Vector2 tile, bool itemIsPassable = false, CollisionMask collisionMask = CollisionMask.All, CollisionMask ignorePassables = ~CollisionMask.Objects, bool useFarmerTile = false, bool ignorePassablesExactly = false)
-        {
-
-            return false;
-
-        }
-
-        public override bool isActionableTile(int xTile, int yTile, Farmer who)
-        {
-
-            Vector2 actionTile = new(xTile, yTile);
-
-            if (dialogueTiles.ContainsKey(actionTile))
-            {
-
-                return true;
-
-            }
-
-            return base.isActionableTile(xTile, yTile, who);
-
-        }
-
-        public override bool checkAction(xTile.Dimensions.Location tileLocation, xTile.Dimensions.Rectangle viewport, Farmer who)
-        {
-
-            Vector2 actionTile = new(tileLocation.X, tileLocation.Y);
-
-            if (dialogueTiles.ContainsKey(actionTile) && Mod.instance.activeEvent.Count == 0)
-            {
-
-                CharacterHandle.characters characterType = dialogueTiles[actionTile];
-
-                if (!Mod.instance.dialogue.ContainsKey(characterType))
-                {
-
-                    Mod.instance.dialogue[characterType] = new(characterType);
-
-                }
-
-                Mod.instance.dialogue[characterType].DialogueApproach();
-
-                return true;
-
-            }
-
-            return base.checkAction(tileLocation, viewport, who);
 
         }
 
@@ -368,27 +247,21 @@ namespace StardewDruid.Location
 
             }
 
-            /*Town town = Game1.getLocationFromName("Town") as Town;
+            warpSets.Add(new WarpTile(27, 32, "Town", 98, 90));
 
-            town.warps.Add(new Warp(98, 4, LocationData.druid_court_name, 28, 29, flipFarmer: false));
+            warpSets.Add(new WarpTile(28, 32, "Town", 98, 90));
 
-            town.warps.Add(new Warp(98, 5, LocationData.druid_court_name, 28, 29, flipFarmer: false));
-
-            warpSets.Add(new WarpTile(27, 32, "Town", 98, 8));
-
-            warpSets.Add(new WarpTile(28, 32, "Town", 98, 8));
-
-            warpSets.Add(new WarpTile(29, 32, "Town", 98, 8));
+            warpSets.Add(new WarpTile(29, 32, "Town", 98, 90));
             
-            warpSets.Add(new WarpTile(30, 32, "Town", 98, 8));
+            warpSets.Add(new WarpTile(30, 32, "Town", 98, 90));
 
-            warps.Add(new Warp(27, 32, "Town", 98, 8, flipFarmer: false));
+            warps.Add(new Warp(27, 32, "Town", 98, 90, flipFarmer: false));
 
-            warps.Add(new Warp(28, 32, "Town", 98, 8, flipFarmer: false));
+            warps.Add(new Warp(28, 32, "Town", 98, 90, flipFarmer: false));
 
-            warps.Add(new Warp(29, 32, "Town", 98, 8, flipFarmer: false));
+            warps.Add(new Warp(29, 32, "Town", 98, 90, flipFarmer: false));
 
-            warps.Add(new Warp(30, 32, "Town", 98, 8, flipFarmer: false));*/
+            warps.Add(new Warp(30, 32, "Town", 98, 90, flipFarmer: false));
 
         }
 

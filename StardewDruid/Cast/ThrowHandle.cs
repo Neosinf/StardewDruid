@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Journal;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Minecarts;
 using StardewValley.Inventories;
@@ -11,6 +12,7 @@ using StardewValley.Tools;
 using System;
 using System.Diagnostics.Metrics;
 using System.Reflection;
+using xTile.Dimensions;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace StardewDruid.Cast
@@ -43,6 +45,8 @@ namespace StardewDruid.Cast
         public float rotation;
 
         public bool track;
+
+        public bool queried;
 
         public enum throwing
         {
@@ -157,6 +161,8 @@ namespace StardewDruid.Cast
 
             pocket = true;
 
+            Mod.instance.relicsData.ReliquaryUpdate(relic.ToString());
+
             track = true;
 
         }
@@ -176,12 +182,14 @@ namespace StardewDruid.Cast
 
         }
 
-        public ThrowHandle(Farmer Player, Vector2 Origin, MeleeWeapon weapon)
+        public ThrowHandle(Farmer Player, Vector2 Origin, SpawnData.swords sword)
         {
 
             localisation = Player.currentLocation.Name;
 
-            tooling = weapon;
+            index = (int)sword;
+
+            tooling = SpawnData.SpawnSword(sword);
 
             thrown = throwing.sword;
 
@@ -197,6 +205,18 @@ namespace StardewDruid.Cast
 
         public void register()
         {
+
+            if(thrown == throwing.sword)
+            {
+
+                if(tooling == null)
+                {
+
+                    return;
+
+                }
+
+            }
 
             Mod.instance.throwRegister.Add(this);
 
@@ -286,8 +306,80 @@ namespace StardewDruid.Cast
         
         }
 
+        public void ThrowQuery()
+        {
+            queried = true;
+
+            if (!Context.IsMultiplayer)
+            {
+
+                return;
+
+            }
+
+            if (!Context.IsMainPlayer)
+            {
+
+                return;
+
+            }
+
+            if (!pocket)
+            {
+
+                return;
+
+            }
+
+            QueryData query;
+            
+            switch (thrown)
+            {
+
+                case throwing.sword:
+
+                    query = new()
+                    {
+                        name = index.ToString(),
+
+                        location = localisation,
+
+                    };
+
+                    Mod.instance.EventQuery(query, QueryData.queries.ThrowSword);
+
+                    break;
+
+                default:
+                case throwing.relic:
+
+                    query = new()
+                    {
+                        name = index.ToString(),
+
+                        location = localisation,
+
+                    };
+
+                    Mod.instance.EventQuery(query, QueryData.queries.ThrowRelic);
+
+                    break;
+
+
+            }
+
+
+        }
+
         public bool update()
         {
+
+            if (!queried)
+            {
+
+                ThrowQuery();
+
+            }
 
             if (complete)
             {
@@ -343,7 +435,7 @@ namespace StardewDruid.Cast
                             layerDepth = origin.Y / 10000f,
                             alphaFade = fade,
                             rotationChange = rotation,
-                            scale = 3f,
+                            scale = 3.5f,
 
                         };
 

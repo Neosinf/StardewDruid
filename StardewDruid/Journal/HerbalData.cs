@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using static StardewDruid.Journal.HerbalData;
+using static StardewValley.Menus.CharacterCustomization;
 
 namespace StardewDruid.Journal
 {
@@ -52,13 +53,15 @@ namespace StardewDruid.Journal
 
         public Dictionary<herbals, HerbalBuff> applied = new();
 
+        public bool applyChange;
+
         public Dictionary<herbals, List<string>> titles = new()
         {
 
             [herbals.ligna] = new() { "Ligna", "Boosts rite damage and success-rate", },
             [herbals.impes] = new() { "Vigores", "Boosts charge-ups and rite critical hit chance", },
             [herbals.celeri] = new() { "Celeri", "Boosts movement speed, lowers rite cooldowns", },
-            [herbals.faeth] = new() { "Essence", "Magical resources used for advanced alchemy", },
+            [herbals.faeth] = new() { "Essentia", "Magical resources used for advanced alchemy", },
         };
 
         public Dictionary<herbals,List<herbals>> lines = new()
@@ -86,15 +89,6 @@ namespace StardewDruid.Journal
             },
         };
 
-        public Dictionary<int, IconData.relics> requirements = new()
-        {
-            [0] = IconData.relics.herbalism_mortar,
-            [1] = IconData.relics.herbalism_pan,
-            [2] = IconData.relics.herbalism_still,
-            [3] = IconData.relics.herbalism_crucible,
-
-        };
-
         public double consumeBuffer;
 
         public HerbalData()
@@ -107,23 +101,32 @@ namespace StardewDruid.Journal
         public int MaxHerbal()
         {
 
-            int max = -1;
-
-            foreach (KeyValuePair<int, IconData.relics> requirement in requirements)
+            if (Mod.instance.save.reliquary.ContainsKey(IconData.relics.herbalism_gauge.ToString()))
             {
 
-                if (!Mod.instance.save.reliquary.ContainsKey(requirement.Value.ToString()))
-                {
+                return 4;
 
-                    break;
+            }
+            if (Mod.instance.save.reliquary.ContainsKey(IconData.relics.herbalism_still.ToString()))
+            {
 
-                }
+                return 3;
 
-                max++;
+            }
+            if (Mod.instance.save.reliquary.ContainsKey(IconData.relics.herbalism_pan.ToString()))
+            {
+
+                return 2;
+
+            }
+            if (Mod.instance.save.reliquary.ContainsKey(IconData.relics.herbalism_mortar.ToString()))
+            {
+
+                return 1;
 
             }
 
-            return max;
+            return -1;
 
         }
 
@@ -173,7 +176,7 @@ namespace StardewDruid.Journal
 
             }
 
-            if(max >= 3)
+            if(Mod.instance.save.reliquary.ContainsKey(IconData.relics.herbalism_crucible.ToString()))
             {
 
                 source.Add(new());
@@ -182,12 +185,10 @@ namespace StardewDruid.Journal
 
             }
 
-            if (max >= 4)
+            if (Mod.instance.save.reliquary.ContainsKey(IconData.relics.herbalism_gauge.ToString()))
             {
 
                 source.Last().Add(herbals.aether.ToString());
-
-                source.Last().Add(herbals.ambrosia.ToString());
 
             }
 
@@ -274,7 +275,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 15 Health, 30 Stamina",
-                    "Effect: Alignment Level 1",
+                    "Effect: Alignment Level 1, 60 Seconds",
                     "Requires: Base, 1x Tree Seed"
                 }
 
@@ -313,7 +314,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 20 Health, 80 Stamina",
-                    "Effect: Alignment Level 2",
+                    "Effect: Alignment Level 2, 90 Seconds",
                     "Requires: Base, 1x Wild Flower"
                 }
 
@@ -352,7 +353,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 50 Health, 200 Stamina",
-                    "Effect: Alignment Level 3",
+                    "Effect: Alignment Level 3, 120 Seconds",
                     "Ingredients: Base, 1x Vegetable Oil",
                 }
 
@@ -390,8 +391,8 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 100 Health, 400 Stamina",
-                    "Effect: Vigorous Level 4",
-                    "Requires: Base, Ether"
+                    "Effect: Vigorous Level 4, 150 Seconds",
+                    "Requires: Base, Aether"
                 }
 
             };
@@ -465,7 +466,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 30 Health, 80 Stamina",
-                    "Effect: Vigorous Level 1",
+                    "Effect: Vigorous Level 1, 60 Seconds",
                     "Requires: Base, 1x Cave Forage"
                 }
 
@@ -504,7 +505,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 45 Health, 160 Stamina",
-                    "Effect: Vigorous Level 2",
+                    "Effect: Vigorous Level 2, 90 Seconds",
                     "Requires: Base, 1x Spicy Ingredient"
                 }
 
@@ -543,7 +544,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 70 Health, 320 Stamina",
-                    "Effect: Vigorous Level 3",
+                    "Effect: Vigorous Level 3, 120 Seconds",
                     "Requires: Base, 1x Combustible Material"
                 }
 
@@ -581,8 +582,8 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 180 Health, 560 Stamina",
-                    "Effect: Vigorous Level 4",
-                    "Requires: Base, Ether"
+                    "Effect: Vigorous Level 4, 150 Seconds",
+                    "Requires: Base, Aether"
                 }
 
             };
@@ -655,7 +656,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 20 Health, 60 Stamina",
-                    "Effect: Celerity Level 1",
+                    "Effect: Celerity Level 1, 60 Seconds",
                     "Requires: Base, 1x Energy Supplement"
                 }
 
@@ -694,7 +695,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 30 Health, 120 Stamina",
-                    "Effect: Celerity Level 2",
+                    "Effect: Celerity Level 2, 90 Seconds",
                     "Requires: Base, 1x Mineral Substance"
                 }
 
@@ -733,7 +734,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 60 Health, 240 Stamina",
-                    "Effect: Celerity Level 3",
+                    "Effect: Celerity Level 3, 120 Seconds",
                     "Requires: Base, 1x Common Shellfish"
                 }
 
@@ -771,8 +772,8 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 120 Health, 480 Stamina",
-                    "Effect: Celerity Level 4",
-                    "Requires: Base, Ether"
+                    "Effect: Celerity Level 4, 150 Seconds",
+                    "Requires: Base, Aether"
                 }
 
             };
@@ -795,20 +796,23 @@ namespace StardewDruid.Journal
 
                 level = 3,
 
-                duration = 150,
-
                 title = "Faeth",
 
                 description = "The currency of the Fates.",
 
                 ingredients = new() { ["(O)577"] = "Fairy Stone", ["(O)595"] = "Fairy Rose", ["(O)768"] = "Solar Essence", ["(O)769"] = "Void Essence", },
 
-                bases = new() {},
+                bases = new() { },
 
                 details = new()
                 {
+                    
                     "Enchants machines",
-                }
+                    "Requires: 1x Essence infused source",
+
+                },
+
+                resource = true,
 
             };
 
@@ -830,11 +834,9 @@ namespace StardewDruid.Journal
 
                 level = 4,
 
-                duration = 150,
+                title = "Aether",
 
-                title = "Ether",
-
-                description = "The essence of the Ancient Ones.",
+                description = "The essence of creation as wielded by the Ancient Ones.",
 
                 ingredients = new() { ["(O)60"] = "Emerald", ["(O)64"] = "Ruby", ["(O)72"] = "Diamond", },
 
@@ -843,44 +845,10 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Enhances potions",
-                }
+                    "Requires: 1x High quality gem",
+                },
 
-            };
-
-            // ====================================================================
-            // Dusth
-
-            potions[herbals.ambrosia.ToString()] = new()
-            {
-
-                line = HerbalData.herbals.faeth,
-
-                herbal = HerbalData.herbals.ambrosia,
-
-                scheme = IconData.schemes.ether,
-
-                container = IconData.relics.bottle,
-
-                content = IconData.relics.bottle5,
-
-                level = 4,
-
-                duration = 150,
-
-                title = "Ambrosia",
-
-                description = "A taste of divinity",
-
-                ingredients = new() {},
-
-                bases = new() { herbals.faeth, herbals.aether },
-
-                details = new()
-                {
-                    "Restores full health and stamina.",
-                    "Effect: Godlike 1",
-                    "Enhances enchantments",
-                }
+                resource = true,
 
             };
             return potions;
@@ -918,7 +886,6 @@ namespace StardewDruid.Journal
             {
 
                 case 0:
-
                     Mod.instance.save.potions[potion] = 1;
                     break;
                 case 1:
@@ -946,39 +913,46 @@ namespace StardewDruid.Journal
 
             herbalism[id].amounts.Clear();
 
-            bool craftable = false;
+            bool craftable = true;
 
-            for (int i = 0; i < Game1.player.Items.Count; i++)
+            if(herbal.ingredients.Count > 0)
             {
+                
+                craftable = false;
 
-                Item checkSlot = Game1.player.Items[i];
-
-                if (checkSlot == null)
+                for (int i = 0; i < Game1.player.Items.Count; i++)
                 {
 
-                    continue;
+                    Item checkSlot = Game1.player.Items[i];
 
-                }
-
-                Item checkItem = checkSlot.getOne();
-
-                if (herbal.ingredients.ContainsKey(@checkItem.QualifiedItemId))
-                {
-
-                    if (!herbalism[id].amounts.ContainsKey(@checkItem.QualifiedItemId))
+                    if (checkSlot == null)
                     {
 
-                        herbalism[id].amounts[@checkItem.QualifiedItemId] = Game1.player.Items[i].Stack;
-
-                    }
-                    else
-                    {
-
-                        herbalism[id].amounts[@checkItem.QualifiedItemId] += Game1.player.Items[i].Stack;
+                        continue;
 
                     }
 
-                    craftable = true;
+                    Item checkItem = checkSlot.getOne();
+
+                    if (herbal.ingredients.ContainsKey(@checkItem.QualifiedItemId))
+                    {
+
+                        if (!herbalism[id].amounts.ContainsKey(@checkItem.QualifiedItemId))
+                        {
+
+                            herbalism[id].amounts[@checkItem.QualifiedItemId] = Game1.player.Items[i].Stack;
+
+                        }
+                        else
+                        {
+
+                            herbalism[id].amounts[@checkItem.QualifiedItemId] += Game1.player.Items[i].Stack;
+
+                        }
+
+                        craftable = true;
+
+                    }
 
                 }
 
@@ -1034,12 +1008,29 @@ namespace StardewDruid.Journal
         public void MassBrew()
         {
 
-            for(int i = 1; i <= 15; i++)
+            int max = MaxHerbal();
+
+            foreach (KeyValuePair<herbals, List<herbals>> line in lines)
             {
 
-                BrewHerbal(((herbals)i).ToString(), 50);
+                foreach (herbals herbal in line.Value)
+                {
+
+                    string key = herbal.ToString();
+
+                    if (herbalism[key].level > max)
+                    {
+
+                        continue;
+
+                    }
+
+                    BrewHerbal(key, 50);
+
+                }
 
             }
+                
 
         }
 
@@ -1094,66 +1085,77 @@ namespace StardewDruid.Journal
 
             }
 
-            for (int i = 0; i < Game1.player.Items.Count; i++)
-            {
+            if(herbal.ingredients.Count > 0) {
 
-                Item checkSlot = Game1.player.Items[i];
-
-                if (checkSlot == null)
+                
+                for (int i = 0; i < Game1.player.Items.Count; i++)
                 {
 
-                    continue;
+                    Item checkSlot = Game1.player.Items[i];
 
-                }
-
-                Item checkItem = checkSlot.getOne();
-
-                if (herbal.ingredients.ContainsKey(@checkItem.QualifiedItemId))
-                {
-
-                    int brew = Math.Min(Game1.player.Items[i].Stack, (draught - brewed));
-
-                    if (herbal.bases.Count > 0)
+                    if (checkSlot == null)
                     {
 
-                        foreach (herbals required in herbal.bases)
+                        continue;
+
+                    }
+
+                    Item checkItem = checkSlot.getOne();
+
+                    if (herbal.ingredients.ContainsKey(@checkItem.QualifiedItemId))
+                    {
+
+                        int brew = Math.Min(Game1.player.Items[i].Stack, (draught - brewed));
+
+                        if (herbal.bases.Count > 0)
                         {
 
-                            Mod.instance.save.herbalism[required] -= brew;
+                            foreach (herbals required in herbal.bases)
+                            {
+
+                                Mod.instance.save.herbalism[required] -= brew;
+
+                            }
 
                         }
 
+                        Game1.player.Items[i].Stack -= brew;
+
+                        if (Game1.player.Items[i].Stack <= 0)
+                        {
+                            Game1.player.Items[i] = null;
+
+                        }
+
+                        brewed += brew;
+
                     }
 
-                    Game1.player.Items[i].Stack -= brew;
-
-                    if (Game1.player.Items[i].Stack <= 0)
+                    if (brewed >= draught)
                     {
-                        Game1.player.Items[i] = null;
+
+                        break;
 
                     }
-
-                    brewed += brew;
-
-                }
-
-                if(brewed >= draught)
-                {
-
-                    break;
 
                 }
 
             }
-
-            CheckHerbal(id);
-
-            /*if(herbal.level < 4)
+            else if (herbal.bases.Count > 0)
             {
 
-                CheckHerbal(((herbals)(herbal.herbal + 1)).ToString());
+                foreach (herbals required in herbal.bases)
+                {
 
-            }*/
+                    Mod.instance.save.herbalism[required] -= draught;
+
+                }
+
+                brewed = draught;
+
+            }
+
+            CheckHerbal(id);
 
             Game1.player.currentLocation.playSound("bubbles");
 
@@ -1187,7 +1189,7 @@ namespace StardewDruid.Journal
 
                 consumeBuffer = Game1.currentGameTime.TotalGameTime.TotalSeconds + 5;
 
-                ConsumePotion hudmessage = new("Consumed " + herbal.title, herbal);
+                DisplayPotion hudmessage = new("Consumed " + herbal.title, herbal);
 
                 Game1.addHUDMessage(hudmessage);
 
@@ -1204,6 +1206,8 @@ namespace StardewDruid.Journal
 
                         applied[herbal.line].level = herbal.level;
 
+                        applyChange = true;
+
                     }
 
                 }
@@ -1214,28 +1218,18 @@ namespace StardewDruid.Journal
 
                     applied[herbal.line].level = herbal.level;
 
-                    applied[herbal.line].expires = Game1.timeOfDay;
+                    applied[herbal.line].counter = 0;
+
+                    applyChange = true;
 
                 }
 
-                for (int i = herbal.duration / 30; i > 0; i--)
+                applied[herbal.line].counter += herbal.duration;
+
+                if (applied[herbal.line].counter >= 999)
                 {
 
-                    applied[herbal.line].expires += i * 30;
-
-                    if (applied[herbal.line].expires % 100 >= 60)
-                    {
-
-                        applied[herbal.line].expires += 40;
-
-                    }
-
-                }
-
-                if (applied[herbal.line].expires >= 2599)
-                {
-
-                    applied[herbal.line].expires = 2599;
+                    applied[herbal.line].counter = 999;
 
                 }
 
@@ -1243,17 +1237,17 @@ namespace StardewDruid.Journal
 
             Mod.instance.save.herbalism[herbal.herbal] -= 1;
 
-            HerbalBuff();
+            //HerbalBuff();
 
         }
 
         public void HerbalBuff()
         {
 
-            if (Game1.player.buffs.IsApplied("184652"))
+            if (applied.Count == 0)
             {
 
-                Game1.player.buffs.Remove("184652");
+                return;
 
             }
 
@@ -1261,29 +1255,23 @@ namespace StardewDruid.Journal
 
             int speed = 0;
 
-            double lasts = 0;
-
-            double latest = 0;
+            int magnetism = 0;
 
             for(int i = applied.Count - 1; i >= 0; i--)
             {
 
                 KeyValuePair<herbals, HerbalBuff> herbBuff = applied.ElementAt(i);
 
-                if (Game1.timeOfDay > herbBuff.Value.expires)
+                applied[herbBuff.Key].counter -= 1;
+
+                if (applied[herbBuff.Key].counter <= 0)
                 {
 
                     applied.Remove(herbBuff.Key);
 
+                    applyChange = true;
+
                     continue;
-
-                }
-                else if (herbBuff.Value.expires > latest)
-                {
-
-                    lasts = herbBuff.Value.expires - Game1.timeOfDay;
-
-                    latest = herbBuff.Value.expires;
 
                 }
 
@@ -1292,13 +1280,15 @@ namespace StardewDruid.Journal
 
                     case herbals.ligna:
 
-                        description += "Alignment " + herbBuff.Value.level.ToString() + ". ";
+                        description += "Alignment " + herbBuff.Value.level.ToString() + " " + applied[herbBuff.Key].counter.ToString() + ". ";
+
+                        magnetism = herbBuff.Value.level * 32;
 
                         break;
 
                     case herbals.impes:
 
-                        description += "Vigorous " + herbBuff.Value.level.ToString() + ". ";
+                        description += "Vigorous " + herbBuff.Value.level.ToString() + " " + applied[herbBuff.Key].counter.ToString() + ". ";
 
                         break;
 
@@ -1318,11 +1308,25 @@ namespace StardewDruid.Journal
 
                         }
 
-                        description += "Celerity "+herbBuff.Value.level.ToString() + ". ";
+                        description += "Celerity "+herbBuff.Value.level.ToString() + " " + applied[herbBuff.Key].counter.ToString() + ". ";
 
                         break;
 
                 }
+
+            }
+
+            if (!applyChange)
+            {
+
+                return;
+
+            }
+
+            if (Game1.player.buffs.IsApplied("184652"))
+            {
+
+                Game1.player.buffs.Remove("184652");
 
             }
 
@@ -1333,23 +1337,11 @@ namespace StardewDruid.Journal
 
             }
 
-            if(lasts >= 100.00)
-            {
-
-                for (int l = (int)Math.Floor(lasts / 100); l > 0; l--)
-                {
-
-                    lasts -= 40.00;
-
-                }
-
-            }
-
             Buff herbalBuff = new(
                 "184652",
                 source: "Stardew Druid",
                 displaySource: "Herbalism",
-                duration: (int)(lasts * 1000),
+                duration: Buff.ENDLESS,
                 iconTexture: Mod.instance.iconData.displayTexture,
                 iconSheetIndex: 5,
                 displayName: "Druid Herbalism",
@@ -1361,13 +1353,26 @@ namespace StardewDruid.Journal
 
                 BuffEffects buffEffect = new();
 
-                buffEffect.Speed.Set(0);
+                buffEffect.Speed.Set(speed);
+
+                herbalBuff.effects.Add(buffEffect);
+
+            }
+
+            if (magnetism > 0)
+            {
+
+                BuffEffects buffEffect = new();
+
+                buffEffect.MagneticRadius.Set(magnetism);
 
                 herbalBuff.effects.Add(buffEffect);
 
             }
 
             Game1.player.buffs.Apply(herbalBuff);
+
+            applyChange = false;
 
         }
 
@@ -1412,6 +1417,8 @@ namespace StardewDruid.Journal
 
         public int stamina;
 
+        public bool resource;
+
     }
 
     public class HerbalBuff
@@ -1421,7 +1428,7 @@ namespace StardewDruid.Journal
 
         public HerbalData.herbals line = HerbalData.herbals.none;
 
-        public double expires;
+        public int counter;
 
         public int level;
 

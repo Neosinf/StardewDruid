@@ -1,7 +1,8 @@
-﻿using StardewModdingAPI.Utilities;
+﻿using StardewDruid.Data;
+using StardewModdingAPI.Utilities;
 using StardewValley.Characters;
 
-namespace StardewDruid.Data
+namespace StardewDruid
 {
 
     public class ModData
@@ -30,6 +31,8 @@ namespace StardewDruid.Data
 
         public bool setOnce { get; set; }
 
+        public bool convert219 { get; set; }
+
         public bool maxDamage { get; set; }
 
         public bool slotAttune { get; set; }
@@ -37,6 +40,8 @@ namespace StardewDruid.Data
         public bool slotConsume { get; set; }
 
         public bool slotFreedom { get; set; }
+
+        public bool slotReverse { get; set; }
 
         public string slotOne { get; set; }
 
@@ -82,6 +87,29 @@ namespace StardewDruid.Data
 
         public bool disableGrass { get; set; }
 
+        public int dragonScheme { get; set; }
+
+        public int dragonBreath { get; set; }
+
+        public int dragonPrimaryR { get; set; }
+
+        public int dragonPrimaryG { get; set; }
+
+        public int dragonPrimaryB { get; set; }
+
+        public int dragonSecondaryR { get; set; }
+
+        public int dragonSecondaryG { get; set; }
+
+        public int dragonSecondaryB { get; set; }
+
+        public int dragonTertiaryR { get; set; }
+
+        public int dragonTertiaryG { get; set; }
+
+        public int dragonTertiaryB { get; set; }
+
+
         public ModData()
         {
             riteButtons = KeybindList.Parse("MouseX1,MouseX2,V,LeftShoulder");
@@ -97,11 +125,13 @@ namespace StardewDruid.Data
             autoProgress = false;
             setMilestone = 0;
             setOnce = false;
+            convert219 = false;
             maxDamage = false;
             modDifficulty = "medium";
             slotAttune = true;
             slotConsume = true;
             slotFreedom = false;
+            slotReverse = false;
             slotOne = "weald";
             slotTwo = "mists";
             slotThree = "stars";
@@ -114,14 +144,58 @@ namespace StardewDruid.Data
             slotTen = "lunch";
             slotEleven = "lunch";
             slotTwelve = "lunch";
-            cultivateBehaviour = 1;
-            meteorBehaviour = 1;
+            cultivateBehaviour = 2;
+            meteorBehaviour = 3;
             cardinalMovement = false;
             castAnywhere = false;
             disableSeeds = false;
             disableFish = false;
             disableTrees = false;
             disableGrass = false;
+            dragonScheme = (int)IconData.schemes.dragon_red;
+            dragonBreath = (int)IconData.schemes.stars;
+            dragonPrimaryR = 190;
+            dragonPrimaryG = 30;
+            dragonPrimaryB = 45;
+            dragonSecondaryR = 191;
+            dragonSecondaryG = 142;
+            dragonSecondaryB = 93;
+            dragonTertiaryR = 39;
+            dragonTertiaryG = 170;
+            dragonTertiaryB = 225;
+        }
+
+    }
+
+    public class QueryData
+    {
+
+        public string name;
+
+        public string value;
+
+        public string description;
+
+        public double time;
+
+        public string location;
+
+        public enum queries
+        {
+            RequestProgress,
+            SyncProgress,
+            QuestUpdate,
+            EventDisplay,
+            EventDialogue,
+            ThrowRelic,
+            ThrowSword,
+            SpellHandle,
+            AccessHandle,
+        }
+
+        public QueryData()
+        {
+
         }
 
     }

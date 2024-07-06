@@ -9,14 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using xTile.Dimensions;
+using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Monster
 {
     public class Reaper : DarkRogue
     {
-
-        public NetBool netShieldActive = new NetBool(false);
-        public int shieldTimer;
 
         public Reaper()
         {
@@ -30,16 +28,6 @@ namespace StardewDruid.Monster
 
         }
 
-
-        protected override void initNetFields()
-        {
-            
-            base.initNetFields();
-
-            NetFields.AddField(netShieldActive, "netShieldActive");
-
-        }
-
         public override void LoadOut()
         {
 
@@ -47,7 +35,7 @@ namespace StardewDruid.Monster
 
             baseJuice = 4;
             
-            basePulp = 50;
+            basePulp = 40;
 
             cooldownInterval = 120;
 
@@ -56,6 +44,8 @@ namespace StardewDruid.Monster
             DarkFlight();
 
             DarkCast();
+
+            DarkBarrage();
 
             DarkSmash();
 
@@ -71,93 +61,15 @@ namespace StardewDruid.Monster
 
         }
 
-        public override void draw(SpriteBatch b, float alpha = 1f)
+        public override float GetScale()
         {
-
-            base.draw(b, alpha);
-
-            if (netShieldActive.Value)
-            {
-
-                if (IsInvisible || !Utility.isOnScreen(Position, 128))
-                {
-                    return;
-                }
-
-                Vector2 localPosition = getLocalPosition(Game1.viewport);
-
-                float drawLayer = (float)StandingPixel.Y / 10000f;
-
-                int netScale = netMode.Value > 5 ? netMode.Value - 4 : netMode.Value;
-
-                float spriteScale = 3.25f + (0.25f * netScale);
-
-                Vector2 spritePosition = localPosition - new Vector2(20 + (netScale * 4), 40f + (netScale * 8) + flightHeight) - (new Vector2(8) * spriteScale);
-
-                b.Draw(
-                    Mod.instance.iconData.shieldTexture,
-                    spritePosition,
-                    new Microsoft.Xna.Framework.Rectangle(0, 0, 48, 48),
-                    Mod.instance.iconData.schemeColours[IconData.schemes.death] * 0.2f,
-                    0f,
-                    Vector2.Zero,
-                    spriteScale,
-                    0,
-                    drawLayer+0.0004f
-                );
-
-                int sparkle= (int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 1000) / 200;
-
-                b.Draw(
-                    Mod.instance.iconData.shieldTexture,
-                    spritePosition,
-                    new Microsoft.Xna.Framework.Rectangle(48 + (48 * sparkle),0,48,48),
-                    Color.White * 0.6f,
-                    0f,
-                    Vector2.Zero,
-                    spriteScale,
-                    0,
-                    drawLayer + 0.0005f
-                );
-
-            }
-
+            return 4f + 0.25f * netMode.Value;
         }
 
-
-        public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who)
+        public override void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, IconData.schemes scheme = schemes.Void)
         {
 
-            if (netShieldActive.Value)
-            {
-
-                return 0;
-
-            }
-
-            return base.takeDamage(damage, xTrajectory, yTrajectory, isBomb, addedPrecision, who);
-
-        }
-
-        public override void update(GameTime time, GameLocation location)
-        {
-
-            base.update(time, location);
-
-            if (shieldTimer > 0)
-            {
-                shieldTimer--;
-            }
-
-            if(netShieldActive.Value)
-            { 
-                if(shieldTimer <= 300)
-                {
-
-                    netShieldActive.Set(false);
-
-                }
-            }
+            base.DrawShield(b, spritePosition, spriteScale, drawLayer, IconData.schemes.death);
 
         }
 
@@ -189,7 +101,9 @@ namespace StardewDruid.Monster
 
             fireball.missile = IconData.missiles.death;
 
-            fireball.display = IconData.impacts.death;
+            fireball.display = IconData.impacts.skull;
+
+            fireball.indicator = IconData.cursors.death;
 
             fireball.boss = this;
 
@@ -222,7 +136,7 @@ namespace StardewDruid.Monster
 
                     Vector2 tryVector = castSelection[Mod.instance.randomIndex.Next(castSelection.Count)];
 
-                    SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 256, GetThreat());
+                    SpellHandle fireball = new(currentLocation, tryVector*64, GetBoundingBox().Center.ToVector2(), 256, GetThreat());
 
                     fireball.type = SpellHandle.spells.ballistic;
 
@@ -230,7 +144,7 @@ namespace StardewDruid.Monster
 
                     fireball.missile = IconData.missiles.death;
 
-                    fireball.display = IconData.impacts.death;
+                    fireball.display = IconData.impacts.skull;
 
                     fireball.indicator = IconData.cursors.death;
 

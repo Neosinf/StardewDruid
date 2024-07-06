@@ -1,4 +1,4 @@
-﻿using GenericModConfigMenu;
+﻿
 using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Data;
@@ -44,8 +44,8 @@ namespace StardewDruid.Event.Relics
 
             if (!Game1.player.hasOrWillReceiveMail("canReadJunimoText"))
             {
-                
-                Mod.instance.CastDisplay("The forest spirits left instructions. You can't read them yet.");
+
+                Mod.instance.CastDisplay(DialogueData.Strings(DialogueData.stringkeys.noJunimo));
 
                 return false;
 
@@ -103,58 +103,9 @@ namespace StardewDruid.Event.Relics
             if(activeCounter == 3)
             {
 
+                CompleteArea(location);
+
                 CommunityCenter communityCenter = location as CommunityCenter;
-
-                Dictionary<string, string> bundleData = Game1.netWorldState.Value.BundleData;
-
-                string areaNameFromNumber = CommunityCenter.getAreaNameFromNumber(1);
-
-                foreach (string key in bundleData.Keys)
-                {
-                    
-                    if (key.Contains(areaNameFromNumber))
-                    {
-                        
-                        int bundleId = Convert.ToInt32(key.Split('/')[1]);
-
-                        if (communityCenter.bundleRewards.ContainsKey(bundleId))
-                        {
-
-                            if (!communityCenter.bundleRewards[bundleId])
-                            {
-
-                                communityCenter.bundleRewards[bundleId] = true;
-
-                            }
-
-                        } else
-                        {
-                            
-                            communityCenter.bundleRewards[bundleId] = true;
-
-                        }
-
-                        if (communityCenter.bundles.FieldDict.ContainsKey(bundleId))
-                        {
-
-                            if (!communityCenter.bundles.FieldDict[bundleId][0])
-                            {
-
-                                communityCenter.bundles.FieldDict[bundleId][0] = true;
-
-                            }
-
-                        }
-                        else
-                        {
-
-                            communityCenter.bundles.FieldDict[bundleId][0] = true;
-
-                        }
-
-                    }
-
-                }
 
                 communityCenter.markAreaAsComplete(1);
 
@@ -162,7 +113,38 @@ namespace StardewDruid.Event.Relics
 
                 communityCenter.areaCompleteReward(1);
 
-                Mod.instance.questHandle.CompleteQuest(eventId);
+                eventComplete = true;
+
+            }
+
+        }
+
+        public static void CompleteArea(GameLocation location)
+        {
+            CommunityCenter communityCenter = location as CommunityCenter;
+
+            Dictionary<string, string> bundleData = Game1.netWorldState.Value.BundleData;
+
+            string areaNameFromNumber = CommunityCenter.getAreaNameFromNumber(1);
+
+            foreach (string key in bundleData.Keys)
+            {
+
+                if (key.Contains(areaNameFromNumber))
+                {
+
+                    int bundleId = Convert.ToInt32(key.Split('/')[1]);
+
+                    communityCenter.bundleRewards[bundleId] = true;
+
+                    for (int i = 0; i < communityCenter.bundles[bundleId].Length; i++)
+                    {
+
+                        communityCenter.bundles.FieldDict[bundleId][i] = true;
+
+                    }
+
+                }
 
             }
 

@@ -127,7 +127,7 @@ namespace StardewDruid.Monster
                 return;
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = (float)StandingPixel.Y / 10000f;
 
@@ -248,9 +248,9 @@ namespace StardewDruid.Monster
 
             burn.type = SpellHandle.spells.explode;
 
-            burn.scheme = IconData.schemes.ember;
+            burn.scheme = IconData.schemes.stars;
 
-            burn.display = IconData.impacts.combustion;
+            burn.display = IconData.impacts.impact;
 
             burn.instant = true;
 

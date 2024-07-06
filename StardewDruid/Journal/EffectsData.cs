@@ -39,8 +39,9 @@ namespace StardewDruid.Journal
                     "Druid Level: Number of quests completed / 5",
                     "Indicator: The decorative rite circle, cursor and HUD-buff icon should indicate the currently selected rite, which can vary due to weapon, attunement, progress and patron served.",
                     "Otherworldly connection: Some of the game maps (mostly interiors) have effect restrictions that can be disabled in the config.",
-                    "Hold: You can run and ride a horse while holding the rite button.",
-                    "Grass: Performing a rite provides faster movement through grass.",
+                    "Quest Replay: Event-type quests can be replayed after they are completed. Controls for replay are found on Quest pages in the Quest Journal"
+                    //"Hold: You can run and ride a horse while holding the rite button.",
+                    //"Grass: Performing a rite provides faster movement through grass.",
                 }
             };
             Effect herbalism = new()
@@ -52,7 +53,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Along your journey you will attain relics that will unlock higher levels of potency, up to level 5",
-                    "Ligna: special ingredients include roots, seeds and roughage, and higher potency will increase the damage and success-rate (better chance based outcomes) of rites.",
+                    "Ligna: special ingredients include roots, seeds and roughage, and higher potency will increase magnetic radius and strengthen rite effects.",
                     "Impes: special ingredients include tubers, fungi and spices, and higher potency will strengthen charge effects and critical hits.",
                     "Celeri: special ingredients include fish oil and seaweeds, and higher potency will raise movement speed, cast speed and lower charge effect cooldowns."
                 }
@@ -154,6 +155,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Mastery: Wild seeds have a chance to convert into quality crops.",
+                    "Limit: Farm/Greenhouse only.",
                     "Effect: Seasonal wild seeds sewn into tilled dirt are converted into domestic crops.",
                     "Effect: Fertilise and update the growth cycle of all crop seeds and tree seeds",
                     "Effect: Progress the growth rate of maturing fruit trees and tea bushes by one day (once per day)",
@@ -179,7 +181,8 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Mastery: Falling rocks inflict small damage to monsters within 3 tiles.",
-                    "Cost: 2 stamina",
+                    "Cost: 3 stamina",
+                    "Chargeups: Charge effects trigger on impact. Charge cooldown applies.",
                     "Debris (Stone): 1 + RNG based on DruidLevel and professions",
                     
                 }
@@ -310,6 +313,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Mastery: Critical hit chance greatly increased",
+                    "Chargeups: Charge effects trigger on impact. Charge cooldown applies.",
                 }
             };
 
@@ -337,7 +341,10 @@ namespace StardewDruid.Journal
                 instruction = "Channel (press and hold) Rite of the Mists to summon wisps. Wisps cast a smaller version of Smite that stuns nearby enemies.",
                 details = new()
                 {
+                    "Targetting Cycle: Once every 5 seconds.",
+                    "Effect: One monster in the range of any of the wisps will be selected for a massive Smite bolt that triggers veil of mist.",
                     "Number: One wisp per 12x12 tile square on valid ground around the player, going clockwise, for every 1 second held once triggered."
+                    
                 }
             };
 
@@ -371,6 +378,7 @@ namespace StardewDruid.Journal
                     "Cost: 12 - Player Combat Level, minimum 5",
                     "Activate: Hold the rite button to continue to produce a shower of meteors around the Farmer",
                     "Mastery: Chance for an additional meteor to be produced per cast cycle",
+                    "Chargeups: Charge effects trigger on impact. Charge cooldown applies.",
                     "The damage and behaviour of meteor rain can be changed in the configuration options",
                     "A melee weapon is required to cast meteors on farmland",
                     "Option 1. Prioritises Monsters and Stone Nodes. If no target is available, will utilise a regular spatial pattern for optimal coverage. Normal damage. (default)",
@@ -538,6 +546,23 @@ namespace StardewDruid.Journal
 
             effects[QuestHandle.fatesFour] = new() { enchant, };
 
+           /* Effect revisit = new()
+            {
+                title = "Revisit",
+                icon = IconData.displays.fates,
+                description = "The Fates can inhabit moments in time, and though the outcome has been determined in the original moment, a lesson or answer can be gained from witnessing events from a fresh perspective.",
+                instruction = "The runestones in the Relics menu can now be used to revisit previous challenges at a higher difficulty level.",
+                details = new()
+                {
+                    "Limit: Each challenge can be revisited once a day",
+                    "Each runestone is associated with a specific event and its tooltip contains the instructions to trigger the event" +
+                    "The event plays out as it previously did, except without the usual quest prompts or rewards",
+
+                }
+            };
+
+            effects[QuestHandle.fatesFive] = new() {revisit, };*/
+
             Effect summonShadowtin = new()
             {
                 title = "The Shadow Scholar",
@@ -561,10 +586,11 @@ namespace StardewDruid.Journal
             {
                 title = "Dragon Form",
                 icon = IconData.displays.ether,
-                description = "The Dragons have long been venerated as masters of the ether, the quintessential fifth element that defines the shape and nature of the spiritual domain. With the Dragontooth of Tyrannus Prime, I can adopt the guise of an Ancient One, and learn to master the ether myself.",
+                description = "The Dragons have long been venerated as masters of the ether, the quintessential fifth element that defines the shape and nature of the spiritual domain. With the Dragontooth of Tyrannus Jin, I can adopt the guise of an Ancient One, and learn to master the ether myself.",
                 instruction = "Press the rite button to transform into a Dragon. Press the rite button again to detransform.",
                 details = new()
                 {
+                    "The Dragonomicon can be gained from Shadowtin, and provides access to aesthetic configuration for dragon form",
                     "Dragon form should maintain through map transitions, but will exit for events or locations that are restricted.",
                 }
             };
@@ -595,8 +621,8 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Targetting: Uses cursor and directional targetting.",
-                    "Potency: Powerful enough to destroy terrain and reave dirt",
-                    "Mastery: Damage effect creates a zone of fire that applies the 'Burn' status" +
+                    "Potency: Powerful enough to destroy terrain and reave dirt.",
+                    "Mastery: Damage effect creates a zone of fire that applies the 'Burn' status.",
                     "Mastery (Burn): has a chance to immolate enemies and convert them into cooking items."
                 }
             };
@@ -622,18 +648,33 @@ namespace StardewDruid.Journal
             {
                 title = "Dragon Treasure",
                 icon = IconData.displays.ether,
-                description = "The treasures of antiquity were sealed away with ethereal binds, all in the hope that a master of the ether would arise from the ranks of the Druids to reclaim them.",
-                instruction = "While in dragon form, treasure markers will appear once day on large maps, these can be activated with the Special button/ right click to claim the treasure. ",
+                description = "Ether transcends time and the boundaries of the material realm, yet carries with it the traumas and triumphs of moments it flows through.",
+                instruction = "Revisiting past events with Fates: Perception while transformed with Rite of the Ether will alter the event.",
                 details = new()
                 {
-                    "Location: Search for the ether symbol on large map locations (Forest, Beach, Mountain, RailRoad, Desert, Island etc).",
+                    "Location: Search for the ether symbol on these large map locations: Cindersap Forest, Beach, Mountain, Desert, Island-West, Atoll and Bug-Land.",
                     "Activate: Move over the spot and either dig or dive (special/right click button) to claim the dragon treasure.",
                     "Thieves: There is a chance a monster will attempt to abscond with the treasure.",
-                    "Mastery: Treasure caches provide Ether",
+                    "Mastery: Dig spots spawn in every 3rd and 7th out of 10 mineshafts, and generate descending ladders or holes",
                 }
             };
 
             effects[QuestHandle.etherFour] = new() { dragonTreasure, };
+
+            /*Effect recollect = new()
+            {
+                title = "Recollect",
+                icon = IconData.displays.ether,
+                description = "Ether transcends time and the boundaries of the material realm, yet carries with it the traumas and triumphs of moments it flows through.",
+                instruction = "Revisiting past events with Fates: Perception while transformed with Rite of the Ether will alter the event.",
+                details = new()
+                {
+                    "Limit: Triggering the alternate version of the revisited quest still counts to the daily limit",
+                    "The event will play out differently, with alternate challenges, bosses and narrative structure",
+                }
+            };
+
+            effects[QuestHandle.etherFive] = new() { recollect, };*/
 
             return effects;
 

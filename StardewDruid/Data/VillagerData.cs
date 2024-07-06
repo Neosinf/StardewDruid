@@ -1,6 +1,7 @@
 ﻿using StardewDruid.Cast.Weald;
 using StardewValley;
 using System.Collections.Generic;
+using static StardewDruid.Data.ReactionData;
 
 namespace StardewDruid.Data
 {
@@ -142,6 +143,73 @@ namespace StardewDruid.Data
             }
 
             return reaction;
+
+        }
+
+
+
+        public static Dictionary<ReactionData.portraits, string> ReactionPortraits(string name)
+        {
+
+            Dictionary<ReactionData.portraits, string> shots = new()
+            {
+                [ReactionData.portraits.neutral] = "$neutral",
+                [ReactionData.portraits.happy] = "$h",
+                [ReactionData.portraits.sad] = "$s",
+                [ReactionData.portraits.unique] = "$u",
+                [ReactionData.portraits.love] = "$l",
+                [ReactionData.portraits.angry] = "$a",
+            };
+
+
+            switch (name)
+            {
+                case "Lewis":
+
+                    shots[ReactionData.portraits.love] = "$h";
+
+                    break;
+
+                case "Caroline":
+
+                    shots[ReactionData.portraits.love] = "$h";
+                    shots[ReactionData.portraits.angry] = "$s";
+                    break;
+
+                case "Pam":
+                case "Jodi":
+                case "Kent":
+                case "Linus":
+
+                    shots[ReactionData.portraits.love] = "$h";
+                    shots[ReactionData.portraits.angry] = "$u";
+
+                    break;
+
+                case "Clint":
+
+                    shots[ReactionData.portraits.love] = "$a";
+                    shots[ReactionData.portraits.angry] = "$u";
+
+                    break;
+
+                case "Wizard":
+
+                    shots = new()
+                    {
+                        [ReactionData.portraits.neutral] = "$neutral",
+                        [ReactionData.portraits.happy] = "$neutral",
+                        [ReactionData.portraits.sad] = "$h",
+                        [ReactionData.portraits.unique] = "$h",
+                        [ReactionData.portraits.love] = "$neutral",
+                        [ReactionData.portraits.angry] = "$h",
+                    };
+
+                    break;
+
+            }
+
+            return shots;
 
         }
 

@@ -53,6 +53,7 @@ namespace StardewDruid.Character
         public List<Vector2> roamVectors = new();
         public int roamIndex;
         public double roamLapse;
+        public int stuck;
 
         public NetBool netSceneActive = new NetBool(false);
         public Dictionary<int,Vector2> eventVectors = new();
@@ -159,7 +160,7 @@ namespace StardewDruid.Character
 
         public Character(CharacterHandle.characters type)
           : base(
-                new AnimatedSprite(Path.Combine("Characters","Abigail")), 
+                new AnimatedSprite("StardewDruid.Characters." + type.ToString()) { SpriteWidth = 32, SpriteHeight = 32, }, 
                 CharacterHandle.CharacterStart(CharacterHandle.CharacterHome(type)),
                 CharacterHandle.CharacterLocation(CharacterHandle.CharacterHome(type)),
                 2, 
@@ -182,6 +183,10 @@ namespace StardewDruid.Character
             LoadOut();
 
         }
+
+        public override bool IsVillager { get { return false; } }
+
+        public override bool CanSocialize { get { return false; } }
 
         protected override void initNetFields()
         {
@@ -524,7 +529,7 @@ namespace StardewDruid.Character
 
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = (float)StandingPixel.Y / 10000f;
 
@@ -534,8 +539,6 @@ namespace StardewDruid.Character
             {
 
                 DrawStandby(b, localPosition, drawLayer);
-
-                return;
 
             }
             else if (netHaltActive.Value)
@@ -778,7 +781,7 @@ namespace StardewDruid.Character
         public virtual void DrawStandby(SpriteBatch b, Vector2 localPosition, float drawLayer)
         {
 
-
+            DrawAlert(b, localPosition, drawLayer);
 
         }
 
@@ -797,10 +800,21 @@ namespace StardewDruid.Character
 
         }
 
-        public virtual void DrawShadow(SpriteBatch b, Vector2 localPosition, float drawLayer, float offset = 0)
+        public virtual void DrawShadow(SpriteBatch b, Vector2 localPosition, float drawLayer)
         {
 
-            b.Draw(
+            int offset = moveFrame % (walkFrames.Count / 2);
+
+            Vector2 shadowPosition = new(localPosition.X-10+(4*offset), localPosition.Y + 14 + (4 * offset));
+
+            if(netDirection.Value % 2 == 1)
+            {
+                shadowPosition.Y += 4;
+            }
+
+            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * 0.35f, 0.0f, Vector2.Zero, 1.75f - (offset*0.125f), 0, drawLayer - 1E-06f);
+
+            /*b.Draw(
                 Game1.shadowTexture,
                 localPosition + new Vector2(10 + offset, 44f),
                 Game1.shadowTexture.Bounds,
@@ -811,7 +825,7 @@ namespace StardewDruid.Character
                 SpriteEffects.None,
                 drawLayer - 0.0001f
                 );
-
+            */
         }
 
         public override Rectangle GetBoundingBox()
@@ -927,7 +941,7 @@ namespace StardewDruid.Character
 
             }
 
-            if (!EngageDialogue())
+            if (!EngageDialogue(who))
             {
                 
                 return false;
@@ -940,7 +954,7 @@ namespace StardewDruid.Character
 
         }
 
-        public virtual bool EngageDialogue()
+        public virtual bool EngageDialogue(Farmer who)
         {
 
             if (!Mod.instance.dialogue.ContainsKey(characterType))
@@ -962,6 +976,8 @@ namespace StardewDruid.Character
 
                 if (Mod.instance.eventRegister.ContainsKey(eventName))
                 {
+
+                    LookAtTarget(who.Position, true);
 
                     if (Mod.instance.eventRegister[eventName].DialogueNext(this))
                     {
@@ -1347,8 +1363,6 @@ namespace StardewDruid.Character
 
                 float distance = Vector2.Distance(Position, eventVector.Value);
 
-                //LookAtTarget(eventVector.Value);
-
                 Position = ModUtility.PathMovement(Position, eventVector.Value, MoveSpeed(distance));
 
                 if(netDashActive.Value || netSmashActive.Value)
@@ -1656,11 +1670,86 @@ namespace StardewDruid.Character
                 if (ModUtility.TileAccessibility(currentLocation, occupied) != 0)
                 {
 
-                    WarpToEntrance();
+                    switch (modeActive)
+                    {
+
+                        case mode.track:
+
+                            Mod.instance.trackers[characterType].WarpToPlayer();
+
+                            return true;
+
+                        case mode.random:
+                            
+                            stuck++;
+
+                            if (stuck>= 4)
+                            {
+
+                                CharacterMover mover = new(characterType);
+
+                                CharacterHandle.locations home = CharacterHandle.CharacterHome(characterType);
+
+                                mover.WarpSet(CharacterHandle.CharacterLocation(home), CharacterHandle.CharacterStart(home), true);
+
+                                Mod.instance.movers[characterType] = mover;
+
+                                stuck = 0;
+
+                                return true;
+
+                            }
+
+                            TargetRandom();
+
+                            return true;
+
+                        case mode.roam:
+
+                            if (TargetRoam())
+                            {
+
+                                return true;
+
+                            }
+                            if (PathTarget(tether, 2, 2))
+                            {
+
+                                return true;
+
+                            }
+                            else
+                            {
+                                stuck++;
+
+                                if (stuck >= 4)
+                                {
+
+                                    CharacterMover mover = new(characterType);
+
+                                    mover.WarpSet(Game1.getFarm().Name, CharacterHandle.CharacterStart(CharacterHandle.locations.farm), true);
+
+                                    Mod.instance.movers[characterType] = mover;
+
+                                    stuck = 0;
+
+                                    return true;
+
+                                }
+
+                                TargetRandom();
+
+                                return true;
+
+                            }
+
+                    }
 
                 }
 
             }
+
+            stuck = 0;
 
             if (timer == -1)
             {
@@ -3336,125 +3425,6 @@ namespace StardewDruid.Character
 
         // ========================================
         // ADJUST MODE
-
-        public virtual void WarpToEntrance()
-        {
-
-            ResetActives();
-
-            Vector2 warppoint = new Vector2(-1);
-
-            if(modeActive == mode.track)
-            {
-
-                Mod.instance.trackers[characterType].WarpToPlayer();
-
-                return;
-
-            }
-
-            if (currentLocation is MineShaft)
-            {
-
-                warppoint = WarpData.WarpXZone(currentLocation);
-
-                if (warppoint != Vector2.Zero)
-                {
-
-                    for(int i = 0; i < 5; i++)
-                    {
-
-                        if(i == 4)
-                        {
-
-                            CharacterHandle.CharacterWarp(this, CharacterHandle.CharacterHome(characterType));
-
-                            return;
-
-                        }
-
-                        if (ModUtility.GroundCheck(currentLocation, new Vector2((int)(warppoint.X / 64), (int)(warppoint.Y / 64)),true) == "ground")
-                        {
-
-                            break;
-
-                        }
-
-                        warppoint += new Vector2(0, 64);
-
-                    }
-
-                    Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position, true);
-
-                    Position = warppoint;
-
-                    SettleOccupied();
-
-                    Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position);
-
-                    return;
-
-                }
-
-            }
-            else
-            {
-
-                warppoint = WarpData.WarpEntrance(currentLocation, Position);
-
-                if (warppoint != Vector2.Zero)
-                {
-
-                    int centerDirection = ModUtility.DirectionToCenter(currentLocation, Position)[2];
-
-                    Vector2 centerMovement = ModUtility.DirectionAsVector(centerDirection) * 64;
-
-                    for (int i = 0; i < 5; i++)
-                    {
-
-                        if (i == 4)
-                        {
-
-                            CharacterHandle.CharacterWarp(this, CharacterHandle.CharacterHome(characterType));
-
-                            return;
-
-                        }
-
-                        Vector2 warppointTile = new Vector2((int)(warppoint.X / 64), (int)(warppoint.Y / 64));
-
-                        string groundCheck = ModUtility.GroundCheck(currentLocation, warppointTile, true);
-
-                        if (groundCheck == "ground")
-                        {
-                            
-                            break;
-
-                        }
-
-                        warppoint += centerMovement;
-
-                    }
-
-                    Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position, true);
-
-                    Position = warppoint;
-
-                    SettleOccupied();
-
-                    Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position);
-
-                    return;
-
-                }
-
-            }
-
-            CharacterHandle.CharacterWarp(this, CharacterHandle.CharacterHome(characterType));
-
-            return;
-
-        }
 
         public virtual void SwitchToMode(mode modechoice, Farmer player)
         {

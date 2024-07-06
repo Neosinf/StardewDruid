@@ -29,6 +29,7 @@ using System.Diagnostics.Metrics;
 using StardewValley.GameData.HomeRenovations;
 using System.Net.Mail;
 using StardewDruid.Cast.Fates;
+using static StardewValley.Menus.CharacterCustomization;
 
 
 namespace StardewDruid.Cast
@@ -60,13 +61,15 @@ namespace StardewDruid.Cast
 
         public bool projectileDirect;
 
+        public Vector2 projectilePosition;
+
         public float damageFarmers;
 
         public float damageMonsters;
 
         public int power;
 
-        public int environment;
+        public int explosion;
 
         public int terrain;
 
@@ -121,6 +124,7 @@ namespace StardewDruid.Cast
             status,
             levitate,
             trick,
+            zap,
         }
 
         public spells type;
@@ -170,6 +174,7 @@ namespace StardewDruid.Cast
             swordswipe,
             thunder_small,
             thunder,
+            dustMeep,
         }
 
         public sounds sound = sounds.none;
@@ -190,9 +195,9 @@ namespace StardewDruid.Cast
 
             location = farmer.currentLocation;
 
-            origin = farmer.Position;
+            origin = farmer.Position + new Vector2(32);
 
-            destination = Monsters.First().Position;
+            destination = Monsters.First().Position + new Vector2(32);
 
             radius = 128;
 
@@ -333,11 +338,9 @@ namespace StardewDruid.Cast
 
                 location = location.Name,
 
-                longId = Game1.player.UniqueMultiplayerID,
-
             };
 
-            Mod.instance.EventQuery(query, "SpellHandle");
+            Mod.instance.EventQuery(query, QueryData.queries.SpellHandle);
 
         }
 
@@ -392,6 +395,13 @@ namespace StardewDruid.Cast
             {
 
                 return true;
+
+            }
+
+            if(location == null)
+            {
+
+                return false;
 
             }
 
@@ -932,27 +942,34 @@ namespace StardewDruid.Cast
 
                         impact = monsters.First().Position;
 
-                        Mod.instance.iconData.AnimateWarpStrike(location, impact, projectile);
+                        LaunchWarpstrike(impact);
 
-                        monsters.First().stunTime.Set(Math.Max(monsters.First().stunTime.Value, 500));
+                        //Mod.instance.iconData.AnimateWarpStrike(location, impact, projectile);
+
+                        //monsters.First().stunTime.Set(Math.Max(monsters.First().stunTime.Value, 500));
+
+                        return true;
 
                     }
 
-                    if (counter == 12)
+                    //AdjustWarpstrike();
+
+                    if (counter == 24)
                     {
 
                         ApplyDamage(impact, radius, damageFarmers, damageMonsters, monsters);
 
-                        if(display != IconData.impacts.none)
+                        /*if(display != IconData.impacts.none)
                         {
 
                             Mod.instance.iconData.AnimateWarpSlash(location, impact);
 
-                        }
+                        }*/
 
                     }
 
-                    if(counter == 15)
+                    //if(counter == 20)
+                    if (counter == 36)
                     {
 
                         Shutdown();
@@ -970,6 +987,40 @@ namespace StardewDruid.Cast
                     Shutdown();
 
                     return false;
+
+                /*case spells.zap:
+
+                    if (counter == 1)
+                    {
+
+                        LaunchZap();
+
+                    }
+
+                    AdjustBolt();
+
+                    if (counter == 5)
+                    {
+
+                        RadialDisplay();
+
+                        ApplyDamage(impact, radius, damageFarmers, damageMonsters, monsters);
+
+                        ApplyEffects(impact);
+
+                    }
+
+                    if (counter == 20)
+                    {
+
+                        Shutdown();
+
+                        return false;
+
+                    }
+
+                    return true;*/
+
 
             }
 
@@ -1024,7 +1075,7 @@ namespace StardewDruid.Cast
 
                     indicator = IconData.cursors.death;
 
-                    display = IconData.impacts.death;
+                    display = IconData.impacts.skull;
 
                     scheme = IconData.schemes.death;
 
@@ -1095,7 +1146,7 @@ namespace StardewDruid.Cast
 
                     indicator = IconData.cursors.death;
 
-                    display = IconData.impacts.death;
+                    display = IconData.impacts.deathbomb;
 
                     scheme = IconData.schemes.death;
 
@@ -1380,7 +1431,9 @@ namespace StardewDruid.Cast
 
             float targetDepth = location.IsOutdoors ? appear.Y / 10000 + 0.001f : 999f;
 
-            Vector2 newPosition = appear - (new Vector2(48, 48) * construct.First().scale) + new Vector2(32, 32);
+            projectilePosition = appear;
+
+            Vector2 newPosition = projectilePosition + new Vector2(32, 32) - (new Vector2(48, 48) * construct.First().scale);
 
             Vector2 diff = newPosition - construct.First().position;
 
@@ -1477,13 +1530,9 @@ namespace StardewDruid.Cast
             if(scheme == IconData.schemes.none)
             {
 
-                scheme = IconData.schemes.bolt;
+                scheme = IconData.schemes.mists;
 
             }
-
-            construct = Mod.instance.iconData.BoltAnimation(location, new Vector2(destination.X, destination.Y - 64), scheme, projectile);
-
-            animations.AddRange(construct);
 
             if(sound == sounds.none)
             {
@@ -1492,12 +1541,39 @@ namespace StardewDruid.Cast
 
             }
 
+            construct = Mod.instance.iconData.BoltAnimation(location, new Vector2(destination.X, destination.Y - 64), scheme, projectile);
+
+            animations.AddRange(construct);
+
         }
+
+        /*public void LaunchZap()
+        {
+
+            if (scheme == IconData.schemes.none)
+            {
+
+                scheme = IconData.schemes.golden;
+
+            }
+
+            if (sound == sounds.none)
+            {
+
+                sound = sounds.flameSpellHit;
+
+            }
+
+            construct = Mod.instance.iconData.ZapAnimation(location, origin, destination, scheme, projectile);
+
+            animations.AddRange(construct);
+
+        }*/
 
         public void AdjustBolt()
         {
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < Math.Min(4,construct.Count); i++)
             {
 
                 int factor = (5 - counter);
@@ -1561,11 +1637,13 @@ namespace StardewDruid.Cast
         public void LaunchEcho()
         {
 
-            Vector2 diff = (destination - origin) / Vector2.Distance(origin, destination);
+            Vector2 diff = destination - origin;
 
-            Vector2 middle = diff * 264f;
+            Vector2 point = diff / Vector2.Distance(origin, destination);
 
-            impact = origin + diff * 450f;
+            Vector2 middle = point * 264f;
+
+            impact = origin + point * 450f;
 
             float rotate = (float)Math.Atan2(diff.Y, diff.X);
 
@@ -1678,7 +1756,7 @@ namespace StardewDruid.Cast
 
             animations.Add(bandAnimation);
 
-            TemporaryAnimatedSprite cloudAnimation = Mod.instance.iconData.ImpactIndicator(location, impact, IconData.impacts.spiral, 8f, new() { loops = 10, flip = true, alpha = 0.05f, layer = location.IsOutdoors ? impact.Y / 10000 : 990f });
+            TemporaryAnimatedSprite cloudAnimation = Mod.instance.iconData.CreateImpact(location, impact, IconData.impacts.spiral, 8f, new() { loops = 10, flip = true, alpha = 0.05f, layer = location.IsOutdoors ? impact.Y / 10000 : 990f });
 
             //cloudAnimation.delayBeforeAnimationStart = 1000;
 
@@ -1936,14 +2014,14 @@ namespace StardewDruid.Cast
             if (power > 0)
             {
 
-                if (environment == 0)
+                if (explosion == 0)
                 {
 
-                    environment = radius / 64;
+                    explosion = 3;
 
                 }
 
-                ModUtility.Explode(location, impact / 64, Game1.player, environment, power);
+                ModUtility.Explode(location, impact / 64, Game1.player, explosion, power);
 
             }
 
@@ -2028,7 +2106,7 @@ namespace StardewDruid.Cast
 
             }
 
-            int drain = Math.Min(4,(int)(Mod.instance.CombatDamage() * impes));
+            int drain = Math.Max(4,(int)(Mod.instance.CombatDamage() * impes));
 
             if (monsters.Count == 0)
             {
@@ -2049,7 +2127,7 @@ namespace StardewDruid.Cast
 
                 Color color = Color.DarkGreen;
 
-                Mod.instance.iconData.ImpactIndicator(location, monster.Position, IconData.impacts.glare, 1f, new() { color = Color.Teal, });
+                //Mod.instance.iconData.ImpactIndicator(location, monster.Position, IconData.impacts.glare, 1f, new() { color = Color.Teal, });
 
                 location.debris.Add(new Debris(drain, new Vector2(boundingBox.Center.X + 16, boundingBox.Center.Y), color, 1f, monster));
 
@@ -2083,42 +2161,6 @@ namespace StardewDruid.Cast
         public void DrainEffect()
         {
 
-
-            Vector2 mistCorner = Game1.player.Position - new Vector2(96, 128);
-
-            for (int i = 0; i < 4; i++)
-            {
-
-                for (int j = 0; j < 4; j++)
-                {
-
-                    if ((i == 0 || i == 5) && (j == 0 || j == 5))
-                    {
-                        continue;
-                    }
-
-                    Vector2 glowVector = mistCorner + new Vector2(i * 32, j * 32);
-
-                    TemporaryAnimatedSprite glowSprite = new TemporaryAnimatedSprite(0, 3000f, 1, 1, glowVector, false, false)
-                    {
-                        sourceRect = new Rectangle(88, 1779, 30, 30),
-                        sourceRectStartingPos = new Vector2(88, 1779),
-                        texture = Game1.mouseCursors,
-                        motion = new(0.016f * (Mod.instance.randomIndex.Next(2) == 0 ? 1 : -1) * Mod.instance.randomIndex.Next(1, 4), 0.016f * (Mod.instance.randomIndex.Next(2) == 0 ? 1 : -1) * Mod.instance.randomIndex.Next(1, 4)),
-                        scale = 4f,
-                        layerDepth = 999f,
-                        timeBasedMotion = true,
-                        alpha = 1f,
-                        alphaFade = 0.0005f,
-                        color = new Color(0.75f, 0.75f, 1f, 1f),
-                    };
-
-                    Game1.player.currentLocation.temporarySprites.Add(glowSprite);
-
-                }
-
-            }
-
             float impes = 0.1f;
 
             if (Mod.instance.herbalData.applied.ContainsKey(HerbalData.herbals.impes))
@@ -2128,7 +2170,7 @@ namespace StardewDruid.Cast
 
             }
 
-            int drain = Math.Min(10, (int)(damageMonsters * impes));
+            int drain = Math.Max(10, (int)(damageMonsters * impes));
 
             int num = Math.Min(drain, Game1.player.maxHealth - Game1.player.health);
 
@@ -2416,20 +2458,7 @@ namespace StardewDruid.Cast
 
             animations.Add(crateOpen);
 
-            StardewValley.Item candidate = SpawnData.CrateTreasure(location,impact);
-
-            if(candidate is MeleeWeapon candidateWeapon)
-            {
-
-                new ThrowHandle(Game1.player, origin, candidateWeapon).register();
-
-            }
-            else if (candidate is StardewValley.Object candidateObject)
-            {
-
-                new ThrowHandle(Game1.player, origin, candidateObject).register();
-
-            }
+            SpawnData.CrateTreasure(location,origin,impact);
 
             Mod.instance.iconData.ImpactIndicator(location, origin - new Vector2(0, 32), IconData.impacts.sparkle, 2, new() { layer = origin.Y / 10000 + 0.001f,});
 
@@ -2454,6 +2483,37 @@ namespace StardewDruid.Cast
             }
 
             Mod.instance.iconData.AnimateQuickWarp(Game1.player.currentLocation, destination);
+
+        }
+
+        public void LaunchWarpstrike(Vector2 position)
+        {
+
+            impact = position;
+
+            construct = Mod.instance.iconData.AnimateWarpStrike(location, position, projectile);
+
+
+        }
+
+        public void AdjustWarpstrike()
+        {
+
+            if(monsters.Count == 0)
+            {
+
+                return;
+
+            }
+
+            if (!ModUtility.MonsterVitals(monsters.First(),location))
+            {
+
+                return;
+
+            }
+
+            Mod.instance.iconData.AdjustWarpStrke(construct, monsters.First().Position, projectile);
 
         }
 

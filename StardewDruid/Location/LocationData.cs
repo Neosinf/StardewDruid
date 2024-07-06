@@ -1,92 +1,174 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.VisualBasic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using StardewDruid.Cast;
 using StardewDruid.Data;
-using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Buildings;
-using StardewValley.Locations;
-using StardewValley.Minigames;
-using StardewValley.Objects;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using xTile;
-using xTile.Dimensions;
-using xTile.Display;
-using xTile.Layers;
-using xTile.Tiles;
+
 using static StardewDruid.Data.IconData;
-using static StardewValley.Minigames.CraneGame;
+
 
 namespace StardewDruid.Location
 {
 
-    public class LocationTile
+    public class TriggerField
     {
 
-        public IconData.tilesheets tilesheet = IconData.tilesheets.druid;
+        public string location;
 
-        public Microsoft.Xna.Framework.Vector2 tile;
+        public Vector2 origin;
 
-        public Microsoft.Xna.Framework.Vector2 position;
+        public IconData.displays display;
 
-        public Microsoft.Xna.Framework.Rectangle rectangle;
+        public Rectangle displayRect;
 
-        public float layer;
+        public Rectangle targetRect;
 
-        public float frame;
+        public string eventId;
 
-        public float interval;
-
-        public bool shadow;
-
-        public bool flip;
-
-        public int offset;
-
-        public LocationTile(int x, int y, int w, int h, int Offset, bool Shadow = false, IconData.tilesheets Sheet = IconData.tilesheets.druid)
+        public enum triggers
         {
 
-            tile = new Vector2(x, y);
-
-            tilesheet = Sheet;
-
-            position = tile * 64;
-
-            rectangle = new(w*16,h*16,16,16);
-
-            layer = ((((float)y + (float)offset) * 64f) / 10000f);//Game1.player.drawLayerDisambiguator;
-
-            shadow = Shadow;
-
-            offset = Offset;
+            target,
+            decoration
 
         }
 
-        public void Draw(SpriteBatch b)
+        public triggers trigger;
+
+        public TriggerField(string Id, string Location, Vector2 Origin, IconData.displays Display)
         {
 
-            if (Utility.isOnScreen(position, 64))
+            eventId = Id;
+
+            location = Location;
+
+            origin = Origin;
+
+            display = Display;
+
+            trigger = triggers.target; 
+
+            displayRect = Mod.instance.iconData.DisplayRect(display);
+
+            targetRect = Mod.instance.iconData.CursorRect(cursors.target);
+
+        }
+
+        public TriggerField(string Id, string Location, Vector2 Origin, IconData.decorations Decoration)
+        {
+
+            eventId = Id;
+
+            location = Location;
+
+            origin = Origin;
+
+            display = displays.none;
+
+            trigger = triggers.decoration;
+
+            displayRect = Mod.instance.iconData.DecorativeRect(Decoration);
+
+        }
+
+        public void draw(SpriteBatch b)
+        {
+
+            if (!Utility.isOnScreen(origin, 64))
             {
 
-                Microsoft.Xna.Framework.Vector2 drawPosition = new(position.X - (float)Game1.viewport.X, position.Y - (float)Game1.viewport.Y);
+                return;
 
-                b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], drawPosition, rectangle, Microsoft.Xna.Framework.Color.White, 0f, Vector2.Zero, 4, SpriteEffects.None, layer + offset * 0.0064f);
+            }
 
-                if (shadow)
-                {
+            switch (trigger)
+            {
+                case triggers.decoration:
 
-                    b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], drawPosition + new Vector2(4, 8), rectangle, Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 4, SpriteEffects.None, layer - 0.001f);
+                    drawDecoration(b);
 
-                }
+                    break;
+
+                default:
+                    case triggers.target:
+
+                    drawTarget(b);
+
+                    break;
+                
 
             }
 
         }
+
+        public void drawDecoration(SpriteBatch b)
+        {
+
+            int offset = (int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds) % 2400 / 20;
+
+            Microsoft.Xna.Framework.Vector2 drawPosition = new(origin.X - (float)Game1.viewport.X, origin.Y - (float)Game1.viewport.Y);
+
+            float rotate = (float)Math.PI / 60 * offset;
+
+            b.Draw(
+                Mod.instance.iconData.decorationTexture,
+                drawPosition + new Vector2(32),
+                displayRect,
+                Color.White*0.75f,
+                rotate,
+                new Vector2(32),
+                3f,
+                SpriteEffects.None,
+                0.0001f
+            );
+
+        }
+
+        public void drawTarget(SpriteBatch b)
+        {
+
+            int offset = Math.Abs((int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 6400) / 100 - 32);
+
+            Microsoft.Xna.Framework.Vector2 drawPosition = new(origin.X - (float)Game1.viewport.X, origin.Y - (float)Game1.viewport.Y);
+
+            Vector2 position = drawPosition - new Vector2(32, 2 * offset);
+
+            //if (display != displays.none)
+            //{
+
+                b.Draw(
+                    Mod.instance.iconData.displayTexture,
+                    position + new Vector2(24, -24),
+                    displayRect,
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    3f,
+                    SpriteEffects.None,
+                    0.9f
+                );
+
+            //}
+            /*
+            b.Draw(
+                Mod.instance.iconData.cursorTexture,
+                position,
+                targetRect,
+                Color.White,
+                0f,
+                Vector2.Zero,
+                2f,
+                SpriteEffects.None,
+                0.9f
+            );
+            */
+
+        }
+
 
     }
 
@@ -120,9 +202,303 @@ namespace StardewDruid.Location
 
     }
 
-    public static class LocationData
+    public class TerrainTile
     {
 
+        public Vector2 position;
+
+        public List<Vector2> baseTiles = new();
+
+        public Microsoft.Xna.Framework.Rectangle source;
+
+        public int index;
+
+        public float layer;
+
+        public bool shadow;
+
+        public bool flip;
+
+        public IconData.tilesheets tilesheet;
+
+        public TerrainTile(IconData.tilesheets Tilesheet, int Index, Vector2 Position, bool Shadow = true, bool Flip = false)
+        {
+
+            tilesheet = Tilesheet;
+
+            index = Index;
+
+            position = Position;
+
+            source = LocationData.TerrainRectangles(tilesheet, Index);
+
+            Vector2 tile = ModUtility.PositionToTile(Position);
+
+            Vector2 range = new Vector2(source.Width / 16, source.Height / 16);
+
+            for (int x = 0; x < (int)range.X; x++)
+            {
+
+                baseTiles.Add(new Vector2(tile.X + x, tile.Y + ((int)range.Y - 1)));
+
+            }
+
+            layer = (Position.Y + (range.Y * 64f)) / 10000;
+
+            shadow = Shadow;
+
+            flip = Flip;
+        }
+
+        public void draw(SpriteBatch b, GameLocation location)
+        {
+
+            if (Utility.isOnScreen(position + source.Center.ToVector2(), source.Height*4))
+            {
+                
+                float opacity = 1f;
+
+                Microsoft.Xna.Framework.Vector2 origin = new(position.X - (float)Game1.viewport.X, position.Y - (float)Game1.viewport.Y);
+                
+                Microsoft.Xna.Framework.Rectangle bounds = new((int)position.X, (int)position.Y, (source.Width*4), (source.Height*4) - 72);
+
+                foreach (Farmer character in location.farmers)
+                {
+
+                    if (bounds.Contains(character.Position.X, character.Position.Y))
+                    {
+
+                        opacity = 0.75f;
+
+                    }
+
+                }
+
+                if (opacity == 1f)
+                {
+
+                    foreach (NPC character in location.characters)
+                    {
+
+                        if (bounds.Contains(character.Position.X, character.Position.Y))
+                        {
+
+                            opacity = 0.75f;
+                        }
+
+                    }
+
+                }
+                
+                b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin, source, Microsoft.Xna.Framework.Color.White * opacity, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer);
+                
+                if (shadow)
+                {
+                    
+                    b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(2, 8), source, Microsoft.Xna.Framework.Color.Black * 0.4f, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
+                
+                }
+            
+            }
+        
+        }
+    
+    }
+
+    public class LightField
+    {
+
+        public Vector2 origin;
+
+        public int luminosity = 4;
+
+        public Microsoft.Xna.Framework.Color colour = Microsoft.Xna.Framework.Color.LightGoldenrodYellow;
+
+        public enum lightTypes
+        {
+            sconceLight,
+            tableLight,
+            lantern,
+            brazier
+
+        }
+
+        public lightTypes lightType;
+
+        public int lightFrame;
+
+        public float lightAmbience = 0.75f;
+
+        public LightField(Vector2 Origin)
+        { 
+            
+            origin = Origin;
+
+        }
+
+        public LightField(Vector2 Origin, int Luminosity, Microsoft.Xna.Framework.Color Colour)
+        {
+
+            origin = Origin;
+
+            luminosity = Luminosity;
+
+            colour = Colour;
+
+        }
+
+        public void draw(SpriteBatch b)
+        {
+
+            if (Utility.isOnScreen(origin, 64 * luminosity))
+            {
+
+                Microsoft.Xna.Framework.Vector2 position = new(origin.X - (float)Game1.viewport.X, origin.Y - (float)Game1.viewport.Y);
+
+                Texture2D texture2D;
+
+                switch (lightType)
+                {
+
+                    case lightTypes.brazier:
+
+                        int brazierTime = (int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 1000) / 250;
+
+                        int frame = (brazierTime + lightFrame) % 4;
+
+                        b.Draw(
+                        Mod.instance.iconData.sheetTextures[IconData.tilesheets.tomb],
+                            position,
+                            new Microsoft.Xna.Framework.Rectangle(32 + (frame * 32), 0, 32, 32),
+                            Microsoft.Xna.Framework.Color.White,
+                            0f,
+                            Vector2.Zero,
+                            4,
+                            0,
+                            position.Y / 10000 + (6 * 0.0064f)
+                            );
+
+                        texture2D = Game1.lantern;
+
+                        break;
+
+                    case lightTypes.lantern:
+
+                        texture2D = Game1.lantern;
+
+                        break;
+
+                    default:
+
+                        texture2D = Game1.sconceLight;
+
+                        break;
+
+                }
+
+                b.Draw(
+                    texture2D,
+                    position,
+                    texture2D.Bounds,
+                    colour * lightAmbience,
+                    0f,
+                    new Vector2(texture2D.Bounds.Width / 2, texture2D.Bounds.Height / 2),
+                    0.25f * luminosity,
+                    SpriteEffects.None,
+                    position.Y / 10000 + 0.9f
+                );
+
+            }
+
+        }
+
+    }
+
+    public class CrateTile
+    {
+
+        public Vector2 origin;
+
+        public SpellHandle spell;
+
+        public bool empty;
+
+        public int series;
+
+        public int crate;
+
+
+        public CrateTile(Vector2 Origin, int Series, int Crate)
+        {
+
+            origin = Origin;
+
+            series = Series;
+
+            crate = Crate;
+
+        }
+
+        public void draw(SpriteBatch b)
+        {
+
+            if (!Utility.isOnScreen(origin, 64))
+            {
+
+                return;
+
+            }
+
+            if(empty)
+            {
+                
+                if(spell.counter < 300)
+                {
+                    
+                    return;
+
+                }
+
+            }
+
+            Microsoft.Xna.Framework.Vector2 position = new(origin.X - (float)Game1.viewport.X, origin.Y - (float)Game1.viewport.Y - 64);
+
+            b.Draw(
+                Mod.instance.iconData.crateTexture,
+                position,
+                new(empty ? 64 : 0, 0, 32, 64),
+                Color.White,
+                0f,
+                Vector2.Zero,
+                2f,
+                SpriteEffects.None,
+                origin.Y / 10000
+            );
+
+        }
+
+        public void open(GameLocation location)
+        {
+
+            SpellHandle spell = new(location, new(series, crate), origin);
+
+            spell.type = SpellHandle.spells.crate;
+
+            spell.counter = 60;
+
+            spell.Update();
+
+            Mod.instance.spellRegister.Add(spell);
+
+            empty = true;
+
+        }
+
+    }
+
+    
+    public static class LocationData
+    {
         public const string druid_grove_name = "18465_Grove";
 
         public const string druid_atoll_name = "18465_Atoll";
@@ -136,6 +512,10 @@ namespace StardewDruid.Location
         public const string druid_archaeum_name = "18465_Archaeum";
 
         public const string druid_tomb_name = "18465_Tomb";
+
+        public const string druid_engineum_name = "18465_Engineum";
+
+        public const string druid_gate_name = "18465_Gate";
 
         public static void DruidLocations(string map)
         {
@@ -158,82 +538,255 @@ namespace StardewDruid.Location
             
             }
 
+            GameLocation location;
+
             switch (map)
             {
-
+                default:
                 case druid_grove_name:
 
-                    GameLocation grove = new Location.Grove(druid_grove_name);
+                    location = new Location.Grove(map);
 
-                    Mod.instance.locations.Add(druid_grove_name, grove);
-
-                    Game1.locations.Add(grove);
-
-                    return;
+                    break;
 
                 case druid_atoll_name:
 
-                    GameLocation atoll = new Location.Atoll(druid_atoll_name);
+                    location = new Location.Atoll(map);
 
-                    Game1.locations.Add(atoll);
-
-                    Mod.instance.locations.Add(druid_atoll_name, atoll);
-
-                    return;
+                    break;
 
                 case druid_chapel_name:
 
-                    GameLocation chapel = new Location.Chapel(druid_chapel_name);
+                    location = new Location.Chapel(map);
 
-                    Game1.locations.Add(chapel);
-
-                    Mod.instance.locations.Add(druid_chapel_name, chapel);
-
-                    return;
+                    break;
 
                 case druid_vault_name:
 
-                    GameLocation vault = new Location.Vault(druid_vault_name);
+                    location = new Location.Vault(map);
 
-                    Game1.locations.Add(vault);
-
-                    Mod.instance.locations.Add(druid_vault_name, vault);
-
-                    return;
+                    break;
 
                 case druid_court_name:
 
-                    GameLocation court = new Location.Court(druid_court_name);
+                    location = new Location.Court(map);
 
-                    Game1.locations.Add(court);
-
-                    Mod.instance.locations.Add(druid_court_name, court);
-
-                    return;
+                    break;
 
                 case druid_archaeum_name:
 
-                    GameLocation archaeum = new Location.Archaeum(druid_archaeum_name);
+                    location = new Location.Archaeum(map);
 
-                    Game1.locations.Add(archaeum);
-
-                    Mod.instance.locations.Add(druid_archaeum_name, archaeum);
-
-                    return;
+                    break;
 
                 case druid_tomb_name:
 
-                    GameLocation tomb = new Location.Tomb(druid_tomb_name);
+                    location = new Location.Tomb(map);
 
-                    Game1.locations.Add(tomb);
+                    break;
 
-                    Mod.instance.locations.Add(druid_tomb_name, tomb);
+                case druid_engineum_name:
 
-                    return;
+                    location = new Location.Engineum(map);
+
+                    break;
+
+                case druid_gate_name:
+
+                    location = new Location.Gate(map);
+
+                    break;
+            }
+
+            Game1.locations.Add(location);
+
+            Mod.instance.locations.Add(map, location);
+
+        }
+
+        public static Microsoft.Xna.Framework.Rectangle TerrainRectangles(IconData.tilesheets sheet, int key)
+        {
+
+            switch (sheet)
+            {
+
+                case tilesheets.grove:
+
+
+                    switch (key)
+                    {
+
+                        case 1:
+
+                            return new(0, 32,32, 32);
+
+                        case 2:
+
+                            return new(32, 0, 32, 48);
+
+                        case 3:
+
+                            return new(80, 16, 16, 48);
+
+                        case 4:
+
+                            return new(96, 0, 16, 32);
+
+                        case 5:
+
+                            return new(112, 16, 16, 16);
+
+                        case 6:
+
+                            return new(96, 32, 16, 32);
+
+                        case 7:
+
+                            return new(112, 32, 16, 32);
+
+                        case 8:
+
+                            return new(128, 0, 48, 32);
+
+                        case 9:
+
+                            return new(128, 32, 48, 32);
+
+                    }
+
+                    break;
+
+                case tilesheets.atoll:
+
+
+                    switch (key)
+                    {
+
+                        case 1:
+
+                            return new(0, 0, 48, 96);
+
+                        case 2:
+
+                            return new(48, 16, 16, 48);
+
+                        case 3:
+
+                            return new(64, 0, 32, 64);
+
+                        case 4:
+
+                            return new(96, 16, 16, 48);
+
+                        case 5:
+
+                            return new(112, 16, 32, 48);
+
+                        case 6:
+
+                            return new(144, 0, 16, 32);
+
+                        case 7:
+
+                            return new(144, 32, 16, 32);
+
+                        case 8:
+
+                            return new(160, 32, 16, 32);
+
+                    }
+
+                    break;
+
+
+                case tilesheets.court:
+
+                    switch (key)
+                    {
+
+                        case 1:
+
+                            return new(0, 0, 64, 128);
+
+                        case 2:
+
+                            return new(64, 0, 64, 128);
+
+                        case 3:
+
+                            return new(128, 0, 64, 128);
+
+                        case 4:
+
+                            return new(192, 0, 64, 128);
+
+                    }
+
+                    break;
+
+
+                case tilesheets.engineum:
+
+                    switch (key)
+                    {
+
+                        case 1:
+
+                        return new(0, 0, 96, 80);
+
+                    }
+
+                    break;
+
+
+                case tilesheets.chapel:
+
+                    switch (key)
+                    {
+
+                        case 1:
+
+                            return new(0, 0, 32, 80);
+
+                        case 2:
+
+                            return new(0, 112, 64, 32);
+
+                    }
+
+                    break;
+
+                case tilesheets.gate:
+
+                    switch (key)
+                    {
+                        case 1:
+
+                            return new(0, 0, 128, 80);
+
+
+                    }
+
+                    break;
+
+                case tilesheets.tomb:
+
+                    switch (key)
+                    {
+                        case 1:
+
+                            return new(0, 0, 32, 64);
+
+                    }
+
+                    break;
 
             }
 
+            return new(0, 0, 0, 0);
+
         }
+
 
     }
 

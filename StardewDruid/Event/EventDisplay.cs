@@ -64,31 +64,30 @@ namespace StardewDruid.Event
 
             if(type == displayTypes.bar)
             {
-                
-                if (eventId != null)
+
+                if(eventId == null)
                 {
-                    if (!Mod.instance.eventRegister.ContainsKey(eventId))
-                    {
 
-                        return false;
+                    return false;
 
-                    }
+                }
 
-                    progress = Mod.instance.eventRegister[eventId].DisplayProgress(uniqueId);
+                if (!Mod.instance.eventRegister.ContainsKey(eventId))
+                {
 
-                    if (progress == -1f)
-                    {
-
-                        return false;
-
-                    }
-
-                    time = 5;
+                    return false;
 
                 }
 
                 if (boss != null)
                 {
+
+                    if (boss.netWoundedActive.Value)
+                    {
+
+                        return false;
+
+                    }
 
                     if (!ModUtility.MonsterVitals(boss, Game1.player.currentLocation))
                     {
@@ -98,6 +97,21 @@ namespace StardewDruid.Event
                     }
 
                     progress = (float)boss.Health / (float)boss.MaxHealth;
+
+                    time = 5;
+
+                }
+                else
+                {
+
+                    progress = Mod.instance.eventRegister[eventId].DisplayProgress(uniqueId);
+
+                    if (progress == -1f)
+                    {
+
+                        return false;
+
+                    }
 
                     time = 5;
 
@@ -120,6 +134,8 @@ namespace StardewDruid.Event
 
         public virtual void shutdown()
         {
+
+            boss = null;
 
             time = 0;
 
@@ -220,7 +236,7 @@ namespace StardewDruid.Event
 
         }
 
-        public virtual void drawContainer(SpriteBatch b, Rectangle container, float fade = 1f)
+        public static void drawContainer(SpriteBatch b, Rectangle container, float fade = 1f)
         {
 
             Color outerTop = new(167, 81, 37);

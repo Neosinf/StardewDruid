@@ -196,22 +196,6 @@ namespace StardewDruid.Character
             if (WarpToPlayer(direction))
             {
 
-                //Mod.instance.characters[trackFor].currentLocation.characters.Remove(Mod.instance.characters[trackFor]);
-
-                //Mod.instance.characters[trackFor].currentLocation = followPlayer.currentLocation;
-
-                //Mod.instance.characters[trackFor].currentLocation.characters.Add(Mod.instance.characters[trackFor]);
-
-                //Mod.instance.iconData.AnimateQuickWarp(Mod.instance.characters[trackFor].currentLocation, Mod.instance.characters[trackFor].Position - new Vector2(0, 32));
-
-                //Mod.instance.characters[trackFor].DeactivateStandby();
-
-                //Mod.instance.characters[trackFor].ResetActives();
-
-                //Mod.instance.characters[trackFor].attentionTimer = 360;
-
-                //Mod.instance.characters[trackFor].update(Game1.currentGameTime, Mod.instance.characters[trackFor].currentLocation);
-
                 return true;
 
             }

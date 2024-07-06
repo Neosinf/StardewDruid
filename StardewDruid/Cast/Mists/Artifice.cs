@@ -16,6 +16,10 @@ using StardewDruid.Location;
 using xTile.Tiles;
 using xTile.Layers;
 using StardewDruid.Character;
+using System.Threading;
+using StardewValley.Objects;
+using StardewValley.Monsters;
+using System.Xml.Linq;
 
 namespace StardewDruid.Cast.Mists
 {
@@ -44,23 +48,43 @@ namespace StardewDruid.Cast.Mists
 
             List<Vector2> tileVectors;
 
+            Dictionary<Vector2, bool> seenVectors = new();
+
             int casts = 0;
+
+            bool zappot = false;
 
             Vector2 warpVector = WarpData.WarpTiles(location);
 
             Vector2 fireVector = WarpData.FireVectors(location);
 
-            for (int i = 0; i < 4; i++)
+            for (int i = -1; i < 4; i++)
             {
 
-                tileVectors = ModUtility.GetTilesWithinRadius(location, castVector, i);
+                if(i == -1)
+                {
 
-                List<Vector2> betweenVectors = ModUtility.GetTilesBetweenPositions(location, Game1.player.Position, castVector * 64);
+                    tileVectors = ModUtility.GetTilesBetweenPositions(location, Game1.player.Position, castVector * 64);
 
-                tileVectors.AddRange(betweenVectors);
+                }
+                else
+                {
+                    tileVectors = ModUtility.GetTilesWithinRadius(location, castVector, i);
+
+
+                }
 
                 foreach (Vector2 tileVector in tileVectors)
                 {
+
+                    if (seenVectors.ContainsKey(tileVector))
+                    {
+
+                        continue;
+
+                    }
+
+                    seenVectors[tileVector] = true;
 
                     if (warpVector != Vector2.Zero && !Mod.instance.rite.specialCasts[locationName].Contains("warp"))
                     {
@@ -68,18 +92,13 @@ namespace StardewDruid.Cast.Mists
                         if (tileVector == warpVector)
                         {
 
-                            int targetIndex = WarpData.WarpTotems(location);
+                            string targetIndex = WarpData.WarpTotems(location);
 
-                            int extractionChance = Mod.instance.randomIndex.Next(1, 3);
+                            StardewValley.Object warpTotem = new(targetIndex, Mod.instance.randomIndex.Next(1, 3));
 
-                            for (int t = 0; t < extractionChance; t++)
-                            {
+                            ThrowHandle throwObject = new(Game1.player, warpVector * 64, warpTotem);
 
-                                ThrowHandle throwObject = new(Game1.player, warpVector * 64, targetIndex, 0);
-
-                                throwObject.register();
-
-                            }
+                            throwObject.register();
 
                             Vector2 boltVector = new(warpVector.X, warpVector.Y - 2);
 
@@ -135,7 +154,7 @@ namespace StardewDruid.Cast.Mists
 
                             StardewValley.Object targetObject = location.objects[tileVector];
 
-                            if (location.IsFarm && targetObject.bigCraftable.Value && targetObject.ParentSheetIndex == 9)
+                            if (location.IsFarm && targetObject.QualifiedItemId == "(BC)9")
                             {
 
                                 if (targetObject.MinutesUntilReady > 1)
@@ -254,16 +273,95 @@ namespace StardewDruid.Cast.Mists
                                 }
 
                             }
+                            else if(targetObject is CrabPot Crabpot)
+                            //else if (targetObject.QualifiedItemId.Contains("(O)710"))
+                            {
+
+                                //Mod.instance.Monitor.Log(Crabpot.readyForHarvest.Value.ToString(), StardewModdingAPI.LogLevel.Debug);
+                                //Mod.instance.Monitor.Log(Crabpot.bait.Value.ToString(), StardewModdingAPI.LogLevel.Debug);
+                                //Mod.instance.Monitor.Log(Crabpot.heldObject.Value.ToString(), StardewModdingAPI.LogLevel.Debug);
+
+                                if (Crabpot.heldObject.Value != null)
+                                {
+
+                                    int numberCaught = 1;
+
+                                    if (Game1.player.stats.Get("Book_Crabbing") != 0)
+                                    {
+
+                                        numberCaught = 2;
+                                    
+                                    }
+
+                                    StardewValley.Object harvest = new StardewValley.Object(Crabpot.heldObject.Value.QualifiedItemId.Replace("(O)",""), numberCaught);
+
+                                    ThrowHandle throwHarvest = new(Game1.player, tileVector * 64, harvest);
+
+                                    throwHarvest.register();
+
+                                    Crabpot.heldObject.Value = null;
+                                    Crabpot.bait.Value = null;
+                                    Crabpot.readyForHarvest.Set(false);
+                                    Crabpot.tileIndexToShow = 710;
+                                    Crabpot.lidFlapping = true;
+                                    Crabpot.lidFlapTimer = 60f;
+                                    location.playSound("fishingRodBend");
+                                    DelayedAction.playSoundAfterDelay("coin", 500);
+                                    Crabpot.shake = Vector2.Zero;
+                                    Crabpot.shakeTimer = 0f;
+
+                                    if (DataLoader.Fish(Game1.content).TryGetValue(harvest.ItemId, out var value2))
+                                    {
+                                        string[] array = value2.Split('/');
+
+                                        int minValue = ((array.Length <= 5) ? 1 : Convert.ToInt32(array[5]));
+
+                                        int num = ((array.Length > 5) ? Convert.ToInt32(array[6]) : 10);
+
+                                        Game1.player.caughtFish(harvest.QualifiedItemId, Game1.random.Next(minValue, num + 1), from_fish_pond: false, numberCaught);
+                                    }
+
+                                    Game1.player.gainExperience(1, 5);
+
+                                }
+
+                                if(Crabpot.bait.Value == null)
+                                {
+
+                                    if (!zappot)
+                                    {
+                                        Mod.instance.spellRegister.Add(new(tileVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                                        zappot = true;
+
+                                    }
+
+                                    Crabpot.bait.Value = new StardewValley.Object("774", i);
+
+                                    location.playSound("Ship");
+
+                                    Crabpot.lidFlapping = true;
+
+                                    Crabpot.lidFlapTimer = 60f;
+
+                                    casts++;
+
+                                }
+
+                            }
+
                             /*else if (targetObject.QualifiedItemId.Contains("93"))
                             {
 
-                                Game1.warpFarmer(LocationData.druid_tomb_name, 27, 30, 1);
+                                Mod.instance.iconData.ImpactIndicator(location, tileVector * 64, IconData.impacts.deathbomb, 2f, new() { scheme = IconData.schemes.stars, });
 
-                                Game1.xLocationAfterWarp = 27;
-
-                                Game1.yLocationAfterWarp = 30;
-
-                                Game1.facingDirectionAfterWarp = 0;
+                                location.objects.Remove(tileVector);
+                                StardewDruid.Monster.Boss theMonster; 
+                                theMonster = new Dustfiend(tileVector, Mod.instance.CombatDifficulty()); 
+                                theMonster.RandomTemperment();
+                                theMonster.SetMode(2);
+                                location.characters.Add(theMonster);
+                                theMonster.currentLocation = location;
+                                theMonster.update(Game1.currentGameTime, location);
 
                             }*/
 
@@ -303,7 +401,7 @@ namespace StardewDruid.Cast.Mists
 
             }
 
-            int radius = ((int)(Mod.instance.PowerLevel) + 2);
+            int radius = ((int)(Mod.instance.PowerLevel) + 3);
 
             radius = Math.Min(8, radius);
 

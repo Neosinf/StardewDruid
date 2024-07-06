@@ -11,11 +11,13 @@ using StardewValley.BellsAndWhistles;
 using StardewValley.Events;
 using StardewValley.Locations;
 using StardewValley.Menus;
+using StardewValley.Monsters;
 using StardewValley.Network;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static StardewValley.Minigames.TargetGame;
 
 
 namespace StardewDruid.Monster
@@ -40,8 +42,10 @@ namespace StardewDruid.Monster
 
         public int baseMode;
         public int baseJuice;
+        public float debuffJuice;
         public int basePulp;
         public int threat;
+        public bool groupMode;
         public NetInt netMode = new NetInt(0);
         public NetBool netPosturing = new NetBool(false);
 
@@ -67,7 +71,6 @@ namespace StardewDruid.Monster
             odd,
             random,
             ranged,
-            group,
 
         }
 
@@ -176,6 +179,10 @@ namespace StardewDruid.Monster
         public int channelFloor;
         //public int barrageThreshold;
 
+        // ============================= Shield ability
+
+        public NetBool netShieldActive = new NetBool(false);
+        public int shieldTimer;
 
         public Boss()
         {
@@ -230,25 +237,79 @@ namespace StardewDruid.Monster
             NetFields.AddField(netChannelActive, "netChannelActive");
             NetFields.AddField(netSweepActive, "netSweepActive");
             NetFields.AddField(netWoundedActive, "netWoundedActive");
+            NetFields.AddField(netShieldActive, "netShieldActive");
             NetFields.AddField(netScheme, "netScheme");
+
+        }
+
+        public virtual float GetScale()
+        {
+
+            float spriteScale = 3.25f + (0.25f * netMode.Value);
+
+            return spriteScale;
+
+        }
+
+        public virtual Vector2 GetPosition(Vector2 localPosition, float spriteScale = -1f, bool shadow = false)
+        {
+
+            if (spriteScale == -1f)
+            {
+                spriteScale = GetScale();
+
+            }
+
+            int width = idleFrames[0][0].Width;
+
+            int height = idleFrames[0][0].Height;
+
+            Vector2 spritePosition = localPosition + new Vector2(width, width*2) - new Vector2(width/2 * spriteScale, height * spriteScale);
+
+            if (shadow)
+            {
+
+                spritePosition.Y += 6 * spriteScale;
+
+                return spritePosition;
+
+            }
+
+            if (netFlightActive.Value || netSmashActive.Value)
+            {
+
+                spritePosition.Y -= flightHeight;
+
+            }
+            else
+            if (hoverInterval > 0)
+            {
+
+                spritePosition.Y -= (float)Math.Abs(hoverHeight) * hoverElevate;
+
+            }
+
+            return spritePosition;
 
         }
 
         public override Rectangle GetBoundingBox()
         {
 
-            Vector2 position = Position;
+            Vector2 spritePosition = GetPosition(Position);
 
-            int netScale = (int)GetScale();
+            float spriteScale = GetScale();
 
-            Rectangle box =  new((int)position.X - 8 - netScale * 4, (int)position.Y - 32 - netScale * 8, 80 + netScale * 4, 96 + netScale * 8);
+            int width = idleFrames[0][0].Width;
 
-            if(netFlightActive.Value || netSmashActive.Value)
-            {
+            int height = idleFrames[0][0].Height;
 
-                box.Y -= flightHeight;
-
-            }
+            Rectangle box =  new(
+                (int)(spritePosition.X + (spriteScale * 2)), 
+                (int)(spritePosition.Y + (spriteScale * 4)), 
+                (int)(spriteScale * (width - 4)), 
+                (int)(spriteScale * (height - 4))
+            );
 
             return box;
 
@@ -295,7 +356,7 @@ namespace StardewDruid.Monster
 
                     Health = MaxHealth;
 
-                    tempermentActive = temperment.cautious;
+                    tempermentActive = temperment.aggressive;
 
                     experienceGained.Set(50);
 
@@ -377,6 +438,13 @@ namespace StardewDruid.Monster
             }
 
             threat = Math.Min(threat, (Game1.player.maxHealth / 2));
+
+            if(debuffJuice > 0f)
+            {
+
+                threat = (int)((float)threat * debuffJuice);
+
+            }
 
             return threat;
 
@@ -480,13 +548,6 @@ namespace StardewDruid.Monster
 
         }
 
-        public virtual float GetScale()
-        {
-
-            return 1 + netMode.Value;
-
-        }
-
         public override void draw(SpriteBatch b, float alpha = 1f)
         {
             if (IsInvisible || !Utility.isOnScreen(Position, 128))
@@ -494,7 +555,7 @@ namespace StardewDruid.Monster
                 return;
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = StandingPixel.Y / 10000f;
 
@@ -508,7 +569,7 @@ namespace StardewDruid.Monster
 
         public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
         {
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             DrawTextAboveHead(b,localPosition);
 
@@ -631,7 +692,7 @@ namespace StardewDruid.Monster
         public override int takeDamage(int damage, int xTrajectory, int yTrajectory, bool isBomb, double addedPrecision, Farmer who)
         {
 
-            if (netPosturing.Value || netWoundedActive.Value)
+            if (netPosturing.Value || netWoundedActive.Value || netShieldActive.Value)
             {
                 
                 if (netChannelActive.Value)
@@ -686,20 +747,13 @@ namespace StardewDruid.Monster
 
                     netWoundedActive.Set(true);
 
+                    Health = MaxHealth;
+
                     return damage;
 
                 }
 
                 deathIsNoEscape();
-
-            }
-
-            if (talkTimer < (int)Game1.currentGameTime.TotalGameTime.TotalSeconds && textAboveHeadTimer <= 0)
-            {
-
-                DialogueData.DisplayText(this, 3, 0);
-
-                talkTimer = (int)Game1.currentGameTime.TotalGameTime.TotalSeconds + 6;
 
             }
 
@@ -712,7 +766,7 @@ namespace StardewDruid.Monster
 
             Microsoft.Xna.Framework.Rectangle box = GetBoundingBox();
 
-            SpellHandle death = new(new(box.Center.X, box.Top), 64 + (64* (int)GetScale()), IconData.impacts.death, new());
+            SpellHandle death = new(new(box.Center.X, box.Top), 64 + (64* (int)GetScale()), IconData.impacts.deathbomb, new());
 
             Mod.instance.spellRegister.Add(death);
 
@@ -902,6 +956,20 @@ namespace StardewDruid.Monster
 
         }
 
+        public virtual void ClearShield(bool reset = true)
+        {
+
+            netShieldActive.Set(false);
+
+            if (reset)
+            {
+
+                shieldTimer = 0;
+
+            }
+
+        }
+
         public void SetDirection(Vector2 target)
         {
 
@@ -988,22 +1056,6 @@ namespace StardewDruid.Monster
             {
                 return;
             }
-
-            int talk = 1;
-
-            if (tempermentActive == temperment.coward)
-            {
-                talk = 2;
-            }
-
-            if (tempermentActive == temperment.aggressive)
-            {
-                talk = 3;
-            }
-
-            DialogueData.DisplayText(this, 1, talk);
-
-            talkTimer = (int)Game1.currentGameTime.TotalGameTime.TotalSeconds + 6;
 
         }
 
@@ -1120,9 +1172,8 @@ namespace StardewDruid.Monster
 
             }
 
-            if (Mod.instance.CasterBusy())
+            if (Mod.instance.CasterGone() || Mod.instance.CasterBusy())
             {
-
                 return;
             }
 
@@ -1187,7 +1238,7 @@ namespace StardewDruid.Monster
 
             }
 
-            if (netHaltActive.Value)
+            if (netHaltActive.Value || netAlert.Value)
             {
 
                 UpdateHalt();
@@ -1508,6 +1559,26 @@ namespace StardewDruid.Monster
 
             }
 
+            if (shieldTimer > 0)
+            {
+
+                shieldTimer--;
+
+            }
+
+            if (netShieldActive.Value)
+            {
+
+                if (shieldTimer <= 300)
+                {
+
+                    ClearShield();
+
+                }
+
+            }
+
+
             if (!netFlightActive.Value)
             {
 
@@ -1629,8 +1700,22 @@ namespace StardewDruid.Monster
 
             if (flightTimer <= 0)
             {
+                
+                bool sweep = false;
+                
+                if (netSmashActive.Value)
+                {
+
+                    sweep = true;
+
+                }
 
                 ClearMove();
+
+                if (sweep)
+                {
+                    ConnectSweep();
+                }
 
             }
             else
@@ -1713,15 +1798,7 @@ namespace StardewDruid.Monster
 
                     }
 
-                    if (flightTimer == flightSegment)
-                    {
-
-                        ConnectSweep();
-
-                    }
-
                 }
-
 
             }
 
@@ -1831,9 +1908,11 @@ namespace StardewDruid.Monster
 
             cooldownActive = true;
 
-            float netScale = GetScale();
+            int range = Math.Abs(10 - netMode.Value);
 
-            cooldownTimer = (int)(((float)cooldownInterval + (float)(new Random().NextDouble() * cooldownInterval)) * (1f - 0.1f * netScale) * factor);
+            float offset = 0.5f + (Mod.instance.randomIndex.Next(range) * 0.1f);
+
+            cooldownTimer = (int)((float)cooldownInterval * offset * factor);
 
         }
 
@@ -1938,7 +2017,7 @@ namespace StardewDruid.Monster
 
             }
 
-            if(tempermentActive == temperment.group)
+            if(groupMode)
             {
 
                 List<StardewDruid.Character.Character> characters = ModUtility.CompanionProximity(currentLocation, new() { Position, }, 20 * 64);
@@ -1979,7 +2058,7 @@ namespace StardewDruid.Monster
                     if (channelSet)
                     {
                         
-                        if(threshold <= 576 + (96 * GetScale()) && Mod.instance.randomIndex.Next(2) == 0)
+                        if(threshold <= 576 + (96 * GetScale()) && (tempermentActive == temperment.ranged || Mod.instance.randomIndex.Next(2) == 0))
                         {
                             
                             if (PerformChannel(target))
@@ -1996,7 +2075,7 @@ namespace StardewDruid.Monster
                     if(specialSet)
                     {
                         
-                        if (threshold <= 384 + (64 * GetScale()) && Mod.instance.randomIndex.Next(2) == 0)
+                        if (threshold <= 384 + (64 * GetScale()) && (tempermentActive == temperment.ranged || Mod.instance.randomIndex.Next(2) == 0))
                         {
 
                             if (PerformSpecial(target))
@@ -2010,13 +2089,18 @@ namespace StardewDruid.Monster
 
                     }
 
-                    if (Mod.instance.randomIndex.Next(2) == 0 && flightSet)
+                    if (flightSet)
                     {
 
-                        if(PerformFlight(target))
+                        if (Mod.instance.randomIndex.Next(2) == 0 || tempermentActive == temperment.aggressive)
                         {
 
-                            return;
+                            if (PerformFlight(target))
+                            {
+
+                                return;
+
+                            }
 
                         }
 
@@ -2369,6 +2453,12 @@ namespace StardewDruid.Monster
 
                     break;
 
+                case 5:
+
+                    flightTo = target;
+
+                    break;
+
             }
 
             SetCooldown(1);
@@ -2580,21 +2670,14 @@ namespace StardewDruid.Monster
         public void PerformRandom()
         {
 
-            Dictionary<int, Vector2> dictionary = new Dictionary<int, Vector2>()
+            List<Vector2> circleTargets = ModUtility.GetOccupiableTilesNearby(currentLocation, ModUtility.PositionToTile(Position), -1, 2, 3);
+
+            if (circleTargets.Count > 0)
             {
-                [0] = new Vector2(1f, -2f),
-                [1] = new Vector2(-1f, -2f),
-                [2] = new Vector2(2f, 0.0f),
-                [3] = new Vector2(1f, 2f),
-                [4] = new Vector2(-1f, 2f),
-                [5] = new Vector2(-2f, 0.0f)
-            };
 
-            int key = new Random().Next(dictionary.Count);
+                PerformFollow(circleTargets[Mod.instance.randomIndex.Next(circleTargets.Count)]);
 
-            Vector2 target = Position + new Vector2(dictionary[key].X * 128f, dictionary[key].Y * 128);//Vector2.op_Multiply(dictionary[key], 128f);
-
-            PerformFollow(target);
+            }
 
         }
 

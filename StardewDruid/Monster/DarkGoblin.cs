@@ -30,7 +30,7 @@ namespace StardewDruid.Monster
 
             baseJuice = 3;
             
-            basePulp = 40;
+            basePulp = 30;
 
             cooldownInterval = 180;
 

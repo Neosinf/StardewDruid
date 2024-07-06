@@ -40,7 +40,7 @@ namespace StardewDruid.Character
         public override void LoadOut()
         {
             
-            characterType = CharacterHandle.characters.Revenant;
+            characterType = CharacterHandle.characters.Marlon;
 
             base.LoadOut();
 

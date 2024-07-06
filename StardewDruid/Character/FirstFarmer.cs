@@ -21,18 +21,16 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace StardewDruid.Character
 {
-    public class Cuchulan : StardewDruid.Character.Character
+    public class FirstFarmer : StardewDruid.Character.Character
     {
         
-        new public CharacterHandle.characters characterType = CharacterHandle.characters.Cuchulan;
-
         public Texture2D hatsTexture;
 
-        public Cuchulan()
+        public FirstFarmer()
         {
         }
 
-        public Cuchulan(CharacterHandle.characters type)
+        public FirstFarmer(CharacterHandle.characters type)
           : base(type)
         {
 
@@ -61,7 +59,7 @@ namespace StardewDruid.Character
 
             }
 
-            Vector2 localPosition = getLocalPosition(Game1.viewport);
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = (float)StandingPixel.Y / 10000f;
 

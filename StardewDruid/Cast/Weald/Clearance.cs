@@ -46,7 +46,7 @@ namespace StardewDruid.Cast.Weald
 
             explode.power = 2;
 
-            explode.environment = radius;
+            explode.explosion = radius;
 
             Mod.instance.spellRegister.Add(explode);
 

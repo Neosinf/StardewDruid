@@ -5,7 +5,7 @@ using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
 using StardewDruid.Event;
-
+using StardewDruid.Journal;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Tools;
@@ -26,24 +26,15 @@ namespace StardewDruid.Cast.Ether
 
         public bool crateThief;
 
-        public List<StardewDruid.Monster.Boss> thieves;
-
         public Crate()
         {
 
         }
 
-        public override bool TriggerActive()
+        public override void TriggerField()
         {
 
-            if(location.Name == Game1.player.currentLocation.Name)
-            {
-
-                return true;
-
-            }
-
-            return false;
+            triggerField = new(eventId, location.Name, origin, IconData.decorations.ether);
 
         }
 
@@ -51,44 +42,6 @@ namespace StardewDruid.Cast.Ether
         {
 
             return false;
-
-        }
-
-        public override void TriggerInterval()
-        {
-
-            triggerCounter++;
-
-            if(triggerCounter % 4 == 0)
-            {
-
-                animations.Clear();
-
-                TemporaryAnimatedSprite radiusAnimation = new(0, 4000, 1, 1, origin - new Vector2(16, 16), false, false)
-                {
-
-                    sourceRect = new(0, 64, 64, 64),
-
-                    sourceRectStartingPos = new Vector2(0, 64),
-
-                    texture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Decorations.png")),
-
-                    scale = 1.5f, //* size,
-
-                    layerDepth = 900f,
-
-                    rotationChange = (float)Math.PI / 1000,
-
-                    alpha = 0.75f,
-
-                };
-
-                location.temporarySprites.Add(radiusAnimation);
-
-                animations.Add(radiusAnimation);
-
-            }
-
 
         }
 
@@ -106,33 +59,22 @@ namespace StardewDruid.Cast.Ether
 
         }
 
-        public override void EventRemove()
-        {
-
-            if (thieves.Count > 0)
-            {
-    
-                thieves.First().currentLocation.characters.Remove(thieves.First());
-            
-            }
-
-            base.EventRemove();
-        
-        }
-
-
         public override void EventInterval()
         {
 
             activeCounter++;
 
-            if (thieves.Count > 0)
+            StardewDruid.Monster.Boss thief;
+
+            if (bosses.Count > 0)
             {
 
-                if (!ModUtility.MonsterVitals(thieves.First(), location) || thieves.First().netWoundedActive.Value)
+                thief = bosses.First().Value;
+
+                if (!ModUtility.MonsterVitals(thief, location) || thief.netWoundedActive.Value)
                 {
 
-                    origin = thieves.First().Position;
+                    origin = thief.Position;
 
                     eventComplete = true;
 
@@ -147,8 +89,6 @@ namespace StardewDruid.Cast.Ether
             activeLimit = 60;
 
             EventBar("Treasure Chase", 0);
-
-            StardewDruid.Monster.Boss thief;
 
             switch (Mod.instance.randomIndex.Next(3))
             {
@@ -171,7 +111,7 @@ namespace StardewDruid.Cast.Ether
 
             thief.baseJuice = 1;
 
-            thief.SetMode(3);
+            thief.SetMode(2);
 
             thief.tempermentActive = Monster.Boss.temperment.coward;
 
@@ -185,17 +125,15 @@ namespace StardewDruid.Cast.Ether
 
             thief.update(Game1.currentGameTime, location);
 
-            EventDisplay bossBar = Mod.instance.CastDisplay("Treasure Thief", "Treasure Thief");
+            narrators = DialogueData.DialogueNarrators("treasureChase");
 
-            bossBar.boss = thief;
+            cues = DialogueData.DialogueScene("treasureChase");
 
-            bossBar.type = EventDisplay.displayTypes.bar;
+            bosses[0] = thief;
 
-            bossBar.colour = Microsoft.Xna.Framework.Color.Red;
+            BossBar(0, 0);
 
-            Mod.instance.CastMessage("A thief has snatched the treasure!");
-
-            thieves.Add(thief);
+            DialogueCue(990);
 
         }
 
@@ -232,15 +170,31 @@ namespace StardewDruid.Cast.Ether
 
                 Game1.player.TemporaryPassableTiles.Add(new Microsoft.Xna.Framework.Rectangle((int)treasureVector.X * 64, (int)treasureVector.Y * 64, 64, 64));
 
-                Mod.instance.CastMessage("A way down has appeared");
+
+                DialogueCue(991);
 
                 return;
 
             }
 
-            if (Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherFour))
+            int aether = Mod.instance.randomIndex.Next(1,4);
+
+            Herbal Aether = Mod.instance.herbalData.herbalism[HerbalData.herbals.aether.ToString()];
+
+            DisplayPotion hudmessage = new("+" + aether.ToString() + " " + Aether.title, Aether);
+                
+            Game1.addHUDMessage(hudmessage);
+
+            if (Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.aether))
             {
 
+                Mod.instance.save.herbalism[HerbalData.herbals.aether] += Math.Min(aether,999-Mod.instance.save.herbalism[HerbalData.herbals.aether]);
+
+            }
+            else
+            {
+
+                Mod.instance.save.herbalism[HerbalData.herbals.aether] = aether;
 
             }
 
@@ -253,6 +207,46 @@ namespace StardewDruid.Cast.Ether
             crate.Update();
 
             Mod.instance.spellRegister.Add(crate);
+
+
+            if(crateTerrain == 2)
+            {
+
+                IconData.relics fishRelic = Mod.instance.relicsData.RelicMistsLocations();
+
+                if (fishRelic != IconData.relics.none)
+                {
+
+                    if (!Mod.instance.save.reliquary.ContainsKey(fishRelic.ToString()))
+                    {
+
+                        ThrowHandle throwRelic = new(Game1.player, origin, fishRelic);
+
+                        throwRelic.register();
+
+                        return;
+
+                    }
+
+                }
+
+            }
+
+            IconData.relics bookRelic = Mod.instance.relicsData.RelicBooksLocations();
+
+            if (bookRelic != IconData.relics.none)
+            {
+
+                if (!Mod.instance.save.reliquary.ContainsKey(bookRelic.ToString()))
+                {
+
+                    ThrowHandle throwRelic = new(Game1.player, origin, bookRelic);
+
+                    throwRelic.register();
+
+                }
+
+            }
 
         }
 

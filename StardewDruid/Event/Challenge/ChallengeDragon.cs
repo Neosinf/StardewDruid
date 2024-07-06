@@ -20,12 +20,6 @@ namespace StardewDruid.Event.Challenge
     public class ChallengeDragon : EventHandle
     {
 
-        public int activeSection;
-
-        public StardewDruid.Monster.Dragon terror;
-
-        public Vector2 relicPosition = Vector2.Zero;
-
         public Warp warpExit;
 
         public ChallengeDragon()
@@ -41,8 +35,6 @@ namespace StardewDruid.Event.Challenge
 
                 EventActivate();
 
-                return true;
-
             }
 
             return false;
@@ -56,27 +48,29 @@ namespace StardewDruid.Event.Challenge
 
             base.EventActivate();
 
-            EventBar("The Terror Beneath",0);
-
-            eventProximity = -1;
+            EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
             activeLimit = 120;
 
-            cues = DialogueData.DialogueScene(eventId);
-
-            narrators = DialogueData.DialogueNarrators(eventId);
-
+            HoldCompanions();
         }
 
         public override bool AttemptReset()
         {
 
-            if(location.Name == LocationData.druid_vault_name)
+            if (!eventActive)
+            {
+
+                return true;
+
+            }
+
+            if (location.Name == LocationData.druid_vault_name)
             {
 
                 Game1.player.warpFarmer(warpExit, 2);
 
-                Mod.instance.CastMessage("You managed to escape! Enter the lair to try again.", 3);
+                DialogueCue(900);
 
             }
 
@@ -84,11 +78,7 @@ namespace StardewDruid.Event.Challenge
 
             eventActive = false;
 
-            eventAbort = false;
-
             triggerEvent = true;
-
-            activeCounter = 0;
 
             return true;
 
@@ -102,57 +92,26 @@ namespace StardewDruid.Event.Challenge
         }
 
 
-        public override void EventRemove()
-        {
-
-            if (terror != null)
-            {
-
-                terror.currentLocation.characters.Remove(terror);
-
-                terror.currentLocation = null;
-
-                terror = null;
-
-            }
-
-            if (location != null)
-            {
-
-                location.updateWarps();
-
-            }
-
-            base.EventRemove();
-
-        }
-
         public override void EventInterval()
         {
 
             activeCounter++;
 
-            if (terror != null)
+            if (bosses.Count > 0)
             {
 
-                if (!ModUtility.MonsterVitals(terror, location))
+                if (!ModUtility.MonsterVitals(bosses[0], location))
                 {
 
-                    terror.currentLocation.characters.Remove(terror);
+                    bosses[0].currentLocation.characters.Remove(bosses[0]);
 
-                    terror = null;
+                    bosses.Clear();
 
                     cues.Clear();
 
                     eventComplete = true;
 
                     return;
-
-                }
-                else
-                {
-
-                    relicPosition = terror.Position;
 
                 }
 
@@ -174,29 +133,25 @@ namespace StardewDruid.Event.Challenge
 
                 warpExit = new Warp(26, 32, "Mine", 17, 6, flipFarmer: false);
 
-                terror = new(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+                bosses[0] = new Dragon(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
 
-                terror.netScheme.Set(2);
+                bosses[0].netScheme.Set(2);
 
-                terror.SetMode(3);
+                bosses[0].SetMode(3);
 
-                terror.netHaltActive.Set(true);
+                bosses[0].netHaltActive.Set(true);
 
-                terror.idleTimer = 300;
+                bosses[0].idleTimer = 300;
 
-                location.characters.Add(terror);
+                location.characters.Add(bosses[0]);
 
-                terror.update(Game1.currentGameTime, location);
+                bosses[0].currentLocation = location;
 
-                voices[0] = terror;
+                bosses[0].update(Game1.currentGameTime, location);
 
-                EventDisplay bossBar = Mod.instance.CastDisplay(narrators[0], narrators[0]);
+                voices[0] = bosses[0];
 
-                bossBar.boss = terror;
-
-                bossBar.type = EventDisplay.displayTypes.bar;
-
-                bossBar.colour = Microsoft.Xna.Framework.Color.Red;
+                BossBar(0, 0);
 
                 location.playSound("DragonRoar");
 
@@ -210,23 +165,6 @@ namespace StardewDruid.Event.Challenge
             }
 
             DialogueCue(activeCounter);
-
-        }
-
-        public override void EventCompleted()
-        {
-            
-            ThrowHandle throwRelic = new(Game1.player, relicPosition, IconData.relics.runestones_cat);
-
-            throwRelic.register();
-
-            Mod.instance.questHandle.CompleteQuest(eventId);
-
-            (location as Vault).AddCrateTile(24, 10, 1);
-
-            (location as Vault).AddCrateTile(28, 10, 2);
-
-            (location as Vault).AddCrateTile(32, 10, 3);
 
         }
 

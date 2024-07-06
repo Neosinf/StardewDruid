@@ -3,6 +3,7 @@ using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Journal;
 using StardewValley;
+using StardewValley.BellsAndWhistles;
 using System;
 using System.Collections.Generic;
 
@@ -38,17 +39,13 @@ namespace StardewDruid.Data
         public StaticData()
         {
 
+            // Player specific
+
             version = Mod.instance.version;
 
             id = Game1.player.UniqueMultiplayerID;
 
             rite = Rite.rites.none;
-
-            progress = new();
-
-            characters = new();
-
-            chests = new();
 
             attunement = new();
 
@@ -56,9 +53,19 @@ namespace StardewDruid.Data
 
             potions = new();
 
+            // Overwrittenn
+
+            progress = new();
+
             reliquary = new();
 
             milestone = QuestHandle.milestones.none;
+
+            // Host only
+
+            characters = new();
+
+            chests = new();
 
             set = 0;
 

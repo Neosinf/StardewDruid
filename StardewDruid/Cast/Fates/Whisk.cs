@@ -4,11 +4,13 @@ using StardewDruid.Cast.Effect;
 using StardewDruid.Data;
 using StardewDruid.Event;
 using StardewDruid.Journal;
+using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 
 namespace StardewDruid.Cast.Fates
@@ -26,31 +28,28 @@ namespace StardewDruid.Cast.Fates
 
         public int strikeTimer;
 
+        public int warpTimer;
+
         public Whisk()
         {
 
         }
 
-        public override void EventSetup(Vector2 target, string id, bool trigger = false)
+        public override void EventActivate()
         {
             
-            origin = target;
+            base.EventActivate();
 
             destination = origin;
 
-            eventId = id;
+            EventClicks(actionButtons.action);
 
-            staticEvent = true;
-
-            location = Game1.player.currentLocation;
-
-            Mod.instance.RegisterEvent(this,eventId);
-
-            Mod.instance.RegisterClick(eventId, 1);
+            EventClicks(actionButtons.rite);
 
             WhiskSetup();
 
         }
+
 
         public virtual void WhiskSetup()
         {
@@ -61,7 +60,7 @@ namespace StardewDruid.Cast.Fates
 
             whiskSpell.missile = IconData.missiles.whisk;
 
-            whiskSpell.indicator = IconData.cursors.fates;
+            whiskSpell.indicator = IconData.cursors.fatesCharge;
 
             whiskSpell.instant = true;
 
@@ -71,21 +70,16 @@ namespace StardewDruid.Cast.Fates
 
             whiskSpell.projectilePeak = -1;
 
+            whiskSpell.Update();
+
             Mod.instance.spellRegister.Add(whiskSpell);
 
         }
 
-        public override bool StaticActive()
+        public override bool EventActive()
         {
 
             if (Game1.player.currentLocation.Name != location.Name)
-            {
-
-                eventComplete = true;
-
-            }
-
-            if (whiskSpell.shutdown)
             {
 
                 eventComplete = true;
@@ -113,7 +107,7 @@ namespace StardewDruid.Cast.Fates
 
             }
 
-            if (!StaticActive())
+            if (!EventActive())
             {
 
                 return false;
@@ -132,13 +126,11 @@ namespace StardewDruid.Cast.Fates
             if (Action == actionButtons.action)
             {
 
-                Vector2 distance = (origin - Game1.player.Position) * ((int)(whiskSpell.counter / 10) + 1) / 13;
+                List<Vector2> whiskTiles = ModUtility.GetTilesBetweenPositions(location, whiskSpell.projectilePosition, Game1.player.Position);
 
-                List<Vector2> whiskTiles = ModUtility.GetTilesBetweenPositions(location, origin, Game1.player.Position + distance);
-
-                for (int i = 0; i < whiskTiles.Count; i++)
+                for (int i = whiskTiles.Count - 1; i >= 0 ; i--)
                 {
-
+                    
                     if (ModUtility.TileAccessibility(location, whiskTiles[i]) != 0)
                     {
 
@@ -147,6 +139,8 @@ namespace StardewDruid.Cast.Fates
                     }
 
                     destination = whiskTiles[i] * 64;
+
+                    break;
 
                 }
 
@@ -200,7 +194,6 @@ namespace StardewDruid.Cast.Fates
                             
                             }
 
-
                             int strikes = 1;
 
                             if (Mod.instance.questHandle.IsComplete(QuestHandle.fatesTwo))
@@ -219,6 +212,8 @@ namespace StardewDruid.Cast.Fates
 
                             List<int> directions = new() { 0, 1, 2, 3, 4, 5, 6, 7, };
 
+                            int s = Mod.instance.randomIndex.Next(3);
+
                             for (int i = 0; i < strikes; i++)
                             {
 
@@ -234,12 +229,6 @@ namespace StardewDruid.Cast.Fates
 
                                 sweep.projectile = d;
 
-                                if(i == 0)
-                                {
-                                    sweep.display = IconData.impacts.slash;
-
-                                }
-
                                 Mod.instance.spellRegister.Add(sweep);
 
                                 warpSpells.Add(sweep);
@@ -249,8 +238,6 @@ namespace StardewDruid.Cast.Fates
                             }
 
                         }
-
-                        staticEvent = false;
 
                         eventActive = true;
 
@@ -263,7 +250,7 @@ namespace StardewDruid.Cast.Fates
                         Game1.player.temporaryInvincibilityTimer = 1;
 
                         Game1.player.currentTemporaryInvincibilityDuration = 5000;
-                        
+
                         return true;
 
                     }
@@ -312,25 +299,20 @@ namespace StardewDruid.Cast.Fates
 
             }
 
-
-
-
-            for(int s = warpSpells.Count - 1; s >= 0; s--) 
+            if (warpSpells.Count > 0)
             {
-
-                SpellHandle warpSpell = warpSpells[s];
-
-                if (warpSpell.shutdown)
+                
+                foreach(SpellHandle warpSpell in warpSpells)
                 {
 
-                    warpSpells.Remove(warpSpell);
+                    if (!warpSpell.shutdown)
+                    {
 
+                        return;
+
+                    }
+                
                 }
-
-            }
-
-            if (warpSpells.Count == 0)
-            {
 
                 Game1.displayFarmer = true;
 
@@ -348,10 +330,20 @@ namespace StardewDruid.Cast.Fates
 
             }
 
+            if (!whiskSpell.shutdown)
+            {
+
+                return;
+
+            }
+
+            eventComplete = true;
+
         }
 
         public override void EventRemove()
         {
+            
             base.EventRemove();
 
             Game1.displayFarmer = true;

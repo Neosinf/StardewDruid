@@ -40,33 +40,37 @@ namespace StardewDruid.Event.Scene
             {
                 case 1:
 
-                    CastVoice(0, "Farmer", duration: 3000);
+                    DialogueCue(1);
 
                     break;
 
                 case 4:
 
-                    CastVoice(0, "You come at last", duration: 3000);
+                    DialogueCue(2);
 
                     break;
 
                 case 7:
 
-                    CastVoice(0, "I'm in the ceiling", duration: 3000);
+                    DialogueCue(3);
 
                     break;
 
                 case 10:
 
-                    CastVoice(0, "Stand here and perform the rite", duration: 3000);
-
-                    Mod.instance.CastDisplay(Mod.instance.Config.riteButtons.ToString() + " with a tool in hand to perform a rite of the Weald");
+                    DialogueCue(4);
 
                     break;
 
                 case 13:
 
-                    CastVoice(0, "As the first farmer did long ago", duration: 3000);
+                    DialogueCue(5);
+
+                    break;
+
+                case 16:
+
+                    DialogueCue(900);
 
                     break;
 
@@ -80,6 +84,8 @@ namespace StardewDruid.Event.Scene
             TriggerRemove();
 
             eventActive = true;
+
+            locales = new() { Location.LocationData.druid_grove_name, Game1.player.currentLocation.Name, };
 
             location = Game1.player.currentLocation;
 
@@ -100,29 +106,6 @@ namespace StardewDruid.Event.Scene
             Mod.instance.rite.CastRockfall(true);
             Mod.instance.rite.CastRockfall(true);
 
-        }
-
-        public override bool AttemptReset()
-        {
-
-            if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Effigy))
-            {
-
-                Mod.instance.characters[CharacterHandle.characters.Effigy].currentLocation.characters.Remove(Mod.instance.characters[CharacterHandle.characters.Effigy]);
-
-                Mod.instance.characters.Remove(CharacterHandle.characters.Effigy);
-
-            }
-
-            ResetToTrigger();
-
-            return true;
-
-        }
-
-        public override void EventCompleted()
-        {
-            Mod.instance.questHandle.CompleteQuest(eventId);
         }
 
         public override void EventInterval()
@@ -177,11 +160,6 @@ namespace StardewDruid.Event.Scene
 
                     CharacterHandle.CharacterLoad(CharacterHandle.characters.Effigy, StardewDruid.Character.Character.mode.scene);
 
-                    narrators = new()
-                    {
-                        [0] = "The Forgotten Effigy",
-                    };
-
                     companions.Add(0,Mod.instance.characters[CharacterHandle.characters.Effigy]);
 
                     companions[0].netStandbyActive.Set(false);
@@ -196,17 +174,17 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].eventName = eventId;
 
-                    voices[0] = companions[0];
+                    voices[1] = companions[0];
 
-                    Mod.instance.iconData.ImpactIndicator(location, companions[0].Position, IconData.impacts.impact, 6f, new());
+                    DialogueCue(6);
+
+                    Mod.instance.iconData.ImpactIndicator(location, origin + new Vector2(64, 0), IconData.impacts.impact, 6f, new());
 
                     location.playSound("explosion");
 
                     break;
 
                 case 4:
-
-                    DialogueCue(0, "Well done");
 
                     DialogueLoad(0, 1);
 
@@ -226,11 +204,17 @@ namespace StardewDruid.Event.Scene
 
                 case 101:
 
-                    DialogueSetups(companions[0], 2);
+                    DialogueLoad(0, 2);
 
                     break;
 
-                case 105:
+                case 106:
+
+                    DialogueNext(companions[0]);
+
+                    break;
+
+                case 110:
 
                     activeCounter = 200;
 
@@ -238,126 +222,13 @@ namespace StardewDruid.Event.Scene
 
                 case 201:
 
-                    DialogueSetups(companions[0], 3);
-
-                    companions[0].TargetEvent(300, companions[0].Position + new Vector2(0, 192));
+                    companions[0].TargetEvent(0, companions[0].Position + new Vector2(0, 192));
 
                     break;
 
-                case 205:
-
-                    activeCounter = 300;
-
-                    break;
-
-                case 301:
+                case 203:
 
                     eventComplete = true;
-
-                    break;
-
-            }
-
-        }
-
-        public override void EventScene(int index)
-        {
-            switch (index)
-            {
-                case 300:
-
-                    if (!eventComplete)
-                    {
-
-                        activeCounter = Math.Max(300, activeCounter);
-
-                        EventInterval();
-
-                    }
-
-                    break;
-
-
-            }
-        }
-
-        public override void DialogueSetups(StardewDruid.Character.Character npc, int dialogueId)
-        {
-            
-            string intro;
-
-            switch (dialogueId)
-            {
-
-                default: // introOne
-
-                    intro = "Forgotten Effigy: So a successor appears. I am the Effigy, crafted by the First Farmer, sustained by the powers of the elderborn, and bored.";
-
-                    break;
-
-                case 2:
-
-                    intro = "Forgotten Effigy: It is difficult to explain the course of events that led to my predicament. First know that the lineage of valley farmers you belong to was once aligned with the otherworld. They formed a circle of Druids.";
-
-                    break;
-
-                case 3:
-
-                    intro = "Meet me in the grove outside, and we will test your aptitude for the otherworld.";
-
-                    DialogueDraw(npc, intro);
-
-                    return;
-
-            }
-
-            List<Response> responseList = new();
-
-            switch (dialogueId)
-            {
-
-                default: //introOne
-
-                    responseList.Add(new Response("1a", "Who stuck you in the ceiling?"));
-                    responseList.Add(new Response("1a", "I inherited this plot from my grandfather. His notes didn't say anything about a magic scarecrow."));
-                    responseList.Add(new Response("1a", "(Say nothing)"));
-
-                    break;
-
-                case 2:
-
-                    responseList.Add(new Response("2a", "I would love to know more about the traditions of my forebearers."));
-                    responseList.Add(new Response("2a", "I want to be like the farmers of old and form a circle"));
-                    responseList.Add(new Response("2a", "(Say nothing)"));
-
-                    break;
-
-            }
-
-            GameLocation.afterQuestionBehavior questionBehavior = new(DialogueResponses);
-
-            Game1.player.currentLocation.createQuestionDialogue(intro, responseList.ToArray(), questionBehavior, npc);
-
-            return;
-
-        }
-
-        public override void DialogueResponses(Farmer visitor, string dialogueId)
-        {
-
-            switch (dialogueId)
-            {
-
-                case "1a":
-                default:
-
-                    activeCounter = Math.Max(100, activeCounter);
-
-                    break;
-
-                case "2a":
-
-                    activeCounter = Math.Max(200, activeCounter);
 
                     break;
 

@@ -22,154 +22,18 @@ using StardewDruid.Character;
 
 namespace StardewDruid.Location
 {
-    public class Chapel : GameLocation
+    public class Chapel : DruidLocation
     {
 
         protected Texture2D _dayParallaxTexture;
 
         protected Texture2D _nightParallaxTexture;
 
-        public List<Location.WarpTile> warpSets = new();
-
-        public List<Location.LocationTile> locationTiles = new();
-
-        public Dictionary<Vector2, CharacterHandle.characters> dialogueTiles = new();
-
-        public Dictionary<Vector2, int> lightFields = new();
-
-        public Dictionary<Vector2, int> darkFields = new();
-
-        public bool ambientDarkness;
-
         public Chapel() { }
 
         public Chapel(string Name)
-            : base("Maps\\Shed", Name) 
+            : base(Name) 
         {
-
-        }
-
-        public override void draw(SpriteBatch b)
-        {
-            
-            IsOutdoors = false;
-
-            ignoreOutdoorLighting.Set(false);
-
-            base.draw(b);
-
-            Dictionary<Vector2,int> occupied = new();
-
-            foreach(Farmer character in farmers)
-            {
-
-                Vector2 check = ModUtility.PositionToTile(character.Position);
-
-                for (int i = 0; i < 2; i++)
-                {
-
-                    List<Vector2> around = ModUtility.GetTilesWithinRadius(this, check, i);
-
-                    foreach(Vector2 tile in around)
-                    {
-                        
-                        occupied[tile] = (int)check.Y+1;
-
-                    }
-
-                }
-
-            }
-
-            foreach (LocationTile tile in locationTiles)
-            {
-
-                if (Utility.isOnScreen(tile.position, 64))
-                {
-
-                    float opacity = 1f;
-
-                    if (occupied.ContainsKey(tile.tile))
-                    {
-                        
-                        if (occupied[tile.tile] < (int)tile.tile.Y+tile.offset)
-                        {
-                        
-                            opacity = 0.75f;
-                        
-                        }
-
-                    }
-
-                    Microsoft.Xna.Framework.Vector2 position = new(tile.position.X - (float)Game1.viewport.X, tile.position.Y - (float)Game1.viewport.Y);
-
-                    b.Draw(Mod.instance.iconData.sheetTextures[tile.tilesheet], position, tile.rectangle, Microsoft.Xna.Framework.Color.White * opacity, 0f, Vector2.Zero, 4, tile.flip ? (SpriteEffects)1 : 0, tile.layer+ (tile.offset*0.0064f));
-
-                    if (tile.shadow)
-                    {
-                        
-                        b.Draw(Mod.instance.iconData.sheetTextures[tile.tilesheet], position + new Vector2(1,8), tile.rectangle, Microsoft.Xna.Framework.Color.Black *0.35f, 0f, Vector2.Zero, 4, tile.flip ? (SpriteEffects)1 : 0, tile.layer - 0.001f);
-
-                    }
-
-                }
-
-            }
-
-            float ambience = 0.4f;
-
-            foreach (KeyValuePair<Vector2,int> light in darkFields)
-            {
-
-                if (Utility.isOnScreen(light.Key, 64 * light.Value))
-                {
-
-                    Texture2D texture2D = Game1.lantern;
-
-                    Microsoft.Xna.Framework.Vector2 position = new(light.Key.X - (float)Game1.viewport.X, light.Key.Y - (float)Game1.viewport.Y);
-
-                    b.Draw(
-                        texture2D,
-                        position, 
-                        texture2D.Bounds, 
-                        Microsoft.Xna.Framework.Color.DarkBlue * ambience, 
-                        0f, 
-                        new Vector2(texture2D.Bounds.Width / 2, texture2D.Bounds.Height / 2), 
-                        light.Value, 
-                        SpriteEffects.None, 
-                        0.9f
-                    );
-
-                }
-
-            }
-
-
-            foreach (KeyValuePair<Vector2, int> light in lightFields)
-            {
-
-                if (Utility.isOnScreen(light.Key, 64 * light.Value))
-                {
-
-                    Texture2D texture2D = Game1.sconceLight;
-
-                    Microsoft.Xna.Framework.Vector2 position = new(light.Key.X - (float)Game1.viewport.X, light.Key.Y - (float)Game1.viewport.Y);
-
-                    b.Draw(
-                        texture2D,
-                        position,
-                        texture2D.Bounds,
-                        Microsoft.Xna.Framework.Color.LightGoldenrodYellow * 0.75f,
-                        0f,
-                        new Vector2(texture2D.Bounds.Width / 2, texture2D.Bounds.Height / 2),
-                        0.25f*light.Value,
-                        SpriteEffects.None,
-                        0.9f
-                    );
-
-                }
-
-            }
 
         }
 
@@ -256,18 +120,6 @@ namespace StardewDruid.Location
         public override void OnMapLoad(xTile.Map map)
         {
 
-            /*
-             
-            60 0
-
-            85
-            89
-
-            7
-            11
-
-             */
-
             xTile.Dimensions.Size tileSize = map.GetLayer("Back").TileSize;
 
             xTile.Map newMap = new(map.Id);
@@ -290,7 +142,7 @@ namespace StardewDruid.Location
 
             TileSheet chapelsheet = new(
                 newMap,
-                IconData.chapel_assetName,
+                "StardewDruid.Tilesheets.chapel",
                 new(
                     Mod.instance.iconData.sheetTextures[IconData.tilesheets.chapel].Width / 16,
                     Mod.instance.iconData.sheetTextures[IconData.tilesheets.chapel].Height / 16
@@ -302,7 +154,11 @@ namespace StardewDruid.Location
 
             newMap.LoadTileSheets(Game1.mapDisplayDevice);
 
-            locationTiles = new();
+            IsOutdoors = false;
+
+            ignoreOutdoorLighting.Set(false);
+
+            terrainTiles = new();
 
             Dictionary<int, List<List<int>>> codes = new()
             {
@@ -470,82 +326,50 @@ namespace StardewDruid.Location
 
             }
 
-            Dictionary<int,Vector2> codeVectors = new()
+            codes = new()
             {
-                [101] = new(12,4),
 
-                [102] = new(13,4),
+                [12] = new() { new() { 20, 1 }, new() { 34, 1 }, },
 
-                [103] = new(0, 3),
+                [14] = new() { new() { 26, 2 }, },
 
-                [104] = new(1, 3),
+                [18] = new() { new() { 18, 1 }, new() { 36, 1 }, },
 
-                [105] = new(0, 9),
-
-                [106] = new(1, 9),
-
-                [201] = new(12, 3),
-
-                [202] = new(13, 3),
-
-                [203] = new(0, 2),
-
-                [204] = new(1, 2),
-
-                [205] = new(0, 8),
-
-                [206] = new(1, 8),
-
-                [301] = new(12, 2),
-
-                [302] = new(13, 2),
-
-                [401] = new(12, 1),
-
-                [402] = new(13, 1),
-
-                [501] = new(12, 0),
-
-                [502] = new(13, 0),
+                [22] = new() { new() { 22, 1 }, new() { 32, 1 }, },
 
             };
 
+            foreach (KeyValuePair<int, List<List<int>>> code in codes)
+            {
+
+                foreach (List<int> array in code.Value)
+                {
+
+                    TerrainTile tTile = new(IconData.tilesheets.chapel, array[1], new Vector2(array[0], code.Key) * 64);
+
+                    foreach (Vector2 bottom in tTile.baseTiles)
+                    {
+
+                        buildings.Tiles[(int)bottom.X, (int)bottom.Y] = new StaticTile(buildings, chapelsheet, BlendMode.Alpha, back.Tiles[(int)bottom.X, (int)bottom.Y].TileIndex);
+
+                    }
+
+                    terrainTiles.Add(tTile);
+
+                }
+
+            }
+
             codes = new()
             {
-                [0] = new() { },
-                [1] = new() { },
-                [2] = new() { },
-                [3] = new() { },
-                [4] = new() { },
-                [5] = new() { },
-                [6] = new() { },
-                [7] = new() { },
-                [8] = new() { },
-                [9] = new() { },
-                [10] = new() { },
-                [11] = new() { },
-                [12] = new() { new() { 20, 501 }, new() { 21, 502 }, new() { 34, 501 }, new() { 35, 502 }, },
-                [13] = new() { new() { 20, 401 }, new() { 21, 402 }, new() { 34, 401 }, new() { 35, 402 }, },
-                [14] = new() { new() { 20, 301 }, new() { 21, 302 }, new() { 26, 203 }, new() { 27, 204 }, new() { 28, 205 }, new() { 29, 206 }, new() { 34, 301 }, new() { 35, 302 }, },
-                [15] = new() { new() { 20, 201 }, new() { 21, 202 }, new() { 26, 103 }, new() { 27, 104 }, new() { 28, 105 }, new() { 29, 106 }, new() { 34, 201 }, new() { 35, 202 }, },
-                [16] = new() { new() { 20, 101 }, new() { 21, 102 }, new() { 34, 101 }, new() { 35, 102 }, },
-                [17] = new() { },
-                [18] = new() { new() { 18, 501 }, new() { 19, 502 }, new() { 36, 501 }, new() { 37, 502 }, },
-                [19] = new() { new() { 18, 401 }, new() { 19, 402 }, new() { 36, 401 }, new() { 37, 402 }, },
-                [20] = new() { new() { 18, 301 }, new() { 19, 302 }, new() { 36, 301 }, new() { 37, 302 }, },
-                [21] = new() { new() { 18, 201 }, new() { 19, 202 }, new() { 36, 201 }, new() { 37, 202 }, },
-                [22] = new() { new() { 18, 101 }, new() { 19, 102 }, new() { 22, 501 }, new() { 23, 502 }, new() { 32, 501 }, new() { 33, 502 }, new() { 36, 101 }, new() { 37, 102 }, },
-                [23] = new() { new() { 22, 401 }, new() { 23, 402 }, new() { 32, 401 }, new() { 33, 402 }, },
-                [24] = new() { new() { 22, 301 }, new() { 23, 302 }, new() { 32, 301 }, new() { 33, 302 }, },
-                [25] = new() { new() { 22, 201 }, new() { 23, 202 }, new() { 32, 201 }, new() { 33, 202 }, },
-                [26] = new() { new() { 22, 101 }, new() { 23, 102 }, new() { 32, 101 }, new() { 33, 102 }, },
-                [27] = new() { },
-                [28] = new() { },
-                [29] = new() { },
-                [30] = new() { },
-                [31] = new() { },
-                [32] = new() { },
-                [33] = new() { },
+
+                [14] = new() { new() { 21, 1 }, new() { 26, 3 }, new() { 29, 3 }, new() { 35, 1 }, new() { 38, 2 }, },
+                [15] = new() { new() { 16, 2 }, },
+
+                [20] = new() { new() { 14, 2 }, new() { 19, 1 }, new() { 37, 1 }, new() { 41, 2 }, },
+      
+                [24] = new() { new() { 23, 1 }, new() { 33, 1 }, },
+                [25] = new() { new() { 17, 2 }, new() { 39, 2 }, },
 
             };
 
@@ -555,104 +379,49 @@ namespace StardewDruid.Location
                 foreach (List<int> array in code.Value)
                 {
                     
-                    int offset = (int)(array[1] / 100);
-                    
-                    LocationTile lTile = new(array[0], code.Key, (int)codeVectors[array[1]].X, (int)codeVectors[array[1]].Y, offset, offset == 1, IconData.tilesheets.chapel);
-
-                    if(offset == 1)
+                    if (array[1] == 1)
                     {
 
-                        buildings.Tiles[array[0], code.Key] = new StaticTile(back, chapelsheet, BlendMode.Alpha, back.Tiles[array[0], code.Key].TileIndex);
+                        LightField light = new(new Vector2(array[0], code.Key) * 64 + new Vector2(0, 32));
+
+                        light.luminosity = 3;
+                        
+                        light.lightAmbience = 0.6f;
+
+                        lightFields.Add(light);
+
+                    }
+                    else if (array[1] == 3)
+                    {
+
+                        LightField light = new(new Vector2(array[0], code.Key) * 64 + new Vector2(32, 32));
+
+                        light.luminosity = 2;
+
+                        light.lightAmbience = 0.7f;
+
+                        lightFields.Add(light);
+
+                    }
+                    else
+                    {
+
+                        LightField light = new(new Vector2(array[0], code.Key) * 64 + new Vector2(0, 32), 12, Microsoft.Xna.Framework.Color.DarkSlateBlue);
+
+                        light.lightAmbience = 0.3f;
+
+                        light.lightType = LightField.lightTypes.lantern;
+
+                        lightFields.Add(light);
 
                     }
 
-                    locationTiles.Add(lTile);
-
                 }
 
             }
-
-            lightFields = new()
-            {
-
-                [new Vector2(21, 14) * 64 + new Vector2(0, 32)] = 3,
-                [new Vector2(26, 14) * 64 + new Vector2(32, 32)] = 2,
-                [new Vector2(29, 14) * 64 + new Vector2(32, 32)] = 2,
-                [new Vector2(35, 14) * 64 + new Vector2(0, 32)] = 3,
-                [new Vector2(19, 20) * 64 + new Vector2(0, 32)] = 3,
-                [new Vector2(37, 20) * 64 + new Vector2(0, 32)] = 3,
-                [new Vector2(23, 24) * 64 + new Vector2(0, 32)] = 3,
-                [new Vector2(33, 24) * 64 + new Vector2(0, 32)] = 3,
-
-            };
-
-            darkFields = new()
-            {
-
-                [new Vector2(25, 21) * 64 + new Vector2(0, 32)] = 4,
-                [new Vector2(30, 21) * 64 + new Vector2(0, 32)] = 4,
-                [new Vector2(27, 32) * 64 + new Vector2(0, 32)] = 5,
-                [new Vector2(15, 15) * 64 + new Vector2(0, 32)] = 5,
-                [new Vector2(12, 21) * 64 + new Vector2(0, 32)] = 5,
-                [new Vector2(15, 26) * 64 + new Vector2(0, 32)] = 5,
-                [new Vector2(39, 15) * 64 + new Vector2(0, 32)] = 5,
-                [new Vector2(42, 21) * 64 + new Vector2(0, 32)] = 5,
-                [new Vector2(39, 26) * 64 + new Vector2(0, 32)] = 5,
-
-            };
 
             this.map = newMap;
 
-        }
-
-        public override bool CanItemBePlacedHere(Vector2 tile, bool itemIsPassable = false, CollisionMask collisionMask = CollisionMask.All, CollisionMask ignorePassables = ~CollisionMask.Objects, bool useFarmerTile = false, bool ignorePassablesExactly = false)
-        {
-
-            return false;
-
-        }
-
-        public override bool isActionableTile(int xTile, int yTile, Farmer who)
-        {
-
-            Vector2 actionTile = new(xTile, yTile);
-
-            if (dialogueTiles.ContainsKey(actionTile))
-            {
-
-                return true;
-
-            }
-
-            return base.isActionableTile(xTile, yTile, who);
-
-        }
-
-        public override bool checkAction(xTile.Dimensions.Location tileLocation, xTile.Dimensions.Rectangle viewport, Farmer who)
-        {
-
-            Vector2 actionTile = new(tileLocation.X, tileLocation.Y);
-
-            if (dialogueTiles.ContainsKey(actionTile) && Mod.instance.activeEvent.Count == 0)
-            {
-
-                CharacterHandle.characters characterType = dialogueTiles[actionTile];
-
-                if (!Mod.instance.dialogue.ContainsKey(characterType))
-                {
-
-                    Mod.instance.dialogue[characterType] = new(characterType);
-
-                }
-
-                Mod.instance.dialogue[characterType].DialogueApproach();
-
-                return true;
-
-            }
-
-            return base.checkAction(tileLocation, viewport, who);
-        
         }
 
         public override void updateWarps()

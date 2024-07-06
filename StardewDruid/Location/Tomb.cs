@@ -1,201 +1,24 @@
 ﻿using StardewValley;
-using StardewValley.Locations;
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using xTile.Layers;
 using xTile.Tiles;
 using Microsoft.Xna.Framework;
-using StardewModdingAPI;
-using StardewValley.Buildings;
-using StardewValley.Objects;
-using System.Runtime.Intrinsics.X86;
-using StardewValley.GameData.Locations;
-using Microsoft.Xna.Framework.Graphics;
+
 using StardewDruid.Data;
-using StardewValley.TerrainFeatures;
-using System.Threading;
-using xTile;
-using StardewDruid.Character;
-using static StardewDruid.Cast.Rite;
-using StardewDruid.Cast;
-using System.Reflection.Emit;
+
 
 namespace StardewDruid.Location
 {
-    public class Tomb : GameLocation
+    public class Tomb : DruidLocation
     {
-
-        public List<Location.WarpTile> warpSets = new();
-
-        public List<Location.LocationTile> locationTiles = new();
-
-        public Dictionary<Vector2, CharacterHandle.characters> dialogueTiles = new();
-
-        public Dictionary<Vector2, int> lightFields = new();
-
-        public Dictionary<Vector2, int> darkFields = new();
-
-        public Dictionary<Vector2, int> brazierTiles = new();
-
-        public bool ambientDarkness;
 
         public Tomb() { }
 
         public Tomb(string Name)
-            : base("Maps\\Shed", Name)
+            : base(Name)
         {
-
-        }
-
-        public override void draw(SpriteBatch b)
-        {
-
-            base.draw(b);
-
-            foreach (KeyValuePair<Vector2, int> light in lightFields)
-            {
-
-                if (Utility.isOnScreen(light.Key, 64 * light.Value))
-                {
-
-                    Texture2D texture2D = Game1.sconceLight;
-
-                    Microsoft.Xna.Framework.Vector2 position = new(light.Key.X - (float)Game1.viewport.X, light.Key.Y - (float)Game1.viewport.Y);
-
-                    b.Draw(
-                        texture2D,
-                        position,
-                        texture2D.Bounds,
-                        Microsoft.Xna.Framework.Color.PeachPuff * 0.75f,
-                        0f,
-                        new Vector2(texture2D.Bounds.Width / 2, texture2D.Bounds.Height / 2),
-                        0.25f * light.Value,
-                        SpriteEffects.None,
-                        0.9f
-                    );
-
-                }
-
-            }
-
-            float ambience = 0.4f;
-
-            foreach (KeyValuePair<Vector2, int> light in darkFields)
-            {
-
-                if (Utility.isOnScreen(light.Key, 64 * light.Value))
-                {
-
-                    Texture2D texture2D = Game1.lantern;
-
-                    Microsoft.Xna.Framework.Vector2 position = new(light.Key.X - (float)Game1.viewport.X, light.Key.Y - (float)Game1.viewport.Y);
-
-                    b.Draw(
-                        texture2D,
-                        position,
-                        texture2D.Bounds,
-                        Microsoft.Xna.Framework.Color.DarkBlue * ambience,
-                        0f,
-                        new Vector2(texture2D.Bounds.Width / 2, texture2D.Bounds.Height / 2),
-                        light.Value,
-                        SpriteEffects.None,
-                        0.9f
-                    );
-
-                }
-
-            }
-
-            int brazierTime = (int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 1000) / 250;
-
-            foreach (KeyValuePair<Vector2, int> brazier in brazierTiles)
-            {
-
-                if (Utility.isOnScreen(brazier.Key, 64))
-                {
-
-                    Texture2D texture2D = Game1.lantern;
-
-                    int frame = (brazierTime + brazier.Value) % 4;
-
-                    Microsoft.Xna.Framework.Vector2 position = new(brazier.Key.X - (float)Game1.viewport.X, brazier.Key.Y - (float)Game1.viewport.Y);
-
-                    b.Draw(
-                        Mod.instance.iconData.sheetTextures[IconData.tilesheets.tomb], 
-                        position, 
-                        new Rectangle(32 + (frame * 32),0,32,32), 
-                        Microsoft.Xna.Framework.Color.White,
-                        0f, 
-                        Vector2.Zero, 
-                        4, 
-                        0, 
-                        brazier.Key.Y / 10000 + (6 * 0.0064f)
-                        );
-
-                }
-
-            }
-
-            Dictionary<Vector2, int> occupied = new();
-
-            foreach (Farmer character in farmers)
-            {
-
-                Vector2 check = ModUtility.PositionToTile(character.Position);
-
-                for (int i = 0; i < 2; i++)
-                {
-
-                    List<Vector2> around = ModUtility.GetTilesWithinRadius(this, check, i);
-
-                    foreach (Vector2 tile in around)
-                    {
-
-                        occupied[tile] = (int)check.Y + 1;
-
-                    }
-
-                }
-
-            }
-
-            foreach (LocationTile tile in locationTiles)
-            {
-
-                if (Utility.isOnScreen(tile.position, 64))
-                {
-
-                    float opacity = 1f;
-
-                    if (occupied.ContainsKey(tile.tile))
-                    {
-
-                        if (occupied[tile.tile] < (int)tile.tile.Y + tile.offset)
-                        {
-
-                            opacity = 0.75f;
-
-                        }
-
-                    }
-
-                    Microsoft.Xna.Framework.Vector2 position = new(tile.position.X - (float)Game1.viewport.X, tile.position.Y - (float)Game1.viewport.Y);
-
-                    b.Draw(Mod.instance.iconData.sheetTextures[IconData.tilesheets.tomb], position, tile.rectangle, Microsoft.Xna.Framework.Color.White * opacity, 0f, Vector2.Zero, 4, tile.flip ? (SpriteEffects)1 : 0, tile.layer + (tile.offset * 0.0064f));
-
-                    if (tile.shadow)
-                    {
-
-                        b.Draw(Mod.instance.iconData.sheetTextures[IconData.tilesheets.tomb], position + new Vector2(2, 11), tile.rectangle, Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 4, tile.flip ? (SpriteEffects)1 : 0, tile.layer - 0.001f);
-
-                    }
-
-                }
-
-            }
 
         }
 
@@ -233,8 +56,6 @@ namespace StardewDruid.Location
             TileSheet dungeon = new(LocationData.druid_tomb_name + "_dungeon", newMap, "Maps\\Mines\\mine_desert_dark_dangerous", new(16, 36), tileSize);
 
             newMap.AddTileSheet(dungeon); //map.TileSheets[1].ImageSource
-
-            locationTiles = new();
 
             Dictionary<int, List<List<int>>> codes = new()
             {
@@ -399,48 +220,14 @@ namespace StardewDruid.Location
 
             }
 
-
-
             codes = new()
             {
-                [0] = new() { },
-                [1] = new() { },
-                [2] = new() { },
-                [3] = new() { },
-                [4] = new() { },
-                [5] = new() { },
-                [6] = new() { },
-                [7] = new() { },
-                [8] = new() { new() { 19, 0 }, new() { 20, 1 }, new() { 34, 0 }, new() { 35, 1 }, },
-                [9] = new() { new() { 19, 10 }, new() { 20, 11 }, new() { 34, 10 }, new() { 35, 11 }, },
-                [10] = new() { new() { 19, 20 }, new() { 20, 21 }, new() { 34, 20 }, new() { 35, 21 }, },
-                [11] = new() { new() { 19, 30 }, new() { 20, 31 }, new() { 34, 30 }, new() { 35, 31 }, },
-                [12] = new() { },
-                [13] = new() { },
-                [14] = new() { },
-                [15] = new() { new() { 16, 0 }, new() { 17, 1 }, new() { 37, 0 }, new() { 38, 1 }, },
-                [16] = new() { new() { 16, 10 }, new() { 17, 11 }, new() { 37, 10 }, new() { 38, 11 }, },
-                [17] = new() { new() { 16, 20 }, new() { 17, 21 }, new() { 37, 20 }, new() { 38, 21 }, },
-                [18] = new() { new() { 16, 30 }, new() { 17, 31 }, new() { 37, 30 }, new() { 38, 31 }, },
-                [19] = new() { },
-                [20] = new() { },
-                [21] = new() { },
-                [22] = new() { new() { 19, 0 }, new() { 20, 1 }, new() { 34, 0 }, new() { 35, 1 }, },
-                [23] = new() { new() { 19, 10 }, new() { 20, 11 }, new() { 34, 10 }, new() { 35, 11 }, },
-                [24] = new() { new() { 19, 20 }, new() { 20, 21 }, new() { 34, 20 }, new() { 35, 21 }, },
-                [25] = new() { new() { 19, 30 }, new() { 20, 31 }, new() { 34, 30 }, new() { 35, 31 }, },
-                [26] = new() { },
-                [27] = new() { },
-                [28] = new() { },
-                [29] = new() { },
-                [30] = new() { },
-                [31] = new() { },
-                [32] = new() { },
-                [33] = new() { },
-                [34] = new() { },
-                [35] = new() { },
 
+                [8] = new() { new() { 19, 1 }, new() { 34, 1 }, },
 
+                [15] = new() { new() { 16, 1 }, new() { 37, 1 }, },
+
+                [22] = new() { new() { 19, 1 }, new() { 34, 1 }, },
 
             };
 
@@ -450,66 +237,43 @@ namespace StardewDruid.Location
                 foreach (List<int> array in code.Value)
                 {
 
-                    Vector2 codeVector = new(array[1] % 10, (int)(array[1] / 10));
+                    TerrainTile tTile = new(IconData.tilesheets.tomb, array[1], new Vector2(array[0], code.Key) * 64);
 
-                    int offset = 4 - (int)codeVector.Y;
-
-                    LocationTile lTile = new(array[0], code.Key, (int)codeVector.X, (int)codeVector.Y, offset, offset == 1, IconData.tilesheets.tomb);
-
-                    if (offset == 1)
+                    foreach (Vector2 bottom in tTile.baseTiles)
                     {
 
-                        buildings.Tiles[array[0], code.Key] = new StaticTile(buildings, dungeon, BlendMode.Alpha, back.Tiles[array[0], code.Key].TileIndex);
+                        buildings.Tiles[(int)bottom.X, (int)bottom.Y] = new StaticTile(buildings, dungeon, BlendMode.Alpha, back.Tiles[(int)bottom.X, (int)bottom.Y].TileIndex);
+
 
                     }
 
-                    locationTiles.Add(lTile);
+                    terrainTiles.Add(tTile);
 
                 }
 
             }
 
-
             codes = new()
             {
 
-                [0] = new() { },
-                [1] = new() { },
-                [2] = new() { },
-                [3] = new() { },
                 [4] = new() { new() { 22, 2 }, },
-                [5] = new() { },
-                [6] = new() { },
+
                 [7] = new() { new() { 15, 2 }, new() { 19, 1 }, new() { 34, 1 }, },
                 [8] = new() { new() { 41, 2 }, },
-                [9] = new() { },
-                [10] = new() { },
+
                 [11] = new() { new() { 12, 2 }, },
-                [12] = new() { },
-                [13] = new() { },
+
                 [14] = new() { new() { 16, 1 }, new() { 37, 1 }, new() { 43, 2 }, },
-                [15] = new() { },
-                [16] = new() { },
-                [17] = new() { },
-                [18] = new() { },
+
                 [19] = new() { new() { 10, 2 }, },
                 [20] = new() { new() { 43, 2 }, },
                 [21] = new() { new() { 19, 1 }, new() { 34, 1 }, },
-                [22] = new() { },
-                [23] = new() { },
-                [24] = new() { },
+
                 [25] = new() { new() { 12, 2 }, },
                 [26] = new() { new() { 41, 2 }, },
-                [27] = new() { },
-                [28] = new() { },
+
                 [29] = new() { new() { 15, 2 }, },
                 [30] = new() { new() { 22, 2 }, new() { 32, 2 }, new() { 37, 2 }, },
-                [31] = new() { },
-                [32] = new() { },
-                [33] = new() { },
-                [34] = new() { },
-                [35] = new() { },
-
 
             };
 
@@ -520,14 +284,26 @@ namespace StardewDruid.Location
                 {
                     if (array[1] == 1)
                     {
-                        lightFields.Add(new Vector2(array[0], code.Key) * 64 + new Vector2(64, 32), 6);
 
-                        brazierTiles.Add(new Vector2(array[0], code.Key)*64, Mod.instance.randomIndex.Next(4));
+                        LightField light = new(new Vector2(array[0], code.Key) * 64, 6, Microsoft.Xna.Framework.Color.PeachPuff);
+
+                        light.lightType = LightField.lightTypes.brazier;
+
+                        light.lightFrame = Mod.instance.randomIndex.Next(4);
+
+                        lightFields.Add(light);
 
                     }
                     else
                     {
-                        darkFields.Add(new Vector2(array[0], code.Key) * 64 + new Vector2(0, 32), 4 + Mod.instance.randomIndex.Next(3));
+
+                        LightField light = new(new Vector2(array[0], code.Key) * 64, 4 + Mod.instance.randomIndex.Next(3), Microsoft.Xna.Framework.Color.DarkBlue);
+
+                        light.lightAmbience = 0.4f;
+
+                        light.lightType = LightField.lightTypes.lantern;
+
+                        lightFields.Add(light);
 
                     }
 
@@ -536,56 +312,6 @@ namespace StardewDruid.Location
             }
 
             this.map = newMap;
-
-        }
-
-        public override bool CanItemBePlacedHere(Vector2 tile, bool itemIsPassable = false, CollisionMask collisionMask = CollisionMask.All, CollisionMask ignorePassables = ~CollisionMask.Objects, bool useFarmerTile = false, bool ignorePassablesExactly = false)
-        {
-
-            return false;
-
-        }
-
-        public override bool isActionableTile(int xTile, int yTile, Farmer who)
-        {
-
-            Vector2 actionTile = new(xTile, yTile);
-
-            if (dialogueTiles.ContainsKey(actionTile))
-            {
-
-                return true;
-
-            }
-
-            return base.isActionableTile(xTile, yTile, who);
-
-        }
-
-        public override bool checkAction(xTile.Dimensions.Location tileLocation, xTile.Dimensions.Rectangle viewport, Farmer who)
-        {
-
-            Vector2 actionTile = new(tileLocation.X, tileLocation.Y);
-
-            if (dialogueTiles.ContainsKey(actionTile) && Mod.instance.activeEvent.Count == 0)
-            {
-
-                CharacterHandle.characters characterType = dialogueTiles[actionTile];
-
-                if (!Mod.instance.dialogue.ContainsKey(characterType))
-                {
-
-                    Mod.instance.dialogue[characterType] = new(characterType);
-
-                }
-
-                Mod.instance.dialogue[characterType].DialogueApproach();
-
-                return true;
-
-            }
-
-            return base.checkAction(tileLocation, viewport, who);
 
         }
 

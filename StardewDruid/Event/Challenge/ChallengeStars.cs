@@ -19,10 +19,6 @@ namespace StardewDruid.Event.Challenge
     public class ChallengeStars : EventHandle
     {
 
-        public StardewDruid.Monster.Blobfiend blobking;
-
-        public Vector2 relicPosition = Vector2.Zero;
-
         public ChallengeStars()
         {
 
@@ -41,31 +37,44 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.spawnSchedule = new();
 
-            for (int i = 1; i <= 15; i++)
+            if (Mod.instance.questHandle.IsComplete(eventId))
             {
 
-                List<SpawnHandle> blobSpawns = new();
-
-                blobSpawns.Add(new(MonsterHandle.bosses.blobfiend, Boss.temperment.random, Boss.difficulty.medium));
-
-                switch (Mod.instance.randomIndex.Next(3))
+                for (int i = 1; i <= 15; i++)
                 {
 
-                    case 0:
+                    List<SpawnHandle> blobSpawns = new()
+                    {
 
-                        blobSpawns.Add(new(MonsterHandle.bosses.blobfiend, Boss.temperment.random, Boss.difficulty.medium));
+                        new(MonsterHandle.bosses.blobfiend, Boss.temperment.random, Boss.difficulty.hard)
 
-                        break;
+                    };
 
-                    case 1:
-
-                        blobSpawns.Add(new(MonsterHandle.bosses.blobfiend, Boss.temperment.coward, Boss.difficulty.basic));
-
-                        break;
+                    monsterHandle.spawnSchedule.Add(i, blobSpawns);
 
                 }
 
-                monsterHandle.spawnSchedule.Add(i, blobSpawns);
+            }
+            else
+            {
+
+                for (int i = 1; i <= 15; i++)
+                {
+
+                    List<SpawnHandle> blobSpawns = new();
+
+                    blobSpawns.Add(new(MonsterHandle.bosses.blobfiend, Boss.temperment.random, Boss.difficulty.medium));
+
+                    if(Mod.instance.randomIndex.Next(2) == 0)
+                    {
+
+                        blobSpawns.Add(new(MonsterHandle.bosses.blobfiend, Boss.temperment.coward, Boss.difficulty.basic));
+
+                    }
+
+                    monsterHandle.spawnSchedule.Add(i, blobSpawns);
+
+                }
 
             }
 
@@ -73,13 +82,13 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.spawnRange = new(14, 13);
 
-            EventBar("The Slime Infestation",0);
+            monsterHandle.spawnGroup = true;
+
+            EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
+
+            SetTrack("cowboy_outlawsong");
 
             eventProximity = 1280;
-
-            cues = DialogueData.DialogueScene(eventId);
-
-            narrators = DialogueData.DialogueNarrators(eventId);
 
             ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 
@@ -90,29 +99,9 @@ namespace StardewDruid.Event.Challenge
 
                 voices[1] = Mod.instance.characters[CharacterHandle.characters.Effigy];
 
-                Mod.instance.characters[CharacterHandle.characters.Effigy].Halt();
-
-                Mod.instance.characters[CharacterHandle.characters.Effigy].idleTimer = 300;
-
             }
 
-        }
-
-        public override void RemoveMonsters()
-        {
-
-            if (blobking != null)
-            {
-
-                blobking.currentLocation.characters.Remove(blobking);
-
-                blobking.currentLocation = null;
-
-                blobking = null;
-
-            }
-
-            base.RemoveMonsters();
+            HoldCompanions();
 
         }
 
@@ -130,23 +119,17 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            if(blobking != null)
+            if (bosses.Count > 0)
             {
 
-                if (!ModUtility.MonsterVitals(blobking,location))
+                if (!ModUtility.MonsterVitals(bosses[0], location))
                 {
 
-                    blobking.currentLocation.characters.Remove(blobking);
+                    bosses[0].currentLocation.characters.Remove(bosses[0]);
 
-                    blobking = null;
+                    bosses.Clear();
 
                     cues.Clear();
-
-                }
-                else
-                {
-
-                    relicPosition = blobking.Position;
 
                 }
 
@@ -157,52 +140,55 @@ namespace StardewDruid.Event.Challenge
 
                 case 14:
 
-                    blobking = new(ModUtility.PositionToTile(origin) - new Vector2(3,3), Mod.instance.CombatDifficulty());
+                    bosses[0] = new StardewDruid.Monster.Blobfiend(ModUtility.PositionToTile(origin) - new Vector2(3,3), Mod.instance.CombatDifficulty());
 
-                    blobking.netScheme.Set(2);
+                    bosses[0].netScheme.Set(2);
 
-                    blobking.SetMode(3);
+                    if (Mod.instance.questHandle.IsComplete(eventId))
+                    {
 
-                    blobking.netPosturing.Set(true);
+                        bosses[0].SetMode(4);
 
-                    location.characters.Add(blobking);
+                    }
+                    else
+                    {
 
-                    blobking.update(Game1.currentGameTime, location);
+                        bosses[0].SetMode(3);
 
-                    voices[0] = blobking;
+                    }
 
-                    Mod.instance.iconData.ImpactIndicator(location, blobking.Position, IconData.impacts.splatter, 5f, new());
+                    bosses[0].netPosturing.Set(true);
 
-                    ModUtility.Explode(location, ModUtility.PositionToTile(blobking.Position), Game1.player, 5, 3);
+                    location.characters.Add(bosses[0]);
+
+                    bosses[0].update(Game1.currentGameTime, location);
+
+                    voices[0] = bosses[0];
+
+                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, IconData.impacts.splatter, 5f, new());
+
+                    ModUtility.Explode(location, ModUtility.PositionToTile(bosses[0].Position), Game1.player, 5, 3);
 
                     break;
 
                 case 37:
 
-                    blobking.netPosturing.Set(false);
+                    bosses[0].netPosturing.Set(false);
 
-                    blobking.MaxHealth *= 2;
+                    bosses[0].MaxHealth *= 2;
 
-                    blobking.Health = blobking.MaxHealth;
+                    bosses[0].Health = bosses[0].MaxHealth;
 
-                    EventDisplay bossBar = Mod.instance.CastDisplay(narrators[0], narrators[0]);
-
-                    bossBar.boss = blobking;
-
-                    bossBar.type = EventDisplay.displayTypes.bar;
-
-                    bossBar.colour = Microsoft.Xna.Framework.Color.Red;
-
-                    blobking.focusedOnFarmers = true;
+                    BossBar(0, 0);
 
                     break;
 
                 case 59:
 
-                    if(blobking != null)
+                    if(bosses.Count > 0)
                     {
 
-                        SpellHandle meteor = new(Game1.player, blobking.Position, 8 * 64, Mod.instance.CombatDamage()*4);
+                        SpellHandle meteor = new(Game1.player, bosses[0].Position, 8 * 64, Mod.instance.CombatDamage()*4);
 
                         meteor.type = spells.orbital;
 
@@ -212,23 +198,25 @@ namespace StardewDruid.Event.Challenge
 
                         meteor.sound = sounds.explosion;
 
-                        meteor.environment = 8;
+                        meteor.explosion = 8;
 
                         meteor.power = 3;
 
                         Mod.instance.spellRegister.Add(meteor);
 
-                        blobking.Halt();
+                        bosses[0].Halt();
 
-                        blobking.idleTimer = 2000;
+                        bosses[0].idleTimer = 2000;
 
-                        blobking.Health = 1;
+                        bosses[0].Health = 1;
 
                     }
 
                     break;
 
                 case 60:
+
+                    eventRating = monsterHandle.spawnTotal - monsterHandle.monsterSpawns.Count;
 
                     eventComplete = true;
 
@@ -239,28 +227,6 @@ namespace StardewDruid.Event.Challenge
             DialogueCue(activeCounter);
 
         }
-
-        public override void EventCompleted()
-        {
-
-            int slimesKilled = monsterHandle.spawnTotal - monsterHandle.monsterSpawns.Count;
-
-            int friendship = 100;
-
-            friendship += slimesKilled * 8;
-
-            Mod.instance.CastDisplay($"Destroyed {slimesKilled} slimes, gained " + friendship + " friendship with forest residents", 2);
-
-            VillagerData.CommunityFriendship("forest", friendship);
-
-            ThrowHandle throwRelic = new(Game1.player, relicPosition, IconData.relics.runestones_moon);
-
-            throwRelic.register();
-
-            Mod.instance.questHandle.CompleteQuest(eventId);
-
-        }
-
 
     }
 
