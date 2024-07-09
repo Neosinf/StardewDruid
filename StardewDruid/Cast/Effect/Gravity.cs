@@ -88,7 +88,18 @@ namespace StardewDruid.Cast.Effect
 
                     }
 
-                    if (victim.stunTime.Value <= 0)
+                    if (victim is StardewDruid.Monster.Boss)
+                    {
+
+                        if(gravityWell.Value.counter == 30)
+                        {
+
+                            victim.Halt();
+
+                        }
+
+                    } 
+                    else if(victim.stunTime.Value <= 0)
                     {
                         
                         victim.stunTime.Set(1000);
@@ -112,8 +123,6 @@ namespace StardewDruid.Cast.Effect
                     if (Mod.instance.rite.castActive && Mod.instance.rite.castType == Rite.rites.stars)
                     {
 
-                        //Mod.instance.rite.CastComet(gravityWell.Value.location, gravityWell.Value.tile);
-
                         gravityWell.Value.comet = true;
 
                         continue;
@@ -122,8 +131,6 @@ namespace StardewDruid.Cast.Effect
 
                     if (Mod.instance.rite.chargeActive && Mod.instance.rite.chargeType == Rite.charges.starsCharge)
                     {
-
-                        //Mod.instance.rite.CastComet(gravityWell.Value.location, gravityWell.Value.tile);
 
                         gravityWell.Value.comet = true;
 

@@ -7,6 +7,7 @@ using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Minecarts;
+using StardewValley.Inventories;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using System;
@@ -27,6 +28,10 @@ namespace StardewDruid.Cast.Weald
         public int radialCounter = 0;
 
         public int castCost = 0;
+
+        public StardewValley.Inventories.Inventory inventory = new();
+
+        public List<string> ignore = new();
 
         public Cultivate()
         {
@@ -79,15 +84,9 @@ namespace StardewDruid.Cast.Weald
                 if (decimalCounter == 5)
                 {
 
-                    TemporaryAnimatedSprite skyAnimation = Mod.instance.iconData.SkyIndicator(location, origin, IconData.skies.valley, 1f, new() { interval = 1000,});
+                    Mod.instance.rite.channel(IconData.skies.valley, 75);
 
-                    skyAnimation.scaleChange = 0.002f;
-
-                    skyAnimation.motion = new(-0.064f, -0.064f);
-
-                    skyAnimation.timeBasedMotion = true;
-
-                    animations.Add(skyAnimation);
+                    channel = IconData.skies.valley;
 
                 }
 
@@ -154,6 +153,8 @@ namespace StardewDruid.Cast.Weald
                 Mod.instance.rite.targetCasts[location.Name] = new();
 
             }
+
+            Season cropSeason = location.GetSeason();
 
             List<Vector2> affected = ModUtility.GetTilesWithinRadius(location, ModUtility.PositionToTile(origin), radialCounter);
 
@@ -320,10 +321,76 @@ namespace StardewDruid.Cast.Weald
 
                     if (hoeDirt.crop == null)
                     {
+                        if (inventory.Count > 0)
+                        {
 
-                        Mod.instance.rite.targetCasts[location.Name][tile] = "Hoed";
+                            int remove = -1;
 
-                        continue;
+                            for (int i = 0; i < inventory.Count; i++)
+                            {
+
+                                Item item = inventory[i];
+
+                                if (ignore.Contains(item.QualifiedItemId))
+                                {
+
+                                    continue;
+
+                                }
+
+                                string itemId = Crop.ResolveSeedId(item.QualifiedItemId.Replace("(O)", ""), location);
+
+                                if (!Crop.TryGetData(itemId, out var cropData) || !cropData.Seasons.Contains(cropSeason))
+                                {
+
+                                    ignore.Add(item.QualifiedItemId);
+
+                                    continue;
+
+                                }
+
+                                if (hoeDirt.plant(itemId, Game1.player, false))
+                                {
+
+                                    remove = i;
+
+                                    break;
+
+                                }
+
+                            }
+
+                            if (remove != -1)
+                            {
+
+                                inventory[remove].Stack--;
+
+                                if (inventory[remove].Stack <= 0)
+                                {
+
+                                    inventory.RemoveAt(remove);
+
+                                }
+
+                            }
+                            else
+                            {
+                                
+                                Mod.instance.rite.targetCasts[location.Name][tile] = "Hoed";
+                                
+                                continue;
+
+                            }
+
+                        }
+                        else
+                        {
+                            
+                            Mod.instance.rite.targetCasts[location.Name][tile] = "Hoed";
+                            
+                            continue;
+
+                        }
 
                     }
 

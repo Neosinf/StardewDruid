@@ -46,6 +46,10 @@ namespace StardewDruid.Event.Challenge
 
             EventBar(Mod.instance.questHandle.quests[eventId].title,0);
 
+            EventDisplay trashbar = EventBar(DialogueData.Strings(DialogueData.stringkeys.bomberInterruptions), 0);
+
+            trashbar.colour = Microsoft.Xna.Framework.Color.LightGreen;
+
             SetTrack("tribal");
 
             eventProximity = 1280;
@@ -64,6 +68,13 @@ namespace StardewDruid.Event.Challenge
             location.playSound("thunder_small");
 
             HoldCompanions(180);
+
+        }
+
+        public override float SpecialProgress(int displayId)
+        {
+
+            return (float)eventRating / 5;
 
         }
 
@@ -374,9 +385,9 @@ namespace StardewDruid.Event.Challenge
 
                 case 65:
 
-                    bosses[2].SetDirection(origin + new Vector2(640, -1280));
+                    bosses[0].SetDirection(origin + new Vector2(640, -1280));
 
-                    bosses[2].PerformFlight(origin + new Vector2(640, -1280));
+                    bosses[0].PerformFlight(origin + new Vector2(640, -1280));
 
                     bosses[2].LookAtFarmer();
 
@@ -484,11 +495,20 @@ namespace StardewDruid.Event.Challenge
 
                 if(Mod.instance.randomIndex.Next(2) == 0)
                 {
+                    
                     DialogueCue(901);
 
                 } else
                 {
+                    
                     DialogueCue(902);
+
+                }
+
+                for(int i = 0; i < 6; i++)
+                {
+
+                    cues.Remove(activeCounter + i);
 
                 }
 

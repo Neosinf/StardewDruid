@@ -10,6 +10,7 @@ using StardewValley;
 using StardewValley.Locations;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using xTile.Layers;
 using xTile.Tiles;
@@ -88,8 +89,6 @@ namespace StardewDruid.Event.Sword
         public override void EventRemove()
         {
 
-            companions.Clear();
-            
             base.EventRemove();
 
             foreach(KeyValuePair<Vector2,Tile> tile in heldTiles)
@@ -133,7 +132,7 @@ namespace StardewDruid.Event.Sword
 
             eventProximity = -1;
 
-            activeLimit = 90;
+            activeLimit = 155;
 
             EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
@@ -167,9 +166,16 @@ namespace StardewDruid.Event.Sword
 
             }
             else
+            if (activeCounter <= 155)
             {
 
                 EventPartFour();
+
+            }
+            else
+            {
+
+                eventComplete = true;
 
             }
 
@@ -205,12 +211,15 @@ namespace StardewDruid.Event.Sword
                         
                     SetTrack("cowboy_outlawsong");
 
+                    EventDisplay run = EventBar(DialogueData.Strings(DialogueData.stringkeys.reachEnd), 1);
+
+                    run.colour = Color.Orange;
+
                     break;
 
             }
 
         }
-
 
         public void EventPartTwo()
         {
@@ -237,12 +246,17 @@ namespace StardewDruid.Event.Sword
 
             monsterHandle.SpawnInterval();
 
-            if(Vector2.Distance(Game1.player.Position,statueVector) <= 384)
+            if(Vector2.Distance(Game1.player.Position,statueVector) <= 448)
             {
 
                 activeCounter = 90;
 
-                activeLimit = 160;
+            }
+
+            if(activeCounter == 89)
+            {
+
+                eventAbort = true;
 
             }
 
@@ -355,7 +369,6 @@ namespace StardewDruid.Event.Sword
 
         }
 
-
         public void EventPartFour()
         {
 
@@ -363,6 +376,10 @@ namespace StardewDruid.Event.Sword
             {
 
                 case 121:
+
+                    companions[0].SwitchToMode(Character.Character.mode.scene, Game1.player);
+
+                    companions[0].eventName = eventId;
 
                     DialogueCue(121);
 
@@ -384,7 +401,7 @@ namespace StardewDruid.Event.Sword
 
                 case 131:
 
-                    companions[0].LookAtTarget(Game1.player.Position);
+                    companions[0].TargetEvent(0,new Vector2(34,13)*64,true);
 
                     DialogueLoad(0,2);
 
@@ -423,6 +440,19 @@ namespace StardewDruid.Event.Sword
 
             }
 
+
+        }
+
+        public override float SpecialProgress(int displayId)
+        {
+
+            if (activeCounter > 80)
+            {
+
+                return -1;
+            }
+
+            return (float)(activeCounter - 10) / 80f;
 
         }
 

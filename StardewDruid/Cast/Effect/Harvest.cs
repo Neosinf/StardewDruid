@@ -2,9 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Event;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Characters;
 using StardewValley.GameData.Crops;
+using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using System;
@@ -20,6 +22,8 @@ namespace StardewDruid.Cast.Effect
     {
 
         public Dictionary<Vector2, HarvestTarget> harvesters = new();
+
+        public bool iridium;
 
         public Harvest()
         {
@@ -37,9 +41,9 @@ namespace StardewDruid.Cast.Effect
 
             harvesters.Add(tile, new(location, tile));
 
-
             activeLimit = eventCounter + 8;
 
+            iridium = (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areAllAreasComplete();
 
         }
 
@@ -123,6 +127,19 @@ namespace StardewDruid.Cast.Effect
 
                         }
 
+                        if (toHarvest.Value.location.objects[tileVector].isForage() || toHarvest.Value.location.objects[tileVector].isAnimalProduct())
+                        {
+
+                            StardewValley.Item extract = ModUtility.ExtractForage(toHarvest.Value.location,tileVector);
+
+                            ThrowHandle throwObject = new(tileVector * 64, toHarvest.Value.tile * 64, extract);
+
+                            throwObject.pocket = true;
+
+                            throwObject.register();
+
+                        }
+
                     }
 
                 }
@@ -139,7 +156,7 @@ namespace StardewDruid.Cast.Effect
                             && hoeDirt.crop.indexOfHarvest.Value != null)
                         {
 
-                            List<StardewValley.Object> extracts = ModUtility.ExtractCrop(hoeDirt, hoeDirt.crop, hoeDirt.Tile);
+                            List<StardewValley.Object> extracts = ModUtility.ExtractCrop(hoeDirt, hoeDirt.crop, hoeDirt.Tile, iridium);
 
                             foreach (StardewValley.Object extract in extracts)
                             {

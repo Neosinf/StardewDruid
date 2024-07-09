@@ -32,7 +32,7 @@ namespace StardewDruid.Event.Challenge
         public ChallengeAtoll()
         {
 
-            activeLimit = 70;
+            activeLimit = 80;
 
             mainEvent = true;
 
@@ -106,7 +106,6 @@ namespace StardewDruid.Event.Challenge
                 monsterHandle.spawnWithin + new Vector2(16,4),
 
             };
-
 
             Wisps wispNew = new();
 
@@ -196,7 +195,7 @@ namespace StardewDruid.Event.Challenge
 
                     break;
 
-                case 70:
+                case 79:
 
                     eventComplete = true;
 
@@ -205,7 +204,7 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            if (activeCounter % 5 == 0 && activeCounter <= 65)
+            if (activeCounter % 5 == 0 && activeCounter <= 75)
             {
 
                 monsterHandle.SpawnInterval();
@@ -223,6 +222,9 @@ namespace StardewDruid.Event.Challenge
 
                 case 43: CannonsAtTheReady(); break;
                 case 46: CannonsToFire(); break;
+
+                case 58: CannonsAtTheReady(); break;
+                case 61: CannonsToFire(); break;
 
                 default: break;
 

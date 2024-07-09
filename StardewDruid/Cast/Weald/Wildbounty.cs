@@ -17,6 +17,8 @@ using StardewValley.GameData.GiantCrops;
 using StardewValley.Quests;
 using StardewValley.GameData.WildTrees;
 using StardewValley.Objects;
+using static StardewDruid.Data.SpawnData;
+using System.Reflection.Metadata.Ecma335;
 
 
 namespace StardewDruid.Cast.Weald
@@ -68,6 +70,8 @@ namespace StardewDruid.Cast.Weald
             int forageCost = Game1.player.ForagingLevel >= 6 ? 4 : 6;
 
             int waterCost = Game1.player.FishingLevel >= 6 ? 5 : 8;
+
+            int grassTimer = 0;
 
             Dictionary<Vector2, int> targets = new();
 
@@ -254,7 +258,18 @@ namespace StardewDruid.Cast.Weald
 
                             }
 
-                            debrisProspects.Add(check.Key, debris.tree);
+                            if(Mod.instance.randomIndex.Next(3) == 0)
+                            {
+
+                                debrisProspects.Add(check.Key, debris.treeseed);
+
+                            }
+                            else
+                            {
+
+                                debrisProspects.Add(check.Key, debris.tree);
+
+                            }
 
                         }
 
@@ -262,11 +277,20 @@ namespace StardewDruid.Cast.Weald
                     else if (terrainFeature is StardewValley.TerrainFeatures.Grass grassFeature)
                     {
 
-                        Microsoft.Xna.Framework.Rectangle tileRectangle = new((int)(check.Key.X * 64) + 1, (int)(check.Key.Y * 64) + 1, 62, 62);
+                        if(grassTimer <= 0)
+                        {
 
-                        grassFeature.doCollisionAction(tileRectangle, 2, check.Key, Game1.player);
+                            Microsoft.Xna.Framework.Rectangle tileRectangle = new((int)(check.Key.X * 64) + 1, (int)(check.Key.Y * 64) + 1, 62, 62);
 
-                        debrisProspects.Add(check.Key, debris.grass);
+                            grassFeature.doCollisionAction(tileRectangle, 2, check.Key, Game1.player);
+
+                            debrisProspects.Add(check.Key, debris.grass);
+                            
+                            grassTimer = 20;
+                        
+                        }
+
+                        grassTimer--;
 
                     }
 
@@ -364,13 +388,17 @@ namespace StardewDruid.Cast.Weald
 
                         break;
 
+                    case debris.treeseed:
+
+                        BountyTreeseed(prospect.Key);
+
+                        Mod.instance.iconData.ImpactIndicator(location, prospect.Key * 64, IconData.impacts.glare, 1f, new() { color = Color.LightGreen });
+
+                        break;
+
                     case debris.grass:
 
-                        int yield = 1;
-                        if(debrisProspects.Count > 10) { yield++; }
-                        if(debrisProspects.Count > 20) { yield++; }
-
-                        BountyGrass(prospect.Key, yield);
+                        BountyGrass(prospect.Key, 1 + (int)(Mod.instance.PowerLevel / 2));
 
                         Mod.instance.iconData.ImpactIndicator(location, prospect.Key * 64, IconData.impacts.glare, 1f, new() { color = Color.LightGreen });
 
@@ -420,7 +448,6 @@ namespace StardewDruid.Cast.Weald
             }
 
         }
-
 
         public void RustleBush(StardewValley.TerrainFeatures.Bush bushFeature)
         {
@@ -525,7 +552,6 @@ namespace StardewDruid.Cast.Weald
 
         }
 
-
         public void BountyClump(Vector2 clumpTile)
         {
 
@@ -536,7 +562,7 @@ namespace StardewDruid.Cast.Weald
 
                 int debrisType = 388;
 
-                int debrisAmount = Mod.instance.randomIndex.Next(1, 5);
+                int debrisAmount = 3 + Mod.instance.randomIndex.Next(Mod.instance.PowerLevel);
 
                 for (int i = 0; i < debrisAmount; i++)
                 {
@@ -562,7 +588,7 @@ namespace StardewDruid.Cast.Weald
 
                 int debrisType = 390;
 
-                int debrisAmount = 2 + Mod.instance.randomIndex.Next(Mod.instance.PowerLevel);
+                int debrisAmount = 3 + Mod.instance.randomIndex.Next(Mod.instance.PowerLevel);
 
                 if (clump.parentSheetIndex.Value == ResourceClump.meteoriteIndex)
                 {
@@ -597,27 +623,21 @@ namespace StardewDruid.Cast.Weald
 
         }
 
-
         public void BountyGrass(Vector2 grassTile, int yield = 1)
         {
 
-            if (Mod.instance.randomIndex.Next(200) == 0)
+            if (Mod.instance.randomIndex.Next(500) == 0)
             {
 
                 new ThrowHandle(Game1.player, grassTile * 64, 114, 0).register();
 
+                extractDebris++;
+
+                return;
+
             }
 
-            List<string> items = new()
-            {
-
-                "771",
-                "771",
-                "771",
-                "771",
-                "771",
-
-            };
+            string item = "498";
 
             if (!Mod.instance.Config.disableSeeds && Mod.instance.questHandle.IsComplete(QuestHandle.wealdTwo))
             {
@@ -627,49 +647,33 @@ namespace StardewDruid.Cast.Weald
 
                     case "spring":
 
-                        items[2] = "495";
-
-                        items[3] = "495";
+                        item = "495";
 
                         break;
 
                     case "summer":
 
-                        items[2] = "496";
-
-                        items[3] = "496";
+                        item = "496";
 
                         break;
 
                     case "fall":
 
-                        items[2] = "497";
-
-                        items[3] = "497";
-
-                        break;
-
-                    default:
-
-                        items[2] = "498";
-
-                        items[3] = "498";
+                        item = "497";
 
                         break;
 
                 }
-                
 
             }
 
-            StardewValley.Object candidate = new(items[Mod.instance.randomIndex.Next(items.Count)], Mod.instance.randomIndex.Next(1,yield + (int)(Mod.instance.PowerLevel/2)));
+            StardewValley.Object candidate = new(item, Mod.instance.randomIndex.Next(1,yield));
 
             new ThrowHandle(Game1.player, grassTile * 64, candidate).register();
 
             extractDebris++;
 
         }
-
 
         public void BountyTree(Vector2 treeTile)
         {
@@ -678,7 +682,7 @@ namespace StardewDruid.Cast.Weald
 
             int debrisType = 388;
 
-            int debrisMax = 2;
+            int debrisMax = 3;
 
             if (Game1.player.professions.Contains(12))
             {
@@ -747,8 +751,6 @@ namespace StardewDruid.Cast.Weald
                 extractDebris++;
 
             }
-
-            location.terrainFeatures.Remove(treeTile);
 
         }
 

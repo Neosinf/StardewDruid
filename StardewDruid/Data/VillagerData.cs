@@ -1,5 +1,6 @@
 ﻿using StardewDruid.Cast.Weald;
 using StardewValley;
+using StardewValley.Locations;
 using System.Collections.Generic;
 using static StardewDruid.Data.ReactionData;
 
@@ -8,44 +9,46 @@ namespace StardewDruid.Data
     static class VillagerData
     {
 
-        public static List<string> VillagerIndex(string residentType)
+        public enum villagerLocales
+        {
+            mountain,
+            town,
+            forest,
+        }
+
+        public static List<string> VillagerIndex(villagerLocales locale)
         {
 
-            List<string> villagerList = new();
-
-            Dictionary<string, List<string>> villagerIndex = new()
+            switch (locale)
             {
-                ["mountain"] = new(){
-                    "Sebastian", "Sam",
-                    "Maru", "Abigail",
-                    "Robin", "Demetrius", "Linus",
-                },
-                ["town"] = new(){
+                default:
+                case villagerLocales.mountain:
+                    return new(){
+                        "Sebastian", "Sam",
+                        "Maru", "Abigail",
+                        "Robin", "Demetrius", "Linus",
+                    };
 
-                    "Alex", "Elliott", "Harvey",
-                    "Emily", "Penny",
-                    "Caroline", "Clint", "Evelyn", "George", "Gus", "Jodi", "Lewis", "Pam", "Pierre", "Vincent",
-                },
-                ["forest"] = new(){
+                case villagerLocales.town:
+                    return new(){
+                        "Alex", "Elliott", "Harvey",
+                        "Emily", "Penny",
+                        "Caroline", "Clint", "Evelyn", "George", "Gus", "Jodi", "Lewis", "Pam", "Pierre", "Vincent",
+                    };
 
-                    "Shane",
-                    "Leah", "Haley",
-                    "Marnie", "Jas", "Wizard", "Willy",
-                }
-            };
+                case villagerLocales.forest:
+                    return new(){
+                        "Shane",
+                        "Leah", "Haley",
+                        "Marnie", "Jas", "Wizard", "Willy",
+                    };
 
-            if (villagerIndex.ContainsKey(residentType))
-            {
-
-                villagerList = villagerIndex[residentType];
 
             }
 
-            return villagerList;
-
         }
 
-        public static void CommunityFriendship(string id = "mountain", int friendship = 250)
+        public static void CommunityFriendship(villagerLocales id = villagerLocales.mountain, int friendship = 250)
         {
 
             List<string> NPCIndex = VillagerData.VillagerIndex(id);
@@ -146,14 +149,12 @@ namespace StardewDruid.Data
 
         }
 
-
-
         public static Dictionary<ReactionData.portraits, string> ReactionPortraits(string name)
         {
 
             Dictionary<ReactionData.portraits, string> shots = new()
             {
-                [ReactionData.portraits.neutral] = "$neutral",
+                [ReactionData.portraits.neutral] = "$0",
                 [ReactionData.portraits.happy] = "$h",
                 [ReactionData.portraits.sad] = "$s",
                 [ReactionData.portraits.unique] = "$u",

@@ -55,6 +55,8 @@ namespace StardewDruid.Character
 
             base.LoadOut();
 
+            gait = 1.4f;
+
         }
 
         public override void draw(SpriteBatch b, float alpha = 1)
@@ -458,6 +460,10 @@ namespace StardewDruid.Character
 
                 cultivateEvent.inabsentia = true;
 
+                CharacterHandle.RetrieveInventory(CharacterHandle.characters.Effigy);
+
+                cultivateEvent.inventory = Mod.instance.chests[CharacterHandle.characters.Effigy].Items;
+
                 cultivateEvent.EventActivate();
 
             }
@@ -486,59 +492,26 @@ namespace StardewDruid.Character
 
             LookAtTarget(monster.Position, true);
 
-            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 192, -1, Mod.instance.CombatDamage() / 2);
+            Mod.instance.iconData.DecorativeIndicator(currentLocation, Position, IconData.decorations.mists, 5f, new());
 
-            int outdoors = currentLocation.IsOutdoors ? 2 : 3;
+            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 2);
 
-            switch (Mod.instance.randomIndex.Next(outdoors))
-            {
+            special.type = SpellHandle.spells.bolt;
 
-                case 2:
+            special.power = 4;
 
-                    special.type = SpellHandle.spells.orbital;
+            special.explosion = 256;
 
-                    special.missile = IconData.missiles.rockfall;
-
-                    special.sound = sounds.boulderBreak;
-
-                    Mod.instance.iconData.DecorativeIndicator(currentLocation, Position, IconData.decorations.weald, 3f, new());
-
-                    break;
-
-                case 1:
-
-                    special.type = SpellHandle.spells.bolt;
-
-                    Mod.instance.iconData.DecorativeIndicator(currentLocation, Position, IconData.decorations.mists, 3f, new());
-
-                    break;
-
-                case 0:
-
-                    special.type = SpellHandle.spells.orbital;
-
-                    special.missile = IconData.missiles.meteor;
-
-                    special.projectile = 3;
-
-                    special.sound = sounds.flameSpellHit;
-
-                    Mod.instance.iconData.DecorativeIndicator(currentLocation, Position, IconData.decorations.stars, 3f, new());
-
-                    break;
-
-
-            }
+            special.terrain = 4;
 
             special.display = IconData.impacts.impact;
-
-            special.power = 3;
 
             Mod.instance.spellRegister.Add(special);
 
             return true;
 
         }
+
         public override void NewDay()
         {
 

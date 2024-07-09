@@ -56,7 +56,7 @@ namespace StardewDruid.Dialogue
             if(promptDialogue.Count > 0)
             {
 
-                KeyValuePair<string,Journal.Quest.questTypes> prompt = promptDialogue.ElementAt(0);
+                KeyValuePair<string,Journal.Quest.questTypes> prompt = promptDialogue.Last();
 
                 promptDialogue.Remove(prompt.Key);
 
@@ -89,6 +89,7 @@ namespace StardewDruid.Dialogue
                 CharacterHandle.subjects.quests,
                 CharacterHandle.subjects.lore,
                 CharacterHandle.subjects.relics,
+                CharacterHandle.subjects.inventory,
                 CharacterHandle.subjects.adventure,
                 CharacterHandle.subjects.attune,
             };
@@ -127,6 +128,7 @@ namespace StardewDruid.Dialogue
                 CharacterHandle.subjects.quests,
                 CharacterHandle.subjects.lore,
                 CharacterHandle.subjects.relics,
+                CharacterHandle.subjects.inventory,
                 CharacterHandle.subjects.adventure,
                 CharacterHandle.subjects.attune,
             };

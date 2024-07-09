@@ -171,7 +171,7 @@ namespace StardewDruid.Character
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            float drawLayer = (float)StandingPixel.Y / 10000f;
+            float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
 
             bool flippant = (netDirection.Value % 2 == 0 && netAlternative.Value == 3);
 
@@ -366,10 +366,53 @@ namespace StardewDruid.Character
 
         public override void NewDay()
         {
-            
-            base.NewDay();
-            
+
             workVectors = new();
+
+            CharacterHandle.RetrieveInventory(characterType);
+
+            for (int i = 0; i < Mod.instance.chests[characterType].Items.Count - 1; i++)
+            {
+
+                if (Mod.instance.chests[characterType].Items[i].Category == -79)
+                {
+
+                    StardewValley.Object conversion = new StardewValley.Object("344", 1);
+
+                    conversion.Price = 50 + (Mod.instance.chests[characterType].Items[i] as StardewValley.Object).Price * 2;
+                    
+                    conversion.name = Mod.instance.chests[characterType].Items[i].Name + " Jelly";
+                    
+                    conversion.Price = 50 + (Mod.instance.chests[characterType].Items[i] as StardewValley.Object).Price * 2;
+                    
+                    conversion.preserve.Value = StardewValley.Object.PreserveType.Jelly;
+                    
+                    conversion.preservedParentSheetIndex.Value = Mod.instance.chests[characterType].Items[i].ParentSheetIndex.ToString();
+                    
+                    conversion.Stack = Mod.instance.chests[characterType].Items[i].Stack;
+
+                    Mod.instance.chests[characterType].Items[i] = conversion;
+
+                }
+
+            }
+
+        }
+
+        public override void ConnectSweep()
+        {
+
+            SpellHandle swipeEffect = new(Game1.player, Position, 192, Mod.instance.CombatDamage() / 2);
+
+            swipeEffect.instant = true;
+
+            swipeEffect.added = new() { effects.knock, };
+
+            swipeEffect.sound = sounds.swordswipe;
+
+            swipeEffect.display = IconData.impacts.flashbang;
+
+            Mod.instance.spellRegister.Add(swipeEffect);
 
         }
 
@@ -456,7 +499,6 @@ namespace StardewDruid.Character
             return false;
 
         }
-
         public override List<Vector2> RoamAnalysis()
         {
 
@@ -471,25 +513,38 @@ namespace StardewDruid.Character
 
             List<Vector2> scarelist = new List<Vector2>();
 
-            if(currentLocation is Farm farm)
+            int takeABreak = 0;
+
+            foreach (Dictionary<Vector2, StardewValley.Object> dictionary in currentLocation.Objects)
             {
 
-                for(int i = 0; i < 2; i++)
+                foreach (KeyValuePair<Vector2, StardewValley.Object> keyValuePair in dictionary)
                 {
 
-                    foreach (Building building in farm.buildings)
+                    if (
+                        keyValuePair.Value.Name.Contains("Artifact Spot") ||
+                        keyValuePair.Value.isForage() ||
+                        keyValuePair.Value.QualifiedItemId == "(BC)9" ||
+                        keyValuePair.Value.QualifiedItemId == "(BC)10" ||
+                        keyValuePair.Value.QualifiedItemId == "(BC)MushroomLog" ||
+                        keyValuePair.Value.IsTapper()
+                    )
                     {
 
-                        if (building.buildingType.Contains("Coop") || building.buildingType.Contains("Barn"))
-                        {
+                        Vector2 scareVector = new(keyValuePair.Key.X * 64f, keyValuePair.Key.Y * 64f);
 
-                            Vector2 scareVector = new(building.tileX.Value * 64f, building.tileY.Value * 64f);
+                        scarelist.Add(scareVector);
 
-                            scarelist.Add(scareVector);
+                        takeABreak++;
 
-                            scarelist.Add(new Vector2(-1f));
+                    }
 
-                        }
+                    if (takeABreak >= 4)
+                    {
+
+                        scarelist.Add(new Vector2(-1f));
+
+                        takeABreak = 0;
 
                     }
 
@@ -568,26 +623,24 @@ namespace StardewDruid.Character
                     if (targetObject.isForage())
                     {
 
-                        StardewValley.Item objectInstance = targetObject.getOne();
+                        StardewValley.Item objectInstance = ModUtility.ExtractForage(currentLocation, workVector, false);
 
-                        objectInstance.Quality = 4;
+                        if (
+                            currentLocation.Name == Game1.player.currentLocation.Name &&
+                            Vector2.Distance(Game1.player.Position,Position) <= 640
+                        )
+                        {
 
+                            ThrowHandle throwItem = new(Game1.player, Position, objectInstance);
+
+                            Mod.instance.throwRegister.Add(throwItem);
+
+                        }
+                        else
                         if (chest.addItem(objectInstance) != null)
                         {
 
-                            if (Mod.instance.trackers.ContainsKey(characterType) && currentLocation.Name == Game1.player.currentLocation.Name)
-                            {
-
-                                ThrowHandle throwItem = new(Game1.player, Position, objectInstance);
-
-                                Mod.instance.throwRegister.Add(throwItem);
-
-                            }
-                            else
-                            {
-                                return;
-
-                            }
+                            return;
 
                         }
 
@@ -617,27 +670,25 @@ namespace StardewDruid.Character
 
                             }
 
+                            if (
+                                currentLocation.Name == Game1.player.currentLocation.Name &&
+                                Vector2.Distance(Game1.player.Position, Position) <= 640
+                            )
+                            {
+                                ThrowHandle throwItem = new(Game1.player, Position, objectInstance);
+
+                                Mod.instance.throwRegister.Add(throwItem);
+
+                            }
+                            else
                             if (chest.addItem(objectInstance) != null)
                             {
 
-                                if (Mod.instance.trackers.ContainsKey(characterType) && currentLocation.Name == Game1.player.currentLocation.Name)
-                                {
+                                return;
 
-                                    ThrowHandle throwItem = new(Game1.player, Position, objectInstance);
-
-                                    Mod.instance.throwRegister.Add(throwItem);
-
-                                }
-                                else
-                                {
-                                    return;
-
-                                }
-                            
                             }
 
                             targetObject.heldObject.Value = null;
-
 
                         }
 
@@ -648,6 +699,43 @@ namespace StardewDruid.Character
                 }
 
             }
+
+        }
+
+        public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
+        {
+
+            ResetActives();
+
+            netSpecialActive.Set(true);
+
+            specialTimer = 90;
+
+            cooldownTimer = cooldownInterval;
+
+            LookAtTarget(monster.Position, true);
+
+            SpellHandle fireball = new(Game1.player, new() { monster, }, Mod.instance.CombatDamage() / 2);
+
+            fireball.origin = GetBoundingBox().Center.ToVector2();
+
+            fireball.type = SpellHandle.spells.missile;
+
+            fireball.missile = IconData.missiles.fireball;
+
+            fireball.projectile = 2;
+
+            fireball.scheme = IconData.schemes.ether;
+
+            fireball.display = IconData.impacts.impact;
+
+            fireball.added = new() { SpellHandle.effects.aiming, };
+
+            fireball.power = 3;
+
+            Mod.instance.spellRegister.Add(fireball);
+
+            return true;
 
         }
 

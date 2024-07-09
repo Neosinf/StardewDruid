@@ -158,14 +158,21 @@ namespace StardewDruid.Cast.Weald
                     if (typeValue == "Dirt" || backTile.TileIndexProperties.TryGetValue("Diggable", out _))
                     {
 
+                        if(location is Beach || location is StardewDruid.Location.Atoll)
+                        {
+
+                            spawnProspects[check.Key].Add(spawns.forage);
+
+                            activeProspects[check.Key] = true;
+
+                        }
+                        else
                         if (grass)
                         {
 
                             spawnProspects[check.Key].Add(spawns.grass); 
                             
                             activeProspects[check.Key] = true; 
-                            
-                            continue;
 
                         }
 
@@ -238,16 +245,6 @@ namespace StardewDruid.Cast.Weald
 
                     case spawns.forage:
 
-                        if (Mod.instance.questHandle.IsComplete(QuestHandle.wealdThree))
-                        {
-
-                            if (Mod.instance.randomIndex.Next(3) == 0)
-                            {
-                                SpawnFlower(prospect.Key);
-                            }
-
-                        }
-
                         SpawnForage(prospect.Key);
 
                         break;
@@ -307,36 +304,22 @@ namespace StardewDruid.Cast.Weald
 
         }
 
-        public void SpawnFlower(Vector2 tile)
-        {
-
-            int randomCrop = SpawnData.RandomFlower();
-
-            StardewValley.Object newFlower = new(
-                        randomCrop.ToString(), 1
-                );
-
-            newFlower.IsSpawnedObject = true;
-
-            newFlower.Location = location;
-
-            newFlower.TileLocation = tile;
-
-            if(location.objects.TryAdd(tile, newFlower))
-            {
-
-                spawnForage++;
-
-            }
-
-            Mod.instance.iconData.CursorIndicator(location, tile * 64 + new Vector2(0, 8), IconData.cursors.weald, new());
-
-        }
-
         public void SpawnForage(Vector2 tile)
         {
 
             int randomCrop = SpawnData.RandomForage(location);
+
+            if (Mod.instance.questHandle.IsComplete(QuestHandle.wealdThree))
+            {
+
+                if (Mod.instance.randomIndex.Next(3) == 0)
+                {
+
+                    randomCrop = SpawnData.RandomFlower(location);
+
+                }
+
+            }
 
             StardewValley.Object newForage = new StardewValley.Object(
                 randomCrop.ToString(), 1

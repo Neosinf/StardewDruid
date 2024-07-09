@@ -295,9 +295,7 @@ namespace StardewDruid.Location
                 {
 
 
-                    LightField light = new(new Vector2(array[0], code.Key) * 64, 6, Microsoft.Xna.Framework.Color.PeachPuff);
-
-                    light.lightType = LightField.lightTypes.brazier;
+                    LightField light = new(new Vector2(array[0], code.Key) * 64, 6, Microsoft.Xna.Framework.Color.Coral);
 
                     light.lightFrame = Mod.instance.randomIndex.Next(4);
 

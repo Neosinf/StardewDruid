@@ -52,7 +52,43 @@ namespace StardewDruid.Event.Challenge
 
             activeLimit = 120;
 
+            SpawnBoss();
+
+        }
+
+        public virtual void SpawnBoss()
+        {
+
+            location.warps.Clear();
+
+            warpExit = new Warp(26, 32, "Mine", 17, 6, flipFarmer: false);
+
+            bosses[0] = new Dragon(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+
+            bosses[0].netScheme.Set(2);
+
+            bosses[0].SetMode(3);
+
+            bosses[0].netHaltActive.Set(true);
+
+            bosses[0].idleTimer = 300;
+
+            location.characters.Add(bosses[0]);
+
+            bosses[0].currentLocation = location;
+
+            bosses[0].update(Game1.currentGameTime, location);
+
+            voices[0] = bosses[0];
+
+            BossBar(0, 0);
+
+            location.playSound("DragonRoar");
+
             HoldCompanions();
+
+            SetTrack("cowboy_boss");
+
         }
 
         public override bool AttemptReset()
@@ -114,46 +150,6 @@ namespace StardewDruid.Event.Challenge
                     return;
 
                 }
-
-            }
-
-            if (activeCounter == 1)
-            {
-
-                foreach(KeyValuePair< CharacterHandle.characters,TrackHandle> tracker in Mod.instance.trackers)
-                {
-
-                    Mod.instance.characters[tracker.Key].Halt();
-
-                    Mod.instance.characters[tracker.Key].idleTimer = 300;
-
-                }
-
-                location.warps.Clear();
-
-                warpExit = new Warp(26, 32, "Mine", 17, 6, flipFarmer: false);
-
-                bosses[0] = new Dragon(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
-
-                bosses[0].netScheme.Set(2);
-
-                bosses[0].SetMode(3);
-
-                bosses[0].netHaltActive.Set(true);
-
-                bosses[0].idleTimer = 300;
-
-                location.characters.Add(bosses[0]);
-
-                bosses[0].currentLocation = location;
-
-                bosses[0].update(Game1.currentGameTime, location);
-
-                voices[0] = bosses[0];
-
-                BossBar(0, 0);
-
-                location.playSound("DragonRoar");
 
             }
 

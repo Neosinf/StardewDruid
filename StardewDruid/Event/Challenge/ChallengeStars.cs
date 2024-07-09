@@ -22,7 +22,7 @@ namespace StardewDruid.Event.Challenge
         public ChallengeStars()
         {
 
-            activeLimit = 60;
+            activeLimit = 80;
 
             mainEvent = true;
 
@@ -46,7 +46,9 @@ namespace StardewDruid.Event.Challenge
                     List<SpawnHandle> blobSpawns = new()
                     {
 
-                        new(MonsterHandle.bosses.blobfiend, Boss.temperment.random, Boss.difficulty.hard)
+                        new(MonsterHandle.bosses.blobfiend, Boss.temperment.random, Boss.difficulty.medium),
+
+                        new(MonsterHandle.bosses.blobfiend, Boss.temperment.random, Boss.difficulty.basic),
 
                     };
 
@@ -61,16 +63,14 @@ namespace StardewDruid.Event.Challenge
                 for (int i = 1; i <= 15; i++)
                 {
 
-                    List<SpawnHandle> blobSpawns = new();
-
-                    blobSpawns.Add(new(MonsterHandle.bosses.blobfiend, Boss.temperment.random, Boss.difficulty.medium));
-
-                    if(Mod.instance.randomIndex.Next(2) == 0)
+                    List<SpawnHandle> blobSpawns = new()
                     {
 
-                        blobSpawns.Add(new(MonsterHandle.bosses.blobfiend, Boss.temperment.coward, Boss.difficulty.basic));
+                        new(MonsterHandle.bosses.blobfiend, Boss.temperment.random, Boss.difficulty.medium),
 
-                    }
+                        new(MonsterHandle.bosses.blobfiend, Boss.temperment.coward, Boss.difficulty.basic),
+
+                    };
 
                     monsterHandle.spawnSchedule.Add(i, blobSpawns);
 
@@ -85,6 +85,10 @@ namespace StardewDruid.Event.Challenge
             monsterHandle.spawnGroup = true;
 
             EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
+
+            EventDisplay trashbar = EventBar(DialogueData.Strings(DialogueData.stringkeys.slimesDestroyed), 0);
+
+            trashbar.colour = Microsoft.Xna.Framework.Color.LightGreen;
 
             SetTrack("cowboy_outlawsong");
 
@@ -105,12 +109,21 @@ namespace StardewDruid.Event.Challenge
 
         }
 
+        public override float SpecialProgress(int displayId)
+        {
+
+            return (float)eventRating / 30;
+
+        }
+
         public override void EventInterval()
         {
 
             activeCounter++;
 
             monsterHandle.SpawnCheck();
+
+            eventRating = monsterHandle.spawnTotal - monsterHandle.monsterSpawns.Count;
 
             if (activeCounter % 5 == 1)
             {
@@ -128,8 +141,6 @@ namespace StardewDruid.Event.Challenge
                     bosses[0].currentLocation.characters.Remove(bosses[0]);
 
                     bosses.Clear();
-
-                    cues.Clear();
 
                 }
 
@@ -183,7 +194,7 @@ namespace StardewDruid.Event.Challenge
 
                     break;
 
-                case 59:
+                case 77:
 
                     if(bosses.Count > 0)
                     {
@@ -214,9 +225,18 @@ namespace StardewDruid.Event.Challenge
 
                     break;
 
-                case 60:
+                case 79:
 
-                    eventRating = monsterHandle.spawnTotal - monsterHandle.monsterSpawns.Count;
+                    if (bosses.Count > 0)
+                    {
+
+                        Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, impacts.splatter, 5f, new() { scheme = schemes.pumpkin, });
+
+                        bosses[0].currentLocation.characters.Remove(bosses[0]);
+
+                        bosses.Clear();
+
+                    }
 
                     eventComplete = true;
 

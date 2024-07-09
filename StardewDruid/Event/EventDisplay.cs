@@ -37,7 +37,7 @@ namespace StardewDruid.Event
 
         public int uniqueId;
 
-        public StardewDruid.Monster.Boss boss;
+        public int boss;
 
         public int level;
 
@@ -54,6 +54,8 @@ namespace StardewDruid.Event
             time = Time * 10;
 
             type = Type;
+
+            boss = -1;
 
             uniqueId = UniqueId;
         
@@ -79,24 +81,37 @@ namespace StardewDruid.Event
 
                 }
 
-                if (boss != null)
+                if (boss != -1)
                 {
 
-                    if (boss.netWoundedActive.Value)
+                    if (!Mod.instance.eventRegister[eventId].bosses.ContainsKey(boss))
                     {
 
                         return false;
 
                     }
 
-                    if (!ModUtility.MonsterVitals(boss, Game1.player.currentLocation))
+                    StardewDruid.Monster.Boss monster = Mod.instance.eventRegister[eventId].bosses[boss];
+
+                    if (monster.netWoundedActive.Value)
+                    {
+
+                        progress = 0;
+
+                        time = 5;
+
+                        return true;
+
+                    }
+
+                    if (!ModUtility.MonsterVitals(monster, Game1.player.currentLocation))
                     {
 
                         return false;
 
                     }
 
-                    progress = (float)boss.Health / (float)boss.MaxHealth;
+                    progress = (float)monster.Health / (float)monster.MaxHealth;
 
                     time = 5;
 
@@ -135,7 +150,7 @@ namespace StardewDruid.Event
         public virtual void shutdown()
         {
 
-            boss = null;
+            boss = -1;
 
             time = 0;
 

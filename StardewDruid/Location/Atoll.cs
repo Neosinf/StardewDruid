@@ -137,7 +137,7 @@ namespace StardewDruid.Location
                 [3] = new() { new() { 0, W1 }, new() { 1, W1 }, new() { 2, W1 }, new() { 3, W1 }, new() { 4, W1 }, new() { 5, W1 }, new() { 6, W1 }, new() { 7, W1 }, new() { 8, W1 }, new() { 46, W1 }, new() { 47, W1 }, new() { 48, W1 }, new() { 49, W1 }, new() { 50, W1 }, new() { 51, W1 }, new() { 52, W1 }, new() { 53, W1 }, new() { 54, W1 }, new() { 55, W1 }, },
                 [4] = new() { new() { 0, W1 }, new() { 1, W1 }, new() { 2, W1 }, new() { 3, W1 }, new() { 4, W1 }, new() { 5, W1 }, new() { 6, W1 }, new() { 7, W1 }, new() { 8, W1 }, new() { 46, W1 }, new() { 47, W1 }, new() { 48, W1 }, new() { 49, W1 }, new() { 50, W1 }, new() { 51, W1 }, new() { 52, W1 }, new() { 53, W1 }, new() { 54, W1 }, new() { 55, W1 }, },
                 [5] = new() { new() { 0, W1 }, new() { 1, W1 }, new() { 2, W1 }, new() { 3, W1 }, new() { 4, W1 }, new() { 5, W1 }, new() { 6, W1 }, new() { 7, W1 }, new() { 8, W1 }, new() { 9, W1 }, new() { 46, W1 }, new() { 47, W1 }, new() { 48, W1 }, new() { 49, W1 }, new() { 50, W1 }, new() { 51, W1 }, new() { 52, W1 }, new() { 53, W1 }, new() { 54, W1 }, new() { 55, W1 }, },
-                [6] = new() { new() { 0, W1 }, new() { 1, W1 }, new() { 2, W1 }, new() { 3, W1 }, new() { 4, W1 }, new() { 5, W1 }, new() { 6, W1 }, new() { 7, W1 }, new() { 8, W1 }, new() { 9, W1 }, new() { 14, D1 }, new() { 15, D1 }, new() { 28, D1 }, new() { 29, D1 }, new() { 30, D1 }, new() { 31, D1 }, new() { 32, D1 }, new() { 33, D1 }, new() { 34, D1 }, new() { 35, D1 }, new() { 36, D1 }, new() { 37, D1 }, new() { 38, D1 }, new() { 39, D1 }, new() { 45, W1 }, new() { 46, W1 }, new() { 47, W1 }, new() { 48, W1 }, new() { 49, W1 }, new() { 50, W1 }, new() { 51, W1 }, new() { 52, W1 }, new() { 53, W1 }, new() { 54, W1 }, new() { 55, W1 }, },
+                [6] = new() { new() { 0, W1 }, new() { 1, W1 }, new() { 2, W1 }, new() { 3, W1 }, new() { 4, W1 }, new() { 5, W1 }, new() { 6, W1 }, new() { 7, W1 }, new() { 8, W1 }, new() { 9, W1 }, new() { 45, W1 }, new() { 46, W1 }, new() { 47, W1 }, new() { 48, W1 }, new() { 49, W1 }, new() { 50, W1 }, new() { 51, W1 }, new() { 52, W1 }, new() { 53, W1 }, new() { 54, W1 }, new() { 55, W1 }, },
                 [7] = new() { new() { 0, W1 }, new() { 1, W1 }, new() { 2, W1 }, new() { 3, W1 }, new() { 4, W1 }, new() { 5, W1 }, new() { 6, W1 }, new() { 7, W1 }, new() { 8, W1 }, new() { 9, W1 }, new() { 12, D1 }, new() { 13, D1 }, new() { 14, D1 }, new() { 15, D1 }, new() { 16, D1 }, new() { 17, D1 }, new() { 18, D1 }, new() { 19, D1 }, new() { 20, D1 }, new() { 21, D1 }, new() { 22, D1 }, new() { 23, D1 }, new() { 24, D1 }, new() { 25, D1 }, new() { 26, D1 }, new() { 27, D1 }, new() { 28, D1 }, new() { 29, D1 }, new() { 30, D1 }, new() { 31, D1 }, new() { 32, D1 }, new() { 33, D1 }, new() { 34, D1 }, new() { 35, D1 }, new() { 36, D1 }, new() { 37, D1 }, new() { 38, D1 }, new() { 39, D1 }, new() { 40, D1 }, new() { 41, D1 }, new() { 42, D1 }, new() { 45, W1 }, new() { 46, W1 }, new() { 47, W1 }, new() { 48, W1 }, new() { 49, W1 }, new() { 50, W1 }, new() { 51, W1 }, new() { 52, W1 }, new() { 53, W1 }, new() { 54, W1 }, new() { 55, W1 }, },
                 [8] = new() { new() { 0, W1 }, new() { 1, W1 }, new() { 2, W1 }, new() { 3, W1 }, new() { 4, W1 }, new() { 5, W1 }, new() { 6, W1 }, new() { 7, W1 }, new() { 8, W1 }, new() { 9, W1 }, new() { 12, D1 }, new() { 13, D1 }, new() { 14, D1 }, new() { 15, D1 }, new() { 16, D1 }, new() { 17, D1 }, new() { 18, D1 }, new() { 19, D1 }, new() { 20, D1 }, new() { 21, D1 }, new() { 22, D1 }, new() { 23, D1 }, new() { 24, D1 }, new() { 25, D1 }, new() { 26, D1 }, new() { 27, D1 }, new() { 28, D1 }, new() { 29, D1 }, new() { 30, D1 }, new() { 31, D1 }, new() { 32, D1 }, new() { 33, D1 }, new() { 34, D1 }, new() { 35, D1 }, new() { 36, D1 }, new() { 37, D1 }, new() { 38, D1 }, new() { 39, D1 }, new() { 40, D1 }, new() { 41, D1 }, new() { 42, D1 }, new() { 45, W1 }, new() { 46, W1 }, new() { 47, W1 }, new() { 48, W1 }, new() { 49, W1 }, new() { 50, W1 }, new() { 51, W1 }, new() { 52, W1 }, new() { 53, W1 }, new() { 54, W1 }, new() { 55, W1 }, },
                 [9] = new() { new() { 0, W1 }, new() { 1, W1 }, new() { 2, W1 }, new() { 3, W1 }, new() { 4, W1 }, new() { 5, W1 }, new() { 6, W1 }, new() { 7, W1 }, new() { 8, W1 }, new() { 9, W1 }, new() { 12, D1 }, new() { 13, D1 }, new() { 14, D1 }, new() { 15, D1 }, new() { 16, D1 }, new() { 17, D1 }, new() { 18, D1 }, new() { 19, D1 }, new() { 20, D1 }, new() { 21, D1 }, new() { 22, D1 }, new() { 23, D1 }, new() { 24, D1 }, new() { 25, D1 }, new() { 26, D1 }, new() { 27, D1 }, new() { 28, D1 }, new() { 29, D1 }, new() { 30, D1 }, new() { 31, D1 }, new() { 32, D1 }, new() { 33, D1 }, new() { 34, D1 }, new() { 35, D1 }, new() { 36, D1 }, new() { 37, D1 }, new() { 38, D1 }, new() { 39, D1 }, new() { 40, D1 }, new() { 41, D1 }, new() { 42, D1 }, new() { 45, W1 }, new() { 46, W1 }, new() { 47, W1 }, new() { 48, W1 }, new() { 49, W1 }, new() { 50, W1 }, new() { 51, W1 }, new() { 52, W1 }, new() { 53, W1 }, new() { 54, W1 }, new() { 55, W1 }, },
@@ -464,17 +464,17 @@ namespace StardewDruid.Location
         {
             if (dialogueTiles.Count > 0) { return; }
 
+            dialogueTiles.Add(new(41, 21), CharacterHandle.characters.waves);
+
+            dialogueTiles.Add(new(41, 22), CharacterHandle.characters.waves);
+
+            dialogueTiles.Add(new(41, 23), CharacterHandle.characters.waves);
+
             dialogueTiles.Add(new(42, 21), CharacterHandle.characters.waves);
 
             dialogueTiles.Add(new(42, 22), CharacterHandle.characters.waves);
 
             dialogueTiles.Add(new(42, 23), CharacterHandle.characters.waves);
-
-            dialogueTiles.Add(new(43, 21), CharacterHandle.characters.waves);
-
-            dialogueTiles.Add(new(43, 22), CharacterHandle.characters.waves);
-
-            dialogueTiles.Add(new(43, 23), CharacterHandle.characters.waves);
 
         }
 

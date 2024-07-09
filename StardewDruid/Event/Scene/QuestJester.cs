@@ -27,17 +27,9 @@ namespace StardewDruid.Event.Scene
     public class QuestJester : EventHandle
     {
 
-        public StardewDruid.Monster.Dinosaur dinosaur;
-
-        public int dialogueCounter;
-
-        public bool raceChallenge;
-
         public Vector2 companionVector;
 
         public Vector2 buffinVector;
-
-        public Vector2 relicPosition;
 
         public Event.Access.AccessHandle MuseumAccess;
 
@@ -97,24 +89,6 @@ namespace StardewDruid.Event.Scene
 
         }
 
-        public override void RemoveMonsters()
-        {
-
-            if (dinosaur != null)
-            {
-
-                dinosaur.currentLocation.characters.Remove(dinosaur);
-
-                dinosaur.currentLocation = null;
-
-                dinosaur = null;
-
-            }
-
-            base.RemoveMonsters();
-
-        }
-
         public override void EventInterval()
         {
 
@@ -129,16 +103,10 @@ namespace StardewDruid.Event.Scene
                 if (activeCounter > 925 && activeCounter <= 964)
                 {
 
-                    if (!ModUtility.MonsterVitals(dinosaur, location))
+                    if (!ModUtility.MonsterVitals(bosses[0], location))
                     {
 
                         activeCounter = 965;
-
-                    }
-                    else
-                    {
-
-                        relicPosition = dinosaur.Position;
 
                     }
 
@@ -833,7 +801,7 @@ namespace StardewDruid.Event.Scene
 
                 case 921:
 
-                    dinosaur = new(new Vector2(27,16), Mod.instance.CombatDifficulty());
+                    StardewDruid.Monster.Dinosaur dinosaur = new(new Vector2(27,16), Mod.instance.CombatDifficulty());
 
                     dinosaur.netScheme.Set(2);
 
@@ -842,6 +810,8 @@ namespace StardewDruid.Event.Scene
                     dinosaur.basePulp = 40;
 
                     dinosaur.SetMode(3);
+
+                    dinosaur.setWounded = true;
 
                     dinosaur.netScheme.Set(1);
 
@@ -853,7 +823,11 @@ namespace StardewDruid.Event.Scene
 
                     dinosaur.update(Game1.currentGameTime, location);
 
+                    bosses[0] = dinosaur;
+
                     voices[4] = dinosaur;
+
+                    BossBar(0, 4);
 
                     break;
 
@@ -863,13 +837,13 @@ namespace StardewDruid.Event.Scene
 
                     companions[3].pathActive = Character.Character.pathing.running;
 
-                    dinosaur.netPosturing.Set(false);
+                    bosses[0].netPosturing.Set(false);
 
                     break;
 
                 case 925:
 
-                    companions[3].LookAtTarget(dinosaur.Position);
+                    companions[3].LookAtTarget(bosses[0].Position);
 
                     companions[0].SwitchToMode(Character.Character.mode.track, Game1.player);
 
@@ -888,33 +862,33 @@ namespace StardewDruid.Event.Scene
                 case 958:
                 case 962:
 
-                    companions[3].SpecialAttack(dinosaur);
+                    companions[3].SpecialAttack(bosses[0]);
 
                     break;
 
                 case 964:
 
-                    dinosaur.Halt();
+                    bosses[0].Halt();
 
-                    dinosaur.idleTimer = 2000;
+                    bosses[0].idleTimer = 2000;
 
-                    Mod.instance.iconData.DecorativeIndicator(location, relicPosition, IconData.decorations.fates, 3f, new() { interval = 2000 });
+                    Mod.instance.iconData.DecorativeIndicator(location, bosses[0].Position, IconData.decorations.fates, 3f, new() { interval = 2000 });
 
                     break;
 
                 case 965:
 
-                    location.characters.Remove(dinosaur);
+                    Mod.instance.spellRegister.Add(new(bosses[0].Position, 320, IconData.impacts.deathbomb, new()));
 
-                    dinosaur = null;
-
-                    ThrowHandle newThrowRelic = new( relicPosition, companions[1].Position, IconData.relics.skull_saurus);
+                    ThrowHandle newThrowRelic = new(bosses[0].Position, companions[1].Position, IconData.relics.skull_saurus);
 
                     newThrowRelic.impact = IconData.impacts.puff;
 
                     newThrowRelic.register();
 
-                    Mod.instance.spellRegister.Add(new(relicPosition, 320, IconData.impacts.deathbomb,new()));
+                    location.characters.Remove(bosses[0]);
+
+                    bosses.Clear();
 
                     voices.Remove(4);
 
@@ -1212,13 +1186,12 @@ namespace StardewDruid.Event.Scene
                             if(i % 3 == 0 && j % 3 == 0)
                             {
 
-                                TemporaryAnimatedSprite lightCircle = new(23, 200f, 6, 1, burnVector, false, Game1.random.NextDouble() < 0.5)
+                                TemporaryAnimatedSprite lightCircle = new(23, 200f, 6, 60, burnVector, false, Game1.random.NextDouble() < 0.5)
                                 {
                                     texture = Game1.mouseCursors,
                                     light = true,
                                     lightRadius = 3f,
                                     lightcolor = Color.Black,
-                                    alphaFade = 0.03f,
                                     Parent = location,
                                 };
 
@@ -1450,11 +1423,11 @@ namespace StardewDruid.Event.Scene
 
                 case 575:
 
-                    activeCounter = 699;
+                    activeCounter = 599;
 
                     break;
 
-                case 700:
+                case 600:
 
                     DialogueCue(83);
 

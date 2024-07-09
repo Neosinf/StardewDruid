@@ -206,7 +206,7 @@ namespace StardewDruid.Monster
                 if (netSpecialActive.Value)
                 {
 
-                    dragonRender.drawFlight(b, localPosition, new() { direction = netDirection.Value, version = 1, breath = netBreathActive.Value, flight = flightHeight, scale = netScale, frame = useFrame, flip = flippant, layer = drawLayer, });
+                    dragonRender.drawFlight(b, localPosition, new() { direction = netDirection.Value, flight = flightHeight, scale = netScale, frame = useFrame, flip = flippant, layer = drawLayer, version = 1, breath = netBreathActive.Value, });
 
                 }
                 else
@@ -240,7 +240,7 @@ namespace StardewDruid.Monster
 
             netBreathActive.Set(true);
 
-            currentLocation.playSound("furnace");
+            currentLocation.playSound("DragonFire");
 
             List<Vector2> zero = BlastZero();
 
@@ -261,7 +261,6 @@ namespace StardewDruid.Monster
             return true;
 
         }
-
 
         public override bool PerformChannel(Vector2 target)
         {

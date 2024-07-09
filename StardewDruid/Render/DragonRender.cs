@@ -477,7 +477,7 @@ namespace StardewDruid.Render
         {
             dragonIndexes.submerge_1,
             dragonIndexes.submerge_1,
-            dragonIndexes.submerge_1,
+            dragonIndexes.emerge_1,
             dragonIndexes.emerge_1,
             dragonIndexes.emerge_1,
             dragonIndexes.emerge_1,
@@ -487,10 +487,10 @@ namespace StardewDruid.Render
         {
             dragonShadows.swim_submerge_1,
             dragonShadows.swim_submerge_2,
-            dragonShadows.swim_submerge_1,
             dragonShadows.swim_emerge_1,
             dragonShadows.swim_emerge_2,
             dragonShadows.swim_emerge_1,
+            dragonShadows.swim_emerge_2,
         };
 
         public Dictionary<int, List<dashIndexes>> dashHeadFrames = new()
@@ -1273,13 +1273,13 @@ namespace StardewDruid.Render
         public virtual void drawBreath(SpriteBatch b, Vector2 spritePosition, DragonAdditional additional)
         {
 
-            additional.scale -= 0.5f;
+            float scale = additional.scale - 0.5f;
 
-            int breathFrame = Game1.currentGameTime.TotalGameTime.Milliseconds % 600 / 150;
+            int breathFrame = Game1.currentGameTime.TotalGameTime.Milliseconds % 800 / 200;
 
             float rotation = 0f;
 
-            additional.layer += 0.0005f;
+            float layer = additional.layer + 0.0005f;
 
             switch (additional.direction)
             {
@@ -1299,19 +1299,19 @@ namespace StardewDruid.Render
 
                     }
 
-                    additional.layer -= 0.002f;
+                    layer -= 0.002f;
 
                     break;
 
                 case 1:
 
-                    rotation = 0f - (float)Math.PI * 0.15f;
+                    rotation = 0f - (float)Math.PI * 0.05f;
 
                     break;
 
                 case 3:
 
-                    rotation = 0f + (float)Math.PI * 0.15f;
+                    rotation = 0f + (float)Math.PI * 0.05f;
 
                     break;
 
@@ -1337,14 +1337,15 @@ namespace StardewDruid.Render
 
             List<Color> colours = Mod.instance.iconData.gradientColours[fire];
 
-            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 0, 192, 192), Color.White * 0.9f, rotation, new Vector2(96), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0005f);
+            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 0, 192, 192), Color.White, rotation, new Vector2(96), scale, additional.flip ? (SpriteEffects)1 : 0, layer + 0.0005f);
 
-            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 192, 192, 192), Color.White , rotation, new Vector2(96), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0005f);
+            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 192, 192, 192), colours[0], rotation, new Vector2(96), scale, additional.flip ? (SpriteEffects)1 : 0, layer + 0.0005f);
 
-            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 384, 192, 192), colours[0], rotation, new Vector2(96), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0005f);
+            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 384, 192, 192), colours[1], rotation, new Vector2(96), scale, additional.flip ? (SpriteEffects)1 : 0, layer + 0.0005f);
 
-            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 576, 192, 192), colours[1], rotation, new Vector2(96), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0005f);
+            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 576, 192, 192), colours[2], rotation, new Vector2(96), scale, additional.flip ? (SpriteEffects)1 : 0, layer + 0.0005f);
 
+            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 768, 192, 192), colours[1], rotation, new Vector2(96), scale, additional.flip ? (SpriteEffects)1 : 0, layer + 0.0005f);
         }
 
     }

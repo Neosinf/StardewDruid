@@ -177,15 +177,15 @@ namespace StardewDruid.Cast.Fates
 
                     List<StardewValley.Monsters.Monster> validTargets = new();
 
-                    if (curseEffect.curseTargets.Count > 0)
+                    if (curseEffect.victims.Count > 0)
                     {
 
                         int delay = 0;
 
-                        for (int g = curseEffect.curseTargets.Count - 1; g >= 0; g--)
+                        for (int g = curseEffect.victims.Count - 1; g >= 0; g--)
                         {
 
-                            KeyValuePair<StardewValley.Monsters.Monster, CurseTarget> curseTarget = curseEffect.curseTargets.ElementAt(g);
+                            KeyValuePair<StardewValley.Monsters.Monster, CurseTarget> curseTarget = curseEffect.victims.ElementAt(g);
 
                             if (!Utility.isOnScreen(curseTarget.Key.Position,64))
                             {
@@ -286,6 +286,8 @@ namespace StardewDruid.Cast.Fates
             whiskSpell.Shutdown();
 
             eventComplete = true;
+
+            Mod.instance.rite.castTimer = 10;
 
         }
 

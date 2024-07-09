@@ -120,7 +120,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 1:
 
-                    StopTrack();
+                    SetTrack("tribal");
 
                     bosses[0] = new Dustfiend(ModUtility.PositionToTile(origin) - new Vector2(1,3), Mod.instance.CombatDifficulty());
 
@@ -161,8 +161,6 @@ namespace StardewDruid.Event.Challenge
 
                     if(bosses.ContainsKey(0))
                     {
-
-                        //Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, IconData.impacts.deathbomb, 6f, new());
 
                         Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, IconData.impacts.bomb, 6f, new());
 

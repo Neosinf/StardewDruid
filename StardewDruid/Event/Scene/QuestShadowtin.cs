@@ -813,6 +813,8 @@ namespace StardewDruid.Event.Scene
 
                     companions[2].TargetEvent(0, eventVectors[20] * 64, true);
 
+                    SetTrack("cowboy_boss");
+
                     break;
 
                 case 303:
@@ -910,6 +912,8 @@ namespace StardewDruid.Event.Scene
                     bosses[0].Health = bosses[0].MaxHealth;
 
                     DialogueCue(310);
+
+                    StopTrack();
 
                     break;
 
@@ -1144,6 +1148,8 @@ namespace StardewDruid.Event.Scene
                     StardewDruid.Cast.Ether.Dragon dragon = (Mod.instance.eventRegister["transform"] as Transform).avatar;
 
                     dragon.netDigActive.Set(true);
+
+                    dragon.digActive = true;
 
                     dragon.digTimer = 108;
 
@@ -1392,6 +1398,10 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(615);
 
+                    break;
+
+                case 648:
+
                     bosses[1].PerformFlight(eventVectors[36] * 64, 5);
 
                     break;
@@ -1404,8 +1414,6 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(616);
 
-                    bosses[2].PerformFlight(eventVectors[36] * 64, 5);
-
                     break;
 
                 case 650:
@@ -1417,6 +1425,8 @@ namespace StardewDruid.Event.Scene
                 case 651:
 
                     companions[1].netDirection.Set(1);
+
+                    bosses[2].PerformFlight(eventVectors[36] * 64, 5);
 
                     break;
 

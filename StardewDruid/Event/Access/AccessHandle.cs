@@ -87,15 +87,20 @@ namespace StardewDruid.Event.Access
 
         }
 
-        public virtual void AccessCheck(GameLocation Location)
+        public virtual void AccessCheck(GameLocation Location, bool clear = false)
         {
 
             location = Location;
 
             if (CheckStair())
             {
+                
+                if (clear)
+                {
 
-                AccessClear();
+                    AccessClear();
+
+                }
 
                 return;
 

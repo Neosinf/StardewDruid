@@ -683,6 +683,20 @@ namespace StardewDruid.Journal
 
             }
 
+            if(type == journalTypes.herbalism)
+            {
+                
+                activeButton.tryHover(x, y, 0.1f);
+
+                if (activeButton.containsPoint(x, y))
+                {
+
+                    hoverText = DialogueData.Strings(stringkeys.massHerbalism);
+                
+                }
+
+            }
+
             if (!NeedsScroll())
             {
                 return;
@@ -877,6 +891,7 @@ namespace StardewDruid.Journal
 
         public override void receiveKeyPress(Keys key)
         {
+            
             if (Game1.isAnyGamePadButtonBeingPressed() && questPage != -1 && Game1.options.doesInputListContain(Game1.options.menuButton, key))
             {
                 
@@ -1138,6 +1153,20 @@ namespace StardewDruid.Journal
                 if (type == journalTypes.herbalism || type == journalTypes.relics)
                 {
 
+                    if (type == journalTypes.herbalism)
+                    {
+                        
+                        if (activeButton.containsPoint(x, y))
+                        {
+
+                            Mod.instance.herbalData.MassBrew();
+
+                            return;
+
+                        }
+                    
+                    }
+
                     for (int index = 0; index < galleryButtons.Count; ++index)
                     {
 
@@ -1154,9 +1183,9 @@ namespace StardewDruid.Journal
                             Game1.playSound("smallSelect");
 
                             if (type == journalTypes.herbalism)
-                            {                           
-                                
-                                if(pages[currentPage][index] == "configure")
+                            {
+
+                                if (pages[currentPage][index] == "configure")
                                 {
 
                                     Mod.instance.herbalData.PotionBehaviour(index);
@@ -1178,6 +1207,8 @@ namespace StardewDruid.Journal
                                     Mod.instance.herbalData.BrewHerbal(pages[currentPage][index],amount);
 
                                 }
+
+                                if (receiveClickQuesting(x, y)) { return; };
 
                             }
 
@@ -1663,6 +1694,13 @@ namespace StardewDruid.Journal
                         if (pages.Count > 0 && pages[currentPage].Count > index && galleryButtons[index].containsPoint(x, y))
                         {
 
+                            if(!Mod.instance.herbalData.herbalism.ContainsKey(pages[currentPage][index]))
+                            {
+
+                                return;
+
+                            }
+
                             Herbal herbal = Mod.instance.herbalData.herbalism[pages[currentPage][index]];
 
                             if (herbal.resource)
@@ -1695,6 +1733,56 @@ namespace StardewDruid.Journal
                             Mod.instance.herbalData.ConsumeHerbal(pages[currentPage][index]);
 
                             return;
+
+                        }
+
+                    }
+
+                }
+
+                if (type == journalTypes.relics)
+                {
+                    
+                    for (int index = 0; index < galleryButtons.Count; ++index)
+                    {
+
+                        if (pages.Count > 0 && pages[currentPage].Count > index && galleryButtons[index].containsPoint(x, y))
+                        {
+                            
+                            string relicId = pages[currentPage][index];
+
+                            if (!Mod.instance.save.reliquary.ContainsKey(relicId))
+                            {
+
+                                return;
+
+                            }
+
+                            if (!Mod.instance.relicsData.reliquary[relicId].cancel)
+                            {
+
+                                return;
+
+                            }
+
+                            int function = Mod.instance.relicsData.RelicCancel(pages[currentPage][index]);
+
+                            switch (function)
+                            {
+
+                                case 1:
+
+                                    exitThisMenu();
+
+                                    return;
+
+                                default:
+
+                                    Game1.playSound("ghost");
+
+                                    return;
+
+                            }
 
                         }
 
@@ -1750,13 +1838,6 @@ namespace StardewDruid.Journal
             base.snapToDefaultClickableComponent();
 
         }
-
-        /*public override void update(GameTime time)
-        {
-
-            base.update(time);
-
-        }*/
 
         public override void draw(SpriteBatch b)
         {
@@ -2139,6 +2220,18 @@ namespace StardewDruid.Journal
 
                 }
 
+                b.Draw(
+                    Mod.instance.iconData.displayTexture,
+                    new Vector2(activeButton.bounds.X, activeButton.bounds.Y) - ((activeButton.scale - 4f) * new Vector2(16, 16)),
+                    Mod.instance.iconData.DisplayRect(IconData.displays.knock),
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    activeButton.scale,
+                    0,
+                    -1f
+                );
+
             }
             else
             {
@@ -2310,6 +2403,7 @@ namespace StardewDruid.Journal
 
                 descriptions.Add(questRecord.description);
 
+                int questReward = questRecord.reward;
 
                 if (isActive)
                 {
@@ -2325,6 +2419,17 @@ namespace StardewDruid.Journal
 
                         instructions.Add(DialogueData.Strings(stringkeys.questReplay));
 
+                        questReward *= 3;
+
+                        questReward /= 2;
+
+                        if(questRecord.replay != null)
+                        {
+
+                            objectives.Add(DialogueData.Strings(DialogueData.stringkeys.replayReward) + ": "+questRecord.replay);
+
+                        }
+
                     }
 
                     instructions.Add(questRecord.instruction);
@@ -2336,22 +2441,14 @@ namespace StardewDruid.Journal
 
                         objectives.Add(Mod.instance.save.progress[questId].progress.ToString() + " "+DialogueData.Strings(stringkeys.outOf)+" " + questRecord.requirement.ToString() + " " + questRecord.progression);
 
-                        if (questRecord.reward > 0)
-                        {
-
-                            int lessonReward = (int)(questRecord.reward * adjustReward);
-
-                            objectives.Add(DialogueData.Strings(stringkeys.reward)+": " + lessonReward.ToString() + "g");
-
-                        }
-
                     }
-                    else if (questRecord.reward > 0)
+
+                    if (questReward > 0)
                     {
 
-                        int questReward = (int)((float)questRecord.reward * adjustReward);
+                        questReward = (int)(questReward * adjustReward);
 
-                        objectives.Add(DialogueData.Strings(stringkeys.bounty) + ": " + questReward.ToString() + "g");
+                        objectives.Add(DialogueData.Strings(stringkeys.reward) + ": " + questReward.ToString() + "g");
 
                     }
 
@@ -2629,6 +2726,8 @@ namespace StardewDruid.Journal
             {
 
                 hoverDetail = -1;
+
+                return;
 
             }
 
@@ -3059,9 +3158,9 @@ namespace StardewDruid.Journal
         public void drawStats(SpriteBatch b)
         {
             
-            b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.HP)+" " + Game1.player.health + "/" + Game1.player.maxHealth, new Vector2(xPositionOnScreen + width - 256, yPositionOnScreen - 64), Color.Wheat, 0f, Vector2.Zero, 1, SpriteEffects.None, 0.88f);
+            b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.HP)+" " + Game1.player.health + "/" + Game1.player.maxHealth, new Vector2(xPositionOnScreen + width - 304, yPositionOnScreen - 64), Color.Wheat, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.88f);
 
-            b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.STM) +" " + (int)Game1.player.Stamina + " /" + Game1.player.MaxStamina, new Vector2(xPositionOnScreen + width - 256, yPositionOnScreen - 32), Color.Wheat, 0f, Vector2.Zero, 1, SpriteEffects.None, 0.88f);
+            b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.STM) +" " + (int)Game1.player.Stamina + " /" + Game1.player.MaxStamina, new Vector2(xPositionOnScreen + width - 304, yPositionOnScreen - 32), Color.Wheat, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.88f);
 
         }
 
@@ -3121,7 +3220,7 @@ namespace StardewDruid.Journal
 
 
         }
-        
+
         public void drawDragonMenu(SpriteBatch b, int startHeight)
         {
 

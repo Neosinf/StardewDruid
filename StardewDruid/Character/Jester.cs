@@ -11,15 +11,19 @@ using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buffs;
+using StardewValley.Buildings;
 using StardewValley.Characters;
 using StardewValley.Monsters;
 using StardewValley.Network;
+using StardewValley.Objects;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using static StardewDruid.Cast.SpellHandle;
+using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Character
 {
@@ -50,15 +54,13 @@ namespace StardewDruid.Character
 
             characterTexture = CharacterHandle.CharacterTexture(characterType);
 
-            modeActive = mode.random;
-
-            collidePriority = new Random().Next(20);
+            LoadIntervals();
 
             overhead = 112;
 
-            gait = 1.6f;
+            gait = 1.8f;
 
-            moveInterval = 12;
+            modeActive = mode.random;
 
             haltFrames = FrameSeries(32, 32, 0, 0, 1);
 
@@ -94,17 +96,7 @@ namespace StardewDruid.Character
 
             };
 
-            cooldownInterval = 300;
-
-            specialInterval = 30;
-
-            specialCeiling = 1;
-
-            specialFloor = 1;
-
             sweepFrames = FrameSeries(32, 32, 0, 128, 3);
-
-            sweepInterval = 9;
 
             workFrames = new()
             {
@@ -116,10 +108,6 @@ namespace StardewDruid.Character
                 },
 
             };
-
-            dashPeak = 128;
-
-            dashInterval = 9;
 
             dashFrames = new(sweepFrames);
 
@@ -156,7 +144,7 @@ namespace StardewDruid.Character
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            float drawLayer = (float)StandingPixel.Y / 10000f;
+            float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
 
             DrawEmote(b);
 
@@ -477,38 +465,25 @@ namespace StardewDruid.Character
 
             List<Vector2> scarelist = new List<Vector2>();
 
-            int takeABreak = 0;
-
-            foreach (Dictionary<Vector2, StardewValley.Object> dictionary in currentLocation.Objects)
+            if (currentLocation is Farm farm)
             {
 
-                foreach (KeyValuePair<Vector2, StardewValley.Object> keyValuePair in dictionary)
+                for (int i = 0; i < 2; i++)
                 {
 
-                    if (
-                        keyValuePair.Value.Name.Contains("Artifact Spot") ||
-                        keyValuePair.Value.isForage() ||
-                        keyValuePair.Value.QualifiedItemId == "(BC)9" ||
-                        keyValuePair.Value.QualifiedItemId == "(BC)10" ||
-                        keyValuePair.Value.QualifiedItemId == "(BC)MushroomLog" ||
-                        keyValuePair.Value.IsTapper()
-                    )
+                    foreach (Building building in farm.buildings)
                     {
 
-                        Vector2 scareVector = new(keyValuePair.Key.X * 64f, keyValuePair.Key.Y * 64f);
+                        if (building.buildingType.Contains("Coop") || building.buildingType.Contains("Barn"))
+                        {
 
-                        scarelist.Add(scareVector);
+                            Vector2 scareVector = new(building.tileX.Value * 64f, building.tileY.Value * 64f);
 
-                        takeABreak++;
+                            scarelist.Add(scareVector);
 
-                    }
+                            scarelist.Add(new Vector2(-1f));
 
-                    if (takeABreak >= 4)
-                    {
-
-                        scarelist.Add(new Vector2(-1f));
-
-                        takeABreak = 0;
+                        }
 
                     }
 
@@ -522,8 +497,16 @@ namespace StardewDruid.Character
 
         }
 
+
         public override bool TargetWork()
         {
+
+            if (!Mod.instance.chests.ContainsKey(CharacterHandle.characters.Jester))
+            {
+
+                Mod.instance.chests[CharacterHandle.characters.Jester] = new();
+
+            }
 
             if (currentLocation.characters.Count > 0 && !Mod.instance.eventRegister.ContainsKey("active"))
             {
@@ -589,9 +572,14 @@ namespace StardewDruid.Character
 
                         }
 
-                        rubVictim.Halt();
+                        if (!currentLocation.IsFarm)
+                        {
+                            
+                            rubVictim.Halt();
 
-                        rubVictim.faceDirection(2);
+                            rubVictim.faceDirection(2);
+
+                        }
 
                         ReactionData.ReactTo(rubVictim, ReactionData.reactions.jester);
 
@@ -617,18 +605,13 @@ namespace StardewDruid.Character
 
             }
 
+            List<FarmAnimal> victims = new();
+
             if (currentLocation is Farm farmLocation)
             {
 
                 foreach (KeyValuePair<long, FarmAnimal> pair in farmLocation.animals.Pairs)
                 {
-
-                    if (pair.Value.wasPet.Value)
-                    {
-
-                        continue;
-
-                    }
 
                     if (Vector2.Distance(pair.Value.Position, Position) >= 480)
                     {
@@ -644,39 +627,7 @@ namespace StardewDruid.Character
 
                     }
 
-                    pair.Value.Halt();
-
-                    pair.Value.faceDirection(2);
-
-                    ModUtility.PetAnimal(Game1.player, pair.Value);
-
-                    if(pair.Value.Sprite.SpriteWidth > 16)
-                    {
-
-                        Position = pair.Value.Position + new Vector2(-32, 32);
-
-                    }
-                    else
-                    {
-                        
-                        Position = pair.Value.Position - new Vector2(64, 0);
-
-                    }
-
-
-                    SettleOccupied();
-
-                    Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position);
-
-                    workVector = pair.Value.Position;
-
-                    netWorkActive.Set(true);
-
-                    netSpecialActive.Set(true);
-
-                    specialTimer = 120;
-
-                    return true;
+                    victims.Add(pair.Value);
 
                 }
 
@@ -687,12 +638,6 @@ namespace StardewDruid.Character
 
                 foreach (KeyValuePair<long, FarmAnimal> pair in animalLocation.animals.Pairs)
                 {
-                    if (pair.Value.wasPet.Value)
-                    {
-
-                        continue;
-
-                    }
 
                     if (Vector2.Distance(pair.Value.Position, Position) >= 480)
                     {
@@ -708,43 +653,163 @@ namespace StardewDruid.Character
 
                     }
 
-                    pair.Value.Halt();
-
-                    pair.Value.faceDirection(2);
-
-                    ModUtility.PetAnimal(Game1.player, pair.Value);
-
-                    if (pair.Value.Sprite.SpriteWidth > 16)
-                    {
-
-                        Position = pair.Value.Position + new Vector2(-32, 32);
-
-                    }
-                    else
-                    {
-
-                        Position = pair.Value.Position - new Vector2(64, 0);
-
-                    }
-
-                    SettleOccupied();
-
-                    Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position);
-
-                    netWorkActive.Set(true);
-
-                    netSpecialActive.Set(true);
-
-                    specialTimer = 120;
-
-                    return true;
+                    victims.Add(pair.Value);
 
                 }
 
             }
+
+            foreach(FarmAnimal victim in victims)
+            {
+
+                bool milk = false;
+
+                if (victim.isAdult())
+                {
+
+                    if (victim.CanGetProduceWithTool(Mod.instance.virtualPail))
+                    {
+
+                        if (victim.currentProduce.Value != null)
+                        {
+
+                            milk = true;
+
+                        }
+
+                    }
+
+                }
+
+                if (!milk && victim.wasPet.Value)
+                {
+
+                    continue;
+
+                }
+
+                if (milk)
+                {
+
+                    MilkRub(victim);
+
+                }
+
+                FarmRub(victim);
+
+                return true;
+
+
+            }
+
             return false;
 
         }
+
+        public void MilkRub(FarmAnimal cow)
+        {
+
+            playNearbySoundLocal("Milking");
+
+            Chest chest = Mod.instance.chests[CharacterHandle.characters.Jester];
+
+            StardewValley.Object @object = ItemRegistry.Create<StardewValley.Object>("(O)" + cow.currentProduce.Value);
+
+            @object.CanBeSetDown = false;
+
+            @object.Quality = cow.produceQuality.Value;
+
+            if (cow.hasEatenAnimalCracker.Value)
+            {
+                @object.Stack = 2;
+            }
+
+            if (
+                currentLocation.Name == Game1.player.currentLocation.Name &&
+                Vector2.Distance(Game1.player.Position, Position) <= 640
+            )
+            {
+                ThrowHandle throwItem = new(Game1.player, Position, @object);
+
+                Mod.instance.throwRegister.Add(throwItem);
+
+            }
+            else
+            if (chest.addItem(@object) != null)
+            {
+
+                ThrowHandle throwItem = new(Game1.player, Position, @object);
+
+                Mod.instance.throwRegister.Add(throwItem);
+
+            }
+
+            Utility.RecordAnimalProduce(cow, cow.currentProduce.Value);
+
+            cow.currentProduce.Value = null;
+
+            cow.ReloadTextureIfNeeded();
+
+            Game1.player.gainExperience(0, 5);
+
+            Microsoft.Xna.Framework.Rectangle bottleRectangle = Mod.instance.iconData.RelicRectangles(relics.bottle);
+
+            TemporaryAnimatedSprite bottleSprite = new(0, 900, 1, 1, cow.Position + new Vector2(2, 52), false, false)
+            {
+
+                sourceRect = bottleRectangle,
+
+                sourceRectStartingPos = new Vector2(bottleRectangle.X, bottleRectangle.Y),
+
+                texture = Mod.instance.iconData.relicsTexture,
+
+                scale = 3f,
+
+                layerDepth = (cow.Position.Y + 128) / 10000,
+
+            };
+
+            currentLocation.temporarySprites.Add(bottleSprite);
+
+        }
+
+        public void FarmRub(FarmAnimal victim)
+        {
+
+            victim.Halt();
+
+            victim.faceDirection(2);
+
+            ModUtility.PetAnimal(Game1.player, victim);
+
+            if (victim.Sprite.SpriteWidth > 16)
+            {
+
+                Position = victim.Position + new Vector2(-32, 32);
+
+            }
+            else
+            {
+
+                Position = victim.Position - new Vector2(64, 0);
+
+            }
+
+
+            SettleOccupied();
+
+            Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position);
+
+            workVector = victim.Position;
+
+            netWorkActive.Set(true);
+
+            netSpecialActive.Set(true);
+
+            specialTimer = 120;
+
+        }
+
 
     }
 

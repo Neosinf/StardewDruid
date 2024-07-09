@@ -81,6 +81,8 @@ namespace StardewDruid
 
         public Dictionary<string, string> activeEvent = new();
 
+        public Dictionary<string, string> drawEvent = new();
+
         public Dictionary<EventHandle.actionButtons,string> clickRegister = new();
 
         public List<SpellHandle> spellRegister = new();
@@ -103,6 +105,8 @@ namespace StardewDruid
 
         public StardewValley.Tools.WateringCan virtualCan;
 
+        public StardewValley.Tools.MilkPail virtualPail;
+
         public int currentTool;
 
         public Dictionary<CharacterHandle.characters, StardewDruid.Character.Character> characters = new();
@@ -113,9 +117,11 @@ namespace StardewDruid
 
         public Dictionary<CharacterHandle.characters, StardewValley.Objects.Chest> chests = new();
 
-        public Dictionary<string, Dictionary<Vector2, string>> featureRegister = new();
-
         public Dictionary<string, GameLocation> locations = new();
+
+        public string mapped;
+
+        public Dictionary<Vector2,string> features = new();
 
         public Random randomIndex = new();
 
@@ -255,6 +261,8 @@ namespace StardewDruid
 
             activeEvent = new();
 
+            drawEvent = new();
+
             clickRegister = new();
 
             spellRegister = new();
@@ -268,8 +276,6 @@ namespace StardewDruid
             chests = new();
 
             trackers = new();
-
-            featureRegister = new();
 
             displayRegister = new();
 
@@ -304,6 +310,10 @@ namespace StardewDruid
             virtualCan.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
 
             virtualCan.UpgradeLevel = 5;
+
+            virtualPail = new MilkPail();
+
+            virtualPail.DoFunction(Game1.player.currentLocation, 0, 0, 1, Game1.player);
 
             Game1.player.Stamina += Math.Min(8, Game1.player.MaxStamina - Game1.player.Stamina);
 
@@ -990,6 +1000,13 @@ namespace StardewDruid
 
                 }
 
+                if (drawEvent.ContainsKey(remove))
+                {
+
+                    drawEvent.Remove(remove);
+
+                }
+
             }
 
         }
@@ -1235,7 +1252,7 @@ namespace StardewDruid
 
             rite.update();
 
-            if (e.IsMultipleOf(27))
+            if (e.Ticks % 60 == 27)
             {
 
                 rite.RiteBuff();
@@ -1338,7 +1355,7 @@ namespace StardewDruid
 
                 if (trackers.Count > 0)
                 {
-                    
+
                     for(int tr = trackers.Count-1; tr >= 0; tr--)
                     {
                         KeyValuePair<CharacterHandle.characters, Character.TrackHandle> trackEntry = trackers.ElementAt(tr);
@@ -1352,7 +1369,7 @@ namespace StardewDruid
 
                         }
 
-                        trackEntry.Value.TrackPlayer();
+                        trackEntry.Value.TrackPlayer(tr);
 
                     }
 
@@ -1435,12 +1452,7 @@ namespace StardewDruid
                 
                 KeyValuePair<string, Event.EventHandle> eventHandle = eventRegister.ElementAt(er);
 
-                if (eventHandle.Value.triggerField != null)
-                {
-                    
-                    eventHandle.Value.triggerField.draw(e.SpriteBatch);
-
-                }
+                eventHandle.Value.EventDraw(e.SpriteBatch);
 
             }
 
@@ -1605,7 +1617,7 @@ namespace StardewDruid
             if (herbalData.applied.ContainsKey(HerbalData.herbals.ligna))
             {
 
-                damageLevel += (int)(damageLevel * 0.125f * herbalData.applied[HerbalData.herbals.ligna].level);
+                damageLevel += (int)(damageLevel * 0.1f * herbalData.applied[HerbalData.herbals.ligna].level);
 
             }
 
@@ -1824,7 +1836,6 @@ namespace StardewDruid
 
         }
 
-
         public void CriticalCondition()
         {
 
@@ -1890,6 +1901,8 @@ namespace StardewDruid
 
         public void AutoConsume()
         {
+
+            ConsumeLunch();
 
             List<HerbalData.herbals> potions = new() {};
 
@@ -1972,6 +1985,10 @@ namespace StardewDruid
 
             }
 
+        }
+
+        public void ConsumeLunch()
+        {
 
             if (!Config.slotConsume)
             {
@@ -2010,7 +2027,7 @@ namespace StardewDruid
 
             }
 
-            foreach(int i in indexes)
+            foreach (int i in indexes)
             {
 
                 if (slots[i] != "lunch")
@@ -2034,10 +2051,8 @@ namespace StardewDruid
                 {
 
                     continue;
-                
-                }
 
-                //Item checkItem = checkSlot.getOne();
+                }
 
                 if (@checkItem.Edibility <= 0)
                 {
@@ -2055,7 +2070,7 @@ namespace StardewDruid
 
                 int itemHealth = @checkItem.healthRecoveredOnConsumption();
 
-                if(itemHealth <= 0)
+                if (itemHealth <= 0)
                 {
                     return;
                 }

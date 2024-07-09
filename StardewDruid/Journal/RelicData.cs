@@ -38,6 +38,7 @@ namespace StardewDruid.Journal
             avalant,
             books,
             boxes,
+            other,
         }
 
         public Dictionary<relicsets, List<string>> titles = new()
@@ -50,6 +51,7 @@ namespace StardewDruid.Journal
             [relicsets.avalant] = new() { "Bronze Artifacts", "Retrieved from fishing spots around the valley", },
             [relicsets.books] = new() { "Preserved Texts", "Writing from the time of dragons", },
             [relicsets.boxes] = new() { "Ornament Boxes", "Left behind by envoys of the Fae Court", },
+            [relicsets.other] = new() { "Powerwrought Tools", "Implements from the otherworld", },
         };
 
         public Dictionary<relicsets, List<IconData.relics>> lines = new()
@@ -101,6 +103,9 @@ namespace StardewDruid.Journal
                 IconData.relics.box_mortician,
                 IconData.relics.box_artisan,
                 IconData.relics.box_chaos,
+            },
+            [relicsets.other] = new() {
+                IconData.relics.crow_hammer,
             },
         };
 
@@ -290,6 +295,7 @@ namespace StardewDruid.Journal
                 relic = IconData.relics.effigy_crest,
                 line = RelicData.relicsets.companion,
                 function = true,
+                cancel = true,
                 description = "Given to me by the Forgotten Effigy, the only surviving member of the old Circle of Druids.",
                 details = new()
                 {
@@ -304,6 +310,7 @@ namespace StardewDruid.Journal
                 relic = IconData.relics.jester_dice,
                 line = RelicData.relicsets.companion,
                 function = true,
+                cancel = true,
                 description = "Given to me by the Jester of Fate, envoy of the Fae Court.",
                 details = new()
                 {
@@ -318,6 +325,7 @@ namespace StardewDruid.Journal
                 relic = IconData.relics.shadowtin_tome,
                 line = RelicData.relicsets.companion,
                 function = true,
+                cancel = true,
                 description = "Given to me by Shadowtin Bear, treasure hunter and aspirant scholar.",
                 details = new()
                 {
@@ -371,6 +379,7 @@ namespace StardewDruid.Journal
                 relic = IconData.relics.wayfinder_lantern,
                 line = RelicData.relicsets.wayfinder,
                 function = true,
+                cancel = true,
                 description = "The order of Star Guardians preceded the Church of Bats, and placed hundreds of lanterns throughout their cavernholds in the mountain",
                 heldup = "You received the Star Guardian Lantern! It can be used to access the Chapel of the Stars on level 60 of the mines. Check the relics journal to view further details.",
             };
@@ -381,6 +390,7 @@ namespace StardewDruid.Journal
                 relic = IconData.relics.wayfinder_water,
                 line = RelicData.relicsets.wayfinder,
                 function = true,
+                cancel = true,
                 description = "The waters of the sacred spring resist the brazen heat of the lavaflows deep under the mountain, where the terror beneath resides",
                 heldup = "You received the Luminous Water of the Sacred Spring! It can be used to access the Molten Lair on level 100 of the mines. Check the relics journal to view further details.",
             };
@@ -405,6 +415,7 @@ namespace StardewDruid.Journal
                 relic = IconData.relics.wayfinder_ceremonial,
                 line = RelicData.relicsets.wayfinder,
                 function = true,
+                cancel = true,
                 description = "The civilisation of the calico shamans centered on reverence for a dragon. When the ancient being perished, so did the shaman's customs.",
                 heldup = "You received the Calico Ceremonial Lamp! It can be used to access the Tomb of Tyrannus in the skull caverns. Check the relics journal to view further details.",
             };
@@ -415,6 +426,7 @@ namespace StardewDruid.Journal
                 relic = IconData.relics.wayfinder_dwarf,
                 line = RelicData.relicsets.wayfinder,
                 function = true,
+                cancel = true,
                 description = "The dwarves were the first elemental race to harness the technological capabilities of free essence.",
                 heldup = "You received the Dwarven Essence Cell! It can be used to access the Shrine Engine Room. Check the relics journal to view further details.",
             };
@@ -512,6 +524,7 @@ namespace StardewDruid.Journal
                 relic = IconData.relics.runestones_moon,
                 line = RelicData.relicsets.runestones,
                 description = "Carried by the Jellyking.",
+                hint = "One of the foes I'll encounter on my journey should have this runestone.",
                 details = new()
                 {
                     "This runestone was once covered in pumpkin muck and slime. It had been swallowed by a foul spirit of the forest, the Jellyking, who took great delight in spiting the old circle of druids",
@@ -525,6 +538,7 @@ namespace StardewDruid.Journal
                 relic = IconData.relics.runestones_farm,
                 line = RelicData.relicsets.runestones,
                 description = "Carried by a Seafaring Phantom.",
+                hint = "One of the foes I'll encounter on my journey should have this runestone.",
                 details = new()
                 {
                     "The Effigy believes this runestone symbolises the hopes of those that restored the farmholds that were torched during the old war. One of those farmers must have lost it to the sea.",
@@ -538,6 +552,7 @@ namespace StardewDruid.Journal
                 relic = IconData.relics.runestones_cat,
                 line = RelicData.relicsets.runestones,
                 description = "Carried by a Lesser Dragon.",
+                hint = "One of the foes I'll encounter on my journey should have this runestone.",
                 details = new()
                 {
                     "This runestone was carried by a champion of the Star Guardians who was also a member of the Circle of Druids, until they ran foul of a powerful dragon in the depths of the lava caverns.",
@@ -642,7 +657,7 @@ namespace StardewDruid.Journal
                     "Summer, Second Year",
                     "A low court of the Fates has been established to administer the valley in the aftermath of the war. " +
                     "It sits on the banks of the mountain stream that flows from the sacred spring, and the Justiciar of the Fates resides over the proceedings. " +
-                    "The Justiciar's hound, the reaper, continues to grow in reverence with the assembly. " +
+                    "The Justiciar's prosecutor, the Reaper, continues to grow in reverence with the assembly. " +
                     "His obsession with the recovery of the hidden Star-born is on full display, and the refugees listen fervently to his rhetoric. " +
                     "They applaud the viciousness with which the Mortician demonstrates against the surviving elderborn. " +
                     "They desire justice for the destruction of lives and families, but what comfort can be found in the humiliation of an endangered race. " +
@@ -665,14 +680,14 @@ namespace StardewDruid.Journal
                     "The crowmother has already lost interest in hearing appeals and accusations, and has convinced her peers to vest authority in the Circle of Druids, " +
                     "to take responsibility for the renewal of the valley and the protection of the sacred space. Were it so simple. " +
                     "The Stream of Chaos feasts on the residue of the war, and produces something unlike cosmic essence, or ancient ether, but of the world, elemental, a new magic to threaten the old ways. " +
-                    "The crowmother has threatened to forsake the mortal plane for lack of order and continuity. ",
+                    "The Crowmother has threatened to forsake the mortal plane for lack of order and continuity. ",
                     
                     "Summer, Third Year",
                     "I have incorporated the remainder of my order into the circle. It was the prudent choice considering our fragmented morale and numbers. " +
-                    "The court has been disestablished, but the unresolved issue of the missing Star-born does not sit well with the Justiciar. " +
+                    "The court has been disestablished, but the unresolved issue of the missing Star-born does not sit well with the Justiciar and Reaper. " +
                     "They are desperate to bring the Bull of the Heavens before the high Fae Court to answer for his actions. " +
                     "As far as I'm aware, our great general vanished with the Elderborn prince, and that is the story we have stuck too. " +
-                    "Still the reaper's acolytes continue to harrass us in the public forums. " +
+                    "Still, the Reaper's acolytes continue to harrass us in the public forums. " +
                     "The Hound of Chaos, long since banished from the low court for stirring trouble, has been seen amongst their number. " +
                     "I fear an escalation.",
 
@@ -846,7 +861,7 @@ namespace StardewDruid.Journal
                 relic = IconData.relics.box_mortician,
                 line = RelicData.relicsets.boxes,
                 description = "An empty box, left amongst the monuments of the disused low court of the Fates, a sign the Morticians were in attendance.",
-                hint = "Buffin suggests holding a prehistoric fossil or bone in the presence of the monument.",
+                hint = "Buffin suggests holding a prehistoric fossil or bone in the presence of the owl monument.",
                 details = new()
                 {
                     "Masayoshi, Justiciar of the Fates, exchanged boxes with his brother Thanatoshi before the latter left on the trial of the fugitive Starborn.",
@@ -860,7 +875,7 @@ namespace StardewDruid.Journal
                 relic = IconData.relics.box_artisan,
                 line = RelicData.relicsets.boxes,
                 description = "The box has the same dimensions and materials as the others, yet is entirely free of quirk or misalignment. This must have belonged to an Artisan of the Fates.",
-                hint = "Buffin suggests bringing an implement forged in iridium or better to the monuments of the Fates to please the artisans.",
+                hint = "Buffin suggests bringing an implement forged in iridium or better to the crow monument to please the artisans.",
 
                 heldup = "You received the Artisan's Box! This might have belonged to a member of the Fae Court. Buffin should know more about it.",
             };
@@ -875,6 +890,23 @@ namespace StardewDruid.Journal
 
                 heldup = "You received the Box of Chaos! This might have belonged to a member of the Fae Court. Buffin should know more about it.",
             };
+
+            // ======================================================================
+            // Other relics
+
+            relics[IconData.relics.crow_hammer.ToString()] = new()
+            {
+                title = "Crow Hammer",
+                relic = IconData.relics.crow_hammer,
+                line = RelicData.relicsets.other,
+                description = "The Effigy believes this implement was used by his former mentors to craft his material form.",
+                details = new(){
+                    "A symbol of a crow is engraved into the head.",
+                    "The herbalist bench in the druid grove provides an option to break all geodes.",
+                },
+                heldup = "You received the Crow Hammer! This provides a new craft option at the herbalist bench in the Druid Grove.",
+            };
+
 
             return relics;
 
@@ -899,7 +931,7 @@ namespace StardewDruid.Journal
 
                     }
 
-                    return "Click to summon The Effigy";
+                    return "Click to summon The Effigy. Rightclick to dismiss.";
 
                 case IconData.relics.jester_dice:
 
@@ -910,7 +942,7 @@ namespace StardewDruid.Journal
 
                     }
 
-                    return "Click to summon The Jester of Fate";
+                    return "Click to summon The Jester of Fate. Rightclick to dismiss.";
 
                 case IconData.relics.shadowtin_tome:
 
@@ -921,7 +953,7 @@ namespace StardewDruid.Journal
 
                     }
 
-                    return "Click to summon Shadowtin Bear";
+                    return "Click to summon Shadowtin Bear. Rightclick to dismiss.";
 
                 case IconData.relics.wayfinder_censer:
 
@@ -929,11 +961,11 @@ namespace StardewDruid.Journal
 
                 case IconData.relics.wayfinder_lantern:
 
-                    return "Click when on level 60 of the mines to open the passage way to the Chapel of the Stars.";
+                    return "Click when on level 60 of the mines to open the passage way to the Chapel of the Stars. Rightclick to close.";
 
                 case IconData.relics.wayfinder_water:
 
-                    return "Click when on level 100 of the mines to open the passage way to the Molten Lair.";
+                    return "Click when on level 100 of the mines to open the passage way to the Molten Lair. Rightclick to close.";
 
                 case IconData.relics.wayfinder_eye:
 
@@ -941,11 +973,11 @@ namespace StardewDruid.Journal
 
                 case IconData.relics.wayfinder_ceremonial:
 
-                    return "Click when in the entrance to the skull caverns to open the passage way to the Tomb of Tyrannus.";
+                    return "Click when in the entrance to the skull caverns to open the passage way to the Tomb of Tyrannus. Rightclick to close.";
 
                 case IconData.relics.wayfinder_dwarf:
 
-                    return "Click while on the arrowhead island in the forest to open the entrance to the Shrine Engine Room.";
+                    return "Click while on the arrowhead island in the forest to open the entrance to the Shrine Engine Room. Rightclick to close.";
 
                 case IconData.relics.dragon_form:
 
@@ -993,7 +1025,7 @@ namespace StardewDruid.Journal
 
                             Mod.instance.characters[CharacterHandle.characters.Effigy].SwitchToMode(Character.Character.mode.track, Game1.player);
 
-                            Mod.instance.CastMessage("The Effigy has joined you on your adventures");
+                            Mod.instance.CastMessage("The Effigy has joined you", 0, true);
 
                             return 1;
 
@@ -1022,7 +1054,7 @@ namespace StardewDruid.Journal
 
                             Mod.instance.characters[CharacterHandle.characters.Jester].SwitchToMode(Character.Character.mode.track, Game1.player);
 
-                            Mod.instance.CastMessage("The Jester of Fates follows you about");
+                            Mod.instance.CastMessage("The Jester of Fates follows you", 0, true);
 
                             return 1;
 
@@ -1052,7 +1084,7 @@ namespace StardewDruid.Journal
 
                             Mod.instance.characters[CharacterHandle.characters.Shadowtin].SwitchToMode(Character.Character.mode.track, Game1.player);
 
-                            Mod.instance.CastMessage("Shadowtin Bear has joined you for a treasure hunt");
+                            Mod.instance.CastMessage("Shadowtin Bear has joined you", 0, true);
 
                             return 1;
 
@@ -1189,6 +1221,180 @@ namespace StardewDruid.Journal
                 case IconData.relics.book_druid:
 
                     return 2;
+
+            }
+
+            return 0;
+
+
+        }
+        public int RelicCancel(string id)
+        {
+
+            if (Mod.instance.activeEvent.Count > 0) { return 0; }
+
+            Event.Access.AccessHandle access;
+
+            Relic relic = reliquary[id];
+
+            switch (relic.relic)
+            {
+
+                case IconData.relics.effigy_crest:
+
+                    if (!Context.IsMainPlayer)
+                    {
+
+                        break;
+
+                    }
+
+                    if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Effigy))
+                    {
+
+                        List<StardewDruid.Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, };
+
+                        if (!reservedModes.Contains(Mod.instance.characters[CharacterHandle.characters.Effigy].modeActive))
+                        {
+
+                            Mod.instance.characters[CharacterHandle.characters.Effigy].SwitchToMode(Character.Character.mode.home, Game1.player);
+
+                            Mod.instance.CastMessage("The Effigy has returned home", 0, true);
+
+                            return 1;
+
+                        }
+
+                    }
+
+                    break;
+
+                case IconData.relics.jester_dice:
+
+                    if (!Context.IsMainPlayer)
+                    {
+
+                        break;
+
+                    }
+
+                    if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Jester))
+                    {
+
+                        List<StardewDruid.Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, };
+
+                        if (!reservedModes.Contains(Mod.instance.characters[CharacterHandle.characters.Jester].modeActive))
+                        {
+
+                            Mod.instance.characters[CharacterHandle.characters.Jester].SwitchToMode(Character.Character.mode.home, Game1.player);
+
+                            Mod.instance.CastMessage("The Jester of Fates has returned home", 0, true);
+
+                            return 1;
+
+                        }
+
+                    }
+
+                    break;
+
+
+                case IconData.relics.shadowtin_tome:
+
+                    if (!Context.IsMainPlayer)
+                    {
+
+                        break;
+
+                    }
+
+                    if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Shadowtin))
+                    {
+
+                        List<StardewDruid.Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, };
+
+                        if (!reservedModes.Contains(Mod.instance.characters[CharacterHandle.characters.Shadowtin].modeActive))
+                        {
+
+                            Mod.instance.characters[CharacterHandle.characters.Shadowtin].SwitchToMode(Character.Character.mode.home, Game1.player);
+
+                            Mod.instance.CastMessage("Shadowtin Bear has returned home", 0, true);
+
+                            return 1;
+
+                        }
+
+                    }
+
+                    break;
+
+                case IconData.relics.wayfinder_lantern:
+
+                    if (Game1.player.currentLocation.Name == "UndergroundMine60")
+                    {
+
+                        access = new();
+
+                        access.AccessSetup("UndergroundMine60", Location.LocationData.druid_chapel_name, new(24, 13), new(27, 30));
+
+                        access.AccessCheck(Game1.player.currentLocation, true);
+
+                        return 1;
+
+                    }
+
+                    break;
+
+                case IconData.relics.wayfinder_water:
+
+                    if (Game1.player.currentLocation.Name == "UndergroundMine100")
+                    {
+
+                        access = new();
+
+                        access.AccessSetup("UndergroundMine100", Location.LocationData.druid_vault_name, new(24, 13), new(27, 30));
+
+                        access.AccessCheck(Game1.player.currentLocation, true);
+
+                        return 1;
+
+                    }
+
+                    break;
+
+                case IconData.relics.wayfinder_ceremonial:
+
+                    if (Game1.player.currentLocation.Name == "SkullCave")
+                    {
+
+                        access = new();
+
+                        access.AccessSetup("SkullCave", Location.LocationData.druid_tomb_name, new(10, 5), new(27, 30));
+
+                        access.AccessCheck(Game1.player.currentLocation, true);
+
+                        return 1;
+
+                    }
+
+                    break;
+
+                case IconData.relics.wayfinder_dwarf:
+
+                    if (Game1.player.currentLocation.Name == "Forest")
+                    {
+
+                        access = new();
+
+                        access.AccessSetup("Forest", Location.LocationData.druid_engineum_name, new(50, 73), new(27, 30));
+
+                        access.AccessCheck(Game1.player.currentLocation, true);
+
+                        return 1;
+
+                    }
+
+                    break;
 
             }
 
@@ -1428,6 +1634,8 @@ namespace StardewDruid.Journal
         public RelicData.relicsets line = RelicData.relicsets.none;
 
         public bool function;
+
+        public bool cancel;
 
         public bool activatable;
 

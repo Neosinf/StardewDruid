@@ -66,7 +66,7 @@ namespace StardewDruid.Cast.Ether
 
             Game1.player.currentLocation.characters.Add(avatar);
 
-            Game1.player.currentLocation.playSound("warrior", null, 700);
+            Game1.player.currentLocation.playSound("warrior");
 
             BuffEffects buffEffect = new();
 
@@ -81,8 +81,6 @@ namespace StardewDruid.Cast.Ether
                 effects: buffEffect);
 
             Game1.player.buffs.Apply(speedBuff);
-
-            Mod.instance.iconData.DecorativeIndicator(Game1.player.currentLocation, Game1.player.Position,IconData.decorations.ether, 3f, new() { interval = 1200, });
 
         }
 
@@ -266,11 +264,11 @@ namespace StardewDruid.Cast.Ether
 
             if (warpTrigger) { return; }
 
-            Mod.instance.iconData.DecorativeIndicator(Game1.player.currentLocation, avatar.Position - new Vector2(64, 64), IconData.decorations.ether, 3f, new() {interval = 2000, });
-
             warpTrigger = true;
 
             warpLocation = Game1.locationRequest.Location.Name;
+
+            Game1.player.currentLocation.playSound("warrior");
 
         }
 

@@ -9,6 +9,7 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
+using xTile.Dimensions;
 
 namespace StardewDruid.Data
 {
@@ -600,7 +601,7 @@ namespace StardewDruid.Data
                         "433", // coffee
                         "745", // strawberry
                         "473", // bean
-                        "477", // kale
+                        //"477", // kale
                         "CarrotSeeds",
                     };
 
@@ -665,13 +666,32 @@ namespace StardewDruid.Data
 
         }
 
-        public static int RandomFlower()
+        public static int RandomFlower(GameLocation location)
         {
 
             Dictionary<int, int> objectIndexes;
 
-            switch (Game1.currentSeason)
+            string season = Game1.currentSeason;
+
+            if (location is Beach || location is StardewDruid.Location.Atoll)
             {
+
+                season = "beach";
+
+            }
+
+            switch (season)
+            {
+
+                case "beach":
+
+                    objectIndexes = new()
+                    {
+                        [0] = 392, // shell
+                        [1] = 394, // shell
+                    };
+
+                    break;
 
                 case "spring":
 
@@ -728,22 +748,36 @@ namespace StardewDruid.Data
 
             int randomCrop;
 
-            string season;
+            string season = Game1.currentSeason;
 
+            if (location is Beach || location is StardewDruid.Location.Atoll)
+            {
+
+                season = "beach";
+
+            }
+            else
             if (location is IslandEast || location is Woods)
             {
 
                 season = "woods";
 
             }
-            else
-            {
-                season = Game1.currentSeason;
-
-            }
 
             switch (season)
             {
+                case "beach":
+
+                    randomCrops = new()
+                    {
+                        [0] = 152,
+                        [1] = 153,
+                        [2] = 152,
+                        [3] = 393,
+                    };
+                    randomCrop = randomCrops[Game1.random.Next(4)];
+
+                    break;
 
                 case "spring":
 
@@ -838,7 +872,12 @@ namespace StardewDruid.Data
                 {
 
                     indexes.Add("150"); // red snapper
-                    if (Mod.instance.randomIndex.Next(3) == 0) { indexes.Add("SeaJelly"); }
+                    if (Mod.instance.randomIndex.Next(3) == 0) 
+                    { 
+                        
+                        indexes.Add("SeaJelly"); 
+                    
+                    } 
 
                 }
 
@@ -863,6 +902,8 @@ namespace StardewDruid.Data
                         break;
 
                 }
+
+                //indexes.Add("152"); // Seaweed
 
             }
             else if (location is IslandLocation)
@@ -930,6 +971,8 @@ namespace StardewDruid.Data
 
                 }
 
+                //indexes.Add("153"); // Green Algae
+
             }
             else
             {
@@ -946,6 +989,8 @@ namespace StardewDruid.Data
                 }
 
                 indexes.Add("142"); // carp
+
+                //indexes.Add("157"); // White Algae
 
             }
 
@@ -1562,6 +1607,8 @@ namespace StardewDruid.Data
 
             }
 
+            CheckDisables();
+
         }
 
         public SpawnIndex(GameLocation location)
@@ -1628,7 +1675,7 @@ namespace StardewDruid.Data
                 crate = true;
 
             }
-            else if (location.Name.Contains("Backwoods") || location is Railroad || location is BusStop || location is Grove || location is Gate)
+            else if (location.Name.Contains("Backwoods") || location is Railroad || location is BusStop || location is Gate)
             {
 
                 forage = true;
@@ -1638,7 +1685,7 @@ namespace StardewDruid.Data
                 weeds = true;
 
             }
-            else if (location is Woods || location is IslandEast || location is IslandShrine)
+            else if (location is Woods || location is Grove || location is IslandEast || location is IslandShrine)
             {
 
                 forage = true;
@@ -1648,7 +1695,6 @@ namespace StardewDruid.Data
                 weeds = true;
 
             }
-
             else if (location is Beach || location is Atoll)
             {
 
@@ -1657,9 +1703,8 @@ namespace StardewDruid.Data
                 weeds = true;
                 crate = true;
 
-
             } 
-            else if (location is IslandSouth || location is IslandSouthEast || location is IslandSouthEastCave || location is Atoll)
+            else if (location is IslandSouth || location is IslandSouthEast || location is IslandSouthEastCave)
             {
 
                 fishes = true;
@@ -1742,6 +1787,14 @@ namespace StardewDruid.Data
                 cast = false;
 
             }
+
+            CheckDisables();
+
+        }
+
+        public void CheckDisables()
+        {
+
 
             if (Mod.instance.Config.disableGrass)
             {

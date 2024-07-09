@@ -62,13 +62,42 @@ namespace StardewDruid.Event.Sword
 
             }
 
-            HoldCompanions();
-
             voices[0] = Mod.instance.characters[CharacterHandle.characters.Jester];
 
             location.warps.Clear();
 
             warpExit = new Warp(26, 32, "SkullCave", 5, 5, flipFarmer: false);
+
+            SpawnBoss();
+
+        }
+
+        public virtual void SpawnBoss()
+        {
+
+            bosses[0] = new StardewDruid.Monster.Reaper(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+
+            bosses[0].netScheme.Set(2);
+
+            bosses[0].SetMode(3);
+
+            bosses[0].netHaltActive.Set(true);
+
+            bosses[0].idleTimer = 300;
+
+            location.characters.Add(bosses[0]);
+
+            bosses[0].update(Game1.currentGameTime, location);
+
+            bosses[0].setWounded = true;
+
+            voices[1] = bosses[0];
+
+            BossBar(0, 1);
+
+            HoldCompanions();
+
+            SetTrack("cowboy_boss");
 
         }
 
@@ -164,34 +193,6 @@ namespace StardewDruid.Event.Sword
                     return;
 
                 }
-
-            }
-
-            if (activeCounter == 1)
-            {
-
-
-                bosses[0] = new StardewDruid.Monster.Reaper(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
-
-                bosses[0].netScheme.Set(2);
-
-                bosses[0].SetMode(3);
-
-                bosses[0].netHaltActive.Set(true);
-
-                bosses[0].idleTimer = 300;
-
-                location.characters.Add(bosses[0]);
-
-                bosses[0].update(Game1.currentGameTime, location);
-
-                bosses[0].setWounded = true;
-
-                voices[1] = bosses[0];
-
-                BossBar(0, 1);
-
-                HoldCompanions();
 
             }
 

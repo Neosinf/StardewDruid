@@ -320,7 +320,7 @@ namespace StardewDruid.Data
             herbalism_still,
             herbalism_crucible,
             herbalism_gauge,
-            herbalism_2,
+            crow_hammer,
             runestones_spring,
             runestones_farm,
             runestones_moon,
@@ -485,7 +485,7 @@ namespace StardewDruid.Data
             [schemes.dragon_purple] = new() { new(159, 80, 191), new(69, 186, 235), new(0, 167, 157) },
 
             [schemes.sword_steel] = new() { new(200,212,212), new(68, 80, 80), new(48, 60, 60) },
-            [schemes.sword_stars] = new() { new(255, 230, 166),  new(231, 102, 84), new(255, 173, 84), },
+            [schemes.sword_stars] = new() { new(255, 192, 128),  new(48, 20, 16), new(64, 48, 16), },
             [schemes.sword_lightsaber] = new() { new(214, 0, 175), new(16, 16, 16), new(37, 34, 74), },
             [schemes.sword_warp] = new() { new(159, 80, 191), new(16, 16, 16), new(37, 34, 74), },
         };
@@ -627,7 +627,12 @@ namespace StardewDruid.Data
 
             Microsoft.Xna.Framework.Rectangle cursorRect = Mod.instance.iconData.CursorRect(cursorId);
 
-            float layer = (origin.Y - 128) / 10000;
+            if(additional.layer == -1f)
+            {
+
+                additional.layer = (origin.Y - 128) / 10000;
+
+            }
 
             Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
 
@@ -654,7 +659,7 @@ namespace StardewDruid.Data
 
                 scale = additional.scale,
 
-                layerDepth = layer,
+                layerDepth = additional.layer,
 
                 timeBasedMotion = true,
 
@@ -828,6 +833,34 @@ namespace StardewDruid.Data
 
                     break;
 
+                case impacts.skull:
+                case impacts.deathbomb:
+
+                    additional.alpha = 0.7f;
+
+                    TemporaryAnimatedSprite skull = CreateImpact(location, origin, IconData.impacts.skull, size, additional);
+
+                    skull.alphaFade = 0.001f;
+
+                    additional.alpha = 0.5f;
+
+                    additional.light = 0f;
+
+                    additional.layerOffset = 0.001f;
+
+                    additional.color = schemeColours[schemes.death];
+
+                    CreateImpact(location, origin, IconData.impacts.puff, size, additional);
+
+                    return;
+
+                case impacts.fish:
+                case impacts.splash:
+
+                    additional.alpha = 0.35f;
+
+                    break;
+
                 //case impacts.death:
 
                 //    additional.color = SchemeColour(additional.scheme);
@@ -844,7 +877,7 @@ namespace StardewDruid.Data
 
                 case impacts.bomb:
 
-                    additional.alpha = 0.85f;
+                    additional.alpha = 0.5f;
 
                     additional.light = 0f;
 
@@ -860,6 +893,8 @@ namespace StardewDruid.Data
 
                     additional.layerOffset = 0f;
 
+                    additional.alpha = 0.7f;
+
                     CreateImpact(location, origin, IconData.impacts.impact, size, additional);
 
                     return;
@@ -872,6 +907,10 @@ namespace StardewDruid.Data
                         additional.scheme = schemes.weald;
 
                     }
+
+                    additional.alpha = 0.75f;
+
+                    additional.layer = 700f;
 
                     additional.color = gradientColours[additional.scheme][2];
 
@@ -923,26 +962,6 @@ namespace StardewDruid.Data
                     additional.light = 0.005f;
 
                     CreateImpact(location, origin, IconData.impacts.spiral, 8f, additional);
-
-                    return;
-
-                case impacts.deathbomb:
-
-                    additional.alpha = 0.85f;
-
-                    additional.light = 0f;
-
-                    CreateImpact(location, origin, IconData.impacts.puff, size, additional);
-
-                    additional.light = 0.005f;
-
-                    additional.layerOffset = 0.005f;
-
-                    //additional.color = Microsoft.Xna.Framework.Color.Black;
-
-                    TemporaryAnimatedSprite skull = CreateImpact(location, origin, IconData.impacts.skull, size+1f, additional);
-
-                    skull.alphaFade = 0.001f;
 
                     return;
 
@@ -1203,12 +1222,19 @@ namespace StardewDruid.Data
 
         }
 
-        public TemporaryAnimatedSprite SkyIndicator(GameLocation location, Vector2 origin, skies slot, float scale, SkyAdditional additional)
+        public static Microsoft.Xna.Framework.Rectangle SkyRectangle(skies sky)
+        {
+
+            return new(((int)sky - 1) * 64, 0, 64, 64);
+
+        }
+
+        public TemporaryAnimatedSprite SkyIndicator(GameLocation location, Vector2 origin, skies sky, float scale, SkyAdditional additional)
         {
 
             Vector2 originOffset = origin + new Vector2(32f, 32f) - (new Vector2(32f, 32f) * scale);
 
-            if (slot == skies.none)
+            if (sky == skies.none)
             {
 
                 return null;
@@ -1225,12 +1251,14 @@ namespace StardewDruid.Data
 
             float layer = originOffset.Y / 10000;
 
-            TemporaryAnimatedSprite sky= new(0, interval, 1, loops, originOffset, false, false)
+            Microsoft.Xna.Framework.Rectangle skyRectangle = SkyRectangle(sky);
+
+            TemporaryAnimatedSprite skyAnimation= new(0, interval, 1, loops, originOffset, false, false)
             {
 
-                sourceRect = new(((int)slot-1)*64, 0, 64, 64),
+                sourceRect = skyRectangle,
 
-                sourceRectStartingPos = new Vector2(((int)slot - 1) * 64, 0),
+                sourceRectStartingPos = new Vector2(skyRectangle.X,skyRectangle.Y),
 
                 texture = skyTexture,
 
@@ -1244,9 +1272,9 @@ namespace StardewDruid.Data
 
             };
 
-            location.temporarySprites.Add(sky);
+            location.temporarySprites.Add(skyAnimation);
 
-            return sky;
+            return skyAnimation;
 
         }
 
@@ -1708,6 +1736,27 @@ namespace StardewDruid.Data
 
             animations.Add(bolt6);
 
+            for(int i = 0; i < ((400-offset)*boltScale); i += 192)
+            {
+
+                Vector2 lightSource = new(origin.X, originOffset.Y + 128 + i);
+
+                TemporaryAnimatedSprite lightCircle = new(23, 200f, 6, 1, lightSource, false, Game1.random.NextDouble() < 0.5)
+                {
+                    texture = Game1.mouseCursors,
+                    light = true,
+                    lightRadius = 3f,
+                    lightcolor = Microsoft.Xna.Framework.Color.Black,
+                    alphaFade = 0.03f,
+                    Parent = location,
+                };
+
+                location.temporarySprites.Add(lightCircle);
+
+                animations.Add(lightCircle);
+
+            }
+
             return animations;
 
             /*Vector2 originOffset = new(origin.X - 64, origin.Y - 320);
@@ -1756,12 +1805,12 @@ namespace StardewDruid.Data
 
         }
 
-        /*public List<TemporaryAnimatedSprite> ZapAnimation(GameLocation location, Vector2 origin, Vector2 destination, IconData.schemes scheme = schemes.golden, int size = 2)
+        public List<TemporaryAnimatedSprite> ZapAnimation(GameLocation location, Vector2 origin, Vector2 destination, IconData.schemes scheme = schemes.golden, int size = 2)
         {
 
             List<TemporaryAnimatedSprite> animations = new();
 
-            float boltScale = 1.5f + (0.5f * size);
+            float boltScale = 1f + (0.5f * size);
 
             float distance = Vector2.Distance(origin, destination);
 
@@ -1769,17 +1818,17 @@ namespace StardewDruid.Data
 
             Vector2 point = diff / distance;
 
-            Vector2 middle = origin + (point * 72 * boltScale);
+            Vector2 middle = origin + (point * 64 * boltScale);
 
-            Vector2 end = origin + (point * 136 * boltScale);
+            Vector2 end = origin + (point * 128 * boltScale);
 
             float rotate = (float)Math.Atan2(diff.Y, diff.X) - (float)(Math.PI / 2);
 
             Vector2 originOffset = new(middle.X - (24*boltScale), middle.Y - (64*boltScale));
 
-            Microsoft.Xna.Framework.Rectangle sourceRect2 = new(192, Mod.instance.randomIndex.Next(3) * 128, 48, 128);
+            Microsoft.Xna.Framework.Rectangle sourceRect2 = new(0, Mod.instance.randomIndex.Next(3) * 128, 48, 128);
 
-            TemporaryAnimatedSprite bolt2 = new(0, 75,4,1, originOffset, false, false)
+            TemporaryAnimatedSprite bolt1 = new(0, 75,4,1, originOffset, false, false)
             {
 
                 sourceRect = sourceRect2,
@@ -1798,18 +1847,18 @@ namespace StardewDruid.Data
 
             };
 
-            location.temporarySprites.Add(bolt2);
+            location.temporarySprites.Add(bolt1);
 
-            animations.Add(bolt2);
+            animations.Add(bolt1);
 
-            Microsoft.Xna.Framework.Rectangle sourceRect3 = new(384, Mod.instance.randomIndex.Next(3)*128, 48, 128);
+            sourceRect2.X += 192;
 
-            TemporaryAnimatedSprite bolt3 = new(0, 75, 4, 1, originOffset, false, false)
+            TemporaryAnimatedSprite bolt2 = new(0, 75, 4, 1, originOffset, false, false)
             {
 
-                sourceRect = sourceRect3,
+                sourceRect = sourceRect2,
 
-                sourceRectStartingPos = new Vector2(sourceRect3.X, sourceRect3.Y),
+                sourceRectStartingPos = new Vector2(sourceRect2.X, sourceRect2.Y),
 
                 texture = boltTexture,
 
@@ -1823,19 +1872,52 @@ namespace StardewDruid.Data
 
             };
 
+            location.temporarySprites.Add(bolt2);
+
+            animations.Add(bolt2);
+
+            sourceRect2.X += 192;
+
+            TemporaryAnimatedSprite bolt3 = new(0, 75, 4, 1, originOffset, false, false)
+            {
+
+                sourceRect = sourceRect2,
+
+                sourceRectStartingPos = new Vector2(sourceRect2.X, sourceRect2.Y),
+
+                texture = boltTexture,
+
+                layerDepth = 800f,
+
+                scale = boltScale,
+
+                color = gradientColours[scheme][1],
+
+                rotation = rotate,
+
+            };
+
             location.temporarySprites.Add(bolt3);
 
             animations.Add(bolt3);
 
-            CreateImpact(location, end, IconData.impacts.electric, size, new(){ interval = 50, color = gradientColours[scheme][2], });
+            TemporaryAnimatedSprite lightCircle = new(23, 200f, 6, 1, destination, false, Game1.random.NextDouble() < 0.5)
+            {
+                texture = Game1.mouseCursors,
+                light = true,
+                lightRadius = 3f,
+                lightcolor = Microsoft.Xna.Framework.Color.Black,
+                alphaFade = 0.03f,
+                Parent = location,
+            };
 
-            CreateImpact(location, end, IconData.impacts.electric, size+0.5f, new(){ interval = 50, color = gradientColours[scheme][1], });
+            location.temporarySprites.Add(lightCircle);
 
-            CreateImpact(location, end, IconData.impacts.electric, size+1f, new(){ interval = 50, color = Microsoft.Xna.Framework.Color.White, });
+            animations.Add(lightCircle);
 
             return animations;
 
-        }*/
+        }
 
         public void AnimateQuickWarp(GameLocation location, Vector2 origin, bool reverse = false)
         {
@@ -1863,34 +1945,6 @@ namespace StardewDruid.Data
 
             location.temporarySprites.Add(cursorAnimation);
 
-
-        }
-        
-        public TemporaryAnimatedSprite StatusIndicator(GameLocation location, Vector2 origin, displays Display)
-        {
-
-            Microsoft.Xna.Framework.Rectangle statusRect = DisplayRect(Display);
-
-            TemporaryAnimatedSprite statusAnimation = new(0, 1000, 1, 1, origin+ new Vector2(8,0), false, false)
-            {
-
-                sourceRect = statusRect,
-
-                sourceRectStartingPos = new Vector2(statusRect.X, statusRect.Y),
-
-                texture = displayTexture,
-
-                layerDepth = 800f,
-
-                scale = 3f,
-
-                alpha = 0.5f,
-
-            };
-
-            location.temporarySprites.Add(statusAnimation);
-
-            return statusAnimation;
 
         }
 
@@ -2102,6 +2156,8 @@ namespace StardewDruid.Data
 
         public int loops = 1;
 
+        public float layer = -1f;
+
         public IconData.schemes scheme = IconData.schemes.none;
 
     }
@@ -2134,7 +2190,7 @@ namespace StardewDruid.Data
 
         public int loops = 1;
 
-        public float alpha = 0.5f;
+        public float alpha = 0.35f;
 
         public float rotation = 0;
 

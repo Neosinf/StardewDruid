@@ -392,6 +392,8 @@ namespace StardewDruid.Journal
                     {
                         prompt = true,
                         intro = "Be careful in the mines. The Druid draws power from the deep rock, and it will answer your call, both above and below you. " +
+                        "For those rocks that prove recalcitrant, gather them to the crafters' bench in the grove, and employ the use of this hammer. " +
+                        "It is of the otherworld, and was used for the artifice of otherworldly things, such as myself, though I was not there to witness it. " +
                         "(New lesson received)",
 
                     }
@@ -445,6 +447,8 @@ namespace StardewDruid.Journal
 
                 reward = 2000,
 
+                replay = "Friendship with mountain residents",
+
                 details = new()
                 {
                     "The residents of the mountain and their friends are pleased with the cleanup: Sebastian, Sam, Maru, Abigail, Robin, Demetrius, Linus.",
@@ -488,6 +492,48 @@ namespace StardewDruid.Journal
             quests.Add(challengeWeald.name, challengeWeald);
 
             // =====================================================
+            // RELICS QUESTS
+
+            Quest relicWeald = new()
+            {
+
+                name = QuestHandle.relicWeald,
+
+                type = Quest.questTypes.relics,
+
+                icon = IconData.displays.weald,
+
+                // -----------------------------------------------
+
+                give = Quest.questGivers.none,
+
+                trigger = true,
+
+                triggerLocation = "CommunityCenter",
+
+                triggerTime = 0,
+
+                triggerRite = Rite.rites.weald,
+
+                origin = new Vector2(14, 22) * 64,
+
+                // -----------------------------------------------
+
+                title = "The Runestones",
+
+                description = "I have gathered all the runestones crafted by the founding members of the circle of druids. " +
+                "Ironically, during the course of the recovery of the runestones, I gained enough experience to master the powers my forebearers sought to acquire, and so the runestones themselves offer little use to me now. " +
+                "Perhaps they might attain some status, and inspire some new art, if I put them on display in the craftsroom of the local community center.",
+
+                instruction = "Perform a Rite of the Weald in the craftroom in the community center.",
+
+                explanation = "I placed the runestones in organised positions around the craftsroom, and incidentally created a happy zone of harmonised energies. Then the forest spirits took the runestones off the wall and decorated the craftroom with pictures of happy apples.",
+
+            };
+
+            quests.Add(relicWeald.name, relicWeald);
+
+            // =====================================================
             // SWORD MISTS
 
             Quest swordMists = new()
@@ -511,7 +557,7 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.none,
 
-                origin = new Vector2(30,19) * 64,
+                origin = new Vector2(30,21) * 64,
 
                 // -----------------------------------------------
 
@@ -592,7 +638,7 @@ namespace StardewDruid.Journal
 
                 description = "The Lady Beyond the Shore has granted me the power to remove common obstacles. Now I can be her representative to the further, wilder spaces of the valley.",
 
-                instruction = "Perform Rite of Mists: Sunder to destroy ten obstacles. This includes boulders, stumps or logs.",
+                instruction = "Perform Rite of Mists: Sunder to destroy ten obstacles. This includes boulders, stumps (including little stumps) or logs.",
 
                 progression = "obstacles destroyed",
 
@@ -634,7 +680,7 @@ namespace StardewDruid.Journal
 
                 description = "The raw energy provided by the mists is precise enough to charge artifacts with special power.",
 
-                instruction = "Rite of Mists has special interactions with various map-specific and crafted items, including warp statues, lightning rods and scarecrows." +
+                instruction = "Rite of Mists has special interactions with various map-specific and crafted items, including warp statues, lightning rods and scarecrows. " +
                 "Perform ten of these interactions. See the Druid Effects journal for details.",
 
                 progression = "special interactions performed",
@@ -650,7 +696,7 @@ namespace StardewDruid.Journal
                     {
                         prompt = true,
                         intro = "The Lady is fascinated by the industriousness of humanity. You can combine your artifice with her blessing for great effect. " +
-                        "I also want you to have this, my old friend's pan, which he called 'the source of goodness'. Many a fish stew was mastered in the source pan, and may it serve you well." +
+                        "I also want you to have this, my old friend's pan, which he called 'the source of goodness'. Many a fish stew was mastered in the source pan, and may it serve you well. " +
                         "(New lesson received)",
 
                     }
@@ -702,6 +748,46 @@ namespace StardewDruid.Journal
             };
 
             quests.Add(mistsThree.name, mistsThree);
+
+            // -----------------------------------------------------
+
+            Quest relicMists = new()
+            {
+
+                name = QuestHandle.relicMists,
+
+                type = Quest.questTypes.relics,
+
+                icon = IconData.displays.mists,
+
+                // -----------------------------------------------
+
+                give = Quest.questGivers.none,
+
+                trigger = true,
+
+                triggerLocation = "CommunityCenter",
+
+                triggerTime = 0,
+
+                triggerRite = Rite.rites.mists,
+
+                origin = new Vector2(40, 9) * 64,
+
+                // -----------------------------------------------
+
+                title = "The Avalant",
+
+                description = "I have gathered all the major components of the Avalant, an ancient navigation device used for passage to a city drowned within the abyssal trench. " +
+                "I do not have the means to explore the trench, but I could use the components to spruce up the disused fishtank in the community center.",
+
+                instruction = "Perform a Rite of Mists at the fish tank in the community center.",
+
+                explanation = "Through artifice bolstered by the power of the Lady Beyond the Shore, the repairs have been completed to the derelict fish tank. Then the forest spirits replaced it with a better model.",
+
+            };
+
+            quests.Add(relicMists.name, relicMists);
 
             // -----------------------------------------------------
 
@@ -852,9 +938,8 @@ namespace StardewDruid.Journal
 
                 title = "The Shadow Invasion",
 
-                description = "When I first discovered The Effigy, it was stuck in a nook in the farmcave ceiling. " +
-                "It has admitted to hiding itself there after a chance encounter with a trinket-marauding shadowfolk at the village cemetery. " +
-                "He has requested that we reconnoitre the last known site of the shadow invader's operation.",
+                description = "When I first discovered The Effigy, he had hidden himself in the farmcave after a chance encounter with a shadowfolk raider. " +
+                "He feels more confident about confronting the invaders, and has requested that we reconnoitre the graveyard for signs of their operation.",
 
                 instruction = "Perform a Rite of Mists in Pelican Town's graveyard between 7:00 pm and Midnight.",
 
@@ -874,6 +959,8 @@ namespace StardewDruid.Journal
 
                 reward = 3000,
 
+                replay = "Friendship with town residents",
+
                 // -----------------------------------------------
 
                 before = new()
@@ -882,13 +969,20 @@ namespace StardewDruid.Journal
                     [CharacterHandle.characters.Effigy] = new()
                     {
                         prompt = true,
-                        intro = "This might be an appropriate time to discuss the circumstances that led to my encasement in the roof of the farm cave. " +
-                        "A group of shadowfolk marauders appeared in the valley some months ago. They appear to be interested in what archaeological evidence remains of the age of the elderborn. " +
-                        "By happenstance I encountered their captain on the banks of the river south of the village cemetery. " +
+                        intro = //"This might be an appropriate time to discuss the circumstances that led to my encasement in the roof of the farm cave. " +
+                        //"As you're aware, I came out of stasis some time ago, shortly after your grandparent passed away. " +
+                        //"The energies of the Weald were disturbed by a group of shadowfolk, and I was roused in order to investigate. " +
+                        //"By happenstance I encountered their captain on the banks of the river south of the village cemetery. " +
+                        //"This rogue expressed a disconcerting interest in my 'make', but I was able to waylay him on the chase home through the brambled paths of the farm. " +
+                        //"I secreted myself away, partly out of self-preservation, partly so to wait until the new custodian of the farm arrived. And now you are here. " +
+                        //"I ask that we reconnoitre site of their operation to gauge the mercenary numbers and location. " +
+                        //"For this, I would be indebted to your kindness. " +
+                        "Successor, someone must confront the shadows that stalk the sacred spaces, and where I have stumbled in this matter, you may yet succeed. " +
+                        "Shortly after your grandparent's passing, the energies of the Weald roused me from a long stasis. " +
+                        "They bid me to investigate signs of intrusion in the secret woods, and that is where I encountered the captain of a band of shadowfolk marauders. " +
                         "This rogue expressed a disconcerting interest in my 'make', but I was able to waylay him on the chase home through the brambled paths of the farm. " +
-                        "I secreted myself away, partly out of self-preservation, partly so to wait until the new custodian of the farm arrived. And now you are here. " +
-                        "I ask that we reconnoitre site of their operation to gauge the mercenary numbers and location. " +
-                        "For this, I would be indebted to your kindness. " +
+                        "I secreted myself away in the farmcave, as I was not confident in my abilities to confront the invaders. " +
+                        "Now you are here, and the energies entreat us to investigate the town cemetary. " + 
                         "(New quest received)",
 
                     }
@@ -969,7 +1063,7 @@ namespace StardewDruid.Journal
                         intro = "By my assessment, your present abilities will not be enough to overcome the comparable forces of the Deep One. I know of only one more blessing available to us, the power of the celestials. " +
                         "It is dangerous, difficult to wield, and incongrous with the harmonies of the Weald and Mists, but I believe in your potential. " +
                         "You must undertake a pilgrimage to a chapel carved into the high side of the mountain, and there you will find the last Holy Warrior of the Guardians of the Star. " +
-                        "The way will be revealed to you by the light of this lantern. Show it to the warrior, and he will know your purpose." +
+                        "The way will be revealed to you by the light of this lantern. Show it to the warrior, and he will know your purpose. " +
                         "I have not visited him for a long, long time. Not since the church of bats was founded, as they are irritated by my presence, and I do not wish to disturb them, or anyone. " +
                         "(New quest received)",
 
@@ -1033,7 +1127,7 @@ namespace StardewDruid.Journal
                         prompt = true,
                         intro = "So you want to call down the wrath of the heavens. Well farmer, its pretty simple. You pray and hope that the starfire will fall where you want it to. " +
                         "It's the celestials that will answer your call, for they have committed themselves to the work of our warrior order, and our work is far from finished. " +
-                        "The rite can be quite taxing, so I say make yourself a couple of tonics using this old still here. It's in pretty good knick, only had to wipe the guana off every few seasons." +
+                        "The rite can be quite taxing, so I say make yourself a couple of tonics using this old still here. It's in pretty good knick, only had to wipe the guano off every few seasons. " +
                         "(New lesson received)",
 
                     }
@@ -1060,7 +1154,7 @@ namespace StardewDruid.Journal
 
                 description = "The lights of the heavens share their home with the vast and ravenous dark, the progenitor of the void.",
 
-                instruction = "Channel Rite of the Stars to create ten gravity wells at the position of your cursor (set distance in facing direction on controllers). Mastery will boost the size and damage of meteors that fall in the vicinity.",
+                instruction = "Channel Rite of the Stars to create ten gravity wells at the position of your cursor (set distance in facing direction on controllers). Harvests crops and forageables. Mastery will spawn a massive comet when Stars:Meteor Rain is cast within proximity to a well.",
 
                 progression = "gravity wells created",
 
@@ -1144,6 +1238,8 @@ namespace StardewDruid.Journal
 
                 reward = 5000,
 
+                replay = "Friendship with forest and beach residents",
+
                 // -----------------------------------------------
 
                 before = new()
@@ -1161,18 +1257,21 @@ namespace StardewDruid.Journal
 
                 after = new()
                 {
+                    
                     [CharacterHandle.characters.Effigy] = new()
                     {
                         prompt = true,
-                        intro = "A splendid end to a longstanding feud. For a long time, the valley farmers would wake to find their prize pumpkins mutilated, burnt, trodden or smashed to many pieces, with cursewords written within pulverised innards. " +
-                        "Well, you might think it was the Jellyking or some other fiend who perpetrated such violent acts against the innocent pumpkins. No, all along, it was me. My petty rage is something I had to learn to restrain, to bury for the good of the circle. " +
+                        intro = "A splendid end to a longstanding feud. For a long time, the valley farmers would wake to find their prize pumpkins mutilated, burnt, trodden or smashed to many pieces, with cursewords written with pulverised innards. " +
+                        "Well, you might think the perpetrator was the Jellyking or some other fiend. No, all along, it was me. My petty rage is something I had to learn to restrain, to bury for the good of the circle. " +
                         "Now one of the sources of my anger has been removed for good. I thank you.",
                     },
+
                     [CharacterHandle.characters.Revenant] = new()
                     {
                         prompt = true,
-                        intro = "The bishop of bats mentioned to me, in passing, that you managed a great victory in the forest. Your training is complete. Now you carry the mantle of the last warrior of the stars.",
-                    }
+                        intro = "The bishop of bats mentioned to me, in passing, that you managed a great victory in the forest.",
+                    },
+
                 },
 
             };
@@ -1223,6 +1322,8 @@ namespace StardewDruid.Journal
                 requirement = 0,
 
                 reward = 5000,
+
+                replay = "Rain Totem",
 
                 // -----------------------------------------------
 
@@ -1325,6 +1426,8 @@ namespace StardewDruid.Journal
 
                 },
 
+                replay = "Prismatic Shard",
+
                 after = new()
                 {
                     [CharacterHandle.characters.Revenant] = new()
@@ -1363,7 +1466,7 @@ namespace StardewDruid.Journal
 
                 triggerTime = 0,
 
-                origin = new Vector2(90,27) * 64,
+                origin = new Vector2(90, 27) * 64,
 
                 // -----------------------------------------------
 
@@ -1404,7 +1507,14 @@ namespace StardewDruid.Journal
                         "Anyhow, remember to speak well of me when you do find the representative of our Lady of Fortune. " +
                         "(New Quest Received)",
 
-                    }
+                    },
+                    [CharacterHandle.characters.Effigy] = new()
+                    {
+                        prompt = true,
+                        questContext = 1,
+                        intro = "I witnessed the predatory motions of a Molossus Gigantus in the farmcave earlier today. Then I realised it was a messenger, for you. The Revenant wishes to discuss a matter of importance.",
+                    },
+
                 },
 
                 after = new()
@@ -1804,6 +1914,8 @@ namespace StardewDruid.Journal
 
                 reward = 10000,
 
+                replay = "Iridium Sprinkler",
+
                 before = new()
                 {
 
@@ -1889,6 +2001,8 @@ namespace StardewDruid.Journal
 
                 reward = 10000,
 
+                replay = "Faeth x20",
+
                 details = new(),
 
                 // -----------------------------------------------
@@ -1951,6 +2065,45 @@ namespace StardewDruid.Journal
 
             // =====================================================
             // ETHER LESSONS
+
+
+            Quest relicFates = new()
+            {
+
+                name = QuestHandle.relicFates,
+
+                type = Quest.questTypes.relics,
+
+                icon = IconData.displays.fates,
+
+                // -----------------------------------------------
+
+                give = Quest.questGivers.none,
+
+                trigger = true,
+
+                triggerLocation = "CommunityCenter",
+
+                triggerTime = 0,
+
+                triggerRite = Rite.rites.fates,
+
+                origin = new Vector2(45, 12) * 64,
+
+                // -----------------------------------------------
+
+                title = "Keepsake Boxes",
+
+                description = "There are many memories plastered on the walls and bulletin board of the community center, and all of them will have a home in the keepsake boxes left behind by the Fates that once served this very community.",
+
+                instruction = "Perform a Rite of the Fates at the bulletin board in the community center.",
+
+                explanation = "As I placed the last wall-dried photograph away, I sensed a spell of goodwill had just spouted and spread over the community. Then I raced after a forest spirit who tried to put the keepsake boxes in storage.",
+
+            };
+
+            quests.Add(relicFates.name, relicFates);
+
 
             Quest etherOne = new()
             {
@@ -2159,7 +2312,6 @@ namespace StardewDruid.Journal
 
             quests.Add(questShadowtin.name, questShadowtin);
 
-
             Quest etherFour = new()
             {
 
@@ -2218,6 +2370,45 @@ namespace StardewDruid.Journal
 
             quests.Add(etherFour.name, etherFour);
 
+            Quest relicEther = new()
+            {
+
+                name = QuestHandle.relicEther,
+
+                type = Quest.questTypes.relics,
+
+                icon = IconData.displays.ether,
+
+                // -----------------------------------------------
+
+                give = Quest.questGivers.none,
+
+                trigger = true,
+
+                triggerLocation = "CommunityCenter",
+
+                triggerTime = 0,
+
+                triggerRite = Rite.rites.ether,
+
+                origin = new Vector2(16, 7) * 64,
+
+                // -----------------------------------------------
+
+                title = "Antiquated Recipes",
+
+                description = "Fearing zealots, the Lady Beyond stashed away several important texts, including testimonies of the war for the fallen star, and the efforts of the first circle to restore the Weald. " +
+                "Though I have recovered these records, there is not much that would make sense to the community of today, save for some cooking and gardening instructions. I'll add them to the cooking digests in the community pantry. ",
+
+                instruction = "Perform a Rite of the Ether in the pantry in the community center.",
+
+                explanation = "I added the ether-smudged book of recipes, tips and poetry to the other digests in the disused pantry. " +
+                "It felt right, like a piece missing from the community's collection had finally been restored. Then all the shelves collapsed and I had to call the forest spirit repair service.",
+
+            };
+
+            quests.Add(relicEther.name, relicEther);
+
             // =====================================================
             // Challenge Ether
 
@@ -2253,6 +2444,8 @@ namespace StardewDruid.Journal
 
 
                 reward = 10000,
+
+                replay = "Rare Seed x2",
 
                 before = new()
                 {
@@ -2297,166 +2490,6 @@ namespace StardewDruid.Journal
             };
 
             quests.Add(challengeEther.name, challengeEther);
-
-
-            // =====================================================
-            // RELICS QUESTS
-
-            Quest relicWeald = new()
-            {
-
-                name = QuestHandle.relicWeald,
-
-                type = Quest.questTypes.relics,
-
-                icon = IconData.displays.weald,
-
-                // -----------------------------------------------
-
-                give = Quest.questGivers.none,
-
-                trigger = true,
-
-                triggerLocation = "CommunityCenter",
-
-                triggerTime = 0,
-
-                triggerRite = Rite.rites.weald,
-
-                origin = new Vector2(14, 22) * 64,
-
-                // -----------------------------------------------
-
-                title = "The Runestones",
-
-                description = "I have gathered all the runestones crafted by the founding members of the circle of druids. " +
-                "Ironically, during the course of the recovery of the runestones, I gained enough experience to master the powers my forebearers sought to acquire, and so the runestones themselves offer little use to me now. " +
-                "Perhaps they might attain some status, and inspire some new art, if I put them on display in the craftsroom of the local community center.",
-
-                instruction = "Perform a Rite of the Weald in the craftroom in the community center.",
-
-                explanation = "I placed the runestones in organised positions around the craftsroom, and incidentally created a happy zone of harmonised energies. Then the forest spirits took the runestones off the wall and decorated the craftroom with pictures of happy apples.",
-
-            };
-
-            quests.Add(relicWeald.name, relicWeald);
-
-            Quest relicMists = new()
-            {
-
-                name = QuestHandle.relicMists,
-
-                type = Quest.questTypes.relics,
-
-                icon = IconData.displays.mists,
-
-                // -----------------------------------------------
-
-                give = Quest.questGivers.none,
-
-                trigger = true,
-
-                triggerLocation = "CommunityCenter",
-
-                triggerTime = 0,
-
-                triggerRite = Rite.rites.mists,
-
-                origin = new Vector2(40, 9) * 64,
-
-                // -----------------------------------------------
-
-                title = "The Avalant",
-
-                description = "I have gathered all the major components of the Avalant, an ancient navigation device used for passage to a city drowned within the abyssal trench. " +
-                "I do not have the means to explore the trench, but I could use the components to spruce up the disused fishtank in the community center.",
-
-                instruction = "Perform a Rite of Mists at the fish tank in the community center.",
-
-                explanation = "Through artifice bolstered by the power of the Lady Beyond the Shore, the repairs have been completed to the derelict fish tank. Then the forest spirits replaced it with a better model.",
-
-            };
-
-            quests.Add(relicMists.name, relicMists);
-
-
-            Quest relicFates = new()
-            {
-
-                name = QuestHandle.relicFates,
-
-                type = Quest.questTypes.relics,
-
-                icon = IconData.displays.fates,
-
-                // -----------------------------------------------
-
-                give = Quest.questGivers.none,
-
-                trigger = true,
-
-                triggerLocation = "CommunityCenter",
-
-                triggerTime = 0,
-
-                triggerRite = Rite.rites.fates,
-
-                origin = new Vector2(45, 12) * 64,
-
-                // -----------------------------------------------
-
-                title = "Keepsake Boxes",
-
-                description = "There are many memories plastered on the walls and bulletin board of the community center, and all of them will have a home in the keepsake boxes left behind by the Fates that once served this very community.",
-
-                instruction = "Perform a Rite of the Fates at the bulletin board in the community center.",
-
-                explanation = "As I placed the last wall-dried photograph away, I sensed a spell of goodwill had just spouted and spread over the community. Then I raced after a forest spirit who tried to put the keepsake boxes in storage.",
-
-            };
-
-            quests.Add(relicFates.name, relicFates);
-
-
-            Quest relicEther = new()
-            {
-
-                name = QuestHandle.relicEther,
-
-                type = Quest.questTypes.relics,
-
-                icon = IconData.displays.ether,
-
-                // -----------------------------------------------
-
-                give = Quest.questGivers.none,
-
-                trigger = true,
-
-                triggerLocation = "CommunityCenter",
-
-                triggerTime = 0,
-
-                triggerRite = Rite.rites.ether,
-
-                origin = new Vector2(14, 4) * 64,
-
-                // -----------------------------------------------
-
-                title = "Antiquated Recipes",
-
-                description = "Fearing zealots, the Lady Beyond stashed away several important texts, including testimonies of the war for the fallen star, and the efforts of the first circle to restore the Weald. " +
-                "Though I have recovered these records, there is not much that would make sense to the community of today, save for some cooking and gardening instructions. I'll add them to the cooking digests in the community pantry. ",
-
-                instruction = "Perform a Rite of the Ether in the pantry in the community center.",
-
-                explanation = "I added the ether-smudged book of recipes, tips and poetry to the other digests in the disused pantry. " +
-                "It felt right, like a piece missing from the community's collection had finally been restored. Then all the shelves collapsed and I had to call the forest spirit repair service.",
-
-            };
-
-            quests.Add(relicEther.name, relicEther);
-
 
             return quests;
 
@@ -2524,6 +2557,8 @@ namespace StardewDruid.Journal
         public int requirement;
 
         public int reward;
+
+        public string replay;
 
         // -----------------------------------------------
         // dialogues

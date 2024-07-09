@@ -276,6 +276,26 @@ namespace StardewDruid.Monster
                 },
             };
 
+            alertFrames = new()
+            {
+                [0] = new()
+                {
+                    new Rectangle(192, 320, 32, 32),
+                },
+                [1] = new()
+                {
+                    new Rectangle(160, 320, 32, 32),
+                },
+                [2] = new()
+                {
+                    new Rectangle(128, 320, 32, 32),
+                },
+                [3] = new()
+                {
+                    new Rectangle(224, 320, 32, 32),
+                },
+            };
+
         }
 
         public virtual void DarkSword()
@@ -523,6 +543,7 @@ namespace StardewDruid.Monster
 
             bool flippity = flippant || netDirection.Value == 3;
 
+
             if (netSweepActive.Value)
             {
 
@@ -646,18 +667,40 @@ namespace StardewDruid.Monster
             }
             else if (netHaltActive.Value)
             {
+                if (netAlert.Value && weaponRender != null)
+                {
 
-                b.Draw(
-                    characterTexture,
-                    spritePosition,
-                    idleFrames[netDirection.Value][0],
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    spriteScale,
-                    flippant ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    drawLayer
-                );
+                    b.Draw(
+                        characterTexture,
+                        spritePosition,
+                        alertFrames[netDirection.Value][0],
+                        Color.White,
+                        0f,
+                        Vector2.Zero,
+                        spriteScale,
+                        flippant ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                        drawLayer
+                    );
+
+                    weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { source = alertFrames[netDirection.Value][0], flipped = flippant });
+
+                }
+                else
+                {
+
+                    b.Draw(
+                        characterTexture,
+                        spritePosition,
+                        idleFrames[netDirection.Value][0],
+                        Color.White,
+                        0f,
+                        Vector2.Zero,
+                        spriteScale,
+                        flippant ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                        drawLayer
+                    );
+
+                }
 
             }
             else
@@ -674,6 +717,7 @@ namespace StardewDruid.Monster
                     flippant ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                     drawLayer
                 );
+
             }
 
             if (netShieldActive.Value)
@@ -733,7 +777,7 @@ namespace StardewDruid.Monster
 
             fireball.type = SpellHandle.spells.missile;
 
-            fireball.projectile = 1;
+            fireball.projectile = 2;
 
             fireball.missile = IconData.missiles.fireball;
 
@@ -741,7 +785,7 @@ namespace StardewDruid.Monster
 
             fireball.boss = this;
 
-            fireball.scheme = IconData.schemes.stars;
+            fireball.scheme = IconData.schemes.ether;
 
             Mod.instance.spellRegister.Add(fireball);
 

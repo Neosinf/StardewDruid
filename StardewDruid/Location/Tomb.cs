@@ -291,6 +291,8 @@ namespace StardewDruid.Location
 
                         light.lightFrame = Mod.instance.randomIndex.Next(4);
 
+                        light.lightLayer = 1;
+
                         lightFields.Add(light);
 
                     }
@@ -299,9 +301,9 @@ namespace StardewDruid.Location
 
                         LightField light = new(new Vector2(array[0], code.Key) * 64, 4 + Mod.instance.randomIndex.Next(3), Microsoft.Xna.Framework.Color.DarkBlue);
 
-                        light.lightAmbience = 0.4f;
+                        light.lightAmbience = 0.3f;
 
-                        light.lightType = LightField.lightTypes.lantern;
+                        light.lightType = LightField.lightTypes.sconceLight;
 
                         lightFields.Add(light);
 

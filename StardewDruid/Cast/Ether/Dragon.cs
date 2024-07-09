@@ -103,6 +103,11 @@ namespace StardewDruid.Cast.Ether
         public Vector2 divePosition;
         public int diveMoment;
 
+        public CueWrapper flightCue;
+        public CueWrapper fireCue;
+        public CueWrapper fireCueTwo;
+        public CueWrapper roarCue;
+
         public Dragon()
         {
         }
@@ -177,6 +182,28 @@ namespace StardewDruid.Cast.Ether
             flightTo = Vector2.Zero;
 
             flightInterval = Vector2.Zero;
+
+            flightCue = Game1.soundBank.GetCue("DragonFlight") as CueWrapper;
+
+            flightCue.Pitch *= 2;
+
+            fireCue = Game1.soundBank.GetCue("DragonFire") as CueWrapper;
+
+            fireCue.Volume *= 2;
+
+            fireCue.Pitch /= 2;
+
+            fireCueTwo = Game1.soundBank.GetCue("DragonFireTwo") as CueWrapper;
+
+            fireCueTwo.Volume *= 2;
+
+            fireCueTwo.Pitch /= 2;
+
+            roarCue = Game1.soundBank.GetCue("DragonRoar") as CueWrapper;
+
+            roarCue.Volume *= 2;
+
+            roarCue.Pitch /= 2;
 
         }
 
@@ -596,7 +623,7 @@ namespace StardewDruid.Cast.Ether
             if (setPosition != Position || netDirection.Value != moveDirection || netAlternative.Value != altDirection)
             {
 
-                CheckSwim();
+                //CheckSwim();
 
                 if (walkFrame == 0)
                 {
@@ -675,7 +702,7 @@ namespace StardewDruid.Cast.Ether
 
                 AnimateMovement();
 
-                CheckSwim();
+                //CheckSwim();
 
                 return;
 
@@ -857,6 +884,13 @@ namespace StardewDruid.Cast.Ether
 
             flightTimer = flightIncrement * flightRange;
 
+            if (!flightCue.IsPlaying)
+            {
+
+                flightCue.Play();
+
+            }
+
             flightInterval = new((flightTo.X - Position.X) / flightTimer, (flightTo.Y - Position.Y) / flightTimer);
 
             flightPosition = Game1.player.Position;
@@ -924,6 +958,14 @@ namespace StardewDruid.Cast.Ether
 
                 netDashActive.Set(false);
 
+                if (flightCue.IsPlaying)
+                {
+
+                    flightCue.Stop(AudioStopOptions.Immediate);
+
+                }
+                
+
                 if (flightTerrain == "water")
                 {
 
@@ -988,6 +1030,13 @@ namespace StardewDruid.Cast.Ether
 
                     if (num != 0)
                     {
+
+                        if (!flightCue.IsPlaying)
+                        {
+
+                            flightCue.Play();
+
+                        }
 
                         flightTimer = flightIncrement * num;
 
@@ -1334,16 +1383,18 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            if (Mod.instance.eventRegister.ContainsKey("crate"))
+            if (Mod.instance.eventRegister.ContainsKey("crate_"+currentLocation.Name))
             {
 
-                if (Mod.instance.eventRegister["crate"] is Crate treasureEvent)
+                if (Mod.instance.eventRegister["crate_" + currentLocation.Name] is Crate treasureEvent)
                 {
 
                     if (!treasureEvent.eventActive)
                     {
 
-                        if (Vector2.Distance(Position, treasureEvent.origin) <= 128f)
+                        float treasureDistance = Vector2.Distance(Position, treasureEvent.origin);
+
+                        if (treasureDistance <= 128f)
                         {
 
                             if (activate)
@@ -1565,7 +1616,7 @@ namespace StardewDruid.Cast.Ether
 
                             showTextAboveHead("RWWWRRR", duration: 2000);
 
-                            currentLocation.playSound("DragonRoar", null, 600);
+                            roarCue.Play();
 
                         }
 
@@ -1653,9 +1704,23 @@ namespace StardewDruid.Cast.Ether
 
                 if (roarTimer <= 0)
                 {
-                    currentLocation.playSound("furnace", null, 600);
 
-                    roarTimer = 120;
+                    if (!fireCue.IsPlaying)
+                    {
+
+                        fireCue.Play();
+
+                    }
+
+                    if (!fireCueTwo.IsPlaying)
+                    {
+
+                        fireCueTwo.Play();
+
+                    }
+
+                    roarTimer = 75;
+
                 }
 
                 List<Vector2> splash = new();
@@ -1799,7 +1864,6 @@ namespace StardewDruid.Cast.Ether
                         break;
 
                     }
-                    //start.Y += 1;
 
                     break;
 
@@ -1835,16 +1899,18 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            if (ModUtility.GroundCheck(currentLocation, new Vector2((int)(Position.X / 64), (int)(Position.Y / 64))) != "water")
+            string ground = ModUtility.GroundCheck(currentLocation, ModUtility.PositionToTile(Position));
+
+            if (ground == "water" || ground == "void")
             {
-
-                swimActive = false;
-
-                netSwimActive.Set(false);
 
                 return;
 
             }
+
+            swimActive = false;
+
+            netSwimActive.Set(false);
 
         }
 
@@ -1855,7 +1921,7 @@ namespace StardewDruid.Cast.Ether
 
             netDiveActive.Set(true);
 
-            diveTimer = 240;
+            diveTimer = 150;
 
             divePosition = Game1.player.Position;
 
@@ -1870,7 +1936,7 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 32), IconData.impacts.splash, 3f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
+            Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 64), IconData.impacts.splash, 4f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
 
         }
 
@@ -1890,22 +1956,21 @@ namespace StardewDruid.Cast.Ether
             Game1.player.Position = divePosition;
             Position = divePosition;
 
-            if (diveTimer % 40 == 0)
+            if (diveTimer % 30 == 0)
             {
 
                 diveMoment++;
 
             }
 
-            if (diveTimer == 120)
+            if (diveTimer == 90)
             {
 
                 currentLocation.playSound("quickSlosh");
 
+                Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 64), IconData.impacts.splash, 4f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
 
-                Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 32), IconData.impacts.splash, 3f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
-
-                Mod.instance.iconData.ImpactIndicator(currentLocation, Position + new Vector2(64, -32), IconData.impacts.fish, 2f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
+                Mod.instance.iconData.ImpactIndicator(currentLocation, Position + new Vector2(64, -64), IconData.impacts.fish, 3f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
 
                 if (TreasureZone(true))
                 {
@@ -1931,7 +1996,7 @@ namespace StardewDruid.Cast.Ether
 
                 treasure.fade = 0.0005f;
 
-                treasure.height = 192;
+                treasure.height = 320;
 
                 treasure.register();
 
@@ -1956,6 +2021,13 @@ namespace StardewDruid.Cast.Ether
             }
 
             DelayedAction.functionAfterDelay(RemoveInstance, 1);
+
+            if (flightCue.IsPlaying)
+            {
+
+                flightCue.Stop(AudioStopOptions.Immediate);
+
+            }
 
         }
 

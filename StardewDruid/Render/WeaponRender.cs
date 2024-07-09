@@ -241,9 +241,8 @@ namespace StardewDruid.Render
                     new(),
                     new(),
                     new(),
-                    new(0, 128, 64, 64),
-                    new(64, 128, 64, 64),
-
+                    new(0, 0, 64, 64),
+                    new(64, 0, 64, 64),
                 },
                 [32] = new()
                 {
@@ -261,8 +260,8 @@ namespace StardewDruid.Render
                     new(),
                     new(),
                     new(),
-                    new(0, 0, 64, 64),
-                    new(64, 0, 64, 64),
+                    new(0, 128, 64, 64),
+                    new(64, 128, 64, 64),
 
                 },
             };

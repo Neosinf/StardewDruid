@@ -74,7 +74,7 @@ namespace StardewDruid.Monster
 
             baseJuice = 2;
 
-            basePulp = 20;
+            basePulp = 25;
 
             hoverInterval = 12;
 

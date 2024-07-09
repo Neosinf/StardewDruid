@@ -39,22 +39,23 @@ namespace StardewDruid.Journal
                     "Druid Level: Number of quests completed / 5",
                     "Indicator: The decorative rite circle, cursor and HUD-buff icon should indicate the currently selected rite, which can vary due to weapon, attunement, progress and patron served.",
                     "Otherworldly connection: Some of the game maps (mostly interiors) have effect restrictions that can be disabled in the config.",
-                    "Quest Replay: Event-type quests can be replayed after they are completed. Controls for replay are found on Quest pages in the Quest Journal"
+                    "Quest Replay: Event-type quests can be replayed after they are completed. Controls for replay are found on Quest pages in the Quest Journal. Special rewards are available for some replayed quests."
                     //"Hold: You can run and ride a horse while holding the rite button.",
                     //"Grass: Performing a rite provides faster movement through grass.",
                 }
             };
+
             Effect herbalism = new()
             {
                 title = "Herbalism",
-                icon = IconData.displays.weald,
+                icon = IconData.displays.herbalism,
                 description = "The offerings of the valley sustain me.",
                 instruction = "Learn how to brew potions and tonics at the herbalism bench in the secluded farm grove. There are three lines of potion to brew, each with their own ingredients and special effects.",
                 details = new()
                 {
                     "Along your journey you will attain relics that will unlock higher levels of potency, up to level 5",
                     "Ligna: special ingredients include roots, seeds and roughage, and higher potency will increase magnetic radius and strengthen rite effects.",
-                    "Impes: special ingredients include tubers, fungi and spices, and higher potency will strengthen charge effects and critical hits.",
+                    "Vigores: special ingredients include tubers, fungi and spices, and higher potency will strengthen charge effects and critical hits.",
                     "Celeri: special ingredients include fish oil and seaweeds, and higher potency will raise movement speed, cast speed and lower charge effect cooldowns."
                 }
             };
@@ -125,6 +126,7 @@ namespace StardewDruid.Journal
                     "Note: Disabled for villagers who have not been introduced to farmer and registered in the in-game friendship directory",
                     "Villagers: Raises friendship by 25, adds custom dialogue, ticks 'talked to today' value",
                     "Animals: Applies petting to animal",
+                    "Special: This can be cast in the town saloon",
                 }
             };
 
@@ -204,8 +206,42 @@ namespace StardewDruid.Journal
 
             };
 
-            effects[QuestHandle.wealdFive] = new() { rockfall, sap,};
+            Effect crowhammer = new()
+            {
+                title = "Crow Hammer",
+                icon = IconData.displays.chaos,
+                description = "Deposits of minerals litter the valley, some potent in energy, some precious in lustre. Some even appear to be the eroded detritus of the great marvels of the past. The hammer will know for sure.",
+                instruction = "The herbalist's bench in the druid's grove now provides the option to break apart all geodes in the player's inventory. ",
+                details = new()
+                {
+                    "Activate: Select the break geodes option when in dialogue at the bench.",
+                    "Uses the base game randomisation logic.",
+                    "The results are stored in the bench's inventory. Overflow will be thrown to the player.",
+                }
 
+            };
+
+            effects[QuestHandle.wealdFive] = new() { rockfall, sap, crowhammer,};
+
+            // ====================================================================
+            // Runestones
+
+            Effect relicsets = new()
+            {
+                title = "Relic Sets",
+                icon = IconData.displays.relic,
+                description = "The heritage of the Circle Druids is forgotten but not completely gone.",
+                instruction = "Collect Runestones of the Circle and other series of relics to unlock optional alternative methods for completing commmunity center bundles.",
+                details = new()
+                {
+                    "Runestones are gained by defeating challenges that appear throughout the Druid questline." +
+                    "Collection methods vary per set of relics.",
+                    "Presenting a full set of relics to the NPC referred to in the relic tooltip will unlock a relic quest.",
+                    "Relic quests will clear automatically if the corresponding community bundle is finished.",
+                }
+            };
+
+            effects[QuestHandle.challengeWeald] = new() { relicsets };
 
             // ====================================================================
             // Mists effects
@@ -232,11 +268,11 @@ namespace StardewDruid.Journal
                 title = "Sunder",
                 icon = IconData.displays.mists,
                 description = "The Lady Beyond the Shore has granted me the power to remove common obstacles. Now I can be her representative to the further, wilder spaces of the valley.",
-                instruction = "Rite of Mists will instantly destroy boulders, large stumps and hollow logs.",
+                instruction = "Rite of Mists will instantly destroy boulders, large stumps, little stumps and hollow logs.",
                 details = new()
                 {
                     "Mastery: Increases the resource acquired from obstacle destruction",
-                    "Cost: 32 stamina - (Player Foraging level x 3)",
+                    "Cost: 32 stamina - (Player Foraging level x 3), free for little stumps",
                 }
             };
 
@@ -358,7 +394,8 @@ namespace StardewDruid.Journal
                 {
                     "The 'Enameled Star Crest' can be used in the relics menu to summon the Effigy.",
                     "The Effigy can accompany you to other locations, and will perform it's own attacks against nearby monsters.",
-                    "The Effigy can be invited to roam the farm, and will perform Weald: Cultivate and Mists: Scarecrows where scarecrows have been placed. ",
+                    "The Effigy can be invited to roam the farm, and will perform Weald: Cultivate and Mists: Scarecrows where scarecrows have been placed.",
+                    "Seeds placed in The Effigy's inventory will be sewn in tilled, empty soil within range of targetted scarecrows.",
                 }
             };
 
@@ -416,7 +453,8 @@ namespace StardewDruid.Journal
                 {
                     "Activate: Hold the rite button until the channel cursor expands past the rite indicator",
                     "Mastery: A massive instance of meteor rain will be drawn to the black hole.",
-                    "Nearby harvestable crops will be harvested and pulled towards the scarecrow, with boosts to quantity and quality based on Weald:Cultivation settings.",
+                    "Nearby harvestable crops will be harvested and pulled towards the well, with boosts to quantity and quality based on Weald:Cultivation settings.",
+                    "Nearby forage will be harvested and pulled towards the well, and normal harvesting rules apply for quantity and quality",
                     "Monsters will be stunned and pulled in. Uses directional and cursor targetting.",
                 }
             };
@@ -453,7 +491,8 @@ namespace StardewDruid.Journal
                 {
                     "The 'Embossed Die of the Fates' can be used in the relics menu to summon Jester",
                     "Jester can accompany you to other locations, and will perform his own attacks against nearby monsters.",
-                    "Jester can be invited to roam the farm, and will perform his version of Weald:Community when in proximity to villagers and farm animals, which provides a friendship boost to the target. ",
+                    "Jester can be invited to roam the farm, and will perform his version of Weald:Community when in proximity to villagers and farm animals, which provides a friendship boost to the target. " +
+                    "Despite his aversion to drinking milk, Jester will collect from cows and goats, and share the resultant product with you.",
                 }
             };
 
@@ -522,6 +561,7 @@ namespace StardewDruid.Journal
                     "Mastery: Unlocks more effects.",
                     "Friendship: Provides -25 to +75 friendship based on whether the villager disliked or liked the effect.",
                     "Cost: Free",
+                    "Special: This can be cast in the town saloon",
                 }
             };
 
@@ -572,8 +612,10 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "The 'Compendium on the Ancient War' can be used in the relics menu to summon Shadowtin",
-                    "Shadowtin can join your other allies on the farm, grove or at your side. He can use his Carnyx to stun enemies, or twirl it in a spin attack.",
+                    "Shadowtin can join your other allies on the farm, grove or at your side. Attacks made with his Carnyx will stun enemies.",
                     "Shadowtin will pick up nearby forageables during idle moments when at work or when following the player.",
+                    "Shadowtin will collect from bee houses, tappers, moss logs and lightning rods.",
+                    "Fruit in Shadowtin's inventory will be made into marmalade (fruit jelly) overnight."
                 }
             };
 

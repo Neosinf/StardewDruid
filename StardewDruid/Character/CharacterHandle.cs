@@ -27,6 +27,7 @@ using System.Linq;
 using xTile.Dimensions;
 using xTile.Tiles;
 using static StardewDruid.Character.Character;
+using static StardewDruid.Character.CharacterHandle;
 
 namespace StardewDruid.Character
 {
@@ -80,6 +81,7 @@ namespace StardewDruid.Character
             quests,
             lore,
             relics,
+            inventory,
             adventure,
             attune,
         }
@@ -311,45 +313,26 @@ namespace StardewDruid.Character
 
                 case characters.Revenant:
 
-
-                    Mod.instance.characters[characters.Revenant] = new Revenant(characters.Revenant);
-
-                    Mod.instance.dialogue[characters.Revenant] = new(characters.Revenant);
-
-                    Mod.instance.characters[characters.Revenant].SwitchToMode(mode, Game1.player);
+                    Mod.instance.characters[character] = new Revenant(character);
 
                     break;
 
                 case characters.Jester:
 
-
-                    Mod.instance.characters[characters.Jester] = new Jester(characters.Jester);
-
-                    Mod.instance.dialogue[characters.Jester] = new(characters.Jester);
-
-                    Mod.instance.characters[characters.Jester].SwitchToMode(mode, Game1.player);
+                    Mod.instance.characters[character] = new Jester(character);
 
                     break;
 
                 case characters.Buffin:
 
 
-                    Mod.instance.characters[characters.Buffin] = new Buffin(characters.Buffin);
-
-                    Mod.instance.dialogue[characters.Buffin] = new(characters.Buffin);
-
-                    Mod.instance.characters[characters.Buffin].SwitchToMode(mode, Game1.player);
+                    Mod.instance.characters[character] = new Buffin(character);
 
                     break;
 
                 case characters.Shadowtin:
 
-
-                    Mod.instance.characters[characters.Shadowtin] = new Shadowtin(characters.Shadowtin);
-
-                    Mod.instance.dialogue[characters.Shadowtin] = new(characters.Shadowtin);
-
-                    Mod.instance.characters[characters.Shadowtin].SwitchToMode(mode, Game1.player);
+                    Mod.instance.characters[character] = new Shadowtin(character);
 
                     break;
 
@@ -357,15 +340,18 @@ namespace StardewDruid.Character
 
                     character = characters.Effigy;
 
-                    Mod.instance.characters[characters.Effigy] = new Effigy(characters.Effigy);
-
-                    Mod.instance.dialogue[characters.Effigy] = new(characters.Effigy);
-
-                    Mod.instance.characters[characters.Effigy].SwitchToMode(mode, Game1.player);
+                    Mod.instance.characters[character] = new Effigy(character);
 
                     break;
-            }
             
+            }
+
+            Mod.instance.dialogue[character] = new(character);
+
+            Mod.instance.characters[character].NewDay();
+
+            Mod.instance.characters[character].SwitchToMode(mode, Game1.player);
+
         }
 
         public static Texture2D CharacterTexture(characters character)
@@ -506,6 +492,14 @@ namespace StardewDruid.Character
 
                     }
 
+                    if (Mod.instance.characters[characters.Effigy].currentLocation.IsFarm)
+                    {
+
+                        return "The Effigy: Provide me with some seeds, and I will sow them as I attend to the crops. " +
+                            "Remember to place plenty of scarecrows about. I like to talk to them.";
+
+                    }
+
                     return "The Effigy: Greetings, successor";
 
                 case characters.Revenant:
@@ -534,6 +528,13 @@ namespace StardewDruid.Character
 
                     }
 
+                    if (Mod.instance.characters[characters.Jester].currentLocation.IsFarm)
+                    {
+
+                        return "The Jester of Fate: I think this place could do with some animals. I enjoy milking.";
+
+                    }
+
                     return "The Jester of Fate: Hey friend.";
 
                 case characters.Buffin:
@@ -541,6 +542,14 @@ namespace StardewDruid.Character
                     return "You would make a great servant of chaos, Farmer.";
 
                 case characters.Shadowtin:
+
+                    if (Mod.instance.characters[characters.Jester].currentLocation.IsFarm)
+                    {
+
+                        return "Shadowtin Bear: I am fascinated by the industry of the organic world, " +
+                            "especially the substances you refer to as maple syrup and honey.";
+
+                    }
 
                     return "(Shadowtin's ethereal eyes shine through a cold metal mask)";
 
@@ -758,6 +767,58 @@ namespace StardewDruid.Character
 
                     break;
 
+                case subjects.inventory:
+
+                    switch (character)
+                    {
+
+                        case characters.Effigy:
+
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.questEffigy) && Context.IsMainPlayer)
+                            {
+
+                                return "(inventory) I have some seeds for you to sow.";
+
+                            }
+
+                            break;
+
+                        case characters.Jester:
+
+                            if (Context.IsMainPlayer)
+                            {
+
+                                return "Jester... what's in your mouth. Come on. Show me.";
+
+                            }
+
+                            break;
+
+                        case characters.Shadowtin:
+
+                            if (Context.IsMainPlayer)
+                            {
+
+                                return "(inventory) Let's take stock of our supplies.";
+
+                            }
+
+                            break;
+
+                        case characters.herbalism:
+
+                            if (Context.IsMainPlayer)
+                            {
+
+                                return "(inventory) Store and review potion ingredients.";
+
+                            }
+
+                            break;
+                    }
+
+                    break;
+
                 case subjects.adventure:
 
                     switch (character)
@@ -809,6 +870,16 @@ namespace StardewDruid.Character
                             return "(warp) It was worth the treacherous ascent to witness the unfurling of the curtain of the sky. " +
                                 "The stage is set with the heroes of the constellations, and their radiance inspires me. Can I sleep here?";
 
+                        case characters.herbalism:
+
+                            if (Mod.instance.save.reliquary.ContainsKey(IconData.relics.crow_hammer.ToString()))
+                            {
+
+                                return "(hammer) Break and store the contents of all geodes in inventory.";
+
+                            }
+
+                            break;
                     }
 
                     break;
@@ -874,7 +945,6 @@ namespace StardewDruid.Character
             {
 
                 case subjects.quests:
-
 
                     Mod.instance.questHandle.DialogueReload(character);
 
@@ -1242,6 +1312,12 @@ namespace StardewDruid.Character
 
                     break;
 
+                case subjects.inventory:
+
+                    OpenInventory(character);
+
+                    return null;
+
                 case subjects.adventure:
 
                     switch (index)
@@ -1264,10 +1340,6 @@ namespace StardewDruid.Character
                                     }
 
                                     generate.intro = "The Effigy: It is time to roam the wilds once more.";
-
-                                    generate.responses.Add("(inventory) I want to check your inventory.");
-
-                                    generate.answers.Add("0");
 
                                     if (Mod.instance.characters[character].modeActive != Character.mode.track)
                                     {
@@ -1312,10 +1384,6 @@ namespace StardewDruid.Character
 
                                     generate.intro = "The Jester of Fate: I'm ready to explore the world."; ;
 
-                                    generate.responses.Add("(inventory) I want to check your inventory.");
-
-                                    generate.answers.Add("0");
-
                                     if (Mod.instance.characters[character].modeActive != Character.mode.track)
                                     {
 
@@ -1358,10 +1426,6 @@ namespace StardewDruid.Character
                                     }
 
                                     generate.intro = "Shadowtin Bear: What do you propose?"; ;
-
-                                    generate.responses.Add("(inventory) I want to check your inventory.");
-
-                                    generate.answers.Add("0");
 
                                     if (Mod.instance.characters[character].modeActive != Character.mode.track)
                                     {
@@ -1433,21 +1497,20 @@ namespace StardewDruid.Character
 
                                     return generate;
 
+                                case characters.herbalism:
+
+                                    Mod.instance.herbalData.ConvertGeodes();
+
+                                    return null;
+
                             }
 
                             break;
 
                         case 1:
 
-
                             switch (answer)
                             {
-
-                                case 0: // Open inventory
-
-                                    OpenInventory(character);
-
-                                    return generate;
 
                                 case 1: // Follow player
 
@@ -1554,12 +1617,11 @@ namespace StardewDruid.Character
                                                 foreach (MinecartDestinationData destination in network.Destinations)
                                                 {
 
-                                                    if (string.Equals(destination.Id, "Bus", StringComparison.OrdinalIgnoreCase))
+                                                    if (destination.Id.Contains("Bus"))
                                                     {
 
                                                         Game1.player.currentLocation.MinecartWarp(destination);
                                                         return generate;
-
 
                                                     }
 
@@ -1873,13 +1935,15 @@ namespace StardewDruid.Character
 
         }
 
-        public static void OpenInventory(characters character)
+        public static void RetrieveInventory(characters character)
         {
 
             if (!Mod.instance.chests.ContainsKey(character))
             {
 
                 Chest newChest = new();
+
+                //newChest.SpecialChestType = Chest.SpecialChestTypes.BigChest;
 
                 if (Mod.instance.save.chests.ContainsKey(character))
                 {
@@ -1889,7 +1953,6 @@ namespace StardewDruid.Character
 
                         newChest.Items.Add(new StardewValley.Object(item.id, item.stack, quality: item.quality));
 
-
                     }
 
                 }
@@ -1897,6 +1960,13 @@ namespace StardewDruid.Character
                 Mod.instance.chests[character] = newChest;
 
             }
+
+        }
+
+        public static void OpenInventory(characters character)
+        {
+
+            RetrieveInventory(character);
 
             Mod.instance.chests[character].ShowMenu();
 
@@ -2014,7 +2084,6 @@ namespace StardewDruid.Character
 
         }
 
-
     }
 
     public class CharacterMover
@@ -2104,7 +2173,6 @@ namespace StardewDruid.Character
             animate = Animate;
 
         }
-
 
         public static void Warp(GameLocation target, Character entity, Vector2 position, bool animate = true)
         {

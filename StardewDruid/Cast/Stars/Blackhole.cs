@@ -24,8 +24,6 @@ namespace StardewDruid.Cast.Stars
     public class Blackhole : EventHandle
     {
 
-        public int channelCounter;
-
         public Vector2 target;
 
         public bool blackhole;
@@ -78,65 +76,30 @@ namespace StardewDruid.Cast.Stars
             if (!EventActive())
             {
 
-                RemoveAnimations();
+                eventComplete = true;
 
                 return;
 
             }
 
+            decimalCounter++;
+
             if (!inabsentia && !eventLocked)
             {
 
-                channelCounter++;
-
-                if (channelCounter == 5)
+                if (decimalCounter == 3)
                 {
 
-                    TemporaryAnimatedSprite skyAnimation = Mod.instance.iconData.SkyIndicator(location, origin, IconData.skies.night, 1f, new() { interval = 1000,});
+                    Mod.instance.rite.channel(IconData.skies.night,60);
 
-                    skyAnimation.scaleChange = 0.002f;
-
-                    skyAnimation.motion = new(-0.064f, -0.064f);
-
-                    skyAnimation.timeBasedMotion = true;
-
-                    animations.Add(skyAnimation);
-
-                    TemporaryAnimatedSprite startAnimation = new(0, 1000f, 1, 1, target + new Vector2(32, 32), false, false)
-                    {
-
-                        sourceRect = new(0, 0, 64, 64),
-
-                        sourceRectStartingPos = new Vector2(0, 0),
-
-                        texture = Mod.instance.iconData.gravityTexture,
-
-                        scale = 0.001f,
-
-                        scaleChange = 0.003f,
-
-                        layerDepth = location.IsOutdoors ? target.Y / 10000 + 0.001f : 999f,
-
-                        //motion = (impact - origin) / 1000 - new Vector2(96, 96) / 1000,
-
-                        motion = new Vector2(-96, -96) / 1000,
-
-                        timeBasedMotion = true,
-
-                        rotationChange = -0.06f,
-
-                        alpha = 0.75f,
-
-                    };
-
-                    location.temporarySprites.Add(startAnimation);
-
-                    animations.Add(startAnimation);
+                    channel = IconData.skies.night;
 
                 }
 
-                if (channelCounter == 14)
+                if (decimalCounter == 11)
                 {
+                    
+                    decimalCounter = 0;
 
                     eventLocked = true;
 
@@ -145,8 +108,6 @@ namespace StardewDruid.Cast.Stars
                 return;
 
             }
-
-            decimalCounter++;
 
             if(decimalCounter == 1)
             {
@@ -177,7 +138,7 @@ namespace StardewDruid.Cast.Stars
 
             hole.type = SpellHandle.spells.blackhole;
 
-            if (location.IsFarm || location.IsGreenhouse || location is Shed)
+            if (location.IsFarm || location.isFarmBuildingInterior() || location.IsGreenhouse || location is Shed)
             {
 
                 hole.added = new() { SpellHandle.effects.harvest, };

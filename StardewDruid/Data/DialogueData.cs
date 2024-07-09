@@ -66,6 +66,8 @@ namespace StardewDruid.Data
             energySkill,
             dragonBuff,
             dragonBuffDescription,
+            druidFreneticism,
+            speedIncrease,
 
             // Journal
 
@@ -117,10 +119,15 @@ namespace StardewDruid.Data
             skipQuest,
             replayQuest,
             replayTomorrow,
+            replayReward,
             cancelReplay,
+            viewEffect,
+            massHerbalism,
 
             // Miscellaneous
-
+            trashCollected,
+            bomberInterruptions,
+            slimesDestroyed,
             learnRecipes,
             theDusting,
             abortTomorrow,
@@ -130,6 +137,8 @@ namespace StardewDruid.Data
             leavingEvent,
             ladderAppeared,
             returnLater,
+            reachEnd,
+            treasureHunt,
 
         }
 
@@ -200,6 +209,14 @@ namespace StardewDruid.Data
                 case stringkeys.stamina:
 
                     return "stamina";
+
+                case stringkeys.druidFreneticism:
+
+                    return "Druidic Freneticism";
+
+                case stringkeys.speedIncrease:
+
+                    return "Speed increased when casting amongst Grass";
 
                 // journal
 
@@ -309,11 +326,11 @@ namespace StardewDruid.Data
 
                 case stringkeys.relicNotFound:
 
-                    return "Unknown Relic";
+                    return "You haven't found this relic yet";
 
                 case stringkeys.relicUnknown:
 
-                    return "You haven't found this relic yet";
+                    return "Unknown Relic"; 
 
                 case stringkeys.primaryColour:
 
@@ -371,11 +388,35 @@ namespace StardewDruid.Data
 
                     return "Replay Available Tomorrow";
 
+                case stringkeys.viewEffect:
+
+                    return "View Related Effect";
+
                 case stringkeys.cancelReplay:
 
                     return "Cancel Replay";
 
+                case stringkeys.replayReward:
+
+                    return "Special Reward";
+
+                case stringkeys.massHerbalism:
+
+                    return "Brew All Available";
+
                 // Miscellaneous / Events
+
+                case stringkeys.trashCollected:
+
+                    return "Trash Collected";
+
+                case stringkeys.bomberInterruptions:
+
+                    return "Bomber Interrupted";
+
+                case stringkeys.slimesDestroyed:
+
+                    return "Slimes Destroyed";
 
                 case stringkeys.learnRecipes:
 
@@ -413,6 +454,14 @@ namespace StardewDruid.Data
                 case stringkeys.returnLater:
 
                     return "Return later today";
+
+                case stringkeys.reachEnd:
+
+                    return "Reach the end of the Tunnel!";
+
+                case stringkeys.treasureHunt:
+
+                    return "Treasure Chase";
 
             }
 
@@ -660,16 +709,20 @@ namespace StardewDruid.Data
                     {
 
                         [22] = new() { [0] = "Trespasser", },
-                        [24] = new() { [0] = "Filthy two legger", },
-                        [26] = new() { [0] = "Cheeep cheep", },
-                        [28] = new() { [0] = "You and your kind", },
-                        [30] = new() { [0] = "Have defiled the sacred waters", },
-                        [32] = new() { [0] = "Cheeep cheep", },
-                        [34] = new() { [0] = "Our Lady of Mists", },
-                        [37] = new() { [0] = "Demands retribution!", },
-                        [39] = new() { [0] = "CHEEEP", },
-                        [56] = new() { [0] = "These damned rocks", },
-                        [58] = new() { [0] = "CHEEE--- aack", },
+                        [25] = new() { [0] = "Filthy two legger", },
+                        [28] = new() { [0] = "Cheeep cheep", },
+                        [31] = new() { [0] = "You and your kind", },
+                        [34] = new() { [0] = "Have defiled the sacred waters", },
+                        [37] = new() { [0] = "Cheeep cheep", },
+                        [40] = new() { [0] = "Our Lady of Mists", },
+                        [43] = new() { [0] = "Demands retribution!", },
+                        [54] = new() { [0] = "CHEEEP", },
+                        [54] = new() { [0] = "The time of vengeance draws near", },
+                        [57] = new() { [0] = "We will be her vanguard", },
+                        [60] = new() { [0] = "to cleanse the undervalley", },
+                        [63] = new() { [0] = "and bring ruin to the betrayer", },
+                        [69] = new() { [0] = "Interminable rocks of damnation!", },
+                        [72] = new() { [0] = "CHEEE--- aack", },
 
                         [900] = new() { [999] = "Remain on the rite circle to increase trash collection", },
                     };
@@ -733,8 +786,8 @@ namespace StardewDruid.Data
                         [33] = new() { [0] = "We are not alone it seems" },
                         [34] = new() { [0] = "Hmmm... why there are so many?" },
                         [35] = new() { [0] = "This is for you." },
-                        [36] = new() { [0] = "I'll stay here for a while" },
-                        [37] = new() { [0] = "The valley is beautiful" },
+                        [36] = new() { [0] = "I'll linger here for a while" },
+                        [37] = new() { [0] = "(sigh)" },
 
                         [502] = new() { [0] = "It seems the wisps would remind me of something" },
                         [506] = new() { [0] = "A fragment of the past" },
@@ -759,6 +812,8 @@ namespace StardewDruid.Data
                         [561] = new() { [2] = "Lady...", },
                         [564] = new() { [0] = "He was never the same after this", },
                         [567] = new() { [0] = "Will I ever understand why?", },
+
+                        [777] = new() { [0] = "?", }
                     };
 
                     break;
@@ -838,17 +893,20 @@ namespace StardewDruid.Data
                         [30] = new() { [1] = "Arrogance! You are far diminished since the last age", },
                         [33] = new() { [1] = "A sad reflection in a murky puddle", },
 
-                        [36] = new() { [0] = "You're too late", },
-                        [39] = new() { [0] = "The slumber of the kings has led to stagnation", },
-                        [42] = new() { [0] = "The land must be destroyed to be renewed", },
+                        [38] = new() { [0] = "Spread out, find the apple spirits!", },
+                        [41] = new() { [0] = "Gorge yourselves on elemental power", },
 
-                        [45] = new() { [1] = "No, the circle will be renewed", },
+                        [48] = new() { [0] = "You're too late", },
+                        [51] = new() { [0] = "The slumber of the kings has led to stagnation", },
+                        [54] = new() { [0] = "The land must be destroyed to be renewed", },
 
-                        [48] = new() { [0] = "You will be consumed", },
-                        [51] = new() { [0] = "Along with the whole valley", },
-                        [54] = new() { [0] = "ALL WILL BE JELLY", },
+                        [57] = new() { [1] = "No, the circle will be renewed", },
 
-                        [58] = new() { [1] = "Your jelly is overrated", },
+                        [65] = new() { [0] = "You will be consumed", },
+                        [68] = new() { [0] = "Along with the whole valley", },
+                        [71] = new() { [0] = "ALL WILL BE JELLY", },
+
+                        [74] = new() { [1] = "Your jelly is overrated", },
 
                     };
 
@@ -866,15 +924,21 @@ namespace StardewDruid.Data
                         [16] = new() { [0] = "The Lady is not a friend to the drowned", },
                         [19] = new() { [0] = "She buried us with our boats on this shore", },
                         [22] = new() { [0] = "And the fae won't let us cross over", },
-                        [25] = new() { [0] = "Until the ol' sea witch gets what's owed", },
                         // cannons
-                        [34] = new() { [0] = "Then the waves will no longer wash our tattered bones", },
-                        [37] = new() { [0] = "An we'll sink into the warm embrace of the earth", },
-                        [40] = new() { [0] = "I think it's time ye join us, matey", },
+                        [25] = new() { [0] = "Until we hear the caws of crows", },
+                        [34] = new() { [0] = "The waves will wash over our tattered bones", },
+                        [37] = new() { [0] = "And we'll stay in the cold embrace of the earth", },
                         // cannons
                         [49] = new() { [0] = "Yeaarggh", },
-                        [52] = new() { [1] = "Bizarre... the Justiciar of Fate", },
-                        [55] = new() { [1] = "Why would he refuse them passage to the afterlife", },
+                        [52] = new() { [1] = "Beg for forgiveness, fiend", },
+                        [55] = new() { [1] = "That you may cease to disturb the living", },
+                        // cannons
+                        [64] = new() { [0] = "You think me too far gone?", },
+                        [67] = new() { [0] = "I regret each day the choices we made", },
+                        [70] = new() { [0] = "The horizon is the colour of reckoning", },
+                        [73] = new() { [0] = "She'll take what's owed her, and you'll be one of us", },
+                        [76] = new() { [1] = "Bizarre... the Morticians", },
+                        [79] = new() { [1] = "Why would they refuse passage to the afterlife", },
 
                         [990] = new() { [0] = "cover!", },
                         [991] = new() { [0] = "RUN", },
@@ -1261,8 +1325,8 @@ namespace StardewDruid.Data
                         [411] = new() { [3] = "Oh, I think I can help with that", },
 
                         [500] = new() { [0] = "Curious, I had this area marked on my chart", },
-                        [501] = new() { [0] = "A node of concentrated, stagnant ether", },
-                        [502] = new() { [0] = "The wizard guessed correctly. More artifacts are sealed here.", },
+                        [501] = new() { [0] = "As a node of concentrated, stagnant ether", },
+                        [502] = new() { [0] = "I theorise that more artifacts are sealed here.", },
                         [503] = new() { [0] = "If you would be so kind, Archdruid", },
                         [504] = new() { [0] = "Great. The digusting remains of a pumpkin fiend", },
                         [505] = new() { [0] = "There's an epitaph underneath it.", },
@@ -1270,8 +1334,8 @@ namespace StardewDruid.Data
                         [600] = new() { [7] = "Shadowtin! I believe you owe us something", },
                         [601] = new() { [8] = "Our friend here says you have OUR access key", },
                         [602] = new() { [0] = "What ploy is this, Rogue? Goblin?", },
-                        [603] = new() { [7] = "The merchant was told not to deal with deserters", },
-                        [604] = new() { [7] = "Now there is a penalty to pay", },
+                        [603] = new() { [7] = "The dwarf was told not to deal with deserters", },
+                        [604] = new() { [7] = "Either you pay the penalty, or we hurt him", },
                         [605] = new() { [0] = "You would debase the name of MY mercenary company", },
                         [606] = new() { [0] = "With a shakedown this pathetic", },
                         [607] = new() { [7] = "We're following the standard you set, with improvements", },
@@ -1284,8 +1348,8 @@ namespace StardewDruid.Data
                         [614] = new() { [0] = "That concludes my association with you lot. We're finished.", },
                         [615] = new() { [7] = "Haha. Deep was right about you Shadowtin", },
                         [616] = new() { [8] = "You're just a tool, and you've lost your edge", },
-                        [617] = new() { [1] = "(PsSht) I guess I was wrong about you", },
-                        [618] = new() { [1] = "(PsSht) Farewell, Shadow Scholar", },
+                        [617] = new() { [1] = "(PsSht) I didn't expect you to help... thank you", },
+                        [618] = new() { [1] = "(PsSht) Farewell friend", },
 
                     };
 
@@ -1420,8 +1484,6 @@ namespace StardewDruid.Data
                         [1] = new()
                         {
 
-                            companion = 0,
-
                             intro = "The Forgotten Effigy: So a successor appears. I am the Effigy, crafted by the First Farmer, sustained by the old powers, and bored.",
 
                             responses = new()
@@ -1434,8 +1496,8 @@ namespace StardewDruid.Data
                             answers = new()
                             {
 
-                                "One of the leylines of the valley seams through the bedrock of this cavern. This is where I have spent many of your centuries, in stasis, listening to the energies of the Weald. " +
-                                "The last time I awoke, your predecessor had already departed this plane. I found the farm abandoned, the mining town, diminished. Now strange shadows stalk the sacred spaces. ",
+                                "One of the leylines of the valley seams through the bedrock of this cavern. This is where I have spent many of your centuries, in stasis, listening to the energies of the Weald, leaving periodically to witness the change of seasons. " +
+                                "The last time I ventured out, your predecessor had already departed this plane. I found the farm abandoned, the mining town, diminished. Now strange shadows stalk the sacred spaces, and it has not been safe for me to leave this refuge."
 
                             },
 
@@ -1445,10 +1507,8 @@ namespace StardewDruid.Data
 
                         [2] = new()
                         {
-                            
-                            companion = 0,
 
-                            intro = "The Forgotten Effigy: The lineage of valley farmers you belong to was once aligned with the otherworld. They formed a circle of Druids.",
+                            intro = "The Forgotten Effigy: The valley didn't always seem so inhospitable. The farmers were once aligned with the otherworld. They formed a circle of Druids.",
 
                             responses = new()
                             {
@@ -1538,8 +1598,6 @@ namespace StardewDruid.Data
                         [1] = new()
                         {
 
-                            companion = 0,
-
                             intro = "Murmurs of the waves: We thank you for restoring our sacred waters. Though you are young. And dry. This is unexpected.",
 
                             responses = new()
@@ -1556,8 +1614,6 @@ namespace StardewDruid.Data
                         [2] = new()
                         {
 
-                            companion = 0,
-
                             intro = "Murmurs of the waves: Speak, friend. She listens.",
 
                             responses = new()
@@ -1573,8 +1629,6 @@ namespace StardewDruid.Data
                         
                         [3] = new()
                         {
-
-                            companion = 0,
 
                             intro = "(Distant voice): I hear you, successor.",
 
@@ -1624,6 +1678,7 @@ namespace StardewDruid.Data
                         {
 
                             intro = "The Effigy: I've only ever possessed a small amount of talent in invoking the energies of the Weald.",
+
                             responses = new()
                             {
                                 "I thought what you just did was great. I'm surprised you consider yourself untalented in the Weald.",
@@ -1643,8 +1698,6 @@ namespace StardewDruid.Data
 
                         [3] = new()
                         {
-
-                            companion = 3,
 
                             intro = "The Effigy: That peculiar cooking technique was taught to me by the Lady herself. It was a favourite dish of the first farmer's. He was her champion.",
 
@@ -1671,8 +1724,6 @@ namespace StardewDruid.Data
                         [4] = new()
                         {
 
-                            companion = 3,
-
                             intro = "The Effigy: That menace. I swear that when I find the means, I will turn him to juice and rind. Something about that insidious, gleeful countenance inspires me to rage.",
 
                             responses = new()
@@ -1696,6 +1747,7 @@ namespace StardewDruid.Data
                         {
 
                             intro = "The Effigy: The rolling energies of the mists gather here.",
+
                             responses = new()
                             {
                                 "Are those... wisps?",
@@ -1753,8 +1805,6 @@ namespace StardewDruid.Data
                         [1] = new()
                         {
 
-                            companion = 0,
-
                             intro = "The Revenant: Well now, a fellow human. Welcome to the Chapel of the Stars.",
 
                             responses = new()
@@ -1776,7 +1826,6 @@ namespace StardewDruid.Data
 
                         [2] = new()
                         {
-                            companion = 0,
 
                             intro = "The Revenant: Did he tell you the risks? Did he tell you what you could lose by this path?",
 
@@ -1797,7 +1846,6 @@ namespace StardewDruid.Data
 
                         [3] = new()
                         {
-                            companion = 0,
 
                             intro = "The Revenant: If the scarecrow believes in you, I suppose that counts for something. Seems to me he never does things on a whim. ",
 
@@ -1830,8 +1878,6 @@ namespace StardewDruid.Data
                         [1] = new()
                         {
 
-                            companion = 0,
-
                             intro = "(The strange cat looks at you expectantly)",
 
                             responses = new()
@@ -1854,7 +1900,6 @@ namespace StardewDruid.Data
 
                         [2] = new()
                         {
-                            companion = 0,
 
                             intro = "The Jester of Fate: Well farmer, you have the scent of destiny about you, and some otherworldly ability too. You must be the fabled acolyte of the celestials I was warned about.",
 
@@ -1876,9 +1921,8 @@ namespace StardewDruid.Data
                         
                         [3] = new()
                         {
-                            companion = 0,
 
-                            intro = "The Jester of Fate: Well farmer, you have the scent of destiny about you, and some otherworldly ability too. You must be the fabled acolyte of the celestials I was warned about.",
+                            intro = "The Jester of Fate: I'm sure you agree this would be great for both of us.",
 
                             responses = new()
                             {
@@ -1900,15 +1944,15 @@ namespace StardewDruid.Data
 
                     };
 
-
-                    object bridge = typeof(Mountain).GetField("bridgeRestored", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(Game1.getLocationFromName("Mountain"));
-
-                    if (bridge.ToString() == "True")
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.relicWeald))
                     {
 
-                        string buffer = conversations[3].responses.First();
-                        conversations[3].responses.Add(buffer);
                         conversations[3].responses.Add("I'm not making any deals with a strange cat on a bridge built by forest spirits!");
+
+                        string buffer = conversations[3].answers.First();
+
+                        conversations[3].answers.Add(buffer);
+
                         conversations[3].answers.Add("Hehehe... I like you already! But you cannot escape this Fate, literally, and, well literally. " +
                                 "Come see me when you're ready to explore the dungeon on the other side of this gap, I promise it will be worth your time! (The mountain bridge must be repaired in order to proceed)");
 
@@ -1923,8 +1967,6 @@ namespace StardewDruid.Data
 
                         [1] = new()
                         {
-
-                            companion = 0,
 
                             intro = "The Jester of Fate: Are you as creeped out as I am farmer?",
 
@@ -1941,14 +1983,13 @@ namespace StardewDruid.Data
 
                             },
 
-                            questContext = 140,
+                            questContext = 130,
 
                         },
 
                         [2] = new()
                         {
-                            companion = 0,
-
+  
                             intro = "The Jester of Fate: These monuments are arranged like the court of the Fates. The Artisans, the Priesthood, the Morticians, and Chaos. ",
 
                             responses = new()
@@ -1962,13 +2003,12 @@ namespace StardewDruid.Data
                                 "I think I know this place. The first envoys to the valley came here to fix all the problems caused by the dragons and celestials and elderfolk and humans.",
                             },
 
-                            questContext = 150,
+                            questContext = 140,
 
                         },
 
                         [3] = new()
                         {
-                            companion = 0,
 
                             intro = "The Jester of Fate: Thanatoshi represented the Morticians. This is the last place he would have been seen by our kin. ",
 
@@ -1985,7 +2025,7 @@ namespace StardewDruid.Data
 
                             },
 
-                            questContext = 160,
+                            questContext = 150,
 
                         },
 
@@ -2015,7 +2055,7 @@ namespace StardewDruid.Data
 
                             },
 
-                            questContext = 100,
+                            questContext = 99,
 
                         },
 
@@ -2041,14 +2081,12 @@ namespace StardewDruid.Data
                                 "Pretty grim. But hey, the priesthood doesn't always get things right. "
                             },
 
-                            questContext = 200,
+                            questContext = 199,
 
                         },
 
                         [3] = new()
                         {
-
-                            companion = 3,
 
                             intro = "Jester of Fate: Any clue where that cosmic fox went?",
 
@@ -2065,14 +2103,12 @@ namespace StardewDruid.Data
                                 "Most fates get confused or angry by her attempts at fun. I'm one of her only friends."
                             },
 
-                            questContext = 250,
+                            questContext = 299,
 
                         },
 
                         [4] = new()
                         {
-
-                            companion = 3,
 
                             intro = "Jester of Fate: I have no idea who actually won.",
 
@@ -2089,7 +2125,7 @@ namespace StardewDruid.Data
                                 "I guess there's something else going on with her. There always is."
                             },
 
-                            questContext = 400,
+                            questContext = 799,
 
                         },
 
@@ -2110,7 +2146,7 @@ namespace StardewDruid.Data
                                 "(Jester sighs) This isn't what the high priestess expects of me."
                             },
 
-                            questContext = 500,
+                            questContext = 499,
 
                         },
 
@@ -2138,7 +2174,7 @@ namespace StardewDruid.Data
 
                             },
 
-                            questContext = 600,
+                            questContext = 599,
 
                         },
 
@@ -2147,7 +2183,7 @@ namespace StardewDruid.Data
                     break;
 
 
-                case QuestHandle.challengeEther:
+                case QuestHandle.challengeFates:
 
                     conversations = new()
                     {
@@ -2278,7 +2314,7 @@ namespace StardewDruid.Data
                             {
                                 "I anticipated this encounter, when my own interests in the magical heritage of the valley would begin to coincide or conflict with yours. " +
                                 "I welcome the re-establishment of the Circle of Druids, but your advancement has been quick by magical standards, " +
-                                "and it has yet to be proven to me that you have the capacity to handle the dangers and mysteries that lie before you." +
+                                "and it has yet to be proven to me that you have the capacity to handle the dangers and mysteries that lie before you. " +
                                 "Before I retransfigure your friend here, you'll need to face me in a contest of powers, and we'll know for sure if there are any merits to your 'rites'.",
                             },
 
@@ -2302,13 +2338,15 @@ namespace StardewDruid.Data
                             answers = new()
                             {
                                 "I recognise that your Circle of Druids are a boon to the valley, not just for your sacred spaces, but for the elemental spirits that I seek to guide and protect." +
-                                "As your co-custodian, I do have some information about this antiquated machine. It is the Shrine Engine, the very one that powers the warp statues and other such artifacts in the valley. " +
-                                "It's purpose is obvious, but of it's mechanisms and origin, I know very little, despite my possession of the specifications for the machine's manufacture. That's the tome your friend attempted to pilfer. " +
-                                "In fact, I discovered it on the stump of a tree above the cliffs south east of here. I believe other such artifacts may be sealed in the vicinity, but unfortunately, " +
-                                "I do not have the means to locate or excavate them, my attempts to source a codex to decipher the specifications have proven futile. I can only marvel at the intricate illustrations like a child with a picture-book. " +
-                                "I have managed only to discern the identity of the author from a scribble that defaces the first page. 'Mother of Crows'. "
+                                "As your co-custodian, I do have some information about this antiquated machine. It is the Shrine Engine. It powers the warp statues and other such artifacts in the valley. " +
+                                "Coincidentally, I recently came into possession of what I believe are the machine's specifications, in the tome your friend attempted to pilfer. " +
+                                "It was in the stump of a tree, the recent victim of celestial power, I believe, within the clearings south-east of the forest. " +
+                                "The tome is cryptic. Without a practical cipher, I have only managed to discern the identity of the author from a scribble that defaces the first page. 'Mother of Crows'. "
                             },
-
+                            //"It's purpose is obvious, but of it's mechanisms and origin, I know very little, despite
+                            //I believe other such artifacts may be sealed in the vicinity, but unfortunately, " +
+                            //"I do not have the means to locate or excavate them, my attempts to source a codex to decipher the specifications have proven futile
+                            //I can only marvel at the intricate illustrations like a child with a picture-book. 
                             questContext = 399,
 
                         },
@@ -2316,7 +2354,7 @@ namespace StardewDruid.Data
                         [5] = new()
                         {
 
-                            intro = "Shadowtin Bear: I'm fine. I imagine I will have to endure many more hardships on my journey to expose Lord Deep. The petty ego of that recluse is of no consequence to me.",
+                            intro = "Shadowtin Bear: I imagine I will have to endure many more hardships on my journey to expose Lord Deep. The petty ego of that recluse is of no consequence to me.",
 
                             responses = new()
                             {
@@ -2326,15 +2364,12 @@ namespace StardewDruid.Data
 
                             answers = new()
                             {
-                                "I just. What. What is the worth of another's comfort in comparison to the depravity of my existence, of the languishing of my people. " +
-                                "We've been slowly consumed by the hunger of a tyrant, who expends the lives of our best folk to construct his cities and continue his conquests. " +
-                                "All under the pretense that we are his property, his souls to enflame and extinguish to his purposes. " +
-                                "So what if a cow got frosty teats, or we trespassed into a lowly magician's sanctum. I know it's wrong, but I can't afford to care, especially when no one shows a damn bit of care to us. " +
+                                "Tell me this, human. What is the worth of another's comfort in comparison to the depravity of my existence, of the languishing of my people. " +
+                                "So what if a cow got frosty teats, or we trespassed into a fabulous magician's sanctum. " +
+                                "I know it's wrong, but I can't afford to care, especially when no one shows a damn bit of care to us. " +
                                 "The Fates don't answer our prayers or pleas. The Lady doesn't smite my enemies. " +
-                                "I need to expose an imposter, before he gains the power of dragons and heaps the souls of my people into an engine of war, and to do that I need the truth of his past. Unequivocable testimony of his fraud. " +
-                                "There may be answers hidden out in the cliffs south east of here, if my enhanced feline senses heard the wizard correctly. " +
-                                "I understand if you have apprehensions about assisting me further. Take this key as a token of my thanks. " +
-                                "I'm off to investigate the cliffs, and you're welcome to join me, if you so wish.",
+                                "(Shadowtin calms as he looks to the exit) There may be answers hidden out in the cliffs south east of here, if my enhanced feline senses heard the wizard correctly. " +
+                                "As a show of good faith, I'll give you the access key, and you can be certain I won't return for a bit of 'shadowthievery'.",
                             },
 
                             questContext = 499,
@@ -2381,15 +2416,15 @@ namespace StardewDruid.Data
                             {
 
                                 "We reap what we sow, as my grandfather might have said. You were the captain of knaves, but now you are the scholar of the circle, and reap the rewards of dignity and new purpose.",
-                                "I thought the only reason you were their captain was because you were the only one who could read maps.",
+                                "I thought the only reason you were their captain was because you were the only one of them who could read maps. So...",
 
                             },
 
                             answers = new()
                             {
 
-                                "I only became a scholar when I beheld a Stellar Vessel in the besieged halls of a dwarven stronghold. " +
-                                "The similarities in it's craftsmanship to the Shadow Vessel were unmistakeable. " +
+                                "I am by nature a shadow thief, but when I beheld an enshrined relic of the stellarfolk in the halls of a besieged stronghold, I lost all passion for plunder. " +
+                                "The similarities in the dwarven craftsmanship to our our own Great Shadow Vessel were unmistakeable. It was a Stellar Vessel. " +
                                 "The dwarves recieved the same blessings as we did, not from Lord Deep, but a greater power, who refuses to reveal themselves to us. " +
                                 "If it was Yoba, then why did he leave us to tyranny? How is that an example that would inspire my people to honour and glory? " +
                                 "I can only look to you to know what is right, farmer, and maybe I'll know the truth of it all one day. Now... I should probably go pay for that milk I stole."

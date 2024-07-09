@@ -34,7 +34,7 @@ namespace StardewDruid.Cast.Ether
         public override void TriggerField()
         {
 
-            triggerField = new(eventId, location.Name, origin, IconData.decorations.ether);
+            eventRenders.Add(new(eventId, location.Name, origin, IconData.decorations.ether));
 
         }
 
@@ -88,7 +88,7 @@ namespace StardewDruid.Cast.Ether
 
             activeLimit = 60;
 
-            EventBar("Treasure Chase", 0);
+            EventBar(DialogueData.Strings(DialogueData.stringkeys.treasureHunt), 0);
 
             switch (Mod.instance.randomIndex.Next(3))
             {

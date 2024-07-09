@@ -123,6 +123,7 @@ namespace StardewDruid.Journal
             //------------------
 
             Effigy_Ether,
+            Jester_Tomb,
             Jester_Ether,
             Shadowtin_Ether,
             Revenant_Ether,
@@ -206,9 +207,11 @@ namespace StardewDruid.Journal
 
                 [QuestHandle.swordEther] = new(){
 
-                    LoreData.stories.Jester_Ether,
 
                     LoreData.stories.Effigy_Ether,
+
+                    LoreData.stories.Jester_Tomb,
+                    LoreData.stories.Jester_Ether,
 
                     LoreData.stories.Shadowtin_Ether,
 
@@ -295,11 +298,10 @@ namespace StardewDruid.Journal
                     "having settled her kin into their enduring slumber, and she continued to fulfill her duty to the Weald and to Yoba. " +
                     "After a time, I began to hear her voice in the storms, and mist would blanket the valley at odd times. " +
                     "It became a mark of her presence, a sign of her enduring affection for the sacred places. " +
-                    "The energies of the waves used to serve the Kings, now they are her servants. " +
                     "The circle weakened in her absence. The First Farmer's attention shifted to other matters, and he began to neglect his duty. " +
                     "He became obsessed with fanciful ideas, and a desire for something beyond his grasp. Then he left. " +
                     "For a long time I was alert for his return. " +
-                    "Then, after a century, when it certain he no longer walked this world, I shut myself away. ",
+                    "Then, after a century, when it became certain he no longer walked this world, I shut myself away. ",
 
             };
 
@@ -355,7 +357,7 @@ namespace StardewDruid.Journal
                 character = characters.Effigy,
                 question = "What do you know of Jester and the Fates?",
                 answer = "Jester serves the Priesthood of the Fates. They weave the cords of destiny into the great tapestry that is the story of the world. " +
-                            "It is said that the clergy serve a special purpose known only to Yoba, and so they often appear to work by mystery and happenchance, by whim even. " +
+                            "It is said that each member of the clergy serve a special purpose known only to Yoba, and so they often appear to work by mystery and happenchance, by whim even. " +
                             "(Effigy motions ever so slightly in the direction of Jester) They should not be underestimated or trifled with. " +
                             "No matter how whimsical they appear, their adherance to the decrees of their high priestess is absolute.",
 
@@ -398,8 +400,8 @@ namespace StardewDruid.Journal
                 question = "Any information you can give me to help Jester find Thanatoshi?",
                 answer = "Not really, knight guardian, but I hope for my own sake as much as your friend's that he can find the mad reaper, so you can plead with him to let me pass on from this plane. " +
                 "Just, be careful. The Priesthood of the Fates are the nice guys. The others, the crafters, the morbid ones, and that great crazy thing they call Chaos, they might not be so happy for you to stick your nose into forgotten affairs. " +
-                "Envoys of all the sects were here once, in the valley, somewhere on the banks of the river. " +
-                "They couldn't agree amongst themselves what to do about the mess the elderfolk and dragons made of this world, and that was when the Reaper took it upon himself to administer his own kind of justice. (Revenant silently turns to the great open window)",
+                "Envoys have visited us before, and the last group settled here, in the valley, somewhere on the banks of the river. " +
+                "They couldn't agree amongst themselves what to do about the mess the elderfolk and dragons made of this world, and that was when the Reaper took it upon himself to administer his own kind of justice. (Revenant silently turns to the great open window).",
 
             };
 
@@ -414,7 +416,7 @@ namespace StardewDruid.Journal
                 answer = "I have started to suspect that the assignment of such indistinguished individuals as envoys of the Fae Court was intentional. The jurisdiction of the Fates has ended, and they cannot act openly. " +
                 "So it is a time for subterfuge and the gathering of information, of an outward display of weakness and whimsy, so that the seats of the Fae Court might prepare to maneuver in secret. " +
                 "The Morticians are not known for subtleties, but if the Artisans, the most curious of all the sects, send an undistinguished envoy, then we'll have certainty. " +
-                "The mysterious games of the Fates are in play in the valley.",
+                "The mysterious games of the Fates are at play in the valley.",
             };
 
             storylist[stories.Jester_Buffin] = new()
@@ -424,8 +426,8 @@ namespace StardewDruid.Journal
                 question = "Doesn't it strike you as a little odd that Buffin's still here?",
                 answer = "It's how it's always been, farmer. You know, she's a mere moment older than me. When she was born, the artisans knew she would be claimed by Chaos, which is obvious, from the way she looks. And walks. " +
                 "Anyway, the great oracle, Senkenomei, foresaw how great of an agent of Chaos Buffin would be, and panicked, because balance, or something, so she asked for the next Fate born to be dedicated to the priesthood, to become... A Hero Of Fortune. " +
-                "Guess who that was? I'll give you a hint, it wasn't someone the the oracle wanted at first, because that someone is not priestly in any way, but she grew fond of me eventually. " +
-                "From that time forth Buffin's been a constant friend because we thought why hate eachother just because of some stupid rule about balance. Still. Anything I do she has to do the same or better. That's why she's here. " +
+                "Guess who that was? I'll give you a hint, it wasn't someone the oracle wanted at first, because that someone is not priestly in any way, but she grew fond of me eventually. " +
+                "From that time forth Buffin's been a constant friend because we thought why hate each other just because of some stupid rule about balance. Still. Anything I do she has to do the same or better. That's why she's here. " +
                 "She's probably trying to outdo me right now in some manner. But she still can't reach the places I do when I lick myself!",
  
 
@@ -436,7 +438,7 @@ namespace StardewDruid.Journal
                 story = stories.Revenant_court,
                 character = characters.Revenant,
                 question = "I've seen the sculpted likeness of the first envoys of the Fates. What were they really like?",
-                answer = "Eh, the monuments are more symbollic than anything. I remember the Artisan being a bit of a hag. The Justiciar was like Thanatoshi, another seven foot tall staff-wielding thug. " +
+                answer = "Eh, the monuments are more symbolic than anything. I remember the Artisan being a bit of a hag. The Justiciar was like Thanatoshi, another seven foot tall staff-wielding thug. " +
                 "The Hound of Chaos, well, the moniker is deceptive, because that creature was massive. The point is, they weren't cute little creatures of the forest like the sculptor would have you believe. " +
                 "The Fae Court sent envoys strong enough to wrestle dragons and arrest celestials. " +
                 "We could not defy them, and even your scarecrow friend was forbidden to approach them, lest they capture him and 'undo' all of the hardwork that went into making him. " +
@@ -506,12 +508,31 @@ namespace StardewDruid.Journal
             {
                 story = stories.Shadowtin_self_1,
                 character = characters.Shadowtin,
-                question = "How did you and the other shadowfolk come into the service of Lord Deep?",
-                answer = "The folklore of shadows is enscribed on the outer surface of the great vessel. " +
-                "The narrative starts with Lord Deep, before the first of my forefolk is mentioned, and the stories suggest we have always been subservient to him. But I believe those first enscriptions have been tampered with. " +
-                "I know now, from research, that the vessel is dragon-forged. Perhaps we served an ancient one, perhaps Lord Deep rewrote our history. I hope my travels and the treasures we uncover yield answers.",
+                question = "How did your company come into the service of Lord Deep?",
+                answer = "We're a band of professional looters. Which has been a wonderful career for me, as I'm fascinated by the elder age, and the cultural heritage of exotic cultures. " +
+                "How my motivations diverged from my former associates is a consequence, I suppose, of my over-analytical personality. " +
+                "The folklore of shadows is enscribed on the surface of the Great Shadow Vessel of our city. The narrative begins with the coalescence of shadows into sentient life by the cosmic power of Lord Deep. " +
+                "But I have uncovered something to the contrary, a bizarre account that suggests those first enscriptions have been tampered with, and that Lord Deep is a fraud. " +
+                "It's a dangerous opinion to have in my homeland, as we are a warring people, and he is a warlord of great measure, " +
+                "but I have come to admire the cultures that we have battled and plundered, and I can't shake these dissident thoughts, that he has burdened and slowly corrupted my people. " +
+                "I hope my travels and the treasures we uncover yield answers.",
 
             };
+
+
+            storylist[stories.Shadowtin_self_1] = new()
+            {
+                story = stories.Shadowtin_self_1,
+                character = characters.Shadowtin,
+                question = "Some of your former band members mentioned a human agent",
+                answer = "Emissaries from your plane visited the Lord Deep and established a partnership to re-acquire the dormant powers of the Ancient Ones. " +
+                "There are many shadow mercenaries at work in the nations of your world, and this valley was my assignment. " +
+                "The human contact I conferred with does not live here, and I am purposefully ignorant of their daylight identity. I do know they're wealthy. And they are disappointed in my progress. " +
+                "I used more resources than they were prepared to allocate, but I believe that it was necessary to conduct a thorough investigation of the prospects here. " +
+                "I suppose demotion could be considered my contract evaluation.",
+
+            };
+
 
             storylist[stories.Buffin_court] = new()
             {
@@ -540,13 +561,24 @@ namespace StardewDruid.Journal
 
             };
 
+            storylist[stories.Jester_Tomb] = new()
+            {
+                story = stories.Jester_Tomb,
+                character = characters.Jester,
+                question = "I'm sorry about what happened in the Tomb",
+                answer = "(Jester looks away) I just... I thought that when we found Thanatoshi, then that would be the end of the 'grand quest'. Now the end seems evern further away. " +
+                "I never met the Reaper before, but I've told a few stories about him, and he was always this great, unbending hero. " +
+                "Well he didn't seem so great when he was trying to slice our heads off. (Jester looks up) I still haven't informed the Morticians where his broken soul is.",
+
+            };
+
             storylist[stories.Jester_Ether] = new()
             {
                 story = stories.Jester_Ether,
                 character = characters.Jester,
                 question = "Any thoughts on the Ancient ones?",
-                answer = "We're talking about creatures that could reforge the world itself, Farmer. They don't like our kind, otherfolk or humanfolk. " +
-                "Actually I'm... (Jester's hairs raise across it's backside) kind of scared of them. I'm glad you have my back!",
+                answer = "Oh I've heard lots of scary tales about those things. Monstrous. Scaley. Big teeth. Warts on their nose (Jester isn't sure about that last one). " +
+                "They could burn you with a look and make you into roast dinner with a single word! Actually I... (Jester's hairs raise across it's backside) get kind os scared just thinking about them. I'm glad you have my back!",
 
             };
 
@@ -653,6 +685,16 @@ namespace StardewDruid.Journal
 
             };
 
+            storylist[stories.Shadowtin_Circle] = new()
+            {
+                story = stories.Buffin_Ether,
+                character = characters.Buffin,
+                question = "",
+                answer = "We've been slowly consumed by the hunger of a tyrant, who expends the lives of our best folk to construct his cities and continue his conquests, " +
+                "all under the pretense that we are his property, his souls to enflame and extinguish to his purposes. "+
+                "I want to expose him as an imposter, before he gains the power of dragons and heaps the souls of my people into an engine of war, " +
+                "and to do that I need the truth of his past. Unequivocable testimony of his fraud.",
+            };
 
             return storylist;
 

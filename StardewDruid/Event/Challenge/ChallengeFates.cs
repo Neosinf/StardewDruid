@@ -143,6 +143,8 @@ namespace StardewDruid.Event.Challenge
 
                 darkBrute.netPosturing.Set(true);
 
+                darkBrute.setWounded = true;
+
                 location.characters.Add(darkBrute);
 
                 darkBrute.update(Game1.currentGameTime, location);
@@ -163,6 +165,8 @@ namespace StardewDruid.Event.Challenge
                 darkLeader.groupMode = true;
 
                 darkLeader.netPosturing.Set(true);
+
+                darkLeader.setWounded = true;
 
                 location.characters.Add(darkLeader);
 
@@ -186,6 +190,8 @@ namespace StardewDruid.Event.Challenge
 
             darkShooter.netPosturing.Set(true);
 
+            darkShooter.setWounded = true;
+
             location.characters.Add(darkShooter);
 
             darkShooter.update(Game1.currentGameTime, location);
@@ -206,6 +212,8 @@ namespace StardewDruid.Event.Challenge
 
             darkGoblin.netPosturing.Set(true);
 
+            darkGoblin.setWounded = true;
+
             location.characters.Add(darkGoblin);
 
             darkGoblin.update(Game1.currentGameTime, location);
@@ -225,6 +233,8 @@ namespace StardewDruid.Event.Challenge
             darkRogue.groupMode = true;
 
             darkRogue.netPosturing.Set(true);
+
+            darkRogue.setWounded = true;
 
             location.characters.Add(darkRogue);
 
@@ -472,6 +482,8 @@ namespace StardewDruid.Event.Challenge
 
                 }
 
+                activeCounter = 89;
+
                 activeSection = 2;
 
                 StayCompanions();
@@ -537,7 +549,13 @@ namespace StardewDruid.Event.Challenge
 
                     break;
 
-                case 135: DialogueSetups(companions[3], 1); companions[3].LookAtTarget(Game1.player.Position); break;
+                case 135:
+
+                    DialogueSetups(companions[3], 1);
+
+                    companions[3].LookAtTarget(Game1.player.Position); 
+                    
+                    break;
 
                 case 145: DialogueSetups(companions[1], 2); companions[3].LookAtTarget(Game1.player.Position); break;
 

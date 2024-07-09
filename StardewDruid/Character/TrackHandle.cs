@@ -1,10 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Xml.Linq;
 using static StardewValley.Minigames.TargetGame;
 
 
@@ -23,6 +25,10 @@ namespace StardewDruid.Character
         public bool standby;
 
         public int warpDelay;
+
+        public Vector2 warpSpot;
+
+        public int trackOffset;
 
         public TrackHandle(CharacterHandle.characters For, Farmer follow = null)
         {
@@ -44,8 +50,10 @@ namespace StardewDruid.Character
 
         }
 
-        public void TrackPlayer()
+        public void TrackPlayer(int Offset)
         {
+
+            trackOffset = Offset;
 
             if (trackLocation != followPlayer.currentLocation.Name)
             {
@@ -79,7 +87,7 @@ namespace StardewDruid.Character
                     return;
 
                 }
-                
+
                 if(warpDelay > 0)
                 {
 
@@ -100,11 +108,13 @@ namespace StardewDruid.Character
 
                 // attempt warp every second
 
-                warpDelay = 10;
+                warpDelay = 8 + (4 * trackOffset);
 
                 return;
 
             }
+
+            warpSpot = Vector2.Zero;
 
             Vector2 center = new Vector2((int)(followPlayer.Position.X / 64), (int)(followPlayer.Position.Y / 64));
 
@@ -168,28 +178,42 @@ namespace StardewDruid.Character
 
             int direction = -1;
 
-            if(Game1.xLocationAfterWarp > 0)
+            if(Game1.xLocationAfterWarp > 0 || warpSpot != Vector2.Zero)
             {
+                
+                if (Game1.xLocationAfterWarp > 0)
+                {
+                
+                    warpSpot = new(Game1.xLocationAfterWarp * 64, Game1.yLocationAfterWarp * 64);
+                
+                }
 
-                Vector2 afterWarp = new(Game1.xLocationAfterWarp, Game1.yLocationAfterWarp);
+                float afterSpace = Vector2.Distance(followPlayer.Position, warpSpot);
 
-                float afterSpace = Vector2.Distance(followPlayer.Position, afterWarp);
-
-                if (afterSpace >= 256)
+                // player is still on warp
+                if(afterSpace <= 64)
                 {
 
-                    //warp between player and warp point
-
-                    direction = ModUtility.DirectionToTarget(followPlayer.Position, afterWarp)[2];
+                    return false;
 
                 }
                 else
+                //if (afterSpace >= 256)
                 {
-                    // warp to other side of warp point
 
-                    direction = (direction + 4) % 8;
+                    //warp between player and warp point
+                    direction = ModUtility.DirectionToTarget(followPlayer.Position, warpSpot)[2];
 
                 }
+                //else
+                //{
+                    
+                //    direction = ModUtility.DirectionToTarget(followPlayer.Position, warpSpot)[2];
+                    
+                    // warp to other side of warp point
+                 //   direction = (direction + 4) % 8;
+
+                //}
 
             }
 
@@ -226,7 +250,7 @@ namespace StardewDruid.Character
 
                 // try for center
 
-                direction = ModUtility.DirectionToCenter(followPlayer.currentLocation, followPlayer.Position)[2];
+                direction = (ModUtility.DirectionToCenter(followPlayer.currentLocation, followPlayer.Position)[2] + 4) % 8;
 
             }
 
@@ -297,18 +321,29 @@ namespace StardewDruid.Character
 
             // first get the closest vector on path from termination
 
-            if(nodes.Count == 0)
+            Dictionary<Vector2,int> valids = new();
+
+            for(int i = 0; i < nodes.Count - trackOffset; i++)
+            {
+
+                KeyValuePair<Vector2, int> node = nodes.ElementAt(i);
+
+                valids[node.Key] = node.Value;
+
+            }
+
+            if (valids.Count == 0)
             {
 
                 return new();
 
             }
 
-            List<Vector2> paths = new() { nodes.Keys.Last(), };
+            List<Vector2> paths = new() { valids.Keys.Last(), };
 
             Vector2 origin = Mod.instance.characters[trackFor].occupied;
 
-            int direct = ModUtility.DirectionToTarget(origin, nodes.Keys.Last())[2];
+            int direct = ModUtility.DirectionToTarget(origin, valids.Keys.Last())[2];
 
             List<int> accept = new()
             {
@@ -317,15 +352,15 @@ namespace StardewDruid.Character
                 (direct + 7) % 8,
             };
 
-            float threshold = Vector2.Distance(origin, nodes.Keys.Last());
+            float threshold = Vector2.Distance(origin, valids.Keys.Last());
 
-            if (nodes.Count > 1)
+            if (valids.Count > 1)
             {
                 
-                for (int n = nodes.Count - 2; n >= 0; n--)
+                for (int n = valids.Count - 2; n >= 0; n--)
                 {
 
-                    KeyValuePair<Vector2, int> node = nodes.ElementAt(n);
+                    KeyValuePair<Vector2, int> node = valids.ElementAt(n);
 
                     float closer = Vector2.Distance(origin, node.Key);
 
@@ -351,7 +386,7 @@ namespace StardewDruid.Character
 
             }
 
-            return ModUtility.PathsToTraversal(Mod.instance.characters[trackFor].currentLocation, paths, nodes, 2);
+            return ModUtility.PathsToTraversal(Mod.instance.characters[trackFor].currentLocation, paths, valids, 2);
 
         }
 

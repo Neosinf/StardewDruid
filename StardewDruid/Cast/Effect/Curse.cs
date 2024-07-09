@@ -7,8 +7,10 @@ using StardewValley;
 using StardewValley.Companions;
 using StardewValley.Locations;
 using StardewValley.Monsters;
+using StardewValley.Projectiles;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -21,11 +23,23 @@ namespace StardewDruid.Cast.Effect
     public class Curse : EventHandle
     {
 
-        public Dictionary<StardewValley.Monsters.Monster, CurseTarget> curseTargets = new();
+        public Dictionary<StardewValley.Monsters.Monster, CurseTarget> victims = new();
 
         public Curse()
           : base()
         {
+
+        }
+
+        public override void EventDraw(SpriteBatch b)
+        {
+
+            foreach(KeyValuePair<StardewValley.Monsters.Monster, CurseTarget> victim in victims)
+            {
+
+                victim.Value.draw(b);
+
+            }
 
         }
 
@@ -39,7 +53,7 @@ namespace StardewDruid.Cast.Effect
 
             }
 
-            if (curseTargets.ContainsKey(monster))
+            if (victims.ContainsKey(monster))
             {
 
                 return;
@@ -73,7 +87,7 @@ namespace StardewDruid.Cast.Effect
 
                 case SpellHandle.effects.morph:
 
-                    if (monster.isGlider.Value || monster is DustSpirit)
+                    if (monster.isGlider.Value || ModUtility.GroundCheck(location,monster.Tile) != "ground" || monster is DustSpirit)
                     {
 
                         effect = SpellHandle.effects.daze;
@@ -116,7 +130,7 @@ namespace StardewDruid.Cast.Effect
 
             }
 
-            curseTargets.Add(monster, new(location, monster, 5, effect));
+            victims.Add(monster, new(location, monster, 5, effect));
 
             activeLimit = eventCounter + 5;
 
@@ -125,10 +139,10 @@ namespace StardewDruid.Cast.Effect
         public override void EventRemove()
         {
 
-            for (int g = curseTargets.Count - 1; g >= 0; g--)
+            for (int g = victims.Count - 1; g >= 0; g--)
             {
 
-                KeyValuePair<StardewValley.Monsters.Monster, CurseTarget> knockTarget = curseTargets.ElementAt(g);
+                KeyValuePair<StardewValley.Monsters.Monster, CurseTarget> knockTarget = victims.ElementAt(g);
 
                 knockTarget.Value.ShutDown();
 
@@ -141,15 +155,15 @@ namespace StardewDruid.Cast.Effect
         public override void EventDecimal()
         {
 
-            for (int g = curseTargets.Count - 1; g >= 0; g--)
+            for (int g = victims.Count - 1; g >= 0; g--)
             {
 
-                KeyValuePair<StardewValley.Monsters.Monster, CurseTarget> knockTarget = curseTargets.ElementAt(g);
+                KeyValuePair<StardewValley.Monsters.Monster, CurseTarget> knockTarget = victims.ElementAt(g);
 
                 if (!knockTarget.Value.Update())
                 {
 
-                    curseTargets.Remove(knockTarget.Key);
+                    victims.Remove(knockTarget.Key);
 
                 }
 
@@ -177,7 +191,7 @@ namespace StardewDruid.Cast.Effect
 
         public SpellHandle.effects type;
 
-        public SpellHandle spell;
+        public IconData.displays display;
 
         public CurseTarget(GameLocation Location, StardewValley.Monsters.Monster Victim, int Timer, SpellHandle.effects Type = SpellHandle.effects.knock)
         {
@@ -189,8 +203,6 @@ namespace StardewDruid.Cast.Effect
             timer = Timer * 10;
 
             type = Type;
-
-            IconData.displays display;
 
             switch (type)
             {
@@ -211,25 +223,35 @@ namespace StardewDruid.Cast.Effect
                 
                 case SpellHandle.effects.mug:
 
-                    if(victim.objectsToDrop.Count == 0)
-                    {
-
-                        SpawnData.MonsterDrops(victim, (SpawnData.drops)Mod.instance.randomIndex.Next(1,5));
-
-                    }
+                    display = displays.herbalism;
 
                     if (victim.objectsToDrop.Count > 0)
                     {
 
-                        string drop = victim.objectsToDrop[Mod.instance.randomIndex.Next(victim.objectsToDrop.Count)];
+                        string dropNormal = victim.objectsToDrop[Mod.instance.randomIndex.Next(victim.objectsToDrop.Count)];
 
-                        StardewValley.Object dropItem = new StardewValley.Object(drop, 1);
+                        StardewValley.Object itemNormal = new StardewValley.Object(dropNormal, 1);
 
-                        Game1.createItemDebris(dropItem, victim.Position + new Vector2(0, 32), 2, location, -1);
+                        if (itemNormal.QualifiedItemId.Contains("-"))
+                        {
+
+                            victim.objectsToDrop.Clear();
+
+                        }
+
+                        Game1.createItemDebris(itemNormal, victim.Position + new Vector2(0, 32), 2, location, -1);
+
+                        break;
 
                     }
 
-                    display = displays.herbalism;
+                    SpawnData.MonsterDrops(victim, (SpawnData.drops)Mod.instance.randomIndex.Next(1,5));
+
+                    string drop = victim.objectsToDrop[Mod.instance.randomIndex.Next(victim.objectsToDrop.Count)];
+
+                    StardewValley.Object dropItem = new StardewValley.Object(drop, 1);
+
+                    Game1.createItemDebris(dropItem, victim.Position + new Vector2(0, 32), 2, location, -1);
 
                     break;
                 
@@ -294,10 +316,6 @@ namespace StardewDruid.Cast.Effect
 
             }
 
-            spell = new(Victim, display, timer * 6);
-
-            Mod.instance.spellRegister.Add(spell);
-
         }
 
         public void ShutDown()
@@ -325,8 +343,6 @@ namespace StardewDruid.Cast.Effect
 
             }
 
-            spell.Shutdown();
-
         }
 
         public bool Update()
@@ -339,7 +355,7 @@ namespace StardewDruid.Cast.Effect
 
                 ShutDown();
 
-                return true;
+                return false;
 
             }
 
@@ -459,6 +475,34 @@ namespace StardewDruid.Cast.Effect
                 throwMeat.register();
 
             }
+
+        }
+
+        public void draw(SpriteBatch b)
+        {
+
+            if (!Utility.isOnScreen(victim.Position, 128))
+            {
+
+                return;
+
+            }
+
+            Microsoft.Xna.Framework.Vector2 drawPosition = new(victim.Position.X - (float)Game1.viewport.X, victim.Position.Y - (float)Game1.viewport.Y);
+
+            Vector2 position = drawPosition - new Vector2(16, 144);
+
+            b.Draw(
+                Mod.instance.iconData.displayTexture,
+                position,
+                Mod.instance.iconData.DisplayRect(display),
+                Color.White * 0.8f,
+                0f,
+                Vector2.Zero,
+                4f,
+                SpriteEffects.None,
+                0.9f
+            );
 
         }
 

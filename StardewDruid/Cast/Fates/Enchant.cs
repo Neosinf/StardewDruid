@@ -72,15 +72,9 @@ namespace StardewDruid.Cast.Fates
                 if (decimalCounter == 5)
                 {
 
-                    TemporaryAnimatedSprite skyAnimation = Mod.instance.iconData.SkyIndicator(location, origin, IconData.skies.sunset, 1f, new() { interval = 1000, });
+                    Mod.instance.rite.channel(IconData.skies.sunset, 75);
 
-                    skyAnimation.scaleChange = 0.002f;
-
-                    skyAnimation.motion = new(-0.064f, -0.064f);
-
-                    skyAnimation.timeBasedMotion = true;
-
-                    animations.Add(skyAnimation);
+                    channel = IconData.skies.sunset;
 
                 }
 
@@ -193,6 +187,32 @@ namespace StardewDruid.Cast.Fates
                 }
 
                 StardewValley.Object target = location.objects[tile];
+
+
+                switch (target.name)
+                {
+
+                    case "Deconstructor":
+                    case "Bone Mill":
+                    case "Keg":
+                    case "Preserves Jar":
+                    case "Cheese Press": 
+                    case "Mayonnaise Machine":
+                    case "Loom":
+                    case "Oil Maker":
+                    case "Furnace":
+                    case "Geode Crusher":
+
+                        // registered for use
+
+                        break;
+
+                    default:
+
+                        continue;
+
+                }
+
 
                 if (target.MinutesUntilReady > 0)
                 {

@@ -202,7 +202,7 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 115: DialogueCue(0, "?"); break;
+                case 115: DialogueCue(777); break;
 
                 case 118:
 
@@ -330,7 +330,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueClear(0);
 
-                    DialogueCue(7);
+                    DialogueCue(8);
 
                     Vector2 cursor56 = campFire * 64;
 
@@ -548,7 +548,7 @@ namespace StardewDruid.Event.Scene
 
                     voices[1] = blobking;
 
-                    bosses.Add(0,blobking);
+                    bosses[0] = blobking;
 
                     break;
 
@@ -562,12 +562,12 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 314: DialogueCue(17); break;
-                case 317: DialogueCue(18 ); break;
-                case 320: DialogueCue(19 ); break;
-                case 323: DialogueCue(20); break;
-                case 326: DialogueCue(21 ); break;
-                case 329: DialogueCue(22); break;
+                case 314: DialogueCue(17); companions[0].LookAtTarget(bosses[0].Position); break;
+                case 317: DialogueCue(18 ); companions[0].LookAtTarget(bosses[0].Position); break;
+                case 320: DialogueCue(19 ); companions[0].LookAtTarget(bosses[0].Position); break;
+                case 323: DialogueCue(20); companions[0].LookAtTarget(bosses[0].Position); break;
+                case 326: DialogueCue(21 ); companions[0].LookAtTarget(bosses[0].Position); break;
+                case 329: DialogueCue(22); companions[0].LookAtTarget(bosses[0].Position); break;
 
                 case 332:
 

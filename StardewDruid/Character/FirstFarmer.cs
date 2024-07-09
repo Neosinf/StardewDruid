@@ -61,7 +61,7 @@ namespace StardewDruid.Character
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            float drawLayer = (float)StandingPixel.Y / 10000f;
+            float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
 
             DrawEmote(b);
             

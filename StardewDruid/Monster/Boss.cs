@@ -140,6 +140,7 @@ namespace StardewDruid.Monster
         public Dictionary<int, List<Rectangle>> flightFrames = new();
         public bool smashSet;
         public Dictionary<int, List<Rectangle>> smashFrames = new();
+        public Dictionary<int, List<Rectangle>> alertFrames = new();
 
         public bool flightSet;
         public int flightFrame; // current animation frame of flight
@@ -1026,26 +1027,26 @@ namespace StardewDruid.Monster
             if (targets.Count > 0)
             {
 
-                if (!netAlert.Value)
-                {
+                //if (!netAlert.Value)
+                //{
                     
-                    netAlert.Set(true);
+               //     netAlert.Set(true);
 
-                }
+                //}
 
                 SetDirection(targets.First().Position);
 
             }
-            else
-            {
-                if (netAlert.Value)
-                {
+            //else
+            //{
+            //    if (netAlert.Value)
+            //    {
 
-                    netAlert.Set(false);
+            //        netAlert.Set(false);
 
-                }
+            //   }
 
-            }
+            //}
 
         }
 
@@ -2031,7 +2032,6 @@ namespace StardewDruid.Monster
 
             }
 
-
             if (targets.Count == 0)
             {
 
@@ -2126,7 +2126,7 @@ namespace StardewDruid.Monster
 
         }
 
-        public virtual void ChooseMovement(float threshold, Vector2 position)
+        public virtual void ChooseMovement(float threshold, Vector2 target)
         {
 
             switch (tempermentActive)
@@ -2134,13 +2134,13 @@ namespace StardewDruid.Monster
 
                 case temperment.coward:
 
-                    PerformRetreat(position);
+                    PerformRetreat(target);
 
                     break;
 
                 case temperment.ranged:
 
-                    float distance = Vector2.Distance(position, Position);
+                    float distance = Vector2.Distance(target, Position);
 
                     if(distance >= 192)
                     {
@@ -2150,7 +2150,7 @@ namespace StardewDruid.Monster
 
                             case 0:
 
-                                PerformCircle(position);
+                                PerformCircle(target);
 
                                 return;
 
@@ -2172,7 +2172,7 @@ namespace StardewDruid.Monster
                     else
                     {
                         
-                        PerformRetreat(position);
+                        PerformRetreat(target);
 
                     }
 
@@ -2196,13 +2196,13 @@ namespace StardewDruid.Monster
 
                         case 2:
 
-                            PerformCircle(position);
+                            PerformCircle(target);
 
                             return;
 
                     }
 
-                    PerformFollow(position);
+                    PerformFollow(target);
       
                     break;
 
@@ -2213,11 +2213,11 @@ namespace StardewDruid.Monster
 
                         case 0: PerformRandom(); break;
 
-                        case 1: PerformFollow(position); break;
+                        case 1: PerformFollow(target); break;
 
-                        case 2: PerformRetreat(position); break;
+                        case 2: PerformRetreat(target); break;
 
-                        case 3: PerformCircle(position); break;
+                        case 3: PerformCircle(target); break;
 
                     }
 
@@ -2244,7 +2244,7 @@ namespace StardewDruid.Monster
                             if (threshold <= 320)
                             {
                                 
-                                PerformCircle(position);
+                                PerformCircle(target);
 
                                 return;
 
@@ -2256,7 +2256,7 @@ namespace StardewDruid.Monster
                             
                             if(threshold <= 192)
                             {
-                                PerformRetreat(position);
+                                PerformRetreat(target);
 
                                 return;
 
@@ -2266,7 +2266,7 @@ namespace StardewDruid.Monster
 
                     }
 
-                    PerformFollow(position);
+                    PerformFollow(target);
 
                     break;
 
@@ -2674,8 +2674,10 @@ namespace StardewDruid.Monster
 
             if (circleTargets.Count > 0)
             {
+                
+                Vector2 target = circleTargets[Mod.instance.randomIndex.Next(circleTargets.Count)] * 64;
 
-                PerformFollow(circleTargets[Mod.instance.randomIndex.Next(circleTargets.Count)]);
+                PerformFollow(target);
 
             }
 

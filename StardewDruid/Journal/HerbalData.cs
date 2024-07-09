@@ -3,19 +3,26 @@ using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Mists;
+using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
+using StardewDruid.Location;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Buffs;
 using StardewValley.Enchantments;
 using StardewValley.GameData.BigCraftables;
 using StardewValley.GameData.Characters;
+using StardewValley.Menus;
 using StardewValley.Objects;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using xTile.Dimensions;
+using static StardewDruid.Character.Character;
+using static StardewDruid.Character.CharacterHandle;
 using static StardewDruid.Journal.HerbalData;
 using static StardewValley.Menus.CharacterCustomization;
 
@@ -226,7 +233,7 @@ namespace StardewDruid.Journal
 
                 description = "Nature, liquified and sticky.",
                 
-                ingredients = new(){ ["(O)92"] = "Sap", ["(O)766"] = "Slime", ["Moss"] = "Moss", },
+                ingredients = new(){ ["(O)92"] = "Sap", ["(O)766"] = "Slime", },
 
                 bases = new() { },
 
@@ -258,13 +265,13 @@ namespace StardewDruid.Journal
 
                 level = 1,
 
-                duration = 60,
+                duration = 180,
 
                 title = "Melius Ligna",
 
                 description = "Like bark-root tea, with more bark, and root to boot.",
 
-                ingredients = new() { ["(O)311"] = "Acorn", ["(O)310"] = "MapleSeed", ["(O)309"] = "Pinecorn", ["(O)292"] = "MahoganySeed", },
+                ingredients = new() { ["(O)311"] = "Acorn", ["(O)310"] = "MapleSeed", ["(O)309"] = "Pinecorn", ["(O)292"] = "MahoganySeed", ["(O)Moss"] = "Moss", },
 
                 bases = new() { herbals.ligna, },
 
@@ -275,7 +282,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 15 Health, 30 Stamina",
-                    "Effect: Alignment Level 1, 60 Seconds",
+                    "Effect: Alignment Level 1, 3 Hours",
                     "Requires: Base, 1x Tree Seed"
                 }
 
@@ -297,13 +304,13 @@ namespace StardewDruid.Journal
 
                 level = 2,
 
-                duration = 90,
+                duration = 240,
 
                 title = "Satius Ligna",
 
                 description = "Infused with the leaves and petals of weeds. Toxic to dogs.",
 
-                ingredients = new() { ["(O)418"] = "Crocus", ["(O)18"] = "Daffodil", ["(O)22"] = "Dandelion", ["(O)402"] = "Sweet Pea", ["(O)273"] = "Rice Shoot", },
+                ingredients = new() { ["(O)418"] = "Crocus", ["(O)18"] = "Daffodil", ["(O)22"] = "Dandelion", ["(O)402"] = "Sweet Pea", ["(O)273"] = "Rice Shoot", ["(O)591"] = "Tulip", ["(O)376"] = "Poppy", },
 
                 bases = new() { herbals.melius_ligna, },
 
@@ -314,8 +321,8 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 20 Health, 80 Stamina",
-                    "Effect: Alignment Level 2, 90 Seconds",
-                    "Requires: Base, 1x Wild Flower"
+                    "Effect: Alignment Level 2, 4 Hours",
+                    "Requires: Base, 1x Meadow Flower"
                 }
 
             };
@@ -336,13 +343,13 @@ namespace StardewDruid.Journal
 
                 level = 3,
 
-                duration = 120,
+                duration = 300,
 
                 title = "Magnus Ligna",
 
                 description = "Potent oils enhance the rich, nutty flavour profile of the base mixture.",
 
-                ingredients = new() { ["(O)247"] = "Oil", ["(O)431"] = "Sunflower Seeds", ["(O)270"] = "Corn", ["(O)271"] = "Unmilled Rice", ["(O)421"] = "Sunflower", }, // },
+                ingredients = new() { ["(O)247"] = "Oil", ["(O)431"] = "Sunflower Seeds", ["(O)270"] = "Corn", ["(O)271"] = "Unmilled Rice", ["(O)421"] = "Sunflower", ["(O)593"] = "Spangle", ["(O)597"] = "Jazz", }, // },
 
                 bases = new() { herbals.satius_ligna, },
 
@@ -353,7 +360,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 50 Health, 200 Stamina",
-                    "Effect: Alignment Level 3, 120 Seconds",
+                    "Effect: Alignment Level 3, 5 Hours",
                     "Ingredients: Base, 1x Vegetable Oil",
                 }
 
@@ -374,7 +381,7 @@ namespace StardewDruid.Journal
 
                 level = 4,
 
-                duration = 150,
+                duration = 360,
 
                 title = "Optimus Ligna",
 
@@ -391,7 +398,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 100 Health, 400 Stamina",
-                    "Effect: Vigorous Level 4, 150 Seconds",
+                    "Effect: Vigorous Level 4, 6 Hours",
                     "Requires: Base, Aether"
                 }
 
@@ -449,7 +456,7 @@ namespace StardewDruid.Journal
 
                 level = 1,
 
-                duration = 60,
+                duration = 180,
 
                 title = "Melius Vigores",
 
@@ -466,7 +473,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 30 Health, 80 Stamina",
-                    "Effect: Vigorous Level 1, 60 Seconds",
+                    "Effect: Vigorous Level 1, 3 Hours",
                     "Requires: Base, 1x Cave Forage"
                 }
 
@@ -488,13 +495,13 @@ namespace StardewDruid.Journal
 
                 level = 2,
 
-                duration = 90,
+                duration = 240,
 
                 title = "Satius Vigores",
 
-                description = "The spicy tang that enflames the regions.",
+                description = "Gently raise to boiling temperature then leave to simmer.",
 
-                ingredients = new() { ["(O)419"] = "Vinegar", ["(O)260"] = "Hot Pepper", ["(O)829"] = "Ginger", },
+                ingredients = new() { ["(O)93"] = "Torch", ["(O)82"] = "Fire Quartz", ["(O)382"] = "Coal", },
 
                 bases = new() { herbals.melius_impes, },
 
@@ -505,8 +512,9 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 45 Health, 160 Stamina",
-                    "Effect: Vigorous Level 2, 90 Seconds",
-                    "Requires: Base, 1x Spicy Ingredient"
+                    "Effect: Vigorous Level 2, 4 Hours",
+
+                    "Requires: Base, 1x Combustible Material"
                 }
 
             };
@@ -527,13 +535,13 @@ namespace StardewDruid.Journal
 
                 level = 3,
 
-                duration = 120,
+                duration = 300,
 
                 title = "Magnus Vigores",
 
-                description = "Gently raise to boiling temperature then leave to simmer.",
+                description = "The spicy tang that enflames the regions.",
 
-                ingredients = new() { ["(O)93"] = "Torch", ["(O)82"] = "Fire Quartz", ["(O)382"] = "Coal", },
+                ingredients = new() { ["(O)419"] = "Vinegar", ["(O)260"] = "Hot Pepper", ["(O)829"] = "Ginger", ["(O)248"] = "Garlic", },
 
                 bases = new() { herbals.satius_impes, },
 
@@ -544,8 +552,8 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 70 Health, 320 Stamina",
-                    "Effect: Vigorous Level 3, 120 Seconds",
-                    "Requires: Base, 1x Combustible Material"
+                    "Effect: Vigorous Level 3, 5 Hours",
+                    "Requires: Base, 1x Spicy Ingredient"
                 }
 
             };
@@ -565,7 +573,7 @@ namespace StardewDruid.Journal
 
                 level = 4,
 
-                duration = 150,
+                duration = 360,
 
                 title = "Optimus Vigores",
 
@@ -582,7 +590,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 180 Health, 560 Stamina",
-                    "Effect: Vigorous Level 4, 150 Seconds",
+                    "Effect: Vigorous Level 4, 6 Hours",
                     "Requires: Base, Aether"
                 }
 
@@ -608,7 +616,7 @@ namespace StardewDruid.Journal
 
                 description = "Good for your joints and memory retention.",
 
-                ingredients = new() {  ["(O)129"] = "Sardine", ["(O)131"] = "Anchovy", ["(O)137"] = "Smallmouth Bass", ["(O)145"] = "Sunfish", ["(O)132"] = "Bream", ["(O)147"] = "Herring", ["(O)142"] = "Carp", },
+                ingredients = new() {  ["(O)129"] = "Sardine", ["(O)131"] = "Anchovy", ["(O)137"] = "Smallmouth Bass", ["(O)145"] = "Sunfish", ["(O)132"] = "Bream", ["(O)147"] = "Herring", ["(O)142"] = "Carp", ["(O)156"] = "Ghostfish", ["(O)684"] = "Bug Meat x2", },
 
                 bases = new() { },
 
@@ -619,7 +627,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 10 Health, 30 Stamina",
-                    "Requires: 1x Common Fish"
+                    "Requires: 1x Common Fish, 2x Bug Meat"
                 }
 
             };
@@ -639,7 +647,7 @@ namespace StardewDruid.Journal
 
                 level = 1,
 
-                duration = 60,
+                duration = 180,
 
                 title = "Melius Celeri",
 
@@ -656,7 +664,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 20 Health, 60 Stamina",
-                    "Effect: Celerity Level 1, 60 Seconds",
+                    "Effect: Celerity Level 1, 3 Hours",
                     "Requires: Base, 1x Energy Supplement"
                 }
 
@@ -678,13 +686,14 @@ namespace StardewDruid.Journal
 
                 level = 2,
 
-                duration = 90,
+                duration = 240,
 
                 title = "Satius Celeri",
 
                 description = "Now with mineral extracts for revitalised skin and circulation.",
 
-                ingredients = new() { ["(O)80"] = "Quartz", ["(O)86"] = "Earth Crystal", ["(O)168"] = "Trash", ["(O)169"] = "Driftwood", ["(O)170"] = "Broken Glasses", ["(O)171"] = "Broken CD", ["(O)172"] = "Soggy Newspaper", },
+                //ingredients = new() { ["(O)80"] = "Quartz", ["(O)86"] = "Earth Crystal", ["(O)392"] = "Nautilus Shell", ["(O)393"] = "Coral", },
+                ingredients = new() { ["(O)80"] = "Quartz", ["(O)86"] = "Earth Crystal", ["(O)881"] = "Bone Fragment", ["(O)168"] = "Trash", ["(O)169"] = "Driftwood", ["(O)170"] = "Broken Glasses", ["(O)171"] = "Broken CD", ["(O)172"] = "Soggy Newspaper",  },
 
                 health = 30,
 
@@ -695,8 +704,8 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 30 Health, 120 Stamina",
-                    "Effect: Celerity Level 2, 90 Seconds",
-                    "Requires: Base, 1x Mineral Substance"
+                    "Effect: Celerity Level 2, 4 Hours",
+                    "Requires: Base, 1x Mineral-Rich Substance"
                 }
 
             };
@@ -717,13 +726,13 @@ namespace StardewDruid.Journal
 
                 level = 3,
 
-                duration = 120,
+                duration = 300,
 
                 title = "Magnus Celeri",
 
                 description = "Now with organically sourced protein for heightened muscle recovery.",
 
-                ingredients = new() { ["(O)718"] = "Cockle", ["(O)719"] = "Mussel", ["(O)720"] = "Shrimp", ["(O)721"] = "Snail", ["(O)722"] = "Periwinkle", ["(O)723"] = "Oyster", },
+                ingredients = new() { ["(O)718"] = "Cockle", ["(O)719"] = "Mussel", ["(O)720"] = "Shrimp", ["(O)721"] = "Snail", ["(O)722"] = "Periwinkle", ["(O)723"] = "Oyster", ["(O)372"] = "Clam", },
 
                 health = 60,
 
@@ -734,7 +743,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 60 Health, 240 Stamina",
-                    "Effect: Celerity Level 3, 120 Seconds",
+                    "Effect: Celerity Level 3, 5 Hours",
                     "Requires: Base, 1x Common Shellfish"
                 }
 
@@ -755,7 +764,7 @@ namespace StardewDruid.Journal
 
                 level = 4,
 
-                duration = 150,
+                duration = 360,
 
                 title = "Optimus Celeri",
 
@@ -772,7 +781,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 120 Health, 480 Stamina",
-                    "Effect: Celerity Level 4, 150 Seconds",
+                    "Effect: Celerity Level 4, 6 hours",
                     "Requires: Base, Aether"
                 }
 
@@ -800,7 +809,7 @@ namespace StardewDruid.Journal
 
                 description = "The currency of the Fates.",
 
-                ingredients = new() { ["(O)577"] = "Fairy Stone", ["(O)595"] = "Fairy Rose", ["(O)768"] = "Solar Essence", ["(O)769"] = "Void Essence", },
+                ingredients = new() { ["(O)577"] = "Fairy Stone", ["(O)595"] = "Fairy Rose", ["(O)768"] = "Solar Essence", ["(O)769"] = "Void Essence", ["(O)MossySeed"] = "Mossy Seed", },
 
                 bases = new() { },
 
@@ -838,7 +847,7 @@ namespace StardewDruid.Journal
 
                 description = "The essence of creation as wielded by the Ancient Ones.",
 
-                ingredients = new() { ["(O)60"] = "Emerald", ["(O)64"] = "Ruby", ["(O)72"] = "Diamond", },
+                ingredients = new() { ["(O)60"] = "Emerald", ["(O)64"] = "Ruby", ["(O)72"] = "Diamond", ["(O)62"] = "Aquamarine", },
 
                 bases = new() {},
 
@@ -915,6 +924,12 @@ namespace StardewDruid.Journal
 
             bool craftable = true;
 
+            Dictionary<string, int> more = new()
+            {
+                ["(O)684"] = 2,
+
+            };
+
             if(herbal.ingredients.Count > 0)
             {
                 
@@ -937,16 +952,27 @@ namespace StardewDruid.Journal
                     if (herbal.ingredients.ContainsKey(@checkItem.QualifiedItemId))
                     {
 
+                        int stack = Game1.player.Items[i].Stack;
+
+                        if (more.ContainsKey(@checkItem.QualifiedItemId))
+                        {
+
+                            double revise = stack / 2;
+
+                            stack = (int)Math.Floor(revise);
+
+                        }
+
                         if (!herbalism[id].amounts.ContainsKey(@checkItem.QualifiedItemId))
                         {
 
-                            herbalism[id].amounts[@checkItem.QualifiedItemId] = Game1.player.Items[i].Stack;
+                            herbalism[id].amounts[@checkItem.QualifiedItemId] = stack;
 
                         }
                         else
                         {
 
-                            herbalism[id].amounts[@checkItem.QualifiedItemId] += Game1.player.Items[i].Stack;
+                            herbalism[id].amounts[@checkItem.QualifiedItemId] += stack;
 
                         }
 
@@ -1007,6 +1033,8 @@ namespace StardewDruid.Journal
 
         public void MassBrew()
         {
+            
+            CharacterHandle.RetrieveInventory(CharacterHandle.characters.herbalism);
 
             int max = MaxHerbal();
 
@@ -1025,16 +1053,15 @@ namespace StardewDruid.Journal
 
                     }
 
-                    BrewHerbal(key, 50);
+                    BrewHerbal(key, 50, true);
 
                 }
 
             }
-                
 
         }
 
-        public void BrewHerbal(string id, int draught)
+        public void BrewHerbal(string id, int draught, bool bench = false)
         {
 
             Herbal herbal = herbalism[id];
@@ -1054,6 +1081,12 @@ namespace StardewDruid.Journal
                 return;
 
             }
+
+            Dictionary<string, int> more = new()
+            {
+                ["(O)684"] = 2,
+
+            };
 
             if (herbal.bases.Count > 0)
             {
@@ -1085,11 +1118,104 @@ namespace StardewDruid.Journal
 
             }
 
-            if(herbal.ingredients.Count > 0) {
+            if (herbal.ingredients.Count > 0)
+            {
 
-                
+
+                if (bench)
+                {
+
+                    for (int i = 0; i < Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items.Count; i++)
+                    {
+
+                        if (brewed >= draught)
+                        {
+
+                            break;
+
+                        }
+
+                        Item checkSlot = Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items[i];
+
+                        if (checkSlot == null)
+                        {
+
+                            continue;
+
+                        }
+
+                        Item checkItem = checkSlot.getOne();
+
+                        if (herbal.ingredients.ContainsKey(@checkItem.QualifiedItemId))
+                        {
+
+                            int stack = Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items[i].Stack;
+
+                            int cost = 1;
+
+                            if (more.ContainsKey(@checkItem.QualifiedItemId))
+                            {
+
+                                double revise = stack / 2;
+
+                                stack = (int)Math.Floor(revise);
+
+                                if (stack == 0)
+                                {
+
+                                    continue;
+
+                                }
+
+                                cost = 2;
+
+                            }
+
+                            int brew = Math.Min(stack, (draught - brewed));
+
+                            if (herbal.bases.Count > 0)
+                            {
+
+                                foreach (herbals required in herbal.bases)
+                                {
+
+                                    Mod.instance.save.herbalism[required] -= brew;
+
+                                }
+
+                            }
+
+                            Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items[i].Stack -= (brew * cost);
+
+                            brewed += brew;
+
+                        }
+
+                    }
+
+                    for (int i = Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items.Count - 1; i >= 0; i--)
+                    {
+
+                        if (Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items[i].Stack <= 0)
+                        {
+
+                            Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items.RemoveAt(i);
+
+                        }
+
+                    }
+
+                }
+
                 for (int i = 0; i < Game1.player.Items.Count; i++)
                 {
+
+                    if (brewed >= draught)
+                    {
+
+                        break;
+
+                    }
 
                     Item checkSlot = Game1.player.Items[i];
 
@@ -1105,7 +1231,29 @@ namespace StardewDruid.Journal
                     if (herbal.ingredients.ContainsKey(@checkItem.QualifiedItemId))
                     {
 
-                        int brew = Math.Min(Game1.player.Items[i].Stack, (draught - brewed));
+                        int stack = Game1.player.Items[i].Stack;
+
+                        int cost = 1;
+
+                        if (more.ContainsKey(@checkItem.QualifiedItemId))
+                        {
+
+                            double revise = stack / 2;
+
+                            stack = (int)Math.Floor(revise);
+
+                            if (stack == 0)
+                            {
+
+                                continue;
+
+                            }
+
+                            cost = 2;
+
+                        }
+
+                        int brew = Math.Min(stack, (draught - brewed));
 
                         if (herbal.bases.Count > 0)
                         {
@@ -1119,22 +1267,16 @@ namespace StardewDruid.Journal
 
                         }
 
-                        Game1.player.Items[i].Stack -= brew;
+                        Game1.player.Items[i].Stack -= (brew * cost);
 
                         if (Game1.player.Items[i].Stack <= 0)
                         {
+
                             Game1.player.Items[i] = null;
 
                         }
 
                         brewed += brew;
-
-                    }
-
-                    if (brewed >= draught)
-                    {
-
-                        break;
 
                     }
 
@@ -1253,7 +1395,7 @@ namespace StardewDruid.Journal
 
             string description = "";
 
-            int speed = 0;
+            float speed = 0f;
 
             int magnetism = 0;
 
@@ -1275,12 +1417,71 @@ namespace StardewDruid.Journal
 
                 }
 
+                int timeOfDay = Game1.timeOfDay;
+
+                int addTime = applied[herbBuff.Key].counter;
+
+                while(addTime > 0)
+                {
+
+                    int updateTime = Math.Min(30, addTime);
+
+                    timeOfDay += updateTime;
+
+                    if(timeOfDay % 100 > 60)
+                    {
+
+                        timeOfDay += 40;
+
+                    }
+
+                    addTime -= updateTime;
+
+                    if(timeOfDay > 2599)
+                    {
+
+                        timeOfDay = 2600;
+
+                        break;
+
+                    }
+
+                }
+
+                string meridian = "am";
+
+                if(timeOfDay >= 2400)
+                {
+
+                    timeOfDay -= 2400;
+
+                }
+                else if(timeOfDay >= 1200)
+                {
+
+                    timeOfDay -= 1200;
+
+                    meridian = "pm";
+
+                }
+
+                string tODs = timeOfDay.ToString();
+
+                for(int l = 0; l < 4 - tODs.Length; l++)
+                {
+
+                    tODs = "0" + tODs;
+
+                }
+
+                string expire = tODs.Substring(0,1) + tODs.Substring(1, 1) + ":" + tODs.Substring(2, 1) + "0" + meridian;
+
                 switch(herbBuff.Key)
                 {
 
                     case herbals.ligna:
 
-                        description += "Alignment " + herbBuff.Value.level.ToString() + " " + applied[herbBuff.Key].counter.ToString() + ". ";
+                        description += "Alignment " + herbBuff.Value.level.ToString() + " " + expire + ". ";
 
                         magnetism = herbBuff.Value.level * 32;
 
@@ -1288,27 +1489,15 @@ namespace StardewDruid.Journal
 
                     case herbals.impes:
 
-                        description += "Vigorous " + herbBuff.Value.level.ToString() + " " + applied[herbBuff.Key].counter.ToString() + ". ";
+                        description += "Vigorous " + herbBuff.Value.level.ToString() + " " + expire + ". ";
 
                         break;
 
                     case herbals.celeri:
 
-                        if (herbBuff.Value.level > 2)
-                        {
+                        speed = 0.25f * herbBuff.Value.level;
 
-                            speed = 2;
-
-                        } 
-                        else 
-                        if (herbBuff.Value.level > 0)
-                        {
-
-                            speed = 1;
-
-                        }
-
-                        description += "Celerity "+herbBuff.Value.level.ToString() + " " + applied[herbBuff.Key].counter.ToString() + ". ";
+                        description += "Celerity "+herbBuff.Value.level.ToString() + " " + expire + ". ";
 
                         break;
 
@@ -1348,7 +1537,7 @@ namespace StardewDruid.Journal
                 description: description
                 );
 
-            if (speed > 0)
+            if (speed > 0f)
             {
 
                 BuffEffects buffEffect = new();
@@ -1376,6 +1565,109 @@ namespace StardewDruid.Journal
 
         }
 
+        public void ConvertGeodes()
+        {
+            
+            CharacterHandle.RetrieveInventory(CharacterHandle.characters.herbalism);
+
+            Dictionary<string,StardewValley.Item> extracts = new();
+
+            for (int i = 0; i < Game1.player.Items.Count; i++)
+            {
+
+                Item checkSlot = Game1.player.Items[i];
+
+                if (checkSlot == null)
+                {
+
+                    continue;
+
+                }
+
+                Item checkItem = checkSlot.getOne();
+
+                if (Utility.IsGeode(checkItem))
+                {
+
+                    for(int e = Game1.player.Items[i].Stack - 1; e >= 0;  e--)
+                    {
+
+                        Item extraction = Utility.getTreasureFromGeode(checkItem);
+
+                        if (checkItem.QualifiedItemId.Contains("MysteryBox"))
+                        {
+                            
+                            Game1.stats.Increment("MysteryBoxesOpened", 1);
+                        
+                        }
+                        else
+                        {
+                            
+                            Game1.stats.GeodesCracked++;
+                        
+                        }
+
+                        if (extracts.ContainsKey(extraction.QualifiedItemId))
+                        {
+
+                            extracts[extraction.QualifiedItemId].Stack += extraction.Stack;
+
+                        }
+                        else
+                        {
+
+                            extracts[extraction.QualifiedItemId] = extraction;
+
+                        }
+
+                        Game1.player.Items[i] = null;
+
+                    }
+
+                }
+
+            }
+
+            Vector2 origin = (Mod.instance.locations[Location.LocationData.druid_grove_name] as Grove).herbalTiles.First().position + new Vector2(64,32);
+
+            foreach(KeyValuePair<string,StardewValley.Item> extract in extracts)
+            {
+                
+                if (Mod.instance.chests[Character.CharacterHandle.characters.herbalism].addItem(extract.Value) != null)
+                {
+                    ThrowHandle throwExtract = new(Game1.player, origin, extract.Value);
+
+                    throwExtract.register();
+
+                }
+
+            }
+
+            Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, projectile = 4, counter = -60, scheme = IconData.schemes.golden, sound = SpellHandle.sounds.secret1 });
+            Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, projectile = 4, counter = -45, sound = SpellHandle.sounds.silent, });
+            Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, projectile = 4, counter = -30, sound = SpellHandle.sounds.silent, });
+            Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, projectile = 4, counter = -15, sound = SpellHandle.sounds.silent, });
+            Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, projectile = 4,  sound = SpellHandle.sounds.thunder, });
+
+            Microsoft.Xna.Framework.Rectangle relicRect = Mod.instance.iconData.RelicRectangles(IconData.relics.crow_hammer);
+
+            TemporaryAnimatedSprite animation = new(0,1500, 1, 1, origin - new Vector2(16,60), false, false)
+            {
+                sourceRect = relicRect,
+                sourceRectStartingPos = new(relicRect.X, relicRect.Y),
+                texture = Mod.instance.iconData.relicsTexture,
+                layerDepth = 900f,
+                rotation = -0.76f,
+                scale = 4f,
+            };
+
+            Game1.player.currentLocation.TemporarySprites.Add(animation);
+
+            Mod.instance.spellRegister.Add(new(origin-new Vector2(24,32), 320, IconData.impacts.nature, new()) { type = SpellHandle.spells.effect, counter = -45, instant = true, scheme = IconData.schemes.golden, sound = SpellHandle.sounds.yoba });
+
+            Mod.instance.spellRegister.Add(new(origin - new Vector2(24,32), 320, IconData.impacts.nature, new()) { type = SpellHandle.spells.effect, instant = true, scheme = IconData.schemes.golden, });
+
+        }
 
     }
 

@@ -14,164 +14,6 @@ using static StardewDruid.Data.IconData;
 namespace StardewDruid.Location
 {
 
-    public class TriggerField
-    {
-
-        public string location;
-
-        public Vector2 origin;
-
-        public IconData.displays display;
-
-        public Rectangle displayRect;
-
-        public Rectangle targetRect;
-
-        public string eventId;
-
-        public enum triggers
-        {
-
-            target,
-            decoration
-
-        }
-
-        public triggers trigger;
-
-        public TriggerField(string Id, string Location, Vector2 Origin, IconData.displays Display)
-        {
-
-            eventId = Id;
-
-            location = Location;
-
-            origin = Origin;
-
-            display = Display;
-
-            trigger = triggers.target; 
-
-            displayRect = Mod.instance.iconData.DisplayRect(display);
-
-            targetRect = Mod.instance.iconData.CursorRect(cursors.target);
-
-        }
-
-        public TriggerField(string Id, string Location, Vector2 Origin, IconData.decorations Decoration)
-        {
-
-            eventId = Id;
-
-            location = Location;
-
-            origin = Origin;
-
-            display = displays.none;
-
-            trigger = triggers.decoration;
-
-            displayRect = Mod.instance.iconData.DecorativeRect(Decoration);
-
-        }
-
-        public void draw(SpriteBatch b)
-        {
-
-            if (!Utility.isOnScreen(origin, 64))
-            {
-
-                return;
-
-            }
-
-            switch (trigger)
-            {
-                case triggers.decoration:
-
-                    drawDecoration(b);
-
-                    break;
-
-                default:
-                    case triggers.target:
-
-                    drawTarget(b);
-
-                    break;
-                
-
-            }
-
-        }
-
-        public void drawDecoration(SpriteBatch b)
-        {
-
-            int offset = (int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds) % 2400 / 20;
-
-            Microsoft.Xna.Framework.Vector2 drawPosition = new(origin.X - (float)Game1.viewport.X, origin.Y - (float)Game1.viewport.Y);
-
-            float rotate = (float)Math.PI / 60 * offset;
-
-            b.Draw(
-                Mod.instance.iconData.decorationTexture,
-                drawPosition + new Vector2(32),
-                displayRect,
-                Color.White*0.75f,
-                rotate,
-                new Vector2(32),
-                3f,
-                SpriteEffects.None,
-                0.0001f
-            );
-
-        }
-
-        public void drawTarget(SpriteBatch b)
-        {
-
-            int offset = Math.Abs((int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 6400) / 100 - 32);
-
-            Microsoft.Xna.Framework.Vector2 drawPosition = new(origin.X - (float)Game1.viewport.X, origin.Y - (float)Game1.viewport.Y);
-
-            Vector2 position = drawPosition - new Vector2(32, 2 * offset);
-
-            //if (display != displays.none)
-            //{
-
-                b.Draw(
-                    Mod.instance.iconData.displayTexture,
-                    position + new Vector2(24, -24),
-                    displayRect,
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    3f,
-                    SpriteEffects.None,
-                    0.9f
-                );
-
-            //}
-            /*
-            b.Draw(
-                Mod.instance.iconData.cursorTexture,
-                position,
-                targetRect,
-                Color.White,
-                0f,
-                Vector2.Zero,
-                2f,
-                SpriteEffects.None,
-                0.9f
-            );
-            */
-
-        }
-
-
-    }
-
     public class WarpTile
     {
 
@@ -329,6 +171,8 @@ namespace StardewDruid.Location
 
         public float lightAmbience = 0.75f;
 
+        public int lightLayer;
+
         public LightField(Vector2 Origin)
         { 
             
@@ -375,10 +219,12 @@ namespace StardewDruid.Location
                             Vector2.Zero,
                             4,
                             0,
-                            position.Y / 10000 + (6 * 0.0064f)
+                            (origin.Y + 384) / 10000
                             );
 
-                        texture2D = Game1.lantern;
+                        texture2D = Game1.sconceLight;
+
+                        position += new Vector2(64);
 
                         break;
 
@@ -405,7 +251,7 @@ namespace StardewDruid.Location
                     new Vector2(texture2D.Bounds.Width / 2, texture2D.Bounds.Height / 2),
                     0.25f * luminosity,
                     SpriteEffects.None,
-                    position.Y / 10000 + 0.9f
+                    origin.Y / 10000 + 0.9f + lightLayer
                 );
 
             }
@@ -449,13 +295,18 @@ namespace StardewDruid.Location
 
             }
 
-            if(empty)
+            if (empty)
             {
-                
-                if(spell.counter < 300)
+
+                if (spell != null)
                 {
-                    
-                    return;
+
+                    if (spell.counter < 300)
+                    {
+
+                        return;
+
+                    }
 
                 }
 

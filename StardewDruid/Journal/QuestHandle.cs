@@ -19,6 +19,8 @@ using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
+using System.IO;
 using System.Linq;
 using xTile.Dimensions;
 
@@ -651,6 +653,12 @@ namespace StardewDruid.Journal
                 DialogueAfter(questId);
 
             }
+            else
+            {
+
+                OnReplayComplete(questId, questRating);
+
+            }
 
             Mod.instance.save.progress[questId].status = 3;
 
@@ -858,7 +866,14 @@ namespace StardewDruid.Journal
 
                 return;
 
+                case wealdFive:
+
+                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.crow_hammer.ToString());
+                    return;
+
                 case swordMists:
+
+                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_censer.ToString());
 
                     LocationData.DruidLocations(LocationData.druid_atoll_name);
 
@@ -1011,8 +1026,6 @@ namespace StardewDruid.Journal
                     return;
 
                 case swordMists:
-
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_censer.ToString());
 
                     if (!Mod.instance.eventRegister.ContainsKey(questId))
                     {
@@ -1329,6 +1342,12 @@ namespace StardewDruid.Journal
                     (Mod.instance.locations[LocationData.druid_grove_name] as Grove).HerbalTiles();
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_mortar.ToString());
+
+                    return;
+
+                case wealdFive:
+
+                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.crow_hammer.ToString());
 
                     return;
 
@@ -1834,6 +1853,16 @@ namespace StardewDruid.Journal
 
                     break;
 
+                case wealdFive:
+
+                    ThrowHandle throwHammer = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.crow_hammer);
+
+                    throwHammer.register();
+
+                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.crow_hammer.ToString());
+
+                    break;
+
                 case swordMists:
 
                     ThrowHandle throwCenser = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.wayfinder_censer);
@@ -1988,7 +2017,7 @@ namespace StardewDruid.Journal
 
                     Mod.instance.CastDisplay($"Collected {questRating} pieces of trash, gained " + friendship + " friendship with mountain residents", 2);
 
-                    VillagerData.CommunityFriendship("mountain", friendship);
+                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.mountain, friendship);
 
                     throwRelic = new(Game1.player, Game1.player.Position + new Vector2(192, -64), IconData.relics.runestones_spring);
 
@@ -2022,7 +2051,7 @@ namespace StardewDruid.Journal
 
                     Mod.instance.CastDisplay($"Prevented {questRating} acts of destruction, gained " + friendship + " friendship with town residents", 2);
 
-                    VillagerData.CommunityFriendship("town", friendship);
+                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.town, friendship);
 
                     break;
 
@@ -2085,7 +2114,7 @@ namespace StardewDruid.Journal
 
                     Mod.instance.CastDisplay($"Destroyed " + questRating + " slimes, gained " + friendship + " friendship with forest residents", 2);
 
-                    VillagerData.CommunityFriendship("forest", friendship);
+                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.forest, friendship);
 
                     throwRelic = new(Game1.player, Game1.player.Position + new Vector2(192, -64), IconData.relics.runestones_moon);
 
@@ -2153,6 +2182,112 @@ namespace StardewDruid.Journal
 
         }
 
+        public void OnReplayComplete(string questId, int questRating)
+        {
+
+            int friendship = 0;
+
+            ThrowHandle throwItem;
+
+            switch (questId)
+            {
+
+                case challengeWeald:
+
+                    friendship += questRating * 8;
+
+                    Mod.instance.CastDisplay($"Collected {questRating} pieces of trash, gained " + friendship + " friendship with mountain residents", 2);
+
+                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.mountain, friendship);
+
+                    break;
+
+                case challengeMists:
+
+                    friendship += questRating * 25;
+
+                    Mod.instance.CastDisplay($"Prevented {questRating} acts of destruction, gained " + friendship + " friendship with town residents", 2);
+
+                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.town, friendship);
+
+                    break;
+
+                case challengeStars:
+
+                    friendship += questRating * 8;
+
+                    Mod.instance.CastDisplay($"Destroyed " + questRating + " slimes, gained " + friendship + " friendship with forest residents", 2);
+
+                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.forest, friendship);
+
+                    break;
+
+                case challengeAtoll:
+
+                    // rain totem (O)681
+                    throwItem = new(Game1.player, Game1.player.Position + new Vector2(128, -64), new StardewValley.Object("681",1));
+
+                    throwItem.register();
+                    
+                    break;
+
+                case challengeDragon:
+
+                    // prismatic shard (O)74
+                    throwItem = new(Game1.player, Game1.player.Position + new Vector2(128, -64), new StardewValley.Object("74", 1));
+
+                    throwItem.register();
+
+                    break;
+
+                case challengeFates:
+
+                    // iridium sprinkler (O)645
+                    throwItem = new(Game1.player, Game1.player.Position + new Vector2(128, -64), new StardewValley.Object("645", 1));
+
+                    throwItem.register();
+
+                    break;
+
+                case swordEther:
+
+                    // faeth *20
+
+                    Herbal Faeth = Mod.instance.herbalData.herbalism[HerbalData.herbals.faeth.ToString()];
+
+                    DisplayPotion hudmessage = new("+20 " + Faeth.title, Faeth);
+
+                    Game1.addHUDMessage(hudmessage);
+
+                    if (Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.faeth))
+                    {
+
+                        Mod.instance.save.herbalism[HerbalData.herbals.faeth] += Math.Min(20, 999 - Mod.instance.save.herbalism[HerbalData.herbals.faeth]);
+
+                    }
+                    else
+                    {
+
+                        Mod.instance.save.herbalism[HerbalData.herbals.faeth] = 20;
+
+                    }
+
+                    break;
+
+                case challengeEther:
+
+                    // rare seed (O)347 x2
+                    throwItem = new(Game1.player, Game1.player.Position + new Vector2(128, -64), new StardewValley.Object("347", 2));
+
+                    throwItem.register();
+
+                    break;
+
+            }
+
+            return;
+        }
+
         public void OnCancel(string questId)
         {
 
@@ -2213,17 +2348,22 @@ namespace StardewDruid.Journal
 
         public void DialogueBefore(string questId, CharacterHandle.characters character = CharacterHandle.characters.none)
         {
-
+            
             if (quests[questId].before.Count > 0)
             {
 
                 foreach(KeyValuePair<CharacterHandle.characters,DialogueSpecial> special in quests[questId].before)
                 {
 
-                    if(character != CharacterHandle.characters.none && special.Key != character)
+                    if(character != CharacterHandle.characters.none)
                     {
+                        
+                        if (special.Key != character)
+                        {
 
-                        return;
+                            continue;
+
+                        }
 
                     }
 
@@ -2345,10 +2485,10 @@ namespace StardewDruid.Journal
             {
 
                 List<string> loadout = new(prompts[character]);
-
+                
                 for (int q = loadout.Count - 1; q >= 0; q--)
                 {
-
+                    
                     if (IsComplete(loadout[q]))
                     {
 

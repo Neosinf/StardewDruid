@@ -991,7 +991,7 @@ namespace StardewDruid.Data
 
                                 NPC.doEmote(8, true);
 
-                                switch (new Random().Next(3))
+                                switch (new Random().Next(2))
                                 {
                                     case 0:
 

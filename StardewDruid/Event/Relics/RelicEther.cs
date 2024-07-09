@@ -78,9 +78,7 @@ namespace StardewDruid.Event.Relics
             if(activeCounter == 1)
             {
 
-                ThrowHandle throwRelic = new(Game1.player.Position, origin + new Vector2(0, -256), IconData.relics.book_druid);
-
-                throwRelic.delay = Mod.instance.randomIndex.Next(5) * 10;
+                ThrowHandle throwRelic = new(Game1.player.Position, (new Vector2(14, 4) * 64), IconData.relics.book_druid);
 
                 throwRelic.impact = IconData.impacts.puff;
 

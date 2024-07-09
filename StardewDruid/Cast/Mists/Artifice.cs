@@ -52,6 +52,8 @@ namespace StardewDruid.Cast.Mists
 
             int casts = 0;
 
+            bool zaprod = false;
+
             bool zappot = false;
 
             Vector2 warpVector = WarpData.WarpTiles(location);
@@ -157,9 +159,11 @@ namespace StardewDruid.Cast.Mists
                             if (location.IsFarm && targetObject.QualifiedItemId == "(BC)9")
                             {
 
-                                if (targetObject.MinutesUntilReady > 1)
+                                if (targetObject.heldObject.Value != null)
                                 {
+
                                     continue;
+
                                 }
 
                                 for (int j = 0; j <= Mod.instance.PowerLevel; j++)
@@ -167,7 +171,7 @@ namespace StardewDruid.Cast.Mists
 
                                     if (Mod.instance.rite.specialCasts[locationName].Contains("rod" + j.ToString()))
                                     {
-
+                                        
                                         continue;
 
                                     }
@@ -178,7 +182,14 @@ namespace StardewDruid.Cast.Mists
 
                                     targetObject.shakeTimer = 1000;
 
-                                    Mod.instance.spellRegister.Add(new(tileVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                                    if (!zaprod)
+                                    {
+                                        
+                                        Mod.instance.spellRegister.Add(new(tileVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                                        
+                                        zaprod = true;
+
+                                    }
 
                                     Mod.instance.rite.specialCasts[locationName].Add("rod" + j.ToString());
 
@@ -274,12 +285,7 @@ namespace StardewDruid.Cast.Mists
 
                             }
                             else if(targetObject is CrabPot Crabpot)
-                            //else if (targetObject.QualifiedItemId.Contains("(O)710"))
                             {
-
-                                //Mod.instance.Monitor.Log(Crabpot.readyForHarvest.Value.ToString(), StardewModdingAPI.LogLevel.Debug);
-                                //Mod.instance.Monitor.Log(Crabpot.bait.Value.ToString(), StardewModdingAPI.LogLevel.Debug);
-                                //Mod.instance.Monitor.Log(Crabpot.heldObject.Value.ToString(), StardewModdingAPI.LogLevel.Debug);
 
                                 if (Crabpot.heldObject.Value != null)
                                 {
@@ -348,22 +354,6 @@ namespace StardewDruid.Cast.Mists
                                 }
 
                             }
-
-                            /*else if (targetObject.QualifiedItemId.Contains("93"))
-                            {
-
-                                Mod.instance.iconData.ImpactIndicator(location, tileVector * 64, IconData.impacts.deathbomb, 2f, new() { scheme = IconData.schemes.stars, });
-
-                                location.objects.Remove(tileVector);
-                                StardewDruid.Monster.Boss theMonster; 
-                                theMonster = new Dustfiend(tileVector, Mod.instance.CombatDifficulty()); 
-                                theMonster.RandomTemperment();
-                                theMonster.SetMode(2);
-                                location.characters.Add(theMonster);
-                                theMonster.currentLocation = location;
-                                theMonster.update(Game1.currentGameTime, location);
-
-                            }*/
 
                             continue;
 

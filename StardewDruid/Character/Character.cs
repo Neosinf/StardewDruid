@@ -35,7 +35,6 @@ namespace StardewDruid.Character
 
         public Texture2D characterTexture;
         public CharacterHandle.characters characterType = CharacterHandle.characters.none;
-        //public List<Vector2> targetVectors = new();
 
         public int overhead;
 
@@ -223,8 +222,6 @@ namespace StardewDruid.Character
             specialFloor = 1;
 
             cooldownInterval = 300;
-
-            workFrames = specialFrames;
 
             dashPeak = 128;
 
@@ -466,6 +463,8 @@ namespace StardewDruid.Character
                 },
             };
 
+            workFrames = specialFrames;
+
             loadedOut = true;
 
         }
@@ -531,7 +530,7 @@ namespace StardewDruid.Character
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            float drawLayer = (float)StandingPixel.Y / 10000f;
+            float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
 
             DrawEmote(b);
 
@@ -676,11 +675,10 @@ namespace StardewDruid.Character
 
         public override void DrawEmote(SpriteBatch b)
         {
+            float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
 
             if (IsEmoting && !Game1.eventUp)
             {
-
-                float drawLayer = (float)StandingPixel.Y / 10000f;
 
                 b.Draw(Game1.emoteSpriteSheet, Game1.GlobalToLocal(Position)-new Vector2(0,overhead == 0 ? 144 : overhead), new Microsoft.Xna.Framework.Rectangle(base.CurrentEmoteIndex * 16 % Game1.emoteSpriteSheet.Width, base.CurrentEmoteIndex * 16 / Game1.emoteSpriteSheet.Width * 16, 16, 16), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, drawLayer);
             
@@ -693,8 +691,6 @@ namespace StardewDruid.Character
 
                     if (Mod.instance.eventRegister[eventName].dialogueLoader.ContainsKey(Name))
                     {
-
-                        float drawLayer = (float)StandingPixel.Y / 10000f;
 
                         b.Draw(
                             Mod.instance.iconData.displayTexture,
@@ -716,8 +712,6 @@ namespace StardewDruid.Character
             else if (netDazeActive.Value)
             {
 
-                float drawLayer = (float)StandingPixel.Y / 10000f;
-
                 b.Draw(
                     Mod.instance.iconData.displayTexture,
                     Game1.GlobalToLocal(Position) - new Vector2(0, overhead == 0 ? 144 : overhead),
@@ -736,8 +730,6 @@ namespace StardewDruid.Character
 
                 if(Mod.instance.dialogue[characterType].promptDialogue.Count > 0)
                 {
-
-                    float drawLayer = (float)StandingPixel.Y / 10000f;
 
                     b.Draw(
                         Mod.instance.iconData.displayTexture, 
@@ -1223,13 +1215,24 @@ namespace StardewDruid.Character
 
                 pushTimer += 2;
 
-                if(pushTimer > 10)
+                if(pushTimer > 30)
                 {
                     
                     if (ChangeBehaviour(true))
                     {
 
                         TargetRandom(4);
+
+                        if(idleTimer > 0)
+                        {
+
+                            Vector2 offset = ModUtility.DirectionAsVector(ModUtility.DirectionToTarget(Position, Game1.player.Position)[2]) * 64;
+
+                            Position = Game1.player.Position + offset;
+
+                            Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position);
+
+                        }
 
                     }
 
@@ -1345,6 +1348,13 @@ namespace StardewDruid.Character
         public virtual void ProgressScene()
         {
 
+            if(eventName == null || !Mod.instance.eventRegister.ContainsKey(eventName))
+            {
+
+                SwitchToMode(mode.random,Game1.player);
+
+            }
+
             if (netHaltActive.Value)
             {
 
@@ -1392,7 +1402,7 @@ namespace StardewDruid.Character
                         Mod.instance.eventRegister[eventName].EventScene(eventVector.Key);
 
                     }
-
+                    
                     if(eventVectors.Count > 0)
                     {
 
@@ -1760,13 +1770,13 @@ namespace StardewDruid.Character
                     case mode.track:
                     case mode.roam:
 
-                        timer = 360;
+                        timer = 180;
 
                         break;
 
                     default: //mode.scene: mode.standby:
 
-                        timer = 720;
+                        timer = 480;
 
                         break;
 
@@ -2213,6 +2223,33 @@ namespace StardewDruid.Character
 
             int decision = random.Next(level);
 
+            int stretch = 0;
+
+            if (Vector2.Distance(tether, Position) >= 1280)
+            {
+
+                stretch = 4;
+
+            }
+            else if (Vector2.Distance(tether, Position) >= 960)
+            {
+
+                stretch = 3;
+
+            }
+            else if (Vector2.Distance(tether,Position) >= 640)
+            {
+
+                stretch = 2;
+
+            }
+            else if (Vector2.Distance(tether, Position) >= 320)
+            {
+
+                stretch = 1;
+
+            }
+
             switch (decision)
             {
                 case 0:
@@ -2222,7 +2259,7 @@ namespace StardewDruid.Character
 
                     int newDirection = random.Next(10);
 
-                    if (newDirection >= 8)
+                    if (newDirection >= (8 -stretch))
                     {
 
                         newDirection = ModUtility.DirectionToTarget(Position, tether)[2];
@@ -2232,18 +2269,18 @@ namespace StardewDruid.Character
                     List<int> directions = new()
                     {
 
-                        (newDirection + 4) % 8,
-                        (newDirection + 6) % 8,
+                        (newDirection + 1) % 8,
                         (newDirection + 2) % 8,
+                        (newDirection + 7) % 8,
 
                     };
 
                     foreach (int direction in directions)
                     {
 
-                        if (PathTarget(occupied*64, 0, 1, direction))
+                        if (PathTarget(occupied*64, 0, 1+ stretch, direction))
                         {
-                            
+
                             pathActive = pathing.random;
 
                             return;
@@ -2649,6 +2686,8 @@ namespace StardewDruid.Character
 
             if (moveTimer > 0)
             {
+
+                idleTimer = 0;
 
                 moveTimer--;
 
@@ -3458,6 +3497,8 @@ namespace StardewDruid.Character
 
                     modeActive = mode.random;
 
+                    tether = CharacterHandle.RoamTether(currentLocation);
+
                     break;
 
                 case mode.track:
@@ -3475,6 +3516,13 @@ namespace StardewDruid.Character
                     modeActive = mode.scene;
 
                     netSceneActive.Set(true);
+
+                    if(Mod.instance.activeEvent.Count > 0)
+                    {
+
+                        eventName = Mod.instance.activeEvent.First().Key;
+
+                    }
 
                     //netStandbyActive.Set(true);
 

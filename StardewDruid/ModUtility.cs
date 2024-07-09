@@ -5,9 +5,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using Netcode;
 using StardewDruid.Cast;
+using StardewDruid.Cast.Effect;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Character;
 using StardewDruid.Data;
+using StardewDruid.Location;
 using StardewDruid.Monster;
 using StardewModdingAPI;
 using StardewValley;
@@ -33,6 +35,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Xml.Linq;
 using xTile;
 using xTile.Dimensions;
 using xTile.Layers;
@@ -523,8 +526,7 @@ namespace StardewDruid
 
         }
 
-
-        public static List<StardewValley.Object> ExtractCrop(HoeDirt soil, Crop crop, Vector2 tileVector)
+        public static List<StardewValley.Object> ExtractCrop(HoeDirt soil, Crop crop, Vector2 tileVector, bool allowIridium)
         {
 
             Random randomIndex = new();
@@ -603,7 +605,12 @@ namespace StardewDruid
 
             }
 
-            qualityMax += (int)(Game1.player.FarmingLevel / 3);
+            if(Game1.player.FarmingLevel > 5)
+            {
+
+                qualityMax++;
+
+            }
 
             if (soil.HasFertilizer())
             {
@@ -621,7 +628,19 @@ namespace StardewDruid
 
                 int quality = randomIndex.Next(0, 3 + qualityMax);
 
-                if (quality == 3) { quality = randomIndex.Next(2) == 0 ? 2 : 4; }
+                if (quality == 3)
+                { 
+                    
+                    quality = randomIndex.Next(2) == 0 ? 2 : 4; 
+                
+                }
+
+                if(quality > 2 && !allowIridium)
+                {
+
+                    quality = 2;
+
+                }
 
                 if (crop.indexOfHarvest.Value.Contains("771") || crop.indexOfHarvest.Value.Contains("889"))
                 {
@@ -692,6 +711,54 @@ namespace StardewDruid
 
         }
 
+        public static StardewValley.Object ExtractForage(GameLocation location, Vector2 vector, bool remove = true)
+        {
+
+            StardewValley.Object value = (location.objects[vector].getOne() as StardewValley.Object);
+
+            int quality = value.Quality;
+
+            Random random = Utility.CreateDaySaveRandom(vector.X, vector.Y * 777f);
+
+            if (Game1.player.professions.Contains(16))
+            {
+                value.Quality = 4;
+            }
+            else
+            {
+                if (random.NextDouble() < (double)((float)Game1.player.ForagingLevel / 30f))
+                {
+                    value.Quality = Math.Max(2, quality);
+                }
+                else if (random.NextDouble() < (double)((float)Game1.player.ForagingLevel / 15f))
+                {
+                    value.Quality = Math.Max(1, quality);
+                }
+            }
+
+            location.localSound("pickUpItem");
+
+            if (Game1.player.professions.Contains(13) && random.NextDouble() < 0.2 && !value.questItem.Value && !location.isFarmBuildingInterior())
+            {
+
+                value.Stack = 2;
+
+            }
+
+            Game1.player.gainExperience(2, 7 * value.Stack);
+
+            Game1.stats.ItemsForaged++;
+
+            if (remove) {
+
+                location.objects.Remove(vector); 
+            
+            }
+
+            return value;
+
+        }
+
         // ======================== Tile Interactions
 
         public static Vector2 PositionToTile(Vector2 position)
@@ -710,7 +777,7 @@ namespace StardewDruid
             Layer backLayer = targetLocation.Map.GetLayer("Back");
 
             Tile backTile;
-            //Mod.instance.Monitor.Log(targetVector.ToString(), LogLevel.Debug);
+
             for (int i = 0; i < radius; i++)
             {
 
@@ -719,15 +786,14 @@ namespace StardewDruid
                 foreach (Vector2 neighbour in neighbours)
                 {
 
-                    //backTile = backLayer.PickTile(new xTile.Dimensions.Location((int)neighbour.X * 64, (int)neighbour.Y * 64), Game1.viewport.Size);
                     backTile = backLayer.Tiles[(int)neighbour.X, (int)neighbour.Y];
 
                     if (backTile != null)
                     {
-                        //Mod.instance.Monitor.Log("meow", LogLevel.Debug);
+
                         if (!backTile.TileIndexProperties.TryGetValue("Water", out _))
                         {
-                            //Mod.instance.Monitor.Log("meow2", LogLevel.Debug);
+
                             check = false;
 
                         }
@@ -1191,20 +1257,22 @@ namespace StardewDruid
 
                 Layer pathsLayer = targetLocation.Map.GetLayer("Paths");
 
-                if (!Mod.instance.featureRegister.ContainsKey(targetLocation.Name))
+                if (Mod.instance.mapped != targetLocation.Name)
                 {
+                    
+                    Mod.instance.mapped = targetLocation.Name;
 
-                    Mod.instance.featureRegister[targetLocation.Name] = LocationTargets(targetLocation);
+                    Mod.instance.features = LocationTargets(targetLocation);
 
                 }
 
                 foreach (Vector2 neighbourVector in neighbourVectors)
                 {
 
-                    if (Mod.instance.featureRegister[targetLocation.Name].ContainsKey(neighbourVector))
+                    if (Mod.instance.features.ContainsKey(neighbourVector))
                     {
 
-                        string targetType = Mod.instance.featureRegister[targetLocation.Name][neighbourVector];
+                        string targetType = Mod.instance.features[neighbourVector];
 
                         if (!neighbourList.ContainsKey(targetType))
                         {
@@ -1219,7 +1287,12 @@ namespace StardewDruid
 
                     }
 
-                    Tile buildingTile = buildingLayer.PickTile(new xTile.Dimensions.Location((int)neighbourVector.X * 64, (int)neighbourVector.Y * 64), Game1.viewport.Size);
+                    int targetX = (int)neighbourVector.X;
+
+                    int targetY = (int)neighbourVector.Y;
+
+                    Tile buildingTile = buildingLayer.Tiles[targetX, targetY];
+                   // Tile buildingTile = buildingLayer.PickTile(new xTile.Dimensions.Location((int)neighbourVector.X * 64, (int)neighbourVector.Y * 64), Game1.viewport.Size);
 
                     if (buildingTile != null)
                     {
@@ -2535,15 +2608,10 @@ namespace StardewDruid
 
             }
 
-            foreach (Farmer farmer in Game1.getAllFarmers())
+            foreach (Farmer farmer in location.farmers)
             {
-
-                if (farmer.currentLocation.Name == location.Name)
-                {
-
-                    farmers.Add(farmer);
-
-                }
+                
+                farmers.Add(farmer);
 
             }
 
@@ -2624,6 +2692,13 @@ namespace StardewDruid
 
             foreach (KeyValuePair<characters, TrackHandle> tracker in Mod.instance.trackers)
             {
+
+                if(Mod.instance.characters[tracker.Key].currentLocation.Name != targetLocation.Name)
+                {
+
+                    continue;
+
+                }
 
                 float distance = Proximation(Mod.instance.characters[tracker.Key].Position, targetPosition, threshold);
 
@@ -2911,7 +2986,19 @@ namespace StardewDruid
                     if (monster is Boss boss)
                     {
 
-                        if (boss.netPosturing.Value || boss.netWoundedActive.Value)
+                        if (boss.netPosturing.Value)
+                        {
+
+                            if (!boss.netChannelActive.Value)
+                            {
+
+                                continue;
+
+                            }
+
+                        }
+
+                        if (boss.netWoundedActive.Value)
                         {
 
                             continue;
@@ -3595,7 +3682,7 @@ namespace StardewDruid
 
         }
 
-        public static void Reave(GameLocation targetLocation, Vector2 targetVector, Farmer targetPlayer, int radius)
+        public static void Reave(GameLocation targetLocation, Vector2 targetVector, Farmer targetPlayer, int radiusTiles)
         {
 
             List<Vector2> tileVectors;
@@ -3604,7 +3691,7 @@ namespace StardewDruid
 
             int wet = Game1.IsRainingHere(targetLocation) && targetLocation.IsOutdoors && !targetLocation.Name.Equals("Desert") ? 1 : 0;
 
-            for (int i = 0; i < radius + 1; i++)
+            for (int i = 0; i < radiusTiles + 1; i++)
             {
 
                 if (i == 0)
@@ -3632,7 +3719,7 @@ namespace StardewDruid
 
                     dirtCount++;
 
-                    if (i == radius && dirtCount % 2 == 1)
+                    if (i == radiusTiles && dirtCount % 2 == 1)
                     {
 
                         continue;

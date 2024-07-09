@@ -48,8 +48,6 @@ namespace StardewDruid.Event
 
         public int triggerCounter;
 
-        public TriggerField triggerField;
-
         // ------------------ event management
 
         public enum actionButtons
@@ -85,6 +83,10 @@ namespace StardewDruid.Event
         public int eventRating;
 
         public List<actionButtons> clicks = new();
+
+        public List<EventRender> eventRenders = new();
+
+        public IconData.skies channel = IconData.skies.none;
 
         // ------------------- event entities
 
@@ -171,6 +173,25 @@ namespace StardewDruid.Event
 
         }
 
+        public virtual void EventDraw(SpriteBatch b)
+        {
+
+            if(eventRenders.Count == 0)
+            {
+
+                return;
+
+            }
+
+            foreach (EventRender er in eventRenders)
+            {
+
+                er.draw(b);
+
+            }
+
+        }
+
         // ------------------------------------
 
         public virtual bool TriggerActive()
@@ -210,7 +231,9 @@ namespace StardewDruid.Event
         public virtual void TriggerField()
         {
 
-            triggerField = new(eventId, location.Name, origin, Mod.instance.iconData.riteDisplays[Mod.instance.questHandle.quests[eventId].triggerRite]);
+            EventRender triggerField = new(eventId, location.Name, origin, Mod.instance.iconData.riteDisplays[Mod.instance.questHandle.quests[eventId].triggerRite]);
+
+            eventRenders.Add(triggerField);
 
         }
 
@@ -295,7 +318,7 @@ namespace StardewDruid.Event
 
             triggerCounter = 0;
 
-            triggerField = null;
+            eventRenders.Clear();
 
             location = null;
 
@@ -397,7 +420,7 @@ namespace StardewDruid.Event
 
             EventDisplay bar = Mod.instance.CastDisplay(narrators[narratorId], narrators[narratorId]);
 
-            bar.boss = bosses[bossId];
+            bar.boss = bossId;
 
             bar.eventId = eventId;
 
@@ -445,7 +468,7 @@ namespace StardewDruid.Event
 
             }
 
-            if (activeLimit != -1 & eventCounter > activeLimit)
+            if (activeLimit != -1 && eventCounter > activeLimit)
             {
 
                 return EventExpire();
@@ -525,7 +548,16 @@ namespace StardewDruid.Event
 
             StopTrack();
 
-            if(location is StardewDruid.Location.DruidLocation druidLocation)
+            eventRenders.Clear();
+
+            if(channel != IconData.skies.none)
+            {
+
+                Mod.instance.rite.ChannelShutdown(channel);
+
+            }
+
+            if (location is StardewDruid.Location.DruidLocation druidLocation)
             {
 
                 druidLocation.updateWarps();
@@ -768,25 +800,41 @@ namespace StardewDruid.Event
 
             }
 
-            if(activeCounter == 0)
+            if (activeCounter == 0)
             {
 
                 return 0f;
 
             }
 
-            float progress = (float)activeCounter / (float)activeLimit;
+            float progress = 0f;
+
+            switch (displayId)
+            {
+
+                case 0:
+
+                    progress = (float)activeCounter / (float)activeLimit;
+
+                    break;
+
+                case 1:
+
+                    progress = SpecialProgress(displayId);
+
+                    break;
+
+
+            }
 
             return progress;
 
         }
 
-        public virtual void DialogueCue(int voice, string text)
+        public virtual float SpecialProgress(int displayId)
         {
 
-            cues = new() { [0] = new() { [voice] = text, }, };
-
-            DialogueCue(0);
+            return -1f;
 
         }
 
@@ -851,6 +899,20 @@ namespace StardewDruid.Event
 
                     if (voices.ContainsKey(cue.Key) && cue.Value.Length > 4)
                     {
+
+                        if (voices[cue.Key] is StardewDruid.Monster.Boss bossMonster)
+                        {
+
+                            if (!ModUtility.MonsterVitals(bossMonster,location))
+                            {
+
+                                voices.Remove(cue.Key);
+
+                                return;
+
+                            }
+
+                        }
 
                         string cueTitle = voices[cue.Key].Name;  
                         
@@ -928,7 +990,6 @@ namespace StardewDruid.Event
 
             }
 
-
             DialogueCue(cueIndex);
 
         }
@@ -972,7 +1033,6 @@ namespace StardewDruid.Event
             DialogueCue(cueIndex);
 
         }
-
 
         public virtual void DialogueLoad(StardewDruid.Character.Character npc,int dialogueId)
         {
@@ -1139,7 +1199,7 @@ namespace StardewDruid.Event
 
                 value = text,
 
-                location = location.Name,
+                location = npc.currentLocation.Name,
 
             };
 

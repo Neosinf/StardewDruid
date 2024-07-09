@@ -172,15 +172,9 @@ namespace StardewDruid.Cast.Mists
             if (decimalCounter == 5)
             {
 
-                TemporaryAnimatedSprite skyAnimation = Mod.instance.iconData.SkyIndicator(location, origin, IconData.skies.moon, 1f, new() { interval = 1000, });
+                Mod.instance.rite.channel(IconData.skies.moon, 75);
 
-                skyAnimation.scaleChange = 0.002f;
-
-                skyAnimation.motion = new(-0.064f, -0.064f);
-
-                skyAnimation.timeBasedMotion = true;
-
-                animations.Add(skyAnimation);
+                channel = IconData.skies.moon;
 
             }
 
@@ -193,10 +187,6 @@ namespace StardewDruid.Cast.Mists
 
             if(decimalCounter == 15)
             {
-
-                TemporaryAnimatedSprite skyAnimation = Mod.instance.iconData.SkyIndicator(location, origin, IconData.skies.moon, 3f, new() { interval = 1000, });
-
-                animations.Add(skyAnimation);
 
                 location.playSound("thunder");
 

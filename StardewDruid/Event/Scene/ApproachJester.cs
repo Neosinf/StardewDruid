@@ -33,9 +33,9 @@ namespace StardewDruid.Event.Scene
 
             CharacterHandle.CharacterLoad(CharacterHandle.characters.Jester, StardewDruid.Character.Character.mode.scene);
 
-            CharacterMover.Warp(location, Mod.instance.characters[CharacterHandle.characters.Jester], origin);
+            location = Game1.getLocationFromName(Mod.instance.questHandle.quests[eventId].triggerLocation);
 
-            SetupCompanion();
+            CharacterMover.Warp(location, Mod.instance.characters[CharacterHandle.characters.Jester], origin);
 
             companions[0] = Mod.instance.characters[CharacterHandle.characters.Jester];
 
