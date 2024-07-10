@@ -1,8 +1,4 @@
 ﻿====================================
-3.0.0 IS HERE
-====================================
-
-====================================
 Stardew Druid - 1.6 Ready
 ====================================
 
@@ -33,7 +29,6 @@ Draw out the hidden bounty of the valley, add trees and grass to barren spaces, 
 The isle of mists is an important place in medieval sagas, and the residence of the Lady Beyond the Shore. This rite is about being a commanding presence with awesome displays of power and lots of lightning bolts.
 
 Extract power from totem shrines, target scarecrows, rods and campfires for special functions, create high-yield fishing spots, and smite any obstacle in your way. 
-Create monster rifts from ordinary candles for a bit of extra challenge and combat experience. 
 
 -----------------------------------------
 3. Rite of the Stars 

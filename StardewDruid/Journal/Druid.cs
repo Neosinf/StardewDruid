@@ -1208,8 +1208,6 @@ namespace StardewDruid.Journal
 
                                 }
 
-                                if (receiveClickQuesting(x, y)) { return; };
-
                             }
 
                             if (type == journalTypes.relics)
