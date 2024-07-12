@@ -346,38 +346,6 @@ namespace StardewDruid
                 setValue: value => Config.castAnywhere = value
             );
 
-            configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => "Disable Seed Spawn",
-                tooltip: () => "Disables wild seasonal seed spawn effect for Rite of the Weald.",
-                getValue: () => Config.disableSeeds,
-                setValue: value => Config.disableSeeds = value
-            );
-
-            configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => "Disable Fish Spawn",
-                tooltip: () => "Disables low grade fish spawn effect for Rite of the Weald.",
-                getValue: () => Config.disableFish,
-                setValue: value => Config.disableFish = value
-            );
-
-            configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => "Disable Tree Spawn",
-                tooltip: () => "Disables tree spawn effect for Rite of the Weald.",
-                getValue: () => Config.disableTrees,
-                setValue: value => Config.disableTrees = value
-            );
-
-            configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => "Disable Grass Spawn",
-                tooltip: () => "Disables grass spawn effect for Rite of the Weald.",
-                getValue: () => Config.disableGrass,
-                setValue: value => Config.disableGrass = value
-            );
-
             return configMenu;
 
         }

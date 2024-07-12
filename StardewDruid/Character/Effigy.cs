@@ -360,10 +360,19 @@ namespace StardewDruid.Character
 
             if (Game1.currentSeason == "winter")
             {
+                
                 return false;
+
             }
 
-            if(!currentLocation.IsFarm && !currentLocation.IsGreenhouse)
+            if (Game1.IsRainingHere(currentLocation))
+            {
+
+                return false;
+
+            }
+
+            if(new SpawnIndex(currentLocation).cultivate == false)
             {
 
                 return false;
@@ -372,7 +381,9 @@ namespace StardewDruid.Character
 
             if (currentLocation.objects.Count() < 0)
             {
+                
                 return false;
+            
             }
             
             List<Vector2> tileVectors;
@@ -451,24 +462,29 @@ namespace StardewDruid.Character
 
             }
 
-            if(specialTimer == 50 && !Mod.instance.Config.disableSeeds)
+            if(specialTimer == 50)
             {
-
-                Cultivate cultivateEvent = new();
-
-                cultivateEvent.EventSetup(workVector * 64, "effigy_cultivate_" + workVector.ToString());
-
-                cultivateEvent.inabsentia = true;
 
                 CharacterHandle.RetrieveInventory(CharacterHandle.characters.Effigy);
 
-                cultivateEvent.inventory = Mod.instance.chests[CharacterHandle.characters.Effigy].Items;
+                if(Mod.instance.chests[CharacterHandle.characters.Effigy].Items.Count > 0)
+                {
 
-                cultivateEvent.EventActivate();
+                    Cultivate cultivateEvent = new();
+
+                    cultivateEvent.EventSetup(workVector * 64, "effigy_cultivate_" + workVector.ToString());
+
+                    cultivateEvent.inabsentia = true;
+
+                    cultivateEvent.inventory = Mod.instance.chests[CharacterHandle.characters.Effigy].Items;
+
+                    cultivateEvent.EventActivate();
+
+                }
 
             }
 
-            if(specialTimer == 20 && !Game1.IsRainingHere(currentLocation))
+            if(specialTimer == 20)
             {
 
                 Artifice artificeHandle = new();

@@ -39,7 +39,6 @@ namespace StardewDruid.Monster
 
         // ============================= Differentiation
 
-
         public int baseMode;
         public int baseJuice;
         public float debuffJuice;
@@ -652,28 +651,21 @@ namespace StardewDruid.Monster
             if(effect == SpellHandle.effects.morph)
             {
 
-                return SpellHandle.effects.blind;
-
-            }
-
-            if (effect == SpellHandle.effects.daze)
-            {
-
-                return SpellHandle.effects.blind;
+                return SpellHandle.effects.daze;
 
             }
 
             if (effect == SpellHandle.effects.knock)
             {
 
-                return SpellHandle.effects.blind;
+                return SpellHandle.effects.daze;
 
             }
 
             if (netMode.Value >= 3)
             {
 
-                return SpellHandle.effects.blind;
+                return SpellHandle.effects.daze;
 
             }
 

@@ -12,6 +12,7 @@ using StardewValley.Extensions;
 using System.Reflection;
 using StardewDruid.Journal;
 using static StardewDruid.Data.IconData;
+using StardewDruid.Data;
 
 namespace StardewDruid.Dialogue
 {
@@ -62,11 +63,11 @@ namespace StardewDruid.Dialogue
 
             Microsoft.Xna.Framework.Color colour = Mod.instance.iconData.SchemeColour(herbal.scheme);
             
-            b.Draw(Mod.instance.iconData.relicsTexture, vector + new Vector2( 2f, 4f), Mod.instance.iconData.RelicRectangles(herbal.container), Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 3f, 0, 0.900f);
+            b.Draw(Mod.instance.iconData.relicsTexture, vector + new Vector2( 2f, 4f), IconData.RelicRectangles(herbal.container), Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 3f, 0, 0.900f);
             
-            b.Draw(Mod.instance.iconData.relicsTexture, vector, Mod.instance.iconData.RelicRectangles(herbal.container), Color.White, 0f, Vector2.Zero, 3f, 0, 0.901f);
+            b.Draw(Mod.instance.iconData.relicsTexture, vector, IconData.RelicRectangles(herbal.container), Color.White, 0f, Vector2.Zero, 3f, 0, 0.901f);
 
-            b.Draw(Mod.instance.iconData.relicsTexture, vector, Mod.instance.iconData.RelicRectangles(herbal.content), colour, 0f, Vector2.Zero, 3f, 0, 0.902f);
+            b.Draw(Mod.instance.iconData.relicsTexture, vector, IconData.RelicRectangles(herbal.content), colour, 0f, Vector2.Zero, 3f, 0, 0.902f);
 
             float timeThink = timeLeft - 3000f;
 

@@ -1,9 +1,4 @@
-﻿using Force.DeepCloner;
-using Microsoft.VisualBasic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
 using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Character;
@@ -12,39 +7,17 @@ using StardewDruid.Dialogue;
 using StardewDruid.Event;
 using StardewDruid.Event.Access;
 using StardewDruid.Journal;
-using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
-using StardewModdingAPI.Utilities;
 using StardewValley;
-using StardewValley.Buffs;
-using StardewValley.Characters;
-using StardewValley.Constants;
-using StardewValley.GameData.Characters;
-using StardewValley.Locations;
 using StardewValley.Menus;
-using StardewValley.Minigames;
-using StardewValley.Quests;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection.Metadata;
-using System.Security.Cryptography.X509Certificates;
-using xTile;
-using xTile.Dimensions;
-using xTile.Display;
-using xTile.Layers;
-using xTile.ObjectModel;
-using xTile.Tiles;
-using static StardewDruid.Cast.ThrowHandle;
+
 using static StardewDruid.Journal.Druid;
-using static StardewDruid.Journal.HerbalData;
-using static StardewValley.Menus.CharacterCustomization;
-using static System.Net.Mime.MediaTypeNames;
+
 
 
 namespace StardewDruid
@@ -466,8 +439,6 @@ namespace StardewDruid
                 foreach (KeyValuePair<CharacterHandle.characters, StardewValley.Objects.Chest> chest in chests)
                 {
 
-                    //save.chests[chest.Key].Clear();
-
                     if (save.chests.ContainsKey(chest.Key))
                     {
 
@@ -511,23 +482,18 @@ namespace StardewDruid
 
             reactions.Clear();
 
-            if (Context.IsMainPlayer)
+            foreach (GameLocation location in (IEnumerable<GameLocation>)Game1.locations)
             {
-                
-                foreach (GameLocation location in (IEnumerable<GameLocation>)Game1.locations)
+
+                if (location.characters.Count > 0)
                 {
-
-                    if (location.characters.Count > 0)
+                    for (int index = location.characters.Count - 1; index >= 0; index--)
                     {
-                        for (int index = location.characters.Count - 1; index >= 0; index--)
+                        NPC npc = location.characters[index];
+
+                        if (npc is StardewDruid.Character.Character)
                         {
-                            NPC npc = location.characters[index];
-
-                            if (npc is StardewDruid.Character.Character)
-                            {
-                                location.characters.RemoveAt(index);
-                            }
-
+                            location.characters.RemoveAt(index);
                         }
 
                     }
@@ -1030,8 +996,40 @@ namespace StardewDruid
 
             }
 
-            //new Event.Challenge.ChallengeStars().EventSetup(Game1.player.Position, QuestHandle.challengeStars, true);
             EventHandle.actionButtons actionPressed = ActionButtonPressed();
+
+            Druid.journalTypes journalPressed = Journal.Druid.JournalButtonPressed();
+
+            if (Game1.activeClickableMenu is Druid druidJournal)
+            {
+
+                if (journalPressed != journalTypes.none)
+                {
+
+                    if (druidJournal.type == journalPressed)
+                    {
+
+                        druidJournal.exitThisMenu(true);
+
+                    }
+                    else
+                    {
+
+                        druidJournal.switchTo(journalPressed);
+
+                    }
+
+                }
+                else if (actionPressed == EventHandle.actionButtons.rite)
+                {
+
+                    druidJournal.exitThisMenu(true);
+
+                }
+
+                return;
+
+            }
 
             if (!CasterBusy()) {
 
@@ -1078,6 +1076,25 @@ namespace StardewDruid
 
                 }
 
+                if(actionPressed == EventHandle.actionButtons.action)
+                {
+
+                    bool buffHover = Game1.buffsDisplay.isWithinBounds(Game1.getMouseX(true), Game1.getMouseY(true));
+
+                    if (buffHover)
+                    {
+
+                        if (Game1.buffsDisplay.hoverText.Contains(DialogueData.Strings(DialogueData.stringkeys.stardewDruid)))
+                        {
+
+                            Game1.activeClickableMenu = new Druid(journalPressed);
+
+                        }
+
+                    }
+
+                }
+
             }
             else
             {
@@ -1086,44 +1103,53 @@ namespace StardewDruid
 
             }
 
-            Druid.journalTypes journalPressed = Journal.Druid.JournalButtonPressed();
-
-
-            if (journalPressed != journalTypes.none)
+            if (Game1.activeClickableMenu != null)
             {
 
-                rite.shutdown();
-                
-                if (Game1.activeClickableMenu != null)
+                if(Game1.activeClickableMenu is QuestLog questLog)
                 {
-
-                    if (Game1.activeClickableMenu is Druid druidJournal)
+                       
+                   if(actionPressed == EventHandle.actionButtons.rite || journalPressed != journalTypes.none)
                     {
 
-                        if (druidJournal.type == journalPressed)
-                        {
+                        questLog.exitThisMenu(true);
 
-                            druidJournal.exitThisMenu(true);
-
-                        }
-                        else
-                        {
-
-                            druidJournal.switchTo(journalPressed);
-
-                        }
+                        Game1.activeClickableMenu = new Druid(journalPressed);
+                        
+                        rite.shutdown();
 
                     }
 
+
                 }
-                else
+                else if(Game1.activeClickableMenu is GameMenu gameMenu)
                 {
                     
-                    Game1.activeClickableMenu = new Druid(journalPressed);
+                    if (gameMenu.currentTab == 0 && actionPressed == EventHandle.actionButtons.rite || journalPressed != journalTypes.none)
+                    {
+
+                        gameMenu.exitThisMenu(true);
+
+                        Game1.activeClickableMenu = new Druid(journalPressed);
+                        
+                        rite.shutdown();
+                    
+                    }
 
                 }
 
                 return;
+
+            }
+
+            if (journalPressed != journalTypes.none)
+            {
+
+                //Game1.activeClickableMenu = new DruidJournal();
+
+                Game1.activeClickableMenu = new Druid(journalPressed);
+                
+                rite.shutdown();
 
             }
 

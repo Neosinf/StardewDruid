@@ -29,6 +29,14 @@ namespace StardewDruid.Event.Sword
 
             companions[0] = Mod.instance.characters[CharacterHandle.characters.Revenant];
 
+            companions[0].SwitchToMode(Character.Character.mode.scene, Game1.player);
+
+            companions[0].Position = new Vector2(27, 16) * 64;
+
+            companions[0].netStandbyActive.Set(true);
+
+            companions[0] = Mod.instance.characters[CharacterHandle.characters.Revenant];
+
             companions[0].eventName = eventId;
 
             voices[0] = companions[0];
@@ -93,79 +101,46 @@ namespace StardewDruid.Event.Sword
             switch (activeCounter)
             {
 
-                case 1:
+                case 4:
 
-                    if(Mod.instance.characters[CharacterHandle.characters.Revenant].modeActive != Character.Character.mode.scene)
-                    {
-                        
-                        Mod.instance.characters[CharacterHandle.characters.Revenant].SwitchToMode(Character.Character.mode.scene, Game1.player);
+                    DialogueCue(1);
 
-                    }
+                    break;
 
-                    if (Vector2.Distance(origin, Mod.instance.characters[CharacterHandle.characters.Revenant].Position) >= 64)
-                    {
+                case 7:
 
-                        Mod.instance.characters[CharacterHandle.characters.Revenant].TargetEvent(0, new Vector2(27, 16) * 64, true);
+                    DialogueCue(2);
 
-                    }
-                    else
-                    {
+                    break;
 
-                        DialogueLoad(0, 1);
+                case 10:
 
-                        Mod.instance.characters[CharacterHandle.characters.Revenant].TargetIdle(2000);
+                    DialogueCue(3);
 
-                        Mod.instance.characters[CharacterHandle.characters.Revenant].netStandbyActive.Set(true);
+                    break;
 
-                        switch ((int)Game1.currentGameTime.TotalGameTime.TotalSeconds % 30)
-                        {
-
-                            case 4:
-
-                                DialogueCue(1);
-
-                                break;
-
-                            case 7:
-
-                                DialogueCue(2);
-
-                                break;
-
-                            case 10:
-
-                                DialogueCue(3);
-
-                                break;
-
-                            case 13:
+                case 13:
 
 
-                                DialogueCue(4);
+                    DialogueCue(4);
 
-                                break;
+                    break;
 
-                            case 16:
+                case 16:
 
-                                DialogueCue(5);
+                    DialogueCue(5);
 
-                                break;
+                    break;
 
-                            case 19:
+                case 19:
 
-                                DialogueCue(6);
+                    DialogueCue(6);
 
-                                break;
+                    break;
 
-                            case 22:
+                case 22:
 
-                                DialogueCue(7);
-
-                                break;
-
-                        }
-
-                    }
+                    DialogueCue(7);
 
                     activeCounter = 0;
 
@@ -173,23 +148,17 @@ namespace StardewDruid.Event.Sword
 
                 case 101:
 
-                    companions[0].TargetIdle(6000);
+                    companions[0].netStandbyActive.Set(false);
+
+                    companions[0].ResetActives();
 
                     companions[0].LookAtTarget(Game1.player.Position);
 
-                    companions[0].clearTextAboveHead();
-
-                    DialogueLoad(0, 2);
+                    DialogueSetups(companions[0], 2);
 
                     break;
 
                 case 105:
-
-                    DialogueNext(companions[0]);
-
-                    break;
-
-                case 110:
 
                     activeCounter = 200;
 
@@ -197,17 +166,11 @@ namespace StardewDruid.Event.Sword
 
                 case 201:
 
-                    DialogueLoad(0, 3);
+                    DialogueSetups(companions[0], 3);
 
                     break;
 
                 case 205:
-
-                    DialogueNext(companions[0]);
-
-                    break;
-
-                case 210:
 
                     activeCounter = 300;
 
@@ -215,7 +178,13 @@ namespace StardewDruid.Event.Sword
 
                 case 301:
 
-                    Mod.instance.characters[CharacterHandle.characters.Revenant].SwitchToMode(Character.Character.mode.random, Game1.player);
+                    companions[0].SwitchToMode(Character.Character.mode.random, Game1.player);
+
+                    DialogueCue(8);
+
+                    companions[0].LookAtTarget(Game1.player.Position);
+
+                    companions[0].TargetIdle(6000);
 
                     eventComplete = true;
 

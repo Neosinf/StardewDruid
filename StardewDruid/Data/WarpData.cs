@@ -414,8 +414,6 @@ namespace StardewDruid.Data
 
             Vector2 destination = new Vector2(tileX, tileY) * 64;
 
-            //Mod.instance.iconData.AnimateQuickWarp(targetLocation, destination);
-
             return destination;
 
         }

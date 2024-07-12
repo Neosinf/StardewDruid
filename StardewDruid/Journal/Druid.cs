@@ -139,7 +139,7 @@ namespace StardewDruid.Journal
 
         public ClickableTextureComponent saveButton;
 
-        public Dictionary<IconData.schemes,ClickableComponent> dragonSchemes = new();
+        public Dictionary<IconData.schemes, ClickableComponent> dragonSchemes = new();
 
         public Dictionary<IconData.schemes, ClickableComponent> breathSchemes = new();
 
@@ -147,7 +147,7 @@ namespace StardewDruid.Journal
           : base(0, 0, 0, 0, true)
         {
 
-            type = Type;
+            type = Type == journalTypes.none ? journalTypes.quests : Type;
 
             reverse = Mod.instance.Config.reverseJournal;
 
@@ -258,8 +258,6 @@ namespace StardewDruid.Journal
             ClickableTextureComponent questingCTC = new ClickableTextureComponent(new Rectangle(xPositionOnScreen + width - 24 - 56 - 56, yPositionOnScreen + 16, 56, 56), Game1.mouseCursors, new Rectangle(365, 495, 12, 11), 3f, false);
             questingCTC.myID = 111;
             questingButton = questingCTC;
-
-
 
             if (Mod.instance.questHandle.IsComplete(QuestHandle.herbalism))
             {
@@ -380,44 +378,79 @@ namespace StardewDruid.Journal
 
         }
 
-        protected override void customSnapBehavior(int direction, int oldRegion, int oldID)
+        public void changePage(int page)
         {
-            if (oldID >= 0 && oldID < 6 && questPage == -1)
+            
+            if(questPage == -1)
             {
-                switch (direction)
+                
+                Game1.playSound("shwip");
+
+                if (Game1.options.SnappyMenus)
                 {
-                    case 1:
-                        if (currentPage < pages.Count - 1)
-                        {
-                            currentlySnappedComponent = getComponentWithID(101);
-                            currentlySnappedComponent.leftNeighborID = oldID;
-                            break;
-                        }
-                        break;
-                    case 2:
-                        if (oldID < 5 && pages[currentPage].Count - 1 > oldID)
-                        {
-                            currentlySnappedComponent = getComponentWithID(oldID + 1);
-                            break;
-                        }
-                        break;
-                    case 3:
-                        if (currentPage > 0)
-                        {
-                            currentlySnappedComponent = getComponentWithID(102);
-                            currentlySnappedComponent.rightNeighborID = oldID;
-                            break;
-                        }
-                        break;
+
+                    base.snapToDefaultClickableComponent();
+
                 }
+
             }
-            else if (oldID == 102)
+
+            questPage = -1;
+
+            currentPage = page;
+
+        }
+
+        public void switchTo(journalTypes journalType)
+        {
+
+            changePage(0);
+
+            type = journalType;
+
+            dragonMenu = false;
+
+            setupPages();
+
+        }
+
+        public bool closeCheck()
+        {
+
+            journalTypes journalPressed = JournalButtonPressed();
+
+            if (journalPressed != journalTypes.none)
             {
-                if (questPage != -1)
-                    return;
-                currentlySnappedComponent = getComponentWithID(0);
+
+                //if (type == journalPressed)
+                //{
+
+                    //exitThisMenu(true);
+
+                //    return true;
+
+                //}
+                //else
+                //{
+
+                    //switchTo(journalPressed);
+
+                    return true;
+
+                //}
+
             }
-            snapCursorToCurrentSnappedComponent();
+            else if (Mod.instance.ActionButtonPressed() == EventHandle.actionButtons.rite)
+            {
+
+                //exitThisMenu(true);
+
+                return true;
+
+            }
+
+            return false;
+
         }
 
         public void setupDragonMenu()
@@ -509,35 +542,36 @@ namespace StardewDruid.Journal
 
         }
 
-        public override void snapToDefaultClickableComponent()
-        {
- 
-            currentlySnappedComponent = getComponentWithID(0);
- 
-            snapCursorToCurrentSnappedComponent();
-
-        }
-
         public override void receiveGamePadButton(Buttons b)
         {
- 
+
+            if (closeCheck())
+            {
+
+                return;
+
+            }
+
             if (b == Buttons.RightTrigger && questPage == -1 && currentPage < pages.Count - 1)
             {
- 
-                nonQuestPageForwardButton();
- 
+
+                changePage(currentPage + 1);
+
             }
             else if (b == Buttons.LeftTrigger && questPage == -1)
             {
 
                 if (currentPage > 0)
                 {
-                    nonQuestPageBackButton();
+                    
+                    changePage(currentPage - 1);
 
                 }
                 else
                 {
-                    pageEndButton();
+                    
+                    changePage(pages.Count - 1);
+                
                 }
 
             }
@@ -718,15 +752,15 @@ namespace StardewDruid.Journal
 
             int hoverFound = -1;
 
-            for (int index = 0; index < galleryButtons.Count; ++index)
+            for (int index = 0; index < pages[currentPage].Count; ++index)
             {
 
-                if (pages[currentPage].Count <= index)
+                /*if (pages[currentPage].Count <= index)
                 {
 
                     return;
 
-                }
+                }*/
 
                 if (galleryButtons[index].containsPoint(x, y))
                 {
@@ -851,8 +885,24 @@ namespace StardewDruid.Journal
 
             }
 
+            /*if(pages[currentPage].Count <= questPage)
+            {
+
+                return;
+
+            }*/
+
             string questId = pages[currentPage][questPage];
 
+            if (!Mod.instance.save.progress.ContainsKey(questId))
+            {
+                return;
+            }
+
+            if (!Mod.instance.questHandle.IsReplayable(questId) && Mod.instance.save.progress[questId].status > 1)
+            {
+                return;
+            }
 
             if (Mod.instance.save.progress.ContainsKey(questId))
             {
@@ -891,77 +941,44 @@ namespace StardewDruid.Journal
 
         public override void receiveKeyPress(Keys key)
         {
-            
-            if (Game1.isAnyGamePadButtonBeingPressed() && questPage != -1 && Game1.options.doesInputListContain(Game1.options.menuButton, key))
-            {
-                
-                exitQuestPage();
-            
-            }
-            else
+
+            if (closeCheck())
             {
 
-                base.receiveKeyPress(key);
-            }
-
-            if (Game1.options.doesInputListContain(Game1.options.journalButton, key) && readyToClose())
-            {
-                
-                Game1.exitActiveMenu();
-
-                Game1.playSound("bigDeSelect");
-
-            }
-
-            if (Mod.instance.Config.riteButtons.GetState() != SButtonState.Pressed)
-            {
-                
                 return;
 
             }
 
-            Game1.exitActiveMenu();
+            if (key != 0)
+            {
+                if (Game1.isAnyGamePadButtonBeingPressed() && questPage != -1 && Game1.options.doesInputListContain(Game1.options.menuButton, key))
+                {
 
-        }
+                    changePage(0);
 
-        private void nonQuestPageForwardButton()
-        {
-            ++currentPage;
-            Game1.playSound("shwip");
-            if (!Game1.options.SnappyMenus || currentPage != pages.Count - 1)
-                return;
-            currentlySnappedComponent = getComponentWithID(0);
-            snapCursorToCurrentSnappedComponent();
-        }
+                    return;
 
-        private void nonQuestPageBackButton()
-        {
-            --currentPage;
-            Game1.playSound("shwip");
-            if (!Game1.options.SnappyMenus || currentPage != 0)
-                return;
-            currentlySnappedComponent = getComponentWithID(0);
-            snapCursorToCurrentSnappedComponent();
-        }
+                }
+                else
+                if (Game1.options.doesInputListContain(Game1.options.menuButton, key))
+                {
+                    
+                    exitThisMenu();
 
-        private void pageEndButton()
-        {
-            currentPage = pages.Count - 1;
-            Game1.playSound("shwip");
-            if (!Game1.options.SnappyMenus || currentPage != 0)
-                return;
-            currentlySnappedComponent = getComponentWithID(0);
-            snapCursorToCurrentSnappedComponent();
-        }
+                    return;
 
-        private void pageStartButton()
-        {
-            currentPage = 0;
-            Game1.playSound("shwip");
-            if (!Game1.options.SnappyMenus || currentPage != 0)
-                return;
-            currentlySnappedComponent = getComponentWithID(0);
-            snapCursorToCurrentSnappedComponent();
+                }
+                else if (Game1.options.snappyMenus && Game1.options.gamepadControls && !overrideSnappyMenuCursorMovementBan())
+                {
+                    
+                    applyMovementKey(key);
+
+                    return;
+
+                }
+
+            }
+
         }
 
         public override void leftClickHeld(int x, int y)
@@ -1296,27 +1313,27 @@ namespace StardewDruid.Journal
                 }
                 else if (currentPage < pages.Count - 1 && forwardButton.containsPoint(x, y))
                 {
-                    
-                    nonQuestPageForwardButton();
+
+                    changePage(currentPage+1);
                 
                 }
                 else if (currentPage > 0 && backButton.containsPoint(x, y))
                 {
-                    
-                    nonQuestPageBackButton();
-                
+
+                    changePage(currentPage-1);
+
                 }
                 else if (currentPage > 0 && startButton.containsPoint(x, y))
                 {
-                    
-                    pageStartButton();
-                
+
+                    changePage(0);
+
                 }
                 else if (currentPage < pages.Count - 1 && endButton.containsPoint(x, y))
                 {
-                    
-                    pageEndButton();
-                
+
+                    changePage(pages.Count - 1);
+
                 }
                 else if (reverseButton.containsPoint(x, y))
                 {
@@ -1334,12 +1351,12 @@ namespace StardewDruid.Journal
                     setupPages(); 
                 
                 }
-                else
-                {
+                //else
+                //{
 
-                    exitThisMenu(true);
+                //    exitThisMenu(true);
 
-                }
+                //}
                     
             }
             else
@@ -1348,7 +1365,7 @@ namespace StardewDruid.Journal
                 if (backButton.containsPoint(x, y))
                 {
 
-                    exitQuestPage();
+                    changePage(0);
 
                     return;
 
@@ -1470,7 +1487,7 @@ namespace StardewDruid.Journal
                 if (!NeedsScroll())
                 {
                     
-                    exitQuestPage();
+                    changePage(0);
 
                     return;
 
@@ -1521,6 +1538,12 @@ namespace StardewDruid.Journal
 
         public bool receiveClickQuesting(int x, int y)
         {
+
+            /*if (pages[currentPage].Count <= questPage)
+            {
+
+                return false;
+            }*/
 
             string questId = pages[currentPage][questPage];
 
@@ -1792,51 +1815,6 @@ namespace StardewDruid.Journal
 
         }
 
-        public void switchTo(journalTypes journalType)
-        {
-
-            if(questPage != -1)
-            {
-
-                Game1.playSound("shwip");
-
-                if (Game1.options.SnappyMenus)
-                {
-                    base.snapToDefaultClickableComponent();
-                }
-
-            }
-
-            type = journalType;
-
-            questPage = -1;
-
-            dragonMenu = false;
-
-            currentPage = 0;
-
-            setupPages();
-
-        }
-
-        public void exitQuestPage()
-        {
-            
-            questPage = -1;
-
-            setupPages();
-
-            Game1.playSound("shwip");
-
-            if (!Game1.options.SnappyMenus)
-            {
-                return;
-            }
-                
-            base.snapToDefaultClickableComponent();
-
-        }
-
         public override void draw(SpriteBatch b)
         {
             
@@ -1910,9 +1888,9 @@ namespace StardewDruid.Journal
                 if (currentPage < pages.Count - 1)
                 {
 
-                    b.Draw(iconTexture, new Vector2(forwardButton.bounds.X, forwardButton.bounds.Y) - ((forwardButton.scale - 4f) * new Vector2(16, 16)), Mod.instance.iconData.DisplayRect(Data.IconData.displays.forward), Color.White, 0f, Vector2.Zero, forwardButton.scale, 0, 999f);
+                    b.Draw(iconTexture, new Vector2(forwardButton.bounds.X, forwardButton.bounds.Y) - ((forwardButton.scale - 4f) * new Vector2(16, 16)), IconData.DisplayRectangle(Data.IconData.displays.forward), Color.White, 0f, Vector2.Zero, forwardButton.scale, 0, 999f);
 
-                    b.Draw(iconTexture, new Vector2(endButton.bounds.X, endButton.bounds.Y) - ((endButton.scale - 4f) * new Vector2(16, 16)), Mod.instance.iconData.DisplayRect(Data.IconData.displays.end), Color.White, 0f, Vector2.Zero, endButton.scale, 0, 999f);
+                    b.Draw(iconTexture, new Vector2(endButton.bounds.X, endButton.bounds.Y) - ((endButton.scale - 4f) * new Vector2(16, 16)), IconData.DisplayRectangle(Data.IconData.displays.end), Color.White, 0f, Vector2.Zero, endButton.scale, 0, 999f);
 
                 }
 
@@ -1928,27 +1906,27 @@ namespace StardewDruid.Journal
             if (currentPage > 0)
             {
 
-                b.Draw(iconTexture, new Vector2(startButton.bounds.X, startButton.bounds.Y) - ((startButton.scale - 4f) * new Vector2(16, 16)), Mod.instance.iconData.DisplayRect(Data.IconData.displays.end), Color.White, 0f, Vector2.Zero, startButton.scale, SpriteEffects.FlipHorizontally, 999f);
+                b.Draw(iconTexture, new Vector2(startButton.bounds.X, startButton.bounds.Y) - ((startButton.scale - 4f) * new Vector2(16, 16)), IconData.DisplayRectangle(Data.IconData.displays.end), Color.White, 0f, Vector2.Zero, startButton.scale, SpriteEffects.FlipHorizontally, 999f);
 
             }
 
             //back
-            b.Draw(iconTexture, new Vector2(backButton.bounds.X, backButton.bounds.Y) - ((backButton.scale - 4f) * new Vector2(16, 16)), Mod.instance.iconData.DisplayRect(Data.IconData.displays.forward), Color.White, 0f, Vector2.Zero, backButton.scale, SpriteEffects.FlipHorizontally, 999f);
+            b.Draw(iconTexture, new Vector2(backButton.bounds.X, backButton.bounds.Y) - ((backButton.scale - 4f) * new Vector2(16, 16)), IconData.DisplayRectangle(Data.IconData.displays.forward), Color.White, 0f, Vector2.Zero, backButton.scale, SpriteEffects.FlipHorizontally, 999f);
 
             // quests
-            b.Draw(iconTexture, new Vector2(questsButton.bounds.X, questsButton.bounds.Y) - ((questsButton.scale - 4f) * new Vector2(16, 16)), Mod.instance.iconData.DisplayRect(Data.IconData.displays.quest), Color.White * (type == journalTypes.quests ? 1f : 0.65f), 0f, Vector2.Zero, questsButton.scale, 0, 999f);
+            b.Draw(iconTexture, new Vector2(questsButton.bounds.X, questsButton.bounds.Y) - ((questsButton.scale - 4f) * new Vector2(16, 16)), IconData.DisplayRectangle(Data.IconData.displays.quest), Color.White * (type == journalTypes.quests ? 1f : 0.65f), 0f, Vector2.Zero, questsButton.scale, 0, 999f);
 
             // effects
-            b.Draw(iconTexture, new Vector2(effectsButton.bounds.X, effectsButton.bounds.Y) - ((effectsButton.scale - 4f) * new Vector2(16, 16)), Mod.instance.iconData.DisplayRect(Data.IconData.displays.effect), Color.White * (type == journalTypes.effects ? 1f : 0.65f), 0f, Vector2.Zero, effectsButton.scale, 0, 999f);
+            b.Draw(iconTexture, new Vector2(effectsButton.bounds.X, effectsButton.bounds.Y) - ((effectsButton.scale - 4f) * new Vector2(16, 16)), IconData.DisplayRectangle(Data.IconData.displays.effect), Color.White * (type == journalTypes.effects ? 1f : 0.65f), 0f, Vector2.Zero, effectsButton.scale, 0, 999f);
 
             // relics
-            b.Draw(iconTexture, new Vector2(relicsButton.bounds.X, relicsButton.bounds.Y) - ((relicsButton.scale - 4f) * new Vector2(16, 16)), Mod.instance.iconData.DisplayRect(Data.IconData.displays.relic), Color.White * (type == journalTypes.relics ? 1f : 0.65f), 0f, Vector2.Zero, relicsButton.scale, 0, 999f);
+            b.Draw(iconTexture, new Vector2(relicsButton.bounds.X, relicsButton.bounds.Y) - ((relicsButton.scale - 4f) * new Vector2(16, 16)), IconData.DisplayRectangle(Data.IconData.displays.relic), Color.White * (type == journalTypes.relics ? 1f : 0.65f), 0f, Vector2.Zero, relicsButton.scale, 0, 999f);
 
             // herbalism
-            b.Draw(iconTexture, new Vector2(herbalismButton.bounds.X, herbalismButton.bounds.Y) - ((herbalismButton.scale - 4f) * new Vector2(16, 16)), Mod.instance.iconData.DisplayRect(Data.IconData.displays.herbalism), Color.White * (type == journalTypes.herbalism ? 1f : 0.65f), 0f, Vector2.Zero, herbalismButton.scale, 0, 999f);
+            b.Draw(iconTexture, new Vector2(herbalismButton.bounds.X, herbalismButton.bounds.Y) - ((herbalismButton.scale - 4f) * new Vector2(16, 16)), IconData.DisplayRectangle(Data.IconData.displays.herbalism), Color.White * (type == journalTypes.herbalism ? 1f : 0.65f), 0f, Vector2.Zero, herbalismButton.scale, 0, 999f);
 
             // exit
-            b.Draw(iconTexture, new Vector2(upperRightCloseButton.bounds.X, upperRightCloseButton.bounds.Y) - ((upperRightCloseButton.scale - 4f) * new Vector2(16, 16)), Mod.instance.iconData.DisplayRect(Data.IconData.displays.exit), Color.White, 0f, Vector2.Zero, upperRightCloseButton.scale, 0, 999f);
+            b.Draw(iconTexture, new Vector2(upperRightCloseButton.bounds.X, upperRightCloseButton.bounds.Y) - ((upperRightCloseButton.scale - 4f) * new Vector2(16, 16)), IconData.DisplayRectangle(Data.IconData.displays.exit), Color.White, 0f, Vector2.Zero, upperRightCloseButton.scale, 0, 999f);
 
             if (type == journalTypes.herbalism)
             {
@@ -1997,10 +1975,10 @@ namespace StardewDruid.Journal
             // List controls
 
             // reverse
-            b.Draw(iconTexture, new Vector2(reverseButton.bounds.X, reverseButton.bounds.Y) - ((reverseButton.scale - 4f) * new Vector2(16, 16)), Mod.instance.iconData.DisplayRect(Data.IconData.displays.reverse), Color.White * (reverse ? 1f : 0.65f), 0f, Vector2.Zero, reverseButton.scale, 0, 999f);
+            b.Draw(iconTexture, new Vector2(reverseButton.bounds.X, reverseButton.bounds.Y) - ((reverseButton.scale - 4f) * new Vector2(16, 16)), IconData.DisplayRectangle(Data.IconData.displays.reverse), Color.White * (reverse ? 1f : 0.65f), 0f, Vector2.Zero, reverseButton.scale, 0, 999f);
 
             // active
-            b.Draw(iconTexture, new Vector2(activeButton.bounds.X, activeButton.bounds.Y) - ((activeButton.scale - 4f) * new Vector2(16, 16)), Mod.instance.iconData.DisplayRect(Data.IconData.displays.active), Color.White * (active ? 1f : 0.65f), 0f, Vector2.Zero, activeButton.scale, 0, 999f);
+            b.Draw(iconTexture, new Vector2(activeButton.bounds.X, activeButton.bounds.Y) - ((activeButton.scale - 4f) * new Vector2(16, 16)), IconData.DisplayRectangle(Data.IconData.displays.active), Color.White * (active ? 1f : 0.65f), 0f, Vector2.Zero, activeButton.scale, 0, 999f);
 
             // =========================================================
             // List entries
@@ -2008,7 +1986,7 @@ namespace StardewDruid.Journal
             for (int index = 0; index < questLogButtons.Count; ++index)
             {
 
-                if (pages.Count() > 0 && pages[currentPage].Count() > index)
+                if (pages.Count > 0 && pages[currentPage].Count > index)
                 {
 
                     IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 396, 15, 15), questLogButtons[index].bounds.X, questLogButtons[index].bounds.Y, questLogButtons[index].bounds.Width, questLogButtons[index].bounds.Height, questLogButtons[index].containsPoint(Game1.getOldMouseX(), Game1.getOldMouseY()) ? Color.Wheat : Color.White, 4f, false, -1f);
@@ -2057,7 +2035,7 @@ namespace StardewDruid.Journal
 
                         }
 
-                        b.Draw(iconTexture, new Vector2(questLogButtons[index].bounds.Right - 80, questLogButtons[index].bounds.Y + 28), Mod.instance.iconData.DisplayRect(questIcon), Color.White * 1f, 0f, Vector2.Zero, 3f, 0, 999f);
+                        b.Draw(iconTexture, new Vector2(questLogButtons[index].bounds.Right - 80, questLogButtons[index].bounds.Y + 28), IconData.DisplayRectangle(questIcon), Color.White * 1f, 0f, Vector2.Zero, 3f, 0, 999f);
 
                         entryIcon = Mod.instance.questHandle.quests[questId].icon;
 
@@ -2065,7 +2043,7 @@ namespace StardewDruid.Journal
 
                     }
 
-                    Utility.drawWithShadow(b, iconTexture, new Vector2(questLogButtons[index].bounds.X + 28, questLogButtons[index].bounds.Y + 28), Mod.instance.iconData.DisplayRect(entryIcon), Color.White, 0.0f, Vector2.Zero, 3f, false, 0.99f, -1, -1, 0.35f);
+                    Utility.drawWithShadow(b, iconTexture, new Vector2(questLogButtons[index].bounds.X + 28, questLogButtons[index].bounds.Y + 28), IconData.DisplayRectangle(entryIcon), Color.White, 0.0f, Vector2.Zero, 3f, false, 0.99f, -1, -1, 0.35f);
 
                     SpriteText.drawString(b, entryText, questLogButtons[index].bounds.X + 100, questLogButtons[index].bounds.Y + 30, 999999, -1, 999999, 1f, 0.88f, false, -1, "", null, 0);
 
@@ -2142,7 +2120,7 @@ namespace StardewDruid.Journal
 
                             }
 
-                            b.Draw(Mod.instance.iconData.displayTexture, new Vector2(galleryButtons[index].bounds.Center.X - 32, galleryButtons[index].bounds.Center.Y - 32), Mod.instance.iconData.DisplayRect(flag), Color.White, 0f, Vector2.Zero, 4f, 0, 0.900f);
+                            b.Draw(Mod.instance.iconData.displayTexture, new Vector2(galleryButtons[index].bounds.Center.X - 32, galleryButtons[index].bounds.Center.Y - 32), IconData.DisplayRectangle(flag), Color.White, 0f, Vector2.Zero, 4f, 0, 0.900f);
 
                             continue;
 
@@ -2208,11 +2186,11 @@ namespace StardewDruid.Journal
 
                         }
 
-                        b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(galleryButtons[index].bounds.Center.X - 40f + 2f, galleryButtons[index].bounds.Center.Y - 60f + 4f), Mod.instance.iconData.RelicRectangles(herbal.container), Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 4f, 0, 0.900f);
+                        b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(galleryButtons[index].bounds.Center.X - 40f + 2f, galleryButtons[index].bounds.Center.Y - 60f + 4f), IconData.RelicRectangles(herbal.container), Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 4f, 0, 0.900f);
 
-                        b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(galleryButtons[index].bounds.Center.X - 40f, galleryButtons[index].bounds.Center.Y - 60f), Mod.instance.iconData.RelicRectangles(herbal.container), Color.White, 0f, Vector2.Zero, 4f, 0, 0.901f);
+                        b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(galleryButtons[index].bounds.Center.X - 40f, galleryButtons[index].bounds.Center.Y - 60f), IconData.RelicRectangles(herbal.container), Color.White, 0f, Vector2.Zero, 4f, 0, 0.901f);
 
-                        b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(galleryButtons[index].bounds.Center.X - 40f, galleryButtons[index].bounds.Center.Y - 60f), Mod.instance.iconData.RelicRectangles(herbal.content), colour, 0f, Vector2.Zero, 4f, 0, 0.902f);
+                        b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(galleryButtons[index].bounds.Center.X - 40f, galleryButtons[index].bounds.Center.Y - 60f), IconData.RelicRectangles(herbal.content), colour, 0f, Vector2.Zero, 4f, 0, 0.902f);
                     
                     }
 
@@ -2221,7 +2199,7 @@ namespace StardewDruid.Journal
                 b.Draw(
                     Mod.instance.iconData.displayTexture,
                     new Vector2(activeButton.bounds.X, activeButton.bounds.Y) - ((activeButton.scale - 4f) * new Vector2(16, 16)),
-                    Mod.instance.iconData.DisplayRect(IconData.displays.knock),
+                    IconData.DisplayRectangle(IconData.displays.knock),
                     Color.White,
                     0f,
                     Vector2.Zero,
@@ -2239,7 +2217,7 @@ namespace StardewDruid.Journal
                 for (int index = 0; index < galleryButtons.Count; ++index)
                 {
 
-                    if (pages.Count() > 0 && pages[currentPage].Count() > index)
+                    if (pages.Count > 0 && pages[currentPage].Count > index)
                     {
 
                         if (pages[currentPage][index] == "blank")
@@ -2293,7 +2271,7 @@ namespace StardewDruid.Journal
                             b.Draw(
                                 Mod.instance.iconData.relicsTexture,
                                 new Vector2(galleryButtons[index].bounds.Center.X - 40f + 1f, galleryButtons[index].bounds.Center.Y - 40f + 3f),
-                                Mod.instance.iconData.RelicRectangles(relic.relic),
+                                IconData.RelicRectangles(relic.relic),
                                 Microsoft.Xna.Framework.Color.Black * 0.35f,
                                 0f,
                                 Vector2.Zero,
@@ -2302,7 +2280,7 @@ namespace StardewDruid.Journal
                             b.Draw(
                                 Mod.instance.iconData.relicsTexture,
                                 new Vector2(galleryButtons[index].bounds.Center.X - 40f, galleryButtons[index].bounds.Center.Y - 40f),
-                                Mod.instance.iconData.RelicRectangles(relic.relic),
+                                IconData.RelicRectangles(relic.relic),
                                 Color.White,
                                 0f,
                                 Vector2.Zero,
@@ -2329,7 +2307,7 @@ namespace StardewDruid.Journal
                             b.Draw(
                                 Mod.instance.iconData.relicsTexture,
                                 new Vector2(galleryButtons[index].bounds.Center.X - 40f, galleryButtons[index].bounds.Center.Y - 40f),
-                                Mod.instance.iconData.RelicRectangles(relic.relic),
+                                IconData.RelicRectangles(relic.relic),
                                 Microsoft.Xna.Framework.Color.Black * 0.35f,
                                 0f,
                                 Vector2.Zero,
@@ -2596,11 +2574,11 @@ namespace StardewDruid.Journal
 
                 Vector2 vector2 = Game1.dialogueFont.MeasureString(descriptionText);
 
+                textHeight += 96 + vector2.Y;
+
                 b.DrawString(Game1.dialogueFont, descriptionText, new Vector2(xPositionOnScreen + 64, (float)(yPositionOnScreen - (double)scrollAmount + 96.0)), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
 
                 b.DrawString(Game1.dialogueFont, descriptionText, new Vector2(xPositionOnScreen + 64 - 1.5f, (float)(yPositionOnScreen - (double)scrollAmount + 96.0) + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
-
-                textHeight += 96 + vector2.Y;
 
             }
 
@@ -2720,14 +2698,14 @@ namespace StardewDruid.Journal
 
             Dictionary<HerbalData.herbals, int> potions = new();
 
-            if (pages[currentPage].Count <= hoverDetail)
+            /*if (pages[currentPage].Count <= hoverDetail)
             {
 
                 hoverDetail = -1;
 
                 return;
 
-            }
+            }*/
 
             if (type == journalTypes.herbalism)
             {
@@ -3110,9 +3088,9 @@ namespace StardewDruid.Journal
 
                     Microsoft.Xna.Framework.Color colour = Mod.instance.iconData.SchemeColour(basePotion.scheme);
 
-                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(textMargin, textPosition), Mod.instance.iconData.RelicRectangles(basePotion.container), Color.White, 0f, Vector2.Zero, 1.5f, 0, 0.901f);
+                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(textMargin, textPosition), IconData.RelicRectangles(basePotion.container), Color.White, 0f, Vector2.Zero, 1.5f, 0, 0.901f);
 
-                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(textMargin, textPosition), Mod.instance.iconData.RelicRectangles(basePotion.content), colour, 0f, Vector2.Zero, 1.5f, 0, 0.902f);
+                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(textMargin, textPosition), IconData.RelicRectangles(basePotion.content), colour, 0f, Vector2.Zero, 1.5f, 0, 0.902f);
 
                     b.DrawString(Game1.smallFont, basePotion.title, new Vector2(textMargin + 40, textPosition + 2), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1f);
 
@@ -3207,7 +3185,7 @@ namespace StardewDruid.Journal
             b.Draw(
                 Mod.instance.iconData.displayTexture,
                 new Vector2(questingButton.bounds.X, questingButton.bounds.Y) - ((questingButton.scale - 4f) * new Vector2(16, 16)),
-                Mod.instance.iconData.DisplayRect(questIcon),
+                IconData.DisplayRectangle(questIcon),
                 Color.White,
                 0f,
                 Vector2.Zero,
@@ -3351,9 +3329,9 @@ namespace StardewDruid.Journal
 
             }
 
-            b.Draw(Mod.instance.iconData.displayTexture, new Vector2(resetButton.bounds.X, resetButton.bounds.Y) - ((resetButton.scale - 4f) * new Vector2(16, 16)), Mod.instance.iconData.DisplayRect(Data.IconData.displays.replay), Color.White, 0f, Vector2.Zero, resetButton.scale, 0, -1f);
+            b.Draw(Mod.instance.iconData.displayTexture, new Vector2(resetButton.bounds.X, resetButton.bounds.Y) - ((resetButton.scale - 4f) * new Vector2(16, 16)), IconData.DisplayRectangle(Data.IconData.displays.replay), Color.White, 0f, Vector2.Zero, resetButton.scale, 0, -1f);
 
-            b.Draw(Mod.instance.iconData.displayTexture, new Vector2(saveButton.bounds.X, saveButton.bounds.Y) - ((saveButton.scale - 4f) * new Vector2(16, 16)), Mod.instance.iconData.DisplayRect(Data.IconData.displays.complete), Color.White, 0f, Vector2.Zero, saveButton.scale, 0, -1f);
+            b.Draw(Mod.instance.iconData.displayTexture, new Vector2(saveButton.bounds.X, saveButton.bounds.Y) - ((saveButton.scale - 4f) * new Vector2(16, 16)), IconData.DisplayRectangle(Data.IconData.displays.complete), Color.White, 0f, Vector2.Zero, saveButton.scale, 0, -1f);
 
         }
 

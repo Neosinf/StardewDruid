@@ -74,17 +74,6 @@ namespace StardewDruid.Cast.Effect
 
                     return;
 
-                case SpellHandle.effects.blind:
-
-                    if(monster is not Monster.Boss)
-                    {
-
-                        effect = SpellHandle.effects.daze;
-
-                    }
-
-                    break;
-
                 case SpellHandle.effects.morph:
 
                     if (monster.isGlider.Value || ModUtility.GroundCheck(location,monster.Tile) != "ground" || monster is DustSpirit)
@@ -207,14 +196,6 @@ namespace StardewDruid.Cast.Effect
             switch (type)
             {
 
-                case SpellHandle.effects.blind:
-
-                    (victim as StardewDruid.Monster.Boss).debuffJuice = 0.5f;
-
-                    display = displays.daze;
-
-                    break;
-
                 case SpellHandle.effects.morph:
 
                     display = displays.morph;
@@ -254,16 +235,33 @@ namespace StardewDruid.Cast.Effect
                     Game1.createItemDebris(dropItem, victim.Position + new Vector2(0, 32), 2, location, -1);
 
                     break;
-                
+
+                case SpellHandle.effects.glare:
+
+                    display = displays.glare;
+
+                    stats.Add((float)victim.Health);
+
+                    break;
+
                 case SpellHandle.effects.daze:
+
+                    display = displays.blind;
+
+                    if (victim is StardewDruid.Monster.Boss boss)
+                    {
+                        
+                        boss.debuffJuice = 0.5f;
+
+                        break;
+
+                    }
 
                     stats.Add((float)victim.speed);
 
                     victim.speed = victim.speed / 2;
 
                     victim.randomSquareMovement(Game1.currentGameTime);
-
-                    display = displays.daze;
 
                     break;
                 
@@ -323,11 +321,6 @@ namespace StardewDruid.Cast.Effect
             
             switch (type)
             {
-                case SpellHandle.effects.blind:
-
-                    (victim as StardewDruid.Monster.Boss).debuffJuice = 0f;
-
-                    break;
 
                 case SpellHandle.effects.knock:
 
@@ -337,6 +330,15 @@ namespace StardewDruid.Cast.Effect
 
                 case SpellHandle.effects.daze:
 
+                    if (victim is StardewDruid.Monster.Boss boss)
+                    {
+                        
+                        boss.debuffJuice = 0f;
+
+                        break;
+
+                    }
+                    
                     victim.speed = (int)stats[0];
 
                     break;
@@ -392,14 +394,35 @@ namespace StardewDruid.Cast.Effect
             switch (type)
             {
 
-                case SpellHandle.effects.daze:
+                case SpellHandle.effects.glare:
 
-                    if(timer % 10 == 0)
+                    if(stats[0] <= ((float)victim.Health - 10f))
                     {
 
-                        victim.randomSquareMovement(Game1.currentGameTime);
+                        PerformCritical();
+
+                        ShutDown();
+
+                        return false;
 
                     }
+
+                    break;
+
+                case SpellHandle.effects.daze:
+                    
+                    if (victim is not StardewDruid.Monster.Boss boss)
+                    {
+
+                        if (timer % 10 == 0)
+                        {
+
+                            victim.randomSquareMovement(Game1.currentGameTime);
+
+                        }
+
+                    }
+
 
                     break;
 
@@ -449,12 +472,24 @@ namespace StardewDruid.Cast.Effect
 
             SpellHandle death = new(Game1.player, new() { victim }, 999);
 
-            //death.display = impacts.deathbomb;
-            death.display = impacts.bomb;
+            death.display = impacts.deathbomb;
 
             death.scheme = schemes.fates;
 
             Mod.instance.spellRegister.Add(death);
+
+        }
+
+        public void PerformCritical()
+        {
+
+            SpellHandle critical = new(Game1.player, new() { victim }, Mod.instance.CombatDamage() / 2);
+
+            critical.display = impacts.flashbang;
+
+            critical.scheme = schemes.golden;
+
+            Mod.instance.spellRegister.Add(critical);
 
         }
 
@@ -464,9 +499,7 @@ namespace StardewDruid.Cast.Effect
             if (new Random().Next(5) == 0)
             {
 
-                //Mod.instance.iconData.ImpactIndicator(location, victim.Position, IconData.impacts.deathbomb, 4f, new() { scheme = schemes.stars,});
-
-                Mod.instance.iconData.ImpactIndicator(location, victim.Position, IconData.impacts.bomb, 4f, new() { scheme = schemes.stars, });
+                Mod.instance.iconData.ImpactIndicator(location, victim.Position, IconData.impacts.deathbomb, 4f, new() { scheme = schemes.stars, });
 
                 int barbeque = SpawnData.RandomBarbeque();
 
@@ -488,17 +521,17 @@ namespace StardewDruid.Cast.Effect
 
             }
 
-            Microsoft.Xna.Framework.Vector2 drawPosition = new(victim.Position.X - (float)Game1.viewport.X, victim.Position.Y - (float)Game1.viewport.Y);
+            Microsoft.Xna.Framework.Rectangle bounding = victim.GetBoundingBox();
 
-            Vector2 position = drawPosition - new Vector2(16, 144);
+            Microsoft.Xna.Framework.Vector2 drawPosition = new(bounding.Center.X - (float)Game1.viewport.X, bounding.Top - 32 - (float)Game1.viewport.Y);
 
             b.Draw(
                 Mod.instance.iconData.displayTexture,
-                position,
-                Mod.instance.iconData.DisplayRect(display),
+                drawPosition,
+                IconData.DisplayRectangle(display),
                 Color.White * 0.8f,
                 0f,
-                Vector2.Zero,
+                new Vector2(8),
                 4f,
                 SpriteEffects.None,
                 0.9f

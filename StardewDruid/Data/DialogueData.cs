@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Input;
 using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Dialogue;
@@ -68,6 +69,8 @@ namespace StardewDruid.Data
             dragonBuffDescription,
             druidFreneticism,
             speedIncrease,
+            questComplete,
+            percentComplete,
 
             // Journal
 
@@ -140,7 +143,91 @@ namespace StardewDruid.Data
             reachEnd,
             treasureHunt,
 
+            quests,
+            effects,
+            relics,
+            herbalism,
+
+            active,
+            reverse,
+            refresh,
+
+            innerOne,
+            innerTwo,
+
+            close,
+
+            back,
+            start,
+
+            scrollUp,
+            scrollBar,
+            scrollDown,
+            forward,
+            end,
+
         }
+
+        public static string ButtonStrings(DruidJournal.journalButtons button)
+        {
+
+            switch (button)
+            {
+                case DruidJournal.journalButtons.back:
+
+                    return "Go Back";
+
+                case DruidJournal.journalButtons.start:
+
+                    return "Start page";
+
+                case DruidJournal.journalButtons.forward:
+
+                    return "Go Foward";
+
+                case DruidJournal.journalButtons.end:
+
+                    return "End page";
+
+                case DruidJournal.journalButtons.exit:
+
+                    return "Exit Menu";
+
+                case DruidJournal.journalButtons.quests:
+
+                    return "Open Questlog";
+
+                case DruidJournal.journalButtons.effects:
+
+                    return "Open Grimoire";
+
+                case DruidJournal.journalButtons.relics:
+
+                    return "Open Reliquary";
+
+                case DruidJournal.journalButtons.herbalism:
+
+                    return "Open Apothecary";
+
+                case DruidJournal.journalButtons.active:
+
+                    return "Sort quests by completion";
+
+                case DruidJournal.journalButtons.reverse:
+
+                    return "Reverse order of entries";
+
+                case DruidJournal.journalButtons.refresh:
+
+                    return "Refresh all potions";
+
+                default:
+
+                    return null;
+            }
+
+        }
+
 
         public static string Strings(stringkeys key)
         {
@@ -148,7 +235,7 @@ namespace StardewDruid.Data
             switch (key)
             {
 
-                // Mod, Rite, ModUtility
+                // Mod, Rite, ModUtility, QuestHandle
 
                 case stringkeys.receivedData:
 
@@ -160,7 +247,7 @@ namespace StardewDruid.Data
 
                 case stringkeys.riteBuffDescription:
 
-                    return "Actively selected rite";
+                    return "Click to open Journal";
 
                 case stringkeys.dragonBuff:
 
@@ -218,7 +305,15 @@ namespace StardewDruid.Data
 
                     return "Speed increased when casting amongst Grass";
 
-                // journal
+                case stringkeys.questComplete:
+
+                    return "quest complete";
+
+                case stringkeys.percentComplete:
+
+                    return "percent complete";
+
+                // ============================================ JOURNAL
 
                 case stringkeys.stardewDruid: 
 
@@ -870,6 +965,7 @@ namespace StardewDruid.Data
                         [5] = new() { [0] = "Lead me to the afterlife", },
                         [6] = new() { [0] = "At least, shut the bats up", },
                         [7] = new() { [0] = "Your unwilling servant", },
+                        [8] = new() { [0] = "A sword for a holy warrior", },
 
                     };
 
@@ -2302,19 +2398,19 @@ namespace StardewDruid.Data
 
                             companion = 3,
 
-                            intro = "The Wizard: Are you aware you've trespassed onto the property of the college of wizardry?",
+                            intro = "The Wizard: I have claimed custodianship of this magical site as per the old arcanist treaties, and you are trespassing.",
 
                             responses = new()
                             {
                                 "Pardon my intrusion, sir. We are on a research venture to study ether currents and stumbled on this place.",
-                                "Nonsense, my scholar friend has correctly identified the architecture and fixtures of this chamber far predate the college, which makes the circle the true custodians. YOU are the trespasser here.",
+                                "Nonsense, my scholar friend has correctly identified the architecture and fixtures of this chamber far predate the arcane epoch, which makes the circle the true custodians. YOU are the trespasser here.",
                             },
 
                             answers = new()
                             {
                                 "I anticipated this encounter, when my own interests in the magical heritage of the valley would begin to coincide or conflict with yours. " +
-                                "I welcome the re-establishment of the Circle of Druids, but your advancement has been quick by magical standards, " +
-                                "and it has yet to be proven to me that you have the capacity to handle the dangers and mysteries that lie before you. " +
+                                "I welcome the re-establishment of the Circle of Druids, but your advancement has been quick, even by my standards, " +
+                                "and it has yet to be proven to me that you have the capacity to handle the dangers and mysteries that lie ahead of you. " +
                                 "Before I retransfigure your friend here, you'll need to face me in a contest of powers, and we'll know for sure if there are any merits to your 'rites'.",
                             },
 
@@ -2425,7 +2521,7 @@ namespace StardewDruid.Data
 
                                 "I am by nature a shadow thief, but when I beheld an enshrined relic of the stellarfolk in the halls of a besieged stronghold, I lost all passion for plunder. " +
                                 "The similarities in the dwarven craftsmanship to our our own Great Shadow Vessel were unmistakeable. It was a Stellar Vessel. " +
-                                "The dwarves recieved the same blessings as we did, not from Lord Deep, but a greater power, who refuses to reveal themselves to us. " +
+                                "The dwarves received the same blessings as we did, not from Lord Deep, but a greater power, who refuses to reveal themselves to us. " +
                                 "If it was Yoba, then why did he leave us to tyranny? How is that an example that would inspire my people to honour and glory? " +
                                 "I can only look to you to know what is right, farmer, and maybe I'll know the truth of it all one day. Now... I should probably go pay for that milk I stole."
                                 

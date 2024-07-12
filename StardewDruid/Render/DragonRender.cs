@@ -1275,7 +1275,7 @@ namespace StardewDruid.Render
 
             float scale = additional.scale - 0.5f;
 
-            int breathFrame = Game1.currentGameTime.TotalGameTime.Milliseconds % 800 / 200;
+            int breathFrame = Game1.currentGameTime.TotalGameTime.Milliseconds % 700 / 175;
 
             float rotation = 0f;
 

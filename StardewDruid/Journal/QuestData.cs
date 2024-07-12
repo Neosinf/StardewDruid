@@ -248,11 +248,11 @@ namespace StardewDruid.Journal
 
                 give = Quest.questGivers.dialogue,
 
-                title = "Lesson Two: Wild Bounty",
+                title = "Lesson Two: Gentle Touch",
 
                 description = "As I perform the rite, the valley springs into new life around me, offering a sample of its hidden bounty.",
 
-                instruction = "Perform Rite of the Weald: Bounty to rustle twenty large bushes for forageables. Unlocks wild seed gathering from grass.",
+                instruction = "Perform Rite of the Weald: Gentle Touch twenty times to rustle large bushes, trees or grass. Mastery enables friendship gain when the rite touches friendly villagers.",
 
                 progression = "bushes rustled",
 
@@ -294,11 +294,15 @@ namespace StardewDruid.Journal
 
                 description = "Years of stagnation have starved the valley of it's wilderness. I now have the means and power to recolour the barren spaces with new plant-life.",
 
-                instruction = "Perform Rite of the Weald: Wild Growth to sprout twenty forageables total in the Forest or anywhere with lawn (grass tiles). Unlocks flowers.",
+                instruction = "Perform Rite of the Weald: Wild Growth five times on open outdoor maps (excluding the farm) to spawn a variety of different forageables and features. " +
+                
+                "Channelling the Weald requires you to stand still, then cast, and hold for 1-2 seconds until you see the channeling indicator appear and fully expand. " +
+                
+                "Effect occurs five tiles from farmer in cursor or facing direction. Mastery unlocks garden flower spawns.",
 
                 progression = "forageables spawned",
 
-                requirement = 20,
+                requirement = 5,
 
                 reward = 1000,
 
@@ -308,7 +312,7 @@ namespace StardewDruid.Journal
                     [CharacterHandle.characters.Effigy] = new()
                     {
                         prompt = true,
-                        intro = "This is your task today. Perform the rite as you have been taught, only this time, you may convince the wild to sprout new shoots and buds. Now go, fill the barren spaces with life. " +
+                        intro = "This is your task today. Perform the rite as you have been taught, only this time, stand still, and concentrate your energies, so you may convince the wild to sprout new shoots and buds. Now go, fill the barren spaces with life. " +
                         "(New lesson received)",
 
                     }

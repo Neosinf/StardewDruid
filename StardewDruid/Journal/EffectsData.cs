@@ -10,10 +10,7 @@ using StardewValley.Objects;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using static StardewValley.Minigames.TargetGame;
-using static System.Net.Mime.MediaTypeNames;
-using System.Threading.Channels;
+
 
 namespace StardewDruid.Journal
 {
@@ -92,7 +89,7 @@ namespace StardewDruid.Journal
 
             effects[QuestHandle.wealdOne] = new() { ritesOfTheDruids, herbalism,  clear, attunement, };
 
-            Effect wildbounty = new()
+            /*Effect wildbounty = new()
             {
                 title = "Wild Bounty",
                 icon = IconData.displays.weald,
@@ -128,21 +125,43 @@ namespace StardewDruid.Journal
                     "Animals: Applies petting to animal",
                     "Special: This can be cast in the town saloon",
                 }
+            };*/
+
+            Effect caress = new()
+            {
+                title = "Gentle Touch",
+                icon = IconData.displays.weald,
+                description = "The druids of antiquity played an important role in civil matters, as ceremonial leaders, mediators and physicians. The Rite of the Weald appears to have a positive effect on those who witness the rite.",
+                instruction = "Rite of the Weald: Bounty, when cast near NPCs and Farm animals, will trigger daily dialogue counters and generate unique reactions. When cast near plants, will apply one day's worth of growth.",
+                details = new()
+                {
+                    "Note: Disabled for villagers who have not been introduced to farmer and registered in the in-game friendship directory",
+                    "Villagers: Raises friendship by 25, adds custom dialogue, ticks 'talked to today' value",
+                    "Animals: Applies petting to animal",
+                    "Trees, Fruit Trees, Bushes, Grass: Shakes and applies a full day's growth uptick",
+                    "Special: This can be cast in the town saloon",
+
+                }
+
             };
 
-            effects[QuestHandle.wealdTwo] = new() { wildbounty, community, };
+            effects[QuestHandle.wealdTwo] = new() {caress, };
 
             Effect wildgrowth = new()
             {
                 title = "Wild Growth",
                 icon = IconData.displays.weald,
                 description = "The Druid fills the barren spaces with life. Seeds, sewn everywhere, freely, ready to sprout into tomorrow's wilderness.",
-                instruction = "Rite of the Weald: Bounty will sprout trees, grass, seasonal forage and flowers in empty spaces.",
+                instruction = "Open maps only (Excludes Farm/Greenhouse). Rite of the Weald will sprout trees, grass, seasonal forage and flowers in empty spaces. " +
+                "Cast and hold Rite of the Weald for 2-3 seconds while standing still, until the essence fills the rite indicator. " +
+                "The effect will occur five tiles in the direction of the cursor or farmer.",
                 details = new()
                 {
                     "Mastery: Chance to sprout wild flowers.",
-                    "Cost: 6 stamina per forageable spawned, halved at Foraging Level 6",
-                    
+                    "Forest, Town, Beach, Mountain and other open maps.",
+                    "Spawned objects vary according to location and terrain",
+                    "Cost: 8 stamina per tree and forageable spawned",
+                    "Cost increase: Cost increases by 4 stamina per cast on the same map.",
                 }
             };
 
@@ -153,7 +172,8 @@ namespace StardewDruid.Journal
                 title = "Cultivate",
                 icon = IconData.displays.weald,
                 description = "I have learned that the Farmer and the Druid share the same vision for a prosperous and well fed community, and so the wild seed is domesticated.",
-                instruction = "Farm/Greenhouse only. Cast and hold Rite of the Weald for 2-3 seconds while standing still, until the essence fills the rite indicator. When released, the cultivation effect will radiate in increasing magnitude from your position.",
+                instruction = "Farm/Greenhouse only. Cast and hold Rite of the Weald for 2-3 seconds while standing still, until the essence fills the rite indicator. " +
+                "When released, the cultivation effect will radiate in increasing magnitude from your position.",
                 details = new()
                 {
                     "Mastery: Wild seeds have a chance to convert into quality crops.",

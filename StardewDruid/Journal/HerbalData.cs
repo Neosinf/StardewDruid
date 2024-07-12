@@ -343,7 +343,7 @@ namespace StardewDruid.Journal
 
                 level = 3,
 
-                duration = 300,
+                duration = 360,
 
                 title = "Magnus Ligna",
 
@@ -360,7 +360,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 50 Health, 200 Stamina",
-                    "Effect: Alignment Level 3, 5 Hours",
+                    "Effect: Alignment Level 3, 6 Hours",
                     "Ingredients: Base, 1x Vegetable Oil",
                 }
 
@@ -381,7 +381,7 @@ namespace StardewDruid.Journal
 
                 level = 4,
 
-                duration = 360,
+                duration = 480,
 
                 title = "Optimus Ligna",
 
@@ -398,7 +398,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 100 Health, 400 Stamina",
-                    "Effect: Vigorous Level 4, 6 Hours",
+                    "Effect: Vigorous Level 4, 8 Hours",
                     "Requires: Base, Aether"
                 }
 
@@ -535,7 +535,7 @@ namespace StardewDruid.Journal
 
                 level = 3,
 
-                duration = 300,
+                duration = 360,
 
                 title = "Magnus Vigores",
 
@@ -552,7 +552,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 70 Health, 320 Stamina",
-                    "Effect: Vigorous Level 3, 5 Hours",
+                    "Effect: Vigorous Level 3, 6 Hours",
                     "Requires: Base, 1x Spicy Ingredient"
                 }
 
@@ -573,7 +573,7 @@ namespace StardewDruid.Journal
 
                 level = 4,
 
-                duration = 360,
+                duration = 480,
 
                 title = "Optimus Vigores",
 
@@ -590,7 +590,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 180 Health, 560 Stamina",
-                    "Effect: Vigorous Level 4, 6 Hours",
+                    "Effect: Vigorous Level 4, 8 Hours",
                     "Requires: Base, Aether"
                 }
 
@@ -614,9 +614,9 @@ namespace StardewDruid.Journal
 
                 title = "Celeri",
 
-                description = "Good for your joints and memory retention.",
+                description = "With extra fiber for good gut health.",
 
-                ingredients = new() {  ["(O)129"] = "Sardine", ["(O)131"] = "Anchovy", ["(O)137"] = "Smallmouth Bass", ["(O)145"] = "Sunfish", ["(O)132"] = "Bream", ["(O)147"] = "Herring", ["(O)142"] = "Carp", ["(O)156"] = "Ghostfish", ["(O)684"] = "Bug Meat x2", },
+                ingredients = new() { ["(O)152"] = "Algae", ["(O)153"] = "Seaweed", ["(O)157"] = "White Algae", ["(O)815"] = "Tea Leaves", ["(O)433"] = "Coffee Bean", ["(O)167"] = "Joja Cola", },
 
                 bases = new() { },
 
@@ -627,7 +627,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 10 Health, 30 Stamina",
-                    "Requires: 1x Common Fish, 2x Bug Meat"
+                   "Requires: Base, 1x Energy Supplement"
                 }
 
             };
@@ -651,9 +651,9 @@ namespace StardewDruid.Journal
 
                 title = "Melius Celeri",
 
-                description = "Now with extra fiber for good gut health.",
+                description = "Now with mineral extracts for revitalised skin and circulation.",
 
-                ingredients = new() { ["(O)152"] = "Algae", ["(O)153"] = "Seaweed", ["(O)157"] = "White Algae", ["(O)815"] = "Tea Leaves", ["(O)433"] = "Coffee Bean", ["(O)167"] = "Joja Cola", },
+                ingredients = new() { ["(O)80"] = "Quartz", ["(O)86"] = "Earth Crystal", ["(O)881"] = "Bone Fragment", ["(O)168"] = "Trash", ["(O)169"] = "Driftwood", ["(O)170"] = "Broken Glasses", ["(O)171"] = "Broken CD", },
 
                 health = 20,
 
@@ -665,7 +665,7 @@ namespace StardewDruid.Journal
                 {
                     "Restores: 20 Health, 60 Stamina",
                     "Effect: Celerity Level 1, 3 Hours",
-                    "Requires: Base, 1x Energy Supplement"
+                    "Requires: Base, 1x Mineral-Rich Substance"
                 }
 
             };
@@ -690,10 +690,9 @@ namespace StardewDruid.Journal
 
                 title = "Satius Celeri",
 
-                description = "Now with mineral extracts for revitalised skin and circulation.",
+                description = "Good for your joints and memory retention.",
 
-                //ingredients = new() { ["(O)80"] = "Quartz", ["(O)86"] = "Earth Crystal", ["(O)392"] = "Nautilus Shell", ["(O)393"] = "Coral", },
-                ingredients = new() { ["(O)80"] = "Quartz", ["(O)86"] = "Earth Crystal", ["(O)881"] = "Bone Fragment", ["(O)168"] = "Trash", ["(O)169"] = "Driftwood", ["(O)170"] = "Broken Glasses", ["(O)171"] = "Broken CD", ["(O)172"] = "Soggy Newspaper",  },
+                ingredients = new() { ["(O)129"] = "Sardine", ["(O)131"] = "Anchovy", ["(O)137"] = "Smallmouth Bass", ["(O)145"] = "Sunfish", ["(O)132"] = "Bream", ["(O)147"] = "Herring", ["(O)142"] = "Carp", ["(O)156"] = "Ghostfish", },
 
                 health = 30,
 
@@ -705,7 +704,7 @@ namespace StardewDruid.Journal
                 {
                     "Restores: 30 Health, 120 Stamina",
                     "Effect: Celerity Level 2, 4 Hours",
-                    "Requires: Base, 1x Mineral-Rich Substance"
+                    "Requires: 1x Common Fish"
                 }
 
             };
@@ -726,7 +725,7 @@ namespace StardewDruid.Journal
 
                 level = 3,
 
-                duration = 300,
+                duration = 360,
 
                 title = "Magnus Celeri",
 
@@ -743,7 +742,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 60 Health, 240 Stamina",
-                    "Effect: Celerity Level 3, 5 Hours",
+                    "Effect: Celerity Level 3, 6 Hours",
                     "Requires: Base, 1x Common Shellfish"
                 }
 
@@ -764,7 +763,7 @@ namespace StardewDruid.Journal
 
                 level = 4,
 
-                duration = 360,
+                duration = 480,
 
                 title = "Optimus Celeri",
 
@@ -781,7 +780,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     "Restores: 120 Health, 480 Stamina",
-                    "Effect: Celerity Level 4, 6 hours",
+                    "Effect: Celerity Level 4, 8 hours",
                     "Requires: Base, Aether"
                 }
 
@@ -924,11 +923,11 @@ namespace StardewDruid.Journal
 
             bool craftable = true;
 
-            Dictionary<string, int> more = new()
+            /*Dictionary<string, int> more = new()
             {
                 ["(O)684"] = 2,
 
-            };
+            };*/
 
             if(herbal.ingredients.Count > 0)
             {
@@ -954,14 +953,14 @@ namespace StardewDruid.Journal
 
                         int stack = Game1.player.Items[i].Stack;
 
-                        if (more.ContainsKey(@checkItem.QualifiedItemId))
+                        /*if (more.ContainsKey(@checkItem.QualifiedItemId))
                         {
 
                             double revise = stack / 2;
 
                             stack = (int)Math.Floor(revise);
 
-                        }
+                        }*/
 
                         if (!herbalism[id].amounts.ContainsKey(@checkItem.QualifiedItemId))
                         {
@@ -1082,11 +1081,11 @@ namespace StardewDruid.Journal
 
             }
 
-            Dictionary<string, int> more = new()
+            /*Dictionary<string, int> more = new()
             {
                 ["(O)684"] = 2,
 
-            };
+            };*/
 
             if (herbal.bases.Count > 0)
             {
@@ -1153,7 +1152,7 @@ namespace StardewDruid.Journal
 
                             int cost = 1;
 
-                            if (more.ContainsKey(@checkItem.QualifiedItemId))
+                           /* if (more.ContainsKey(@checkItem.QualifiedItemId))
                             {
 
                                 double revise = stack / 2;
@@ -1169,7 +1168,7 @@ namespace StardewDruid.Journal
 
                                 cost = 2;
 
-                            }
+                            }*/
 
                             int brew = Math.Min(stack, (draught - brewed));
 
@@ -1235,7 +1234,7 @@ namespace StardewDruid.Journal
 
                         int cost = 1;
 
-                        if (more.ContainsKey(@checkItem.QualifiedItemId))
+                        /*if (more.ContainsKey(@checkItem.QualifiedItemId))
                         {
 
                             double revise = stack / 2;
@@ -1251,7 +1250,7 @@ namespace StardewDruid.Journal
 
                             cost = 2;
 
-                        }
+                        }*/
 
                         int brew = Math.Min(stack, (draught - brewed));
 
@@ -1649,7 +1648,7 @@ namespace StardewDruid.Journal
             Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, projectile = 4, counter = -15, sound = SpellHandle.sounds.silent, });
             Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, projectile = 4,  sound = SpellHandle.sounds.thunder, });
 
-            Microsoft.Xna.Framework.Rectangle relicRect = Mod.instance.iconData.RelicRectangles(IconData.relics.crow_hammer);
+            Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles(IconData.relics.crow_hammer);
 
             TemporaryAnimatedSprite animation = new(0,1500, 1, 1, origin - new Vector2(16,60), false, false)
             {

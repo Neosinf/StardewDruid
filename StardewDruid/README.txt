@@ -96,7 +96,7 @@ Each section of the mod generally follows the same format, a quest to retrieve a
 Rite of the Weald:
 1. Companion Quest (The Effigy)
 2. Weapon Quest
-3. Lessons (Clearance, Bounty, Growth, Cultivate, Rockfall)
+3. Lessons (Clearance, Gentle Touch, Growth, Cultivate, Rockfall)
 4. Challenge Quest
 
 Rite of Mists:
@@ -229,14 +229,6 @@ Disables isometric (6 way) targetting for transformation effects. Might look a l
 Cast Anywhere "castAnywhere"
 
 Disables the Map-based cast restrictions so that any rite effect can be cast anywhere. Proceed with caution!
-
------------------------------------------
-Disable/Enable effects
-
-1. Disable seed harvest from grass, disable Effigy crop seeding
-2. Disable fish harvest from nearby water
-3. Disable tree spawning and growth upticks
-4. Disable grass spawning
 
 -----------------------------------------
 COMPATIBILITY AND SAVE DATA

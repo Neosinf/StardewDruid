@@ -44,6 +44,8 @@ namespace StardewDruid.Character
         public Vector2 tether;
 
         public float gait;
+        public float fadeOut;
+        public float setScale;
 
         public NetInt netDirection = new NetInt(0);
         public NetInt netAlternative = new NetInt(0);
@@ -212,6 +214,8 @@ namespace StardewDruid.Character
             collidePriority = new Random().Next(20);
 
             gait = 1.6f;
+
+            fadeOut = 1;
 
             moveInterval = 12;
 
@@ -532,6 +536,8 @@ namespace StardewDruid.Character
 
             float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
 
+            float fade = fadeOut == 0 ? 1f : fadeOut;
+
             DrawEmote(b);
 
             if (netStandbyActive.Value)
@@ -555,7 +561,7 @@ namespace StardewDruid.Character
                         characterTexture,
                         localPosition - new Vector2(32, 64f),
                         haltFrames[netDirection.Value][0],
-                        Color.White,
+                        Color.White* fade,
                         0f,
                         Vector2.Zero,
                         4f,
@@ -575,7 +581,7 @@ namespace StardewDruid.Character
                      characterTexture,
                      localPosition - new Vector2(32, 64f),
                      sweepFrames[netDirection.Value][sweepFrame],
-                     Color.White,
+                     Color.White* fade,
                      0f,
                      Vector2.Zero,
                      4f,
@@ -591,7 +597,7 @@ namespace StardewDruid.Character
                     characterTexture,
                     localPosition - new Vector2(32, 64f),
                     specialFrames[netDirection.Value][specialFrame],
-                    Color.White,
+                    Color.White * fade,
                     0.0f,
                     Vector2.Zero,
                     4f,
@@ -611,7 +617,7 @@ namespace StardewDruid.Character
                     characterTexture,
                     localPosition - new Vector2(32, 64f + dashHeight),
                     dashFrames[dashSeries][dashSetto],
-                    Color.White,
+                    Color.White * fade,
                     0f,
                     Vector2.Zero,
                     4f,
@@ -632,7 +638,7 @@ namespace StardewDruid.Character
                     characterTexture,
                     smashVector,
                     smashFrames[smashSeries][smashSetto],
-                    Color.White,
+                    Color.White * fade,
                     0f,
                     Vector2.Zero,
                     4f,
@@ -657,7 +663,7 @@ namespace StardewDruid.Character
                         characterTexture,
                         localPosition - new Vector2(32, 64f),
                         walkFrames[netDirection.Value][moveFrame],
-                        Color.White,
+                        Color.White * fade,
                         0f,
                         Vector2.Zero,
                         4f,
@@ -715,7 +721,7 @@ namespace StardewDruid.Character
                 b.Draw(
                     Mod.instance.iconData.displayTexture,
                     Game1.GlobalToLocal(Position) - new Vector2(0, overhead == 0 ? 144 : overhead),
-                    Mod.instance.iconData.DisplayRect(IconData.displays.daze),
+                    IconData.DisplayRectangle(IconData.displays.glare),
                     Color.White,
                     0f,
                     Vector2.Zero,
@@ -756,11 +762,13 @@ namespace StardewDruid.Character
 
             Rectangle alertFrame = alertFrames[netDirection.Value][0];
 
+            float fade = fadeOut == 0 ? 1f : fadeOut;
+
             b.Draw(
                  characterTexture,
                  alertVector,
                  alertFrame,
-                 Color.White,
+                 Color.White * fade,
                  0f,
                  Vector2.Zero,
                  4f,
@@ -898,11 +906,18 @@ namespace StardewDruid.Character
                 Mod.instance.CastMessage("Unable to converse while transformed");
 
                 return false;
+            
             }
-
 
             if (l.Name != currentLocation.Name)
             {
+
+                if (!Context.IsMainPlayer)
+                {
+
+                    Mod.instance.characters[characterType] = this;
+
+                }
 
                 CharacterMover mover = new(characterType);
 
@@ -975,6 +990,8 @@ namespace StardewDruid.Character
                     {
                         
                         Halt();
+
+                        clearTextAboveHead();
 
                         return true;
 
@@ -1304,6 +1321,13 @@ namespace StardewDruid.Character
 
             if (location.Name != currentLocation.Name)
             {
+
+                if (!Context.IsMainPlayer)
+                {
+
+                    Mod.instance.characters[characterType] = this;
+
+                }
 
                 CharacterMover mover = new(characterType);
                 

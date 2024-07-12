@@ -5,6 +5,7 @@ using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewDruid.Render;
 using StardewValley;
+using StardewValley.Monsters;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -88,6 +89,10 @@ namespace StardewDruid.Monster
                 netShieldActive.Set(true);
 
                 shieldTimer = 600;
+
+                SpellHandle capture = new(Position, 8*64, IconData.impacts.deathwhirl, new() { SpellHandle.effects.capture, }) { instant = true, scheme = IconData.schemes.death };
+
+                Mod.instance.spellRegister.Add(capture);
 
                 return true;
 

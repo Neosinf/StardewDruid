@@ -57,7 +57,7 @@ namespace StardewDruid.Event.Challenge
 
             EventBar(DialogueData.Strings(DialogueData.stringkeys.theDusting),0);
 
-            eventProximity = 1280;
+            eventProximity = -1;
 
             ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 

@@ -566,7 +566,7 @@ namespace StardewDruid.Journal
                 story = stories.Jester_Tomb,
                 character = characters.Jester,
                 question = "I'm sorry about what happened in the Tomb",
-                answer = "(Jester looks away) I just... I thought that when we found Thanatoshi, then that would be the end of the 'grand quest'. Now the end seems evern further away. " +
+                answer = "(Jester looks away) I just... I thought that when we found Thanatoshi, then that would be the end of the 'grand quest'. Now the end seems even further away. " +
                 "I never met the Reaper before, but I've told a few stories about him, and he was always this great, unbending hero. " +
                 "Well he didn't seem so great when he was trying to slice our heads off. (Jester looks up) I still haven't informed the Morticians where his broken soul is.",
 
@@ -687,13 +687,13 @@ namespace StardewDruid.Journal
 
             storylist[stories.Shadowtin_Circle] = new()
             {
-                story = stories.Buffin_Ether,
-                character = characters.Buffin,
-                question = "",
-                answer = "We've been slowly consumed by the hunger of a tyrant, who expends the lives of our best folk to construct his cities and continue his conquests, " +
+                story = stories.Shadowtin_Circle,
+                character = characters.Shadowtin,
+                question = "When will you return to the darkened plane?",
+                answer = "My folk have been slowly consumed by the hunger of a tyrant, who expends the lives of our best folk to construct his cities and continue his conquests, " +
                 "all under the pretense that we are his property, his souls to enflame and extinguish to his purposes. "+
                 "I want to expose him as an imposter, before he gains the power of dragons and heaps the souls of my people into an engine of war, " +
-                "and to do that I need the truth of his past. Unequivocable testimony of his fraud.",
+                "and to do that I need the truth of his past. Unequivocable testimony of his fraud. I cannot return empty-handed.",
             };
 
             return storylist;

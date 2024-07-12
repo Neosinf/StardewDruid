@@ -202,6 +202,7 @@ namespace StardewDruid.Cast.Fates
                     case "Oil Maker":
                     case "Furnace":
                     case "Geode Crusher":
+                    case "Bee House":
 
                         // registered for use
 
