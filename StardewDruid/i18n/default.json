@@ -98,6 +98,73 @@
     "Enum.stringkeys.reachEnd": "Reach the end of the Tunnel!",
     "Enum.stringkeys.treasureHunt": "Treasure Chase",
 
-    "nevermind": "(nevermind)"
+    "nevermind": "(nevermind)",
+
+    // DialogueNarrators
+    "DialogueNarrators.approachEffigy.0": "Unknown Voice",
+    "DialogueNarrators.approachEffigy.1": "The Forgotten Effigy",
+
+    "DialogueNarrators.swordWeald.0": "Rustling in the woodland",
+    "DialogueNarrators.swordWeald.1": "Whispers on the wind",
+    "DialogueNarrators.swordWeald.2": "Sighs of the earth",
+
+    "DialogueNarrators.challengeWeald.0": "Clericbat",
+
+    "DialogueNarrators.swordMists.0": "Murmurs on the waves",
+    "DialogueNarrators.swordMists.1": "Voice Beyond the Shore",
+
+    "DialogueNarrators.questEffigy.0": "The Effigy",
+    "DialogueNarrators.questEffigy.1": "The Jellyking",
+    "DialogueNarrators.questEffigy.2": "First Farmer",
+    "DialogueNarrators.questEffigy.3": "Lady Beyond",
+
+    "DialogueNarrators.challengeMists.0": "Shadow Sergeant",
+    "DialogueNarrators.challengeMists.1": "Shadow Thug",
+    "DialogueNarrators.challengeMists.2": "Shadow Leader",
+    "DialogueNarrators.challengeMists.3": "The Effigy",
+
+    "DialogueNarrators.swordStars.0": "The Last Guardian",
+
+    "DialogueNarrators.challengeStars.0": "The Jellyking",
+    "DialogueNarrators.challengeStars.1": "The Effigy",
+
+    "DialogueNarrators.challengeAtoll.0": "Captain of the Drowned",
+    "DialogueNarrators.challengeAtoll.1": "The Effigy",
+
+    "DialogueNarrators.challengeDragon.0": "Lesser Dragon",
+
+    "DialogueNarrators.swordFates.0": "The Jester of Fate",
+
+    "DialogueNarrators.questJester.0": "Jester",
+    "DialogueNarrators.questJester.1": "Buffin",
+    "DialogueNarrators.questJester.2": "Marlon",
+    "DialogueNarrators.questJester.3": "Gunther",
+    "DialogueNarrators.questJester.4": "Summoned Saurus",
+
+    "DialogueNarrators.challengeFates.0": "The Effigy",
+    "DialogueNarrators.challengeFates.1": "Jester",
+    "DialogueNarrators.challengeFates.2": "Buffin",
+    "DialogueNarrators.challengeFates.3": "Shadow Leader",
+    "DialogueNarrators.challengeFates.4": "Shadow Sergeant",
+    "DialogueNarrators.challengeFates.5": "Shadow Goblin",
+    "DialogueNarrators.challengeFates.6": "Shadow Rogue",
+    "DialogueNarrators.challengeFates.7": "Confused Bear",
+
+    "DialogueNarrators.swordEther.0": "The Jester of Fate",
+    "DialogueNarrators.swordEther.1": "Thanatoshi, Twilight Reaper",
+
+    "DialogueNarrators.questShadowtin.0": "Shadowtin Bear",
+    "DialogueNarrators.questShadowtin.1": "Dwarf",
+    "DialogueNarrators.questShadowtin.2": "Intriguing Voice",
+    "DialogueNarrators.questShadowtin.3": "Enamoured Voice",
+    "DialogueNarrators.questShadowtin.4": "Shadowtin Cat",
+    "DialogueNarrators.questShadowtin.5": "The Wizard",
+    "DialogueNarrators.questShadowtin.6": "Wizard Duellist",
+    "DialogueNarrators.questShadowtin.7": "Shadow Rogue",
+    "DialogueNarrators.questShadowtin.8": "Shadow Goblin",
+
+    "DialogueNarrators.challengeEther.0": "Dust Chef",
+
+    "DialogueNarrators.treasureChase.0": "Tresure Thief"
 
 }

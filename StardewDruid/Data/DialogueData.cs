@@ -159,8 +159,8 @@ namespace StardewDruid.Data
 
                     sceneNarrators = new()
                     {
-                        [0] = "Unknown Voice",
-                        [1] = "The Forgotten Effigy",
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.approachEffigy.0"),
+                        [1] = Mod.instance.Helper.Translation.Get("DialogueNarrators.approachEffigy.1"),
                     };
 
                     break;
@@ -168,16 +168,16 @@ namespace StardewDruid.Data
                 case QuestHandle.swordWeald:
                     sceneNarrators = new()
                     {
-                        [0] = "Rustling in the woodland",
-                        [1] = "Whispers on the wind",
-                        [2] = "Sighs of the earth",
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.swordWeald.0"),
+                        [1] = Mod.instance.Helper.Translation.Get("DialogueNarrators.swordWeald.1"),
+                        [2] = Mod.instance.Helper.Translation.Get("DialogueNarrators.swordWeald.2"),
                     };
                     break;
 
                 case QuestHandle.challengeWeald:
 
-                    sceneNarrators = new() { 
-                        [0] = "Clericbat",
+                    sceneNarrators = new() {
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeWeald.0"),
                     };
 
                     break;
@@ -186,8 +186,8 @@ namespace StardewDruid.Data
 
                     sceneNarrators = new()
                     {
-                        [0] = "Murmurs on the waves",
-                        [1] = "Voice Beyond the Shore",
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.swordMists.0"),
+                        [1] = Mod.instance.Helper.Translation.Get("DialogueNarrators.swordMists.1"),
                     };
 
                     break;
@@ -196,21 +196,21 @@ namespace StardewDruid.Data
                     
                     sceneNarrators = new()
                     {
-                        [0] = "The Effigy",
-                        [1] = "The Jellyking",
-                        [2] = "First Farmer",
-                        [3] = "Lady Beyond",
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questEffigy.0"),
+                        [1] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questEffigy.1"),
+                        [2] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questEffigy.2"),
+                        [3] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questEffigy.3"),
                     };
 
                     break;
 
                 case QuestHandle.challengeMists:
 
-                    sceneNarrators = new() { 
-                        [0] = "Shadow Sergeant", 
-                        [1] = "Shadow Thug",
-                        [2] = "Shadow Leader",
-                        [3] = "The Effigy",
+                    sceneNarrators = new() {
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.approachEffigy.0"),
+                        [1] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeMists.1"),
+                        [2] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeMists.2"),
+                        [3] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeMists.3"),
                     };
 
                     break;
@@ -219,7 +219,7 @@ namespace StardewDruid.Data
 
                     sceneNarrators = new()
                     {
-                        [0] = "The Last Guardian",
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.swordStars.0"),
                     };
 
                     break;
@@ -228,8 +228,8 @@ namespace StardewDruid.Data
 
                     sceneNarrators = new()
                     {
-                        [0] = "The Jellyking",
-                        [1] = "The Effigy",
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeAtoll.0"),
+                        [1] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeAtoll.1"),
                     };
 
                     break;
@@ -238,8 +238,8 @@ namespace StardewDruid.Data
 
                     sceneNarrators = new()
                     {
-                        [0] = "Captain of the Drowned",
-                        [1] = "The Effigy",
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeAtoll.0"),
+                        [1] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeAtoll.1"),
                     };
 
                     break;
@@ -248,7 +248,7 @@ namespace StardewDruid.Data
 
                     sceneNarrators = new()
                     {
-                        [0] = "Lesser Dragon",
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeDragon.0"),
                     };
 
                     break;
@@ -257,7 +257,7 @@ namespace StardewDruid.Data
 
                     sceneNarrators = new()
                     {
-                        [0] = "The Jester of Fate",
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.swordFates.0"),
                     };
 
                     break;
@@ -266,11 +266,11 @@ namespace StardewDruid.Data
 
                     sceneNarrators = new()
                     {
-                        [0] = "Jester",
-                        [1] = "Buffin",
-                        [2] = "Marlon",
-                        [3] = "Gunther",
-                        [4] = "Summoned Saurus",
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questJester.0"),
+                        [1] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questJester.1"),
+                        [2] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questJester.2"),
+                        [3] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questJester.3"),
+                        [4] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questJester.4"),
                     };
 
                     break;
@@ -279,14 +279,14 @@ namespace StardewDruid.Data
 
                     sceneNarrators = new()
                     {
-                        [0] = "The Effigy",
-                        [1] = "Jester",
-                        [2] = "Buffin",
-                        [3] = "Shadow Leader",
-                        [4] = "Shadow Sergeant",
-                        [5] = "Shadow Goblin",
-                        [6] = "Shadow Rogue",
-                        [7] = "Confused Bear",
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeFates.0"),
+                        [1] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeFates.1"),
+                        [2] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeFates.2"),
+                        [3] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeFates.3"),
+                        [4] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeFates.4"),
+                        [5] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeFates.5"),
+                        [6] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeFates.6"),
+                        [7] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeFates.7"),
                     };
 
                     break;
@@ -295,8 +295,8 @@ namespace StardewDruid.Data
 
                     sceneNarrators = new()
                     {
-                        [0] = "The Jester of Fate",
-                        [1] = "Thanatoshi, Twilight Reaper",
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.swordEther.0"),
+                        [1] = Mod.instance.Helper.Translation.Get("DialogueNarrators.swordEther.1"),
                     };
 
                     break;
@@ -305,15 +305,15 @@ namespace StardewDruid.Data
 
                     sceneNarrators = new()
                     {
-                        [0] = "Shadowtin Bear",
-                        [1] = "Dwarf",
-                        [2] = "Intriguing Voice",
-                        [3] = "Enamoured Voice",
-                        [4] = "Shadowtin Cat",
-                        [5] = "The Wizard",
-                        [6] = "Wizard Duellist",
-                        [7] = "Shadow Rogue",
-                        [8] = "Shadow Goblin",
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questShadowtin.0"),
+                        [1] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questShadowtin.1"),
+                        [2] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questShadowtin.2"),
+                        [3] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questShadowtin.3"),
+                        [4] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questShadowtin.4"),
+                        [5] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questShadowtin.5"),
+                        [6] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questShadowtin.6"),
+                        [7] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questShadowtin.7"),
+                        [8] = Mod.instance.Helper.Translation.Get("DialogueNarrators.questShadowtin.8"),
 
                     };
 
@@ -323,7 +323,7 @@ namespace StardewDruid.Data
 
                     sceneNarrators = new()
                     {
-                        [0] = "Dust Chef",
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.challengeEther.0"),
                     };
 
                     break;
@@ -332,7 +332,7 @@ namespace StardewDruid.Data
 
                     sceneNarrators = new()
                     {
-                        [0] = "Tresure Thief",
+                        [0] = Mod.instance.Helper.Translation.Get("DialogueNarrators.treasureChase.0"),
                     };
 
                     break;
