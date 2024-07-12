@@ -2266,4 +2266,124 @@
     "Relic.Instruction.dragon_form": "Click to study the guise of the ancient ones.",
     "Relic.Instruction.-1": "Click to read",
 
+    "Config.riteButtons.name": "Rite",
+    "Config.riteButtons.tooltip": "Configure the list or combination of keybinds to use for casting Rites",
+
+    "Config.actionButtons.name": "Action (Druid Only)",
+    "Config.actionButtons.tooltip": "Assigns an alternative keybind for the Action / Left Click / Use tool function, for the purposes of the mod only. This keybind does not override or re-map any keybinds in the base game. Useful for controllers with non-standard button maps.",
+
+    "Config.specialButtons.name": "Special (Druid Only)",
+    "Config.specialButtons.tooltip": "Assigns an alternative keybind for the Check / Special / Right Click / Placedown function, for the purposes of the mod only. This keybind does not override or re-map any keybinds in the base game. Useful for controllers with non-standard button maps.",
+
+    "Config.journalButtons.name": "Quests Journal",
+    "Config.journalButtons.tooltip": "Keybind assignment to open the Stardew Druid effects journal while in world. The rite keybind can be used to open the journal from the game questlog.",
+
+    "Config.effectsButtons.name": "Effects Journal",
+    "Config.effectsButtons.tooltip": "Keybind assignment to open the Stardew Druid effects journal while in world.",
+
+    "Config.relicsButtons.name": "Relics Journal",
+    "Config.relicsButtons.tooltip": "Keybind assignment to open the Stardew Druid relics journal while in world.",
+
+    "Config.herbalismButtons.name": "Herbalism Journal",
+    "Config.herbalismButtons.tooltip": "Keybind assignment to open the Stardew Druid herbalism journal while in world.",
+
+    "Config.reverseJournal.name": "Reverse Journal",
+    "Config.reverseJournal.tooltip": "Reverse the order in which Stardew Druid journal entries are displayed. Default: oldest to newest. Enabled: newest to oldest.",
+
+    "Config.activeJournal.name": "Active Journal",
+    "Config.activeJournal.tooltip": "Show active quests on the front pages of the Stardew Druid journal. Default: active entries on front page. Disabled: no change in order.",
+
+    "Config.modDifficulty.name": "Mod Difficulty",
+    "Config.modDifficulty.tooltip": "Select Mod difficulty level. Affects monetary rewards, stamina costs, monster difficulty.",
+
+    "Config.disableHands.name": "Disable Cast Hands",
+    "Config.disableHands.tooltip": "Disables farmer sprite 'cast hands' animation when triggering events. Recommended disable if other game modifications make changes to the farmer rendering or draw cycle.",
+
+    "Config.autoProgress.name": "Auto Progress",
+    "Config.autoProgress.tooltip": "Automatically progress to the next stage of the questline after loading or starting a new day.",
+
+    "Config.setMilestone.name": "Set Progress",
+    "Config.setMilestone.tooltip": "Use to adjust progress level on game load. 0 is no change. Note that adjustments may clear or miss levels of progress.",
+
+    "Config.setOnce.name": "Set Once",
+    "Config.setOnce.tooltip": "Automatically returns set progress to 0 after reconfiguring one save file.",
+
+    "Config.convert219.name": "Convert 2.1.9 Data",
+    "Config.convert219.tooltip": "(Not recommended) Reconfigures 2.1.9 and earlier version data if present in the loaded save file and sets new progress to the relative 2.1.9 level.",
+
+    "Config.slotAttune.name": "Slot Attune",
+    "Config.slotAttune.tooltip": "Rite casts will be based on selected slot in the toolbar as opposed to weapon or tool attunement, as per the below slot assignments. [lunch] will consume any edible item in that slot when health or stamina is below 33%.",
+
+    "Config.slotConsume.name": "Slot Consume",
+    "Config.slotConsume.tooltip": "For slots set to [lunch], the mod will consume any edible item in that inventory slot when health or stamina is below 33%.",
+
+    "Config.slotFreedom.name": "Slot Freedom",
+    "Config.slotFreedom.tooltip": "Invalid tool selections will be ignored when slot-attune is active. Proceed with caution!",
+
+    "Config.slotReverse.name": "Slot Reverse",
+    "Config.slotReverse.tooltip": "Tool and lunch detection moves from right to left (slot 12 to 1)",
+
+    "Config.slotOne.name": "Slot 1",
+    "Config.slotOne.tooltip": "Select slot behaviour for inventory slot one",
+
+    "Config.slotTwo.name": "Slot 2",
+    "Config.slotTwo.tooltip": "Select slot behaviour for inventory slot two",
+
+    "Config.slotThree.name": "Slot 3",
+    "Config.slotThree.tooltip": "Select slot behaviour for inventory slot three",
+
+    "Config.slotFour.name": "Slot 4",
+    "Config.slotFour.tooltip": "Select slot behaviour for inventory slot four",
+
+    "Config.slotFive.name": "Slot 5",
+    "Config.slotFive.tooltip": "Select slot behaviour for inventory slot five",
+
+    "Config.slotSix.name": "Slot 6",
+    "Config.slotSix.tooltip": "Select slot behaviour for inventory slot six",
+
+    "Config.slotSeven.name": "Slot 7",
+    "Config.slotSeven.tooltip": "Select slot behaviour for inventory slot seven",
+
+    "Config.slotEight.name": "Slot 8",
+    "Config.slotEight.tooltip": "Select slot behaviour for inventory slot eight",
+
+    "Config.slotNine.name": "Slot 9",
+    "Config.slotNine.tooltip": "Select slot behaviour for inventory slot nine",
+
+    "Config.slotTen.name": "Slot 10",
+    "Config.slotTen.tooltip": "Select slot behaviour for inventory slot ten",
+
+    "Config.slotEleven.name": "Slot 11",
+    "Config.slotEleven.tooltip": "Select slot behaviour for inventory slot eleven",
+
+    "Config.slotTwelve.name": "Slot 12",
+    "Config.slotTwelve.tooltip": "Select slot behaviour for inventory slot twelve",
+
+    "Config.cultivateBehaviour.name": "Cultivate Behaviour",
+    "Config.cultivateBehaviour.tooltip": "Adjust settings for Weald: Cultivate in regards to crop handling. See readme for specifics. 1 Highest growth rate. 2 Average growth, average quality. 3 Highest quality.",
+
+    "Config.meteorBehaviour.name": "Meteor Behaviour",
+    "Config.meteorBehaviour.tooltip": "Adjust risk/reward setting for Stars: Meteor. See readme for specifics. 1 Intelligent targetting, lowest damage. 5 Completely random targets, highest damage.",
+
+    "Config.maxDamage.name": "Maximum Damage",
+    "Config.maxDamage.tooltip": "Some spell effects have damage modifiers that consider player combat level, highest upgrade on Pickaxe, Axe, and applied enchantments. Enable to cast at max damage and effect everytime.",
+
+    "Config.cardinalMovement.name": "Cardinal Targetting",
+    "Config.cardinalMovement.tooltip": "Disables isometric (6 way) targetting for transformation effects. Might look a little misaligned with the transformation animations.",
+
+    "Config.castAnywhere.name": "Cast Anywhere",
+    "Config.castAnywhere.tooltip": "Disables the Map-based cast restrictions so that any rite effect can be cast anywhere. Proceed with caution!",
+
+    "Config.disableSeeds.name": "Disable Seed Spawn",
+    "Config.disableSeeds.tooltip": "Disables wild seasonal seed spawn effect for Rite of the Weald.",
+
+    "Config.disableFish.name": "Disable Fish Spawn",
+    "Config.disableFish.tooltip": "Disables low grade fish spawn effect for Rite of the Weald.",
+
+    "Config.disableTrees.name": "Disable Tree Spawn",
+    "Config.disableTrees.tooltip": "Disables tree spawn effect for Rite of the Weald.",
+
+    "Config.disableGrass.name": "Disable Grass Spawn",
+    "Config.disableGrass.tooltip": "Disables grass spawn effect for Rite of the Weald."
+
 }
