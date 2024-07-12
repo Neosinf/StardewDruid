@@ -1176,20 +1176,19 @@ namespace StardewDruid.Data
                         [1] = new()
                         {
 
-                            intro = "The Forgotten Effigy: So a successor appears. I am the Effigy, crafted by the First Farmer, sustained by the old powers, and bored.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.approachEffigy.1.intro"),
 
                             responses = new()
                             {
-                                "Who stuck you in the ceiling?",
-                                "I inherited this plot from my grandfather. His notes didn't say anything about a magic scarecrow.",
-                                "(Say nothing)",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachEffigy.1.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachEffigy.1.responses.1"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachEffigy.1.responses.2"),
                             },
 
                             answers = new()
                             {
 
-                                "One of the leylines of the valley seams through the bedrock of this cavern. This is where I have spent many of your centuries, in stasis, listening to the energies of the Weald, leaving periodically to witness the change of seasons. " +
-                                "The last time I ventured out, your predecessor had already departed this plane. I found the farm abandoned, the mining town, diminished. Now strange shadows stalk the sacred spaces, and it has not been safe for me to leave this refuge."
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachEffigy.1.answers.0")
 
                             },
 
@@ -1200,18 +1199,18 @@ namespace StardewDruid.Data
                         [2] = new()
                         {
 
-                            intro = "The Forgotten Effigy: The valley didn't always seem so inhospitable. The farmers were once aligned with the otherworld. They formed a circle of Druids.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.approachEffigy.2.intro"),
 
                             responses = new()
                             {
-                                "I would love to know more about the traditions of my forebearers.",
-                                "I want to be like the farmers of old and form a circle",
-                                "(Say nothing)",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachEffigy.2.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachEffigy.2.responses.1"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachEffigy.2.responses.2"),
                             },
 
                             answers = new()
                             {
-                                "Very well. Meet me in the grove outside, and we will test your aptitude for the otherworld.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachEffigy.2.answers.0"),
                             },
 
                             questContext = 200,
@@ -1231,12 +1230,12 @@ namespace StardewDruid.Data
                         [1] = new()
                         {
 
-                            intro = "Sighs of the Earth: What say you, farmer?",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.swordWeald.1.intro"),
 
                             responses = new()
                             {
-                                "I seek the blessing of the Two Kings to reform the circle of Druids.",
-                                "Ok. Whoever's behind the rock, come on out.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordWeald.1.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordWeald.1.responses.1"),
 
                             },
 
@@ -1247,12 +1246,12 @@ namespace StardewDruid.Data
                         [2] = new()
                         {
 
-                            intro = "Whispers on the wind: The monarchs remain dormant, their realm untended. Who are you to claim the inheritance of the broken circle?",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.swordWeald.2.intro"),
 
                             responses = new()
                             {
-                                "The valley is my home now. I want to care for and protect it.",
-                                "I'm being friendly and playing along with your little game. Just dont pull down my pants or anything.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordWeald.2.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordWeald.2.responses.1"),
 
                             },
 
@@ -1263,13 +1262,13 @@ namespace StardewDruid.Data
                         [3] = new()
                         {
 
-                            intro = "Rustling in the Woodland: It is not an easy path, the one tread by a squire of the Two Kings. Are you ready to serve?",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.swordWeald.3.intro"),
 
                             responses = new()
                             {
 
-                                "I will serve the sleeping monarchs like the druids of yore.",
-                                "Serve... tea? Tennis ball?",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordWeald.3.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordWeald.3.responses.1"),
 
                             },
 
@@ -1290,12 +1289,12 @@ namespace StardewDruid.Data
                         [1] = new()
                         {
 
-                            intro = "Murmurs of the waves: We thank you for restoring our sacred waters. Though you are young. And dry. This is unexpected.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.swordMists.1.intro"),
 
                             responses = new()
                             {
-                                "I harken to the Voice Beyond the Shore, as I was called.",
-                                "Creepy voices. Creepy voices everywhere. And I never have something to record them with either.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordMists.1.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordMists.1.responses.1"),
 
                             },
 
@@ -1306,12 +1305,12 @@ namespace StardewDruid.Data
                         [2] = new()
                         {
 
-                            intro = "Murmurs of the waves: Speak, friend. She listens.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.swordMists.2.intro"),
 
                             responses = new()
                             {
-                                "Dear Lady, you once blessed the first farmer. I am their successor.",
-                                "So, is this like a prayer? Do I close my eyes...",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordMists.2.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordMists.2.responses.1"),
 
                             },
 
@@ -1322,12 +1321,12 @@ namespace StardewDruid.Data
                         [3] = new()
                         {
 
-                            intro = "(Distant voice): I hear you, successor.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.swordMists.3.intro"),
 
                             responses = new()
                             {
-                                "My Lady, I will be your champion in the realm before the shore.",
-                                "How? I'm not even on a long distance frequency.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordMists.3.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordMists.3.responses.1"),
 
                             },
 
@@ -1348,17 +1347,16 @@ namespace StardewDruid.Data
                         [1] = new()
                         {
 
-                            intro = "The Effigy: Here again. At the hem of the valley.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.1.intro"),
 
                             responses = new()
                             {
-                                "Is the beach how you remember it?"
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.1.responses.0")
                             },
 
                             answers = new()
                             {
-                                "The sands and waves glimmer as they once did, but I think I remember them differently. " +
-                            "Perhaps they will appear more familiar when I've spent some time here."
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.1.answers.0")
 
                             },
 
@@ -1369,19 +1367,17 @@ namespace StardewDruid.Data
                         [2] = new()
                         {
 
-                            intro = "The Effigy: I've only ever possessed a small amount of talent in invoking the energies of the Weald.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.2.intro"),
 
                             responses = new()
                             {
-                                "I thought what you just did was great. I'm surprised you consider yourself untalented in the Weald.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.2.responses.0"),
 
                             },
 
                             answers = new()
                             {
-                                "You conduct the energies with a grace I do not possess. " +
-                                "They panic and scatter at my touch, as if compelled by violence instead of by the gentleness I hope to express. " +
-                                "Yes. The farm and grove of my former masters want for a better caretaker."
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.2.answers.0")
                             },
 
                             questContext = 200,
@@ -1391,22 +1387,17 @@ namespace StardewDruid.Data
                         [3] = new()
                         {
 
-                            intro = "The Effigy: That peculiar cooking technique was taught to me by the Lady herself. It was a favourite dish of the first farmer's. He was her champion.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.3.intro"),
 
                             responses = new()
                             {
-                                "You once told me the first farmer knew her.",
-                                "So it's true then, you were created with the Lady's power?",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.3.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.3.responses.1"),
                             },
 
                             answers = new()
                             {
-                                "When I came into this world, a great war between dragons and elderfolk had just rescinded, with the dominions of both parties in ruins. " +
-                                "It was decreed by the fates that humans and other survivors would work together to revitalise the valley. " +
-                                "The Lady Beyond and my master built a little garden of hope in the valley, the first farm. " +
-                                "From the moment I awoke in this form, the circle of druids has been my mission, and my home. " +
-                                "But the Fates lost interest in our world, and the elderborn departed. " +
-                                "I have lost count of the days since that time."
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.3.answers.0")
                             },
 
                             questContext = 250,
@@ -1416,19 +1407,17 @@ namespace StardewDruid.Data
                         [4] = new()
                         {
 
-                            intro = "The Effigy: That menace. I swear that when I find the means, I will turn him to juice and rind. Something about that insidious, gleeful countenance inspires me to rage.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.4.intro"),
 
                             responses = new()
                             {
-                                "Sociopathic slime monsters tend to talk smack.",
-                                "That blob was the most disgusting thing I've ever seen... today.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.4.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.4.responses.1"),
                             },
 
                             answers = new()
                             {
-                                "Though it pains me to admit, the Jellyking spoke the truth about my present position. I am not an adequate guardian of the change. " +
-                                "Such duties have fallen to the wayside, and others have claimed custodianship of the sacred spaces, such as the Bat Church, or the Wizard, and his ally. " +
-                                "Even the slime can see it. I have failed the Circle."
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.4.answers.0")
                             },
 
                             questContext = 400,
@@ -1438,19 +1427,17 @@ namespace StardewDruid.Data
                         [5] = new()
                         {
 
-                            intro = "The Effigy: The rolling energies of the mists gather here.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.5.intro"),
 
                             responses = new()
                             {
-                                "Are those... wisps?",
-                                "Along with dust, shells, driftwood, and the salty tears of failed anglers",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.5.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.5.responses.1"),
                             },
 
                             answers = new()
                             {
-                                "The will of the sleeping monarchs, their dreams and promises, become the wisps. " +
-                                "In a gentle moment, they revealed themselves to me, and have continued to keep me company, in the long periods of loneliness between times of stasis. " +
-                                "Now they reveal themselves to you too. It is a special privilege.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.5.answers.0"),
                             },
 
                             questContext = 500,
@@ -1460,23 +1447,20 @@ namespace StardewDruid.Data
                         [6] = new()
                         {
 
-                            intro = "The Effigy: I witnessed this, many ages ago, when I was still new to this world. " +
-                                "I was unable to assist my friend with his troubled heart.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.6.intro"),
 
                             responses = new()
                             {
 
-                                "You kept the circle active in the valley all this time.",
-                                "Your friend was heartbroken. Such is life. His burdens are no longer yours to bear.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.6.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.6.responses.1"),
 
                             },
 
                             answers = new()
                             {
 
-                                "I can not be sure if I've honoured his friendship, as the final instruction, as you heard, was to learn the beauty of the valley. " +
-                                "Even now, her distant voice asks me to abide here, and wait. I think I'll make my own decision. " +
-                                "It's time for me to venture out of the hovel I've made in the secluded grove and follow your lead. You are my friend and mentor now, successor.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questEffigy.6.answers.0"),
 
                             },
 
@@ -1497,18 +1481,18 @@ namespace StardewDruid.Data
                         [1] = new()
                         {
 
-                            intro = "The Revenant: Well now, a fellow human. Welcome to the Chapel of the Stars.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.swordStars.1.intro"),
 
                             responses = new()
                             {
-                                "Master holy warrior, I have come, bearing the lantern of your order, to learn the ways of the Stars.",
-                                "Human? You don't even have a face.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordStars.1.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordStars.1.responses.1"),
                             },
 
                             answers = new()
                             {
 
-                                "Ah... it was I that gifted that lantern you carry to the funny scarecrow man, back when he used to visit. So you're the successor he has been waiting for. ",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordStars.1.answers.0"),
 
                             },
 
@@ -1519,17 +1503,17 @@ namespace StardewDruid.Data
                         [2] = new()
                         {
 
-                            intro = "The Revenant: Did he tell you the risks? Did he tell you what you could lose by this path?",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.swordStars.2.intro"),
 
                             responses = new()
                             {
-                                "He told me this is a necessary step towards obtaining the power the circle needs to defend our home.",
-                                "I think I've exhausted all his dialogue.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordStars.2.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordStars.2.responses.1"),
                             },
 
                             answers = new()
                             {
-                                "Well, I'll be the first to admit that being a Holy Warrior of the Star Guardians has been pretty fun. Until the Fates cursed me with unlife. If you follow this path, you'll face your own reckoning one day.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordStars.2.answers.0"),
                             },
 
                             questContext = 200,
@@ -1539,17 +1523,17 @@ namespace StardewDruid.Data
                         [3] = new()
                         {
 
-                            intro = "The Revenant: If the scarecrow believes in you, I suppose that counts for something. Seems to me he never does things on a whim. ",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.swordStars.3.intro"),
 
                             responses = new()
                             {
-                                "I will do what needs to be done to lead the circle of Druids. I am not afraid.",
-                                "You and the Effigy seem pretty desperate, so I'll help you out just this once.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordStars.3.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordStars.3.responses.1"),
                             },
 
                             answers = new()
                             {
-                                "I accept you as guardian in training. Take this holy sword as an emblem of your oath to the Stars. It belonged to the last trainee. They never used it.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordStars.3.answers.0"),
 
                             },
 
@@ -1570,19 +1554,18 @@ namespace StardewDruid.Data
                         [1] = new()
                         {
 
-                            intro = "(The strange cat looks at you expectantly)",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.approachJester.1.intro"),
 
                             responses = new()
                             {
-                                "Greetings, you must be the representative from the Fae Court",
-                                "Hello Kitty, are you far from home?",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachJester.1.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachJester.1.responses.1"),
                             },
 
                             answers = new()
                             {
 
-                                "Greetings, person of interest. I am the Jester of Fate, and, uh... I guess I'm not really who you thought the Fae Court would send. " +
-                                "I had a job as a court fool, and the best part was trying to make the High Priestess smile, but then the chance came to be a hero and go on a grand quest, and I took it. Now I'm here, trying to find a missing Celestial.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachJester.1.answers.0"),
 
                             },
 
@@ -1593,18 +1576,18 @@ namespace StardewDruid.Data
                         [2] = new()
                         {
 
-                            intro = "The Jester of Fate: Well farmer, you have the scent of destiny about you, and some otherworldly ability too. You must be the fabled acolyte of the celestials I was warned about.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.approachJester.2.intro"),
 
                             responses = new()
                             {
-                                "I've received a few titles on my journey, but I prefer to be known as the Stardew Druid.",
-                                "Meteorites, lightning bolts? Nah, can't say we see much of those out here.",
-                                "(Say nothing and pretend the cat can't talk)",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachJester.2.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachJester.2.responses.1"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachJester.2.responses.2"),
                             },
 
                             answers = new()
                             {
-                                "I propose a partnership. I teach you some of my special tricks, and you help me in my sacred quest. All I need to do is find the great Reaper of Fate and the world-threatening Star entity that he's hunting.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachJester.2.answers.0"),
                             },
 
                             questContext = 200,
@@ -1614,19 +1597,17 @@ namespace StardewDruid.Data
                         [3] = new()
                         {
 
-                            intro = "The Jester of Fate: I'm sure you agree this would be great for both of us.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.approachJester.3.intro"),
 
                             responses = new()
                             {
-                                "A practitioner of mysteries? This is truly fortuitous. I accept your proposal.",
-                                "Well I could use a big cat on the farm.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachJester.3.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachJester.3.responses.1"),
                             },
 
                             answers = new()
                             {
-                                "Great! Now the adventure people said there's a dark dungeon to the east of here, full of peril and evil skull-heads. " +
-                                "That's exactly the place I want to go! It's just the thought of going alone... well... uh... who doesn't like to have friends with them on an epic journey like this? " +
-                                "Come see me when you're ready to venture forth, my brave and loyal farmer. (The mountain bridge must be repaired in order to proceed)",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.approachJester.3.answers.0"),
 
                             },
 
@@ -1639,14 +1620,13 @@ namespace StardewDruid.Data
                     if (Mod.instance.questHandle.IsComplete(QuestHandle.relicWeald))
                     {
 
-                        conversations[3].responses.Add("I'm not making any deals with a strange cat on a bridge built by forest spirits!");
+                        conversations[3].responses.Add(Mod.instance.Helper.Translation.Get("SceneConversations.approachJester.3.responses.2"));
 
                         string buffer = conversations[3].answers.First();
 
                         conversations[3].answers.Add(buffer);
 
-                        conversations[3].answers.Add("Hehehe... I like you already! But you cannot escape this Fate, literally, and, well literally. " +
-                                "Come see me when you're ready to explore the dungeon on the other side of this gap, I promise it will be worth your time! (The mountain bridge must be repaired in order to proceed)");
+                        conversations[3].answers.Add(Mod.instance.Helper.Translation.Get("SceneConversations.approachJester.3.answers.1"));
 
                     }
 
@@ -1660,18 +1640,18 @@ namespace StardewDruid.Data
                         [1] = new()
                         {
 
-                            intro = "The Jester of Fate: Are you as creeped out as I am farmer?",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.swordFates.1.intro"),
 
                             responses = new()
                             {
-                                "After a hundred descents into the mines, I have become a master dungeon-explorer.",
-                                "I saw a lot of body-less heads but not a lot of headless bodies. I suspect someone's stealing bodies.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordFates.1.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordFates.1.responses.1"),
                             },
 
                             answers = new()
                             {
 
-                                "You know what, after all that, I'm actually relieved we didnt run into Thanatoshi, because, to be honest, it's all a bit overwhelming. And what would I say if we even find him?",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordFates.1.answers.0"),
 
                             },
 
@@ -1681,18 +1661,18 @@ namespace StardewDruid.Data
 
                         [2] = new()
                         {
-  
-                            intro = "The Jester of Fate: These monuments are arranged like the court of the Fates. The Artisans, the Priesthood, the Morticians, and Chaos. ",
+
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.swordFates.2.intro"),
 
                             responses = new()
                             {
-                                "Odd to think the locals produced this. I assume most of them are unaware of the mysteries of the Fates.",
-                                "I don't want to throw shade at the Fates and all, but this has a real big cult vibe",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordFates.2.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordFates.2.responses.1"),
                             },
 
                             answers = new()
                             {
-                                "I think I know this place. The first envoys to the valley came here to fix all the problems caused by the dragons and celestials and elderfolk and humans.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordFates.2.answers.0"),
                             },
 
                             questContext = 140,
@@ -1702,18 +1682,17 @@ namespace StardewDruid.Data
                         [3] = new()
                         {
 
-                            intro = "The Jester of Fate: Thanatoshi represented the Morticians. This is the last place he would have been seen by our kin. ",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.swordFates.3.intro"),
 
                             responses = new()
                             {
-                                "He's cursed a great number of souls, innocent or not, and I intend to hold him accountable.",
-                                "Judging by his likeness in stone, I imagine he'll be warm and approachable.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordFates.3.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordFates.3.responses.1"),
                             },
 
                             answers = new()
                             {
-                                "I feel weird about all this. I think the switch I pressed opened a door to the outside in the south part of this cave. " +
-                                "How about we go back to your place and practice tricks!",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.swordFates.3.answers.0"),
 
                             },
 
@@ -1733,17 +1712,17 @@ namespace StardewDruid.Data
                         [1] = new()
                         {
 
-                            intro = "Jester of Fate: So this is the town of pelicans. I guess the humans killed all the birds when they took it over.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questJester.1.intro"),
 
                             responses = new()
                             {
-                                "Not quite... it's probable that the town founders were the Pelican family.",
-                                 "Indeed. It was quite an effort for us humans to overthrow our big billed overlords.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.1.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.1.responses.1"),
                             },
 
                             answers = new()
                             {
-                                "I wonder if the pelicans were still around, would they be able to tell us where the fallen star is."
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.1.answers.0")
 
                             },
 
@@ -1754,23 +1733,17 @@ namespace StardewDruid.Data
                         [2] = new()
                         {
 
-                            intro = "Jester of Fate: He's one of the good ones, farmer. Makes me sad.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questJester.2.intro"),
                             responses = new()
                             {
-                                "Why would you be sad about Marlon?",
-                                "It is a shame that there aren't more men with capes and eyepatches in the valley.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.2.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.2.responses.1"),
 
                             },
 
                             answers = new()
                             {
-                                "When I first came to the valley, I started at the last known position of Thanatoshi before he vanished in his pursuit of the fallen one. " +
-                                "Even after a week I couldn't find a clue to his whereabouts. So I cried a little. I even yelled a bit. Well sort of cat-screamed. " +
-                                "I guess kind of loudly, because the one-eyed cheese-eating adventure man told me to shut up. " +
-                                "Then he offered me a spot to sleep by a warm fire, and I learned from him about the star crater, and that long tunnel of death we explored. " +
-                                "Yet, just now, when he started talking about the shadow raiders, I received a vision of the oracles. " +
-                                "The one eyed warrior will continue his crusade against the shadows of the valley, but he will meet his match against a cloaked warrior, and be claimed by the Fates of Death. " +
-                                "Pretty grim. But hey, the priesthood doesn't always get things right. "
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.2.responses.0")
                             },
 
                             questContext = 199,
@@ -1780,19 +1753,18 @@ namespace StardewDruid.Data
                         [3] = new()
                         {
 
-                            intro = "Jester of Fate: Any clue where that cosmic fox went?",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questJester.3.intro"),
 
                             responses = new()
                             {
-                                "Probably eating cookies and sipping whiskey with the Muellers.",
-                                "Within the insatiable maw of the town dog from which there is no escape.",
-                                "Just check the trash. Everyone else does... right?",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.3.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.3.responses.1"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.3.responses.2"),
                             },
 
                             answers = new()
                             {
-                                "Sounds like something the Buffoonette of Chaos would do. " +
-                                "Most fates get confused or angry by her attempts at fun. I'm one of her only friends."
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.3.answers.0")
                             },
 
                             questContext = 299,
@@ -1802,19 +1774,18 @@ namespace StardewDruid.Data
                         [4] = new()
                         {
 
-                            intro = "Jester of Fate: I have no idea who actually won.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questJester.4.intro"),
 
                             responses = new()
                             {
-                                "I saw both of you arrive after me.",
-                                "Buffin is quicker on the ground.",
-                                "You Jester, you're a powerhouse of motion when you want to be.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.4.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.4.responses.1"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.4.responses.2"),
                             },
 
                             answers = new()
                             {
-                                "Heh, it didn't seem like Buffin put in much effort. She's usually very foxy. " +
-                                "I guess there's something else going on with her. There always is."
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.4.answers.0")
                             },
 
                             questContext = 799,
@@ -1824,18 +1795,16 @@ namespace StardewDruid.Data
                         [5] = new()
                         {
 
-                            intro = "Jester of Fate: I think we went too far.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questJester.5.intro"),
                             responses = new()
                             {
-                                "Don't worry. The Junimos have a knack for fixing this kind of thing.",
-                                "I don't see Gunther's precious wooden panelling being consumed by the flame. Is that even a real fire?",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.5.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.5.responses.1"),
                             },
 
                             answers = new()
                             {
-                                "Buffin serves the Stream of Chaos, who occupies one of the four seats of the Fates. " +
-                                "The stream has an influence on some of the more, uh, fun aspects of the mysteries of the Fates, so things like this tend to happen when we get together. " +
-                                "(Jester sighs) This isn't what the high priestess expects of me."
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.5.answers.0")
                             },
 
                             questContext = 499,
@@ -1845,24 +1814,20 @@ namespace StardewDruid.Data
                         [6] = new()
                         {
 
-                            intro = "Jester of Fate: When Fortumei asked for a volunteer to take up the Reaper's trail, the only answer was silence. " +
-                            "So I jested. I proclaimed, with big bravado, that I would get the job done.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questJester.6.intro"),
 
                             responses = new()
                             {
 
-                                "You've done pretty well considering you never intended to get this far. Do you have any regrets?",
-                                "That must have been quite the scene, with all those important Fates looking at you. Maybe some saw a fool, but some saw a hero. I see a hero.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.6.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.6.responses.1"),
 
                             },
 
                             answers = new()
                             {
 
-                                "The faithful certainly took it as a joke. One heckler said the earth cats would chase me away. " +
-                                "An oracle foretold that my sparkly star cape would be torn to shreds. " +
-                                "Buffin showed the court an image of me in tears, stuck in a ditch. All of which ended up happening for real but besides that, Fortumei took me at my word. " +
-                                "I'm more than a joke.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questJester.6.answers.0"),
 
                             },
 
@@ -1885,22 +1850,18 @@ namespace StardewDruid.Data
 
                             companion = 3,
 
-                            intro = "Shadow Leader: My name is Shadowtin Bear. I am foremost a scholar of antiquity, but I was responsible for my company's operations on the surfaceland, and for that, I accept the consequence of my defeat.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.challengeFates.1.intro"),
 
                             responses = new()
                             {
-                                "Shadowtin, why did you infiltrate the valley?",
-                                "Antiquity indeed. Your tactics were certainly outdated.",
-                                "(Say nothing)",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.challengeFates.1.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.challengeFates.1.responses.1"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.challengeFates.1.responses.2"),
                             },
 
                             answers = new()
                             {
-                                "If you're familiar with the old legends, this is where the stars fell in the war that claimed the Dragons. " +
-                                "We're, well, I guess 'they're', seeing as I've been demoted, searching for remnants of that war. Specifically, the power of the ancient ones over the Ether. " +
-                                "Their efforts have been fruitless, save for a cache of writings and other ornaments found in the nearby tunnels. " +
-                                "It appears to have been a repository for human followers of the Reaper of Fate. " +
-                                "One of the texts mentions the tomb of Tyrannus Jin, once dragon king of this land, but there are no descriptions of its location.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.challengeFates.1.answers.0"),
 
                             },
 
@@ -1912,22 +1873,18 @@ namespace StardewDruid.Data
                         {
                             companion = 3,
 
-                            intro = "The Jester of Fate: He's tracking my kinsman! This is good for us, farmer, we might have finally found someone who can figure out where Thanatoshi went.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.challengeFates.2.intro"),
 
                             responses = new()
                             {
-                                "I feel inclined to deny your masters any power that might threaten peace in the valley. You will aid us instead.",
-                                "I fought a dragon once. How long ago was that? Seems like I'm always fighting when I'd rather make friends. Welcome new friend.",
-                                "(Say nothing)",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.challengeFates.2.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.challengeFates.2.responses.1"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.challengeFates.2.responses.2"),
                             },
 
                             answers = new()
                             {
-                                "I'm surprised that you would consider me for a partnership, but I will accept, gratefully. " +
-                                "I have my own reasons for studying the forgotten war between dragons and elderborn, and if I get the opportunity to pursue my research, then I will. " +
-                                "I also expect I will have to face my former masters at some point. Until then, my allegiance is yours. " +
-                                "As a token of my goodwill, I entrust to you the old text I spoke of, and the compendium of my own research. " +
-                                "The text also made mention of the circle of druids, and are part of the reason I wanted to capture one of your number for questioning.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.challengeFates.2.answers.0"),
                             },
 
                             questContext = 148,
@@ -1945,21 +1902,18 @@ namespace StardewDruid.Data
                         
                         [1] = new()
                         {
-                            
-                            intro = "Shadowtin Bear: It spoke through a translation device, but I could still hear the unmistakenable tone of disgust. " +
-                                "I suppose it has it's own reasons for distrusting folk like me. We're notorious for being marauders.",
+
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.1.intro"),
 
                             responses = new()
                             {
-                                "I've read details about a tenuous peace between stellarfolk and shadowfolk after a brutal conflict.",
-                                "Where did you get that milk? It didn't have the "+ Game1.player.farmName.Value +" farm label on it."
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.1.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.1.responses.1").Tokens(new {farmName=Game1.player.farmName.Value })
                             },
 
                             answers = new()
                             {
-                                "I procured the liquid from a grazing creature, coralled by that local animal handler. " +
-                                "The teats did not welcome the unnatural chill of my shadowy hands. " +
-                                "A necessary expense for the success of our endeavour. This device should afford us access to the ether vault."
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.1.answers.0")
 
                             },
 
@@ -1970,19 +1924,17 @@ namespace StardewDruid.Data
                         [2] = new()
                         {
 
-                            intro = "Shadowtin Bear: It's heartening when a clever plan comes to fruition. I know that the circumstances and methods that have led us here are not particularly honourable. But the results speak for themselves.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.2.intro"),
 
                             responses = new()
                             {
-                                "I'm concerned that a large magical device of unknown origin is operating under our peaceful valley.",
-                                "I think that chunky glow box is a bit too big for you to steal, Shadowtin."
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.2.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.2.responses.1")
                             },
 
                             answers = new()
                             {
-                                "That's an engine for ethereal transmutation. " +
-                                "Considering the conduits and the transmission panel, I suspect this is providing magical current to a network of some kind. " +
-                                "The nature of the technology could be attributed to shadowfolk innovation, but the composition and engineering is more akin to stellarfolk. Could it have been a collaborative effort?",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.2.answers.0"),
                             },
 
                             questContext = 199,
@@ -1994,20 +1946,17 @@ namespace StardewDruid.Data
 
                             companion = 3,
 
-                            intro = "The Wizard: Are you aware you've trespassed onto the property of the college of wizardry?",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.3.intro"),
 
                             responses = new()
                             {
-                                "Pardon my intrusion, sir. We are on a research venture to study ether currents and stumbled on this place.",
-                                "Nonsense, my scholar friend has correctly identified the architecture and fixtures of this chamber far predate the college, which makes the circle the true custodians. YOU are the trespasser here.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.3.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.3.responses.1"),
                             },
 
                             answers = new()
                             {
-                                "I anticipated this encounter, when my own interests in the magical heritage of the valley would begin to coincide or conflict with yours. " +
-                                "I welcome the re-establishment of the Circle of Druids, but your advancement has been quick by magical standards, " +
-                                "and it has yet to be proven to me that you have the capacity to handle the dangers and mysteries that lie before you. " +
-                                "Before I retransfigure your friend here, you'll need to face me in a contest of powers, and we'll know for sure if there are any merits to your 'rites'.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.3.answers.0"),
                             },
 
                             questContext = 299,
@@ -2019,21 +1968,17 @@ namespace StardewDruid.Data
 
                             companion = 3,
 
-                            intro = "The Wizard: The arcane. It seems to be merely a dim reflection of the mythic powers you have learnt to wield, despite your youth and lack of tutelage.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.4.intro"),
 
                             responses = new()
                             {
-                                "Perhaps you and your peers were wrong to dismiss the patrons of the Druids as bygone myths.",
-                                "I do not take pleasure in administering harsh lessons, my pupil, but your education was lacking.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.4.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.4.responses.1"),
                             },
 
                             answers = new()
                             {
-                                "I recognise that your Circle of Druids are a boon to the valley, not just for your sacred spaces, but for the elemental spirits that I seek to guide and protect." +
-                                "As your co-custodian, I do have some information about this antiquated machine. It is the Shrine Engine. It powers the warp statues and other such artifacts in the valley. " +
-                                "Coincidentally, I recently came into possession of what I believe are the machine's specifications, in the tome your friend attempted to pilfer. " +
-                                "It was in the stump of a tree, the recent victim of celestial power, I believe, within the clearings south-east of the forest. " +
-                                "The tome is cryptic. Without a practical cipher, I have only managed to discern the identity of the author from a scribble that defaces the first page. 'Mother of Crows'. "
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.4.answers.0")
                             },
                             //"It's purpose is obvious, but of it's mechanisms and origin, I know very little, despite
                             //I believe other such artifacts may be sealed in the vicinity, but unfortunately, " +
@@ -2046,22 +1991,17 @@ namespace StardewDruid.Data
                         [5] = new()
                         {
 
-                            intro = "Shadowtin Bear: I imagine I will have to endure many more hardships on my journey to expose Lord Deep. The petty ego of that recluse is of no consequence to me.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.5.intro"),
 
                             responses = new()
                             {
-                                "The Wizard's words are worth considering, Shadowtin. Should you forsake your own shadowmanity to redeem that of your people?",
-                                "It took me a while to realise that you didn't transform into a cat on purpose. You were a very convincing kitty.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.5.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.5.responses.1"),
                             },
 
                             answers = new()
                             {
-                                "Tell me this, human. What is the worth of another's comfort in comparison to the depravity of my existence, of the languishing of my people. " +
-                                "So what if a cow got frosty teats, or we trespassed into a fabulous magician's sanctum. " +
-                                "I know it's wrong, but I can't afford to care, especially when no one shows a damn bit of care to us. " +
-                                "The Fates don't answer our prayers or pleas. The Lady doesn't smite my enemies. " +
-                                "(Shadowtin calms as he looks to the exit) There may be answers hidden out in the cliffs south east of here, if my enhanced feline senses heard the wizard correctly. " +
-                                "As a show of good faith, I'll give you the access key, and you can be certain I won't return for a bit of 'shadowthievery'.",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.5.answers.0"),
                             },
 
                             questContext = 499,
@@ -2071,26 +2011,20 @@ namespace StardewDruid.Data
                         [6] = new()
                         {
 
-                            intro = "Shadowtin Bear: It seems to be a cautionary warning, written in one of the older human tongues, from a Druid, no less.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.6.intro"),
 
                             responses = new()
                             {
-                                
-                                "That's great news, the more I learn of the Circle's past, the better I can understand our current situation.",
-                                "Good to know the old circle of Druids was real and Effigy didn't make up the whole thing.",
-                            
+
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.6.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.6.responses.1"),
+
                             },
 
                             answers = new()
                             {
-                                
-                                "(Shadowtin narrates) 'Here lies the profanity of Gelatin, brother of Cannoli, founding member of the Circle. " +
-                                "He succumbed to the temptation afforded by the ravenous Hound, and feasted on the aspects of forest spirits, stewed and baked within succulent pastry. " +
-                                "Of the artifice of Dragons was this visage of horror forged, and yet it resists the dragon's flame, and only Chaos knows the methods to unmake it. " +
-                                "Therefore, discoverer, return this profanity to rest, lay heaps over it, and bind it in ethereal ties, to be forgotten again, forever. " +
-                                "Beware the Rite of Bones. Wyrven, Knight Druid.' (Narration ends) " +
-                                "I guess we should put it back then. There's nothing here that furthers either of our causes. (Shadowtin pauses) " +
-                                "I'm almost inclined to bring that lucky cat with us if it would increase our chances of fortune.",
+
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.6.answers.0"),
 
 
                             },
@@ -2102,25 +2036,21 @@ namespace StardewDruid.Data
                         [7] = new()
                         {
 
-                            intro = "Shadowtin Bear: (Sighs) Well my reputation as a fearsome mercenary captain is officially ruined.",
+                            intro = Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.7.intro"),
 
                             responses = new()
                             {
 
-                                "We reap what we sow, as my grandfather might have said. You were the captain of knaves, but now you are the scholar of the circle, and reap the rewards of dignity and new purpose.",
-                                "I thought the only reason you were their captain was because you were the only one of them who could read maps. So...",
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.7.responses.0"),
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.7.responses.1"),
 
                             },
 
                             answers = new()
                             {
 
-                                "I am by nature a shadow thief, but when I beheld an enshrined relic of the stellarfolk in the halls of a besieged stronghold, I lost all passion for plunder. " +
-                                "The similarities in the dwarven craftsmanship to our our own Great Shadow Vessel were unmistakeable. It was a Stellar Vessel. " +
-                                "The dwarves recieved the same blessings as we did, not from Lord Deep, but a greater power, who refuses to reveal themselves to us. " +
-                                "If it was Yoba, then why did he leave us to tyranny? How is that an example that would inspire my people to honour and glory? " +
-                                "I can only look to you to know what is right, farmer, and maybe I'll know the truth of it all one day. Now... I should probably go pay for that milk I stole."
-                                
+                                Mod.instance.Helper.Translation.Get("SceneConversations.questShadowtin.7.answers.0")
+
                             },
 
                             questContext = 699,
