@@ -72,35 +72,35 @@ namespace StardewDruid.Data
 
                         case "Harvey":
 
-                            reaction.Add("Be careful, " + Game1.player.Name + ". The dust and vapours from those impacts could be hazardous! $s");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("Reaction.Custom.stars.Harvey.0").Tokens(new { playerName= Game1.player.Name }));
 
                             break;
 
                         case "Maru":
 
-                            reaction.Add("Ooh! A meteor shower! Did you know that the difference between a meteor and an asteroid is whether they've entered the atmosphere of a planet? $h");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("Reaction.Custom.stars.Maru.0"));
 
                             break;
 
                         case "Kent":
 
-                            reaction.Add("Aerial bombardment! Take Cover! $a");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("Reaction.Custom.stars.Kent.0"));
 
-                            reaction.Add("It's over... you saw that right? I didn't imagine it. I didn't... bring it home.");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("Reaction.Custom.stars.Kent.1"));
 
                             break;
 
                         case "Krobus":
 
-                            reaction.Add("My people hide underground for many reasons. You've just demonstrated one of them. $s");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("Reaction.Custom.stars.Krobus.0"));
 
                             break;
 
                         case "Jodi":
 
-                            reaction.Add("Explosions. I wonder if...");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("Reaction.Custom.stars.Jodi.0"));
 
-                            reaction.Add("Sorry, my thoughts wandered to somewhere else.");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("Reaction.Custom.stars.Jodi.1"));
 
                             break;
 
@@ -119,23 +119,23 @@ namespace StardewDruid.Data
 
                         case "Sebastian":
 
-                            reaction.Add("I think I'd be good at that if you taught me.");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("Reaction.Custom.mists.Sebastian.0"));
 
-                            reaction.Add("On second thought, I don't think I want to risk bolting myself. $h");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("Reaction.Custom.mists.Sebastian.1"));
 
                             break;
 
                         case "Sam":
 
-                            reaction.Add("That just gave me the best album-cover idea.");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("Reaction.Custom.mists.Sam.0"));
 
                             break;
 
                         case "Demetrius":
 
-                            reaction.Add("This is an anomalous weather pattern for this region. There haven't been recordings of such phenomena since...");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("Reaction.Custom.mists.Demetrius.0"));
 
-                            reaction.Add("(Demetrius is deep in thought)");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("Reaction.Custom.mists.Demetrius.1"));
 
                             break;
 
