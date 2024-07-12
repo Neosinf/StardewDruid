@@ -1,3 +1,103 @@
 {
+    // RiteNames
+    "Enum.rites.weald.name": "Rite of the Weald",
+    "Enum.rites.mists.name": "Rite of Mists",
+    "Enum.rites.stars.name": "Rite of the Stars",
+    "Enum.rites.fates.name": "Rite of the Fates",
+    "Enum.rites.ether.name": "Rite of Ether",
+
+    // stringkeys
+    "Enum.stringkeys.stardewDruid": "Stardew Druid",
+
+    // Mod, Rite, ModUtility
+    "Enum.stringkeys.receivedData": "Received Stardew Druid data for Farmer ID ",
+    "Enum.stringkeys.challengeAborted": "Challenge aborted due to critical condition",
+    "Enum.stringkeys.stamina": "stamina",
+    "Enum.stringkeys.openJournal": "to open Druid Journal and get started",
+    "Enum.stringkeys.riteTool": "Rite requires a melee weapon or tool",
+    "Enum.stringkeys.noRiteAttuned": "No rite attuned to slot ",
+    "Enum.stringkeys.noToolAttunement": "This tool has not been attuned to a rite",
+    "Enum.stringkeys.nothingHappened": "Nothing happened... ",
+    "Enum.stringkeys.invalidLocation": "Unable to reach the otherworldly plane from this location",
+    "Enum.stringkeys.energyContinue": "Not enough energy to continue rite",
+    "Enum.stringkeys.energyRite": "Not enough energy to perform rite",
+    "Enum.stringkeys.riteBuffDescription": "Actively selected rite",
+    "Enum.stringkeys.energySkill": "Not enough energy to perform skill",
+    "Enum.stringkeys.dragonBuff": "Dragon Scales",
+    "Enum.stringkeys.dragonBuffDescription": "Defense increased by transformation",
+    "Enum.stringkeys.druidFreneticism": "Druidic Freneticism",
+    "Enum.stringkeys.speedIncrease": "Speed increased when casting amongst Grass",
+
+    // Journal
+    "Enum.stringkeys.grimoire": "Grimoire",
+    "Enum.stringkeys.reliquary": "Reliquary",
+    "Enum.stringkeys.dragonomicon": "Dragonomicon",
+    "Enum.stringkeys.apothecary": "Apothecary",
+
+    "Enum.stringkeys.startPage": "Start page",
+    "Enum.stringkeys.endPage": "End page",
+    "Enum.stringkeys.sortCompletion": "Sort quests by completion",
+    "Enum.stringkeys.reverseOrder": "Reverse order of entries",
+    "Enum.stringkeys.openQuests": "Quests",
+    "Enum.stringkeys.openEffects": "Effects",
+    "Enum.stringkeys.openRelics": "Relics",
+    "Enum.stringkeys.openPotions": "Potions",
+
+    "Enum.stringkeys.checkHerbalism": "Check the herbalism bench in the farm grove",
+
+    "Enum.stringkeys.hostOnly": "(Please note only the farm host can activate quests.)",
+    "Enum.stringkeys.questReplay": "(Quest currently being replayed)",
+    "Enum.stringkeys.outOf": "out of",
+    "Enum.stringkeys.reward": "Reward",
+    "Enum.stringkeys.bounty": "Bounty",
+    "Enum.stringkeys.transcript": "(transcript)",
+
+    "Enum.stringkeys.acEnabled": "Autoconsumption enabled",
+    "Enum.stringkeys.acDisabled": "Autoconsumption disabled",
+    "Enum.stringkeys.acPriority": "Autoconsumption enabled with priority given to this line of herbal potions",
+    "Enum.stringkeys.MAX": "(MAX)",
+    "Enum.stringkeys.HP": "HP",
+    "Enum.stringkeys.STM": "STM",
+
+    "Enum.stringkeys.relicUnknown": "Unknown Relic",
+    "Enum.stringkeys.relicNotFound": "You haven't found this relic yet",
+
+    "Enum.stringkeys.primaryColour": "Primary Colour",
+    "Enum.stringkeys.secondaryColour": "Secondary Colour",
+    "Enum.stringkeys.tertiaryColour": "Tertiary Colour",
+    "Enum.stringkeys.dragonScheme": "Dragon Scheme",
+    "Enum.stringkeys.breathScheme": "Breath Scheme",
+    "Enum.stringkeys.dragonRotate": "Click to rotate",
+    "Enum.stringkeys.dragonScale": "Scale colour",
+    "Enum.stringkeys.dragonAccent": "Accent colour",
+    "Enum.stringkeys.dragonEye": "Eye colour",
+    "Enum.stringkeys.dragonReset": "Reset custom colours",
+    "Enum.stringkeys.dragonSave": "Save and Exit",
+
+    "Enum.stringkeys.skipQuest": "Skip Quest",
+    "Enum.stringkeys.replayQuest": "Replay Quest",
+    "Enum.stringkeys.replayTomorrow": "Replay Available Tomorrow",
+    "Enum.stringkeys.viewEffect": "View Related Effect",
+    "Enum.stringkeys.cancelReplay": "Cancel Replay",
+    "Enum.stringkeys.replayReward": "Special Reward",
+    "Enum.stringkeys.massHerbalism": "Brew All Available",
+
+    // Miscellaneous
+    "Enum.stringkeys.trashCollected": "Trash Collected",
+    "Enum.stringkeys.bomberInterruptions": "Bomber Interrupted",
+    "Enum.stringkeys.slimesDestroyed": "Slimes Destroyed",
+    "Enum.stringkeys.learnRecipes": "Recipes Learnt",
+    "Enum.stringkeys.theDusting": "The Dusting",
+    "Enum.stringkeys.abortTomorrow": "Event aborted, try again tomorrow",
+    "Enum.stringkeys.noJunimo": "The forest spirits left instructions. You can't read them yet.",
+    "Enum.stringkeys.noInstructions": "The forest spirits have not left instructions for how to fix this yet",
+    "Enum.stringkeys.leftEvent": "Left event zone",
+    "Enum.stringkeys.leavingEvent": "Leaving event zone",
+    "Enum.stringkeys.ladderAppeared": "A way down has appeared",
+    "Enum.stringkeys.returnLater": "Return later today",
+    "Enum.stringkeys.reachEnd": "Reach the end of the Tunnel!",
+    "Enum.stringkeys.treasureHunt": "Treasure Chase",
+
+    "nevermind": "(nevermind)"
 
 }
