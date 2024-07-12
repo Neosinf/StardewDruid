@@ -65,10 +65,10 @@ namespace StardewDruid.Journal
         public Dictionary<herbals, List<string>> titles = new()
         {
 
-            [herbals.ligna] = new() { "Ligna", "Boosts rite damage and success-rate", },
-            [herbals.impes] = new() { "Vigores", "Boosts charge-ups and rite critical hit chance", },
-            [herbals.celeri] = new() { "Celeri", "Boosts movement speed, lowers rite cooldowns", },
-            [herbals.faeth] = new() { "Essentia", "Magical resources used for advanced alchemy", },
+            [herbals.ligna] = new() { Mod.instance.Helper.Translation.Get("Herbal.ligna.title.0"), Mod.instance.Helper.Translation.Get("Herbal.ligna.title.1"), },
+            [herbals.impes] = new() { Mod.instance.Helper.Translation.Get("Herbal.impes.title.0"), Mod.instance.Helper.Translation.Get("Herbal.impes.title.1"), },
+            [herbals.celeri] = new() { Mod.instance.Helper.Translation.Get("Herbal.celeri.title.0"), Mod.instance.Helper.Translation.Get("Herbal.celeri.title.1"), },
+            [herbals.faeth] = new() { Mod.instance.Helper.Translation.Get("Herbal.faeth.title.0"), Mod.instance.Helper.Translation.Get("Herbal.faeth.title.1"), },
         };
 
         public Dictionary<herbals,List<herbals>> lines = new()
@@ -229,9 +229,9 @@ namespace StardewDruid.Journal
 
                 duration = 0,
 
-                title = "Ligna",
+                title = Mod.instance.Helper.Translation.Get("Potion.ligna.title"),
 
-                description = "Nature, liquified and sticky.",
+                description = Mod.instance.Helper.Translation.Get("Potion.ligna.description"),
                 
                 ingredients = new(){ ["(O)92"] = "Sap", ["(O)766"] = "Slime", },
 
@@ -243,8 +243,8 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 10 Health, 15 Stamina",
-                    "Requires: 1x Organic Substance"
+                    Mod.instance.Helper.Translation.Get("Potion.ligna.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.ligna.details.1")
                 }
 
             };
@@ -267,9 +267,9 @@ namespace StardewDruid.Journal
 
                 duration = 180,
 
-                title = "Melius Ligna",
+                title = Mod.instance.Helper.Translation.Get("Potion.melius_ligna.title"),
 
-                description = "Like bark-root tea, with more bark, and root to boot.",
+                description = Mod.instance.Helper.Translation.Get("Potion.melius_ligna.description"),
 
                 ingredients = new() { ["(O)311"] = "Acorn", ["(O)310"] = "MapleSeed", ["(O)309"] = "Pinecorn", ["(O)292"] = "MahoganySeed", ["(O)Moss"] = "Moss", },
 
@@ -281,9 +281,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 15 Health, 30 Stamina",
-                    "Effect: Alignment Level 1, 3 Hours",
-                    "Requires: Base, 1x Tree Seed"
+                    Mod.instance.Helper.Translation.Get("Potion.melius_ligna.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.melius_ligna.details.1"),
+                    Mod.instance.Helper.Translation.Get("Potion.melius_ligna.details.2")
                 }
 
             };
@@ -306,9 +306,9 @@ namespace StardewDruid.Journal
 
                 duration = 240,
 
-                title = "Satius Ligna",
+                title = Mod.instance.Helper.Translation.Get("Potion.satius_ligna.title"),
 
-                description = "Infused with the leaves and petals of weeds. Toxic to dogs.",
+                description = Mod.instance.Helper.Translation.Get("Potion.satius_ligna.description"),
 
                 ingredients = new() { ["(O)418"] = "Crocus", ["(O)18"] = "Daffodil", ["(O)22"] = "Dandelion", ["(O)402"] = "Sweet Pea", ["(O)273"] = "Rice Shoot", ["(O)591"] = "Tulip", ["(O)376"] = "Poppy", },
 
@@ -320,9 +320,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 20 Health, 80 Stamina",
-                    "Effect: Alignment Level 2, 4 Hours",
-                    "Requires: Base, 1x Meadow Flower"
+                    Mod.instance.Helper.Translation.Get("Potion.satius_ligna.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.satius_ligna.details.1"),
+                    Mod.instance.Helper.Translation.Get("Potion.satius_ligna.details.2")
                 }
 
             };
@@ -345,9 +345,9 @@ namespace StardewDruid.Journal
 
                 duration = 300,
 
-                title = "Magnus Ligna",
+                title = Mod.instance.Helper.Translation.Get("Potion.magnus_ligna.title"),
 
-                description = "Potent oils enhance the rich, nutty flavour profile of the base mixture.",
+                description = Mod.instance.Helper.Translation.Get("Potion.magnus_ligna.description"),
 
                 ingredients = new() { ["(O)247"] = "Oil", ["(O)431"] = "Sunflower Seeds", ["(O)270"] = "Corn", ["(O)271"] = "Unmilled Rice", ["(O)421"] = "Sunflower", ["(O)593"] = "Spangle", ["(O)597"] = "Jazz", }, // },
 
@@ -359,9 +359,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 50 Health, 200 Stamina",
-                    "Effect: Alignment Level 3, 5 Hours",
-                    "Ingredients: Base, 1x Vegetable Oil",
+                    Mod.instance.Helper.Translation.Get("Potion.magnus_ligna.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.magnus_ligna.details.1"),
+                    Mod.instance.Helper.Translation.Get("Potion.magnus_ligna.details.2"),
                 }
 
             };
@@ -383,9 +383,9 @@ namespace StardewDruid.Journal
 
                 duration = 360,
 
-                title = "Optimus Ligna",
+                title = Mod.instance.Helper.Translation.Get("Potion.optimus_ligna.title"),
 
-                description = "Brims with the vibrant colours of creation",
+                description = Mod.instance.Helper.Translation.Get("Potion.optimus_ligna.description"),
 
                 ingredients = new() { },
 
@@ -397,9 +397,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 100 Health, 400 Stamina",
-                    "Effect: Vigorous Level 4, 6 Hours",
-                    "Requires: Base, Aether"
+                    Mod.instance.Helper.Translation.Get("Potion.optimus_ligna.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.optimus_ligna.details.1"),
+                    Mod.instance.Helper.Translation.Get("Potion.optimus_ligna.details.2")
                 }
 
             };
@@ -420,9 +420,9 @@ namespace StardewDruid.Journal
 
                 content = IconData.relics.bottle1,
 
-                title = "Vigores",
+                title = Mod.instance.Helper.Translation.Get("Potion.impes.title"),
 
-                description = "The flavours of the earth in a bottle.",
+                description = Mod.instance.Helper.Translation.Get("Potion.impes.description"),
 
                 ingredients = new() { ["(O)399"] = "Spring Onion", ["(O)78"] = "Cave Carrot", ["(O)24"] = "Parsnip", ["(O)831"] = "Taro Tubers", ["(O)16"] = "Wild Horseradish", ["(O)412"] = "Winter Root",},
 
@@ -434,8 +434,8 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 15 Health, 40 Stamina",
-                    "Requires: 1x Wild Tuber"
+                    Mod.instance.Helper.Translation.Get("Potion.impes.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.impes.details.1")
                 }
 
             };
@@ -458,9 +458,9 @@ namespace StardewDruid.Journal
 
                 duration = 180,
 
-                title = "Melius Vigores",
+                title = Mod.instance.Helper.Translation.Get("Potion.melius_impes.title"),
 
-                description = "Contains the essence of cave.",
+                description = Mod.instance.Helper.Translation.Get("Potion.melius_impes.description"),
 
                 ingredients = new() {  ["(O)420"] = "Red Mushrooms", ["(O)404"] = "Common Mushrooms", ["(O)257"] = "Morel", ["(O)767"] = "Batwings", },
 
@@ -472,9 +472,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 30 Health, 80 Stamina",
-                    "Effect: Vigorous Level 1, 3 Hours",
-                    "Requires: Base, 1x Cave Forage"
+                    Mod.instance.Helper.Translation.Get("Potion.melius_impes.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.melius_impes.details.1"),
+                    Mod.instance.Helper.Translation.Get("Potion.melius_impes.details.2")
                 }
 
             };
@@ -497,9 +497,9 @@ namespace StardewDruid.Journal
 
                 duration = 240,
 
-                title = "Satius Vigores",
+                title = Mod.instance.Helper.Translation.Get("Potion.satius_impes.title"),
 
-                description = "Gently raise to boiling temperature then leave to simmer.",
+                description = Mod.instance.Helper.Translation.Get("Potion.satius_impes.description"),
 
                 ingredients = new() { ["(O)93"] = "Torch", ["(O)82"] = "Fire Quartz", ["(O)382"] = "Coal", },
 
@@ -511,10 +511,10 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 45 Health, 160 Stamina",
-                    "Effect: Vigorous Level 2, 4 Hours",
+                    Mod.instance.Helper.Translation.Get("Potion.satius_impes.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.satius_impes.details.1"),
 
-                    "Requires: Base, 1x Combustible Material"
+                    Mod.instance.Helper.Translation.Get("Potion.satius_impes.details.2")
                 }
 
             };
@@ -537,9 +537,9 @@ namespace StardewDruid.Journal
 
                 duration = 300,
 
-                title = "Magnus Vigores",
+                title = Mod.instance.Helper.Translation.Get("Potion.magnus_impes.title"),
 
-                description = "The spicy tang that enflames the regions.",
+                description = Mod.instance.Helper.Translation.Get("Potion.magnus_impes.description"),
 
                 ingredients = new() { ["(O)419"] = "Vinegar", ["(O)260"] = "Hot Pepper", ["(O)829"] = "Ginger", ["(O)248"] = "Garlic", },
 
@@ -551,9 +551,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 70 Health, 320 Stamina",
-                    "Effect: Vigorous Level 3, 5 Hours",
-                    "Requires: Base, 1x Spicy Ingredient"
+                    Mod.instance.Helper.Translation.Get("Potion.magnus_impes.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.magnus_impes.details.1"),
+                    Mod.instance.Helper.Translation.Get("Potion.magnus_impes.details.2")
                 }
 
             };
@@ -575,9 +575,9 @@ namespace StardewDruid.Journal
 
                 duration = 360,
 
-                title = "Optimus Vigores",
+                title = Mod.instance.Helper.Translation.Get("Potion.optimus_impes.title"),
 
-                description = "It burns, but it stays down.",
+                description = Mod.instance.Helper.Translation.Get("Potion.optimus_impes.description"),
 
                 ingredients = new() { },
 
@@ -589,9 +589,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 180 Health, 560 Stamina",
-                    "Effect: Vigorous Level 4, 6 Hours",
-                    "Requires: Base, Aether"
+                    Mod.instance.Helper.Translation.Get("Potion.optimus_impes.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.optimus_impes.details.1"),
+                    Mod.instance.Helper.Translation.Get("Potion.optimus_impes.details.2")
                 }
 
             };
@@ -612,9 +612,9 @@ namespace StardewDruid.Journal
 
                 content = IconData.relics.vial1,
 
-                title = "Celeri",
+                title = Mod.instance.Helper.Translation.Get("Potion.celeri.title"),
 
-                description = "Good for your joints and memory retention.",
+                description = Mod.instance.Helper.Translation.Get("Potion.celeri.description"),
 
                 ingredients = new() {  ["(O)129"] = "Sardine", ["(O)131"] = "Anchovy", ["(O)137"] = "Smallmouth Bass", ["(O)145"] = "Sunfish", ["(O)132"] = "Bream", ["(O)147"] = "Herring", ["(O)142"] = "Carp", ["(O)156"] = "Ghostfish", ["(O)684"] = "Bug Meat x2", },
 
@@ -626,8 +626,8 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 10 Health, 30 Stamina",
-                    "Requires: 1x Common Fish, 2x Bug Meat"
+                    Mod.instance.Helper.Translation.Get("Potion.celeri.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.celeri.details.1")
                 }
 
             };
@@ -649,9 +649,9 @@ namespace StardewDruid.Journal
 
                 duration = 180,
 
-                title = "Melius Celeri",
+                title = Mod.instance.Helper.Translation.Get("Potion.melius_celeri.title"),
 
-                description = "Now with extra fiber for good gut health.",
+                description = Mod.instance.Helper.Translation.Get("Potion.melius_celeri.description"),
 
                 ingredients = new() { ["(O)152"] = "Algae", ["(O)153"] = "Seaweed", ["(O)157"] = "White Algae", ["(O)815"] = "Tea Leaves", ["(O)433"] = "Coffee Bean", ["(O)167"] = "Joja Cola", },
 
@@ -663,9 +663,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 20 Health, 60 Stamina",
-                    "Effect: Celerity Level 1, 3 Hours",
-                    "Requires: Base, 1x Energy Supplement"
+                    Mod.instance.Helper.Translation.Get("Potion.melius_celeri.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.melius_celeri.details.1"),
+                    Mod.instance.Helper.Translation.Get("Potion.melius_celeri.details.2")
                 }
 
             };
@@ -688,9 +688,9 @@ namespace StardewDruid.Journal
 
                 duration = 240,
 
-                title = "Satius Celeri",
+                title = Mod.instance.Helper.Translation.Get("Potion.satius_celeri.title"),
 
-                description = "Now with mineral extracts for revitalised skin and circulation.",
+                description = Mod.instance.Helper.Translation.Get("Potion.satius_celeri.description"),
 
                 //ingredients = new() { ["(O)80"] = "Quartz", ["(O)86"] = "Earth Crystal", ["(O)392"] = "Nautilus Shell", ["(O)393"] = "Coral", },
                 ingredients = new() { ["(O)80"] = "Quartz", ["(O)86"] = "Earth Crystal", ["(O)881"] = "Bone Fragment", ["(O)168"] = "Trash", ["(O)169"] = "Driftwood", ["(O)170"] = "Broken Glasses", ["(O)171"] = "Broken CD", ["(O)172"] = "Soggy Newspaper",  },
@@ -703,9 +703,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 30 Health, 120 Stamina",
-                    "Effect: Celerity Level 2, 4 Hours",
-                    "Requires: Base, 1x Mineral-Rich Substance"
+                    Mod.instance.Helper.Translation.Get("Potion.satius_celeri.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.satius_celeri.details.1"),
+                    Mod.instance.Helper.Translation.Get("Potion.satius_celeri.details.2")
                 }
 
             };
@@ -728,9 +728,9 @@ namespace StardewDruid.Journal
 
                 duration = 300,
 
-                title = "Magnus Celeri",
+                title = Mod.instance.Helper.Translation.Get("Potion.magnus_celeri.title"),
 
-                description = "Now with organically sourced protein for heightened muscle recovery.",
+                description = Mod.instance.Helper.Translation.Get("Potion.magnus_celeri.description"),
 
                 ingredients = new() { ["(O)718"] = "Cockle", ["(O)719"] = "Mussel", ["(O)720"] = "Shrimp", ["(O)721"] = "Snail", ["(O)722"] = "Periwinkle", ["(O)723"] = "Oyster", ["(O)372"] = "Clam", },
 
@@ -742,9 +742,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 60 Health, 240 Stamina",
-                    "Effect: Celerity Level 3, 5 Hours",
-                    "Requires: Base, 1x Common Shellfish"
+                    Mod.instance.Helper.Translation.Get("Potion.magnus_celeri.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.magnus_celeri.details.1"),
+                    Mod.instance.Helper.Translation.Get("Potion.magnus_celeri.details.2")
                 }
 
             };
@@ -766,9 +766,9 @@ namespace StardewDruid.Journal
 
                 duration = 360,
 
-                title = "Optimus Celeri",
+                title = Mod.instance.Helper.Translation.Get("Potion.optimus_celeri.title"),
 
-                description = "Now with fluff and sprinkles for added bliss.",
+                description = Mod.instance.Helper.Translation.Get("Potion.optimus_celeri.description"),
 
                 ingredients = new() {},
 
@@ -780,9 +780,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 120 Health, 480 Stamina",
-                    "Effect: Celerity Level 4, 6 hours",
-                    "Requires: Base, Aether"
+                    Mod.instance.Helper.Translation.Get("Potion.optimus_celeri.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.optimus_celeri.details.1"),
+                    Mod.instance.Helper.Translation.Get("Potion.optimus_celeri.details.2")
                 }
 
             };
@@ -805,9 +805,9 @@ namespace StardewDruid.Journal
 
                 level = 3,
 
-                title = "Faeth",
+                title = Mod.instance.Helper.Translation.Get("Potion.faeth.title"),
 
-                description = "The currency of the Fates.",
+                description = Mod.instance.Helper.Translation.Get("Potion.faeth.description"),
 
                 ingredients = new() { ["(O)577"] = "Fairy Stone", ["(O)595"] = "Fairy Rose", ["(O)768"] = "Solar Essence", ["(O)769"] = "Void Essence", ["(O)MossySeed"] = "Mossy Seed", },
 
@@ -816,8 +816,8 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     
-                    "Enchants machines",
-                    "Requires: 1x Essence infused source",
+                    Mod.instance.Helper.Translation.Get("Potion.faeth.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.faeth.details.1"),
 
                 },
 
@@ -843,9 +843,9 @@ namespace StardewDruid.Journal
 
                 level = 4,
 
-                title = "Aether",
+                title = Mod.instance.Helper.Translation.Get("Potion.aether.title"),
 
-                description = "The essence of creation as wielded by the Ancient Ones.",
+                description = Mod.instance.Helper.Translation.Get("Potion.aether.description"),
 
                 ingredients = new() { ["(O)60"] = "Emerald", ["(O)64"] = "Ruby", ["(O)72"] = "Diamond", ["(O)62"] = "Aquamarine", },
 
@@ -853,8 +853,8 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Enhances potions",
-                    "Requires: 1x High quality gem",
+                    Mod.instance.Helper.Translation.Get("Potion.aether.details.0"),
+                    Mod.instance.Helper.Translation.Get("Potion.aether.details.1"),
                 },
 
                 resource = true,
@@ -1481,7 +1481,7 @@ namespace StardewDruid.Journal
 
                     case herbals.ligna:
 
-                        description += "Alignment " + herbBuff.Value.level.ToString() + " " + expire + ". ";
+                        description += Mod.instance.Helper.Translation.Get("herbBuff.ligna.description").Tokens(new { level = herbBuff.Value.level.ToString(), expire = expire });
 
                         magnetism = herbBuff.Value.level * 32;
 
@@ -1489,7 +1489,7 @@ namespace StardewDruid.Journal
 
                     case herbals.impes:
 
-                        description += "Vigorous " + herbBuff.Value.level.ToString() + " " + expire + ". ";
+                        description += Mod.instance.Helper.Translation.Get("herbBuff.impes.description").Tokens(new { level = herbBuff.Value.level.ToString(), expire = expire });
 
                         break;
 
@@ -1497,7 +1497,7 @@ namespace StardewDruid.Journal
 
                         speed = 0.25f * herbBuff.Value.level;
 
-                        description += "Celerity "+herbBuff.Value.level.ToString() + " " + expire + ". ";
+                        description += Mod.instance.Helper.Translation.Get("herbBuff.celeri.description").Tokens(new { level = herbBuff.Value.level.ToString(), expire = expire });
 
                         break;
 
@@ -1529,11 +1529,11 @@ namespace StardewDruid.Journal
             Buff herbalBuff = new(
                 "184652",
                 source: "Stardew Druid",
-                displaySource: "Herbalism",
+                displaySource: Mod.instance.Helper.Translation.Get("herbalBuff.displaySource"),
                 duration: Buff.ENDLESS,
                 iconTexture: Mod.instance.iconData.displayTexture,
                 iconSheetIndex: 5,
-                displayName: "Druid Herbalism",
+                displayName: Mod.instance.Helper.Translation.Get("herbalBuff.displayName"),
                 description: description
                 );
 
