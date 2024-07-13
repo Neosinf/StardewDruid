@@ -72,8 +72,7 @@ namespace StardewDruid.Cast.Mists
                     if(ground == "water")
                     {
 
-                        //colour = Mod.instance.iconData.SchemeColour(IconData.schemes.Topaz);
-                        colour = Microsoft.Xna.Framework.Color.White;
+                        colour = Mod.instance.iconData.SchemeColour(IconData.schemes.Topaz);
 
                     }
                     else if (ground != "ground")
@@ -288,7 +287,7 @@ namespace StardewDruid.Cast.Mists
 
                 bolt.sound = sounds.thunder;
 
-                bolt.added = new() { effects.push, effects.drain };
+                bolt.added = new() { effects.push, effects.drain, effects.shock, };
 
                 Mod.instance.spellRegister.Add(bolt);
 

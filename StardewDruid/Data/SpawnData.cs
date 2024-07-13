@@ -1,4 +1,6 @@
 ﻿using StardewDruid.Cast;
+using StardewDruid.Cast.Effect;
+using StardewDruid.Cast.Weald;
 using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewModdingAPI;
@@ -9,7 +11,10 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
+using System.Reflection.Metadata;
 using xTile.Dimensions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace StardewDruid.Data
 {
@@ -322,6 +327,8 @@ namespace StardewDruid.Data
                 14, // aquamarine
                 44, // special ore
                 46, // mystic ore
+                343, // debris stone
+                450, // debris stone
             };
 
             return stoneIndex;
@@ -666,6 +673,70 @@ namespace StardewDruid.Data
 
         }
 
+        public static string SeasonalSeed(GameLocation location)
+        {
+
+            if (Mod.instance.randomIndex.Next(250) == 0)
+            {
+
+                return "498";
+
+            }
+
+            switch (Mod.instance.randomIndex.Next(8))
+            {
+
+                case 0:
+
+                    return "(O)MixedFlowerSeeds";
+
+                case 1:
+
+                    return "(O)770";
+
+                case 2:
+                case 3:
+                case 4:
+
+                    return null;
+
+                default:
+
+                    string item = "(O)498";
+
+                    switch (Game1.currentSeason)
+                    {
+
+                        case "spring":
+
+                            item = "(O)495";
+
+                            break;
+
+                        case "summer":
+
+                            item = "(O)496";
+
+                            break;
+
+                        case "fall":
+
+                            item = "(O)497";
+
+                            break;
+
+                    }
+
+                    return item;
+
+
+            }
+
+
+
+
+        }
+
         public static int RandomFlower(GameLocation location)
         {
 
@@ -739,6 +810,24 @@ namespace StardewDruid.Data
             int randomFlower = objectIndexes[Game1.random.Next(objectIndexes.Count)];
 
             return randomFlower;
+
+        }
+
+        public static bool ForageCheck(StardewValley.Object obj)
+        {
+
+            if(
+                obj.isForage() || 
+                obj.isAnimalProduct() || 
+                obj.QualifiedItemId == "(O)398"
+            )
+            {
+
+                return true;
+
+            }
+
+            return false;
 
         }
 
@@ -827,6 +916,79 @@ namespace StardewDruid.Data
             }
 
             return randomCrop;
+
+        }
+
+        public static string RandomRock(GameLocation location)
+        {
+
+            if (location is Beach || location is StardewDruid.Location.Atoll)
+            {
+
+                return RandomBeach(location);
+
+            }
+
+            if (Mod.instance.randomIndex.Next(50) == 0)
+            {
+
+                return "(O)46";
+
+            }
+
+            if (Mod.instance.randomIndex.Next(10) == 0)
+            {
+
+
+                return "(O)44";
+
+            }
+
+            if (Mod.instance.randomIndex.Next(2) == 0)
+            {
+                
+                return "(O)343";
+
+            }
+
+            return "(O)450";
+
+        }
+
+        public static string RandomBeach(GameLocation location)
+        {
+
+
+            if (Mod.instance.randomIndex.Next(20) == 0)
+            {
+
+                return "(O)44";
+
+            }
+
+            if (Mod.instance.randomIndex.Next(10) == 0)
+            {
+
+                 return "(O)25";
+
+
+            }
+
+            if (Mod.instance.randomIndex.Next(2) == 0)
+            {
+
+                 return "(O)818";
+
+            }
+
+            return "(O)169";
+
+        }
+
+        public static string RandomTwig(GameLocation location)
+        {
+
+            return "(O)" + (294 + Mod.instance.randomIndex.Next(2)).ToString();
 
         }
 
@@ -1162,6 +1324,37 @@ namespace StardewDruid.Data
 
         }
 
+        public static int RandomTrash(GameLocation location)
+        {
+
+            Dictionary<int, int> artifactIndexes = new()
+            {
+                [0] = 105,
+                [1] = 106,
+                [2] = 110,
+                [3] = 111,
+                [4] = 112,
+                [5] = 115,
+                [6] = 117,
+            };
+
+            Dictionary<int, int> objectIndexes = new()
+            {
+                [0] = artifactIndexes[Mod.instance.randomIndex.Next(7)],
+                [1] = 167,
+                [2] = 168,
+                [3] = 169,
+                [4] = 170,
+                [5] = 171,
+                [6] = 172,
+            };
+
+            int objectIndex = objectIndexes[Mod.instance.randomIndex.Next(7)];
+
+            return objectIndex;
+
+        }
+
         public static int RandomJumpFish(GameLocation location)
         {
 
@@ -1297,7 +1490,6 @@ namespace StardewDruid.Data
             int objectIndex = objectIndexes[new Random().Next(objectIndexes.Count)];
 
             return objectIndex;
-
         }
 
         public static StardewValley.Object RandomTreasure(GameLocation location, bool rareTreasure = false)
@@ -1549,13 +1741,9 @@ namespace StardewDruid.Data
 
         public bool cast;
         public bool weeds;
-        public bool forage;
-        public bool flower;
-        public bool grass;
-        public bool trees;
-        public bool fishes;
+        public bool cultivate;
+        public bool wilderness;
         public bool fishspot;
-        public bool seed;
         public bool crate;
 
         public SpawnIndex()
@@ -1579,19 +1767,31 @@ namespace StardewDruid.Data
 
             weeds = true;
 
-            forage = true;
-
-            flower = true;
-
-            grass = true;
-
-            trees = true;
-
-            fishes = true;
-
             fishspot = true;
 
-            seed = true;
+            if (Game1.player.currentLocation.IsOutdoors)
+            {
+                
+                if (Game1.player.currentLocation.IsFarm)
+                {
+
+                    cultivate = true;
+
+                }
+                else
+                {
+
+                    wilderness = true;
+
+                }
+
+            }
+            else if (Game1.player.currentLocation.isGreenhouse.Value || Game1.player.currentLocation is Shed || Game1.player.currentLocation is AnimalHouse)
+            {
+
+                cultivate = true;
+
+            }
 
             if (Game1.player.currentLocation.Map.Layers[0].LayerWidth * Game1.player.currentLocation.Map.Layers[0].LayerHeight > 1600)
             {
@@ -1599,15 +1799,6 @@ namespace StardewDruid.Data
                 crate = true;
 
             }
-
-            if (Game1.player.currentLocation is Beach || Game1.player.currentLocation is IslandSouth || Game1.player.currentLocation is IslandSouthEast || Game1.player.currentLocation is IslandSouthEastCave)
-            {
-
-                trees = false;
-
-            }
-
-            CheckDisables();
 
         }
 
@@ -1631,27 +1822,33 @@ namespace StardewDruid.Data
             {
 
                 weeds = true;
-                forage = true;
-                flower = true;
-                grass = true;
-                trees = true;
-                fishes = true;
-                seed = true;
+                cultivate = true;
 
             }
             else if (location.isGreenhouse.Value || location is Shed || location is AnimalHouse)
             {
 
-                seed = true;
+                cultivate = true;
 
             }
             else if (location is IslandWest || location is IslandNorth)
             {
-                fishes = true;
+
                 fishspot = true;
-                seed = true;
-                trees = true;
                 weeds = true;
+                wilderness = true;
+
+                if (location is IslandWest islandWest)
+                {
+
+                    if (islandWest.getTileSheetIDAt((int)Game1.player.Tile.X, (int)Game1.player.Tile.Y, "Back") != "untitled tile sheet2")
+                    {
+
+                        cultivate = true;
+
+                    }
+
+                }
 
                 if (location is IslandWest)
                 {
@@ -1663,34 +1860,25 @@ namespace StardewDruid.Data
             }
             else if (location is Forest || location is Mountain || location is Desert || location is BugLand)
             {
-                
+
                 weeds = true;
-                forage = true;
-                flower = true;
-                grass = true;
-                trees = true;
-                fishes = true;
+                wilderness = true;
                 fishspot = true;
 
                 crate = true;
 
             }
-            else if (location.Name.Contains("Backwoods") || location is Railroad || location is BusStop || location is Gate)
+            else if (location.Name.Contains("Backwoods") || location is Railroad || location is BusStop)
             {
 
-                forage = true;
-                flower = true;
-                grass = true;
-                trees = true;
+                wilderness = true;
                 weeds = true;
 
             }
             else if (location is Woods || location is Grove || location is IslandEast || location is IslandShrine)
             {
 
-                forage = true;
-                flower = true;
-                grass = true;
+                wilderness = true;
                 fishspot = true;
                 weeds = true;
 
@@ -1698,16 +1886,16 @@ namespace StardewDruid.Data
             else if (location is Beach || location is Atoll)
             {
 
-                fishes = true;
+                wilderness = true;
                 fishspot = true;
                 weeds = true;
                 crate = true;
 
-            } 
+            }
             else if (location is IslandSouth || location is IslandSouthEast || location is IslandSouthEastCave)
             {
 
-                fishes = true;
+                wilderness = true;
                 fishspot = true;
                 weeds = true;
 
@@ -1715,9 +1903,7 @@ namespace StardewDruid.Data
             else if (location is Town)
             {
                 weeds = true;
-                forage = true;
-                flower = true;
-                fishes = true;
+                wilderness = true;
                 fishspot = true;
 
             }
@@ -1736,7 +1922,10 @@ namespace StardewDruid.Data
             }
             else if (
                 location is MineShaft ||
-                location is VolcanoDungeon
+                location is VolcanoDungeon ||
+                location is Vault ||
+                location is Court ||
+                location is Engineum
                 )
             {
 
@@ -1785,42 +1974,6 @@ namespace StardewDruid.Data
             {
 
                 cast = false;
-
-            }
-
-            CheckDisables();
-
-        }
-
-        public void CheckDisables()
-        {
-
-
-            if (Mod.instance.Config.disableGrass)
-            {
-
-                grass = false;
-
-            }
-
-            if (Mod.instance.Config.disableTrees)
-            {
-
-                trees = false;
-
-            }
-
-            if (Mod.instance.Config.disableFish)
-            {
-
-                fishes = false;
-
-            }
-
-            if (Mod.instance.Config.disableSeeds)
-            {
-
-                seed = false;
 
             }
 

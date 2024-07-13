@@ -15,6 +15,10 @@ namespace StardewDruid.Monster
 
         public WeaponRender weaponRender;
 
+        public bool firearmSet;
+
+        public bool meleeSet;
+
         public DarkRogue()
         {
 
@@ -75,6 +79,8 @@ namespace StardewDruid.Monster
             idleFrames = FrameSeries(32, 32, 0, 0, 1);
 
             walkFrames = FrameSeries(32, 32, 0, 128, 6, FrameSeries(32, 32, 0, 0, 1));
+
+            alertFrames = new(idleFrames);
 
             walkSwitch = true;
 
@@ -302,6 +308,8 @@ namespace StardewDruid.Monster
         {
             sweepSet = true;
 
+            meleeSet = true;
+
             sweepInterval = 8;
 
             sweepFrames = new()
@@ -333,6 +341,26 @@ namespace StardewDruid.Monster
                     new Rectangle(160, 256, 32, 32),
                     new Rectangle(192, 256, 32, 32),
                     new Rectangle(224, 256, 32, 32),
+                },
+            };
+
+            alertFrames = new()
+            {
+                [0] = new()
+                {
+                    new Rectangle(192, 320, 32, 32),
+                },
+                [1] = new()
+                {
+                    new Rectangle(160, 320, 32, 32),
+                },
+                [2] = new()
+                {
+                    new Rectangle(128, 320, 32, 32),
+                },
+                [3] = new()
+                {
+                    new Rectangle(224, 320, 32, 32),
                 },
             };
 
@@ -428,6 +456,8 @@ namespace StardewDruid.Monster
 
         public virtual void DarkBlast()
         {
+
+            firearmSet = true;
 
             specialSet = true;
 
@@ -559,9 +589,14 @@ namespace StardewDruid.Monster
                      drawLayer
                 );
 
-                weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { source = sweepFrames[netDirection.Value][sweepFrame], flipped = flippity });
+                if (meleeSet)
+                {
 
-                weaponRender.DrawSwipe(b, spritePosition, drawLayer, new() { source = sweepFrames[netDirection.Value][sweepFrame], flipped = flippity });
+                    weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { source = sweepFrames[netDirection.Value][sweepFrame], flipped = flippity });
+
+                    weaponRender.DrawSwipe(b, spritePosition, drawLayer, new() { source = sweepFrames[netDirection.Value][sweepFrame], flipped = flippity });
+
+                }
 
             }
             else if (netSpecialActive.Value)
@@ -578,9 +613,11 @@ namespace StardewDruid.Monster
                     flippant ? (SpriteEffects)1 : 0,
                     drawLayer
                 );
+                if (firearmSet)
+                {
 
-                weaponRender.DrawFirearm(b, spritePosition, drawLayer, new() { source = specialFrames[netDirection.Value][specialFrame], flipped = flippant });
-
+                    weaponRender.DrawFirearm(b, spritePosition, drawLayer, new() { source = specialFrames[netDirection.Value][specialFrame], flipped = flippant });
+                }
             }
             else if (netChannelActive.Value)
             {
@@ -596,9 +633,11 @@ namespace StardewDruid.Monster
                     flippity ? (SpriteEffects)1 : 0, 
                     drawLayer
                     );
+                if (firearmSet)
+                {
 
-                weaponRender.DrawFirearm(b, spritePosition, drawLayer, new() { source = channelFrames[netDirection.Value][specialFrame], flipped = flippity });
-
+                    weaponRender.DrawFirearm(b, spritePosition, drawLayer, new() { source = channelFrames[netDirection.Value][specialFrame], flipped = flippity });
+                }
             }
             else if (netFlightActive.Value)
             {
@@ -639,12 +678,17 @@ namespace StardewDruid.Monster
                     drawLayer
                 );
 
-                weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { source = smashFrames[setFlightSeries][setFlightFrame], flipped = flippity });
-
-                if (netFlightProgress.Value >= 2)
+                if (meleeSet)
                 {
 
-                    weaponRender.DrawSwipe(b, spritePosition, drawLayer, new() { source = smashFrames[setFlightSeries][setFlightFrame], flipped = flippity });
+                    weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { source = smashFrames[setFlightSeries][setFlightFrame], flipped = flippity });
+
+                    if (netFlightProgress.Value >= 2)
+                    {
+
+                        weaponRender.DrawSwipe(b, spritePosition, drawLayer, new() { source = smashFrames[setFlightSeries][setFlightFrame], flipped = flippity });
+
+                    }
 
                 }
 
@@ -667,7 +711,8 @@ namespace StardewDruid.Monster
             }
             else if (netHaltActive.Value)
             {
-                if (netAlert.Value && weaponRender != null)
+                
+                if (netAlert.Value)
                 {
 
                     b.Draw(
@@ -681,8 +726,13 @@ namespace StardewDruid.Monster
                         flippant ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                         drawLayer
                     );
-
-                    weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { source = alertFrames[netDirection.Value][0], flipped = flippant });
+                    
+                    if (meleeSet)
+                    {
+                        
+                        weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { source = alertFrames[netDirection.Value][0], flipped = flippant });
+                    
+                    }
 
                 }
                 else

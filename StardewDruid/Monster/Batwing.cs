@@ -121,7 +121,7 @@ namespace StardewDruid.Monster
                 }
             };
 
-            walkFrames = idleFrames;
+            walkFrames = new(idleFrames);
 
             schemeFrames = new()
             {
@@ -326,7 +326,7 @@ namespace StardewDruid.Monster
                 b.Draw(
                     characterTexture,
                     spritePosition,
-                   flightFrames[netDirection.Value + 8][specialFrame],
+                    flightFrames[netDirection.Value + 8][specialFrame],
                     Color.White,
                     0,
                     Vector2.Zero,

@@ -53,8 +53,6 @@ namespace StardewDruid.Data
 
         public Texture2D cursorTexture;
 
-        public int cursorColumns;
-
         public enum displays
         {
             none,
@@ -91,14 +89,17 @@ namespace StardewDruid.Data
             blaze,
             morph,
             skull,
-            daze,
+            blind,
             knock,
+
+            glare,
+            up,
+            down,
+            scroll,
 
         }
 
         public Texture2D displayTexture;
-
-        public int displayColumns;
 
         public enum decorations
         {
@@ -145,8 +146,6 @@ namespace StardewDruid.Data
 
         public Texture2D decorationTexture;
 
-        public int decorationColumns;
-
         public enum impacts
         {
             none,
@@ -165,25 +164,18 @@ namespace StardewDruid.Data
             cinder,
             skull,
 
-            //death,
-            //whirl,
-
             nature,
             bomb,
             boltswirl,
             deathbomb,
             mists,
-            //gore,
-            //deathwhirl,
+            deathwhirl,
 
         }
 
         public Texture2D impactsTexture;
 
         public Texture2D impactsTextureTwo;
-
-        //public Texture2D impactsTextureThree;
-
         public enum skies
         {
             none,
@@ -514,21 +506,13 @@ namespace StardewDruid.Data
 
             cursorTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Cursors.png"));
 
-            cursorColumns = 4;
-
             displayTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Displays.png"));
 
-            displayColumns = 6;
-
             decorationTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Decorations.png"));
-
-            decorationColumns = 5;
 
             impactsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Impacts.png"));
 
             impactsTextureTwo = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ImpactsTwo.png"));
-
-            //impactsTextureThree = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ImpactsThree.png"));
 
             skyTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Skies.png"));
 
@@ -547,8 +531,6 @@ namespace StardewDruid.Data
             sheetTextures[tilesheets.engineum] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Engineum.png"));
 
             sheetTextures[tilesheets.gate] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Gate.png"));
-
-            relicColumns = 6;
 
             relicsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Relics.png"));
 
@@ -576,7 +558,7 @@ namespace StardewDruid.Data
 
             shieldTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Shield.png"));
 
-            shadowRectangle = new(((int)cursors.shadow - 1) % cursorColumns * 48, ((int)cursors.shadow - 1) / cursorColumns * 48, 48, 48);
+            shadowRectangle = CursorRectangle(cursors.shadow);
 
             CustomDragonScheme();
 
@@ -608,14 +590,14 @@ namespace StardewDruid.Data
 
         }
 
-        public Microsoft.Xna.Framework.Rectangle CursorRect(cursors id)
+        public static Microsoft.Xna.Framework.Rectangle CursorRectangle(cursors id)
         {
 
             if (id == cursors.none) { return new(); }
 
             int slot = (int)id - 1;
 
-            return new(slot % cursorColumns * 48, slot / cursorColumns * 48, 48, 48);
+            return new(slot % 4 * 48, slot / 4 * 48, 48, 48);
 
 
         }
@@ -625,7 +607,7 @@ namespace StardewDruid.Data
 
             Vector2 originOffset = origin + new Vector2(32f, 32f) - new Vector2(24 * additional.scale, 24 * additional.scale);
 
-            Microsoft.Xna.Framework.Rectangle cursorRect = Mod.instance.iconData.CursorRect(cursorId);
+            Microsoft.Xna.Framework.Rectangle cursorRect = CursorRectangle(cursorId);
 
             if(additional.layer == -1f)
             {
@@ -688,14 +670,14 @@ namespace StardewDruid.Data
 
         }
 
-        public Microsoft.Xna.Framework.Rectangle DisplayRect(displays id)
+        public static Microsoft.Xna.Framework.Rectangle DisplayRectangle(displays id)
         {
 
             if (id == displays.none) { return new(); }
 
             int slot = Convert.ToInt32(id) - 1;
 
-            return new(slot % displayColumns * 16, slot / displayColumns * 16, 16, 16);
+            return new(slot % 6 * 16, slot / 6 * 16, 16, 16);
 
         }
 
@@ -705,32 +687,32 @@ namespace StardewDruid.Data
             {
                 case Journal.Quest.questTypes.challenge:
 
-                    return DisplayRect(displays.quest);
+                    return DisplayRectangle(displays.quest);
 
                 case Journal.Quest.questTypes.lesson:
 
-                    return DisplayRect(displays.effect);
+                    return DisplayRectangle(displays.effect);
 
                 case Journal.Quest.questTypes.miscellaneous:
 
-                    return DisplayRect(displays.active);
+                    return DisplayRectangle(displays.active);
 
                 default:
 
-                    return DisplayRect(displays.speech);
+                    return DisplayRectangle(displays.speech);
 
             }
 
         }
 
-        public Microsoft.Xna.Framework.Rectangle DecorativeRect(decorations id)
+        public static Microsoft.Xna.Framework.Rectangle DecorativeRectangle(decorations id)
         {
 
             if (id == decorations.none) { return new(); }
 
             int slot = Convert.ToInt32(id) - 1;
 
-            return new(slot % decorationColumns * 64, slot / decorationColumns * 64, 64, 64);
+            return new(slot * 64, 0, 64, 64);
 
         }
 
@@ -739,7 +721,7 @@ namespace StardewDruid.Data
 
             Vector2 originOffset = origin + new Vector2(32f, 32f) - (new Vector2(32f, 32f) * scale);
 
-            Microsoft.Xna.Framework.Rectangle rect = DecorativeRect(decorationId);
+            Microsoft.Xna.Framework.Rectangle rect = DecorativeRectangle(decorationId);
 
             float interval = additional.interval;
 
@@ -1006,43 +988,45 @@ namespace StardewDruid.Data
 
                     return;*/
 
-                /*case impacts.deathwhirl:
+                case impacts.deathwhirl:
 
-                    if (gradientColours.ContainsKey(additional.scheme))
-                    {
+                    additional.alpha = 0.7f;
 
-                        colours = gradientColours[additional.scheme];
+                    TemporaryAnimatedSprite skullCore = CreateImpact(location, origin, IconData.impacts.skull, size, additional);
 
-                    }
-                    else
-                    {
+                    skullCore.alphaFade = 0.001f;
 
-                        colours = ConvertToGradient(additional.scheme);
-
-                    }
-
-                    additional.alpha = 0.85f;
+                    additional.interval = 80;
 
                     additional.light = 0f;
 
-                    additional.color = colours[0];
+                    additional.color = Microsoft.Xna.Framework.Color.White;
 
-                    CreateImpact(location, origin, IconData.impacts.whirl, size + 1, additional);
+                    additional.alpha = 0.3f;
 
-                    additional.layerOffset = 0.001f;
+                    additional.layer = 997f;
 
-                    additional.color = colours[1];
+                    CreateImpact(location, origin, IconData.impacts.spiral, 4f, additional);
 
-                    CreateImpact(location, origin, IconData.impacts.whirl, size, additional);
+                    additional.color = gradientColours[schemes.death][0];
+
+                    additional.alpha = 0.2f;
+
+                    additional.layer = 996f;
+
+                    CreateImpact(location, origin, IconData.impacts.spiral, 6f, additional);
+
+                    additional.color = gradientColours[schemes.death][1];
+
+                    additional.alpha = 0.1f;
+
+                    additional.layer = 995f;
 
                     additional.light = 0.005f;
 
-                    additional.layerOffset = 0.002f;
+                    CreateImpact(location, origin, IconData.impacts.spiral, 8f, additional);
 
-                    additional.color = colours[2];
-
-                    CreateImpact(location, origin, IconData.impacts.whirl, size -1, additional);
-                    return;*/
+                    return;
 
                 case impacts.mists:
 
@@ -1555,14 +1539,14 @@ namespace StardewDruid.Data
 
         }
 
-        public Microsoft.Xna.Framework.Rectangle RelicRectangles(relics relic)
+        public static Microsoft.Xna.Framework.Rectangle RelicRectangles(relics relic)
         {
 
             if (relic == relics.none) { return new(); }
 
             int slot = Convert.ToInt32(relic) - 1;
 
-            return new(slot % relicColumns * 20, slot / relicColumns * 20, 20, 20);
+            return new(slot % 6 * 20, slot == 0 ? 0 : slot / 6 * 20, 20, 20);
 
         }
 

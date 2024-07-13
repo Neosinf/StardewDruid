@@ -10,10 +10,7 @@ using StardewValley.Objects;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using static StardewValley.Minigames.TargetGame;
-using static System.Net.Mime.MediaTypeNames;
-using System.Threading.Channels;
+
 
 namespace StardewDruid.Journal
 {
@@ -92,7 +89,7 @@ namespace StardewDruid.Journal
 
             effects[QuestHandle.wealdOne] = new() { ritesOfTheDruids, herbalism,  clear, attunement, };
 
-            Effect wildbounty = new()
+            /*Effect wildbounty = new()
             {
                 title = Mod.instance.Helper.Translation.Get("Effect.wildbounty.title"),
                 icon = IconData.displays.weald,
@@ -128,9 +125,27 @@ namespace StardewDruid.Journal
                     Mod.instance.Helper.Translation.Get("Effect.community.details.2"),
                     Mod.instance.Helper.Translation.Get("Effect.community.details.3"),
                 }
+            };*/
+
+            Effect caress = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("Effect.caress.title"),
+                icon = IconData.displays.weald,
+                description = Mod.instance.Helper.Translation.Get("Effect.caress.description"),
+                instruction = Mod.instance.Helper.Translation.Get("Effect.caress.instruction"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("Effect.caress.details.0"),
+                    Mod.instance.Helper.Translation.Get("Effect.caress.details.1"),
+                    Mod.instance.Helper.Translation.Get("Effect.caress.details.2"),
+                    Mod.instance.Helper.Translation.Get("Effect.caress.details.3"),
+                    Mod.instance.Helper.Translation.Get("Effect.caress.details.4"),
+
+                }
+
             };
 
-            effects[QuestHandle.wealdTwo] = new() { wildbounty, community, };
+            effects[QuestHandle.wealdTwo] = new() {caress, };
 
             Effect wildgrowth = new()
             {
@@ -142,6 +157,9 @@ namespace StardewDruid.Journal
                 {
                     Mod.instance.Helper.Translation.Get("Effect.wildgrowth.details.0"),
                     Mod.instance.Helper.Translation.Get("Effect.wildgrowth.details.1"),
+                    Mod.instance.Helper.Translation.Get("Effect.wildgrowth.details.2"),
+                    Mod.instance.Helper.Translation.Get("Effect.wildgrowth.details.3"),
+                    Mod.instance.Helper.Translation.Get("Effect.wildgrowth.details.4"),
                     
                 }
             };

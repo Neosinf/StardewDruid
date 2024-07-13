@@ -2,27 +2,15 @@
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
-using StardewDruid.Cast.Mists;
-using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
 using StardewDruid.Event;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Buildings;
-using StardewValley.Extensions;
-using StardewValley.GameData.FruitTrees;
-using StardewValley.Internal;
-using StardewValley.Monsters;
-using StardewValley.Network;
 using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using static StardewDruid.Cast.SpellHandle;
+
 
 namespace StardewDruid.Character
 {
@@ -371,29 +359,40 @@ namespace StardewDruid.Character
 
             CharacterHandle.RetrieveInventory(characterType);
 
-            for (int i = 0; i < Mod.instance.chests[characterType].Items.Count - 1; i++)
+            List<StardewValley.Object> marmalade = new();
+
+            for (int i = Mod.instance.chests[characterType].Items.Count - 1; i >= 0; i--)
             {
 
-                if (Mod.instance.chests[characterType].Items[i].Category == -79)
+                StardewValley.Object @object = ItemRegistry.Create<StardewValley.Object>(Mod.instance.chests[characterType].Items[i].QualifiedItemId);
+
+                if (@object.Category == -79)
                 {
 
                     StardewValley.Object conversion = new StardewValley.Object("344", 1);
 
-                    conversion.Price = 50 + (Mod.instance.chests[characterType].Items[i] as StardewValley.Object).Price * 2;
+                    conversion.name = @object.Name + " Marmalade";
                     
-                    conversion.name = Mod.instance.chests[characterType].Items[i].Name + " Jelly";
-                    
-                    conversion.Price = 50 + (Mod.instance.chests[characterType].Items[i] as StardewValley.Object).Price * 2;
+                    conversion.Price = 50 + @object.Price * 2;
                     
                     conversion.preserve.Value = StardewValley.Object.PreserveType.Jelly;
                     
-                    conversion.preservedParentSheetIndex.Value = Mod.instance.chests[characterType].Items[i].ParentSheetIndex.ToString();
-                    
+                    conversion.preservedParentSheetIndex.Value = @object.ParentSheetIndex.ToString();
+
                     conversion.Stack = Mod.instance.chests[characterType].Items[i].Stack;
 
-                    Mod.instance.chests[characterType].Items[i] = conversion;
+                    marmalade.Add(conversion);
+
+                    Mod.instance.chests[characterType].Items.RemoveAt(i);
 
                 }
+
+            }
+
+            foreach (StardewValley.Object conversion in marmalade)
+            {
+
+                Mod.instance.chests[characterType].addItem(conversion);
 
             }
 
@@ -406,9 +405,9 @@ namespace StardewDruid.Character
 
             swipeEffect.instant = true;
 
-            swipeEffect.added = new() { effects.knock, };
+            swipeEffect.added = new() { SpellHandle.effects.knock, };
 
-            swipeEffect.sound = sounds.swordswipe;
+            swipeEffect.sound = SpellHandle.sounds.swordswipe;
 
             swipeEffect.display = IconData.impacts.flashbang;
 
@@ -620,7 +619,7 @@ namespace StardewDruid.Character
 
                     }
                     
-                    if (targetObject.isForage())
+                    if (SpawnData.ForageCheck(targetObject))
                     {
 
                         StardewValley.Item objectInstance = ModUtility.ExtractForage(currentLocation, workVector, false);
@@ -689,6 +688,31 @@ namespace StardewDruid.Character
                             }
 
                             targetObject.heldObject.Value = null;
+
+                            if(targetObject.QualifiedItemId == "(BC)9")
+                            {
+
+                                targetObject.MinutesUntilReady = -1;
+
+                            } 
+                            else if(targetObject.QualifiedItemId == "(BC)10")
+                            {
+                                
+                                targetObject.MinutesUntilReady = Utility.CalculateMinutesUntilMorning(Game1.timeOfDay, 4);
+
+                            }
+                            else if (targetObject.QualifiedItemId == "(BC)MushroomLog")
+                            {
+                                
+                                targetObject.MinutesUntilReady = Utility.CalculateMinutesUntilMorning(Game1.timeOfDay);
+
+                            }
+                            else if (targetObject.IsTapper())
+                            {
+                                
+                                targetObject.MinutesUntilReady = Utility.CalculateMinutesUntilMorning(Game1.timeOfDay, 5);
+
+                            }
 
                         }
 

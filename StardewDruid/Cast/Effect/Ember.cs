@@ -9,23 +9,13 @@ using StardewValley.Menus;
 using StardewValley.Monsters;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.IO;
 using System.Linq;
-using System.Net;
-using xTile.Dimensions;
-using xTile.Tiles;
-using static StardewDruid.Cast.SpellHandle;
-using static StardewDruid.Data.IconData;
-using static System.Net.WebRequestMethods;
 
 
 namespace StardewDruid.Cast.Effect
 {
     public class Ember : EventHandle
     {
-
-        public int skipCounter;
 
         public Dictionary<Vector2, EmberTarget> embers = new();
 
@@ -69,7 +59,7 @@ namespace StardewDruid.Cast.Effect
 
                     burning.instant = true;
 
-                    burning.added = new() { effects.immolate, };
+                    burning.added = new() { SpellHandle.effects.immolate, };
 
                     Mod.instance.spellRegister.Add(burning);
 
@@ -79,15 +69,15 @@ namespace StardewDruid.Cast.Effect
 
         }
 
-        public void RadialTarget(GameLocation location, Vector2 origin, int damageFarmers, int damageMonsters, IconData.schemes scheme = schemes.stars, int Time = 3)
+        public void RadialTarget(GameLocation location, Vector2 origin, int damageFarmers, int damageMonsters, IconData.schemes scheme = IconData.schemes.stars, int Time = 3)
         {
 
             location = Game1.player.currentLocation;
 
-            if(scheme == schemes.none)
+            if(scheme == IconData.schemes.none)
             {
 
-                scheme = schemes.stars;
+                scheme = IconData.schemes.stars;
 
             }
 

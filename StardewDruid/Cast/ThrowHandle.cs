@@ -445,7 +445,7 @@ namespace StardewDruid.Cast
 
                     case throwing.relic:
 
-                        Microsoft.Xna.Framework.Rectangle relicRect = Mod.instance.iconData.RelicRectangles((IconData.relics)index);
+                        Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles((IconData.relics)index);
 
                         animation = new(0, timeframe * 16.66f, 1, 1, origin + new Vector2(2,2), false, false)
                         {
@@ -575,7 +575,7 @@ namespace StardewDruid.Cast
 
                     AnimateHoldup();
 
-                    Microsoft.Xna.Framework.Rectangle relicRect = Mod.instance.iconData.RelicRectangles((IconData.relics)index);
+                    Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles((IconData.relics)index);
 
                     animation = new(0, 2500, 1, 1, Game1.player.Position + new Vector2(2, -124f), false, false)
                     {

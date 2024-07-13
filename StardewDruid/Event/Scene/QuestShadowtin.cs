@@ -577,7 +577,7 @@ namespace StardewDruid.Event.Scene
 
                 case 225:
 
-                    Microsoft.Xna.Framework.Rectangle relicRect = Mod.instance.iconData.RelicRectangles(IconData.relics.book_manual);
+                    Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles(IconData.relics.book_manual);
 
                     TemporaryAnimatedSprite animation = new(0, 6000, 1, 1, eventVectors[19] * 64, false, false)
                     {
@@ -618,7 +618,7 @@ namespace StardewDruid.Event.Scene
 
                     location.characters.Remove(companions[0]);
 
-                    companions[2] = new Buffin(CharacterHandle.characters.Shadowcat);
+                    companions[2] = new Critter(CharacterHandle.characters.Shadowcat);
 
                     companions[2].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -1211,7 +1211,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCueWithFeeling(504);
 
-                    Microsoft.Xna.Framework.Rectangle relicRect = Mod.instance.iconData.RelicRectangles(IconData.relics.skull_gelatin);
+                    Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles(IconData.relics.skull_gelatin);
 
                     TemporaryAnimatedSprite animation = new(0, 10000, 1, 1, eventVectors[32] * 64, false, false)
                     {

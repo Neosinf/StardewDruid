@@ -182,7 +182,7 @@ namespace StardewDruid.Cast.Fates
 
                         int delay = 0;
 
-                        for (int g = curseEffect.victims.Count - 1; g >= 0; g--)
+                        for (int g = Math.Min(8,curseEffect.victims.Count - 1); g >= 0; g--)
                         {
 
                             KeyValuePair<StardewValley.Monsters.Monster, CurseTarget> curseTarget = curseEffect.victims.ElementAt(g);

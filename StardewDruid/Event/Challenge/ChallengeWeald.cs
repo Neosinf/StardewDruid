@@ -317,30 +317,6 @@ namespace StardewDruid.Event.Challenge
 
             Vector2 splash = castSelection[Mod.instance.randomIndex.Next(castSelection.Count)] *64;
 
-            Dictionary<int, int> artifactIndexes = new()
-            {
-                [0] = 105,
-                [1] = 106,
-                [2] = 110,
-                [3] = 111,
-                [4] = 112,
-                [5] = 115,
-                [6] = 117,
-            };
-
-            Dictionary<int, int> objectIndexes = new()
-            {
-                [0] = artifactIndexes[Mod.instance.randomIndex.Next(7)],
-                [1] = 167,
-                [2] = 168,
-                [3] = 169,
-                [4] = 170,
-                [5] = 171,
-                [6] = 172,
-            };
-
-            int objectIndex = objectIndexes[Mod.instance.randomIndex.Next(7)];
-
             ThrowHandle throwObject;
 
             if (eventRating == 8 && !Mod.instance.questHandle.IsComplete(eventId))
@@ -358,6 +334,8 @@ namespace StardewDruid.Event.Challenge
             }
             else
             {
+
+                int objectIndex = SpawnData.RandomTrash(location);
 
                 throwObject = new(splash, origin, objectIndex, 0) { pocket = true };
 

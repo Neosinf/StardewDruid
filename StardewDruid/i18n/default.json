@@ -6,6 +6,19 @@
     "Enum.rites.fates.name": "Rite of the Fates",
     "Enum.rites.ether.name": "Rite of Ether",
 
+    "Enum.journalButtons.back": "Go Back",
+    "Enum.journalButtons.start": "Start page",
+    "Enum.journalButtons.forward": "Go Foward",
+    "Enum.journalButtons.end": "End page",
+    "Enum.journalButtons.exit": "Exit Menu",
+    "Enum.journalButtons.quests": "Open Questlog",
+    "Enum.journalButtons.effects": "Open Grimoire",
+    "Enum.journalButtons.relics": "Open Reliquary",
+    "Enum.journalButtons.herbalism": "Open Apothecary",
+    "Enum.journalButtons.active": "Sort quests by completion",
+    "Enum.journalButtons.reverse": "Reverse order of entries",
+    "Enum.journalButtons.refresh": "Refresh all potions",
+
     // stringkeys
     "Enum.stringkeys.stardewDruid": "Stardew Druid",
 
@@ -21,12 +34,14 @@
     "Enum.stringkeys.invalidLocation": "Unable to reach the otherworldly plane from this location",
     "Enum.stringkeys.energyContinue": "Not enough energy to continue rite",
     "Enum.stringkeys.energyRite": "Not enough energy to perform rite",
-    "Enum.stringkeys.riteBuffDescription": "Actively selected rite",
+    "Enum.stringkeys.riteBuffDescription": "Click to open Journal",
     "Enum.stringkeys.energySkill": "Not enough energy to perform skill",
     "Enum.stringkeys.dragonBuff": "Dragon Scales",
     "Enum.stringkeys.dragonBuffDescription": "Defense increased by transformation",
     "Enum.stringkeys.druidFreneticism": "Druidic Freneticism",
     "Enum.stringkeys.speedIncrease": "Speed increased when casting amongst Grass",
+    "Enum.stringkeys.questComplete": "quest complete",
+    "Enum.stringkeys.percentComplete": "percent complete",
 
     // Journal
     "Enum.stringkeys.grimoire": "Grimoire",
@@ -313,6 +328,7 @@
     "DialogueScene.swordStars.5.0": "Lead me to the afterlife",
     "DialogueScene.swordStars.6.0": "At least, shut the bats up",
     "DialogueScene.swordStars.7.0": "Your unwilling servant",
+    "DialogueScene.swordStars.8.0": "A sword for a holy warrior",
 
     "DialogueScene.challengeStars.3.1": "The infestation must be contained here",
 
@@ -907,11 +923,10 @@
     "SceneConversations.questShadowtin.2.responses.1": "I think that chunky glow box is a bit too big for you to steal, Shadowtin.",
     "SceneConversations.questShadowtin.2.answers.0": "That's an engine for ethereal transmutation. Considering the conduits and the transmission panel, I suspect this is providing magical current to a network of some kind. The nature of the technology could be attributed to shadowfolk innovation, but the composition and engineering is more akin to stellarfolk. Could it have been a collaborative effort?",
 
-    "SceneConversations.questShadowtin.3.intro": "The Wizard: Are you aware you've trespassed onto the property of the college of wizardry?",
+    "SceneConversations.questShadowtin.3.intro": "The Wizard: I have claimed custodianship of this magical site as per the old arcanist treaties, and you are trespassing.",
     "SceneConversations.questShadowtin.3.responses.0": "Pardon my intrusion, sir. We are on a research venture to study ether currents and stumbled on this place.",
-    "SceneConversations.questShadowtin.3.responses.1": "Nonsense, my scholar friend has correctly identified the architecture and fixtures of this chamber far predate the college, which makes the circle the true custodians. YOU are the trespasser here.",
-    "SceneConversations.questShadowtin.3.answers.0": "I anticipated this encounter, when my own interests in the magical heritage of the valley would begin to coincide or conflict with yours. I welcome the re-establishment of the Circle of Druids, but your advancement has been quick by magical standards, and it has yet to be proven to me that you have the capacity to handle the dangers and mysteries that lie before you. Before I retransfigure your friend here, you'll need to face me in a contest of powers, and we'll know for sure if there are any merits to your 'rites'.",
-
+    "SceneConversations.questShadowtin.3.responses.1": "Nonsense, my scholar friend has correctly identified the architecture and fixtures of this chamber far predate the arcane epoch, which makes the circle the true custodians. YOU are the trespasser here.",
+    "SceneConversations.questShadowtin.3.answers.0": "I anticipated this encounter, when my own interests in the magical heritage of the valley would begin to coincide or conflict with yours. I welcome the re-establishment of the Circle of Druids, but your advancement has been quick, even by my standards, and it has yet to be proven to me that you have the capacity to handle the dangers and mysteries that lie ahead of you. Before I retransfigure your friend here, you'll need to face me in a contest of powers, and we'll know for sure if there are any merits to your 'rites'.",
     "SceneConversations.questShadowtin.4.intro": "The Wizard: The arcane. It seems to be merely a dim reflection of the mythic powers you have learnt to wield, despite your youth and lack of tutelage.",
     "SceneConversations.questShadowtin.4.responses.0": "Perhaps you and your peers were wrong to dismiss the patrons of the Druids as bygone myths.",
     "SceneConversations.questShadowtin.4.responses.1": "I do not take pleasure in administering harsh lessons, my pupil, but your education was lacking.",
@@ -930,8 +945,7 @@
     "SceneConversations.questShadowtin.7.intro": "Shadowtin Bear: (Sighs) Well my reputation as a fearsome mercenary captain is officially ruined.",
     "SceneConversations.questShadowtin.7.responses.0": "We reap what we sow, as my grandfather might have said. You were the captain of knaves, but now you are the scholar of the circle, and reap the rewards of dignity and new purpose.",
     "SceneConversations.questShadowtin.7.responses.1": "I thought the only reason you were their captain was because you were the only one of them who could read maps. So...",
-    "SceneConversations.questShadowtin.7.answers.0": "I am by nature a shadow thief, but when I beheld an enshrined relic of the stellarfolk in the halls of a besieged stronghold, I lost all passion for plunder. The similarities in the dwarven craftsmanship to our our own Great Shadow Vessel were unmistakeable. It was a Stellar Vessel. The dwarves recieved the same blessings as we did, not from Lord Deep, but a greater power, who refuses to reveal themselves to us. If it was Yoba, then why did he leave us to tyranny? How is that an example that would inspire my people to honour and glory? I can only look to you to know what is right, farmer, and maybe I'll know the truth of it all one day. Now... I should probably go pay for that milk I stole.",
-
+    "SceneConversations.questShadowtin.7.answers.0": "I am by nature a shadow thief, but when I beheld an enshrined relic of the stellarfolk in the halls of a besieged stronghold, I lost all passion for plunder. The similarities in the dwarven craftsmanship to our our own Great Shadow Vessel were unmistakeable. It was a Stellar Vessel. The dwarves received the same blessings as we did, not from Lord Deep, but a greater power, who refuses to reveal themselves to us. If it was Yoba, then why did he leave us to tyranny? How is that an example that would inspire my people to honour and glory? I can only look to you to know what is right, farmer, and maybe I'll know the truth of it all one day. Now... I should probably go pay for that milk I stole.",
     "Reaction.place.0": "valley",
     "Reaction.place.1": "island",
     
@@ -1240,15 +1254,27 @@
     "Effect.community.details.2": "Animals: Applies petting to animal",
     "Effect.community.details.3": "Special: This can be cast in the town saloon",
 
+    "Effect.caress.title": "Gentle Touch",
+    "Effect.caress.description": "The druids of antiquity played an important role in civil matters, as ceremonial leaders, mediators and physicians. The Rite of the Weald appears to have a positive effect on those who witness the rite.",
+    "Effect.caress.instruction": "Rite of the Weald: Bounty, when cast near NPCs and Farm animals, will trigger daily dialogue counters and generate unique reactions. When cast near plants, will apply one day's worth of growth.",
+    "Effect.caress.details.0": "Note: Disabled for villagers who have not been introduced to farmer and registered in the in-game friendship directory",
+    "Effect.caress.details.1": "Villagers: Raises friendship by 25, adds custom dialogue, ticks 'talked to today' value",
+    "Effect.caress.details.2": "Animals: Applies petting to animal",
+    "Effect.caress.details.3": "Trees, Fruit Trees, Bushes, Grass: Shakes and applies a full day's growth uptick",
+    "Effect.caress.details.4": "Special: This can be cast in the town saloon",
+
     "Effect.wildgrowth.title": "Wild Growth",
     "Effect.wildgrowth.description": "The Druid fills the barren spaces with life. Seeds, sewn everywhere, freely, ready to sprout into tomorrow's wilderness.",
-    "Effect.wildgrowth.instruction": "Rite of the Weald: Bounty will sprout trees, grass, seasonal forage and flowers in empty spaces.",
+    "Effect.wildgrowth.instruction": "Open maps only (Excludes Farm/Greenhouse). Rite of the Weald will sprout trees, grass, seasonal forage and flowers in empty spaces. Cast and hold Rite of the Weald for 2-3 seconds while standing still, until the essence fills the rite indicator. The effect will occur five tiles in the direction of the cursor or farmer.",
     "Effect.wildgrowth.details.0": "Mastery: Chance to sprout wild flowers.",
-    "Effect.wildgrowth.details.1": "Cost: 6 stamina per forageable spawned, halved at Foraging Level 6",
+    "Effect.wildgrowth.details.1": "Forest, Town, Beach, Mountain and other open maps.",
+    "Effect.wildgrowth.details.2": "Spawned objects vary according to location and terrain",
+    "Effect.wildgrowth.details.3": "Cost: 8 stamina per tree and forageable spawned",
+    "Effect.wildgrowth.details.4": "Cost increase: Cost increases by 4 stamina per cast on the same map.",
 
     "Effect.cultivate.title": "Cultivate",
     "Effect.cultivate.description": "I have learned that the Farmer and the Druid share the same vision for a prosperous and well fed community, and so the wild seed is domesticated.",
-    "Effect.cultivate.instruction": "Farm/Greenhouse only. Cast and hold Rite of the Weald for 2-3 seconds while standing still, until the essence fills the rite indicator. When released, the cultivation will radiate in increasing magnitude from your position.",
+    "Effect.cultivate.instruction": "Farm/Greenhouse only. Cast and hold Rite of the Weald for 2-3 seconds while standing still, until the essence fills the rite indicator. When released, the cultivation effect will radiate in increasing magnitude from your position.",
     "Effect.cultivate.details.0": "Mastery: Wild seeds have a chance to convert into quality crops.",
     "Effect.cultivate.details.1": "Limit: Farm/Greenhouse only.",
     "Effect.cultivate.details.2": "Effect: Seasonal wild seeds sewn into tilled dirt are converted into domestic crops.",
@@ -1518,13 +1544,13 @@
     "Potion.magnus_ligna.title": "Magnus Ligna",
     "Potion.magnus_ligna.description": "Potent oils enhance the rich, nutty flavour profile of the base mixture.",
     "Potion.magnus_ligna.details.0": "Restores: 50 Health, 200 Stamina",
-    "Potion.magnus_ligna.details.1": "Effect: Alignment Level 3, 5 Hours",
+    "Potion.magnus_ligna.details.1": "Effect: Alignment Level 3, 6 Hours",
     "Potion.magnus_ligna.details.2": "Ingredients: Base, 1x Vegetable Oil",
 
     "Potion.optimus_ligna.title": "Optimus Ligna",
     "Potion.optimus_ligna.description": "Brims with the vibrant colours of creation",
     "Potion.optimus_ligna.details.0": "Restores: 100 Health, 400 Stamina",
-    "Potion.optimus_ligna.details.1": "Effect: Vigorous Level 4, 6 Hours",
+    "Potion.optimus_ligna.details.1": "Effect: Vigorous Level 4, 8 Hours",
     "Potion.optimus_ligna.details.2": "Requires: Base, Aether",
 
     "Potion.impes.title": "Vigores",
@@ -1547,42 +1573,42 @@
     "Potion.magnus_impes.title": "Magnus Vigores",
     "Potion.magnus_impes.description": "The spicy tang that enflames the regions.",
     "Potion.magnus_impes.details.0": "Restores: 70 Health, 320 Stamina",
-    "Potion.magnus_impes.details.1": "Effect: Vigorous Level 3, 5 Hours",
+    "Potion.magnus_impes.details.1": "Effect: Vigorous Level 3, 6 Hours",
     "Potion.magnus_impes.details.2": "Requires: Base, 1x Spicy Ingredient",
 
     "Potion.optimus_impes.title": "Optimus Vigores",
     "Potion.optimus_impes.description": "It burns, but it stays down.",
     "Potion.optimus_impes.details.0": "Restores: 180 Health, 560 Stamina",
-    "Potion.optimus_impes.details.1": "Effect: Vigorous Level 4, 6 Hours",
+    "Potion.optimus_impes.details.1": "Effect: Vigorous Level 4, 8 Hours",
     "Potion.optimus_impes.details.2": "Requires: Base, Aether",
 
     "Potion.celeri.title": "Celeri",
-    "Potion.celeri.description": "Good for your joints and memory retention.",
+    "Potion.celeri.description": "With extra fiber for good gut health.",
     "Potion.celeri.details.0": "Restores: 10 Health, 30 Stamina",
-    "Potion.celeri.details.1": "Requires: 1x Common Fish, 2x Bug Meat",
+    "Potion.celeri.details.1": "Requires: Base, 1x Energy Supplement",
 
     "Potion.melius_celeri.title": "Melius Celeri",
-    "Potion.melius_celeri.description": "Now with extra fiber for good gut health.",
+    "Potion.melius_celeri.description": "Now with mineral extracts for revitalised skin and circulation.",
     "Potion.melius_celeri.details.0": "Restores: 20 Health, 60 Stamina",
     "Potion.melius_celeri.details.1": "Effect: Celerity Level 1, 3 Hours",
-    "Potion.melius_celeri.details.2": "Requires: Base, 1x Energy Supplement",
+    "Potion.melius_celeri.details.2": "Requires: Base, 1x Mineral-Rich Substance",
 
     "Potion.satius_celeri.title": "Satius Celeri",
-    "Potion.satius_celeri.description": "Now with mineral extracts for revitalised skin and circulation.",
+    "Potion.satius_celeri.description": "Good for your joints and memory retention.",
     "Potion.satius_celeri.details.0": "Restores: 30 Health, 120 Stamina",
     "Potion.satius_celeri.details.1": "Effect: Celerity Level 2, 4 Hours",
-    "Potion.satius_celeri.details.2": "Requires: Base, 1x Mineral-Rich Substance",
+    "Potion.satius_celeri.details.2": "Requires: 1x Common Fish",
 
     "Potion.magnus_celeri.title": "Magnus Celeri",
     "Potion.magnus_celeri.description": "Now with organically sourced protein for heightened muscle recovery.",
     "Potion.magnus_celeri.details.0": "Restores: 60 Health, 240 Stamina",
-    "Potion.magnus_celeri.details.1": "Effect: Celerity Level 3, 5 Hours",
+    "Potion.magnus_celeri.details.1": "Effect: Celerity Level 3, 6 Hours",
     "Potion.magnus_celeri.details.2": "Requires: Base, 1x Common Shellfish",
 
     "Potion.optimus_celeri.title": "Optimus Celeri",
     "Potion.optimus_celeri.description": "Now with fluff and sprinkles for added bliss.",
     "Potion.optimus_celeri.details.0": "Restores: 120 Health, 480 Stamina",
-    "Potion.optimus_celeri.details.1": "Effect: Celerity Level 4, 6 hours",
+    "Potion.optimus_celeri.details.1": "Effect: Celerity Level 4, 8 hours",
     "Potion.optimus_celeri.details.2": "Requires: Base, Aether",
 
     "Potion.faeth.title": "Faeth",
@@ -1688,7 +1714,7 @@
     "Story.Effigy_Ether.answer": "The Lady Beyond declined to dwell on the nature of the aggressors of a war that claimed her kin. What I know of Dragonkind comes from the poetry of myth. They were the first servants of Yoba, and had diminished long before the event that marks the nadir of their noble race. Their bones have become the foundation of the otherworld, their potent life essence has become the streams of ether that flow through the planes. ",
 
     "Story.Jester_Tomb.question": "I'm sorry about what happened in the Tomb",
-    "Story.Jester_Tomb.answer": "(Jester looks away) I just... I thought that when we found Thanatoshi, then that would be the end of the 'grand quest'. Now the end seems evern further away. I never met the Reaper before, but I've told a few stories about him, and he was always this great, unbending hero. Well he didn't seem so great when he was trying to slice our heads off. (Jester looks up) I still haven't informed the Morticians where his broken soul is.",
+    "Story.Jester_Tomb.answer": "(Jester looks away) I just... I thought that when we found Thanatoshi, then that would be the end of the 'grand quest'. Now the end seems even further away. I never met the Reaper before, but I've told a few stories about him, and he was always this great, unbending hero. Well he didn't seem so great when he was trying to slice our heads off. (Jester looks up) I still haven't informed the Morticians where his broken soul is.",
 
     "Story.Jester_Ether.question": "Any thoughts on the Ancient ones?",
     "Story.Jester_Ether.answer": "Oh I've heard lots of scary tales about those things. Monstrous. Scaley. Big teeth. Warts on their nose (Jester isn't sure about that last one). They could burn you with a look and make you into roast dinner with a single word! Actually I... (Jester's hairs raise across it's backside) get kind os scared just thinking about them. I'm glad you have my back!",
@@ -1717,9 +1743,8 @@
     "Story.Buffin_Circle.question": "Did the Great Stream witness what happened here after the War for the Star?",
     "Story.Buffin_Circle.answer": "This is what I remember from the account scrawled on one of the walls of the Chaos sanitarium, written by the Watcher who surmised these events from the patterns of the Stream. When the dragons perished, waves of liberated, ethereal energy swept across the realms, and from this, the artisans set to work, capturing and organising this energy into new forms. The Stream observed this artifice, and was displeased, as the designs possessed no nuances of interest, for they were boring, mechanical and utilitarian. So the Stream sabotaged the craft, and from the imperfections, the elementals emerged, and were unleashed upon this world. It was the advent of the arcane epoch. As was the intention of Chaos, many of the mortal races were threatened by the new, subsuming powers, and were forced to adapt to survive. But the Artisans opposed the initiative of Chaos, and provided gifts of knowledge and inspiration, that some races might harness the elementals for their own purposes, and achieve the zenith of their civilisations. I believe the engine you beheld is one such divinely inspired device. It is a precursor to the marvels of Stellarfolk and Shadowfolk engineering. Still, The Stream resented the development of such organised systems, and presented it's own gifts, in dreams and mysteries, to the first mortals to learn the arcane arts, to rival the technomancers. Is that sufficient to explain the elemental wars or have you not learned about that yet?",
 
-    "Story.Shadowtin_Circle.question": "",
-    "Story.Shadowtin_Circle.answer": "We've been slowly consumed by the hunger of a tyrant, who expends the lives of our best folk to construct his cities and continue his conquests, all under the pretense that we are his property, his souls to enflame and extinguish to his purposes. I want to expose him as an imposter, before he gains the power of dragons and heaps the souls of my people into an engine of war, and to do that I need the truth of his past. Unequivocable testimony of his fraud.",
-
+    "Story.Shadowtin_Circle.question": "When will you return to the darkened plane?",
+    "Story.Shadowtin_Circle.answer": "My folk have been slowly consumed by the hunger of a tyrant, who expends the lives of our best folk to construct his cities and continue his conquests, all under the pretense that we are his property, his souls to enflame and extinguish to his purposes. I want to expose him as an imposter, before he gains the power of dragons and heaps the souls of my people into an engine of war, and to do that I need the truth of his past. Unequivocable testimony of his fraud. I cannot return empty-handed.",
     "Quest.approachEffigy.title": "Grandfather's note",
     "Quest.approachEffigy.description": "There's a note stuck to grandpa's old scythe: \"For the new farmer. Before my forefathers came to the valley, the secluded grove behind the farm was a frequent meeting ground for a circle of Druids. An eeriness hangs over the place, so I have kept my father's tradition of leaving it well enough alone. Perhaps you should too.\"",
     "Quest.approachEffigy.instruction": "Investigate the secluded grove and old farm cave. Press one of {{button}} to cast a rite at the quest icon.",
@@ -1747,17 +1772,17 @@
     "Quest.wealdOne.progression": "weeds and twigs destroyed",
     "Quest.wealdOne.before.Effigy.intro": "Good. You are now a subject of the two kingdoms, and bear authority over the weed and the twig. Use this new power to drive out decay and detritus. Return tomorrow for another lesson. (New lesson received)",
 
-    "Quest.wealdTwo.title": "Lesson Two: Wild Bounty",
+    "Quest.wealdTwo.title": "Lesson Two: Gentle Touch",
     "Quest.wealdTwo.description": "As I perform the rite, the valley springs into new life around me, offering a sample of its hidden bounty.",
-    "Quest.wealdTwo.instruction": "Perform Rite of the Weald: Bounty to rustle twenty large bushes for forageables. Unlocks wild seed gathering from grass.",
+    "Quest.wealdTwo.instruction": "Perform Rite of the Weald: Gentle Touch twenty times to rustle large bushes, trees or grass. Mastery enables friendship gain when the rite touches friendly villagers.",
     "Quest.wealdTwo.progression": "bushes rustled",
     "Quest.wealdTwo.before.Effigy.intro": "Your journey continues with this lesson. The wild spaces hold many riches. Call out to the trees, the bushes and the grass, that they may offer you a portion of their bounty. Those creatures that are caught in the midst of your work should be delighted by the gentle caress of power. (New lesson received)",
 
     "Quest.wealdThree.title": "Lesson Three: Wild Growth",
     "Quest.wealdThree.description": "Years of stagnation have starved the valley of it's wilderness. I now have the means and power to recolour the barren spaces with new plant-life.",
-    "Quest.wealdThree.instruction": "Perform Rite of the Weald: Wild Growth to sprout twenty forageables total in the Forest or anywhere with lawn (grass tiles). Unlocks flowers.",
+    "Quest.wealdThree.instruction": "Perform Rite of the Weald: Wild Growth five times on open outdoor maps (excluding the farm) to spawn a variety of different forageables and features. Channelling the Weald requires you to stand still, then cast, and hold for 1-2 seconds until you see the channeling indicator appear and fully expand. Effect occurs five tiles from farmer in cursor or facing direction. Mastery unlocks garden flower spawns.",
     "Quest.wealdThree.progression": "forageables spawned",
-    "Quest.wealdThree.before.Effigy.intro": "This is your task today. Perform the rite as you have been taught, only this time, you may convince the wild to sprout new shoots and buds. Now go, fill the barren spaces with life. (New lesson received)",
+    "Quest.wealdThree.before.Effigy.intro": "This is your task today. Perform the rite as you have been taught, only this time, stand still, and concentrate your energies, so you may convince the wild to sprout new shoots and buds. Now go, fill the barren spaces with life. (New lesson received)",
 
     "Quest.wealdFour.title": "Lesson Four: Cultivation",
     "Quest.wealdFour.description": "My connection to the otherworld deepens. I may channel the power of the Two Kings to enhance the quality and growth of my crops.",

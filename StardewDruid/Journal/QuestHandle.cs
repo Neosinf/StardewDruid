@@ -23,6 +23,7 @@ using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
 using xTile.Dimensions;
+using static StardewValley.Menus.CharacterCustomization;
 
 
 namespace StardewDruid.Journal
@@ -201,7 +202,7 @@ namespace StardewDruid.Journal
 
         // ----------------------------------------------------------------------
 
-        public void FixQuests(string questId)
+        /*public void FixQuests(string questId)
         {
 
             QuestProgress progress = Mod.instance.save.progress[questId];
@@ -225,7 +226,7 @@ namespace StardewDruid.Journal
 
             Mod.instance.save.progress.Remove(questId);
 
-        }
+        }*/
 
         public List<List<string>> OrganiseQuests(bool active = false, bool reverse = false)
         {
@@ -301,6 +302,87 @@ namespace StardewDruid.Journal
             }
 
             return source;
+
+        }
+
+        public Dictionary<int,Journal.ContentComponent> JournalQuests()
+        {
+
+            Dictionary<int, Journal.ContentComponent> journal = new();
+
+            List<string> pageList = new();
+
+            List<string> activeList = new();
+
+            foreach (string id in quests.Keys)
+            {
+
+                if (!Mod.instance.save.progress.ContainsKey(id))
+                {
+                    continue;
+                }
+
+                QuestProgress progress = Mod.instance.save.progress[id];
+
+                if (progress.status == 1 || progress.status == 4)
+                {
+                    if (Mod.instance.Config.activeJournal)
+                    {
+
+                        activeList.Add(id);
+
+                    }
+                    else
+                    {
+
+                        pageList.Add(id);
+
+                    }
+
+                }
+                else
+                if (progress.status >= 1)
+                {
+
+                    pageList.Add(id);
+
+                }
+
+            }
+
+            if (Mod.instance.Config.reverseJournal)
+            {
+
+                pageList.Reverse();
+
+                activeList.Reverse();
+            }
+
+            if (Mod.instance.Config.activeJournal)
+            {
+
+                activeList.AddRange(pageList);
+
+                pageList = activeList;
+
+            }
+
+            int start = 0;
+
+            foreach (string page in pageList)
+            {
+
+                Journal.ContentComponent content = new(ContentComponent.contentTypes.list, page);
+
+                content.text = quests[page].title;
+
+                content.icon = quests[page].icon;
+
+                journal[start++] = content;
+
+            }
+
+            return journal;
 
         }
 
@@ -385,7 +467,7 @@ namespace StardewDruid.Journal
 
             List<string> keys = new(Mod.instance.save.progress.Keys);
 
-            foreach (string key in keys)
+            /*foreach (string key in keys)
             {
                 
                 if (!quests.ContainsKey(key))
@@ -395,7 +477,7 @@ namespace StardewDruid.Journal
 
                 }
 
-            }
+            }*/
 
             keys = new(Mod.instance.save.progress.Keys);
 
@@ -662,7 +744,7 @@ namespace StardewDruid.Journal
 
             Mod.instance.save.progress[questId].status = 3;
 
-            Mod.instance.CastMessage(quests[questId].title + " quest complete", 1, true);
+            Mod.instance.CastMessage(quests[questId].title + " " + DialogueData.Strings(DialogueData.stringkeys.questComplete), 1, true);
 
             if (quests[questId].reward > 0)
             {
@@ -733,7 +815,7 @@ namespace StardewDruid.Journal
                 if (progress % portion == 0)
                 {
 
-                    Mod.instance.CastMessage(quests[quest].title + " " + ((progress * 100) / limit).ToString() + " percent complete", 2, true);
+                    Mod.instance.CastMessage(quests[quest].title + " " + ((progress * 100) / limit).ToString() + " " + DialogueData.Strings(DialogueData.stringkeys.questComplete), 2, true);
                 }
 
             }
@@ -2015,9 +2097,7 @@ namespace StardewDruid.Journal
 
                     friendship += questRating * 8;
 
-                    Mod.instance.CastDisplay($"Collected {questRating} pieces of trash, gained " + friendship + " friendship with mountain residents", 2);
-
-                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.mountain, friendship);
+                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.mountain, friendship, questRating);
 
                     throwRelic = new(Game1.player, Game1.player.Position + new Vector2(192, -64), IconData.relics.runestones_spring);
 
@@ -2049,21 +2129,13 @@ namespace StardewDruid.Journal
 
                     friendship += questRating * 25;
 
-                    Mod.instance.CastDisplay($"Prevented {questRating} acts of destruction, gained " + friendship + " friendship with town residents", 2);
-
-                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.town, friendship);
+                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.town, friendship, questRating);
 
                     break;
 
                 case swordStars:
 
                     Mod.instance.save.rite = Rite.rites.stars;
-
-                    Mod.instance.characters[CharacterHandle.characters.Revenant].showTextAboveHead("A sword for a holy warrior", duration: 2000);
-
-                    Mod.instance.characters[CharacterHandle.characters.Revenant].LookAtTarget(Game1.player.Position);
-
-                    Mod.instance.characters[CharacterHandle.characters.Revenant].TargetIdle(6000);
 
                     swordThrow = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Revenant].Position, SpawnData.swords.holy);
 
@@ -2112,9 +2184,7 @@ namespace StardewDruid.Journal
 
                     friendship += questRating * 8;
 
-                    Mod.instance.CastDisplay($"Destroyed " + questRating + " slimes, gained " + friendship + " friendship with forest residents", 2);
-
-                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.forest, friendship);
+                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.forest, friendship, questRating);
 
                     throwRelic = new(Game1.player, Game1.player.Position + new Vector2(192, -64), IconData.relics.runestones_moon);
 
@@ -2196,9 +2266,7 @@ namespace StardewDruid.Journal
 
                     friendship += questRating * 8;
 
-                    Mod.instance.CastDisplay($"Collected {questRating} pieces of trash, gained " + friendship + " friendship with mountain residents", 2);
-
-                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.mountain, friendship);
+                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.mountain, friendship, questRating);
 
                     break;
 
@@ -2206,9 +2274,7 @@ namespace StardewDruid.Journal
 
                     friendship += questRating * 25;
 
-                    Mod.instance.CastDisplay($"Prevented {questRating} acts of destruction, gained " + friendship + " friendship with town residents", 2);
-
-                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.town, friendship);
+                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.town, friendship, questRating);
 
                     break;
 
@@ -2216,9 +2282,7 @@ namespace StardewDruid.Journal
 
                     friendship += questRating * 8;
 
-                    Mod.instance.CastDisplay($"Destroyed " + questRating + " slimes, gained " + friendship + " friendship with forest residents", 2);
-
-                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.forest, friendship);
+                    VillagerData.CommunityFriendship(VillagerData.villagerLocales.forest, friendship, questRating);
 
                     break;
 

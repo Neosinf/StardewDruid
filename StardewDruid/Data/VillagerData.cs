@@ -16,44 +16,55 @@ namespace StardewDruid.Data
             forest,
         }
 
-        public static List<string> VillagerIndex(villagerLocales locale)
+        public static void CommunityFriendship(villagerLocales locale = villagerLocales.mountain, int friendship = 250, int questRating = 1)
         {
-
+            List<string> NPCIndex;
             switch (locale)
             {
                 default:
                 case villagerLocales.mountain:
-                    return new(){
+
+                    Mod.instance.CastDisplay("Collected " + questRating + " pieces of trash, gained " + friendship + " friendship with mountain residents", 2);
+
+                    NPCIndex = new(){
                         "Sebastian", "Sam",
                         "Maru", "Abigail",
                         "Robin", "Demetrius", "Linus",
                     };
+                    
+                    ModUtility.UpdateFriendship(Game1.player, NPCIndex, friendship);
+                    
+                    break;
 
                 case villagerLocales.town:
-                    return new(){
+
+                    Mod.instance.CastDisplay("Prevented " + questRating + " acts of destruction, gained " + friendship + " friendship with town residents", 2);
+
+                    NPCIndex = new(){
                         "Alex", "Elliott", "Harvey",
                         "Emily", "Penny",
                         "Caroline", "Clint", "Evelyn", "George", "Gus", "Jodi", "Lewis", "Pam", "Pierre", "Vincent",
                     };
+                    
+                    ModUtility.UpdateFriendship(Game1.player, NPCIndex, friendship);
+                    
+                    break;
 
                 case villagerLocales.forest:
-                    return new(){
+
+                    Mod.instance.CastDisplay("Destroyed " + questRating + " slimes, gained " + friendship + " friendship with forest residents", 2);
+
+                    NPCIndex = new(){
                         "Shane",
                         "Leah", "Haley",
                         "Marnie", "Jas", "Wizard", "Willy",
                     };
 
+                    ModUtility.UpdateFriendship(Game1.player, NPCIndex, friendship);
+                    
+                    break;
 
-            }
-
-        }
-
-        public static void CommunityFriendship(villagerLocales id = villagerLocales.mountain, int friendship = 250)
-        {
-
-            List<string> NPCIndex = VillagerData.VillagerIndex(id);
-
-            ModUtility.UpdateFriendship(Game1.player, NPCIndex, friendship);
+            }           
 
         }
 

@@ -132,15 +132,16 @@ namespace StardewDruid.Cast
             push,
             gravity,
             harvest,
+            tornado,
             knock,
             morph,
             mug,
             daze,
             doom,
             immolate,
-            blind,
             capture,
             shock,
+            glare,
         }
 
         public List<effects> added = new();
@@ -1627,6 +1628,44 @@ namespace StardewDruid.Cast
 
             animations.Add(bandAnimation);
 
+            if (added.Contains(effects.tornado))
+            {
+
+                TemporaryAnimatedSprite innerAnimation = Mod.instance.iconData.CreateImpact(
+                    location,
+                    impact,
+                    IconData.impacts.spiral,
+                    4f,
+                    new()
+                    {
+                        color = Mod.instance.iconData.gradientColours[IconData.schemes.mists][2],
+                        loops = 10,
+                        flip = true,
+                        alpha = 0.2f,
+                        layer = location.IsOutdoors ? impact.Y / 10000 : 990f
+                    }
+                );
+
+                animations.Add(innerAnimation);
+
+                TemporaryAnimatedSprite waterAnimation = Mod.instance.iconData.CreateImpact(
+                    location, 
+                    impact, 
+                    IconData.impacts.spiral, 
+                    6f, 
+                    new() { 
+                        color = Mod.instance.iconData.gradientColours[IconData.schemes.mists][1], 
+                        loops = 10, 
+                        flip = true, 
+                        alpha = 0.2f, 
+                        layer = location.IsOutdoors ? impact.Y / 10000 : 990f 
+                    }
+                );
+                
+                animations.Add(waterAnimation);
+
+            }
+
             TemporaryAnimatedSprite cloudAnimation = Mod.instance.iconData.CreateImpact(location, impact, IconData.impacts.spiral, 8f, new() { loops = 10, flip = true, alpha = 0.05f, layer = location.IsOutdoors ? impact.Y / 10000 : 990f });
 
             animations.Add(cloudAnimation);
@@ -1833,6 +1872,7 @@ namespace StardewDruid.Cast
                     case effects.daze:
                     case effects.doom:
                     case effects.immolate:
+                    case effects.glare:
 
                         CurseEffect(effect);
 
@@ -1853,6 +1893,12 @@ namespace StardewDruid.Cast
                     case effects.harvest:
 
                         HarvestEffect();
+
+                        break;
+
+                    case effects.tornado:
+
+                        TornadoEffect();
 
                         break;
 
@@ -2165,55 +2211,6 @@ namespace StardewDruid.Cast
 
         }
 
-        public void GravityEffect()
-        {
-
-            Gravity gravity;
-
-            if (!Mod.instance.eventRegister.ContainsKey("gravityEffect"))
-            {
-                gravity = new();
-
-                gravity.eventId = "gravityEffect";
-
-                gravity.EventActivate();
-
-            }
-            else
-            {
-
-                gravity = Mod.instance.eventRegister["gravityEffect"] as Gravity;
-            }
-
-            gravity.AddTarget(location, ModUtility.PositionToTile(impact), 4, radius * 2);
-
-        }
-
-        public void HarvestEffect()
-        {
-
-            Harvest harvest;
-
-            if (!Mod.instance.eventRegister.ContainsKey("harvestEffect"))
-            {
-
-                harvest = new();
-
-                harvest.eventId = "harvestEffect";
-
-                harvest.EventActivate();
-
-            }
-            else
-            {
-
-                harvest = Mod.instance.eventRegister["harvestEffect"] as Harvest;
-            }
-
-            harvest.AddTarget(location, ModUtility.PositionToTile(impact));
-
-        }
-
         public void CaptureEffect()
         {
 
@@ -2299,6 +2296,84 @@ namespace StardewDruid.Cast
             }
 
         }
+
+        // ========================================= gravity well
+
+
+        public void GravityEffect()
+        {
+
+            Gravity gravity;
+
+            if (!Mod.instance.eventRegister.ContainsKey("gravityEffect"))
+            {
+                gravity = new();
+
+                gravity.eventId = "gravityEffect";
+
+                gravity.EventActivate();
+
+            }
+            else
+            {
+
+                gravity = Mod.instance.eventRegister["gravityEffect"] as Gravity;
+            }
+
+            gravity.AddTarget(location, ModUtility.PositionToTile(impact), 4, radius * 2);
+
+        }
+
+        public void HarvestEffect()
+        {
+
+            Harvest harvest;
+
+            if (!Mod.instance.eventRegister.ContainsKey("harvestEffect"))
+            {
+
+                harvest = new();
+
+                harvest.eventId = "harvestEffect";
+
+                harvest.EventActivate();
+
+            }
+            else
+            {
+
+                harvest = Mod.instance.eventRegister["harvestEffect"] as Harvest;
+            }
+
+            harvest.AddTarget(location, ModUtility.PositionToTile(impact));
+
+        }
+
+        public void TornadoEffect()
+        {
+
+            Tornado tornado;
+
+            if (!Mod.instance.eventRegister.ContainsKey("tornadoEffect"))
+            {
+
+                tornado = new();
+
+                tornado.eventId = "tornadoEffect";
+
+                tornado.EventActivate();
+
+            }
+            else
+            {
+
+                tornado = Mod.instance.eventRegister["tornadoEffect"] as Tornado;
+            }
+
+            tornado.AddTarget(location, ModUtility.PositionToTile(impact));
+
+        }
+
 
         // ========================================= crate
 

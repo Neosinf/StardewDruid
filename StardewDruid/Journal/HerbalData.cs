@@ -343,7 +343,7 @@ namespace StardewDruid.Journal
 
                 level = 3,
 
-                duration = 300,
+                duration = 360,
 
                 title = Mod.instance.Helper.Translation.Get("Potion.magnus_ligna.title"),
 
@@ -381,7 +381,7 @@ namespace StardewDruid.Journal
 
                 level = 4,
 
-                duration = 360,
+                duration = 480,
 
                 title = Mod.instance.Helper.Translation.Get("Potion.optimus_ligna.title"),
 
@@ -535,7 +535,7 @@ namespace StardewDruid.Journal
 
                 level = 3,
 
-                duration = 300,
+                duration = 360,
 
                 title = Mod.instance.Helper.Translation.Get("Potion.magnus_impes.title"),
 
@@ -573,7 +573,7 @@ namespace StardewDruid.Journal
 
                 level = 4,
 
-                duration = 360,
+                duration = 480,
 
                 title = Mod.instance.Helper.Translation.Get("Potion.optimus_impes.title"),
 
@@ -616,7 +616,7 @@ namespace StardewDruid.Journal
 
                 description = Mod.instance.Helper.Translation.Get("Potion.celeri.description"),
 
-                ingredients = new() {  ["(O)129"] = "Sardine", ["(O)131"] = "Anchovy", ["(O)137"] = "Smallmouth Bass", ["(O)145"] = "Sunfish", ["(O)132"] = "Bream", ["(O)147"] = "Herring", ["(O)142"] = "Carp", ["(O)156"] = "Ghostfish", ["(O)684"] = "Bug Meat x2", },
+                ingredients = new() { ["(O)152"] = "Algae", ["(O)153"] = "Seaweed", ["(O)157"] = "White Algae", ["(O)815"] = "Tea Leaves", ["(O)433"] = "Coffee Bean", ["(O)167"] = "Joja Cola", },
 
                 bases = new() { },
 
@@ -653,7 +653,7 @@ namespace StardewDruid.Journal
 
                 description = Mod.instance.Helper.Translation.Get("Potion.melius_celeri.description"),
 
-                ingredients = new() { ["(O)152"] = "Algae", ["(O)153"] = "Seaweed", ["(O)157"] = "White Algae", ["(O)815"] = "Tea Leaves", ["(O)433"] = "Coffee Bean", ["(O)167"] = "Joja Cola", },
+                ingredients = new() { ["(O)80"] = "Quartz", ["(O)86"] = "Earth Crystal", ["(O)881"] = "Bone Fragment", ["(O)168"] = "Trash", ["(O)169"] = "Driftwood", ["(O)170"] = "Broken Glasses", ["(O)171"] = "Broken CD", },
 
                 health = 20,
 
@@ -692,8 +692,7 @@ namespace StardewDruid.Journal
 
                 description = Mod.instance.Helper.Translation.Get("Potion.satius_celeri.description"),
 
-                //ingredients = new() { ["(O)80"] = "Quartz", ["(O)86"] = "Earth Crystal", ["(O)392"] = "Nautilus Shell", ["(O)393"] = "Coral", },
-                ingredients = new() { ["(O)80"] = "Quartz", ["(O)86"] = "Earth Crystal", ["(O)881"] = "Bone Fragment", ["(O)168"] = "Trash", ["(O)169"] = "Driftwood", ["(O)170"] = "Broken Glasses", ["(O)171"] = "Broken CD", ["(O)172"] = "Soggy Newspaper",  },
+                ingredients = new() { ["(O)129"] = "Sardine", ["(O)131"] = "Anchovy", ["(O)137"] = "Smallmouth Bass", ["(O)145"] = "Sunfish", ["(O)132"] = "Bream", ["(O)147"] = "Herring", ["(O)142"] = "Carp", ["(O)156"] = "Ghostfish", },
 
                 health = 30,
 
@@ -726,7 +725,7 @@ namespace StardewDruid.Journal
 
                 level = 3,
 
-                duration = 300,
+                duration = 360,
 
                 title = Mod.instance.Helper.Translation.Get("Potion.magnus_celeri.title"),
 
@@ -764,7 +763,7 @@ namespace StardewDruid.Journal
 
                 level = 4,
 
-                duration = 360,
+                duration = 480,
 
                 title = Mod.instance.Helper.Translation.Get("Potion.optimus_celeri.title"),
 
@@ -924,11 +923,11 @@ namespace StardewDruid.Journal
 
             bool craftable = true;
 
-            Dictionary<string, int> more = new()
+            /*Dictionary<string, int> more = new()
             {
                 ["(O)684"] = 2,
 
-            };
+            };*/
 
             if(herbal.ingredients.Count > 0)
             {
@@ -954,14 +953,14 @@ namespace StardewDruid.Journal
 
                         int stack = Game1.player.Items[i].Stack;
 
-                        if (more.ContainsKey(@checkItem.QualifiedItemId))
+                        /*if (more.ContainsKey(@checkItem.QualifiedItemId))
                         {
 
                             double revise = stack / 2;
 
                             stack = (int)Math.Floor(revise);
 
-                        }
+                        }*/
 
                         if (!herbalism[id].amounts.ContainsKey(@checkItem.QualifiedItemId))
                         {
@@ -1082,11 +1081,11 @@ namespace StardewDruid.Journal
 
             }
 
-            Dictionary<string, int> more = new()
+            /*Dictionary<string, int> more = new()
             {
                 ["(O)684"] = 2,
 
-            };
+            };*/
 
             if (herbal.bases.Count > 0)
             {
@@ -1153,7 +1152,7 @@ namespace StardewDruid.Journal
 
                             int cost = 1;
 
-                            if (more.ContainsKey(@checkItem.QualifiedItemId))
+                           /* if (more.ContainsKey(@checkItem.QualifiedItemId))
                             {
 
                                 double revise = stack / 2;
@@ -1169,7 +1168,7 @@ namespace StardewDruid.Journal
 
                                 cost = 2;
 
-                            }
+                            }*/
 
                             int brew = Math.Min(stack, (draught - brewed));
 
@@ -1235,7 +1234,7 @@ namespace StardewDruid.Journal
 
                         int cost = 1;
 
-                        if (more.ContainsKey(@checkItem.QualifiedItemId))
+                        /*if (more.ContainsKey(@checkItem.QualifiedItemId))
                         {
 
                             double revise = stack / 2;
@@ -1251,7 +1250,7 @@ namespace StardewDruid.Journal
 
                             cost = 2;
 
-                        }
+                        }*/
 
                         int brew = Math.Min(stack, (draught - brewed));
 
@@ -1649,7 +1648,7 @@ namespace StardewDruid.Journal
             Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, projectile = 4, counter = -15, sound = SpellHandle.sounds.silent, });
             Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, projectile = 4,  sound = SpellHandle.sounds.thunder, });
 
-            Microsoft.Xna.Framework.Rectangle relicRect = Mod.instance.iconData.RelicRectangles(IconData.relics.crow_hammer);
+            Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles(IconData.relics.crow_hammer);
 
             TemporaryAnimatedSprite animation = new(0,1500, 1, 1, origin - new Vector2(16,60), false, false)
             {

@@ -307,7 +307,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(20);
 
-                    Microsoft.Xna.Framework.Rectangle relicRect = Mod.instance.iconData.RelicRectangles(IconData.relics.skull_saurus);
+                    Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles(IconData.relics.skull_saurus);
 
                     TemporaryAnimatedSprite animation = new(0, 5000, 1, 1, companions[0].Position + new Vector2(32,32), false, false)
                     {
@@ -758,7 +758,7 @@ namespace StardewDruid.Event.Scene
 
                 case 900:
 
-                    Microsoft.Xna.Framework.Rectangle relicRectTwo = Mod.instance.iconData.RelicRectangles(IconData.relics.skull_saurus);
+                    Microsoft.Xna.Framework.Rectangle relicRectTwo = IconData.RelicRectangles(IconData.relics.skull_saurus);
 
                     TemporaryAnimatedSprite animationTwo = new(0, 20000, 1, 1, new Vector2(27,15)*64 + new Vector2(32), false, false)
                     {

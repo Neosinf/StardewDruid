@@ -55,7 +55,7 @@ namespace StardewDruid.Event
 
             render = renders.target;
 
-            rectangle = Mod.instance.iconData.DisplayRect(display);
+            rectangle = IconData.DisplayRectangle(display);
 
         }
 
@@ -72,7 +72,7 @@ namespace StardewDruid.Event
 
             render = renders.decoration;
 
-            rectangle = Mod.instance.iconData.DecorativeRect(Decoration);
+            rectangle = IconData.DecorativeRectangle(Decoration);
 
         }
 

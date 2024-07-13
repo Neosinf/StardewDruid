@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Media;
 using Netcode;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Cast.Ether;
@@ -8,7 +7,6 @@ using StardewDruid.Cast.Fates;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Stars;
 using StardewDruid.Cast.Weald;
-using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Event;
 using StardewDruid.Journal;
@@ -16,36 +14,14 @@ using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buffs;
-using StardewValley.Characters;
-using StardewValley.GameData.HomeRenovations;
-using StardewValley.GameData.Movies;
 using StardewValley.Locations;
-using StardewValley.Minigames;
 using StardewValley.Objects;
-using StardewValley.Projectiles;
-using StardewValley.Quests;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Diagnostics.Metrics;
-using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Reflection.Metadata.Ecma335;
-using xTile.Dimensions;
 using xTile.Layers;
-using static StardewDruid.Cast.Rite;
-using static StardewDruid.Cast.SpellHandle;
-using static StardewDruid.Cast.Weald.Wildbounty;
-using static StardewDruid.Data.IconData;
-using static StardewValley.Menus.CharacterCustomization;
-using static StardewValley.Minigames.BoatJourney;
-using static StardewValley.Minigames.CraneGame;
-using static StardewValley.Minigames.TargetGame;
-using static System.Net.Mime.MediaTypeNames;
-
 
 namespace StardewDruid.Cast
 {
@@ -105,7 +81,19 @@ namespace StardewDruid.Cast
 
         public rites appliedBuff;
 
-        public skies channelling;
+        // ----------------------------------------------------
+
+        public IconData.cursors cursoring;
+
+        public int cursorTimer;
+
+        public Vector2 cursorVector;
+
+        public int cursorDistance;
+
+        // ----------------------------------------------------
+
+        public IconData.skies channelling;
 
         public int channelLimit;
 
@@ -204,7 +192,7 @@ namespace StardewDruid.Cast
             b.Draw(
                 Mod.instance.iconData.decorationTexture,
                 drawPosition +new Vector2(32),
-                Mod.instance.iconData.DecorativeRect(Mod.instance.iconData.riteDecorations[castType]),
+                IconData.DecorativeRectangle(Mod.instance.iconData.riteDecorations[castType]),
                 Color.White * 0.8f,
                 rotate,
                 new Vector2(32),
@@ -219,7 +207,7 @@ namespace StardewDruid.Cast
                 b.Draw(
                     Mod.instance.iconData.cursorTexture,
                     drawPosition + new Vector2(32),
-                    Mod.instance.iconData.CursorRect(chargeCursors[chargeType]),
+                    IconData.CursorRectangle(chargeCursors[chargeType]),
                     Color.White*0.8f,
                     rotate,
                     new Vector2(24),
@@ -230,7 +218,7 @@ namespace StardewDruid.Cast
 
             }
 
-            if(channelling != skies.none)
+            if(channelling != IconData.skies.none)
             {
 
                 b.Draw(
@@ -243,6 +231,46 @@ namespace StardewDruid.Cast
                     1f + (2f * (((float)channelLimit - (float)channelTimer) / (float)channelLimit)),
                     SpriteEffects.None,
                     0.0003f
+                );
+
+            }
+
+            if (cursoring != IconData.cursors.none)
+            {
+
+                Vector2 cursorPosition = drawPosition;
+
+                if(cursorVector != Vector2.Zero)
+                {
+
+                    cursorPosition = new(cursorVector.X - (float)Game1.viewport.X, cursorVector.Y - (float)Game1.viewport.Y);
+
+                }
+                else if (cursorDistance != -1)
+                {
+
+                    Vector2 cursorTarget = GetTargetCursor(Game1.player.FacingDirection, cursorDistance);
+
+                    cursorPosition = new(cursorTarget.X - (float)Game1.viewport.X, cursorTarget.Y - (float)Game1.viewport.Y);
+
+                }
+                else
+                {
+
+                    cursorPosition += new Vector2(32);
+
+                }
+                
+                b.Draw(
+                    Mod.instance.iconData.cursorTexture,
+                    cursorPosition,
+                    IconData.CursorRectangle(cursoring),
+                    Color.White * 0.8f,
+                    rotate,
+                    new Vector2(24),
+                    3f,
+                    SpriteEffects.None,
+                    0.0004f
                 );
 
             }
@@ -339,6 +367,8 @@ namespace StardewDruid.Cast
             castLevel = 0;
 
             castLocation = Game1.player.currentLocation;
+
+            CursorShutdown();
 
         }
 
@@ -456,6 +486,8 @@ namespace StardewDruid.Cast
             ChargeUpdate();
 
             ChannelUpdate();
+
+            CursorUpdate();
 
             if (!castActive)
             {
@@ -681,7 +713,7 @@ namespace StardewDruid.Cast
 
                         knockeffect.display = IconData.impacts.puff;
 
-                        knockeffect.scheme = schemes.fates;
+                        knockeffect.scheme = IconData.schemes.fates;
 
                         knockeffect.instant = true;
 
@@ -744,7 +776,7 @@ namespace StardewDruid.Cast
 
                         draineffect.added.Add(ChargeEffect(charges.mistsCharge));
 
-                        draineffect.display = impacts.mists;
+                        draineffect.display = IconData.impacts.mists;
 
                         draineffect.local = true;
 
@@ -793,6 +825,30 @@ namespace StardewDruid.Cast
             channelLimit = timer;
 
             channelTimer = timer;
+
+        }
+
+        public void cursor(IconData.cursors cursor, int timer, int distance = -1, int x = 0, int y = 0)
+        {
+
+            cursoring = cursor;
+
+            cursorTimer = timer;
+
+            cursorDistance = distance;
+
+            if(x > 0 || y > 0)
+            {
+
+                cursorVector = new Vector2(x, y);
+
+            }
+            else
+            {
+
+                cursorVector = Vector2.Zero;
+
+            }
 
         }
 
@@ -923,7 +979,7 @@ namespace StardewDruid.Cast
         public void ChannelUpdate()
         {
 
-            if (channelling != skies.none)
+            if (channelling != IconData.skies.none)
             {
 
                 channelTimer--;
@@ -931,7 +987,7 @@ namespace StardewDruid.Cast
                 if(channelTimer <= 0)
                 {
 
-                    channelling = skies.none;
+                    channelling = IconData.skies.none;
 
                 }
 
@@ -945,9 +1001,41 @@ namespace StardewDruid.Cast
             if(channelling == sky)
             {
 
-                channelling = skies.none;
+                channelling = IconData.skies.none;
 
             }
+
+        }
+
+        public void CursorUpdate()
+        {
+
+            if (cursoring != IconData.cursors.none)
+            {
+
+                cursorTimer--;
+
+                if (cursorTimer <= 0)
+                {
+
+                    cursoring = IconData.cursors.none;
+
+                }
+
+            }
+
+        }
+        
+        public void CursorShutdown()
+        {
+
+            cursoring = IconData.cursors.none;
+
+            cursorTimer = 0;
+
+            cursorVector = Vector2.Zero;
+
+            cursorDistance = -1;
 
         }
 
@@ -1244,29 +1332,17 @@ namespace StardewDruid.Cast
         public void CastWeald()
         {
 
-            int chargeFactor = castLevel % 4;
-
-            int chargeLevel = (chargeFactor * 2) + 1;
-
-            Layer backLayer = castLocation.Map.GetLayer("Back");
-
-            Layer buildingLayer = castLocation.Map.GetLayer("Buildings");
-
-            string locationName = castLocation.Name;
-
-            float damageLevel = Mod.instance.CombatDamage();
 
             //---------------------------------------------
             // Weald Sound
             //---------------------------------------------
 
-            if (castLevel == 0)
+            if (castLevel % 6 == 0)
             {
                 
                 Game1.player.currentLocation.playSound("discoverMineral");
 
             }
-
 
             if (castLocation.terrainFeatures.ContainsKey(castVector))
             {
@@ -1300,67 +1376,7 @@ namespace StardewDruid.Cast
             if (castLocation.objects.Count() > 0 && spawnIndex.weeds)
             {
 
-                Cast.Weald.Clearance clearance = new();
-
-                for (int i = 0; i < 5; i++)
-                {
-
-                    List<Vector2> weedVectors = ModUtility.GetTilesWithinRadius(castLocation, castVector, i);
-
-                    foreach (Vector2 tileVector in weedVectors)
-                    {
-
-                        if (castLocation.objects.ContainsKey(tileVector))
-                        {
-
-                            StardewValley.Object tileObject = castLocation.objects[tileVector];
-
-                            if (tileObject.IsBreakableStone() && Mod.instance.questHandle.IsComplete(QuestHandle.wealdOne))
-                            {
-
-                                if (SpawnData.StoneIndex().Contains(tileObject.ParentSheetIndex))
-                                {
-
-                                    clearance.CastActivate(tileVector, damageLevel);
-
-                                }
-
-                            }
-                            else if (tileObject.IsTwig() || tileObject.IsWeeds() || tileObject.QualifiedItemId == "(O)590" || tileObject.QualifiedItemId == "(O)SeedSpot")
-                            {
-
-                                clearance.CastActivate(tileVector, damageLevel);
-
-                            }
-                            else if (castLocation is MineShaft && tileObject is BreakableContainer)
-                            {
-
-                                clearance.CastActivate(tileVector, damageLevel);
-
-                            }
-
-                        }
-
-                        if (castLocation.terrainFeatures.ContainsKey(tileVector))
-                        {
-
-                            if (castLocation.terrainFeatures[tileVector] is StardewValley.TerrainFeatures.Tree treeFeature)
-                            {
-                                
-                                if (treeFeature.growthStage.Value == 0 && ModUtility.NeighbourCheck(castLocation,tileVector).Count > 0)
-                                {
-
-                                    clearance.CastActivate(tileVector, damageLevel, false);
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                }
+                CastClearance();
 
             }
 
@@ -1388,29 +1404,23 @@ namespace StardewDruid.Cast
             // Friendship
             //---------------------------------------------
 
-            if (castLevel % 3 == 0)
+            if (Mod.instance.questHandle.IsGiven(QuestHandle.wealdTwo))
             {
-
-                if (Mod.instance.questHandle.IsGiven(QuestHandle.wealdTwo))
+                
+                if (castLevel % 3 == 0)
                 {
 
-                    CastFriendship();
+                    CastGlimmer();
 
                 }
+
+                CastBounty();
 
             }
 
             //---------------------------------------------
             // Wild bounty / growth
             //---------------------------------------------
-
-
-            if (Mod.instance.questHandle.IsGiven(QuestHandle.wealdTwo))
-            {
-
-                CastWildGrowth();
-
-            }
 
             if (Mod.instance.questHandle.IsGiven(QuestHandle.wealdFour))
             {
@@ -1419,159 +1429,65 @@ namespace StardewDruid.Cast
 
             }
 
-
         }
 
-        public void CastFriendship()
+        public void CastClearance()
         {
 
-            GameLocation location = Game1.player.currentLocation;
+            Cast.Weald.Clearance clearance = new();
 
-            Vector2 origin = Game1.player.Position;
-
-            List<NPC> villagers = ModUtility.GetFriendsInLocation(location, true);
-
-            float threshold = 640;
-
-            foreach (NPC witness in villagers)
+            for (int i = 0; i < 5; i++)
             {
 
-                if (Mod.instance.Witnessed(ReactionData.reactions.weald,witness))
+                List<Vector2> weedVectors = ModUtility.GetTilesWithinRadius(castLocation, castVector, i);
+
+                foreach (Vector2 tileVector in weedVectors)
                 {
 
-                    continue;
-
-                }
-
-                if (Vector2.Distance(witness.Position, origin) >= threshold)
-                {
-
-                    continue;
-
-                }
-
-                witness.faceTowardFarmerForPeriod(3000, 4, false, Game1.player);
-
-                Game1.player.friendshipData[witness.Name].TalkedToToday = true;
-
-                Game1.player.changeFriendship(25, witness);
-
-                ReactionData.ReactTo(witness, ReactionData.reactions.weald, 25);
-
-                SpellHandle sparklesparkle = new(witness.Position, 192, IconData.impacts.nature, new()) { instant = true };
-
-                Mod.instance.spellRegister.Add(sparklesparkle);
-
-            }
-
-            if (location is Farm farmLocation)
-            {
-
-
-                Vector2 bowl = farmLocation.GetStarterPetBowlLocation();
-
-                if (Vector2.Distance(bowl * 64, origin) <= threshold)
-                {
-
-                    Mod.instance.virtualCan.WaterLeft = 100;
-
-                    farmLocation.performToolAction(Mod.instance.virtualCan, (int)bowl.X+1, (int)bowl.Y);
-
-                }
-
-                foreach (NPC witness in location.characters)
-                {
-
-                    if (witness is Pet petPet)
+                    if (castLocation.objects.ContainsKey(tileVector))
                     {
 
-                        if (Mod.instance.Witnessed(ReactionData.reactions.weald, witness))
+                        StardewValley.Object tileObject = castLocation.objects[tileVector];
+
+                        if (tileObject.IsBreakableStone() && Mod.instance.questHandle.IsComplete(QuestHandle.wealdOne))
                         {
 
-                            continue;
+                            if (SpawnData.StoneIndex().Contains(tileObject.ParentSheetIndex))
+                            {
+
+                                clearance.CastActivate(tileVector);
+
+                            }
+
+                        }
+                        else if (tileObject.IsTwig() || tileObject.IsWeeds() || 
+                            tileObject.QualifiedItemId == "(O)343" || tileObject.QualifiedItemId == "(O)450" || tileObject.QualifiedItemId == "(O)590" || tileObject.QualifiedItemId == "(O)SeedSpot")
+                        {
+
+                            clearance.CastActivate(tileVector);
+
+                        }
+                        else if (castLocation is MineShaft && tileObject is BreakableContainer)
+                        {
+
+                            clearance.CastActivate(tileVector);
 
                         }
 
-                        if (Vector2.Distance(petPet.Position, origin) >= threshold)
+                    }
+
+                    if (castLocation.terrainFeatures.ContainsKey(tileVector))
+                    {
+
+                        if (castLocation.terrainFeatures[tileVector] is StardewValley.TerrainFeatures.Tree treeFeature)
                         {
-                            continue;
-                        }
 
-                        petPet.checkAction(Game1.player, location);
+                            if (treeFeature.growthStage.Value == 0 && ModUtility.NeighbourCheck(castLocation, tileVector).Count > 0)
+                            {
 
-                        continue;
+                                clearance.CastActivate(tileVector, false);
 
-                    }
-
-                }
-
-                foreach (KeyValuePair<long, FarmAnimal> pair in farmLocation.animals.Pairs)
-                {
-
-                    if (Mod.instance.Witnessed(ReactionData.reactions.weald, pair.Value.myID.ToString()))
-                    {
-
-                        continue;
-
-                    }
-
-                    if (Vector2.Distance(pair.Value.Position, origin) >= threshold)
-                    {
-
-                        continue;
-
-                    }
-
-                    ModUtility.PetAnimal(Game1.player, pair.Value);
-
-                    Mod.instance.AddWitness(ReactionData.reactions.weald, pair.Value.myID.ToString());
-                
-                }
-
-            }
-
-            if (location is AnimalHouse animalLocation)
-            {
-
-                foreach (KeyValuePair<long, FarmAnimal> pair in animalLocation.animals.Pairs)
-                {
-
-                    if (Mod.instance.Witnessed(ReactionData.reactions.weald, pair.Value.myID.ToString()))
-                    {
-
-                        continue;
-
-                    }
-
-                    if (Vector2.Distance(pair.Value.Position, origin) >= threshold)
-                    {
-
-                        continue;
-
-                    }
-
-
-                    ModUtility.PetAnimal(Game1.player, pair.Value);
-
-                    Mod.instance.AddWitness(ReactionData.reactions.weald, pair.Value.myID.ToString());
-
-                }
-
-                for (int i = 0; i < location.map.Layers[0].LayerWidth; i++)
-                {
-
-                    for (int j = 0; j < location.map.Layers[0].LayerHeight; j++)
-                    {
-
-                        if (location.doesTileHaveProperty(i, j, "Trough", "Back") == null)
-                        {
-                            continue;
-                        }
-                        Vector2 trough = new Vector2(i, j);
-
-                        if (!location.objects.ContainsKey(trough))
-                        {
-                            location.objects.Add(trough, new StardewValley.Object("178", 1));
+                            }
 
                         }
 
@@ -1583,7 +1499,16 @@ namespace StardewDruid.Cast
 
         }
 
-        public void CastWildGrowth()
+        public void CastGlimmer()
+        {
+
+            Glimmer glimmer = new();
+
+            glimmer.CastActivate();
+
+        }
+
+        public void CastBounty()
         {
 
             // ---------------------------------------------
@@ -1601,42 +1526,36 @@ namespace StardewDruid.Cast
 
             Vector2 playerTile = ModUtility.PositionToTile(Game1.player.Position);
 
-            for (int i = 0; i < 4; i++)
+            Vector2 sqtVector = new((int)(playerTile.X - (playerTile.X % 16)), (int)(playerTile.Y -(playerTile.Y % 16)));
+
+            if (terrainCasts[castLocation.Name].ContainsKey(sqtVector))
+            {
+                
+                for(int i = 0; i < 4; i++)
+                {
+                    
+                    Mod.instance.iconData.ImpactIndicator(
+                        castLocation,
+                        (sqtVector + new Vector2((i % 2) * 4,i == 0 ? 0 : (i / 2) * 4) + new Vector2(Mod.instance.randomIndex.Next(8), Mod.instance.randomIndex.Next(8))) * 64,
+                        IconData.impacts.glare,
+                        0.8f + (Mod.instance.randomIndex.Next(5) * 0.2f),
+                        new() { alpha = 0.35f }
+                    );
+
+                }
+
+                return;
+
+            }
+
+            terrainCasts[castLocation.Name][sqtVector] = 0;
+
+            Bounty bounty = new(); bounty.CastActivate(castLocation, sqtVector);
+
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdTwo))
             {
 
-                List<Vector2> castSelection = ModUtility.GetTilesWithinRadius(Game1.player.currentLocation,playerTile,4,true,Mod.instance.randomIndex.Next(8));
-
-                if(castSelection.Count == 0)
-                {
-
-                    continue;
-
-                }
-
-                Vector2 useVector = castSelection.First();
-
-                Vector2 sqtVector = new((int)(useVector.X - (useVector.X % 9)), (int)(useVector.Y -(useVector.Y % 9)));
-
-                if (terrainCasts[castLocation.Name].ContainsKey(sqtVector))
-                {
-
-
-                    Mod.instance.iconData.ImpactIndicator(castLocation, useVector * 64, IconData.impacts.glare, 0.8f + (Mod.instance.randomIndex.Next(5) * 0.2f), new() { alpha = 0.35f });
-
-                    continue;
-
-                }
-
-                terrainCasts[castLocation.Name][sqtVector] = 0;
-
-                Wildbounty bounty = new(); bounty.CastActivate(castLocation, sqtVector);
-
-                if (Mod.instance.questHandle.IsGiven(QuestHandle.wealdThree))
-                {
-
-                    Wildgrowth growth = new(); growth.CastActivate(castLocation, sqtVector);
-
-                }
+                Mod.instance.questHandle.UpdateTask(QuestHandle.wealdTwo, 1);
 
             }
 
@@ -1645,55 +1564,73 @@ namespace StardewDruid.Cast
         public void CastCultivate()
         {
 
-            if (castLevel != 0) { return; }
-
-            if (Mod.instance.eventRegister.ContainsKey("cultivate")) {
-
-
-                if (Mod.instance.eventRegister["cultivate"] is Cultivate cultivate)
-                {
-
-                    if (!cultivate.eventLocked)
-                    {
-
-                        cultivate.eventAbort = true;
-
-                    }
-
-                }
-
+            if (castLevel != 0)
+            { 
+                
                 return; 
             
             }
 
-            if (!castLocation.IsFarm && !castLocation.IsGreenhouse)
-            { 
-                
-                if(castLocation is IslandEast islandEast)
-                {
+            if (spawnIndex.cultivate)
+            {
 
-                    if(islandEast.getTileSheetIDAt((int)Game1.player.Tile.X, (int)Game1.player.Tile.Y, "Back") == "untitled tile sheet2")
-                    {
-
-                        return;
-
-                    }
-
-                }
-                else
+                if (Mod.instance.eventRegister.ContainsKey("cultivate"))
                 {
 
                     return;
 
                 }
+
+                Cultivate cultivateEvent = new();
+
+                cultivateEvent.EventSetup(Game1.player.Position, "cultivate");
+
+                cultivateEvent.EventActivate();
+
+            }            
             
+            if (spawnIndex.wilderness)
+            {
+                
+                if (Mod.instance.eventRegister.ContainsKey("wilderness"))
+                {
+
+                    return;
+
+                }
+
+                if (!specialCasts.ContainsKey(castLocation.Name))
+                {
+
+                    specialCasts[castLocation.Name] = new();
+
+                }
+
+                int costing = 8;
+
+                for (int i = 0; i < 5; i++)
+                {
+
+                    costing += i * 4;
+
+                    if (!specialCasts[castLocation.Name].Contains("wilderness" + i.ToString()))
+                    {
+
+                        break;
+
+                    }
+
+                }
+
+                Wilderness wildernessEvent = new();
+
+                wildernessEvent.EventSetup(Game1.player.Position, "wilderness");
+
+                wildernessEvent.costing = costing;
+
+                wildernessEvent.EventActivate();
+
             }
-
-            Cultivate cultivateEvent = new();
-
-            cultivateEvent.EventSetup(Game1.player.Position, "cultivate");
-
-            cultivateEvent.EventActivate();
 
         }
 
@@ -1773,7 +1710,7 @@ namespace StardewDruid.Cast
 
             rockSpell.type = SpellHandle.spells.orbital;
 
-            rockSpell.missile = missiles.rockfall;
+            rockSpell.missile = IconData.missiles.rockfall;
 
             rockSpell.projectile = 2;
 
@@ -1799,12 +1736,6 @@ namespace StardewDruid.Cast
 
             Mod.instance.spellRegister.Add(rockSpell);
 
-            if (!scene)
-            {
-                
-
-            }
-
         }
 
         public void CastMists()
@@ -1814,12 +1745,14 @@ namespace StardewDruid.Cast
             // Mists
             //---------------------------------------------
 
-            if (castLevel == 0)
+            if (castLevel % 6 == 0)
             {
 
                 Game1.player.currentLocation.playSound("thunder_small");
 
             }
+
+            cursor(IconData.cursors.mists, 75, 320);
 
             //---------------------------------------------
             // Sunder
@@ -1874,13 +1807,12 @@ namespace StardewDruid.Cast
 
             }
 
-            if (castLevel % 2 == 0)
-            {
-                
-                Mod.instance.iconData.CursorIndicator(castLocation, castVector * 64, IconData.cursors.mists, new() { interval = 1200f, alpha = 1f, scale = 2f, fade = 0.0008f});
+            //if (castLevel % 2 == 0)
+            //{
 
-            }
-            
+            //    Mod.instance.iconData.CursorIndicator(castLocation, castVector * 64, IconData.cursors.mists, new() { interval = 1200f, alpha = 1f, scale = 2f, fade = 0.0008f});
+
+            //}
 
         }
 
@@ -2073,7 +2005,6 @@ namespace StardewDruid.Cast
 
         }
 
-        //public void CastSmite(List<Vector2> origins, float damage)
         public void CastSmite()
         {
 
@@ -2081,13 +2012,7 @@ namespace StardewDruid.Cast
             // Monster iteration
             // ---------------------------------------------
 
-            //int smiteCount = 0;
-
-            //int smiteLimit = Mod.instance.PowerLevel;
-
             float damage = Mod.instance.CombatDamage() * 0.8f;
-
-            //List<StardewValley.Monsters.Monster> victims = ModUtility.MonsterProximity(Game1.player.currentLocation,origins,256,true);
 
             List<StardewValley.Monsters.Monster> victims = ModUtility.MonsterProximity(Game1.player.currentLocation, new List<Vector2>() { castVector * 64, }, 384, true);
 
@@ -2118,13 +2043,13 @@ namespace StardewDruid.Cast
                 if (chargeActive && chargeCooldown == 0)
                 {
 
-                    bolt.added = new() { ChargeEffect(chargeType), effects.shock, };
+                    bolt.added = new() { ChargeEffect(chargeType), SpellHandle.effects.shock, };
 
                 }
                 else
                 {
 
-                    bolt.added = new() { effects.push, effects.shock, };
+                    bolt.added = new() { SpellHandle.effects.push, SpellHandle.effects.shock, };
                 }
 
                 Mod.instance.spellRegister.Add(bolt);
@@ -2134,107 +2059,6 @@ namespace StardewDruid.Cast
                 castCost += tryCost < 12 ? 12 : tryCost;
 
             }
-
-                /*Dictionary<Vector2, List<StardewValley.Monsters.Monster>> victimSets = new();
-
-                foreach (StardewValley.Monsters.Monster victim in victims)
-                {
-
-                    if (victimSets.Count == 0)
-                    {
-
-                        victimSets.Add(victim.Position, new() { victim });
-
-                        continue;
-
-                    }
-
-                    bool added = false;
-
-                    foreach (KeyValuePair<Vector2, List<StardewValley.Monsters.Monster>> victimSet in victimSets)
-                    {
-
-                        if (Vector2.Distance(victim.Position, victimSet.Key) <= 192)
-                        {
-
-                            victimSet.Value.Add(victim);
-
-                            added = true;
-
-                            break;
-
-                        }
-
-                    }
-
-                    if (!added)
-                    {
-
-                        victimSets.Add(victim.Position, new() { victim });
-
-                    }
-
-                }
-
-
-                foreach (KeyValuePair<Vector2,List<StardewValley.Monsters.Monster>> victimSet in victimSets)
-                {
-
-                    if (smiteCount == smiteLimit)
-                    {
-                        break;
-                    }
-
-                    List<float> crits = Mod.instance.CombatCritical();
-
-                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.mistsFour))
-                    {
-
-                        Mod.instance.questHandle.UpdateTask(QuestHandle.mistsFour, 1);
-
-                    }
-                    else
-                    {
-                        crits[0] += 0.2f;
-                    }
-
-                    SpellHandle bolt = new(Game1.player, victimSet.Value, damage);
-
-                    bolt.type = SpellHandle.spells.bolt;
-
-                    bolt.critical = crits[0];
-
-                    bolt.criticalModifier = crits[1];
-
-                    if (chargeActive && chargeCooldown == 0)
-                    {
-
-                        bolt.added = new() { ChargeEffect(chargeType) };
-
-                    }
-                    else
-                    {
-
-                        bolt.added = new() { effects.push };
-                    }
-
-                    //bolt.display = IconData.impacts.electric;
-
-                    Mod.instance.spellRegister.Add(bolt);
-
-                    smiteCount++;
-
-                }
-
-                if (smiteCount > 0)
-                {
-
-                    int tryCost = 12 - Game1.player.CombatLevel / 2;
-
-                    castCost += tryCost < 6 ? 6 : tryCost;
-
-                }*/
-
 
             // ---------------------------------------------
             // Villager iteration
@@ -2270,7 +2094,7 @@ namespace StardewDruid.Cast
 
                 Microsoft.Xna.Framework.Rectangle box = witness.GetBoundingBox();
 
-                SpellHandle bolt = new(new(box.Center.X, box.Top), 192, impacts.deathbomb, new());
+                SpellHandle bolt = new(new(box.Center.X, box.Top), 192, IconData.impacts.deathbomb, new());
 
                 bolt.type = SpellHandle.spells.bolt;
 
@@ -2687,7 +2511,7 @@ namespace StardewDruid.Cast
 
                 int radius = 3 + extra;
 
-                SpellHandle.sounds sound = sounds.flameSpellHit;
+                SpellHandle.sounds sound = SpellHandle.sounds.flameSpellHit;
 
                 int scale = radius;
 
@@ -2702,7 +2526,7 @@ namespace StardewDruid.Cast
 
                     scale = 5;
 
-                    sound = sounds.explosion;
+                    sound = SpellHandle.sounds.explosion;
 
                     damage *= 4;
 
@@ -2712,9 +2536,9 @@ namespace StardewDruid.Cast
 
                 SpellHandle meteor = new(Game1.player, meteorTarget, radius * 64, damage);
 
-                meteor.type = spells.orbital;
+                meteor.type = SpellHandle.spells.orbital;
 
-                meteor.missile = missiles.meteor;
+                meteor.missile = IconData.missiles.meteor;
 
                 if (damage > 0)
                 {
@@ -2742,7 +2566,7 @@ namespace StardewDruid.Cast
 
                         meteor.display = IconData.impacts.splash;
 
-                        meteor.sound = sounds.dropItemInWater;
+                        meteor.sound = SpellHandle.sounds.dropItemInWater;
 
                         break;
 
@@ -2807,7 +2631,9 @@ namespace StardewDruid.Cast
 
             Cast.Stars.Blackhole blackholeNew = new();
 
-            blackholeNew.GravitySetup(Game1.player.Position, "blackhole", blackholeVector);
+            blackholeNew.EventSetup(Game1.player.Position, "blackhole");
+
+            blackholeNew.target = blackholeVector;
 
             blackholeNew.EventActivate();
 
@@ -3018,7 +2844,7 @@ namespace StardewDruid.Cast
 
                 witness.doEmote(8);
 
-                Mod.instance.iconData.CursorIndicator(location, witness.Position + new Vector2(32), cursors.fates, new());
+                Mod.instance.iconData.CursorIndicator(location, witness.Position + new Vector2(32), IconData.cursors.fates, new());
 
                 // Trick reaction
 
@@ -3056,7 +2882,7 @@ namespace StardewDruid.Cast
 
                     SpellHandle trick = new(witness.Position, 192, IconData.impacts.nature, new()) { instant = true };
 
-                    trick.type = spells.trick;
+                    trick.type = SpellHandle.spells.trick;
 
                     trick.projectile = display;
 
@@ -3112,8 +2938,6 @@ namespace StardewDruid.Cast
                 CastTransform();
 
             }
-
-            
 
         }
 
@@ -3185,7 +3009,7 @@ namespace StardewDruid.Cast
 
             if (!spawnIndex.crate)
             {
-                Mod.instance.Monitor.Log("meow", LogLevel.Debug);
+
                 return;
 
             }

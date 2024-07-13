@@ -89,7 +89,7 @@ namespace StardewDruid.Event.Relics
                 })
                 {
 
-                    Microsoft.Xna.Framework.Rectangle relicRect = Mod.instance.iconData.RelicRectangles(relic.Value);
+                    Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles(relic.Value);
 
                     TemporaryAnimatedSprite animation = new(0, 3000, 1, 1, relic.Key, false, false)
                     {

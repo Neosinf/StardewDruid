@@ -30,18 +30,11 @@ namespace StardewDruid.Cast.Stars
 
         public bool meteor;
 
+        public bool water;
+
         public Blackhole()
         {
             
-        }
-
-        public virtual void GravitySetup(Vector2 origin, string id, Vector2 Target)
-        {
-            
-            base.EventSetup(origin, id);
-
-            target = Target;
-
         }
 
         public override bool EventActive()
@@ -103,6 +96,12 @@ namespace StardewDruid.Cast.Stars
 
                     eventLocked = true;
 
+                    if(ModUtility.GroundCheck(location, ModUtility.PositionToTile(target)) == "water"){
+
+                        water = true;
+                        meteor = true;
+                    }
+
                 }
 
                 return;
@@ -138,7 +137,13 @@ namespace StardewDruid.Cast.Stars
 
             hole.type = SpellHandle.spells.blackhole;
 
-            if (location.IsFarm || location.isFarmBuildingInterior() || location.IsGreenhouse || location is Shed)
+            if (water)
+            {
+
+                hole.added = new() { SpellHandle.effects.tornado, };
+
+            }
+            else if (location.IsFarm || location.isFarmBuildingInterior() || location.IsGreenhouse || location is Shed)
             {
 
                 hole.added = new() { SpellHandle.effects.harvest, };

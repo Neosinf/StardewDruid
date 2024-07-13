@@ -72,8 +72,13 @@ namespace StardewDruid.Character
             FirstFarmer,
             LadyBeyond,
             Dwarf,
-            Shadowcat,
             Dragon,
+
+            // animals
+            Shadowcat,
+            Shadowfox,
+            Shadowbat,
+
         }
 
         public enum subjects
@@ -373,6 +378,10 @@ namespace StardewDruid.Character
                 case characters.Dwarf:
 
                     return Mod.instance.Helper.GameContent.Load<Texture2D>(Path.Combine("Characters", "Dwarf"));
+
+                case characters.Shadowbat:
+
+                    return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Batwing.png"));
 
                 default:
 
@@ -2236,6 +2245,13 @@ namespace StardewDruid.Character
                     }
 
                 }
+
+            }
+
+            if (!Context.IsMainPlayer)
+            {
+
+                Mod.instance.characters.Remove(character);
 
             }
 

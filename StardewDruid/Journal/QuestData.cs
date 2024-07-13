@@ -287,7 +287,7 @@ namespace StardewDruid.Journal
 
                 progression = Mod.instance.Helper.Translation.Get("Quest.wealdThree.progression"),
 
-                requirement = 20,
+                requirement = 5,
 
                 reward = 1000,
 

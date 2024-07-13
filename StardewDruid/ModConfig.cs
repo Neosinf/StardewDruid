@@ -346,38 +346,6 @@ namespace StardewDruid
                 setValue: value => Config.castAnywhere = value
             );
 
-            configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("Config.disableSeeds.name"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("Config.disableSeeds.tooltip"),
-                getValue: () => Config.disableSeeds,
-                setValue: value => Config.disableSeeds = value
-            );
-
-            configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("Config.disableFish.name"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("Config.disableFish.tooltip"),
-                getValue: () => Config.disableFish,
-                setValue: value => Config.disableFish = value
-            );
-
-            configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("Config.disableTrees.name"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("Config.disableTrees.tooltip"),
-                getValue: () => Config.disableTrees,
-                setValue: value => Config.disableTrees = value
-            );
-
-            configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("Config.disableGrass.name"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("Config.disableGrass.tooltip"),
-                getValue: () => Config.disableGrass,
-                setValue: value => Config.disableGrass = value
-            );
-
             return configMenu;
 
         }

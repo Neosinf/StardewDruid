@@ -79,14 +79,6 @@ namespace StardewDruid
 
         public bool activeJournal { get; set; }
 
-        public bool disableSeeds { get; set; }
-
-        public bool disableFish { get; set; }
-
-        public bool disableTrees { get; set; }
-
-        public bool disableGrass { get; set; }
-
         public int dragonScheme { get; set; }
 
         public int dragonBreath { get; set; }
@@ -148,10 +140,6 @@ namespace StardewDruid
             meteorBehaviour = 3;
             cardinalMovement = false;
             castAnywhere = false;
-            disableSeeds = false;
-            disableFish = false;
-            disableTrees = false;
-            disableGrass = false;
             dragonScheme = (int)IconData.schemes.dragon_red;
             dragonBreath = (int)IconData.schemes.stars;
             dragonPrimaryR = 190;

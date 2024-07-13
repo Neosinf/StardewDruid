@@ -21,22 +21,17 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
-using static StardewDruid.Cast.SpellHandle;
-using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Character
 {
-    public class Jester : StardewDruid.Character.Character
+    public class Jester : Critter
     {
-
-        public Dictionary<int, List<Rectangle>> runningFrames;
 
         public Jester()
         {
         }
 
-        public Jester(CharacterHandle.characters characterType)
+        public Jester(CharacterHandle.characters characterType = CharacterHandle.characters.Jester)
           : base(characterType)
         {
             
@@ -45,30 +40,7 @@ namespace StardewDruid.Character
         public override void LoadOut()
         {
             
-            if(characterType == CharacterHandle.characters.none)
-            {
-                
-                characterType = CharacterHandle.characters.Jester;
-
-            }
-
-            characterTexture = CharacterHandle.CharacterTexture(characterType);
-
-            LoadIntervals();
-
-            overhead = 112;
-
-            gait = 1.8f;
-
-            modeActive = mode.random;
-
-            haltFrames = FrameSeries(32, 32, 0, 0, 1);
-
-            alertFrames = haltFrames;
-
-            walkFrames = FrameSeries(32, 32, 0, 0, 7);
-
-            runningFrames = FrameSeries(32, 32, 0, 128, 6, FrameSeries(32, 32, 0, 0, 1));
+            base.LoadOut();
 
             idleFrames = new()
             {
@@ -96,8 +68,6 @@ namespace StardewDruid.Character
 
             };
 
-            sweepFrames = FrameSeries(32, 32, 0, 128, 3);
-
             workFrames = new()
             {
 
@@ -108,239 +78,6 @@ namespace StardewDruid.Character
                 },
 
             };
-
-            dashFrames = new(sweepFrames);
-
-            dashFrames[4] = new() { new(64, 192, 32, 32), };
-            dashFrames[5] = new() { new(64, 160, 32, 32), };
-            dashFrames[6] = new() { new(64, 128, 32, 32), };
-            dashFrames[7] = new() { new(64, 192, 32, 32), };
-
-            dashFrames[8] = new() { new(96, 192, 32, 32), new(128, 192, 32, 32), new(160, 192, 32, 32), };
-            dashFrames[9] = new() { new(96, 160, 32, 32), new(128, 160, 32, 32), new(160, 160, 32, 32), };
-            dashFrames[10] = new() { new(96, 128, 32, 32), new(128, 128, 32, 32), new(160, 128, 32, 32), };
-            dashFrames[11] = new() { new(96, 192, 32, 32), new(128, 192, 32, 32), new(160, 192, 32, 32), };
-
-            smashFrames = new(dashFrames);
-
-            loadedOut = true;
-
-        }
-
-        public override void draw(SpriteBatch b, float alpha = 1f)
-        {
-
-            if (IsInvisible || !Utility.isOnScreen(Position, 128))
-            {
-                return;
-            }
-
-            if (characterTexture == null)
-            {
-
-                return;
-
-            }
-
-            Vector2 localPosition = Game1.GlobalToLocal(Position);
-
-            float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
-
-            DrawEmote(b);
-
-            if (netStandbyActive.Value)
-            {
-
-                DrawStandby(b, localPosition, drawLayer);
-
-                DrawShadow(b, localPosition, drawLayer);
-
-                return;
-
-            }
-            else if (netHaltActive.Value)
-            {
-
-                b.Draw(
-                    characterTexture,
-                    localPosition - new Vector2(28, 56f),
-                    haltFrames[netDirection.Value][0],
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    3.75f,
-                    (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    drawLayer
-                );
-
-            }
-            else if (netSweepActive.Value)
-            {
-
-                b.Draw(
-                    characterTexture,
-                    localPosition - new Vector2(28, 56f),
-                    sweepFrames[netDirection.Value][sweepFrame],
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    3.75f,
-                    (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    drawLayer
-                );
-
-            }
-            else if (netDashActive.Value)
-            {
-
-                int dashSeries = netDirection.Value + (netDashProgress.Value * 4);
-
-                int dashSetto = Math.Min(dashFrame, (dashFrames[dashSeries].Count - 1));
-
-                b.Draw(
-                    characterTexture,
-                    localPosition - new Vector2(28, 56f + dashHeight),
-                    dashFrames[dashSeries][dashSetto],
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    3.75f,
-                    (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    drawLayer
-                );
-
-            }
-            else if (netSmashActive.Value)
-            {
-                
-                int smashSeries = netDirection.Value + (netDashProgress.Value * 4);
-
-                int smashSetto = Math.Min(dashFrame, (smashFrames[smashSeries].Count - 1));
-
-                b.Draw(
-                    characterTexture,
-                    localPosition - new Vector2(28, 56f + dashHeight),
-                    smashFrames[smashSeries][smashSetto],
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    3.75f,
-                    (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    drawLayer
-                );
-
-            }
-            else if (netWorkActive.Value)
-            {
-
-                b.Draw(
-                    characterTexture,
-                    localPosition - new Vector2(24, 56f),
-                    workFrames[0][specialFrame],
-                    Color.White,
-                    0.0f,
-                    Vector2.Zero,
-                    3.75f,
-                    SpriteEffects.None,
-                    drawLayer
-                );
-
-            }
-            else if (netSpecialActive.Value)
-            {
-
-                b.Draw(
-                    characterTexture,
-                    localPosition - new Vector2(28, 56f),
-                    specialFrames[netDirection.Value][0], 
-                    Color.White, 
-                    0.0f,
-                    Vector2.Zero,
-                    3.75f,
-                    (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? (SpriteEffects)1 : 0, 
-                    drawLayer
-                );
-
-            }
-            else
-            {
-
-                if (TightPosition() && idleTimer > 0 && !netSceneActive.Value)
-                {
-
-                    DrawStandby(b, localPosition, drawLayer);
-
-                }
-                else
-                if (pathActive == pathing.running)
-                {
-                    b.Draw(
-                        characterTexture,
-                        localPosition - new Vector2(28, 56f),
-                        runningFrames[netDirection.Value][moveFrame],
-                        Color.White,
-                        0f,
-                        Vector2.Zero,
-                        3.75f,
-                        (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                        drawLayer
-                    );
-                }
-                else
-                {
-                    b.Draw(
-                        characterTexture,
-                        localPosition - new Vector2(28, 56f),
-                        walkFrames[netDirection.Value][moveFrame],
-                        Color.White,
-                        0f,
-                        Vector2.Zero,
-                        3.75f,
-                        (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                        drawLayer
-                    );
-
-                }
-
-
-            }
-
-            DrawShadow(b, localPosition, drawLayer);
-
-        }
-
-        public override void DrawStandby(SpriteBatch b, Vector2 localPosition, float drawLayer)
-        {
-
-            int chooseFrame = IdleFrame();
-
-            b.Draw(
-                characterTexture,
-                localPosition - new Vector2(28, 56f),
-                idleFrames[0][chooseFrame],
-                Color.White,
-                0f,
-                Vector2.Zero,
-                3.75f,
-                netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                drawLayer
-            );
-
-            return;
-
-        }
-
-        public override Rectangle GetBoundingBox()
-        {
-
-            if (netDirection.Value % 2 == 0)
-            {
-
-                return new Rectangle((int)Position.X + 8, (int)Position.Y + 8, 48, 48);
-
-            }
-
-            return new Rectangle((int)Position.X - 16, (int)Position.Y + 8, 96, 48);
 
         }
 
@@ -410,7 +147,7 @@ namespace StardewDruid.Character
 
             swipeEffect.instant = true;
 
-            swipeEffect.sound = sounds.swordswipe;
+            swipeEffect.sound = SpellHandle.sounds.swordswipe;
 
             swipeEffect.display = IconData.impacts.skull;
 
@@ -752,7 +489,7 @@ namespace StardewDruid.Character
 
             Game1.player.gainExperience(0, 5);
 
-            Microsoft.Xna.Framework.Rectangle bottleRectangle = Mod.instance.iconData.RelicRectangles(relics.bottle);
+            Microsoft.Xna.Framework.Rectangle bottleRectangle = IconData.RelicRectangles(IconData.relics.bottle);
 
             TemporaryAnimatedSprite bottleSprite = new(0, 900, 1, 1, cow.Position + new Vector2(2, 52), false, false)
             {

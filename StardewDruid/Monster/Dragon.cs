@@ -229,6 +229,20 @@ namespace StardewDruid.Monster
 
         }
 
+        public override SpellHandle.effects IsCursable(SpellHandle.effects effect = SpellHandle.effects.knock)
+        {
+
+            if (effect == SpellHandle.effects.immolate)
+            {
+
+                return SpellHandle.effects.none;
+
+            }
+
+            return base.IsCursable(effect);
+
+        }
+
         public override bool PerformSpecial(Vector2 farmerPosition)
         {
 

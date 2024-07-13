@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Input;
 using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Dialogue;
@@ -59,6 +60,8 @@ namespace StardewDruid.Data
             dragonBuffDescription,
             druidFreneticism,
             speedIncrease,
+            questComplete,
+            percentComplete,
 
             // Journal
 
@@ -131,20 +134,425 @@ namespace StardewDruid.Data
             reachEnd,
             treasureHunt,
 
+            quests,
+            effects,
+            relics,
+            herbalism,
+
+            active,
+            reverse,
+            refresh,
+
+            innerOne,
+            innerTwo,
+
+            close,
+
+            back,
+            start,
+
+            scrollUp,
+            scrollBar,
+            scrollDown,
+            forward,
+            end,
+
         }
 
+        public static string ButtonStrings(DruidJournal.journalButtons button)
+        {
+
+            switch (button)
+            {
+                case DruidJournal.journalButtons.back:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.back");
+
+                case DruidJournal.journalButtons.start:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.start");
+
+                case DruidJournal.journalButtons.forward:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.forward");
+
+                case DruidJournal.journalButtons.end:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.end");
+
+                case DruidJournal.journalButtons.exit:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.exit");
+
+                case DruidJournal.journalButtons.quests:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.quests");
+
+                case DruidJournal.journalButtons.effects:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.effects");
+
+                case DruidJournal.journalButtons.relics:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.relics");
+
+                case DruidJournal.journalButtons.herbalism:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.herbalism");
+
+                case DruidJournal.journalButtons.active:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.active");
+
+                case DruidJournal.journalButtons.reverse:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.reverse");
+
+                case DruidJournal.journalButtons.refresh:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.refresh");
+
+                default:
+
+                    return null;
+            }
+
+        }
+
+        // ok , i switch back to full version
         public static string Strings(stringkeys key)
         {
 
-            if (Enum.IsDefined(key)) {
-                return Mod.instance.Helper.Translation.Get($"Enum.stringkeys.{key}");
-            }
-            else {
-                return Mod.instance.Helper.Translation.Get("nevermind");
+            switch (key)
+            {
+
+                // Mod, Rite, ModUtility, QuestHandle
+
+                case stringkeys.receivedData:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.receivedData");
+
+                case stringkeys.challengeAborted:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.challengeAborted");
+
+                case stringkeys.riteBuffDescription:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.riteBuffDescription");
+
+                case stringkeys.dragonBuff:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.dragonBuff");
+
+                case stringkeys.dragonBuffDescription:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.dragonBuffDescription");
+
+                case stringkeys.energySkill:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.energySkill");
+
+                case stringkeys.openJournal:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.openJournal");
+
+                case stringkeys.noRiteAttuned:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.noRiteAttuned");
+
+                case stringkeys.riteTool:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.riteTool");
+
+                case stringkeys.noToolAttunement:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.noToolAttunement");
+
+                case stringkeys.nothingHappened:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.nothingHappened");
+
+                case stringkeys.invalidLocation:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.invalidLocation");
+
+                case stringkeys.energyContinue:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.energyContinue");
+
+                case stringkeys.energyRite:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.energyRite");
+
+                case stringkeys.stamina:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.stamina");
+
+                case stringkeys.druidFreneticism:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.druidFreneticism");
+
+                case stringkeys.speedIncrease:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.speedIncrease");
+
+                case stringkeys.questComplete:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.questComplete");
+
+                case stringkeys.percentComplete:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.percentComplete");
+
+                // ============================================ JOURNAL
+
+                case stringkeys.stardewDruid: 
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.stardewDruid");
+
+                case stringkeys.grimoire:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.grimoire");
+
+                case stringkeys.reliquary:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.reliquary");
+
+                case stringkeys.dragonomicon:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.dragonomicon");
+
+                case stringkeys.apothecary:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.apothecary");
+
+                case stringkeys.startPage: 
+                    
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.startPage");
+
+                case stringkeys.endPage: 
+                    
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.endPage");
+
+                case stringkeys.sortCompletion: 
+                    
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.sortCompletion");
+
+                case stringkeys.reverseOrder: 
+                    
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.reverseOrder");
+
+                case stringkeys.openQuests: 
+                    
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.openQuests");
+
+                case stringkeys.openEffects: 
+                    
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.openEffects");
+
+                case stringkeys.openRelics: 
+                    
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.openRelics");
+
+                case stringkeys.openPotions: 
+                    
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.openPotions");
+
+                case stringkeys.checkHerbalism:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.checkHerbalism");
+
+                case stringkeys.hostOnly:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.hostOnly");
+
+                case stringkeys.questReplay:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.questReplay");
+
+                case stringkeys.outOf:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.outOf");
+
+                case stringkeys.reward:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.reward");
+
+                case stringkeys.bounty:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.bounty");
+
+                case stringkeys.transcript:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.transcript");
+
+                case stringkeys.acEnabled:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.acEnabled");
+
+                case stringkeys.acDisabled:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.acDisabled");
+
+                case stringkeys.acPriority:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.acPriority");
+
+                case stringkeys.MAX:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.MAX");
+
+                case stringkeys.HP:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.HP");
+
+                case stringkeys.STM:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.STM");
+
+                case stringkeys.relicNotFound:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.relicNotFound");
+
+                case stringkeys.relicUnknown:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.relicUnknown"); 
+
+                case stringkeys.primaryColour:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.primaryColour");
+
+                case stringkeys.secondaryColour:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.secondaryColour");
+
+                case stringkeys.tertiaryColour:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.tertiaryColour");
+
+                case stringkeys.dragonScheme:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.dragonScheme");
+
+                case stringkeys.breathScheme:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.breathScheme");
+
+                case stringkeys.dragonRotate:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.dragonRotate");
+
+                case stringkeys.dragonScale:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.dragonScale");
+
+                case stringkeys.dragonAccent:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.dragonAccent");
+
+                case stringkeys.dragonEye:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.dragonEye");
+
+                case stringkeys.dragonReset:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.dragonReset");
+
+                case stringkeys.dragonSave:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.dragonSave");
+
+                case stringkeys.skipQuest:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.skipQuest");
+
+                case stringkeys.replayQuest:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.replayQuest");
+
+                case stringkeys.replayTomorrow:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.replayTomorrow");
+
+                case stringkeys.viewEffect:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.viewEffect");
+
+                case stringkeys.cancelReplay:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.cancelReplay");
+
+                case stringkeys.replayReward:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.replayReward");
+
+                case stringkeys.massHerbalism:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.massHerbalism");
+
+                // Miscellaneous / Events
+
+                case stringkeys.trashCollected:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.trashCollected");
+
+                case stringkeys.bomberInterruptions:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.bomberInterruptions");
+
+                case stringkeys.slimesDestroyed:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.slimesDestroyed");
+
+                case stringkeys.learnRecipes:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.learnRecipes");
+
+                case stringkeys.theDusting:
+
+                    // Title for Ether/Gate challenge
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.theDusting");
+
+                case stringkeys.abortTomorrow:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.abortTomorrow");
+
+                case stringkeys.noJunimo:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.noJunimo");
+
+                case stringkeys.noInstructions:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.noInstructions");
+
+                case stringkeys.leftEvent:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.leftEvent");
+
+                case stringkeys.leavingEvent:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.leavingEvent");
+
+                case stringkeys.ladderAppeared:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.ladderAppeared");
+
+                case stringkeys.returnLater:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.returnLater");
+
+                case stringkeys.reachEnd:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.reachEnd");
+
+                case stringkeys.treasureHunt:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.stringkeys.treasureHunt");
+
             }
 
             // ?
-            // return "(nevermind)";
+            return Mod.instance.Helper.Translation.Get("nevermind");
 
         }
 
@@ -561,6 +969,7 @@ namespace StardewDruid.Data
                         [5] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueScene.swordStars.5.0"), },
                         [6] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueScene.swordStars.6.0"), },
                         [7] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueScene.swordStars.7.0"), },
+                        [7] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueScene.swordStars.8.0"), },
 
                     };
 

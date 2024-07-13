@@ -20,6 +20,8 @@ using StardewValley.Characters;
 using StardewValley.Enchantments;
 using StardewValley.GameData.Crops;
 using StardewValley.GameData.FarmAnimals;
+using StardewValley.GameData.WildTrees;
+using StardewValley.Internal;
 using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Monsters;
@@ -3501,13 +3503,9 @@ namespace StardewDruid
                         else if (targetObject.IsTwig())
                         {
 
-                            //Throw throwObject = new(targetPlayer, tileVector * 64, 388);
-
-                            //throwObject.ThrowObject();
-
                             targetObject.onExplosion(targetPlayer);
 
-                            targetLocation.debris.Add(new Debris(ItemRegistry.Create("(O)388"), tileVector * 64f));
+                            targetLocation.debris.Add(new Debris(ItemRegistry.Create("(O)388",Mod.instance.randomIndex.Next(1,4)), tileVector * 64f));
 
                             targetLocation.objects.Remove(tileVector);
 
@@ -3517,10 +3515,15 @@ namespace StardewDruid
                         else if (targetObject.IsWeeds())
                         {
 
-                            //Throw throwObject = new(targetPlayer, tileVector * 64, 771);
+                            string spawnSeed = SpawnData.SeasonalSeed(targetLocation);
 
-                            //throwObject.ThrowObject();
-
+                            if (spawnSeed != null)
+                            {
+                                
+                                targetLocation.debris.Add(new Debris(ItemRegistry.Create(spawnSeed), tileVector * 64f));
+                            
+                            }
+                            
                             targetObject.onExplosion(targetPlayer);
 
                             targetLocation.objects.Remove(tileVector);
@@ -3634,6 +3637,15 @@ namespace StardewDruid
                                 }
                                 else
                                 {
+                                    
+                                    WildTreeData data = targetTree.GetData();
+
+                                    if (data != null && data.SeedItemId != null)
+                                    {
+                                        
+                                        targetLocation.debris.Add(new Debris(ItemQueryResolver.TryResolveRandomItem(data.SeedItemId, new ItemQueryContext(targetLocation, Game1.player, null)), tileVector * 64f));
+                                    
+                                    }
 
                                     targetTree.performToolAction(Axe, 0, tileVector);
 
@@ -3654,7 +3666,7 @@ namespace StardewDruid
 
                             targetLocation.terrainFeatures.Remove(tileVector);
 
-                            if (Game1.random.NextDouble() < 0.5)
+                            if (Mod.instance.randomIndex.Next(2) == 0)
                             {
 
                                 targetLocation.debris.Add(new Debris(ItemRegistry.Create("(O)771"), tileVector * 64f));

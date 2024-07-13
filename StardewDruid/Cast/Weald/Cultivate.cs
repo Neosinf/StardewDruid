@@ -6,19 +6,9 @@ using StardewDruid.Event;
 using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.GameData.Minecarts;
-using StardewValley.Inventories;
-using StardewValley.Locations;
-using StardewValley.TerrainFeatures;
-using System;
+
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using xTile.Tiles;
-using static StardewValley.Minigames.TargetGame;
-using static System.Net.WebRequestMethods;
+
 
 namespace StardewDruid.Cast.Weald
 {
@@ -95,9 +85,11 @@ namespace StardewDruid.Cast.Weald
 
                     eventLocked = true;
 
-                    SpellHandle spellHandle = new(origin, 320, IconData.impacts.nature, new());
+                    SpellHandle spellHandle = new(origin, 384, IconData.impacts.nature, new());
 
                     Mod.instance.spellRegister.Add(spellHandle);
+
+                    ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 
                     if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour))
                     {
@@ -471,138 +463,6 @@ namespace StardewDruid.Cast.Weald
                     }
 
                     Mod.instance.iconData.ImpactIndicator(location, cursorVector, IconData.impacts.glare, 0.75f + Mod.instance.randomIndex.Next(5)*0.25f, new() { color = randomColour,});
-
-                }
-
-                // =========================================================================
-                // other features
-
-                if (Mod.instance.rite.targetCasts[location.Name].ContainsKey(tile))
-                {
-
-                    continue;
-
-                }
-
-                if (location.terrainFeatures[tile] is StardewValley.TerrainFeatures.FruitTree fruitTree)
-                {
-
-                    fruitTree.dayUpdate();
-
-                    Mod.instance.rite.targetCasts[location.Name][tile] = "Tree";
-
-                    if (!inabsentia)
-                    {
-
-                        castCost += cultivationCost;
-
-                    }
-
-                    Vector2 cursorVector = tile * 64 + new Vector2(0,8);
-
-                    Mod.instance.iconData.CursorIndicator(location, cursorVector, IconData.cursors.weald, new());
-
-                }
-
-                if (inabsentia)
-                {
-
-                    continue;
-
-                }
-
-                if (location.terrainFeatures[tile] is StardewValley.TerrainFeatures.Tree treeFeature)
-                {
-
-                    if (treeFeature.growthStage.Value < 3)
-                    {
-
-                        treeFeature.growthStage.Value++;
-
-                    }
-                    else
-                    {
-
-                        treeFeature.dayUpdate();
-
-                    }
-
-                    Mod.instance.rite.targetCasts[location.Name][tile] = "Tree";
-
-                    if (!inabsentia)
-                    {
-
-                        castCost += cultivationCost;
-
-                    }
-
-                    Vector2 cursorVector = tile * 64 + new Vector2(0,8);
-
-                    Mod.instance.iconData.CursorIndicator(location, cursorVector, IconData.cursors.weald, new());
-
-                }
-
-            }
-
-            // ---------------------------------------------
-            // Large Feature iteration
-            // ---------------------------------------------
-
-            if (radialCounter != 8)
-            {
-
-                return;
-
-            }
-
-            if (location.largeTerrainFeatures.Count > 0)
-            {
-
-                foreach (LargeTerrainFeature largeTerrainFeature in location.largeTerrainFeatures)
-                {
-
-                    if (largeTerrainFeature is not StardewValley.TerrainFeatures.Bush bushFeature)
-                    {
-
-                        continue;
-
-                    }
-
-                    if (bushFeature.size.Value == 3)
-                    {
-
-                        int age = bushFeature.getAge();
-
-                        if (age < 20)
-                        {
-
-                            Vector2 teaTile = bushFeature.Tile;
-
-                            if (Mod.instance.rite.targetCasts[location.Name].ContainsKey(teaTile))
-                            {
-
-                                continue;
-
-                            }
-
-                            if (Vector2.Distance(bushFeature.getBoundingBox().Center.ToVector2(),origin) <= 512)
-                            {
-
-                                int trydate = (bushFeature.datePlanted.Value - 1);
-
-                                int newdate = trydate < 1 ? 1 : trydate;
-
-                                bushFeature.datePlanted.Set(newdate);
-
-                                Mod.instance.rite.targetCasts[location.Name][teaTile] = "bush";
-
-                            }
-
-                            return;
-
-                        }
-
-                    }
 
                 }
 

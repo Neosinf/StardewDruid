@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
+using StardewDruid.Data;
 using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewValley;
@@ -127,7 +128,7 @@ namespace StardewDruid.Cast.Effect
 
                         }
 
-                        if (toHarvest.Value.location.objects[tileVector].isForage() || toHarvest.Value.location.objects[tileVector].isAnimalProduct())
+                        if (SpawnData.ForageCheck(toHarvest.Value.location.objects[tileVector]))
                         {
 
                             StardewValley.Item extract = ModUtility.ExtractForage(toHarvest.Value.location,tileVector);
