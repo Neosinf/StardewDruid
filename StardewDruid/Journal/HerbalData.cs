@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Character;
@@ -21,6 +22,7 @@ using System.ComponentModel.Design;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using xTile.Dimensions;
+using static StardewDruid.Cast.SpellHandle;
 using static StardewDruid.Character.Character;
 using static StardewDruid.Character.CharacterHandle;
 using static StardewDruid.Journal.HerbalData;
@@ -94,6 +96,33 @@ namespace StardewDruid.Journal
                 herbals.magnus_celeri,
                 herbals.optimus_celeri,
             },
+        };
+
+        public List<herbals> herbalLayout = new()
+        {
+            
+            herbals.ligna,
+            herbals.melius_ligna,
+            herbals.satius_ligna,
+            herbals.magnus_ligna,
+            herbals.optimus_ligna,
+
+            herbals.faeth,
+
+            herbals.impes,
+            herbals.melius_impes,
+            herbals.satius_impes,
+            herbals.magnus_impes,
+            herbals.optimus_impes,
+
+            herbals.aether,
+
+            herbals.celeri,
+            herbals.melius_celeri,
+            herbals.satius_celeri,
+            herbals.magnus_celeri,
+            herbals.optimus_celeri,
+
         };
 
         public double consumeBuffer;
@@ -201,6 +230,95 @@ namespace StardewDruid.Journal
 
 
             return source;
+
+        }
+
+        public Dictionary<int, Journal.ContentComponent> JournalHerbals()
+        {
+
+            Dictionary<int, Journal.ContentComponent> journal = new();
+
+            int max = MaxHerbal();
+
+            int start = 0;
+
+            foreach (herbals herbal in herbalLayout)
+            {
+
+                string key = herbal.ToString();
+
+                if (herbalism[key].level > max)
+                {
+                    
+                    Journal.ContentComponent blank = new(ContentComponent.contentTypes.potion, key, false);
+                    
+                    journal[start++] = blank;
+
+                    continue;
+
+                }
+
+                Journal.ContentComponent content = new(ContentComponent.contentTypes.potion, key);
+
+                Mod.instance.herbalData.CheckHerbal(key);
+
+                int amount = 0;
+
+                if (Mod.instance.save.herbalism.ContainsKey(herbal))
+                {
+
+                    amount = Mod.instance.save.herbalism[herbal];
+
+                }
+
+                string amountString = amount.ToString();
+
+                content.text[0] = amount.ToString();
+
+                content.relics[0] = herbalism[key].container;
+
+                content.relicColours[0] = Color.White;
+
+                content.relics[1] = herbalism[key].content;
+
+                Microsoft.Xna.Framework.Color potionColour = Mod.instance.iconData.schemeColours[herbalism[key].scheme];
+
+                if (amount == 0)
+                {
+                    potionColour = Microsoft.Xna.Framework.Color.LightGray;
+                }
+
+                content.relicColours[1] = potionColour;
+
+                journal[start++] = content;
+
+            }
+
+            return journal;
+
+        }
+
+        public Dictionary<int, Journal.ContentComponent> JournalHeaders()
+        {
+
+            Dictionary<int, Journal.ContentComponent> journal = new();
+
+            int start = 0;
+
+            foreach(KeyValuePair<HerbalData.herbals, List<string>> section in titles)
+            {
+
+                Journal.ContentComponent content = new(ContentComponent.contentTypes.header, section.Key.ToString());
+
+                content.text[0] = section.Value[0];
+
+                content.text[1] = section.Value[1];
+
+                journal[start++] = content;
+
+            }
+
+            return journal;
 
         }
 
@@ -883,6 +1001,13 @@ namespace StardewDruid.Journal
 
             }
 
+            PotionBehaviour(potion);
+
+        }
+
+        public void PotionBehaviour(HerbalData.herbals potion)
+        {
+
             if (!Mod.instance.save.potions.ContainsKey(potion))
             {
 
@@ -1055,6 +1180,20 @@ namespace StardewDruid.Journal
                     BrewHerbal(key, 50, true);
 
                 }
+
+            }
+
+            if (herbalism[herbals.aether.ToString()].level <= max)
+            {
+                
+                BrewHerbal(herbals.aether.ToString(), 50, true);
+
+            }
+
+            if (herbalism[herbals.faeth.ToString()].level <= max)
+            {
+
+                BrewHerbal(herbals.faeth.ToString(), 50, true);
 
             }
 

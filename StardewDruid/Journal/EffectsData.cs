@@ -429,7 +429,7 @@ namespace StardewDruid.Journal
                 title = "Meteor Rain",
                 icon = IconData.displays.stars,
                 description = "If nature extends to the celestial realm, then the stars themselves are it's greatest force, a force now granted to me in order to burn away the taint and decay of a stagnated world.",
-                instruction = "Cast Rite of the Stars to produce a meteor that strikes objects and monsters within the impact radius of a random point near the Farmer. Will dislodge most set down objects.",
+                instruction = "Cast Rite of the Stars to produce a meteor that strikes objects and monsters within the impact radius of a random point near the Farmer. Will dislodge most set down objects. A melee weapon is required to cast meteors on farmland.",
                 details = new()
                 {
                     "Cost: 12 - Player Combat Level, minimum 5",

@@ -13,6 +13,7 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Constants;
+using StardewValley.Delegates;
 using StardewValley.GameData.Pets;
 using StardewValley.Locations;
 using StardewValley.Quests;
@@ -374,15 +375,67 @@ namespace StardewDruid.Journal
 
                 Journal.ContentComponent content = new(ContentComponent.contentTypes.list, page);
 
-                content.text = quests[page].title;
+                content.text[0] = quests[page].title;
 
-                content.icon = quests[page].icon;
+                content.icons[0] = quests[page].icon;
+
+                IconData.displays questIcon;
+
+                switch (Mod.instance.save.progress[page].status)
+                {
+
+                    default:
+                    case 1:
+
+                        questIcon = IconData.displays.active;
+
+                        break;
+                    case 2:
+                    case 3:
+
+                        questIcon = IconData.displays.complete;
+
+                        break;
+                    case 4:
+
+                        questIcon = IconData.displays.replay;
+
+                        break;
+
+                }
+
+                content.icons[1] = questIcon;
 
                 journal[start++] = content;
 
             }
 
             return journal;
+
+        }
+
+        public KeyValuePair<string,int> questEffects(string questId)
+        {
+
+            Dictionary<int, Journal.ContentComponent> effectComponents = JournalEffects();
+
+            foreach (KeyValuePair<int, Journal.ContentComponent> effectComponent in effectComponents)
+            {
+
+                string[] effectParts = effectComponent.Value.id.Split(".");
+
+                string effectId = effectParts[0];
+
+                if (effectId == questId)
+                {
+
+                    return new(effectComponent.Value.id, effectComponent.Key);
+
+                }
+
+            }
+
+            return new(null,0);
 
         }
 
@@ -448,6 +501,99 @@ namespace StardewDruid.Journal
             }
 
             return source;
+
+        }
+
+        public Dictionary<int, Journal.ContentComponent> JournalEffects()
+        {
+            
+            Dictionary<int, Journal.ContentComponent> journal = new();
+
+            List<string> pageList = new();
+
+            foreach (KeyValuePair<string, QuestProgress> pair in Mod.instance.save.progress)
+            {
+
+                string id = pair.Key;
+
+                QuestProgress progress = pair.Value;
+
+                if (!quests.ContainsKey(id))
+                {
+
+                    continue;
+
+                }
+
+                int requirement = quests[id].type == Quest.questTypes.lesson ? 1 : 2;
+
+                if (progress.status >= requirement)
+                {
+
+                    if (effects.ContainsKey(id))
+                    {
+
+                        pageList.Add(id);
+
+                    }
+
+                }
+
+            }
+
+            if (Mod.instance.Config.reverseJournal)
+            {
+
+                pageList.Reverse();
+
+            }
+
+            int start = 0;
+
+            foreach (string id in pageList)
+            {
+
+                for (int i = 0; i < effects[id].Count; i++)
+                {
+
+                    Journal.ContentComponent content = new(ContentComponent.contentTypes.list, id + "." + i.ToString());
+
+                    content.text[0] = effects[id][i].title;
+
+                    content.icons[0] = effects[id][i].icon;
+
+                    journal[start++] = content;
+
+                }
+
+            }
+
+            return journal;
+
+        }
+
+        public KeyValuePair<string, int> effectQuests(string combinedId)
+        {
+
+            string[] effectParts = combinedId.Split(".");
+
+            string questId = effectParts[0];
+
+            Dictionary<int, Journal.ContentComponent> questComponents = JournalQuests();
+
+            foreach (KeyValuePair<int, Journal.ContentComponent> questComponent in questComponents)
+            {
+
+                if (questComponent.Value.id == questId)
+                {
+
+                    return new(questComponent.Value.id, questComponent.Key);
+
+                }
+
+            }
+
+            return new(null, 0);
 
         }
 

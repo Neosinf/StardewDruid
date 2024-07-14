@@ -31,6 +31,7 @@ namespace StardewDruid.Cast.Ether
         public bool rightActive;
 
         public bool warpTrigger;
+        public int warpTimeout;
         public string warpLocation;
 
         public Transform()
@@ -139,16 +140,16 @@ namespace StardewDruid.Cast.Ether
 
             Game1.displayFarmer = true;
 
-            if (avatar == null)
+            if (avatar != null)
             {
 
-                return;
+                avatar.ShutDown();
+
+                avatar.currentLocation.characters.Remove(avatar);
+
+                avatar = null;
 
             }
-
-            avatar.ShutDown();
-
-            avatar = null;
 
             if (Game1.player.buffs.IsApplied("184655"))
             {
@@ -223,6 +224,8 @@ namespace StardewDruid.Cast.Ether
 
             if(warpTrigger)
             {
+                
+                warpTimeout--;
 
                 if(Game1.player.currentLocation.Name == warpLocation)
                 {
@@ -240,9 +243,19 @@ namespace StardewDruid.Cast.Ether
 
                     }
 
-                    avatar.ShutDown();
+                    //avatar.currentLocation = Game1.player.currentLocation;
+
+                    //avatar.Position = Game1.player.Position;
+
+                    //Game1.player.currentLocation.characters.Add(avatar);
 
                     CreateAvatar();
+
+                }
+                else if(warpTimeout <= 0)
+                {
+
+                    warpTrigger = false;
 
                 }
 
@@ -262,13 +275,29 @@ namespace StardewDruid.Cast.Ether
         public virtual void EventWarp()
         {
 
-            if (warpTrigger) { return; }
+            if (warpTrigger) 
+            { 
+                
+                if(warpLocation != Game1.locationRequest.Location.Name)
+                {
+
+                    warpTimeout = 30;
+
+                    warpLocation = Game1.locationRequest.Location.Name;
+
+                }
+
+                return; 
+            
+            }
 
             warpTrigger = true;
 
+            warpTimeout = 30;
+
             warpLocation = Game1.locationRequest.Location.Name;
 
-            Game1.player.currentLocation.playSound("warrior");
+            EventRemove();
 
         }
 

@@ -310,6 +310,13 @@ namespace StardewDruid.Cast
         {
             queried = true;
 
+            if(thrown == throwing.item)
+            {
+
+                return;
+
+            }
+
             if (!Context.IsMultiplayer)
             {
 
@@ -350,7 +357,6 @@ namespace StardewDruid.Cast
 
                     break;
 
-                default:
                 case throwing.relic:
 
                     query = new()

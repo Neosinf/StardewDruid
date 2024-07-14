@@ -131,7 +131,14 @@ namespace StardewDruid.Cast.Fates
                 Mod.instance.rite.castCost *= faeth * 12;
 
                 Mod.instance.rite.ApplyCost();
-            
+
+                if (!Mod.instance.questHandle.IsComplete(QuestHandle.fatesFour))
+                {
+
+                    Mod.instance.questHandle.UpdateTask(QuestHandle.fatesFour, faeth);
+
+                }
+
             }
   
         }
@@ -282,13 +289,6 @@ namespace StardewDruid.Cast.Fates
                     Mod.instance.rite.targetCasts[location.Name][tile] = target.name;
 
                     Mod.instance.save.herbalism[HerbalData.herbals.faeth] -= 1;
-
-                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.fatesFour))
-                    {
-
-                        Mod.instance.questHandle.UpdateTask(QuestHandle.fatesFour, 1);
-
-                    }
 
                     Vector2 cursorVector = tile * 64 + new Vector2(32, 32);
 

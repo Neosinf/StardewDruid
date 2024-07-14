@@ -1419,8 +1419,15 @@ namespace StardewDruid.Cast
             }
 
             //---------------------------------------------
-            // Wild bounty / growth
+            // Cultivate / Wilderness
             //---------------------------------------------
+
+            if (Mod.instance.questHandle.IsGiven(QuestHandle.wealdThree))
+            {
+
+                CastWilderness();
+
+            }
 
             if (Mod.instance.questHandle.IsGiven(QuestHandle.wealdFour))
             {
@@ -1561,37 +1568,19 @@ namespace StardewDruid.Cast
 
         }
 
-        public void CastCultivate()
+        public void CastWilderness()
         {
 
             if (castLevel != 0)
-            { 
-                
-                return; 
-            
+            {
+
+                return;
+
             }
 
-            if (spawnIndex.cultivate)
-            {
-
-                if (Mod.instance.eventRegister.ContainsKey("cultivate"))
-                {
-
-                    return;
-
-                }
-
-                Cultivate cultivateEvent = new();
-
-                cultivateEvent.EventSetup(Game1.player.Position, "cultivate");
-
-                cultivateEvent.EventActivate();
-
-            }            
-            
             if (spawnIndex.wilderness)
             {
-                
+
                 if (Mod.instance.eventRegister.ContainsKey("wilderness"))
                 {
 
@@ -1629,6 +1618,36 @@ namespace StardewDruid.Cast
                 wildernessEvent.costing = costing;
 
                 wildernessEvent.EventActivate();
+
+            }
+
+        }
+
+        public void CastCultivate()
+        {
+
+            if (castLevel != 0)
+            {
+
+                return;
+
+            }
+
+            if (spawnIndex.cultivate)
+            {
+
+                if (Mod.instance.eventRegister.ContainsKey("cultivate"))
+                {
+
+                    return;
+
+                }
+
+                Cultivate cultivateEvent = new();
+
+                cultivateEvent.EventSetup(Game1.player.Position, "cultivate");
+
+                cultivateEvent.EventActivate();
 
             }
 

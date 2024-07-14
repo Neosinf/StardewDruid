@@ -401,7 +401,7 @@ namespace StardewDruid.Cast.Ether
             if (anchor == null)
             {
 
-                ShutDown();
+                Mod.instance.movers.Add(CharacterHandle.characters.Dragon,new(CharacterHandle.characters.Dragon));
 
                 return;
 
@@ -426,6 +426,14 @@ namespace StardewDruid.Cast.Ether
             if (currentLocation != Game1.player.currentLocation)
             {
 
+                return;
+
+            }
+
+            if (!Mod.instance.eventRegister.ContainsKey("transform"))
+            {
+
+                Mod.instance.movers.Add(CharacterHandle.characters.Dragon, new(CharacterHandle.characters.Dragon));
 
                 return;
 
@@ -2020,8 +2028,6 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            DelayedAction.functionAfterDelay(RemoveInstance, 1);
-
             if (flightCue.IsPlaying)
             {
 
@@ -2031,17 +2037,12 @@ namespace StardewDruid.Cast.Ether
 
         }
 
-        public void RemoveInstance()
-        {
-
-            currentLocation.characters.Remove(this);
-
-        }
-
         public bool SafeExit()
         {
 
-            if (swimActive || flightTerrain == "water")
+            if (
+                (ModUtility.GroundCheck(currentLocation,ModUtility.PositionToTile(Position)) == "water" && swimActive) || 
+                (flightActive && flightTerrain == "water"))
             {
 
                 return false;

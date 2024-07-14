@@ -183,7 +183,7 @@ namespace StardewDruid.Data
 
                 case DruidJournal.journalButtons.forward:
 
-                    return "Go Foward";
+                    return "Go Forward";
 
                 case DruidJournal.journalButtons.end:
 
@@ -220,6 +220,30 @@ namespace StardewDruid.Data
                 case DruidJournal.journalButtons.refresh:
 
                     return "Refresh all potions";
+
+                case DruidJournal.journalButtons.skipQuest:
+
+                    return "Skip Quest";
+
+                case DruidJournal.journalButtons.replayQuest:
+
+                    return "Replay Quest";
+
+                case DruidJournal.journalButtons.replayTomorrow:
+
+                    return "Replay Available Tomorrow";
+
+                case DruidJournal.journalButtons.cancelReplay:
+
+                    return "Cancel Replay";
+
+                case DruidJournal.journalButtons.viewEffect:
+
+                    return "View Related Effect";
+
+                case DruidJournal.journalButtons.viewQuest:
+
+                    return "View Related Quest";
 
                 default:
 
@@ -405,7 +429,7 @@ namespace StardewDruid.Data
 
                 case stringkeys.acPriority:
 
-                    return "Autoconsumption enabled with priority given to this line of herbal potions";
+                    return "Autoconsumption prioritised";
 
                 case stringkeys.MAX:
 
@@ -748,7 +772,7 @@ namespace StardewDruid.Data
 
                     sceneNarrators = new()
                     {
-                        [0] = "Tresure Thief",
+                        [0] = "Treasure Thief",
                     };
 
                     break;

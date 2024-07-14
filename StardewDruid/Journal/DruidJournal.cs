@@ -2,14 +2,20 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewDruid.Data;
+using StardewDruid.Event;
 using StardewDruid.Event.Scene;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Menus;
+using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Xml.Schema;
 using static StardewDruid.Journal.HerbalData;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -20,15 +26,22 @@ namespace StardewDruid.Journal
         public enum journalTypes
         {
             none,
+
             quests,
-            questPage,
             effects,
             relics,
             herbalism,
 
+            questPage,
+            effectPage,
+            relicPage,
+            dragonPage,
+
         }
 
         public journalTypes type = journalTypes.quests;
+
+        public journalTypes parentJournal = journalTypes.quests;
 
         public string title = DialogueData.Strings(DialogueData.stringkeys.stardewDruid);
 
@@ -44,9 +57,12 @@ namespace StardewDruid.Journal
             reverse,
             refresh,
 
-            associateQuest,
-            associateEffect,
+            viewQuest,
+            viewEffect,
+            skipQuest,
+            replayTomorrow,
             replayQuest,
+            cancelReplay,
 
             exit,
 
@@ -59,6 +75,13 @@ namespace StardewDruid.Journal
             scrollDown,
             forward,
             end,
+
+            headerOne, 
+            headerTwo, 
+            headerThree,
+
+            reset,
+            save,
 
         }
 
@@ -90,6 +113,8 @@ namespace StardewDruid.Journal
 
         public Dictionary<int, ContentComponent> contentComponents = new();
 
+        public Dictionary<int, ContentComponent> otherComponents = new();
+
         public DruidJournal(string JournalId = null, int Record = 0)
           : base(0, 0, 0, 0, true)
         {
@@ -118,8 +143,13 @@ namespace StardewDruid.Journal
 
         public static void openJournal(journalTypes Type, string Id = null, int Record = 0)
         {
+            
+            if(Game1.activeClickableMenu != null)
+            {
 
-            Game1.activeClickableMenu.exitThisMenu(false);
+                Game1.activeClickableMenu.exitThisMenu(false);
+
+            }
 
             switch (Type)
             {
@@ -137,8 +167,79 @@ namespace StardewDruid.Journal
 
                     break;
 
+                case journalTypes.effects:
+
+                    Game1.activeClickableMenu = new EffectJournal(Id, Record);
+
+                    break;
+
+                case journalTypes.effectPage:
+
+                    Game1.activeClickableMenu = new EffectPage(Id, Record);
+
+                    break;
+
+                case journalTypes.relics:
+
+                    Game1.activeClickableMenu = new RelicJournal(Id, Record);
+
+                    break;
+
+                case journalTypes.relicPage:
+
+                    Game1.activeClickableMenu = new RelicPage(Id, Record);
+
+                    break;
+
+                case journalTypes.herbalism:
+
+                    Game1.activeClickableMenu = new HerbalJournal(Id, Record);
+
+                    break;
+
+                case journalTypes.dragonPage:
+
+                    Game1.activeClickableMenu = new DragonPage(Id, Record);
+
+                    break;
+
             }
 
+
+        }
+
+        public static journalTypes journalTrigger()
+        {
+
+            if (Mod.instance.Config.journalButtons.GetState() == SButtonState.Pressed)
+            {
+
+                return journalTypes.quests;
+
+            }
+            else
+            if (Mod.instance.Config.effectsButtons.GetState() == SButtonState.Pressed)
+            {
+
+                return journalTypes.effects;
+
+            }
+            else
+            if (Mod.instance.Config.relicsButtons.GetState() == SButtonState.Pressed)
+            {
+
+                return journalTypes.relics;
+
+            }
+            else
+            if (Mod.instance.Config.herbalismButtons.GetState() == SButtonState.Pressed && Mod.instance.questHandle.IsComplete(QuestHandle.herbalism))
+            {
+
+                return journalTypes.herbalism;
+
+            }
+
+            return journalTypes.none;
 
         }
 
@@ -161,8 +262,8 @@ namespace StardewDruid.Journal
 
                 [301] = addButton(journalButtons.exit),
 
-                [305] = addButton(journalButtons.forward),
-                [306] = addButton(journalButtons.end),
+                [305] = addButton(journalButtons.end),
+                [306] = addButton(journalButtons.forward),
 
             };
 
@@ -211,10 +312,8 @@ namespace StardewDruid.Journal
 
         }
 
-        public virtual void activateInterface()
+        public virtual void fadeMenu()
         {
-
-            resetInterface();
 
             if (type != journalTypes.quests)
             {
@@ -244,6 +343,15 @@ namespace StardewDruid.Journal
 
             }
 
+        }
+
+        public virtual void activateInterface()
+        {
+
+            resetInterface();
+
+            fadeMenu();
+
             if (!Mod.instance.Config.activeJournal)
             {
 
@@ -258,17 +366,17 @@ namespace StardewDruid.Journal
 
             }
 
-            int top = record - (record % pagination);
+            int firstOnThisPage = record - (record % pagination);
 
-            int page = top == 0 ? 0 : top / pagination;
+            int thispage = firstOnThisPage == 0 ? 0 : firstOnThisPage / pagination;
 
-            int upper = contentComponents.Count % pagination;
+            int last = contentComponents.Count - 1;
+            
+            int firstOnLastPage = last - (last % pagination);
 
-            int next = contentComponents.Count - upper;
+            int lastpage = firstOnLastPage == 0 ? 0 : firstOnLastPage / pagination;
 
-            int pages = next == 0 ? 0 : next / pagination;
-
-            if (page == 0)
+            if (thispage == 0)
             {
                 
                 // back
@@ -279,7 +387,7 @@ namespace StardewDruid.Journal
 
             }
 
-            if (pages == page)
+            if (lastpage == thispage)
             {
                 
                 // forward
@@ -318,6 +426,19 @@ namespace StardewDruid.Journal
 
                     return new JournalComponent(Button, new Vector2(xP - (4 + 32), yP + 4 + 64 + 4 + 32), IconData.displays.end, new() { flip = true, });
 
+                case journalButtons.headerOne:
+
+                    return new JournalComponent(Button, new Vector2(xP + 48, yP + 17 + 28), IconData.displays.flag, new() { scale = 3f });
+
+                case journalButtons.headerTwo:
+
+                    return new JournalComponent(Button, new Vector2(xP + 48, yP + 17 + 202 + 28), IconData.displays.flag, new() { scale = 3f });
+
+                case journalButtons.headerThree:
+
+                    return new JournalComponent(Button, new Vector2(xP + 48, yP + 17 + 404 + 28), IconData.displays.flag, new() { scale = 3f });
+
+
                 // ====================================== top bar
 
                 default:
@@ -349,17 +470,29 @@ namespace StardewDruid.Journal
 
                     return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.knock, new());
 
-                case journalButtons.associateQuest:
+                case journalButtons.viewQuest:
 
-                    return new JournalComponent(Button, new Vector2(xR - (4 + 64 + 4 + 32), yT), IconData.displays.quest, new());
+                    return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.quest, new());
 
-                case journalButtons.associateEffect:
+                case journalButtons.viewEffect:
 
                     return new JournalComponent(Button, new Vector2(xR - (4 + 64 + 4 + 32), yT), IconData.displays.effect, new());
 
+                case journalButtons.skipQuest:
+
+                    return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.end, new());
+
                 case journalButtons.replayQuest:
 
-                    return new JournalComponent(Button, new Vector2(xR - (4 + 64 + 4 + 32), yT), IconData.displays.replay, new());
+                    return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.replay, new());
+
+                case journalButtons.replayTomorrow:
+
+                    return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.flag, new());
+
+                case journalButtons.cancelReplay:
+
+                    return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.active, new());
 
                 // ======================================  right side
 
@@ -393,6 +526,13 @@ namespace StardewDruid.Journal
 
                     return new JournalComponent(Button, new Vector2(xR + 4 + 32, yB - (4 + 64 + 4 + 32)), IconData.displays.end, new());
 
+                case journalButtons.reset:
+
+                    return new JournalComponent(Button, new Vector2(xR - 160, yB - 240), IconData.displays.knock, new());
+
+                case journalButtons.save:
+
+                    return new JournalComponent(Button, new Vector2(xR - 160, yB - 160), IconData.displays.complete, new());
 
             }
 
@@ -407,17 +547,25 @@ namespace StardewDruid.Journal
                 default:
                 case journalButtons.quests:
 
+                    DruidJournal.openJournal(journalTypes.quests);
+
                     break;
 
                 case journalButtons.effects:
+
+                    DruidJournal.openJournal(journalTypes.effects);
 
                     break;
 
                 case journalButtons.relics:
 
+                    DruidJournal.openJournal(journalTypes.relics);
+
                     break;
 
                 case journalButtons.herbalism:
+
+                    DruidJournal.openJournal(journalTypes.herbalism);
 
                     break;
 
@@ -441,15 +589,40 @@ namespace StardewDruid.Journal
 
                     break;
 
-                case journalButtons.associateQuest:
+                case journalButtons.skipQuest:
 
-                    break;
+                    Game1.playSound("ghost");
 
-                case journalButtons.associateEffect:
+                    Mod.instance.questHandle.CompleteQuest(journalId);
+
+                    Mod.instance.questHandle.OnCancel(journalId);
 
                     break;
 
                 case journalButtons.replayQuest:
+
+                    if (Mod.instance.questHandle.IsReplayable(journalId))
+                    {
+
+                        Game1.playSound("yoba");
+
+                        Mod.instance.questHandle.RevisitQuest(journalId);
+
+                    }
+
+                    break;
+
+                case journalButtons.replayTomorrow:
+
+                    break;
+
+                case journalButtons.cancelReplay:
+
+                    Game1.playSound("ghost");
+
+                    Mod.instance.questHandle.OnCancel(journalId);
+
+                    Mod.instance.SyncMultiplayer();
 
                     break;
 
@@ -461,11 +634,16 @@ namespace StardewDruid.Journal
 
                 case journalButtons.back:
 
-                    int back = record - (record % pagination);
+                    if (pagination != 0)
+                    {
 
-                    record = Math.Max(0, back - pagination);
+                        int back = record - (record % pagination);
 
-                    activateInterface();
+                        record = Math.Max(0, back - pagination);
+
+                        activateInterface();
+
+                    }
                     
                     break;
 
@@ -499,11 +677,16 @@ namespace StardewDruid.Journal
 
                 case journalButtons.forward:
 
-                    int forward = record - (record % pagination);
+                    if (pagination != 0)
+                    {
 
-                    record = Math.Min(contentComponents.Count, forward + pagination);
+                        int forward = record - (record % pagination);
 
-                    activateInterface();
+                        record = Math.Min(contentComponents.Count-1, forward + pagination);
+
+                        activateInterface();
+                    
+                    }
 
                     break;
 
@@ -544,6 +727,7 @@ namespace StardewDruid.Journal
             }
 
         }
+        
         public virtual void pressContent()
         {
 
@@ -551,7 +735,65 @@ namespace StardewDruid.Journal
             
         }
 
-        public virtual void scrollAmount(int direction)
+        public virtual void pressCancel()
+        {
+
+        }
+
+        public virtual void pressEnter(int X, int Y)
+        {
+
+            if (scrolling)
+            {
+
+                scrollWithin(Y);
+
+                return;
+
+            }
+
+            if (interfacing)
+            {
+
+                if (interfaceComponents[focus].active)
+                {
+
+                    pressButton(interfaceComponents[focus].button);
+
+                }
+
+            }
+
+            if (browsing)
+            {
+
+                pressContent();
+
+            }
+
+        }
+
+        public void pressBackspace(int X, int Y)
+        {
+
+            if (browsing)
+            {
+
+                pressCancel();
+
+            }
+            else
+            {
+
+                pressButton(journalButtons.back);
+
+            }
+
+        }
+
+        // ===================================================== 
+
+        public virtual bool scrollAmount(int direction)
         {
 
             scrolled += (int)(direction * 32);
@@ -563,7 +805,11 @@ namespace StardewDruid.Journal
 
                 scrolled = limit;
 
+                interfaceComponents[scrollId].setBounds();
+
                 interfaceComponents[scrollId].position.Y = scrollBox.Bottom - 32;
+
+                return false;
 
             }
             else if (scrolled < 0)
@@ -571,26 +817,28 @@ namespace StardewDruid.Journal
 
                 scrolled = 0;
 
+                interfaceComponents[scrollId].setBounds();
+
                 interfaceComponents[scrollId].position.Y = scrollBox.Top + 32;
 
-            }
-            else
-            {
-
-                float ratio = (float)Math.Abs(scrolled) / (float)limit;
-
-                interfaceComponents[scrollId].position.Y = scrollBox.Top + 32 + (int)((float)(scrollBox.Height-64) * ratio);
+                return false;
 
             }
+
+            float ratio = (float)Math.Abs(scrolled) / (float)limit;
+
+            interfaceComponents[scrollId].position.Y = scrollBox.Top + 32 + (int)((float)(scrollBox.Height - 64) * ratio);
 
             interfaceComponents[scrollId].setBounds();
+
+            return true;
 
         }
 
         public virtual void scrollWithin(int Y)
         {
 
-            interfaceComponents[scrollId].position.Y = Math.Max(scrollBox.Top + 32, Math.Min(scrollBox.Bottom-32, Y ));
+            interfaceComponents[scrollId].position.Y = Math.Max(scrollBox.Top + 32, Math.Min(scrollBox.Bottom - 32, Y));
 
             float diff = interfaceComponents[scrollId].position.Y - (float)(scrollBox.Top + 32);
 
@@ -601,6 +849,577 @@ namespace StardewDruid.Journal
             scrolled = (int)((float)ratio * (float)limit);
 
             interfaceComponents[scrollId].setBounds();
+
+        }
+
+        public void shiftFocus(int direction)
+        {
+
+            if (scrolling)
+            {
+
+                movementScrolling(direction);
+
+                return;
+
+            }
+
+            if (interfacing)
+            {
+
+                movementInterface(direction);
+
+                return;
+            }
+
+            if(pagination == 0)
+            {
+
+                if (scrollId != 0)
+                {
+
+                    pageScrolling(direction);
+
+                }
+
+                return;
+
+            }
+
+            shiftContents(direction);
+
+        }
+
+        public virtual void movementScrolling(int direction)
+        {
+
+            switch (direction)
+            {
+
+                case 0:
+
+                    if (scrollAmount(-1))
+                    {
+
+                        Mouse.SetPosition((int)interfaceComponents[scrollId].position.X, (int)interfaceComponents[scrollId].position.Y);
+
+                        return;
+
+                    }
+
+                    break;
+
+                case 1:
+
+                    shiftInterface(scrollId, 1);
+
+                    break;
+
+
+                case 2:
+
+                    if (scrollAmount(1))
+                    {
+
+                        Mouse.SetPosition((int)interfaceComponents[scrollId].position.X, (int)interfaceComponents[scrollId].position.Y);
+
+                        return;
+
+                    }
+
+                    break;
+
+
+                case 3:
+
+                    focusContents();
+
+                    break;
+
+            }
+
+        }
+
+        public virtual void pageScrolling(int direction)
+        {
+            
+            switch (direction)
+            {
+
+                case 0:
+
+                    if (!scrollAmount(-1))
+                    {
+
+                        shiftInterface(100, 1);
+
+                        return;
+
+                    }
+
+                    break;
+
+                case 1:
+
+                    shiftInterface(300, 1);
+
+                    break;
+
+                case 2:
+
+                    if (!scrollAmount(1))
+                    {
+
+                        shiftInterface(100, 1);
+
+                        return;
+
+                    }
+
+                    break;
+
+
+                case 3:
+
+                    shiftInterface(200, 1);
+
+                    break;
+
+            }
+
+        }
+
+        public virtual void movementInterface(int direction)
+        {
+
+            if (focus < 200)
+            {
+                switch (direction)
+                {
+
+                    case 0:
+                    case 1:
+
+                        shiftInterface(focus, 1);
+
+                        break;
+
+
+                    case 2:
+
+                        focusContents();
+
+                        break;
+
+
+                    case 3:
+
+                        shiftInterface(focus, -1);
+
+                        break;
+
+                }
+
+            }
+            else if (focus < 300)
+            {
+                switch (direction)
+                {
+
+                    case 0:
+
+                        shiftInterface(focus, -1);
+
+                        break;
+
+                    case 1:
+
+                        focusContents();
+
+                        break;
+
+
+                    case 2:
+
+                        shiftInterface(focus, 1);
+
+                        break;
+
+
+                    case 3:
+
+                        shiftInterface(300, 1);
+
+                        break;
+
+                }
+
+            }
+            else if (focus < 400)
+            {
+                switch (direction)
+                {
+
+                    case 0:
+
+                        shiftInterface(focus, -1);
+
+                        break;
+
+                    case 1:
+
+                        shiftInterface(200, 1);
+
+                        break;
+
+                    case 2:
+
+                        shiftInterface(focus, 1);
+
+                        break;
+
+                    case 3:
+
+                        focusContents();
+
+                        break;
+
+                }
+
+            }
+
+        }
+
+        public void shiftInterface(int previous, int increment = 1)
+        {
+
+            List<int> interfaceables = new();
+
+            foreach(KeyValuePair<int,JournalComponent> component in interfaceComponents)
+            {
+                if (component.Value.active)
+                {
+
+                    interfaceables.Add(component.Key);
+
+                }
+
+            }
+
+            interfaceables.Sort();
+
+            for(int i = 0; i < interfaceables.Count; i++)
+            {
+
+                int key = interfaceables[i];
+
+                if(increment < 0)
+                {
+
+                    if(key >= previous)
+                    {
+
+                        if (i == 0)
+                        {
+
+                            focusInterface(interfaceables.Last());
+                            
+                            return;
+
+                        }
+                        else
+                        {
+
+                            focusInterface(interfaceables[i - 1]);
+
+                            return;
+
+                        }
+
+                    }
+                    else if (i == interfaceables.Count-1)
+                    {
+
+                        focusInterface(key);
+
+                        return;
+
+                    }
+
+                }
+                else if (increment > 0)
+                {
+
+                    if (key == previous)
+                    {
+
+                        int next = i + 1;
+
+                        if (next > interfaceables.Count - 1)
+                        {
+
+                            focusInterface(interfaceables.First());
+
+                            return;
+
+                        }
+                        else
+                        {
+
+                            focusInterface(interfaceables[next]);
+
+                            return;
+
+                        }
+
+                    }
+                    else if (key > previous)
+                    {
+
+                        focusInterface(interfaceables[i]);
+
+                        return;
+
+                    }
+                    else if (i == interfaceables.Count - 1)
+                    {
+
+                        focusInterface(interfaceables.First());
+
+                        return;
+
+                    }
+
+                }
+
+            }
+
+            focusContents();
+
+        }
+
+        public void focusInterface(int key)
+        {
+
+            focus = key;
+
+            scrolling = false;
+
+            browsing = false;
+
+            interfacing = true;
+
+            Mouse.SetPosition(interfaceComponents[focus].bounds.Center.X, interfaceComponents[focus].bounds.Center.Y);
+
+        }
+
+        public void shiftContents(int direction)
+        {
+
+            int start = focus - (focus % pagination);
+
+            int end = Math.Min(contentComponents.Count-1, start + pagination - 1);
+
+            bool active = false;
+
+            switch (direction)
+            {
+
+                case 0:
+
+                    while (!active)
+                    {
+                        
+                        if (focus == start)
+                        {
+
+                            shiftInterface(100, 1);
+
+                            return;
+
+                        }
+
+                        focus--;
+
+                        if (contentComponents[focus].active)
+                        {
+
+                            active = true;
+
+                        }
+
+                    }
+
+                    break;
+
+                case 1:
+
+                    shiftInterface(200, 1);
+
+                    return;
+
+                case 2:
+                    while (!active)
+                    {
+
+                        if (focus == end)
+                        {
+
+                            shiftInterface(100, 1);
+
+                            return;
+
+                        }
+
+                        focus++;
+
+                        if (contentComponents[focus].active)
+                        {
+
+                            active = true;
+
+                        }
+
+                    }
+
+                    break;
+
+                case 3:
+
+                    shiftInterface(300, 1);
+
+                    return;
+
+            }
+
+            browsing = true;
+
+            Mouse.SetPosition(contentComponents[focus].bounds.Center.X, contentComponents[focus].bounds.Center.Y);
+
+        }
+
+        public void focusContents()
+        {
+
+            scrolling = false;
+
+            interfacing = false;
+
+            browsing = false;
+
+            if(contentComponents.Count > 0)
+            {
+                
+                browsing = true;
+
+                focus = contentComponents.First().Key;
+
+                Mouse.SetPosition(contentComponents[focus].bounds.Center.X, contentComponents[focus].bounds.Center.Y);
+
+            }
+            else
+            {
+
+                interfacing = true;
+
+                focus = interfaceComponents.First().Key;
+
+                Mouse.SetPosition(interfaceComponents[focus].bounds.Center.X, interfaceComponents[focus].bounds.Center.Y);
+
+            }
+
+        }
+
+        public void hoverInterface(int x, int y)
+        {
+
+            foreach (KeyValuePair<int, JournalComponent> component in interfaceComponents)
+            {
+
+                if (!component.Value.active)
+                {
+
+                    continue;
+
+                }
+
+                if (component.Value.bounds.Contains(x, y))
+                {
+
+                    focus = component.Key;
+
+                    interfacing = true;
+
+                    if (component.Value.hover < component.Value.spec.hoverLimit)
+                    {
+
+                        component.Value.hover++;
+
+                    }
+
+                }
+                else if (component.Value.hover > 0)
+                {
+
+                    component.Value.hover--;
+
+                }
+
+            }
+
+        }
+
+        public void hoverContent(int x, int y)
+        {
+
+            int top = 0;
+
+            int total = contentComponents.Count;
+
+            if (pagination > 0)
+            {
+
+                top = record - (record % pagination);
+
+                total = pagination;
+
+            }
+
+            //int upper = contentComponents.Count % pagination;
+
+            for (int i = 0; i < total; i++)
+            {
+
+                int index = top + i;
+
+                if (contentComponents.Count <= index)
+                {
+                    
+                    break;
+                
+                }
+
+                ContentComponent component = contentComponents[index];
+
+                if (!component.active)
+                {
+
+                    continue;
+
+                }
+
+                if (component.bounds.Contains(x, y))
+                {
+
+                    browsing = true;
+
+                    focus = index;
+
+                    return;
+
+                }
+
+            }
 
         }
 
@@ -663,73 +1482,39 @@ namespace StardewDruid.Journal
         public virtual void drawContent(SpriteBatch b)
         {
 
-            int top = record - (record % pagination);
+            int top = 0;
 
-            //int upper = contentComponents.Count % pagination;
+            int total = contentComponents.Count;
 
-            for (int i = 0; i < pagination; i++)
+            if (pagination > 0)
+            {
+
+                top = record - (record % pagination);
+
+                total = pagination;
+
+            }
+
+            for (int i = 0; i < total; i++)
             {
 
                 int index = top + i;
 
                 if(contentComponents.Count <= index)
                 {
+                    
                     break;
+                
                 }
 
-                ContentComponent component = contentComponents[index];
-
-                component.draw(b, Vector2.Zero, (browsing && index == focus));
-
-                IconData.displays questIcon;
-
-                switch (Mod.instance.save.progress[component.id].status)
+                if (!contentComponents[index].active)
                 {
 
-                    default:
-                    case 1:
-
-                        questIcon = IconData.displays.active;
-
-                        break;
-                    case 2:
-                    case 3:
-
-                        questIcon = IconData.displays.complete;
-
-                        break;
-                    case 4:
-
-                        questIcon = IconData.displays.replay;
-
-                        break;
+                    continue;
 
                 }
 
-                b.Draw(
-                    Mod.instance.iconData.displayTexture,
-                    new Vector2(component.bounds.Right - 20f - 32f + 1f, component.bounds.Center.Y + 3f),
-                    IconData.DisplayRectangle(questIcon),
-                    Microsoft.Xna.Framework.Color.Black * 0.35f,
-                    0f,
-                    new Vector2(8),
-                    4f,
-                    0,
-                    0.900f
-                );
-
-                b.Draw(
-                    Mod.instance.iconData.displayTexture,
-                    new Vector2(component.bounds.Right - 20f - 32f, component.bounds.Center.Y),
-                    IconData.DisplayRectangle(questIcon),
-                    Microsoft.Xna.Framework.Color.White,
-                    0f,
-                    new Vector2(8),
-                    4f,
-                    0,
-                    0.901f
-                );
-
+                contentComponents[index].draw(b, Vector2.Zero, (browsing && index == focus));
 
             }
 
@@ -746,13 +1531,13 @@ namespace StardewDruid.Journal
 
                     Vector2 textOffset = Game1.smallFont.MeasureString(interfaceComponents[focus].text) * 1.25f;
 
-                    Microsoft.Xna.Framework.Rectangle hoverbox = drawHoverBox(b,(int)textOffset.X+32, (int)textOffset.Y+32);
+                    Microsoft.Xna.Framework.Rectangle hoverbox = drawHoverBox(b,(int)textOffset.X+64, (int)textOffset.Y+32);
 
                     b.DrawString(
                         Game1.smallFont, 
                         interfaceComponents[focus].text, 
                         new Vector2(hoverbox.Center.X-(textOffset.X/2), 
-                        hoverbox.Center.Y - (textOffset.Y / 2)), 
+                        hoverbox.Center.Y - (textOffset.Y / 2) + 2f), 
                         Game1.textColor, 
                         0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
 
@@ -760,7 +1545,7 @@ namespace StardewDruid.Journal
                         Game1.smallFont, 
                         interfaceComponents[focus].text, 
                         new Vector2(hoverbox.Center.X - (textOffset.X / 2) - 1f, 
-                        hoverbox.Center.Y - (textOffset.Y / 2) + 1.5f), 
+                        hoverbox.Center.Y - (textOffset.Y / 2) + 2f + 1.5f), 
                         Microsoft.Xna.Framework.Color.Brown * 0.35f, 
                         0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
 
@@ -835,10 +1620,141 @@ namespace StardewDruid.Journal
 
         }
 
+
         // ===================================================== 
 
         public override void receiveGamePadButton(Buttons b)
         {
+
+            switch(b)
+            {
+
+                case Buttons.RightTrigger:
+
+                    pressButton(journalButtons.back);
+
+                    break;
+
+                case Buttons.LeftTrigger:
+
+                    pressButton(journalButtons.forward);
+
+                    break;
+
+            }
+
+        }
+
+        public override void receiveKeyPress(Keys key)
+        {
+
+            if (key == 0)
+            {
+
+                return;
+
+            }
+
+            if(Game1.options.doesInputListContain(Game1.options.menuButton, key))
+            {
+
+                pressButton(journalButtons.exit);
+
+                return;
+
+            }
+
+            if (Game1.options.doesInputListContain(Game1.options.moveUpButton, key))
+            {
+
+                shiftFocus(0);
+
+                return;
+
+            }
+
+            if (Game1.options.doesInputListContain(Game1.options.moveRightButton, key))
+            {
+
+                shiftFocus(1);
+
+                return;
+
+            }
+
+            if (Game1.options.doesInputListContain(Game1.options.moveLeftButton, key))
+            {
+
+                shiftFocus(2);
+
+                return;
+
+            }
+
+            if (Game1.options.doesInputListContain(Game1.options.moveDownButton, key))
+            {
+
+                shiftFocus(3);
+
+                return;
+
+            }
+
+            if (Game1.options.snappyMenus && Game1.options.gamepadControls)
+            {
+
+                applyMovementKey(key);
+
+                return;
+
+            }
+
+            switch (key)
+            {
+
+                case Keys.Escape:
+
+                    pressButton(journalButtons.exit);
+
+                    break;
+
+                case Keys.Back:
+
+                    pressBackspace(Mouse.GetState().X, Mouse.GetState().Y);
+
+                    break;
+
+                case Keys.Enter:
+
+                    pressEnter(Mouse.GetState().X, Mouse.GetState().Y);
+
+                    break;
+
+                case Keys.Up:
+
+                    shiftFocus(0);
+
+                    break;
+
+                case Keys.Right:
+
+                    shiftFocus(1);
+                    break;
+
+                case Keys.Down:
+
+                    shiftFocus(2);
+
+                    break;
+
+                case Keys.Left:
+
+                    shiftFocus(3);
+
+                    break;
+
+            }
+
         }
 
         public override void receiveScrollWheelAction(int direction)
@@ -873,48 +1789,20 @@ namespace StardewDruid.Journal
 
             scrolling = false;
 
+            focus = 0;
+
             if (scrollId != 0 && scrollBox.Contains(x, y))
             {
 
                 scrolling = true;
 
+                focus = scrollId;
+
                 return;
 
             }
 
-            foreach (KeyValuePair<int, JournalComponent> component in interfaceComponents)
-            {
-
-                if (!component.Value.active)
-                {
-                    
-                    continue;
-
-                }
-
-                if (component.Value.bounds.Contains(x,y))
-                {
-
-                    focus = component.Key;
-
-                    interfacing = true;
-
-                    if(component.Value.hover < component.Value.spec.hoverLimit)
-                    {
-
-                        component.Value.hover++;
-
-                    }
-
-                }
-                else if(component.Value.hover > 0)
-                {
-
-                    component.Value.hover--;
-
-                }
-
-            }
+            hoverInterface(x, y);
 
             if (interfacing)
             {
@@ -923,79 +1811,21 @@ namespace StardewDruid.Journal
 
             }
 
-            if(pagination == 0)
-            {
+            hoverContent(x,y);
 
-                return;
-
-            }
-
-            int top = record - (record % pagination);
-
-            //int upper = contentComponents.Count % pagination;
-
-            for (int i = 0; i < pagination; i++)
-            {
-
-                int index = top + i;
-
-                if (contentComponents.Count <= index)
-                {
-                    break;
-                }
-
-                ContentComponent component = contentComponents[index];
-
-                if (component.bounds.Contains(x, y))
-                {
-
-                    browsing = true;
-
-                    focus = index;
-
-                    return;
-
-                }
-
-            }
-
-        }
-
-        public override void receiveKeyPress(Keys key)
-        {
         }
 
         public override void applyMovementKey(int direction)
         {
+
+            shiftFocus(direction);
+
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
         {
 
-            if (scrolling)
-            {
-
-                scrollWithin(y);
-
-                return;
-            
-            }
-
-            if (interfacing)
-            {
-
-                pressButton(interfaceComponents[focus].button);
-
-                return;
-
-            }
-
-            if(browsing)
-            {
-
-                pressContent();
-
-            }
+            pressEnter(x,y);
 
         }
 
@@ -1024,313 +1854,13 @@ namespace StardewDruid.Journal
 
         public override void releaseLeftClick(int x, int y)
         {
+
         }
 
         public override void receiveRightClick(int x, int y, bool playSound = true)
         {
-        }
 
-    }
-
-    public class JournalComponent
-    {
-        
-        public DruidJournal.journalButtons button;
-
-        public Microsoft.Xna.Framework.Vector2 position;
-
-        public IconData.displays display;
-
-        public Microsoft.Xna.Framework.Rectangle bounds;
-
-        public Microsoft.Xna.Framework.Rectangle source;
-
-        public int hover;
-
-        public string text;
-
-        public bool active;
-
-        public float fade = 1f;
-
-        public JournalAdditional spec = new();
-
-        public JournalComponent(DruidJournal.journalButtons Button, Vector2 Position, IconData.displays Display, JournalAdditional additional)
-        {
-
-            position = Position;
-
-            button = Button;
-
-            display = Display;
-
-            spec = additional;
-
-            setBounds();
-
-        }
-        
-        public void setBounds()
-        {
-
-            source = IconData.DisplayRectangle(display);
-
-            bounds = new((int)position.X - (int)(8f * spec.scale), (int)position.Y - (int)(8f * spec.scale), (int)(16f * spec.scale), (int)(16f * spec.scale));
-
-            text = DialogueData.ButtonStrings(button);
-
-        }
-
-        public void draw(SpriteBatch b)
-        {
-
-            b.Draw(
-                Mod.instance.iconData.displayTexture, 
-                position, 
-                source,
-                Color.White * fade,
-                0f, 
-                new Vector2(8), 
-                spec.scale + (0.05f * hover), 
-                spec.flip ? SpriteEffects.FlipHorizontally : 0, 
-                999f
-            );
-
-        }
-
-    }
-
-    public class JournalAdditional
-    {
-
-        public float scale = 3.5f;
-
-        public bool flip;
-
-        public float hoverLimit = 5;
-
-    }
-
-    public class ContentComponent
-    {
-
-        public enum contentTypes
-        {
-            list,
-            gallery,
-            title,
-            text
-
-        }
-
-        public contentTypes type;
-
-        public string id;
-
-        public int context;
-
-        public Microsoft.Xna.Framework.Rectangle bounds;
-
-        // display content
-
-        public string text;
-
-        public Vector2 measure;
-
-        public Microsoft.Xna.Framework.Color color;
-
-        public IconData.displays icon;
-
-        public Microsoft.Xna.Framework.Rectangle iconSource;
-
-        public ContentComponent(contentTypes Type, string ID)
-        {
-
-            type = Type;
-
-            id = ID;
-
-            color = new Color(86, 22, 12);
-
-        }
-
-        public void setBounds(int index, int xP, int yP, int width, int height)
-        {
-
-            switch (type)
-            {
-
-                case contentTypes.list:
-
-                    bounds = new Rectangle(xP + 16, yP + 16 + index * ((height - 32) / 6), width - 32, (height - 32) / 6 + 4);
-
-                    if(icon != IconData.displays.none)
-                    {
-
-                        iconSource = IconData.DisplayRectangle(icon);
-
-                    }
-
-                    return;
-
-                case contentTypes.title:
-
-                    text = Game1.parseText(id, Game1.dialogueFont, width);
-
-                    measure = Game1.dialogueFont.MeasureString(text);
-
-                    bounds = new Rectangle(xP, yP, width, 80);
-
-                    return;
-
-                case contentTypes.text:
-
-                    // width should be journal.width - 128
-
-                    text = Game1.parseText(id, Game1.dialogueFont, width);
-
-                    measure = Game1.dialogueFont.MeasureString(text);
-
-                    bounds = new Rectangle(xP, yP, (int)measure.X, (int)measure.Y+16);
-
-                    return;
-
-            }
-
-        }
-
-        public void draw(SpriteBatch b, Vector2 offset, bool focus = false)
-        {
-
-            switch (type)
-            {
-
-                case contentTypes.list:
-
-                    IClickableMenu.drawTextureBox(
-                        b,
-                        Game1.mouseCursors,
-                        new Rectangle(384, 396, 15, 15),
-                        bounds.X,
-                        bounds.Y,
-                        bounds.Width,
-                        bounds.Height,
-                        focus ? Color.Wheat : Color.White,
-                        4f,
-                        false,
-                        -1f
-                    );
-
-                    // icon
-
-                    b.Draw(
-                        Mod.instance.iconData.displayTexture,
-                        new Vector2(bounds.Left + 20f + 32f - 1.5f,  bounds.Center.Y + 3f),
-                        iconSource,
-                        Microsoft.Xna.Framework.Color.Black * 0.35f,
-                        0f,
-                        new Vector2(8),
-                        4f, 
-                        0, 
-                        0.900f
-                    );
-
-                    b.Draw(
-                        Mod.instance.iconData.displayTexture,
-                        new Vector2(bounds.Left + 20f + 32f, bounds.Center.Y),
-                        iconSource,
-                        Microsoft.Xna.Framework.Color.White,
-                        0f,
-                        new Vector2(8),
-                        4f,
-                        0,
-                        0.901f
-                    );
-
-                    // title
-
-                    b.DrawString(
-                        Game1.dialogueFont,
-                        text,
-                        new Vector2(bounds.Left + 20f + 64 + 16f - 1.5f, bounds.Center.Y - 20 + 1.5f),
-                        Microsoft.Xna.Framework.Color.Brown * 0.35f,
-                        0f,
-                        Vector2.Zero,
-                        1f,
-                        SpriteEffects.None,
-                        0.900f
-                    );
-
-                    b.DrawString(
-                        Game1.dialogueFont,
-                        text,
-                        new Vector2(bounds.Left + 20f + 64 + 16f, bounds.Center.Y - 20),
-                        color,
-                        0f,
-                        Vector2.Zero,
-                        1f,
-                        SpriteEffects.None,
-                        0.901f
-                    );
-
-                    return;
-
-                case contentTypes.title:
-
-                    b.DrawString(
-                        Game1.dialogueFont,
-                        text,
-                        new Vector2(bounds.Center.X - (measure.X / 2f * 1.1f) - 1.5f, offset.Y + bounds.Center.Y - (measure.Y / 2 * 1.1f) + 1.5f),
-                        Microsoft.Xna.Framework.Color.Brown * 0.35f,
-                        0f,
-                        Vector2.Zero,
-                        1.1f,
-                        SpriteEffects.None,
-                        0.900f
-                    );
-
-                    b.DrawString(
-                        Game1.dialogueFont,
-                        text,
-                        new Vector2(bounds.Center.X - (measure.X / 2f * 1.1f), offset.Y + bounds.Center.Y - (measure.Y / 2 * 1.1f)),
-                        color,
-                        0f,
-                        Vector2.Zero,
-                        1.1f,
-                        SpriteEffects.None,
-                        0.901f
-                    );
-
-                    return;
-
-                case contentTypes.text:
-
-                    b.DrawString(
-                        Game1.dialogueFont,
-                        text,
-                        new Vector2(bounds.Left - 1.5f, offset.Y + bounds.Top + 1.5f),
-                        Microsoft.Xna.Framework.Color.Brown * 0.35f,
-                        0f,
-                        Vector2.Zero,
-                        1f,
-                        SpriteEffects.None,
-                        0.900f
-                    );
-
-                    b.DrawString(
-                        Game1.dialogueFont,
-                        text,
-                        new Vector2(bounds.Left, offset.Y + bounds.Top),
-                        color,
-                        0f,
-                        Vector2.Zero,
-                        1f,
-                        SpriteEffects.None,
-                        0.901f
-                    );
-                    return;
-
-            }
+            pressBackspace(x,y);
 
         }
 
