@@ -493,11 +493,30 @@ namespace StardewDruid.Data
 
         };
 
+        public Dictionary<string, IconData.schemes> DragonSchemery = new()
+        {
+            ["Custom"] = schemes.dragon_custom,
+            ["Red"] = schemes.dragon_red,
+            ["Blue"] = schemes.dragon_blue,
+            ["Black"] = schemes.dragon_black,
+            ["Green"] = schemes.dragon_green,
+            ["Purple"] = schemes.dragon_purple,
+
+        };
+
         public Dictionary<IconData.schemes, string> BreathOptions = new()
         {
             [schemes.stars] = "Stars",
             [schemes.fates] = "Fates",
             [schemes.ether] = "Ether",
+
+        };
+
+        public Dictionary<string, IconData.schemes> BreathSchemery = new()
+        {
+            ["Stars"] = schemes.stars,
+            ["Fates"] = schemes.fates,
+            ["Ether"] = schemes.ether,
 
         };
 

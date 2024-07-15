@@ -8,7 +8,7 @@
 
     "Enum.journalButtons.back": "Go Back",
     "Enum.journalButtons.start": "Start page",
-    "Enum.journalButtons.forward": "Go Foward",
+    "Enum.journalButtons.forward": "Go Forward",
     "Enum.journalButtons.end": "End page",
     "Enum.journalButtons.exit": "Exit Menu",
     "Enum.journalButtons.quests": "Open Questlog",
@@ -18,6 +18,12 @@
     "Enum.journalButtons.active": "Sort quests by completion",
     "Enum.journalButtons.reverse": "Reverse order of entries",
     "Enum.journalButtons.refresh": "Refresh all potions",
+    "Enum.journalButtons.skipQuest": "Skip Quest",
+    "Enum.journalButtons.replayQuest": "Replay Quest",
+    "Enum.journalButtons.replayTomorrow": "Replay Available Tomorrow",
+    "Enum.journalButtons.cancelReplay": "Cancel Replay",
+    "Enum.journalButtons.viewEffect": "View Related Effect",
+    "Enum.journalButtons.viewQuest": "View Related Quest",
 
     // stringkeys
     "Enum.stringkeys.stardewDruid": "Stardew Druid",
@@ -69,7 +75,7 @@
 
     "Enum.stringkeys.acEnabled": "Autoconsumption enabled",
     "Enum.stringkeys.acDisabled": "Autoconsumption disabled",
-    "Enum.stringkeys.acPriority": "Autoconsumption enabled with priority given to this line of herbal potions",
+    "Enum.stringkeys.acPriority": "Autoconsumption prioritised",
     "Enum.stringkeys.MAX": "(MAX)",
     "Enum.stringkeys.HP": "HP",
     "Enum.stringkeys.STM": "STM",
@@ -180,7 +186,7 @@
 
     "DialogueNarrators.challengeEther.0": "Dust Chef",
 
-    "DialogueNarrators.treasureChase.0": "Tresure Thief",
+    "DialogueNarrators.treasureChase.0": "Treasure Thief",
 
     // DialogueScene
     "DialogueScene.approachEffigy.1.0": "Farmer",
@@ -1388,7 +1394,7 @@
 
     "Effect.meteorRain.title": "Meteor Rain",
     "Effect.meteorRain.description": "If nature extends to the celestial realm, then the stars themselves are it's greatest force, a force now granted to me in order to burn away the taint and decay of a stagnated world.",
-    "Effect.meteorRain.instruction": "Cast Rite of the Stars to produce a meteor that strikes objects and monsters within the impact radius of a random point near the Farmer. Will dislodge most set down objects.",
+    "Effect.meteorRain.instruction": "Cast Rite of the Stars to produce a meteor that strikes objects and monsters within the impact radius of a random point near the Farmer. Will dislodge most set down objects. A melee weapon is required to cast meteors on farmland.",
     "Effect.meteorRain.details.0": "Cost: 12 - Player Combat Level, minimum 5",
     "Effect.meteorRain.details.1": "Activate: Hold the rite button to continue to produce a shower of meteors around the Farmer",
     "Effect.meteorRain.details.2": "Mastery: Chance for an additional meteor to be produced per cast cycle",

@@ -1220,6 +1220,18 @@ namespace StardewDruid.Journal
                                     {
                                         amount = 10;
                                     }
+                                    else if (Mod.instance.Helper.Input.GetState(SButton.RightShift) == SButtonState.Held)
+                                    {
+                                        amount = 10;
+                                    }
+                                    else if (Mod.instance.Helper.Input.GetState(SButton.LeftControl) == SButtonState.Held)
+                                    {
+                                        amount = 50;
+                                    }
+                                    else if (Mod.instance.Helper.Input.GetState(SButton.RightControl) == SButtonState.Held)
+                                    {
+                                        amount = 50;
+                                    }
 
                                     Mod.instance.herbalData.BrewHerbal(pages[currentPage][index],amount);
 

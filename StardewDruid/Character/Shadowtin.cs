@@ -689,30 +689,9 @@ namespace StardewDruid.Character
 
                             targetObject.heldObject.Value = null;
 
-                            if(targetObject.QualifiedItemId == "(BC)9")
-                            {
+                            targetObject.MinutesUntilReady = 0;
 
-                                targetObject.MinutesUntilReady = -1;
-
-                            } 
-                            else if(targetObject.QualifiedItemId == "(BC)10")
-                            {
-                                
-                                targetObject.MinutesUntilReady = Utility.CalculateMinutesUntilMorning(Game1.timeOfDay, 4);
-
-                            }
-                            else if (targetObject.QualifiedItemId == "(BC)MushroomLog")
-                            {
-                                
-                                targetObject.MinutesUntilReady = Utility.CalculateMinutesUntilMorning(Game1.timeOfDay);
-
-                            }
-                            else if (targetObject.IsTapper())
-                            {
-                                
-                                targetObject.MinutesUntilReady = Utility.CalculateMinutesUntilMorning(Game1.timeOfDay, 5);
-
-                            }
+                            targetObject.performDropDownAction(Game1.player);
 
                         }
 

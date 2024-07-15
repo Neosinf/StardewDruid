@@ -489,11 +489,21 @@ namespace StardewDruid
                 {
                     for (int index = location.characters.Count - 1; index >= 0; index--)
                     {
+                        
                         NPC npc = location.characters[index];
 
                         if (npc is StardewDruid.Character.Character)
                         {
+                            
                             location.characters.RemoveAt(index);
+                        
+                        }
+
+                        if (npc is Cast.Ether.Dragon)
+                        {
+
+                            location.characters.RemoveAt(index);
+
                         }
 
                     }
@@ -1086,8 +1096,9 @@ namespace StardewDruid
 
                         if (Game1.buffsDisplay.hoverText.Contains(DialogueData.Strings(DialogueData.stringkeys.stardewDruid)))
                         {
-
-                            Game1.activeClickableMenu = new Druid(journalPressed);
+                            
+                            DruidJournal.openJournal((DruidJournal.journalTypes)journalPressed);
+                            //Game1.activeClickableMenu = new Druid(journalPressed);
 
                         }
 
@@ -1114,8 +1125,9 @@ namespace StardewDruid
 
                         questLog.exitThisMenu(true);
 
-                        Game1.activeClickableMenu = new Druid(journalPressed);
-                        
+                        DruidJournal.openJournal((DruidJournal.journalTypes)journalPressed);
+                        //Game1.activeClickableMenu = new Druid(journalPressed);
+
                         rite.shutdown();
 
                     }
@@ -1130,8 +1142,9 @@ namespace StardewDruid
 
                         gameMenu.exitThisMenu(true);
 
-                        Game1.activeClickableMenu = new Druid(journalPressed);
-                        
+                        DruidJournal.openJournal((DruidJournal.journalTypes)journalPressed);
+                        //Game1.activeClickableMenu = new Druid(journalPressed);
+
                         rite.shutdown();
                     
                     }
@@ -1145,9 +1158,8 @@ namespace StardewDruid
             if (journalPressed != journalTypes.none)
             {
 
-                //Game1.activeClickableMenu = new DruidJournal();
-
-                Game1.activeClickableMenu = new Druid(journalPressed);
+                DruidJournal.openJournal((DruidJournal.journalTypes)journalPressed);
+                //Game1.activeClickableMenu = new Druid(journalPressed);
                 
                 rite.shutdown();
 

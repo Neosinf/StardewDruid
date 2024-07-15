@@ -142,6 +142,8 @@ namespace StardewDruid.Cast
             capture,
             shock,
             glare,
+            crate,
+            teleport,
         }
 
         public List<effects> added = new();
@@ -315,6 +317,8 @@ namespace StardewDruid.Cast
         public SpellHandle(GameLocation Location, List<int> spellData)
         {
 
+            external = true;
+
             location = Location;
 
             destination = new Vector2(spellData[0], spellData[1]);
@@ -328,8 +332,6 @@ namespace StardewDruid.Cast
             damageFarmers = -1;
 
             damageMonsters = -1;
-
-            external = true;
 
             type = (spells)spellData[5];
 
@@ -802,6 +804,8 @@ namespace StardewDruid.Cast
 
                         CrateRelease();
 
+                        ApplyEffects(destination);
+
                         location.playSound("yoba");
 
                     }
@@ -820,6 +824,9 @@ namespace StardewDruid.Cast
 
                     if(counter == 1)
                     {
+
+
+
                         TeleportStart();
 
                         if (instant)
@@ -834,7 +841,9 @@ namespace StardewDruid.Cast
                     if(counter == 30)
                     {
 
-                        TeleportPlayer();
+                        TeleportEnd();
+
+                        ApplyEffects(destination);
 
                     }
 
@@ -1671,8 +1680,45 @@ namespace StardewDruid.Cast
             animations.Add(cloudAnimation);
 
         }
+        
+        public void LaunchWarpstrike(Vector2 position)
+        {
 
-        // ========================================= end
+            impact = position;
+
+            construct = Mod.instance.iconData.AnimateWarpStrike(location, position, projectile);
+
+        }
+
+        public void AdjustWarpstrike()
+        {
+
+            if(external) 
+            { 
+                
+                return; 
+            
+            }
+
+            if (monsters.Count == 0)
+            {
+
+                return;
+
+            }
+
+            if (!ModUtility.MonsterVitals(monsters.First(), location))
+            {
+
+                return;
+
+            }
+
+            Mod.instance.iconData.AdjustWarpStrke(construct, monsters.First().Position, projectile);
+
+        }
+
+        // ========================================= cosmetic
 
         public void RadialDisplay()
         {
@@ -1716,10 +1762,143 @@ namespace StardewDruid.Cast
 
         }
 
+        public void TrickDisplay()
+        {
+
+            switch (projectile)
+            {
+
+                default:
+                case 0:
+                    ModUtility.AnimateRandomCritter(location, ModUtility.PositionToTile(impact));
+                    break;
+
+                case 1:
+                    ModUtility.AnimateRandomFish(location, ModUtility.PositionToTile(impact));
+                    break;
+
+                case 2:
+                    ModUtility.AnimateButterflySpray(location, ModUtility.PositionToTile(impact));
+                    break;
+            }
+
+        }
+
+
+        public void CrateCreate()
+        {
+
+            if (!added.Contains(effects.crate))
+            {
+
+                added.Add(effects.crate);
+
+            }
+
+            TemporaryAnimatedSprite crate = new(0, 1000, 1, 1, origin + new Vector2(16, 0), false, false)
+            {
+
+                sourceRect = new(0, 0, 32, 64),
+
+                sourceRectStartingPos = new Vector2(0, 0),
+
+                texture = Mod.instance.iconData.crateTexture,
+
+                scale = 1f, //* size,
+
+                layerDepth = origin.Y / 10000,
+
+                scaleChange = 0.001f,
+
+                motion = new Vector2(-0.016f, -0.064f),
+
+                timeBasedMotion = true,
+
+            };
+
+            location.temporarySprites.Add(crate);
+
+            animations.Add(crate);
+
+        }
+
+        public void CrateOpen()
+        {
+
+            TemporaryAnimatedSprite crateOpen = new(0, 167, 3, 1, origin - new Vector2(0, 64), false, false)
+            {
+
+                sourceRect = new(0, 0, 32, 64),
+
+                sourceRectStartingPos = new Vector2(64, 0),
+
+                texture = Mod.instance.iconData.crateTexture,
+
+                scale = 2f,
+
+                layerDepth = origin.Y / 10000,
+
+            };
+
+            location.temporarySprites.Add(crateOpen);
+
+            animations.Add(crateOpen);
+
+        }
+
+        public void CrateRelease()
+        {
+
+            TemporaryAnimatedSprite crateOpen = new(0, 3000, 1, 1, origin - new Vector2(0, 64), false, false)
+            {
+
+                sourceRect = new(64, 0, 32, 64),
+
+                sourceRectStartingPos = new Vector2(64, 0),
+
+                texture = Mod.instance.iconData.crateTexture,
+
+                scale = 2f,
+
+                layerDepth = origin.Y / 10000,
+
+            };
+
+            location.temporarySprites.Add(crateOpen);
+
+            animations.Add(crateOpen);
+
+            Mod.instance.iconData.ImpactIndicator(location, origin - new Vector2(0, 32), IconData.impacts.sparkle, 2, new() { layer = origin.Y / 10000 + 0.001f, });
+
+        }
+
+        public void TeleportStart()
+        {
+
+            if (!added.Contains(effects.teleport))
+            {
+
+                added.Add(effects.teleport);
+
+            }
+
+            Mod.instance.iconData.AnimateQuickWarp(Game1.player.currentLocation, origin, true);
+
+        }
+
+        public void TeleportEnd()
+        {
+
+            Mod.instance.iconData.AnimateQuickWarp(Game1.player.currentLocation, destination);
+
+        }
+
+        // ========================================= CONSEQUENCES
+
         public void GrazeDamage(int piece, int division, float reach = -1, bool effects = false)
         {
 
-            if (!Context.IsMainPlayer)
+            if (external)
             {
 
                 return;
@@ -1751,7 +1930,7 @@ namespace StardewDruid.Cast
         public void ApplyDamage(Vector2 position, float reach, float hitfarmers, float hitmonsters, List<StardewValley.Monsters.Monster> individuals)
         {
 
-            if (!Context.IsMainPlayer)
+            if (external)
             {
 
                 return;
@@ -1833,10 +2012,45 @@ namespace StardewDruid.Cast
 
         }
 
+        public void RadialExplode()
+        {
+
+            if (external)
+            {
+
+                return;
+
+            }
+
+            if (power > 0)
+            {
+
+                if (explosion == 0)
+                {
+
+                    explosion = 3;
+
+                }
+
+                ModUtility.Explode(location, impact / 64, Game1.player, explosion, power);
+
+            }
+
+            if (terrain > 0)
+            {
+
+                ModUtility.Reave(location, impact / 64, Game1.player, terrain);
+
+            }
+
+        }
+
+        // ========================================= LOCAL ONLY EFFECTS
+
         public void ApplyEffects(Vector2 zone)
         {
-            
-            if (!Context.IsMainPlayer)
+
+            if (external)
             {
 
                 return;
@@ -1914,50 +2128,33 @@ namespace StardewDruid.Cast
 
                         break;
 
+                    case effects.teleport:
+
+                        TeleportEffect();
+
+                        break;
+
+                    case effects.crate:
+
+                        CrateEffect();
+
+                        break;
+
                 }
 
             }
 
         }
 
-        public void RadialExplode()
+        public void StoneEffect()
         {
 
-            if (!Context.IsMainPlayer)
+            if (external)
             {
 
                 return;
 
             }
-
-            if (power > 0)
-            {
-
-                if (explosion == 0)
-                {
-
-                    explosion = 3;
-
-                }
-
-                ModUtility.Explode(location, impact / 64, Game1.player, explosion, power);
-
-            }
-
-            if (terrain > 0)
-            {
-
-                ModUtility.Reave(location, impact / 64, Game1.player, terrain);
-
-            }
-
-        }
-
-        // ========================================= effects
-
-        public void StoneEffect()
-        {
-
 
             Random randomIndex = new();
 
@@ -2013,6 +2210,13 @@ namespace StardewDruid.Cast
 
         public void SapEffect()
         {
+            
+            if (external)
+            {
+
+                return;
+
+            }
 
             int leech = 0;
 
@@ -2079,6 +2283,13 @@ namespace StardewDruid.Cast
 
         public void DrainEffect()
         {
+            
+            if (external)
+            {
+
+                return;
+
+            }
 
             float impes = 0.1f;
 
@@ -2116,6 +2327,13 @@ namespace StardewDruid.Cast
 
         public void CurseEffect(effects effect = effects.knock)
         {
+            
+            if (external)
+            {
+
+                return;
+
+            }
 
             Curse curseEffect;
 
@@ -2163,6 +2381,13 @@ namespace StardewDruid.Cast
 
         public void EmberEffect(Vector2 zone)
         {
+            
+            if (external)
+            {
+
+                return;
+
+            }
 
             Ember ember;
 
@@ -2213,8 +2438,15 @@ namespace StardewDruid.Cast
 
         public void CaptureEffect()
         {
+            
+            if (!Context.IsMainPlayer)
+            {
 
-            foreach(StardewDruid.Character.Character character in ModUtility.GetFriendsInLocation(location))
+                return;
+
+            }
+
+            foreach (StardewDruid.Character.Character character in ModUtility.GetFriendsInLocation(location))
             {
 
                 if (character.netDazeActive.Value)
@@ -2252,6 +2484,13 @@ namespace StardewDruid.Cast
 
         public void ShockEffect()
         {
+            
+            if (external)
+            {
+
+                return;
+
+            }
 
             Vector2 shockOrigin = impact - new Vector2(0, 32);
 
@@ -2299,9 +2538,15 @@ namespace StardewDruid.Cast
 
         // ========================================= gravity well
 
-
         public void GravityEffect()
         {
+            
+            if (external)
+            {
+
+                return;
+
+            }
 
             Gravity gravity;
 
@@ -2326,6 +2571,13 @@ namespace StardewDruid.Cast
 
         public void HarvestEffect()
         {
+            
+            if (external)
+            {
+
+                return;
+
+            }
 
             Harvest harvest;
 
@@ -2351,6 +2603,13 @@ namespace StardewDruid.Cast
 
         public void TornadoEffect()
         {
+            
+            if (external)
+            {
+
+                return;
+
+            }
 
             Tornado tornado;
 
@@ -2374,165 +2633,30 @@ namespace StardewDruid.Cast
 
         }
 
-
-        // ========================================= crate
-
-        public void CrateCreate()
+        public void CrateEffect()
         {
-
-            TemporaryAnimatedSprite crate = new(0, 1000, 1, 1, origin + new Vector2(16, 0), false, false)
-            {
-
-                sourceRect = new(0, 0, 32, 64),
-
-                sourceRectStartingPos = new Vector2(0, 0),
-
-                texture = Mod.instance.iconData.crateTexture,
-
-                scale = 1f, //* size,
-
-                layerDepth = origin.Y / 10000,
-
-                scaleChange = 0.001f,
-
-                motion = new Vector2(-0.016f, -0.064f),
-
-                timeBasedMotion = true,
-
-            };
-
-            location.temporarySprites.Add(crate);
-
-            animations.Add(crate);
-
-        }
-
-        public void CrateOpen()
-        {
-
-            TemporaryAnimatedSprite crateOpen = new(0, 167, 3, 1, origin - new Vector2(0, 64), false, false)
-            {
-
-                sourceRect = new(0, 0, 32, 64),
-
-                sourceRectStartingPos = new Vector2(64, 0),
-
-                texture = Mod.instance.iconData.crateTexture,
-
-                scale = 2f,
-
-                layerDepth = origin.Y / 10000,
-
-            };
-
-            location.temporarySprites.Add(crateOpen);
-
-            animations.Add(crateOpen);
-
-        }
-
-        public void CrateRelease()
-        {
-
-            TemporaryAnimatedSprite crateOpen = new(0, 3000, 1, 1, origin - new Vector2(0, 64), false, false)
-            {
-
-                sourceRect = new(64, 0, 32, 64),
-
-                sourceRectStartingPos = new Vector2(64, 0),
-
-                texture = Mod.instance.iconData.crateTexture,
-
-                scale = 2f,
-
-                layerDepth = origin.Y / 10000,
-
-            };
-
-            location.temporarySprites.Add(crateOpen);
-
-            animations.Add(crateOpen);
-
-            SpawnData.CrateTreasure(location,origin,impact);
-
-            Mod.instance.iconData.ImpactIndicator(location, origin - new Vector2(0, 32), IconData.impacts.sparkle, 2, new() { layer = origin.Y / 10000 + 0.001f,});
-
-        }
-
-        // ========================================= teleport
-
-        public void TeleportStart()
-        {
-
-            Mod.instance.iconData.AnimateQuickWarp(Game1.player.currentLocation, origin, true);
-
-        }
-
-        public void TeleportPlayer()
-        {
-            if (!external)
-            {
-
-                Game1.player.Position = destination;
-
-            }
-
-            Mod.instance.iconData.AnimateQuickWarp(Game1.player.currentLocation, destination);
-
-        }
-
-        public void LaunchWarpstrike(Vector2 position)
-        {
-
-            impact = position;
-
-            construct = Mod.instance.iconData.AnimateWarpStrike(location, position, projectile);
-
-
-        }
-
-        public void AdjustWarpstrike()
-        {
-
-            if(monsters.Count == 0)
+            
+            if (external)
             {
 
                 return;
 
             }
 
-            if (!ModUtility.MonsterVitals(monsters.First(),location))
+            SpawnData.CrateTreasure(location, origin, impact);
+
+        }
+
+        public void TeleportEffect()
+        {
+            if (external)
             {
 
                 return;
 
             }
 
-            Mod.instance.iconData.AdjustWarpStrke(construct, monsters.First().Position, projectile);
-
-        }
-
-        // ========================================= trick
-
-        public void TrickDisplay()
-        {
-
-            switch (projectile)
-            {
-
-                default:
-                case 0:
-                    ModUtility.AnimateRandomCritter(location, ModUtility.PositionToTile(impact));
-                    break;
-
-                case 1:
-                    ModUtility.AnimateRandomFish(location, ModUtility.PositionToTile(impact));
-                    break;
-
-                case 2:
-                    ModUtility.AnimateButterflySpray(location, ModUtility.PositionToTile(impact));
-                    break;
-            }
+            Game1.player.Position = destination;
 
         }
 

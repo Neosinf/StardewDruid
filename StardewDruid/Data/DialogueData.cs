@@ -212,6 +212,30 @@ namespace StardewDruid.Data
 
                     return Mod.instance.Helper.Translation.Get("Enum.journalButtons.refresh");
 
+                case DruidJournal.journalButtons.skipQuest:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.skipQuest");
+
+                case DruidJournal.journalButtons.replayQuest:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.replayQuest");
+
+                case DruidJournal.journalButtons.replayTomorrow:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.replayTomorrow");
+
+                case DruidJournal.journalButtons.cancelReplay:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.cancelReplay");
+
+                case DruidJournal.journalButtons.viewEffect:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.viewEffect");
+
+                case DruidJournal.journalButtons.viewQuest:
+
+                    return Mod.instance.Helper.Translation.Get("Enum.journalButtons.viewQuest");
+
                 default:
 
                     return null;

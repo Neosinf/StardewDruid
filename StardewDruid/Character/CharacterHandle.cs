@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
+using StardewDruid.Cast.Ether;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
 using StardewDruid.Journal;
@@ -2099,6 +2100,15 @@ namespace StardewDruid.Character
         public void Update()
         {
 
+            if(character == CharacterHandle.characters.Dragon)
+            {
+
+                RemoveDragons();
+
+                return;
+
+            }
+
             Character entity = Mod.instance.characters[character];
 
             GameLocation target;
@@ -2224,6 +2234,47 @@ namespace StardewDruid.Character
             {
 
                 Mod.instance.characters.Remove(character);
+
+            }
+
+        }
+
+        public void RemoveDragons(bool avatars = true)
+        {
+
+            List<Dragon> dragons = new();
+
+            foreach (GameLocation location in (IEnumerable<GameLocation>)Game1.locations)
+            {
+
+                if (location.characters.Count > 0)
+                {
+
+                    for(int c = location.characters.Count - 1; c>=0;c--)
+                    {
+
+                        if(location.characters[c] is Dragon dragonCharacter)
+                        {
+
+                            if (avatars)
+                            {
+                                
+                                if (!dragonCharacter.avatar)
+                                {
+                                    
+                                    continue;
+                                
+                                }
+                            
+                            }
+
+                            location.characters.Remove(dragonCharacter);
+
+                        }
+
+                    }
+
+                }
 
             }
 

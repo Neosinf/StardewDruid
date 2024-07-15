@@ -4,17 +4,16 @@ using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static StardewDruid.Data.DialogueData;
 
 namespace StardewDruid.Journal
 {
     public class QuestPage : DruidJournal
     {
+
 
         public QuestPage(string QuestId, int Record) : base(QuestId, Record) 
         {
@@ -24,12 +23,20 @@ namespace StardewDruid.Journal
         public override void populateInterface()
         {
 
+            parentJournal = journalTypes.quests;
+
+            type = journalTypes.questPage;
+
             interfaceComponents = new()
             {
+                
+                [101] = addButton(journalButtons.viewEffect),
 
-                [301] = addButton(journalButtons.exit),
+                [102] = addButton(journalButtons.replayQuest),
 
                 [201] = addButton(journalButtons.back),
+
+                [301] = addButton(journalButtons.exit),
 
                 [302] = addButton(journalButtons.scrollUp),
 
@@ -55,57 +62,71 @@ namespace StardewDruid.Journal
             int questReward = questRecord.reward;
 
 
-            // ----------------------------- setup
+            // ----------------------------- title
 
-            int textHeight = 32;
+            int textHeight = 48;
 
-            contentComponents[101] = new(ContentComponent.contentTypes.title, questRecord.title);
+            //contentComponents[101] = new(ContentComponent.contentTypes.title, questRecord.title);
 
-            contentComponents[101].setBounds(0, xPositionOnScreen, yPositionOnScreen + textHeight, width, 64);
+            //contentComponents[101].setBounds(0, xPositionOnScreen, yPositionOnScreen + textHeight, width, 64);
 
-            textHeight += contentComponents[101].bounds.Height;
+            //textHeight += contentComponents[101].bounds.Height;
 
-            contentComponents[102] = new(ContentComponent.contentTypes.text, questRecord.description);
+            title = questRecord.title;
 
-            contentComponents[102].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width-128, 0);
+            int start = 0;
 
-            textHeight += contentComponents[102].bounds.Height;
+            // ----------------------------- description
+
+            contentComponents[start] = new(ContentComponent.contentTypes.text, "description");
+
+            contentComponents[start].text[0] = questRecord.description;
+
+            contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width-128, 0);
+
+            textHeight += contentComponents[start++].bounds.Height;
 
             // ------------------------------ conditional description
 
             if (isActive && !Context.IsMainPlayer && questRecord.type != Quest.questTypes.lesson)
             {
 
-                contentComponents[103] = new(ContentComponent.contentTypes.text, DialogueData.Strings(stringkeys.hostOnly));
+                contentComponents[start] = new(ContentComponent.contentTypes.text, "hostonly");
 
-                contentComponents[103].color = Microsoft.Xna.Framework.Color.BurlyWood;
+                contentComponents[start].text[0] = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.hostOnly);
 
-                contentComponents[103].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+                contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.BurlyWood;
 
-                textHeight += contentComponents[103].bounds.Height;
+                contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+                textHeight += contentComponents[start++].bounds.Height;
 
             }
             
             if (isActive && Mod.instance.save.progress[questId].status == 4)
             {
                 
-                contentComponents[104] = new(ContentComponent.contentTypes.text, DialogueData.Strings(stringkeys.questReplay));
+                contentComponents[start] = new(ContentComponent.contentTypes.text, "questReplay");
 
-                contentComponents[104].color = Microsoft.Xna.Framework.Color.BurlyWood;
+                contentComponents[start].text[0] = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.questReplay);
 
-                contentComponents[104].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+                contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.BurlyWood;
 
-                textHeight += contentComponents[104].bounds.Height;
+                contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+                textHeight += contentComponents[start++].bounds.Height;
 
             }
 
             // ------------------------------ instructions
 
-            contentComponents[105] = new(ContentComponent.contentTypes.text, questRecord.instruction);
+            contentComponents[start] = new(ContentComponent.contentTypes.text, "instruction");
 
-            contentComponents[105].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+            contentComponents[start].text[0] = questRecord.instruction;
 
-            textHeight += contentComponents[105].bounds.Height;
+            contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+            textHeight += contentComponents[start++].bounds.Height;
 
 
             // ------------------------------ conditional instructions
@@ -116,15 +137,17 @@ namespace StardewDruid.Journal
                 string lessonProgress = 
                     isActive ? "Mastered " : "" +
                     Mod.instance.save.progress[questId].progress.ToString() + " " + 
-                    DialogueData.Strings(stringkeys.outOf) + " " + 
+                    DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.outOf) + " " + 
                     questRecord.requirement.ToString() + " " + 
                     questRecord.progression;
 
-                contentComponents[106] = new(ContentComponent.contentTypes.text, lessonProgress);
+                contentComponents[start] = new(ContentComponent.contentTypes.text, "progress");
 
-                contentComponents[106].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+                contentComponents[start].text[0] = lessonProgress;
 
-                textHeight += contentComponents[106].bounds.Height;
+                contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+                textHeight += contentComponents[start++].bounds.Height;
 
             }
 
@@ -137,26 +160,30 @@ namespace StardewDruid.Journal
 
                 questReward = (int)(questReward * adjustReward);
 
-                contentComponents[107] = new(ContentComponent.contentTypes.text, DialogueData.Strings(stringkeys.reward) + ": " + questReward.ToString() + "g");
+                contentComponents[start] = new(ContentComponent.contentTypes.text, "lesson");
 
-                contentComponents[107].color = Microsoft.Xna.Framework.Color.DarkGreen;
+                contentComponents[start].text[0] = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.reward) + ": " + questReward.ToString() + "g";
 
-                contentComponents[107].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+                contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkGreen;
 
-                textHeight += contentComponents[107].bounds.Height;
+                contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+                textHeight += contentComponents[start++].bounds.Height;
 
             }
 
             if (isActive && Mod.instance.save.progress[questId].status == 4 && questRecord.replay != null)
             {
 
-                contentComponents[108] = new(ContentComponent.contentTypes.text, DialogueData.Strings(DialogueData.stringkeys.replayReward) + ": " + questRecord.replay);
+                contentComponents[start] = new(ContentComponent.contentTypes.text, "replay");
 
-                contentComponents[108].color = Microsoft.Xna.Framework.Color.DarkGreen;
+                contentComponents[start].text[0] = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.replayReward) + ": " + questRecord.replay;
 
-                contentComponents[108].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+                contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkGreen;
 
-                textHeight += contentComponents[108].bounds.Height;
+                contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+                textHeight += contentComponents[start++].bounds.Height;
 
             }
 
@@ -165,11 +192,13 @@ namespace StardewDruid.Journal
 
                 string detail = questRecord.details[i];
 
-                contentComponents[200 + i] = new(ContentComponent.contentTypes.text, detail);
+                contentComponents[start] = new(ContentComponent.contentTypes.text, "detail"+i.ToString());
 
-                contentComponents[200 + i].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+                contentComponents[start].text[0] = detail;
 
-                textHeight += contentComponents[200 + i].bounds.Height;
+                contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+                textHeight += contentComponents[start++].bounds.Height;
 
 
             }
@@ -190,13 +219,15 @@ namespace StardewDruid.Journal
                         foreach (KeyValuePair<int, string> sceneMoment in sceneEntry.Value)
                         {
 
-                            contentComponents[1000 + sceneEntry.Key] = new(ContentComponent.contentTypes.text, narrators[sceneMoment.Key] + ": " + sceneMoment.Value);
+                            contentComponents[start] = new(ContentComponent.contentTypes.text, "narration" + start.ToString());
 
-                            contentComponents[1000 + sceneEntry.Key].color = Mod.instance.iconData.schemeColours.ElementAt(sceneMoment.Key + 1).Value;
+                            contentComponents[start].text[0] = narrators[sceneMoment.Key] + ": " + sceneMoment.Value;
 
-                            contentComponents[1000 + sceneEntry.Key].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+                            contentComponents[start].textColours[0] = Mod.instance.iconData.schemeColours.ElementAt(sceneMoment.Key + 1).Value;
 
-                            textHeight += contentComponents[1000 + sceneEntry.Key].bounds.Height;
+                            contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+                            textHeight += contentComponents[start++].bounds.Height;
 
                         }
 
@@ -209,29 +240,31 @@ namespace StardewDruid.Journal
             if (Mod.instance.questHandle.loresets.ContainsKey(questId))
             {
 
-                int loreCounter = 300;
-
                 foreach (LoreData.stories story in Mod.instance.questHandle.loresets[questId])
                 {
 
                     if (Mod.instance.questHandle.lores.ContainsKey(story))
                     {
 
-                        contentComponents[loreCounter] = new(ContentComponent.contentTypes.text, Mod.instance.questHandle.lores[story].answer);
+                        contentComponents[start] = new(ContentComponent.contentTypes.text, "lore" + start.ToString());
 
-                        contentComponents[loreCounter].color = Mod.instance.iconData.schemeColours.ElementAt((int)Mod.instance.questHandle.lores[story].character + 1).Value;
+                        contentComponents[start].text[0] = Mod.instance.questHandle.lores[story].answer;
 
-                        contentComponents[loreCounter].setBounds(0, xPositionOnScreen+ 64, yPositionOnScreen + textHeight, width - 128, 0);
+                        contentComponents[start].textColours[0] = Mod.instance.iconData.schemeColours.ElementAt((int)Mod.instance.questHandle.lores[story].character + 1).Value;
 
-                        textHeight += contentComponents[loreCounter++].bounds.Height;
+                        contentComponents[start].setBounds(0, xPositionOnScreen+ 64, yPositionOnScreen + textHeight, width - 128, 0);
 
-                        contentComponents[loreCounter] = new(ContentComponent.contentTypes.text, "(" + CharacterHandle.CharacterTitle(Mod.instance.questHandle.lores[story].character) + ")");
+                        textHeight += contentComponents[start++].bounds.Height;
 
-                        contentComponents[loreCounter].color = Mod.instance.iconData.schemeColours.ElementAt((int)Mod.instance.questHandle.lores[story].character + 1).Value;
+                        contentComponents[start] = new(ContentComponent.contentTypes.text, "lore" + start.ToString());
 
-                        contentComponents[loreCounter].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+                        contentComponents[start].text[0] = "(" + CharacterHandle.CharacterTitle(Mod.instance.questHandle.lores[story].character) + ")";
 
-                        textHeight += contentComponents[loreCounter++].bounds.Height;
+                        contentComponents[start].textColours[0] = Mod.instance.iconData.schemeColours.ElementAt((int)Mod.instance.questHandle.lores[story].character + 1).Value;
+
+                        contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+                        textHeight += contentComponents[start++].bounds.Height;
 
                     }
 
@@ -239,18 +272,53 @@ namespace StardewDruid.Journal
 
             }
 
-            contentBox = new(xPositionOnScreen, yPositionOnScreen + 96, width, textHeight - 96);
+            textHeight += 48;
+
+            contentBox = new(xPositionOnScreen, yPositionOnScreen + 96, width, textHeight);
 
         }
 
         public override void activateInterface()
         {
 
+
+            if (Mod.instance.save.progress[journalId].status <= 1)
+            {
+
+                interfaceComponents[102] = addButton(journalButtons.skipQuest);
+
+            }
+            else if (Mod.instance.questHandle.IsReplayable(journalId))
+            {
+
+                switch (Mod.instance.save.progress[journalId].status)
+                {
+
+                    case 2:
+
+                        interfaceComponents[102] = addButton(journalButtons.replayQuest);
+
+                        break;
+                    case 3:
+
+                        interfaceComponents[102] = addButton(journalButtons.replayTomorrow);
+
+                        break;
+                    case 4:
+
+                        interfaceComponents[102] = addButton(journalButtons.cancelReplay);
+
+                        break;
+
+                }
+
+            }
+
             resetInterface();
 
             scrolled = 0;
 
-            if(contentBox.Height < 512)
+            if (contentBox.Height < 512)
             {
 
                 interfaceComponents[302].active = false;
@@ -267,6 +335,26 @@ namespace StardewDruid.Journal
 
             }
 
+            if (!Context.IsMainPlayer)
+            {
+
+                interfaceComponents[102].active = false;
+
+            }
+            else if (Mod.instance.save.progress[journalId].status > 1 && !Mod.instance.questHandle.IsReplayable(journalId))
+            {
+
+                interfaceComponents[102].active = false;
+
+            }
+
+            if (Mod.instance.questHandle.quests[journalId].type != Quest.questTypes.lesson)
+            {
+
+                interfaceComponents[101].active = false;
+
+            }
+
         }
 
         public override void pressButton(journalButtons button)
@@ -277,13 +365,21 @@ namespace StardewDruid.Journal
 
                 case journalButtons.back:
 
-                    DruidJournal.openJournal(journalTypes.quests, null, record);
+                    DruidJournal.openJournal(parentJournal, null, record);
+
+                    break;
+
+                case journalButtons.viewEffect:
+
+                    KeyValuePair<string, int> findEffect = Mod.instance.questHandle.questEffects(journalId);
+
+                    openJournal(journalTypes.effectPage, findEffect.Key, findEffect.Value);
 
                     break;
 
                 default:
 
-                    base.pressButton(interfaceComponents[focus].button);
+                    base.pressButton(button);
 
                     break;
 
@@ -309,7 +405,7 @@ namespace StardewDruid.Journal
 
             // determine inframe
 
-            Rectangle inframe = new(xPositionOnScreen + 32, yPositionOnScreen + 32, width - 64, height - 64);
+            Rectangle inframe = new(xPositionOnScreen + 32, yPositionOnScreen + 48, width - 64, height - 96);
 
             Rectangle screen = Utility.ConstrainScissorRectToScreen(inframe);
 

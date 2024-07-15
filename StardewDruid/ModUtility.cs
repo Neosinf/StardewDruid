@@ -3519,11 +3519,11 @@ namespace StardewDruid
 
                             if (spawnSeed != null)
                             {
-                                
+
                                 targetLocation.debris.Add(new Debris(ItemRegistry.Create(spawnSeed), tileVector * 64f));
-                            
+
                             }
-                            
+
                             targetObject.onExplosion(targetPlayer);
 
                             targetLocation.objects.Remove(tileVector);

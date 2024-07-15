@@ -20,6 +20,7 @@ using System.Threading;
 using StardewValley.Objects;
 using StardewValley.Monsters;
 using System.Xml.Linq;
+using static StardewValley.Minigames.TargetGame;
 
 namespace StardewDruid.Cast.Mists
 {
@@ -271,7 +272,9 @@ namespace StardewDruid.Cast.Mists
 
                                     targetObject.shakeTimer = 1000;
 
-                                    targetObject.MinutesUntilReady = 1;
+                                    targetObject.MinutesUntilReady = 10;
+
+                                    DelayedAction.functionAfterDelay(delegate { targetObject.minutesElapsed(10); }, 50);
 
                                     Mod.instance.spellRegister.Add(new(tileVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
 

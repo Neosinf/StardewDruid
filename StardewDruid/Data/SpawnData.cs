@@ -679,11 +679,11 @@ namespace StardewDruid.Data
             if (Mod.instance.randomIndex.Next(250) == 0)
             {
 
-                return "498";
+                return "114";
 
             }
 
-            switch (Mod.instance.randomIndex.Next(8))
+            switch (Mod.instance.randomIndex.Next(15 - Mod.instance.PowerLevel))
             {
 
                 case 0:
@@ -697,10 +697,6 @@ namespace StardewDruid.Data
                 case 2:
                 case 3:
                 case 4:
-
-                    return null;
-
-                default:
 
                     string item = "(O)498";
 
@@ -729,10 +725,11 @@ namespace StardewDruid.Data
 
                     return item;
 
+                default:
+
+                    return null;
 
             }
-
-
 
 
         }

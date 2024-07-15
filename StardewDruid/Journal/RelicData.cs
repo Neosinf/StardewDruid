@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.VisualBasic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Cast.Mists;
@@ -20,6 +21,8 @@ using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
+using static StardewDruid.Journal.HerbalData;
 
 
 namespace StardewDruid.Journal
@@ -260,6 +263,134 @@ namespace StardewDruid.Journal
             }
 
             return source;
+
+        }
+
+        public Dictionary<int, Journal.ContentComponent> JournalRelics()
+        {
+
+            Dictionary<int, Journal.ContentComponent> journal = new();
+
+            int start = 0;
+
+            foreach (relicsets set in lines.Keys)
+            {
+                
+                if (set == relicsets.avalant)
+                {
+
+                    if (ProgressRelicQuest(relicsets.avalant) == 0)
+                    {
+
+                        continue;
+
+                    }
+
+
+                }else
+                if (!Mod.instance.save.reliquary.ContainsKey(lines[set][0].ToString()))
+                {
+
+                    continue;
+
+                }
+
+                for (int i = 0; i < lines[set].Count; i++)
+                {
+
+                    IconData.relics relicName = lines[set][i];
+
+                    Journal.ContentComponent content = new(ContentComponent.contentTypes.relic, relicName.ToString());
+
+                    content.relics[0] = relicName;
+
+                    content.relicColours[0] = Color.White;
+
+                    if (!Mod.instance.save.reliquary.ContainsKey(relicName.ToString()))
+                    {
+
+                        switch (set)
+                        {
+                            case relicsets.runestones:
+                            case relicsets.avalant:
+                            case relicsets.books:
+                            case relicsets.boxes:
+
+                                content.relicColours[0] = Color.Black * 0.01f;
+
+                                break;
+
+                            default:
+
+                                content.active = false;
+
+                                break;
+
+                        }
+
+                    }
+
+                    journal[start++] = content;
+
+                }
+
+                for(int i = 0; i < 6 - lines[set].Count; i++)
+                {
+
+                    Journal.ContentComponent content = new(ContentComponent.contentTypes.relic, set.ToString()+i.ToString());
+
+                    content.active = false;
+
+                    journal[start++] = content;
+
+                }
+
+            }
+
+            return journal;
+
+        }
+
+        public Dictionary<int, Journal.ContentComponent> JournalHeaders()
+        {
+
+            Dictionary<int, Journal.ContentComponent> journal = new();
+
+            int start = 0;
+
+            foreach(KeyValuePair<relicsets, List<string>> section in titles)
+            {
+
+                if (section.Key == relicsets.avalant)
+                {
+
+                    if (ProgressRelicQuest(relicsets.avalant) == 0)
+                    {
+
+                        continue;
+
+                    }
+
+                }
+                else
+                if (!Mod.instance.save.reliquary.ContainsKey(lines[section.Key][0].ToString()))
+                {
+
+                    continue;
+
+                }
+
+                Journal.ContentComponent content = new(ContentComponent.contentTypes.header, section.Key.ToString());
+
+                content.text[0] = section.Value[0];
+
+                content.text[1] = section.Value[1];
+
+                journal[start++] = content;
+
+            }
+
+            return journal;
 
         }
 
@@ -1162,7 +1293,6 @@ namespace StardewDruid.Journal
 
                     break;
 
-                case IconData.relics.dragon_form:
                 case IconData.relics.book_wyrven:
                 case IconData.relics.book_letters:
                 case IconData.relics.book_manual:
@@ -1170,12 +1300,17 @@ namespace StardewDruid.Journal
 
                     return 2;
 
+                case IconData.relics.dragon_form:
+
+                    return 3;
+
             }
 
             return 0;
 
 
         }
+        
         public int RelicCancel(string id)
         {
 
