@@ -2,7 +2,7 @@
 Stardew Druid - 1.6 Ready
 ====================================
 
-40+ quests, 25+ abilities, 5 unique NPCs, 10 custom locations, 30+ collectables, 10000+ lines of dialogue and lore, Stardew Druid is a unique kind of expansion created to satisfy a desire for adventure.
+40+ quests, 25+ abilities, 5 unique NPCs, 10 custom locations, 30+ collectables, 2500+ lines of dialogue and lore, Stardew Druid is a unique kind of expansion created to satisfy a desire for adventure.
 
 This mod provides an alternative to early tool-based gameplay in the form of five schools of magic, which incorporate motifs and themes inspired by the Druids of antiquity!
 

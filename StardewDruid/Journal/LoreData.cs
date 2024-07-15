@@ -58,6 +58,7 @@ namespace StardewDruid.Journal
             Shadowtin_Effigy,
             Shadowtin_Jester,
             Shadowtin_self_1,
+            Shadowtin_self_2,
             Buffin_court,
 
             //------------------
@@ -140,6 +141,7 @@ namespace StardewDruid.Journal
                     LoreData.stories.Shadowtin_Effigy,
                     LoreData.stories.Shadowtin_Jester,
                     LoreData.stories.Shadowtin_self_1,
+                    LoreData.stories.Shadowtin_self_2,
 
                     LoreData.stories.Buffin_court,
 
@@ -522,9 +524,9 @@ namespace StardewDruid.Journal
             };
 
 
-            storylist[stories.Shadowtin_self_1] = new()
+            storylist[stories.Shadowtin_self_2] = new()
             {
-                story = stories.Shadowtin_self_1,
+                story = stories.Shadowtin_self_2,
                 character = characters.Shadowtin,
                 question = Mod.instance.Helper.Translation.Get("LoreData.346"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.347") +

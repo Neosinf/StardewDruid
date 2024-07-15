@@ -1453,7 +1453,7 @@ namespace StardewDruid.Journal
                     Mod.instance.Helper.Translation.Get("RelicData.519") +
                     Mod.instance.Helper.Translation.Get("RelicData.520") +
                     Mod.instance.Helper.Translation.Get("RelicData.521") +
-                    Mod.instance.Helper.Translation.Get("RelicData.522") +
+                    Mod.instance.Helper.Translation.Get("RelicData.522"),
 
                     Mod.instance.Helper.Translation.Get("RelicData.524"),
                     Mod.instance.Helper.Translation.Get("RelicData.525") +
