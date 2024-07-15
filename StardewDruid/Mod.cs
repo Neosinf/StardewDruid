@@ -16,9 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using static StardewDruid.Journal.Druid;
-
-
 
 namespace StardewDruid
 {
@@ -1008,12 +1005,12 @@ namespace StardewDruid
 
             EventHandle.actionButtons actionPressed = ActionButtonPressed();
 
-            Druid.journalTypes journalPressed = Journal.Druid.JournalButtonPressed();
+            DruidJournal.journalTypes journalPressed = Journal.DruidJournal.JournalButtonPressed();
 
-            if (Game1.activeClickableMenu is Druid druidJournal)
+            if (Game1.activeClickableMenu is DruidJournal druidJournal)
             {
 
-                if (journalPressed != journalTypes.none)
+                if (journalPressed != DruidJournal.journalTypes.none)
                 {
 
                     if (druidJournal.type == journalPressed)
@@ -1025,7 +1022,7 @@ namespace StardewDruid
                     else
                     {
 
-                        druidJournal.switchTo(journalPressed);
+                        DruidJournal.openJournal(journalPressed);
 
                     }
 
@@ -1097,8 +1094,7 @@ namespace StardewDruid
                         if (Game1.buffsDisplay.hoverText.Contains(DialogueData.Strings(DialogueData.stringkeys.stardewDruid)))
                         {
                             
-                            DruidJournal.openJournal((DruidJournal.journalTypes)journalPressed);
-                            //Game1.activeClickableMenu = new Druid(journalPressed);
+                            DruidJournal.openJournal(journalPressed);
 
                         }
 
@@ -1120,46 +1116,43 @@ namespace StardewDruid
                 if(Game1.activeClickableMenu is QuestLog questLog)
                 {
                        
-                   if(actionPressed == EventHandle.actionButtons.rite || journalPressed != journalTypes.none)
+                   if(actionPressed == EventHandle.actionButtons.rite || journalPressed != DruidJournal.journalTypes.none)
                     {
 
                         questLog.exitThisMenu(true);
 
-                        DruidJournal.openJournal((DruidJournal.journalTypes)journalPressed);
-                        //Game1.activeClickableMenu = new Druid(journalPressed);
-
-                        rite.shutdown();
+                        DruidJournal.openJournal(journalPressed);
 
                     }
 
-
                 }
-                else if(Game1.activeClickableMenu is GameMenu gameMenu)
+
+                /*else if(Game1.activeClickableMenu is GameMenu gameMenu)
                 {
                     
-                    if (gameMenu.currentTab == 0 && actionPressed == EventHandle.actionButtons.rite || journalPressed != journalTypes.none)
+                    if (gameMenu.currentTab == 0 && actionPressed == EventHandle.actionButtons.rite || journalPressed != DruidJournal.journalTypes.none)
                     {
 
                         gameMenu.exitThisMenu(true);
 
                         DruidJournal.openJournal((DruidJournal.journalTypes)journalPressed);
-                        //Game1.activeClickableMenu = new Druid(journalPressed);
 
                         rite.shutdown();
                     
                     }
 
-                }
+                }*/
+
+                rite.shutdown();
 
                 return;
 
             }
 
-            if (journalPressed != journalTypes.none)
+            if (journalPressed != DruidJournal.journalTypes.none)
             {
 
-                DruidJournal.openJournal((DruidJournal.journalTypes)journalPressed);
-                //Game1.activeClickableMenu = new Druid(journalPressed);
+                DruidJournal.openJournal(journalPressed);
                 
                 rite.shutdown();
 

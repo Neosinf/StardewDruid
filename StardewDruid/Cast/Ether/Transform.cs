@@ -39,16 +39,47 @@ namespace StardewDruid.Cast.Ether
             
         }
 
+        public virtual void EventWarp()
+        {
+
+            warpTrigger = true;
+
+            warpTimeout = 10;
+
+            warpLocation = Game1.locationRequest.Location.Name;
+
+            if (avatar != null)
+            {
+
+                EventRemove();
+
+            }
+
+            /*if (warpTrigger)
+            {
+
+                if (warpLocation != Game1.locationRequest.Location.Name)
+                {
+
+                    warpTimeout = 30;
+
+                    warpLocation = Game1.locationRequest.Location.Name;
+
+                }
+
+                return;
+
+            }*/
+
+
+        }
+
         public override void EventActivate()
         {
 
             eventId = "transform";
 
             Mod.instance.RegisterEvent(this, "transform");
-
-            EventClicks(actionButtons.action);
-
-            EventClicks(actionButtons.special);
 
             CreateAvatar();
 
@@ -58,6 +89,10 @@ namespace StardewDruid.Cast.Ether
 
         public void CreateAvatar()
         {
+
+            EventClicks(actionButtons.action);
+
+            EventClicks(actionButtons.special);
 
             Game1.displayFarmer = false;
 
@@ -88,8 +123,48 @@ namespace StardewDruid.Cast.Ether
         public override bool EventActive()
         {
 
+            eventCounter = 0;
+
             if (eventComplete)
             {
+
+                return false;
+
+            }
+
+            if (warpTrigger && !Game1.isWarping)
+            {
+
+                warpTrigger = false;
+
+                warpTimeout = 0;
+
+                SpawnIndex spawnCheck = new(Game1.player.currentLocation);
+
+                if (spawnCheck.cast)
+                {
+
+                    CreateAvatar();
+
+                }
+
+            }
+
+            if (warpTrigger)
+            {
+
+                warpTimeout--;
+
+                if (warpTimeout > 0)
+                {
+
+                    return true;
+
+                }
+
+                warpTrigger = false;
+
+                eventComplete = true;
 
                 return false;
 
@@ -108,22 +183,22 @@ namespace StardewDruid.Cast.Ether
 
         public override bool AttemptReset()
         {
-            
-            if (warpTrigger)
+
+            /*if (warpTrigger)
             {
 
                 return true;
 
-            }
+            }*/
 
-            if (avatar != null)
+            if (avatar == null)
             {
 
-                return !avatar.SafeExit();
+                return false;
 
             }
 
-            return false;
+            return !avatar.SafeExit();
 
         }
 
@@ -158,12 +233,21 @@ namespace StardewDruid.Cast.Ether
 
             }
 
+            RemoveClicks();
+
         }
 
         public override bool EventPerformAction(SButton Button, actionButtons Action = actionButtons.action)
         {
 
             if (!EventActive())
+            {
+
+                return false;
+
+            }
+
+            if (warpTrigger)
             {
 
                 return false;
@@ -222,48 +306,24 @@ namespace StardewDruid.Cast.Ether
         public override void EventDecimal()
         {
 
-            if(warpTrigger)
+            if (!EventActive()) { 
+                
+                return; 
+            
+            }
+
+            if (warpTrigger)
             {
                 
-                warpTimeout--;
-
-                if(Game1.player.currentLocation.Name == warpLocation)
-                {
-                   
-                    warpTrigger = false;
-
-                    SpawnIndex spawnCheck = new(Game1.player.currentLocation);
-
-                    if (!spawnCheck.cast)
-                    {
-
-                        eventComplete = true;
-
-                        return;
-
-                    }
-
-                    //avatar.currentLocation = Game1.player.currentLocation;
-
-                    //avatar.Position = Game1.player.Position;
-
-                    //Game1.player.currentLocation.characters.Add(avatar);
-
-                    CreateAvatar();
-
-                }
-                else if(warpTimeout <= 0)
-                {
-
-                    warpTrigger = false;
-
-                }
+                return;
 
             }
 
-            if (!EventActive()) { return; }
-
-            if (Game1.player.CurrentToolIndex != 999 || Mod.instance.Helper.Input.IsDown(rightButton) || Mod.instance.Helper.Input.IsDown(leftButton))
+            if (
+                Game1.player.CurrentToolIndex != 999 || 
+                Mod.instance.Helper.Input.IsDown(rightButton) || 
+                Mod.instance.Helper.Input.IsDown(leftButton)
+            )
             {
                 return;
             }
@@ -272,39 +332,15 @@ namespace StardewDruid.Cast.Ether
 
         }
 
-        public virtual void EventWarp()
+        public override void EventInterval()
         {
 
             if (warpTrigger) 
             { 
                 
-                if(warpLocation != Game1.locationRequest.Location.Name)
-                {
-
-                    warpTimeout = 30;
-
-                    warpLocation = Game1.locationRequest.Location.Name;
-
-                }
-
                 return; 
             
             }
-
-            warpTrigger = true;
-
-            warpTimeout = 30;
-
-            warpLocation = Game1.locationRequest.Location.Name;
-
-            EventRemove();
-
-        }
-
-        public override void EventInterval()
-        {
-
-            if (warpTrigger) { return; }
             
             if((int)Game1.currentGameTime.TotalGameTime.TotalSeconds % 3 != 0)
             {

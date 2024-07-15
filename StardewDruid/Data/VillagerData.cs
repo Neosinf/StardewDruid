@@ -1,6 +1,7 @@
 ﻿using StardewDruid.Cast.Weald;
 using StardewValley;
 using StardewValley.Locations;
+using System;
 using System.Collections.Generic;
 using static StardewDruid.Data.ReactionData;
 
@@ -16,6 +17,22 @@ namespace StardewDruid.Data
             forest,
         }
 
+        public enum villagers
+        {
+            Sebastian, Sam,
+            Maru, Abigail,
+            Robin, Demetrius, Linus,
+            Alex, Elliott, Harvey,
+            Emily, Penny,
+            Caroline, Clint, Evelyn, George, 
+            Gus, Jodi, Lewis, Pam, Pierre, Vincent,
+            Shane,
+            Leah, Haley,
+            Marnie, Jas, Wizard, Willy,
+            Krobus,
+            Kent,
+        }
+
         public static void CommunityFriendship(villagerLocales locale = villagerLocales.mountain, int friendship = 250, int questRating = 1)
         {
             List<string> NPCIndex;
@@ -24,47 +41,58 @@ namespace StardewDruid.Data
                 default:
                 case villagerLocales.mountain:
 
-                    Mod.instance.CastDisplay("Collected " + questRating + " pieces of trash, gained " + friendship + " friendship with mountain residents", 2);
+                    Mod.instance.CastDisplay(
+                        Mod.instance.Helper.Translation.Get("VillagerData.11") + questRating +
+                        Mod.instance.Helper.Translation.Get("VillagerData.12") + friendship +
+                        Mod.instance.Helper.Translation.Get("VillagerData.13"), 2);
 
                     NPCIndex = new(){
-                        "Sebastian", "Sam",
-                        "Maru", "Abigail",
-                        "Robin", "Demetrius", "Linus",
+                        villagers.Sebastian.ToString(), villagers.Sam.ToString(),
+                        villagers.Maru.ToString(), villagers.Abigail.ToString(),
+                        villagers.Robin.ToString(), villagers.Demetrius.ToString(), villagers.Linus.ToString(),
                     };
-                    
+
                     ModUtility.UpdateFriendship(Game1.player, NPCIndex, friendship);
-                    
+
                     break;
 
                 case villagerLocales.town:
 
-                    Mod.instance.CastDisplay("Prevented " + questRating + " acts of destruction, gained " + friendship + " friendship with town residents", 2);
+                    Mod.instance.CastDisplay(Mod.instance.Helper.Translation.Get("VillagerData.27")
+                        + questRating + Mod.instance.Helper.Translation.Get("VillagerData.28")
+                        + friendship + Mod.instance.Helper.Translation.Get("VillagerData.29"), 2);
 
                     NPCIndex = new(){
-                        "Alex", "Elliott", "Harvey",
-                        "Emily", "Penny",
-                        "Caroline", "Clint", "Evelyn", "George", "Gus", "Jodi", "Lewis", "Pam", "Pierre", "Vincent",
+                        villagers.Alex.ToString(), villagers.Elliott.ToString(), villagers.Harvey.ToString(),
+                        villagers.Emily.ToString(), villagers.Penny.ToString(),
+                        villagers.Caroline.ToString(), villagers.Clint.ToString(), villagers.Evelyn.ToString(),
+                        villagers.George.ToString(), villagers.Gus.ToString(), villagers.Jodi.ToString(),
+                        villagers.Lewis.ToString(), villagers.Pam.ToString(),
+                        villagers.Pierre.ToString(), villagers.Vincent.ToString(),
                     };
-                    
+
                     ModUtility.UpdateFriendship(Game1.player, NPCIndex, friendship);
-                    
+
                     break;
 
                 case villagerLocales.forest:
 
-                    Mod.instance.CastDisplay("Destroyed " + questRating + " slimes, gained " + friendship + " friendship with forest residents", 2);
+                    Mod.instance.CastDisplay(Mod.instance.Helper.Translation.Get("VillagerData.46")
+                        + questRating + Mod.instance.Helper.Translation.Get("VillagerData.47")
+                        + friendship + Mod.instance.Helper.Translation.Get("VillagerData.48"), 2);
 
                     NPCIndex = new(){
-                        "Shane",
-                        "Leah", "Haley",
-                        "Marnie", "Jas", "Wizard", "Willy",
+                        villagers.Shane.ToString(),
+                        villagers.Leah.ToString(), villagers.Haley.ToString(),
+                        villagers.Marnie.ToString(), villagers.Jas.ToString(),
+                        villagers.Wizard.ToString(), villagers.Willy.ToString(),
                     };
 
                     ModUtility.UpdateFriendship(Game1.player, NPCIndex, friendship);
-                    
+
                     break;
 
-            }           
+            }
 
         }
 
@@ -78,40 +106,42 @@ namespace StardewDruid.Data
 
                 case ReactionData.reactions.stars:
 
-                    switch (name)
+                    switch (Enum.Parse<villagers>(name))
                     {
 
-                        case "Harvey":
+                        case villagers.Harvey:
 
-                            reaction.Add("Be careful, " + Game1.player.Name + ". The dust and vapours from those impacts could be hazardous! $s");
-
-                            break;
-
-                        case "Maru":
-
-                            reaction.Add("Ooh! A meteor shower! Did you know that the difference between a meteor and an asteroid is whether they've entered the atmosphere of a planet? $h");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.80")
+                                + Game1.player.Name +
+                                Mod.instance.Helper.Translation.Get("VillagerData.82"));
 
                             break;
 
-                        case "Kent":
+                        case villagers.Maru:
 
-                            reaction.Add("Aerial bombardment! Take Cover! $a");
-
-                            reaction.Add("It's over... you saw that right? I didn't imagine it. I didn't... bring it home.");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.88"));
 
                             break;
 
-                        case "Krobus":
+                        case villagers.Kent:
 
-                            reaction.Add("My people hide underground for many reasons. You've just demonstrated one of them. $s");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.94"));
+
+                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.96"));
 
                             break;
 
-                        case "Jodi":
+                        case villagers.Krobus:
 
-                            reaction.Add("Explosions. I wonder if...");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.102"));
 
-                            reaction.Add("Sorry, my thoughts wandered to somewhere else.");
+                            break;
+
+                        case villagers.Jodi:
+
+                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.108"));
+
+                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.110"));
 
                             break;
 
@@ -125,28 +155,28 @@ namespace StardewDruid.Data
 
                 case ReactionData.reactions.mists:
 
-                    switch (name)
+                    switch (Enum.Parse<villagers>(name))
                     {
 
-                        case "Sebastian":
+                        case villagers.Sebastian:
 
-                            reaction.Add("I think I'd be good at that if you taught me.");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.129"));
 
-                            reaction.Add("On second thought, I don't think I want to risk bolting myself. $h");
-
-                            break;
-
-                        case "Sam":
-
-                            reaction.Add("That just gave me the best album-cover idea.");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.131"));
 
                             break;
 
-                        case "Demetrius":
+                        case villagers.Sam:
 
-                            reaction.Add("This is an anomalous weather pattern for this region. There haven't been recordings of such phenomena since...");
+                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.137"));
 
-                            reaction.Add("(Demetrius is deep in thought)");
+                            break;
+
+                        case villagers.Demetrius:
+
+                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.143"));
+
+                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.145"));
 
                             break;
 
@@ -159,6 +189,7 @@ namespace StardewDruid.Data
             return reaction;
 
         }
+
 
         public static Dictionary<ReactionData.portraits, string> ReactionPortraits(string name)
         {

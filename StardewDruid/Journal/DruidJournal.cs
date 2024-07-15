@@ -141,6 +141,41 @@ namespace StardewDruid.Journal
 
         }
 
+        public static journalTypes JournalButtonPressed()
+        {
+
+            if (Mod.instance.Config.journalButtons.GetState() == SButtonState.Pressed)
+            {
+
+                return journalTypes.quests;
+
+            }
+            else
+            if (Mod.instance.Config.effectsButtons.GetState() == SButtonState.Pressed)
+            {
+
+                return journalTypes.effects;
+
+            }
+            else
+            if (Mod.instance.Config.relicsButtons.GetState() == SButtonState.Pressed)
+            {
+
+                return journalTypes.relics;
+
+            }
+            else
+            if (Mod.instance.Config.herbalismButtons.GetState() == SButtonState.Pressed && Mod.instance.questHandle.IsComplete(QuestHandle.herbalism))
+            {
+
+                return journalTypes.herbalism;
+
+            }
+
+            return journalTypes.none;
+
+        }
+
         public static void openJournal(journalTypes Type, string Id = null, int Record = 0)
         {
             

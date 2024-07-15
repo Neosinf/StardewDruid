@@ -335,6 +335,8 @@ namespace StardewDruid.Location
 
             spell.type = SpellHandle.spells.crate;
 
+            spell.added.Add(SpellHandle.effects.crate);
+
             spell.counter = 60;
 
             spell.Update();

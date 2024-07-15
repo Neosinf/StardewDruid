@@ -229,9 +229,9 @@ namespace StardewDruid.Event.Challenge
 
                 bosses[0].tempermentActive = Boss.temperment.cautious;
 
-                Mod.instance.rite.castLocation.characters.Add(bosses[0]);
+                location.characters.Add(bosses[0]);
 
-                bosses[0].update(Game1.currentGameTime, Mod.instance.rite.castLocation);
+                bosses[0].update(Game1.currentGameTime, location);
 
                 voices[0] = bosses[0];
 

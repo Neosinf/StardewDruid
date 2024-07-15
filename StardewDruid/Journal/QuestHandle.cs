@@ -187,6 +187,7 @@ namespace StardewDruid.Journal
 
         public const string relicEther = "relicEther";
 
+        public const string treasureChase = "treasureChase";
 
         public QuestHandle()
         {
@@ -228,83 +229,6 @@ namespace StardewDruid.Journal
             Mod.instance.save.progress.Remove(questId);
 
         }*/
-
-        public List<List<string>> OrganiseQuests(bool active = false, bool reverse = false)
-        {
-
-            List<List<string>> source = new();
-
-            List<string> pageList = new();
-
-            List<string> activeList = new();
-
-            foreach(string id in quests.Keys)
-            {
-
-                if (!Mod.instance.save.progress.ContainsKey(id))
-                {
-                    continue;
-                }
-
-                QuestProgress progress = Mod.instance.save.progress[id];
-
-                if (progress.status == 1 || progress.status == 4)
-                {
-                    if (active)
-                    {
-
-                        activeList.Add(id);
-
-                    }
-                    else
-                    {
-
-                        pageList.Add(id);
-
-                    }
-
-                }
-                else
-                if (progress.status >= 1)
-                {
-
-                    pageList.Add(id);
-
-                }
-            
-            }
-
-            if (reverse)
-            {
-
-                pageList.Reverse();
-
-                activeList.Reverse();
-            }
-            
-            if (active)
-            {
-
-                activeList.AddRange(pageList);
-
-                pageList = activeList;
-            }
-
-            foreach (string page in pageList)
-            {
-
-                if (source.Count == 0 || source.Last().Count() == 6)
-                {
-                    source.Add(new List<string>());
-                }
-
-                source.Last().Add(page);
-
-            }
-
-            return source;
-
-        }
 
         public Dictionary<int,Journal.ContentComponent> JournalQuests()
         {
@@ -436,71 +360,6 @@ namespace StardewDruid.Journal
             }
 
             return new(null,0);
-
-        }
-
-        public List<List<string>> OrganiseEffects(bool reverse = false)
-        {
-
-            List<List<string>> source = new();
-
-            List<string> pageList = new();
-
-            foreach (KeyValuePair<string, QuestProgress> pair in Mod.instance.save.progress)
-            {
-
-                string id = pair.Key;
-
-                QuestProgress progress = pair.Value;
-
-                if (!quests.ContainsKey(id))
-                {
-
-                    continue;
-
-                }
-
-                int requirement = quests[id].type == Quest.questTypes.lesson ? 1 : 2;
-
-                if (progress.status >= requirement)
-                {
-
-                    if (effects.ContainsKey(id))
-                    {
-
-                        for(int i = 0; i < effects[id].Count; i++)
-                        {
-
-                            pageList.Add(id+"|"+i.ToString());
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            if (reverse)
-            {
-
-                pageList.Reverse();
-
-            }
-
-            foreach (string page in pageList)
-            {
-
-                if (source.Count == 0 || source.Last().Count() == 6)
-                {
-                    source.Add(new List<string>());
-                }
-
-                source.Last().Add(page);
-
-            }
-
-            return source;
 
         }
 

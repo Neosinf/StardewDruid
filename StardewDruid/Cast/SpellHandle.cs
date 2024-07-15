@@ -165,7 +165,11 @@ namespace StardewDruid.Cast
             thunder,
             dustMeep,
             yoba,
-            secret1
+            secret1,
+            wand,
+            doorCreak,
+            fireball,
+            bubbles,
         }
 
         public sounds sound = sounds.none;
@@ -624,8 +628,8 @@ namespace StardewDruid.Cast
                         if(missile == IconData.missiles.fireball)
                         {
 
-                            Game1.currentLocation.playSound("fireball");
-
+                            Game1.currentLocation.playSound(sounds.fireball.ToString());
+                            
                         }
 
                         LaunchMissile();
@@ -793,7 +797,7 @@ namespace StardewDruid.Cast
 
                         CrateOpen();
 
-                        location.playSound("doorCreak");
+                        location.playSound(sounds.doorCreak.ToString());
 
                     }
 
@@ -806,7 +810,7 @@ namespace StardewDruid.Cast
 
                         ApplyEffects(destination);
 
-                        location.playSound("yoba");
+                        location.playSound(sounds.yoba.ToString());
 
                     }
 
@@ -1787,13 +1791,6 @@ namespace StardewDruid.Cast
 
         public void CrateCreate()
         {
-
-            if (!added.Contains(effects.crate))
-            {
-
-                added.Add(effects.crate);
-
-            }
 
             TemporaryAnimatedSprite crate = new(0, 1000, 1, 1, origin + new Vector2(16, 0), false, false)
             {

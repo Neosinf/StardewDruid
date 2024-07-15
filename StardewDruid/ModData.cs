@@ -101,6 +101,27 @@ namespace StardewDruid
 
         public int dragonTertiaryB { get; set; }
 
+        public enum difficulties
+        {
+            kiwi,
+            hard,
+            medium,
+            easy,
+            cali,
+
+        }
+
+        public enum slotOptions
+        {
+            weald,
+            mists,
+            stars,
+            fates,
+            ether,
+            none,
+            lunch,
+
+        }
 
         public ModData()
         {
@@ -119,23 +140,23 @@ namespace StardewDruid
             setOnce = false;
             convert219 = false;
             maxDamage = false;
-            modDifficulty = "medium";
+            modDifficulty = difficulties.medium.ToString();
             slotAttune = true;
             slotConsume = true;
             slotFreedom = false;
             slotReverse = false;
-            slotOne = "weald";
-            slotTwo = "mists";
-            slotThree = "stars";
-            slotFour = "fates";
-            slotFive = "ether";
-            slotSix = "none";
-            slotSeven = "none";
-            slotEight = "none";
-            slotNine = "lunch";
-            slotTen = "lunch";
-            slotEleven = "lunch";
-            slotTwelve = "lunch";
+            slotOne = slotOptions.weald.ToString();
+            slotTwo = slotOptions.mists.ToString();
+            slotThree = slotOptions.stars.ToString();
+            slotFour = slotOptions.fates.ToString();
+            slotFive = slotOptions.ether.ToString();
+            slotSix = slotOptions.none.ToString();
+            slotSeven = slotOptions.none.ToString();
+            slotEight = slotOptions.none.ToString();
+            slotNine = slotOptions.lunch.ToString();
+            slotTen = slotOptions.lunch.ToString();
+            slotEleven = slotOptions.lunch.ToString();
+            slotTwelve = slotOptions.lunch.ToString();
             cultivateBehaviour = 2;
             meteorBehaviour = 3;
             cardinalMovement = false;

@@ -886,7 +886,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[2].netDirection.Set(1);
 
-                    if (companions[2].currentLocation.Name != Mod.instance.rite.castLocation.Name)
+                    if (companions[2].currentLocation.Name != location.Name)
                     {
                         companions[2].currentLocation.characters.Remove(companions[2]);
 
@@ -908,7 +908,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[3].flip = true;
 
-                    if (companions[3].currentLocation.Name != Mod.instance.rite.castLocation.Name)
+                    if (companions[3].currentLocation.Name != location.Name)
                     {
                         companions[3].currentLocation.characters.Remove(companions[3]);
 

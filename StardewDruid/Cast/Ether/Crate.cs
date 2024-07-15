@@ -204,10 +204,11 @@ namespace StardewDruid.Cast.Ether
 
             crate.counter = 60;
 
+            crate.added.Add(SpellHandle.effects.crate);
+
             crate.Update();
 
             Mod.instance.spellRegister.Add(crate);
-
 
             if(crateTerrain == 2)
             {

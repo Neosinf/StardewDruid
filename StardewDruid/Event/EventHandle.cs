@@ -1368,6 +1368,8 @@ namespace StardewDruid.Event
 
             }
 
+            clicks.Clear();
+
         }
 
         public virtual void StopTrack()

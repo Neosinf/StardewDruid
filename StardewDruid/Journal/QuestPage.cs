@@ -57,6 +57,8 @@ namespace StardewDruid.Journal
 
             bool isActive = Mod.instance.save.progress[questId].status == 1 || Mod.instance.save.progress[questId].status == 4;
 
+            bool isComplete = Mod.instance.questHandle.IsComplete(questId);
+
             Quest questRecord = Mod.instance.questHandle.quests[questId];
 
             int questReward = questRecord.reward;
@@ -120,22 +122,38 @@ namespace StardewDruid.Journal
 
             // ------------------------------ instructions
 
-            contentComponents[start] = new(ContentComponent.contentTypes.text, "instruction");
+            if(isComplete && questRecord.explanation != null)
+            {
 
-            contentComponents[start].text[0] = questRecord.instruction;
+                contentComponents[start] = new(ContentComponent.contentTypes.text, "instruction");
 
-            contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+                contentComponents[start].text[0] = questRecord.explanation;
 
-            textHeight += contentComponents[start++].bounds.Height;
+                contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
 
+                textHeight += contentComponents[start++].bounds.Height;
+
+            }
+            else if (questRecord.instruction != null)
+            {
+
+                contentComponents[start] = new(ContentComponent.contentTypes.text, "instruction");
+
+                contentComponents[start].text[0] = questRecord.instruction;
+
+                contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+                textHeight += contentComponents[start++].bounds.Height;
+
+            }
 
             // ------------------------------ conditional instructions
 
             if (questRecord.type == Quest.questTypes.lesson)
             {
 
-                string lessonProgress = 
-                    isActive ? "Mastered " : "" +
+                string lessonProgress =
+                    isComplete ? "Mastered " : "" +
                     Mod.instance.save.progress[questId].progress.ToString() + " " + 
                     DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.outOf) + " " + 
                     questRecord.requirement.ToString() + " " + 
@@ -187,23 +205,7 @@ namespace StardewDruid.Journal
 
             }
 
-            for(int i = 0; i < questRecord.details.Count; i++)
-            {
-
-                string detail = questRecord.details[i];
-
-                contentComponents[start] = new(ContentComponent.contentTypes.text, "detail"+i.ToString());
-
-                contentComponents[start].text[0] = detail;
-
-                contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
-
-                textHeight += contentComponents[start++].bounds.Height;
-
-
-            }
-
-            if (questRecord.type == Quest.questTypes.challenge)
+            if (isComplete && questRecord.type == Quest.questTypes.challenge)
             {
 
                 Dictionary<int, Dictionary<int, string>> dialogueScene = DialogueData.DialogueScene(questId);
@@ -218,6 +220,13 @@ namespace StardewDruid.Journal
 
                         foreach (KeyValuePair<int, string> sceneMoment in sceneEntry.Value)
                         {
+
+                            if (sceneMoment.Key == 999)
+                            {
+
+                                continue;
+
+                            }
 
                             contentComponents[start] = new(ContentComponent.contentTypes.text, "narration" + start.ToString());
 
@@ -237,7 +246,7 @@ namespace StardewDruid.Journal
 
             }
 
-            if (Mod.instance.questHandle.loresets.ContainsKey(questId))
+            if (isComplete && Mod.instance.questHandle.loresets.ContainsKey(questId))
             {
 
                 foreach (LoreData.stories story in Mod.instance.questHandle.loresets[questId])
@@ -252,7 +261,7 @@ namespace StardewDruid.Journal
 
                         contentComponents[start].textColours[0] = Mod.instance.iconData.schemeColours.ElementAt((int)Mod.instance.questHandle.lores[story].character + 1).Value;
 
-                        contentComponents[start].setBounds(0, xPositionOnScreen+ 64, yPositionOnScreen + textHeight, width - 128, 0);
+                        contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
 
                         textHeight += contentComponents[start++].bounds.Height;
 

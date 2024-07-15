@@ -92,33 +92,6 @@ namespace StardewDruid.Character
             attune,
         }
 
-        public static string CharacterTitle(characters character)
-        {
-            switch (character)
-            {
-                case characters.Shadowtin:
-
-                    return "Shadowtin, Treasure Hunter";
-
-                case characters.Jester:
-
-                    return "Jester, Envoy of the Fates";
-
-                case characters.Buffin:
-
-                    return "Buffin, Agent of Chaos";
-
-                case characters.Revenant:
-
-                    return "Revenant, Guardian of the Star";
-
-                default:
-
-                    return "Effigy, Last of the Circle";
-
-            }
-
-        }
 
         public static Vector2 CharacterStart(locations location)
         {
@@ -487,6 +460,85 @@ namespace StardewDruid.Character
 
         }
 
+        public static bool TryWarpBusStop()
+        {
+
+            Dictionary<string, MinecartNetworkData> dictionary = DataLoader.Minecarts(Game1.content);
+
+            if (dictionary.TryGetValue("Default", out var network))
+            {
+
+                MinecartNetworkData minecartNetworkData = network;
+
+                if (minecartNetworkData != null && minecartNetworkData.Destinations?.Count > 0)
+                {
+
+                    foreach (MinecartDestinationData destination in network.Destinations)
+                    {
+
+                        if (destination.Id.Contains("Bus"))
+                        {
+
+                            Game1.player.currentLocation.MinecartWarp(destination);
+
+                            return true;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            return false;
+
+        }
+
+        public static bool CommunityCheck(int area)
+        {
+
+            if(
+                !Game1.MasterPlayer.mailReceived.Contains("JojaMember") && 
+                !(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[area]
+            )
+            {
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+        public static string CharacterTitle(characters character)
+        {
+            switch (character)
+            {
+                case characters.Shadowtin:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.8");
+
+                case characters.Jester:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.12");
+
+                case characters.Buffin:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.16");
+
+                case characters.Revenant:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.20");
+
+                default:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.24");
+
+            }
+
+        }
         public static string DialogueApproach(characters character)
         {
 
@@ -498,98 +550,98 @@ namespace StardewDruid.Character
                     if (Mod.instance.save.milestone == QuestHandle.milestones.weald_weapon || Mod.instance.save.milestone == QuestHandle.milestones.mists_weapon)
                     {
 
-                        return "The Effigy: Successor, remember to retain discipline in your training, and visit me tomorrow for new instruction";
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.40");
 
                     }
 
                     if (Mod.instance.characters[characters.Effigy].currentLocation.IsFarm)
                     {
 
-                        return "The Effigy: Provide me with some seeds, and I will sow them as I attend to the crops. " +
-                            "Remember to place plenty of scarecrows about. I like to talk to them.";
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.47") +
+                            Mod.instance.Helper.Translation.Get("CharacterHandle.48");
 
                     }
 
-                    return "The Effigy: Greetings, successor";
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.52");
 
                 case characters.Revenant:
 
                     if (Mod.instance.save.milestone == QuestHandle.milestones.stars_weapon)
                     {
 
-                        return "The Revenant: Fortumei bless you, warrior. Come see me again tomorrow, I might have more to teach you.";
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.59");
 
                     }
-                    return "The Revenant: Hail, adventurer.";
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.62");
 
                 case characters.Jester:
 
                     if (Mod.instance.save.milestone == QuestHandle.milestones.fates_weapon)
                     {
 
-                        return "The Jester of Fate: That's all for today friend. Now what can I find to rub up against...";
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.69");
 
                     }
 
                     if (Mod.instance.save.milestone == QuestHandle.milestones.fates_enchant)
                     {
 
-                        return "The Jester of Fate: Did you go see Buffin at the court of Fates and Chaos? She has the best stuff.";
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.76");
 
                     }
 
                     if (Mod.instance.characters[characters.Jester].currentLocation.IsFarm)
                     {
 
-                        return "The Jester of Fate: I think this place could do with some animals. I enjoy milking.";
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.83");
 
                     }
 
-                    return "The Jester of Fate: Hey friend.";
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.87");
 
                 case characters.Buffin:
 
-                    return "You would make a great servant of chaos, Farmer.";
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.91");
 
                 case characters.Shadowtin:
 
                     if (Mod.instance.characters[characters.Jester].currentLocation.IsFarm)
                     {
 
-                        return "Shadowtin Bear: I am fascinated by the industry of the organic world, " +
-                            "especially the substances you refer to as maple syrup and honey.";
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.98") +
+                            Mod.instance.Helper.Translation.Get("CharacterHandle.99");
 
                     }
 
-                    return "(Shadowtin's ethereal eyes shine through a cold metal mask)";
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.103");
 
                 case characters.energies:
 
-                    return "Energies of the Weald: Squire (squire) (squire) (squire)";
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.107");
 
                 case characters.waves:
 
-                    return "Murmurs of the Waves: Yes, friend";
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.111");
 
                 case characters.herbalism:
 
-                    return "An old stone bench used by the old Druids for crafting herbal remedies";
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.115");
 
                 case characters.monument_artisans:
 
-                    return "The beak has not been worn down with the passage of time.";
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.119");
 
                 case characters.monument_priesthood:
 
-                    return "The cat presides over the court";
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.123");
 
                 case characters.monument_morticians:
 
-                    return "The giant owl appears to watch the entrance to the cavern, as if waiting for something to arrive, or watching something leave.";
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.127");
 
                 case characters.monument_chaos:
 
-                    return "It's unnerving to see a canine so large sit so still.";
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.131");
 
             }
 
@@ -601,7 +653,7 @@ namespace StardewDruid.Character
         {
 
 
-            return "(nevermind)";
+            return Mod.instance.Helper.Translation.Get("CharacterHandle.143");
 
 
         }
@@ -617,7 +669,7 @@ namespace StardewDruid.Character
                     if (Mod.instance.questHandle.IsQuestGiver(character))
                     {
 
-                        return "(quests) Can you please repeat the instructions?";
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.159");
 
                     }
 
@@ -625,7 +677,7 @@ namespace StardewDruid.Character
 
                 case subjects.lore:
 
-                    if(Mod.instance.questHandle.lorekey != null)
+                    if (Mod.instance.questHandle.lorekey != null)
                     {
 
                         foreach (LoreData.stories story in Mod.instance.questHandle.loresets[Mod.instance.questHandle.lorekey])
@@ -668,13 +720,13 @@ namespace StardewDruid.Character
                             if (runestones == 4)
                             {
 
-                                return "(relics) I've recovered all the missing runestones from the founding of the circle. How do I access their latent powers?";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.210");
 
                             }
                             else if (runestones >= 1)
                             {
 
-                                return "(relics) I think I've found an artifact from the time of the circle's founding";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.216");
 
                             }
 
@@ -694,13 +746,13 @@ namespace StardewDruid.Character
                             if (avalant == 6)
                             {
 
-                                return "(relics) I've found all the components of the ancient Avalant. Will this enable me to chart a course to the isle of mists?";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.236");
 
                             }
                             else if (avalant >= 1)
                             {
 
-                                return "(relics) I fished out a fragment of a strange device. Is it familiar to you?";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.242");
 
                             }
 
@@ -720,13 +772,13 @@ namespace StardewDruid.Character
                             if (books == 4)
                             {
 
-                                return "(relics) I've managed to find three manuscripts hidden by the first farmer before he disappeared.";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.262");
 
                             }
                             else if (books >= 1)
                             {
 
-                                return "(relics) How many records from the founding of the circle are missing?";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.268");
 
                             }
 
@@ -746,13 +798,13 @@ namespace StardewDruid.Character
                             if (boxes == 4)
                             {
 
-                                return "(relics) These ornament boxes, they're all empty";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.288");
 
                             }
                             else if (boxes >= 1)
                             {
 
-                                return "(relics) The Reaper of Fate kept this small box on him. Is it of value to the Fates?";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.294");
 
                             }
 
@@ -760,19 +812,19 @@ namespace StardewDruid.Character
 
                         case characters.monument_artisans:
 
-                            return "You take out your strongest tool, and strike as hard as you can.";
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.302");
 
                         case characters.monument_priesthood:
 
-                            return "You raise your hand towards the feline's gentle features.";
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.306");
 
                         case characters.monument_morticians:
 
-                            return "You marvel at the colouring and lustre of the owl's feathers. You reach out, expecting a surface as cool and smooth as ivory.";
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.310");
 
                         case characters.monument_chaos:
 
-                            return "You lift the back of your hand towards the enlarged snout.";
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.314");
                     }
 
                     break;
@@ -787,7 +839,7 @@ namespace StardewDruid.Character
                             if (Mod.instance.questHandle.IsComplete(QuestHandle.questEffigy) && Context.IsMainPlayer)
                             {
 
-                                return "(inventory) I have some seeds for you to sow.";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.329");
 
                             }
 
@@ -798,7 +850,7 @@ namespace StardewDruid.Character
                             if (Context.IsMainPlayer)
                             {
 
-                                return "Jester... what's in your mouth. Come on. Show me.";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.340");
 
                             }
 
@@ -809,7 +861,7 @@ namespace StardewDruid.Character
                             if (Context.IsMainPlayer)
                             {
 
-                                return "(inventory) Let's take stock of our supplies.";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.351");
 
                             }
 
@@ -820,7 +872,7 @@ namespace StardewDruid.Character
                             if (Context.IsMainPlayer)
                             {
 
-                                return "(inventory) Store and review potion ingredients.";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.362");
 
                             }
 
@@ -839,7 +891,7 @@ namespace StardewDruid.Character
                             if (Mod.instance.questHandle.IsComplete(QuestHandle.questEffigy) && Context.IsMainPlayer)
                             {
 
-                                return "(adventure) I have a task for you.";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.381");
 
                             }
 
@@ -850,18 +902,18 @@ namespace StardewDruid.Character
                             if (Context.IsMainPlayer)
                             {
 
-                                return "(adventure) Let's talk adventure.";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.392");
 
                             }
 
-                            break;                        
-                        
+                            break;
+
                         case characters.Shadowtin:
-                            
+
                             if (Context.IsMainPlayer)
                             {
 
-                                return "(adventure) Lets talk about our partnership.";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.403");
 
                             }
 
@@ -869,23 +921,23 @@ namespace StardewDruid.Character
 
                         case characters.waves:
 
-                            return "(warp) Why is the monument to the lady all the way out here?";
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.411");
 
                         case characters.Buffin:
 
-                            return "(warp) What is it like to be a servant of Chaos, Buffin? I imagine your duties take you to all sorts of random places.";
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.415");
 
                         case characters.Revenant:
 
-                            return "(warp) It was worth the treacherous ascent to witness the unfurling of the curtain of the sky. " +
-                                "The stage is set with the heroes of the constellations, and their radiance inspires me. Can I sleep here?";
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.419") +
+                                Mod.instance.Helper.Translation.Get("CharacterHandle.420");
 
                         case characters.herbalism:
 
                             if (Mod.instance.save.reliquary.ContainsKey(IconData.relics.crow_hammer.ToString()))
                             {
 
-                                return "(hammer) Break and store the contents of all geodes in inventory.";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.427");
 
                             }
 
@@ -924,13 +976,13 @@ namespace StardewDruid.Character
                             if (Mod.instance.questHandle.IsComplete(QuestHandle.herbalism))
                             {
 
-                                return "(herbalism) Replenish potions";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.466");
 
                             }
                             if (Mod.instance.questHandle.IsGiven(QuestHandle.herbalism))
                             {
 
-                                return "The bowl beckons. You reach out, tentatively, and touch its rim with your fingertip.";
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.472");
 
                             }
 
@@ -1009,18 +1061,18 @@ namespace StardewDruid.Character
                             if (runestones == 4)
                             {
 
-                                generate.intro = "Whispering on the wind: (laughs) You already possess conduits for the energies represented in the runes. Well, I can't remember what the cat means. " +
-                                    "Sighs of the Earth: The calico shamans served the ancient ones, the dragons. Their wild shape-shifting has been forgotten to time and ruin. The runestones are useless to you now.";
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.551") +
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.552");
 
-                                if (!Game1.MasterPlayer.mailReceived.Contains("JojaMember") && !(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[1])
+                                if (CommunityCheck(1))
                                 {
 
                                     Mod.instance.questHandle.AssignQuest(QuestHandle.relicWeald);
 
-                                    generate.responses.Add("Oh. Well the craftsmanship is rather neat. I think I'll use them to redecorate the craftroom at the community center.");
+                                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.559"));
 
-                                    generate.answers.Add("Rustling in the woodland: When sourcing materials for your redecoration project, consider nearby sources and support your local woodlands! We have the best timber products on the market. " +
-                                        "(New quest recieved)");
+                                    generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.561") +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.562"));
 
                                 }
                                 else
@@ -1034,8 +1086,8 @@ namespace StardewDruid.Character
                             else if (runestones >= 1)
                             {
 
-                                generate.intro = "Rustling in the woodland: It is one of the runestones gifted to your forebearers, those tasked to govern in the Kings' stead. " +
-                                    "The other stones belong to creatures that do not care for the old ways. To gather all four would be a boon to the Weald.";
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.576") +
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.577");
 
                             }
 
@@ -1055,18 +1107,18 @@ namespace StardewDruid.Character
                             if (avalant == 6)
                             {
 
-                                generate.intro = "Murmurs of the Waves: Indeed. The finned faithful will be very pleased... to be rid of the ruinous device! " +
-                                    "You see, it points towards the broken forgehall of the drowned city, deep within the abyssal trench, where mortals cannot tread. It is useless to you.";
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.597") +
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.598");
 
-                                if (!Game1.MasterPlayer.mailReceived.Contains("JojaMember") && !(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[2])
+                                if (CommunityCheck(2))
                                 {
                                     Mod.instance.questHandle.AssignQuest(QuestHandle.relicMists);
 
-                                    generate.responses.Add("The parts appear to be quite sea-resistant. Perhaps I can use them to repair the community center fishtank.");
+                                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.604"));
 
-                                    generate.answers.Add("Fish... Tank? We weren't aware the little creatures had armed themselves with war machines. " +
-                                        "We will warn the guardians of the depths to prepare for a fish uprising! But do as you will with the Avalant. " +
-                                        "(New Quest Received)");
+                                    generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.606") +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.607") +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.608"));
                                 }
                                 else
                                 {
@@ -1079,9 +1131,9 @@ namespace StardewDruid.Character
                             else if (avalant >= 1)
                             {
 
-                                generate.intro = "Murmurs of the Waves: The Avalant, to guide the blessed pilgrim through the judgements of the mists. " +
-                                    "It was broken, but can be restored. The finned faithful carry the pieces from the sea to the sacred spring. " +
-                                    "Continue to use the power of the lady to fish the waters, and you might collect all the scattered pieces.";
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.621") +
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.622") +
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.623");
 
                             }
 
@@ -1101,19 +1153,18 @@ namespace StardewDruid.Character
                             if (books == 4)
                             {
 
-                                generate.intro = "";
+                                generate.intro = string.Empty;
 
-
-                                if (!Game1.MasterPlayer.mailReceived.Contains("JojaMember") && !(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[0])
+                                if (CommunityCheck(0))
                                 {
-                                    
+
                                     Mod.instance.questHandle.AssignQuest(QuestHandle.relicEther);
 
-                                    generate.intro = "The Revenant: ";
-                                    
-                                    generate.responses.Add("I guess there's no great mystery to glean from these texts, but at least I can add the recipes to the digests in the community pantry.");
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.650");
 
-                                    generate.answers.Add("Even the one for Fish Stew? Some of the ideas of my day are best left in the past. (New Quest Received)");
+                                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.652"));
+
+                                    generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.654"));
 
                                 }
                                 else
@@ -1123,14 +1174,14 @@ namespace StardewDruid.Character
 
                                 }
 
-                                generate.intro += "I think the Lady Beyond must have stashed these texts, farmer. The letters were penned by the prince of the sunken city, heir to the Isle of Mists, and the one who seduced our fair Starborn. " +
-                                    "I have nothing to say about the tome. The green book might have been too personal to leave intact, as it's been scrubbed down to just the boring parts. Recipes and potting tips. ";
+                                generate.intro += Mod.instance.Helper.Translation.Get("CharacterHandle.664") +
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.665");
 
                             }
                             else if (books >= 1)
                             {
 
-                                generate.intro = "All the annals are accounted for, but if you find any manuscripts that weren't profaned by those crazies, bring them to me, might be good for a memory or a laugh.";
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.671");
 
                             }
 
@@ -1149,19 +1200,22 @@ namespace StardewDruid.Character
 
                             if (boxes == 4)
                             {
-                                generate.intro = "";
+                                generate.intro = string.Empty;
 
-                                if (!Game1.MasterPlayer.mailReceived.Contains("JojaMember") && !(Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[5])
+                                if (CommunityCheck(5))
                                 {
 
                                     Mod.instance.questHandle.AssignQuest(QuestHandle.relicFates);
 
-                                    generate.intro = "Buffin, Agent of Chaos: ";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.697");
 
-                                    generate.responses.Add("I guess I understand. There's a bulletin board layered with all kinds of moments like that, only perceptable, put on paper and print stock. I think these boxes would be perfect to put the memories of the community in.");
+                                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.699") +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.700"));
 
-                                    generate.answers.Add("You make me smile, farmer. There's so much goodwill the Fates have for the people of this valley, though we are limited in how we can share it, and the desperate, cruel legacy of Thanatoshi hasn't helped. I count you as a friend to the Fae and blessed by Yoba. " +
-                                        "(New quest recieved)");
+                                    generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.702") +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.703") +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.704") +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.705"));
 
                                 }
                                 else
@@ -1171,16 +1225,16 @@ namespace StardewDruid.Character
 
                                 }
 
-                                generate.intro += "Nonsense, farmer, they're full. Full of imperceptible wonders. Good will, happy memories and lessons learned by the Fates that experienced life on this realm.";
+                                generate.intro += Mod.instance.Helper.Translation.Get("CharacterHandle.715");
 
                             }
                             else if (boxes >= 1)
                             {
 
-                                generate.intro = "Very valuable, farmer, for the Fate that possessed it. These trinkets are keepsakes of home, to comfort those of us on assignment to the realms. " +
-                                    "This belonged to a kindred spirit of Thanatoshi's. Masayoshi, the Justiciar of Fate at a moment in the history of this world. " +
-                                    "Imagine the bond they shared, to exchange boxes with one another. (Buffin looks towards the monuments) " +
-                                    "You'll have to convince the stone guardians to relinquish their secrets if you want the complete set. The Artisans are fond of tools, the Morticians, bones, probably, and Chaos... animals, of course!";
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.721") +
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.722") +
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.723") +
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.724");
 
                             }
 
@@ -1188,19 +1242,20 @@ namespace StardewDruid.Character
 
 
                         case characters.monument_artisans:
-                            
+
                             switch (Mod.instance.relicsData.ArtisanRelicQuest())
                             {
 
                                 case 0:
 
-                                    generate.intro = "The tool almost flies out of your hands with the rebound. It didn't even impact the surface of the monument. You may need an implement with a lustre that delights the Artisans. (Come back with an iridium tool) ";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.738") +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.739");
 
                                     break;
 
                                 case 1:
 
-                                    generate.intro = "Your strike lands and a marvelous clang echoes through the cavern, singing the praises of a beautiful implement.";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.745");
 
                                     ThrowHandle throwNotes = new(Game1.player, Game1.player.Position + new Vector2(-64, -256), IconData.relics.box_artisan);
 
@@ -1210,7 +1265,7 @@ namespace StardewDruid.Character
 
                                 default:
 
-                                    generate.intro = "Verse 1 of 4. Cracks have appeared in the stonework of the court monuments.";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.755");
 
                                     break;
 
@@ -1234,11 +1289,13 @@ namespace StardewDruid.Character
 
                                 int faethBlessing = Mod.instance.randomIndex.Next(1, 4);
 
-                                Mod.instance.CastMessage("You have received " + faethBlessing.ToString() + " faeth");
+                                Mod.instance.CastMessage(
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.780")
+                                    + faethBlessing.ToString() + Mod.instance.Helper.Translation.Get("CharacterHandle.781"));
 
                                 Mod.instance.save.herbalism[HerbalData.herbals.faeth] = faethBlessing;
 
-                                generate.intro = "The Priestess bestows you with a small gift of Faeth";
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.785");
 
                                 return generate;
 
@@ -1247,14 +1304,14 @@ namespace StardewDruid.Character
                             if (priestProgress >= 0)
                             {
 
-                                generate.intro = "The shadow cast by the cat shifts over your hands, as if reading your fortune from the lines in your palms. " +
-                                    "You now know that you are to find one that is lost, where three have stayed one has strayed far away.";
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.794") +
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.795");
 
                             }
                             else
                             {
 
-                                generate.intro = "Verse 2 of 4. The one that was lost has returned, and their silent vigil has concluded.";
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.801");
 
                             }
 
@@ -1268,20 +1325,20 @@ namespace StardewDruid.Character
 
                                 case 0:
 
-                                    generate.intro = "You do not recognise the material of the owl's feathers. Perhaps you do not know the Mortician's art. (Come back with a 'Prehistoric' or 'Fossilised' bone item) ";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.815");
 
                                     break;
 
                                 case 1:
 
-                                    generate.intro = "Your hands have honoured the bones of those that have passed on. ";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.821");
 
                                     ThrowHandle throwNotes = new(Game1.player, Game1.player.Position + new Vector2(64, -256), IconData.relics.box_mortician);
 
                                     throwNotes.register();
                                     break;
                                 default:
-                                    generate.intro = "Verse 3 of 4. Their eyes now shut to the cares of this world.";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.828");
 
                                     break;
                             }
@@ -1295,15 +1352,15 @@ namespace StardewDruid.Character
 
                                 case 0:
 
-                                    generate.intro = "Your hands do not smell sweet to the hungry fox. (Come back when you have built a Deluxe Barn or Deluxe Coop) ";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.842");
 
                                     break;
 
                                 case 1:
 
-                                    generate.intro = "The fox's grin appears to widen. Your hands have touched the splendid creatures. ";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.848");
 
-                                    ThrowHandle throwNotes = new(Game1.player, Game1.player.Position + new Vector2(64,-256), IconData.relics.box_chaos);
+                                    ThrowHandle throwNotes = new(Game1.player, Game1.player.Position + new Vector2(64, -256), IconData.relics.box_chaos);
 
                                     throwNotes.register();
 
@@ -1311,7 +1368,7 @@ namespace StardewDruid.Character
 
                                 default:
 
-                                    generate.intro = "Verse 4 of 4. They are free to crumble into the unburdened nothing of dust.";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.858");
 
                                     break;
                             }
@@ -1349,22 +1406,22 @@ namespace StardewDruid.Character
 
                                     }
 
-                                    generate.intro = "The Effigy: It is time to roam the wilds once more.";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.896");
 
                                     if (Mod.instance.characters[character].modeActive != Character.mode.track)
                                     {
 
-                                        generate.responses.Add("(follow) Come explore the valley with me.");
+                                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.901"));
 
-                                        generate.answers.Add("1");
+                                        generate.answers.Add(1.ToString());
                                     }
 
                                     if (Mod.instance.characters[character].modeActive != Character.mode.roam)
                                     {
 
-                                        generate.responses.Add("(work) My farm would benefit from your gentle stewardship.");
+                                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.909"));
 
-                                        generate.answers.Add("2");
+                                        generate.answers.Add(2.ToString());
 
                                     }
 
@@ -1372,17 +1429,17 @@ namespace StardewDruid.Character
                                         && Mod.instance.characters[character].currentLocation.Name != CharacterLocation(locations.grove))
                                     {
 
-                                        generate.responses.Add("(rest) Thank you for everything you do for the circle.");
+                                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.919"));
 
-                                        generate.answers.Add("3");
+                                        generate.answers.Add(3.ToString());
 
                                     }
 
                                     generate.lead = true;
 
-                                    return generate;                                
-                                
-                                
+                                    return generate;
+
+
                                 case characters.Jester:
 
                                     if (!Mod.instance.questHandle.IsComplete(QuestHandle.approachJester))
@@ -1392,23 +1449,23 @@ namespace StardewDruid.Character
 
                                     }
 
-                                    generate.intro = "The Jester of Fate: I'm ready to explore the world."; ;
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.939"); ;
 
                                     if (Mod.instance.characters[character].modeActive != Character.mode.track)
                                     {
 
-                                        generate.responses.Add("(follow) Let us continue our quest.");
+                                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.944"));
 
-                                        generate.answers.Add("1");
+                                        generate.answers.Add(1.ToString());
 
                                     }
 
                                     if (Mod.instance.characters[character].modeActive != Character.mode.roam)
                                     {
 
-                                        generate.responses.Add("(work) There's plenty going on on the farm.");
+                                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.953"));
 
-                                        generate.answers.Add("2");
+                                        generate.answers.Add(2.ToString());
 
                                     }
 
@@ -1416,9 +1473,9 @@ namespace StardewDruid.Character
                                         && Mod.instance.characters[character].currentLocation.Name != CharacterLocation(locations.grove))
                                     {
 
-                                        generate.responses.Add("(rest) The Druid's grove is where it's all happening.");
+                                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.963"));
 
-                                        generate.answers.Add("3");
+                                        generate.answers.Add(3.ToString());
 
                                     }
 
@@ -1435,23 +1492,23 @@ namespace StardewDruid.Character
 
                                     }
 
-                                    generate.intro = "Shadowtin Bear: What do you propose?"; ;
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.982"); ;
 
                                     if (Mod.instance.characters[character].modeActive != Character.mode.track)
                                     {
 
-                                        generate.responses.Add("(follow) Let us continue our investigation.");
+                                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.987"));
 
-                                        generate.answers.Add("1");
+                                        generate.answers.Add(1.ToString());
 
                                     }
 
                                     if (Mod.instance.characters[character].modeActive != Character.mode.roam)
                                     {
 
-                                        generate.responses.Add("(work) There's plenty of research material on the farm.");
+                                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.996"));
 
-                                        generate.answers.Add("2");
+                                        generate.answers.Add(2.ToString());
 
                                     }
 
@@ -1459,9 +1516,9 @@ namespace StardewDruid.Character
                                         && Mod.instance.characters[character].currentLocation.Name != CharacterLocation(locations.grove))
                                     {
 
-                                        generate.responses.Add("(rest) That's enough treasure hunting for now.");
+                                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.1006"));
 
-                                        generate.answers.Add("3");
+                                        generate.answers.Add(3.ToString());
 
                                     }
 
@@ -1471,11 +1528,11 @@ namespace StardewDruid.Character
 
                                 case characters.waves:
 
-                                    generate.intro = "Murmurs of the waves: Still yourself, and let the rolling motions of the mists carry you home.";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1018");
 
-                                    generate.responses.Add("I feel... wet? Wait what... !");
+                                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.1020"));
 
-                                    generate.answers.Add("10");
+                                    generate.answers.Add(10.ToString());
 
                                     generate.lead = true;
 
@@ -1484,11 +1541,11 @@ namespace StardewDruid.Character
 
                                 case characters.Buffin:
 
-                                    generate.intro = "Buffoonette of Chaos: Indeed they do, and I'm glad you asked me to demonstrate. Now, close your eyes. Prepare for your mind to be swept along the Great Stream.";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1031");
 
-                                    generate.responses.Add("Sorry, Buffin, what did you just say?");
+                                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.1033"));
 
-                                    generate.answers.Add("11");
+                                    generate.answers.Add(11.ToString());
 
                                     generate.lead = true;
 
@@ -1496,12 +1553,12 @@ namespace StardewDruid.Character
 
                                 case characters.Revenant:
 
-                                    generate.intro = "The Revenant: Best you be off home farmer, you don't want to be around when the bats have their rave. " +
-                                        "There's a cart-line that extends from here all the way to the main network. It was working well the last time I used it, but tell me if it requires any repairs.";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1043") +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1044");
 
-                                    generate.responses.Add("Has it been inspected recent- (Revenant pushes you into the cart bed and disengages the brake-lever)");
+                                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.1046"));
 
-                                    generate.answers.Add("12");
+                                    generate.answers.Add(12.ToString());
 
                                     generate.lead = true;
 
@@ -1529,19 +1586,19 @@ namespace StardewDruid.Character
                                         default:
                                         case characters.Effigy:
 
-                                            generate.intro = "I will see how you exercise the authority of the sleeping kings.";
+                                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1076");
 
                                             break;
 
                                         case characters.Jester:
 
-                                            generate.intro = "Lead the way, fateful one.";
+                                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1082");
 
                                             break;
 
                                         case characters.Shadowtin:
 
-                                            generate.intro = "Indeed. How about we split the spoils fifty fifty.";
+                                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1088");
 
                                             break;
 
@@ -1558,19 +1615,19 @@ namespace StardewDruid.Character
                                         default:
                                         case characters.Effigy:
 
-                                            generate.intro = "I will take my place amongst the posts and furrows of my old master's home.";
+                                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1105");
 
                                             break;
 
                                         case characters.Jester:
 
-                                            generate.intro = "Let's see who's around to bother.";
+                                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1111");
 
                                             break;
 
                                         case characters.Shadowtin:
 
-                                            generate.intro = "Lets see how profitable this agricultural venture is.";
+                                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1117");
 
                                             break;
                                     }
@@ -1586,19 +1643,19 @@ namespace StardewDruid.Character
                                         default:
                                         case characters.Effigy:
 
-                                            generate.intro = "I will return to where I may hear the rumbling energies of the valley's leylines.";
+                                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1133");
 
                                             break;
 
                                         case characters.Jester:
 
-                                            generate.intro = "(Jester grins) That's my favourite place to nap!";
+                                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1139");
 
                                             break;
 
                                         case characters.Shadowtin:
 
-                                            generate.intro = "Good idea. I require a quiet, shaded place to ruminate.";
+                                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1145");
 
                                             break;
                                     }
@@ -1614,47 +1671,28 @@ namespace StardewDruid.Character
                                     if (index == 12)
                                     {
 
-                                        Dictionary<string, MinecartNetworkData> dictionary = DataLoader.Minecarts(Game1.content);
-
-                                        if (dictionary.TryGetValue("Default", out var network))
+                                        if (TryWarpBusStop())
                                         {
 
-                                            MinecartNetworkData minecartNetworkData = network;
-
-                                            if (minecartNetworkData != null && minecartNetworkData.Destinations?.Count > 0)
-                                            {
-
-                                                foreach (MinecartDestinationData destination in network.Destinations)
-                                                {
-
-                                                    if (destination.Id.Contains("Bus"))
-                                                    {
-
-                                                        Game1.player.currentLocation.MinecartWarp(destination);
-                                                        return generate;
-
-                                                    }
-
-                                                }
-
-                                            }
+                                            return generate;
 
                                         }
+
 
                                     }
 
 
-                                    if(index == 11 && Mod.instance.randomIndex.Next(2) == 0)
+                                    if (index == 11 && Mod.instance.randomIndex.Next(2) == 0)
                                     {
 
-                                        for(int i = 0; i < 4; i++)
+                                        for (int i = 0; i < 4; i++)
                                         {
 
                                             GameLocation location = Game1.locations.ElementAt(Mod.instance.randomIndex.Next(Game1.locations.Count()));
 
                                             Vector2 tile = location.getRandomTile();
 
-                                            if(ModUtility.TileAccessibility(location,tile) != 0)
+                                            if (ModUtility.TileAccessibility(location, tile) != 0)
                                             {
 
                                                 continue;
@@ -1663,7 +1701,7 @@ namespace StardewDruid.Character
 
                                             Mod.instance.iconData.ImpactIndicator(Game1.player.currentLocation, Game1.player.Position, IconData.impacts.bomb, 4, new());
 
-                                            Game1.player.playNearbySoundAll("wand");
+                                            Game1.player.playNearbySoundAll(SpellHandle.sounds.wand.ToString());
 
                                             Game1.warpFarmer(location.Name, (int)tile.X, (int)tile.Y, 2);
 
@@ -1711,26 +1749,33 @@ namespace StardewDruid.Character
 
                                 case 0:
 
-                                    generate.intro = "This " + Game1.player.CurrentTool.Name + " resists attunement";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1239")
+                                        + Game1.player.CurrentTool.Name + Mod.instance.Helper.Translation.Get("CharacterHandle.1240");
 
                                     break;
 
                                 case 1:
 
-                                    generate.intro = "Sighs of the Earth: The " + Game1.player.CurrentTool.Name + " was crafted from materials blessed by the Lords of the Weald. " +
-                                    "It will serve your purposes as squire just fine, but its allegiance will always be to the Two Kings.";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1246")
+                                        + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1248") +
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.1249");
 
                                     break;
 
                                 case 2:
 
-                                    generate.intro = "Sighs of the Earth: This " + Game1.player.CurrentTool.Name + " will no longer serve the Two Kings";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1255")
+                                        + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1257");
 
                                     break;
 
                                 case 3:
 
-                                    generate.intro = "Sighs of the Earth: This " + Game1.player.CurrentTool.Name + " will serve the Two Kings";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1263")
+                                        + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1265");
 
                                     break;
 
@@ -1747,27 +1792,35 @@ namespace StardewDruid.Character
 
                                 case 0:
 
-                                    generate.intro = "This " + Game1.player.CurrentTool.Name + " resists attunement";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1282")
+                                        + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1284");
 
                                     break;
 
                                 case 1:
 
-                                    generate.intro = "Murmurs of the Waves: The " + Game1.player.CurrentTool.Name + " is from a time before the Lady, " +
-                                        "before the mists swirled around the isle, before the city it was forged in was lost to the storm.";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1290")
+                                        + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1292") +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1293");
 
 
                                     break;
 
                                 case 2:
 
-                                    generate.intro = "Murmurs of the Waves: This " + Game1.player.CurrentTool.Name + " will no longer serve the Lady Beyond the Shore";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1300")
+                                        + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1302");
 
                                     break;
 
                                 case 3:
 
-                                    generate.intro = "Murmurs of the Waves: This " + Game1.player.CurrentTool.Name + " will serve the Lady Beyond the Shore";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1308")
+                                        + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1310");
 
                                     break;
 
@@ -1784,25 +1837,29 @@ namespace StardewDruid.Character
 
                                 case 0:
 
-                                    generate.intro = "This " + Game1.player.CurrentTool.Name + " resists attunement";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1327") + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1328");
 
                                     break;
 
                                 case 1:
 
-                                    generate.intro = "There used to be a lot of warriors in our order. Now all that remains of them are the " + Game1.player.CurrentTool.Name + "'s that never tarnish.";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1334") + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1335");
 
                                     break;
 
                                 case 2:
 
-                                    generate.intro = "This " + Game1.player.CurrentTool.Name + " will no longer serve the Lights of the Great Expanse";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1341") + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1342");
 
                                     break;
 
                                 case 3:
 
-                                    generate.intro = "This " + Game1.player.CurrentTool.Name + " will serve the Lights of the Great Expanse";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1348") + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1349");
 
                                     break;
 
@@ -1819,27 +1876,31 @@ namespace StardewDruid.Character
 
                                 case 0:
 
-                                    generate.intro = "This " + Game1.player.CurrentTool.Name + " resists attunement";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1366") + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1367");
 
                                     break;
 
                                 case 1:
 
-                                    generate.intro = "I don't think that " + Game1.player.CurrentTool.Name + " is of this world, Farmer. " +
-                                        "I think it was made by one of the Morticians to reap the wayward souls of mortals. " +
-                                        "Or maybe they wanted to cut the heads off of flowers. Morticians are melancholic.";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1373") + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1374") +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1375") +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1376");
 
                                     break;
 
                                 case 2:
 
-                                    generate.intro = "This " + Game1.player.CurrentTool.Name + " means nothing to the Fates now, Farmer";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1382") + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1383");
 
                                     break;
 
                                 case 3:
 
-                                    generate.intro = "This " + Game1.player.CurrentTool.Name + " will please the High Priestess";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1389") + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1390");
 
                                     break;
 
@@ -1856,26 +1917,29 @@ namespace StardewDruid.Character
 
                                 case 0:
 
-                                    generate.intro = "This " + Game1.player.CurrentTool.Name + " resists attunement";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1407") + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1408");
 
                                     break;
 
                                 case 1:
 
-                                    generate.intro = "I suspect that the instrument you acquired from the Reaper of Fate carries the ether-bound memories of the Tyrant of Calico and all the shapeshifters who served under him. " +
-                                                    "Thus, the guise of an ancient one seems a natural result from it's use. That's my theory anyway.";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1414") +
+                                                    Mod.instance.Helper.Translation.Get("CharacterHandle.1415");
 
                                     break;
 
                                 case 2:
 
-                                    generate.intro = "This " + Game1.player.CurrentTool.Name + " does not touch the Ether now, Farmer";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1421") + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1422");
 
                                     break;
 
                                 case 3:
 
-                                    generate.intro = "This " + Game1.player.CurrentTool.Name + " will now whistle through the streams of Ether";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1428") + Game1.player.CurrentTool.Name +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1429");
 
                                     break;
 
@@ -1889,7 +1953,7 @@ namespace StardewDruid.Character
                             if (Mod.instance.questHandle.IsComplete(QuestHandle.herbalism))
                             {
 
-                                generate.intro = "Potion stock has been refilled based on available ingredients.";
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1443");
 
                                 Mod.instance.herbalData.MassBrew();
 
@@ -1902,19 +1966,19 @@ namespace StardewDruid.Character
 
                                 case 0:
 
-                                    generate.intro = "Your fingertip traces the smoothened edge. The bowl seems pleased, as if the face reflected in the shiny inner surface is happier than your own.";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1456");
 
-                                    generate.responses.Add("You rub your palms around the curvature of the bowl.");
+                                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.1458"));
 
-                                    generate.answers.Add("0");
+                                    generate.answers.Add(0.ToString());
 
-                                    generate.responses.Add("You use a firm grip to grasp the mortar. It's so strong.");
+                                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.1462"));
 
-                                    generate.answers.Add("1");
+                                    generate.answers.Add(1.ToString());
 
-                                    generate.responses.Add("Your face goes into the bowl.");
+                                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.1466"));
 
-                                    generate.answers.Add("2");
+                                    generate.answers.Add(2.ToString());
 
                                     generate.lead = true;
 
@@ -1922,10 +1986,10 @@ namespace StardewDruid.Character
 
                                 case 1:
 
-                                    generate.intro = "A soft sound of contentment fills your ear. You're startled. You look back and forth but find no other creature but yourself at the stone table. " +
-                                        "Even stranger, you have acquired the forgotten knowledge of herbalism, with all the craft secrets of the druids that stood before this bowl in ages past. " +
-                                        "With a bit of amateur effort, three stoppered flasks, each with a small amount of herbal remedy, dangle from your belt. " +
-                                        "The bowl is pleased. (Herbalism journal unlocked)";
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1476") +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1477") +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1478") +
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.1479");
 
                                     Mod.instance.questHandle.CompleteQuest(QuestHandle.herbalism);
 
@@ -2003,7 +2067,8 @@ namespace StardewDruid.Character
                 {
 
 
-                    return "Is there a special quality to this " + Game1.player.CurrentTool.Name + "?";
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.1557") +
+                        Game1.player.CurrentTool.Name + Mod.instance.Helper.Translation.Get("CharacterHandle.1558");
 
                 }
                 else
@@ -2022,13 +2087,15 @@ namespace StardewDruid.Character
                 {
 
 
-                    return "(detune) Can I reclaim this " + Game1.player.CurrentTool.Name + "?";
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.1577") +
+                        Game1.player.CurrentTool.Name + Mod.instance.Helper.Translation.Get("CharacterHandle.1578");
 
                 }
 
             }
 
-            return "(attune) I want to dedicate this " + Game1.player.CurrentTool.Name + " to the "+compare.ToString();
+            return Mod.instance.Helper.Translation.Get("CharacterHandle.1584") +
+                Game1.player.CurrentTool.Name + Mod.instance.Helper.Translation.Get("CharacterHandle.1585") + compare.ToString();
 
         }
 
@@ -2072,7 +2139,7 @@ namespace StardewDruid.Character
 
                     Mod.instance.iconData.ImpactIndicator(Game1.player.currentLocation, Game1.player.Position, IconData.impacts.nature, 6f, new());
 
-                    Game1.player.currentLocation.playSound("yoba");
+                    Game1.player.currentLocation.playSound(SpellHandle.sounds.yoba.ToString());
 
                     Mod.instance.DetuneWeapon();
 
@@ -2086,7 +2153,7 @@ namespace StardewDruid.Character
 
             Mod.instance.iconData.ImpactIndicator(Game1.player.currentLocation, Game1.player.Position, IconData.impacts.nature, 6f, new());
 
-            Game1.player.currentLocation.playSound("yoba");
+            Game1.player.currentLocation.playSound(SpellHandle.sounds.yoba.ToString());
 
             Mod.instance.AttuneWeapon(compare);
 

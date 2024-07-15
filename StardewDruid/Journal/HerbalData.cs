@@ -64,13 +64,175 @@ namespace StardewDruid.Journal
 
         public bool applyChange;
 
-        public Dictionary<herbals, List<string>> titles = new()
+        public static List<string> HerbalIngredients(herbals herbalId)
         {
 
-            [herbals.ligna] = new() { "Ligna", "Boosts rite damage and success-rate", },
-            [herbals.impes] = new() { "Vigores", "Boosts charge-ups and rite critical hit chance", },
-            [herbals.celeri] = new() { "Celeri", "Boosts movement speed, lowers rite cooldowns", },
-            [herbals.faeth] = new() { "Essentia", "Magical resources used for advanced alchemy", },
+            switch (herbalId)
+            {
+
+                case herbals.ligna:
+                    return new() { 
+                        "(O)92", // "Sap", 
+                        "(O)766", // "Slime", 
+                    };
+
+                case herbals.melius_ligna:
+                    return new() { 
+                        "(O)311", // "Acorn", 
+                        "(O)310", // "MapleSeed", 
+                        "(O)309", // "Pinecorn", 
+                        "(O)292", // "MahoganySeed", 
+                        "(O)Moss", // "Moss", 
+                    };
+
+                case herbals.satius_ligna:
+                    return new() { 
+                        "(O)418", // "Crocus", 
+                        "(O)18", // "Daffodil", 
+                        "(O)22", // "Dandelion", 
+                        "(O)402", // "Sweet Pea", 
+                        "(O)273", // "Rice Shoot", 
+                        "(O)591", // "Tulip", 
+                        "(O)376", // "Poppy", 
+                    };
+
+                case herbals.magnus_ligna:
+                    return new()
+                    {
+                        "(O)247", // "Oil",
+                        "(O)431", // "Sunflower Seeds",
+                        "(O)270", // "Corn",
+                        "(O)271", // "Unmilled Rice",
+                        "(O)421", // "Sunflower",
+                        "(O)593", // "Spangle",
+                        "(O)597", // "Jazz",
+                    };
+
+                case herbals.optimus_ligna:
+                    break;
+
+                case herbals.impes:
+                    return new() { 
+                        "(O)399", // "Spring Onion", 
+                        "(O)78", // "Cave Carrot", 
+                        "(O)24", // "Parsnip", 
+                        "(O)831", // "Taro Tubers", 
+                        "(O)16", // "Wild Horseradish", 
+                        "(O)412", // "Winter Root", 
+                    };
+
+                case herbals.melius_impes:
+                    return new() { 
+                        "(O)420", // "Red Mushrooms", 
+                        "(O)404", // "Common Mushrooms", 
+                        "(O)257", // "Morel", 
+                        "(O)767", // "Batwings", 
+                    };
+
+
+                case herbals.satius_impes:
+                    return new() { 
+                        "(O)93", // "Torch", 
+                        "(O)82", // "Fire Quartz", 
+                        "(O)382", // "Coal", 
+                    };
+
+                case herbals.magnus_impes:
+                    return new() { 
+                        "(O)419", // "Vinegar", 
+                        "(O)260", // "Hot Pepper", 
+                        "(O)829", // "Ginger", 
+                        "(O)248", // "Garlic", 
+                    };
+
+                case herbals.optimus_impes:
+                    break;
+
+                case herbals.celeri:
+                    return new() { 
+                        "(O)152", // "Algae", 
+                        "(O)153", // "Seaweed", 
+                        "(O)157", // "White Algae", 
+                        "(O)815", // "Tea Leaves", 
+                        "(O)433", // "Coffee Bean", 
+                        "(O)167", // "Joja Cola", 
+                    };
+
+                case herbals.melius_celeri:
+                    return new() { 
+                        "(O)80", // "Quartz", 
+                        "(O)86", // "Earth Crystal", 
+                        "(O)84", // "Frozen Tear",
+                        "(O)881", // "Bone Fragment", 
+                        "(O)168", // "Trash", 
+                        "(O)169", // "Driftwood", 
+                        "(O)170", // "Broken Glasses", 
+                        "(O)171", // "Broken CD", 
+                    };
+
+                case herbals.satius_celeri:
+                    return new() { 
+                        "(O)129", // "Sardine", 
+                        "(O)131", // "Anchovy", 
+                        "(O)137", // "Smallmouth Bass", 
+                        "(O)145", // "Sunfish", 
+                        "(O)132", // "Bream", 
+                        "(O)147", // "Herring", 
+                        "(O)142", // "Carp", 
+                        "(O)156", // "Ghostfish", 
+                    };
+
+                case herbals.magnus_celeri:
+                    return new() { 
+                        "(O)718", // "Cockle", 
+                        "(O)719", // "Mussel", 
+                        "(O)720", // "Shrimp", 
+                        "(O)721", // "Snail", 
+                        "(O)722", // "Periwinkle", 
+                        "(O)723", // "Oyster", 
+                        "(O)372", // "Clam", 
+                    };
+
+                case herbals.optimus_celeri:
+                    break;
+
+                case herbals.faeth:
+
+                    return new() { "(O)577", "(O)595", "(O)768", "(O)769", "(O)MossySeed", };
+
+                case herbals.aether:
+
+                    return new() { "(O)60", "(O)64", "(O)72", "(O)62", };
+            }
+
+            return new();
+
+        }
+
+        public Dictionary<herbals, List<string>> titles = new()
+        {
+            [herbals.ligna] = new() { 
+                "Ligna", 
+                "Boosts rite damage and success-rate", },
+            [herbals.impes] = new() { 
+                "Vigores", 
+                "Boosts charge-ups and rite critical hit chance", },
+            [herbals.celeri] = new() { 
+                "Celeri", 
+                "Boosts movement speed, lowers rite cooldowns", },
+            [herbals.faeth] = new() { 
+                "Essentia", 
+                "Magical resources used for advanced alchemy", },
+        };
+
+        public Dictionary<herbals, IconData.schemes> schemes = new()
+        {
+            [herbals.ligna] = IconData.schemes.herbal_ligna,
+            [herbals.impes] = IconData.schemes.herbal_impes,
+            [herbals.celeri] = IconData.schemes.herbal_celeri,
+            [herbals.faeth] = IconData.schemes.herbal_faeth,
+            [herbals.aether] = IconData.schemes.herbal_aether,
+
         };
 
         public Dictionary<herbals,List<herbals>> lines = new()
@@ -166,73 +328,6 @@ namespace StardewDruid.Journal
 
         }
 
-        public List<List<string>> OrganiseHerbals()
-        {
-
-            List<List<string>> source = new()
-            {
-                
-                new List<string>()
-
-            };
-
-            int max = MaxHerbal();
-
-            foreach (KeyValuePair<herbals, List<herbals>> line in lines)
-            {
-
-                foreach (herbals herbal in line.Value)
-                {
-
-                    string key = herbal.ToString();
-
-                    if (herbalism[key].level > max)
-                    {
-
-                        source.Last().Add("blank");
-
-                    }
-                    else
-                    {
-
-                        Mod.instance.herbalData.CheckHerbal(key);
-
-                        source.Last().Add(key);
-
-                    }
-
-                    if (herbal == lines[line.Key].Last())
-                    {
-
-                        source.Last().Add("configure");
-
-                    }
-
-                }
-
-            }
-
-            if(Mod.instance.save.reliquary.ContainsKey(IconData.relics.herbalism_crucible.ToString()))
-            {
-
-                source.Add(new());
-
-                source.Last().Add(herbals.faeth.ToString());
-
-            }
-
-            if (Mod.instance.save.reliquary.ContainsKey(IconData.relics.herbalism_gauge.ToString()))
-            {
-
-                source.Last().Add(herbals.aether.ToString());
-
-            }
-
-
-            return source;
-
-        }
-
         public Dictionary<int, Journal.ContentComponent> JournalHerbals()
         {
 
@@ -281,7 +376,9 @@ namespace StardewDruid.Journal
 
                 content.relics[1] = herbalism[key].content;
 
-                Microsoft.Xna.Framework.Color potionColour = Mod.instance.iconData.schemeColours[herbalism[key].scheme];
+                IconData.schemes scheme = schemes[herbalism[key].line];
+
+                Microsoft.Xna.Framework.Color potionColour = Mod.instance.iconData.schemeColours[scheme];
 
                 if (amount == 0)
                 {
@@ -321,8 +418,7 @@ namespace StardewDruid.Journal
             return journal;
 
         }
-
-        public static Dictionary<string,Herbal> HerbalList()
+        public static Dictionary<string, Herbal> HerbalList()
         {
 
             Dictionary<string, Herbal> potions = new();
@@ -337,8 +433,6 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.ligna,
 
-                scheme = IconData.schemes.Emerald,
-
                 container = IconData.relics.flask,
 
                 content = IconData.relics.flask1,
@@ -347,11 +441,11 @@ namespace StardewDruid.Journal
 
                 duration = 0,
 
-                title = "Ligna",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.25"),
 
-                description = "Nature, liquified and sticky.",
-                
-                ingredients = new(){ ["(O)92"] = "Sap", ["(O)766"] = "Slime", },
+                description = Mod.instance.Helper.Translation.Get("HerbalData.27"),
+
+                ingredients = HerbalIngredients(herbals.ligna),
 
                 bases = new() { },
 
@@ -361,8 +455,8 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 10 Health, 15 Stamina",
-                    "Requires: 1x Organic Substance"
+                    Mod.instance.Helper.Translation.Get("HerbalData.39"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.40")
                 }
 
             };
@@ -375,8 +469,6 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.melius_ligna,
 
-                scheme = IconData.schemes.Emerald,
-
                 container = IconData.relics.flask,
 
                 content = IconData.relics.flask2,
@@ -385,11 +477,11 @@ namespace StardewDruid.Journal
 
                 duration = 180,
 
-                title = "Melius Ligna",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.61"),
 
-                description = "Like bark-root tea, with more bark, and root to boot.",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.63"),
 
-                ingredients = new() { ["(O)311"] = "Acorn", ["(O)310"] = "MapleSeed", ["(O)309"] = "Pinecorn", ["(O)292"] = "MahoganySeed", ["(O)Moss"] = "Moss", },
+                ingredients = HerbalIngredients(herbals.melius_ligna),
 
                 bases = new() { herbals.ligna, },
 
@@ -399,9 +491,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 15 Health, 30 Stamina",
-                    "Effect: Alignment Level 1, 3 Hours",
-                    "Requires: Base, 1x Tree Seed"
+                    Mod.instance.Helper.Translation.Get("HerbalData.75"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.76"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.77")
                 }
 
             };
@@ -414,8 +506,6 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.satius_ligna,
 
-                scheme = IconData.schemes.Emerald,
-
                 container = IconData.relics.flask,
 
                 content = IconData.relics.flask3,
@@ -424,11 +514,11 @@ namespace StardewDruid.Journal
 
                 duration = 240,
 
-                title = "Satius Ligna",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.98"),
 
-                description = "Infused with the leaves and petals of weeds. Toxic to dogs.",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.100"),
 
-                ingredients = new() { ["(O)418"] = "Crocus", ["(O)18"] = "Daffodil", ["(O)22"] = "Dandelion", ["(O)402"] = "Sweet Pea", ["(O)273"] = "Rice Shoot", ["(O)591"] = "Tulip", ["(O)376"] = "Poppy", },
+                ingredients = HerbalIngredients(herbals.satius_ligna),
 
                 bases = new() { herbals.melius_ligna, },
 
@@ -438,9 +528,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 20 Health, 80 Stamina",
-                    "Effect: Alignment Level 2, 4 Hours",
-                    "Requires: Base, 1x Meadow Flower"
+                    Mod.instance.Helper.Translation.Get("HerbalData.112"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.113"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.114")
                 }
 
             };
@@ -453,8 +543,6 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.magnus_ligna,
 
-                scheme = IconData.schemes.Emerald,
-
                 container = IconData.relics.flask,
 
                 content = IconData.relics.flask4,
@@ -463,11 +551,11 @@ namespace StardewDruid.Journal
 
                 duration = 360,
 
-                title = "Magnus Ligna",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.135"),
 
-                description = "Potent oils enhance the rich, nutty flavour profile of the base mixture.",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.137"),
 
-                ingredients = new() { ["(O)247"] = "Oil", ["(O)431"] = "Sunflower Seeds", ["(O)270"] = "Corn", ["(O)271"] = "Unmilled Rice", ["(O)421"] = "Sunflower", ["(O)593"] = "Spangle", ["(O)597"] = "Jazz", }, // },
+                ingredients = HerbalIngredients(herbals.magnus_ligna),
 
                 bases = new() { herbals.satius_ligna, },
 
@@ -477,9 +565,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 50 Health, 200 Stamina",
-                    "Effect: Alignment Level 3, 6 Hours",
-                    "Ingredients: Base, 1x Vegetable Oil",
+                    Mod.instance.Helper.Translation.Get("HerbalData.149"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.150"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.151"),
                 }
 
             };
@@ -491,8 +579,6 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.optimus_ligna,
 
-                scheme = IconData.schemes.Emerald,
-
                 container = IconData.relics.flask,
 
                 content = IconData.relics.flask5,
@@ -501,9 +587,9 @@ namespace StardewDruid.Journal
 
                 duration = 480,
 
-                title = "Optimus Ligna",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.171"),
 
-                description = "Brims with the vibrant colours of creation",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.173"),
 
                 ingredients = new() { },
 
@@ -515,9 +601,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 100 Health, 400 Stamina",
-                    "Effect: Vigorous Level 4, 8 Hours",
-                    "Requires: Base, Aether"
+                    Mod.instance.Helper.Translation.Get("HerbalData.185"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.186"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.187")
                 }
 
             };
@@ -532,17 +618,15 @@ namespace StardewDruid.Journal
 
                 herbal = herbals.impes,
 
-                scheme = IconData.schemes.Ruby,
-
                 container = IconData.relics.bottle,
 
                 content = IconData.relics.bottle1,
 
-                title = "Vigores",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.206"),
 
-                description = "The flavours of the earth in a bottle.",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.208"),
 
-                ingredients = new() { ["(O)399"] = "Spring Onion", ["(O)78"] = "Cave Carrot", ["(O)24"] = "Parsnip", ["(O)831"] = "Taro Tubers", ["(O)16"] = "Wild Horseradish", ["(O)412"] = "Winter Root",},
+                ingredients = HerbalIngredients(herbals.impes),
 
                 bases = new() { },
 
@@ -552,8 +636,8 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 15 Health, 40 Stamina",
-                    "Requires: 1x Wild Tuber"
+                    Mod.instance.Helper.Translation.Get("HerbalData.220"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.221")
                 }
 
             };
@@ -566,8 +650,6 @@ namespace StardewDruid.Journal
 
                 herbal = herbals.melius_impes,
 
-                scheme = IconData.schemes.Ruby,
-
                 container = IconData.relics.bottle,
 
                 content = IconData.relics.bottle2,
@@ -576,11 +658,11 @@ namespace StardewDruid.Journal
 
                 duration = 180,
 
-                title = "Melius Vigores",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.242"),
 
-                description = "Contains the essence of cave.",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.244"),
 
-                ingredients = new() {  ["(O)420"] = "Red Mushrooms", ["(O)404"] = "Common Mushrooms", ["(O)257"] = "Morel", ["(O)767"] = "Batwings", },
+                ingredients = HerbalIngredients(herbals.melius_impes),
 
                 bases = new() { herbals.impes, },
 
@@ -590,9 +672,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 30 Health, 80 Stamina",
-                    "Effect: Vigorous Level 1, 3 Hours",
-                    "Requires: Base, 1x Cave Forage"
+                    Mod.instance.Helper.Translation.Get("HerbalData.256"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.257"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.258")
                 }
 
             };
@@ -605,8 +687,6 @@ namespace StardewDruid.Journal
 
                 herbal = herbals.satius_impes,
 
-                scheme = IconData.schemes.Ruby,
-
                 container = IconData.relics.bottle,
 
                 content = IconData.relics.bottle3,
@@ -615,11 +695,11 @@ namespace StardewDruid.Journal
 
                 duration = 240,
 
-                title = "Satius Vigores",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.279"),
 
-                description = "Gently raise to boiling temperature then leave to simmer.",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.281"),
 
-                ingredients = new() { ["(O)93"] = "Torch", ["(O)82"] = "Fire Quartz", ["(O)382"] = "Coal", },
+                ingredients = HerbalIngredients(herbals.satius_impes),
 
                 bases = new() { herbals.melius_impes, },
 
@@ -629,10 +709,10 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 45 Health, 160 Stamina",
-                    "Effect: Vigorous Level 2, 4 Hours",
+                    Mod.instance.Helper.Translation.Get("HerbalData.293"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.294"),
 
-                    "Requires: Base, 1x Combustible Material"
+                    Mod.instance.Helper.Translation.Get("HerbalData.296")
                 }
 
             };
@@ -645,8 +725,6 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.magnus_impes,
 
-                scheme = IconData.schemes.Ruby,
-
                 container = IconData.relics.bottle,
 
                 content = IconData.relics.bottle4,
@@ -655,11 +733,11 @@ namespace StardewDruid.Journal
 
                 duration = 360,
 
-                title = "Magnus Vigores",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.317"),
 
-                description = "The spicy tang that enflames the regions.",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.319"),
 
-                ingredients = new() { ["(O)419"] = "Vinegar", ["(O)260"] = "Hot Pepper", ["(O)829"] = "Ginger", ["(O)248"] = "Garlic", },
+                ingredients = HerbalIngredients(herbals.magnus_impes),
 
                 bases = new() { herbals.satius_impes, },
 
@@ -669,9 +747,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 70 Health, 320 Stamina",
-                    "Effect: Vigorous Level 3, 6 Hours",
-                    "Requires: Base, 1x Spicy Ingredient"
+                    Mod.instance.Helper.Translation.Get("HerbalData.331"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.332"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.333")
                 }
 
             };
@@ -683,8 +761,6 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.optimus_impes,
 
-                scheme = IconData.schemes.Ruby,
-
                 container = IconData.relics.bottle,
 
                 content = IconData.relics.bottle5,
@@ -693,9 +769,9 @@ namespace StardewDruid.Journal
 
                 duration = 480,
 
-                title = "Optimus Vigores",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.353"),
 
-                description = "It burns, but it stays down.",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.355"),
 
                 ingredients = new() { },
 
@@ -707,9 +783,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 180 Health, 560 Stamina",
-                    "Effect: Vigorous Level 4, 8 Hours",
-                    "Requires: Base, Aether"
+                    Mod.instance.Helper.Translation.Get("HerbalData.367"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.368"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.369")
                 }
 
             };
@@ -724,17 +800,15 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.celeri,
 
-                scheme = IconData.schemes.blueberry,
-
                 container = IconData.relics.vial,
 
                 content = IconData.relics.vial1,
 
-                title = "Celeri",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.388"),
 
-                description = "With extra fiber for good gut health.",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.390"),
 
-                ingredients = new() { ["(O)152"] = "Algae", ["(O)153"] = "Seaweed", ["(O)157"] = "White Algae", ["(O)815"] = "Tea Leaves", ["(O)433"] = "Coffee Bean", ["(O)167"] = "Joja Cola", },
+                ingredients = HerbalIngredients(herbals.celeri),
 
                 bases = new() { },
 
@@ -744,8 +818,8 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 10 Health, 30 Stamina",
-                   "Requires: Base, 1x Energy Supplement"
+                    Mod.instance.Helper.Translation.Get("HerbalData.402"),
+                   Mod.instance.Helper.Translation.Get("HerbalData.403")
                 }
 
             };
@@ -757,8 +831,6 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.melius_celeri,
 
-                scheme = IconData.schemes.blueberry,
-
                 container = IconData.relics.vial,
 
                 content = IconData.relics.vial2,
@@ -767,11 +839,11 @@ namespace StardewDruid.Journal
 
                 duration = 180,
 
-                title = "Melius Celeri",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.423"),
 
-                description = "Now with mineral extracts for revitalised skin and circulation.",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.425"),
 
-                ingredients = new() { ["(O)80"] = "Quartz", ["(O)86"] = "Earth Crystal", ["(O)881"] = "Bone Fragment", ["(O)168"] = "Trash", ["(O)169"] = "Driftwood", ["(O)170"] = "Broken Glasses", ["(O)171"] = "Broken CD", },
+                ingredients = HerbalIngredients(herbals.melius_celeri),
 
                 health = 20,
 
@@ -781,9 +853,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 20 Health, 60 Stamina",
-                    "Effect: Celerity Level 1, 3 Hours",
-                    "Requires: Base, 1x Mineral-Rich Substance"
+                    Mod.instance.Helper.Translation.Get("HerbalData.437"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.438"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.439")
                 }
 
             };
@@ -796,8 +868,6 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.satius_celeri,
 
-                scheme = IconData.schemes.blueberry,
-
                 container = IconData.relics.vial,
 
                 content = IconData.relics.vial3,
@@ -806,11 +876,11 @@ namespace StardewDruid.Journal
 
                 duration = 240,
 
-                title = "Satius Celeri",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.460"),
 
-                description = "Good for your joints and memory retention.",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.462"),
 
-                ingredients = new() { ["(O)129"] = "Sardine", ["(O)131"] = "Anchovy", ["(O)137"] = "Smallmouth Bass", ["(O)145"] = "Sunfish", ["(O)132"] = "Bream", ["(O)147"] = "Herring", ["(O)142"] = "Carp", ["(O)156"] = "Ghostfish", },
+                ingredients = HerbalIngredients(herbals.satius_celeri),
 
                 health = 30,
 
@@ -820,9 +890,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 30 Health, 120 Stamina",
-                    "Effect: Celerity Level 2, 4 Hours",
-                    "Requires: 1x Common Fish"
+                    Mod.instance.Helper.Translation.Get("HerbalData.474"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.475"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.476")
                 }
 
             };
@@ -835,8 +905,6 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.magnus_celeri,
 
-                scheme = IconData.schemes.blueberry,
-
                 container = IconData.relics.vial,
 
                 content = IconData.relics.vial4,
@@ -845,11 +913,11 @@ namespace StardewDruid.Journal
 
                 duration = 360,
 
-                title = "Magnus Celeri",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.497"),
 
-                description = "Now with organically sourced protein for heightened muscle recovery.",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.499"),
 
-                ingredients = new() { ["(O)718"] = "Cockle", ["(O)719"] = "Mussel", ["(O)720"] = "Shrimp", ["(O)721"] = "Snail", ["(O)722"] = "Periwinkle", ["(O)723"] = "Oyster", ["(O)372"] = "Clam", },
+                ingredients = HerbalIngredients(herbals.magnus_celeri),
 
                 health = 60,
 
@@ -859,9 +927,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 60 Health, 240 Stamina",
-                    "Effect: Celerity Level 3, 6 Hours",
-                    "Requires: Base, 1x Common Shellfish"
+                    Mod.instance.Helper.Translation.Get("HerbalData.511"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.512"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.513")
                 }
 
             };
@@ -873,8 +941,6 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.optimus_celeri,
 
-                scheme = IconData.schemes.blueberry,
-
                 container = IconData.relics.vial,
 
                 content = IconData.relics.vial5,
@@ -883,11 +949,11 @@ namespace StardewDruid.Journal
 
                 duration = 480,
 
-                title = "Optimus Celeri",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.533"),
 
-                description = "Now with fluff and sprinkles for added bliss.",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.535"),
 
-                ingredients = new() {},
+                ingredients = new() { },
 
                 health = 120,
 
@@ -897,9 +963,9 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    "Restores: 120 Health, 480 Stamina",
-                    "Effect: Celerity Level 4, 8 hours",
-                    "Requires: Base, Aether"
+                    Mod.instance.Helper.Translation.Get("HerbalData.547"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.548"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.549")
                 }
 
             };
@@ -914,27 +980,25 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.faeth,
 
-                scheme = IconData.schemes.Amethyst,
-
                 container = IconData.relics.bottle,
 
                 content = IconData.relics.bottle5,
 
                 level = 3,
 
-                title = "Faeth",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.570"),
 
-                description = "The currency of the Fates.",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.572"),
 
-                ingredients = new() { ["(O)577"] = "Fairy Stone", ["(O)595"] = "Fairy Rose", ["(O)768"] = "Solar Essence", ["(O)769"] = "Void Essence", ["(O)MossySeed"] = "Mossy Seed", },
+                ingredients = HerbalIngredients(herbals.faeth),
 
                 bases = new() { },
 
                 details = new()
                 {
-                    
-                    "Enchants machines",
-                    "Requires: 1x Essence infused source",
+
+                    Mod.instance.Helper.Translation.Get("HerbalData.581"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.582"),
 
                 },
 
@@ -948,11 +1012,9 @@ namespace StardewDruid.Journal
             potions[herbals.aether.ToString()] = new()
             {
 
-                line = HerbalData.herbals.faeth,
+                line = HerbalData.herbals.aether,
 
                 herbal = HerbalData.herbals.aether,
-
-                scheme = IconData.schemes.ether,
 
                 container = IconData.relics.bottle,
 
@@ -960,18 +1022,18 @@ namespace StardewDruid.Journal
 
                 level = 4,
 
-                title = "Aether",
+                title = Mod.instance.Helper.Translation.Get("HerbalData.606"),
 
-                description = "The essence of creation as wielded by the Ancient Ones.",
+                description = Mod.instance.Helper.Translation.Get("HerbalData.608"),
 
-                ingredients = new() { ["(O)60"] = "Emerald", ["(O)64"] = "Ruby", ["(O)72"] = "Diamond", ["(O)62"] = "Aquamarine", },
+                ingredients = HerbalIngredients(herbals.aether),
 
-                bases = new() {},
+                bases = new() { },
 
                 details = new()
                 {
-                    "Enhances potions",
-                    "Requires: 1x High quality gem",
+                    Mod.instance.Helper.Translation.Get("HerbalData.616"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.617"),
                 },
 
                 resource = true,
@@ -980,6 +1042,7 @@ namespace StardewDruid.Journal
             return potions;
 
         }
+
 
         public void PotionBehaviour(int index)
         {
@@ -1050,13 +1113,13 @@ namespace StardewDruid.Journal
 
             /*Dictionary<string, int> more = new()
             {
-                ["(O)684"] = 2,
+                [Mod.instance.Helper.Translation.Get("HerbalData.697")] = 2,
 
             };*/
 
-            if(herbal.ingredients.Count > 0)
+            if (herbal.ingredients.Count > 0)
             {
-                
+
                 craftable = false;
 
                 for (int i = 0; i < Game1.player.Items.Count; i++)
@@ -1073,7 +1136,7 @@ namespace StardewDruid.Journal
 
                     Item checkItem = checkSlot.getOne();
 
-                    if (herbal.ingredients.ContainsKey(@checkItem.QualifiedItemId))
+                    if (herbal.ingredients.Contains(@checkItem.QualifiedItemId))
                     {
 
                         int stack = Game1.player.Items[i].Stack;
@@ -1157,7 +1220,7 @@ namespace StardewDruid.Journal
 
         public void MassBrew()
         {
-            
+
             CharacterHandle.RetrieveInventory(CharacterHandle.characters.herbalism);
 
             int max = MaxHerbal();
@@ -1185,7 +1248,7 @@ namespace StardewDruid.Journal
 
             if (herbalism[herbals.aether.ToString()].level <= max)
             {
-                
+
                 BrewHerbal(herbals.aether.ToString(), 50, true);
 
             }
@@ -1222,7 +1285,7 @@ namespace StardewDruid.Journal
 
             /*Dictionary<string, int> more = new()
             {
-                ["(O)684"] = 2,
+                [Mod.instance.Helper.Translation.Get("HerbalData.869")] = 2,
 
             };*/
 
@@ -1284,30 +1347,30 @@ namespace StardewDruid.Journal
 
                         Item checkItem = checkSlot.getOne();
 
-                        if (herbal.ingredients.ContainsKey(@checkItem.QualifiedItemId))
+                        if (herbal.ingredients.Contains(@checkItem.QualifiedItemId))
                         {
 
                             int stack = Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items[i].Stack;
 
                             int cost = 1;
 
-                           /* if (more.ContainsKey(@checkItem.QualifiedItemId))
-                            {
+                            /* if (more.ContainsKey(@checkItem.QualifiedItemId))
+                             {
 
-                                double revise = stack / 2;
+                                 double revise = stack / 2;
 
-                                stack = (int)Math.Floor(revise);
+                                 stack = (int)Math.Floor(revise);
 
-                                if (stack == 0)
-                                {
+                                 if (stack == 0)
+                                 {
 
-                                    continue;
+                                     continue;
 
-                                }
+                                 }
 
-                                cost = 2;
+                                 cost = 2;
 
-                            }*/
+                             }*/
 
                             int brew = Math.Min(stack, (draught - brewed));
 
@@ -1366,7 +1429,7 @@ namespace StardewDruid.Journal
 
                     Item checkItem = checkSlot.getOne();
 
-                    if (herbal.ingredients.ContainsKey(@checkItem.QualifiedItemId))
+                    if (herbal.ingredients.Contains(@checkItem.QualifiedItemId))
                     {
 
                         int stack = Game1.player.Items[i].Stack;
@@ -1437,7 +1500,7 @@ namespace StardewDruid.Journal
 
             CheckHerbal(id);
 
-            Game1.player.currentLocation.playSound("bubbles");
+            Game1.player.currentLocation.playSound(SpellHandle.sounds.bubbles.ToString());
 
             if (!Mod.instance.save.herbalism.ContainsKey(herbal.herbal))
             {
@@ -1464,18 +1527,18 @@ namespace StardewDruid.Journal
 
             Microsoft.Xna.Framework.Rectangle healthBox = Game1.player.GetBoundingBox();
 
-            if(Game1.currentGameTime.TotalGameTime.TotalSeconds > consumeBuffer)
+            if (Game1.currentGameTime.TotalGameTime.TotalSeconds > consumeBuffer)
             {
 
                 consumeBuffer = Game1.currentGameTime.TotalGameTime.TotalSeconds + 5;
 
-                DisplayPotion hudmessage = new("Consumed " + herbal.title, herbal);
+                DisplayPotion hudmessage = new(Mod.instance.Helper.Translation.Get("HerbalData.1116") + herbal.title, herbal);
 
                 Game1.addHUDMessage(hudmessage);
 
             }
 
-            if(herbal.level > 0)
+            if (herbal.level > 0)
             {
 
                 if (applied.ContainsKey(herbal.line))
@@ -1531,13 +1594,13 @@ namespace StardewDruid.Journal
 
             }
 
-            string description = "";
+            string description = string.Empty;
 
             float speed = 0f;
 
             int magnetism = 0;
 
-            for(int i = applied.Count - 1; i >= 0; i--)
+            for (int i = applied.Count - 1; i >= 0; i--)
             {
 
                 KeyValuePair<herbals, HerbalBuff> herbBuff = applied.ElementAt(i);
@@ -1559,14 +1622,14 @@ namespace StardewDruid.Journal
 
                 int addTime = applied[herbBuff.Key].counter;
 
-                while(addTime > 0)
+                while (addTime > 0)
                 {
 
                     int updateTime = Math.Min(30, addTime);
 
                     timeOfDay += updateTime;
 
-                    if(timeOfDay % 100 > 60)
+                    if (timeOfDay % 100 > 60)
                     {
 
                         timeOfDay += 40;
@@ -1575,7 +1638,7 @@ namespace StardewDruid.Journal
 
                     addTime -= updateTime;
 
-                    if(timeOfDay > 2599)
+                    if (timeOfDay > 2599)
                     {
 
                         timeOfDay = 2600;
@@ -1586,20 +1649,20 @@ namespace StardewDruid.Journal
 
                 }
 
-                string meridian = "am";
+                string meridian = Mod.instance.Helper.Translation.Get("HerbalData.1233");
 
-                if(timeOfDay >= 2400)
+                if (timeOfDay >= 2400)
                 {
 
                     timeOfDay -= 2400;
 
                 }
-                else if(timeOfDay >= 1200)
+                else if (timeOfDay >= 1200)
                 {
 
                     timeOfDay -= 1200;
 
-                    meridian = "pm";
+                    meridian = Mod.instance.Helper.Translation.Get("HerbalData.1246");
 
                 }
 
@@ -1619,7 +1682,7 @@ namespace StardewDruid.Journal
 
                     case herbals.ligna:
 
-                        description += "Alignment " + herbBuff.Value.level.ToString() + " " + expire + ". ";
+                        description += Mod.instance.Helper.Translation.Get("HerbalData.1266") + herbBuff.Value.level.ToString() + " " + expire + ". ";
 
                         magnetism = herbBuff.Value.level * 32;
 
@@ -1627,7 +1690,7 @@ namespace StardewDruid.Journal
 
                     case herbals.impes:
 
-                        description += "Vigorous " + herbBuff.Value.level.ToString() + " " + expire + ". ";
+                        description += Mod.instance.Helper.Translation.Get("HerbalData.1274") + herbBuff.Value.level.ToString() + " " + expire + ". ";
 
                         break;
 
@@ -1635,7 +1698,7 @@ namespace StardewDruid.Journal
 
                         speed = 0.25f * herbBuff.Value.level;
 
-                        description += "Celerity "+herbBuff.Value.level.ToString() + " " + expire + ". ";
+                        description += Mod.instance.Helper.Translation.Get("HerbalData.1282") + herbBuff.Value.level.ToString() + " " + expire + ". ";
 
                         break;
 
@@ -1650,10 +1713,10 @@ namespace StardewDruid.Journal
 
             }
 
-            if (Game1.player.buffs.IsApplied("184652"))
+            if (Game1.player.buffs.IsApplied(184652.ToString()))
             {
 
-                Game1.player.buffs.Remove("184652");
+                Game1.player.buffs.Remove(184652.ToString());
 
             }
 
@@ -1665,13 +1728,13 @@ namespace StardewDruid.Journal
             }
 
             Buff herbalBuff = new(
-                "184652",
-                source: "Stardew Druid",
-                displaySource: "Herbalism",
+                184652.ToString(),
+                source: Mod.instance.Helper.Translation.Get("HerbalData.1313"),
+                displaySource: Mod.instance.Helper.Translation.Get("HerbalData.1314"),
                 duration: Buff.ENDLESS,
                 iconTexture: Mod.instance.iconData.displayTexture,
                 iconSheetIndex: 5,
-                displayName: "Druid Herbalism",
+                displayName: Mod.instance.Helper.Translation.Get("HerbalData.1318"),
                 description: description
                 );
 
@@ -1819,8 +1882,6 @@ namespace StardewDruid.Journal
 
         public HerbalData.herbals herbal = HerbalData.herbals.none;
 
-        public IconData.schemes scheme = IconData.schemes.none;
-
         public IconData.relics container = IconData.relics.flask;
 
         public IconData.relics content = IconData.relics.flask1;
@@ -1829,7 +1890,7 @@ namespace StardewDruid.Journal
 
         public string description;
 
-        public Dictionary<string, string> ingredients = new();
+        public List<string> ingredients = new();
 
         public List<HerbalData.herbals> bases = new();
 

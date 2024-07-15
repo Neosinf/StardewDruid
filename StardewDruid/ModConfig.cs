@@ -24,7 +24,6 @@ namespace StardewDruid
             {
                 return null;
             }
-
             // register mod
             configMenu.Register(
                 mod: mod.ModManifest,
@@ -34,81 +33,81 @@ namespace StardewDruid
 
             configMenu.AddKeybindList(
                 mod: mod.ModManifest,
-                name: () => "Rite",
-                tooltip: () => "Configure the list or combination of keybinds to use for casting Rites",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.10"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.11"),
                 getValue: () => Config.riteButtons,
             setValue: value => Config.riteButtons = value
             );
             configMenu.AddKeybindList(
             mod: mod.ModManifest,
-                name: () => "Action (Druid Only)",
-                tooltip: () => "Assigns an alternative keybind for the Action / Left Click / Use tool function, for the purposes of the mod only. This keybind does not override or re-map any keybinds in the base game. Useful for controllers with non-standard button maps.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.17"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.18"),
                   getValue: () => Config.actionButtons,
                 setValue: value => Config.actionButtons = value
             );
 
             configMenu.AddKeybindList(
                 mod: mod.ModManifest,
-                name: () => "Special (Druid Only)",
-                tooltip: () => "Assigns an alternative keybind for the Check / Special / Right Click / Placedown function, for the purposes of the mod only. This keybind does not override or re-map any keybinds in the base game. Useful for controllers with non-standard button maps.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.25"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.26"),
                 getValue: () => Config.specialButtons,
                 setValue: value => Config.specialButtons = value
             );
 
             configMenu.AddKeybindList(
                 mod: mod.ModManifest,
-                name: () => "Quests Journal",
-                tooltip: () => "Keybind assignment to open the Stardew Druid effects journal while in world. The rite keybind can be used to open the journal from the game questlog.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.33"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.34"),
                 getValue: () => Config.journalButtons,
                 setValue: value => Config.journalButtons = value
             );
 
             configMenu.AddKeybindList(
                 mod: mod.ModManifest,
-                name: () => "Effects Journal",
-                tooltip: () => "Keybind assignment to open the Stardew Druid effects journal while in world.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.41"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.42"),
                 getValue: () => Config.effectsButtons,
                 setValue: value => Config.effectsButtons = value
             );
 
             configMenu.AddKeybindList(
                 mod: mod.ModManifest,
-                name: () => "Relics Journal",
-                tooltip: () => "Keybind assignment to open the Stardew Druid relics journal while in world.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.49"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.50"),
                 getValue: () => Config.relicsButtons,
                 setValue: value => Config.relicsButtons = value
             );
 
             configMenu.AddKeybindList(
                 mod: mod.ModManifest,
-                name: () => "Herbalism Journal",
-                tooltip: () => "Keybind assignment to open the Stardew Druid herbalism journal while in world.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.57"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.58"),
                 getValue: () => Config.herbalismButtons,
                 setValue: value => Config.herbalismButtons = value
             );
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
-                name: () => "Reverse Journal",
-                tooltip: () => "Reverse the order in which Stardew Druid journal entries are displayed. Default: oldest to newest. Enabled: newest to oldest.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.65"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.66"),
                 getValue: () => Config.reverseJournal,
                 setValue: value => Config.reverseJournal = value
             );
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
-                name: () => "Active Journal",
-                tooltip: () => "Show active quests on the front pages of the Stardew Druid journal. Default: active entries on front page. Disabled: no change in order.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.73"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.74"),
                 getValue: () => Config.activeJournal,
                 setValue: value => Config.activeJournal = value
             );
 
-            string[] textOption = { "cali", "easy", "medium", "hard", "kiwi", };
+            string[] textOption = Enum.GetNames<ModData.difficulties>();
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
-                name: () => "Mod Difficulty",
-                tooltip: () => "Select Mod difficulty level. Affects monetary rewards, stamina costs, monster difficulty.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.83"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.84"),
                 allowedValues: textOption,
                 getValue: () => Config.modDifficulty,
                 setValue: value => Config.modDifficulty = value
@@ -116,86 +115,86 @@ namespace StardewDruid
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
-                name: () => "Disable Cast Hands",
-                tooltip: () => "Disables farmer sprite 'cast hands' animation when triggering events. Recommended disable if other game modifications make changes to the farmer rendering or draw cycle.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.92"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.93"),
                 getValue: () => Config.disableHands,
                 setValue: value => Config.disableHands = value
             );
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
-                name: () => "Auto Progress",
-                tooltip: () => "Automatically progress to the next stage of the questline after loading or starting a new day.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.100"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.101"),
                 getValue: () => Config.autoProgress,
                 setValue: value => Config.autoProgress = value
             );
 
             configMenu.AddNumberOption(
                 mod: mod.ModManifest,
-                name: () => "Set Progress",
-                tooltip: () => "Use to adjust progress level on game load. 0 is no change. Note that adjustments may clear or miss levels of progress.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.108"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.109"),
                 min: 0,
                 max: Enum.GetNames(typeof(QuestHandle.milestones)).Count() - 1,
                 interval: 1,
                 getValue: () => Config.setMilestone,
                 setValue: value => Config.setMilestone = value,
-                fieldId: "setProgress"
+                fieldId: Mod.instance.Helper.Translation.Get("ModConfig.115")
             );
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
-                name: () => "Set Once",
-                tooltip: () => "Automatically returns set progress to 0 after reconfiguring one save file.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.120"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.121"),
                 getValue: () => Config.setOnce,
                 setValue: value => Config.setOnce = value
             );
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
-                name: () => "Convert 2.1.9 Data",
-                tooltip: () => "(Not recommended) Reconfigures 2.1.9 and earlier version data if present in the loaded save file and sets new progress to the relative 2.1.9 level.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.128"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.129"),
                 getValue: () => Config.convert219,
                 setValue: value => Config.convert219 = value
             );
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
-                name: () => "Slot Attune",
-                tooltip: () => "Rite casts will be based on selected slot in the toolbar as opposed to weapon or tool attunement, as per the below slot assignments. [lunch] will consume any edible item in that slot when health or stamina is below 33%.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.136"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.137"),
                 getValue: () => Config.slotAttune,
                 setValue: value => Config.slotAttune = value
             );
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
-                name: () => "Slot Consume",
-                tooltip: () => "For slots set to [lunch], the mod will consume any edible item in that inventory slot when health or stamina is below 33%.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.144"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.145"),
                 getValue: () => Config.slotConsume,
                 setValue: value => Config.slotConsume = value
             );
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
-                name: () => "Slot Freedom",
-                tooltip: () => "Invalid tool selections will be ignored when slot-attune is active. Proceed with caution!",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.152"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.153"),
                 getValue: () => Config.slotFreedom,
                 setValue: value => Config.slotFreedom = value
             );
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
-                name: () => "Slot Reverse",
-                tooltip: () => "Tool and lunch detection moves from right to left (slot 12 to 1)",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.160"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.161"),
                 getValue: () => Config.slotReverse,
                 setValue: value => Config.slotReverse = value
             );
 
-            string[] slotOption = { "none", "lunch", "weald", "mists", "stars", "fates", "ether", };
+            string[] slotOption = Enum.GetNames<ModData.slotOptions>();
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
-                name: () => "Slot 1",
-                tooltip: () => "Select slot behaviour for inventory slot one",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.170"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.171"),
                 allowedValues: slotOption,
                 getValue: () => Config.slotOne,
                 setValue: value => Config.slotOne = value
@@ -203,8 +202,8 @@ namespace StardewDruid
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
-                name: () => "Slot 2",
-                tooltip: () => "Select slot behaviour for inventory slot two",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.179"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.180"),
                 allowedValues: slotOption,
                 getValue: () => Config.slotTwo,
                 setValue: value => Config.slotTwo = value
@@ -212,8 +211,8 @@ namespace StardewDruid
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
-                name: () => "Slot 3",
-                tooltip: () => "Select slot behaviour for inventory slot three",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.188"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.189"),
                 allowedValues: slotOption,
                 getValue: () => Config.slotThree,
                 setValue: value => Config.slotThree = value
@@ -221,8 +220,8 @@ namespace StardewDruid
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
-                name: () => "Slot 4",
-                tooltip: () => "Select slot behaviour for inventory slot four",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.197"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.198"),
                 allowedValues: slotOption,
                 getValue: () => Config.slotFour,
                 setValue: value => Config.slotFour = value
@@ -230,8 +229,8 @@ namespace StardewDruid
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
-                name: () => "Slot 5",
-                tooltip: () => "Select slot behaviour for inventory slot five",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.206"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.207"),
                 allowedValues: slotOption,
                 getValue: () => Config.slotFive,
                 setValue: value => Config.slotFive = value
@@ -239,8 +238,8 @@ namespace StardewDruid
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
-                name: () => "Slot 6",
-                tooltip: () => "Select slot behaviour for inventory slot six",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.215"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.216"),
                 allowedValues: slotOption,
                 getValue: () => Config.slotSix,
                 setValue: value => Config.slotSix = value
@@ -248,8 +247,8 @@ namespace StardewDruid
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
-                name: () => "Slot 7",
-                tooltip: () => "Select slot behaviour for inventory slot seven",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.224"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.225"),
                 allowedValues: slotOption,
                 getValue: () => Config.slotSeven,
                 setValue: value => Config.slotSeven = value
@@ -257,8 +256,8 @@ namespace StardewDruid
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
-                name: () => "Slot 8",
-                tooltip: () => "Select slot behaviour for inventory slot eight",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.233"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.234"),
                 allowedValues: slotOption,
                 getValue: () => Config.slotEight,
                 setValue: value => Config.slotEight = value
@@ -266,8 +265,8 @@ namespace StardewDruid
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
-                name: () => "Slot 9",
-                tooltip: () => "Select slot behaviour for inventory slot nine",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.242"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.243"),
                 allowedValues: slotOption,
                 getValue: () => Config.slotNine,
                 setValue: value => Config.slotNine = value
@@ -275,8 +274,8 @@ namespace StardewDruid
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
-                name: () => "Slot 10",
-                tooltip: () => "Select slot behaviour for inventory slot ten",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.251"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.252"),
                 allowedValues: slotOption,
                 getValue: () => Config.slotTen,
                 setValue: value => Config.slotTen = value
@@ -284,8 +283,8 @@ namespace StardewDruid
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
-                name: () => "Slot 11",
-                tooltip: () => "Select slot behaviour for inventory slot eleven",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.260"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.261"),
                 allowedValues: slotOption,
                 getValue: () => Config.slotEleven,
                 setValue: value => Config.slotEleven = value
@@ -293,8 +292,8 @@ namespace StardewDruid
 
             configMenu.AddTextOption(
                 mod: mod.ModManifest,
-                name: () => "Slot 12",
-                tooltip: () => "Select slot behaviour for inventory slot twelve",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.269"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.270"),
                 allowedValues: slotOption,
                 getValue: () => Config.slotTwelve,
                 setValue: value => Config.slotTwelve = value
@@ -302,8 +301,8 @@ namespace StardewDruid
 
             configMenu.AddNumberOption(
                 mod: mod.ModManifest,
-                name: () => "Cultivate Behaviour",
-                tooltip: () => "Adjust settings for Weald: Cultivate in regards to crop handling. See readme for specifics. 1 Highest growth rate. 2 Average growth, average quality. 3 Highest quality.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.278"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.279"),
                 min: 1,
                 max: 3,
                 interval: 1,
@@ -313,8 +312,8 @@ namespace StardewDruid
 
             configMenu.AddNumberOption(
                 mod: mod.ModManifest,
-                name: () => "Meteor Behaviour",
-                tooltip: () => "Adjust risk/reward setting for Stars: Meteor. See readme for specifics. 1 Intelligent targetting, lowest damage. 5 Completely random targets, highest damage.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.289"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.290"),
                 min: 1,
                 max: 5,
                 interval: 1,
@@ -324,24 +323,24 @@ namespace StardewDruid
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
-                name: () => "Maximum Damage",
-                tooltip: () => "Some spell effects have damage modifiers that consider player combat level, highest upgrade on Pickaxe, Axe, and applied enchantments. Enable to cast at max damage and effect everytime.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.300"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.301"),
                 getValue: () => Config.maxDamage,
                 setValue: value => Config.maxDamage = value
             );
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
-                name: () => "Cardinal Targetting",
-                tooltip: () => "Disables isometric (6 way) targetting for transformation effects. Might look a little misaligned with the transformation animations.",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.308"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.309"),
                 getValue: () => Config.cardinalMovement,
                 setValue: value => Config.cardinalMovement = value
             );
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
-                name: () => "Cast Anywhere",
-                tooltip: () => "Disables the Map-based cast restrictions so that any rite effect can be cast anywhere. Proceed with caution!",
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.316"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.317"),
                 getValue: () => Config.castAnywhere,
                 setValue: value => Config.castAnywhere = value
             );

@@ -418,6 +418,11 @@ namespace StardewDruid.Data
             sword_lightsaber,
             sword_warp,
 
+            herbal_ligna,
+            herbal_impes,
+            herbal_celeri,
+            herbal_faeth,
+            herbal_aether,
 
         }
 
@@ -454,6 +459,12 @@ namespace StardewDruid.Data
             [schemes.plum] = new(196, 35, 86),
             [schemes.blueberry] = new(84, 104, 177),
             [schemes.melon] = new(107, 192, 111),
+
+            [schemes.herbal_ligna] = new(186, 255, 201),
+            [schemes.herbal_impes] = new(255, 179, 186),
+            [schemes.herbal_celeri] = new(186, 225, 255),
+            [schemes.herbal_faeth] = new(255, 255, 186),
+            [schemes.herbal_aether] = new(186, 225, 255),
 
         };
 

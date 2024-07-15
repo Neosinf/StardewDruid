@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using StardewDruid.Data;
 using StardewModdingAPI;
 using StardewValley;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using static StardewDruid.Data.DialogueData;
+using static StardewDruid.Journal.HerbalData;
 
 
 namespace StardewDruid.Journal
@@ -469,19 +471,19 @@ namespace StardewDruid.Journal
 
             details = new(herbal.details);
 
-            foreach (KeyValuePair<string, string> ingredient in herbal.ingredients)
+            foreach (string ingredient in herbal.ingredients)
             {
 
                 int herbalAmount = 0;
 
-                if (herbal.amounts.ContainsKey(ingredient.Key))
+                if (herbal.amounts.ContainsKey(ingredient))
                 {
 
-                    herbalAmount = herbal.amounts[ingredient.Key];
+                    herbalAmount = herbal.amounts[ingredient];
 
                 }
 
-                items.Add(ingredient.Key, herbalAmount);
+                items.Add(ingredient, herbalAmount);
 
             }
 
@@ -648,7 +650,7 @@ namespace StardewDruid.Journal
 
                     Herbal basePotion = Mod.instance.herbalData.herbalism[potion.Key.ToString()];
 
-                    Microsoft.Xna.Framework.Color colour = Mod.instance.iconData.SchemeColour(basePotion.scheme);
+                    Microsoft.Xna.Framework.Color colour = Mod.instance.iconData.SchemeColour(Mod.instance.herbalData.schemes[basePotion.line]);
 
                     b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(textMargin, textPosition), IconData.RelicRectangles(basePotion.container), Color.White, 0f, Vector2.Zero, 1.5f, 0, 0.901f);
 

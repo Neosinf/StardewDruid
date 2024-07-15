@@ -61,7 +61,7 @@ namespace StardewDruid.Cast
 
         public int castTool;
 
-        public StardewValley.GameLocation castLocation;
+        public string castLocation;
 
         public SpawnIndex spawnIndex = new();
 
@@ -366,7 +366,7 @@ namespace StardewDruid.Cast
 
             castLevel = 0;
 
-            castLocation = Game1.player.currentLocation;
+            castLocation = Game1.player.currentLocation.Name;
 
             CursorShutdown();
 
@@ -508,7 +508,7 @@ namespace StardewDruid.Cast
 
                 }
 
-                if(Game1.player.currentLocation.Name != castLocation.Name)
+                if(Game1.player.currentLocation.Name != castLocation)
                 {
 
                     GetLocation();
@@ -1153,9 +1153,9 @@ namespace StardewDruid.Cast
         public void GetLocation()
         {
             
-            castLocation = Game1.player.currentLocation;
+            castLocation = Game1.player.currentLocation.Name;
 
-            spawnIndex = new SpawnIndex(castLocation);
+            spawnIndex = new SpawnIndex(Game1.player.currentLocation);
 
             if (!spawnIndex.cast && Mod.instance.eventRegister.ContainsKey("active"))
             {
@@ -1344,10 +1344,10 @@ namespace StardewDruid.Cast
 
             }
 
-            if (castLocation.terrainFeatures.ContainsKey(castVector))
+            if (Game1.player.currentLocation.terrainFeatures.ContainsKey(castVector))
             {
 
-                if (castLocation.terrainFeatures[castVector] is StardewValley.TerrainFeatures.Grass)
+                if (Game1.player.currentLocation.terrainFeatures[castVector] is StardewValley.TerrainFeatures.Grass)
                 {
 
                     BuffEffects buffEffect = new();
@@ -1373,7 +1373,7 @@ namespace StardewDruid.Cast
             // Weed destruction
             //---------------------------------------------
 
-            if (castLocation.objects.Count() > 0 && spawnIndex.weeds)
+            if (Game1.player.currentLocation.objects.Count() > 0 && spawnIndex.weeds)
             {
 
                 CastClearance();
@@ -1384,7 +1384,7 @@ namespace StardewDruid.Cast
             // Rockfall
             //---------------------------------------------
 
-            if (castLocation is MineShaft || castLocation is VolcanoDungeon)
+            if (Game1.player.currentLocation is MineShaft || Game1.player.currentLocation is VolcanoDungeon)
             {
 
                 if (Mod.instance.questHandle.IsGiven(QuestHandle.wealdFive))
@@ -1446,15 +1446,15 @@ namespace StardewDruid.Cast
             for (int i = 0; i < 5; i++)
             {
 
-                List<Vector2> weedVectors = ModUtility.GetTilesWithinRadius(castLocation, castVector, i);
+                List<Vector2> weedVectors = ModUtility.GetTilesWithinRadius(Game1.player.currentLocation, castVector, i);
 
                 foreach (Vector2 tileVector in weedVectors)
                 {
 
-                    if (castLocation.objects.ContainsKey(tileVector))
+                    if (Game1.player.currentLocation.objects.ContainsKey(tileVector))
                     {
 
-                        StardewValley.Object tileObject = castLocation.objects[tileVector];
+                        StardewValley.Object tileObject = Game1.player.currentLocation.objects[tileVector];
 
                         if (tileObject.IsBreakableStone() && Mod.instance.questHandle.IsComplete(QuestHandle.wealdOne))
                         {
@@ -1474,7 +1474,7 @@ namespace StardewDruid.Cast
                             clearance.CastActivate(tileVector);
 
                         }
-                        else if (castLocation is MineShaft && tileObject is BreakableContainer)
+                        else if (Game1.player.currentLocation is MineShaft && tileObject is BreakableContainer)
                         {
 
                             clearance.CastActivate(tileVector);
@@ -1483,13 +1483,13 @@ namespace StardewDruid.Cast
 
                     }
 
-                    if (castLocation.terrainFeatures.ContainsKey(tileVector))
+                    if (Game1.player.currentLocation.terrainFeatures.ContainsKey(tileVector))
                     {
 
-                        if (castLocation.terrainFeatures[tileVector] is StardewValley.TerrainFeatures.Tree treeFeature)
+                        if (Game1.player.currentLocation.terrainFeatures[tileVector] is StardewValley.TerrainFeatures.Tree treeFeature)
                         {
 
-                            if (treeFeature.growthStage.Value == 0 && ModUtility.NeighbourCheck(castLocation, tileVector).Count > 0)
+                            if (treeFeature.growthStage.Value == 0 && ModUtility.NeighbourCheck(Game1.player.currentLocation, tileVector).Count > 0)
                             {
 
                                 clearance.CastActivate(tileVector, false);
@@ -1524,10 +1524,10 @@ namespace StardewDruid.Cast
 
             List<Vector2> centerVectors = new();
 
-            if (!terrainCasts.ContainsKey(castLocation.Name))
+            if (!terrainCasts.ContainsKey(Game1.player.currentLocation.Name))
             {
 
-                terrainCasts[castLocation.Name] = new();
+                terrainCasts[Game1.player.currentLocation.Name] = new();
 
             }
 
@@ -1535,14 +1535,14 @@ namespace StardewDruid.Cast
 
             Vector2 sqtVector = new((int)(playerTile.X - (playerTile.X % 16)), (int)(playerTile.Y -(playerTile.Y % 16)));
 
-            if (terrainCasts[castLocation.Name].ContainsKey(sqtVector))
+            if (terrainCasts[Game1.player.currentLocation.Name].ContainsKey(sqtVector))
             {
                 
                 for(int i = 0; i < 4; i++)
                 {
                     
                     Mod.instance.iconData.ImpactIndicator(
-                        castLocation,
+                        Game1.player.currentLocation,
                         (sqtVector + new Vector2((i % 2) * 4,i == 0 ? 0 : (i / 2) * 4) + new Vector2(Mod.instance.randomIndex.Next(8), Mod.instance.randomIndex.Next(8))) * 64,
                         IconData.impacts.glare,
                         0.8f + (Mod.instance.randomIndex.Next(5) * 0.2f),
@@ -1555,9 +1555,9 @@ namespace StardewDruid.Cast
 
             }
 
-            terrainCasts[castLocation.Name][sqtVector] = 0;
+            terrainCasts[Game1.player.currentLocation.Name][sqtVector] = 0;
 
-            Bounty bounty = new(); bounty.CastActivate(castLocation, sqtVector);
+            Bounty bounty = new(); bounty.CastActivate(Game1.player.currentLocation, sqtVector);
 
             if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdTwo))
             {
@@ -1588,10 +1588,10 @@ namespace StardewDruid.Cast
 
                 }
 
-                if (!specialCasts.ContainsKey(castLocation.Name))
+                if (!specialCasts.ContainsKey(Game1.player.currentLocation.Name))
                 {
 
-                    specialCasts[castLocation.Name] = new();
+                    specialCasts[Game1.player.currentLocation.Name] = new();
 
                 }
 
@@ -1602,7 +1602,7 @@ namespace StardewDruid.Cast
 
                     costing += i * 4;
 
-                    if (!specialCasts[castLocation.Name].Contains("wilderness" + i.ToString()))
+                    if (!specialCasts[Game1.player.currentLocation.Name].Contains("wilderness" + i.ToString()))
                     {
 
                         break;
@@ -1829,7 +1829,7 @@ namespace StardewDruid.Cast
             //if (castLevel % 2 == 0)
             //{
 
-            //    Mod.instance.iconData.CursorIndicator(castLocation, castVector * 64, IconData.cursors.mists, new() { interval = 1200f, alpha = 1f, scale = 2f, fade = 0.0008f});
+            //    Mod.instance.iconData.CursorIndicator(Game1.player.currentLocation, castVector * 64, IconData.cursors.mists, new() { interval = 1200f, alpha = 1f, scale = 2f, fade = 0.0008f});
 
             //}
 
@@ -1842,13 +1842,13 @@ namespace StardewDruid.Cast
 
             //bool extraDebris = Mod.instance.questHandle.IsComplete(QuestHandle.mistsFour);
 
-            if (castLocation.resourceClumps.Count > 0)
+            if (Game1.player.currentLocation.resourceClumps.Count > 0)
             {
 
-                for (int r = castLocation.resourceClumps.Count -1; r >= 0; r--)
+                for (int r = Game1.player.currentLocation.resourceClumps.Count -1; r >= 0; r--)
                 {
 
-                    ResourceClump resourceClump = castLocation.resourceClumps[r];
+                    ResourceClump resourceClump = Game1.player.currentLocation.resourceClumps[r];
 
                     if(resourceClump is GiantCrop)
                     {
@@ -1867,13 +1867,13 @@ namespace StardewDruid.Cast
                         if (Mod.instance.questHandle.IsComplete(QuestHandle.mistsFour))
                         {
 
-                            resourceClump.destroy(Mod.instance.virtualAxe, castLocation, resourceClump.Tile);
+                            resourceClump.destroy(Mod.instance.virtualAxe, Game1.player.currentLocation, resourceClump.Tile);
                         
                         }
 
                         Mod.instance.spellRegister.Add(new(resourceClump.Tile * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, display = IconData.impacts.puff, });
 
-                        resourceClump.destroy(Mod.instance.virtualAxe, castLocation, resourceClump.Tile);
+                        resourceClump.destroy(Mod.instance.virtualAxe, Game1.player.currentLocation, resourceClump.Tile);
 
                         resourceClump.health.Set(1f);
 
@@ -1886,9 +1886,9 @@ namespace StardewDruid.Cast
                             Game1.createMultipleObjectDebris("(O)388", (int)resourceClump.Tile.X, (int)resourceClump.Tile.Y, 20);
                         }
 
-                        castLocation._activeTerrainFeatures.Remove(resourceClump);
+                        Game1.player.currentLocation._activeTerrainFeatures.Remove(resourceClump);
 
-                        castLocation.resourceClumps.Remove(resourceClump);
+                        Game1.player.currentLocation.resourceClumps.Remove(resourceClump);
 
                         castCost += cost;
 
@@ -1900,10 +1900,10 @@ namespace StardewDruid.Cast
 
             }
 
-            if (castLocation.terrainFeatures.ContainsKey(castVector))
+            if (Game1.player.currentLocation.terrainFeatures.ContainsKey(castVector))
             {
 
-                if(castLocation.terrainFeatures[castVector] is Tree tree)
+                if(Game1.player.currentLocation.terrainFeatures[castVector] is Tree tree)
                 {
 
                     if (tree.stump.Value)
@@ -1913,7 +1913,7 @@ namespace StardewDruid.Cast
 
                         tree.performToolAction(Mod.instance.virtualAxe, 0, castVector);
 
-                        castLocation.terrainFeatures.Remove(castVector);
+                        Game1.player.currentLocation.terrainFeatures.Remove(castVector);
 
                         sundered++;
 
@@ -1956,7 +1956,7 @@ namespace StardewDruid.Cast
             if (spawnIndex.fishspot)
             {
 
-                if (ModUtility.WaterCheck(castLocation, castVector))
+                if (ModUtility.WaterCheck(Game1.player.currentLocation, castVector))
                 {
 
                     int tryCost = 32 - Game1.player.FishingLevel * 3;
@@ -1972,7 +1972,7 @@ namespace StardewDruid.Cast
 
             }
 
-            if (castLocation is VolcanoDungeon volcanoLocation)
+            if (Game1.player.currentLocation is VolcanoDungeon volcanoLocation)
             {
                 int tileX = (int)castVector.X;
                 int tileY = (int)castVector.Y;
@@ -2199,16 +2199,16 @@ namespace StardewDruid.Cast
         public void CastMeteors()
         {
 
-            if (!castLocation.IsOutdoors)
+            if (!Game1.player.currentLocation.IsOutdoors)
             {
 
                 if(
-                    castLocation is not MineShaft 
-                    && castLocation is not VolcanoDungeon 
-                    && castLocation is not Vault
-                    && castLocation is not Court
-                    && castLocation is not Tomb
-                    && castLocation is not Engineum
+                    Game1.player.currentLocation is not MineShaft 
+                    && Game1.player.currentLocation is not VolcanoDungeon 
+                    && Game1.player.currentLocation is not Vault
+                    && Game1.player.currentLocation is not Court
+                    && Game1.player.currentLocation is not Tomb
+                    && Game1.player.currentLocation is not Engineum
                 )
                 {
 
@@ -2218,7 +2218,7 @@ namespace StardewDruid.Cast
 
             }
 
-            if(castLocation.IsFarm && Game1.player.CurrentTool is not MeleeWeapon)
+            if(Game1.player.currentLocation.IsFarm && Game1.player.CurrentTool is not MeleeWeapon)
             {
 
                 return;
@@ -2248,7 +2248,7 @@ namespace StardewDruid.Cast
                     
                     vectorList = new();
 
-                    List<Vector2> innerTiles = ModUtility.GetTilesWithinRadius(castLocation, Vector2.Zero, 3, false);
+                    List<Vector2> innerTiles = ModUtility.GetTilesWithinRadius(Game1.player.currentLocation, Vector2.Zero, 3, false);
 
                     for (int iv = 0; iv < 3; iv++)
                     {
@@ -2257,7 +2257,7 @@ namespace StardewDruid.Cast
                         
                     }
 
-                    List<Vector2> outerTiles = ModUtility.GetTilesWithinRadius(castLocation, Vector2.Zero, 4, false);
+                    List<Vector2> outerTiles = ModUtility.GetTilesWithinRadius(Game1.player.currentLocation, Vector2.Zero, 4, false);
 
                     for (int ov = 0; ov < 3; ov++)
                     {
@@ -2325,7 +2325,7 @@ namespace StardewDruid.Cast
             if (difficulty == 1 || difficulty == 2)
             {
 
-                foreach (NPC nonPlayableCharacter in castLocation.characters)
+                foreach (NPC nonPlayableCharacter in Game1.player.currentLocation.characters)
                 {
 
                     if (meteorVectors.Count >= meteorLimit)
@@ -2367,7 +2367,7 @@ namespace StardewDruid.Cast
 
             }
 
-            if((difficulty == 1 || difficulty == 3) && (castLocation is MineShaft || castLocation is VolcanoDungeon))
+            if((difficulty == 1 || difficulty == 3) && (Game1.player.currentLocation is MineShaft || Game1.player.currentLocation is VolcanoDungeon))
             {
 
                 for (int i = 2; i < 6; i++)
@@ -2380,7 +2380,7 @@ namespace StardewDruid.Cast
 
                     }
 
-                    List<Vector2> objectVectors = ModUtility.GetTilesWithinRadius(castLocation, castVector, i);
+                    List<Vector2> objectVectors = ModUtility.GetTilesWithinRadius(Game1.player.currentLocation, castVector, i);
 
                     foreach (Vector2 objectVector in objectVectors)
                     {
@@ -2392,10 +2392,10 @@ namespace StardewDruid.Cast
 
                         }
 
-                        if (castLocation.objects.ContainsKey(objectVector))
+                        if (Game1.player.currentLocation.objects.ContainsKey(objectVector))
                         {
 
-                            StardewValley.Object targetObject = castLocation.objects[objectVector];
+                            StardewValley.Object targetObject = Game1.player.currentLocation.objects[objectVector];
 
                             if (targetObject.Name == "Stone")
                             {
@@ -2458,7 +2458,7 @@ namespace StardewDruid.Cast
                     
                     Vector2 randomVector = vectorList[Mod.instance.randomIndex.Next(vectorList.Count)];
 
-                    string groundCheck = ModUtility.GroundCheck(castLocation, castVector + randomVector);
+                    string groundCheck = ModUtility.GroundCheck(Game1.player.currentLocation, castVector + randomVector);
 
                     if(groundCheck == "water" || groundCheck == "ground")
                     {
@@ -2517,7 +2517,7 @@ namespace StardewDruid.Cast
                 if (!Mod.instance.questHandle.IsComplete(QuestHandle.starsOne))
                 {
 
-                    List<StardewValley.Monsters.Monster> monsters = ModUtility.MonsterProximity(castLocation, new() { meteorVector * 64, }, 224, true);
+                    List<StardewValley.Monsters.Monster> monsters = ModUtility.MonsterProximity(Game1.player.currentLocation, new() { meteorVector * 64, }, 224, true);
 
                     for (int i = monsters.Count - 1; i >= 0; i--)
                     {
@@ -2578,7 +2578,7 @@ namespace StardewDruid.Cast
 
                 }
 
-                switch (ModUtility.GroundCheck(castLocation, meteorVector))
+                switch (ModUtility.GroundCheck(Game1.player.currentLocation, meteorVector))
                 {
 
                     case "water":
@@ -2713,12 +2713,12 @@ namespace StardewDruid.Cast
 
             Vector2 nearVector = GetTargetCursor(Game1.player.FacingDirection, 6 * 64);
 
-            List<Vector2> whiskTiles = ModUtility.GetTilesBetweenPositions(castLocation, farVector, nearVector);
+            List<Vector2> whiskTiles = ModUtility.GetTilesBetweenPositions(Game1.player.currentLocation, farVector, nearVector);
 
             for (int i = whiskTiles.Count - 1; i >= 0; i--)
             {
 
-                if (ModUtility.TileAccessibility(castLocation, whiskTiles[i]) != 0)
+                if (ModUtility.TileAccessibility(Game1.player.currentLocation, whiskTiles[i]) != 0)
                 {
 
                     continue;
@@ -2740,7 +2740,7 @@ namespace StardewDruid.Cast
             if (Mod.instance.questHandle.IsGiven(QuestHandle.fatesTwo))
             {
 
-                List<StardewValley.Monsters.Monster> monsters = ModUtility.MonsterProximity(castLocation, new() { farVector }, 320, true);
+                List<StardewValley.Monsters.Monster> monsters = ModUtility.MonsterProximity(Game1.player.currentLocation, new() { farVector }, 320, true);
 
                 if (monsters.Count > 0)
                 {
@@ -2791,23 +2791,23 @@ namespace StardewDruid.Cast
                         {
                             case 0:
 
-                                curseEffect.AddTarget(castLocation, monster, SpellHandle.effects.daze);
+                                curseEffect.AddTarget(Game1.player.currentLocation, monster, SpellHandle.effects.daze);
   
                                 break;
 
                             case 1:
-                                curseEffect.AddTarget(castLocation, monster, SpellHandle.effects.mug);
+                                curseEffect.AddTarget(Game1.player.currentLocation, monster, SpellHandle.effects.mug);
 
                                 break;
 
                             case 2:
-                                curseEffect.AddTarget(castLocation, monster, SpellHandle.effects.morph);
+                                curseEffect.AddTarget(Game1.player.currentLocation, monster, SpellHandle.effects.morph);
 
                                 break;
 
                             default:
                             case 3:
-                                curseEffect.AddTarget(castLocation, monster, SpellHandle.effects.doom);
+                                curseEffect.AddTarget(Game1.player.currentLocation, monster, SpellHandle.effects.doom);
 
                                 break;
                         }
@@ -2938,7 +2938,7 @@ namespace StardewDruid.Cast
 
             }
 
-            if (!castLocation.IsFarm && !castLocation.IsGreenhouse && castLocation is not AnimalHouse && castLocation is not Shed) { return; }
+            if (!Game1.player.currentLocation.IsFarm && !Game1.player.currentLocation.IsGreenhouse && Game1.player.currentLocation is not AnimalHouse && Game1.player.currentLocation is not Shed) { return; }
 
             Enchant enchantmentEvent = new();
 
@@ -3033,14 +3033,14 @@ namespace StardewDruid.Cast
 
             }
 
-            if (!specialCasts.ContainsKey(castLocation.Name))
+            if (!specialCasts.ContainsKey(Game1.player.currentLocation.Name))
             {
 
-                specialCasts[castLocation.Name] = new();
+                specialCasts[Game1.player.currentLocation.Name] = new();
 
             }
 
-            if (specialCasts[castLocation.Name].Contains("crate"))
+            if (specialCasts[Game1.player.currentLocation.Name].Contains("crate"))
             {
 
                 return;
