@@ -180,7 +180,7 @@ namespace StardewDruid
             if (e.Name.StartsWith("StardewDruid.Tilesheets."))
             {
 
-                string tilesheetId = e.Name.ToString().Replace("StardewDruid.Tilesheets.", "");
+                string tilesheetId = e.Name.ToString().Split(".")[2];//e.Name.ToString().Replace("StardewDruid.Tilesheets.", "");
 
                 IconData.tilesheets tilesheet = Enum.Parse<IconData.tilesheets>(tilesheetId);
 
@@ -195,7 +195,7 @@ namespace StardewDruid
             if (e.Name.StartsWith("StardewDruid.Characters."))
             {
 
-                string characterId = e.Name.ToString().Replace("StardewDruid.Characters.", "");
+                string characterId = e.Name.ToString().Split(".")[2];//e.Name.ToString().Replace("StardewDruid.Characters.", "");
 
                 CharacterHandle.characters character = Enum.Parse<CharacterHandle.characters>(characterId);
 
