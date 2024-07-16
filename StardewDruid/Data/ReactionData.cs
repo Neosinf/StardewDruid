@@ -70,10 +70,6 @@ namespace StardewDruid.Data
 
         }
 
-        public const string valleyPlace = "valley";
-
-        public const string islandPlace = "island";
-
         public const string fullStop = ".";
 
         public const string questionMark = "?";
@@ -116,12 +112,12 @@ namespace StardewDruid.Data
 
             }
 
-            string place = valleyPlace;
+            string place = Mod.instance.Helper.Translation.Get("ReactionData.1");
 
             if (NPC.currentLocation.Name.Contains("Island"))
             {
 
-                place = islandPlace;
+                place = Mod.instance.Helper.Translation.Get("ReactionData.2");
 
             }
 
@@ -165,7 +161,7 @@ namespace StardewDruid.Data
                                 case 3:
 
 
-                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.42") + place + fullStop);
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.42").Tokens(new { place = place }));
 
                                     stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.44") + shots[portraits.love]);
 
@@ -271,7 +267,7 @@ namespace StardewDruid.Data
 
                             NPC.showTextAboveHead(alertListOne[new Random().Next(2)]);
 
-                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.148") + Game1.player.Name);
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.148").Tokens(new { name = Game1.player.Name }));
 
                             stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.150") + shots[portraits.sad]);
 
@@ -433,8 +429,7 @@ namespace StardewDruid.Data
 
                                 NPC.doEmote(32, true);
 
-                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.310") + Game1.player.Name +
-                                    Mod.instance.Helper.Translation.Get("ReactionData.311"));
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.310").Tokens(new { name = Game1.player.Name }));
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313") + shots[portraits.happy]);
 
@@ -522,8 +517,7 @@ namespace StardewDruid.Data
 
                                 NPC.doEmote(24, true);
 
-                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.399") + trick +
-                                    Mod.instance.Helper.Translation.Get("ReactionData.400"));
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.399").Tokens(new { trick = trick, }));
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.402"));
 
@@ -568,8 +562,7 @@ namespace StardewDruid.Data
                             else
                             {
 
-                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.445") + trick +
-                                    Mod.instance.Helper.Translation.Get("ReactionData.446") + shots[portraits.angry]);
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.445").Tokens(new { trick = trick, }) + shots[portraits.angry]);
 
                             }
 
@@ -630,8 +623,7 @@ namespace StardewDruid.Data
 
                         case 0:
 
-                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.507") + Game1.player.Name +
-                                Mod.instance.Helper.Translation.Get("ReactionData.508"));
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.507").Tokens(new { name = Game1.player.Name }));
 
                             stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.510"));
 
@@ -653,11 +645,9 @@ namespace StardewDruid.Data
 
                         case 3:
 
-                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.530") + Game1.player.Name +
-                                Mod.instance.Helper.Translation.Get("ReactionData.531"));
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.530").Tokens(new { name = Game1.player.Name }));
 
-                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.533")
-                                + place + Mod.instance.Helper.Translation.Get("ReactionData.534"));
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.533").Tokens(new { place = place, }));
 
                             break;
 
@@ -675,8 +665,7 @@ namespace StardewDruid.Data
 
                             stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.550"));
 
-                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.552") + place +
-                                Mod.instance.Helper.Translation.Get("ReactionData.553"));
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.552").Tokens(new { place = place, }));
 
                             break;
 
@@ -723,7 +712,7 @@ namespace StardewDruid.Data
 
                         case 3:
 
-                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.600") + Game1.player.Name);
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.600").Tokens(new { name = Game1.player.Name, }));
 
                             break;
 
@@ -737,8 +726,7 @@ namespace StardewDruid.Data
 
                             stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.612"));
 
-                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.614") + Game1.player.Name +
-                                Mod.instance.Helper.Translation.Get("ReactionData.615") + shots[portraits.sad]);
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.614").Tokens(new { name = Game1.player.Name, }) + shots[portraits.sad]);
 
                             stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.617"));
 
@@ -779,23 +767,19 @@ namespace StardewDruid.Data
                             case 3:
 
 
-                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.656") + place +
-                                    Mod.instance.Helper.Translation.Get("ReactionData.657") + shots[portraits.love]);
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.656").Tokens(new { place = place, }) + shots[portraits.love]);
 
                                 break;
 
                             case 4:
 
-                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.663") + place +
-                                    Mod.instance.Helper.Translation.Get("ReactionData.664") + shots[portraits.love]);
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.663").Tokens(new { place = place, }) + shots[portraits.love]);
 
                                 break;
 
                             default:
 
-                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.670")
-                                    + place +
-                                    Mod.instance.Helper.Translation.Get("ReactionData.672"));
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.670").Tokens(new { place = place, }));
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.674") + shots[portraits.love]);
 
@@ -895,9 +879,7 @@ namespace StardewDruid.Data
 
                                     case 0:
 
-                                        stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.772")
-                                            + place +
-                                            Mod.instance.Helper.Translation.Get("ReactionData.774") + shots[portraits.happy]);
+                                        stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.772").Tokens(new { place = place, }) + shots[portraits.happy]);
 
                                         break;
 
@@ -969,14 +951,13 @@ namespace StardewDruid.Data
 
                                         stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.844"));
                                         stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.845") + shots[portraits.happy]);
-                                        stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.846") + Game1.player.Name);
+                                        stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.846").Tokens(new { name = Game1.player.Name, }));
 
                                         break;
 
                                     default:
 
-                                        stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.852") + place +
-                                            Mod.instance.Helper.Translation.Get("ReactionData.853"));
+                                        stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.852").Tokens(new { place = place, }));
 
                                         break;
                                 }
@@ -992,7 +973,7 @@ namespace StardewDruid.Data
 
                                     case 0:
 
-                                        stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.869") + Game1.player.Name + questionMark);
+                                        stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.869").Tokens(new { name = Game1.player.Name, }));
 
                                         stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.871"));
 

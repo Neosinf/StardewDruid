@@ -211,7 +211,7 @@ namespace StardewDruid.Cast.Weald
 
                 case bounties.bush:
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowfox, prospect.Key * 64, Mod.instance.randomIndex.Next(8), 3f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowfox, prospect.Key * 64, Mod.instance.randomIndex.Next(8), 2.5f);
 
                     break;
 
@@ -233,13 +233,13 @@ namespace StardewDruid.Cast.Weald
 
                     Vector2 fruitTop = prospect.Key * 64 - new Vector2(0, 160);
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat, fruitTop, Mod.instance.randomIndex.Next(8), 3f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat, fruitTop, Mod.instance.randomIndex.Next(8), 2.5f);
 
                     break;
 
                 case bounties.grass:
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowcat, prospect.Key * 64, Mod.instance.randomIndex.Next(8), 3f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowcat, prospect.Key * 64, Mod.instance.randomIndex.Next(8), 2.5f);
 
                     break;
 

@@ -42,9 +42,7 @@ namespace StardewDruid.Data
                 case villagerLocales.mountain:
 
                     Mod.instance.CastDisplay(
-                        Mod.instance.Helper.Translation.Get("VillagerData.11") + questRating +
-                        Mod.instance.Helper.Translation.Get("VillagerData.12") + friendship +
-                        Mod.instance.Helper.Translation.Get("VillagerData.13"), 2);
+                        Mod.instance.Helper.Translation.Get("VillagerData.11").Tokens(new { rating = questRating, friendship = friendship,}),2);
 
                     NPCIndex = new(){
                         villagers.Sebastian.ToString(), villagers.Sam.ToString(),
@@ -58,9 +56,7 @@ namespace StardewDruid.Data
 
                 case villagerLocales.town:
 
-                    Mod.instance.CastDisplay(Mod.instance.Helper.Translation.Get("VillagerData.27")
-                        + questRating + Mod.instance.Helper.Translation.Get("VillagerData.28")
-                        + friendship + Mod.instance.Helper.Translation.Get("VillagerData.29"), 2);
+                    Mod.instance.CastDisplay(Mod.instance.Helper.Translation.Get("VillagerData.27").Tokens(new { rating = questRating, friendship = friendship, }), 2);
 
                     NPCIndex = new(){
                         villagers.Alex.ToString(), villagers.Elliott.ToString(), villagers.Harvey.ToString(),
@@ -77,9 +73,7 @@ namespace StardewDruid.Data
 
                 case villagerLocales.forest:
 
-                    Mod.instance.CastDisplay(Mod.instance.Helper.Translation.Get("VillagerData.46")
-                        + questRating + Mod.instance.Helper.Translation.Get("VillagerData.47")
-                        + friendship + Mod.instance.Helper.Translation.Get("VillagerData.48"), 2);
+                    Mod.instance.CastDisplay(Mod.instance.Helper.Translation.Get("VillagerData.46").Tokens(new { rating = questRating, friendship = friendship, }), 2);
 
                     NPCIndex = new(){
                         villagers.Shane.ToString(),
@@ -111,9 +105,7 @@ namespace StardewDruid.Data
 
                         case villagers.Harvey:
 
-                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.80")
-                                + Game1.player.Name +
-                                Mod.instance.Helper.Translation.Get("VillagerData.82"));
+                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.80").Tokens(new { name = Game1.player.Name }));
 
                             break;
 

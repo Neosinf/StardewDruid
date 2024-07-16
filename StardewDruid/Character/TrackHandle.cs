@@ -299,6 +299,8 @@ namespace StardewDruid.Character
 
                     mover.WarpSet(followPlayer.currentLocation.Name, warppoint * 64, true);
 
+                    nodes.Clear();
+
                     Mod.instance.movers[trackFor] = mover;
 
                     Mod.instance.characters[trackFor].attentionTimer = 360;

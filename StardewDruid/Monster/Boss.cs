@@ -256,6 +256,7 @@ namespace StardewDruid.Monster
 
             if (spriteScale == -1f)
             {
+                
                 spriteScale = GetScale();
 
             }
@@ -264,7 +265,7 @@ namespace StardewDruid.Monster
 
             int height = idleFrames[0][0].Height;
 
-            Vector2 spritePosition = localPosition + new Vector2(width, width*2) - new Vector2(width/2 * spriteScale, height * spriteScale);
+            Vector2 spritePosition = localPosition + new Vector2(32,64) - new Vector2(width / 2f * spriteScale, height * spriteScale);
 
             if (shadow)
             {
@@ -285,7 +286,7 @@ namespace StardewDruid.Monster
             if (hoverInterval > 0)
             {
 
-                spritePosition.Y -= (float)Math.Abs(hoverHeight) * hoverElevate;
+                spritePosition.Y -= ((float)Math.Abs(hoverHeight) * hoverElevate);
 
             }
 

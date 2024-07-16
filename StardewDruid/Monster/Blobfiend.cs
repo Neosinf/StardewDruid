@@ -281,11 +281,15 @@ namespace StardewDruid.Monster
 
             float spriteScale = GetScale();
 
+            int width = idleFrames[0][0].Width;
+
+            int height = idleFrames[0][0].Height;
+
             Rectangle box = new(
-                (int)(spritePosition.X - (spriteScale * 10)),
-                (int)(spritePosition.Y - (spriteScale * 8)),
-                (int)(spriteScale * 40f),
-                (int)(spriteScale * 40f)
+                (int)(spritePosition.X + (spriteScale * 2)),
+                (int)(spritePosition.Y + (spriteScale * 4)),
+                (int)(spriteScale * (width - 4)),
+                (int)(spriteScale * (height - 4))
             );
 
             if (leapAttack)

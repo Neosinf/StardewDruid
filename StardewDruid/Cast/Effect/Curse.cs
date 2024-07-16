@@ -10,6 +10,7 @@ using StardewValley.Monsters;
 using StardewValley.Projectiles;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
@@ -522,23 +523,20 @@ namespace StardewDruid.Cast.Effect
             }
 
             Microsoft.Xna.Framework.Rectangle bounding = victim.GetBoundingBox();
-
-            Microsoft.Xna.Framework.Vector2 drawPosition = new(bounding.Center.X - (float)Game1.viewport.X, bounding.Top - 32 - (float)Game1.viewport.Y);
-
+            
+            Microsoft.Xna.Framework.Vector2 drawPosition = new(bounding.Center.X - (float)Game1.viewport.X, bounding.Top - (float)Game1.viewport.Y);
             b.Draw(
-                Mod.instance.iconData.displayTexture,
-                drawPosition,
-                IconData.DisplayRectangle(display),
-                Color.White * 0.8f,
-                0f,
-                new Vector2(8),
-                4f,
-                SpriteEffects.None,
-                0.9f
+            Mod.instance.iconData.displayTexture,
+            drawPosition,
+            IconData.DisplayRectangle(display),
+            Color.White * 0.8f,
+            0f,
+            new Vector2(8),
+            4f,
+            SpriteEffects.None,
+            0.9f
             );
-
         }
-
     }
 
 }

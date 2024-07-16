@@ -1,33 +1,61 @@
-﻿using Microsoft.Xna.Framework;
+﻿
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewValley.Network;
 using StardewValley;
 using System;
 using System.Collections.Generic;
+using StardewValley.Minigames;
 
 namespace StardewDruid.Character
 {
     public class Flyer : StardewDruid.Character.Character
     {
 
-        public int hoverHeight;
+        public enum flyerFrames
+        {
+            
+            downIdle,
+            downLift,
+            downFullOut,
+            downHalfOut,
+            downGlide,
+            downHalfIn,
+            downFullIn,
 
-        public int hoverInterval;
+            rightIdle,
+            rightLift,
+            rightFullOut,
+            rightHalfOut,
+            rightGlide,
+            rightHalfIn,
+            rightFullIn,
 
-        public int hoverIncrements;
+            upIdle,
+            upLift,
+            upFullOut,
+            upHalfOut,
+            upGlide,
+            upHalfIn,
+            upFullIn,
 
-        public float hoverElevate;
+        }
 
-        public int hoverFrame;
+        public bool liftOff;
 
         public Flyer()
         {
         }
 
-        public Flyer(CharacterHandle.characters type = CharacterHandle.characters.Shadowbat)
+        public Flyer(CharacterHandle.characters type = CharacterHandle.characters.Crow)
           : base(type)
         {
 
+        }
+
+        public Rectangle FlyerRectangle(flyerFrames frame)
+        {
+            return new((int)frame % 7 * 48, (int)frame / 7 * 48, 48, 48);
         }
 
         public override void LoadOut()
@@ -39,202 +67,277 @@ namespace StardewDruid.Character
                 characterType = Enum.Parse<CharacterHandle.characters>(Name);
 
             }
+
             characterTexture = CharacterHandle.CharacterTexture(characterType);
 
             LoadIntervals();
 
-            setScale = 3f;
-
             overhead = 112;
 
+            setScale = 3.75f;
+
             gait = 1.8f;
-
-            hoverInterval = 12;
-
-            hoverIncrements = 2;
-
-            hoverElevate = 1f;
 
             modeActive = mode.random;
 
             haltFrames = new()
             {
-                [0] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 64, 32, 32),
-                    new Rectangle(32, 64, 32, 32),
-                    new Rectangle(64, 64, 32, 32),
-                    new Rectangle(32, 64, 32, 32),
+
+                [0] = new() {
+                    FlyerRectangle(flyerFrames.upIdle), 
                 },
 
-                [1] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
-                    new Rectangle(64, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
+                [1] = new() {
+                    FlyerRectangle(flyerFrames.rightIdle),
                 },
-                [2] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 0, 32, 32),
-                    new Rectangle(32, 0, 32, 32),
-                    new Rectangle(64, 0, 32, 32),
-                    new Rectangle(32, 0, 32, 32),
 
+                [2] = new() {
+                    FlyerRectangle(flyerFrames.downIdle),
                 },
-                [3] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
-                    new Rectangle(64, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
 
-                }
+                [3] = new() {
+                    FlyerRectangle(flyerFrames.rightIdle),
+                },
+
             };
 
             idleFrames = new(haltFrames);
 
-            walkFrames = new(haltFrames);
-
             alertFrames = new(haltFrames);
 
-            specialFrames = new()
+            specialFrames = new(haltFrames);
+
+            workFrames = new(haltFrames);
+
+            walkFrames = new()
             {
 
-                [8] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 160, 32, 32),
-                    new Rectangle(32, 160, 32, 32),
-                    new Rectangle(64, 160, 32, 32),
-                    new Rectangle(32, 160, 32, 32),
+                [0] = new() {
+                    FlyerRectangle(flyerFrames.upIdle),
+                    FlyerRectangle(flyerFrames.upLift),
+                    FlyerRectangle(flyerFrames.upHalfOut),
+                    FlyerRectangle(flyerFrames.upFullOut),
+                    FlyerRectangle(flyerFrames.upHalfOut),
+                    FlyerRectangle(flyerFrames.upGlide),
+                    FlyerRectangle(flyerFrames.upHalfIn),
+                    FlyerRectangle(flyerFrames.upFullIn),
+                    FlyerRectangle(flyerFrames.upHalfIn),
                 },
-                [9] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
 
+                [1] = new() {
+                    FlyerRectangle(flyerFrames.rightIdle),
+                    FlyerRectangle(flyerFrames.rightLift),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightFullOut),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightHalfIn),
+                    FlyerRectangle(flyerFrames.rightFullIn),
+                    FlyerRectangle(flyerFrames.rightHalfIn),
                 },
-                [10] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 96, 32, 32),
-                    new Rectangle(32, 96, 32, 32),
-                    new Rectangle(64, 96, 32, 32),
-                    new Rectangle(32, 96, 32, 32),
 
+                [2] = new() {
+                    FlyerRectangle(flyerFrames.downIdle),
+                    FlyerRectangle(flyerFrames.downLift),
+                    FlyerRectangle(flyerFrames.downHalfOut),
+                    FlyerRectangle(flyerFrames.downFullOut),
+                    FlyerRectangle(flyerFrames.downHalfOut),
+                    FlyerRectangle(flyerFrames.downGlide),
+                    FlyerRectangle(flyerFrames.downHalfIn),
+                    FlyerRectangle(flyerFrames.downFullIn),
+                    FlyerRectangle(flyerFrames.downHalfIn),
                 },
-                [11] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
 
-                }
+                [3] = new() {
+                    FlyerRectangle(flyerFrames.rightIdle),
+                    FlyerRectangle(flyerFrames.rightLift),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightFullOut),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightHalfIn),
+                    FlyerRectangle(flyerFrames.rightFullIn),
+                    FlyerRectangle(flyerFrames.rightHalfIn),
+                },
 
             };
 
-            workFrames = new(specialFrames);
+            sweepFrames = new(walkFrames);
 
-            sweepFrames = new(specialFrames);
-
-            dashFrames = new Dictionary<int, List<Rectangle>>()
+            dashFrames = new()
             {
-                [0] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 160, 32, 32),
-                    new Rectangle(32, 160, 32, 32),
-                    new Rectangle(64, 160, 32, 32),
 
+                [0] = new() {
+                    FlyerRectangle(flyerFrames.upLift),
+                    FlyerRectangle(flyerFrames.upHalfOut),
+                    FlyerRectangle(flyerFrames.upFullOut),
+                    FlyerRectangle(flyerFrames.upHalfOut),
                 },
-
-                [1] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-
+                [1] = new() {
+                    FlyerRectangle(flyerFrames.rightLift),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightFullOut),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
                 },
-                [2] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 96, 32, 32),
-                    new Rectangle(32, 96, 32, 32),
-                    new Rectangle(64, 96, 32, 32),
-
+                [2] = new() {
+                    FlyerRectangle(flyerFrames.downLift),
+                    FlyerRectangle(flyerFrames.downHalfOut),
+                    FlyerRectangle(flyerFrames.downFullOut),
+                    FlyerRectangle(flyerFrames.downHalfOut),
                 },
-                [3] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-
+                [3] = new() {
+                    FlyerRectangle(flyerFrames.rightLift),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightFullOut),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
                 },
-                [4] = new List<Rectangle>()
-                {
-                    new Rectangle(32, 160, 32, 32),
+                [4] = new() {
+                    FlyerRectangle(flyerFrames.upGlide),
+                    FlyerRectangle(flyerFrames.upGlide),
+                    FlyerRectangle(flyerFrames.upGlide),
+                    FlyerRectangle(flyerFrames.upGlide),
+                    FlyerRectangle(flyerFrames.upGlide),
+                    FlyerRectangle(flyerFrames.upGlide),
+                    FlyerRectangle(flyerFrames.upGlide),
+                    FlyerRectangle(flyerFrames.upGlide),
+                    FlyerRectangle(flyerFrames.upGlide),
+                    FlyerRectangle(flyerFrames.upGlide),
+                    FlyerRectangle(flyerFrames.upGlide),
+                    FlyerRectangle(flyerFrames.upGlide),
+                    FlyerRectangle(flyerFrames.upHalfOut),
+                    FlyerRectangle(flyerFrames.upFullOut),
+                    FlyerRectangle(flyerFrames.upHalfOut),
+                    FlyerRectangle(flyerFrames.upGlide),
+                    FlyerRectangle(flyerFrames.upHalfIn),
+                    FlyerRectangle(flyerFrames.upFullIn),
+                    FlyerRectangle(flyerFrames.upHalfIn),
+                    FlyerRectangle(flyerFrames.upGlide),
+                    FlyerRectangle(flyerFrames.upHalfOut),
+                    FlyerRectangle(flyerFrames.upFullOut),
+                    FlyerRectangle(flyerFrames.upHalfOut),
+                    FlyerRectangle(flyerFrames.upGlide),
                 },
-                [5] = new List<Rectangle>()
-                {
-                    new Rectangle(32, 128, 32, 32),
+                [5] = new() {
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightFullOut),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightHalfIn),
+                    FlyerRectangle(flyerFrames.rightFullIn),
+                    FlyerRectangle(flyerFrames.rightHalfIn),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightFullOut),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightGlide),
                 },
-                [6] = new List<Rectangle>()
-                {
-                    new Rectangle(32, 96, 32, 32),
+                [6] = new() {
+                    FlyerRectangle(flyerFrames.downGlide),
+                    FlyerRectangle(flyerFrames.downGlide),
+                    FlyerRectangle(flyerFrames.downGlide),
+                    FlyerRectangle(flyerFrames.downGlide),
+                    FlyerRectangle(flyerFrames.downGlide),
+                    FlyerRectangle(flyerFrames.downGlide),
+                    FlyerRectangle(flyerFrames.downGlide),
+                    FlyerRectangle(flyerFrames.downGlide),
+                    FlyerRectangle(flyerFrames.downGlide),
+                    FlyerRectangle(flyerFrames.downGlide),
+                    FlyerRectangle(flyerFrames.downGlide),
+                    FlyerRectangle(flyerFrames.downGlide),
+                    FlyerRectangle(flyerFrames.downHalfOut),
+                    FlyerRectangle(flyerFrames.downFullOut),
+                    FlyerRectangle(flyerFrames.downHalfOut),
+                    FlyerRectangle(flyerFrames.downGlide),
+                    FlyerRectangle(flyerFrames.downHalfIn),
+                    FlyerRectangle(flyerFrames.downFullIn),
+                    FlyerRectangle(flyerFrames.downHalfIn),
+                    FlyerRectangle(flyerFrames.downGlide),
+                    FlyerRectangle(flyerFrames.downHalfOut),
+                    FlyerRectangle(flyerFrames.downFullOut),
+                    FlyerRectangle(flyerFrames.downHalfOut),
+                    FlyerRectangle(flyerFrames.downGlide),
                 },
-                [7] = new List<Rectangle>()
-                {
-                    new Rectangle(32, 128, 32, 32),
+                [7] = new() {
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightFullOut),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightHalfIn),
+                    FlyerRectangle(flyerFrames.rightFullIn),
+                    FlyerRectangle(flyerFrames.rightHalfIn),
+                    FlyerRectangle(flyerFrames.rightGlide),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightFullOut),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightGlide),
                 },
-                [8] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 160, 32, 32),
-                    new Rectangle(32, 160, 32, 32),
-                    new Rectangle(64, 160, 32, 32),
-                    new Rectangle(32, 160, 32, 32),
+                [8] = new() {
+                    FlyerRectangle(flyerFrames.upHalfOut),
+                    FlyerRectangle(flyerFrames.upFullOut),
+                    FlyerRectangle(flyerFrames.upHalfOut),
+                    FlyerRectangle(flyerFrames.upLift),
                 },
-                [9] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-
+                [9] = new() {
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightFullOut),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightLift),
                 },
-                [10] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 96, 32, 32),
-                    new Rectangle(32, 96, 32, 32),
-                    new Rectangle(64, 96, 32, 32),
-                    new Rectangle(32, 96, 32, 32),
-
+                [10] = new() {
+                    FlyerRectangle(flyerFrames.downHalfOut),
+                    FlyerRectangle(flyerFrames.downFullOut),
+                    FlyerRectangle(flyerFrames.downHalfOut),
+                    FlyerRectangle(flyerFrames.downLift),
                 },
-                [11] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-
-                }
+                [11] = new() {
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightFullOut),
+                    FlyerRectangle(flyerFrames.rightHalfOut),
+                    FlyerRectangle(flyerFrames.rightLift),
+                },
             };
 
             smashFrames = new(dashFrames);
 
             loadedOut = true;
-
         }
 
-        public override void draw(SpriteBatch b, float alpha = -1f)
-        {
-            
-        }
-
-        public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
+        public override void draw(SpriteBatch b, float alpha = 1f)
         {
 
-            base.drawAboveAlwaysFrontLayer(b);
+            if (netDashActive.Value || netSmashActive.Value)
+            {
+                if(netDashProgress.Value == 1)
+                {
+                    return;
+                }
 
+            }
+                
             if (IsInvisible || !Utility.isOnScreen(Position, 128))
             {
                 return;
@@ -242,29 +345,107 @@ namespace StardewDruid.Character
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            Vector2 spritePosition = GetPosition(localPosition, setScale);
+            Vector2 spritePosition = localPosition + new Vector2(32, 64) - (new Vector2(16, 32) * setScale);
 
             float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
 
-            bool flippity = netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3;
-
             float fade = fadeOut == 0 ? 1f : fadeOut;
+
+            bool flippity = netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3);
 
             DrawEmote(b);
 
-            if (netDashActive.Value)
+            if (netStandbyActive.Value)
             {
 
-                int setFlightSeries = netDirection.Value + (netDashProgress.Value * 4);
+                DrawStandby(b, spritePosition, drawLayer);
 
-                int setFlightFrame = Math.Min(dashFrame, (dashFrames[setFlightSeries].Count - 1));
+                DrawShadow(b, localPosition, drawLayer);
+
+                return;
+
+            }
+            else if (netHaltActive.Value)
+            {
 
                 b.Draw(
                     characterTexture,
                     spritePosition,
-                    dashFrames[setFlightSeries][setFlightFrame],
+                    haltFrames[netDirection.Value][0],
                     Color.White * fade,
-                    0,
+                    0f,
+                    Vector2.Zero,
+                    setScale,
+                    flippity ? (SpriteEffects)1 : 0,
+                    drawLayer
+                );
+
+            }
+            else if (netSweepActive.Value)
+            {
+
+                b.Draw(
+                    characterTexture,
+                    spritePosition,
+                    sweepFrames[netDirection.Value][sweepFrame],
+                    Color.White * fade,
+                    0f,
+                    Vector2.Zero,
+                    setScale,
+                    flippity ? (SpriteEffects)1 : 0,
+                    drawLayer
+                );
+
+            }
+            else if (netDashActive.Value)
+            {
+
+                int dashSeries = netDirection.Value + (netDashProgress.Value * 4);
+
+                int dashSetto = Math.Min(dashFrame, (dashFrames[dashSeries].Count - 1));
+
+                b.Draw(
+                    characterTexture,
+                    spritePosition - new Vector2(0,dashHeight),
+                    dashFrames[dashSeries][dashSetto],
+                    Color.White * fade,
+                    0f,
+                    Vector2.Zero,
+                    setScale,
+                    flippity ? (SpriteEffects)1 : 0,
+                    drawLayer
+                );
+
+            }
+            else if (netSmashActive.Value)
+            {
+
+                int smashSeries = netDirection.Value + (netDashProgress.Value * 4);
+
+                int smashSetto = Math.Min(dashFrame, (smashFrames[smashSeries].Count - 1));
+
+                b.Draw(
+                    characterTexture,
+                    spritePosition - new Vector2(0, dashHeight),
+                    smashFrames[smashSeries][smashSetto],
+                    Color.White * fade,
+                    0f,
+                    Vector2.Zero,
+                    setScale,
+                    flippity ? (SpriteEffects)1 : 0,
+                    drawLayer
+                );
+
+            }
+            else if (netWorkActive.Value)
+            {
+
+                b.Draw(
+                    characterTexture,
+                    spritePosition,
+                    workFrames[0][specialFrame],
+                    Color.White * fade,
+                    0.0f,
                     Vector2.Zero,
                     setScale,
                     flippity ? (SpriteEffects)1 : 0,
@@ -278,155 +459,188 @@ namespace StardewDruid.Character
                 b.Draw(
                     characterTexture,
                     spritePosition,
-                    specialFrames[netDirection.Value][specialFrame],
+                    specialFrames[netDirection.Value][0],
                     Color.White * fade,
-                    0,
+                    0.0f,
                     Vector2.Zero,
                     setScale,
                     flippity ? (SpriteEffects)1 : 0,
-                    drawLayer);
+                    drawLayer
+                );
 
             }
             else
             {
 
-                b.Draw(
-                    characterTexture,
-                    spritePosition,
-                    idleFrames[netDirection.Value][hoverFrame],
-                    Color.White * fade,
-                    0,
-                    Vector2.Zero,
-                    setScale,
-                    flippity ? (SpriteEffects)1 : 0,
-                    drawLayer);
+                if (TightPosition() && idleTimer > 0 && !netSceneActive.Value)
+                {
+
+                    DrawStandby(b, spritePosition, drawLayer);
+
+                }
+                else
+                {
+
+                    int useFrame = moveFrame;
+
+                    if(liftOff && moveFrame == 1)
+                    {
+
+                        useFrame = 5;
+
+                    }
+
+                    b.Draw(
+                        characterTexture,
+                        spritePosition,
+                        walkFrames[netDirection.Value][moveFrame],
+                        Color.White * fade,
+                        0f,
+                        Vector2.Zero,
+                        setScale,
+                        flippity ? (SpriteEffects)1 : 0,
+                        drawLayer
+                    );
+
+                    if(moveFrame == 2)
+                    {
+
+                        liftOff = true;
+
+                    }
+                    else if(moveFrame == 0)
+                    {
+
+                        liftOff = false;
+
+                    }
+
+                }
+
 
             }
 
             DrawShadow(b, localPosition, drawLayer);
 
         }
-
-        public virtual Vector2 GetPosition(Vector2 localPosition, float spriteScale = -1f, bool shadow = false)
+        public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
         {
 
-            if (spriteScale == -1f)
-            {
-                spriteScale = setScale;
-
-            }
-
-            int width = idleFrames[0][0].Width;
-
-            int height = idleFrames[0][0].Height;
-
-            Vector2 spritePosition = localPosition + new Vector2(width, width * 2) - new Vector2(width / 2 * spriteScale, height * spriteScale);
-
-            if (shadow)
-            {
-
-                spritePosition.Y += 6 * spriteScale;
-
-                return spritePosition;
-
-            }
+            base.drawAboveAlwaysFrontLayer(b);
 
             if (netDashActive.Value || netSmashActive.Value)
             {
-
-                spritePosition.Y -= dashHeight;
+                if (netDashProgress.Value != 1)
+                {
+                    return;
+                }
 
             }
             else
-            if (hoverInterval > 0)
             {
 
-                spritePosition.Y -= (float)Math.Abs(hoverHeight) * hoverElevate;
+                return;
 
             }
 
-            return spritePosition;
+            if (IsInvisible || !Utility.isOnScreen(Position, 128))
+            {
+                return;
+            }
+
+            Vector2 localPosition = Game1.GlobalToLocal(Position);
+
+            Vector2 spritePosition = localPosition + new Vector2(32, 64) - (new Vector2(16, 32) * setScale);
+
+            float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
+
+            float fade = fadeOut == 0 ? 1f : fadeOut;
+
+            if (netDashActive.Value)
+            {
+
+                int dashSeries = netDirection.Value + (netDashProgress.Value * 4);
+
+                int dashSetto = Math.Min(dashFrame, (dashFrames[dashSeries].Count - 1));
+
+                b.Draw(
+                    characterTexture,
+                    spritePosition - new Vector2(0, dashHeight),
+                    dashFrames[dashSeries][dashSetto],
+                    Color.White * fade,
+                    0f,
+                    Vector2.Zero,
+                    setScale,
+                    (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    drawLayer
+                );
+
+            }
+            else if (netSmashActive.Value)
+            {
+
+                int smashSeries = netDirection.Value + (netDashProgress.Value * 4);
+
+                int smashSetto = Math.Min(dashFrame, (smashFrames[smashSeries].Count - 1));
+
+                b.Draw(
+                    characterTexture,
+                    spritePosition - new Vector2(0, dashHeight),
+                    smashFrames[smashSeries][smashSetto],
+                    Color.White * fade,
+                    0f,
+                    Vector2.Zero,
+                    setScale,
+                    (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    drawLayer
+                );
+
+            }
+
 
         }
 
-        public override void DrawShadow(SpriteBatch b, Vector2 localPosition, float drawLayer)
+
+        public override void DrawStandby(SpriteBatch b, Vector2 spritePosition, float drawLayer)
         {
 
-            int offset = hoverHeight / 2;
+            int chooseFrame = IdleFrame();
 
-            Vector2 shadowPosition = new(localPosition.X - 10 + (4 * offset), localPosition.Y + 14 + (4 * offset));
-
-            if (netDirection.Value % 2 == 1)
-            {
-                
-                shadowPosition.Y += 4;
-            
-            }
+            float fade = fadeOut == 0 ? 1f : fadeOut;
 
             b.Draw(
-                Mod.instance.iconData.cursorTexture, 
-                shadowPosition, 
-                Mod.instance.iconData.shadowRectangle, 
-                Color.White * 0.35f, 
-                0.0f, 
-                Vector2.Zero, 
-                1.75f - (offset * 0.125f), 
-                0, 
-                drawLayer - 1E-06f
+                characterTexture,
+                spritePosition,
+                idleFrames[0][chooseFrame],
+                Color.White * fade,
+                0f,
+                Vector2.Zero,
+                setScale,
+                netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                drawLayer
             );
+
+            return;
 
         }
 
         public override Rectangle GetBoundingBox()
         {
 
-            Vector2 spritePosition = GetPosition(Position);
+            if (netDirection.Value % 2 == 0)
+            {
 
-            float spriteScale = setScale;
+                return new Rectangle((int)Position.X + 8, (int)Position.Y + 8, 48, 48);
 
-            int width = idleFrames[0][0].Width;
+            }
 
-            int height = idleFrames[0][0].Height;
-
-            Rectangle box = new(
-                (int)(spritePosition.X + (spriteScale * 2)),
-                (int)(spritePosition.Y + (spriteScale * 4)),
-                (int)(spriteScale * (width - 4)),
-                (int)(spriteScale * (height - 4))
-            );
-
-            return box;
+            return new Rectangle((int)Position.X - 16, (int)Position.Y + 8, 96, 48);
 
         }
 
-        public override void update(GameTime time, GameLocation location)
+        public override bool checkAction(Farmer who, GameLocation l)
         {
-            
-            base.update(time, location);
-
-            hoverHeight++;
-
-            int heightLimit = (hoverIncrements * hoverInterval);
-
-            if (hoverHeight > heightLimit)
-            {
-                hoverHeight -= (heightLimit * 2);
-            }
-
-            if (Math.Abs(hoverHeight) % hoverInterval == 0)
-            {
-
-                hoverFrame++;
-
-                if (hoverFrame >= idleFrames.Count)
-                {
-
-                    hoverFrame = 0;
-
-                }
-
-            }
-
+            return false;
         }
 
     }

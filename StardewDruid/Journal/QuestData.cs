@@ -71,8 +71,7 @@ namespace StardewDruid.Journal
                     ReactionData.quotationMark + Mod.instance.Helper.Translation.Get("QuestData.35") +
                     Mod.instance.Helper.Translation.Get("QuestData.36") + ReactionData.quotationMark,
 
-                instruction = Mod.instance.Helper.Translation.Get("QuestData.38") +
-                Mod.instance.Config.riteButtons.ToString() + Mod.instance.Helper.Translation.Get("QuestData.39"),
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.38").Tokens(new { button = Mod.instance.Config.riteButtons.ToString() }),
 
                 explanation = Mod.instance.Helper.Translation.Get("QuestData.41") +
                     Mod.instance.Helper.Translation.Get("QuestData.42") +
@@ -119,8 +118,7 @@ namespace StardewDruid.Journal
                 description = Mod.instance.Helper.Translation.Get("QuestData.83") +
                 Mod.instance.Helper.Translation.Get("QuestData.84"),
 
-                instruction = Mod.instance.Helper.Translation.Get("QuestData.86") +
-                Mod.instance.Config.riteButtons.ToString() + Mod.instance.Helper.Translation.Get("QuestData.87"),
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.86").Tokens(new { button = Mod.instance.Config.riteButtons.ToString() }),
 
                 explanation = Mod.instance.Helper.Translation.Get("QuestData.89"),
 
@@ -223,8 +221,7 @@ namespace StardewDruid.Journal
 
                 description = Mod.instance.Helper.Translation.Get("QuestData.187"),
 
-                instruction = Mod.instance.Helper.Translation.Get("QuestData.189") +
-                Mod.instance.Config.effectsButtons.ToString() + Mod.instance.Helper.Translation.Get("QuestData.190"),
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.189").Tokens(new { button = Mod.instance.Config.effectsButtons.ToString() }),
 
                 progression = Mod.instance.Helper.Translation.Get("QuestData.192"),
 
@@ -978,14 +975,7 @@ namespace StardewDruid.Journal
                     [CharacterHandle.characters.Effigy] = new()
                     {
                         prompt = true,
-                        intro = //Mod.instance.Helper.Translation.Get("QuestData.944") +
-                        //Mod.instance.Helper.Translation.Get("QuestData.945") +
-                        //Mod.instance.Helper.Translation.Get("QuestData.946") +
-                        //Mod.instance.Helper.Translation.Get("QuestData.947") +
-                        //Mod.instance.Helper.Translation.Get("QuestData.948") +
-                        //Mod.instance.Helper.Translation.Get("QuestData.949") +
-                        //Mod.instance.Helper.Translation.Get("QuestData.950") +
-                        //Mod.instance.Helper.Translation.Get("QuestData.951") +
+                        intro = 
                         Mod.instance.Helper.Translation.Get("QuestData.952") +
                         Mod.instance.Helper.Translation.Get("QuestData.953") +
                         Mod.instance.Helper.Translation.Get("QuestData.954") +
@@ -1002,9 +992,7 @@ namespace StardewDruid.Journal
                     [CharacterHandle.characters.Effigy] = new()
                     {
                         prompt = true,
-                        intro = //Mod.instance.Helper.Translation.Get("QuestData.968") +
-                        //Mod.instance.Helper.Translation.Get("QuestData.969") +
-                        //Mod.instance.Helper.Translation.Get("QuestData.970") +
+                        intro = 
                         Mod.instance.Helper.Translation.Get("QuestData.971") +
                         Mod.instance.Helper.Translation.Get("QuestData.972") +
                         Mod.instance.Helper.Translation.Get("QuestData.973"),
@@ -2437,8 +2425,7 @@ namespace StardewDruid.Journal
 
                 instruction = Mod.instance.Helper.Translation.Get("QuestData.2401"),
 
-                explanation =
-                        Mod.instance.Helper.Translation.Get("QuestData.2404"),
+                explanation = Mod.instance.Helper.Translation.Get("QuestData.2404"),
 
 
                 reward = 10000,

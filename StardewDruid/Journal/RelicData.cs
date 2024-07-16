@@ -442,6 +442,36 @@ namespace StardewDruid.Journal
 
 
                     }
+                    else if(Game1.player.currentLocation is Town)
+                    {
+
+                        if (Vector2.Distance(Game1.player.Position, new Vector2(98, 8) * 64) <= 640)
+                        {
+
+                            Game1.warpFarmer(LocationData.druid_court_name, (int)28, (int)29, 0);
+
+                            Game1.xLocationAfterWarp = (int)28;
+
+                            Game1.yLocationAfterWarp = (int)29;
+
+                            return 1;
+
+                        }
+
+                        destination = WarpData.WarpEntrance(Game1.player.currentLocation, Game1.player.Position);
+
+                    }
+                    else if (Game1.player.currentLocation is Court)
+                    {
+
+                        destination = WarpData.WarpEntrance(Game1.getLocationFromName("Town"), new Vector2(98, 8) * 64);
+
+                        Game1.warpFarmer("Town", (int)destination.X, (int)destination.Y, 0);
+
+                        Game1.xLocationAfterWarp = (int)destination.X;
+
+                        Game1.yLocationAfterWarp = (int)destination.Y;
+                    }
                     else
                     {
                         destination = WarpData.WarpEntrance(Game1.player.currentLocation, Game1.player.Position);
@@ -1086,6 +1116,7 @@ namespace StardewDruid.Journal
                 details = new()
                 {
                     Mod.instance.Helper.Translation.Get("RelicData.154"),
+                    Mod.instance.Helper.Translation.Get("RelicData.155"),
                 },
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.156"),
             };

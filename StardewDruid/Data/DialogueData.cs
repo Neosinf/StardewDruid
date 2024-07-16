@@ -815,7 +815,7 @@ namespace StardewDruid.Data
 
                         [900] = new()
                         {
-                            [999] = Mod.instance.Helper.Translation.Get("DialogueScene.approachEffigy.900.999").Tokens(new { button = Mod.instance.Config.riteButtons.ToString() }),
+                            [999] = Mod.instance.Helper.Translation.Get("DialogueData.802").Tokens(new { button = Mod.instance.Config.riteButtons.ToString() }),
                         },
                     };
 
@@ -2355,9 +2355,7 @@ namespace StardewDruid.Data
                             responses = new()
                             {
                                 Mod.instance.Helper.Translation.Get("DialogueData.2392"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2393")+
-                                Game1.player.farmName.Value +
-                                Mod.instance.Helper.Translation.Get("DialogueData.2395")
+                                Mod.instance.Helper.Translation.Get("DialogueData.2393").Tokens(new { farm = Game1.player.farmName.Value, }),
                             },
 
                             answers = new()

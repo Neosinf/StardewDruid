@@ -108,7 +108,7 @@ namespace StardewDruid.Cast.Effect
 
             direction = Direction;
 
-            fadeRate = 0.01f;
+            fadeRate = 0.05f;
 
             location = Location;
 
@@ -148,7 +148,7 @@ namespace StardewDruid.Cast.Effect
 
                 default:
 
-                    creature = new StardewDruid.Character.Flyer(Character.CharacterHandle.characters.Shadowbat);
+                    creature = new StardewDruid.Character.Hoverer(Character.CharacterHandle.characters.Shadowbat);
 
                     break;
 
@@ -191,14 +191,20 @@ namespace StardewDruid.Cast.Effect
             if (check == "void")
             {
 
-                fadeRate = 0.05f;
+                fadeRate = 0.4f;
 
             }
             else
-            if (creature is StardewDruid.Character.Critter && check != "ground")
+            if (creature is StardewDruid.Character.Critter && check == "water")
             {
 
-                fadeRate = 0.05f;
+                fadeRate = 0.4f;
+
+            }
+            else if (creature is StardewDruid.Character.Critter && check != "ground")
+            {
+
+                fadeRate = 0.2f;
 
             }
 

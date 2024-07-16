@@ -2068,9 +2068,11 @@ namespace StardewDruid
 
             int diagonal;
 
+            int straight = 0;
+
             Vector2 difference = new(target.X - origin.X, target.Y - origin.Y);
 
-            double radian = Math.Abs(Math.Atan2(difference.Y, difference.X));
+            double radian = Math.Atan2(difference.Y, difference.X);
 
             double pie = Math.PI / 8;
 
@@ -2088,6 +2090,8 @@ namespace StardewDruid
                 else if (difference.X > 0f)
                 {
 
+                    straight = 1;
+
                     moveDirection = 1;
                     altDirection = 1;
                     diagonal = 2;
@@ -2095,6 +2099,8 @@ namespace StardewDruid
                 }
                 else
                 {
+
+                    straight = 1;
 
                     moveDirection = 3;
                     altDirection = 3;
@@ -2124,11 +2130,14 @@ namespace StardewDruid
                 }
 
             }
-            else if (difference.Y > 0f)
+            else if (radian > 0.00)
             {
+
+                straight = 1;
 
                 if (radian < pie)
                 {
+ 
                     moveDirection = 1;
                     altDirection = 1;
                     diagonal = 2;
@@ -2136,6 +2145,7 @@ namespace StardewDruid
                 }
                 else if (radian < pie * 2)
                 {
+
                     moveDirection = 1;
                     altDirection = 1;
                     diagonal = 3;
@@ -2143,6 +2153,7 @@ namespace StardewDruid
                 }
                 else if (radian < pie * 3)
                 {
+
                     moveDirection = 2;
                     altDirection = 1;
                     diagonal = 3;
@@ -2150,6 +2161,7 @@ namespace StardewDruid
                 }
                 else if (radian < pie * 4)
                 {
+
                     moveDirection = 2;
                     altDirection = 1;
                     diagonal = 4;
@@ -2157,6 +2169,7 @@ namespace StardewDruid
                 }
                 else if (radian < pie * 5)
                 {
+
                     moveDirection = 2;
                     altDirection = 3;
                     diagonal = 4;
@@ -2164,6 +2177,7 @@ namespace StardewDruid
                 }
                 else if (radian < pie * 6)
                 {
+
                     moveDirection = 2;
                     altDirection = 3;
                     diagonal = 5;
@@ -2171,6 +2185,7 @@ namespace StardewDruid
                 }
                 else if (radian < pie * 7)
                 {
+
                     moveDirection = 3;
                     altDirection = 3;
                     diagonal = 5;
@@ -2178,6 +2193,7 @@ namespace StardewDruid
                 }
                 else
                 {
+
                     moveDirection = 3;
                     altDirection = 3;
                     diagonal = 6;
@@ -2187,6 +2203,10 @@ namespace StardewDruid
             }
             else
             {
+
+                straight = 1;
+
+                radian = Math.Abs(radian);
 
                 if (radian < pie)
                 {
@@ -2214,7 +2234,7 @@ namespace StardewDruid
                 }
                 else if (radian < pie * 4)
                 {
-
+ 
                     moveDirection = 0;
                     altDirection = 1;
                     diagonal = 0;
@@ -2260,6 +2280,8 @@ namespace StardewDruid
             directions.Add(altDirection);
 
             directions.Add(diagonal);
+
+            directions.Add(straight);
 
             return directions;
 

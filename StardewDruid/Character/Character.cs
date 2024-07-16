@@ -217,7 +217,7 @@ namespace StardewDruid.Character
 
             fadeOut = 1;
 
-            moveInterval = 12;
+            moveInterval = 8;
 
             specialInterval = 30;
 
@@ -229,9 +229,9 @@ namespace StardewDruid.Character
 
             dashPeak = 128;
 
-            dashInterval = 9;
+            dashInterval = 6;
 
-            sweepInterval = 9;
+            sweepInterval = 6;
 
         }
 
@@ -812,7 +812,7 @@ namespace StardewDruid.Character
                 shadowPosition.Y += 4;
             }
 
-            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * 0.35f, 0.0f, Vector2.Zero, 1.75f - (offset*0.125f), 0, drawLayer - 1E-06f);
+            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * 0.35f, 0.0f, Vector2.Zero, (1.75f - (offset*0.125f)) * (setScale / 4f), 0, drawLayer - 1E-06f);
 
             /*b.Draw(
                 Game1.shadowTexture,
@@ -1209,7 +1209,12 @@ namespace StardewDruid.Character
 
             moveDirection = directions[0];
 
-            altDirection = directions[1];
+            if (directions[3] == 1)
+            {
+
+                altDirection = directions[1];
+
+            }
 
             netDirection.Set(moveDirection);
 
@@ -1242,7 +1247,10 @@ namespace StardewDruid.Character
 
                         if(idleTimer > 0)
                         {
-
+                            if (characterType == CharacterHandle.characters.Crow)
+                            {
+                                Mod.instance.Monitor.Log("collision", LogLevel.Debug);
+                            }
                             Vector2 offset = ModUtility.DirectionAsVector(ModUtility.DirectionToTarget(Position, Game1.player.Position)[2]) * 64;
 
                             Position = Game1.player.Position + offset;
@@ -3157,7 +3165,6 @@ namespace StardewDruid.Character
             {
 
                 // direction from target (center) to origin (occupied), will search for tiles in between
-
                 direction = ModUtility.DirectionToTarget(target, Position)[2]; // uses 64
 
             }

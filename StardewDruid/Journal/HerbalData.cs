@@ -1532,7 +1532,7 @@ namespace StardewDruid.Journal
 
                 consumeBuffer = Game1.currentGameTime.TotalGameTime.TotalSeconds + 5;
 
-                DisplayPotion hudmessage = new(Mod.instance.Helper.Translation.Get("HerbalData.1116") + herbal.title, herbal);
+                DisplayPotion hudmessage = new(Mod.instance.Helper.Translation.Get("HerbalData.1116").Tokens(new { potion = herbal.title, }), herbal);
 
                 Game1.addHUDMessage(hudmessage);
 
