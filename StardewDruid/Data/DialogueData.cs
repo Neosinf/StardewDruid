@@ -1104,7 +1104,7 @@ namespace StardewDruid.Data
 
                         [1] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.1085"), },
                         [4] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.1086"), },
-                        [7] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.1087") + Mod.instance.rite.castType.ToString(), },
+                        [7] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.1087").Tokens(new { rite = Mod.instance.save.rite.ToString() }) },
 
                         [12] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.1089"), },
                         [15] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.1090"), },
@@ -1444,7 +1444,7 @@ namespace StardewDruid.Data
                         [210] = new() { [4] = Mod.instance.Helper.Translation.Get("DialogueData.1421"), },
                         [211] = new() { [4] = Mod.instance.Helper.Translation.Get("DialogueData.1422"), },
                         [212] = new() { [5] = Mod.instance.Helper.Translation.Get("DialogueData.1423"), },
-                        [213] = new() { [5] = Mod.instance.Helper.Translation.Get("DialogueData.1424") + Game1.player.Name, },
+                        [213] = new() { [5] = Mod.instance.Helper.Translation.Get("DialogueData.1424").Tokens(new { name = Game1.player.Name }) },
                         [214] = new() { [5] = Mod.instance.Helper.Translation.Get("DialogueData.1425"), },
                         [215] = new() { [4] = Mod.instance.Helper.Translation.Get("DialogueData.1426"), },
 
