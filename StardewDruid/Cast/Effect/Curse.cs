@@ -15,6 +15,7 @@ using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Xml.Linq;
 using static StardewDruid.Cast.SpellHandle;
 using static StardewDruid.Data.IconData;
 
@@ -98,9 +99,9 @@ namespace StardewDruid.Cast.Effect
 
                     location.characters.Add(morph);
 
-                    monster.Health = 0;
+                    monster.Health = 1;
 
-                    monster.currentLocation.characters.Remove(monster);
+                    ModUtility.DamageMonsters(new() { monster, }, Game1.player, 999);
 
                     monster = morph;
 
@@ -402,8 +403,6 @@ namespace StardewDruid.Cast.Effect
 
                         PerformCritical();
 
-                        ShutDown();
-
                         return false;
 
                     }
@@ -492,6 +491,8 @@ namespace StardewDruid.Cast.Effect
 
             Mod.instance.spellRegister.Add(critical);
 
+            timer = 0;
+
         }
 
         public void PerformBarbeque()
@@ -523,8 +524,10 @@ namespace StardewDruid.Cast.Effect
             }
 
             Microsoft.Xna.Framework.Rectangle bounding = victim.GetBoundingBox();
+
+            //b.Draw(Game1.staminaRect, new Vector2(bounding.Left - (float)Game1.viewport.X, bounding.Top - (float)Game1.viewport.Y), bounding, new(254, 240, 192), 0f, Vector2.Zero, 1f, 0, 990f);
             
-            Microsoft.Xna.Framework.Vector2 drawPosition = new(bounding.Center.X - (float)Game1.viewport.X, bounding.Top - (float)Game1.viewport.Y);
+            Microsoft.Xna.Framework.Vector2 drawPosition = new(bounding.Center.X - (float)Game1.viewport.X, bounding.Top - (float)Game1.viewport.Y - 32);
             b.Draw(
             Mod.instance.iconData.displayTexture,
             drawPosition,
@@ -536,7 +539,9 @@ namespace StardewDruid.Cast.Effect
             SpriteEffects.None,
             0.9f
             );
+        
         }
+    
     }
 
 }

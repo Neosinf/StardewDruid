@@ -72,6 +72,12 @@ namespace StardewDruid.Character
 
             LoadIntervals();
 
+            moveInterval = 9;
+
+            dashInterval = 7;
+
+            sweepInterval = 7;
+
             overhead = 112;
 
             setScale = 3.75f;
@@ -345,7 +351,7 @@ namespace StardewDruid.Character
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            Vector2 spritePosition = localPosition + new Vector2(32, 64) - (new Vector2(16, 32) * setScale);
+            Vector2 spritePosition = localPosition + new Vector2(32);
 
             float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
 
@@ -374,7 +380,7 @@ namespace StardewDruid.Character
                     haltFrames[netDirection.Value][0],
                     Color.White * fade,
                     0f,
-                    Vector2.Zero,
+                    new Vector2(24),
                     setScale,
                     flippity ? (SpriteEffects)1 : 0,
                     drawLayer
@@ -390,7 +396,7 @@ namespace StardewDruid.Character
                     sweepFrames[netDirection.Value][sweepFrame],
                     Color.White * fade,
                     0f,
-                    Vector2.Zero,
+                    new Vector2(24),
                     setScale,
                     flippity ? (SpriteEffects)1 : 0,
                     drawLayer
@@ -410,7 +416,7 @@ namespace StardewDruid.Character
                     dashFrames[dashSeries][dashSetto],
                     Color.White * fade,
                     0f,
-                    Vector2.Zero,
+                    new Vector2(24),
                     setScale,
                     flippity ? (SpriteEffects)1 : 0,
                     drawLayer
@@ -430,7 +436,7 @@ namespace StardewDruid.Character
                     smashFrames[smashSeries][smashSetto],
                     Color.White * fade,
                     0f,
-                    Vector2.Zero,
+                    new Vector2(24),
                     setScale,
                     flippity ? (SpriteEffects)1 : 0,
                     drawLayer
@@ -446,7 +452,7 @@ namespace StardewDruid.Character
                     workFrames[0][specialFrame],
                     Color.White * fade,
                     0.0f,
-                    Vector2.Zero,
+                    new Vector2(24),
                     setScale,
                     flippity ? (SpriteEffects)1 : 0,
                     drawLayer
@@ -462,7 +468,7 @@ namespace StardewDruid.Character
                     specialFrames[netDirection.Value][0],
                     Color.White * fade,
                     0.0f,
-                    Vector2.Zero,
+                    new Vector2(24),
                     setScale,
                     flippity ? (SpriteEffects)1 : 0,
                     drawLayer
@@ -492,11 +498,11 @@ namespace StardewDruid.Character
 
                     b.Draw(
                         characterTexture,
-                        spritePosition,
+                        spritePosition - new Vector2(0, setScale * (liftOff ? 24f : moveFrame * 12f)),
                         walkFrames[netDirection.Value][moveFrame],
                         Color.White * fade,
                         0f,
-                        Vector2.Zero,
+                        new Vector2(24),
                         setScale,
                         flippity ? (SpriteEffects)1 : 0,
                         drawLayer
@@ -550,7 +556,7 @@ namespace StardewDruid.Character
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            Vector2 spritePosition = localPosition + new Vector2(32, 64) - (new Vector2(16, 32) * setScale);
+            Vector2 spritePosition = localPosition + new Vector2(32);
 
             float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
 
@@ -569,7 +575,7 @@ namespace StardewDruid.Character
                     dashFrames[dashSeries][dashSetto],
                     Color.White * fade,
                     0f,
-                    Vector2.Zero,
+                    new Vector2(24),
                     setScale,
                     (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                     drawLayer
@@ -589,7 +595,7 @@ namespace StardewDruid.Character
                     smashFrames[smashSeries][smashSetto],
                     Color.White * fade,
                     0f,
-                    Vector2.Zero,
+                    new Vector2(24),
                     setScale,
                     (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                     drawLayer
@@ -597,6 +603,7 @@ namespace StardewDruid.Character
 
             }
 
+            DrawShadow(b, localPosition, drawLayer);
 
         }
 
@@ -621,6 +628,20 @@ namespace StardewDruid.Character
             );
 
             return;
+
+        }
+
+        public override void DrawShadow(SpriteBatch b, Vector2 localPosition, float drawLayer)
+        {
+
+            Vector2 shadowPosition = localPosition + new Vector2(32, 56);
+
+            if (netDirection.Value % 2 == 1)
+            {
+                shadowPosition.Y += 4;
+            }
+
+            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * 0.35f, 0.0f, new Vector2(24), setScale * 0.8f, 0, drawLayer - 0.0001f);
 
         }
 

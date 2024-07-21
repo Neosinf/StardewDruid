@@ -184,6 +184,13 @@ namespace StardewDruid.Journal
 
                 Game1.activeClickableMenu.exitThisMenu(false);
 
+                Game1.playSound("shwip");
+
+            } else
+            {
+
+                Game1.playSound("bigSelect");
+
             }
 
             switch (Type)
@@ -624,46 +631,11 @@ namespace StardewDruid.Journal
 
                     break;
 
-                case journalButtons.skipQuest:
-
-                    Game1.playSound("ghost");
-
-                    Mod.instance.questHandle.CompleteQuest(journalId);
-
-                    Mod.instance.questHandle.OnCancel(journalId);
-
-                    break;
-
-                case journalButtons.replayQuest:
-
-                    if (Mod.instance.questHandle.IsReplayable(journalId))
-                    {
-
-                        Game1.playSound("yoba");
-
-                        Mod.instance.questHandle.RevisitQuest(journalId);
-
-                    }
-
-                    break;
-
-                case journalButtons.replayTomorrow:
-
-                    break;
-
-                case journalButtons.cancelReplay:
-
-                    Game1.playSound("ghost");
-
-                    Mod.instance.questHandle.OnCancel(journalId);
-
-                    Mod.instance.SyncMultiplayer();
-
-                    break;
-
                 case journalButtons.exit:
 
                     exitThisMenu();
+
+                    Game1.playSound("bigDeSelect");
 
                     break;
 
@@ -844,6 +816,8 @@ namespace StardewDruid.Journal
 
                 interfaceComponents[scrollId].position.Y = scrollBox.Bottom - 32;
 
+                Game1.playSound("shiny4");
+
                 return false;
 
             }
@@ -855,6 +829,8 @@ namespace StardewDruid.Journal
                 interfaceComponents[scrollId].setBounds();
 
                 interfaceComponents[scrollId].position.Y = scrollBox.Top + 32;
+
+                Game1.playSound("shiny4");
 
                 return false;
 
@@ -884,6 +860,8 @@ namespace StardewDruid.Journal
             scrolled = (int)((float)ratio * (float)limit);
 
             interfaceComponents[scrollId].setBounds();
+
+            Game1.playSound("shiny4");
 
         }
 
@@ -1445,6 +1423,8 @@ namespace StardewDruid.Journal
 
                 if (component.bounds.Contains(x, y))
                 {
+                    
+                    //Game1.playSound("smallSelect");
 
                     browsing = true;
 

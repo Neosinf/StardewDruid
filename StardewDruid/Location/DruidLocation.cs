@@ -77,6 +77,7 @@ namespace StardewDruid.Location
 
         public override void draw(SpriteBatch b)
         {
+            
             base.draw(b);
 
             foreach (TerrainTile tile in terrainTiles)
@@ -179,6 +180,12 @@ namespace StardewDruid.Location
             }
 
             return base.checkAction(tileLocation, viewport, who);
+
+        }
+
+        public virtual void addDialogue()
+        {
+
 
         }
 

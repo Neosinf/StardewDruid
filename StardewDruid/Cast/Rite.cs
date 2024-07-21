@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using xTile.Layers;
+using static StardewValley.Minigames.CraneGame;
 
 namespace StardewDruid.Cast
 {
@@ -708,6 +709,8 @@ namespace StardewDruid.Cast
                         knockeffect.type = SpellHandle.spells.explode;
 
                         knockeffect.added.Add(ChargeEffect(charges.fatesCharge));
+                                                
+                        knockeffect.added.Add(SpellHandle.effects.backstab);
 
                         knockeffect.monsters = checkMonsters;
 
@@ -749,6 +752,8 @@ namespace StardewDruid.Cast
 
                         knockeffect.added.Add(ChargeEffect(charges.starsCharge));
 
+                        knockeffect.added.Add(SpellHandle.effects.backstab);
+
                         knockeffect.monsters = checkMonsters;
 
                         knockeffect.display = IconData.impacts.flashbang;
@@ -776,6 +781,8 @@ namespace StardewDruid.Cast
 
                         draineffect.added.Add(ChargeEffect(charges.mistsCharge));
 
+                        draineffect.added.Add(SpellHandle.effects.backstab);
+
                         draineffect.display = IconData.impacts.mists;
 
                         draineffect.local = true;
@@ -798,6 +805,8 @@ namespace StardewDruid.Cast
                         sapeffect.type = SpellHandle.spells.effect;
 
                         sapeffect.added.Add(ChargeEffect(charges.wealdCharge));
+
+                        sapeffect.added.Add(SpellHandle.effects.backstab);
 
                         sapeffect.scheme = IconData.schemes.weald;
 
@@ -1344,6 +1353,8 @@ namespace StardewDruid.Cast
 
             }
 
+            castVector = ModUtility.PositionToTile(Game1.player.Position);
+
             if (Game1.player.currentLocation.terrainFeatures.ContainsKey(castVector))
             {
 
@@ -1384,7 +1395,12 @@ namespace StardewDruid.Cast
             // Rockfall
             //---------------------------------------------
 
-            if (Game1.player.currentLocation is MineShaft || Game1.player.currentLocation is VolcanoDungeon)
+            if (Game1.player.currentLocation is MineShaft || 
+                Game1.player.currentLocation is VolcanoDungeon ||
+                Game1.player.currentLocation is Vault ||
+                Game1.player.currentLocation is Tomb ||
+                Game1.player.currentLocation is Spring
+            )
             {
 
                 if (Mod.instance.questHandle.IsGiven(QuestHandle.wealdFive))
@@ -1456,7 +1472,7 @@ namespace StardewDruid.Cast
 
                         StardewValley.Object tileObject = Game1.player.currentLocation.objects[tileVector];
 
-                        if (tileObject.IsBreakableStone() && Mod.instance.questHandle.IsComplete(QuestHandle.wealdOne))
+                        if (tileObject.IsBreakableStone())
                         {
 
                             if (SpawnData.StoneIndex().Contains(tileObject.ParentSheetIndex))
@@ -1467,8 +1483,11 @@ namespace StardewDruid.Cast
                             }
 
                         }
-                        else if (tileObject.IsTwig() || tileObject.IsWeeds() || 
-                            tileObject.QualifiedItemId == "(O)343" || tileObject.QualifiedItemId == "(O)450" || tileObject.QualifiedItemId == "(O)590" || tileObject.QualifiedItemId == "(O)SeedSpot")
+                        else if (tileObject.IsTwig() || 
+                            tileObject.IsWeeds() || 
+                            tileObject.QualifiedItemId == "(O)169" || 
+                            tileObject.QualifiedItemId == "(O)590" || 
+                            tileObject.QualifiedItemId == "(O)SeedSpot")
                         {
 
                             clearance.CastActivate(tileVector);
@@ -1534,7 +1553,7 @@ namespace StardewDruid.Cast
             Vector2 playerTile = ModUtility.PositionToTile(Game1.player.Position);
 
             Vector2 sqtVector = new((int)(playerTile.X - (playerTile.X % 16)), (int)(playerTile.Y -(playerTile.Y % 16)));
-
+            
             if (terrainCasts[Game1.player.currentLocation.Name].ContainsKey(sqtVector))
             {
                 
@@ -2205,10 +2224,7 @@ namespace StardewDruid.Cast
                 if(
                     Game1.player.currentLocation is not MineShaft 
                     && Game1.player.currentLocation is not VolcanoDungeon 
-                    && Game1.player.currentLocation is not Vault
-                    && Game1.player.currentLocation is not Court
-                    && Game1.player.currentLocation is not Tomb
-                    && Game1.player.currentLocation is not Engineum
+                    && Game1.player.currentLocation is not DruidLocation
                 )
                 {
 

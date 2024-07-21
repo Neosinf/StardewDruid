@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StardewValley.Locations;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -179,10 +180,10 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if (Mod.instance.activeEvent.Count > 0)
+            if (Mod.instance.activeEvent.Count > 0 || location is Woods)
             {
 
-                List<StardewValley.Monsters.Monster> monsters = ModUtility.MonsterProximity(location, new() { Game1.player.Position * 64, }, 640);
+                List<StardewValley.Monsters.Monster> monsters = ModUtility.MonsterProximity(location, new() { Game1.player.Position, }, 640);
 
                 foreach (StardewValley.Monsters.Monster monster in monsters)
                 {

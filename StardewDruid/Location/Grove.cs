@@ -390,7 +390,7 @@ namespace StardewDruid.Location
 
         }
 
-        public void AddDialogueTiles()
+        public override void addDialogue()
         {
 
             if (dialogueTiles.Count > 0) { return; }

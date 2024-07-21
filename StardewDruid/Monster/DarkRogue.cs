@@ -113,6 +113,38 @@ namespace StardewDruid.Monster
 
             };
 
+            specialFrames = new Dictionary<int, List<Rectangle>>()
+            {
+                [0] = new()
+                {
+
+                    new(64, 64, 32, 32),
+                    new(96, 64, 32, 32),
+
+                },
+                [1] = new()
+                {
+
+                    new(64, 32, 32, 32),
+                    new(96, 32, 32, 32),
+
+                },
+                [2] = new()
+                {
+
+                    new(64, 0, 32, 32),
+                    new(96, 0, 32, 32),
+
+                },
+                [3] = new()
+                {
+
+                    new(64, 96, 32, 32),
+                    new(96, 96, 32, 32),
+
+                },
+
+            };
         }
 
         public virtual void DarkFlight()
@@ -377,38 +409,6 @@ namespace StardewDruid.Monster
 
             specialInterval = 30;
 
-            specialFrames = new Dictionary<int, List<Rectangle>>()
-            {
-                [0] = new()
-                {
-
-                    new(64, 64, 32, 32),
-                    new(96, 64, 32, 32),
-
-                },
-                [1] = new()
-                {
-
-                    new(64, 32, 32, 32),
-                    new(96, 32, 32, 32),
-
-                },
-                [2] = new()
-                {
-
-                    new(64, 0, 32, 32),
-                    new(96, 0, 32, 32),
-
-                },
-                [3] = new()
-                {
-
-                    new(64, 96, 32, 32),
-                    new(96, 96, 32, 32),
-
-                },
-
-            };
 
         }
 
@@ -592,9 +592,9 @@ namespace StardewDruid.Monster
                 if (meleeSet)
                 {
 
-                    weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { source = sweepFrames[netDirection.Value][sweepFrame], flipped = flippity });
+                    weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { scale = spriteScale, source = sweepFrames[netDirection.Value][sweepFrame], flipped = flippity });
 
-                    weaponRender.DrawSwipe(b, spritePosition, drawLayer, new() { source = sweepFrames[netDirection.Value][sweepFrame], flipped = flippity });
+                    weaponRender.DrawSwipe(b, spritePosition, drawLayer, new() { scale = spriteScale, source = sweepFrames[netDirection.Value][sweepFrame], flipped = flippity });
 
                 }
 
@@ -616,7 +616,7 @@ namespace StardewDruid.Monster
                 if (firearmSet)
                 {
 
-                    weaponRender.DrawFirearm(b, spritePosition, drawLayer, new() { source = specialFrames[netDirection.Value][specialFrame], flipped = flippant });
+                    weaponRender.DrawFirearm(b, spritePosition, drawLayer, new() { scale = spriteScale, source = specialFrames[netDirection.Value][specialFrame], flipped = flippant });
                 }
             }
             else if (netChannelActive.Value)
@@ -636,7 +636,7 @@ namespace StardewDruid.Monster
                 if (firearmSet)
                 {
 
-                    weaponRender.DrawFirearm(b, spritePosition, drawLayer, new() { source = channelFrames[netDirection.Value][specialFrame], flipped = flippity });
+                    weaponRender.DrawFirearm(b, spritePosition, drawLayer, new() { scale = spriteScale, source = channelFrames[netDirection.Value][specialFrame], flipped = flippity });
                 }
             }
             else if (netFlightActive.Value)
@@ -681,12 +681,12 @@ namespace StardewDruid.Monster
                 if (meleeSet)
                 {
 
-                    weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { source = smashFrames[setFlightSeries][setFlightFrame], flipped = flippity });
+                    weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { scale = spriteScale, source = smashFrames[setFlightSeries][setFlightFrame], flipped = flippity });
 
                     if (netFlightProgress.Value >= 2)
                     {
 
-                        weaponRender.DrawSwipe(b, spritePosition, drawLayer, new() { source = smashFrames[setFlightSeries][setFlightFrame], flipped = flippity });
+                        weaponRender.DrawSwipe(b, spritePosition, drawLayer, new() { scale = spriteScale, source = smashFrames[setFlightSeries][setFlightFrame], flipped = flippity });
 
                     }
 
@@ -730,7 +730,7 @@ namespace StardewDruid.Monster
                     if (meleeSet)
                     {
                         
-                        weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { source = alertFrames[netDirection.Value][0], flipped = flippant });
+                        weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { scale = spriteScale, source = alertFrames[netDirection.Value][0], flipped = flippant });
                     
                     }
 

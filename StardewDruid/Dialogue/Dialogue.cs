@@ -237,10 +237,12 @@ namespace StardewDruid.Dialogue
             if (Context.IsMultiplayer && Context.IsMainPlayer)
             {
 
+                string queryName = npc == null ? "none" : npc.Name;
+
                 QueryData queryData = new()
                 {
 
-                    name = npc.Name,
+                    name = queryName,
 
                     value = answer,
 

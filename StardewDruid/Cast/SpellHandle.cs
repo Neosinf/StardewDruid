@@ -142,6 +142,7 @@ namespace StardewDruid.Cast
             capture,
             shock,
             glare,
+            backstab,
             crate,
             teleport,
         }
@@ -170,6 +171,8 @@ namespace StardewDruid.Cast
             doorCreak,
             fireball,
             bubbles,
+            batScreech,
+            batFlap,
         }
 
         public sounds sound = sounds.none;
@@ -2089,6 +2092,12 @@ namespace StardewDruid.Cast
 
                         break;
 
+                    case effects.backstab:
+
+                        BackstabEffect();
+
+                        break;
+
                     case effects.embers:
 
                         EmberEffect(zone);
@@ -2371,6 +2380,47 @@ namespace StardewDruid.Cast
             {
 
                 curseEffect.AddTarget(location, monster, effect);
+
+            }
+
+        }
+
+        public void BackstabEffect()
+        {
+
+            if (Mod.instance.eventRegister.ContainsKey("curse"))
+            {
+
+                if (Mod.instance.eventRegister["curse"] is Cast.Effect.Curse curseEffect)
+                {
+                    
+                    List<StardewValley.Monsters.Monster> monsterTargets = new(monsters);
+
+                    if (monsterTargets.Count == 0)
+                    {
+
+                        monsterTargets = ModUtility.MonsterProximity(location, new() { impact }, radius + 32, true);
+
+                    }
+
+                    foreach (var monster in monsterTargets)
+                    {
+
+                        if (curseEffect.victims.ContainsKey(monster))
+                        {
+
+                            if(curseEffect.victims[monster].type == effects.glare)
+                            {
+
+                                curseEffect.victims[monster].PerformCritical();
+
+                            }
+                            
+                        }
+
+                    }
+
+                }
 
             }
 

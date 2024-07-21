@@ -7,6 +7,7 @@ using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Monsters;
+using StardewValley.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace StardewDruid.Cast.Effect
         public Creature()
         {
 
-            inabsentia = true;
+            activeLimit = -1;
 
         }
 
@@ -35,7 +36,7 @@ namespace StardewDruid.Cast.Effect
                 pair.Value.shutdown();
 
             }
-
+            
             base.EventRemove();
 
         }
@@ -61,7 +62,7 @@ namespace StardewDruid.Cast.Effect
 
         }
 
-        public void AddCreature(GameLocation Location, Character.CharacterHandle.characters CharacterType, Vector2 Origin, int Direction, float Scale)
+        public void AddCreature(GameLocation Location, Character.CharacterHandle.characters CharacterType, Vector2 Origin, Vector2 Target, float Scale)
         {
 
             if (creatures.ContainsKey(Origin))
@@ -71,9 +72,7 @@ namespace StardewDruid.Cast.Effect
 
             }
 
-            creatures[Origin] =  new(Location,CharacterType,Origin,Direction,eventId, Scale);
-
-            activeLimit = eventCounter += 10;
+            creatures[Origin] =  new(Location,CharacterType,Origin,Target,eventId, Scale);
 
         }
 
@@ -91,8 +90,6 @@ namespace StardewDruid.Cast.Effect
 
         public Vector2 target;
 
-        public int direction;
-
         public StardewDruid.Character.Character creature;
 
         public float fadeRate;
@@ -101,14 +98,16 @@ namespace StardewDruid.Cast.Effect
 
         public float scale;
 
-        public CreatureHandle(GameLocation Location, Character.CharacterHandle.characters CharacterType, Vector2 Origin, int Direction, string EventId, float Scale)
+        public bool drop;
+
+        public CreatureHandle(GameLocation Location, Character.CharacterHandle.characters CharacterType, Vector2 Origin, Vector2 Target, string EventId, float Scale)
         {
 
             origin = Origin;
 
-            direction = Direction;
+            target = Target;
 
-            fadeRate = 0.05f;
+            fadeRate = 0f;
 
             location = Location;
 
@@ -118,18 +117,14 @@ namespace StardewDruid.Cast.Effect
 
             scale = Scale;
 
-            direct();
+            if(Mod.instance.randomIndex.Next(3) != 0)
+            {
+
+                drop = true;
+
+            }
 
             load();
-
-        }
-
-        public void direct()
-        {
-
-            Vector2 offset = (ModUtility.DirectionAsVector(direction) * 64 * location.Map.Layers[0].TileWidth);
-
-            target = origin + offset;
 
         }
 
@@ -146,9 +141,35 @@ namespace StardewDruid.Cast.Effect
 
                     break;
 
+                case Character.CharacterHandle.characters.Crow:
+
+                    creature = new StardewDruid.Character.Flyer(characterType);
+
+                    location.playSound(SpellHandle.sounds.batFlap.ToString());
+
+                    break;
+
                 default:
 
+                    IconData.relics tacticalRelic = Mod.instance.relicsData.RelicTacticalLocations();
+
+                    if (tacticalRelic != IconData.relics.none)
+                    {
+
+                        if (!Mod.instance.save.reliquary.ContainsKey(tacticalRelic.ToString()))
+                        {
+
+                            ThrowHandle throwRelic = new(Game1.player, origin, tacticalRelic);
+
+                            throwRelic.register();
+
+                        }
+
+                    }
+
                     creature = new StardewDruid.Character.Hoverer(Character.CharacterHandle.characters.Shadowbat);
+
+                    location.playSound(SpellHandle.sounds.batFlap.ToString());
 
                     break;
 
@@ -180,42 +201,42 @@ namespace StardewDruid.Cast.Effect
             if(Vector2.Distance(creature.Position, target) <= 32)
             {
 
-                shutdown();
-
                 return false;
 
             }
 
-            string check = ModUtility.GroundCheck(creature.currentLocation, creature.occupied, true);
-
-            if (check == "void")
+            if (!drop)
             {
 
-                fadeRate = 0.4f;
+                if (Vector2.Distance(creature.Position, origin) >= 240)
+                {
+
+                    Item bushDrop = ItemRegistry.Create(SpawnData.RandomBushForage());
+
+                    if (bushDrop != null)
+                    {
+
+                        location.debris.Add(new Debris(bushDrop, creature.Position));
+
+                    }
+
+                    drop = true;
+
+                }
 
             }
-            else
-            if (creature is StardewDruid.Character.Critter && check == "water")
+
+            if (creature is StardewDruid.Character.Critter)
             {
+                
+                string check = ModUtility.GroundCheck(creature.currentLocation, creature.occupied, true);
 
-                fadeRate = 0.4f;
+                if (check != "ground")
+                {
 
-            }
-            else if (creature is StardewDruid.Character.Critter && check != "ground")
-            {
+                    creature.fadeOut -= 0.2f;
 
-                fadeRate = 0.2f;
-
-            }
-
-            creature.fadeOut -= fadeRate;
-
-            if(creature.fadeOut <= 0)
-            {
-
-                shutdown();
-
-                return false;
+                }
 
             }
 
@@ -226,7 +247,14 @@ namespace StardewDruid.Cast.Effect
         public void shutdown()
         {
 
-            creature.currentLocation.characters.Remove(creature);
+            if (creature != null)
+            {
+
+                creature.currentLocation.characters.Remove(creature);
+
+                creature = null;
+
+            }
 
         }
 

@@ -299,44 +299,69 @@ namespace StardewDruid.Render
             {
                 default:
                 case weapons.none:
+
                     melee = false;
+
                     break;
 
                 case weapons.sword:
+
                     weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponSword.png"));
+
                     swordScheme = IconData.schemes.sword_steel;
+
                     melee = true;
+
                     break;
 
                 case weapons.cutlass:
+
                     weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponCutlass.png"));
+
                     melee = true;
+
                     break;
 
                 case weapons.axe:
+
                     weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponAxe.png"));
+
                     melee = true;
+
                     break;
 
                 case weapons.estoc:
+
                     weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponEstoc.png"));
+
                     melee = true;
+
                     break;
 
                 case weapons.carnyx:
+
                     weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponCarnyx.png"));
+
                     melee = true;
+
                     break;
 
                 case weapons.scythe:
+
                     weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponScythe.png"));
+
                     melee = true;
+
                     break;
 
                 case weapons.bazooka:
+
                     firearmTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "FirearmBazooka.png"));
+
                     firearm = true;
+
                     firearmFrames = GetFirearmFrames();
+
                     break;
 
             }
@@ -366,9 +391,9 @@ namespace StardewDruid.Render
                  Color.White,
                  0f,
                  Vector2.Zero,
-                additional.scale,
-                additional.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                drawLayer + weaponOffsets[additional.source.Y][additional.source.X == 0 ? 0 : additional.source.X / 32]
+                 additional.scale,
+                 additional.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                 drawLayer + weaponOffsets[additional.source.Y][additional.source.X == 0 ? 0 : additional.source.X / 32]
             );
 
         }

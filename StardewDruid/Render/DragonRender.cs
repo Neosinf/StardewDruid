@@ -940,7 +940,7 @@ namespace StardewDruid.Render
         public virtual void drawWalk(SpriteBatch b, Vector2 localPosition, DragonAdditional additional)
         {
 
-            Vector2 spritePosition = new Vector2(localPosition.X + 32 - 32 * additional.scale, localPosition.Y + 64 - 64 * additional.scale);
+            Vector2 spritePosition = new Vector2(localPosition.X + 32 - (32 * additional.scale), localPosition.Y + 64 - (64 * additional.scale));
 
             Vector2 spriteShadow = new Vector2(localPosition.X + 32 - 32 * additional.scale, localPosition.Y + 64 - 56 * additional.scale);
 

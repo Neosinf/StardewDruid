@@ -349,34 +349,6 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawShadow(SpriteBatch b, Vector2 localPosition, float drawLayer)
-        {
-
-            int offset = hoverHeight;
-
-            Vector2 shadowPosition = new(localPosition.X - 10 + (offset), localPosition.Y + 14 + (offset));
-
-            if (netDirection.Value % 2 == 1)
-            {
-                
-                shadowPosition.Y += 4;
-            
-            }
-
-            b.Draw(
-                Mod.instance.iconData.cursorTexture, 
-                shadowPosition, 
-                Mod.instance.iconData.shadowRectangle, 
-                Color.White * 0.35f, 
-                0.0f, 
-                Vector2.Zero, 
-                (1.75f - (offset * 0.025f)) * (setScale / 4f), 
-                0, 
-                drawLayer - 1E-06f
-            );
-
-        }
-
         public override Rectangle GetBoundingBox()
         {
 

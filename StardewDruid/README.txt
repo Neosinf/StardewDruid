@@ -114,9 +114,9 @@ Rite of the Stars:
 Rite of the Fates:
 13. Companion Quest (Jester)
 14. Weapon Quest
-15. Lessons (Whisk, Curses, Tricks, Enchant)
+15. Lessons (Whisk, Curses, Tricks)
 16. Companion Quest (Jester part 2)
-17. Lessons (part 2)
+17. Lessons (Enchant)
 18. Challenge Quest
 
 Rite of Ether:

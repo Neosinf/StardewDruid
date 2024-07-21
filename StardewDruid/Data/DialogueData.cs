@@ -852,17 +852,19 @@ namespace StardewDruid.Data
                     sceneDialogue = new()
                     {
 
-                        [22] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.835"), },
-                        [25] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.836"), },
-                        [28] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.837"), },
-                        [31] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.838"), },
-                        [34] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.839"), },
-                        [37] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.840"), },
-                        [40] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.841"), },
-                        [43] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.842"), },
-                        [51] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.843"), },
-                        [54] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.844"), },
-                        [57] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.845"), },
+                        [2] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.835"), },
+                        [5] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.836"), },
+                        [8] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.837"), },
+                        [11] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.838"), },
+                        [14] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.839"), },
+                        [17] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.840"), },
+                        [20] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.841"), },
+                        [23] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.842"), },
+
+                        [41] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.843"), },
+                        [44] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.844"), },
+                        [47] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.845"), },
+
                         [60] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.846"), },
                         [63] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.847"), },
                         [69] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.848"), },

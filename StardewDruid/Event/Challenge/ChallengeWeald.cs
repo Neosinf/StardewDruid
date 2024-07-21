@@ -13,15 +13,22 @@ using xTile.Layers;
 using xTile.Tiles;
 using System;
 using StardewDruid.Dialogue;
-using System.Xml.Linq;
-using StardewValley.Monsters;
-using static StardewDruid.Data.IconData;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace StardewDruid.Event.Challenge
 {
     public class ChallengeWeald : EventHandle
     {
+
+        public List<Vector2> trashVectors = new()
+        {
+            new Vector2(16,19)*64,
+            new Vector2(17,13)*64,
+            new Vector2(21,10)*64,
+            new Vector2(34,11)*64,
+            new Vector2(37,15)*64,
+            new Vector2(37,20)*64,
+
+        };
 
         public ChallengeWeald()
         {
@@ -46,15 +53,7 @@ namespace StardewDruid.Event.Challenge
 
             TemporaryAnimatedSprite newAnimation;
 
-            List<Vector2> trashVectors = new()
-            {
-                new(origin.X+64,origin.Y-256),
-                new(origin.X+128,origin.Y+256),
-                new(origin.X+320,origin.Y-64),
-
-            };
-
-            if(animations.Count == 0)
+            if (animations.Count == 0)
             {
 
                 foreach (Vector2 trashVector in trashVectors)
@@ -73,7 +72,7 @@ namespace StardewDruid.Event.Challenge
                     {
                         interval = 99999f,
                         totalNumberOfLoops = 99999,
-                        scale = 3f,
+                        scale = 4f,
                     };
 
                     location.temporarySprites.Add(newAnimation);
@@ -86,7 +85,7 @@ namespace StardewDruid.Event.Challenge
             else
             {
 
-                foreach(TemporaryAnimatedSprite trashAnimation in animations)
+                foreach (TemporaryAnimatedSprite trashAnimation in animations)
                 {
 
                     trashAnimation.reset();
@@ -97,14 +96,14 @@ namespace StardewDruid.Event.Challenge
 
             foreach (Vector2 trashVector in trashVectors)
             {
-                
+
                 newAnimation = new(
                     "LooseSprites\\Cursors",
                     new Microsoft.Xna.Framework.Rectangle(372, 1956, 10, 10),
                     trashVector,
                     flipped: false,
-                    0.002f,
-                    Color.Green
+                    0.001f,
+                    Color.Teal
                 )
                 {
                     alpha = 0.75f,
@@ -112,7 +111,7 @@ namespace StardewDruid.Event.Challenge
                     //acceleration = new Vector2(0.002f, 0f),
                     interval = 9999f,
                     layerDepth = 0.001f,
-                    scale = 2f,
+                    scale = 2.75f,
                     scaleChange = 0.02f,
                     rotationChange = Game1.random.Next(-5, 6) * MathF.PI / 256f,
                 };
@@ -166,7 +165,7 @@ namespace StardewDruid.Event.Challenge
 
             SetTrack("tribal");
 
-            EventRender ritePortal = new(eventId, location.Name, origin, IconData.skies.mountain);
+            EventRender ritePortal = new(eventId, location.Name, origin, IconData.skies.mountain,5f);
 
             eventRenders.Add(ritePortal);
 
@@ -188,74 +187,41 @@ namespace StardewDruid.Event.Challenge
 
             activeCounter++;
 
-            RemoveLadders();
-
-            monsterHandle.SpawnCheck();
-
-            monsterHandle.SpawnInterval();
-
             TrashAnimation();
 
-            if (activeCounter % 2 == 0 && Vector2.Distance(Game1.player.Position,origin) <= 320)
+            if (activeCounter % 3 == 0 && Vector2.Distance(Game1.player.Position, origin) <= 320)
             {
 
                 ThrowTrash();
 
             }
+            
+            if (activeCounter % 2 == 0)
+            {
+                
+                Mod.instance.iconData.ImpactIndicator(location, origin, IconData.impacts.nature, 6f, new() { alpha = 0.3f, });
+            
+            }
 
-            Mod.instance.iconData.ImpactIndicator(location, origin, IconData.impacts.nature, 5f, new());
-
-            if(activeCounter % 20 == 0)
+            if (activeCounter % 20 == 0)
             {
 
                 DialogueCue(900);
 
             }
 
-            if (activeCounter == 20)
+            if (activeCounter >= 12)
             {
 
-                bosses[0] = new Batwing(new Vector2(30, 11),Mod.instance.CombatDifficulty());
+                monsterHandle.SpawnCheck();
 
-                bosses[0].SetMode(3);
-
-                bosses[0].netPosturing.Set(true);
-
-                bosses[0].netDirection.Set(2);
-
-                bosses[0].netAlternative.Set(3);
-
-                bosses[0].netScheme.Set(1);
-
-                bosses[0].tempermentActive = Boss.temperment.cautious;
-
-                location.characters.Add(bosses[0]);
-
-                bosses[0].update(Game1.currentGameTime, location);
-
-                voices[0] = bosses[0];
-
-            }
-
-            if (activeCounter <= 20)
-            {
-                return;
-            }
-
-            if(activeCounter == 45)
-            {
-
-                bosses[0].netPosturing.Set(false);
-
-                BossBar(0, 0);
+                monsterHandle.SpawnInterval();
 
             }
 
             if (bosses.Count > 0)
             {
-
-                DialogueCue(activeCounter);
-
+                
                 if (!ModUtility.MonsterVitals(bosses[0], location))
                 {
 
@@ -264,47 +230,79 @@ namespace StardewDruid.Event.Challenge
                     bosses.Clear();
 
                 }
-                else if (activeCounter == 72)
-                {
-                    
-                    bosses[0].Halt();
-
-                    SpellHandle rockSpell = new(Game1.player, bosses[0].Position, 320, 999);
-
-                    rockSpell.display = IconData.impacts.impact;
-
-                    rockSpell.type = SpellHandle.spells.orbital;
-
-                    rockSpell.projectile = 5;
-
-                    rockSpell.scheme = IconData.schemes.rock;
-
-                    rockSpell.sound = SpellHandle.sounds.explosion;
-
-                    rockSpell.missile = missiles.rockfall;
-
-                    rockSpell.terrain = 3;
-
-                    rockSpell.added = new() { SpellHandle.effects.stone, };
-
-                    Mod.instance.spellRegister.Add(rockSpell);
-
-                }
-                else if(activeCounter == 74)
-                {
-
-                    bosses[0].currentLocation.characters.Remove(bosses[0]);
-
-                    bosses.Clear();
-
-                }
+                
+                DialogueCue(activeCounter);
 
             }
 
-            if(activeCounter == 75)
+            switch (activeCounter)
             {
 
-                eventComplete = true;
+                case 1:
+
+                    bosses[0] = new Batwing(new Vector2(27, 11), Mod.instance.CombatDifficulty());
+
+                    bosses[0].SetMode(3);
+
+                    bosses[0].netPosturing.Set(true);
+
+                    bosses[0].netDirection.Set(2);
+
+                    bosses[0].netAlternative.Set(3);
+
+                    bosses[0].netScheme.Set(1);
+
+                    bosses[0].tempermentActive = Boss.temperment.cautious;
+
+                    location.characters.Add(bosses[0]);
+
+                    bosses[0].update(Game1.currentGameTime, location);
+
+                    voices[0] = bosses[0];
+
+                    break;
+
+                case 24:
+                    bosses[0].netPosturing.Set(false);
+
+                    BossBar(0, 0);
+
+                    break;
+
+                case 73:
+
+                    if (bosses.Count > 0)
+                    {
+                        bosses[0].Halt();
+
+                        SpellHandle rockSpell = new(Game1.player, bosses[0].Position, 384, 9999);
+
+                        rockSpell.display = IconData.impacts.impact;
+
+                        rockSpell.type = SpellHandle.spells.orbital;
+
+                        rockSpell.projectile = 5;
+
+                        rockSpell.scheme = IconData.schemes.rock;
+
+                        rockSpell.sound = SpellHandle.sounds.explosion;
+
+                        rockSpell.missile = IconData.missiles.rockfall;
+
+                        rockSpell.terrain = 3;
+
+                        rockSpell.added = new() { SpellHandle.effects.stone, };
+
+                        Mod.instance.spellRegister.Add(rockSpell);
+                    }
+
+                    break;
+
+                case 75:
+
+                    eventComplete = true;
+
+                    break;
 
             }
 
@@ -313,9 +311,7 @@ namespace StardewDruid.Event.Challenge
         public void ThrowTrash()
         {
 
-            List<Vector2> castSelection = ModUtility.GetTilesWithinRadius(location, ModUtility.PositionToTile(origin), 2 + Mod.instance.randomIndex.Next(3), true, Mod.instance.randomIndex.Next(5));
-
-            Vector2 splash = castSelection[Mod.instance.randomIndex.Next(castSelection.Count)] *64;
+            Vector2 splash = trashVectors[Mod.instance.randomIndex.Next(trashVectors.Count)];
 
             ThrowHandle throwObject;
 

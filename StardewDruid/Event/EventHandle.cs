@@ -112,8 +112,6 @@ namespace StardewDruid.Event
 
         public bool soundTrack;
 
-        public List<Vector2> ladders = new();
-
         // ------------------------------------
 
         public EventHandle()
@@ -542,8 +540,6 @@ namespace StardewDruid.Event
 
             RemoveAnimations();
 
-            ReturnLadders();
-
             RemoveClicks();
 
             StopTrack();
@@ -750,36 +746,6 @@ namespace StardewDruid.Event
 
             voices[id] = actor;
 
-        }
-
-        public void RemoveLadders()
-        {
-            Layer layer = location.map.GetLayer("Buildings");
-
-            for (int index1 = 0; index1 < layer.LayerHeight; ++index1)
-            {
-                
-                for (int index2 = 0; index2 < layer.LayerWidth; ++index2)
-                {
-                    
-                    if (layer.Tiles[index2, index1] != null && layer.Tiles[index2, index1].TileIndex == 173)
-                    {
-                        
-                        layer.Tiles[index2, index1] = null;
-                        
-                        Game1.player.TemporaryPassableTiles.Clear();
-                        
-                        if (ladders.Count == 0)
-                        {
-                            ladders.Add(new Vector2(index2, index1));
-                        }
-
-                    }
-                
-                }
-            
-            }
-        
         }
 
         public virtual void EventScene(int index)
@@ -1322,32 +1288,6 @@ namespace StardewDruid.Event
                 }
 
                 animations.Clear();
-
-            }
-
-        }
-
-        public virtual void ReturnLadders()
-        {
-
-            if (ladders.Count > 0)
-            {
-                Layer layer = location.map.GetLayer("Buildings");
-
-                int x = (int)ladders.First().X;
-
-                int y = (int)ladders.First().Y;
-
-                if (layer.Tiles[x, y] == null)
-                {
-
-                    layer.Tiles[x, y] = new StaticTile(layer, location.map.TileSheets[0], 0, 173);
-
-                    Game1.player.TemporaryPassableTiles.Add(new Microsoft.Xna.Framework.Rectangle(x * 64, y * 64, 64, 64));
-
-                    Mod.instance.CastDisplay(DialogueData.Strings(DialogueData.stringkeys.ladderAppeared));
-
-                }
 
             }
 

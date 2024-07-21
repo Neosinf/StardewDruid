@@ -215,9 +215,11 @@ namespace StardewDruid.Character
 
             gait = 1.6f;
 
+            setScale = 4f;
+
             fadeOut = 1;
 
-            moveInterval = 8;
+            moveInterval = 12;
 
             specialInterval = 30;
 
@@ -229,9 +231,9 @@ namespace StardewDruid.Character
 
             dashPeak = 128;
 
-            dashInterval = 6;
+            dashInterval = 9;
 
-            sweepInterval = 6;
+            sweepInterval = 9;
 
         }
 
@@ -803,16 +805,16 @@ namespace StardewDruid.Character
         public virtual void DrawShadow(SpriteBatch b, Vector2 localPosition, float drawLayer)
         {
 
-            int offset = moveFrame % (walkFrames.Count / 2);
+            Vector2 shadowPosition = localPosition + new Vector2(32, 56);
 
-            Vector2 shadowPosition = new(localPosition.X-10+(4*offset), localPosition.Y + 14 + (4 * offset));
+            float offset = 2f + (Math.Abs(0 - (walkFrames[0].Count() / 2) + moveFrame) * 0.1f);
 
             if(netDirection.Value % 2 == 1)
             {
                 shadowPosition.Y += 4;
             }
 
-            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * 0.35f, 0.0f, Vector2.Zero, (1.75f - (offset*0.125f)) * (setScale / 4f), 0, drawLayer - 1E-06f);
+            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * 0.35f, 0.0f, new Vector2(24), setScale/ offset, 0, drawLayer - 0.0001f);
 
             /*b.Draw(
                 Game1.shadowTexture,
@@ -909,7 +911,7 @@ namespace StardewDruid.Character
             
             }
 
-            if (l.Name != currentLocation.Name)
+            /*if (l.Name != currentLocation.Name)
             {
 
                 if (!Context.IsMainPlayer)
@@ -927,7 +929,7 @@ namespace StardewDruid.Character
 
                 return false;
 
-            }
+            }*/
 
             foreach (NPC character in currentLocation.characters)
             {
@@ -1020,10 +1022,28 @@ namespace StardewDruid.Character
 
         public override void Halt()
         {
+            
+            if (!Context.IsMainPlayer)
+            {
+
+                QueryData queryData = new()
+                {
+
+                    name = characterType.ToString(),
+                    
+                };
+
+                Mod.instance.EventQuery(queryData, QueryData.queries.HaltCharacter);
+
+                return;
+
+            }
+
+            StopMoving();
 
             netHaltActive.Set(true);
 
-            TargetIdle();
+            idleTimer = 180;
 
         }
 
@@ -1247,10 +1267,7 @@ namespace StardewDruid.Character
 
                         if(idleTimer > 0)
                         {
-                            if (characterType == CharacterHandle.characters.Crow)
-                            {
-                                Mod.instance.Monitor.Log("collision", LogLevel.Debug);
-                            }
+
                             Vector2 offset = ModUtility.DirectionAsVector(ModUtility.DirectionToTarget(Position, Game1.player.Position)[2]) * 64;
 
                             Position = Game1.player.Position + offset;
@@ -1327,7 +1344,7 @@ namespace StardewDruid.Character
         public override void update(GameTime time, GameLocation location)
         {
 
-            if (location.Name != currentLocation.Name)
+            /*if (location.Name != currentLocation.Name)
             {
 
                 if (!Context.IsMainPlayer)
@@ -1345,7 +1362,7 @@ namespace StardewDruid.Character
 
                 return;
 
-            }
+            }*/
 
             normalUpdate(time, location);
 

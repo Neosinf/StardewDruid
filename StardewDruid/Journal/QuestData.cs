@@ -437,13 +437,13 @@ namespace StardewDruid.Journal
 
                 trigger = true,
 
-                triggerLocation = triggerLocales.UndergroundMine20.ToString(),
+                triggerLocation = LocationData.druid_spring_name,
 
                 triggerTime = 0,
 
                 triggerRite = Rite.rites.weald,
 
-                origin = new Vector2(25f, 13f) * 64,
+                origin = new Vector2(26f, 17f) * 64,
 
                 // -----------------------------------------------
 
@@ -477,7 +477,6 @@ namespace StardewDruid.Journal
                         intro = Mod.instance.Helper.Translation.Get("QuestData.443") +
                         Mod.instance.Helper.Translation.Get("QuestData.444") +
                         Mod.instance.Helper.Translation.Get("QuestData.445"),
-
                     }
                 },
 
@@ -503,12 +502,12 @@ namespace StardewDruid.Journal
             quests.Add(challengeWeald.name, challengeWeald);
 
             // =====================================================
-            // RELICS QUESTS
+            // RELIC BOILER
 
-            Quest relicWeald = new()
+            Quest relicTactical = new()
             {
 
-                name = QuestHandle.relicWeald,
+                name = QuestHandle.relicTactical,
 
                 type = Quest.questTypes.relics,
 
@@ -526,24 +525,27 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.weald,
 
-                origin = new Vector2(14, 22) * 64,
+                origin = new Vector2(63, 16) * 64,
 
                 // -----------------------------------------------
 
-                title = Mod.instance.Helper.Translation.Get("QuestData.499"),
+                title = Mod.instance.Helper.Translation.Get("QuestData.310.1"),
 
-                description = Mod.instance.Helper.Translation.Get("QuestData.501") +
-                Mod.instance.Helper.Translation.Get("QuestData.502") +
-                Mod.instance.Helper.Translation.Get("QuestData.503"),
+                description = Mod.instance.Helper.Translation.Get("QuestData.310.2") +
+                Mod.instance.Helper.Translation.Get("QuestData.310.3") +
+                Mod.instance.Helper.Translation.Get("QuestData.310.4"),
 
-                instruction = Mod.instance.Helper.Translation.Get("QuestData.505"),
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.310.5"),
 
-                explanation = Mod.instance.Helper.Translation.Get("QuestData.507") +
-                Mod.instance.Helper.Translation.Get("QuestData.508"),
+                explanation = Mod.instance.Helper.Translation.Get("QuestData.310.6") +
+                Mod.instance.Helper.Translation.Get("QuestData.310.7") +
+                Mod.instance.Helper.Translation.Get("QuestData.310.8") +
+                Mod.instance.Helper.Translation.Get("QuestData.310.9") +
+                Mod.instance.Helper.Translation.Get("QuestData.310.10"),
 
             };
 
-            quests.Add(relicWeald.name, relicWeald);
+            quests.Add(relicTactical.name, relicTactical);
 
             // =====================================================
             // SWORD MISTS
@@ -761,46 +763,6 @@ namespace StardewDruid.Journal
 
             // -----------------------------------------------------
 
-            Quest relicMists = new()
-            {
-
-                name = QuestHandle.relicMists,
-
-                type = Quest.questTypes.relics,
-
-                icon = IconData.displays.mists,
-
-                // -----------------------------------------------
-
-                give = Quest.questGivers.none,
-
-                trigger = true,
-
-                triggerLocation = triggerLocales.CommunityCenter.ToString(),
-
-                triggerTime = 0,
-
-                triggerRite = Rite.rites.mists,
-
-                origin = new Vector2(40, 9) * 64,
-
-                // -----------------------------------------------
-
-                title = Mod.instance.Helper.Translation.Get("QuestData.755"),
-
-                description = Mod.instance.Helper.Translation.Get("QuestData.757") +
-                Mod.instance.Helper.Translation.Get("QuestData.758"),
-
-                instruction = Mod.instance.Helper.Translation.Get("QuestData.760"),
-
-                explanation = Mod.instance.Helper.Translation.Get("QuestData.762"),
-
-            };
-
-            quests.Add(relicMists.name, relicMists);
-
-            // -----------------------------------------------------
-
             Quest mistsFour = new()
             {
 
@@ -839,6 +801,47 @@ namespace StardewDruid.Journal
             };
 
             quests.Add(mistsFour.name, mistsFour);
+
+            // =====================================================
+            // RELIC FISHTANK
+
+            Quest relicMists = new()
+            {
+
+                name = QuestHandle.relicMists,
+
+                type = Quest.questTypes.relics,
+
+                icon = IconData.displays.mists,
+
+                // -----------------------------------------------
+
+                give = Quest.questGivers.none,
+
+                trigger = true,
+
+                triggerLocation = triggerLocales.CommunityCenter.ToString(),
+
+                triggerTime = 0,
+
+                triggerRite = Rite.rites.mists,
+
+                origin = new Vector2(40, 9) * 64,
+
+                // -----------------------------------------------
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.755"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.757") +
+                Mod.instance.Helper.Translation.Get("QuestData.758"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.760"),
+
+                explanation = Mod.instance.Helper.Translation.Get("QuestData.762"),
+
+            };
+
+            quests.Add(relicMists.name, relicMists);
 
 
             // =====================================================
@@ -1003,6 +1006,48 @@ namespace StardewDruid.Journal
 
             quests.Add(challengeMists.name, challengeMists);
 
+            // =====================================================
+            // RELIC WEALD
+
+            Quest relicWeald = new()
+            {
+
+                name = QuestHandle.relicWeald,
+
+                type = Quest.questTypes.relics,
+
+                icon = IconData.displays.weald,
+
+                // -----------------------------------------------
+
+                give = Quest.questGivers.none,
+
+                trigger = true,
+
+                triggerLocation = triggerLocales.CommunityCenter.ToString(),
+
+                triggerTime = 0,
+
+                triggerRite = Rite.rites.weald,
+
+                origin = new Vector2(14, 22) * 64,
+
+                // -----------------------------------------------
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.499"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.501") +
+                Mod.instance.Helper.Translation.Get("QuestData.502") +
+                Mod.instance.Helper.Translation.Get("QuestData.503"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.505"),
+
+                explanation = Mod.instance.Helper.Translation.Get("QuestData.507") +
+                Mod.instance.Helper.Translation.Get("QuestData.508"),
+
+            };
+
+            quests.Add(relicWeald.name, relicWeald);
 
             // =====================================================
             // SWORD STARS
@@ -2049,8 +2094,7 @@ namespace StardewDruid.Journal
             quests.Add(swordEther.name, swordEther);
 
             // =====================================================
-            // ETHER LESSONS
-
+            // RELIC BULLETIN
 
             Quest relicFates = new()
             {
@@ -2089,6 +2133,9 @@ namespace StardewDruid.Journal
 
             quests.Add(relicFates.name, relicFates);
 
+
+            // =====================================================
+            // ETHER LESSONS
 
             Quest etherOne = new()
             {
@@ -2355,6 +2402,9 @@ namespace StardewDruid.Journal
             };
 
             quests.Add(etherFour.name, etherFour);
+
+            // =====================================================
+            // RELIC PANTRY
 
             Quest relicEther = new()
             {

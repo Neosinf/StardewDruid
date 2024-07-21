@@ -460,15 +460,23 @@ namespace StardewDruid.Location
 
         }
 
-        public void AddDialogueTiles()
+        public override void addDialogue()
         {
             if (dialogueTiles.Count > 0) { return; }
+
+            dialogueTiles.Add(new(41, 19), CharacterHandle.characters.waves);
+
+            dialogueTiles.Add(new(41, 20), CharacterHandle.characters.waves);
 
             dialogueTiles.Add(new(41, 21), CharacterHandle.characters.waves);
 
             dialogueTiles.Add(new(41, 22), CharacterHandle.characters.waves);
 
             dialogueTiles.Add(new(41, 23), CharacterHandle.characters.waves);
+
+            dialogueTiles.Add(new(42, 19), CharacterHandle.characters.waves);
+
+            dialogueTiles.Add(new(42, 20), CharacterHandle.characters.waves);
 
             dialogueTiles.Add(new(42, 21), CharacterHandle.characters.waves);
 

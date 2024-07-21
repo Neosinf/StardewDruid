@@ -774,13 +774,28 @@ namespace StardewDruid
 
         public static bool WaterCheck(GameLocation targetLocation, Vector2 targetVector, int radius = 4)
         {
-            bool check = true;
+
+            bool check = false;
 
             Layer backLayer = targetLocation.Map.GetLayer("Back");
 
-            Tile backTile;
+            Tile backTile = backLayer.Tiles[(int)targetVector.X, (int)targetVector.Y];
 
-            for (int i = 0; i < radius; i++)
+            if (backTile == null)
+            {
+
+                return false;
+
+            }
+
+            if (backTile.TileIndexProperties.TryGetValue("Water", out _))
+            {
+
+                check = true;
+
+            }
+
+            for (int i = 1; i < radius; i++)
             {
 
                 List<Vector2> neighbours = GetTilesWithinRadius(targetLocation, targetVector, i);
@@ -3271,7 +3286,7 @@ namespace StardewDruid
 
             if (targetMonster.Health <= 0)
             {
-
+                
                 Farmer who = targetPlayer;
 
                 StardewValley.Monsters.Monster monster = targetMonster;
@@ -3513,7 +3528,7 @@ namespace StardewDruid
                             if (powerLevel >= 2)
                             {
 
-                                targetLocation.OnStoneDestroyed(@targetObject.ParentSheetIndex.ToString(), (int)tileVector.X, (int)tileVector.Y, targetPlayer);
+                                targetLocation.OnStoneDestroyed(@targetObject.QualifiedItemId.Replace("(O)",""), (int)tileVector.X, (int)tileVector.Y, targetPlayer);
 
                                 targetLocation.objects.Remove(tileVector);
 
@@ -3522,7 +3537,7 @@ namespace StardewDruid
                             }
 
                         }
-                        else if (targetObject.IsTwig())
+                        else if (targetObject.IsTwig() || targetObject.QualifiedItemId == "(O)169")
                         {
 
                             targetObject.onExplosion(targetPlayer);

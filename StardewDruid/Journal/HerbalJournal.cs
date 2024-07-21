@@ -266,12 +266,12 @@ namespace StardewDruid.Journal
         public override void pressCancel()
         {
 
-            if (Game1.player.health == Game1.player.maxHealth & Game1.player.Stamina == Game1.player.MaxStamina)
+            /*if (Game1.player.health == Game1.player.maxHealth & Game1.player.Stamina == Game1.player.MaxStamina)
             {
 
                 return;
 
-            }
+            }*/
 
             string herbalId = contentComponents[focus].id;
 

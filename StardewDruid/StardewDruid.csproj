@@ -439,6 +439,9 @@
     <None Update="Sheets\Gate.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Sheets\Spring.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Sheets\Tomb.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

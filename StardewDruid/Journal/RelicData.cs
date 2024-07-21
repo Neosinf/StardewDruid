@@ -36,12 +36,14 @@ namespace StardewDruid.Journal
             none,
             companion,
             wayfinder,
+            other,
             herbalism,
+            tactical,
             runestones,
             avalant,
             books,
             boxes,
-            other,
+
         }
 
         public Dictionary<relicsets, List<IconData.relics>> lines = new()
@@ -54,12 +56,17 @@ namespace StardewDruid.Journal
                 IconData.relics.stardew_druid,
             },
             [relicsets.wayfinder] = new() {
+                IconData.relics.wayfinder_pot,
                 IconData.relics.wayfinder_censer,
                 IconData.relics.wayfinder_lantern,
                 IconData.relics.wayfinder_water,
-                IconData.relics.wayfinder_eye,
                 IconData.relics.wayfinder_ceremonial,
                 IconData.relics.wayfinder_dwarf,
+            },
+            [relicsets.other] = new() {
+                IconData.relics.crow_hammer,
+                IconData.relics.wayfinder_key,
+                IconData.relics.wayfinder_eye,
             },
             [relicsets.herbalism] = new() {
                 IconData.relics.herbalism_mortar,
@@ -67,6 +74,13 @@ namespace StardewDruid.Journal
                 IconData.relics.herbalism_still,
                 IconData.relics.herbalism_crucible,
                 IconData.relics.herbalism_gauge,
+            },
+            [relicsets.tactical] = new() {
+                IconData.relics.tactical_discombobulator,
+                IconData.relics.tactical_mask,
+                IconData.relics.tactical_cell,
+                IconData.relics.tactical_lunchbox,
+                IconData.relics.tactical_peppermint,
             },
             [relicsets.runestones] = new() {
                 IconData.relics.runestones_spring,
@@ -94,14 +108,13 @@ namespace StardewDruid.Journal
                 IconData.relics.box_artisan,
                 IconData.relics.box_chaos,
             },
-            [relicsets.other] = new() {
-                IconData.relics.crow_hammer,
-            },
+
         };
 
 
         public Dictionary<relicsets, string> quests = new()
         {
+            [relicsets.tactical] = QuestHandle.relicTactical,
             [relicsets.runestones] = QuestHandle.relicWeald,
             [relicsets.avalant] = QuestHandle.relicMists,
             [relicsets.books] = QuestHandle.relicEther,
@@ -181,6 +194,7 @@ namespace StardewDruid.Journal
 
                         switch (set)
                         {
+                            case relicsets.tactical:
                             case relicsets.runestones:
                             case relicsets.avalant:
                             case relicsets.books:
@@ -378,6 +392,25 @@ namespace StardewDruid.Journal
                             return 1;
 
                         }
+
+                    }
+
+                    break;
+
+                case IconData.relics.wayfinder_pot:
+
+                    if (Game1.player.currentLocation.Name == "UndergroundMine20")
+                    {
+
+                        Event.Access.AccessHandle lanternAccess = new();
+
+                        lanternAccess.AccessSetup("UndergroundMine20", Location.LocationData.druid_spring_name, new(24, 13), new(27, 31));
+
+                        lanternAccess.AccessCheck(Game1.player.currentLocation);
+
+                        Mod.instance.CastDisplay(Mod.instance.Helper.Translation.Get("RelicData.309.8"));
+
+                        return 1;
 
                     }
 
@@ -655,6 +688,23 @@ namespace StardewDruid.Journal
 
                     break;
 
+                case IconData.relics.wayfinder_pot:
+
+                    if (Game1.player.currentLocation.Name == "UndergroundMine20")
+                    {
+
+                        access = new();
+
+                        access.AccessSetup("UndergroundMine20", Location.LocationData.druid_spring_name, new(24, 13), new(27, 31));
+
+                        access.AccessCheck(Game1.player.currentLocation, true);
+
+                        return 1;
+
+                    }
+
+                    break;
+
                 case IconData.relics.wayfinder_lantern:
 
                     if (Game1.player.currentLocation.Name == "UndergroundMine60")
@@ -727,6 +777,45 @@ namespace StardewDruid.Journal
 
             return 0;
 
+
+        }
+
+        public IconData.relics RelicTacticalLocations()
+        {
+
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.challengeWeald))
+            {
+
+                return IconData.relics.none;
+
+            }
+
+            if (Game1.player.currentLocation is Forest)
+            {
+
+                return IconData.relics.tactical_cell;
+
+            }
+            else if (Game1.player.currentLocation is Woods)
+            {
+
+                return IconData.relics.tactical_mask;
+
+            }
+            else if (Game1.player.currentLocation is FarmCave)
+            {
+
+                return IconData.relics.tactical_peppermint;
+
+            }
+            else if (Game1.player.currentLocation is BusStop)
+            {
+
+                return IconData.relics.tactical_lunchbox;
+
+            }
+
+            return IconData.relics.none;
 
         }
 
@@ -946,23 +1035,6 @@ namespace StardewDruid.Journal
 
         }
 
-        /*"The war",
-        "For many lives my family lived in the Weald, at the woodland estate of the elder race. We could talk to the trees, the stones, the wind, anything blessed by the rule of the Two Kings. " +
-        "If only it had lasted. The elder race started a war with dragons, and when the Kings fled here, to the Weald, the dragons followed, and everything burned. " +
-        "It seemed the Kings would die, and their power lost forever, but an unworldly power came to the aid of the elder prince. The dragons were bested. " +
-        "Still, the wounds of the Two Kings caused them to fall into endless slumber.", 
-
-        "The circle",
-        "So it seemed the power of the Weald would be lost forever, until the old crone and the princess came to us, and put us to task, building, sewing seeds, healing the land. " +
-        "But we would no longer answer to the Kings, for the power would be ours to wield, as long as we kept to the crone's plan. New friends came to us, some that loved the Stars, those that served dragons, some survivors, those faithful to Yoba. " +
-        "We formed a circle of druids to keep the old ways alive and look after the new folk. We had our enemies though. Many men blamed the elder race for their troubles.",
-
-        "The end",
-        "The princess shared many things with me, and favoured me most, for she trusted me with her biggest secret, the wooden man, who we crafted to house the soul of a fallen hero, the prince I think, though only the crone and princess know. " +
-        "But the blind anger of our enemies made it unsafe for the princess and her kin. She took her liegelords across the sea to an isle beyond the reach of the cultists. Then, after too short a time, she left the Weald for good. " +
-        "Now I go to be with her. The wooden one knows everything there is about the druids, and can train the next leader, and the next, and keep the crone's plan in my stead. For I cannot enjoy the Weald without the sight of my princess."
-        */
-
         public Dictionary<relicsets, List<string>> titles = new()
         {
 
@@ -972,9 +1044,15 @@ namespace StardewDruid.Journal
             [relicsets.wayfinder] = new() {
                 Mod.instance.Helper.Translation.Get("RelicData.9"),
                 Mod.instance.Helper.Translation.Get("RelicData.10"), },
+            [relicsets.other] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.27"),
+                Mod.instance.Helper.Translation.Get("RelicData.28"), },
             [relicsets.herbalism] = new() {
                 Mod.instance.Helper.Translation.Get("RelicData.12"),
                 Mod.instance.Helper.Translation.Get("RelicData.13"), },
+            [relicsets.tactical] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.309.1"),
+                Mod.instance.Helper.Translation.Get("RelicData.309.2"), },
             [relicsets.runestones] = new() {
                 Mod.instance.Helper.Translation.Get("RelicData.15"),
                 Mod.instance.Helper.Translation.Get("RelicData.16"), },
@@ -987,9 +1065,7 @@ namespace StardewDruid.Journal
             [relicsets.boxes] = new() {
                 Mod.instance.Helper.Translation.Get("RelicData.24"),
                 Mod.instance.Helper.Translation.Get("RelicData.25"), },
-            [relicsets.other] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.27"),
-                Mod.instance.Helper.Translation.Get("RelicData.28"), },
+
         };
 
         public static Dictionary<string, Relic> RelicsList()
@@ -1074,6 +1150,20 @@ namespace StardewDruid.Journal
             // ====================================================================
             // Wayfinder relics
 
+            relics[IconData.relics.wayfinder_pot.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.309.3"),
+                relic = IconData.relics.wayfinder_pot,
+                line = RelicData.relicsets.wayfinder,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.309.4"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.309.5"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.309.6"),
+            };
+
             relics[IconData.relics.wayfinder_censer.ToString()] = new()
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.115"),
@@ -1106,21 +1196,6 @@ namespace StardewDruid.Journal
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.142"),
             };
 
-            relics[IconData.relics.wayfinder_eye.ToString()] = new()
-            {
-                title = Mod.instance.Helper.Translation.Get("RelicData.147"),
-                relic = IconData.relics.wayfinder_eye,
-                line = RelicData.relicsets.wayfinder,
-                function = true,
-                description = Mod.instance.Helper.Translation.Get("RelicData.151"),
-                details = new()
-                {
-                    Mod.instance.Helper.Translation.Get("RelicData.154"),
-                    Mod.instance.Helper.Translation.Get("RelicData.155"),
-                },
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.156"),
-            };
-
             relics[IconData.relics.wayfinder_ceremonial.ToString()] = new()
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.161"),
@@ -1141,6 +1216,93 @@ namespace StardewDruid.Journal
                 cancel = true,
                 description = Mod.instance.Helper.Translation.Get("RelicData.177"),
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.178"),
+            };
+
+            // ======================================================================
+            // Other relics
+
+            relics[IconData.relics.crow_hammer.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.630"),
+                relic = IconData.relics.crow_hammer,
+                line = RelicData.relicsets.other,
+                description = Mod.instance.Helper.Translation.Get("RelicData.633"),
+                details = new(){
+                    Mod.instance.Helper.Translation.Get("RelicData.635"),
+                    Mod.instance.Helper.Translation.Get("RelicData.636"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.638"),
+            };
+
+            relics[IconData.relics.wayfinder_eye.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.147"),
+                relic = IconData.relics.wayfinder_eye,
+                line = RelicData.relicsets.wayfinder,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.151"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.154"),
+                    Mod.instance.Helper.Translation.Get("RelicData.155"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.156"),
+            };
+
+            // ====================================================================
+            // Tactical Relics
+
+            relics[IconData.relics.tactical_discombobulator.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.310.1"),
+                relic = IconData.relics.tactical_discombobulator,
+                line = RelicData.relicsets.tactical,
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.310.2"),
+                },
+                description = Mod.instance.Helper.Translation.Get("RelicData.310.3"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.310.4"),
+            };
+
+            relics[IconData.relics.tactical_mask.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.310.5"),
+                relic = IconData.relics.tactical_mask,
+                line = RelicData.relicsets.tactical,
+                description = Mod.instance.Helper.Translation.Get("RelicData.310.6"),
+                hint = Mod.instance.Helper.Translation.Get("RelicData.310.7"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.310.8"),
+            };
+
+            relics[IconData.relics.tactical_cell.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.310.9"),
+                relic = IconData.relics.tactical_cell,
+                line = RelicData.relicsets.tactical,
+                description = Mod.instance.Helper.Translation.Get("RelicData.310.10"),
+                hint = Mod.instance.Helper.Translation.Get("RelicData.310.11"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.310.12"),
+            };
+
+            relics[IconData.relics.tactical_lunchbox.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.310.13"),
+                relic = IconData.relics.tactical_lunchbox,
+                line = RelicData.relicsets.tactical,
+                description = Mod.instance.Helper.Translation.Get("RelicData.310.14"),
+                hint = Mod.instance.Helper.Translation.Get("RelicData.310.15"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.310.16"),
+            };
+
+            relics[IconData.relics.tactical_peppermint.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.310.17"),
+                relic = IconData.relics.tactical_peppermint,
+                line = RelicData.relicsets.tactical,
+                description = Mod.instance.Helper.Translation.Get("RelicData.310.18"),
+                hint = Mod.instance.Helper.Translation.Get("RelicData.310.19"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.310.20"),
             };
 
             // ====================================================================
@@ -1587,22 +1749,6 @@ namespace StardewDruid.Journal
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.622"),
             };
 
-            // ======================================================================
-            // Other relics
-
-            relics[IconData.relics.crow_hammer.ToString()] = new()
-            {
-                title = Mod.instance.Helper.Translation.Get("RelicData.630"),
-                relic = IconData.relics.crow_hammer,
-                line = RelicData.relicsets.other,
-                description = Mod.instance.Helper.Translation.Get("RelicData.633"),
-                details = new(){
-                    Mod.instance.Helper.Translation.Get("RelicData.635"),
-                    Mod.instance.Helper.Translation.Get("RelicData.636"),
-                },
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.638"),
-            };
-
 
             return relics;
 
@@ -1650,6 +1796,10 @@ namespace StardewDruid.Journal
                     }
 
                     return Mod.instance.Helper.Translation.Get("RelicData.687");
+
+                case IconData.relics.wayfinder_pot:
+
+                    return Mod.instance.Helper.Translation.Get("RelicData.309.7");
 
                 case IconData.relics.wayfinder_censer:
 

@@ -59,6 +59,7 @@ namespace StardewDruid.Character
             // map interaction
             disembodied,
             energies,
+            attendant,
             waves,
             herbalism,
             monument_artisans,
@@ -341,6 +342,7 @@ namespace StardewDruid.Character
             {
                 case characters.disembodied:
                 case characters.energies:
+                case characters.attendant:
                 case characters.waves:
                 case characters.herbalism:
                 case characters.monument_artisans:
@@ -620,6 +622,10 @@ namespace StardewDruid.Character
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.107");
 
+                case characters.attendant:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.310.1");
+
                 case characters.waves:
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.111");
@@ -728,6 +734,32 @@ namespace StardewDruid.Character
                             {
 
                                 return Mod.instance.Helper.Translation.Get("CharacterHandle.216");
+
+                            }
+
+                            return null;
+
+                        case characters.attendant:
+
+                            int tactical = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.tactical);
+
+                            if (tactical == -1)
+                            {
+
+                                return null;
+
+                            }
+
+                            if (tactical == 5)
+                            {
+
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.310.2");
+
+                            }
+                            else if (tactical >= 1)
+                            {
+
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.310.3");
 
                             }
 
@@ -1072,8 +1104,7 @@ namespace StardewDruid.Character
 
                                     generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.559"));
 
-                                    generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.561") +
-                                        Mod.instance.Helper.Translation.Get("CharacterHandle.562"));
+                                    generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.561"));
 
                                 }
                                 else
@@ -1089,6 +1120,51 @@ namespace StardewDruid.Character
 
                                 generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.576") +
                                     Mod.instance.Helper.Translation.Get("CharacterHandle.577");
+
+                            }
+
+                            return generate;
+
+                        case characters.attendant:
+
+                            int tactical = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.tactical);
+
+                            if (tactical == -1)
+                            {
+
+                                return null;
+
+                            }
+
+                            if (tactical == 5)
+                            {
+
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.310.4") + 
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.310.5");
+
+                                if (CommunityCheck(3))
+                                {
+                                    Mod.instance.questHandle.AssignQuest(QuestHandle.relicTactical);
+
+                                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.310.6"));
+
+                                    generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.310.7"));
+                                }
+                                else
+                                {
+
+                                    Mod.instance.questHandle.CompleteQuest(QuestHandle.relicTactical);
+
+                                }
+
+                            }
+                            else if (tactical >= 1)
+                            {
+
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.310.8") +
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.310.9") +
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.310.10") +
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.310.11");
 
                             }
 
@@ -1118,8 +1194,7 @@ namespace StardewDruid.Character
                                     generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.604"));
 
                                     generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.606") +
-                                        Mod.instance.Helper.Translation.Get("CharacterHandle.607") +
-                                        Mod.instance.Helper.Translation.Get("CharacterHandle.608"));
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.607"));
                                 }
                                 else
                                 {
@@ -1215,8 +1290,7 @@ namespace StardewDruid.Character
 
                                     generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.702") +
                                         Mod.instance.Helper.Translation.Get("CharacterHandle.703") +
-                                        Mod.instance.Helper.Translation.Get("CharacterHandle.704") +
-                                        Mod.instance.Helper.Translation.Get("CharacterHandle.705"));
+                                        Mod.instance.Helper.Translation.Get("CharacterHandle.704"));
 
                                 }
                                 else
@@ -1748,26 +1822,26 @@ namespace StardewDruid.Character
 
                                 case 0:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1239").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1239").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
                                 case 1:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1246").Tokens(new { name = Game1.player.CurrentTool.Name, }) +
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1246").Tokens(new { tool = Game1.player.CurrentTool.Name, }) +
                                         Mod.instance.Helper.Translation.Get("CharacterHandle.1249");
 
                                     break;
 
                                 case 2:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1255").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1255").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
                                 case 3:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1263").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1263").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
@@ -1784,13 +1858,13 @@ namespace StardewDruid.Character
 
                                 case 0:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1282").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1239").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
                                 case 1:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1290").Tokens(new { name = Game1.player.CurrentTool.Name, }) +
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1290").Tokens(new { tool = Game1.player.CurrentTool.Name, }) +
                                         Mod.instance.Helper.Translation.Get("CharacterHandle.1293");
 
 
@@ -1798,13 +1872,13 @@ namespace StardewDruid.Character
 
                                 case 2:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1300").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1300").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
                                 case 3:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1308").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1308").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
@@ -1821,25 +1895,25 @@ namespace StardewDruid.Character
 
                                 case 0:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1327").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1239").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
                                 case 1:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1334").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1334").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
                                 case 2:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1341").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1341").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
                                 case 3:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1348").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1348").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
@@ -1856,13 +1930,13 @@ namespace StardewDruid.Character
 
                                 case 0:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1366").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1239").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
                                 case 1:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1373").Tokens(new { name = Game1.player.CurrentTool.Name, }) +
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1373").Tokens(new { tool = Game1.player.CurrentTool.Name, }) +
                                         Mod.instance.Helper.Translation.Get("CharacterHandle.1375") +
                                         Mod.instance.Helper.Translation.Get("CharacterHandle.1376");
 
@@ -1870,13 +1944,13 @@ namespace StardewDruid.Character
 
                                 case 2:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1382").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1382").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
                                 case 3:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1389").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1389").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
@@ -1893,7 +1967,7 @@ namespace StardewDruid.Character
 
                                 case 0:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1407").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1239").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
@@ -1906,13 +1980,13 @@ namespace StardewDruid.Character
 
                                 case 2:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1421").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1421").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
                                 case 3:
 
-                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1428").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1428").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                                     break;
 
@@ -1998,7 +2072,18 @@ namespace StardewDruid.Character
                     foreach (ItemData item in Mod.instance.save.chests[character])
                     {
 
-                        newChest.Items.Add(new StardewValley.Object(item.id, item.stack, quality: item.quality));
+                        string QualifiedId = ItemRegistry.QualifyItemId(item.id);
+
+                        if (QualifiedId == null)
+                        {
+                            
+                            newChest.Items.Add(new StardewValley.Object(item.id, item.stack, quality: item.quality));
+
+                            continue;
+
+                        }
+
+                        newChest.Items.Add(ItemRegistry.Create(QualifiedId, amount: item.stack, quality: item.quality));
 
                     }
 
@@ -2040,7 +2125,7 @@ namespace StardewDruid.Character
                 {
 
 
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.1557").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.1557").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                 }
                 else
@@ -2059,13 +2144,13 @@ namespace StardewDruid.Character
                 {
 
 
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.1577").Tokens(new { name = Game1.player.CurrentTool.Name, });
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.1577").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                 }
 
             }
 
-            return Mod.instance.Helper.Translation.Get("CharacterHandle.1584").Tokens(new { name = Game1.player.CurrentTool.Name, rite = DialogueData.RiteNames(compare),});
+            return Mod.instance.Helper.Translation.Get("CharacterHandle.1584").Tokens(new { tool = Game1.player.CurrentTool.Name, rite = DialogueData.RiteNames(compare),});
 
         }
 
@@ -2128,220 +2213,6 @@ namespace StardewDruid.Character
             Mod.instance.AttuneWeapon(compare);
 
             return 3;
-
-        }
-
-    }
-
-    public class CharacterMover
-    {
-
-        public CharacterHandle.characters character;
-
-        public enum moveType
-        {
-
-            from,
-            to,
-            remove,
-
-        }
-
-        public moveType type;
-
-        public string locale;
-
-        public Vector2 position;
-
-        public bool animate;
-
-        public CharacterMover(CharacterHandle.characters CharacterType)
-        {
-
-            character = CharacterType;
-
-        }
-
-        public void Update()
-        {
-
-            if(character == CharacterHandle.characters.Dragon)
-            {
-
-                RemoveDragons();
-
-                return;
-
-            }
-
-            Character entity = Mod.instance.characters[character];
-
-            GameLocation target;
-
-            if (Mod.instance.locations.ContainsKey(locale))
-            {
-
-                target = Mod.instance.locations[locale];
-
-            }
-            else
-            {
-
-                target = Game1.getLocationFromName(locale);
-
-            }
-
-            switch (type)
-            {
-
-                case moveType.from:
-
-                    target.characters.Remove(entity);
-
-                    break;
-
-                case moveType.to:
-
-                    Warp(target, entity, position);
-
-                    break;
-
-                case moveType.remove:
-
-                    RemoveAll(entity);
-
-                    break;
-
-            }
-
-
-        }
-
-        public void WarpSet(string Target, Vector2 Position, bool Animate = true)
-        {
-
-            type = moveType.to;
-
-            locale = Target;
-
-            position = Position;
-
-            animate = Animate;
-
-        }
-
-        public static void Warp(GameLocation target, Character entity, Vector2 position, bool animate = true)
-        {
-
-            if (entity.currentLocation != null)
-            {
-
-                if (animate)
-                {
-
-                    Mod.instance.iconData.AnimateQuickWarp(entity.currentLocation, entity.Position, true);
-
-                }
-
-                entity.currentLocation.characters.Remove(entity);
-
-            }
-
-            entity.ResetActives(true);
-
-            target.characters.Add(entity);
-
-            entity.currentLocation = target;
-
-            entity.Position = position;
-
-            entity.SettleOccupied();
-
-            if (animate)
-            {
-
-                Mod.instance.iconData.AnimateQuickWarp(entity.currentLocation, entity.Position);
-
-            }
-
-        }
-
-        public void RemovalSet(string From)
-        {
-
-            type = moveType.from;
-
-            locale = From;
-
-        }
-
-        public void RemoveAll(Character entity)
-        {
-
-            foreach (GameLocation location in (IEnumerable<GameLocation>)Game1.locations)
-            {
-
-                if (location.characters.Count > 0)
-                {
-
-                    if (location.characters.Contains(entity))
-                    {
-
-                        location.characters.Remove(entity);
-
-                    }
-
-                }
-
-            }
-
-            if (!Context.IsMainPlayer)
-            {
-
-                Mod.instance.characters.Remove(character);
-
-            }
-
-        }
-
-        public void RemoveDragons(bool avatars = true)
-        {
-
-            List<Dragon> dragons = new();
-
-            foreach (GameLocation location in (IEnumerable<GameLocation>)Game1.locations)
-            {
-
-                if (location.characters.Count > 0)
-                {
-
-                    for(int c = location.characters.Count - 1; c>=0;c--)
-                    {
-
-                        if(location.characters[c] is Dragon dragonCharacter)
-                        {
-
-                            if (avatars)
-                            {
-                                
-                                if (!dragonCharacter.avatar)
-                                {
-                                    
-                                    continue;
-                                
-                                }
-                            
-                            }
-
-                            location.characters.Remove(dragonCharacter);
-
-                        }
-
-                    }
-
-                }
-
-            }
 
         }
 

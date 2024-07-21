@@ -205,6 +205,17 @@ namespace StardewDruid.Cast.Weald
                         }
 
                         break;
+
+                    case 4:
+
+                        if (p % 8 != offset)
+                        {
+
+                            continue;
+
+                        }
+
+                        break;
                 }
 
                 Vector2 prospect = affected[p];
@@ -245,7 +256,12 @@ namespace StardewDruid.Cast.Weald
                     ) 
                     {
 
-                        spawnProspects[prospect].Add(spawns.forage);
+                        if (Mod.instance.randomIndex.Next(2) == 0)
+                        {
+
+                            spawnProspects[prospect].Add(spawns.forage);
+
+                        }
 
                         spawnProspects[prospect].Add(spawns.twig);
 
@@ -254,7 +270,7 @@ namespace StardewDruid.Cast.Weald
                         if (Mod.instance.questHandle.IsComplete(QuestHandle.wealdThree))
                         {
 
-                            if (Mod.instance.randomIndex.Next(2) == 0)
+                            if (Mod.instance.randomIndex.Next(3) == 0)
                             {
 
                                 spawnProspects[prospect].Add(spawns.flower);
@@ -278,6 +294,7 @@ namespace StardewDruid.Cast.Weald
                             {
 
                                 spawnProspects[prospect].Add(spawns.tree);
+
 
                             }
 
@@ -346,6 +363,12 @@ namespace StardewDruid.Cast.Weald
                         case spawns.rock:
 
                             SpawnRock(prospect.Key);
+
+                            break;
+
+                        case spawns.trash:
+
+                            SpawnTrash(prospect.Key);
 
                             break;
 

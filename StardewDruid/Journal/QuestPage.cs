@@ -59,6 +59,8 @@ namespace StardewDruid.Journal
 
             bool isComplete = Mod.instance.questHandle.IsComplete(questId);
 
+            bool isReplayed = Mod.instance.save.progress[questId].status == 4;
+
             Quest questRecord = Mod.instance.questHandle.quests[questId];
 
             int questReward = questRecord.reward;
@@ -97,7 +99,7 @@ namespace StardewDruid.Journal
 
                 contentComponents[start].text[0] = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.hostOnly);
 
-                contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.BurlyWood;
+                contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkRed;
 
                 contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
 
@@ -105,14 +107,14 @@ namespace StardewDruid.Journal
 
             }
             
-            if (isActive && Mod.instance.save.progress[questId].status == 4)
+            if (isReplayed)
             {
                 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "questReplay");
 
                 contentComponents[start].text[0] = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.questReplay);
 
-                contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.BurlyWood;
+                contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkRed;
 
                 contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
 
@@ -122,7 +124,7 @@ namespace StardewDruid.Journal
 
             // ------------------------------ instructions
 
-            if(isComplete && questRecord.explanation != null)
+            if(isComplete && !isReplayed && questRecord.explanation != null)
             {
 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "instruction");
@@ -172,7 +174,7 @@ namespace StardewDruid.Journal
             if (questReward > 0)
             {
 
-                if(Mod.instance.save.progress[questId].status == 4) { questReward *= 3; questReward /= 2; }
+                if(isReplayed) { questReward *= 3; questReward /= 2; }
 
                 float adjustReward = 1.2f - ((float)Mod.instance.ModDifficulty() * 0.1f);
 
@@ -190,7 +192,7 @@ namespace StardewDruid.Journal
 
             }
 
-            if (isActive && Mod.instance.save.progress[questId].status == 4 && questRecord.replay != null)
+            if (isActive && isReplayed && questRecord.replay != null)
             {
 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "replay");
@@ -205,7 +207,7 @@ namespace StardewDruid.Journal
 
             }
 
-            if (isComplete && questRecord.type == Quest.questTypes.challenge)
+            if (isComplete && !isReplayed && questRecord.type == Quest.questTypes.challenge)
             {
 
                 Dictionary<int, Dictionary<int, string>> dialogueScene = DialogueData.DialogueScene(questId);
@@ -246,7 +248,7 @@ namespace StardewDruid.Journal
 
             }
 
-            if (isComplete && Mod.instance.questHandle.loresets.ContainsKey(questId))
+            if (isComplete && !isReplayed && Mod.instance.questHandle.loresets.ContainsKey(questId))
             {
 
                 foreach (LoreData.stories story in Mod.instance.questHandle.loresets[questId])
@@ -281,9 +283,9 @@ namespace StardewDruid.Journal
 
             }
 
-            textHeight += 48;
+            textHeight += 16;
 
-            contentBox = new(xPositionOnScreen, yPositionOnScreen + 96, width, textHeight);
+            contentBox = new(xPositionOnScreen, yPositionOnScreen + 64, width, textHeight);
 
         }
 
@@ -383,6 +385,49 @@ namespace StardewDruid.Journal
                     KeyValuePair<string, int> findEffect = Mod.instance.questHandle.questEffects(journalId);
 
                     openJournal(journalTypes.effectPage, findEffect.Key, findEffect.Value);
+
+                    break;
+
+                case journalButtons.skipQuest:
+
+                    Game1.playSound("ghost");
+
+                    Mod.instance.questHandle.CompleteQuest(journalId);
+
+                    Mod.instance.questHandle.OnCancel(journalId);
+
+                    DruidJournal.openJournal(journalTypes.questPage, journalId, record);
+
+                    break;
+
+                case journalButtons.replayQuest:
+
+                    if (Mod.instance.questHandle.IsReplayable(journalId))
+                    {
+
+                        Game1.playSound("yoba");
+
+                        Mod.instance.questHandle.RevisitQuest(journalId);
+
+                        DruidJournal.openJournal(journalTypes.questPage, journalId, record);
+
+                    }
+
+                    break;
+
+                case journalButtons.replayTomorrow:
+
+                    break;
+
+                case journalButtons.cancelReplay:
+
+                    Game1.playSound("ghost");
+
+                    Mod.instance.questHandle.OnCancel(journalId);
+
+                    Mod.instance.SyncMultiplayer();
+
+                    DruidJournal.openJournal(journalTypes.questPage, journalId, record);
 
                     break;
 

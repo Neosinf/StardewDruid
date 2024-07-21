@@ -5,9 +5,11 @@ using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Extensions;
+using StardewValley.GameData.Machines;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using static StardewDruid.Journal.HerbalData;
 
 
@@ -200,6 +202,7 @@ namespace StardewDruid.Cast.Fates
                 {
 
                     case "Deconstructor":
+                    case "Dehydrator":
                     case "Bone Mill":
                     case "Keg":
                     case "Preserves Jar":
@@ -255,12 +258,20 @@ namespace StardewDruid.Cast.Fates
 
                         target.heldObject.Set(null);
 
+                        target.MinutesUntilReady = 0;
+
+                        target.readyForHarvest.Set(false);
+
+                        target.performDropDownAction(Game1.player);
+
                     }
 
                     switch (target.name)
                     {
 
                         case "Deconstructor": FillDeconstructor(target); break;
+
+                        case "Dehydrator": FillDehydrator(target); break;
 
                         case "Bone Mill": FillBoneMill(target); break;
 
@@ -307,9 +318,15 @@ namespace StardewDruid.Cast.Fates
         public void FillDeconstructor(StardewValley.Object targetObject)
         {
 
+            MachineData machineData = targetObject.GetMachineData();
+
             KeyValuePair<string, string> craftingRecipe = CraftingRecipe.craftingRecipes.ElementAt(Mod.instance.randomIndex.Next(CraftingRecipe.craftingRecipes.Count));
 
-            string[] array = craftingRecipe.Value.Split('/')[0].Split(' ');
+            CraftingRecipe newThing = new(craftingRecipe.Key);
+
+            targetObject.PlaceInMachine(machineData, ItemRegistry.Create(newThing.itemToProduce.FirstOrDefault(),1), false, Game1.player);
+
+            /*string[] array = craftingRecipe.Value.Split('/')[0].Split(' ');
 
             List<StardewValley.Object> list = new();
 
@@ -329,7 +346,83 @@ namespace StardewDruid.Cast.Fates
 
             targetObject.MinutesUntilReady = 240;
 
-            Game1.playSound("furnace");
+            Game1.playSound("furnace");*/
+
+        }
+
+        public void FillDehydrator(StardewValley.Object targetObject)
+        {
+            
+            MachineData machineData = targetObject.GetMachineData();
+
+            Dictionary<int, int> cropList = new()
+            {
+
+                [0] = 24,
+                [1] = 188,
+                [2] = 190,
+                [3] = 248,
+                [4] = 250,
+                [5] = 256,
+                [6] = 264,
+                [7] = 266,
+                [8] = 272,
+                [9] = 274,
+                [10] = 276,
+                [11] = 278,
+                [12] = 280,
+                [13] = 284,
+                [14] = 300,
+                [15] = 304,
+                [16] = 830,
+                [17] = 259,
+                [18] = 270,
+                [19] = 486,
+                [20] = 262,
+                [21] = 304,
+                [22] = 91,
+                [23] = 832,
+                [24] = 834,
+                [25] = 634,
+                [26] = 635,
+                [27] = 636,
+                [28] = 637,
+                [29] = 638,
+                [30] = 613,
+                [31] = 400,
+                [32] = 398,
+                [33] = 282,
+                [34] = 260,
+                [35] = 258,
+                [36] = 254,
+                [37] = 252,
+                [38] = 88,
+                [39] = 90
+
+            };
+
+            int cropIndex = cropList[Mod.instance.randomIndex.Next(cropList.Count)];
+
+            StardewValley.Object input = new(cropIndex.ToString(), 5);
+
+            if (input == null) { location.playSound("ghost"); return; }
+
+            switch (@input.Category)
+            {
+
+                default:
+
+                    input = new("404", 5);
+
+                    break;
+
+                case -79:
+
+                    break;
+
+            }
+
+            targetObject.PlaceInMachine(machineData, input, false, Game1.player);
 
         }
 
@@ -426,7 +519,15 @@ namespace StardewDruid.Cast.Fates
 
             int cropIndex = cropList[Mod.instance.randomIndex.Next(cropList.Count)];
 
-            StardewValley.Object input = new(cropIndex.ToString(), 0);
+            MachineData machineData = targetObject.GetMachineData();
+
+            StardewValley.Item input = ItemRegistry.Create("(O)" + cropIndex.ToString(), 1);
+
+            if (input == null) { location.playSound("ghost"); return; }
+
+            targetObject.PlaceInMachine(machineData, input, false, Game1.player);
+
+            /*StardewValley.Object input = new(cropIndex.ToString(), 1);
 
             if (input == null) { location.playSound("ghost"); return; }
 
@@ -519,7 +620,7 @@ namespace StardewDruid.Cast.Fates
 
             location.temporarySprites.Add(temporarySprite);
 
-            targetObject.MinutesUntilReady = 1000;
+            targetObject.MinutesUntilReady = 1000;*/
 
         }
 
@@ -574,7 +675,15 @@ namespace StardewDruid.Cast.Fates
 
             int cropIndex = cropList[Mod.instance.randomIndex.Next(cropList.Count)];
 
-            StardewValley.Object input = new(cropIndex.ToString(), 0);
+            MachineData machineData = targetObject.GetMachineData();
+
+            StardewValley.Item input = ItemRegistry.Create("(O)" + cropIndex.ToString(), 1);
+
+            if (input == null) { location.playSound("ghost"); return; }
+
+            targetObject.PlaceInMachine(machineData, input, false, Game1.player);
+
+            /*StardewValley.Object input = new(cropIndex.ToString(), 0);
 
             if (input == null) { location.playSound("ghost"); return; }
 
@@ -630,7 +739,7 @@ namespace StardewDruid.Cast.Fates
             location.temporarySprites.Add(temporarySprite);
 
             targetObject.MinutesUntilReady = 4000;
-
+            */
         }
 
         public void FillCheesePress(StardewValley.Object targetObject)
@@ -672,6 +781,15 @@ namespace StardewDruid.Cast.Fates
 
             int eggIndex = eggList[Mod.instance.randomIndex.Next(eggList.Count)];
 
+            MachineData machineData = targetObject.GetMachineData();
+
+            StardewValley.Item input = ItemRegistry.Create("(O)" + eggIndex.ToString(), 1);
+
+            if (input == null) { location.playSound("ghost"); return; }
+
+            targetObject.PlaceInMachine(machineData, input, false, Game1.player);
+
+            /*
             location.playSound("Ship");
 
             targetObject.MinutesUntilReady = 240;
@@ -724,7 +842,7 @@ namespace StardewDruid.Cast.Fates
 
                     break;
             }
-
+            */
 
         }
 
@@ -868,8 +986,16 @@ namespace StardewDruid.Cast.Fates
 
         public void FillGeodeCrusher(StardewValley.Object targetObject)
         {
+            
+            MachineData machineData = targetObject.GetMachineData();
 
-            targetObject.heldObject.Value = (StardewValley.Object)Utility.getTreasureFromGeode(new StardewValley.Object("749", 1));
+            StardewValley.Item input = ItemRegistry.Create("(O)749", 1);
+
+            if (input == null) { location.playSound("ghost"); return; }
+
+            targetObject.PlaceInMachine(machineData, input, false, Game1.player);
+
+            /*targetObject.heldObject.Value = (StardewValley.Object)Utility.getTreasureFromGeode(new StardewValley.Object("749", 1));
 
             Game1.stats.GeodesCracked++;
 
@@ -879,7 +1005,7 @@ namespace StardewDruid.Cast.Fates
 
             Game1.playSound("stoneCrack");
 
-            DelayedAction.playSoundAfterDelay("steam", 200);
+            DelayedAction.playSoundAfterDelay("steam", 200);*/
 
         }
 

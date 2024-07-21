@@ -150,16 +150,7 @@ namespace StardewDruid.Journal
 
                 case herbals.celeri:
                     return new() { 
-                        "(O)152", // "Algae", 
-                        "(O)153", // "Seaweed", 
-                        "(O)157", // "White Algae", 
-                        "(O)815", // "Tea Leaves", 
-                        "(O)433", // "Coffee Bean", 
-                        "(O)167", // "Joja Cola", 
-                    };
 
-                case herbals.melius_celeri:
-                    return new() { 
                         "(O)80", // "Quartz", 
                         "(O)86", // "Earth Crystal", 
                         "(O)84", // "Frozen Tear",
@@ -168,6 +159,16 @@ namespace StardewDruid.Journal
                         "(O)169", // "Driftwood", 
                         "(O)170", // "Broken Glasses", 
                         "(O)171", // "Broken CD", 
+                    };
+
+                case herbals.melius_celeri:
+                    return new() {
+                        "(O)152", // "Algae", 
+                        "(O)153", // "Seaweed", 
+                        "(O)157", // "White Algae", 
+                        "(O)815", // "Tea Leaves", 
+                        "(O)433", // "Coffee Bean", 
+                        "(O)167", // "Joja Cola", 
                     };
 
                 case herbals.satius_celeri:
@@ -211,18 +212,22 @@ namespace StardewDruid.Journal
 
         public Dictionary<herbals, List<string>> titles = new()
         {
-            [herbals.ligna] = new() { 
-                "Ligna", 
-                "Boosts rite damage and success-rate", },
-            [herbals.impes] = new() { 
-                "Vigores", 
-                "Boosts charge-ups and rite critical hit chance", },
-            [herbals.celeri] = new() { 
-                "Celeri", 
-                "Boosts movement speed, lowers rite cooldowns", },
-            [herbals.faeth] = new() { 
-                "Essentia", 
-                "Magical resources used for advanced alchemy", },
+            [herbals.ligna] = new() {
+                Mod.instance.Helper.Translation.Get("HerbalData.1"),
+                Mod.instance.Helper.Translation.Get("HerbalData.2"), 
+            },
+            [herbals.impes] = new() {
+                Mod.instance.Helper.Translation.Get("HerbalData.3"),
+                Mod.instance.Helper.Translation.Get("HerbalData.4"), 
+            },
+            [herbals.celeri] = new() {
+                Mod.instance.Helper.Translation.Get("HerbalData.5"),
+                Mod.instance.Helper.Translation.Get("HerbalData.6"), 
+            },
+            [herbals.faeth] = new() {
+                Mod.instance.Helper.Translation.Get("HerbalData.7"),
+                Mod.instance.Helper.Translation.Get("HerbalData.8"), 
+            },
         };
 
         public Dictionary<herbals, IconData.schemes> schemes = new()
@@ -418,6 +423,7 @@ namespace StardewDruid.Journal
             return journal;
 
         }
+        
         public static Dictionary<string, Herbal> HerbalList()
         {
 
@@ -807,6 +813,7 @@ namespace StardewDruid.Journal
                 title = Mod.instance.Helper.Translation.Get("HerbalData.388"),
 
                 description = Mod.instance.Helper.Translation.Get("HerbalData.390"),
+                
 
                 ingredients = HerbalIngredients(herbals.celeri),
 

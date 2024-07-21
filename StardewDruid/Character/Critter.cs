@@ -240,7 +240,7 @@ namespace StardewDruid.Character
                         Color.White * fade,
                         0f,
                         Vector2.Zero,
-                        3.75f,
+                        setScale,
                         (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                         drawLayer
                     );
@@ -294,18 +294,16 @@ namespace StardewDruid.Character
         public override void DrawShadow(SpriteBatch b, Vector2 localPosition, float drawLayer)
         {
 
-            int offset = moveFrame % (walkFrames.Count / 2);
-
             float fade = fadeOut == 0 ? 0.35f : fadeOut * 0.35f;
 
-            Vector2 shadowPosition = new(localPosition.X - 10 + (4 * offset), localPosition.Y + 14 + (4 * offset));
+            Vector2 shadowPosition = localPosition + new Vector2(32,56);
 
             if (netDirection.Value % 2 == 1)
             {
                 shadowPosition.Y += 4;
             }
 
-            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * fade, 0.0f, Vector2.Zero, (1.75f - (offset * 0.125f)) * setScale / 4f, 0, drawLayer - 1E-06f);
+            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * fade, 0.0f, new Vector2(24), setScale/2, 0, drawLayer - 0.0001f);
 
         }
 

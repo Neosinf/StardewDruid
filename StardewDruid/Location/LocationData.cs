@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 
 using static StardewDruid.Data.IconData;
+using static StardewValley.Menus.CharacterCustomization;
 
 
 namespace StardewDruid.Location
@@ -74,22 +75,14 @@ namespace StardewDruid.Location
 
             source = LocationData.TerrainRectangles(tilesheet, Index);
 
-            Vector2 tile = ModUtility.PositionToTile(Position);
+            baseTiles = LocationData.TerrainBases(tilesheet, Index, position, source);
 
-            Vector2 range = new Vector2(source.Width / 16, source.Height / 16);
-
-            for (int x = 0; x < (int)range.X; x++)
-            {
-
-                baseTiles.Add(new Vector2(tile.X + x, tile.Y + ((int)range.Y - 1)));
-
-            }
-
-            layer = (Position.Y + (range.Y * 64f)) / 10000;
+            layer = LocationData.TerrainLayers(tilesheet, Index, position, source);
 
             shadow = Shadow;
 
             flip = Flip;
+
         }
 
         public void draw(SpriteBatch b, GameLocation location)
@@ -352,9 +345,14 @@ namespace StardewDruid.Location
     
     public static class LocationData
     {
+
         public const string druid_grove_name = "18465_Grove";
 
+        public const string druid_spring_name = "18465_Spring";
+
         public const string druid_atoll_name = "18465_Atoll";
+
+        public const string druid_cemetery_name = "18465_Cemetery";
 
         public const string druid_chapel_name = "18465_Chapel";
 
@@ -399,6 +397,12 @@ namespace StardewDruid.Location
                 case druid_grove_name:
 
                     location = new Location.Grove(map);
+
+                    break;
+
+                case druid_spring_name:
+
+                    location = new Location.Spring(map);
 
                     break;
 
@@ -509,6 +513,40 @@ namespace StardewDruid.Location
 
                     break;
 
+                case tilesheets.spring:
+
+
+                    switch (key)
+                    {
+
+                        case 1:
+
+                            return new(0, 0, 192, 64);
+
+                        case 2:
+
+                            return new(192, 0, 96, 96);
+
+                        case 3:
+
+                            return new(0, 64, 32, 64);
+
+                        case 4:
+
+                            return new(32, 64, 16, 64);
+
+                        case 5:
+
+                            return new(144, 64, 16, 64);
+
+                        case 6:
+
+                            return new(48, 64, 48, 64);
+
+                    }
+
+                    break;
+
                 case tilesheets.atoll:
 
 
@@ -585,7 +623,7 @@ namespace StardewDruid.Location
 
                         case 1:
 
-                        return new(0, 0, 96, 80);
+                        return new(0, 0, 128, 96);
 
                     }
 
@@ -616,7 +654,9 @@ namespace StardewDruid.Location
                         case 1:
 
                             return new(0, 0, 128, 80);
+                        case 2:
 
+                            return new(128, 0, 48, 128);
 
                     }
 
@@ -640,6 +680,79 @@ namespace StardewDruid.Location
 
         }
 
+
+        public static List<Microsoft.Xna.Framework.Vector2> TerrainBases(IconData.tilesheets sheet, int key, Vector2 position, Rectangle source)
+        {
+
+            List<Microsoft.Xna.Framework.Vector2> baseTiles = new();
+
+            switch (sheet)
+            {
+
+                case tilesheets.spring:
+
+                    switch (key)
+                    {
+
+                        case 6:
+
+                            break;
+
+                        default:
+
+                            return new();
+
+                    }
+
+                    break;
+
+                default:
+
+                    break;
+
+            }
+
+            Vector2 tile = ModUtility.PositionToTile(position);
+
+            Vector2 range = new Vector2(source.Width / 16, source.Height / 16);
+
+            for (int x = 0; x < (int)range.X; x++)
+            {
+
+                baseTiles.Add(new Vector2(tile.X + x, tile.Y + ((int)range.Y - 1)));
+
+            }
+
+            return baseTiles;
+
+        }
+
+        public static float TerrainLayers(IconData.tilesheets sheet, int key, Vector2 position, Rectangle source)
+        {
+
+            List<Microsoft.Xna.Framework.Vector2> baseTiles = new();
+
+            switch (sheet)
+            {
+
+                case tilesheets.spring:
+
+                    switch (key)
+                    {
+
+                        case 1:
+
+                            return (position.Y + 512) / 10000;
+
+                    }
+
+                    break;
+
+            }
+
+            return (position.Y + (source.Height * 4)) / 10000;
+
+        }
 
     }
 

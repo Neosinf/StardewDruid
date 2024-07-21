@@ -263,6 +263,7 @@ namespace StardewDruid.Data
         {
             none,
             grove,
+            spring,
             atoll,
             chapel,
             court,
@@ -301,10 +302,10 @@ namespace StardewDruid.Data
             dragon_form,
             stardew_druid, 
             companion_5,
+            wayfinder_pot,
             wayfinder_censer,
             wayfinder_lantern,
             wayfinder_water,
-            wayfinder_eye,
             wayfinder_ceremonial,
             wayfinder_dwarf,
             herbalism_mortar,
@@ -312,7 +313,19 @@ namespace StardewDruid.Data
             herbalism_still,
             herbalism_crucible,
             herbalism_gauge,
+            herbalism_6,
             crow_hammer,
+            wayfinder_key,
+            wayfinder_eye,
+            other_4,
+            other_5,
+            other_6,
+            tactical_discombobulator,
+            tactical_mask,
+            tactical_cell,
+            tactical_lunchbox,
+            tactical_peppermint,
+            tactical_6,
             runestones_spring,
             runestones_farm,
             runestones_moon,
@@ -478,6 +491,7 @@ namespace StardewDruid.Data
             [schemes.fates] = new() { new(119, 75, 131), new(59, 55, 100), new(37,34,74), new(236, 118, 124), },
             [schemes.ether] = new() { new(111, 203, 220), new(84, 163, 218), new(13, 114, 185), },
 
+            [schemes.death] = new() { new(60, 66, 72), new(72, 84, 96), new(96, 108, 128) },
             [schemes.golden] = new() { new(255, 250, 194), new(255, 232, 155), new(251, 201, 38), },
             [schemes.snazzle] = new() { new(214, 0, 175), new(155, 0, 126), new(37, 34, 74), },
 
@@ -549,6 +563,8 @@ namespace StardewDruid.Data
             missileTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Missiles.png"));
 
             sheetTextures[tilesheets.grove] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Grove.png"));
+
+            sheetTextures[tilesheets.spring] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Spring.png"));
 
             sheetTextures[tilesheets.atoll] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Atoll.png"));
 
@@ -920,7 +936,12 @@ namespace StardewDruid.Data
 
                     }
 
-                    additional.alpha = 0.75f;
+                    if(additional.alpha == 0.35f)
+                    {
+
+                        additional.alpha = 0.75f;
+
+                    }
 
                     additional.layer = 700f;
 
@@ -1198,7 +1219,7 @@ namespace StardewDruid.Data
 
             Microsoft.Xna.Framework.Rectangle source = new((64) * additional.frame, Y * 64, 64 * additional.girth, 64);
 
-            TemporaryAnimatedSprite bomb = new(0, interval,additional.frames, additional.loops, originOffset, false, false)
+            TemporaryAnimatedSprite bomb = new(0, interval, additional.frames, additional.loops, originOffset, false, false)
             {
                 sourceRect = source,
                 sourceRectStartingPos = new Vector2(source.X, source.Y),
@@ -1832,17 +1853,17 @@ namespace StardewDruid.Data
 
             Vector2 point = diff / distance;
 
-            Vector2 middle = origin + (point * 64 * boltScale);
+            Vector2 middle = origin + (point * 72 * boltScale);
 
-            Vector2 end = origin + (point * 128 * boltScale);
+            Vector2 end = origin + (point * 144 * boltScale);
 
             float rotate = (float)Math.Atan2(diff.Y, diff.X) - (float)(Math.PI / 2);
 
-            Vector2 originOffset = new(middle.X - (24*boltScale), middle.Y - (64*boltScale));
+            Vector2 originOffset = new(middle.X - (24 * boltScale), middle.Y - (72 * boltScale));
 
-            Microsoft.Xna.Framework.Rectangle sourceRect2 = new(0, Mod.instance.randomIndex.Next(3) * 128, 48, 128);
+            Microsoft.Xna.Framework.Rectangle sourceRect2 = new(0, 256, 48, 144);
 
-            TemporaryAnimatedSprite bolt1 = new(0, 75,4,1, originOffset, false, false)
+            TemporaryAnimatedSprite bolt1 = new(0, 75, 4, 1, originOffset, false, false)
             {
 
                 sourceRect = sourceRect2,
@@ -1880,7 +1901,7 @@ namespace StardewDruid.Data
 
                 scale = boltScale,
 
-                color = gradientColours[scheme][2],
+                color = gradientColours[scheme][0],
 
                 rotation = rotate,
 
@@ -1905,7 +1926,7 @@ namespace StardewDruid.Data
 
                 scale = boltScale,
 
-                color = gradientColours[scheme][1],
+                color = gradientColours[scheme][0],
 
                 rotation = rotate,
 

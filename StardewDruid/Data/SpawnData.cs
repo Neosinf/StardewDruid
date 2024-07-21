@@ -11,10 +11,8 @@ using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
-using System.Numerics;
-using System.Reflection.Metadata;
+using Microsoft.Xna.Framework;
 using xTile.Dimensions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace StardewDruid.Data
 {
@@ -329,6 +327,10 @@ namespace StardewDruid.Data
                 46, // mystic ore
                 343, // debris stone
                 450, // debris stone
+                169,
+                818,
+                25,
+
             };
 
             return stoneIndex;
@@ -409,11 +411,59 @@ namespace StardewDruid.Data
 
             Dictionary<int, int> specialIndexes;
 
+            int oreLevel = 5;
+
             if (location is MineShaft shaftLocation)
             {
 
                 if (shaftLocation.mineLevel <= 40)
                 {
+
+                    oreLevel = 1;
+
+                }
+                else if (shaftLocation.mineLevel <= 80)
+                {
+
+                    oreLevel = 2;
+
+                }
+                else if (shaftLocation.mineLevel <= 120)
+                {
+
+                    oreLevel = 3;
+                }
+                else // Skull Cavern
+                {
+                    oreLevel = 4;
+
+                }
+
+            }
+            else if(location is Spring)
+            {
+
+                oreLevel = 1;
+
+            }
+            else if(location is Vault)
+            {
+
+                oreLevel = 3;
+
+            }
+            else if (location is Tomb)
+            {
+
+                oreLevel = 4;
+
+            }
+
+            switch (oreLevel)
+            {
+
+                default:
+                case 1:
 
                     objectIndexes = new()
                     {
@@ -429,15 +479,15 @@ namespace StardewDruid.Data
                         [1] = 378, // copper stone
                         [2] = 378, // copper stone
                         [3] = 378, // copper stone
-                        //[4] = 66, // amethyst
-                        //[5] = 68, // topaz
+                                   //[4] = 66, // amethyst
+                                   //[5] = 68, // topaz
 
                     };
 
+                    break;
 
-                }
-                else if (shaftLocation.mineLevel <= 80)
-                {
+
+                case 2:
 
                     objectIndexes = new()
                     {
@@ -454,16 +504,16 @@ namespace StardewDruid.Data
                         [1] = 380, // iron ore
                         [2] = 380, // iron ore
                         [3] = 380, // iron ore
-                        //[4] = 60, // emerald
-                        //[5] = 62, // aquamarine
+                                   //[4] = 60, // emerald
+                                   //[5] = 62, // aquamarine
 
                     };
 
+                    break;
 
 
-                }
-                else if (shaftLocation.mineLevel <= 120)
-                {
+
+                case 3:
 
                     objectIndexes = new()
                     {
@@ -479,14 +529,15 @@ namespace StardewDruid.Data
                         [1] = 384, // gold ore
                         [2] = 384, // gold ore
                         [3] = 384, // gold ore
-                        //[4] = 72, // ruby
-                        //[5] = 64, // diamond*
+                                   //[4] = 72, // ruby
+                                   //[5] = 64, // diamond*
 
                     };
 
-                }
-                else // Skull Cavern
-                {
+                    break;
+
+                case 4:
+
                     objectIndexes = new()
                     {
                         [0] = 760, // grade 3 stone
@@ -505,29 +556,29 @@ namespace StardewDruid.Data
 
                     };
 
-                }
+                    break;
 
-            }
-            else // assume Volcano dungeon
-            {
+                case 5:
 
-                objectIndexes = new()
-                {
-                    [0] = 845, // volcanic stone
-                    [1] = 846, // volcanic stone
-                    [2] = 847, // volcanic stone
-                };
+                    objectIndexes = new()
+                    {
+                        [0] = 845, // volcanic stone
+                        [1] = 846, // volcanic stone
+                        [2] = 847, // volcanic stone
+                    };
 
-                specialIndexes = new()
-                {
+                    specialIndexes = new()
+                    {
 
-                    [0] = 848, // cinder shards
-                    [1] = 848, // cinder shards
-                    [2] = 848, // cinder shards
-                    [3] = 386, // iridium ore
-                    [4] = 384, // gold ore
+                        [0] = 848, // cinder shards
+                        [1] = 848, // cinder shards
+                        [2] = 848, // cinder shards
+                        [3] = 386, // iridium ore
+                        [4] = 384, // gold ore
 
-                };
+                    };
+
+                    break;
 
             }
 
@@ -676,14 +727,14 @@ namespace StardewDruid.Data
         public static string SeasonalSeed(GameLocation location)
         {
 
-            if (Mod.instance.randomIndex.Next(250) == 0)
+            if (Mod.instance.randomIndex.Next(500) == 0)
             {
 
                 return "114";
 
             }
 
-            switch (Mod.instance.randomIndex.Next(15 - Mod.instance.PowerLevel))
+            switch (Mod.instance.randomIndex.Next(12 + Mod.instance.ModDifficulty() - Mod.instance.PowerLevel))
             {
 
                 case 0:
@@ -741,7 +792,7 @@ namespace StardewDruid.Data
 
             string season = Game1.currentSeason;
 
-            if (location is Beach || location is StardewDruid.Location.Atoll)
+            if (location is Beach || location is StardewDruid.Location.Atoll || location is IslandWest || location is IslandSouth || location is IslandSouthEast)
             {
 
                 season = "beach";
@@ -836,7 +887,7 @@ namespace StardewDruid.Data
 
             string season = Game1.currentSeason;
 
-            if (location is Beach || location is StardewDruid.Location.Atoll)
+            if (location is Beach || location is StardewDruid.Location.Atoll || location is IslandWest || location is IslandSouth || location is IslandSouthEast)
             {
 
                 season = "beach";
@@ -919,21 +970,21 @@ namespace StardewDruid.Data
         public static string RandomRock(GameLocation location)
         {
 
-            if (location is Beach || location is StardewDruid.Location.Atoll)
+            if (location is Beach || location is StardewDruid.Location.Atoll || location is IslandWest || location is IslandSouth || location is IslandSouthEast)
             {
 
                 return RandomBeach(location);
 
             }
 
-            if (Mod.instance.randomIndex.Next(50) == 0)
+            if (Mod.instance.randomIndex.Next(100) == 0)
             {
 
                 return "(O)46";
 
             }
 
-            if (Mod.instance.randomIndex.Next(10) == 0)
+            if (Mod.instance.randomIndex.Next(20) == 0)
             {
 
 
@@ -966,7 +1017,7 @@ namespace StardewDruid.Data
             if (Mod.instance.randomIndex.Next(10) == 0)
             {
 
-                 return "(O)25";
+                 return "(O)25"; 
 
 
             }
@@ -1442,7 +1493,7 @@ namespace StardewDruid.Data
 
         }
 
-        public static int RandomBushForage()
+        public static string RandomBushForage()
         {
 
             int seasonal = 414; // crystal fruit
@@ -1486,7 +1537,7 @@ namespace StardewDruid.Data
 
             int objectIndex = objectIndexes[new Random().Next(objectIndexes.Count)];
 
-            return objectIndex;
+            return "(O)"+objectIndex.ToString();
         }
 
         public static StardewValley.Object RandomTreasure(GameLocation location, bool rareTreasure = false)
@@ -1769,18 +1820,29 @@ namespace StardewDruid.Data
             if (Game1.player.currentLocation.IsOutdoors)
             {
                 
+                wilderness = true;
+
                 if (Game1.player.currentLocation.IsFarm)
                 {
 
                     cultivate = true;
+                    wilderness = false;
 
                 }
-                else
+
+                if (Game1.player.currentLocation is IslandWest islandWest)
                 {
 
-                    wilderness = true;
+                    if (Vector2.Distance(Game1.player.Position, new Vector2(90, 55) * 64) <= 1280)
+                    {
+
+                        cultivate = true;
+                        wilderness = false;
+
+                    }
 
                 }
+
 
             }
             else if (Game1.player.currentLocation.isGreenhouse.Value || Game1.player.currentLocation is Shed || Game1.player.currentLocation is AnimalHouse)
@@ -1838,17 +1900,13 @@ namespace StardewDruid.Data
                 if (location is IslandWest islandWest)
                 {
 
-                    if (islandWest.getTileSheetIDAt((int)Game1.player.Tile.X, (int)Game1.player.Tile.Y, "Back") != "untitled tile sheet2")
+                    if (Vector2.Distance(Game1.player.Position,new Vector2(90,55)*64) <= 1280)
                     {
 
                         cultivate = true;
+                        wilderness = false;
 
                     }
-
-                }
-
-                if (location is IslandWest)
-                {
 
                     crate = true;
 
@@ -1961,7 +2019,7 @@ namespace StardewDruid.Data
                 fishspot = true;
 
             }
-            else if (location.Name.Contains("Saloon") || location is DruidLocation)
+            else if (location.Name.Contains("Saloon") || location is DruidLocation || location is FarmCave)
             {
 
                 cast = true;

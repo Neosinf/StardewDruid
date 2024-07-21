@@ -76,6 +76,8 @@ namespace StardewDruid.Monster
 
         public Vector2 spawnRange;
 
+        public int spawnLimit;
+
         public int spawnTotal;
 
         public GameLocation spawnLocation;
@@ -100,6 +102,8 @@ namespace StardewDruid.Monster
             spawnCombat = Mod.instance.CombatDifficulty();
 
             spawnWater = false;
+
+            spawnLimit = 5 + (Mod.instance.ModDifficulty() / 2);
 
         }
 
@@ -191,6 +195,13 @@ namespace StardewDruid.Monster
 
             }
 
+            if(monsterSpawns.Count >= spawnLimit)
+            {
+
+                return 0;
+
+            }
+
             for (int i = 0; i < spawnSchedule[spawnCounter].Count; i++)
             {
 
@@ -218,7 +229,7 @@ namespace StardewDruid.Monster
 
         }
 
-        public Vector2 SpawnVector(int spawnLimit = 4, int fromX = -1, int fromY = -1, int spawnX = -1, int spawnY = -1)
+        public Vector2 SpawnVector(int spawnTries = 4, int fromX = -1, int fromY = -1, int spawnX = -1, int spawnY = -1)
         {
 
             Vector2 spawnVector = new(-1);
@@ -245,7 +256,7 @@ namespace StardewDruid.Monster
 
             }
 
-            while (spawnAttempt++ < spawnLimit)
+            while (spawnAttempt++ < spawnTries)
             {
 
                 int offsetX = Mod.instance.randomIndex.Next(spawnX);
@@ -401,73 +412,6 @@ namespace StardewDruid.Monster
                     theMonster = new Phantom(spawnVector, combatModifier);
 
                     break;
-
-                    /*case bosses.gargoyle:
-
-                        theMonster = new Gargoyle(spawnVector, combatModifier);
-
-                        break;
-
-                    case bosses.demonki:
-
-                        theMonster = new Demonki(spawnVector, combatModifier);
-
-                        break;
-
-                    case bosses.dino:
-
-                        theMonster = new Dino(spawnVector, combatModifier);
-
-                        break;
-
-                    case bosses.scavenger:
-
-                        theMonster = new Scavenger(spawnVector, combatModifier);
-
-                        break;
-
-                    case bosses.shadowfox:
-
-                        theMonster = new Shadowfox(spawnVector, combatModifier);
-
-                        break;
-
-                    case bosses.rogue:
-
-                        theMonster = new Rogue(spawnVector, combatModifier);
-
-                        break;
-
-                    case bosses.goblin:
-
-                        theMonster = new Goblin(spawnVector, combatModifier);
-
-                        break;
-
-                    case bosses.dragon:
-
-                        string dragon = "Purple";
-
-                        switch (randomise.Next(4))
-                        {
-
-                            case 1:
-
-                                dragon = "Red"; break;
-
-                            case 2:
-
-                                dragon = "Blue"; break;
-
-                            case 3:
-
-                                dragon = "Black"; break;
-
-                        }
-
-                        theMonster = new Dragon(spawnVector, combatModifier, dragon + "Dragon");
-
-                        break;*/
 
             }
 

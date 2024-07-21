@@ -200,6 +200,7 @@ namespace StardewDruid
             ThrowSword,
             SpellHandle,
             AccessHandle,
+            HaltCharacter,
         }
 
         public QueryData()

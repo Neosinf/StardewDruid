@@ -169,6 +169,13 @@ namespace StardewDruid.Cast.Fates
 
             }
 
+            if (Mod.instance.eventRegister.ContainsKey("transform"))
+            {
+
+                return false;
+
+            }
+
             if (Mod.instance.eventRegister.ContainsKey("curse"))
             {
 

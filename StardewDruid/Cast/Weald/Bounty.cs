@@ -10,6 +10,8 @@ using StardewDruid.Data;
 
 using StardewDruid.Cast.Effect;
 using StardewModdingAPI;
+using static StardewValley.Minigames.TargetGame;
+using StardewValley.Locations;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -22,6 +24,7 @@ namespace StardewDruid.Cast.Weald
             tree,
             fruit,
             grass,
+            flyby,
         }
 
         public GameLocation location;
@@ -36,6 +39,13 @@ namespace StardewDruid.Cast.Weald
         {
 
             location = Location;
+
+            if (!Mod.instance.rite.specialCasts.ContainsKey(location.Name))
+            {
+
+                Mod.instance.rite.specialCasts[location.Name] = new();
+
+            }
 
             Dictionary<Vector2, int> targets = new();
 
@@ -127,18 +137,10 @@ namespace StardewDruid.Cast.Weald
                             }
 
                         }
-                        else if (treeFeature.growthStage.Value < 3)
+                        else if (treeFeature.growthStage.Value < 4 && ModUtility.NeighbourCheck(Game1.player.currentLocation, check.Key).Count == 0)
                         {
 
                             treeFeature.growthStage.Value++;
-
-                            Mod.instance.iconData.CursorIndicator(location, (check.Key * 64), IconData.cursors.weald, new());
-
-                        }
-                        else
-                        {
-
-                            treeFeature.dayUpdate();
 
                             Mod.instance.iconData.CursorIndicator(location, (check.Key * 64), IconData.cursors.weald, new());
 
@@ -147,8 +149,6 @@ namespace StardewDruid.Cast.Weald
                     }
                     else if (terrainFeature is StardewValley.TerrainFeatures.Grass grassFeature)
                     {
-
-                        creatureProspects[check.Key] = bounties.grass;
 
                         if(Mod.instance.randomIndex.Next(4) == 0)
                         {
@@ -164,6 +164,42 @@ namespace StardewDruid.Cast.Weald
                     }
 
                     continue;
+
+                }
+
+            }
+
+            if(location is FarmCave)
+            {
+
+                if (!Mod.instance.rite.specialCasts[location.Name].Contains("FarmCaveBats"))
+                {
+                    creatureProspects.Clear();
+                    
+                    creatureProspects[new Vector2(1,1)] = bounties.flyby;
+
+                    Mod.instance.rite.specialCasts[location.Name].Add("FarmCaveBats");
+                
+                }
+
+            }
+
+            if (location is Woods)
+            {
+
+                if (!Mod.instance.rite.specialCasts[location.Name].Contains("WoodsBats"))
+                {
+
+                    if (Vector2.Distance(Game1.player.Position, new Vector2(640, 720)) <= 320)
+                    {
+
+                        creatureProspects.Clear();
+
+                        creatureProspects[new Vector2(1, 1)] = bounties.flyby;
+
+                        Mod.instance.rite.specialCasts[location.Name].Add("WoodsBats");
+
+                    }
 
                 }
 
@@ -206,12 +242,53 @@ namespace StardewDruid.Cast.Weald
 
             }
 
+            int direction = Mod.instance.randomIndex.Next(8);
+
+            Vector2 target;
+
             switch (prospect.Value)
             {
 
                 case bounties.bush:
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowfox, prospect.Key * 64, Mod.instance.randomIndex.Next(8), 2.5f);
+                    target = Vector2.Zero;
+
+                    foreach(KeyValuePair<Vector2, bounties> possible in creatureProspects)
+                    {
+
+                        if(possible.Key != prospect.Key && Vector2.Distance(prospect.Key,possible.Key) >= 6)
+                        {
+
+                            if (ModUtility.PathsToTraversal(location, ModUtility.GetTilesBetweenPositions(location,possible.Key*64,prospect.Key*64), new(), 0).Count > 0)
+                            {
+
+                                target = possible.Key;
+
+                                break;
+
+                            }
+
+                        }
+
+                    }
+
+                    if(target != Vector2.Zero)
+                    {
+
+                        if (Mod.instance.randomIndex.Next(2) == 0)
+                        {
+
+                            creature.AddCreature(location, Character.CharacterHandle.characters.Shadowfox, prospect.Key * 64 - new Vector2(0, 64), target * 64 - new Vector2(0, 64), 3f);
+
+                        }
+                        else
+                        {
+
+                            creature.AddCreature(location, Character.CharacterHandle.characters.Shadowcat, prospect.Key * 64 - new Vector2(0, 64), target * 64 - new Vector2(0,64), 3f);
+
+                        }
+
+                    }
 
                     break;
 
@@ -219,13 +296,34 @@ namespace StardewDruid.Cast.Weald
 
                     Vector2 treeTop = prospect.Key * 64 - new Vector2(0, 160);
 
-                    int direction = Mod.instance.randomIndex.Next(8);
+                    target = treeTop + (ModUtility.DirectionAsVector(direction) * 6400);
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat, treeTop, direction, 2.5f);
+                    if (Mod.instance.randomIndex.Next(2) == 0)
+                    {
 
-                    Vector2 offset = ModUtility.DirectionAsVector((direction + 6) % 8);
+                        creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat, treeTop, target, 3f);
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat, treeTop + (offset * 96), direction, 2.5f);
+                        break;
+
+                    }
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Crow, treeTop, target, 3f);
+
+                    break;
+
+                case bounties.flyby:
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat, new Vector2(3, 0) *64, new Vector2(4, 31) * 64, 3f);
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat, new Vector2(4, 1) * 64, new Vector2(5, 31) * 64, 3f);
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat, new Vector2(6, 0) * 64, new Vector2(7, 30) * 64, 3f);
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat, new Vector2(7, 1) * 64, new Vector2(9, 31) * 64, 3f);
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat, new Vector2(8, 1) * 64, new Vector2(10, 30) * 64, 3f);
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat, new Vector2(10, 0) * 64, new Vector2(12, 30) * 64, 3f);
 
                     break;
 
@@ -233,13 +331,9 @@ namespace StardewDruid.Cast.Weald
 
                     Vector2 fruitTop = prospect.Key * 64 - new Vector2(0, 160);
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat, fruitTop, Mod.instance.randomIndex.Next(8), 2.5f);
+                    target = fruitTop + (ModUtility.DirectionAsVector(direction) * 6400);
 
-                    break;
-
-                case bounties.grass:
-
-                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowcat, prospect.Key * 64, Mod.instance.randomIndex.Next(8), 2.5f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat, fruitTop, target, 3f);
 
                     break;
 

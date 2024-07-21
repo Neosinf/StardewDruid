@@ -289,7 +289,7 @@ namespace StardewDruid.Event.Sword
 
                     break;
 
-                case 93:
+                case 92:
 
                     if (!Game1.player.mailReceived.Contains("gotGoldenScythe"))
                     {
@@ -318,7 +318,7 @@ namespace StardewDruid.Event.Sword
 
                     break;
 
-                case 98:
+                case 94:
 
                     CourtAccess = new();
 
@@ -326,7 +326,7 @@ namespace StardewDruid.Event.Sword
 
                     CourtAccess.location = location;
 
-                    CourtAccess.AccessStair();
+                    CourtAccess.AccessStair(false);
 
                     TunnelAccess = new();
 
@@ -334,17 +334,11 @@ namespace StardewDruid.Event.Sword
 
                     TunnelAccess.location = Mod.instance.locations[LocationData.druid_court_name];
 
-                    TunnelAccess.AccessStair();
+                    TunnelAccess.AccessStair(false);
 
                     break;
 
-                case 99:
-
-                    location.localSound("secret1");
-
-                    break;
-
-                case 102:
+                case 97:
 
                     Game1.warpFarmer(LocationData.druid_court_name, 41, 20, 1);
 
@@ -358,7 +352,7 @@ namespace StardewDruid.Event.Sword
 
                     break;
 
-                case 106:
+                case 100:
 
                     activeCounter = 120;
 
@@ -380,8 +374,6 @@ namespace StardewDruid.Event.Sword
                     companions[0].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
                     companions[0].eventName = eventId;
-
-                    DialogueCue(121);
 
                     break;
 

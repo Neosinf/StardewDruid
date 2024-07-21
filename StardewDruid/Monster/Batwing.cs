@@ -386,11 +386,9 @@ namespace StardewDruid.Monster
 
             beam.display = IconData.impacts.flashbang;
 
-            beam.scheme = IconData.schemes.Amethyst;
+            beam.scheme = IconData.schemes.blueberry;
 
             beam.indicator = IconData.cursors.scope;
-
-            beam.scheme = IconData.schemes.Amethyst;
 
             beam.added = new() { SpellHandle.effects.aiming, };
 
@@ -416,7 +414,7 @@ namespace StardewDruid.Monster
 
                 bang.display = IconData.impacts.flashbang;
 
-                bang.scheme = IconData.schemes.Amethyst;
+                bang.scheme = IconData.schemes.blueberry;
 
                 bang.instant = true;
 

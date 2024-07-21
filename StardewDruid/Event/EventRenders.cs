@@ -32,6 +32,8 @@ namespace StardewDruid.Event
 
         public NPC npc;
 
+        public float scale;
+
         public enum renders
         {
 
@@ -76,7 +78,7 @@ namespace StardewDruid.Event
 
         }
 
-        public EventRender(string Id, string Location, Vector2 Origin, IconData.skies sky)
+        public EventRender(string Id, string Location, Vector2 Origin, IconData.skies sky, float Scale = 4f)
         {
 
             eventId = Id;
@@ -90,6 +92,8 @@ namespace StardewDruid.Event
             render = renders.sky;
 
             rectangle = IconData.SkyRectangle(sky);
+
+            scale = Scale;
 
         }
 

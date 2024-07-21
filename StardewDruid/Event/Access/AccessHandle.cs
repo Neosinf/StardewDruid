@@ -179,7 +179,7 @@ namespace StardewDruid.Event.Access
 
         }
 
-        public void AccessStair()
+        public void AccessStair(bool animate = true)
         {
 
             TileSheet tileSheet = new(
@@ -227,7 +227,7 @@ namespace StardewDruid.Event.Access
 
             }
 
-            if (Utility.isOnScreen(stair * 64, 64))
+            if (Utility.isOnScreen(stair * 64, 64) && animate)
             {
 
                 ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);

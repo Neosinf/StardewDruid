@@ -124,17 +124,6 @@ namespace StardewDruid
 
         }
 
-        public int CurrentProgress
-        {
-
-            get
-            {
-                return save.progress.Count();
-            }
-
-
-        }
-
         public Dictionary<int,Rite.rites> Attunement
         {
 
@@ -452,8 +441,8 @@ namespace StardewDruid
                     foreach (Item item in chest.Value.Items)
                     {
 
-                        save.chests[chest.Key].Add(new() { id = item.itemId.Value, quality = item.quality.Value, stack = item.stack.Value, });
-
+                        save.chests[chest.Key].Add(new() { id = item.QualifiedItemId, quality = item.quality.Value, stack = item.stack.Value, });
+                        
                     }
 
                 }
@@ -644,6 +633,7 @@ namespace StardewDruid
                     return;
 
 
+
             }
 
             // Synchronise all players
@@ -668,6 +658,20 @@ namespace StardewDruid
                     SpellHandle spellEffect = new(Game1.player.currentLocation, spellData);
 
                     spellRegister.Add(spellEffect);
+
+                    return;
+
+                case QueryData.queries.HaltCharacter:
+
+                    if (!Context.IsMainPlayer) { return; }
+
+                    CharacterHandle.characters characterType = Enum.Parse<CharacterHandle.characters>(queryData.name);
+
+                    Farmer farmerTarget = Game1.getFarmer(e.FromPlayerID);
+
+                    Mod.instance.characters[characterType].Halt();
+
+                    Mod.instance.characters[characterType].LookAtTarget(farmerTarget.Position);
 
                     return;
 
@@ -699,7 +703,7 @@ namespace StardewDruid
 
                 case QueryData.queries.EventDialogue:
 
-                    if (queryData.location != Game1.player.currentLocation.Name)
+                    if (queryData.location != Game1.player.currentLocation.Name || queryData.name == "none")
                     {
                         return;
 

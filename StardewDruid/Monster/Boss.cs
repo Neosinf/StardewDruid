@@ -778,7 +778,7 @@ namespace StardewDruid.Monster
 
             }
 
-            Mod.instance.iconData.ImpactIndicator(currentLocation, Position, IconData.impacts.flashbang, size, new() { frame = 2, interval = 50, });
+            Mod.instance.iconData.ImpactIndicator(currentLocation, Position, IconData.impacts.flashbang, size, new() { frame = 3, frames = 5, interval = 50, });
 
         }
 

@@ -43,6 +43,16 @@ namespace StardewDruid.Location
 
             base.draw(b);
 
+            List<Vector2> vectors = new()
+            {
+                new Vector2(1664,464),
+                new Vector2(1752,516),
+                new Vector2(1832,516),
+                new Vector2(1920,464),
+
+            };
+
+            int start = 0;
 
             foreach (KeyValuePair<Vector2, int> light in blueLights)
             {
@@ -52,13 +62,15 @@ namespace StardewDruid.Location
 
                     Texture2D texture2D = Game1.sconceLight;
 
-                    Microsoft.Xna.Framework.Vector2 position = new(light.Key.X - (float)Game1.viewport.X, light.Key.Y - (float)Game1.viewport.Y);
+                    Vector2 blueLight = vectors[start++];
+
+                    Microsoft.Xna.Framework.Vector2 position = new(blueLight.X - (float)Game1.viewport.X, blueLight.Y - (float)Game1.viewport.Y);
 
                     int sparkle = Math.Abs((int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 5000) / 100 - 25);
 
                     b.Draw(
                         texture2D,
-                        position + new Vector2(32,32),
+                        position,
                         texture2D.Bounds,
                         Microsoft.Xna.Framework.Color.LightBlue,
                         0f,
@@ -282,7 +294,7 @@ namespace StardewDruid.Location
 
             codes = new()
             {
-                [8] = new() { new() { 25, 1 }, },
+                [7] = new() { new() { 24, 1 }, },
             };
 
             foreach (KeyValuePair<int, List<List<int>>> code in codes)
@@ -310,8 +322,9 @@ namespace StardewDruid.Location
             codes = new()
             {
 
-                [7] = new() { new() { 22, 1 }, new() { 34, 1 }, },
-                [8] = new() { new() { 27, 2 }, new() { 28, 2 }, },
+                [6] = new() { new() { 25, 2 }, new() { 30, 2 }, },
+                [7] = new() { new() { 22, 1 }, new() { 27, 2 }, new() { 28, 2 }, new() { 34, 1 }, },
+
                 [9] = new() { new() { 15, 1 }, },
                 [10] = new() { new() { 41, 1 }, },
                 [11] = new() { new() { 21, 1 }, new() { 35, 1 }, },
@@ -319,10 +332,10 @@ namespace StardewDruid.Location
                 [14] = new() { new() { 43, 1 }, },
 
                 [16] = new() { new() { 12, 1 }, },
-  
+ 
                 [21] = new() { new() { 43, 1 }, },
                 [22] = new() { new() { 12, 1 }, },
- 
+
                 [26] = new() { new() { 15, 1 }, },
                 [27] = new() { new() { 41, 1 }, },
 

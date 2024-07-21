@@ -72,7 +72,12 @@ namespace StardewDruid.Dialogue
 
             float timeThink = timeLeft - 3000f;
 
-            b.Draw(Game1.mouseCursors, vector + new Vector2(24, 24) + new Vector2(8f, 8f) * 4f, new Rectangle(0, 411, 16, 16), Color.White * transparency, 0f, new Vector2(8f, 8f), 3f + (timeThink < 0f ? 0f : timeThink / 900f), SpriteEffects.None, 1f);
+            if (!message.Contains("-"))
+            {
+
+                b.Draw(Game1.mouseCursors, vector + new Vector2(24, 24) + new Vector2(8f, 8f) * 4f, new Rectangle(0, 411, 16, 16), Color.White * transparency, 0f, new Vector2(8f, 8f), 3f + (timeThink < 0f ? 0f : timeThink / 900f), SpriteEffects.None, 1f);
+
+            }
 
             vector.X += 51f;
 

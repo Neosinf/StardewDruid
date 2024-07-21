@@ -293,20 +293,6 @@ namespace StardewDruid.Journal
 
                 relicDetails = new(relic.details);
 
-                if (relic.function)
-                {
-
-                    string relicInstruction = Mod.instance.relicsData.RelicInstruction(relic.relic.ToString());
-
-                    if (relicInstruction != null)
-                    {
-
-                        relicDetails.Add(relicInstruction);
-
-                    }
-
-                }
-
             }
             else
             {

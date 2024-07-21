@@ -359,14 +359,14 @@ namespace StardewDruid.Cast.Mists
                                 }
 
                             }
-                            else if(targetObject.QualifiedItemId == "(O)93")
+                            /*else if(targetObject.QualifiedItemId == "(O)93")
                             {
 
                                 Mod.instance.characters[CharacterHandle.characters.Crow] = new Character.Flyer(CharacterHandle.characters.Crow);
 
                                 Mod.instance.characters[CharacterHandle.characters.Crow].SwitchToMode(Character.Character.mode.track, Game1.player);
 
-                            }
+                            }*/
 
                             continue;
 

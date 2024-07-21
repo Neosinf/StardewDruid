@@ -1626,9 +1626,9 @@ namespace StardewDruid.Cast.Ether
 
                             roarCue.Play();
 
-                        }
+                            roarTimer = 60;
 
-                        roarTimer = 120;
+                        }
 
                         roarActive = true;
 

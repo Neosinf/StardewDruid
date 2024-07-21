@@ -401,7 +401,7 @@ namespace StardewDruid.Monster
 
                 if (netDirection.Value == 3) { mirrored = true; }
 
-                weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { scale = (spriteScale / 4f), source = sweepFrames[netDirection.Value][sweepFrame] });
+                weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { scale = spriteScale, source = sweepFrames[netDirection.Value][sweepFrame] });
 
             }
             else if (netSpecialActive.Value)
@@ -430,13 +430,14 @@ namespace StardewDruid.Monster
 
                 if (netDirection.Value == 3) { mirrored = true; }
 
-                weaponRender.DrawWeapon(b, spritePosition,  drawLayer, new() { scale = (spriteScale / 4f), source = smashFrames[setFlightSeries][setFlightFrame] });
+                weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { scale = spriteScale, source = smashFrames[setFlightSeries][setFlightFrame] });
 
             }
             else if (netHaltActive.Value)
             {
 
                 main = idleFrames[netDirection.Value][0];
+
             }
 
 

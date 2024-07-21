@@ -103,18 +103,9 @@ namespace StardewDruid.Monster
 
             float netScale = GetScale();
 
-            //Vector2 baseVector = new(Position.X + 32f - (64f* netScale), Position.Y + 64f - (64f * netScale));
-            Vector2 baseVector = new(Position.X + 32f - (56f * netScale), Position.Y + 64f - (48f * netScale));
+            Vector2 baseVector = new(Position.X + 32f - (28f * netScale), Position.Y + 64f - (56f * netScale));
 
-            Rectangle baseRectangle = new((int)baseVector.X,(int)baseVector.Y, (int)(48f * netScale), (int)(48f * netScale));
-
-            //baseRectangle.X += (int)(8 * netScale);
-
-            //baseRectangle.Width -= (int)(16 * netScale);
-
-            //baseRectangle.Y += (int)(16 * netScale);
-
-            //baseRectangle.Height -= (int)(16 * netScale);
+            Rectangle baseRectangle = new((int)baseVector.X,(int)baseVector.Y, (int)(56f * netScale), (int)(56f * netScale));
 
             return baseRectangle;
 

@@ -1,4 +1,5 @@
 ﻿using StardewDruid.Cast.Weald;
+using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Locations;
 using System;
@@ -95,12 +96,19 @@ namespace StardewDruid.Data
 
             List<string> reaction = new();
 
+            if (!Enum.TryParse<villagers>(name, out villagers result))
+            {
+
+                return reaction;
+
+            }
+
             switch (react)
             {
 
                 case ReactionData.reactions.stars:
 
-                    switch (Enum.Parse<villagers>(name))
+                    switch (result)
                     {
 
                         case villagers.Harvey:
@@ -147,7 +155,7 @@ namespace StardewDruid.Data
 
                 case ReactionData.reactions.mists:
 
-                    switch (Enum.Parse<villagers>(name))
+                    switch (result)
                     {
 
                         case villagers.Sebastian:

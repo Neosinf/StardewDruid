@@ -70,6 +70,7 @@ namespace StardewDruid.Journal
             quest_shadowtin,
             ether_treasure,
             ether_challenge,
+            end,
 
         }
 
@@ -99,6 +100,7 @@ namespace StardewDruid.Journal
             [milestones.quest_shadowtin] = new() { questShadowtin, },
             [milestones.ether_treasure] = new() { etherFour, },
             [milestones.ether_challenge] = new() { challengeEther, },
+            [milestones.end] = new() { },
 
         };
 
@@ -178,6 +180,8 @@ namespace StardewDruid.Journal
 
 
         // optional
+
+        public const string relicTactical = "relicTactical";
 
         public const string relicWeald = "relicWeald";
 
@@ -956,6 +960,15 @@ namespace StardewDruid.Journal
                 case wealdFive:
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.crow_hammer.ToString());
+
+                    return;
+
+                case challengeWeald:
+
+                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_pot.ToString());
+
+                    LocationData.DruidLocations(LocationData.druid_spring_name);
+
                     return;
 
                 case swordMists:
@@ -1356,6 +1369,16 @@ namespace StardewDruid.Journal
                     return;
 
                 // =====================================================================
+                case relicTactical:
+
+                    if (!Mod.instance.eventRegister.ContainsKey(questId))
+                    {
+
+                        new Event.Relics.RelicTactical().EventSetup(questId);
+
+                    }
+
+                    return;
 
                 case relicWeald:
 
@@ -1420,7 +1443,7 @@ namespace StardewDruid.Journal
 
                 case swordWeald:
 
-                    (Mod.instance.locations[LocationData.druid_grove_name] as Grove).AddDialogueTiles();
+                    (Mod.instance.locations[LocationData.druid_grove_name] as Grove).addDialogue();
 
                     return;
 
@@ -1440,7 +1463,13 @@ namespace StardewDruid.Journal
 
                 case challengeWeald:
 
+                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_pot.ToString());
+
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.runestones_spring.ToString());
+
+                    LocationData.DruidLocations(LocationData.druid_spring_name);
+
+                    (Mod.instance.locations[LocationData.druid_spring_name] as Spring).addDialogue();
 
                     return;
 
@@ -1448,9 +1477,11 @@ namespace StardewDruid.Journal
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_censer.ToString());
 
+                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.tactical_discombobulator.ToString());
+
                     LocationData.DruidLocations(LocationData.druid_atoll_name);
 
-                    (Mod.instance.locations[LocationData.druid_atoll_name] as Atoll).AddDialogueTiles();
+                    (Mod.instance.locations[LocationData.druid_atoll_name] as Atoll).addDialogue();
 
                     return;
 
@@ -1463,6 +1494,12 @@ namespace StardewDruid.Journal
                 case questEffigy:
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.effigy_crest.ToString());
+
+                    return;
+
+                case challengeMists:
+
+                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.runestones_spring.ToString());
 
                     return;
 
@@ -1544,7 +1581,7 @@ namespace StardewDruid.Journal
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.box_measurer.ToString());
 
-                    (Mod.instance.locations[LocationData.druid_court_name] as Court).AddDialogueTiles();
+                    (Mod.instance.locations[LocationData.druid_court_name] as Court).addDialogue();
 
                     return;
 
@@ -1921,6 +1958,8 @@ namespace StardewDruid.Journal
         public void OnAccept(string questId)
         {
 
+            ThrowHandle throwRelic;
+
             switch (questId)
             {
 
@@ -1947,6 +1986,16 @@ namespace StardewDruid.Journal
                     throwHammer.register();
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.crow_hammer.ToString());
+
+                    break;
+
+                case challengeWeald:
+
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.wayfinder_pot);
+
+                    throwRelic.register();
+
+                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_pot.ToString());
 
                     break;
 
@@ -2104,7 +2153,7 @@ namespace StardewDruid.Journal
 
                     VillagerData.CommunityFriendship(VillagerData.villagerLocales.mountain, friendship, questRating);
 
-                    throwRelic = new(Game1.player, Game1.player.Position + new Vector2(192, -64), IconData.relics.runestones_spring);
+                    throwRelic = new(Game1.player, Game1.player.Position + new Vector2(192, -64), IconData.relics.tactical_discombobulator);
 
                     throwRelic.register();
 
@@ -2135,6 +2184,10 @@ namespace StardewDruid.Journal
                     friendship += questRating * 25;
 
                     VillagerData.CommunityFriendship(VillagerData.villagerLocales.town, friendship, questRating);
+
+                    throwRelic = new(Game1.player, Game1.player.Position + new Vector2(192, -64), IconData.relics.runestones_spring);
+
+                    throwRelic.register();
 
                     break;
 
