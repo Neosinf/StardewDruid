@@ -92,8 +92,6 @@ namespace StardewDruid.Event.Challenge
 
             SetTrack("cowboy_outlawsong");
 
-            eventProximity = 1280;
-
             ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 
             Mod.instance.rite.CastMeteors();
@@ -125,7 +123,7 @@ namespace StardewDruid.Event.Challenge
 
             eventRating = monsterHandle.spawnTotal - monsterHandle.monsterSpawns.Count;
 
-            if (activeCounter % 5 == 1)
+            if (activeCounter > 5 && activeCounter % 5 == 1)
             {
 
                 monsterHandle.SpawnInterval();
@@ -149,7 +147,7 @@ namespace StardewDruid.Event.Challenge
             switch (activeCounter)
             {
 
-                case 14:
+                case 1:
 
                     bosses[0] = new StardewDruid.Monster.Blobfiend(ModUtility.PositionToTile(origin) - new Vector2(3,3), Mod.instance.CombatDifficulty());
 
@@ -176,17 +174,15 @@ namespace StardewDruid.Event.Challenge
 
                     voices[0] = bosses[0];
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, IconData.impacts.splatter, 5f, new());
-
-                    ModUtility.Explode(location, ModUtility.PositionToTile(bosses[0].Position), Game1.player, 5, 3);
+                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, IconData.impacts.splatter, 5f, new() { scheme = schemes.pumpkin,});
 
                     break;
 
-                case 37:
+                case 17:
 
                     bosses[0].netPosturing.Set(false);
 
-                    bosses[0].MaxHealth *= 2;
+                    bosses[0].MaxHealth *= 3;
 
                     bosses[0].Health = bosses[0].MaxHealth;
 
@@ -199,7 +195,7 @@ namespace StardewDruid.Event.Challenge
                     if(bosses.Count > 0)
                     {
 
-                        SpellHandle meteor = new(Game1.player, bosses[0].Position, 8 * 64, Mod.instance.CombatDamage()*4);
+                        SpellHandle meteor = new(Game1.player, bosses[0].Position, 8 * 64, 9999);
 
                         meteor.type = spells.orbital;
 
@@ -219,7 +215,7 @@ namespace StardewDruid.Event.Challenge
 
                         bosses[0].idleTimer = 2000;
 
-                        bosses[0].Health = 1;
+                        bosses[0].Health = 10;
 
                     }
 

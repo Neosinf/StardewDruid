@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using xTile.Dimensions;
+using static StardewDruid.Journal.HerbalData;
 
 namespace StardewDruid.Data
 {
@@ -40,6 +41,7 @@ namespace StardewDruid.Data
             lava,
             scythe,
             cutlass,
+            knife,
         }
 
         public static MeleeWeapon SpawnSword(swords sword)
@@ -94,7 +96,39 @@ namespace StardewDruid.Data
 
                     return new MeleeWeapon("57");
 
+                case swords.knife:
+
+                    return new MeleeWeapon("16");
             }
+
+        }
+
+        public static Dictionary<int, Rite.rites> WeaponAttunement(bool reserved = false)
+        {
+
+            Dictionary<int, Rite.rites> weapons = new();
+
+            if (!reserved)
+            {
+                weapons = Mod.instance.save.attunement;
+
+            }
+
+            weapons[15] = Rite.rites.weald;
+            weapons[14] = Rite.rites.mists;
+            weapons[3] = Rite.rites.stars;
+            weapons[53] = Rite.rites.fates;
+            weapons[57] = Rite.rites.ether;
+            weapons[16] = Rite.rites.bones;
+
+            if (Mod.instance.Helper.ModRegistry.IsLoaded("DaLion.Overhaul"))
+            {
+                weapons[44] = Rite.rites.weald;
+                weapons[7] = Rite.rites.mists;
+
+            }
+
+            return weapons;
 
         }
 
@@ -218,6 +252,7 @@ namespace StardewDruid.Data
 
                     switch (Game1.random.Next(4))
                     {
+                        default:
                         case 0: monster.objectsToDrop.Add("797"); break;
 
                         case 1: monster.objectsToDrop.Add("166"); break;
@@ -283,34 +318,6 @@ namespace StardewDruid.Data
 
         }
 
-        public static Dictionary<int, Rite.rites> WeaponAttunement(bool reserved = false)
-        {
-
-            Dictionary<int, Rite.rites> weapons = new();
-
-            if (!reserved)
-            {
-                weapons = Mod.instance.save.attunement;
-
-            }
-
-            weapons[15] = Rite.rites.weald;
-            weapons[14] = Rite.rites.mists;
-            weapons[3] = Rite.rites.stars;
-            weapons[53] = Rite.rites.fates;
-            weapons[57] = Rite.rites.ether;
-
-            if (Mod.instance.Helper.ModRegistry.IsLoaded("DaLion.Overhaul"))
-            {
-                weapons[44] = Rite.rites.weald;
-                weapons[7] = Rite.rites.mists;
-
-            }
-
-            return weapons;
-
-        }
-
         public static List<int> StoneIndex()
         {
 
@@ -337,7 +344,7 @@ namespace StardewDruid.Data
 
         }
 
-        public static int RandomTree(GameLocation location)
+        public static Tree RandomTree(GameLocation location)
         {
             List<int> treeIndex;
 
@@ -392,7 +399,7 @@ namespace StardewDruid.Data
 
             };
 
-            return treeIndex[Game1.random.Next(treeIndex.Count)];
+            return new(treeIndex[Game1.random.Next(treeIndex.Count)].ToString(), 1);
 
         }
 
@@ -727,6 +734,13 @@ namespace StardewDruid.Data
         public static string SeasonalSeed(GameLocation location)
         {
 
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdOne) || Mod.instance.ModDifficulty() > 10)
+            {
+
+                return null;
+
+            }
+
             if (Mod.instance.randomIndex.Next(500) == 0)
             {
 
@@ -734,54 +748,39 @@ namespace StardewDruid.Data
 
             }
 
-            switch (Mod.instance.randomIndex.Next(12 + Mod.instance.ModDifficulty() - Mod.instance.PowerLevel))
+            if(Mod.instance.randomIndex.Next(5) == 0)
             {
 
-                case 0:
+                string item = "(O)498";
 
-                    return "(O)MixedFlowerSeeds";
+                switch (Game1.currentSeason)
+                {
 
-                case 1:
+                    case "spring":
 
-                    return "(O)770";
+                        item = "(O)495";
 
-                case 2:
-                case 3:
-                case 4:
+                        break;
 
-                    string item = "(O)498";
+                    case "summer":
 
-                    switch (Game1.currentSeason)
-                    {
+                        item = "(O)496";
 
-                        case "spring":
+                        break;
 
-                            item = "(O)495";
+                    case "fall":
 
-                            break;
+                        item = "(O)497";
 
-                        case "summer":
+                        break;
 
-                            item = "(O)496";
+                }
 
-                            break;
-
-                        case "fall":
-
-                            item = "(O)497";
-
-                            break;
-
-                    }
-
-                    return item;
-
-                default:
-
-                    return null;
+                return item;
 
             }
 
+            return null;
 
         }
 
@@ -887,13 +886,6 @@ namespace StardewDruid.Data
 
             string season = Game1.currentSeason;
 
-            if (location is Beach || location is StardewDruid.Location.Atoll || location is IslandWest || location is IslandSouth || location is IslandSouthEast)
-            {
-
-                season = "beach";
-
-            }
-            else
             if (location is IslandEast || location is Woods)
             {
 
@@ -903,18 +895,6 @@ namespace StardewDruid.Data
 
             switch (season)
             {
-                case "beach":
-
-                    randomCrops = new()
-                    {
-                        [0] = 152,
-                        [1] = 153,
-                        [2] = 152,
-                        [3] = 393,
-                    };
-                    randomCrop = randomCrops[Game1.random.Next(4)];
-
-                    break;
 
                 case "spring":
 
@@ -970,13 +950,6 @@ namespace StardewDruid.Data
         public static string RandomRock(GameLocation location)
         {
 
-            if (location is Beach || location is StardewDruid.Location.Atoll || location is IslandWest || location is IslandSouth || location is IslandSouthEast)
-            {
-
-                return RandomBeach(location);
-
-            }
-
             if (Mod.instance.randomIndex.Next(100) == 0)
             {
 
@@ -1006,30 +979,29 @@ namespace StardewDruid.Data
         public static string RandomBeach(GameLocation location)
         {
 
-
-            if (Mod.instance.randomIndex.Next(20) == 0)
-            {
-
-                return "(O)44";
-
-            }
-
-            if (Mod.instance.randomIndex.Next(10) == 0)
-            {
-
-                 return "(O)25"; 
-
-
-            }
-
-            if (Mod.instance.randomIndex.Next(2) == 0)
-            {
-
-                 return "(O)818";
-
-            }
-
-            return "(O)169";
+            List<string> spawn = new() {
+                "(O)80", // "Quartz", 
+                "(O)86", // "Earth Crystal", 
+                "(O)84", // "Frozen Tear",
+                "(O)881", // "Bone Fragment", 
+                "(O)168", // "Trash", 
+                "(O)169", // "Driftwood", 
+                "(O)170", // "Broken Glasses", 
+                "(O)171", // "Broken CD", 
+                "(O)152", // "Algae", 
+                "(O)153", // "Seaweed", 
+                "(O)157", // "White Algae", 
+                "(O)167", // "Joja Cola", 
+                "(O)718", // "Cockle", 
+                "(O)719", // "Mussel", 
+                "(O)720", // "Shrimp", 
+                "(O)721", // "Snail", 
+                "(O)722", // "Periwinkle", 
+                "(O)723", // "Oyster", 
+                "(O)372", // "Clam", 
+                "(O)393",
+            };
+            return spawn[Game1.random.Next(spawn.Count)];
 
         }
 
@@ -1254,7 +1226,7 @@ namespace StardewDruid.Data
 
                 }
             }
-            else if (location is Beach || location is IslandLocation || location is Atoll || forest == 3)
+            else if (location is Beach || location.Name.Contains("Beach") || location is IslandLocation || location is Atoll || forest == 3)
             {
 
                 switch (Game1.currentSeason)
@@ -1538,6 +1510,50 @@ namespace StardewDruid.Data
             int objectIndex = objectIndexes[new Random().Next(objectIndexes.Count)];
 
             return "(O)"+objectIndex.ToString();
+        }
+        
+        public static string RandomSeasonalFruit()
+        {
+
+            List<string> indexes = new();
+
+            switch (Game1.currentSeason)
+            {
+
+                case "spring":
+
+                    indexes.Add("(O)634"); // apricot
+                    indexes.Add("(O)638"); // cherry
+                    indexes.Add("(O)296"); // salmonberry
+                    indexes.Add("(O)296"); // salmonberry
+                    break;
+
+                case "summer":
+
+                    indexes.Add("(O)636"); // peach
+                    indexes.Add("(O)635"); // orange
+                    indexes.Add("(O)398"); // grape
+                    indexes.Add("(O)398"); // grape
+                    break;
+
+                case "fall":
+
+                    indexes.Add("(O)613"); // apple
+                    indexes.Add("(O)637"); // pomegranite
+                    indexes.Add("(O)410"); // blackberry
+                    indexes.Add("(O)410"); // blackberry
+                    break;
+
+                case "winter":
+
+                    return null;
+
+            }
+
+            string objectIndex = indexes[new Random().Next(indexes.Count)];
+
+            return objectIndex;
+
         }
 
         public static StardewValley.Object RandomTreasure(GameLocation location, bool rareTreasure = false)
@@ -1913,7 +1929,7 @@ namespace StardewDruid.Data
                 }
 
             }
-            else if (location is Forest || location is Mountain || location is Desert || location is BugLand)
+            else if (location is Forest || location is Mountain || location is Desert || location is BugLand || location is Clearing)
             {
 
                 weeds = true;
@@ -2019,7 +2035,7 @@ namespace StardewDruid.Data
                 fishspot = true;
 
             }
-            else if (location.Name.Contains("Saloon") || location is DruidLocation || location is FarmCave)
+            else if (location.Name.Contains("Saloon") || location is DruidLocation || location is FarmCave || location.Name.Equals("Tunnel"))
             {
 
                 cast = true;

@@ -154,8 +154,10 @@ namespace StardewDruid.Journal
             if (questRecord.type == Quest.questTypes.lesson)
             {
 
+                string completeString = isComplete ? "Mastered " : "";
+
                 string lessonProgress =
-                    isComplete ? "Mastered " : "" +
+                    completeString +
                     Mod.instance.save.progress[questId].progress.ToString() + " " + 
                     DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.outOf) + " " + 
                     questRecord.requirement.ToString() + " " + 

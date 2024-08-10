@@ -218,7 +218,7 @@ namespace StardewDruid.Cast.Ether
                 if (fishRelic != IconData.relics.none)
                 {
 
-                    if (!Mod.instance.save.reliquary.ContainsKey(fishRelic.ToString()))
+                    if (!Journal.RelicData.HasRelic(fishRelic))
                     {
 
                         ThrowHandle throwRelic = new(Game1.player, origin, fishRelic);
@@ -238,7 +238,7 @@ namespace StardewDruid.Cast.Ether
             if (bookRelic != IconData.relics.none)
             {
 
-                if (!Mod.instance.save.reliquary.ContainsKey(bookRelic.ToString()))
+                if (!Journal.RelicData.HasRelic(bookRelic))
                 {
 
                     ThrowHandle throwRelic = new(Game1.player, origin, bookRelic);

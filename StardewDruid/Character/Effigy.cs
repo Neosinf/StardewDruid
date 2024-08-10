@@ -27,8 +27,6 @@ namespace StardewDruid.Character
     public class Effigy : StardewDruid.Character.Character
     {
 
-        public WeaponRender weaponRender;
-
         public List<Vector2> ritesDone = new();
 
         public Effigy()
@@ -44,16 +42,68 @@ namespace StardewDruid.Character
 
         public override void LoadOut()
         {
-            
-            characterType = CharacterHandle.characters.Effigy;
-
-            weaponRender = new();
-
-            weaponRender.LoadWeapon(WeaponRender.weapons.sword);
-
-            weaponRender.swordScheme = IconData.schemes.sword_stars;
 
             base.LoadOut();
+
+            WeaponLoadout();
+
+            weaponRender.swordScheme = IconData.schemes.stars;
+
+            idleFrames = new()
+            {
+                [0] = new()
+                {
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(224, 0, 32, 32),
+                },
+                [1] = new()
+                {
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(224, 0, 32, 32),
+                },
+                [2] = new()
+                {
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(224, 0, 32, 32),
+                },
+                [3] = new()
+                {
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(224, 0, 32, 32),
+                },
+            };
+
+            sweepFrames = new()
+            {
+                [0] = new()
+                {
+                    new Rectangle(192, 288, 32, 32),
+                    new Rectangle(224, 288, 32, 32),
+                    new Rectangle(128, 288, 32, 32),
+                    new Rectangle(160, 288, 32, 32),
+                },
+                [1] = new()
+                {
+                    new Rectangle(160, 288, 32, 32),
+                    new Rectangle(192, 288, 32, 32),
+                    new Rectangle(224, 288, 32, 32),
+                    new Rectangle(128, 288, 32, 32),
+                },
+                [2] = new()
+                {
+                    new Rectangle(128, 288, 32, 32),
+                    new Rectangle(160, 288, 32, 32),
+                    new Rectangle(192, 288, 32, 32),
+                    new Rectangle(224, 288, 32, 32),
+                },
+                [3] = new()
+                {
+                    new Rectangle(224, 288, 32, 32),
+                    new Rectangle(128, 288, 32, 32),
+                    new Rectangle(160, 288, 32, 32),
+                    new Rectangle(192, 288, 32, 32),
+                },
+            };
 
             gait = 1.4f;
 

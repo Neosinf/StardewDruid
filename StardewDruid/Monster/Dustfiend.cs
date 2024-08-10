@@ -42,7 +42,7 @@ namespace StardewDruid.Monster
 
             base.LoadOut();
 
-            baseJuice -= 1;
+            baseJuice = 2;
 
             basePulp += 5;
 

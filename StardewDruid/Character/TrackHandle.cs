@@ -1,10 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewDruid.Data;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
 using static StardewValley.Minigames.TargetGame;
@@ -30,7 +32,13 @@ namespace StardewDruid.Character
 
         public int trackOffset;
 
-        public TrackHandle(CharacterHandle.characters For, Farmer follow = null)
+        public int trackQuadrant;
+
+        public int linger;
+
+        public Vector2 lingerSpot;
+
+        public TrackHandle(CharacterHandle.characters For, Farmer follow = null, int quadrant = 0)
         {
             
             if(follow == null)
@@ -47,6 +55,23 @@ namespace StardewDruid.Character
             }
 
             trackFor = For;
+
+            trackQuadrant = quadrant;
+
+        }
+
+
+        public Vector2 TrackPosition()
+        {
+
+            if(linger > 0)
+            {
+
+                return lingerSpot;
+
+            }
+
+            return followPlayer.Position;
 
         }
 
@@ -78,7 +103,9 @@ namespace StardewDruid.Character
 
             }
 
-            if (Mod.instance.characters[trackFor].currentLocation.Name != followPlayer.currentLocation.Name)
+            if (
+                //Mod.instance.characters[trackFor].currentLocation == null || 
+                Mod.instance.characters[trackFor].currentLocation.Name != followPlayer.currentLocation.Name)
             {
 
                 if (Mod.instance.characters[trackFor].netSceneActive.Value)
@@ -115,6 +142,15 @@ namespace StardewDruid.Character
             }
 
             warpSpot = Vector2.Zero;
+
+            if(linger > 0)
+            {
+
+                linger--;
+
+                return;
+
+            }
 
             Vector2 center = new Vector2((int)(followPlayer.Position.X / 64), (int)(followPlayer.Position.Y / 64));
 
@@ -220,6 +256,10 @@ namespace StardewDruid.Character
             if (WarpToPlayer(direction))
             {
 
+                linger = 0;
+
+                lingerSpot = Vector2.Zero;
+
                 return true;
 
             }
@@ -245,12 +285,18 @@ namespace StardewDruid.Character
 
             }
 
-            if (direction == -1)
+            if (direction == -1 && trackQuadrant == 0)
             {
 
                 // try for center
 
                 direction = (ModUtility.DirectionToCenter(followPlayer.currentLocation, followPlayer.Position)[2] + 4) % 8;
+
+            }
+            else
+            {
+
+                direction = trackQuadrant;
 
             }
 
@@ -272,6 +318,8 @@ namespace StardewDruid.Character
                 if (friends.Key == trackFor) { continue; }
 
                 if (friends.Value is Actor) { continue; }
+
+                //if (friends.Value.currentLocation == null) { continue; }
 
                 if (friends.Value.currentLocation.Name != followPlayer.currentLocation.Name) { continue; }
 
@@ -295,17 +343,15 @@ namespace StardewDruid.Character
 
                     //Mod.instance.characters[trackFor].occupied = warppoint;
 
-                    CharacterMover mover = new(trackFor);
+                    CharacterMover mover = new(Mod.instance.characters[trackFor], followPlayer.currentLocation, warppoint * 64, true);
 
-                    mover.WarpSet(followPlayer.currentLocation.Name, warppoint * 64, true);
-
-                    nodes.Clear();
+                    mover.warp = Mod.instance.characters[trackFor].warpDisplay;
 
                     Mod.instance.movers[trackFor] = mover;
 
-                    Mod.instance.characters[trackFor].attentionTimer = 360;
-
                     warpDelay = 30;
+
+                    nodes.Clear();
 
                     return true;
 
@@ -316,7 +362,6 @@ namespace StardewDruid.Character
             return false;
 
         }
-
 
         public Dictionary<Vector2,int> NodesToTraversal()
         {
@@ -344,7 +389,7 @@ namespace StardewDruid.Character
             List<Vector2> paths = new() { valids.Keys.Last(), };
 
             Vector2 origin = Mod.instance.characters[trackFor].occupied;
-
+            
             int direct = ModUtility.DirectionToTarget(origin, valids.Keys.Last())[2];
 
             List<int> accept = new()

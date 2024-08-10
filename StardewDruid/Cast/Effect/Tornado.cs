@@ -191,18 +191,31 @@ namespace StardewDruid.Cast.Effect
             foreach(string fish in fishes)
             {
 
+                if(Mod.instance.randomIndex.Next(3) != 0)
+                {
+
+                    continue;
+
+                }
+
                 int objectQuality = 0;
+
+                int experienceGain = 4;
 
                 if (Game1.player.FishingLevel >= 10)
                 {
 
                     objectQuality = 2;
 
+                    experienceGain = 8;
+
                 }
                 else if (Mod.instance.randomIndex.Next(11 - Game1.player.FishingLevel) == 0)
                 {
 
                     objectQuality = 2;
+
+                    experienceGain = 8;
 
                 }
 
@@ -212,7 +225,11 @@ namespace StardewDruid.Cast.Effect
 
                 ThrowHandle throwObject = new(Game1.player, offset, candidate);
 
+                throwObject.delay = Mod.instance.randomIndex.Next(5) * 10;
+
                 throwObject.register();
+
+                Game1.player.gainExperience(1, experienceGain); // gain fishing experience
 
                 Game1.player.checkForQuestComplete(null, -1, 1, null, fish, 7);
 
@@ -221,6 +238,7 @@ namespace StardewDruid.Cast.Effect
             Game1.player.currentLocation.playSound("pullItemFromWater");
             Game1.player.currentLocation.playSound("pullItemFromWater");
             Game1.player.currentLocation.playSound("pullItemFromWater");
+
         }
 
     }

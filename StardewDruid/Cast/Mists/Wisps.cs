@@ -8,6 +8,7 @@ using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Constants;
 using StardewValley.Locations;
+using StardewValley.Network;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,22 @@ namespace StardewDruid.Cast.Mists
             : base()
         {
 
+            activeLimit = -1;
+
+        }
+
+        public override void EventDraw(SpriteBatch b)
+        {
+
+            for (int w = wisps.Count - 1; w >= 0; w--)
+            {
+
+                KeyValuePair<Vector2, WispHandle> wisp = wisps.ElementAt(w);
+
+                wisp.Value.draw(b);
+
+            }
+
         }
 
         public Vector2 WispVector(Vector2 target)
@@ -43,13 +60,22 @@ namespace StardewDruid.Cast.Mists
 
         }
 
-        public Vector2 AddWisps(int index, int charge = 120)
+        public Vector2 AddWisps(int index, int charge = 120, int distance = 0)
         {
+
+            Vector2 usePosition = origin;
+
+            if(distance > 0)
+            {
+
+                usePosition = origin + (ModUtility.DirectionAsVector(index) * distance);
+
+            }
 
             for (int i = 0; i < 3; i++)
             {
 
-                List<Vector2> castSelection = ModUtility.GetTilesWithinRadius(location, ModUtility.PositionToTile(origin), Mod.instance.randomIndex.Next(5, 9), true, index);
+                List<Vector2> castSelection = ModUtility.GetTilesWithinRadius(location, ModUtility.PositionToTile(usePosition), Mod.instance.randomIndex.Next(5, 9), true, index);
 
                 if (castSelection.Count > 0)
                 {
@@ -65,22 +91,7 @@ namespace StardewDruid.Cast.Mists
 
                     }
 
-                    string ground = ModUtility.GroundCheck(location, tryVector);
-
-                    Microsoft.Xna.Framework.Color colour = Mod.instance.iconData.SchemeColour(IconData.schemes.Aquamarine);
-
-                    if(ground == "water")
-                    {
-
-                        colour = Mod.instance.iconData.SchemeColour(IconData.schemes.Topaz);
-
-                    }
-                    else if (ground != "ground")
-                    {
-
-                        continue;
-
-                    }
+                    Microsoft.Xna.Framework.Color colour = Mod.instance.iconData.gradientColours[IconData.schemes.wisps][Mod.instance.randomIndex.Next(4)];
 
                     switch (Mod.instance.randomIndex.Next(3))
                     {
@@ -93,9 +104,6 @@ namespace StardewDruid.Cast.Mists
                     }
 
                     wisps[wispVector] = new(location, tryVector, colour, charge);
-
-                    activeLimit = eventCounter + charge;
-
 
                 }
 
@@ -218,6 +226,22 @@ namespace StardewDruid.Cast.Mists
 
             Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
 
+            wispVector = AddWisps((wispCounter + 1) % 8, 120, 384);
+
+            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+
+            wispVector = AddWisps((wispCounter + 3) % 8, 120, 384);
+
+            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+
+            wispVector = AddWisps((wispCounter + 5) % 8, 120, 384);
+
+            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+
+            wispVector = AddWisps((wispCounter + 7) % 8, 120, 384);
+
+            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+
         }
 
 
@@ -254,7 +278,7 @@ namespace StardewDruid.Cast.Mists
 
                 }
 
-                if (!moment.Value.reset())
+                if (!moment.Value.update())
                 {
 
                     wisps.Remove(moment.Key);
@@ -270,7 +294,7 @@ namespace StardewDruid.Cast.Mists
                     
                     victims.AddRange(closeby);
 
-                    moment.Value.flashed();
+                    moment.Value.flash = 60;
                 
                 }
 
@@ -293,6 +317,13 @@ namespace StardewDruid.Cast.Mists
 
             }
 
+            if(wisps.Count == 0)
+            {
+
+                eventComplete = true;
+
+            }
+
         }
 
     }
@@ -305,22 +336,14 @@ namespace StardewDruid.Cast.Mists
         public Vector2 tile;
 
         public Vector2 position;
+        
+        public Vector2 origin;
 
-        public TemporaryAnimatedSprite wisp;
+        public LightSource light;
 
-        public TemporaryAnimatedSprite eyes;
-
-        public TemporaryAnimatedSprite light;
-
-        public TemporaryAnimatedSprite flash;
+        public int flash;
 
         public int timer;
-
-        public bool initiated;
-
-        public bool completed;
-
-        public Random randomIndex;
 
         public int activation;
 
@@ -335,124 +358,101 @@ namespace StardewDruid.Cast.Mists
 
             tile = Tile;
 
-            position = tile * 64;
+            position = (tile * 64);
 
             timer = Timer;
 
-            randomIndex = new();
-
             colour = Colour;
 
-            flip = randomIndex.Next(2) == 0;
+            flip = Mod.instance.randomIndex.Next(2) == 0;
 
             initiate();
+
+        }
+
+        public void draw(SpriteBatch b)
+        {
+            if (!Utility.isOnScreen(position, 128) && Game1.player.currentLocation.Name == location.Name)
+            {
+                return;
+            }
+
+            Vector2 localPosition = Game1.GlobalToLocal(position);
+
+            float drawLayer = (float)position.Y / 10000f + 0.001f;
+
+            int wispFrame = (int)((Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 2000) / 250);
+
+            int wispOffset = Math.Abs(-4 + wispFrame);
+
+            Microsoft.Xna.Framework.Color useColour = colour;
+
+            if(flash > 0)
+            {
+
+                useColour = Microsoft.Xna.Framework.Color.White;
+
+                flash--;
+
+            }
+
+            b.Draw(
+                Mod.instance.iconData.wispTexture,
+                localPosition - new Vector2(32, 80f),
+                new Microsoft.Xna.Framework.Rectangle(0 + (wispFrame * 32), 0, 32, 32),
+                colour * (0.90f - (0.05f * wispOffset)),
+                0f,
+                Vector2.Zero,
+                4f,
+                flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                drawLayer
+            );
+
+            b.Draw(
+                Mod.instance.iconData.wispTexture,
+                localPosition - new Vector2(32, 80f),
+                new Microsoft.Xna.Framework.Rectangle(0 + (wispFrame*32),32,32,32),
+                Microsoft.Xna.Framework.Color.White * 0.90f,
+                0f,
+                Vector2.Zero,
+                4f,
+                flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                drawLayer
+            );
+
+            b.Draw(Mod.instance.iconData.cursorTexture, localPosition + new Vector2(32, 56), Mod.instance.iconData.shadowRectangle, Microsoft.Xna.Framework.Color.White * 0.15f, 0.0f, new Vector2(24), 1.2f + (wispOffset * 0.1f), 0, drawLayer - 0.0001f);
 
         }
 
         public void initiate()
         {
 
-            light = new(23, 1000f, 1, timer, position, flicker: false, randomIndex.Next(2) == 0 ? true : false)
+
+            int id = (int)(position.X * 10000 + position.Y);
+
+            for (int l = Game1.currentLightSources.Count - 1; l >= 0; l--)
             {
-                texture = Game1.animations,
-                light = true,
-                lightRadius = 3,
-                lightcolor = Microsoft.Xna.Framework.Color.White,
-                alpha = 0.5f,
-                Parent = location,
-            };
+                LightSource lightSource = Game1.currentLightSources.ElementAt(l);
 
-            location.temporarySprites.Add(light);
+                if (lightSource.Identifier == id)
+                {
 
-            Texture2D wispTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Wisp.png"));
+                    //Game1.currentLightSources.Remove(lightSource);
 
-            wisp = new(0, 250f, 8, timer / 2, position - new Vector2(32, 64), false, false)
-            {
+                    return;
 
-                sourceRect = new(0, 0, 32, 32),
-
-                sourceRectStartingPos = new Vector2(0,0),
-
-                texture = Mod.instance.iconData.wispTexture,
-
-                scale = 4, //* size,
-
-                layerDepth = 992f,
-
-                alpha = 0.3f,
-
-                flipped =flip,
-
-                color = colour,
-
-            };
-
-            location.temporarySprites.Add(wisp);
-
-            eyes = new(0, 250f, 8, timer / 2, position - new Vector2(32, 64), false, false)
-            {
-
-                sourceRect = new(0, 32, 32, 32),
-
-                sourceRectStartingPos = new Vector2(0, 32),
-
-                texture = Mod.instance.iconData.wispTexture,
-
-                scale = 4, //* size,
-
-                layerDepth = 992f,
-
-                alpha = 0.4f,
-
-                flipped = flip,
-
-            };
-
-            location.temporarySprites.Add(eyes);
-
-            //light = Mod.instance.iconData.ImpactIndicator(location, position, IconData.impacts.cloud, 2.5f, new() { alpha = 0.3f, interval = 125f, loops = timer, color = colour, });
-
-            initiated = true;
-
-        }
-
-        public void flashed()
-        {
-
-            flash = new(0, 250f, 4, 1, position - new Vector2(32, 64), false, false)
-            {
-
-                sourceRect = new(wisp.sourceRect.X,wisp.sourceRect.Y,32,32),
-
-                sourceRectStartingPos = new Vector2(0, 0),
-
-                texture = Mod.instance.iconData.wispTexture,
-
-                scale = 4, //* size,
-
-                layerDepth = 994f,
-
-                alpha = 0.3f,
-
-                alphaFade = 0.3f / 1000f,
-
-                flipped = flip,
-
-            };
-
-            location.temporarySprites.Add(flash);
-
-        }
-
-        public bool reset()
-        {
-
-            if (!initiated)
-            {
-
-                initiate();
+                }
 
             }
+
+            light = new LightSource(1, position + new Vector2(32), 4f, Microsoft.Xna.Framework.Color.Black * 0.75f, id, LightSource.LightContext.None, 0L);
+
+            Game1.currentLightSources.Add(light);
+
+        }
+
+        public bool update()
+        {
 
             if (timer != -1)
             {
@@ -470,48 +470,12 @@ namespace StardewDruid.Cast.Mists
 
             }
 
-            if (Game1.getLocationFromName(location.Name) == null)
+            if (Game1.player.currentLocation.Name != location.Name)
             {
+                
                 shutdown();
 
                 return false;
-
-            }
-
-            if (!location.temporarySprites.Contains(wisp))
-            {
-                if (light != null)
-                {
-
-                    location.temporarySprites.Remove(light);
-
-                }
-                if (eyes != null)
-                {
-
-                    location.temporarySprites.Remove(eyes);
-
-                }
-                if (flash != null)
-                {
-
-                    location.temporarySprites.Remove(flash);
-
-                }
-
-                initiate();
-
-                completed = false;
-
-            }
-            else
-            {
-
-                wisp.reset();
-
-                light.reset();
-
-                eyes.reset();
 
             }
 
@@ -522,13 +486,7 @@ namespace StardewDruid.Cast.Mists
         public void shutdown()
         {
 
-            location.temporarySprites.Remove(light);
-
-            location.temporarySprites.Remove(wisp);
-
-            location.temporarySprites.Remove(eyes);
-
-            //location.playSound("fireball");
+            Game1.currentLightSources.Remove(light);
 
         }
 

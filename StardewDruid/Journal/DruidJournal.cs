@@ -80,8 +80,8 @@ namespace StardewDruid.Journal
             headerTwo, 
             headerThree,
 
-            reset,
-            save,
+            dragonReset,
+            dragonSave,
 
         }
 
@@ -199,6 +199,15 @@ namespace StardewDruid.Journal
                 default:
                 case journalTypes.quests:
 
+                    if (Mod.instance.magic)
+                    {
+
+                        Game1.activeClickableMenu = new EffectJournal(Id, Record);
+
+                        break;
+
+                    }
+
                     Game1.activeClickableMenu = new DruidJournal(Id, Record);
 
                     break;
@@ -222,6 +231,15 @@ namespace StardewDruid.Journal
                     break;
 
                 case journalTypes.relics:
+
+                    if (Mod.instance.magic)
+                    {
+
+                        Game1.activeClickableMenu = new DragonPage(Id, Record);
+
+                        break;
+
+                    }
 
                     Game1.activeClickableMenu = new RelicJournal(Id, Record);
 
@@ -385,6 +403,13 @@ namespace StardewDruid.Journal
 
             }
 
+            if (Mod.instance.magic)
+            {
+
+                interfaceComponents[101].active = false;
+
+            }
+
         }
 
         public virtual void activateInterface()
@@ -536,6 +561,16 @@ namespace StardewDruid.Journal
 
                     return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.active, new());
 
+                // dragon menu
+
+                case journalButtons.dragonReset:
+
+                    return new JournalComponent(Button, new Vector2(xR - (4 + 64 + 4 + 32), yT), IconData.displays.replay, new());
+
+                case journalButtons.dragonSave:
+
+                    return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.complete, new());
+
                 // ======================================  right side
 
                 case journalButtons.exit:
@@ -567,14 +602,6 @@ namespace StardewDruid.Journal
                 case journalButtons.end:
 
                     return new JournalComponent(Button, new Vector2(xR + 4 + 32, yB - (4 + 64 + 4 + 32)), IconData.displays.end, new());
-
-                case journalButtons.reset:
-
-                    return new JournalComponent(Button, new Vector2(xR - 160, yB - 240), IconData.displays.knock, new());
-
-                case journalButtons.save:
-
-                    return new JournalComponent(Button, new Vector2(xR - 160, yB - 160), IconData.displays.complete, new());
 
             }
 
@@ -734,12 +761,17 @@ namespace StardewDruid.Journal
             }
 
         }
-        
+
         public virtual void pressContent()
         {
-
-            openJournal(journalTypes.questPage, contentComponents[focus].id, focus );
             
+            if (type == journalTypes.quests)
+            {
+                
+                openJournal(journalTypes.questPage, contentComponents[focus].id, focus);
+
+            }
+
         }
 
         public virtual void pressCancel()

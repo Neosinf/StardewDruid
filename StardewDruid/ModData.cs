@@ -1,4 +1,5 @@
-﻿using StardewDruid.Data;
+﻿using Microsoft.VisualBasic;
+using StardewDruid.Data;
 using StardewModdingAPI.Utilities;
 using StardewValley.Characters;
 
@@ -7,6 +8,9 @@ namespace StardewDruid
 
     public class ModData
     {
+        
+        public string modVersion { get; set; }
+
         public KeybindList riteButtons { get; set; }
 
         public KeybindList actionButtons { get; set; }
@@ -79,6 +83,8 @@ namespace StardewDruid
 
         public bool activeJournal { get; set; }
 
+        public int dragonScale { get; set; }
+
         public int dragonScheme { get; set; }
 
         public int dragonBreath { get; set; }
@@ -118,13 +124,23 @@ namespace StardewDruid
             stars,
             fates,
             ether,
+            bones,
             none,
             lunch,
 
         }
 
+        public enum modOptions
+        {
+            Default,
+            Druid,
+            Magic,
+        }
+
         public ModData()
         {
+            
+            modVersion = modOptions.Default.ToString();
             riteButtons = KeybindList.Parse("MouseX1,MouseX2,V,LeftShoulder");
             actionButtons = KeybindList.Parse("MouseLeft,C,ControllerX");
             specialButtons = KeybindList.Parse("MouseRight,X,ControllerY");
@@ -150,7 +166,7 @@ namespace StardewDruid
             slotThree = slotOptions.stars.ToString();
             slotFour = slotOptions.fates.ToString();
             slotFive = slotOptions.ether.ToString();
-            slotSix = slotOptions.none.ToString();
+            slotSix = slotOptions.bones.ToString();
             slotSeven = slotOptions.none.ToString();
             slotEight = slotOptions.none.ToString();
             slotNine = slotOptions.lunch.ToString();
@@ -161,6 +177,7 @@ namespace StardewDruid
             meteorBehaviour = 3;
             cardinalMovement = false;
             castAnywhere = false;
+            dragonScale = 3;
             dragonScheme = (int)IconData.schemes.dragon_red;
             dragonBreath = (int)IconData.schemes.stars;
             dragonPrimaryR = 190;
@@ -172,6 +189,7 @@ namespace StardewDruid
             dragonTertiaryR = 39;
             dragonTertiaryG = 170;
             dragonTertiaryB = 225;
+
         }
 
     }
@@ -200,6 +218,7 @@ namespace StardewDruid
             ThrowSword,
             SpellHandle,
             AccessHandle,
+            AccessDoor,
             HaltCharacter,
         }
 

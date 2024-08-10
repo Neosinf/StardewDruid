@@ -95,6 +95,24 @@ namespace StardewDruid.Monster
 
             float drawLayer = (float)StandingPixel.Y / 10000f;
 
+            if (realName.Value == "Doja")
+            {
+
+                b.Draw(
+                    characterTexture,
+                    localPosition + new Vector2(32) - new Vector2(netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? -4 : 4, 48),
+                    hatFrames[netDirection.Value][0],
+                    Color.White,
+                    0f,
+                    new Vector2(16),
+                    GetScale(),
+                    netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    drawLayer + 0.0001f
+                );
+
+                return;
+            }
+
             b.Draw(
                 characterTexture,
                 localPosition - new Vector2(netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? 30 : 32, 76),

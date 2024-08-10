@@ -70,8 +70,6 @@ namespace StardewDruid.Event.Challenge
 
             SetTrack("PIRATE_THEME");
 
-            eventProximity = -1;
-
             ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 
             //Mod.instance.iconData.AnimateBolt(location, origin);
@@ -120,20 +118,6 @@ namespace StardewDruid.Event.Challenge
             location.warps.Clear();
 
             (location as Atoll).ambientDarkness = true;
-
-        }
-
-        public override void RemoveMonsters()
-        {
-
-            if (location != null)
-            {
-
-                location.updateWarps();
-
-            }
-
-            base.RemoveMonsters();
 
         }
 
@@ -271,12 +255,13 @@ namespace StardewDruid.Event.Challenge
 
             List<string> textList = new()
             {
+                 cues[990][0],
                  cues[991][0],
                  cues[992][0],
                  cues[993][0],
-                 cues[994][0],
 
             };
+
             foreach (StardewValley.Monsters.Monster monsterSpawn in monsterHandle.monsterSpawns)
             {
 
@@ -313,11 +298,11 @@ namespace StardewDruid.Event.Challenge
             }
             
             List<string> textList = new()
-            {
+            {                 
+                 cues[990][0],
                  cues[991][0],
                  cues[992][0],
                  cues[993][0],
-                 cues[994][0],
 
             };
 

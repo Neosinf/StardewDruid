@@ -38,7 +38,7 @@ namespace StardewDruid.Cast.Mists
             if (fishRelic != IconData.relics.none)
             {
 
-                if (!Mod.instance.save.reliquary.ContainsKey(fishRelic.ToString()))
+                if (!Journal.RelicData.HasRelic(fishRelic))
                 {
                     fishingRelic = true;
                 }
@@ -120,7 +120,7 @@ namespace StardewDruid.Cast.Mists
                     if (fishRelic != IconData.relics.none)
                     {
 
-                        if (!Mod.instance.save.reliquary.ContainsKey(fishRelic.ToString()))
+                        if (!Journal.RelicData.HasRelic(fishRelic))
                         {
 
                             ThrowHandle throwRelic = new(Game1.player, origin, fishRelic);

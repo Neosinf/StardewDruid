@@ -28,19 +28,18 @@ namespace StardewDruid.Cast.Weald
 
         public int offset = 0;
 
+        public bool beachTerrain = false;
+
         public enum spawns
         {
             flower,
             forage,
             tree,
             grass,
-            shell,
             weed,
             twig,
-            gem,
             rock,
-            mussel,
-            trash,
+            beach,
         }
 
         int spawnCount;
@@ -167,7 +166,15 @@ namespace StardewDruid.Cast.Weald
 
             Dictionary<Vector2, List<spawns>> spawnProspects = new();
 
-            for(int p = 0; p < affected.Count; p++)
+
+            if(location is Beach || location is StardewDruid.Location.Atoll || location is IslandWest || location is IslandSouth || location is IslandSouthEast)
+            {
+
+                beachTerrain = true;
+
+            }
+
+            for (int p = 0; p < affected.Count; p++)
             {
 
                 switch (radialCounter)
@@ -256,21 +263,27 @@ namespace StardewDruid.Cast.Weald
                     ) 
                     {
 
-                        if (Mod.instance.randomIndex.Next(2) == 0)
-                        {
-
-                            spawnProspects[prospect].Add(spawns.forage);
-
-                        }
+                        spawnProspects[prospect].Add(spawns.weed);
 
                         spawnProspects[prospect].Add(spawns.twig);
 
                         spawnProspects[prospect].Add(spawns.rock);
 
+                        if (beachTerrain)
+                        {
+
+                            spawnProspects[prospect].Add(spawns.beach);
+
+                            continue;
+
+                        }
+
+                        spawnProspects[prospect].Add(spawns.forage);
+
                         if (Mod.instance.questHandle.IsComplete(QuestHandle.wealdThree))
                         {
 
-                            if (Mod.instance.randomIndex.Next(3) == 0)
+                            if (Mod.instance.randomIndex.Next(2) == 0)
                             {
 
                                 spawnProspects[prospect].Add(spawns.flower);
@@ -279,29 +292,22 @@ namespace StardewDruid.Cast.Weald
 
                         }
 
-                        if (location is Beach || location is StardewDruid.Location.Atoll)
+                        Dictionary<string, List<Vector2>> neighbour = ModUtility.NeighbourCheck(location, prospect, 0, 1);
+
+                        if (neighbour.Count == 0)
                         {
 
-                            spawnProspects[prospect].Add(spawns.trash);
+                            spawnProspects[prospect].Add(spawns.tree);
+
 
                         }
                         else
                         {
-                            
-                            Dictionary<string, List<Vector2>> neighbour = ModUtility.NeighbourCheck(location, prospect, 0, 1);
-
-                            if (neighbour.Count == 0)
-                            {
-
-                                spawnProspects[prospect].Add(spawns.tree);
-
-
-                            }
 
                             spawnProspects[prospect].Add(spawns.grass);
 
                         }
- 
+
                     }
 
                 }
@@ -344,7 +350,7 @@ namespace StardewDruid.Cast.Weald
 
                         case spawns.flower:
 
-                            SpawnForage(prospect.Key,true);
+                            SpawnForage(prospect.Key, true);
 
                             break;
 
@@ -366,9 +372,9 @@ namespace StardewDruid.Cast.Weald
 
                             break;
 
-                        case spawns.trash:
+                        case spawns.beach:
 
-                            SpawnTrash(prospect.Key);
+                            SpawnBeach(prospect.Key);
 
                             break;
 
@@ -409,7 +415,7 @@ namespace StardewDruid.Cast.Weald
 
         }
 
-        public void SpawnTrash(Vector2 prospect)
+        public void SpawnBeach(Vector2 prospect)
         {
 
             if (location.objects.ContainsKey(prospect))
@@ -419,7 +425,7 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            StardewValley.Object newForage = new StardewValley.Object(SpawnData.RandomTrash(location).ToString(), 1);
+            StardewValley.Object newForage = new StardewValley.Object(SpawnData.RandomBeach(location).ToString(), 1);
 
             newForage.IsSpawnedObject = true;
 

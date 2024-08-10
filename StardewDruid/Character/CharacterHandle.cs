@@ -8,6 +8,7 @@ using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Characters;
 using StardewValley.Delegates;
 using StardewValley.GameData.Minecarts;
 using StardewValley.Locations;
@@ -43,6 +44,7 @@ namespace StardewDruid.Character
             vault,
             court,
             archaeum,
+            gate,
         }
 
         public enum characters
@@ -55,6 +57,7 @@ namespace StardewDruid.Character
             Revenant,
             Buffin,
             Shadowtin,
+            Blackfeather,
 
             // map interaction
             disembodied,
@@ -80,7 +83,16 @@ namespace StardewDruid.Character
             Shadowcat,
             Shadowfox,
             Shadowbat,
+            ShadowRook,
+            ShadowCrow,
+            ShadowRaven,
+            ShadowMagpie,
+
+            // crows
+            Rook,
             Crow,
+            Raven,
+            Magpie,
 
         }
 
@@ -94,6 +106,75 @@ namespace StardewDruid.Character
             attune,
         }
 
+        public static string CharacterName(characters entity)
+        {
+
+            switch (entity)
+            {
+
+                case characters.Effigy:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.311.1");
+
+                case characters.Revenant:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.311.2");
+
+                case characters.Jester:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.311.3");
+
+                case characters.Buffin:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.311.4");
+
+                case characters.Shadowtin:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.311.5");
+
+                case characters.Blackfeather:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.315.1");
+
+                default:
+
+                    return entity.ToString();
+
+            }
+
+        }
+
+        public static string CharacterTitle(characters character)
+        {
+            switch (character)
+            {
+                case characters.Shadowtin:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.8");
+
+                case characters.Jester:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.12");
+
+                case characters.Buffin:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.16");
+
+                case characters.Revenant:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.20");
+
+                case characters.Blackfeather:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.315.2");
+
+                default:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.24");
+
+            }
+
+        }
 
         public static Vector2 CharacterStart(locations location)
         {
@@ -115,6 +196,10 @@ namespace StardewDruid.Character
                 case locations.chapel:
 
                     return new Vector2(27, 19) * 64;
+
+                case locations.gate:
+
+                    return new Vector2(26, 15) * 64;
 
                 case locations.farm:
 
@@ -175,6 +260,10 @@ namespace StardewDruid.Character
 
                     return LocationData.druid_chapel_name;
 
+                case locations.gate:
+
+                    return LocationData.druid_gate_name;
+
                 case locations.farm:
 
                     return Game1.getFarm().Name;
@@ -216,13 +305,28 @@ namespace StardewDruid.Character
 
             }
 
+            if(location is Gate)
+            {
+
+                return CharacterStart(locations.gate);
+
+            }
+
             return new(location.map.Layers[0].LayerWidth / 2, location.map.Layers[0].LayerHeight / 2);
 
         }
 
-        public static locations CharacterHome(characters character)
+        public static locations CharacterHome(characters entity)
         {
-            switch (character)
+
+            if (Mod.instance.magic)
+            {
+
+                return locations.farm;
+
+            }
+
+            switch (entity)
             {
 
                 case characters.Buffin:
@@ -232,6 +336,10 @@ namespace StardewDruid.Character
                 case characters.Revenant:
 
                     return locations.chapel;
+
+                case characters.Blackfeather:
+
+                    return locations.gate;
 
                 default:
 
@@ -248,9 +356,7 @@ namespace StardewDruid.Character
 
             Vector2 position = CharacterStart(destination);
 
-            CharacterMover mover = new(entity.characterType);
-
-            mover.WarpSet(destiny, position, true);
+            CharacterMover mover = new(entity, destiny, position, true);
 
             if (instant)
             {
@@ -306,7 +412,6 @@ namespace StardewDruid.Character
 
                 case characters.Buffin:
 
-
                     Mod.instance.characters[character] = new Buffin(character);
 
                     break;
@@ -314,6 +419,12 @@ namespace StardewDruid.Character
                 case characters.Shadowtin:
 
                     Mod.instance.characters[character] = new Shadowtin(character);
+
+                    break;
+
+                case characters.Blackfeather:
+
+                    Mod.instance.characters[character] = new Blackfeather(character);
 
                     break;
 
@@ -360,6 +471,22 @@ namespace StardewDruid.Character
 
                     return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Batwing.png"));
 
+                // crows
+                case characters.ShadowRook:
+                case characters.ShadowCrow:
+                case characters.ShadowRaven:
+                case characters.ShadowMagpie:
+
+                    return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Corvid" + character.ToString().Replace("Shadow","") + ".png"));
+
+                // crows
+                case characters.Rook:
+                case characters.Crow:
+                case characters.Raven:
+                case characters.Magpie:
+
+                    return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Corvid" + character.ToString() + ".png"));
+
                 default:
 
                     return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", character.ToString() + ".png"));
@@ -392,6 +519,10 @@ namespace StardewDruid.Character
                 case characters.Shadowtin:
 
                     return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ShadowtinPortrait.png"));
+
+                case characters.Blackfeather:
+
+                    return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "BlackfeatherPortrait.png"));
 
                 case characters.Dwarf:
 
@@ -459,6 +590,15 @@ namespace StardewDruid.Character
 
             }
 
+            if (character == characters.Buffin)
+            {
+
+                disposition.id += 5;
+                disposition.Birthday_Season = "fall";
+                disposition.Birthday_Day = 15;
+
+            }
+
             return disposition;
 
         }
@@ -515,38 +655,13 @@ namespace StardewDruid.Character
 
         }
 
-        public static string CharacterTitle(characters character)
-        {
-            switch (character)
-            {
-                case characters.Shadowtin:
-
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.8");
-
-                case characters.Jester:
-
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.12");
-
-                case characters.Buffin:
-
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.16");
-
-                case characters.Revenant:
-
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.20");
-
-                default:
-
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.24");
-
-            }
-
-        }
         public static string DialogueApproach(characters character)
         {
 
             switch (character)
             {
+
+                // companion characters
 
                 case characters.Effigy:
 
@@ -557,7 +672,7 @@ namespace StardewDruid.Character
 
                     }
 
-                    if (Mod.instance.characters[characters.Effigy].currentLocation.IsFarm)
+                    if (Game1.player.currentLocation.IsFarm)
                     {
 
                         return Mod.instance.Helper.Translation.Get("CharacterHandle.47") +
@@ -593,7 +708,7 @@ namespace StardewDruid.Character
 
                     }
 
-                    if (Mod.instance.characters[characters.Jester].currentLocation.IsFarm)
+                    if (Game1.player.currentLocation.IsFarm)
                     {
 
                         return Mod.instance.Helper.Translation.Get("CharacterHandle.83");
@@ -608,7 +723,7 @@ namespace StardewDruid.Character
 
                 case characters.Shadowtin:
 
-                    if (Mod.instance.characters[characters.Jester].currentLocation.IsFarm)
+                    if (Game1.player.currentLocation.IsFarm)
                     {
 
                         return Mod.instance.Helper.Translation.Get("CharacterHandle.98") +
@@ -617,6 +732,12 @@ namespace StardewDruid.Character
                     }
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.103");
+
+                case characters.Blackfeather:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.315.3");
+
+                // other characters
 
                 case characters.energies:
 
@@ -668,10 +789,17 @@ namespace StardewDruid.Character
         public static string DialogueOption(characters character, subjects subject)
         {
 
+
             switch (subject)
             {
 
                 case subjects.quests:
+
+                    if (!Context.IsMainPlayer)
+                    {
+                        return null;
+
+                    }
 
                     if (Mod.instance.questHandle.IsQuestGiver(character))
                     {
@@ -710,6 +838,11 @@ namespace StardewDruid.Character
 
                 case subjects.relics:
 
+                    if (!Context.IsMainPlayer)
+                    {
+                        return null;
+
+                    }
                     switch (character)
                     {
 
@@ -864,6 +997,11 @@ namespace StardewDruid.Character
 
                 case subjects.inventory:
 
+                    if (!Context.IsMainPlayer)
+                    {
+                        return null;
+
+                    }
                     switch (character)
                     {
 
@@ -916,6 +1054,13 @@ namespace StardewDruid.Character
 
                 case subjects.adventure:
 
+                    if (!Context.IsMainPlayer)
+                    {
+                        
+                        return null;
+
+                    }
+
                     switch (character)
                     {
 
@@ -967,7 +1112,7 @@ namespace StardewDruid.Character
 
                         case characters.herbalism:
 
-                            if (Mod.instance.save.reliquary.ContainsKey(IconData.relics.crow_hammer.ToString()))
+                            if (Journal.RelicData.HasRelic(IconData.relics.crow_hammer))
                             {
 
                                 return Mod.instance.Helper.Translation.Get("CharacterHandle.427");
@@ -998,11 +1143,29 @@ namespace StardewDruid.Character
 
                         case characters.Jester:
 
-                            return AttunementIntro(Rite.rites.fates);
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.swordFates))
+                            {
+
+                                return AttunementIntro(Rite.rites.fates);
+
+                            }
+
+                            return null;
 
                         case characters.Shadowtin:
 
                             return AttunementIntro(Rite.rites.ether);
+
+                        case characters.Blackfeather:
+
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.bonesClearing))
+                            {
+
+                                return AttunementIntro(Rite.rites.bones);
+
+                            }
+
+                            return null;
 
                         case characters.herbalism:
 
@@ -1994,6 +2157,40 @@ namespace StardewDruid.Character
 
                             return generate;
 
+                        case characters.Blackfeather:
+
+                            attuneUpdate = AttunementUpdate(Rite.rites.bones);
+
+                            switch (attuneUpdate)
+                            {
+
+                                case 0:
+
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1239").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                                    break;
+
+                                case 1:
+
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.315.4").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                                    break;
+
+                                case 2:
+
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.315.5").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                                    break;
+
+                                case 3:
+
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.315.6").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                                    break;
+
+                            }
+
+                            return generate;
 
                         case characters.herbalism:
 
@@ -2002,7 +2199,7 @@ namespace StardewDruid.Character
 
                                 generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1443");
 
-                                Mod.instance.herbalData.MassBrew();
+                                Mod.instance.herbalData.MassBrew(true);
 
                                 return generate;
 

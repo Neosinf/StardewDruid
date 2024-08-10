@@ -1,9 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Audio;
 using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Monsters;
@@ -100,6 +103,8 @@ namespace StardewDruid.Cast.Effect
 
         public bool drop;
 
+        public bool sounded;
+
         public CreatureHandle(GameLocation Location, Character.CharacterHandle.characters CharacterType, Vector2 Origin, Vector2 Target, string EventId, float Scale)
         {
 
@@ -141,7 +146,10 @@ namespace StardewDruid.Cast.Effect
 
                     break;
 
-                case Character.CharacterHandle.characters.Crow:
+                case Character.CharacterHandle.characters.ShadowCrow:
+                case Character.CharacterHandle.characters.ShadowRaven:
+                case Character.CharacterHandle.characters.ShadowRook:
+                case Character.CharacterHandle.characters.ShadowMagpie:
 
                     creature = new StardewDruid.Character.Flyer(characterType);
 
@@ -156,7 +164,7 @@ namespace StardewDruid.Cast.Effect
                     if (tacticalRelic != IconData.relics.none)
                     {
 
-                        if (!Mod.instance.save.reliquary.ContainsKey(tacticalRelic.ToString()))
+                        if (!Journal.RelicData.HasRelic(tacticalRelic))
                         {
 
                             ThrowHandle throwRelic = new(Game1.player, origin, tacticalRelic);
@@ -205,12 +213,59 @@ namespace StardewDruid.Cast.Effect
 
             }
 
+            if(!sounded && creature is Character.Flyer)
+            {
+
+                if(Mod.instance.randomIndex.Next(24) == 0)
+                {
+
+                    location.playSound(SpellHandle.sounds.crow.ToString());
+
+                }
+
+                sounded = true;
+
+            }
+
             if (!drop)
             {
 
-                if (Vector2.Distance(creature.Position, origin) >= 240)
+                if (location is Clearing)
                 {
 
+                    if (Vector2.Distance(creature.Position, origin) >= 480)
+                    {
+                        Item bushDrop = ItemRegistry.Create(SpawnData.RandomSeasonalFruit());
+
+                        if (bushDrop != null)
+                        {
+
+                            location.debris.Add(new Debris(bushDrop, creature.Position));
+
+                        }
+
+                        drop = true;
+
+                        if (creature is Flyer)
+                        {
+
+                            location.playSound(SpellHandle.sounds.crow.ToString());
+
+                        }
+                        else
+                        if (creature is Hoverer)
+                        {
+
+                            location.playSound(SpellHandle.sounds.batScreech.ToString());
+
+                        }
+
+                    }
+
+                }
+                else if (Vector2.Distance(creature.Position, origin) >= 240)
+                {
+ 
                     Item bushDrop = ItemRegistry.Create(SpawnData.RandomBushForage());
 
                     if (bushDrop != null)
@@ -221,6 +276,20 @@ namespace StardewDruid.Cast.Effect
                     }
 
                     drop = true;
+
+                    if (creature is Flyer)
+                    {
+
+                        location.playSound(SpellHandle.sounds.crow.ToString());
+
+                    }
+                    else
+                    if (creature is Hoverer)
+                    {
+
+                        location.playSound(SpellHandle.sounds.batScreech.ToString());
+
+                    }
 
                 }
 

@@ -1,10 +1,19 @@
-﻿using StardewDruid.Cast.Weald;
+﻿using Microsoft.Xna.Framework.Media;
+using StardewDruid.Cast.Bones;
+using StardewDruid.Cast.Weald;
+using StardewDruid.Character;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.GameData.Characters;
 using StardewValley.Locations;
+using StardewValley.Objects;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
+using System.Reflection.PortableExecutable;
+using System.Threading.Channels;
 using static StardewDruid.Data.ReactionData;
+using static StardewValley.Minigames.BoatJourney;
 
 namespace StardewDruid.Data
 {
@@ -32,11 +41,17 @@ namespace StardewDruid.Data
             Marnie, Jas, Wizard, Willy,
             Krobus,
             Kent,
+            Leo,
+            Dwarf,
+            Marlon,
         }
 
         public static void CommunityFriendship(villagerLocales locale = villagerLocales.mountain, int friendship = 250, int questRating = 1)
         {
             List<string> NPCIndex;
+
+            friendship = Math.Min(friendship, 375);
+
             switch (locale)
             {
                 default:
@@ -91,100 +106,325 @@ namespace StardewDruid.Data
 
         }
 
-        public static List<string> CustomReaction(ReactionData.reactions react, string name)
+        public static List<string> CustomReaction(ReactionData.reactions react, NPC entity, int rating = 0)
         {
-
             List<string> reaction = new();
 
-            if (!Enum.TryParse<villagers>(name, out villagers result))
+            CharacterData customData = entity.GetData();
+
+            if (customData != null && customData.CustomFields != null)
             {
+
+                string reactionValue;
+
+                switch (react)
+                {
+
+                    //StardewDruid.Reactions.Weald(character witnesses or feels a gentle touch of magic)
+                    //StardewDruid.Reactions.Weald.neutral(reaction when low friendship)
+                    //StardewDruid.Reactions.Weald.like(reaction when medium friendship with player)
+                    //StardewDruid.Reactions.Weald.love(reaction when high friendship with player)
+
+                    case ReactionData.reactions.weald:
+
+                        if(customData.CustomFields.TryGetValue("StardewDruid.Reactions.Weald", out reactionValue))
+                        {
+
+                            return new() { reactionValue, };
+
+                        };
+
+                        if (Game1.player.friendshipData[entity.Name].Points >= 1500)
+                        {
+
+                            if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Weald.love", out reactionValue))
+                            {
+                                entity.doEmote(20, true);
+                                return new() { reactionValue, };
+
+                            };
+
+                        }
+                        else if (Game1.player.friendshipData[entity.Name].Points >= 750)
+                        {
+
+                            if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Weald.like", out reactionValue))
+                            {
+                                entity.doEmote(32, true);
+                                return new() { reactionValue, };
+
+                            };
+
+                        }
+
+                        if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Weald.neutral", out reactionValue))
+                        {
+                            entity.doEmote(24, true);
+                            return new() { reactionValue, };
+
+                        };
+
+                        break;
+
+                    //StardewDruid.Reactions.Mists(character hit by lightning)
+                    case ReactionData.reactions.mists:
+
+                        if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Mists", out reactionValue))
+                        {
+                            entity.doEmote(28, true);
+                            return new() { reactionValue, };
+
+                        };
+
+                        break;
+
+                    //StardewDruid.Reactions.Stars(character hit by a meteorite)
+                    case ReactionData.reactions.stars:
+
+                        if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Stars", out reactionValue))
+                        {
+                            entity.doEmote(28, true);
+                            return new() { reactionValue, };
+
+                        };
+
+                        break;
+
+                    //StardewDruid.Reactions.Fates
+                    //StardewDruid.Reactions.Fates.dislike(character doesn't like the trick produced by the Rite of the fates)
+                    //StardewDruid.Reactions.Fates.neutral
+                    //StardewDruid.Reactions.Fates.like
+                    //StardewDruid.Reactions.Fates.love(character loves the trick produced)
+                    case ReactionData.reactions.fates:
+
+                        if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Fates", out reactionValue))
+                        {
+
+                            return new() { reactionValue, };
+
+                        };
+
+                        if (rating >= 75)
+                        {
+
+                            if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Fates.love", out reactionValue))
+                            {
+                                entity.doEmote(20, true);
+                                return new() { reactionValue, };
+
+                            };
+
+                        }
+                        else
+                        if (rating >= 50)
+                        {
+
+                            if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Fates.like", out reactionValue))
+                            {
+                                entity.doEmote(32, true);
+                                return new() { reactionValue, };
+
+                            };
+
+                        }
+                        else
+                        if (rating >= 25)
+                        {
+
+                            if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Fates.neutral", out reactionValue))
+                            {
+                                entity.doEmote(24, true);
+                                return new() { reactionValue, };
+
+                            };
+
+                        }
+
+                        if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Fates.dislike", out reactionValue))
+                        {
+                            entity.doEmote(28, true);
+                            return new() { reactionValue, };
+
+                        };
+
+                        break;
+
+                    //StardewDruid.Reactions.Dragon(character sees player in dragon form)
+                    //StardewDruid.Reactions.Dragon.neutral(reaction when low friendship)
+                    //StardewDruid.Reactions.Dragon.like(reaction when medium friendship with player)
+                    //StardewDruid.Reactions.Dragon.love(reaction when high friendship with player)
+                    case ReactionData.reactions.dragon:
+
+                        if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Dragon", out reactionValue))
+                        {
+
+                            return new() { reactionValue, };
+
+                        };
+
+                        if (Game1.player.friendshipData[entity.Name].Points >= 1500)
+                        {
+
+                            if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Dragon.love", out reactionValue))
+                            {
+                                entity.doEmote(20, true);
+                                return new() { reactionValue, };
+
+                            };
+
+                        }
+                        else if (Game1.player.friendshipData[entity.Name].Points >= 750)
+                        {
+
+                            if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Dragon.like", out reactionValue))
+                            {
+                                entity.doEmote(32, true);
+                                return new() { reactionValue, };
+
+                            };
+
+                        }
+
+                        if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Dragon.neutral", out reactionValue))
+                        {
+                            entity.doEmote(24, true);
+                            return new() { reactionValue, };
+
+                        };
+
+                        break;
+
+                    //StardewDruid.Reactions.Jester(Jester rubs up against the character)
+                    case ReactionData.reactions.jester:
+
+                        if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Jester", out reactionValue))
+                        {
+
+                            return new() { reactionValue, };
+
+                        };
+
+                        break;
+
+                    //StardewDruid.Reactions.Corvid(character is mobbed by a flock of corvids.Small chance they are pickpocketed and are aware or oblivious)
+                    //StardewDruid.Reactions.Corvid.dislike(when pickpocketed by the magpie)
+                    case ReactionData.reactions.corvid:
+
+                        if(rating > 0)
+                        {
+                            
+                            if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Corvid", out reactionValue))
+                            {
+                                entity.doEmote(28, true);
+                                return new() { reactionValue, };
+
+                            };
+
+                        }
+
+                        if (customData.CustomFields.TryGetValue("StardewDruid.Reactions.Corvid.dislike", out reactionValue))
+                        {
+
+                            return new() { reactionValue, };
+
+                        };
+
+                        break;
+
+                }
+
+            }
+
+            if (Enum.TryParse<villagers>(entity.Name, out villagers result))
+            {
+
+                switch (react)
+                {
+
+                    case ReactionData.reactions.stars:
+
+                        switch (result)
+                        {
+
+                            case villagers.Harvey:
+
+                                reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.80").Tokens(new { name = Game1.player.Name }));
+
+                                break;
+
+                            case villagers.Maru:
+
+                                reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.88"));
+
+                                break;
+
+                            case villagers.Kent:
+
+                                reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.94"));
+
+                                reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.96"));
+
+                                break;
+
+                            case villagers.Krobus:
+
+                                reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.102"));
+
+                                break;
+
+                            case villagers.Jodi:
+
+                                reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.108"));
+
+                                reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.110"));
+
+                                break;
+
+                            default:
+
+                                break;
+
+                        }
+
+                        break;
+
+                    case ReactionData.reactions.mists:
+
+                        switch (result)
+                        {
+
+                            case villagers.Sebastian:
+
+                                reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.129"));
+
+                                reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.131"));
+
+                                break;
+
+                            case villagers.Sam:
+
+                                reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.137"));
+
+                                break;
+
+                            case villagers.Demetrius:
+
+                                reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.143"));
+
+                                reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.145"));
+
+                                break;
+
+                        }
+
+                        break;
+
+                }
 
                 return reaction;
 
             }
 
-            switch (react)
-            {
-
-                case ReactionData.reactions.stars:
-
-                    switch (result)
-                    {
-
-                        case villagers.Harvey:
-
-                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.80").Tokens(new { name = Game1.player.Name }));
-
-                            break;
-
-                        case villagers.Maru:
-
-                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.88"));
-
-                            break;
-
-                        case villagers.Kent:
-
-                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.94"));
-
-                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.96"));
-
-                            break;
-
-                        case villagers.Krobus:
-
-                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.102"));
-
-                            break;
-
-                        case villagers.Jodi:
-
-                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.108"));
-
-                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.110"));
-
-                            break;
-
-                        default:
-
-                            break;
-
-                    }
-
-                    break;
-
-                case ReactionData.reactions.mists:
-
-                    switch (result)
-                    {
-
-                        case villagers.Sebastian:
-
-                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.129"));
-
-                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.131"));
-
-                            break;
-
-                        case villagers.Sam:
-
-                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.137"));
-
-                            break;
-
-                        case villagers.Demetrius:
-
-                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.143"));
-
-                            reaction.Add(Mod.instance.Helper.Translation.Get("VillagerData.145"));
-
-                            break;
-
-                    }
-
-                    break;
-
-            }
 
             return reaction;
 
@@ -240,11 +480,11 @@ namespace StardewDruid.Data
 
                     shots = new()
                     {
-                        [ReactionData.portraits.neutral] = "$neutral",
-                        [ReactionData.portraits.happy] = "$neutral",
+                        [ReactionData.portraits.neutral] = "$0",
+                        [ReactionData.portraits.happy] = "$0",
                         [ReactionData.portraits.sad] = "$h",
                         [ReactionData.portraits.unique] = "$h",
-                        [ReactionData.portraits.love] = "$neutral",
+                        [ReactionData.portraits.love] = "$0",
                         [ReactionData.portraits.angry] = "$h",
                     };
 
@@ -257,60 +497,115 @@ namespace StardewDruid.Data
         }
 
 
-        public static Dictionary<string, int> Affinity()
+        public static int Affinity(NPC entity)
         {
+
+            int affinity = 3;
+
+            CharacterData customData = entity.GetData();
+
+            if (customData != null && customData.CustomFields != null)
+            {
+                if(customData.CustomFields.TryGetValue("StardewDruid.Reactions.Affinity", out string affinityValue))
+                {
+                    
+                    int affinityParse = Convert.ToInt32(affinityValue);
+
+                    if (affinityParse < -1 || affinityParse > 4)
+                    {
+
+                        return 3;
+
+                    }
+
+                    return affinityParse;
+
+                }
+
+            }
+
+            if (Enum.TryParse<villagers>(entity.Name, out villagers result))
+            {
+
+                Dictionary<villagers, int> villagerAffinities = new()
+                {
+
+                    // Skeptical / Worldly
+                    [villagers.Demetrius] = 0,
+                    [villagers.Pam] = 0,
+                    [villagers.Penny] = 0,
+                    [villagers.Kent] = 0,
+                    [villagers.Harvey] = 0,
+                    [villagers.Maru] = 0,
+                    [villagers.Robin] = 0,
+
+                    // Ignorant / Don't know
+                    [villagers.Jas] = 1,
+                    [villagers.Alex] = 1,
+                    [villagers.Vincent] = 1,
+                    [villagers.Sam] = 1,
+                    [villagers.Haley] = 1,
+                    [villagers.Marnie] = 1,
+                    [villagers.Leo] = 1,
+
+                    // Indifferent / Unconcerned
+                    [villagers.Shane] = 2,
+                    [villagers.Jodi] = 2,
+                    [villagers.Gus] = 2,
+                    [villagers.Lewis] = 2,
+                    [villagers.Pierre] = 2,
+                    [villagers.George] = 2,
+
+                    // Enthusiastic / Inspired
+                    [villagers.Leah] = 3,
+                    [villagers.Emily] = 3,
+                    [villagers.Elliott] = 3,
+                    [villagers.Abigail] = 3,
+                    [villagers.Sebastian] = 3,
+                    [villagers.Caroline] = 3,
+
+                    // Matter of Fact / Concerned
+                    [villagers.Evelyn] = 4,
+                    [villagers.Clint] = 4,
+                    [villagers.Dwarf] = 4,
+                    [villagers.Marlon] = 4,
+                    [villagers.Willy] = 4,
+
+                    // Esoteric Knowledge
+                    [villagers.Krobus] = 5,
+                    [villagers.Linus] = 5,
+                    [villagers.Wizard] = 5,
+
+                };
+
+                if (villagerAffinities.ContainsKey(result))
+                {
+
+                    return villagerAffinities[result];
+
+                }
+
+            }
+
             Dictionary<string, int> affinities = new()
             {
 
-                // Skeptical / Worldly
-                ["Demetrius"] = 0,
-                ["Pam"] = 0,
-                ["Penny"] = 0,
-                ["Kent"] = 0,
-                ["Harvey"] = 0,
-                ["Maru"] = 0,
-                ["Robin"] = 0,
+                // Can't talk
+                ["FC.Roswell"] = -1,
+                ["FC.Boxy"] = -1,
 
-                // Ignorant / Don't know
-                ["Jas"] = 1,
-                ["Alex"] = 1,
-                ["Vincent"] = 1,
-                ["Sam"] = 1,
-                ["Haley"] = 1,
-                ["Marnie"] = 1,
-
-                // Indifferent / Unconcerned
-                ["Shane"] = 2,
-                ["Jodi"] = 2,
-                ["Gus"] = 2,
-                ["Lewis"] = 2,
-                ["Pierre"] = 2,
-                ["George"] = 2,
-
-                // Enthusiastic / Inspired
-                ["Leah"] = 3,
-                ["Emily"] = 3,
-                ["Elliott"] = 3,
-                ["Abigail"] = 3,
-                ["Sebastian"] = 3,
-                ["Caroline"] = 3,
-
-                // Matter of Fact / Concerned
-                ["Evelyn"] = 4,
-                ["Clint"] = 4,
-                ["Dwarf"] = 4,
-                ["Marlon"] = 4,
-                ["Willy"] = 4,
                 ["Mateo"] = 4,
-
-                // Esoteric Knowledge
-                ["Krobus"] = 5,
-                ["Linus"] = 5,
-                ["Wizard"] = 5,
 
             };
 
-            return affinities;
+            if (affinities.ContainsKey(entity.Name))
+            {
+
+                return affinities[entity.Name];
+
+            }
+
+            return affinity;
 
         }
 

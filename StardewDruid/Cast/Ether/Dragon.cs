@@ -171,7 +171,7 @@ namespace StardewDruid.Cast.Ether
 
             anchor = Game1.getFarmer(netAnchor.Value);
 
-            dragonScale = 3.5f;
+            dragonScale = 2f + ((float)Mod.instance.Config.dragonScale * 0.5f);
 
             dragonRender = new();
 
@@ -1212,7 +1212,7 @@ namespace StardewDruid.Cast.Ether
 
             int key = 0;
 
-            int increment = 8;
+            int increment = 11;
 
             int alternate = netAlternative.Value;
 
@@ -1699,7 +1699,7 @@ namespace StardewDruid.Cast.Ether
 
                 List<Vector2> zeroes = BlastTarget();
 
-                if (RoarCheck(zeroes[0]) || !AccountStamina(5))
+                if (RoarCheck(zeroes[0]) || !AccountStamina())
                 {
 
                     fireTimer = 24;
@@ -2053,7 +2053,7 @@ namespace StardewDruid.Cast.Ether
 
         }
 
-        public bool AccountStamina(int cost)
+        public bool AccountStamina()
         {
 
             if (Game1.player.Stamina <= 32 || Game1.player.health <= 25)
@@ -2062,6 +2062,8 @@ namespace StardewDruid.Cast.Ether
                 Mod.instance.AutoConsume();
 
             }
+
+            int cost = (int)Mod.instance.ModDifficulty();
 
             if (Game1.player.Stamina <= cost)
             {

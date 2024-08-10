@@ -84,18 +84,19 @@ namespace StardewDruid.Event.Scene
                     Mod.instance.characters[CharacterHandle.characters.Jester].netStandbyActive.Set(false);
 
                     Mod.instance.characters[CharacterHandle.characters.Jester].LookAtTarget(Game1.player.Position, true);
-
-                    DialogueLoad(0, 2);
+                    
+                    //DialogueLoad(0, 2);
+                    DialogueSetups(companions[0], 2);
 
                     break;
 
                 case 105:
 
-                    DialogueNext(companions[0]);
+                    //DialogueNext(companions[0]);
 
-                    break;
+                    //break;
 
-                case 110:
+                //case 110:
 
                     activeCounter = 200;
 
@@ -103,17 +104,18 @@ namespace StardewDruid.Event.Scene
 
                 case 201:
 
-                    DialogueLoad(0, 3);
+                    //DialogueLoad(0, 3);
+                    DialogueSetups(companions[0], 3);
 
                     break;
 
                 case 205:
 
-                    DialogueNext(companions[0]);
+                    //DialogueNext(companions[0]);
 
-                    break;
+                    //break;
 
-                case 210:
+                //case 210:
 
                     activeCounter = 300;
 
@@ -122,6 +124,10 @@ namespace StardewDruid.Event.Scene
                 case 301:
 
                     eventComplete = true;
+
+                    Mod.instance.characters[CharacterHandle.characters.Jester].SwitchToMode(Character.Character.mode.track, Game1.player);
+
+                    companions.Clear();
 
                     break;
 

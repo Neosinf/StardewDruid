@@ -21,8 +21,6 @@ namespace StardewDruid.Event.Sword
 
         public int activeSection;
 
-        public Warp warpExit;
-
         public int woundedCounter;
 
         public SwordEther()
@@ -65,8 +63,6 @@ namespace StardewDruid.Event.Sword
             voices[0] = Mod.instance.characters[CharacterHandle.characters.Jester];
 
             location.warps.Clear();
-
-            warpExit = new Warp(26, 32, "SkullCave", 5, 5, flipFarmer: false);
 
             SpawnBoss();
 
@@ -116,9 +112,11 @@ namespace StardewDruid.Event.Sword
                 
                 DialogueCue(991);
 
-                Game1.player.warpFarmer(warpExit, 2);
+                Game1.warpFarmer("SkullCave", 5, 5, 1);
 
-                Mod.instance.CastMessage("You managed to escape! Enter the tomb to try again.", 3);
+                Game1.xLocationAfterWarp = 5;
+
+                Game1.yLocationAfterWarp = 5;
 
             }
 

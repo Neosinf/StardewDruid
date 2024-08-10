@@ -1,26 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
-using StardewDruid.Cast.Effect;
-using StardewDruid.Cast.Mists;
 using StardewDruid.Character;
 using StardewDruid.Data;
-using StardewDruid.Journal;
 using StardewDruid.Location;
-using StardewModdingAPI;
 using StardewValley;
-using StardewValley.Locations;
-using StardewValley.Monsters;
-using StardewValley.Objects;
-using StardewValley.Projectiles;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using xTile.Dimensions;
-using xTile.Tiles;
-using static StardewDruid.Data.IconData;
-using static StardewValley.Menus.CharacterCustomization;
 
 namespace StardewDruid.Event.Scene
 {
@@ -38,7 +22,7 @@ namespace StardewDruid.Event.Scene
             
             mainEvent = true;
 
-            activeLimit = 600;
+            activeLimit = -1;
 
         }
 
@@ -89,28 +73,27 @@ namespace StardewDruid.Event.Scene
 
         }
 
+        public override void EventRemove()
+        {
+            
+            base.EventRemove();
+
+            Mod.instance.locations[LocationData.druid_archaeum_name].updateWarps();
+
+        }
+
         public override void EventInterval()
         {
 
             activeCounter++;
 
 
-            if (activeCounter > 900)
+            if (activeCounter >= 800)
             {
 
-                DialogueCue(activeCounter);
+                SceneMuseum();
 
-                if (activeCounter > 925 && activeCounter <= 964)
-                {
-
-                    if (!ModUtility.MonsterVitals(bosses[0], location))
-                    {
-
-                        activeCounter = 965;
-
-                    }
-
-                }
+                return;
 
             }
 
@@ -659,310 +642,6 @@ namespace StardewDruid.Event.Scene
                     break;
 
                 // --------------------------------------
-                // Museum fight (inserted)
-
-                case 800:
-
-                    Vector2 archaeum = companions[0].Position + new Vector2(320, -64);
-
-                    MuseumAccess = new();
-
-                    MuseumAccess.AccessSetup("Town", LocationData.druid_archaeum_name, ModUtility.PositionToTile(archaeum), new Vector2(24, 15));
-
-                    MuseumAccess.location = location;
-
-                    MuseumAccess.AccessStair();
-
-                    location.localSound("secret1");
-
-                    DialogueClear(0);
-
-                    companions[0].netStandbyActive.Set(false);
-
-                    companions[0].TargetEvent(203, archaeum, true);
-
-                    companions[1].netStandbyActive.Set(false);
-
-                    companions[1].TargetEvent(0, archaeum, true);
-
-                    DialogueCue(45);
-
-                    break;
-
-                case 810:
-
-                    Game1.warpFarmer(LocationData.druid_archaeum_name, 27, 18, 1);
-
-                    Game1.xLocationAfterWarp = 27;
-
-                    Game1.yLocationAfterWarp = 18;
-
-                    inabsentia = true;
-
-                    location = Mod.instance.locations[LocationData.druid_archaeum_name];
-
-                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_archaeum_name], companions[0], new Vector2(24, 15) * 64, false);
-
-                    companions[0].netStandbyActive.Set(true);
-
-                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_archaeum_name], companions[1], new Vector2(31, 15) * 64, false);
-
-                    companions[1].netStandbyActive.Set(true);
-
-                    companions[1].netDirection.Set(3);
-
-                    Vector2 GuntherPosition = new Vector2(27, 14)* 64;
-
-                    companions[3] = new Gunther(CharacterHandle.characters.Gunther);
-
-                    companions[3].SwitchToMode(Character.Character.mode.scene, Game1.player);
-
-                    CharacterMover.Warp(location, companions[3], GuntherPosition);
-
-                    companions[3].eventName = eventId;
-
-                    companions[3].netDirection.Set(2);
-
-                    voices[3] = companions[3];
-
-                    MuseumAccess.AccessWarps();
-
-                    break;
-
-                case 811:
-                case 812:
-                case 813:
-                case 814:
-
-                    if (Game1.player.currentLocation.Name == LocationData.druid_archaeum_name)
-                    {
-
-                        inabsentia = false;
-
-                        activeCounter = 899;
-
-                    }
-
-                    break;
-
-                case 815:
-
-                    inabsentia = false;
-
-                    activeCounter = 899;
-
-                    break;
-
-                // --------------------------------------
-                // Museum fight
-
-                case 900:
-
-                    Microsoft.Xna.Framework.Rectangle relicRectTwo = IconData.RelicRectangles(IconData.relics.skull_saurus);
-
-                    TemporaryAnimatedSprite animationTwo = new(0, 20000, 1, 1, new Vector2(27,15)*64 + new Vector2(32), false, false)
-                    {
-                        sourceRect = relicRectTwo,
-                        sourceRectStartingPos = new(relicRectTwo.X, relicRectTwo.Y),
-                        texture = Mod.instance.iconData.relicsTexture,
-                        layerDepth = 900f,
-                        scale = 4f,
-                    };
-
-                    location.TemporarySprites.Add(animationTwo);
-
-                    break;
-
-                case 916:
-
-                    companions[0].ResetActives(true);
-
-                    companions[0].netDirection.Set(1);
-
-                    companions[1].ResetActives(true);
-
-                    companions[1].netDirection.Set(3);
-
-                    Mod.instance.iconData.DecorativeIndicator(location, new Vector2(27,15) * 64 + new Vector2(32), IconData.decorations.fates, 3f, new() { interval = 6000 });
-
-                    break;
-
-                case 918:
-
-                    Mod.instance.spellRegister.Add(new(new Vector2(27,15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, projectile = 1 });
-
-                    break;
-
-                case 920:
-
-                    Mod.instance.spellRegister.Add(new(new Vector2(27,15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, projectile = 1 });
-
-                    break;
-
-                case 921:
-
-                    StardewDruid.Monster.Dinosaur dinosaur = new(new Vector2(27,16), Mod.instance.CombatDifficulty());
-
-                    dinosaur.netScheme.Set(2);
-
-                    dinosaur.baseJuice = 1;
-
-                    dinosaur.basePulp = 40;
-
-                    dinosaur.SetMode(3);
-
-                    dinosaur.setWounded = true;
-
-                    dinosaur.netScheme.Set(1);
-
-                    dinosaur.netPosturing.Set(true);
-
-                    location.characters.Add(dinosaur);
-
-                    dinosaur.dragonRender.GhostScheme();
-
-                    dinosaur.update(Game1.currentGameTime, location);
-
-                    bosses[0] = dinosaur;
-
-                    voices[4] = dinosaur;
-
-                    BossBar(0, 4);
-
-                    break;
-
-                case 923:
-
-                    companions[3].TargetEvent(0, companions[3].Position - new Vector2(384, 256));
-
-                    companions[3].pathActive = Character.Character.pathing.running;
-
-                    bosses[0].netPosturing.Set(false);
-
-                    break;
-
-                case 925:
-
-                    companions[3].LookAtTarget(bosses[0].Position);
-
-                    companions[0].SwitchToMode(Character.Character.mode.track, Game1.player);
-
-                    Mod.instance.characters[CharacterHandle.characters.Buffin] = companions[1];
-                    
-                    companions[1].SwitchToMode(Character.Character.mode.track, Game1.player);
-
-                    break;
-
-                case 928:
-                case 933:
-                case 938:
-                case 943:
-                case 948:
-                case 953:
-                case 958:
-                case 962:
-
-                    companions[3].SpecialAttack(bosses[0]);
-
-                    break;
-
-                case 964:
-
-                    bosses[0].Halt();
-
-                    bosses[0].idleTimer = 2000;
-
-                    Mod.instance.iconData.DecorativeIndicator(location, bosses[0].Position, IconData.decorations.fates, 3f, new() { interval = 2000 });
-
-                    break;
-
-                case 965:
-
-                    Mod.instance.spellRegister.Add(new(bosses[0].Position, 320, IconData.impacts.deathbomb, new()));
-
-                    ThrowHandle newThrowRelic = new(bosses[0].Position, companions[1].Position, IconData.relics.skull_saurus);
-
-                    newThrowRelic.impact = IconData.impacts.puff;
-
-                    newThrowRelic.register();
-
-                    location.characters.Remove(bosses[0]);
-
-                    bosses.Clear();
-
-                    voices.Remove(4);
-
-                    companions[0].SwitchToMode(Character.Character.mode.scene, Game1.player);
-
-                    companions[0].netStandbyActive.Set(true);
-
-                    Mod.instance.characters.Remove(CharacterHandle.characters.Buffin);
-
-                    companions[1].SwitchToMode(Character.Character.mode.scene, Game1.player);
-
-                    companions[1].netStandbyActive.Set(true);
-
-                    break;
-
-                case 969:
-
-                    companions[0].ResetActives();
-
-                    companions[0].TargetEvent(0, new Vector2(27, 32) * 64);
-
-                    companions[1].ResetActives();
-
-                    companions[1].TargetEvent(0, new Vector2(27, 32) * 64);
-
-                    break;
-
-                case 972:
-
-                    Vector2 outsideTile = ModUtility.PositionToTile(companionVector);
-
-                    Game1.warpFarmer("Town", (int)outsideTile.X+1, (int)outsideTile.Y + 2, 1);
-
-                    Game1.xLocationAfterWarp = (int)outsideTile.X + 1;
-
-                    Game1.yLocationAfterWarp = (int)outsideTile.Y + 2;
-
-                    inabsentia = true;
-
-                    location = Game1.getLocationFromName("Town");
-
-                    CharacterMover.Warp(location, companions[0], companionVector, false);//new Vector2(100, 56) * 64, false);
-
-                    buffinVector = companionVector + new Vector2(192, 0);
-
-                    CharacterMover.Warp(location, companions[1], buffinVector, false);//new Vector2(102, 56) * 64, false);
-
-                    companions[0].netDirection.Set(1);
-
-                    companions[1].netDirection.Set(3);
-
-                    break;
-
-                case 973:
-                case 974:
-                case 975:
-                case 976:
-
-                    if (Game1.player.currentLocation.Name == "Town")
-                    {
-
-                        activeCounter = 399;
-
-                    }
-
-                    break;
-
-                case 977:
-
-                    activeCounter = 399;
-
-                    break;
-
-                // --------------------------------------
                 // Cat fight
 
                 case 400:
@@ -1145,7 +824,7 @@ namespace StardewDruid.Event.Scene
 
                     beam.type = SpellHandle.spells.beam;
 
-                    beam.scheme = schemes.ether;
+                    beam.scheme = IconData.schemes.ether;
 
                     Mod.instance.spellRegister.Add(beam);
 
@@ -1161,7 +840,7 @@ namespace StardewDruid.Event.Scene
 
                     beamTwo.type = SpellHandle.spells.beam;
 
-                    beamTwo.scheme = schemes.fates;
+                    beamTwo.scheme = IconData.schemes.fates;
 
                     Mod.instance.spellRegister.Add(beamTwo);
 
@@ -1181,7 +860,7 @@ namespace StardewDruid.Event.Scene
 
                             Vector2 burnVector = cornerVector + new Vector2((i * 64), (j * 64)) - new Vector2(16 * Mod.instance.randomIndex.Next(0, 4), 16 * Mod.instance.randomIndex.Next(0, 4));
 
-                            Mod.instance.iconData.EmberConstruct(location, IconData.schemes.stars, burnVector, Mod.instance.randomIndex.Next(2,5), Mod.instance.randomIndex.Next(3), 60, 999f);
+                            Mod.instance.iconData.EmberConstruct(location, IconData.schemes.stars, burnVector, 2f + (0.5f * Mod.instance.randomIndex.Next(5)), 60, 999f);
 
                             if(i % 3 == 0 && j % 3 == 0)
                             {
@@ -1442,6 +1121,335 @@ namespace StardewDruid.Event.Scene
             }
 
         }
+
+        public void SceneMuseum()
+        {
+
+            DialogueCue(activeCounter);
+
+            if (bosses.Count > 0 && activeCounter < 965)
+            {
+
+                if (!ModUtility.MonsterVitals(bosses[0], location))
+                {
+
+                    activeCounter = 965;
+
+                }
+
+            }
+
+            switch (activeCounter)
+            {
+
+                // --------------------------------------
+                // Museum entry
+
+                case 800:
+
+                Vector2 archaeum = companions[0].Position + new Vector2(320, -64);
+
+                MuseumAccess = new();
+
+                MuseumAccess.AccessSetup("Town", LocationData.druid_archaeum_name, ModUtility.PositionToTile(archaeum), new Vector2(24, 15));
+
+                MuseumAccess.location = location;
+
+                MuseumAccess.AccessStart();
+
+                location.localSound("secret1");
+
+                DialogueClear(0);
+
+                companions[0].netStandbyActive.Set(false);
+
+                companions[0].TargetEvent(203, archaeum, true);
+
+                companions[1].netStandbyActive.Set(false);
+
+                companions[1].TargetEvent(0, archaeum, true);
+
+                DialogueCue(45);
+
+                break;
+
+                case 810:
+
+                    Game1.warpFarmer(LocationData.druid_archaeum_name, 27, 18, 1);
+
+                    Game1.xLocationAfterWarp = 27;
+
+                    Game1.yLocationAfterWarp = 18;
+
+                    location = Mod.instance.locations[LocationData.druid_archaeum_name];
+
+                    location.warps.Clear();
+
+                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_archaeum_name], companions[0], new Vector2(24, 15) * 64, false);
+
+                    companions[0].netStandbyActive.Set(true);
+
+                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_archaeum_name], companions[1], new Vector2(31, 15) * 64, false);
+
+                    companions[1].netStandbyActive.Set(true);
+
+                    companions[1].netDirection.Set(3);
+
+                    Vector2 GuntherPosition = new Vector2(27, 14) * 64;
+
+                    companions[3] = new Gunther(CharacterHandle.characters.Gunther);
+
+                    companions[3].SwitchToMode(Character.Character.mode.scene, Game1.player);
+
+                    CharacterMover.Warp(location, companions[3], GuntherPosition);
+
+                    companions[3].eventName = eventId;
+
+                    companions[3].netDirection.Set(2);
+
+                    voices[3] = companions[3];
+
+                    MuseumAccess.AccessWarps();
+
+                    break;
+
+                case 811:
+                case 812:
+                case 813:
+                case 814:
+
+                    if (Game1.player.currentLocation.Name == LocationData.druid_archaeum_name)
+                    {
+
+                        activeCounter = 899;
+
+                    }
+
+                    break;
+
+                case 815:
+
+                    activeCounter = 899;
+
+                    break;
+
+                // --------------------------------------
+                // Museum fight
+
+                case 900:
+
+                    SetTrack("libraryTheme");
+
+                    Microsoft.Xna.Framework.Rectangle relicRectTwo = IconData.RelicRectangles(IconData.relics.skull_saurus);
+
+                    TemporaryAnimatedSprite animationTwo = new(0, 20000, 1, 1, new Vector2(27, 15) * 64 + new Vector2(32), false, false)
+                    {
+                        sourceRect = relicRectTwo,
+                        sourceRectStartingPos = new(relicRectTwo.X, relicRectTwo.Y),
+                        texture = Mod.instance.iconData.relicsTexture,
+                        layerDepth = 900f,
+                        scale = 4f,
+                    };
+
+                    location.TemporarySprites.Add(animationTwo);
+
+                    break;
+
+                case 916:
+
+                    companions[0].ResetActives(true);
+
+                    companions[0].netDirection.Set(1);
+
+                    companions[1].ResetActives(true);
+
+                    companions[1].netDirection.Set(3);
+
+                    Mod.instance.iconData.DecorativeIndicator(location, new Vector2(27, 15) * 64 + new Vector2(32), IconData.decorations.fates, 3f, new() { interval = 6000 });
+
+                    break;
+
+                case 918:
+
+                    Mod.instance.spellRegister.Add(new(new Vector2(27, 15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, projectile = 1 });
+
+                    break;
+
+                case 920:
+
+                    Mod.instance.spellRegister.Add(new(new Vector2(27, 15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, projectile = 1 });
+
+                    break;
+
+                case 921:
+
+                    StardewDruid.Monster.Dinosaur dinosaur = new(new Vector2(27, 16), Mod.instance.CombatDifficulty());
+
+                    dinosaur.netScheme.Set(2);
+
+                    dinosaur.baseJuice = 1;
+
+                    dinosaur.basePulp = 40;
+
+                    dinosaur.SetMode(3);
+
+                    dinosaur.setWounded = true;
+
+                    dinosaur.netScheme.Set(1);
+
+                    dinosaur.netPosturing.Set(true);
+
+                    location.characters.Add(dinosaur);
+
+                    dinosaur.dragonRender.GhostScheme();
+
+                    dinosaur.update(Game1.currentGameTime, location);
+
+                    bosses[0] = dinosaur;
+
+                    voices[4] = dinosaur;
+
+                    BossBar(0, 4);
+
+                    break;
+
+                case 923:
+
+                    companions[3].TargetEvent(0, companions[3].Position - new Vector2(384, 256));
+
+                    companions[3].pathActive = Character.Character.pathing.running;
+
+                    bosses[0].netPosturing.Set(false);
+
+                    break;
+
+                case 925:
+
+                    companions[3].LookAtTarget(bosses[0].Position);
+
+                    companions[0].SwitchToMode(Character.Character.mode.track, Game1.player);
+
+                    Mod.instance.characters[CharacterHandle.characters.Buffin] = companions[1];
+
+                    companions[1].SwitchToMode(Character.Character.mode.track, Game1.player);
+
+                    break;
+
+                case 928:
+                case 933:
+                case 938:
+                case 943:
+                case 948:
+                case 953:
+                case 958:
+                case 962:
+
+                    companions[3].SpecialAttack(bosses[0]);
+
+                    break;
+
+                case 964:
+
+                    bosses[0].Halt();
+
+                    bosses[0].idleTimer = 2000;
+
+                    Mod.instance.iconData.DecorativeIndicator(location, bosses[0].Position, IconData.decorations.fates, 3f, new() { interval = 2000 });
+
+                    break;
+
+                case 965:
+
+                    Mod.instance.spellRegister.Add(new(bosses[0].Position, 320, IconData.impacts.deathbomb, new()));
+
+                    ThrowHandle newThrowRelic = new(bosses[0].Position, companions[1].Position, IconData.relics.skull_saurus);
+
+                    newThrowRelic.impact = IconData.impacts.puff;
+
+                    newThrowRelic.register();
+
+                    location.characters.Remove(bosses[0]);
+
+                    bosses.Clear();
+
+                    voices.Remove(4);
+
+                    companions[0].SwitchToMode(Character.Character.mode.scene, Game1.player);
+
+                    companions[0].netStandbyActive.Set(true);
+
+                    Mod.instance.characters.Remove(CharacterHandle.characters.Buffin);
+
+                    companions[1].SwitchToMode(Character.Character.mode.scene, Game1.player);
+
+                    companions[1].netStandbyActive.Set(true);
+
+                    break;
+
+                case 969:
+
+                    companions[0].ResetActives();
+
+                    companions[0].TargetEvent(0, new Vector2(27, 32) * 64);
+
+                    companions[1].ResetActives();
+
+                    companions[1].TargetEvent(0, new Vector2(27, 32) * 64);
+
+                    break;
+
+                case 972:
+
+                    location.updateWarps();
+
+                    Vector2 outsideTile = ModUtility.PositionToTile(companionVector);
+
+                    Game1.warpFarmer("Town", (int)outsideTile.X + 1, (int)outsideTile.Y + 2, 1);
+
+                    Game1.xLocationAfterWarp = (int)outsideTile.X + 1;
+
+                    Game1.yLocationAfterWarp = (int)outsideTile.Y + 2;
+
+                    location = Game1.getLocationFromName("Town");
+
+                    CharacterMover.Warp(location, companions[0], companionVector, false);//new Vector2(100, 56) * 64, false);
+
+                    buffinVector = companionVector + new Vector2(192, 0);
+
+                    CharacterMover.Warp(location, companions[1], buffinVector, false);//new Vector2(102, 56) * 64, false);
+
+                    companions[0].netDirection.Set(1);
+
+                    companions[1].netDirection.Set(3);
+
+                    StopTrack();
+
+                    break;
+
+                case 973:
+                case 974:
+                case 975:
+                case 976:
+
+                    if (Game1.player.currentLocation.Name == "Town")
+                    {
+
+                        activeCounter = 399;
+
+                    }
+
+                    break;
+
+                case 977:
+
+                    activeCounter = 399;
+
+                    break;
+
+            }
+
+        }
+
 
         public override void EventScene(int index)
         {

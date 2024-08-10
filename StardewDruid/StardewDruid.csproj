@@ -13,6 +13,12 @@
     <None Update="Images\Batwing.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Images\Blackfeather.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\BlackfeatherPortrait.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Images\Blobfiend.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -23,6 +29,18 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Images\Carnyx.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\CorvidCrow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\CorvidMagpie.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\CorvidRaven.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\CorvidRook.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Images\Crow.png">
@@ -43,10 +61,16 @@
     <None Update="Images\Dinosaur.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Images\Doja.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Images\Dragon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Images\DragonBreath.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\DragonBreathTwo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Images\DragonDash.png">
@@ -65,6 +89,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Images\Gunther.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\ImpactsThree.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Images\ImpactsTwo.png">
@@ -430,6 +457,9 @@
     <None Update="Sheets\Court.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Sheets\Graveyard.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Sheets\Grove.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -437,6 +467,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Sheets\Gate.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Sheets\Magnolia.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Sheets\Spring.png">

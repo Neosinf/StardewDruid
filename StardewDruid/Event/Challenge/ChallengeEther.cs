@@ -3,6 +3,7 @@ using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Journal;
+using StardewDruid.Location;
 using StardewDruid.Monster;
 using StardewValley;
 using StardewValley.Locations;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using static StardewDruid.Cast.SpellHandle;
 using static StardewDruid.Data.IconData;
 using static System.Net.Mime.MediaTypeNames;
@@ -22,7 +24,7 @@ namespace StardewDruid.Event.Challenge
         public ChallengeEther()
         {
 
-            activeLimit = 90;
+            activeLimit = 180;
 
             mainEvent = true;
 
@@ -49,7 +51,7 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            monsterHandle.spawnWithin = new(15, 7);
+            monsterHandle.spawnWithin = new(15, 10);
 
             monsterHandle.spawnRange = new(24, 21);
 
@@ -57,29 +59,42 @@ namespace StardewDruid.Event.Challenge
 
             EventBar(DialogueData.Strings(DialogueData.stringkeys.theDusting),0);
 
-            eventProximity = -1;
-
             ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 
             location.playSound("discoverMineral");
+
+            if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Blackfeather))
+            {
+                
+                if(Mod.instance.characters[CharacterHandle.characters.Blackfeather].currentLocation is Gate)
+                {
+                    
+                    Mod.instance.characters[CharacterHandle.characters.Blackfeather].SwitchToMode(Character.Character.mode.track, Game1.player);
+
+                }
+
+            }
 
             HoldCompanions();
 
         }
 
-        public override void RemoveMonsters()
+        public override void EventRemove()
         {
 
-            foreach(KeyValuePair<int,StardewDruid.Monster.Boss> boss in bosses)
+            if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Blackfeather))
             {
 
-                boss.Value.currentLocation.characters.Remove(boss.Value);
+                if (Mod.instance.characters[CharacterHandle.characters.Blackfeather].modeActive == Character.Character.mode.track && !Mod.instance.questHandle.IsComplete(QuestHandle.bonesClearing))
+                {
+
+                    Mod.instance.characters[CharacterHandle.characters.Blackfeather].SwitchToMode(Character.Character.mode.home, Game1.player);
+
+                }
 
             }
 
-            bosses.Clear();
-
-            base.RemoveMonsters();
+            base.EventRemove();
 
         }
 
@@ -87,6 +102,24 @@ namespace StardewDruid.Event.Challenge
         {
 
             activeCounter++;
+
+            DialogueCue(activeCounter);
+
+            if (activeCounter <= 90)
+            {
+
+                EventPartOne();
+
+                return;
+
+            }
+
+            EventPartTwo();
+
+        }
+
+        public void EventPartOne()
+        {
 
             monsterHandle.SpawnCheck();
 
@@ -107,7 +140,9 @@ namespace StardewDruid.Event.Challenge
 
                         bosses.Remove(boss.Key);
 
-                        eventComplete = true;
+                        voices.Clear();
+
+                        activeCounter = 90;
 
                     }
 
@@ -168,6 +203,8 @@ namespace StardewDruid.Event.Challenge
 
                         bosses.Clear();
 
+                        voices.Clear();
+
                     }
 
                     break;
@@ -176,13 +213,290 @@ namespace StardewDruid.Event.Challenge
 
                     eventRating = monsterHandle.spawnTotal - monsterHandle.monsterSpawns.Count;
 
+                    RemoveMonsters();
+
+                    break;
+
+            }
+
+        }
+
+        public void EventPartTwo()
+        {
+
+            if (Mod.instance.questHandle.IsComplete(eventId))
+            {
+
+                eventComplete = true;
+
+                return;
+
+            }
+
+            List<Vector2> ruins = new()
+            {
+                new Vector2(32,7),
+                new Vector2(42,11),
+                new Vector2(38,13),
+                new Vector2(42,16),
+                new Vector2(32,23),
+                new Vector2(38,23),
+
+            };
+
+            Flyer corvid;
+
+            switch (activeCounter)
+            {
+
+                case 91:
+
+                    SetTrack("fall3");
+
+                    corvid = new Flyer(CharacterHandle.characters.ShadowCrow);
+
+                    corvid.SwitchToMode(Character.Character.mode.scene, Game1.player);
+
+                    CharacterMover.Warp(location, corvid, new Vector2(1,1));
+
+                    corvid.TargetEvent(0, (ruins[0] * 64) + new Vector2(32, 0), true);
+
+                    corvid.pathActive = Character.Character.pathing.running;
+
+                    companions[1] = corvid;
+
+                    break;
+
+                case 92:
+
+                    location.playSound(SpellHandle.sounds.crow.ToString());
+
+                    break;
+
+                case 93:
+
+                    corvid = new Flyer(CharacterHandle.characters.ShadowCrow);
+
+                    corvid.SwitchToMode(Character.Character.mode.scene, Game1.player);
+
+                    CharacterMover.Warp(location, corvid, new Vector2(1, 33));
+
+                    corvid.TargetEvent(0, (ruins[1] * 64) + new Vector2(32, 0), true);
+
+                    corvid.pathActive = Character.Character.pathing.running;
+
+                    companions[2] = corvid;
+
+                    break;
+
+                case 94:
+
+                    corvid = new Flyer(CharacterHandle.characters.ShadowCrow);
+
+                    corvid.SwitchToMode(Character.Character.mode.scene, Game1.player);
+
+                    CharacterMover.Warp(location, corvid, new Vector2(53, 1));
+
+                    corvid.TargetEvent(0, (ruins[2] * 64) + new Vector2(32, 0), true);
+
+                    corvid.pathActive = Character.Character.pathing.running;
+
+                    companions[3] = corvid;
+
+                    location.playSound(SpellHandle.sounds.crow.ToString());
+
+                    break;
+
+                case 95:
+
+                    corvid = new Flyer(CharacterHandle.characters.ShadowCrow);
+
+                    corvid.SwitchToMode(Character.Character.mode.scene, Game1.player);
+
+                    CharacterMover.Warp(location, corvid, new Vector2(53, 33));
+
+                    corvid.TargetEvent(0, (ruins[3] * 64) + new Vector2(32, 0), true);
+
+                    corvid.pathActive = Character.Character.pathing.running;
+
+                    companions[4] = corvid;
+
+                    break;
+
+                case 96:
+
+                    location.playSound(SpellHandle.sounds.crow.ToString());
+
+                    break;
+
+                case 97:
+
+                    corvid = new Flyer(CharacterHandle.characters.ShadowCrow);
+
+                    corvid.SwitchToMode(Character.Character.mode.scene, Game1.player);
+
+                    CharacterMover.Warp(location, corvid, new Vector2(1, 1));
+
+                    corvid.TargetEvent(0, (ruins[4] * 64) + new Vector2(32, 0), true);
+
+                    corvid.pathActive = Character.Character.pathing.running;
+
+                    companions[5] = corvid;
+
+                    location.playSound(SpellHandle.sounds.crow.ToString());
+
+                    break;
+
+                case 98:
+
+                    corvid = new Flyer(CharacterHandle.characters.ShadowCrow);
+
+                    corvid.SwitchToMode(Character.Character.mode.scene, Game1.player);
+
+                    CharacterMover.Warp(location, corvid, new Vector2(53, 1));
+
+                    corvid.TargetEvent(0, (ruins[5] * 64) + new Vector2(32, 0), true);
+
+                    corvid.pathActive = Character.Character.pathing.running;
+
+                    companions[6] = corvid;
+
+                    location.playSound(SpellHandle.sounds.crow.ToString());
+
+                    break;
+
+                case 99:
+
+                    location.playSound(SpellHandle.sounds.crow.ToString());
+
+                    break;
+
+                case 100:
+
+                    location.playSound(SpellHandle.sounds.crow.ToString());
+
+                    break;
+
+                case 101:
+
+                    CharacterHandle.CharacterLoad(CharacterHandle.characters.Blackfeather, Character.Character.mode.scene);
+
+                    companions[0] = Mod.instance.characters[CharacterHandle.characters.Blackfeather];
+
+                    voices[1] = Mod.instance.characters[CharacterHandle.characters.Blackfeather];
+
+                    Vector2 blackfeather = (ModUtility.PositionToTile(origin) - new Vector2(1, 3)) * 64;
+
+                    CharacterMover.Warp(location, companions[0], blackfeather, false);
+
+                    Mod.instance.iconData.CreateImpact(location, Mod.instance.characters[CharacterHandle.characters.Blackfeather].Position, impacts.plume, 4f, new() { color = Mod.instance.iconData.schemeColours[schemes.npc_blackfeather], alpha = 1f, });
+
+                    break;
+
+                case 102:
+
+                    companions[0].LookAtTarget(new Vector2(4800, 2040), true);
+
+                    break;
+
+                case 103:
+
+                    companions[0].LookAtTarget(new Vector2(0, 2040), true);
+
+                    break;
+
+                case 104:
+
+                    foreach(KeyValuePair<int,Character.Character> companion in companions)
+                    {
+                        
+                        companion.Value.LookAtTarget(Game1.player.Position, true);
+
+                    }
+
+                    DialogueLoad(companions[0], 1);
+
+                    break;
+
+                case 109:
+
+                    DialogueNext(companions[0]);
+
+                    break;
+
+                case 112:
+
+                    activeCounter = 199;
+
+                    break;
+
+                case 200:
+
+                    foreach (KeyValuePair<int, Character.Character> companion in companions)
+                    {
+
+                        companion.Value.LookAtTarget(Game1.player.Position, true);
+
+                    }
+                    DialogueSetups(companions[0], 2);
+
+                    break;
+
+                case 205:
+
+                    activeCounter = 299;
+
+                    break;
+
+                case 300:
+
+                    foreach (KeyValuePair<int, Character.Character> companion in companions)
+                    {
+
+                        companion.Value.LookAtTarget(Game1.player.Position, true);
+
+                    }
+
+                    DialogueSetups(companions[0], 3);
+
+                    break;
+
+                case 305:
+
+                    activeCounter = 399;
+
+                    break;
+
+                case 400:
+
                     eventComplete = true;
 
                     break;
 
             }
 
-            DialogueCue(activeCounter);
+        }
+
+        public override float DisplayProgress(int displayId = 0)
+        {
+
+            if (activeCounter <= 24)
+            {
+
+                return 0f;
+
+            }
+
+            if (activeCounter >= 90)
+            {
+
+                return -1f;
+
+            }
+
+            float progress = ((float)activeCounter - 24f) / (float)66;
+
+            return progress;
 
         }
 

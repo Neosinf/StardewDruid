@@ -17,8 +17,6 @@ namespace StardewDruid.Character
     public class Shadowtin : StardewDruid.Character.Character
     {
 
-        public WeaponRender weaponRender;
-
         public Dictionary<string,Dictionary<Vector2,int>> workVectors = new();
 
         public Shadowtin()
@@ -35,13 +33,11 @@ namespace StardewDruid.Character
         public override void LoadOut()
         {
             
-            characterType = CharacterHandle.characters.Shadowtin;
+            base.LoadOut();
 
-            weaponRender = new();
+            WeaponLoadout();
 
             weaponRender.LoadWeapon(WeaponRender.weapons.carnyx);
-
-            base.LoadOut();
 
             idleFrames = new()
             {
@@ -434,7 +430,6 @@ namespace StardewDruid.Character
 
             }
 
-            Vector2 currentVector = new((int)(Position.X / 64), (int)(Position.Y / 64));
 
             List<Vector2> objectVectors = new List<Vector2>();
 
@@ -447,7 +442,7 @@ namespace StardewDruid.Character
 
                 }
 
-                objectVectors = ModUtility.GetTilesWithinRadius(currentLocation, currentVector, i); ;
+                objectVectors = ModUtility.GetTilesWithinRadius(currentLocation, occupied, i); ;
 
                 foreach (Vector2 objectVector in objectVectors)
                 {
@@ -498,6 +493,7 @@ namespace StardewDruid.Character
             return false;
 
         }
+
         public override List<Vector2> RoamAnalysis()
         {
 

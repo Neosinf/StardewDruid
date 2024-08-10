@@ -25,7 +25,6 @@ namespace StardewDruid.Character
 {
     public class Gunther : StardewDruid.Character.Character
     {
-        new public CharacterHandle.characters characterType = CharacterHandle.characters.Gunther;
 
         public Dictionary<int, List<Rectangle>> hatFrames = new();
 
@@ -42,8 +41,6 @@ namespace StardewDruid.Character
 
         public override void LoadOut()
         {
-
-            characterType = CharacterHandle.characters.Gunther;
 
             base.LoadOut();
 

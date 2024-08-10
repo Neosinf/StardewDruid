@@ -40,8 +40,6 @@ namespace StardewDruid.Event.Challenge
 
             base.EventActivate();
 
-            eventProximity = -1;
-
             location.warps.Clear();
 
             spawnPoints = new()

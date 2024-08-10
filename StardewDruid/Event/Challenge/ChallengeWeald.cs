@@ -153,8 +153,6 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.spawnWater = true;
 
-            eventProximity = 768;
-
             EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
             EventDisplay trashbar = EventBar(DialogueData.Strings(DialogueData.stringkeys.trashCollected), 0);
@@ -244,6 +242,8 @@ namespace StardewDruid.Event.Challenge
 
                     bosses[0].SetMode(3);
 
+                    bosses[0].MaxHealth *= 3;
+
                     bosses[0].netPosturing.Set(true);
 
                     bosses[0].netDirection.Set(2);
@@ -258,11 +258,14 @@ namespace StardewDruid.Event.Challenge
 
                     bosses[0].update(Game1.currentGameTime, location);
 
+                    Mod.instance.iconData.AnimateQuickWarp(location, bosses[0].Position);
+
                     voices[0] = bosses[0];
 
                     break;
 
                 case 24:
+
                     bosses[0].netPosturing.Set(false);
 
                     BossBar(0, 0);

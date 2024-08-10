@@ -13,6 +13,8 @@ namespace StardewDruid.Event.Sword
         public SwordStars()
         {
 
+            activeLimit = -1;
+
         }
 
         public override void SetupCompanion()

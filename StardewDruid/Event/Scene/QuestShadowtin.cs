@@ -50,13 +50,17 @@ namespace StardewDruid.Event.Scene
             [5] = new Vector2(114, 26),
 
             // warp farmer to arrowhead
-            [10] = new Vector2(58, 71),
+            //[10] = new Vector2(58, 71),
+            [10] = new Vector2(32,7),
             // warp companion to arrowhead
-            [11] = new Vector2(56, 70),
+            //[11] = new Vector2(56, 70),
+            [11] = new Vector2(35,8),
             // look at access to shrine
-            [12] = new Vector2(49, 70),
+            //[12] = new Vector2(49, 70),
+            [12] = new Vector2(44, 9),
             // trigger access to shrine
-            [13] = new Vector2(50, 73),
+            //[13] = new Vector2(50, 73),
+            [13] = new Vector2(47, 11),
             // shrine warp farmer
             [14] = new Vector2(27, 26),
             // shrine warp companion
@@ -92,23 +96,23 @@ namespace StardewDruid.Event.Scene
             [29] = new Vector2(28, 28),
 
             // forest cache enter farmer
-            [30] = new Vector2(80, 89),
+            [30] = new Vector2(28, 20),
             // forest cache enter shadowtin
-            [31] = new Vector2(82, 88),
+            [31] = new Vector2(27, 22),
             // forest cache location
-            [32] = new Vector2(83, 92),
+            [32] = new Vector2(27, 25),
             // forest enter rogue
-            [33] = new Vector2(86, 89),
+            [33] = new Vector2(24, 20),
             // forest enter goblin
-            [34] = new Vector2(88, 90),
+            [34] = new Vector2(26, 19),
             // forest cache enter dwarf
-            [35] = new Vector2(87, 90),
+            [35] = new Vector2(25, 19),
             // rogue exit
-            [36] = new Vector2(95, 80),
+            [36] = new Vector2(5, 18),
             // dwarf exit
-            [37] = new Vector2(100, 89),
+            [37] = new Vector2(27, 6),
             // shadowtin contemplation
-            [38] = new Vector2(83, 98),
+            [38] = new Vector2(27, 28),
 
         };
 
@@ -138,6 +142,7 @@ namespace StardewDruid.Event.Scene
             locales = new()
             {
                 "Forest",
+                LocationData.druid_clearing_name,
                 LocationData.druid_engineum_name,
 
             };
@@ -421,13 +426,21 @@ namespace StardewDruid.Event.Scene
 
                 case 103:
 
-                    Game1.warpFarmer(location.Name, (int)eventVectors[10].X, (int)eventVectors[10].Y, 3);
+                    //Game1.warpFarmer(location.Name, (int)eventVectors[10].X, (int)eventVectors[10].Y, 3);
+
+                    Game1.warpFarmer(LocationData.druid_clearing_name, (int)eventVectors[10].X, (int)eventVectors[10].Y, 1);
+
+                    Game1.xLocationAfterWarp = (int)eventVectors[10].X;
+
+                    Game1.yLocationAfterWarp = (int)eventVectors[10].Y;
+
+                    location = Mod.instance.locations[LocationData.druid_clearing_name];
 
                     CharacterMover.Warp(location, companions[0], eventVectors[11] * 64, false);
 
                     companions[0].ResetActives();
 
-                    companions[0].TargetEvent(0, eventVectors[12] * 64,true);
+                    companions[0].TargetEvent(0, eventVectors[12] * 64, true);
 
                     break;
 
@@ -445,11 +458,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].specialTimer = 60;
 
-                    Event.Access.AccessHandle access = new();
-
-                    access.AccessSetup("Forest", Location.LocationData.druid_engineum_name, new(50, 73), new(27, 30));
-
-                    access.AccessCheck(Game1.player.currentLocation);
+                    (location as Location.Clearing).OpenAccessDoor();
 
                     break;
 
@@ -953,6 +962,8 @@ namespace StardewDruid.Event.Scene
 
                 case 400:
 
+                    Game1.stopMusicTrack(MusicContext.Default);
+
                     DialogueClear(0);
 
                     DialogueCue(400);
@@ -1103,7 +1114,9 @@ namespace StardewDruid.Event.Scene
 
                 case 503:
 
-                    location = Game1.getLocationFromName("Forest");
+                    //location = Game1.getLocationFromName("Forest");
+
+                    location = Mod.instance.locations[LocationData.druid_clearing_name];
 
                     Game1.warpFarmer(location.Name, (int)eventVectors[30].X, (int)eventVectors[30].Y, 1);
 

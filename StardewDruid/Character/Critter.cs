@@ -33,6 +33,7 @@ namespace StardewDruid.Character
                 characterType = Enum.Parse<CharacterHandle.characters>(Name);
 
             }
+
             characterTexture = CharacterHandle.CharacterTexture(characterType);
 
             LoadIntervals();

@@ -6,10 +6,12 @@ using StardewDruid.Dialogue;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Extensions;
 using StardewValley.Minigames;
 using StardewValley.Monsters;
 using StardewValley.Objects;
 using StardewValley.Projectiles;
+using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -48,6 +50,7 @@ namespace StardewDruid.Data
             target,
 
             divineCharge,
+            feathers,
 
         }
 
@@ -96,6 +99,11 @@ namespace StardewDruid.Data
             up,
             down,
             scroll,
+            blank2,
+            blank3,
+
+            bones,
+
 
         }
 
@@ -109,6 +117,7 @@ namespace StardewDruid.Data
             stars,
             fates,
             ether,
+            bones,
 
         }
 
@@ -124,6 +133,8 @@ namespace StardewDruid.Data
             [Rite.rites.fates] = decorations.fates,
 
             [Rite.rites.ether] = decorations.ether,
+
+            [Rite.rites.bones] = decorations.bones,
 
         };
 
@@ -141,6 +152,8 @@ namespace StardewDruid.Data
             [Rite.rites.fates] = displays.fates,
 
             [Rite.rites.ether] = displays.ether,
+
+            [Rite.rites.bones] = displays.bones,
 
         };
 
@@ -164,6 +177,13 @@ namespace StardewDruid.Data
             cinder,
             skull,
 
+            plume,
+            steam,
+            smoke,
+            three3,
+            three4,
+            three5,
+
             nature,
             bomb,
             boltswirl,
@@ -176,6 +196,9 @@ namespace StardewDruid.Data
         public Texture2D impactsTexture;
 
         public Texture2D impactsTextureTwo;
+
+        public Texture2D impactsTextureThree;
+
         public enum skies
         {
             none,
@@ -262,15 +285,18 @@ namespace StardewDruid.Data
         public enum tilesheets
         {
             none,
+            outdoors,
+            outdoorsTwo,
             grove,
             spring,
+            graveyard,
             atoll,
             chapel,
             court,
             tomb,
             engineum,
             gate,
-
+            magnolia,
         }
 
         public Dictionary<tilesheets, Texture2D> sheetTextures = new();
@@ -314,11 +340,11 @@ namespace StardewDruid.Data
             herbalism_crucible,
             herbalism_gauge,
             herbalism_6,
+            wayfinder_stone,
             crow_hammer,
             wayfinder_key,
+            wayfinder_glove,
             wayfinder_eye,
-            other_4,
-            other_5,
             other_6,
             tactical_discombobulator,
             tactical_mask,
@@ -352,6 +378,14 @@ namespace StardewDruid.Data
             box_5,
             skull_saurus,
             skull_gelatin,
+
+        }
+
+        public enum warps
+        {
+
+            portal,
+            smoke,
 
         }
 
@@ -399,6 +433,7 @@ namespace StardewDruid.Data
             golden,
             snazzle,
             stardew,
+            wisps,
 
             rock,
             rockTwo,
@@ -436,6 +471,8 @@ namespace StardewDruid.Data
             herbal_celeri,
             herbal_faeth,
             herbal_aether,
+
+            npc_blackfeather,
 
         }
 
@@ -478,6 +515,8 @@ namespace StardewDruid.Data
             [schemes.herbal_celeri] = new(186, 225, 255),
             [schemes.herbal_faeth] = new(255, 255, 186),
             [schemes.herbal_aether] = new(186, 225, 255),
+            
+            [schemes.npc_blackfeather] = new(81,115,131),
 
         };
 
@@ -494,6 +533,7 @@ namespace StardewDruid.Data
             [schemes.death] = new() { new(60, 66, 72), new(72, 84, 96), new(96, 108, 128) },
             [schemes.golden] = new() { new(255, 250, 194), new(255, 232, 155), new(251, 201, 38), },
             [schemes.snazzle] = new() { new(214, 0, 175), new(155, 0, 126), new(37, 34, 74), },
+            [schemes.wisps] = new() { new(75, 138, 187), new(69, 186, 235), new(74, 243, 255), new(186, 225, 255), },
 
             [schemes.dragon_red] = new() { new(190, 30, 45), new(191, 142, 93), new(39, 170, 225) },
             [schemes.dragon_green] = new() { new(121,172,66), new(207,165,73), new(248, 149, 32) },
@@ -558,6 +598,8 @@ namespace StardewDruid.Data
 
             impactsTextureTwo = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ImpactsTwo.png"));
 
+            impactsTextureThree = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ImpactsThree.png"));
+
             skyTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Skies.png"));
 
             missileTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Missiles.png"));
@@ -568,6 +610,8 @@ namespace StardewDruid.Data
 
             sheetTextures[tilesheets.atoll] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Atoll.png"));
 
+            sheetTextures[tilesheets.graveyard] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Graveyard.png"));
+
             sheetTextures[tilesheets.chapel] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Chapel.png"));
 
             sheetTextures[tilesheets.court] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Court.png"));
@@ -577,6 +621,8 @@ namespace StardewDruid.Data
             sheetTextures[tilesheets.engineum] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Engineum.png"));
 
             sheetTextures[tilesheets.gate] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Gate.png"));
+
+            sheetTextures[tilesheets.magnolia] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Magnolia.png"));
 
             relicsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Relics.png"));
 
@@ -605,6 +651,17 @@ namespace StardewDruid.Data
             shieldTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Shield.png"));
 
             shadowRectangle = CursorRectangle(cursors.shadow);
+
+            LoadNuances();
+
+        }
+
+        public void LoadNuances()
+        {
+
+            sheetTextures[tilesheets.outdoors] = Mod.instance.Helper.GameContent.Load<Texture2D>(Path.Combine("Maps", Game1.currentSeason + "_outdoorsTileSheet"));
+
+            sheetTextures[tilesheets.outdoorsTwo] = Mod.instance.Helper.GameContent.Load<Texture2D>(Path.Combine("Maps", Game1.currentSeason + "_outdoorsTileSheet2"));
 
             CustomDragonScheme();
 
@@ -889,14 +946,6 @@ namespace StardewDruid.Data
 
                     break;
 
-                //case impacts.death:
-
-                //    additional.color = SchemeColour(additional.scheme);
-
-                //    additional.alpha = 0.65f;
-
-                //    break;
-
                 case impacts.clouds:
 
                     additional.girth = 2;
@@ -910,10 +959,6 @@ namespace StardewDruid.Data
                     additional.light = 0f;
 
                     additional.layerOffset = 0.001f;
-
-                    //CreateImpact(location, origin, IconData.impacts.cinder, size + 2, additional);
-
-                    //additional.layerOffset = -0.001f;
 
                     CreateImpact(location, origin, IconData.impacts.puff, size + 1, additional);
 
@@ -966,6 +1011,13 @@ namespace StardewDruid.Data
 
                 case impacts.boltswirl:
 
+                    if(additional.scheme == schemes.none)
+                    {
+
+                        additional.scheme = schemes.mists;
+
+                    }
+
                     additional.interval = 80;
 
                     additional.light = 0f;
@@ -978,7 +1030,7 @@ namespace StardewDruid.Data
 
                     CreateImpact(location, origin, IconData.impacts.spiral, 4f, additional);
 
-                    additional.color = gradientColours[schemes.mists][0];
+                    additional.color = gradientColours[additional.scheme][0];
 
                     additional.alpha = 0.2f;
 
@@ -986,7 +1038,7 @@ namespace StardewDruid.Data
 
                     CreateImpact(location, origin, IconData.impacts.spiral, 6f, additional);
 
-                    additional.color = gradientColours[schemes.mists][1];
+                    additional.color = gradientColours[additional.scheme][1];
 
                     additional.alpha = 0.1f;
 
@@ -997,47 +1049,6 @@ namespace StardewDruid.Data
                     CreateImpact(location, origin, IconData.impacts.spiral, 8f, additional);
 
                     return;
-
-                /*case impacts.deathbomb:
-
-                    if (gradientColours.ContainsKey(additional.scheme))
-                    {
-
-                        colours = gradientColours[additional.scheme];
-
-                    }
-                    else
-                    {
-
-                        colours = ConvertToGradient(additional.scheme);
-
-                    }
-
-                    additional.alpha = 0.85f;
-
-                    additional.light = 0f;
-
-                    additional.layerOffset = 0.001f;
-
-                    additional.color = colours[0];
-
-                    CreateImpact(location, origin, IconData.impacts.puff, size+1f, additional);
-
-                    additional.layerOffset = -0.001f;
-
-                    additional.color = colours[1];
-
-                    CreateImpact(location, origin, IconData.impacts.puff, size, additional);
-
-                    additional.light = 0.005f;
-
-                    additional.layerOffset = 0.0032f;
-
-                    additional.color = colours[2];
-
-                    CreateImpact(location, origin - new Vector2(0,32), IconData.impacts.death, size, additional);
-
-                    return;*/
 
                 case impacts.deathwhirl:
 
@@ -1088,53 +1099,6 @@ namespace StardewDruid.Data
                     CreateImpact(location, Game1.player.Position - new Vector2(0,64), IconData.impacts.spiral, 5f, additional);
                     return;
 
-               /* case impacts.gore:
-
-                    if (gradientColours.ContainsKey(additional.scheme))
-                    {
-
-                        colours = gradientColours[additional.scheme];
-
-                    }
-                    else
-                    {
-
-                        colours = ConvertToGradient(additional.scheme);
-
-                    }
-
-                    additional.alpha = 0.9f;
-
-                    additional.light = 0f;
-
-                    additional.color = colours[2];
-
-                    CreateImpact(location, origin, IconData.impacts.cinder, size + 2, additional);
-
-                    additional.layerOffset = 0.001f;
-
-                    additional.color = colours[1];
-
-                    additional.flip = true;
-
-                    CreateImpact(location, origin, IconData.impacts.cinder, size+1, additional);
-
-                    additional.light = 0.005f;
-
-                    additional.layerOffset = 0.002f;
-
-                    additional.color = colours[0];
-
-                    additional.flip = false;
-
-                    CreateImpact(location, origin, IconData.impacts.cinder, size, additional);
-
-                    //CreateImpact(location, origin, IconData.impacts.splash, size, additional);
-
-                    //CreateImpact(location, origin, IconData.impacts.splatter, size + 1, additional);
-
-                    return;*/
-
             }
 
             CreateImpact(location, origin, impact, size, additional);
@@ -1147,18 +1111,7 @@ namespace StardewDruid.Data
 
             int Y = (Convert.ToInt32(impact) - 1);
 
-            if (Y >= 6 && Y < 12)
-            {
-                Y -= 6;
-
-            }
-            else if (Y >= 12)
-            {
-                Y -= 12;
-
-            }
-
-            return Y;
+            return Y % 6;
 
         }
 
@@ -1173,12 +1126,14 @@ namespace StardewDruid.Data
             {
 
                 sheet = impactsTextureTwo;
-            }
-            //else if (Y >= 12)
-            //{
 
-            //    sheet = impactsTextureThree;
-            //}
+            }
+            else if (Y >= 12 && Y < 18)
+            {
+
+                sheet = impactsTextureThree;
+
+            }
 
             return sheet;
 
@@ -1502,6 +1457,21 @@ namespace StardewDruid.Data
 
         }
 
+        public Microsoft.Xna.Framework.Color ConvertToOutline(Microsoft.Xna.Framework.Color schemeColour)
+        {
+
+            int trydarkR = (int)schemeColour.R - 72;
+
+            int trydarkG = (int)schemeColour.G - 72;
+
+            int trydarkB = (int)schemeColour.B - 72;
+
+            Microsoft.Xna.Framework.Color schemeDark = new(trydarkR < 0 ? 0 : trydarkR, trydarkG < 0 ? 0 : trydarkG, trydarkB < 0 ? 0 : trydarkB);
+
+            return schemeDark;
+
+        }
+
         public TemporaryAnimatedSprite MissileAnimation(GameLocation location, missileIndexes missile, Vector2 origin, float scale, int interval, int frames, int loops,  float depth, Microsoft.Xna.Framework.Color color, float alpha)
         {
 
@@ -1532,57 +1502,125 @@ namespace StardewDruid.Data
 
         }
 
-        public List<TemporaryAnimatedSprite> EmberConstruct(GameLocation location, schemes scheme, Vector2 origin, float scale, int grade, int Time = 3, float layer = -1f)
+        public List<TemporaryAnimatedSprite> EmberConstruct(GameLocation location, schemes scheme, Vector2 origin, float scale, int Time = 1, float layer = -1f)
         {
 
             List<TemporaryAnimatedSprite> emberAnimations = new();
 
-            if(layer <= 0)
+            if (layer <= 0)
             {
 
                 layer = origin.Y / 10000;
 
+                layer -= (0.0001f * scale);
+
             }
 
-            if (grade == 3)
+            float fade = 1f - (0.05f * Mod.instance.randomIndex.Next(8));
+
+            bool smokeFlip = Game1.player.FacingDirection < 2;
+
+            switch (Mod.instance.randomIndex.Next(4))
             {
+                default:
 
-                grade = Mod.instance.randomIndex.Next(2) + 1;
+                    break;
+
+                case 0:
+
+                    emberAnimations.Add(CreateImpact(location, origin + new Vector2(32) - (new Vector2(16, 28) * scale), impacts.plume, scale, new() { interval = 200, loops = Time, layer = layer - 0.0001f, alpha = 0.75f, flip = Mod.instance.randomIndex.NextBool() }));
+
+                    break;
+
+                case 1:
+
+                    emberAnimations.Add(CreateImpact(location, origin + new Vector2(32) - (new Vector2(16, 28) * scale), impacts.plume, scale, new() { interval = 200, loops = Time, color = Microsoft.Xna.Framework.Color.LightGray, layer = layer - 0.0001f, alpha = 0.75f, flip = Mod.instance.randomIndex.NextBool() }));
+
+                    break;
+
+                case 2:
+
+                    emberAnimations.Add(CreateImpact(location, origin + new Vector2(32) - (new Vector2(16, 28) * scale), impacts.smoke, scale, new() { interval = 200, loops = Time, layer = layer - 0.0001f, alpha = 0.75f, flip = Mod.instance.randomIndex.NextBool() }));
+
+                    break;
+
+                case 3:
+
+                    emberAnimations.Add(CreateImpact(location, origin + new Vector2(32) - (new Vector2(16, 28) * scale), impacts.smoke, scale, new() { interval = 200, loops = Time, color = Microsoft.Xna.Framework.Color.LightGray, layer = layer - 0.0001f, alpha = 0.75f, flip = Mod.instance.randomIndex.NextBool() }));
+
+                    break;
             }
 
-            emberAnimations.Add(emberAnimation(location, origin, scale, grade, 0, gradientColours[scheme][2], layer, 0.65f, Time));
+            emberAnimations.Add(emberAnimation(location, origin, scale, 0, gradientColours[scheme][2], layer, fade, Time));
 
-            emberAnimations.Add(emberAnimation(location, origin, scale, grade, 1, gradientColours[scheme][1], layer, 0.85f, Time));
+            emberAnimations.Add(emberAnimation(location, origin, scale, 1, gradientColours[scheme][1], layer, fade, Time));
 
-            emberAnimations.Add(emberAnimation(location, origin, scale, grade, 2, gradientColours[scheme][0], layer, 0.85f, Time));
+            emberAnimations.Add(emberAnimation(location, origin, scale, 2, gradientColours[scheme][0], layer, fade, Time));
 
-            emberAnimations.Add(emberAnimation(location, origin, scale, grade, 3, Microsoft.Xna.Framework.Color.White, layer, 0.85f, Time));
+            emberAnimations.Add(emberAnimation(location, origin, scale, 3, Microsoft.Xna.Framework.Color.White, layer, fade, Time));
 
+            emberAnimations.Add(emberAnimation(location, origin + new Vector2(0, 8), scale, 3, Microsoft.Xna.Framework.Color.Black * 0.25f, layer - 0.0002f, 1f, Time));
+            
             return emberAnimations;
 
         }
 
-        public TemporaryAnimatedSprite emberAnimation(GameLocation location, Vector2 origin, float scale, int grade, int part, Microsoft.Xna.Framework.Color color, float layer, float alpha, int Time)
+        public TemporaryAnimatedSprite emberAnimation(GameLocation location, Vector2 origin, float scale, int part, Microsoft.Xna.Framework.Color color, float layer, float alpha, int Time)
         {
+            
+            TemporaryAnimatedSprite burnAnimation;
 
-            TemporaryAnimatedSprite burnAnimation = new(0, 125, 4, Time * 2, origin + new Vector2(32) - (new Vector2(16) * scale), false, false)
+            if (part == 2)
             {
 
-                sourceRect = new(0, (grade * 32) + (part * 96), 32, 32),
+                burnAnimation = new(0, 200, 15, Time, origin + new Vector2(32) - (new Vector2(16) * scale), false, false)
+                {
 
-                sourceRectStartingPos = new(0, (grade * 32) + (part * 96)),
+                    sourceRect = new(0,  (part * 32), 32, 32),
 
-                texture = emberTexture,
+                    sourceRectStartingPos = new(0,  (part * 32)),
 
-                scale = scale,
+                    texture = emberTexture,
 
-                layerDepth = layer,
+                    scale = scale,
 
-                alpha = alpha,
+                    layerDepth = layer,
 
-                color = color,
+                    alpha = alpha,
 
-            };
+                    color = color,
+
+                    light = true,
+
+                    lightRadius = 2,
+
+                };
+
+            }
+            else
+            {
+
+                burnAnimation = new(0, 200, 15, Time, origin + new Vector2(32) - (new Vector2(16) * scale), false, false)
+                {
+
+                    sourceRect = new(0, (part * 32), 32, 32),
+
+                    sourceRectStartingPos = new(0, (part * 32)),
+
+                    texture = emberTexture,
+
+                    scale = scale,
+
+                    layerDepth = layer,
+
+                    alpha = alpha,
+
+                    color = color,
+
+                };
+
+
+            }
 
             location.TemporarySprites.Add(burnAnimation);
 
@@ -1845,7 +1883,7 @@ namespace StardewDruid.Data
 
             List<TemporaryAnimatedSprite> animations = new();
 
-            float boltScale = 1f + (0.5f * size);
+            float boltScale = 0.5f * size;
 
             float distance = Vector2.Distance(origin, destination);
 
@@ -1853,15 +1891,15 @@ namespace StardewDruid.Data
 
             Vector2 point = diff / distance;
 
-            Vector2 middle = origin + (point * 72 * boltScale);
+            Vector2 middle = origin + (diff / 2);
 
-            Vector2 end = origin + (point * 144 * boltScale);
+            //Vector2 end = origin + (point * 144 * boltScale);
 
             float rotate = (float)Math.Atan2(diff.Y, diff.X) - (float)(Math.PI / 2);
 
-            Vector2 originOffset = new(middle.X - (24 * boltScale), middle.Y - (72 * boltScale));
+            Vector2 originOffset = new(middle.X - (24*boltScale), middle.Y - ((int)distance / 2) - 8);
 
-            Microsoft.Xna.Framework.Rectangle sourceRect2 = new(0, 256, 48, 144);
+            Microsoft.Xna.Framework.Rectangle sourceRect2 = new(0, 400 - (int)(distance / boltScale), 48, (int)(distance / boltScale));
 
             TemporaryAnimatedSprite bolt1 = new(0, 75, 4, 1, originOffset, false, false)
             {
@@ -1936,6 +1974,57 @@ namespace StardewDruid.Data
 
             animations.Add(bolt3);
 
+            // Zap indicator
+
+            Microsoft.Xna.Framework.Rectangle sourceRect3 = new(12 + Mod.instance.randomIndex.Next(2)*48, 400, 24, 24);
+
+            TemporaryAnimatedSprite zap1 = new(0, 300, 1, 1, origin - new Vector2(boltScale * 12), false, false)
+            {
+
+                sourceRect = sourceRect3,
+
+                sourceRectStartingPos = new Vector2(sourceRect3.X, sourceRect3.Y),
+
+                texture = boltTexture,
+
+                layerDepth = 803f,
+
+                scale = boltScale,
+
+                color = Microsoft.Xna.Framework.Color.White,
+
+            };
+
+            location.temporarySprites.Add(zap1);
+
+            animations.Add(zap1);
+
+            sourceRect3.X += 192;
+
+            TemporaryAnimatedSprite zap2 = new(0, 300, 1, 1, origin - new Vector2(boltScale * 12), false, false)
+            {
+
+                sourceRect = sourceRect3,
+
+                sourceRectStartingPos = new Vector2(sourceRect3.X, sourceRect3.Y),
+
+                texture = boltTexture,
+
+                layerDepth = 802f,
+
+                scale = boltScale,
+
+                color = gradientColours[scheme][0],
+
+            };
+
+            location.temporarySprites.Add(zap2);
+
+            animations.Add(zap2);
+
+
+            // Light
+
             TemporaryAnimatedSprite lightCircle = new(23, 200f, 6, 1, destination, false, Game1.random.NextDouble() < 0.5)
             {
                 texture = Game1.mouseCursors,
@@ -1954,32 +2043,51 @@ namespace StardewDruid.Data
 
         }
 
-        public void AnimateQuickWarp(GameLocation location, Vector2 origin, bool reverse = false)
+        public void AnimateQuickWarp(GameLocation location, Vector2 origin, bool reverse = false, warps warp = warps.portal)
         {
 
-            Vector2 originOffset = origin - new Vector2(32, 32);
+            TemporaryAnimatedSprite animation;
 
-            Microsoft.Xna.Framework.Rectangle rect = reverse ? new(0, 32, 32, 32) : new(0, 0, 32, 32);
+            Microsoft.Xna.Framework.Rectangle rect;
 
-            TemporaryAnimatedSprite cursorAnimation = new(0, 75, 8, 1, originOffset, false, false)
+            Vector2 originOffset;
+
+            switch (warp)
             {
+                default:
+                case warps.portal:
 
-                sourceRect = rect,
+                    originOffset = origin - new Vector2(32, 32);
 
-                sourceRectStartingPos = new Vector2(0, rect.Y),
+                    rect = reverse ? new(0, 32, 32, 32) : new(0, 0, 32, 32);
 
-                texture = warpTexture,
+                    animation = new(0, 75, 8, 1, originOffset, false, false)
+                    {
 
-                scale = 4f,
+                        sourceRect = rect,
 
-                layerDepth = 0.001f,
+                        sourceRectStartingPos = new Vector2(0, rect.Y),
 
-                alpha = 0.65f,
+                        texture = warpTexture,
 
-            };
+                        scale = 4f,
 
-            location.temporarySprites.Add(cursorAnimation);
+                        layerDepth = 0.001f,
 
+                        alpha = 0.65f,
+
+                    };
+
+                    location.temporarySprites.Add(animation);
+
+                    break;
+
+                case warps.smoke:
+
+                    CreateImpact(location, origin, impacts.plume, 2f, new() { color = schemeColours[schemes.npc_blackfeather], alpha = 1f, });
+
+                    break;
+            }
 
         }
 

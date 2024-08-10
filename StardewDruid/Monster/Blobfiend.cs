@@ -93,11 +93,11 @@ namespace StardewDruid.Monster
         public void BlobWalk()
         {
 
-            walkInterval = 12;
+            walkInterval = 14;
 
             gait = 1.5f;
 
-            hoverInterval = 12;
+            hoverInterval = 14;
 
             hoverIncrements = 2;
 

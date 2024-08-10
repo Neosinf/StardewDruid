@@ -230,11 +230,16 @@ namespace StardewDruid.Cast.Effect
 
                     SpawnData.MonsterDrops(victim, (SpawnData.drops)Mod.instance.randomIndex.Next(1,5));
 
-                    string drop = victim.objectsToDrop[Mod.instance.randomIndex.Next(victim.objectsToDrop.Count)];
+                    if(victim.objectsToDrop.Count > 0)
+                    {
 
-                    StardewValley.Object dropItem = new StardewValley.Object(drop, 1);
+                        string drop = victim.objectsToDrop[Mod.instance.randomIndex.Next(victim.objectsToDrop.Count)];
 
-                    Game1.createItemDebris(dropItem, victim.Position + new Vector2(0, 32), 2, location, -1);
+                        StardewValley.Object dropItem = new StardewValley.Object(drop, 1);
+
+                        Game1.createItemDebris(dropItem, victim.Position + new Vector2(0, 32), 2, location, -1);
+
+                    }
 
                     break;
 

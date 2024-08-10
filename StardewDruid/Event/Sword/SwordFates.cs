@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Data;
+using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewDruid.Monster;
 using StardewModdingAPI;
@@ -20,22 +21,22 @@ namespace StardewDruid.Event.Sword
     internal class SwordFates : EventHandle
     {
 
-        public bool entranceFound;
+        //public bool entranceFound;
 
         public Vector2 statueVector;
 
-        public Dictionary<Vector2, Tile> heldTiles = new();
+        //public Dictionary<Vector2, Tile> heldTiles = new();
 
-        public Event.Access.AccessHandle CourtAccess;
+        //public Event.Access.AccessHandle CourtAccess;
 
-        public Event.Access.AccessHandle TunnelAccess;
+        //public Event.Access.AccessHandle TunnelAccess;
 
         public SwordFates()
         {
 
         }
 
-        public override void TriggerInterval()
+        /*public override void TriggerInterval()
         {
             
             if (!entranceFound)
@@ -102,6 +103,40 @@ namespace StardewDruid.Event.Sword
 
             heldTiles.Clear();
 
+        }*/
+
+        public override void EventRemove()
+        {
+
+            base.EventRemove();
+
+            if (eventAbort)
+            {
+
+                if (Game1.player.currentLocation.Name == LocationData.druid_tunnel_name)
+                {
+
+                    DialogueCue(901);
+
+                    Vector2 warpBack = ModUtility.PositionToTile(Mod.instance.questHandle.quests[eventId].origin);
+
+                    Game1.warpFarmer(
+                        Mod.instance.questHandle.quests[eventId].triggerLocation,
+                        (int)warpBack.X,
+                        (int)warpBack.Y, 
+                        2);
+
+                    Game1.xLocationAfterWarp = (int)warpBack.X;
+
+                    Game1.yLocationAfterWarp = (int)warpBack.Y;
+
+                    //Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.leftEvent), 3);
+
+                }
+
+            }
+
+
         }
 
         public override void EventActivate()
@@ -109,7 +144,9 @@ namespace StardewDruid.Event.Sword
 
             base.EventActivate();
 
-            locales = new() { "UndergroundMine77377", LocationData.druid_court_name, };
+            statueVector = new Vector2(30, 6) * 64;
+
+            locales = new() { location.Name, LocationData.druid_tunnel_name, LocationData.druid_court_name, };
 
             monsterHandle = new(origin, location);
 
@@ -130,11 +167,9 @@ namespace StardewDruid.Event.Sword
 
             monsterHandle.spawnVoid = true;
 
-            eventProximity = -1;
-
             activeLimit = 155;
 
-            EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
+            //EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
         }
 
@@ -188,8 +223,16 @@ namespace StardewDruid.Event.Sword
             {
                 
                 case 1:
+                    
+                    Game1.warpFarmer(LocationData.druid_tunnel_name, 22, 99, 3);
+
+                    Game1.xLocationAfterWarp = 22;
+
+                    Game1.yLocationAfterWarp = 99;
 
                     CharacterHandle.CharacterLoad(CharacterHandle.characters.Jester, Character.Character.mode.track);
+
+                    Game1.stopMusicTrack(StardewValley.GameData.MusicContext.Default);
 
                     companions[0] = Mod.instance.characters[CharacterHandle.characters.Jester];
 
@@ -197,23 +240,37 @@ namespace StardewDruid.Event.Sword
                     
                     break;
 
-                case 6:
-                case 8:
+                case 3:
+
+                    location = Game1.player.currentLocation;
+
+                    monsterHandle.spawnLocation = location;
+
                     location.playSound("ghost");
 
                     break;
-                
+
+                case 6:
+
+                    location.playSound("ghost");
+
+                    break;
+
+                case 9:
+
+                    location.playSound("ghost");
+
+                    break;
+
                 case 10:
 
                     DialogueCue(900);
 
-                    location.playSound("ghost");
-                        
-                    SetTrack("cowboy_outlawsong");
-
                     EventDisplay run = EventBar(DialogueData.Strings(DialogueData.stringkeys.reachEnd), 1);
 
                     run.colour = Color.Orange;
+
+                    SetTrack("spirits_eve");
 
                     break;
 
@@ -227,16 +284,15 @@ namespace StardewDruid.Event.Sword
             if (activeCounter % 10 == 0)
             {
 
-                Mod.instance.trackers[CharacterHandle.characters.Jester].WarpToPlayer();
-
-                if (Mod.instance.trackers.ContainsKey(CharacterHandle.characters.Effigy))
+                foreach(KeyValuePair< CharacterHandle.characters,TrackHandle> tracker in Mod.instance.trackers)
                 {
 
-                    Mod.instance.trackers[CharacterHandle.characters.Effigy].WarpToPlayer();
+                    tracker.Value.WarpToPlayer();
 
                 }
 
                 DialogueCue(900);
+                //SetTrack("spirits_eve");
 
             }
 
@@ -320,21 +376,13 @@ namespace StardewDruid.Event.Sword
 
                 case 94:
 
-                    CourtAccess = new();
+                    Event.Access.AccessHandle CourtAccess = new();
 
-                    CourtAccess.AccessSetup("UndergroundMine77377", LocationData.druid_court_name, new(29, 8), new(45, 20));
+                    CourtAccess.AccessSetup(LocationData.druid_tunnel_name, LocationData.druid_court_name, new(29, 8), new(45, 20));
 
                     CourtAccess.location = location;
 
-                    CourtAccess.AccessStair(false);
-
-                    TunnelAccess = new();
-
-                    TunnelAccess.AccessSetup(LocationData.druid_court_name, "UndergroundMine77377", new(45, 20), new(29, 10));
-
-                    TunnelAccess.location = Mod.instance.locations[LocationData.druid_court_name];
-
-                    TunnelAccess.AccessStair(false);
+                    CourtAccess.AccessStart(false);
 
                     break;
 
@@ -349,6 +397,14 @@ namespace StardewDruid.Event.Sword
                     location = Mod.instance.locations[LocationData.druid_court_name];
 
                     CharacterMover.Warp(Mod.instance.locations[LocationData.druid_court_name], companions[0], new Vector2(40, 18) * 64);
+
+                    Event.Access.AccessHandle TunnelAccess = new();
+
+                    TunnelAccess.AccessSetup( LocationData.druid_court_name, LocationData.druid_tunnel_name, new Vector2(46, 21), new Vector2(29, 8) );
+
+                    TunnelAccess.location = location;
+
+                    TunnelAccess.AccessStart(false);
 
                     break;
 
@@ -395,13 +451,11 @@ namespace StardewDruid.Event.Sword
 
                     companions[0].TargetEvent(0,new Vector2(34,13)*64,true);
 
-                    DialogueLoad(0,2);
-
                     break;
 
-                case 135:
+                case 132:
 
-                    DialogueNext(companions[0]);
+                    DialogueSetups(companions[0], 2);
 
                     break;
 
@@ -409,21 +463,11 @@ namespace StardewDruid.Event.Sword
 
                     companions[0].LookAtTarget(Game1.player.Position);
 
-                    DialogueLoad(0, 3);
-
-                    break;
-
-                case 145:
-
-                    DialogueNext(companions[0]);
+                    DialogueSetups(companions[0], 3);
 
                     break;
 
                 case 151:
-
-                    CourtAccess.AccessWarps();
-
-                    TunnelAccess.AccessWarps();
 
                     eventComplete = true;
 

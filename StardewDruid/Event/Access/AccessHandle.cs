@@ -12,8 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using xTile.Layers;
 using xTile.Tiles;
-using static StardewDruid.Cast.SpellHandle;
-using static StardewDruid.Data.IconData;
+
 
 namespace StardewDruid.Event.Access
 {
@@ -22,7 +21,7 @@ namespace StardewDruid.Event.Access
 
         public GameLocation location;
 
-        public Vector2 stair;
+        public Vector2 start;
 
         public Vector2 exit;
 
@@ -32,12 +31,14 @@ namespace StardewDruid.Event.Access
 
         public bool manualSet;
 
+        public QueryData.queries queryHandle = QueryData.queries.AccessHandle;
+
         public AccessHandle() { }
 
-        public void AccessSetup(string Entrance, string Access, Vector2 Stair, Vector2 Exit)
+        public void AccessSetup(string Entrance, string Access, Vector2 Start, Vector2 Exit)
         {
 
-            stair = Stair;
+            start = Start;
 
             entrance = Entrance;
 
@@ -47,13 +48,13 @@ namespace StardewDruid.Event.Access
 
         }
 
-        public void AccessQuery()
+        public virtual void AccessQuery()
         {
 
             List<string> array = new()
             {
-                stair.X.ToString(),
-                stair.Y.ToString(),
+                start.X.ToString(),
+                start.Y.ToString(),
                 entrance,
                 access,
                 exit.X.ToString(),
@@ -70,14 +71,14 @@ namespace StardewDruid.Event.Access
 
             };
 
-            Mod.instance.EventQuery(query, QueryData.queries.AccessHandle);
+            Mod.instance.EventQuery(query, queryHandle);
 
         }
 
         public void AccessSetup(List<string> accessData)
         {
 
-            stair = new(Convert.ToInt32(accessData[0]), Convert.ToInt32(accessData[1]));
+            start = new(Convert.ToInt32(accessData[0]), Convert.ToInt32(accessData[1]));
 
             entrance = accessData[2];
 
@@ -92,7 +93,7 @@ namespace StardewDruid.Event.Access
 
             location = Location;
 
-            if (CheckStair())
+            if (CheckStart())
             {
                 
                 if (clear)
@@ -106,19 +107,19 @@ namespace StardewDruid.Event.Access
 
             }
 
-            AccessStair();
+            AccessStart();
 
             AccessWarps();
 
         }
 
-        public virtual bool CheckStair()
+        public virtual bool CheckStart()
         {
 
             foreach (Warp warp in location.warps)
             {
 
-                if (warp.X == stair.X && warp.Y == stair.Y)
+                if (warp.X == start.X && warp.Y == start.Y)
                 {
 
                     return true;
@@ -131,12 +132,12 @@ namespace StardewDruid.Event.Access
 
         }
 
-        public void AccessClear()
+        public virtual void AccessClear()
         {
 
-            int tilex = (int)stair.X;
+            int tilex = (int)start.X;
 
-            int tiley = (int)stair.Y;
+            int tiley = (int)start.Y;
 
             Layer buildings = location.map.GetLayer("Buildings");
 
@@ -157,7 +158,7 @@ namespace StardewDruid.Event.Access
 
                 Warp warp = location.warps.ElementAt(w);
 
-                if (warp.X == stair.X && (warp.Y == stair.Y || warp.Y == stair.Y + 1))
+                if (warp.X == start.X && (warp.Y == start.Y || warp.Y == start.Y + 1))
                 {
 
                     location.warps.RemoveAt(w);
@@ -168,10 +169,10 @@ namespace StardewDruid.Event.Access
 
             }
 
-            if (Utility.isOnScreen(stair * 64, 64))
+            if (Utility.isOnScreen(start * 64, 64))
             {
 
-                Mod.instance.iconData.ImpactIndicator(location, stair * 64 + new Vector2(64, 0), IconData.impacts.impact, 6, new());
+                Mod.instance.iconData.ImpactIndicator(location, start * 64 + new Vector2(64, 0), IconData.impacts.impact, 6, new());
 
                 location.playSound("boulderCrack");
 
@@ -179,7 +180,7 @@ namespace StardewDruid.Event.Access
 
         }
 
-        public void AccessStair(bool animate = true)
+        public virtual void AccessStart(bool animate = true)
         {
 
             TileSheet tileSheet = new(
@@ -196,9 +197,9 @@ namespace StardewDruid.Event.Access
 
             location.map.LoadTileSheets(Game1.mapDisplayDevice);
 
-            int tilex = (int)stair.X;
+            int tilex = (int)start.X;
 
-            int tiley = (int)stair.Y;
+            int tiley = (int)start.Y;
 
             Layer buildings = location.map.GetLayer("Buildings");
 
@@ -218,8 +219,6 @@ namespace StardewDruid.Event.Access
 
             buildings.Tiles[tilex + 2, tiley + 1] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 86);
 
-            location.localSound("secret1");
-
             if (Context.IsMultiplayer && Context.IsMainPlayer)
             {
 
@@ -227,25 +226,27 @@ namespace StardewDruid.Event.Access
 
             }
 
-            if (Utility.isOnScreen(stair * 64, 64) && animate)
+            if (Utility.isOnScreen(start * 64, 64) && animate)
             {
 
                 ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 
-                Mod.instance.iconData.ImpactIndicator(location, stair * 64 + new Vector2(64, 0), IconData.impacts.impact, 6, new());
+                Mod.instance.iconData.ImpactIndicator(location, start * 64 + new Vector2(64, 0), IconData.impacts.impact, 6, new());
 
-                location.playSound("boulderBreak");
+                location.playSound(SpellHandle.sounds.boulderBreak.ToString());
+
+                location.playSound(SpellHandle.sounds.secret1.ToString());
 
             }
 
         }
 
-        public void AccessWarps()
+        public virtual void AccessWarps()
         {
 
-            int tilex = (int)stair.X;
+            int tilex = (int)start.X;
 
-            int tiley = (int)stair.Y;
+            int tiley = (int)start.Y;
 
             location.warps.Add(new Warp(tilex, tiley, access, (int)exit.X, (int)exit.Y, flipFarmer: false));
 

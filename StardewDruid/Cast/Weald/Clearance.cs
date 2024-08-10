@@ -28,13 +28,6 @@ namespace StardewDruid.Cast.Weald
         public void CastActivate(Vector2 target, bool sound = true)
         {
 
-            if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdOne))
-            {
-
-                Mod.instance.questHandle.UpdateTask(QuestHandle.wealdOne, 1);
-
-            }
-
             int radius = 2 + powerLevel;
 
             SpellHandle explode = new(Game1.player, target * 64, radius * 64, damageLevel);
@@ -58,7 +51,16 @@ namespace StardewDruid.Cast.Weald
 
             explode.explosion = radius;
 
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdOne))
+            {
+
+                Mod.instance.questHandle.UpdateTask(QuestHandle.wealdOne, 1);
+
+            }
+
             Mod.instance.spellRegister.Add(explode);
+
+            Mod.instance.rite.castCost += 1;
 
         }
 

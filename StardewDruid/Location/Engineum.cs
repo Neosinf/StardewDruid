@@ -45,10 +45,10 @@ namespace StardewDruid.Location
 
             List<Vector2> vectors = new()
             {
-                new Vector2(1664,464),
-                new Vector2(1752,516),
-                new Vector2(1832,516),
-                new Vector2(1920,464),
+                new Vector2(1664,420),
+                new Vector2(1752,472),
+                new Vector2(1832,472),
+                new Vector2(1920,420),
 
             };
 
@@ -294,7 +294,7 @@ namespace StardewDruid.Location
 
             codes = new()
             {
-                [7] = new() { new() { 24, 1 }, },
+                [6] = new() { new() { 24, 1 }, },
             };
 
             foreach (KeyValuePair<int, List<List<int>>> code in codes)
@@ -397,21 +397,21 @@ namespace StardewDruid.Location
 
             }
 
-            warpSets.Add(new WarpTile(26, 32, "Forest", 48, 72));
+            warpSets.Add(new WarpTile(26, 32, LocationData.druid_clearing_name, 44, 14));
 
-            warpSets.Add(new WarpTile(27, 32, "Forest", 48, 72));
+            warpSets.Add(new WarpTile(27, 32, LocationData.druid_clearing_name, 44, 14));
 
-            warpSets.Add(new WarpTile(28, 32, "Forest", 48, 72));
+            warpSets.Add(new WarpTile(28, 32, LocationData.druid_clearing_name, 44, 14));
 
-            warpSets.Add(new WarpTile(29, 32, "Forest", 48, 72));
+            warpSets.Add(new WarpTile(29, 32, LocationData.druid_clearing_name, 44, 14));
 
-            warps.Add(new Warp(26, 32, "Forest", 48, 72, flipFarmer: false));
+            warps.Add(new Warp(26, 32, LocationData.druid_clearing_name, 46, 14, flipFarmer: false));
 
-            warps.Add(new Warp(27, 32, "Forest", 48, 72, flipFarmer: false));
+            warps.Add(new Warp(27, 32, LocationData.druid_clearing_name, 46, 14, flipFarmer: false));
 
-            warps.Add(new Warp(28, 32, "Forest", 48, 72, flipFarmer: false));
+            warps.Add(new Warp(28, 32, LocationData.druid_clearing_name, 46, 14, flipFarmer: false));
 
-            warps.Add(new Warp(29, 32, "Forest", 48, 72, flipFarmer: false));
+            warps.Add(new Warp(29, 32, LocationData.druid_clearing_name, 46, 14, flipFarmer: false));
 
         }
 

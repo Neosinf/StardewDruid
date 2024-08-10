@@ -24,7 +24,6 @@ namespace StardewDruid.Character
 {
     public class Marlon : StardewDruid.Character.Character
     {
-        new public CharacterHandle.characters characterType = CharacterHandle.characters.Marlon;
 
         public Marlon()
         {
@@ -39,8 +38,6 @@ namespace StardewDruid.Character
 
         public override void LoadOut()
         {
-            
-            characterType = CharacterHandle.characters.Marlon;
 
             base.LoadOut();
 

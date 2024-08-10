@@ -73,7 +73,9 @@ namespace StardewDruid.Event.Scene
 
             bridgeVector = new Vector2(55, 13);
 
-            blobVector = new Vector2(75, 8);
+            //blobVector = new Vector2(75, 8);
+
+            blobVector = new Vector2(25, 10);
 
             atollVector = new Vector2(92, 7);
 
@@ -83,7 +85,7 @@ namespace StardewDruid.Event.Scene
 
             location.playSound("discoverMineral");
 
-            (Mod.instance.locations[LocationData.druid_atoll_name] as Atoll).ambientDarkness = true;
+            //(Mod.instance.locations[LocationData.druid_atoll_name] as Atoll).ambientDarkness = true;
 
         }
 
@@ -300,14 +302,14 @@ namespace StardewDruid.Event.Scene
                             companions[0].Position - new Vector2(256, 128) + new Vector2(Mod.instance.randomIndex.Next(16) * 32, Mod.instance.randomIndex.Next(8) * 32),
                             new StardewValley.Object("147", 1)
                         )
-                        { pocket = false }.register();
+                        { pocket = Mod.instance.randomIndex.Next(2) == 0 }.register();
 
                         new ThrowHandle(
                             origin - (vectors28[i] * 64),
                             companions[0].Position - new Vector2(256, 128) + new Vector2(Mod.instance.randomIndex.Next(16) * 32, Mod.instance.randomIndex.Next(8) * 32),
                             new StardewValley.Object("147", 1)
                         )
-                        { pocket = false }.register();
+                        { pocket = Mod.instance.randomIndex.Next(2) == 0 }.register();
 
                     }
 
@@ -367,7 +369,7 @@ namespace StardewDruid.Event.Scene
                     Mod.instance.iconData.CursorIndicator(location, cursor57, IconData.cursors.mists, new());
 
                     //Mod.instance.iconData.AnimateBolt(location, cursor57);
-                    Mod.instance.spellRegister.Add(new(cursor57 - new Vector2(0, 64), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                    Mod.instance.spellRegister.Add(new(cursor57, 128, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt });
 
                     break;
 
@@ -398,7 +400,7 @@ namespace StardewDruid.Event.Scene
                     Mod.instance.iconData.CursorIndicator(location, cursor60, IconData.cursors.mists, new());
 
                     //Mod.instance.iconData.AnimateBolt(location, campFire * 64);
-                    Mod.instance.spellRegister.Add(new(campFire * 64 - new Vector2(0,64), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                    Mod.instance.spellRegister.Add(new(campFire * 64, 128, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt });
 
                     break;
 
@@ -433,7 +435,7 @@ namespace StardewDruid.Event.Scene
                     Mod.instance.iconData.CursorIndicator(location, cursor64, IconData.cursors.mists, new());
 
                     //Mod.instance.iconData.AnimateBolt(location, cursor64);
-                    Mod.instance.spellRegister.Add(new(cursor64 - new Vector2(0, 64), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                    Mod.instance.spellRegister.Add(new(cursor64, 128, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt });
 
                     break;
 
@@ -493,13 +495,58 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].TargetEvent(260, (bridgeVector + new Vector2(12,0))*64, false);
 
-                    companions[0].TargetEvent(300, (bridgeVector + new Vector2(14, -2))*64, false);
+                    //companions[0].TargetEvent(300, (bridgeVector + new Vector2(14, -2))*64, false);
+                    companions[0].TargetEvent(265, (bridgeVector + new Vector2(14, -2)) * 64, false);
+
+                    companions[0].TargetEvent(270, (bridgeVector + new Vector2(24, -2)) * 64, false);
+
+                    companions[0].TargetEvent(275, atollVector * 64, false);
+
+                    DialogueCue(12);
 
                     break;
 
-                case 252:
+                case 254:
 
-                    DialogueCue(12);
+                    DialogueCue(31);
+
+                    break;
+
+                case 257: 
+                    
+                    DialogueCue(32);
+                    
+                    break;
+
+                case 276:
+
+                    DialogueClear(0);
+
+                    Game1.warpFarmer(LocationData.druid_atoll_name, 15, 11, 1);
+
+                    Game1.xLocationAfterWarp = 15;
+
+                    Game1.yLocationAfterWarp = 11;
+
+                    location = Mod.instance.locations[LocationData.druid_atoll_name];
+
+                    location.warps.Clear();
+
+                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_atoll_name], companions[0], new Vector2(17, 12) * 64, false);
+
+                    break;
+
+                case 277:
+                case 278:
+                case 279:
+                case 280:
+
+                    if (Game1.player.currentLocation.Name == LocationData.druid_atoll_name)
+                    {
+
+                        activeCounter = 300;
+
+                    }
 
                     break;
 
@@ -510,7 +557,7 @@ namespace StardewDruid.Event.Scene
 
                 case 301:
 
-                    DialogueClear(0);
+                    DialogueCue(13);
 
                     break;
 
@@ -518,8 +565,6 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].netStandbyActive.Set(true);
 
-                    DialogueCue(13 ); 
-                    
                     break;
 
                 case 305: 
@@ -542,6 +587,8 @@ namespace StardewDruid.Event.Scene
 
                     blobking.LookAtFarmer();
 
+                    blobking.groupMode = true;
+
                     location.characters.Add(blobking);
 
                     blobking.update(Game1.currentGameTime, location);
@@ -562,20 +609,75 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 314: DialogueCue(17); companions[0].LookAtTarget(bosses[0].Position); break;
-                case 317: DialogueCue(18 ); companions[0].LookAtTarget(bosses[0].Position); break;
-                case 320: DialogueCue(19 ); companions[0].LookAtTarget(bosses[0].Position); break;
-                case 323: DialogueCue(20); companions[0].LookAtTarget(bosses[0].Position); break;
-                case 326: DialogueCue(21 ); companions[0].LookAtTarget(bosses[0].Position); break;
-                case 329: DialogueCue(22); companions[0].LookAtTarget(bosses[0].Position); break;
+                case 314: 
+                    
+                    DialogueCue(17); 
+                    
+                    companions[0].LookAtTarget(bosses[0].Position); 
+                    
+                    break;
+
+                case 317: 
+                    
+                    DialogueCue(18 ); 
+                    
+                    companions[0].LookAtTarget(bosses[0].Position); 
+                    
+                    break;
+
+                case 320: 
+                    
+                    DialogueCue(19 ); 
+                    
+                    companions[0].LookAtTarget(bosses[0].Position); 
+                    
+                    break;
+
+                case 323: 
+                    
+                    DialogueCue(20); 
+                    
+                    companions[0].LookAtTarget(bosses[0].Position); 
+                    
+                    break;
+
+                case 326: 
+                    
+                    DialogueCue(21 ); 
+                    
+                    companions[0].LookAtTarget(bosses[0].Position); 
+                    
+                    break;
+
+                case 329: 
+                    
+                    DialogueCue(22); 
+                    
+                    companions[0].LookAtTarget(bosses[0].Position); 
+                    
+                    break;
 
                 case 332:
 
                     DialogueCue(23);
 
-                    companions[0].netSmashActive.Set(true);
+                    companions[0].SwitchToMode(Character.Character.mode.track, Game1.player);
 
-                    companions[0].TargetEvent(340, bosses[0].Position - new Vector2(64, 0), true);
+                    bosses[0].netPosturing.Set(false);
+
+                    bosses[0].Health = 9999;
+
+                    bosses[0].MaxHealth = 9999;
+
+                    bosses[0].baseJuice = 1;
+
+                    companions[0].ResetActives();
+
+                    companions[0].SmashAttack(bosses[0]);
+
+                    //companions[0].netSmashActive.Set(true);
+
+                    //companions[0].TargetEvent(340, bosses[0].Position - new Vector2(64, 0), true);
 
                     SetTrack("Cowboy_undead");
 
@@ -585,15 +687,13 @@ namespace StardewDruid.Event.Scene
 
                 case 341:
 
-                    DialogueCue(24);
+                   // DialogueCue(24);
 
-                    bosses[0].netPosturing.Set(false);
+                    //bosses[0].netPosturing.Set(false);
 
-                    bosses[0].Health = 9999;
+                    //bosses[0].Health = 9999;
 
-                    bosses[0].MaxHealth = 9999;
-
-                    companions[0].SwitchToMode(Character.Character.mode.track, Game1.player);
+                    //bosses[0].MaxHealth = 9999;
 
                     break;
 
@@ -655,11 +755,11 @@ namespace StardewDruid.Event.Scene
 
                     bosses[0].netAlternative.Set(1);
 
-                    bosses[0].PerformFlight(new(bosses[0].Position.X + 1280, bosses[0].Position.Y + 192),0);
+                    bosses[0].PerformFlight(new Vector2(-2,-2)*64, 5);
 
                     break;
 
-                case 361:
+                case 362:
 
                     DialogueLoad(0, 4);
 
@@ -675,13 +775,19 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 373: activeCounter = 400; break;
+                case 373:
+                case 410:
+
+                    //activeCounter = 400; 
+                    activeCounter = 450;
+
+                    break;
 
                 // ------------------------------------------
                 // 4.5 Transfer to Atoll
                 // ------------------------------------------
 
-                case 401:
+                /*case 401:
 
                     DialogueClear(0);
 
@@ -733,15 +839,17 @@ namespace StardewDruid.Event.Scene
 
                     activeCounter = 450;
 
-                    break;
+                    break;*/
 
                 // ------------------------------------------
                 // 5 Wisps
                 // ------------------------------------------
 
                 case 451:
-                    
-                    Game1.ambientLight = new(64, 0, 0);
+
+                    //Game1.ambientLight = new(64, 0, 0);
+
+                    //(location as Atoll).ambientDarkness = true;
 
                     companions[0].TargetEvent(455, mistVector * 64, true);
 
@@ -749,7 +857,7 @@ namespace StardewDruid.Event.Scene
 
                 case 452:
 
-                    DialogueCue(32 );
+                    DialogueCue(33);
 
                     Wisps wispNew = new();
 
@@ -759,41 +867,13 @@ namespace StardewDruid.Event.Scene
 
                     wispNew.EventActivate();
 
-                    wispNew.AddWisps(1, 120);
-
-                    wispNew.AddWisps(3, 120);
-
-                    wispNew.AddWisps(5, 120);
-
-                    wispNew.AddWisps(7, 120);
-
-                    wispNew.origin.X -= 768;
-
-                    wispNew.AddWisps(2, 120);
-
-                    wispNew.AddWisps(4, 120);
-
-                    wispNew.AddWisps(6, 120);
-
-                    wispNew.AddWisps(7, 120);
-
-                    wispNew.origin.X += 1532;
-
-                    wispNew.AddWisps(2, 120);
-
-                    wispNew.AddWisps(4, 120);
-
-                    wispNew.AddWisps(6, 120);
-
-                    wispNew.AddWisps(7, 120);
+                    wispNew.WispArray();
 
                     break;
 
-                case 455: DialogueCue(33); break;
+                case 454: DialogueCue(34); break;
 
-                case 458: DialogueCue(34); break;
-
-                case 461:
+                case 457:
 
                     DialogueLoad(0, 5);
 
@@ -1012,7 +1092,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].netDirection.Set(1);
 
-                    Mod.instance.questHandle.CompleteQuest(eventId);
+                    //Mod.instance.questHandle.CompleteQuest(eventId);
 
                     companions[0].SwitchToMode(Character.Character.mode.random, Game1.player);
 
@@ -1042,23 +1122,29 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 300: // Skygazing position
+                /*case 300: // Skygazing position
 
                     activeCounter = 300;
 
-                    break;
+                    break;*/
 
-                case 340: // Jellyking position
+                case 275: // Skygazing position on Atoll
 
-                    activeCounter = 340;
-
-                    break;
-
-                case 420: // mist position
-
-                    activeCounter = 420;
+                    activeCounter = 275;
 
                     break;
+
+                // 340: // Jellyking position
+
+                //    activeCounter = 340;
+
+                //   break;
+
+                //case 420: // mist position
+
+                //    activeCounter = 420;
+
+                //   break;
 
 
             }

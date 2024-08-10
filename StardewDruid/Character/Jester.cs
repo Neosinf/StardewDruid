@@ -13,6 +13,7 @@ using StardewValley;
 using StardewValley.Buffs;
 using StardewValley.Buildings;
 using StardewValley.Characters;
+using StardewValley.ItemTypeDefinitions;
 using StardewValley.Monsters;
 using StardewValley.Network;
 using StardewValley.Objects;
@@ -160,10 +161,10 @@ namespace StardewDruid.Character
                         swipeEffect.added.Add(SpellHandle.effects.daze);
                         break;
 
-                    case 1:
+                    //case 1:
 
-                        swipeEffect.added.Add(SpellHandle.effects.mug);
-                        break;
+                    //    swipeEffect.added.Add(SpellHandle.effects.mug);
+                    //    break;
 
                     case 2:
 
@@ -171,7 +172,7 @@ namespace StardewDruid.Character
                         break;
 
                     default:
-                    case 3:
+                    //case 3:
 
                         swipeEffect.added.Add(SpellHandle.effects.doom);
                         break;
@@ -401,6 +402,8 @@ namespace StardewDruid.Character
 
                 bool milk = false;
 
+                bool shear = false;
+
                 if (victim.isAdult())
                 {
 
@@ -411,6 +414,18 @@ namespace StardewDruid.Character
                         {
 
                             milk = true;
+
+                        }
+
+                    }
+
+                    if (victim.CanGetProduceWithTool(Mod.instance.virtualShears))
+                    {
+
+                        if (victim.currentProduce.Value != null)
+                        {
+
+                            shear = true;
 
                         }
 
@@ -432,6 +447,13 @@ namespace StardewDruid.Character
 
                 }
 
+                if (shear)
+                {
+
+                    MilkRub(victim,false);
+
+                }
+
                 FarmRub(victim);
 
                 return true;
@@ -443,10 +465,26 @@ namespace StardewDruid.Character
 
         }
 
-        public void MilkRub(FarmAnimal cow)
+        public void MilkRub(FarmAnimal cow, bool milk = true)
         {
+            ParsedItemData dataOrErrorItem;
 
-            playNearbySoundLocal("Milking");
+            if (milk)
+            {
+
+                dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(Mod.instance.virtualPail.QualifiedItemId);
+
+                playNearbySoundLocal("Milking");
+
+            }
+            else
+            {
+                
+                dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(Mod.instance.virtualShears.QualifiedItemId);
+            
+                playNearbySoundLocal("scissors");
+            
+            }
 
             Chest chest = Mod.instance.chests[CharacterHandle.characters.Jester];
 
@@ -489,7 +527,7 @@ namespace StardewDruid.Character
 
             Game1.player.gainExperience(0, 5);
 
-            Microsoft.Xna.Framework.Rectangle bottleRectangle = IconData.RelicRectangles(IconData.relics.bottle);
+            Rectangle bottleRectangle = dataOrErrorItem.GetSourceRect();
 
             TemporaryAnimatedSprite bottleSprite = new(0, 900, 1, 1, cow.Position + new Vector2(2, 52), false, false)
             {
@@ -498,7 +536,7 @@ namespace StardewDruid.Character
 
                 sourceRectStartingPos = new Vector2(bottleRectangle.X, bottleRectangle.Y),
 
-                texture = Mod.instance.iconData.relicsTexture,
+                texture = dataOrErrorItem.GetTexture(),
 
                 scale = 3f,
 

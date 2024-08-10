@@ -110,6 +110,7 @@ namespace StardewDruid.Cast
             levitate,
             trick,
             zap,
+            warp,
         }
 
         public spells type;
@@ -145,6 +146,7 @@ namespace StardewDruid.Cast
             backstab,
             crate,
             teleport,
+
         }
 
         public List<effects> added = new();
@@ -173,6 +175,10 @@ namespace StardewDruid.Cast
             bubbles,
             batScreech,
             batFlap,
+            Ship,
+            crow,
+            hammer,
+            leafrustle,
         }
 
         public sounds sound = sounds.none;
@@ -952,6 +958,39 @@ namespace StardewDruid.Cast
 
                     return true;
 
+                case spells.warp:
+
+                    if (counter == 1)
+                    {
+
+                        Mod.instance.iconData.AnimateQuickWarp(Game1.player.currentLocation, Game1.player.Position, true);
+
+                    }
+
+                    if(counter == 15)
+                    {
+
+                        WarpEffect();
+
+                    }
+
+                    if(counter == 60)
+                    {
+
+                        Mod.instance.iconData.AnimateQuickWarp(Game1.player.currentLocation, Game1.player.Position);
+
+                    }
+
+                    if (counter == 75)
+                    {
+
+                        Shutdown();
+
+                        return false;
+
+                    }
+
+                    return true;
 
             }
 
@@ -968,6 +1007,12 @@ namespace StardewDruid.Cast
 
                 foreach (TemporaryAnimatedSprite animatedSprite in animations)
                 {
+                    if (animatedSprite.lightID != 0)
+                    {
+
+                        Utility.removeLightSource(animatedSprite.lightID);
+
+                    }
 
                     location.temporarySprites.Remove(animatedSprite);
 
@@ -982,6 +1027,12 @@ namespace StardewDruid.Cast
 
                 foreach (TemporaryAnimatedSprite animatedSprite in construct)
                 {
+                    if (animatedSprite.lightID != 0)
+                    {
+
+                        Utility.removeLightSource(animatedSprite.lightID);
+
+                    }
 
                     location.temporarySprites.Remove(animatedSprite);
 
@@ -1791,7 +1842,6 @@ namespace StardewDruid.Cast
 
         }
 
-
         public void CrateCreate()
         {
 
@@ -2541,10 +2591,21 @@ namespace StardewDruid.Cast
 
             Vector2 shockOrigin = impact - new Vector2(0, 32);
 
-            List<StardewValley.Monsters.Monster> victims = ModUtility.MonsterProximity(location, new() { shockOrigin }, 384, true);
+            int shockSize = 6;
+
+            int shockDirection = -1;
+
+            List<StardewValley.Monsters.Monster> victims = ModUtility.MonsterProximity(location, new() { shockOrigin }, 640, true);
 
             foreach(StardewValley.Monsters.Monster victim in victims)
             {
+
+                if(shockSize == 0)
+                {
+
+                    break;
+
+                }
 
                 if(monsters.Count > 0)
                 {
@@ -2558,16 +2619,44 @@ namespace StardewDruid.Cast
 
                 }
 
-                float shockDamage = damageMonsters * (Vector2.Distance(shockOrigin, victim.Position) / 384);
+                Vector2 victimPosition = victim.Position + new Vector2(32, 0);
 
-                if(shockDamage <= 16f)
+                float shockDistance = Vector2.Distance(shockOrigin, victimPosition);
+
+                if(shockDistance > (192f * shockSize))
+                { 
+                
+                    continue;
+                
+                }
+
+                int thisDirection = ModUtility.DirectionToTarget(victimPosition, shockOrigin)[2];
+
+                int upDirection = (thisDirection + 1) % 8;
+
+                int downDirection = (thisDirection + 7) % 8;
+
+                if (shockDirection == -1)
+                {
+
+                    shockDirection = thisDirection;
+
+                }
+
+                List<int> checkDirections = new() { thisDirection, upDirection, downDirection };
+
+                if (!checkDirections.Contains(shockDirection))
                 {
 
                     continue;
 
                 }
 
-                SpellHandle bolt = new(location, victim.Position, shockOrigin, 56, -1, shockDamage);
+                float shockDamage = damageMonsters * (shockSize / 6);
+
+                SpellHandle bolt = new(location, victimPosition, shockOrigin, 56, -1, shockDamage);
+
+                bolt.projectile = shockSize;
 
                 bolt.monsters = new() { victim, };
 
@@ -2578,6 +2667,12 @@ namespace StardewDruid.Cast
                 bolt.criticalModifier = criticalModifier;
 
                 Mod.instance.spellRegister.Add(bolt);
+
+                shockOrigin = victimPosition;
+
+                shockSize -= 1;
+
+                shockDirection = thisDirection;
 
             }
 
@@ -2704,6 +2799,26 @@ namespace StardewDruid.Cast
             }
 
             Game1.player.Position = destination;
+
+        }
+
+        public void WarpEffect()
+        {
+
+            int direction = (int)origin.Y;
+
+            if (direction < 0 || direction > 3)
+            {
+
+                direction = 0;
+
+            }
+
+            Game1.warpFarmer(location.Name, (int)destination.X, (int)destination.Y, direction);
+
+            Game1.xLocationAfterWarp = (int)destination.X;
+
+            Game1.yLocationAfterWarp = (int)destination.Y;
 
         }
 

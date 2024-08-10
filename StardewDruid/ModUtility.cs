@@ -389,9 +389,7 @@ namespace StardewDruid
 
             }
 
-            int treeIndex = SpawnData.RandomTree(targetLocation);
-
-            Tree newTree = new(treeIndex.ToString(), 1);
+            Tree newTree = SpawnData.RandomTree(targetLocation);
 
             if (newTree == null)
             {
@@ -1713,9 +1711,9 @@ namespace StardewDruid
                 center + new Vector2(-5,3),
                 center + new Vector2(-5,2),
 
-                center + new Vector2(-6,-1),
-                center + new Vector2(-6,0), // W
                 center + new Vector2(-6,1),
+                center + new Vector2(-6,0), // W
+                center + new Vector2(-6,-1),
 
                 center + new Vector2(-5,-2),
                 center + new Vector2(-5,-3),
@@ -1731,9 +1729,75 @@ namespace StardewDruid
 
         }
 
-        static List<Vector2> TilesWithinSeven(Vector2 center)
+        static List<Vector2> TilesWithinSeven(Vector2 center, bool smooth = false)
         {
-            List<Vector2> result = new() {
+            List<Vector2> result;
+
+            if (smooth)
+            {
+
+                result = new() {
+
+                    center + new Vector2(0,-7), // N
+                    center + new Vector2(1,-7),
+
+                    center + new Vector2(2,-6),
+                    center + new Vector2(3,-6),
+
+                    center + new Vector2(4,-5), // NE
+                    center + new Vector2(5,-4), // NE
+
+                    center + new Vector2(6,-3),
+                    center + new Vector2(6,-2),
+
+                    center + new Vector2(7,-1),
+                    center + new Vector2(7,0), // E
+                    center + new Vector2(7,1),
+
+                    center + new Vector2(6,2),
+                    center + new Vector2(6,3),
+
+                    center + new Vector2(5,4), // SE
+                    center + new Vector2(4,5), // SE
+
+                    center + new Vector2(3,6),
+                    center + new Vector2(2,6),
+
+                    center + new Vector2(1,7),
+                    center + new Vector2(0,7), // S
+                    center + new Vector2(-1,7),
+
+                    center + new Vector2(-2,6),
+                    center + new Vector2(-3,6),
+
+                    center + new Vector2(-4,5), // SW
+                    center + new Vector2(-5,4), // SW
+
+                    center + new Vector2(-6,3),
+                    center + new Vector2(-6,2),
+
+                    center + new Vector2(-7,1),
+                    center + new Vector2(-7,0), // W
+                    center + new Vector2(-7,-1),
+
+                    center + new Vector2(-6,-2),
+                    center + new Vector2(-6,-3),
+
+                    center + new Vector2(-5,-4), // NW
+                    center + new Vector2(-4,-5), // NW
+
+                    center + new Vector2(-3,-6),
+                    center + new Vector2(-2,-6),
+
+                    center + new Vector2(-1,-7), // NNW
+
+                };
+
+                return result;
+
+            }
+
+            result = new() {
 
                 center + new Vector2(0,-7), // N
                 center + new Vector2(1,-7),
@@ -1773,9 +1837,9 @@ namespace StardewDruid
                 //center + new Vector2(-6,3),
                 center + new Vector2(-6,2),
 
-                center + new Vector2(-7,-1),
-                center + new Vector2(-7,0), // W
                 center + new Vector2(-7,1),
+                center + new Vector2(-7,0), // W
+                center + new Vector2(-7,-1),
 
                 center + new Vector2(-6,-2),
                 //center + new Vector2(-6,-3),
@@ -1822,7 +1886,7 @@ namespace StardewDruid
                 center + new Vector2(3,6),
                 center + new Vector2(2,7),
 
-                center + new Vector2(0,-8),
+                center + new Vector2(0,8),
 
                 center + new Vector2(-2,7),
                 center + new Vector2(-3,6),
@@ -1878,7 +1942,7 @@ namespace StardewDruid
                     templateList = TilesWithinSix(center);
                     break;
                 case 7:
-                    templateList = TilesWithinSeven(center);
+                    templateList = TilesWithinSeven(center, !onmap);
                     break;
                 case 8:
                     templateList = TilesWithinEight(center);
@@ -3542,7 +3606,7 @@ namespace StardewDruid
 
                             targetObject.onExplosion(targetPlayer);
 
-                            targetLocation.debris.Add(new Debris(ItemRegistry.Create("(O)388",Mod.instance.randomIndex.Next(1,4)), tileVector * 64f));
+                            targetLocation.debris.Add(new Debris(ItemRegistry.Create("(O)388", Mod.instance.randomIndex.Next(1, 4)), tileVector * 64f));
 
                             targetLocation.objects.Remove(tileVector);
 

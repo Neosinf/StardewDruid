@@ -349,7 +349,12 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            Mod.instance.rite.CreateTreasure();
+            if (!Mod.instance.magic)
+            {
+
+                Mod.instance.rite.CreateTreasure();
+
+            }
 
             foreach (NPC character in ModUtility.GetFriendsInLocation(Game1.player.currentLocation,true))
             {
@@ -361,7 +366,9 @@ namespace StardewDruid.Cast.Ether
 
                     if (Mod.instance.Witnessed(ReactionData.reactions.dragon, character))
                     {
+                        
                         continue;
+                    
                     }
 
                     character.faceTowardFarmerForPeriod(3000, 4, false, Game1.player);

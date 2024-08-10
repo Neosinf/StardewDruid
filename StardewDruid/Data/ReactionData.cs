@@ -14,6 +14,8 @@ using System.Net.Sockets;
 using System.Runtime.Intrinsics.X86;
 using static StardewDruid.Data.IconData;
 using xTile.Dimensions;
+using Microsoft.Xna.Framework.Media;
+using StardewValley.Minigames;
 
 namespace StardewDruid.Data
 {
@@ -56,6 +58,7 @@ namespace StardewDruid.Data
             fates,
             dragon,
             jester,
+            corvid,
 
         }
 
@@ -78,12 +81,12 @@ namespace StardewDruid.Data
 
         public const string leftParenthesis = "(";
 
-        public static void ReactTo(NPC NPC, reactions reaction, int friendship = 0, List<int> context = null)
+        public static void ReactTo(NPC entity, reactions reaction, int friendship = 0, List<int> context = null)
         {
 
-            Mod.instance.AddWitness(reaction, NPC.Name);
+            Mod.instance.AddWitness(reaction, entity.Name);
 
-            List<string> stringList = VillagerData.CustomReaction(reaction, NPC.Name);
+            List<string> stringList = VillagerData.CustomReaction(reaction, entity);
 
             if (stringList.Count > 0)
             {
@@ -93,7 +96,7 @@ namespace StardewDruid.Data
 
                     string str = stringList[index];
 
-                    NPC.CurrentDialogue.Push(new StardewValley.Dialogue(NPC, "0", str));
+                    entity.CurrentDialogue.Push(new StardewValley.Dialogue(entity, "0", str));
 
                 }
 
@@ -101,40 +104,38 @@ namespace StardewDruid.Data
 
             }
 
-            Dictionary<string, int> affinities = VillagerData.Affinity();
+            int affinity = VillagerData.Affinity(entity);
 
-            int affinity = 3;
-
-            if (affinities.ContainsKey(NPC.Name))
+            if(affinity == -1)
             {
 
-                affinity = affinities[NPC.Name];
+                return;
 
             }
 
             string place = Mod.instance.Helper.Translation.Get("ReactionData.1");
 
-            if (NPC.currentLocation.Name.Contains("Island"))
+            if (entity.currentLocation.Name.Contains("Island"))
             {
 
                 place = Mod.instance.Helper.Translation.Get("ReactionData.2");
 
             }
 
-            Dictionary<portraits, string> shots = VillagerData.ReactionPortraits(NPC.Name);
+            Dictionary<portraits, string> shots = VillagerData.ReactionPortraits(entity.Name);
 
             switch (reaction)
             {
 
                 case reactions.dragon:
 
-                    if (Game1.player.friendshipData.ContainsKey(NPC.Name))
+                    if (Game1.player.friendshipData.ContainsKey(entity.Name))
                     {
 
-                        if (Game1.player.friendshipData[NPC.Name].Points >= 1500)
+                        if (Game1.player.friendshipData[entity.Name].Points >= 1500)
                         {
 
-                            NPC.doEmote(20, true);
+                            entity.doEmote(20, true);
 
                             switch (affinity)
                             {
@@ -192,10 +193,10 @@ namespace StardewDruid.Data
 
                         }
 
-                        if (Game1.player.friendshipData[NPC.Name].Points >= 1000)
+                        if (Game1.player.friendshipData[entity.Name].Points >= 1000)
                         {
 
-                            NPC.doEmote(32, true);
+                            entity.doEmote(32, true);
 
                             switch (affinity)
                             {
@@ -255,6 +256,7 @@ namespace StardewDruid.Data
                         }
 
                     }
+
                     switch (affinity)
                     {
                         case 0:
@@ -265,7 +267,7 @@ namespace StardewDruid.Data
                                 Mod.instance.Helper.Translation.Get("ReactionData.143")
                             };
 
-                            NPC.showTextAboveHead(alertListOne[new Random().Next(2)]);
+                            entity.showTextAboveHead(alertListOne[new Random().Next(2)]);
 
                             stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.148").Tokens(new { name = Game1.player.Name }));
 
@@ -282,15 +284,15 @@ namespace StardewDruid.Data
                                 Mod.instance.Helper.Translation.Get("ReactionData.160"),
                             };
 
-                            NPC.showTextAboveHead(alertListTwo[new Random().Next(3)]);
+                            entity.showTextAboveHead(alertListTwo[new Random().Next(3)]);
 
-                            stringList.Add(leftParenthesis + NPC.Name + Mod.instance.Helper.Translation.Get("ReactionData.165") + shots[portraits.sad]);
+                            stringList.Add(leftParenthesis + entity.Name + Mod.instance.Helper.Translation.Get("ReactionData.165") + shots[portraits.sad]);
 
                             break;
 
                         case 2:
 
-                            NPC.doEmote(16, true);
+                            entity.doEmote(16, true);
 
                             stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.173"));
 
@@ -300,7 +302,7 @@ namespace StardewDruid.Data
 
                         case 3:
 
-                            NPC.doEmote(16, true);
+                            entity.doEmote(16, true);
 
                             stringList.Add(Game1.player.Name + questionMark);
 
@@ -318,7 +320,7 @@ namespace StardewDruid.Data
                                 Mod.instance.Helper.Translation.Get("ReactionData.196"),
                             };
 
-                            NPC.showTextAboveHead(alertList[new Random().Next(3)]);
+                            entity.showTextAboveHead(alertList[new Random().Next(3)]);
 
                             stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.201"));
 
@@ -326,7 +328,7 @@ namespace StardewDruid.Data
 
                         default:
 
-                            NPC.doEmote(16, true);
+                            entity.doEmote(16, true);
 
                             stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.209") +
                                 place + Mod.instance.Helper.Translation.Get("ReactionData.210"));
@@ -363,14 +365,14 @@ namespace StardewDruid.Data
                         {
                             case 0:
 
-                                NPC.doEmote(20, true);
+                                entity.doEmote(20, true);
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.246") + shots[portraits.happy]);
 
                                 break;
 
                             case 1:
-                                NPC.doEmote(20, true);
+                                entity.doEmote(20, true);
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.253") +
                                     trick +
@@ -382,7 +384,7 @@ namespace StardewDruid.Data
                             case 2:
 
 
-                                NPC.showTextAboveHead(Mod.instance.Helper.Translation.Get("ReactionData.263"));
+                                entity.showTextAboveHead(Mod.instance.Helper.Translation.Get("ReactionData.263"));
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.265") + shots[portraits.love]);
 
@@ -390,7 +392,7 @@ namespace StardewDruid.Data
 
                             case 3:
 
-                                NPC.doEmote(20, true);
+                                entity.doEmote(20, true);
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.273") + shots[portraits.love]);
 
@@ -398,7 +400,7 @@ namespace StardewDruid.Data
 
                             case 4:
 
-                                NPC.doEmote(20, true);
+                                entity.doEmote(20, true);
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.281") + shots[portraits.love]);
 
@@ -406,7 +408,7 @@ namespace StardewDruid.Data
 
                             default:
 
-                                NPC.doEmote(20, true);
+                                entity.doEmote(20, true);
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.289"));
 
@@ -427,7 +429,7 @@ namespace StardewDruid.Data
                         {
                             case 0:
 
-                                NPC.doEmote(32, true);
+                                entity.doEmote(32, true);
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.310").Tokens(new { name = Game1.player.Name }));
 
@@ -437,7 +439,7 @@ namespace StardewDruid.Data
 
                             case 1:
 
-                                NPC.showTextAboveHead(Mod.instance.Helper.Translation.Get("ReactionData.319"));
+                                entity.showTextAboveHead(Mod.instance.Helper.Translation.Get("ReactionData.319"));
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.321") + shots[portraits.happy]);
 
@@ -445,7 +447,7 @@ namespace StardewDruid.Data
 
                             case 2:
 
-                                NPC.doEmote(32, true);
+                                entity.doEmote(32, true);
 
                                 stringList.Add(trick.ToUpper() + Mod.instance.Helper.Translation.Get("ReactionData.329") + shots[portraits.happy]);
 
@@ -453,7 +455,7 @@ namespace StardewDruid.Data
 
                             case 3:
 
-                                NPC.doEmote(32, true);
+                                entity.doEmote(32, true);
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.337") + shots[portraits.happy]);
 
@@ -461,7 +463,7 @@ namespace StardewDruid.Data
 
                             case 4:
 
-                                NPC.doEmote(32, true);
+                                entity.doEmote(32, true);
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.345") + shots[portraits.happy]);
 
@@ -469,7 +471,7 @@ namespace StardewDruid.Data
 
                             default:
 
-                                NPC.doEmote(32, true);
+                                entity.doEmote(32, true);
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.353"));
 
@@ -490,7 +492,7 @@ namespace StardewDruid.Data
                         {
                             case 0:
 
-                                NPC.doEmote(24, true);
+                                entity.doEmote(24, true);
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.374"));
 
@@ -499,7 +501,7 @@ namespace StardewDruid.Data
 
                             case 1:
 
-                                NPC.showTextAboveHead(Mod.instance.Helper.Translation.Get("ReactionData.381"));
+                                entity.showTextAboveHead(Mod.instance.Helper.Translation.Get("ReactionData.381"));
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.383"));
 
@@ -507,7 +509,7 @@ namespace StardewDruid.Data
 
                             case 2:
 
-                                NPC.doEmote(24, true);
+                                entity.doEmote(24, true);
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.391"));
 
@@ -515,7 +517,7 @@ namespace StardewDruid.Data
 
                             case 3:
 
-                                NPC.doEmote(24, true);
+                                entity.doEmote(24, true);
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.399").Tokens(new { trick = trick, }));
 
@@ -525,7 +527,7 @@ namespace StardewDruid.Data
 
                             case 4:
 
-                                NPC.doEmote(24, true);
+                                entity.doEmote(24, true);
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.410"));
 
@@ -533,7 +535,7 @@ namespace StardewDruid.Data
 
                             default:
 
-                                NPC.doEmote(32, true);
+                                entity.doEmote(32, true);
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.418"));
 
@@ -551,9 +553,9 @@ namespace StardewDruid.Data
                         case 0:
 
 
-                            NPC.doEmote(28, true);
+                            entity.doEmote(28, true);
 
-                            if (NPC is Child)
+                            if (entity is Child)
                             {
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.439") + shots[portraits.sad]);
@@ -570,7 +572,7 @@ namespace StardewDruid.Data
 
                         case 1:
 
-                            NPC.doEmote(28, true);
+                            entity.doEmote(28, true);
 
                             stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.456") + shots[portraits.sad]);
 
@@ -580,7 +582,7 @@ namespace StardewDruid.Data
 
                         case 2:
 
-                            NPC.showTextAboveHead(Mod.instance.Helper.Translation.Get("ReactionData.464"));
+                            entity.showTextAboveHead(Mod.instance.Helper.Translation.Get("ReactionData.464"));
 
                             stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.466") + shots[portraits.sad]);
 
@@ -588,7 +590,7 @@ namespace StardewDruid.Data
 
                         case 3:
 
-                            NPC.doEmote(28, true);
+                            entity.doEmote(28, true);
 
                             stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.474") + shots[portraits.sad]);
 
@@ -596,7 +598,7 @@ namespace StardewDruid.Data
 
                         case 4:
 
-                            NPC.doEmote(28, true);
+                            entity.doEmote(28, true);
 
                             stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.482") + shots[portraits.sad]);
 
@@ -604,9 +606,9 @@ namespace StardewDruid.Data
 
                         default:
 
-                            NPC.doEmote(28, true);
+                            entity.doEmote(28, true);
 
-                            stringList.Add(leftParenthesis + NPC.Name + Mod.instance.Helper.Translation.Get("ReactionData.490") + shots[portraits.angry]);
+                            stringList.Add(leftParenthesis + entity.Name + Mod.instance.Helper.Translation.Get("ReactionData.490") + shots[portraits.angry]);
 
                             break;
 
@@ -616,7 +618,7 @@ namespace StardewDruid.Data
 
                 case reactions.stars:
 
-                    NPC.doEmote(8, true);
+                    entity.doEmote(8, true);
 
                     switch (affinity)
                     {
@@ -675,7 +677,7 @@ namespace StardewDruid.Data
 
                 case reactions.mists:
 
-                    NPC.doEmote(16, true);
+                    entity.doEmote(16, true);
 
                     switch (affinity)
                     {
@@ -689,7 +691,7 @@ namespace StardewDruid.Data
 
                         case 1:
 
-                            if (NPC is Child)
+                            if (entity is Child)
                             {
 
                                 stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.580") + shots[portraits.sad]);
@@ -738,9 +740,9 @@ namespace StardewDruid.Data
 
                 case reactions.weald:
 
-                    if (Game1.player.friendshipData[NPC.Name].Points >= 1500)
+                    if (Game1.player.friendshipData[entity.Name].Points >= 1500)
                     {
-                        NPC.doEmote(20, true);
+                        entity.doEmote(20, true);
 
                         switch (affinity)
                         {
@@ -788,10 +790,10 @@ namespace StardewDruid.Data
                         }
 
                     }
-                    else if (Game1.player.friendshipData[NPC.Name].Points >= 750)
+                    else if (Game1.player.friendshipData[entity.Name].Points >= 750)
                     {
 
-                        NPC.doEmote(32, true);
+                        entity.doEmote(32, true);
 
                         switch (affinity)
                         {
@@ -844,7 +846,7 @@ namespace StardewDruid.Data
                         {
                             case 0:
 
-                                NPC.showTextAboveHead(Mod.instance.Helper.Translation.Get("ReactionData.737"));
+                                entity.showTextAboveHead(Mod.instance.Helper.Translation.Get("ReactionData.737"));
 
                                 switch (new Random().Next(3))
                                 {
@@ -872,7 +874,7 @@ namespace StardewDruid.Data
 
                             case 1:
 
-                                NPC.doEmote(8, true);
+                                entity.doEmote(8, true);
 
                                 switch (new Random().Next(3))
                                 {
@@ -900,7 +902,7 @@ namespace StardewDruid.Data
 
                             case 2:
 
-                                NPC.doEmote(8, true);
+                                entity.doEmote(8, true);
 
                                 switch (new Random().Next(3))
                                 {
@@ -935,7 +937,7 @@ namespace StardewDruid.Data
 
                             case 3:
 
-                                NPC.doEmote(8, true);
+                                entity.doEmote(8, true);
 
                                 switch (new Random().Next(3))
                                 {
@@ -966,7 +968,7 @@ namespace StardewDruid.Data
 
                             case 4:
 
-                                NPC.doEmote(8, true);
+                                entity.doEmote(8, true);
 
                                 switch (new Random().Next(3))
                                 {
@@ -1002,7 +1004,7 @@ namespace StardewDruid.Data
 
                             default:
 
-                                NPC.doEmote(8, true);
+                                entity.doEmote(8, true);
 
                                 switch (new Random().Next(2))
                                 {
@@ -1037,9 +1039,192 @@ namespace StardewDruid.Data
 
                 case reactions.jester:
 
-                    NPC.doEmote(20, true);
+                    entity.doEmote(20, true);
 
-                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.935"));
+                    switch (affinity)
+                    {
+                        case 0:
+
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.1"));
+
+                            break;
+
+                        case 1:
+
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.2") + shots[portraits.happy]);
+
+                            break;
+
+                        case 2:
+
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.935"));
+
+                            break;
+
+                        case 3:
+
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.3"));
+
+                            break;
+
+                        case 4:
+
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.4"));
+
+                            break;
+
+                        default:
+
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.5"));
+
+                            break;
+
+                    };
+
+                    break;
+
+
+                case reactions.corvid:
+
+                    
+                    if(friendship > 15)
+                    {
+
+                        entity.doEmote(20, true);
+
+                        switch (affinity)
+                        {
+                            case 0:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.6") + shots[portraits.happy]);
+
+                                break;
+
+                            case 1:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.7") + shots[portraits.happy]);
+
+                                break;
+
+                            case 2:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.8") + shots[portraits.happy]);
+
+                                break;
+
+                            case 3:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.9") + shots[portraits.happy]);
+
+                                break;
+
+                            case 4:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.10") + shots[portraits.happy]);
+
+                                break;
+
+                            default:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.11") + shots[portraits.happy]);
+
+                                break;
+
+                        };
+
+                    }
+                    else if (friendship > 0)
+                    {
+
+                        entity.doEmote(32, true);
+
+                        switch (affinity)
+                        {
+                            case 0:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.18"));
+
+                                break;
+
+                            case 1:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.19").Tokens(new { name = Game1.player.Name, }));
+
+                                break;
+
+                            case 2:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.20"));
+
+                                break;
+
+                            case 3:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.21").Tokens(new { name = Game1.player.Name, }));
+
+                                break;
+
+                            case 4:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.22"));
+
+                                break;
+
+                            default:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.23").Tokens(new { name = Game1.player.Name, }));
+
+                                break;
+
+                        };
+
+                    }
+                    else
+                    {
+                        
+                        entity.doEmote(8, true);
+
+                        switch (affinity)
+                        {
+                            case 0:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.12"));
+
+                                break;
+
+                            case 1:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.13") + shots[portraits.sad]);
+
+                                break;
+
+                            case 2:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.14"));
+
+                                break;
+
+                            case 3:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.15") + shots[portraits.angry]);
+
+                                break;
+
+                            case 4:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.16"));
+
+                                break;
+
+                            default:
+
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.17"));
+
+                                break;
+
+                        };
+
+                    }
 
                     break;
 
@@ -1051,7 +1236,7 @@ namespace StardewDruid.Data
 
                 string str = stringList[index];
 
-                NPC.CurrentDialogue.Push(new StardewValley.Dialogue(NPC, 0.ToString(), str));
+                entity.CurrentDialogue.Push(new StardewValley.Dialogue(entity, 0.ToString(), str));
 
             }
 

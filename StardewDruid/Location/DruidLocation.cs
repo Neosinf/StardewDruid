@@ -18,6 +18,8 @@ namespace StardewDruid.Location
 
         public List<Location.TerrainTile> terrainTiles = new();
 
+        public List<Location.TerrainTile> frontTiles = new();
+
         public Dictionary<Vector2, CharacterHandle.characters> dialogueTiles = new();
 
         public List<Location.LightField> lightFields = new();
@@ -39,6 +41,15 @@ namespace StardewDruid.Location
 
 
         }
+
+        public DruidLocation(string name, string baseName)
+            : base(baseName, name)
+        {
+
+
+
+        }
+
         protected override void _updateAmbientLighting()
         {
 
@@ -100,6 +111,22 @@ namespace StardewDruid.Location
                 crate.Value.draw(b);
 
             }
+
+        }
+
+        public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
+        {
+
+
+            foreach (TerrainTile tile in frontTiles)
+            {
+
+                tile.draw(b, this);
+
+            }
+
+            base.drawAboveAlwaysFrontLayer(b);
+
 
         }
 

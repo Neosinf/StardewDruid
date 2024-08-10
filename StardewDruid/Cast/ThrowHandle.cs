@@ -421,6 +421,8 @@ namespace StardewDruid.Cast
 
             }
 
+            ParsedItemData dataOrErrorItem;
+
             if (counter == 0)
             {
 
@@ -429,7 +431,17 @@ namespace StardewDruid.Cast
 
                     case throwing.item:
 
-                        ParsedItemData dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(item.QualifiedItemId);
+
+                        if(item == null)
+                        {
+                            
+                            complete = true;
+
+                            return false;
+
+                        }
+
+                        dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(item.QualifiedItemId);
 
                         Microsoft.Xna.Framework.Rectangle itemRect = dataOrErrorItem.GetSourceRect(0, item.ParentSheetIndex);
 

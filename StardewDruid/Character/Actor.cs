@@ -10,7 +10,6 @@ namespace StardewDruid.Character
 {
     public class Actor : StardewDruid.Character.Character
     {
-        new public CharacterHandle.characters characterType = CharacterHandle.characters.disembodied;
 
         public bool drawSlave;
 
@@ -26,6 +25,7 @@ namespace StardewDruid.Character
 
         public override void LoadOut()
         {
+            characterType = CharacterHandle.characters.disembodied;
             loadedOut = true;
         }
 

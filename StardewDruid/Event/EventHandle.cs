@@ -74,8 +74,6 @@ namespace StardewDruid.Event
 
         public bool eventAbort;
 
-        public float eventProximity = -1;
-
         public int proximityCounter = 0;
 
         public bool eventLocked;
@@ -369,8 +367,6 @@ namespace StardewDruid.Event
 
             decimalCounter = 0;
 
-            eventProximity = -1;
-
             if (!inabsentia || location == null)
             {
 
@@ -470,39 +466,6 @@ namespace StardewDruid.Event
             {
 
                 return EventExpire();
-
-            }
-
-            if (eventProximity != -1)
-            {
-
-                if (Vector2.Distance(Game1.player.Position, origin) > eventProximity)
-                {
-
-                    proximityCounter++;
-
-                    if (proximityCounter > 5)
-                    {
-
-                        Mod.instance.CastDisplay(DialogueData.Strings(DialogueData.stringkeys.leftEvent), 3);
-
-                        return AttemptReset();
-
-                    }
-                    else
-                    {
-
-                        Mod.instance.CastDisplay(DialogueData.Strings(DialogueData.stringkeys.leavingEvent), 3);
-
-                    }
-
-                }
-                else if (proximityCounter > 0)
-                {
-
-                    proximityCounter--;
-
-                }
 
             }
 
@@ -960,6 +923,18 @@ namespace StardewDruid.Event
 
         }
 
+        public void BossesAddressPlayer()
+        {
+
+            foreach(KeyValuePair<int,StardewDruid.Monster.Boss> boss in bosses)
+            {
+
+                boss.Value.LookAtFarmer();
+
+            }
+
+        }
+
         public void DialogueCueWithThreat(int cueIndex)
         {
 
@@ -1200,7 +1175,9 @@ namespace StardewDruid.Event
             for (int b = bosses.Count - 1; b >= 0; b--)
             {
 
-                Boss boss = bosses[b];
+                Boss boss = bosses.ElementAt(b).Value;
+
+                Mod.instance.iconData.AnimateQuickWarp(location, boss.Position);
 
                 location.characters.Remove(boss);
 
@@ -1282,7 +1259,12 @@ namespace StardewDruid.Event
 
                 foreach (TemporaryAnimatedSprite animation in animations)
                 {
+                    if (animation.lightID != 0)
+                    {
 
+                        Utility.removeLightSource(animation.lightID);
+
+                    }
                     location.temporarySprites.Remove(animation);
 
                 }

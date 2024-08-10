@@ -26,6 +26,8 @@ namespace StardewDruid.Render
 
         public Texture2D breathTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "DragonBreath.png"));
 
+        public Texture2D breathTextureTwo = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "DragonBreathTwo.png"));
+
         public Texture2D dinosaurTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Dinosaur.png"));
 
 
@@ -247,6 +249,8 @@ namespace StardewDruid.Render
             shade_1,
             blank41,
             shade_0,
+
+
         }
 
         public enum dinosaurIndexes
@@ -951,9 +955,16 @@ namespace StardewDruid.Render
 
             }
 
-            b.Draw(characterTexture, spriteShadow, RectangleShadowIndex(shadowFrames[additional.direction][0]), Color.White * 0.15f, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer - 0.0002f);
+            if (additional.shadow)
+            {
+                
+                b.Draw(characterTexture, spriteShadow, RectangleShadowIndex(shadowFrames[additional.direction][0]), Color.White * 0.25f, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer - 0.0002f);
+
+            }
 
             b.Draw(characterTexture, spritePosition, RectangleDragonIndex(backFrames[additional.direction][0]), primary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer - 0.0001f);
+
+            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(backFrames[additional.direction][0], 1, 320), secondary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer - 0.0002f);
 
             b.Draw(characterTexture, spritePosition, RectangleDragonIndex(legFrames[additional.direction][additional.frame]), primary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
 
@@ -961,13 +972,13 @@ namespace StardewDruid.Render
 
             b.Draw(characterTexture, spritePosition, RectangleDragonIndex(headFrames[additional.direction][additional.version]), primary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
 
-            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(headFrames[additional.direction][additional.version], 1, 448), secondary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
+            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(headFrames[additional.direction][additional.version], 1, 320), secondary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
 
             b.Draw(characterTexture, spritePosition, RectangleDragonIndex(headFrames[additional.direction][additional.version], 1, 704), tertiary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
 
             b.Draw(characterTexture, spritePosition, RectangleDragonIndex(bodyFrames[additional.direction][0]), primary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0002f);
 
-            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(bodyFrames[additional.direction][0], 1, 448), secondary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0002f);
+            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(bodyFrames[additional.direction][0], 1, 320), secondary, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0002f);
 
             if (additional.breath)
             {
@@ -1032,15 +1043,17 @@ namespace StardewDruid.Render
 
             b.Draw(characterTexture, spritePosition, RectangleDragonIndex(backFrames[additional.direction][0]), primary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer - 0.0001f);
 
+            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(backFrames[additional.direction][0], 1, 320), secondary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer - 0.0001f);
+
             b.Draw(characterTexture, spritePosition, RectangleDragonIndex(headFrames[additional.direction][additional.version]), primary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
 
-            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(headFrames[additional.direction][additional.version], 1, 448), secondary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
+            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(headFrames[additional.direction][additional.version], 1, 320), secondary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
 
             b.Draw(characterTexture, spritePosition, RectangleDragonIndex(headFrames[additional.direction][additional.version], 1, 704), tertiary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer);
 
             b.Draw(characterTexture, spritePosition, RectangleDragonIndex(bodyFrames[additional.direction][0]), primary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
 
-            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(bodyFrames[additional.direction][0], 1, 448), secondary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
+            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(bodyFrames[additional.direction][0], 1, 320), secondary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
 
             b.Draw(characterTexture, spritePosition, RectangleShadowIndex(swimFrames[additional.direction][swimFrame]), Color.White * 0.35f, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0002f);
 
@@ -1060,7 +1073,7 @@ namespace StardewDruid.Render
 
             b.Draw(characterTexture, spritePosition, RectangleDragonIndex(diveFrames[additional.frame]), primary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
 
-            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(diveFrames[additional.frame], 1, 384), secondary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
+            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(diveFrames[additional.frame], 1, 320), secondary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
 
             b.Draw(characterTexture, spritePosition, RectangleDragonIndex(diveFrames[additional.frame], 1, 576), tertiary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
 
@@ -1091,7 +1104,13 @@ namespace StardewDruid.Render
 
             }
 
-            b.Draw(dashTexture, flightPosition, RectangleDashIndex(dashWingFrames[additional.direction][additional.frame]), primary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
+            Rectangle wingFrame = RectangleDashIndex(dashWingFrames[additional.direction][additional.frame]);
+
+            b.Draw(dashTexture, flightPosition, wingFrame, primary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
+
+            wingFrame.Y += 704;
+
+            b.Draw(dashTexture, flightPosition, wingFrame, secondary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
 
             if (additional.breath)
             {
@@ -1121,7 +1140,13 @@ namespace StardewDruid.Render
 
             Vector2 spriteShadow = new Vector2(localPosition.X + 32 - 64 * additional.scale, localPosition.Y + 64 - 56 * additional.scale);
 
-            b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashWingFrames[1][0]), primary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0003f);
+            Rectangle wingFrame = RectangleDashIndex(dashWingFrames[1][0]);
+
+            b.Draw(dashTexture, spritePosition, wingFrame, primary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0003f);
+
+            wingFrame.Y += 704;
+
+            b.Draw(dashTexture, spritePosition, wingFrame, secondary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0003f);
 
             //b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashLegFrames[4][additional.frame]), primary, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
 
@@ -1195,7 +1220,14 @@ namespace StardewDruid.Render
 
             b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashBodyFrames[useDirection][0], 2, 256), secondary, 0f, Vector2.Zero, additional.scale, useFlip ? (SpriteEffects)1 : 0, additional.layer + 0.0002f);
 
-            b.Draw(dashTexture, spritePosition, RectangleDashIndex(dashWingFrames[useDirection][0]), primary, 0f, Vector2.Zero, additional.scale, useFlip ? (SpriteEffects)1 : 0, additional.layer + 0.0003f);
+            Rectangle wingFrame = RectangleDashIndex(dashWingFrames[useDirection][0]);
+
+            b.Draw(dashTexture, spritePosition, wingFrame, primary, 0f, Vector2.Zero, additional.scale, useFlip ? (SpriteEffects)1 : 0, additional.layer + 0.0003f);
+
+            wingFrame.Y += 704;
+
+            b.Draw(dashTexture, spritePosition, wingFrame, secondary, 0f, Vector2.Zero, additional.scale, useFlip ? (SpriteEffects)1 : 0, additional.layer + 0.0003f);
+
 
             if (additional.breath)
             {
@@ -1275,7 +1307,7 @@ namespace StardewDruid.Render
 
             float scale = additional.scale - 0.5f;
 
-            int breathFrame = Game1.currentGameTime.TotalGameTime.Milliseconds % 700 / 175;
+            int breathFrame = (int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 1000 / 250);
 
             float rotation = 0f;
 
@@ -1305,17 +1337,23 @@ namespace StardewDruid.Render
 
                 case 1:
 
+                    //layer += 0.032f;
+
                     rotation = 0f - (float)Math.PI * 0.05f;
 
                     break;
 
                 case 3:
 
+                    //layer += 0.032f;
+
                     rotation = 0f + (float)Math.PI * 0.05f;
 
                     break;
 
                 case 2:
+
+                    //layer += 0.032f;
 
                     if (additional.flip)
                     {
@@ -1337,15 +1375,42 @@ namespace StardewDruid.Render
 
             List<Color> colours = Mod.instance.iconData.gradientColours[fire];
 
-            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 0, 192, 192), Color.White, rotation, new Vector2(96), scale, additional.flip ? (SpriteEffects)1 : 0, layer + 0.0005f);
+            switch (additional.direction)
+            {
+                case 0:
+                case 2:
 
-            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 192, 192, 192), colours[0], rotation, new Vector2(96), scale, additional.flip ? (SpriteEffects)1 : 0, layer + 0.0005f);
+                    b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 0, 192, 192), Color.White*0.9f, rotation, new Vector2(96), scale - 0.5f, additional.flip ? (SpriteEffects)1 : 0, layer);
 
-            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 384, 192, 192), colours[1], rotation, new Vector2(96), scale, additional.flip ? (SpriteEffects)1 : 0, layer + 0.0005f);
+                    b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 192, 192, 192), colours[0] * 0.9f, rotation, new Vector2(96), scale - 0.5f, additional.flip ? (SpriteEffects)1 : 0, layer);
 
-            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 576, 192, 192), colours[2], rotation, new Vector2(96), scale, additional.flip ? (SpriteEffects)1 : 0, layer + 0.0005f);
+                    b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 384, 192, 192), colours[1] * 0.9f, rotation, new Vector2(96), scale - 0.5f, additional.flip ? (SpriteEffects)1 : 0, layer);
 
-            b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 768, 192, 192), colours[1], rotation, new Vector2(96), scale, additional.flip ? (SpriteEffects)1 : 0, layer + 0.0005f);
+                    b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 576, 192, 192), colours[2] * 0.9f, rotation, new Vector2(96), scale - 0.5f, additional.flip ? (SpriteEffects)1 : 0, layer);
+
+                    b.Draw(breathTexture, spritePosition, new Rectangle(breathFrame * 192, 768, 192, 192), colours[1] * 0.9f, rotation, new Vector2(96), scale - 0.5f, additional.flip ? (SpriteEffects)1 : 0, layer);
+
+                    break;
+
+                case 1:
+                case 3:
+
+                    b.Draw(breathTextureTwo, spritePosition, new Rectangle(breathFrame * 192, 0, 192, 192), Color.White * 0.9f, rotation, new Vector2(96), scale - 0.5f, additional.flip ? (SpriteEffects)1 : 0, layer);
+
+                    b.Draw(breathTextureTwo, spritePosition, new Rectangle(breathFrame * 192, 192, 192, 192), colours[0] * 0.9f, rotation, new Vector2(96), scale - 0.5f, additional.flip ? (SpriteEffects)1 : 0, layer);
+
+                    b.Draw(breathTextureTwo, spritePosition, new Rectangle(breathFrame * 192, 384, 192, 192), colours[1] * 0.9f, rotation, new Vector2(96), scale - 0.5f, additional.flip ? (SpriteEffects)1 : 0, layer);
+
+                    b.Draw(breathTextureTwo, spritePosition, new Rectangle(breathFrame * 192, 576, 192, 192), colours[2] * 0.9f, rotation, new Vector2(96), scale - 0.5f, additional.flip ? (SpriteEffects)1 : 0, layer);
+
+                    b.Draw(breathTextureTwo, spritePosition, new Rectangle(breathFrame * 192, 768, 192, 192), colours[1] * 0.9f, rotation, new Vector2(96), scale - 0.5f, additional.flip ? (SpriteEffects)1 : 0, layer);
+
+                    break;
+
+
+            }
+
+
         }
 
     }
@@ -1368,6 +1433,8 @@ namespace StardewDruid.Render
         public int flight = 0;
 
         public bool breath = false;
+
+        public bool shadow = true;
 
     }
 

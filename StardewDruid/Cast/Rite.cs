@@ -7,6 +7,7 @@ using StardewDruid.Cast.Fates;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Stars;
 using StardewDruid.Cast.Weald;
+using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Event;
 using StardewDruid.Journal;
@@ -26,6 +27,7 @@ using static StardewValley.Minigames.CraneGame;
 
 namespace StardewDruid.Cast
 {
+
     public class Rite
     {
         // -----------------------------------------------------
@@ -38,7 +40,8 @@ namespace StardewDruid.Cast
             mists,
             stars,
             fates,
-            ether
+            ether,
+            bones,
 
         }
 
@@ -51,6 +54,7 @@ namespace StardewDruid.Cast
             [rites.stars] = QuestHandle.milestones.stars_weapon,
             [rites.fates] = QuestHandle.milestones.fates_weapon,
             [rites.ether] = QuestHandle.milestones.ether_weapon,
+            [rites.bones] = QuestHandle.milestones.ether_challenge,
 
         };
 
@@ -299,7 +303,9 @@ namespace StardewDruid.Cast
 
                     start();
 
-                    /*Mod.instance.Monitor.Log(Game1.player.currentLocation.Name, LogLevel.Debug);
+                    /*Mod.instance.Monitor.Log(ModUtility.PositionToTile(Game1.player.Position).ToString(), LogLevel.Debug);
+
+                    Mod.instance.Monitor.Log(Game1.player.currentLocation.Name, LogLevel.Debug);
 
                     for (int i = 0; i < Game1.player.currentLocation.map.Layers.Count; i++)
                     {
@@ -347,7 +353,25 @@ namespace StardewDruid.Cast
 
             int castFast = 4;
 
+            if (castType == rites.stars)
+            {
+
+                castInterval = 45;
+
+                castFast = 3;
+
+            }
+
             if (castType == rites.fates)
+            {
+
+                castInterval = 120;
+
+                castFast = 8;
+
+            }
+
+            if (castType == rites.bones)
             {
 
                 castInterval = 120;
@@ -380,7 +404,7 @@ namespace StardewDruid.Cast
 
             int tool = Mod.instance.AttuneableWeapon();
 
-            if (Mod.instance.Config.slotAttune)
+            if (Mod.instance.Config.slotAttune || Mod.instance.magic)
             {
 
                 blessing = GetSlotBlessing();
@@ -516,7 +540,7 @@ namespace StardewDruid.Cast
 
                 }
 
-                if (Mod.instance.Config.slotAttune)
+                if (Mod.instance.Config.slotAttune || Mod.instance.magic)
                 {
 
                     rites slot = GetSlotBlessing();
@@ -647,6 +671,8 @@ namespace StardewDruid.Cast
             if (!castActive) { return; }
 
             if (castType == rites.ether) { return; }
+
+            if (castType == rites.bones) { return; }
 
             if (!Mod.instance.questHandle.IsGiven(chargeRequirement[castType]))
             {
@@ -886,23 +912,24 @@ namespace StardewDruid.Cast
 
                     chargeCooldown = (int)(180f * celeri);
 
-                    switch (Mod.instance.randomIndex.Next(4))
+                    //switch (Mod.instance.randomIndex.Next(4))
+                    switch (Mod.instance.randomIndex.Next(3))
                     {
                         
                         case 0:
 
                             return SpellHandle.effects.daze;
 
-                        case 1:
+                        //case 1:
 
-                            return SpellHandle.effects.mug;
+                        //return SpellHandle.effects.mug;
 
                         case 2:
 
                             return SpellHandle.effects.morph;
 
                         default:
-                        case 3:
+                        //case 3:
 
                             return SpellHandle.effects.doom;
                     }
@@ -1051,7 +1078,14 @@ namespace StardewDruid.Cast
         public rites RequirementCheck(rites id, bool next = false)
         {
 
-            if((int)Mod.instance.save.milestone >= (int)requirement[id])
+            if (Mod.instance.magic)
+            {
+                
+                return id;
+
+            }
+
+            if ((int)Mod.instance.save.milestone >= (int)requirement[id])
             {
 
                 return id;
@@ -1131,6 +1165,11 @@ namespace StardewDruid.Cast
 
                     break;
 
+                case "bones":
+
+                    blessing = RequirementCheck(rites.bones, true);
+
+                    break;
 
             }
 
@@ -1188,6 +1227,12 @@ namespace StardewDruid.Cast
 
                     castVector = ModUtility.PositionToTile(cursorVector);
 
+                    break;  
+                    
+               case rites.bones:
+
+                    castVector = ModUtility.PositionToTile(GetTargetCursor(Game1.player.FacingDirection, 1280, -1));
+
                     break;
 
                 default: // earth / stars / ether
@@ -1231,7 +1276,7 @@ namespace StardewDruid.Cast
 
             float vectorDistance = Vector2.Distance(playerPosition, mousePosition);
 
-            if (vectorDistance <= threshhold + 32)
+            if (threshhold != -1 && vectorDistance <= threshhold + 32)
             {
 
                 return GetTargetDirectional(direction, distance);
@@ -1302,6 +1347,12 @@ namespace StardewDruid.Cast
                 case rites.ether:
 
                     CastEther();
+
+                    break;
+
+                case rites.bones:
+
+                    CastBones();
 
                     break;
 
@@ -1832,8 +1883,6 @@ namespace StardewDruid.Cast
             if (Mod.instance.questHandle.IsGiven(QuestHandle.mistsFour))
             {
 
-                //CastSmite(new() { castVector*64,Game1.player.Position}, Mod.instance.CombatDamage());
-
                 CastSmite();
 
             }
@@ -1844,13 +1893,6 @@ namespace StardewDruid.Cast
                 CastWisps();
 
             }
-
-            //if (castLevel % 2 == 0)
-            //{
-
-            //    Mod.instance.iconData.CursorIndicator(Game1.player.currentLocation, castVector * 64, IconData.cursors.mists, new() { interval = 1200f, alpha = 1f, scale = 2f, fade = 0.0008f});
-
-            //}
 
         }
 
@@ -2050,7 +2092,7 @@ namespace StardewDruid.Cast
             // Monster iteration
             // ---------------------------------------------
 
-            float damage = Mod.instance.CombatDamage() * 0.8f;
+            float damage = Mod.instance.CombatDamage();
 
             List<StardewValley.Monsters.Monster> victims = ModUtility.MonsterProximity(Game1.player.currentLocation, new List<Vector2>() { castVector * 64, }, 384, true);
 
@@ -2496,7 +2538,7 @@ namespace StardewDruid.Cast
 
             }
 
-            float damage = Mod.instance.CombatDamage() * 0.75f;
+            float damage = Mod.instance.CombatDamage() * 1.2f;
 
             int extra = 0;
 
@@ -2811,10 +2853,10 @@ namespace StardewDruid.Cast
   
                                 break;
 
-                            case 1:
-                                curseEffect.AddTarget(Game1.player.currentLocation, monster, SpellHandle.effects.mug);
+                            //case 1:
+                            //    curseEffect.AddTarget(Game1.player.currentLocation, monster, SpellHandle.effects.mug);
 
-                                break;
+                            //    break;
 
                             case 2:
                                 curseEffect.AddTarget(Game1.player.currentLocation, monster, SpellHandle.effects.morph);
@@ -2822,7 +2864,7 @@ namespace StardewDruid.Cast
                                 break;
 
                             default:
-                            case 3:
+                            //case 3:
                                 curseEffect.AddTarget(Game1.player.currentLocation, monster, SpellHandle.effects.doom);
 
                                 break;
@@ -3131,6 +3173,96 @@ namespace StardewDruid.Cast
             
         }
 
+        public void CastBones()
+        {
+
+            CastMob();
+
+            CastFlock();
+
+        }
+
+        public void CastMob()
+        {
+
+            List<CharacterHandle.characters> corvids = new()
+            {
+                CharacterHandle.characters.Raven,
+                CharacterHandle.characters.Crow,
+                CharacterHandle.characters.Rook,
+                CharacterHandle.characters.Magpie,
+            };
+
+            bool returnToPlayer = Vector2.Distance(castVector * 64, Game1.player.Position) <= 192;
+
+            foreach (CharacterHandle.characters corvid in corvids)
+            {
+
+                if (Mod.instance.characters.ContainsKey(corvid))
+                {
+
+                    Mod.instance.characters[corvid].ResetActives();
+
+                    if (returnToPlayer)
+                    {
+
+                        Mod.instance.trackers[corvid].linger = 0;
+
+                        Mod.instance.trackers[corvid].lingerSpot = Vector2.Zero;
+
+                        continue;
+
+                    }
+
+                    Mod.instance.trackers[corvid].linger = 120;
+
+                    Mod.instance.trackers[corvid].lingerSpot = castVector * 64;
+
+                }
+
+            }
+
+            if (!returnToPlayer)
+            {
+
+                cursor(IconData.cursors.feathers, 75, 1280);
+
+            }
+
+        }
+
+        public void CastFlock()
+        {
+
+            if (castLevel != 0) { return; }
+
+            if (Mod.instance.eventRegister.ContainsKey("corvids"))
+            {
+
+                if (Mod.instance.eventRegister["corvids"] is Cast.Bones.Corvids corvids)
+                {
+
+                    if (!corvids.eventLocked)
+                    {
+
+                        corvids.eventAbort = true;
+
+                    }
+
+                }
+
+                return;
+
+            }
+
+            Cast.Bones.Corvids corvidsEvent = new();
+
+            corvidsEvent.EventSetup(Game1.player.Position, "corvids");
+
+            corvidsEvent.EventActivate();
+
+        }
+
         public void RiteBuff()
         {
 
@@ -3153,6 +3285,13 @@ namespace StardewDruid.Cast
 
             }
 
+            if(Mod.instance.magic)
+            {
+
+                blessing = GetSlotBlessing();
+
+            }
+            else
             if (Mod.instance.save.milestone < Journal.QuestHandle.milestones.effigy)
             {
 
@@ -3207,7 +3346,7 @@ namespace StardewDruid.Cast
                 displaySource: DialogueData.Strings(DialogueData.stringkeys.stardewDruid),
                 duration: Buff.ENDLESS, 
                 iconTexture:Mod.instance.iconData.displayTexture, 
-                iconSheetIndex: Convert.ToInt32(blessing)-1, 
+                iconSheetIndex: (int)Mod.instance.iconData.riteDisplays[blessing] - 1, 
                 displayName: DialogueData.RiteNames(blessing), 
                 description: DialogueData.Strings(DialogueData.stringkeys.riteBuffDescription)
                 );

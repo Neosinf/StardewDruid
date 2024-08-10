@@ -16,7 +16,9 @@ using StardewValley.GameData.BigCraftables;
 using StardewValley.GameData.Characters;
 using StardewValley.Menus;
 using StardewValley.Objects;
+using StardewValley.Tools;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
@@ -297,6 +299,11 @@ namespace StardewDruid.Journal
         public HerbalData()
         {
 
+        }
+
+        public void LoadHerbals()
+        {
+
             herbalism = HerbalList();
 
         }
@@ -304,25 +311,25 @@ namespace StardewDruid.Journal
         public int MaxHerbal()
         {
 
-            if (Mod.instance.save.reliquary.ContainsKey(IconData.relics.herbalism_gauge.ToString()))
+            if (RelicData.HasRelic(IconData.relics.herbalism_gauge))
             {
 
                 return 4;
 
             }
-            if (Mod.instance.save.reliquary.ContainsKey(IconData.relics.herbalism_still.ToString()))
+            if (RelicData.HasRelic(IconData.relics.herbalism_still))
             {
 
                 return 3;
 
             }
-            if (Mod.instance.save.reliquary.ContainsKey(IconData.relics.herbalism_pan.ToString()))
+            if (RelicData.HasRelic(IconData.relics.herbalism_pan))
             {
 
                 return 2;
 
             }
-            if (Mod.instance.save.reliquary.ContainsKey(IconData.relics.herbalism_mortar.ToString()))
+            if (RelicData.HasRelic(IconData.relics.herbalism_mortar))
             {
 
                 return 1;
@@ -347,7 +354,47 @@ namespace StardewDruid.Journal
 
                 string key = herbal.ToString();
 
-                if (herbalism[key].level > max)
+                if (herbalism[key].level == 99)
+                {
+
+                    switch (herbal)
+                    {
+
+                        case herbals.aether:
+
+                            if (!Journal.RelicData.HasRelic(IconData.relics.herbalism_gauge))
+                            {
+
+                                Journal.ContentComponent blank = new(ContentComponent.contentTypes.potion, key, false);
+
+                                journal[start++] = blank;
+
+                                continue;
+
+                            }
+
+                            break;
+
+                        case herbals.faeth:
+
+                            if (!Journal.RelicData.HasRelic(IconData.relics.herbalism_crucible))
+                            {
+
+                                Journal.ContentComponent blank = new(ContentComponent.contentTypes.potion, key, false);
+
+                                journal[start++] = blank;
+
+                                continue;
+
+                            }
+
+                            break;
+
+
+                    }
+
+                }
+                else if (herbalism[key].level > max)
                 {
                     
                     Journal.ContentComponent blank = new(ContentComponent.contentTypes.potion, key, false);
@@ -991,7 +1038,7 @@ namespace StardewDruid.Journal
 
                 content = IconData.relics.bottle5,
 
-                level = 3,
+                level = 99,
 
                 title = Mod.instance.Helper.Translation.Get("HerbalData.570"),
 
@@ -1027,7 +1074,7 @@ namespace StardewDruid.Journal
 
                 content = IconData.relics.bottle5,
 
-                level = 4,
+                level = 99,
 
                 title = Mod.instance.Helper.Translation.Get("HerbalData.606"),
 
@@ -1049,7 +1096,6 @@ namespace StardewDruid.Journal
             return potions;
 
         }
-
 
         public void PotionBehaviour(int index)
         {
@@ -1129,7 +1175,23 @@ namespace StardewDruid.Journal
 
                 craftable = false;
 
-                for (int i = 0; i < Game1.player.Items.Count; i++)
+                foreach (string ingredient in herbal.ingredients)
+                {
+
+                    int count = Game1.player.Items.CountId(ingredient);
+
+                    if (count > 0)
+                    {
+
+                        herbalism[id].amounts[ingredient] = count;
+
+                        craftable = true;
+
+                    }
+
+                }
+
+                /*for (int i = 0; i < Game1.player.Items.Count; i++)
                 {
 
                     Item checkSlot = Game1.player.Items[i];
@@ -1148,15 +1210,6 @@ namespace StardewDruid.Journal
 
                         int stack = Game1.player.Items[i].Stack;
 
-                        /*if (more.ContainsKey(@checkItem.QualifiedItemId))
-                        {
-
-                            double revise = stack / 2;
-
-                            stack = (int)Math.Floor(revise);
-
-                        }*/
-
                         if (!herbalism[id].amounts.ContainsKey(@checkItem.QualifiedItemId))
                         {
 
@@ -1174,7 +1227,12 @@ namespace StardewDruid.Journal
 
                     }
 
-                }
+                }*/
+
+                //if (Mod.instance.Helper.ModRegistry.IsLoaded("FlyingTNT.ResourceStorage"))
+                //{
+
+                //}
 
             }
 
@@ -1225,12 +1283,26 @@ namespace StardewDruid.Journal
 
         }
 
-        public void MassBrew()
+        public void MassBrew(bool bench = false)
         {
 
             CharacterHandle.RetrieveInventory(CharacterHandle.characters.herbalism);
 
             int max = MaxHerbal();
+
+            if (Journal.RelicData.HasRelic(IconData.relics.herbalism_gauge))
+            {
+
+                BrewHerbal(herbals.aether.ToString(), 50, bench);
+
+            }
+
+            if (Journal.RelicData.HasRelic(IconData.relics.herbalism_crucible))
+            {
+
+                BrewHerbal(herbals.faeth.ToString(), 50, bench);
+
+            }
 
             foreach (KeyValuePair<herbals, List<herbals>> line in lines)
             {
@@ -1247,23 +1319,9 @@ namespace StardewDruid.Journal
 
                     }
 
-                    BrewHerbal(key, 50, true);
+                    BrewHerbal(key, 50, bench);
 
                 }
-
-            }
-
-            if (herbalism[herbals.aether.ToString()].level <= max)
-            {
-
-                BrewHerbal(herbals.aether.ToString(), 50, true);
-
-            }
-
-            if (herbalism[herbals.faeth.ToString()].level <= max)
-            {
-
-                BrewHerbal(herbals.faeth.ToString(), 50, true);
 
             }
 
@@ -1289,12 +1347,6 @@ namespace StardewDruid.Journal
                 return;
 
             }
-
-            /*Dictionary<string, int> more = new()
-            {
-                [Mod.instance.Helper.Translation.Get("HerbalData.869")] = 2,
-
-            };*/
 
             if (herbal.bases.Count > 0)
             {
@@ -1329,7 +1381,6 @@ namespace StardewDruid.Journal
             if (herbal.ingredients.Count > 0)
             {
 
-
                 if (bench)
                 {
 
@@ -1343,7 +1394,7 @@ namespace StardewDruid.Journal
 
                         }
 
-                        Item checkSlot = Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items[i];
+                        Item checkSlot = Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items.ElementAt(i);
 
                         if (checkSlot == null)
                         {
@@ -1357,27 +1408,9 @@ namespace StardewDruid.Journal
                         if (herbal.ingredients.Contains(@checkItem.QualifiedItemId))
                         {
 
-                            int stack = Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items[i].Stack;
+                            int stack = Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items.ElementAt(i).Stack;
 
                             int cost = 1;
-
-                            /* if (more.ContainsKey(@checkItem.QualifiedItemId))
-                             {
-
-                                 double revise = stack / 2;
-
-                                 stack = (int)Math.Floor(revise);
-
-                                 if (stack == 0)
-                                 {
-
-                                     continue;
-
-                                 }
-
-                                 cost = 2;
-
-                             }*/
 
                             int brew = Math.Min(stack, (draught - brewed));
 
@@ -1393,7 +1426,7 @@ namespace StardewDruid.Journal
 
                             }
 
-                            Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items[i].Stack -= (brew * cost);
+                            Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items.ElementAt(i).Stack -= (brew * cost);
 
                             brewed += brew;
 
@@ -1404,10 +1437,15 @@ namespace StardewDruid.Journal
                     for (int i = Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items.Count - 1; i >= 0; i--)
                     {
 
-                        if (Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items[i].Stack <= 0)
+                        if(Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items.ElementAt(i) != null)
                         {
 
-                            Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items.RemoveAt(i);
+                            if (Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items.ElementAt(i).Stack <= 0)
+                            {
+
+                                Mod.instance.chests[Character.CharacterHandle.characters.herbalism].Items.RemoveAt(i);
+
+                            }
 
                         }
 
@@ -1415,7 +1453,45 @@ namespace StardewDruid.Journal
 
                 }
 
-                for (int i = 0; i < Game1.player.Items.Count; i++)
+
+                foreach (string ingredient in herbal.ingredients)
+                {
+
+                    if (brewed >= draught)
+                    {
+
+                        break;
+
+                    }
+
+                    int count = Game1.player.Items.CountId(ingredient);
+
+                    if (count > 0)
+                    {
+
+                        int brew = Math.Min(count, (draught - brewed));
+
+                        if (herbal.bases.Count > 0)
+                        {
+
+                            foreach (herbals required in herbal.bases)
+                            {
+
+                                Mod.instance.save.herbalism[required] -= brew;
+
+                            }
+
+                        }
+
+                        Game1.player.Items.ReduceId(ingredient, brew);
+
+                        brewed += brew;
+
+                    }
+
+                }
+
+                /*for (int i = 0; i < Game1.player.Items.Count; i++)
                 {
 
                     if (brewed >= draught)
@@ -1442,24 +1518,6 @@ namespace StardewDruid.Journal
                         int stack = Game1.player.Items[i].Stack;
 
                         int cost = 1;
-
-                        /*if (more.ContainsKey(@checkItem.QualifiedItemId))
-                        {
-
-                            double revise = stack / 2;
-
-                            stack = (int)Math.Floor(revise);
-
-                            if (stack == 0)
-                            {
-
-                                continue;
-
-                            }
-
-                            cost = 2;
-
-                        }*/
 
                         int brew = Math.Min(stack, (draught - brewed));
 
@@ -1488,7 +1546,7 @@ namespace StardewDruid.Journal
 
                     }
 
-                }
+                }*/
 
             }
             else if (herbal.bases.Count > 0)
@@ -1836,7 +1894,7 @@ namespace StardewDruid.Journal
 
             }
 
-            Vector2 origin = (Mod.instance.locations[Location.LocationData.druid_grove_name] as Grove).herbalTiles.First().position + new Vector2(64,32);
+            Vector2 origin = new Vector2(21,24)*64 + new Vector2(0,32);
 
             foreach(KeyValuePair<string,StardewValley.Item> extract in extracts)
             {

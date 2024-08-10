@@ -29,6 +29,8 @@ namespace StardewDruid.Journal
 
         public int dragonDirection;
 
+        public float dragonScale;
+
         public int dragonScheme;
 
         public int breathScheme;
@@ -47,6 +49,27 @@ namespace StardewDruid.Journal
 
             title = DialogueData.Strings(DialogueData.stringkeys.dragonomicon);
 
+            if (Mod.instance.magic)
+            {
+                interfaceComponents = new()
+                {
+
+                    [101] = addButton(journalButtons.quests),
+                    [102] = addButton(journalButtons.effects),
+                    [103] = addButton(journalButtons.relics),
+                    [104] = addButton(journalButtons.herbalism),
+
+                    [301] = addButton(journalButtons.exit),
+
+                    [302] = addButton(journalButtons.dragonReset),
+
+                    [303] = addButton(journalButtons.dragonSave),
+
+                };
+                return;
+
+            }
+
             interfaceComponents = new()
             {
 
@@ -54,9 +77,9 @@ namespace StardewDruid.Journal
 
                 [301] = addButton(journalButtons.exit),
 
-                [302] = addButton(journalButtons.reset),
+                [302] = addButton(journalButtons.dragonReset),
 
-                [303] = addButton(journalButtons.save),
+                [303] = addButton(journalButtons.dragonSave),
 
             };
 
@@ -70,6 +93,8 @@ namespace StardewDruid.Journal
             dragonRender.LoadConfigScheme();
 
             dragonDirection = 1;
+
+            dragonScale = 2f + (0.5f * Mod.instance.Config.dragonScale);
 
             dragonScheme = Mod.instance.Config.dragonScheme;
 
@@ -87,7 +112,7 @@ namespace StardewDruid.Journal
 
             contentComponents[start++] = portrait;
 
-            // ===========================================
+            // =========================================== colours
 
             int colourArrayX = xPositionOnScreen + (width / 2) - 352;
 
@@ -110,7 +135,7 @@ namespace StardewDruid.Journal
 
             }
 
-            // ===========================================
+            // =========================================== breath
 
             colourArrayY = yPositionOnScreen + 480 + 40;
 
@@ -128,6 +153,25 @@ namespace StardewDruid.Journal
                 chooseBreath.bounds = new Rectangle(colourArrayX + (s * 96), colourArrayY, 64, 64);
 
                 contentComponents[start++] = chooseBreath;
+
+            }
+
+            // =========================================== sizes
+
+            int sizeArrayX = xPositionOnScreen + width - 160;
+
+            int sizeArrayY = yPositionOnScreen + 32;
+
+            for (int s = 1; s < 6; s++)
+            {
+
+                ContentComponent chooseSize = new(ContentComponent.contentTypes.custom, "size");
+
+                chooseSize.text[0] = s.ToString();
+
+                chooseSize.bounds = new Rectangle(sizeArrayX, sizeArrayY + (s * 96), 64, 64);
+
+                contentComponents[start++] = chooseSize;
 
             }
 
@@ -174,6 +218,19 @@ namespace StardewDruid.Journal
 
             resetInterface();
 
+            if (Mod.instance.magic)
+            {
+
+                fadeMenu();
+
+                interfaceComponents[101].active = false;
+
+                interfaceComponents[103].fade = 1f;
+
+                interfaceComponents[103].text = DialogueData.Strings(stringkeys.dragonomicon);
+
+            }
+
         }
 
         public override void pressButton(journalButtons button)
@@ -188,7 +245,7 @@ namespace StardewDruid.Journal
 
                     break;
 
-                case journalButtons.reset:
+                case journalButtons.dragonReset:
 
                     IconData.schemes newScheme = (IconData.schemes)dragonScheme;
 
@@ -207,7 +264,7 @@ namespace StardewDruid.Journal
 
                     return;
 
-                case journalButtons.save:
+                case journalButtons.dragonSave:
 
                     Mod.instance.SaveConfig();
 
@@ -256,6 +313,16 @@ namespace StardewDruid.Journal
                     Mod.instance.Config.dragonBreath = breathScheme;
 
                     dragonRender.LoadConfigScheme();
+
+                    Game1.playSound("shwip");
+
+                    break;
+
+                case "size":
+
+                    Mod.instance.Config.dragonScale = Convert.ToInt32(contentComponents[focus].text[0]);
+
+                    dragonScale = 2f + (0.5f * Mod.instance.Config.dragonScale);
 
                     Game1.playSound("shwip");
 
@@ -401,8 +468,12 @@ namespace StardewDruid.Journal
 
             IconData.schemes scheme;
 
+            Vector2 stamina;
+
             foreach (KeyValuePair<int,ContentComponent> component in contentComponents)
             {
+                
+                highlight = Color.Wheat;
 
                 switch (component.Value.id)
                 {
@@ -432,15 +503,15 @@ namespace StardewDruid.Journal
 
                             b.Draw(Mod.instance.iconData.emberTexture, emberVector, new(32 * e, 0, 32, 28), embers[2] * 0.65f, 0f, Vector2.Zero, 3f, 0, -1.1f);
 
-                            b.Draw(Mod.instance.iconData.emberTexture, emberVector, new(32 * e, 96, 32, 28), embers[1] * 0.65f, 0f, Vector2.Zero, 3f, 0, -1.1f);
+                            b.Draw(Mod.instance.iconData.emberTexture, emberVector, new(32 * e, 32, 32, 28), embers[1] * 0.65f, 0f, Vector2.Zero, 3f, 0, -1.1f);
 
-                            b.Draw(Mod.instance.iconData.emberTexture, emberVector, new(32 * e, 192, 32, 28), embers[0] * 0.65f, 0f, Vector2.Zero, 3f, 0, -1.1f);
+                            b.Draw(Mod.instance.iconData.emberTexture, emberVector, new(32 * e, 64, 32, 28), embers[0] * 0.65f, 0f, Vector2.Zero, 3f, 0, -1.1f);
 
-                            b.Draw(Mod.instance.iconData.emberTexture, emberVector, new(32 * e, 288, 32, 28), Color.White * 0.65f, 0f, Vector2.Zero, 3f, 0, -1.1f);
+                            b.Draw(Mod.instance.iconData.emberTexture, emberVector, new(32 * e, 96, 32, 28), Color.White * 0.65f, 0f, Vector2.Zero, 3f, 0, -1.1f);
 
                         }
 
-                        dragonRender.drawWalk(b, new(component.Value.bounds.X + 128, component.Value.bounds.Y + 224), new() { direction = dragonDirection, frame = 0, layer = -1f, flip = dragonDirection == 3 });
+                        dragonRender.drawWalk(b, new(component.Value.bounds.X + 128, component.Value.bounds.Y + 240), new() { direction = dragonDirection, frame = 0, scale = dragonScale, layer = -1f, flip = dragonDirection == 3, shadow = false, });
 
                         b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.dragonScheme), new Vector2(component.Value.bounds.X - 1.5f, yPositionOnScreen + 372 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1.1f);
 
@@ -449,6 +520,10 @@ namespace StardewDruid.Journal
                         b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.breathScheme), new Vector2(component.Value.bounds.X - 1.5f, yPositionOnScreen + 480 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1.1f);
 
                         b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.breathScheme), new Vector2(component.Value.bounds.X, yPositionOnScreen + 480), Game1.textColor, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
+
+                        b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.dragonSize), new Vector2(xPositionOnScreen + width - 160f - 1.5f, yPositionOnScreen + 64f + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1.1f);
+
+                        b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.dragonSize), new Vector2(xPositionOnScreen + width - 160f, yPositionOnScreen + 64), Game1.textColor, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
 
                         break;
 
@@ -479,6 +554,10 @@ namespace StardewDruid.Journal
                                 -1.1f
                             );
 
+                            stamina = new Vector2(component.Value.bounds.X + 8, component.Value.bounds.Y + 8);
+
+                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width - 16, component.Value.bounds.Height - 16), Mod.instance.iconData.gradientColours[scheme][0], 0f, Vector2.Zero, 1f, 0, -1f);
+
                         }
                         else
                         {
@@ -497,9 +576,11 @@ namespace StardewDruid.Journal
                                  -1.1f
                              );
 
-                        }
+                            stamina = new Vector2(component.Value.bounds.X + 9, component.Value.bounds.Y + 9);
 
-                        b.Draw(Game1.staminaRect, new Vector2(component.Value.bounds.X + 9, component.Value.bounds.Y + 9), new Rectangle(component.Value.bounds.X + 9, component.Value.bounds.Y + 9, component.Value.bounds.Width - 18, component.Value.bounds.Height - 18), Mod.instance.iconData.gradientColours[scheme][0], 0f, Vector2.Zero, 1f, 0, -1f);
+                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width - 18, component.Value.bounds.Height - 18), Mod.instance.iconData.gradientColours[scheme][0], 0f, Vector2.Zero, 1f, 0, -1f);
+
+                        }
 
                         break;
 
@@ -530,7 +611,12 @@ namespace StardewDruid.Journal
                                 -1.1f
                             );
 
-                        } else {
+                            stamina = new Vector2(component.Value.bounds.X + 8, component.Value.bounds.Y + 8);
+
+                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width -16, component.Value.bounds.Height - 16), Mod.instance.iconData.gradientColours[scheme][1], 0f, Vector2.Zero, 1f, 0, -1f);
+
+                        }
+                        else {
 
                             IClickableMenu.drawTextureBox(
                                  b,
@@ -546,9 +632,68 @@ namespace StardewDruid.Journal
                                  -1.1f
                              );
 
+                            stamina = new Vector2(component.Value.bounds.X + 9, component.Value.bounds.Y + 9);
+
+                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width - 18, component.Value.bounds.Height - 18), Mod.instance.iconData.gradientColours[scheme][1], 0f, Vector2.Zero, 1f, 0, -1f);
+
                         }
 
-                        b.Draw(Game1.staminaRect, new Vector2(component.Value.bounds.X + 9, component.Value.bounds.Y + 9), new Rectangle(component.Value.bounds.X + 9, component.Value.bounds.Y + 9, component.Value.bounds.Width - 18, component.Value.bounds.Height - 18), Mod.instance.iconData.gradientColours[scheme][1], 0f, Vector2.Zero, 1f, 0, -1f);
+                        break;
+
+                    case "size":
+
+                        int sizeComponent = Convert.ToInt32(component.Value.text[0]);
+
+                        if (dragonScale == (2f + (0.5f*sizeComponent)))
+                        {
+
+                            highlight = Color.White;
+
+                        }
+
+                        if (browsing && focus == component.Key)
+                        {
+                            IClickableMenu.drawTextureBox(
+                                b,
+                                Game1.mouseCursors,
+                                new Rectangle(384, 396, 15, 15),
+                                (int)(component.Value.bounds.Center.X - component.Value.bounds.Width * 0.55f),
+                                (int)(component.Value.bounds.Center.Y - component.Value.bounds.Height * 0.55f),
+                                (int)(component.Value.bounds.Width * 1.1f),
+                                (int)(component.Value.bounds.Height * 1.1f),
+                                highlight,
+                                2.2f,
+                                false,
+                                -1.1f
+                            );
+
+                            stamina = new Vector2(component.Value.bounds.Center.X - 10 - (2 * sizeComponent), component.Value.bounds.Center.Y - 10 - (2 * sizeComponent));
+
+                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, 20 + 4 * sizeComponent, 20 + 4 * sizeComponent), Mod.instance.iconData.gradientColours[(IconData.schemes)dragonScheme][0], 0f, Vector2.Zero, 1f, 0, -1f);
+
+                        }
+                        else
+                        {
+
+                            IClickableMenu.drawTextureBox(
+                                 b,
+                                 Game1.mouseCursors,
+                                 new Rectangle(384, 396, 15, 15),
+                                 component.Value.bounds.X,
+                                 component.Value.bounds.Y,
+                                 component.Value.bounds.Width,
+                                 component.Value.bounds.Height,
+                                 highlight,
+                                 2f,
+                                 false,
+                                 -1.1f
+                             );
+
+                            stamina = new Vector2(component.Value.bounds.Center.X - 8 - (2 * sizeComponent), component.Value.bounds.Center.Y - 8 - (2 * sizeComponent));
+
+                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, 16 + 4 * sizeComponent, 16 + 4 * sizeComponent), Mod.instance.iconData.gradientColours[(IconData.schemes)dragonScheme][0], 0f, Vector2.Zero, 1f, 0, -1f);
+
+                        }
 
                         break;
 

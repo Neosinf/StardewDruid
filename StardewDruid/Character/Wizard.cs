@@ -9,7 +9,6 @@ namespace StardewDruid.Character
 {
     public class Wizard : StardewDruid.Character.Character
     {
-        new public CharacterHandle.characters characterType = CharacterHandle.characters.Wizard;
 
         public Dictionary<int, List<Rectangle>> hatFrames = new();
 
@@ -26,8 +25,6 @@ namespace StardewDruid.Character
 
         public override void LoadOut()
         {
-
-            characterType = CharacterHandle.characters.Wizard;
 
             base.LoadOut();
 

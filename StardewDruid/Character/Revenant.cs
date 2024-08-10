@@ -24,7 +24,6 @@ namespace StardewDruid.Character
 {
     public class Revenant : StardewDruid.Character.Character
     {
-        new public CharacterHandle.characters characterType = CharacterHandle.characters.Revenant;
 
         public Revenant()
         {
@@ -39,8 +38,6 @@ namespace StardewDruid.Character
 
         public override void LoadOut()
         {
-            
-            characterType = CharacterHandle.characters.Revenant;
 
             base.LoadOut();
 

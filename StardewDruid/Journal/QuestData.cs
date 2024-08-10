@@ -32,6 +32,7 @@ namespace StardewDruid.Journal
             Forest,
             Mountain,
             UndergroundMine77377,
+            Mine,
         }
 
         public static Dictionary<string, Quest> QuestList()
@@ -938,14 +939,13 @@ namespace StardewDruid.Journal
 
                 trigger = true,
 
-                triggerLocation = triggerLocales.Town.ToString(),
+                triggerLocation = LocationData.druid_graveyard_name,
 
-                //triggerTime = 0,
                 triggerTime = 1900,
 
-                triggerRite = Rite.rites.mists,
+                //triggerRite = Rite.rites.mists,
 
-                origin = new Vector2(47f, 88f) * 64,
+                origin = new Vector2(27,16) * 64,
 
                 // -----------------------------------------------
 
@@ -984,8 +984,8 @@ namespace StardewDruid.Journal
                         Mod.instance.Helper.Translation.Get("QuestData.954") +
                         Mod.instance.Helper.Translation.Get("QuestData.955") +
                         Mod.instance.Helper.Translation.Get("QuestData.956") +
-                        Mod.instance.Helper.Translation.Get("QuestData.957") +
-                        Mod.instance.Helper.Translation.Get("QuestData.958"),
+                        Mod.instance.Helper.Translation.Get("QuestData.311.1") +
+                        Mod.instance.Helper.Translation.Get("QuestData.311.2"),
 
                     }
                 },
@@ -1250,13 +1250,13 @@ namespace StardewDruid.Journal
 
                 trigger = true,
 
-                triggerLocation = triggerLocales.Forest.ToString(),
+                triggerLocation = LocationData.druid_clearing_name,
 
                 triggerTime = 0,
 
                 triggerRite = Rite.rites.stars,
 
-                origin = new Vector2(79f, 78f) * 64,
+                origin = new Vector2(27,15) * 64,
 
                 // -----------------------------------------------
 
@@ -1289,6 +1289,7 @@ namespace StardewDruid.Journal
                     {
                         prompt = true,
                         intro = Mod.instance.Helper.Translation.Get("QuestData.1221") +
+                            Mod.instance.Helper.Translation.Get("QuestData.312.1") +
                             Mod.instance.Helper.Translation.Get("QuestData.1222") +
                             Mod.instance.Helper.Translation.Get("QuestData.1223"),
 
@@ -1588,13 +1589,13 @@ namespace StardewDruid.Journal
 
                 trigger = true,
 
-                triggerLocation = triggerLocales.UndergroundMine77377.ToString(),
+                triggerLocation = triggerLocales.Mine.ToString(),
 
                 triggerTime = 0,
 
                 triggerRite = Rite.rites.none,
 
-                origin = new Vector2(27, 99) * 64,
+                origin = new Vector2(67, 12) * 64,
 
                 // -----------------------------------------------
 
@@ -2465,7 +2466,7 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.none,
 
-                origin = new Vector2(28, 9) * 64,
+                origin = new Vector2(28, 23) * 64,
 
                 title = Mod.instance.Helper.Translation.Get("QuestData.2395"),
 
@@ -2475,7 +2476,9 @@ namespace StardewDruid.Journal
 
                 instruction = Mod.instance.Helper.Translation.Get("QuestData.2401"),
 
-                explanation = Mod.instance.Helper.Translation.Get("QuestData.2404"),
+                explanation = Mod.instance.Helper.Translation.Get("QuestData.2404") + 
+                Mod.instance.Helper.Translation.Get("QuestData.315.1") + 
+                Mod.instance.Helper.Translation.Get("QuestData.315.2"),
 
 
                 reward = 10000,
@@ -2525,6 +2528,85 @@ namespace StardewDruid.Journal
             };
 
             quests.Add(challengeEther.name, challengeEther);
+
+            // =====================================================
+            // Bones Clearing
+
+            Quest bonesClearing = new()
+            {
+
+                name = QuestHandle.bonesClearing,
+
+                icon = IconData.displays.bones,
+
+                type = Quest.questTypes.sword,
+
+                give = Quest.questGivers.dialogue,
+
+                trigger = true,
+
+                triggerLocation = LocationData.druid_clearing_name,
+
+                triggerRite = Rite.rites.none,
+
+                origin = new Vector2(28, 15) * 64,
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.315.3"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.315.4") +
+                Mod.instance.Helper.Translation.Get("QuestData.315.5") +
+                Mod.instance.Helper.Translation.Get("QuestData.315.6") +
+                Mod.instance.Helper.Translation.Get("QuestData.315.7"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.315.8"),
+
+                explanation = Mod.instance.Helper.Translation.Get("QuestData.315.9") +
+                Mod.instance.Helper.Translation.Get("QuestData.315.10") +
+                Mod.instance.Helper.Translation.Get("QuestData.315.11") +
+                Mod.instance.Helper.Translation.Get("QuestData.315.12"),
+
+                reward = 1000,
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Effigy] = new()
+                    {
+                        prompt = true,
+                        questContext = 1,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.315.13") +
+                        Mod.instance.Helper.Translation.Get("QuestData.315.14"),
+
+                    },
+                    
+                    [CharacterHandle.characters.Blackfeather] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.315.15") +
+                        Mod.instance.Helper.Translation.Get("QuestData.315.16") +
+                        Mod.instance.Helper.Translation.Get("QuestData.315.17") +
+                        Mod.instance.Helper.Translation.Get("QuestData.315.18"),
+
+
+                    },
+
+                },
+
+                after = new()
+                {
+
+                    [CharacterHandle.characters.Blackfeather] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.315.19"),
+
+                    },
+
+                }
+
+            };
+
+            quests.Add(bonesClearing.name, bonesClearing);
 
             return quests;
 

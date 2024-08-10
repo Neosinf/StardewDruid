@@ -41,7 +41,20 @@ namespace StardewDruid.Cast.Effect
 
                 KeyValuePair<Vector2, EmberTarget> ember = embers.ElementAt(e);
 
-                if(ember.Value.expire <= Game1.currentGameTime.TotalGameTime.TotalSeconds || ember.Value.location.Name != Game1.player.currentLocation.Name)
+                if(ember.Value.expire <= Game1.currentGameTime.TotalGameTime.TotalSeconds)
+                {
+
+                    //ember.Value.Fadeout();
+
+                    ember.Value.Shutdown();
+
+                    embers.Remove(ember.Key);
+
+                    continue;
+
+                }
+
+                if(ember.Value.location.Name != Game1.player.currentLocation.Name)
                 {
 
                     ember.Value.Shutdown();
@@ -52,7 +65,7 @@ namespace StardewDruid.Cast.Effect
 
                 }
 
-                if(ember.Value.grade == 0)
+                if (ember.Value.grade == 0)
                 {
 
                     SpellHandle burning = new(ember.Value.location,ember.Value.tile*64,ember.Value.tile*64,192,ember.Value.damageFarmer,ember.Value.damageMonster);
@@ -69,7 +82,7 @@ namespace StardewDruid.Cast.Effect
 
         }
 
-        public void RadialTarget(GameLocation location, Vector2 origin, int damageFarmers, int damageMonsters, IconData.schemes scheme = IconData.schemes.stars, int Time = 3)
+        public void RadialTarget(GameLocation location, Vector2 origin, int damageFarmers, int damageMonsters, IconData.schemes scheme = IconData.schemes.stars)
         {
 
             location = Game1.player.currentLocation;
@@ -86,40 +99,41 @@ namespace StardewDruid.Cast.Effect
 
                 List<Vector2> burnVectors = ModUtility.GetTilesWithinRadius(location, origin, i);
 
-                foreach (Vector2 burnVector in burnVectors)
+                for(int b = 0; b < burnVectors.Count; b++)
                 {
+                    
+                    Vector2 burnVector = burnVectors[b];
+
+                    if(ModUtility.GroundCheck(location,burnVector) != "ground" || (i != 0 && Mod.instance.randomIndex.Next(10) != 0))
+                    {
+
+                        continue;
+
+                    }
 
                     if (embers.ContainsKey(burnVector))
                     {
 
-                        EmberTarget existing = embers[burnVector];
+                        //EmberTarget existing = embers[burnVector];
 
-                        if (existing.grade > i)
-                        {
+                        //if (existing.grade > i)
+                        //{
 
-                            existing.Upgrade(Time);
+                        //    existing.Upgrade();
 
-                        }
-                        else
-                        {
-
-                            existing.Reset(Time);
-
-                        }
+                        //}
 
                     }
                     else
                     {
 
-
-                        embers.Add(burnVector,new(location,burnVector, i, damageFarmers, damageMonsters, scheme, Time));
+                        embers.Add(burnVector,new(location,burnVector, i, damageFarmers, damageMonsters, scheme));
 
                     }
 
                 }
 
             }
-
 
             activeLimit = eventCounter + 5;
 
@@ -140,7 +154,7 @@ namespace StardewDruid.Cast.Effect
 
         public IconData.schemes scheme;
 
-        public List<TemporaryAnimatedSprite> animations;
+        public List<TemporaryAnimatedSprite> animations = new();
 
         public int damageFarmer;
 
@@ -150,7 +164,7 @@ namespace StardewDruid.Cast.Effect
 
         public double expire;
 
-        public EmberTarget(GameLocation Location, Vector2 Tile, int Grade = 0, int vsFarmer = 0, int vsMonster = 0, IconData.schemes Scheme = IconData.schemes.stars, int Time = 3)
+        public EmberTarget(GameLocation Location, Vector2 Tile, int Grade = 0, int vsFarmer = 0, int vsMonster = 0, IconData.schemes Scheme = IconData.schemes.stars)
         {
 
             location = Location;
@@ -165,44 +179,33 @@ namespace StardewDruid.Cast.Effect
 
             scheme = Scheme;
 
-            Animations(Time);
-
-            expire = Game1.currentGameTime.TotalGameTime.TotalSeconds + Time;
+            Animations();
 
         }
 
-        public void Animations(int Time = 3)
+        public void Animations()
         {
 
             offset = new Vector2(-16 + Mod.instance.randomIndex.Next(5) * 8, -16 + Mod.instance.randomIndex.Next(5) * 8);
 
-            scale = 1.75f + Mod.instance.randomIndex.Next(4) * 0.25f;
+            scale = 3.5f - 0.25f * grade;
 
-            if(grade == 3)
-            {
-                scale -= 0.5f;
-                offset += new Vector2(8);
+            List<TemporaryAnimatedSprite> newAnimations = Mod.instance.iconData.EmberConstruct(location, scheme, tile * 64 + offset, scale);
 
-            }
+            animations.AddRange(newAnimations);
 
-            animations = Mod.instance.iconData.EmberConstruct(location, scheme, tile * 64 + offset, 1.75f, grade, Time);
+            expire = Game1.currentGameTime.TotalGameTime.TotalSeconds + 3;
 
         }
 
-        public void Reset(int Time = 3)
+        public void Reset()
         {
-            foreach(TemporaryAnimatedSprite animation in animations)
-            {
-                
-                animation.reset();
 
-            }
-
-            expire = Game1.currentGameTime.TotalGameTime.TotalSeconds + Time;
+            Animations();
 
         }
 
-        public void Upgrade(int Time = 3)
+        public void Upgrade()
         {
 
             if(grade == 0) { return; }
@@ -211,9 +214,28 @@ namespace StardewDruid.Cast.Effect
 
             Shutdown();
 
-            Animations(Time);
+            Animations();
 
-            expire = Game1.currentGameTime.TotalGameTime.TotalSeconds + Time;
+        }
+
+        public void Fadeout()
+        {
+
+            foreach (TemporaryAnimatedSprite animation in animations)
+            {
+
+                if (animation.lightID != 0)
+                {
+
+                    Utility.removeLightSource(animation.lightID);
+
+                }
+
+                animation.alphaFade = 0.001f;
+
+                animation.timeBasedMotion = true;
+
+            }
 
         }
 
@@ -222,6 +244,13 @@ namespace StardewDruid.Cast.Effect
             
             foreach (TemporaryAnimatedSprite animation in animations)
             {
+
+                if(animation.lightID != 0)
+                {
+
+                    Utility.removeLightSource(animation.lightID);
+
+                }
 
                 location.TemporarySprites.Remove(animation);
 

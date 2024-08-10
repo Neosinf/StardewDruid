@@ -17,7 +17,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static StardewValley.Minigames.TargetGame;
 
 
 namespace StardewDruid.Monster
@@ -353,7 +352,7 @@ namespace StardewDruid.Monster
                 default:
                 case 2: // multiple bosses
 
-                    MaxHealth = combatModifier * basePulp * 8;
+                    MaxHealth = combatModifier * basePulp * 6;
 
                     Health = MaxHealth;
 
@@ -365,7 +364,7 @@ namespace StardewDruid.Monster
 
                 case 3: // single boss
 
-                    MaxHealth = combatModifier * basePulp * 16;
+                    MaxHealth = combatModifier * basePulp * 12;
 
                     Health = MaxHealth;
 
@@ -377,7 +376,7 @@ namespace StardewDruid.Monster
 
                 case 4: // hard boss
 
-                    MaxHealth = combatModifier * basePulp * 30;
+                    MaxHealth = combatModifier * basePulp * 18;
 
                     Health = MaxHealth;
 
@@ -438,7 +437,7 @@ namespace StardewDruid.Monster
 
             }
 
-            threat = Math.Min(threat, (Game1.player.maxHealth / 2));
+            threat = Math.Min(threat, (Game1.player.maxHealth / 3));
 
             if(debuffJuice > 0f)
             {
@@ -1166,7 +1165,7 @@ namespace StardewDruid.Monster
 
             }
 
-            if (Mod.instance.CasterGone() || Mod.instance.CasterBusy())
+            if (Mod.instance.CasterGone() || Mod.instance.CasterBusy() || Mod.instance.CasterMenu())
             {
                 return;
             }

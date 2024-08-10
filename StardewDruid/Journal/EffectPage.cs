@@ -141,6 +141,13 @@ namespace StardewDruid.Journal
 
             }
 
+            if (Mod.instance.magic)
+            {
+
+                interfaceComponents[101].active = false;
+
+            }
+            else
             if (Mod.instance.questHandle.quests[effectQuest].type != Quest.questTypes.lesson)
             {
 

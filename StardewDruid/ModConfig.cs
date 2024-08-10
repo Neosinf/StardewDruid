@@ -24,11 +24,23 @@ namespace StardewDruid
             {
                 return null;
             }
+
             // register mod
             configMenu.Register(
                 mod: mod.ModManifest,
                 reset: () => Config = new ModData(),
                 save: () => mod.Helper.WriteConfig(Config)
+            );
+
+            string[] modOption = Enum.GetNames<ModData.modOptions>();
+
+            configMenu.AddTextOption(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.313.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.313.2"),
+                allowedValues: modOption,
+                getValue: () => Config.modVersion,
+                setValue: value => Config.modVersion = value
             );
 
             configMenu.AddKeybindList(
@@ -38,6 +50,7 @@ namespace StardewDruid
                 getValue: () => Config.riteButtons,
             setValue: value => Config.riteButtons = value
             );
+
             configMenu.AddKeybindList(
             mod: mod.ModManifest,
                 name: () => Mod.instance.Helper.Translation.Get("ModConfig.17"),
@@ -137,8 +150,7 @@ namespace StardewDruid
                 max: Enum.GetNames(typeof(QuestHandle.milestones)).Count() - 1,
                 interval: 1,
                 getValue: () => Config.setMilestone,
-                setValue: value => Config.setMilestone = value,
-                fieldId: Mod.instance.Helper.Translation.Get("ModConfig.115")
+                setValue: value => Config.setMilestone = value
             );
 
             configMenu.AddBoolOption(
