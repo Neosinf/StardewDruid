@@ -156,9 +156,7 @@ namespace StardewDruid.Character
 
                             LookAtTarget(scarevector * 64,true);
 
-                            netSpecialActive.Set(true);
-
-                            netWorkActive.Set(true);
+                            netSpecial.Set((int)specials.invoke);
 
                             specialTimer = 90;
 
@@ -250,7 +248,7 @@ namespace StardewDruid.Character
 
             ResetActives();
 
-            netSpecialActive.Set(true);
+            netSpecial.Set((int)specials.invoke);
 
             specialTimer = 90;
 
@@ -262,19 +260,11 @@ namespace StardewDruid.Character
 
             SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 3);
 
-            special.type = SpellHandle.spells.explode;
+            special.type = SpellHandle.spells.zap;
 
-            special.display = IconData.impacts.nature;
+            special.scheme = IconData.schemes.golden;
 
-            special.added = new() { effects.glare, };
-
-            special.power = 4;
-
-            special.explosion = 256;
-
-            special.terrain = 4;
-
-            special.display = IconData.impacts.impact;
+            special.added = new() { effects.shock, };
 
             Mod.instance.spellRegister.Add(special);
 

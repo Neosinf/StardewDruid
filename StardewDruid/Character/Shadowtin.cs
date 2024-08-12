@@ -10,6 +10,7 @@ using StardewValley;
 using StardewValley.Objects;
 using System;
 using System.Collections.Generic;
+using static StardewValley.Minigames.TargetGame;
 
 
 namespace StardewDruid.Character
@@ -39,312 +40,154 @@ namespace StardewDruid.Character
 
             weaponRender.LoadWeapon(WeaponRender.weapons.carnyx);
 
-            idleFrames = new()
+            weaponRender.LoadWeapon(WeaponRender.weapons.bazooka);
+
+            specialFrames[specials.launch] = CharacterRender.WeaponLaunch();
+
+            idleFrames[idles.standby] = new(specialFrames[specials.sweep]);
+
+            idleFrames[idles.alert] = new()
             {
                 [0] = new()
                 {
                     new Rectangle(192, 288, 32, 32),
-                    new Rectangle(224, 288, 32, 32),
-                    new Rectangle(128, 288, 32, 32),
-                    new Rectangle(160, 288, 32, 32),
                 },
                 [1] = new()
                 {
                     new Rectangle(224, 288, 32, 32),
-                    new Rectangle(128, 288, 32, 32),
-                    new Rectangle(160, 288, 32, 32),
-                    new Rectangle(192, 288, 32, 32),
                 },
                 [2] = new()
                 {
                     new Rectangle(128, 288, 32, 32),
-                    new Rectangle(160, 288, 32, 32),
-                    new Rectangle(192, 288, 32, 32),
-                    new Rectangle(224, 288, 32, 32),
                 },
                 [3] = new()
                 {
                     new Rectangle(160, 288, 32, 32),
-                    new Rectangle(192, 288, 32, 32),
-                    new Rectangle(224, 288, 32, 32),
-                    new Rectangle(128, 288, 32, 32),
-                },
-            };
-
-            workFrames = new Dictionary<int, List<Rectangle>>()
-            {
-                [0] = new()
-                {
-
-                    new(128, 64, 32, 32),
-                    new(160, 64, 32, 32),
-
-                },
-                [1] = new()
-                {
-
-                    new(128, 32, 32, 32),
-                    new(160, 32, 32, 32),
-
-                },
-                [2] = new()
-                {
-
-                    new(128, 0, 32, 32),
-                    new(160, 0, 32, 32),
-
-                },
-                [3] = new()
-                {
-
-                    new(128, 32, 32, 32),
-                    new(160, 32, 32, 32),
-
-                },
-
-            };
-
-            alertFrames = new()
-            {
-                [0] = new()
-                {
-                    new Rectangle(192, 288, 32, 32),
-                    new Rectangle(224, 288, 32, 32),
-                    new Rectangle(128, 288, 32, 32),
-                    new Rectangle(160, 288, 32, 32),
-                },
-                [1] = new()
-                {
-                    new Rectangle(224, 288, 32, 32),
-                    new Rectangle(128, 288, 32, 32),
-                    new Rectangle(160, 288, 32, 32),
-                    new Rectangle(192, 288, 32, 32),
-                },
-                [2] = new()
-                {
-                    new Rectangle(128, 288, 32, 32),
-                    new Rectangle(160, 288, 32, 32),
-                    new Rectangle(192, 288, 32, 32),
-                    new Rectangle(224, 288, 32, 32),
-                },
-                [3] = new()
-                {
-                    new Rectangle(160, 288, 32, 32),
-                    new Rectangle(192, 288, 32, 32),
-                    new Rectangle(224, 288, 32, 32),
-                    new Rectangle(128, 288, 32, 32),
                 },
             };
 
         }
 
-        public override void draw(SpriteBatch b, float alpha = 1)
+        public override void DrawDash(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
         {
 
-            if (IsInvisible || !Utility.isOnScreen(Position, 128))
-            {
-                return;
-            }
 
-            if (characterTexture == null)
+            if (netDash.Value != (int)dashes.smash)
             {
+
+                base.DrawDash(b, localPosition, drawLayer, fade);
 
                 return;
 
             }
 
-            Vector2 localPosition = Game1.GlobalToLocal(Position);
+            int dashSeries = netDirection.Value + (netDashProgress.Value * 4);
 
-            float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
+            int dashSetto = Math.Min(dashFrame, (dashFrames[(dashes)netDash.Value][dashSeries].Count - 1));
 
-            bool flippant = (netDirection.Value % 2 == 0 && netAlternative.Value == 3);
+            Vector2 dashVector = SpritePosition(localPosition) - new Vector2(0, dashHeight);
 
-            bool flippity = flippant || netDirection.Value == 3;
+            Rectangle dashTangle = dashFrames[(dashes)netDash.Value][dashSeries][dashSetto];
 
-            DrawEmote(b);
-
-            if (netStandbyActive.Value)
-            {
-
-                DrawStandby(b, localPosition, drawLayer);
-
-            }
-            else if (netHaltActive.Value)
-            {
-
-                if (onAlert && idleTimer > 0)
-                {
-
-                    DrawAlert(b, localPosition, drawLayer);
-
-                }
-                else
-                {
-                    b.Draw(
-                        characterTexture,
-                        localPosition - new Vector2(32, 64f),
-                        haltFrames[netDirection.Value][0],
-                        Color.White,
-                        0f,
-                        Vector2.Zero,
-                        4f,
-                        flippant ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                        drawLayer
-                    );
-                }
-
-            }
-            else if (netSweepActive.Value)
-            {
-
-                Vector2 sweepVector = localPosition - new Vector2(32, 64f);
-
-                b.Draw(
-                     characterTexture,
-                     localPosition - new Vector2(32, 64f),
-                     sweepFrames[netDirection.Value][sweepFrame],
-                     Color.White,
-                     0f,
-                     Vector2.Zero,
-                     4f,
-                     flippity ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                     drawLayer
-                 );
-
-                weaponRender.DrawWeapon(b, sweepVector, drawLayer, new() { source = sweepFrames[netDirection.Value][sweepFrame], flipped = flippity });
-
-                weaponRender.DrawSwipe(b, sweepVector, drawLayer, new() { source = sweepFrames[netDirection.Value][sweepFrame], flipped = flippity });
-
-            }
-            else if (netSpecialActive.Value)
-            {
-
-                b.Draw(
-                    characterTexture,
-                    localPosition - new Vector2(32, 64f),
-                    specialFrames[netDirection.Value][specialFrame],
-                    Color.White,
-                    0.0f,
-                    Vector2.Zero,
-                    4f,
-                    flippant ? (SpriteEffects)1 : 0,
-                    drawLayer
-                );
-
-            }
-            else if (netDashActive.Value)
-            {
-
-                int dashSeries = netDirection.Value + (netDashProgress.Value * 4);
-
-                int dashSetto = Math.Min(dashFrame, (dashFrames[dashSeries].Count - 1));
-
-                b.Draw(
-                    characterTexture,
-                    localPosition - new Vector2(32, 64f + dashHeight),
-                    dashFrames[dashSeries][dashSetto],
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    4f,
-                    flippant ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    drawLayer
-                );
-
-            }
-            else if (netSmashActive.Value)
-            {
-                int smashSeries = netDirection.Value + (netDashProgress.Value * 4);
-
-                int smashSetto = Math.Min(dashFrame, (smashFrames[smashSeries].Count - 1));
-
-                Vector2 smashVector = localPosition - new Vector2(32, 64f + dashHeight);
-
-                b.Draw(
-                    characterTexture,
-                    smashVector,
-                    smashFrames[smashSeries][smashSetto],
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    4f,
-                    flippity ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    drawLayer
-                );
-
-                weaponRender.DrawWeapon(b, smashVector, drawLayer, new() { source = smashFrames[smashSeries][smashSetto], flipped = flippity });
-                
-                if(netDashProgress.Value >= 2)
-                {
-
-                    weaponRender.DrawSwipe(b, smashVector, drawLayer, new() { source = smashFrames[smashSeries][smashSetto], flipped = flippity });
-
-                }
-
-            }
-            else
-            {
-
-                if (onAlert && idleTimer > 0)
-                {
-
-                    DrawAlert(b, localPosition, drawLayer);
-
-                }
-                else
-                {
-
-                    b.Draw(
-                        characterTexture,
-                        localPosition - new Vector2(32, 64f),
-                        walkFrames[netDirection.Value][moveFrame],
-                        Color.White,
-                        0f,
-                        Vector2.Zero,
-                        4f,
-                        flippant ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                        drawLayer
-                    );
-
-                }
-
-            }
+            b.Draw(
+                characterTexture,
+                dashVector,
+                dashTangle,
+                Color.White * fade,
+                0f,
+                new Vector2(16),
+                setScale,
+                SpriteFlip() ? (SpriteEffects)1 : 0,
+                drawLayer
+            );
 
             DrawShadow(b, localPosition, drawLayer);
 
+            weaponRender.DrawWeapon(b, dashVector - new Vector2(16)*setScale, drawLayer, new() { scale = setScale, source = dashTangle, flipped = SpriteFlip() });
+
+            if (netDashProgress.Value >= 2)
+            {
+
+                weaponRender.DrawSwipe(b, dashVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = dashTangle, flipped = SpriteFlip() });
+
+            }
+
         }
-        
-        public override void DrawAlert(SpriteBatch b, Vector2 localPosition, float drawLayer)
+
+        public override void DrawSweep(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        {
+            Vector2 sweepVector = SpritePosition(localPosition);
+
+            Rectangle sweepFrame = specialFrames[(specials)netSpecial.Value][netDirection.Value][specialFrame];
+
+            b.Draw(
+                characterTexture,
+                sweepVector,
+                sweepFrame,
+                Color.White * fade,
+                0.0f,
+                new Vector2(16),
+                setScale,
+                0,
+                drawLayer
+            );
+
+            DrawShadow(b, localPosition, drawLayer);
+
+            weaponRender.DrawWeapon(b, sweepVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = sweepFrame, });
+
+            weaponRender.DrawSwipe(b, sweepVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = sweepFrame, });
+
+
+        }
+
+        public override void DrawAlert(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
         {
 
-            Vector2 alertVector = localPosition - new Vector2(32, 64f);
+            Vector2 alertVector = SpritePosition(localPosition);
 
-            int chooseFrame = IdleFrame();
-
-            Rectangle alertFrame = alertFrames[netDirection.Value][chooseFrame];
-
-            bool flippant = (netDirection.Value % 2 == 0 && netAlternative.Value == 3);
+            Rectangle alertFrame = idleFrames[idles.alert][netDirection.Value][0];
 
             b.Draw(
                  characterTexture,
                  alertVector,
                  alertFrame,
-                 Color.White,
+                 Color.White * fade,
                  0f,
-                 Vector2.Zero,
-                 4f,
-                 flippant ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                 new Vector2(16),
+                 setScale,
+                 SpriteAngle() ? (SpriteEffects)1 : 0,
                  drawLayer
              );
 
-            weaponRender.DrawWeapon(b, alertVector, drawLayer, new() { source = alertFrame, flipped = flippant });
+            DrawShadow(b, localPosition, drawLayer);
+
+            weaponRender.DrawWeapon(b, alertVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = alertFrame, flipped = SpriteAngle() });
 
         }
 
-        public override void DrawStandby(SpriteBatch b, Vector2 localPosition, float drawLayer)
+        public override void DrawLaunch(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
         {
 
-            DrawAlert(b, localPosition, drawLayer);
+            Vector2 launchVector = SpritePosition(localPosition);
+
+            Rectangle launchFrame = specialFrames[specials.launch][netDirection.Value][specialFrame];
+
+            b.Draw(
+                characterTexture,
+                launchVector,
+                launchFrame,
+                Color.White * fade,
+                0.0f,
+                new Vector2(16),
+                4f,
+                SpriteFlip() ? (SpriteEffects)1 : 0,
+                drawLayer
+            );
+
+            DrawShadow(b, localPosition, drawLayer);
+
+            weaponRender.DrawFirearm(b, launchVector - new Vector2(16) * setScale, drawLayer, new() { scale = 4f, source = launchFrame, flipped = SpriteFlip() });
 
         }
 
@@ -404,8 +247,6 @@ namespace StardewDruid.Character
             swipeEffect.added = new() { SpellHandle.effects.knock, };
 
             swipeEffect.sound = SpellHandle.sounds.swordswipe;
-
-            swipeEffect.display = IconData.impacts.flashbang;
 
             Mod.instance.spellRegister.Add(swipeEffect);
 
@@ -474,9 +315,7 @@ namespace StardewDruid.Character
 
                             Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position);
 
-                            netWorkActive.Set(true);
-
-                            netSpecialActive.Set(true);
+                            netSpecial.Set((int)specials.pickup);
 
                             specialTimer = 60;
 
@@ -706,7 +545,7 @@ namespace StardewDruid.Character
 
             ResetActives();
 
-            netSpecialActive.Set(true);
+            netSpecial.Set((int)specials.launch);
 
             specialTimer = 90;
 
@@ -714,23 +553,33 @@ namespace StardewDruid.Character
 
             LookAtTarget(monster.Position, true);
 
-            SpellHandle fireball = new(Game1.player, new() { monster, }, Mod.instance.CombatDamage() / 2);
+            SpellHandle fireball = new(Game1.player, monster.Position, 384, Mod.instance.CombatDamage() / 2);
 
             fireball.origin = GetBoundingBox().Center.ToVector2();
 
-            fireball.type = SpellHandle.spells.missile;
+            fireball.counter = -30;
+
+            fireball.type = SpellHandle.spells.ballistic;
 
             fireball.missile = IconData.missiles.fireball;
 
-            fireball.projectile = 2;
+            fireball.display = IconData.impacts.impact;
+
+            fireball.indicator = IconData.cursors.scope;
+
+            fireball.projectile = 3;
 
             fireball.scheme = IconData.schemes.ether;
 
-            fireball.display = IconData.impacts.impact;
+            fireball.sound = SpellHandle.sounds.explosion;
 
-            fireball.added = new() { SpellHandle.effects.aiming, };
+            fireball.added = new() { SpellHandle.effects.embers, };
 
-            fireball.power = 3;
+            fireball.power = 4;
+
+            fireball.explosion = 4;
+
+            fireball.terrain = 4;
 
             Mod.instance.spellRegister.Add(fireball);
 

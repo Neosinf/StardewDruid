@@ -43,20 +43,18 @@ namespace StardewDruid.Character
             
             base.LoadOut();
 
-            idleFrames = new()
+            idleFrames[idles.standby] = new()
             {
                 [0] = new(){
                     new(0, 256, 32, 32),
                     new(32, 256, 32, 32),
                     new(64, 256, 32, 32),
                     new(96, 256, 32, 32),
-                    //new(128, 256, 32, 32),
-                    //new(160, 256, 32, 32),
                 },
 
             };
 
-            specialFrames = new()
+            specialFrames[specials.special] = new()
             {
 
                 [0] = new() { new(192, 192, 32, 32), },
@@ -69,7 +67,7 @@ namespace StardewDruid.Character
 
             };
 
-            workFrames = new()
+            specialFrames[specials.greet] = new()
             {
 
                 [0] = new() {new(0, 288, 32, 32),
@@ -79,6 +77,10 @@ namespace StardewDruid.Character
                 },
 
             };
+
+            specialIntervals[specials.greet] = 30;
+            specialCeilings[specials.greet] = 3;
+            specialFloors[specials.greet] = 1;
 
         }
 
@@ -94,21 +96,25 @@ namespace StardewDruid.Character
 
             ResetActives();
 
-            netSpecialActive.Set(true);
+            netSpecial.Set((int)specials.special);
 
-            specialTimer = 60;
+            specialTimer = 90;
 
             cooldownTimer = cooldownInterval;
 
             LookAtTarget(monster.Position, true);
 
-            SpellHandle beam = new(Game1.player,new() { monster, },Mod.instance.CombatDamage() / 2);
+            SpellHandle beam = new(Game1.player,monster.Position,320, Mod.instance.CombatDamage() * 2 / 3);
 
             beam.origin = Position;
 
             beam.type = SpellHandle.spells.beam;
 
             beam.scheme = IconData.schemes.Void;
+
+            beam.display = IconData.impacts.deathbomb;
+
+            beam.sound = SpellHandle.sounds.explosion;
 
             Mod.instance.spellRegister.Add(beam);
 
@@ -329,9 +335,7 @@ namespace StardewDruid.Character
 
                         workVector = rubVictim.Position;
 
-                        netWorkActive.Set(true);
-
-                        netSpecialActive.Set(true);
+                        netSpecial.Set((int)specials.greet);
 
                         specialTimer = 120;
 
@@ -577,9 +581,7 @@ namespace StardewDruid.Character
 
             workVector = victim.Position;
 
-            netWorkActive.Set(true);
-
-            netSpecialActive.Set(true);
+            netSpecial.Set((int)specials.greet);
 
             specialTimer = 120;
 

@@ -1298,13 +1298,15 @@ namespace StardewDruid.Data
 
                 case missiles.fireball:
 
+                    gradient = ConvertToGradient(scheme);
+
                     missileAnimations.Add(MissileAnimation(location,missileIndexes.blazeCore1,setat,scale,interval,frames,loops,depth,coreColour,0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.stars][0], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, gradient[0], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.stars][1], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, gradient[1], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.stars][2], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, gradient[2], 0.75f));
 
                     break;
 
@@ -1377,13 +1379,15 @@ namespace StardewDruid.Data
 
                 case missiles.cannonball:
 
+                    gradient = ConvertToGradient(scheme);
+
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, coreColour, 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.stars][0], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, gradient[0], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.stars][1], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, gradient[1], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, gradientColours[schemes.stars][2], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, gradient[2], 0.75f));
 
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.cannonball, setat, (int)(scale * 0.75f), interval * frames * loops, 1, 1, depth + 0.0001f, SchemeColour(schemes.death), 0.75f));
 
@@ -1439,6 +1443,13 @@ namespace StardewDruid.Data
 
         public List<Microsoft.Xna.Framework.Color> ConvertToGradient(schemes scheme)
         {
+
+            if (gradientColours.ContainsKey(scheme))
+            {
+
+                return gradientColours[scheme];
+
+            }
 
             Microsoft.Xna.Framework.Color schemeColour = SchemeColour(scheme);
 

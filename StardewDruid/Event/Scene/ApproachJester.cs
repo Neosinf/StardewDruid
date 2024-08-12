@@ -39,7 +39,7 @@ namespace StardewDruid.Event.Scene
 
             companions[0] = Mod.instance.characters[CharacterHandle.characters.Jester];
 
-            companions[0].netStandbyActive.Set(true);
+            companions[0].ResetActives();
 
             companions[0].eventName = eventId;
 
@@ -81,7 +81,7 @@ namespace StardewDruid.Event.Scene
 
                 case 101:
 
-                    Mod.instance.characters[CharacterHandle.characters.Jester].netStandbyActive.Set(false);
+                    Mod.instance.characters[CharacterHandle.characters.Jester].netIdle.Set((int)Character.Character.idles.standby);
 
                     Mod.instance.characters[CharacterHandle.characters.Jester].LookAtTarget(Game1.player.Position, true);
                     

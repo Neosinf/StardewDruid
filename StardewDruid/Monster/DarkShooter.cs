@@ -74,7 +74,7 @@ namespace StardewDruid.Monster
 
             SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 192, GetThreat());
 
-            fireball.type = SpellHandle.spells.missile;
+            fireball.type = SpellHandle.spells.ballistic;
 
             fireball.projectile = 2;
 

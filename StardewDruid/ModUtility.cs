@@ -127,8 +127,6 @@ namespace StardewDruid
 
             Vector2 targetVector = targetPosition;
 
-            targetLocation.playSound("pullItemFromWater");
-
             Vector2 fishPosition;
 
             Vector2 sloshPosition;
@@ -146,9 +144,9 @@ namespace StardewDruid
 
                 case true:
 
-                    fishPosition = new(targetVector.X - 64, targetVector.Y - 8);
+                    fishPosition = new Vector2(targetVector.X - 64, targetVector.Y - 8) + new Vector2(Mod.instance.randomIndex.Next(40));
 
-                    sloshPosition = new(targetVector.X + 100, targetVector.Y);
+                    sloshPosition = new Vector2(targetVector.X + 100, targetVector.Y) + new Vector2(Mod.instance.randomIndex.Next(40));
 
                     sloshMotion = new(0.160f, -0.5f);
 
@@ -156,15 +154,17 @@ namespace StardewDruid
 
                     fishFlip = false;
 
-                    fishRotate = 0.03f;
+                    fishRotate = 0.025f;
+
+                    targetLocation.playSound(Mod.instance.randomIndex.Next(2) == 0 ? "pullItemFromWater" : "slosh");
 
                     break;
 
                 default:
 
-                    fishPosition = new(targetVector.X + 64, targetVector.Y - 8);
+                    fishPosition = new Vector2(targetVector.X + 64, targetVector.Y - 8) + new Vector2(Mod.instance.randomIndex.Next(40));
 
-                    sloshPosition = new(targetVector.X - 128, targetVector.Y);
+                    sloshPosition = new Vector2(targetVector.X - 128, targetVector.Y) + new Vector2(Mod.instance.randomIndex.Next(40));
 
                     sloshMotion = new(-0.160f, -0.5f);
 
@@ -172,7 +172,7 @@ namespace StardewDruid
 
                     fishFlip = true;
 
-                    fishRotate = -0.03f;
+                    fishRotate = -0.025f;
 
                     break;
 
@@ -186,6 +186,8 @@ namespace StardewDruid
 
             float animationSort = targetVector.Y / 10000 + 0.00003f;
 
+            int fishDelay = Mod.instance.randomIndex.Next(300);
+
             TemporaryAnimatedSprite fishAnimation = new("Maps\\springobjects", targetRectangle, animationInterval, 1, 0, fishPosition, flicker: false, flipped: fishFlip, animationSort, 0f, Color.White, 3f, 0f, 0f, fishRotate)
             {
 
@@ -195,17 +197,19 @@ namespace StardewDruid
 
                 timeBasedMotion = true,
 
+                delayBeforeAnimationStart = fishDelay,
+
             };
 
             targetLocation.temporarySprites.Add(fishAnimation);
 
             // ------------------------------------
 
-            Mod.instance.iconData.ImpactIndicator(targetLocation, fishPosition, IconData.impacts.fish, 2.5f, new() { alpha = 0.7f, });
+            Mod.instance.iconData.ImpactIndicator(targetLocation, fishPosition, IconData.impacts.fish, 2.5f, new() { alpha = 0.7f, delay = fishDelay, });
 
             // ------------------------------------
 
-            Mod.instance.iconData.ImpactIndicator(targetLocation, sloshPosition, IconData.impacts.splash, 2.5f, new() { alpha = 0.7f, delay = 1000, });
+            Mod.instance.iconData.ImpactIndicator(targetLocation, sloshPosition, IconData.impacts.splash, 2.5f, new() { alpha = 0.7f, delay = 1000 + fishDelay, });
 
         }
 
@@ -3503,7 +3507,7 @@ namespace StardewDruid
 
         // ======================== ENVIRONMENT INTERACTIONS
 
-        public static List<Vector2> Explode(GameLocation targetLocation, Vector2 targetVector, Farmer targetPlayer, int radius, int powerLevel = 1)
+        public static List<Vector2> Explode(GameLocation targetLocation, Vector2 targetVector, Farmer targetPlayer, int tileRadius, int powerLevel = 1)
         {
 
             Tool Pick = Mod.instance.virtualPick;
@@ -3522,7 +3526,7 @@ namespace StardewDruid
 
                     ResourceClump resourceClump = targetLocation.resourceClumps[index];
 
-                    if ((double)Vector2.Distance(resourceClump.Tile, targetVector) <= radius + 1)
+                    if ((double)Vector2.Distance(resourceClump.Tile, targetVector) <= tileRadius + 1)
                     {
 
                         switch (resourceClump.parentSheetIndex.Value)
@@ -3550,7 +3554,7 @@ namespace StardewDruid
 
             List<Vector2> tileVectors;
 
-            int impactRadius = radius + 1;
+            int impactRadius = tileRadius + 1;
 
             for (int i = 0; i < impactRadius; i++)
             {

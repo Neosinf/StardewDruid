@@ -403,6 +403,10 @@ namespace StardewDruid.Location
             map.Layers[1].Tiles[x,y] = new StaticTile(map.Layers[1], map.Layers[0].Tiles[x,y].TileSheet, BlendMode.Alpha, map.Layers[0].Tiles[x, y].TileIndex);
 
         }
+        public override Item getFish(float millisecondsAfterNibble, string bait, int waterDepth, Farmer who, double baitPotency, Vector2 bobberTile, string locationName = null)
+        {
+            return base.getFish(millisecondsAfterNibble, bait, waterDepth, who, baitPotency, bobberTile, "UndergroundMine100");
+        }
 
     }
 

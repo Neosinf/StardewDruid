@@ -35,7 +35,9 @@ namespace StardewDruid.Event.Sword
 
             companions[0].Position = new Vector2(27, 16) * 64;
 
-            companions[0].netStandbyActive.Set(true);
+            companions[0].ResetActives();
+
+            companions[0].netIdle.Set((int)Character.Character.idles.kneel);
 
             companions[0] = Mod.instance.characters[CharacterHandle.characters.Revenant];
 
@@ -149,8 +151,6 @@ namespace StardewDruid.Event.Sword
                     break;
 
                 case 101:
-
-                    companions[0].netStandbyActive.Set(false);
 
                     companions[0].ResetActives();
 

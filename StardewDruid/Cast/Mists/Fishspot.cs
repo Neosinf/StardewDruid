@@ -64,7 +64,9 @@ namespace StardewDruid.Cast.Mists
 
                 int fishIndex = SpawnData.RandomJumpFish(location);
 
-                ModUtility.AnimateFishJump(location, origin, fishIndex, Mod.instance.randomIndex.Next(2) == 0);
+                ModUtility.AnimateFishJump(location, origin, fishIndex, true);
+
+                ModUtility.AnimateFishJump(location, origin, fishIndex, false);
 
                 fishCounter = 20;
 

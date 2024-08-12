@@ -2067,7 +2067,7 @@
     "QuestData.1130": "gravity wells created",
     "QuestData.1142": "Why do the stars shine so bright? Where does all that light go once it's touched us? It goes into the dark, farmer. The vast dark that grasps at the stars. ",
     "QuestData.1143": "The hungry dark that would feast on all the bliss and colour. That is the true nature of the void, the backdrop to the celestial realm. ",
-    "QuestData.1144": "(New lesson received)",
+    "QuestData.1144": "(New lesson received! Note: use a normal non-weapon tool to cast gravity well on the farm without triggering meteor rain)",
     "QuestData.1152": "It would serve you well to ascend to the mountain chapel, to receive the last instructions from our guardian friend. ",
     "QuestData.1153": "I abandoned my own journey to master the blessings of the celestial realm. The powers of the voided space do not lend themselves to me. ",
     "QuestData.1154": "It is up to you to gain and safeguard all the traditions of our circle and allies.",
@@ -2141,7 +2141,7 @@
     "QuestData.1470": "Apparently that place has been mined down to the bare bones of the mountain, when the valleyfolk had a keen eye for star-touched ores. ",
     "QuestData.1471": "Anyhow, remember to speak well of me when you do find the representative of our Lady of Fortune. ",
     "QuestData.1472": "(New Quest Received)",
-    "QuestData.1479": "I witnessed the predatory motions of a Molossus Gigantus in the farmcave earlier today. Then I realised it was a messenger, for you. The Revenant wishes to discuss a matter of importance.",
+    "QuestData.1479": "I witnessed the predatory motions of a Molossus Gigantus in the farmcave earlier today. Then I realised it was a messenger, for you. It is time to brave the hallowed mountain passages to the Star Chapel again, as the Revenant wishes to discuss a matter of importance.",
     "QuestData.1489": "Now that I've heard from you what this Jester chap is like, the description given to me by the wing mother makes a lot more sense. ",
     "QuestData.1490": "The way she said it you would think a ferocious tiger was teleporting around, sniffing at every nook a bat might seek shelter in, whining like a kitten whenever such a bat soiled itself and flew away.",
     "QuestData.1495": "The Fae Court sent a mere low-ranking courtier to entreat with you, and not even of their nobility, but one of their anthropomorphic entertainers. It seems almost farcical. I'm unsure what to make of this occurrence.",
@@ -2832,8 +2832,8 @@
     "EffectsData.21": "Herbalism",
 
     "EffectsData.23": "The offerings of the valley sustain me.",
-    "EffectsData.24": "Learn how to brew potions and tonics at the herbalism bench in the secluded farm grove. There are three lines of potion to brew, each with their own ingredients and special effects.",
-    "EffectsData.27": "Along your journey you will attain relics that will unlock higher levels of potency, up to level 5",
+    "EffectsData.24": "There are three lines of potion to brew, each with their own ingredients and special effects.",
+    "EffectsData.27": "Learn how to brew potions and tonics at the herbalism bench in the secluded farm grove. Along your journey you will attain relics that will unlock higher levels of potency, up to level 5.",
     "EffectsData.311.1": "Each potion requires only 1 of the ingredients listed in the tooltip to brew.",
     "EffectsData.311.2": "Start by crafting a base tier potion, then enhance that potion by adding an ingredient from the next tier.",
     "EffectsData.28": "Ligna: special ingredients include roots, seeds and roughage, and higher potency will increase magnetic radius and strengthen rite effects.",
@@ -3134,7 +3134,7 @@
     "EffectsData.571": "Dragon Flight",
 
     "EffectsData.573": "I can feel the streams of ether rushing softly under my finger tips, and then my wing tips as I allow them to lift me into the sky.",
-    "EffectsData.574": "While in dragon form, press the action button/left click to perform a sweeping flight.",
+    "EffectsData.574": "While in dragon form, press the action button/left click to perform a sweeping flight. An attuneable tool/weapon needs to be selected in the inventory bar to perform.",
     "EffectsData.577": "Targetting: Flies in the direction the farmer is facing.",
     "EffectsData.578": "Monster Proximity: Will instead perform a sweeping tail attack when in close proximity to monsters.",
     "EffectsData.579": "Direction: Uses isometric lines by default, can be changed to strictly cardinal lines in the config.",
@@ -3143,7 +3143,7 @@
     "EffectsData.588": "Dragon Breath",
 
     "EffectsData.590": "I draw the ether in, then expel it as a torrent of violent energy.",
-    "EffectsData.591": "While in dragon form, Press the special button/right click to perform a dragon breath attack.",
+    "EffectsData.591": "While in dragon form, Press the special button/right click to perform a dragon breath attack. An attuneable tool/weapon needs to be selected in the inventory bar to perform.",
     "EffectsData.594": "Targetting: Uses cursor and directional targetting.",
     "EffectsData.595": "Potency: Powerful enough to destroy terrain and reave dirt.",
     "EffectsData.596": "Mastery: Damage effect creates a zone of fire that applies the 'Burn' status.",
@@ -3152,7 +3152,7 @@
     "EffectsData.605": "Dragon Dive",
 
     "EffectsData.607": "It is time to bring blessings to the world under the waters.",
-    "EffectsData.608": "While in dragon form, use Dragon Flight near water to fly into and out of swim mode. ",
+    "EffectsData.608": "While in dragon form, use Dragon Flight near water to fly into and out of swim mode. An attuneable tool/weapon needs to be selected in the inventory bar to perform.",
     "EffectsData.611": "Dive: Press the special button/right click while swimming to dive for treasure.",
     "EffectsData.612": "Mastery: Dives have a chance for higher quality fish",
 

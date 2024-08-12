@@ -144,6 +144,8 @@ namespace StardewDruid.Cast.Effect
 
                     creature = new StardewDruid.Character.Critter(characterType);
 
+                    creature.netMovement.Set((int)Character.Character.movements.run);
+
                     break;
 
                 case Character.CharacterHandle.characters.ShadowCrow:
@@ -177,6 +179,8 @@ namespace StardewDruid.Cast.Effect
 
                     creature = new StardewDruid.Character.Hoverer(Character.CharacterHandle.characters.Shadowbat);
 
+                    creature.netMovement.Set((int)Character.Character.movements.run);
+
                     location.playSound(SpellHandle.sounds.batFlap.ToString());
 
                     break;
@@ -198,8 +202,6 @@ namespace StardewDruid.Cast.Effect
             creature.eventName = eventId;
 
             creature.TargetEvent(0, target, true);
-
-            creature.pathActive = Character.Character.pathing.running;
 
         }
 

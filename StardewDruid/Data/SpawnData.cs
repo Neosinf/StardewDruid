@@ -1197,14 +1197,14 @@ namespace StardewDruid.Data
                 switch (Game1.currentSeason)
                 {
                     case "spring":
-                        seasonStar = 734;
+                        seasonStar = 734; // woodskip
                         break;
                     case "fall":
                     case "winter":
-                        seasonStar = 161;
+                        seasonStar = 161; // icepip
                         break;
                     default:
-                        seasonStar = 162;
+                        seasonStar = 162; // lava eel
                         break;
 
                 }
@@ -1233,13 +1233,13 @@ namespace StardewDruid.Data
                 {
                     case "spring":
                     case "fall":
-                        seasonStar = 148;
+                        seasonStar = 148; // eel
                         break;
                     case "winter":
-                        seasonStar = 151;
+                        seasonStar = 151; // octopus
                         break;
                     default:
-                        seasonStar = 155;
+                        seasonStar = 155; // super cucumber
                         break;
 
                 }
@@ -1283,7 +1283,8 @@ namespace StardewDruid.Data
                     [1] = 698, // sturgeon
                     [2] = 140, // walleye
                     [3] = 699, // tiger trout
-                    [4] = 158, // stone fish
+                    [4] = seasonStar,
+                    //158, // stone fish
                     [5] = seasonStar,
                     [6] = seasonStar,
 
@@ -1401,7 +1402,7 @@ namespace StardewDruid.Data
             }
             else if (location is Beach || location is Atoll)
             {
-                fishIndex = 128; // puff ball 
+                fishIndex = 705; // puff ball 
             }
             else if (location is IslandLocation)
             {
@@ -2035,10 +2036,36 @@ namespace StardewDruid.Data
                 fishspot = true;
 
             }
-            else if (location.Name.Contains("Saloon") || location is DruidLocation || location is FarmCave || location.Name.Equals("Tunnel"))
+            else if (
+                location.Name.Contains("Saloon") 
+                || location is DruidLocation 
+                || location is FarmCave 
+                || location.Name.Equals("Tunnel")
+            )
             {
 
                 cast = true;
+
+            }
+            else if (Mod.instance.Helper.ModRegistry.IsLoaded("dreamy.kickitspot"))
+            {
+                if (location.Name.Contains("Custom_SeaCavern")
+                || location.Name.Contains("Custom_AreaSecret")
+                || location.Name.Contains("Custom_DarkCave")
+                || location.Name.Contains("Custom_SecretBoss")
+                || location.Name.Contains("Custom_CapeCaving"))
+                {
+
+                    cast = true;
+
+
+                }
+                else
+                {
+
+                    cast = false;
+
+                }
 
             }
             else

@@ -47,16 +47,9 @@ namespace StardewDruid.Character
         public override void draw(SpriteBatch b, float alpha = 1f)
         {
 
-            if (IsInvisible || !Utility.isOnScreen(Position, 128))
+            if (IsInvisible || !Utility.isOnScreen(Position, 128) || characterTexture == null)
             {
                 return;
-            }
-
-            if (characterTexture == null)
-            {
-
-                return;
-
             }
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
@@ -64,7 +57,7 @@ namespace StardewDruid.Character
             float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
 
             DrawEmote(b);
-            if (netSpecialActive.Value)
+            if (netSpecial.Value != 0)
             {
 
                 b.Draw(

@@ -148,7 +148,7 @@ namespace StardewDruid.Event.Scene
 
                 case 3:
 
-                    companions[0].netStandbyActive.Set(true);
+                    companions[0].ResetActives();
 
                     DialogueCue(2);
 
@@ -171,7 +171,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueClear(0);
 
-                    companions[0].netStandbyActive.Set(false);
+                    companions[0].ResetActives();
 
                     break;
 
@@ -187,7 +187,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(4);
 
-                    companions[0].netSpecialActive.Set(true);
+                    companions[0].netSpecial.Set((int)Character.Character.specials.invoke);
 
                     companions[0].specialTimer = 60;
 
@@ -210,7 +210,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(5);
 
-                    companions[0].netSpecialActive.Set(true);
+                    companions[0].netSpecial.Set((int)Character.Character.specials.invoke);
 
                     companions[0].specialTimer = 60;
 
@@ -342,7 +342,7 @@ namespace StardewDruid.Event.Scene
 
                 case 203:
 
-                    companions[0].netSpecialActive.Set(true);
+                    companions[0].netSpecial.Set((int)Character.Character.specials.invoke);
 
                     companions[0].specialTimer = 60;
 
@@ -385,7 +385,7 @@ namespace StardewDruid.Event.Scene
 
                 case 206:
 
-                    companions[0].netSpecialActive.Set(true);
+                    companions[0].netSpecial.Set((int)Character.Character.specials.invoke);
 
                     companions[0].specialTimer = 60;
 
@@ -420,7 +420,7 @@ namespace StardewDruid.Event.Scene
 
                 case 210:
 
-                    companions[0].netSpecialActive.Set(true);
+                    companions[0].netSpecial.Set((int)Character.Character.specials.invoke);
 
                     companions[0].specialTimer = 60;
 
@@ -563,7 +563,7 @@ namespace StardewDruid.Event.Scene
 
                 case 302:
 
-                    companions[0].netStandbyActive.Set(true);
+                    companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
                     break;
 
@@ -603,7 +603,7 @@ namespace StardewDruid.Event.Scene
 
                 case 313:
 
-                    companions[0].netStandbyActive.Set(false);
+                    companions[0].ResetActives();
 
                     companions[0].LookAtTarget(bosses[0].Position);
 
@@ -731,7 +731,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-                    companions[0].netSpecialActive.Set(true);
+                    companions[0].netSpecial.Set((int)Character.Character.specials.invoke);
 
                     companions[0].specialTimer = 90;
 
@@ -903,7 +903,7 @@ namespace StardewDruid.Event.Scene
 
                 case 505:
 
-                    companions[0].netSpecialActive.Set(true);
+                    companions[0].netSpecial.Set((int)Character.Character.specials.invoke);
 
                     companions[0].specialTimer = 60;
 
@@ -1003,42 +1003,42 @@ namespace StardewDruid.Event.Scene
                     break;
 
                 case 508: 
-                    companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90;
+                    companions[3].netSpecial.Set((int)Character.Character.specials.gesture); companions[3].specialTimer = 90;
                     break;
                 case 511: 
-                    companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90;
+                    companions[2].netSpecial.Set((int)Character.Character.specials.gesture); companions[2].specialTimer = 90;
                     break;
                 case 514: 
-                    companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90;
+                    companions[3].netSpecial.Set((int)Character.Character.specials.gesture); companions[3].specialTimer = 90;
                     break;
                 case 523: 
-                    companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90;
+                    companions[2].netSpecial.Set((int)Character.Character.specials.gesture); companions[2].specialTimer = 90;
                     break;
                 case 526: 
-                    companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90; 
+                    companions[3].netSpecial.Set((int)Character.Character.specials.gesture); companions[3].specialTimer = 90; 
                     break;
                 case 529: 
-                    companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90;
+                    companions[2].netSpecial.Set((int)Character.Character.specials.gesture); companions[2].specialTimer = 90;
                     break;
                 case 532: 
-                    companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90;
+                    companions[3].netSpecial.Set((int)Character.Character.specials.gesture); companions[3].specialTimer = 90;
                     break;
                 case 535: 
-                    companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90; 
+                    companions[2].netSpecial.Set((int)Character.Character.specials.gesture); companions[2].specialTimer = 90; 
                     break;
                 case 538: 
-                    companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90;
+                    companions[3].netSpecial.Set((int)Character.Character.specials.gesture); companions[3].specialTimer = 90;
                     break;
                 case 547: 
-                    companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90;
+                    companions[2].netSpecial.Set((int)Character.Character.specials.gesture); companions[2].specialTimer = 90;
                     break;
                 case 550: 
                     break;
                 case 553: 
-                    companions[2].netSpecialActive.Set(true); companions[2].specialTimer = 90;
+                    companions[2].netSpecial.Set((int)Character.Character.specials.gesture); companions[2].specialTimer = 90;
                     break;
                 case 556: 
-                    companions[3].netSpecialActive.Set(true); companions[3].specialTimer = 90;
+                    companions[3].netSpecial.Set((int)Character.Character.specials.gesture); companions[3].specialTimer = 90;
                     break;
                 case 559: 
                     companions[3].netDirection.Set(2);

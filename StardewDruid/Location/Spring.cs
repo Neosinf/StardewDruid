@@ -512,6 +512,10 @@ namespace StardewDruid.Location
             warps.Add(new Warp(29, 34, "Mine", 17, 6, flipFarmer: false));
 
         }
+        public override Item getFish(float millisecondsAfterNibble, string bait, int waterDepth, Farmer who, double baitPotency, Vector2 bobberTile, string locationName = null)
+        {
+            return base.getFish(millisecondsAfterNibble, bait, waterDepth + 2, who, baitPotency, bobberTile, "Mountain");
+        }
 
     }
 

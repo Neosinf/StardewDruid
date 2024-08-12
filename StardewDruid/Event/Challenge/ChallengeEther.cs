@@ -261,7 +261,7 @@ namespace StardewDruid.Event.Challenge
 
                     corvid.TargetEvent(0, (ruins[0] * 64) + new Vector2(32, 0), true);
 
-                    corvid.pathActive = Character.Character.pathing.running;
+                    corvid.netMovement.Set((int)Character.Character.movements.run);
 
                     companions[1] = corvid;
 
@@ -283,7 +283,7 @@ namespace StardewDruid.Event.Challenge
 
                     corvid.TargetEvent(0, (ruins[1] * 64) + new Vector2(32, 0), true);
 
-                    corvid.pathActive = Character.Character.pathing.running;
+                    //corvid.netMovement.Set((int)Character.Character.movements.run);
 
                     companions[2] = corvid;
 
@@ -299,7 +299,7 @@ namespace StardewDruid.Event.Challenge
 
                     corvid.TargetEvent(0, (ruins[2] * 64) + new Vector2(32, 0), true);
 
-                    corvid.pathActive = Character.Character.pathing.running;
+                    //corvid.netMovement.Set((int)Character.Character.movements.run);
 
                     companions[3] = corvid;
 
@@ -317,7 +317,7 @@ namespace StardewDruid.Event.Challenge
 
                     corvid.TargetEvent(0, (ruins[3] * 64) + new Vector2(32, 0), true);
 
-                    corvid.pathActive = Character.Character.pathing.running;
+                    //corvid.netMovement.Set((int)Character.Character.movements.run);
 
                     companions[4] = corvid;
 
@@ -339,7 +339,7 @@ namespace StardewDruid.Event.Challenge
 
                     corvid.TargetEvent(0, (ruins[4] * 64) + new Vector2(32, 0), true);
 
-                    corvid.pathActive = Character.Character.pathing.running;
+                    //corvid.netMovement.Set((int)Character.Character.movements.run);
 
                     companions[5] = corvid;
 
@@ -357,7 +357,7 @@ namespace StardewDruid.Event.Challenge
 
                     corvid.TargetEvent(0, (ruins[5] * 64) + new Vector2(32, 0), true);
 
-                    corvid.pathActive = Character.Character.pathing.running;
+                    //corvid.netMovement.Set((int)Character.Character.movements.run);
 
                     companions[6] = corvid;
 

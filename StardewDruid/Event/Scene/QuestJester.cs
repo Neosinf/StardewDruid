@@ -119,7 +119,7 @@ namespace StardewDruid.Event.Scene
 
                 case 7:
 
-                    companions[0].netStandbyActive.Set(true);
+                    companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
                     DialogueLoad(0, 1);
 
@@ -162,11 +162,9 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].netDirection.Set(1);
 
-                    companions[0].netStandbyActive.Set(false);
+                    companions[0].ResetActives();
 
-                    companions[0].netWorkActive.Set(true);
-
-                    companions[0].netSpecialActive.Set(true);
+                    companions[0].netSpecial.Set((int)Character.Character.specials.pickup);
 
                     companions[0].specialTimer = 120;
 
@@ -180,7 +178,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].Position = companions[2].Position - new Vector2(96, 0);
 
-                    companions[0].netStandbyActive.Set(true);
+                    companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
                     break;
 
@@ -219,7 +217,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].netDirection.Set(1);
 
-                    companions[0].netStandbyActive.Set(false);
+                    companions[0].ResetActives();
 
                     DialogueCue(10);
                     break;
@@ -245,7 +243,7 @@ namespace StardewDruid.Event.Scene
 
                 case 130:
 
-                    companions[0].netStandbyActive.Set(true);
+                    companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
                     DialogueCue(14);
                     break;
@@ -354,8 +352,8 @@ namespace StardewDruid.Event.Scene
                     DialogueClear(0);
 
                     companionVector += new Vector2(640, 320);
-                    
-                    companions[0].netStandbyActive.Set(false);
+
+                    companions[0].ResetActives();
 
                     companions[0].TargetEvent(0, companionVector, true);
 
@@ -577,7 +575,8 @@ namespace StardewDruid.Event.Scene
 
                     companionVector = jesterRace;
 
-                    companions[0].pathActive = Character.Character.pathing.running;
+                    companions[0].netMovement.Set((int)Character.Character.movements.run);
+
 
                     // Buffin route
 
@@ -599,7 +598,7 @@ namespace StardewDruid.Event.Scene
 
                     buffinVector = buffinRace;
 
-                    companions[1].pathActive = Character.Character.pathing.running;
+                    companions[1].netMovement.Set((int)Character.Character.movements.run);
 
                     break;
 
@@ -617,7 +616,7 @@ namespace StardewDruid.Event.Scene
 
                 case 370:
 
-                    companions[0].netStandbyActive.Set(true);
+                    companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
                     companions[0].netDirection.Set(1);
 
@@ -629,7 +628,7 @@ namespace StardewDruid.Event.Scene
 
                 case 371:
 
-                    companions[1].netStandbyActive.Set(true);
+                    companions[1].netIdle.Set((int)Character.Character.idles.standby);
 
                     companions[1].netDirection.Set(3);
 
@@ -648,9 +647,9 @@ namespace StardewDruid.Event.Scene
 
                     DialogueClear(0);
 
-                    companions[0].netStandbyActive.Set(false);
+                    companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
-                    companions[1].netStandbyActive.Set(false);
+                    companions[1].netIdle.Set((int)Character.Character.idles.standby);
 
                     companions[1].netDirection.Set(3);
 
@@ -816,8 +815,8 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].ResetActives(true);
 
-                    companions[0].netSpecialActive.Set(true);
-
+                    companions[0].netSpecial.Set((int)Character.Character.specials.special);
+                    
                     companions[0].specialTimer = 120;
 
                     SpellHandle beam = new(companions[0].currentLocation, companions[1].GetBoundingBox().Center.ToVector2(), companions[0].GetBoundingBox().Center.ToVector2());
@@ -832,7 +831,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].ResetActives(true);
 
-                    companions[1].netSpecialActive.Set(true);
+                    companions[1].netSpecial.Set((int)Character.Character.specials.special);
 
                     companions[1].specialTimer = 120;
 
@@ -974,7 +973,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(66);
 
-                    companions[0].netStandbyActive.Set(true);
+                    companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
                     companions[0].netDirection.Set(1);
 
@@ -982,7 +981,7 @@ namespace StardewDruid.Event.Scene
 
                 case 523:
 
-                    companions[1].netStandbyActive.Set(true);
+                    companions[1].netIdle.Set((int)Character.Character.idles.standby);
 
                     companions[1].netDirection.Set(3);
 
@@ -1070,7 +1069,7 @@ namespace StardewDruid.Event.Scene
 
                 case 562:
 
-                    companions[1].netStandbyActive.Set(false);
+                    companions[1].ResetActives();
 
                     companions[1].TargetEvent(0, companions[0].Position + new Vector2(32, 0));
 
@@ -1080,7 +1079,7 @@ namespace StardewDruid.Event.Scene
 
                 case 564:
 
-                    companions[0].netStandbyActive.Set(false);
+                    companions[0].ResetActives(true);
 
                     DialogueCue(82);
 
@@ -1088,7 +1087,7 @@ namespace StardewDruid.Event.Scene
 
                 case 567:
 
-                    companions[0].netStandbyActive.Set(true);
+                    companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
                     Mod.instance.iconData.AnimateQuickWarp(location, companions[1].Position - new Vector2(0.0f, 32f), true);
 
@@ -1161,11 +1160,11 @@ namespace StardewDruid.Event.Scene
 
                 DialogueClear(0);
 
-                companions[0].netStandbyActive.Set(false);
+                    companions[0].ResetActives();
 
                 companions[0].TargetEvent(203, archaeum, true);
 
-                companions[1].netStandbyActive.Set(false);
+                companions[1].ResetActives();
 
                 companions[1].TargetEvent(0, archaeum, true);
 
@@ -1187,11 +1186,11 @@ namespace StardewDruid.Event.Scene
 
                     CharacterMover.Warp(Mod.instance.locations[LocationData.druid_archaeum_name], companions[0], new Vector2(24, 15) * 64, false);
 
-                    companions[0].netStandbyActive.Set(true);
+                    companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
                     CharacterMover.Warp(Mod.instance.locations[LocationData.druid_archaeum_name], companions[1], new Vector2(31, 15) * 64, false);
 
-                    companions[1].netStandbyActive.Set(true);
+                    companions[1].netIdle.Set((int)Character.Character.idles.standby);
 
                     companions[1].netDirection.Set(3);
 
@@ -1317,7 +1316,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[3].TargetEvent(0, companions[3].Position - new Vector2(384, 256));
 
-                    companions[3].pathActive = Character.Character.pathing.running;
+                    companions[3].netMovement.Set((int)Character.Character.movements.run);
 
                     bosses[0].netPosturing.Set(false);
 
@@ -1376,13 +1375,13 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-                    companions[0].netStandbyActive.Set(true);
+                    companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
                     Mod.instance.characters.Remove(CharacterHandle.characters.Buffin);
 
                     companions[1].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-                    companions[1].netStandbyActive.Set(true);
+                    companions[1].netIdle.Set((int)Character.Character.idles.standby);
 
                     break;
 

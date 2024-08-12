@@ -883,7 +883,7 @@ namespace StardewDruid.Journal
         public IconData.relics RelicTacticalLocations()
         {
 
-            if (!Mod.instance.questHandle.IsComplete(QuestHandle.challengeWeald))
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.challengeWeald) || !Context.IsMainPlayer)
             {
 
                 return IconData.relics.none;
@@ -921,6 +921,13 @@ namespace StardewDruid.Journal
 
         public IconData.relics RelicMistsLocations()
         {
+
+            if (!Context.IsMainPlayer)
+            {
+
+                return IconData.relics.none;
+
+            }
 
             if (Game1.player.currentLocation is Forest)
             {
@@ -966,6 +973,13 @@ namespace StardewDruid.Journal
         public IconData.relics RelicBooksLocations()
         {
 
+            if (!Context.IsMainPlayer)
+            {
+
+                return IconData.relics.none;
+
+            }
+
             if (Game1.player.currentLocation is Forest)
             {
 
@@ -991,6 +1005,13 @@ namespace StardewDruid.Journal
 
         public int ArtisanRelicQuest()
         {
+
+            if (!Context.IsMainPlayer)
+            {
+
+                return -1;
+
+            }
 
             if (HasRelic(IconData.relics.box_artisan))
             {
@@ -1027,6 +1048,12 @@ namespace StardewDruid.Journal
 
         public int MorticianRelicQuest()
         {
+            if (!Context.IsMainPlayer)
+            {
+
+                return -1;
+
+            }
 
             if (HasRelic(IconData.relics.box_mortician))
             {
@@ -1080,6 +1107,12 @@ namespace StardewDruid.Journal
 
         public int ChaosRelicQuest()
         {
+            if (!Context.IsMainPlayer)
+            {
+
+                return -1;
+
+            }
 
             if (HasRelic(IconData.relics.box_chaos))
             {
@@ -1109,6 +1142,12 @@ namespace StardewDruid.Journal
 
         public int ProgressRelicQuest(relicsets relicset)
         {
+            if (!Context.IsMainPlayer)
+            {
+
+                return -1;
+
+            }
 
             if (Mod.instance.questHandle.IsComplete(quests[relicset]))
             {

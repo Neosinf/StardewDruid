@@ -162,7 +162,7 @@ namespace StardewDruid.Event.Scene
 
                     companions.Add(0,Mod.instance.characters[CharacterHandle.characters.Effigy]);
 
-                    companions[0].netStandbyActive.Set(false);
+                    companions[0].ResetActives();
 
                     companions[0].currentLocation = location;
 

@@ -176,7 +176,7 @@ namespace StardewDruid.Character
 
         }
 
-        public static Vector2 CharacterStart(locations location)
+        public static Vector2 CharacterStart(locations location, characters character = characters.none)
         {
 
             switch (location)
@@ -191,7 +191,23 @@ namespace StardewDruid.Character
 
                 case locations.grove:
 
-                    return new Vector2(39, 15) * 64;
+                    switch (character)
+                    {
+
+                        case characters.Shadowtin:
+
+                            return new Vector2(41, 15) * 64;
+
+                        case characters.Jester:
+
+                            return new Vector2(39, 17) * 64;
+
+                        default:
+
+                            return new Vector2(39, 15) * 64;
+
+
+                    }
 
                 case locations.chapel:
 
@@ -354,7 +370,7 @@ namespace StardewDruid.Character
 
             string destiny = CharacterLocation(destination);
 
-            Vector2 position = CharacterStart(destination);
+            Vector2 position = CharacterStart(destination, entity.characterType);
 
             CharacterMover mover = new(entity, destiny, position, true);
 

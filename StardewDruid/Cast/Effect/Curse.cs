@@ -532,7 +532,7 @@ namespace StardewDruid.Cast.Effect
 
             //b.Draw(Game1.staminaRect, new Vector2(bounding.Left - (float)Game1.viewport.X, bounding.Top - (float)Game1.viewport.Y), bounding, new(254, 240, 192), 0f, Vector2.Zero, 1f, 0, 990f);
             
-            Microsoft.Xna.Framework.Vector2 drawPosition = new(bounding.Center.X - (float)Game1.viewport.X, bounding.Top - (float)Game1.viewport.Y - 32);
+            Microsoft.Xna.Framework.Vector2 drawPosition = new(bounding.Center.X - (float)Game1.viewport.X, bounding.Center.Y - (float)Game1.viewport.Y - 64);
             b.Draw(
             Mod.instance.iconData.displayTexture,
             drawPosition,
@@ -540,7 +540,7 @@ namespace StardewDruid.Cast.Effect
             Color.White * 0.8f,
             0f,
             new Vector2(8),
-            4f,
+            2.5f,
             SpriteEffects.None,
             0.9f
             );

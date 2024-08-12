@@ -895,11 +895,11 @@ namespace StardewDruid.Event
                         if (voices[cue.Key] is StardewDruid.Character.Character companion)
                         {
 
-                            companion.netSpecialActive.Set(true);
+                            companion.netSpecial.Set((int)Character.Character.specials.point);
 
                             companion.specialFrame = frame;
 
-                            companion.specialTimer = 2 * companion.specialInterval;
+                            companion.specialTimer =60;
 
                         }
                         else if (voices[cue.Key] is StardewDruid.Monster.Boss boss)

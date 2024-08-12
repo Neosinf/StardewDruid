@@ -39,6 +39,7 @@ namespace StardewDruid.Character
                 characterType = Enum.Parse<CharacterHandle.characters>(Name);
 
             }
+
             characterTexture = CharacterHandle.CharacterTexture(characterType);
 
             LoadIntervals();
@@ -57,7 +58,7 @@ namespace StardewDruid.Character
 
             modeActive = mode.random;
 
-            haltFrames = new()
+            walkFrames = new()
             {
                 [0] = new List<Rectangle>()
                 {
@@ -92,13 +93,7 @@ namespace StardewDruid.Character
                 }
             };
 
-            idleFrames = new(haltFrames);
-
-            walkFrames = new(haltFrames);
-
-            alertFrames = new(haltFrames);
-
-            specialFrames = new()
+            specialFrames[specials.special] = new()
             {
 
                 [8] = new List<Rectangle>()
@@ -135,11 +130,9 @@ namespace StardewDruid.Character
 
             };
 
-            workFrames = new(specialFrames);
+            specialFrames[specials.sweep] = new(specialFrames[specials.special]);
 
-            sweepFrames = new(specialFrames);
-
-            dashFrames = new Dictionary<int, List<Rectangle>>()
+            dashFrames[dashes.dash] = new Dictionary<int, List<Rectangle>>()
             {
                 [0] = new List<Rectangle>()
                 {
@@ -219,7 +212,7 @@ namespace StardewDruid.Character
                 }
             };
 
-            smashFrames = new(dashFrames);
+            dashFrames[dashes.smash] = new(dashFrames[dashes.dash]);
 
             loadedOut = true;
 
@@ -235,7 +228,7 @@ namespace StardewDruid.Character
 
             base.drawAboveAlwaysFrontLayer(b);
 
-            if (IsInvisible || !Utility.isOnScreen(Position, 128))
+            if (IsInvisible || !Utility.isOnScreen(Position, 128) || characterTexture == null)
             {
                 return;
             }
@@ -252,17 +245,17 @@ namespace StardewDruid.Character
 
             DrawEmote(b);
 
-            if (netDashActive.Value)
+            if (netDash.Value != 0)
             {
 
                 int setFlightSeries = netDirection.Value + (netDashProgress.Value * 4);
 
-                int setFlightFrame = Math.Min(dashFrame, (dashFrames[setFlightSeries].Count - 1));
+                int setFlightFrame = Math.Min(dashFrame, (dashFrames[(dashes)netDash.Value][setFlightSeries].Count - 1));
 
                 b.Draw(
                     characterTexture,
                     spritePosition,
-                    dashFrames[setFlightSeries][setFlightFrame],
+                    dashFrames[(dashes)netDash.Value][setFlightSeries][setFlightFrame],
                     Color.White * fade,
                     0,
                     Vector2.Zero,
@@ -272,13 +265,13 @@ namespace StardewDruid.Character
                 );
 
             }
-            else if (netSpecialActive.Value)
+            else if (netSpecial.Value != 0)
             {
 
                 b.Draw(
                     characterTexture,
                     spritePosition,
-                    specialFrames[netDirection.Value][specialFrame],
+                    specialFrames[(specials)netSpecial.Value][netDirection.Value][specialFrame],
                     Color.White * fade,
                     0,
                     Vector2.Zero,
@@ -293,7 +286,7 @@ namespace StardewDruid.Character
                 b.Draw(
                     characterTexture,
                     spritePosition,
-                    idleFrames[netDirection.Value][hoverFrame],
+                    walkFrames[netDirection.Value][hoverFrame],
                     Color.White * fade,
                     0,
                     Vector2.Zero,
@@ -316,9 +309,9 @@ namespace StardewDruid.Character
 
             }
 
-            int width = idleFrames[0][0].Width;
+            int width = idleFrames[idles.standby][0][0].Width;
 
-            int height = idleFrames[0][0].Height;
+            int height = idleFrames[idles.standby][0][0].Height;
 
             Vector2 spritePosition = localPosition + new Vector2(width, width * 2) - new Vector2(width / 2 * spriteScale, height * spriteScale);
 
@@ -331,7 +324,7 @@ namespace StardewDruid.Character
 
             }
 
-            if (netDashActive.Value || netSmashActive.Value)
+            if (netDash.Value != 0)
             {
 
                 spritePosition.Y -= dashHeight;
@@ -356,9 +349,9 @@ namespace StardewDruid.Character
 
             float spriteScale = setScale;
 
-            int width = idleFrames[0][0].Width;
+            int width = walkFrames[0][0].Width;
 
-            int height = idleFrames[0][0].Height;
+            int height = walkFrames[0][0].Height;
 
             Rectangle box = new(
                 (int)(spritePosition.X + (spriteScale * 2)),

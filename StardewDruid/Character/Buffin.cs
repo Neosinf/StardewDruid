@@ -39,7 +39,7 @@ namespace StardewDruid.Character
         
             base.LoadOut();
 
-            idleFrames = new()
+            idleFrames[idles.standby] = new()
             {
                 [0] = new() { new(0, 256, 32, 32), new(32, 256, 32, 32), },
             };

@@ -699,21 +699,21 @@ namespace StardewDruid.Cast
 
                     }
 
-                    if (counter == 30)
+                    if (counter == 15)
                     {
 
                         GrazeDamage(1, 3, 3, true);
 
                     }
 
-                    if (counter == 45)
+                    if (counter == 30)
                     {
 
                         GrazeDamage(2, 3, 3, true);
 
                     }
 
-                    if (counter == 60)
+                    if (counter == 45)
                     {
 
                         ApplyDamage(impact, radius, damageFarmers, damageMonsters, new());
@@ -724,7 +724,7 @@ namespace StardewDruid.Cast
 
                     }
 
-                    if (counter == 130)
+                    if (counter == 90)
                     {
 
                         Shutdown();
@@ -2071,7 +2071,7 @@ namespace StardewDruid.Cast
                 return;
 
             }
-
+            
             if (power > 0)
             {
 
@@ -2081,15 +2081,15 @@ namespace StardewDruid.Cast
                     explosion = 3;
 
                 }
-
-                ModUtility.Explode(location, impact / 64, Game1.player, explosion, power);
+                Mod.instance.Monitor.Log(ModUtility.PositionToTile(impact).ToString(), LogLevel.Debug);
+                ModUtility.Explode(location, ModUtility.PositionToTile(impact), Game1.player, explosion, power);
 
             }
 
             if (terrain > 0)
             {
-
-                ModUtility.Reave(location, impact / 64, Game1.player, terrain);
+                Mod.instance.Monitor.Log(ModUtility.PositionToTile(impact).ToString(), LogLevel.Debug);
+                ModUtility.Reave(location, ModUtility.PositionToTile(impact), Game1.player, terrain);
 
             }
 
@@ -2546,13 +2546,6 @@ namespace StardewDruid.Cast
             foreach (StardewDruid.Character.Character character in ModUtility.GetFriendsInLocation(location))
             {
 
-                if (character.netDazeActive.Value)
-                {
-
-                    continue;
-
-                }
-
                 if (!character.ChangeBehaviour(true))
                 {
 
@@ -2565,11 +2558,9 @@ namespace StardewDruid.Cast
 
                     character.ResetActives();
 
-                    character.netHaltActive.Set(true);
-
                     character.LookAtTarget(origin);
 
-                    character.netDazeActive.Set(true);
+                    character.netIdle.Set((int)Character.Character.idles.daze);
 
                     character.idleTimer = radius * 2;
 

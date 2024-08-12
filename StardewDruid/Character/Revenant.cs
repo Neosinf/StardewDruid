@@ -36,49 +36,6 @@ namespace StardewDruid.Character
             
         }
 
-        public override void LoadOut()
-        {
-
-            base.LoadOut();
-
-            idleFrames = new()
-            {
-                [0] = new List<Rectangle> { new Rectangle(160, 32, 32, 32), },
-            };
-
-        }
-
-        public override void DrawStandby(SpriteBatch b, Vector2 localPosition, float drawLayer)
-        {
-
-            b.Draw(
-                characterTexture,
-                localPosition - new Vector2(32f, 64f),
-                idleFrames[0][0],
-                Color.White,
-                0f,
-                Vector2.Zero,
-                4f,
-                netDirection.Value == 1 || netAlternative.Value == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                drawLayer
-            );
-
-            b.Draw(
-                characterTexture,
-                localPosition - new Vector2(30f, 60f),
-                idleFrames[0][0],
-                Color.Black * 0.25f,
-                0f,
-                Vector2.Zero,
-                4f,
-                netDirection.Value == 1 || netAlternative.Value == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                drawLayer - 0.001f
-            );
-
-            return;
-
-        }
-
     }
 
 }

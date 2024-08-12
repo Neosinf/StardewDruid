@@ -28,7 +28,7 @@ namespace StardewDruid.Character
 
             base.LoadOut();
 
-            idleFrames = new()
+            idleFrames[idles.standby] = new()
             {
                 [0] = new List<Rectangle> { new Rectangle(160, 32, 32, 32), },
             };
@@ -58,7 +58,7 @@ namespace StardewDruid.Character
         {
             base.draw(b, alpha);
 
-            if (IsInvisible || !Utility.isOnScreen(Position, 128))
+            if (IsInvisible || !Utility.isOnScreen(Position, 128) || characterTexture == null)
             {
                 return;
             }

@@ -454,7 +454,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].LookAtTarget(eventVectors[13]*64,true);
 
-                    companions[0].netSpecialActive.Set(true);
+                    companions[0].netSpecial.Set((int)Character.Character.specials.invoke);
 
                     companions[0].specialTimer = 60;
 
@@ -615,7 +615,7 @@ namespace StardewDruid.Event.Scene
 
                     CharacterMover.Warp(location, companions[0], eventVectors[20] * 64, true);
 
-                    companions[0].netWorkActive.Set(true);
+                    companions[0].netSpecial.Set((int)Character.Character.specials.pickup);
 
                     companions[0].specialTimer = 60;
 
@@ -667,7 +667,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[2].TargetEvent(11, eventVectors[24] * 64, false);
 
-                    companions[2].pathActive = Character.Character.pathing.running;
+                    companions[2].netMovement.Set((int)Character.Character.movements.run);
 
                     break;
 
@@ -976,7 +976,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(401);
 
-                    companions[3].netSpecialActive.Set(true);
+                    companions[3].netSpecial.Set((int)Character.Character.specials.invoke);
 
                     companions[3].specialTimer = 60;
 

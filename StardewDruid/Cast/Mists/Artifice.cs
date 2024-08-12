@@ -386,7 +386,7 @@ namespace StardewDruid.Cast.Mists
 
             bool animate = true;
 
-            if (Game1.player.currentLocation.Name != location.Name && !Utility.isOnScreen(targetVector * 64, 0))
+            if (Game1.player.currentLocation.Name != location.Name || !Utility.isOnScreen(targetVector * 64, 0))
             {
 
                 animate = false;
