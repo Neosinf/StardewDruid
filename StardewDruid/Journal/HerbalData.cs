@@ -8,12 +8,16 @@ using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
 using StardewDruid.Location;
+using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Buffs;
 using StardewValley.Enchantments;
 using StardewValley.GameData.BigCraftables;
 using StardewValley.GameData.Characters;
+using StardewValley.GameData.Tools;
+using StardewValley.Internal;
+using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Objects;
 using StardewValley.Tools;
@@ -165,12 +169,14 @@ namespace StardewDruid.Journal
 
                 case herbals.melius_celeri:
                     return new() {
-                        "(O)152", // "Algae", 
-                        "(O)153", // "Seaweed", 
-                        "(O)157", // "White Algae", 
+
                         "(O)815", // "Tea Leaves", 
                         "(O)433", // "Coffee Bean", 
                         "(O)167", // "Joja Cola", 
+                        "(O)157", // "White Algae",
+                        "(O)152", // "Algae", 
+                        "(O)153", // "Seaweed", 
+ 
                     };
 
                 case herbals.satius_celeri:
@@ -502,13 +508,13 @@ namespace StardewDruid.Journal
 
                 bases = new() { },
 
-                health = 10,
+                health = 8,
 
-                stamina = 15,
+                stamina = 12,
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.39"),
+                    //Mod.instance.Helper.Translation.Get("HerbalData.39"),
                     Mod.instance.Helper.Translation.Get("HerbalData.40")
                 }
 
@@ -544,7 +550,7 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.75"),
+                    //Mod.instance.Helper.Translation.Get("HerbalData.75"),
                     Mod.instance.Helper.Translation.Get("HerbalData.76"),
                     Mod.instance.Helper.Translation.Get("HerbalData.77")
                 }
@@ -581,7 +587,7 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.112"),
+                    //Mod.instance.Helper.Translation.Get("HerbalData.112"),
                     Mod.instance.Helper.Translation.Get("HerbalData.113"),
                     Mod.instance.Helper.Translation.Get("HerbalData.114")
                 }
@@ -618,7 +624,7 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.149"),
+                    //Mod.instance.Helper.Translation.Get("HerbalData.149"),
                     Mod.instance.Helper.Translation.Get("HerbalData.150"),
                     Mod.instance.Helper.Translation.Get("HerbalData.151"),
                 }
@@ -654,7 +660,7 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.185"),
+                    //Mod.instance.Helper.Translation.Get("HerbalData.185"),
                     Mod.instance.Helper.Translation.Get("HerbalData.186"),
                     Mod.instance.Helper.Translation.Get("HerbalData.187")
                 }
@@ -689,7 +695,7 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.220"),
+                    //Mod.instance.Helper.Translation.Get("HerbalData.220"),
                     Mod.instance.Helper.Translation.Get("HerbalData.221")
                 }
 
@@ -725,7 +731,7 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.256"),
+                    //Mod.instance.Helper.Translation.Get("HerbalData.256"),
                     Mod.instance.Helper.Translation.Get("HerbalData.257"),
                     Mod.instance.Helper.Translation.Get("HerbalData.258")
                 }
@@ -762,7 +768,7 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.293"),
+                    //Mod.instance.Helper.Translation.Get("HerbalData.293"),
                     Mod.instance.Helper.Translation.Get("HerbalData.294"),
 
                     Mod.instance.Helper.Translation.Get("HerbalData.296")
@@ -800,7 +806,7 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.331"),
+                    //Mod.instance.Helper.Translation.Get("HerbalData.331"),
                     Mod.instance.Helper.Translation.Get("HerbalData.332"),
                     Mod.instance.Helper.Translation.Get("HerbalData.333")
                 }
@@ -836,7 +842,7 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.367"),
+                    //Mod.instance.Helper.Translation.Get("HerbalData.367"),
                     Mod.instance.Helper.Translation.Get("HerbalData.368"),
                     Mod.instance.Helper.Translation.Get("HerbalData.369")
                 }
@@ -872,7 +878,7 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.402"),
+                   //Mod.instance.Helper.Translation.Get("HerbalData.402"),
                    Mod.instance.Helper.Translation.Get("HerbalData.403")
                 }
 
@@ -907,7 +913,7 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.437"),
+                    //Mod.instance.Helper.Translation.Get("HerbalData.437"),
                     Mod.instance.Helper.Translation.Get("HerbalData.438"),
                     Mod.instance.Helper.Translation.Get("HerbalData.439")
                 }
@@ -944,7 +950,7 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.474"),
+                    //Mod.instance.Helper.Translation.Get("HerbalData.474"),
                     Mod.instance.Helper.Translation.Get("HerbalData.475"),
                     Mod.instance.Helper.Translation.Get("HerbalData.476")
                 }
@@ -981,7 +987,7 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.511"),
+                    //Mod.instance.Helper.Translation.Get("HerbalData.511"),
                     Mod.instance.Helper.Translation.Get("HerbalData.512"),
                     Mod.instance.Helper.Translation.Get("HerbalData.513")
                 }
@@ -1017,7 +1023,7 @@ namespace StardewDruid.Journal
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.547"),
+                    //Mod.instance.Helper.Translation.Get("HerbalData.547"),
                     Mod.instance.Helper.Translation.Get("HerbalData.548"),
                     Mod.instance.Helper.Translation.Get("HerbalData.549")
                 }
@@ -1586,9 +1592,15 @@ namespace StardewDruid.Journal
 
             Herbal herbal = herbalism[id];
 
-            Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + herbal.stamina);
+            float difficulty = 1.6f - (Mod.instance.ModDifficulty() * 0.1f);
 
-            Game1.player.health = Math.Min(Game1.player.maxHealth, Game1.player.health + herbal.health);
+            int staminaGain = (int)(herbal.stamina * difficulty);
+
+            int healthGain = (int)(herbal.health * difficulty);
+
+            Game1.player.Stamina = Math.Min(Game1.player.MaxStamina, Game1.player.Stamina + staminaGain);
+
+            Game1.player.health = Math.Min(Game1.player.maxHealth, Game1.player.health + healthGain);
 
             Microsoft.Xna.Framework.Rectangle healthBox = Game1.player.GetBoundingBox();
 
@@ -1771,24 +1783,31 @@ namespace StardewDruid.Journal
 
             }
 
-            if (!applyChange)
-            {
-
-                return;
-
-            }
-
-            if (Game1.player.buffs.IsApplied(184652.ToString()))
-            {
-
-                Game1.player.buffs.Remove(184652.ToString());
-
-            }
+            bool isApplied = true;
 
             if (applied.Count == 0)
             {
 
                 return;
+
+            }
+            else if (!Game1.player.buffs.IsApplied(184652.ToString()))
+            {
+
+                isApplied = false;
+
+            }
+            else if (!applyChange)
+            {
+
+                return;
+
+            }
+
+            if (isApplied)
+            {
+
+                Game1.player.buffs.Remove(184652.ToString());
 
             }
 
@@ -1834,7 +1853,12 @@ namespace StardewDruid.Journal
         public void ConvertGeodes()
         {
             
-            CharacterHandle.RetrieveInventory(CharacterHandle.characters.herbalism);
+            if (Context.IsMainPlayer)
+            {
+
+                CharacterHandle.RetrieveInventory(CharacterHandle.characters.herbalism);
+
+            }
 
             Dictionary<string,StardewValley.Item> extracts = new();
 
@@ -1894,11 +1918,22 @@ namespace StardewDruid.Journal
 
             }
 
-            Vector2 origin = new Vector2(21,24)*64 + new Vector2(0,32);
+            Vector2 origin = new Vector2(21,23)*64;
 
             foreach(KeyValuePair<string,StardewValley.Item> extract in extracts)
             {
-                
+
+                if (!Context.IsMainPlayer)
+                {
+                    
+                    ThrowHandle throwExtract = new(Game1.player, origin, extract.Value);
+
+                    throwExtract.register();
+
+                    continue;
+
+                }
+
                 if (Mod.instance.chests[Character.CharacterHandle.characters.herbalism].addItem(extract.Value) != null)
                 {
                     ThrowHandle throwExtract = new(Game1.player, origin, extract.Value);
@@ -1934,6 +1969,158 @@ namespace StardewDruid.Journal
             Mod.instance.spellRegister.Add(new(origin - new Vector2(24,32), 320, IconData.impacts.nature, new()) { type = SpellHandle.spells.effect, instant = true, scheme = IconData.schemes.golden, });
 
         }
+
+        public static string ForgeCheck()
+        {
+
+            if (Game1.player.CurrentTool is Tool currentTool)
+            {
+
+                Dictionary<string, string> toolUpgrades = new()
+                {
+                    // Axe
+                    ["(T)Axe"] = "(T)CopperAxe",
+                    ["(T)CopperAxe"] = "(T)SteelAxe",
+                    ["(T)SteelAxe"] = "(T)GoldAxe",
+                    ["(T)GoldAxe"] = "(T)IridiumAxe",
+                    // Pickaxe
+                    ["(T)Pickaxe"] = "(T)CopperPickaxe",
+                    ["(T)CopperPickaxe"] = "(T)SteelPickaxe",
+                    ["(T)SteelPickaxe"] = "(T)GoldPickaxe",
+                    ["(T)GoldPickaxe"] = "(T)IridiumPickaxe",
+                    // Hoe
+                    ["(T)WateringCan"] = "(T)CopperWateringCan",
+                    ["(T)CopperWateringCan"] = "(T)SteelWateringCan",
+                    ["(T)SteelWateringCan"] = "(T)GoldWateringCan",
+                    ["(T)GoldWateringCan"] = "(T)IridiumWateringCan",
+                    // Can
+                    ["(T)Hoe"] = "(T)CopperHoe",
+                    ["(T)CopperHoe"] = "(T)SteelHoe",
+                    ["(T)SteelHoe"] = "(T)GoldHoe",
+                    ["(T)GoldHoe"] = "(T)IridiumHoe",
+
+                };
+
+                if (toolUpgrades.ContainsKey(currentTool.QualifiedItemId))
+                {
+
+                    return toolUpgrades[currentTool.QualifiedItemId];
+
+                }
+
+            }
+
+            return String.Empty;
+
+        }
+
+        public static int ForgeRequirement(string toolId)
+        {
+
+            Dictionary<string, int> toolRequirements = new()
+            {
+                // Axe
+                ["(T)CopperAxe"] = 4,
+                ["(T)SteelAxe"] = 6,
+                ["(T)GoldAxe"] = 9,
+                ["(T)IridiumAxe"]= 12,
+                // Pickaxe
+                ["(T)CopperPickaxe"] = 4,
+                ["(T)SteelPickaxe"] = 6,
+                ["(T)GoldPickaxe"] = 9,
+                ["(T)IridiumPickaxe"]= 12,
+                // Hoe
+                ["(T)CopperWateringCan"] = 4,
+                ["(T)SteelWateringCan"] = 6,
+                ["(T)GoldWateringCan"] = 9,
+                ["(T)IridiumWateringCan"]= 12,
+                // Can
+                ["(T)CopperHoe"] = 4,
+                ["(T)SteelHoe"] = 6,
+                ["(T)GoldHoe"] = 9,
+                ["(T)IridiumHoe"]= 12,
+
+            };
+
+            return toolRequirements[toolId];
+
+
+        }
+
+        public static void ForgeUpgrade()
+        {
+            
+            if (Game1.player.CurrentTool is Tool currentTool)
+            {
+
+                Dictionary<string, string> toolUpgrades = new()
+                {
+                    // Axe
+                    ["(T)Axe"] = "(T)CopperAxe",
+                    ["(T)CopperAxe"] = "(T)SteelAxe",
+                    ["(T)SteelAxe"] = "(T)GoldAxe",
+                    ["(T)GoldAxe"] = "(T)IridiumAxe",
+                    // Pickaxe
+                    ["(T)Pickaxe"] = "(T)CopperPickaxe",
+                    ["(T)CopperPickaxe"] = "(T)SteelPickaxe",
+                    ["(T)SteelPickaxe"] = "(T)GoldPickaxe",
+                    ["(T)GoldPickaxe"] = "(T)IridiumPickaxe",
+                    // Hoe
+                    ["(T)WateringCan"] = "(T)CopperWateringCan",
+                    ["(T)CopperWateringCan"] = "(T)SteelWateringCan",
+                    ["(T)SteelWateringCan"] = "(T)GoldWateringCan",
+                    ["(T)GoldWateringCan"] = "(T)IridiumWateringCan",
+                    // Can
+                    ["(T)Hoe"] = "(T)CopperHoe",
+                    ["(T)CopperHoe"] = "(T)SteelHoe",
+                    ["(T)SteelHoe"] = "(T)GoldHoe",
+                    ["(T)GoldHoe"] = "(T)IridiumHoe",
+
+                };
+
+                if (toolUpgrades.ContainsKey(currentTool.QualifiedItemId))
+                {
+
+                    Tool tooling = (Tool)ItemRegistry.Create(toolUpgrades[currentTool.QualifiedItemId]);
+
+                    tooling.UpgradeFrom(currentTool);
+
+                    Game1.player.removeItemFromInventory(currentTool);
+
+                    Vector2 origin = new Vector2(1312, 1080);
+
+                    new ThrowHandle(Game1.player, origin, tooling) { delay = 60 }.register();
+
+                    Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, projectile = 4, counter = -60, scheme = IconData.schemes.golden, sound = SpellHandle.sounds.secret1 });
+                    Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, projectile = 4, counter = -45, sound = SpellHandle.sounds.silent, });
+                    Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, projectile = 4, counter = -30, sound = SpellHandle.sounds.silent, });
+                    Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, projectile = 4, counter = -15, sound = SpellHandle.sounds.silent, });
+                    Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, projectile = 4, sound = SpellHandle.sounds.thunder, });
+
+                    Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles(IconData.relics.crow_hammer);
+
+                    TemporaryAnimatedSprite animation = new(0, 1500, 1, 1, origin - new Vector2(16, 60), false, false)
+                    {
+                        sourceRect = relicRect,
+                        sourceRectStartingPos = new(relicRect.X, relicRect.Y),
+                        texture = Mod.instance.iconData.relicsTexture,
+                        layerDepth = 900f,
+                        rotation = -0.76f,
+                        scale = 4f,
+                    };
+
+                    Game1.player.currentLocation.TemporarySprites.Add(animation);
+
+                    Mod.instance.spellRegister.Add(new(origin - new Vector2(24, 32), 320, IconData.impacts.nature, new()) { type = SpellHandle.spells.effect, counter = -45, instant = true, scheme = IconData.schemes.golden, sound = SpellHandle.sounds.yoba });
+
+                    Mod.instance.spellRegister.Add(new(origin - new Vector2(24, 32), 320, IconData.impacts.nature, new()) { type = SpellHandle.spells.effect, instant = true, scheme = IconData.schemes.golden, });
+
+                }
+
+            }
+
+        }
+
 
     }
 

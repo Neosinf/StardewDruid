@@ -13,6 +13,7 @@ using StardewModdingAPI;
 using static StardewValley.Minigames.TargetGame;
 using StardewValley.Locations;
 using StardewDruid.Location;
+using System.ComponentModel.Design;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -211,14 +212,14 @@ namespace StardewDruid.Cast.Weald
             if (location is Clearing && Game1.currentSeason != "winter")
             {
 
-                if (!Mod.instance.rite.specialCasts[location.Name].Contains("OrchardBats"))
+                if (!Mod.instance.rite.specialCasts[location.Name].Contains("OrchardCrows"))
                 {
 
                     creatureProspects.Clear();
 
                     creatureProspects[new Vector2(1, 1)] = bounties.orchard;
 
-                    Mod.instance.rite.specialCasts[location.Name].Add("OrchardBats");
+                    Mod.instance.rite.specialCasts[location.Name].Add("OrchardCrows");
 
                 }
 
@@ -249,7 +250,9 @@ namespace StardewDruid.Cast.Weald
             
             if (creatureProspects.Count == 0)
             {
+
                 return;
+
             }
 
             int index = Mod.instance.randomIndex.Next(creatureProspects.Count);
@@ -258,7 +261,7 @@ namespace StardewDruid.Cast.Weald
 
             Creature creature;
 
-            string id = "creature" + location.Name;
+            string id ="creature" + location.Name;
 
             if (!Mod.instance.eventRegister.ContainsKey(id))
             {
@@ -280,6 +283,10 @@ namespace StardewDruid.Cast.Weald
             int direction = Mod.instance.randomIndex.Next(8);
 
             Vector2 target;
+
+            IconData.relics dropRelic;
+
+            ThrowHandle throwRelic;
 
             switch (prospect.Value)
             {
@@ -356,6 +363,22 @@ namespace StardewDruid.Cast.Weald
 
                     creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat, fruitTop, target, 3f);
 
+                    dropRelic = Mod.instance.relicsData.RelicTacticalLocations();
+
+                    if (dropRelic != IconData.relics.none)
+                    {
+
+                        if (!Journal.RelicData.HasRelic(dropRelic))
+                        {
+
+                            throwRelic = new(Game1.player, fruitTop, dropRelic);
+
+                            throwRelic.register();
+
+                        }
+
+                    }
+
                     break;
 
                 case bounties.flyby:
@@ -372,8 +395,23 @@ namespace StardewDruid.Cast.Weald
 
                     creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat, new Vector2(10, 0) * 64, new Vector2(12, 30) * 64, 3f);
 
-                    break;
+                    dropRelic = Mod.instance.relicsData.RelicTacticalLocations();
 
+                    if (dropRelic != IconData.relics.none)
+                    {
+
+                        if (!Journal.RelicData.HasRelic(dropRelic))
+                        {
+
+                            throwRelic = new(Game1.player, new Vector2(6, 0) * 64, dropRelic);
+
+                            throwRelic.register();
+
+                        }
+
+                    }
+
+                    break;
 
                 case bounties.orchard:
 
@@ -391,10 +429,66 @@ namespace StardewDruid.Cast.Weald
                             Character.CharacterHandle.characters.ShadowMagpie,
 
                         };
+
                         foreach (TerrainTile terrainTile in clearing.terrainTiles)
                         {
 
-                            if(!(terrainTile.tilesheet == IconData.tilesheets.outdoors && terrainTile.index == 11) && !(terrainTile.tilesheet == IconData.tilesheets.outdoorsTwo && terrainTile.index == 1))
+                            Vector2 orchardTree = terrainTile.position;
+
+                            if (terrainTile.tilesheet == IconData.tilesheets.magnolia)
+                            {
+
+                                if (terrainTile.index != 2)
+                                {
+
+                                    continue;
+
+                                }
+
+                                if (Context.IsMainPlayer && Mod.instance.save.restoration[LocationData.druid_clearing_name] < 3)
+                                {
+
+                                    continue;
+
+                                }
+
+                                orchardTree.X += 256;
+
+                                orchardTree.Y -= 256;
+
+                                if (!Journal.RelicData.HasRelic(IconData.relics.restore_cloth))
+                                {
+
+                                    throwRelic = new(Game1.player, orchardTree, IconData.relics.restore_cloth);
+
+                                    throwRelic.register();
+
+                                }
+
+                            }
+                            else if(terrainTile.tilesheet == IconData.tilesheets.outdoors)
+                            {
+
+                                if(terrainTile.index != 11)
+                                {
+
+                                    continue;
+
+                                }
+
+                            }
+                            else if(terrainTile.tilesheet == IconData.tilesheets.outdoorsTwo)
+                            {
+
+                                if(terrainTile.index != 1)
+                                {
+
+                                    continue;
+
+                                }
+
+                            }
+                            else
                             {
 
                                 continue;
@@ -404,7 +498,7 @@ namespace StardewDruid.Cast.Weald
                             for(int i = 0; i < 2 + Mod.instance.randomIndex.Next(1); i++)
                             {
 
-                                Vector2 startAt = terrainTile.position + new Vector2(Mod.instance.randomIndex.Next(5) * 96, Mod.instance.randomIndex.Next(5) * 48);
+                                Vector2 startAt = orchardTree + new Vector2(Mod.instance.randomIndex.Next(5) * 96, Mod.instance.randomIndex.Next(5) * 48);
 
                                 creature.AddCreature(location, corvids[Mod.instance.randomIndex.Next(corvids.Count)], startAt, exit, 1.5f + (0.25f * Mod.instance.randomIndex.Next(6)));
 
@@ -433,6 +527,22 @@ namespace StardewDruid.Cast.Weald
                     creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat,  new Vector2(41, 10) * 64, new Vector2(0, 10) * 64, 2.5f);
 
                     creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbat,  new Vector2(39, 11) * 64, new Vector2(1, 11) * 64, 3f);
+
+                    dropRelic = Mod.instance.relicsData.RelicTacticalLocations();
+
+                    if (dropRelic != IconData.relics.none)
+                    {
+
+                        if (!Journal.RelicData.HasRelic(dropRelic))
+                        {
+
+                            throwRelic = new(Game1.player, new Vector2(39, 8) * 64, dropRelic);
+
+                            throwRelic.register();
+
+                        }
+
+                    }
 
                     break;
 

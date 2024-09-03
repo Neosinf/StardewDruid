@@ -15,6 +15,7 @@ using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Buffs;
 using StardewValley.Buildings;
+using StardewValley.Locations;
 using StardewValley.Monsters;
 using StardewValley.Network;
 using StardewValley.Tools;
@@ -22,6 +23,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using static StardewDruid.Data.IconData;
+using static System.Net.WebRequestMethods;
 
 namespace StardewDruid.Cast.Ether
 {
@@ -31,6 +34,11 @@ namespace StardewDruid.Cast.Ether
         public NetLong netAnchor = new NetLong(0);
         public Farmer anchor;
         public bool avatar;
+
+        public NetColor netPrimary = new NetColor(Color.White);
+        public NetColor netSecondary = new NetColor(Color.White);
+        public NetColor netTertiary = new NetColor(Color.White);
+        public NetInt netFire = new NetInt((int)IconData.schemes.stars);
 
         public DragonRender dragonRender;
         public float dragonScale;
@@ -134,6 +142,12 @@ namespace StardewDruid.Cast.Ether
 
             netAnchor.Set(Farmer.UniqueMultiplayerID);
 
+            SetSchemes((IconData.schemes)Mod.instance.Config.dragonScheme, (IconData.schemes)Mod.instance.Config.dragonBreath);
+
+            dragonScale = 2f + ((float)Mod.instance.Config.dragonScale * 0.5f);
+
+            scale.Set(dragonScale);
+
             moveDirection = Game1.player.FacingDirection;
 
             netDirection.Set(moveDirection);
@@ -162,6 +176,47 @@ namespace StardewDruid.Cast.Ether
 
         }
 
+        public void SetSchemes(IconData.schemes scheme, IconData.schemes breath)
+        {
+
+            if (!Mod.instance.iconData.gradientColours.ContainsKey(scheme))
+            {
+
+                scheme = IconData.schemes.dragon_red;
+            }
+
+            if (!Mod.instance.iconData.gradientColours.ContainsKey(breath))
+            {
+
+                breath = IconData.schemes.stars;
+
+            }
+
+            List<Color> colors = Mod.instance.iconData.gradientColours[scheme];
+
+            netPrimary.Set(colors[0]);
+
+            netSecondary.Set(colors[1]);
+
+            netTertiary.Set(colors[2]);
+
+            netFire.Set((int)breath);
+
+        }
+
+        public void DragonSchemes()
+        {
+
+            dragonRender.primary = netPrimary.Value;
+
+            dragonRender.secondary = netSecondary.Value;
+
+            dragonRender.tertiary = netTertiary.Value;
+
+            dragonRender.fire = (IconData.schemes)netFire.Value;
+
+        }
+
         public override bool IsVillager { get { return false; } }
 
         public override bool CanSocialize { get { return false; } }
@@ -171,11 +226,16 @@ namespace StardewDruid.Cast.Ether
 
             anchor = Game1.getFarmer(netAnchor.Value);
 
-            dragonScale = 2f + ((float)Mod.instance.Config.dragonScale * 0.5f);
+            if(dragonScale == 0f)
+            {
+
+                dragonScale = scale.Value;
+
+            }
 
             dragonRender = new();
 
-            dragonRender.LoadConfigScheme();
+            DragonSchemes();
 
             loadedOut = true;
 
@@ -1765,7 +1825,7 @@ namespace StardewDruid.Cast.Ether
 
                     burn.type = SpellHandle.spells.explode;
 
-                    burn.scheme = dragonRender.fire;
+                    burn.scheme = (IconData.schemes)netFire.Value;
 
                     //burn.display = IconData.impacts.combustion;
 

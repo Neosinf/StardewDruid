@@ -39,6 +39,170 @@ namespace StardewDruid.Character
 
             
         }
+
+        public override void LoadOut()
+        {
+            base.LoadOut();
+
+            setScale = 3.75f;
+
+            cooldownInterval = 90;
+
+            specialFrames[specials.launch] = new()
+            {
+
+                [0] = CharacterRender.RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.jumpUp,
+                        CharacterRender.humanoidFrames.boxUp1,
+                        CharacterRender.humanoidFrames.boxUp2,
+                        CharacterRender.humanoidFrames.jumpUp,
+                    }),
+                [1] = CharacterRender.RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.jumpRight,
+                        CharacterRender.humanoidFrames.boxRight1,
+                        CharacterRender.humanoidFrames.boxRight2,
+                        CharacterRender.humanoidFrames.jumpRight,
+                    }),
+                [2] = CharacterRender.RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.jumpDown,
+                        CharacterRender.humanoidFrames.boxDown1,
+                        CharacterRender.humanoidFrames.boxDown2,
+                        CharacterRender.humanoidFrames.jumpDown,
+                    }),
+                [3] = CharacterRender.RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.jumpLeft,
+                        CharacterRender.humanoidFrames.boxLeft1,
+                        CharacterRender.humanoidFrames.boxLeft2,
+                        CharacterRender.humanoidFrames.jumpLeft,
+                    }),
+
+            };
+
+            specialIntervals[specials.launch] = 12;
+            specialCeilings[specials.launch] = 3;
+            specialFloors[specials.launch] = 0;
+
+            specialFrames[specials.liftup] = new()
+            {
+
+                [0] = CharacterRender.RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.jumpUp,
+                        CharacterRender.humanoidFrames.boxUp1,
+                    }),
+                [1] = CharacterRender.RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.jumpRight,
+                        CharacterRender.humanoidFrames.boxRight1,
+                    }),
+                [2] = CharacterRender.RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.jumpDown,
+                        CharacterRender.humanoidFrames.boxDown1,
+                    }),
+                [3] = CharacterRender.RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.jumpLeft,
+                        CharacterRender.humanoidFrames.boxLeft1,
+                    }),
+
+            };
+
+            specialIntervals[specials.liftup] = 15;
+            specialCeilings[specials.liftup] = 1;
+            specialFloors[specials.liftup] = 1;
+
+            specialFrames[specials.liftdown] = new()
+            {
+
+                [0] = CharacterRender.RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.boxUp2,
+                        CharacterRender.humanoidFrames.jumpUp,
+                    }),
+                [1] = CharacterRender.RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.boxRight2,
+                        CharacterRender.humanoidFrames.jumpRight,
+                    }),
+                [2] = CharacterRender.RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.boxDown2,
+                        CharacterRender.humanoidFrames.jumpDown,
+                    }),
+                [3] = CharacterRender.RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.boxLeft2,
+                        CharacterRender.humanoidFrames.jumpLeft,
+                    }),
+
+            };
+
+            specialIntervals[specials.liftdown] = 15;
+            specialCeilings[specials.liftdown] = 1;
+            specialFloors[specials.liftdown] = 1;
+
+            restSet = true;
+
+        }
+
+        public override void DrawLaunch(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        {
+            
+            Rectangle useFrame = specialFrames[specials.launch][netDirection.Value][specialFrame];
+
+            int specialHover = 0;
+
+            switch (specialFrame)
+            {
+                case 0:
+                case 3:
+
+                    specialHover = 16;
+
+                    break;
+
+                case 1:
+                case 2:
+
+                    specialHover = 32;
+
+                    break;
+
+            }
+
+            b.Draw(
+                characterTexture,
+                SpritePosition(localPosition) - new Vector2(0,specialHover),
+                useFrame,
+                Color.White * fade,
+                0.0f,
+                new Vector2(useFrame.Width / 2, useFrame.Height / 2),
+                setScale,
+                SpriteAngle() ? (SpriteEffects)1 : 0,
+                drawLayer
+            );
+
+            DrawShadow(b, localPosition, drawLayer);
+
+        }
+
         public override List<Vector2> RoamAnalysis()
         {
 
@@ -46,7 +210,7 @@ namespace StardewDruid.Character
 
             if (Game1.currentSeason == "winter")
             {
-                
+
                 return collection;
 
             }
@@ -57,10 +221,10 @@ namespace StardewDruid.Character
 
             foreach (Dictionary<Vector2, StardewValley.Object> dictionary in currentLocation.Objects)
             {
-                
+
                 foreach (KeyValuePair<Vector2, StardewValley.Object> keyValuePair in dictionary)
                 {
-                    
+
                     if (keyValuePair.Value.IsScarecrow())
                     {
 
@@ -89,49 +253,35 @@ namespace StardewDruid.Character
                     break;
 
                 }
-                    
+
             }
 
             scarelist.AddRange(collection);
-            
+
             return scarelist;
-        
+
         }
 
         public override bool TargetWork()
         {
 
-            if (Game1.currentSeason == "winter")
-            {
-                
-                return false;
-
-            }
-
-            if (Game1.IsRainingHere(currentLocation))
+            if (new SpawnIndex(currentLocation).cultivate == false)
             {
 
                 return false;
 
             }
 
-            if(new SpawnIndex(currentLocation).cultivate == false)
+            if (currentLocation.objects.Count() <= 0)
             {
 
                 return false;
 
             }
 
-            if (currentLocation.objects.Count() < 0)
-            {
-                
-                return false;
-            
-            }
-            
             List<Vector2> tileVectors;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 5; i++)
             {
 
                 tileVectors = ModUtility.GetTilesWithinRadius(currentLocation, occupied, i);
@@ -152,9 +302,25 @@ namespace StardewDruid.Character
                         if (currentLocation.Objects[scarevector].IsScarecrow())
                         {
 
+                            string scid = "scarecrow_" + scarevector.X.ToString() + "_" + scarevector.Y.ToString();
+
+                            if (!Mod.instance.rite.specialCasts.ContainsKey(currentLocation.Name))
+                            {
+
+                                Mod.instance.rite.specialCasts[currentLocation.Name] = new();
+
+                            }
+
+                            if (Mod.instance.rite.specialCasts[currentLocation.Name].Contains(scid))
+                            {
+
+                                continue;
+
+                            }
+
                             ResetActives();
 
-                            LookAtTarget(scarevector * 64,true);
+                            LookAtTarget(scarevector * 64, true);
 
                             netSpecial.Set((int)specials.invoke);
 
@@ -169,9 +335,9 @@ namespace StardewDruid.Character
                         }
 
                     }
-                
+
                 }
-            
+
             }
 
             return false;
@@ -181,7 +347,7 @@ namespace StardewDruid.Character
         public override void PerformWork()
         {
 
-            if(specialTimer == 80)
+            if (specialTimer == 80)
             {
 
                 if (currentLocation.Name == Game1.player.currentLocation.Name && Utility.isOnScreen(Position, 128))
@@ -203,12 +369,12 @@ namespace StardewDruid.Character
 
             }
 
-            if(specialTimer == 50)
+            if (specialTimer == 50)
             {
 
                 CharacterHandle.RetrieveInventory(CharacterHandle.characters.Effigy);
 
-                if(Mod.instance.chests[CharacterHandle.characters.Effigy].Items.Count > 0)
+                if (Mod.instance.chests[CharacterHandle.characters.Effigy].Items.Count > 0)
                 {
 
                     Cultivate cultivateEvent = new();
@@ -225,7 +391,7 @@ namespace StardewDruid.Character
 
             }
 
-            if(specialTimer == 20)
+            if (specialTimer == 20 && !Game1.IsRainingHere(currentLocation) && Game1.currentSeason != "winter")
             {
 
                 Artifice artificeHandle = new();
@@ -233,7 +399,6 @@ namespace StardewDruid.Character
                 artificeHandle.ArtificeScarecrow(currentLocation, workVector);
 
             }
-
         }
 
         public override bool SmashAttack(StardewValley.Monsters.Monster monster)
@@ -243,26 +408,35 @@ namespace StardewDruid.Character
 
         }
 
+        public override bool SweepAttack(StardewValley.Monsters.Monster monster)
+        {
+            
+            return SpecialAttack(monster);
+        
+        }
+
         public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
         {
 
             ResetActives();
 
-            netSpecial.Set((int)specials.invoke);
+            netSpecial.Set((int)specials.launch);
 
-            specialTimer = 90;
+            specialTimer = 48;
 
             cooldownTimer = cooldownInterval;
 
             LookAtTarget(monster.Position, true);
 
-            Mod.instance.iconData.DecorativeIndicator(currentLocation, Position, IconData.decorations.mists, 5f, new());
-
             SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 3);
 
             special.type = SpellHandle.spells.zap;
 
-            special.scheme = IconData.schemes.golden;
+            special.projectile = 6;
+
+            //special.scheme = IconData.schemes.stars;
+
+            special.counter = -24;
 
             special.added = new() { effects.shock, };
 

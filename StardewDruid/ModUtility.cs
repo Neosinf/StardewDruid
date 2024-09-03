@@ -43,6 +43,7 @@ using xTile.Dimensions;
 using xTile.Layers;
 using xTile.ObjectModel;
 using xTile.Tiles;
+using static StardewDruid.Character.Character;
 using static StardewDruid.Character.CharacterHandle;
 using static StardewValley.Minigames.TargetGame;
 
@@ -407,51 +408,6 @@ namespace StardewDruid
 
         }
 
-        public static void UpgradeCrop(HoeDirt hoeDirt, Farmer targetPlayer, GameLocation targetLocation, int qualityFactor)
-        {
-
-            string generateItem = "770";
-
-            if (qualityFactor > 0)
-            {
-
-                List<string> objectIndexes = SpawnData.CropList(targetLocation);
-
-                for (int q = 3 - qualityFactor; q >= 0; q--)
-                {
-
-                    objectIndexes.Add(generateItem);
-                    objectIndexes.Add(generateItem);
-
-                }
-
-                generateItem = objectIndexes[Mod.instance.randomIndex.Next(objectIndexes.Count)];
-
-            }
-
-            hoeDirt.destroyCrop(true);
-
-            if (generateItem == "829")
-            {
-
-                Crop newGinger = new(true, "2", (int)hoeDirt.Tile.X, (int)hoeDirt.Tile.Y, targetLocation);
-
-                hoeDirt.crop = newGinger;
-
-                targetLocation.playSound("dirtyHit");
-
-                Game1.stats.SeedsSown++;
-
-                return;
-
-            }
-
-            hoeDirt.plant(generateItem, targetPlayer, false);
-
-            //hoeDirt.crop.updateDrawMath(new Vector2(targetX, targetY));
-
-        }
-
         public static void UpdateFriendship(Farmer player, List<string> NPCIndex, int friendship = 375)
         {
 
@@ -619,7 +575,16 @@ namespace StardewDruid
             if (soil.HasFertilizer())
             {
 
-                qualityMax += soil.GetFertilizerQualityBoostLevel();
+                int boostSoil = soil.GetFertilizerQualityBoostLevel();
+
+                qualityMax += boostSoil;
+
+                if(boostSoil == 3)
+                {
+
+                    allowIridium = true;
+
+                }
 
             }
 
@@ -637,6 +602,13 @@ namespace StardewDruid
                     
                     quality = randomIndex.Next(2) == 0 ? 2 : 4; 
                 
+                }
+
+                if(quality > 4)
+                {
+
+                    quality = 4;
+
                 }
 
                 if(quality > 2 && !allowIridium)
@@ -2397,7 +2369,33 @@ namespace StardewDruid
             return move;
 
         }
+        public static Vector2 DirectionAsVectorOffset(int direction)
+        {
 
+            Vector2 move = new(0.5f, -1f);
+
+            switch (direction)
+            {
+
+                case 1: move = new(1f, -0.5f); break;
+
+                case 2: move = new(1f, 0.5f); break;
+
+                case 3: move = new(0.5f, 1f); break;
+
+                case 4: move = new(-0.5f, 1f); break;
+
+                case 5: move = new(-1f, 0.5f); break;
+
+                case 6: move = new(-1f, -0.5f); break;
+
+                case 7: move = new(-0.5f, -1f); break;
+
+            }
+
+            return move;
+
+        }
         public static Vector2 PathMovement(Vector2 origin, Vector2 destination, float speed)
         {
 
@@ -3737,7 +3735,7 @@ namespace StardewDruid
                                 if (targetTree.growthStage.Value >= 5)
                                 {
 
-                                    targetTree.performToolAction(null, (int)targetTree.health.Value, tileVector);
+                                    targetTree.performToolAction(Axe, (int)targetTree.health.Value, tileVector);
 
                                 }
                                 else
@@ -3751,7 +3749,7 @@ namespace StardewDruid
                                         targetLocation.debris.Add(new Debris(ItemQueryResolver.TryResolveRandomItem(data.SeedItemId, new ItemQueryContext(targetLocation, Game1.player, null)), tileVector * 64f));
                                     
                                     }
-
+                                    
                                     targetTree.performToolAction(Axe, 0, tileVector);
 
                                     targetLocation.terrainFeatures.Remove(tileVector);

@@ -357,6 +357,14 @@ namespace StardewDruid
                 setValue: value => Config.castAnywhere = value
             );
 
+            configMenu.AddBoolOption(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.326.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.326.2"),
+                getValue: () => Config.decorateGrove,
+                setValue: value => Config.decorateGrove = value
+            );
+
             return configMenu;
 
         }

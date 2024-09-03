@@ -18,7 +18,7 @@ namespace StardewDruid.Render
             pointDown,
             crouchDown,
             crouchDownTwo,
-            custom1,
+            rest,
             custom2,
 
             idleRight,
@@ -155,6 +155,39 @@ namespace StardewDruid.Render
 
                 }),
             };
+            
+            custom[Character.Character.idles.rest] = new()
+            {
+                [0] = RectangleHumanoidList(new(){
+
+                    humanoidFrames.rest,
+
+                }),
+            };
+
+            custom[Character.Character.idles.jump] = new()
+            {
+                [0] = RectangleHumanoidList(new(){
+
+                    humanoidFrames.jumpUp,
+
+                }),
+                [1] = RectangleHumanoidList(new(){
+
+                    humanoidFrames.jumpRight,
+
+                }),
+                [2] = RectangleHumanoidList(new(){
+
+                    humanoidFrames.jumpDown,
+
+                }),
+                [3] = RectangleHumanoidList(new(){
+
+                    humanoidFrames.jumpLeft,
+
+                }),
+            };
 
             return custom;
 
@@ -203,23 +236,16 @@ namespace StardewDruid.Render
                 [0] = RectangleHumanoidList(new(){
 
                     humanoidFrames.pointUp,
-                    humanoidFrames.pointUp,
                 }),
                 [1] = RectangleHumanoidList(new(){
-
-                    humanoidFrames.pointRight,
 
                     humanoidFrames.pointRight,
                 }),
                 [2] = RectangleHumanoidList(new(){
 
                     humanoidFrames.pointDown,
-
-                    humanoidFrames.pointDown,
                 }),
                 [3] = RectangleHumanoidList(new(){
-
-                    humanoidFrames.pointLeft,
 
                     humanoidFrames.pointLeft,
                 }),
@@ -292,10 +318,84 @@ namespace StardewDruid.Render
 
             };
 
+            custom[Character.Character.specials.gesture] = new()
+            {
+
+                [0] = RectangleHumanoidList(new(){
+
+                    humanoidFrames.gesture,
+
+                }),
+
+                [1] = RectangleHumanoidList(new(){
+
+                    humanoidFrames.gesture,
+
+                }),
+
+                [2] = RectangleHumanoidList(new(){
+
+                    humanoidFrames.gesture,
+
+                }),
+
+                [3] = RectangleHumanoidList(new(){
+
+                    humanoidFrames.gesture,
+
+                }),
+
+            };
+
             return custom;
 
         }
-        
+
+        public static Dictionary<specials,int> HumanoidIntervals()
+        {
+
+            return new()
+            {
+                [specials.invoke] = 30,
+                [specials.special] = 30,
+                [specials.launch] = 12,
+                [specials.point] = 60,
+                [specials.sweep] = 15,
+                [specials.pickup] = 30,
+                [specials.gesture] = 60,
+            };
+
+        }
+        public static Dictionary<specials, int> HumanoidCeilings()
+        {
+
+            return new()
+            {
+                [specials.invoke] = 1,
+                [specials.special] = 1,
+                [specials.launch] = 1,
+                [specials.point] = 0,
+                [specials.sweep] = 3,
+                [specials.pickup] = 1,
+                [specials.gesture] = 0,
+            };
+        }
+
+        public static Dictionary<specials, int> HumanoidFloors()
+        {
+
+            return new()
+            {
+                [specials.invoke] = 1,
+                [specials.special] = 1,
+                [specials.launch] = 1,
+                [specials.point] = 0,
+                [specials.sweep] = 0,
+                [specials.pickup] = 1,
+                [specials.gesture] = 0,
+            };
+        }
+
         public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> HumanoidWalk()
         {
 

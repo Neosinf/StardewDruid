@@ -161,22 +161,6 @@ namespace StardewDruid.Cast.Effect
 
                 default:
 
-                    IconData.relics tacticalRelic = Mod.instance.relicsData.RelicTacticalLocations();
-
-                    if (tacticalRelic != IconData.relics.none)
-                    {
-
-                        if (!Journal.RelicData.HasRelic(tacticalRelic))
-                        {
-
-                            ThrowHandle throwRelic = new(Game1.player, origin, tacticalRelic);
-
-                            throwRelic.register();
-
-                        }
-
-                    }
-
                     creature = new StardewDruid.Character.Hoverer(Character.CharacterHandle.characters.Shadowbat);
 
                     creature.netMovement.Set((int)Character.Character.movements.run);
@@ -188,6 +172,8 @@ namespace StardewDruid.Cast.Effect
             }
 
             creature.setScale = scale;
+
+            creature.gait = 2.8f;
 
             creature.currentLocation = location;
 

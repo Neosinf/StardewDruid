@@ -228,7 +228,7 @@ namespace StardewDruid.Journal
 
                 requirement = 100,
 
-                reward = 1000,
+                reward = 500,
 
                 before = new()
                 {
@@ -269,7 +269,7 @@ namespace StardewDruid.Journal
 
                 requirement = 20,
 
-                reward = 1000,
+                reward = 500,
 
                 before = new()
                 {
@@ -315,7 +315,7 @@ namespace StardewDruid.Journal
 
                 requirement = 5,
 
-                reward = 1000,
+                reward = 500,
 
                 before = new()
                 {
@@ -358,7 +358,7 @@ namespace StardewDruid.Journal
 
                 requirement = 5,
 
-                reward = 1000,
+                reward = 500,
 
                 before = new()
                 {
@@ -400,7 +400,7 @@ namespace StardewDruid.Journal
 
                 requirement = 100,
 
-                reward = 1000,
+                reward = 500,
 
                 before = new()
                 {
@@ -572,7 +572,7 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.none,
 
-                origin = new Vector2(30, 21) * 64,
+                origin = new Vector2(26, 21) * 64,
 
                 // -----------------------------------------------
 
@@ -945,7 +945,7 @@ namespace StardewDruid.Journal
 
                 //triggerRite = Rite.rites.mists,
 
-                origin = new Vector2(27,16) * 64,
+                origin = new Vector2(27,14) * 64,
 
                 // -----------------------------------------------
 
@@ -1343,7 +1343,7 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.mists,
 
-                origin = new Vector2(28, 10f) * 64,
+                origin = new Vector2(24, 10f) * 64,
 
                 // -----------------------------------------------
 
@@ -2134,6 +2134,47 @@ namespace StardewDruid.Journal
 
             quests.Add(relicFates.name, relicFates);
 
+            // =====================================================
+            // RELIC VAULT
+
+            Quest relicRestore = new()
+            {
+
+                name = QuestHandle.relicRestore,
+
+                type = Quest.questTypes.relics,
+
+                icon = IconData.displays.weald,
+
+                // -----------------------------------------------
+
+                give = Quest.questGivers.none,
+
+                trigger = true,
+
+                triggerLocation = triggerLocales.CommunityCenter.ToString(),
+
+                triggerTime = 0,
+
+                triggerRite = Rite.rites.weald,
+
+                origin = new Vector2(51, 8) * 64,
+
+                // -----------------------------------------------
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.329.1"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.329.2"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.329.3"),
+
+                explanation = Mod.instance.Helper.Translation.Get("QuestData.329.4") + 
+                Mod.instance.Helper.Translation.Get("QuestData.329.5") + 
+                Mod.instance.Helper.Translation.Get("QuestData.329.6"),
+
+            };
+
+            quests.Add(relicRestore.name, relicRestore);
 
             // =====================================================
             // ETHER LESSONS
@@ -2470,16 +2511,17 @@ namespace StardewDruid.Journal
 
                 title = Mod.instance.Helper.Translation.Get("QuestData.2395"),
 
-                description = Mod.instance.Helper.Translation.Get("QuestData.2397") +
+                description = 
+                Mod.instance.Helper.Translation.Get("QuestData.2397") +
                 Mod.instance.Helper.Translation.Get("QuestData.2398") +
                 Mod.instance.Helper.Translation.Get("QuestData.2399"),
 
                 instruction = Mod.instance.Helper.Translation.Get("QuestData.2401"),
 
-                explanation = Mod.instance.Helper.Translation.Get("QuestData.2404") + 
+                explanation = 
+                Mod.instance.Helper.Translation.Get("QuestData.2404") + 
                 Mod.instance.Helper.Translation.Get("QuestData.315.1") + 
                 Mod.instance.Helper.Translation.Get("QuestData.315.2"),
-
 
                 reward = 10000,
 
@@ -2492,7 +2534,8 @@ namespace StardewDruid.Journal
                     {
                         prompt = true,
                         questContext = 1,
-                        intro = Mod.instance.Helper.Translation.Get("QuestData.2418") +
+                        intro = 
+                        Mod.instance.Helper.Translation.Get("QuestData.2418") +
                         Mod.instance.Helper.Translation.Get("QuestData.2419") +
                         Mod.instance.Helper.Translation.Get("QuestData.2420") +
                         Mod.instance.Helper.Translation.Get("QuestData.2421") +
@@ -2524,7 +2567,6 @@ namespace StardewDruid.Journal
                     },
                 },
 
-
             };
 
             quests.Add(challengeEther.name, challengeEther);
@@ -2532,12 +2574,12 @@ namespace StardewDruid.Journal
             // =====================================================
             // Bones Clearing
 
-            Quest bonesClearing = new()
+            Quest questBlackfeather = new()
             {
 
-                name = QuestHandle.bonesClearing,
+                name = QuestHandle.questBlackfeather,
 
-                icon = IconData.displays.bones,
+                icon = IconData.displays.blackfeather,
 
                 type = Quest.questTypes.sword,
 
@@ -2549,7 +2591,7 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.none,
 
-                origin = new Vector2(28, 15) * 64,
+                origin = new Vector2(23, 15) * 64,
 
                 title = Mod.instance.Helper.Translation.Get("QuestData.315.3"),
 
@@ -2587,26 +2629,143 @@ namespace StardewDruid.Journal
                         Mod.instance.Helper.Translation.Get("QuestData.315.17") +
                         Mod.instance.Helper.Translation.Get("QuestData.315.18"),
 
-
                     },
 
                 },
 
-                after = new()
+            };
+
+            quests.Add(questBlackfeather.name, questBlackfeather);
+
+            // =====================================================
+            // Bones One
+
+            Quest bonesOne = new()
+            {
+
+                name = QuestHandle.bonesOne,
+
+                icon = IconData.displays.bones,
+
+                type = Quest.questTypes.lesson,
+
+                give = Quest.questGivers.dialogue,
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.324.1"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.324.2"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.324.3") +
+                Mod.instance.Helper.Translation.Get("QuestData.324.4"),
+
+                progression = Mod.instance.Helper.Translation.Get("QuestData.324.5"),
+
+                requirement = 20,
+
+                reward = 1000,
+
+                before = new()
                 {
 
                     [CharacterHandle.characters.Blackfeather] = new()
                     {
                         prompt = true,
-                        intro = Mod.instance.Helper.Translation.Get("QuestData.315.19"),
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.324.6") +
+                        Mod.instance.Helper.Translation.Get("QuestData.324.7"),
 
                     },
 
-                }
+                },
 
             };
 
-            quests.Add(bonesClearing.name, bonesClearing);
+            quests.Add(bonesOne.name, bonesOne);
+
+            // =====================================================
+            // Bones Two
+
+            Quest bonesTwo = new()
+            {
+
+                name = QuestHandle.bonesTwo,
+
+                icon = IconData.displays.bones,
+
+                type = Quest.questTypes.lesson,
+
+                give = Quest.questGivers.dialogue,
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.324.8"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.324.9"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.324.10"),
+
+                progression = Mod.instance.Helper.Translation.Get("QuestData.324.11"),
+
+                requirement = 20,
+
+                reward = 1000,
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Blackfeather] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.324.12"),
+
+                    },
+
+                },
+
+            };
+
+            quests.Add(bonesTwo.name, bonesTwo);
+
+            // =====================================================
+            // Bones Three
+
+            Quest bonesThree = new()
+            {
+
+                name = QuestHandle.bonesThree,
+
+                icon = IconData.displays.bones,
+
+                type = Quest.questTypes.lesson,
+
+                give = Quest.questGivers.dialogue,
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.324.13"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.324.14"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.324.15") +
+                Mod.instance.Helper.Translation.Get("QuestData.324.16"),
+
+                progression = Mod.instance.Helper.Translation.Get("QuestData.324.17"),
+
+                requirement = 10,
+
+                reward = 1000,
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Blackfeather] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.324.18") +
+                        Mod.instance.Helper.Translation.Get("QuestData.324.19"),
+
+                    },
+
+                },
+
+            };
+
+            quests.Add(bonesThree.name, bonesThree);
 
             return quests;
 
@@ -2697,6 +2856,8 @@ namespace StardewDruid.Journal
 
         public int delay;
 
+        public int given;
+
         public QuestProgress()
         {
 
@@ -2712,6 +2873,8 @@ namespace StardewDruid.Journal
             replay = Replay;
 
             delay = Delay;
+
+            given = 0;
 
         }
 

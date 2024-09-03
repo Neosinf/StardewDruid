@@ -19,6 +19,7 @@ using StardewValley.TerrainFeatures;
 using System.Threading;
 using xTile;
 using StardewDruid.Character;
+using StardewDruid.Journal;
 
 namespace StardewDruid.Location
 {
@@ -482,9 +483,18 @@ namespace StardewDruid.Location
 
             }
 
+            addDialogue();
+
             this.map = newMap;
 
             waterfallTexture = Game1.temporaryContent.Load<Texture2D>("Maps\\spring_Waterfalls");
+
+        }
+
+        public override bool readyDialogue()
+        {
+
+            return Mod.instance.questHandle.IsComplete(QuestHandle.swordEther);
 
         }
 
@@ -583,6 +593,10 @@ namespace StardewDruid.Location
 
             warps.Add(new Warp(30, 32, "Town", 98, 8, flipFarmer: false));
 
+        }
+        public override Item getFish(float millisecondsAfterNibble, string bait, int waterDepth, Farmer who, double baitPotency, Vector2 bobberTile, string locationName = null)
+        {
+            return base.getFish(millisecondsAfterNibble, bait, waterDepth, who, baitPotency, bobberTile, "Mountain");
         }
 
     }

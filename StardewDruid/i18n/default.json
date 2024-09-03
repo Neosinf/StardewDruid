@@ -21,6 +21,8 @@
     "DialogueData.201": "Open Grimoire",
     "DialogueData.205": "Open Reliquary",
     "DialogueData.209": "Open Apothecary",
+    "DialogueData.318.1": "Open Chronicle",
+    "DialogueData.318.2": "Open Dragonomicon",
     "DialogueData.213": "Sort quests by completion",
     "DialogueData.217": "Reverse order of entries",
     "DialogueData.221": "Refresh all potions",
@@ -43,6 +45,7 @@
     "DialogueData.293": "No rite attuned to slot ",
     "DialogueData.297": "Rite requires a melee weapon or tool",
     "DialogueData.301": "This tool has not been attuned to a rite",
+    "DialogueData.330.2": "This tool is not attuned, and will cast {{rite}} by default",
     "DialogueData.305": "Nothing happened... ",
     "DialogueData.309": "Unable to reach the otherworldly plane from this location",
     "DialogueData.313": "Not enough energy to continue rite",
@@ -53,12 +56,18 @@
     "DialogueData.333": "quest complete",
     "DialogueData.337": "percent complete",
 
+    "DialogueData.329.1": "You have started to restore this sacred space",
+    "DialogueData.329.2": "This sacred space has been restored a little more",
+    "DialogueData.329.3": "You have fully restored this sacred space!",
+    "DialogueData.330.1": "You have restored as much as possible today, come again tomorrow",
+
     // Menu titles
     "DialogueData.343": "Stardew Druid",
     "DialogueData.347": "Grimoire",
     "DialogueData.351": "Reliquary",
     "DialogueData.355": "Dragonomicon",
     "DialogueData.359": "Apothecary",
+    "DialogueData.318.3": "Chronicle",
 
     // Menu strings
     "DialogueData.399": "(Please note only the farm host can activate quests.)",
@@ -76,6 +85,8 @@
     "DialogueData.443": "STM",
     "DialogueData.447": "You haven't found this relic yet",
     "DialogueData.451": "Unknown Relic",
+    "DialogueData.319.1": "Lesson Skipped",
+    "DialogueData.319.2": "Mastered",
 
     // Dragon Menu
     "DialogueData.455": "Primary Colour",
@@ -88,6 +99,10 @@
     "DialogueData.483": "Accent colour",
     "DialogueData.487": "Eye colour",
     "DialogueData.316.3": "Size",
+
+    // Lore menu
+    "DialogueData.318.4": "The following is an account of the conversations I had during this time in my journey.",
+    "DialogueData.318.5": "The following is an account of words I heard spoken during this event.",
 
     // Event strings
     "DialogueData.529": "Trash Collected",
@@ -243,7 +258,7 @@
     "DialogueData.905": "Face my judgement, Jelly-fiend",
     "DialogueData.906": "Ha ha ha. Too slow, scarecrow.",
     "DialogueData.908": "The energies of the waves call to me",
-    "DialogueData.909": "Come join me on the farthest shore",
+    "DialogueData.909": "Come join me on the lonely atoll",
     "DialogueData.910": "We are not alone it seems",
     "DialogueData.911": "Hmmm... why there are so many?",
     "DialogueData.912": "This is for you.",
@@ -295,7 +310,7 @@
     "DialogueData.959": "Stop waffling and pin them down",
     "DialogueData.960": "Its no good. Twinkly's too tricky",
     // segment 4
-    "DialogueData.963": "Dont feel so good bout this",
+    "DialogueData.963": "Don't feel so good bout this",
     "DialogueData.964": "You'd rather anger the Deep one?",
     "DialogueData.965": "Sod that, I'd rather fight",
     "DialogueData.967": "This isn't going well",
@@ -428,7 +443,7 @@
     "DialogueData.1134": "Why is everything so grey",
     "DialogueData.1135": "Then again I am colourblind to half the rainbow",
     "DialogueData.1137": "I think we're getting closer!",
-    "DialogueData.1138": "Dont think there will be anything spooky at the end of this... right?",
+    "DialogueData.1138": "Don't think there will be anything spooky at the end of this... right?",
     "DialogueData.1140": "There... Thanatoshi... the Reaper",
     "DialogueData.1141": "Hey farmer, there's something back here",
     "DialogueData.1142": "The Jester of Fates wins again!",
@@ -758,7 +773,7 @@
     "DialogueData.1676": "Ok. Whoever's behind the rock, come on out.",
     "DialogueData.1687": "Whispers on the wind: The monarchs remain dormant, their realm untended. Who are you to claim the inheritance of the broken circle?",
     "DialogueData.1691": "The valley is my home now. I want to care for and protect it.",
-    "DialogueData.1692": "I'm being friendly and playing along with your little game. Just dont pull down my pants or anything.",
+    "DialogueData.1692": "I'm being friendly and playing along with your little game. Just don't pull down my pants or anything.",
     "DialogueData.1703": "Rustling in the Woodland: It is not an easy path, the one tread by a squire of the Two Kings. Are you ready to serve?",
     "DialogueData.1708": "I will serve the sleeping monarchs like the druids of yore.",
     "DialogueData.1709": "Serve... tea? Tennis ball?",
@@ -791,7 +806,7 @@
     "DialogueData.1842": "It was decreed by the Fates that humans and other survivors would work together to revitalise the valley. ",
     "DialogueData.1843": "The Lady Beyond and my master built a little garden of hope in the valley, the first farm. ",
     "DialogueData.1844": "From the moment I awoke in this form, the circle of druids has been my mission, and my home. ",
-    "DialogueData.1845": "But the Fates lost interest in our world, and the elderborn departed. ",
+    "DialogueData.1845": "But the Fates lost interest in our world, and the elderfolk departed. ",
     "DialogueData.1846": "I have lost count of the days since that time.",
     "DialogueData.1856": "The Effigy: That menace. I swear that when I find the means, I will turn him to juice and rind. Something about that insidious, gleeful countenance inspires me to rage.",
     "DialogueData.1860": "Sociopathic slime monsters tend to talk smack.",
@@ -921,7 +936,7 @@
     "DialogueData.2358": "I fought a dragon once. How long ago was that? Seems like I'm always fighting when I'd rather make friends. Welcome new friend.",
     "DialogueData.2359": "(Say nothing)",
     "DialogueData.2364": "I'm surprised that you would consider me for a partnership, but I will accept, gratefully. ",
-    "DialogueData.2365": "I have my own reasons for studying the forgotten war between dragons and elderborn, and if I get the opportunity to pursue my research, then I will. ",
+    "DialogueData.2365": "I have my own reasons for studying the forgotten war between dragons and elderfolk, and if I get the opportunity to pursue my research, then I will. ",
     "DialogueData.2366": "I also expect I will have to face my former masters at some point. Until then, my allegiance is yours. ",
     "DialogueData.2367": "As a token of my goodwill, I entrust to you the old text I spoke of, and the compendium of my own research. ",
     "DialogueData.2368": "The text also made mention of the circle of druids, and are part of the reason I wanted to capture one of your number for questioning.",
@@ -1003,13 +1018,168 @@
     "DialogueData.315.15": "(Blackfeather looks around) I should probably try to remember what I was doing before I was consumed by that spirit-eating monstrosity. ",
     "DialogueData.315.16": "Please visit me here again soon. I think we have much to discuss. ",
 
-    // Blackfeather, Rite of Bones, Clearing event
-    "DialogueData.315.100": "(Blackfeather appraises the Raven) Ah, a splendid creature.",
-    "DialogueData.315.101": "It's just a common carrion bird. It's probably attracted to the unearthed bones.",
-    "DialogueData.315.102": "Oh, the frightful omen of a lone Raven! Our desecration of the Thane's grave has angered the Forest Spirits, we must make an offering of one of every type of seasonal forage to appease their wrath!",
-    "DialogueData.315.103": "The appearance of our friend here is a good first sign that we follow the Crowmother's plan. This isn't a common Raven. It was one of the old crone's familiars.",
-    "DialogueData.315.104": "That means congratulations are owed to you, successor. You're now a witch in the tradition of the Mother of Crows.",
-    //"You are the hope of those that believe in the crowmother's plan, to restore the harmony that existed before the downfall of the elders and dragons, and to that end, I will follow you. " +
+    // Blackfeather, Rite of Bones, event
+    "DialogueData.324.1": "Blackfeather",
+    "DialogueData.324.2": "Mother of Crows",
+    "DialogueData.324.3": "Lady of Mists",
+    "DialogueData.324.4": "Knight Wyrven",
+    "DialogueData.324.5": "First Farmer",
+    "DialogueData.324.6": "Masayoshi, The Justiciar",
+    "DialogueData.324.7": "Thanatoshi, The Reaper",
+    "DialogueData.324.8": "Seafarer Captain",
+
+    // Transcript
+    "DialogueData.324.9": "This was once a nursery of trees and spirits",
+    "DialogueData.324.10": "The forest has grown, and aged, and grown again",
+    "DialogueData.324.11": "And I missed every moment",
+
+    "DialogueData.324.12": "Oh... the nursery",
+    "DialogueData.324.13": "Blackfeather!",
+    "DialogueData.324.14": "Mother?",
+    "DialogueData.324.15": "By darkness, it's all come undone. My little ones...",
+    "DialogueData.324.16": "Dragonfire? Here?",
+    "DialogueData.324.17": "Thank you, heiress",
+    "DialogueData.324.18": "How can this be, how have the dragons returned?",
+    "DialogueData.324.19": "No. This blaze was created by shamanic magic",
+    "DialogueData.324.20": "Indeed. The guardians performed a purification here",
+    "DialogueData.324.21": "What, what do you mean, purification?",
+    "DialogueData.324.22": "The Druids... fell to corruption. They consumed your garden",
+    "DialogueData.324.23": "The traitors have been destroyed",
+    "DialogueData.324.24": "But their bones remain",
+    "DialogueData.324.25": "A memory of mist",
+
+    "DialogueData.324.26": "It's empty",
+    "DialogueData.324.27": "This place used to be full of little marvels",
+    "DialogueData.324.28": "Oh... I sense the energies of the mists again",
+    "DialogueData.324.29": "The Stream has claimed Blackfeather",
+    "DialogueData.324.30": "And will not relinquish her until the agreed time",
+    "DialogueData.324.31": "Will the hound not intercede for us?",
+    "DialogueData.324.32": "Not while he is on the hunt",
+    "DialogueData.324.33": "We must reform the circle with new apprentices. With clean hearts",
+    "DialogueData.324.34": "I know a human who might ascend the rites",
+    "DialogueData.324.35": "Has he been tested?",
+    "DialogueData.324.36": "No. But his arms are strong. His heart is good",
+    "DialogueData.324.37": "The human lifespan, he will perish long before the time comes",
+    "DialogueData.324.38": "His descendants will be ready. If he weds...",
+    "DialogueData.324.39": "I do have an idea. An outrageous one. A golem. Undying",
+    "DialogueData.324.40": "What source will sustain it's core? We possess no such device",
+    "DialogueData.324.41": "Ah, but we do, and the beauty of it is...",
+    "DialogueData.324.42": "It only needs to function until the rite is performed",
+    "DialogueData.324.43": "You can't possibly mean",
+    "DialogueData.324.44": "Trust me, heiress. The promises will be kept",
+    "DialogueData.324.45": "She never was one to give up",
+
+    "DialogueData.324.46": "Of all the valleys secrets",
+    "DialogueData.324.47": "This one seems to have changed the least",
+    "DialogueData.324.48": "Now to speak across the seas",
+    "DialogueData.324.49": "Lady of the Mists, I beseech thy counsel",
+    "DialogueData.324.50": "I am ready to listen",
+
+    "DialogueData.324.51": "Farmer, see reason. You have much to gain from cooperation",
+    "DialogueData.324.52": "It's already over, Justiciar. I've destroyed the Avalant.",
+    "DialogueData.324.53": "You will never reach the isles",
+    "DialogueData.324.54": "Brother, he has confessed",
+    "DialogueData.324.55": "He is misguided. His affections for the witch deceive him",
+    "DialogueData.324.56": "More twisted narratives and false virtues",
+    "DialogueData.324.57": "Blaspheme again, and your life is forfeit",
+    "DialogueData.324.58": "Yoba will favour the blade of the righteous",
+    "DialogueData.324.59": "Brother, be at ease",
+    "DialogueData.324.60": "I have already divined the secrets of this wayward soul",
+    "DialogueData.324.61": "Our quarry is close, disguised in bone and...",
+    "DialogueData.324.62": "...unexpected",
+    "DialogueData.324.63": "Masayoshi!",
+    "DialogueData.324.64": "May those awake... guard... my love...",
+    "DialogueData.324.65": "Rest, my kin, for I will not",
+    "DialogueData.324.66": "We'll leave you to your grief, master",
+    "DialogueData.324.67": "No. Prepare to set sail",
+    "DialogueData.324.68": "But master, without the device, the journey...",
+    "DialogueData.324.69": "You will bring that mist witch before me",
+    "DialogueData.324.70": "And if you die trying",
+    "DialogueData.324.71": "You will spend your death trying",
+
+    "DialogueData.324.72": "You've made great progress, successor",
+    "DialogueData.324.73": "I think you're strong enough for the crowmother's rite",
+
+    "DialogueData.324.74": "I WILL NOT BE DENIED",
+    "DialogueData.324.75": "I brought you here",
+    "DialogueData.324.76": "I raised you to the seat of the archdruid",
+    "DialogueData.324.77": "Your power is mine to wield",
+    "DialogueData.324.78": "An instrument of my vengeance",
+    "DialogueData.324.79": "ARGHH",
+    "DialogueData.324.80": "These damned crows",
+    "DialogueData.324.81": "Your mistress abandoned me!",
+    "DialogueData.324.82": "All her promises are broken",
+    "DialogueData.324.83": "She didn't protect him...",
+    "DialogueData.324.84": "My farmer",
+
+    "DialogueData.324.85": "Thank you, my little friends.",
+    "DialogueData.324.86": "You have not abandoned the cause, and neither will I.",
+    "DialogueData.324.87": "Funny. They still answer to this strange little knife.",
+    "DialogueData.324.88": "It was my mothers.",
+    "DialogueData.324.89": "Look after it for me.",
+
+    // Conversations
+    // 1 Intro conversation
+    "DialogueData.324.90": "Blackfeather: It's strange to see wisps gather so far from the shoreline. Did you summon them here?",
+
+    "DialogueData.324.91": "The wisps are the dreams of the sleeping kings made manifest in this world. This space has a special significance to the Weald, and something here remains a source of discontent for those on the isle of mists.",
+    "DialogueData.324.92": "Maybe. One time I sneezed in the library and lightning struck all the desk lamps and puddles formed on the inlaid hardwood panels. I snuck out.",
+
+    "DialogueData.324.93": "You have a strong connection to the energies that served the elderfolk. Funny, I can sense something familiar on the shifting winds. Like a scent from the old nursery.",
+
+    // 2 After Orchard scene
+    "DialogueData.324.94": "Blackfeather: The chefs attacked the nursery, and before I could escape with the little apple spirits, we were caught by the foul magics channeled by the traitors.",
+
+    "DialogueData.324.95": "Gelatin's phylactery is a darkened bone pumpkin head. He was struck down by Knight Wyrven and sealed here, as per a testimony he left for the descendants of the Circle.",
+    "DialogueData.324.96": "Mmmm. I did detect a faint scent of fresh apple danish.",
+
+    "DialogueData.324.97": "Only the powers of chaos can unmake such a horrid artifact, for it was the Great Stream itself that gave us the rite of bones. ",
+    "DialogueData.324.98": "The chefs used a twisted version of the rite, and devoured the elemental essence of the forest spirits I cared for to transfrom themselves into undying fiends. How my mother of crows must have felt at this devastation. ",
+    "DialogueData.324.99": "(Blackfeather looks towards the Shrine engine door) There is a space nearby where I would often find her at craft with her stellarfolk assistants. ",
+    "DialogueData.324.100": "I wonder what she might have done with the broken pieces of the Circle.",
+
+    // 3 After Shrine Engine scene
+    "DialogueData.324.101": "Blackfeather: These memories must belong to the Heiress of the Isle of Mists. I think we are meant to understand her perspective on these events.",
+
+    "DialogueData.324.102": "I saw a similar vision one time at the lonely atoll. The lady departed our shores to care for her elderfolk kin, and the circle waned until only the Effigy remained.",
+    "DialogueData.324.103": "Yes, what could cause such a well mannered Lady to become a storm-stirring voice that shouts at everything.",
+
+    "DialogueData.324.104": "I remember the atoll you describe. It was a great place to immerse oneself in the energies of the tides and the breezes of the sea. If that is where the wisps linger, then I will accompany you there. ",
+    "DialogueData.324.105": "I hope to see what manner of plan my mother of crows devised in the aftermath of the nursery's destruction and my banishment.",
+
+    // 4 After Atoll scene
+    "DialogueData.324.106": "Blackfeather: So you have witnessed the crimes against our circle. You have seen how crowmother abandoned us to zealotry of the Fates. (Blackfeather's eyes flicker turquoise)",
+
+    "DialogueData.324.107": "The Justiciar and the Reaper were determined to bring a rogue celestial to justice for war crimes. Their extremism damned many souls, though I'm not sure why they attacked the Circle. The first farmer had nothing to do with the war.",
+    "DialogueData.324.108": "Sorry, I know this was important, but I was distracted by all the fashions on display. The hats.",
+
+    "DialogueData.324.109": "It has everything to do with the circle, as it was formed to guard the change of seasons until the Two Kings returned to perform the rite of bones. ",
+    "DialogueData.324.110": "Now the conditions are right, and the two kings will not return, so it is up to us to perform this sacred duty. ",
+    "DialogueData.324.111": "We must prepare to break the seals of crows, and return the fallen stars to the firmament of the heavens. ",
+    "DialogueData.324.112": "It is time for my, our, retribution. ",
+
+    // 5 Confronting Possessed Blackfeather
+    "DialogueData.324.113": "Blackfeather: Successor? Is something amiss? (Blackfeather's turquoise eyes flash like lightning)",
+
+    "DialogueData.324.114": "Those phrases you just used. Successor. Time of Retribution. Guarding the change. Only the Effigy uses those words, as he was taught... by the Lady Beyond the Shore.",
+    "DialogueData.324.115": "Well I thought we were going to have a forest picnic, or at least a beach picnic... when are we going to bust out the blanket and jam sandwhiches?",
+
+    "DialogueData.324.116": "It appears that you require a final lesson in the power of the Mists.",
+
+    // 6 After Duel
+    "DialogueData.324.117": "Blackfeather: I opened myself to receive the Lady's blessing, and she poured several ages of grief and frustration into the vessel of my mind.",
+
+    "DialogueData.324.118": "The Effigy and I believed that she resigned from the circle to pursue the interests and wellbeing of her people. I suppose it's more complicated.",
+    "DialogueData.324.119": "I'm sensible enough to know a time when a witty pun is inappropriate. But that was shocking.",
+
+    "DialogueData.324.120": "She was betrayed, long ago, by someone who caused her and her people no small measure of sorrow. ",
+    "DialogueData.324.121": "Even when the war ended, her duties as mistress of the Isles, custodian of the wounded Kings, could not distract her from her grievance. ",
+    "DialogueData.324.122": "She returned to the valley, to oversee the settling and restoration of the King's ruined dominion, but not even the friendship she gained here, from a gentle farmer who loved her, could comfort her. ",
+    "DialogueData.324.123": "Yet my mother of crows had a plan, and to it the Lady invested all her hopes and vindictiveness. But tragedy ensued, and as time passed, the Kings failed to wake, and the civilisation of the Isles went into decline. ",
+    "DialogueData.324.124": "The crows wouldn't answer the Lady, so she turned to Chaos, and in service to the Stream, she was granted a permanence that outlived her fading mind and body. She became mist. She is THE mists. ",
+    "DialogueData.324.125": "Forever encircled around the resting place of the Two Kings. Her voice becomes the thunder, and she still awaits her time of retribution. ",
+    "DialogueData.324.126": "But for now she is content. You are the hope of those that believe in the crowmother's plan, to restore the harmony that existed before the downfall of the elders and dragons, and to that end, I will follow you.",
+
 
     // ===========================================================================
     // NPC DIALOGUE
@@ -1023,7 +1193,6 @@
     "CharacterHandle.311.5": "Shadowtin",
     "CharacterHandle.315.1": "Blackfeather",
 
-
     // Main character titles
     "CharacterHandle.8": "Shadowtin, Treasure Hunter",
     "CharacterHandle.12": "Jester, Envoy of the Fates",
@@ -1031,7 +1200,7 @@
     "CharacterHandle.20": "Revenant, Guardian of the Star",
     "CharacterHandle.24": "Effigy, Last of the Circle",
     "CharacterHandle.315.2": "Blackfeather, The First Gardener",
-
+    "CharacterHandle.329.25": "The Keeper of Elder Memories",
 
     // Character approach text
     // Effigy
@@ -1055,6 +1224,8 @@
     "CharacterHandle.103": "(Shadowtin's ethereal eyes shine through a cold metal mask)",
     // Blackfeather
     "CharacterHandle.315.3": "Blackfeather: The forest spirits are pleased today.",
+    "CharacterHandle.323.1": "I need some time to recover my senses. Come see me tomorrow ok?",
+
     // Standing stones
     "CharacterHandle.107": "Energies of the Weald: Squire (squire) (squire) (squire)",
     // Shrine Attendant
@@ -1063,6 +1234,8 @@
     "CharacterHandle.111": "Murmurs of the Waves: Yes, friend",
     // Herbalism bench
     "CharacterHandle.115": "An old stone bench used by the old Druids for crafting herbal remedies",
+    // Elder memory
+    "CharacterHandle.329.7": "Keeper of Elder Memories: Keyholder. Welcome back to the graves of the elderfolk.",
     // Bird monument
     "CharacterHandle.119": "The beak has not been worn down with the passage of time.",
     // Cat monument
@@ -1072,46 +1245,31 @@
     // Fox monument
     "CharacterHandle.131": "It's unnerving to see a canine so large sit so still.",
 
+    // Shrine Engine
+    "CharacterHandle.323.20": "Stardew Valley Warp Shrine Engine Patent 3.2.3",
+    // Shrine Forge
+    "CharacterHandle.328.1": "Stardew Valley Aether Forge Patent 3.2.8",
+
     // Exit dialogue
     "CharacterHandle.143": "(nevermind)",
+    "CharacterHandle.329.31": "(Rest In Peace)",
 
     // About quests
     "CharacterHandle.159": "(quests) Can you please repeat the instructions?",
-
-    // About relics
-    "CharacterHandle.210": "(relics) I've recovered all the missing runestones from the founding of the circle. How do I access their latent powers?",
-    "CharacterHandle.216": "(relics) I think I've found an artifact from the time of the circle's founding",
-    "CharacterHandle.236": "(relics) I've found all the components of the ancient Avalant. Will this enable me to chart a course to the isle of mists?",
-    "CharacterHandle.242": "(relics) I fished out a fragment of a strange device. Is it familiar to you?",
-    "CharacterHandle.262": "(relics) I've managed to find three manuscripts hidden by the first farmer before he disappeared.",
-    "CharacterHandle.268": "(relics) How many records from the founding of the circle are missing?",
-    "CharacterHandle.288": "(relics) These ornament boxes, they're all empty.",
-    "CharacterHandle.294": "(relics) The Reaper of Fates kept this small box on him. Is it of value to the Fates?",
-    "CharacterHandle.302": "You take out your strongest tool, and strike as hard as you can.",
-    "CharacterHandle.306": "You raise your hand towards the feline's gentle features.",
-    "CharacterHandle.310": "You marvel at the colouring and lustre of the owl's feathers. You reach out, expecting a surface as cool and smooth as ivory.",
-    "CharacterHandle.314": "You lift the back of your hand towards the enlarged snout.",
-    // Shrine Attendant
-    "CharacterHandle.310.2": "(relics) I've located your lost brethren. Some of them were holding equipment.",
-    "CharacterHandle.310.3": "(relics) Can you speak? Can you tell me what happened here.",
 
     // About inventories
     "CharacterHandle.329": "(inventory) I have some seeds for you to sow.",
     "CharacterHandle.340": "Jester... what's in your mouth. Come on. Show me.",
     "CharacterHandle.351": "(inventory) Let's take stock of our supplies.",
     "CharacterHandle.362": "(inventory) Store and review potion ingredients.",
+    "CharacterHandle.323.2": "(inventory) Do you have everything you need to continue gardening?",
 
-    // About companion tasks
-    "CharacterHandle.381": "(adventure) I have a task for you.",
-    "CharacterHandle.392": "(adventure) Let's talk adventure.",
-    "CharacterHandle.403": "(adventure) Lets talk about our partnership.",
-    "CharacterHandle.411": "(warp) Why is the monument to the lady all the way out here?",
-    "CharacterHandle.415": "(warp) What is it like to be a servant of Chaos, Buffin? I imagine your duties take you to all sorts of random places.",
-    "CharacterHandle.419": "(warp) It was worth the treacherous ascent to witness the unfurling of the curtain of the sky. ",
-    "CharacterHandle.420": "The stage is set with the heroes of the constellations, and their radiance inspires me. Can I sleep here?",
-    "CharacterHandle.427": "(hammer) Break and store the contents of all geodes in inventory.",
-    "CharacterHandle.466": "(herbalism) Replenish potions",
 
+    // About relics
+
+    // Runestones
+    "CharacterHandle.210": "(relics) I've recovered all the missing runestones from the founding of the circle. How do I access their latent powers?",
+    "CharacterHandle.216": "(relics) I think I've found an artifact from the time of the circle's founding",
     // Energies (Standing Stones) in regards to the runestones
     "CharacterHandle.551": "Whispering on the wind: (laughs) You already possess conduits for the energies represented in the runes. Well, I can't remember what the cat means. ",
     "CharacterHandle.552": "Sighs of the Earth: The calico shamans served the ancient ones, the dragons. Their wild shape-shifting has been forgotten to time and ruin. The runestones are useless to you now.",
@@ -1119,6 +1277,10 @@
     "CharacterHandle.561": "Rustling in the woodland: When sourcing materials for your redecoration project, consider nearby sources and support your local woodlands! We have the best timber products on the market. (New quest recieved)",
     "CharacterHandle.576": "Rustling in the woodland: It is one of the runestones gifted to your forebearers, those tasked to govern in the Kings' stead. ",
     "CharacterHandle.577": "The other stones belong to creatures that do not care for the old ways. To gather all four would be a boon to the Weald.",
+
+    // Avalant
+    "CharacterHandle.236": "(relics) I've found all the components of the ancient Avalant. Will this enable me to chart a course to the isle of mists?",
+    "CharacterHandle.242": "(relics) I fished out a fragment of a strange device. Is it familiar to you?",
     // Waves in regards to the Avalant pieces
     "CharacterHandle.597": "Murmurs of the Waves: Indeed. The finned faithful will be very pleased... to be rid of the ruinous device! ",
     "CharacterHandle.598": "You see, it points towards the broken forgehall of the drowned city, deep within the abyssal trench, where mortals cannot tread. It is useless to you.",
@@ -1128,13 +1290,21 @@
     "CharacterHandle.621": "Murmurs of the Waves: The Avalant, to guide the blessed pilgrim through the judgements of the mists. ",
     "CharacterHandle.622": "It was broken, but can be restored. The finned faithful carry the pieces from the sea to the sacred spring. ",
     "CharacterHandle.623": "Continue to use the power of the lady to fish the waters, and you might collect all the scattered pieces.",
+
+    // Manuscripts
+    "CharacterHandle.262": "(relics) I've managed to find three manuscripts hidden by the first farmer before he disappeared.",
+    "CharacterHandle.268": "(relics) How many records from the founding of the circle are missing?",
     // The Revenant in regards to the treasure hunt texts
     "CharacterHandle.650": "The Revenant: ",
     "CharacterHandle.652": "I guess there's no great mystery to glean from these texts, but at least I can add the recipes to the digests in the community pantry.",
     "CharacterHandle.654": "Even the one for Fish Stew? Some of the ideas of my day are best left in the past. (New Quest Received)",
-    "CharacterHandle.664": "I think the Lady Beyond must have stashed these texts, farmer. The letters were penned by the prince of the sunken city, heir to the Isle of Mists, and the one who seduced our fair Starborn. ",
+    "CharacterHandle.664": "I think the Lady Beyond must have stashed these texts, farmer. The letters were penned by the prince of the sunken city, heir to the Isle of Mists, and the one who seduced our fair Celestial. ",
     "CharacterHandle.665": "I have nothing to say about the tome. The green book might have been too personal to leave intact, as it's been scrubbed down to just the boring parts. Recipes and potting tips. ",
     "CharacterHandle.671": "All the annals are accounted for, but if you find any manuscripts that weren't profaned by those crazies, bring them to me, might be good for a memory or a laugh.",
+
+    // Keepsake boxes
+    "CharacterHandle.288": "(relics) These ornament boxes, they're all empty.",
+    "CharacterHandle.294": "(relics) The Reaper of Fates kept this small box on him. Is it of value to the Fates?",
     // Buffin in regards to the keepsake boxes
     "CharacterHandle.697": "Buffin, Agent of Chaos: ",
     "CharacterHandle.699": "I guess I understand. There's a bulletin board layered with all kinds of moments like that, on faded paper and print stock. ",
@@ -1148,12 +1318,18 @@
     "CharacterHandle.723": "Imagine the bond they shared, to exchange boxes with one another. (Buffin looks towards the monuments) ",
     "CharacterHandle.724": "You'll have to convince the stone guardians to relinquish their secrets if you want the complete set. The Artisans are fond of tools, the Morticians, bones, probably, and Chaos... animals, of course!",
     // Monument interactions
+    "CharacterHandle.302": "You take out your strongest tool, and strike as hard as you can.",
+    "CharacterHandle.306": "You raise your hand towards the feline's gentle features.",
+    "CharacterHandle.310": "You marvel at the colouring and lustre of the owl's feathers. You reach out, expecting a surface as cool and smooth as ivory.",
+    "CharacterHandle.314": "You lift the back of your hand towards the enlarged snout.",
     "CharacterHandle.738": "The tool almost flies out of your hands with the rebound. It didn't even impact the surface of the monument. ",
     "CharacterHandle.739": "You may need an implement with a lustre that delights the Artisans. (Come back with an iridium tool) ",
     "CharacterHandle.745": "Your strike lands and a marvelous clang echoes through the cavern, singing the praises of a beautiful implement.",
     "CharacterHandle.755": "Verse 1 of 4. Cracks have appeared in the stonework of the court monuments.",
+    "CharacterHandle.323.11": "(blessing) Repeat the Revenant's prayer of supplication to the Lady of Luck and Fortune",
     "CharacterHandle.780": "You have received {{faeth}} faeth",
     "CharacterHandle.785": "The Priestess bestows you with a small gift of Faeth",
+    "CharacterHandle.323.12": "The priestess is amused with your fervor but provides no additional blessing",
     "CharacterHandle.794": "The shadow cast by the cat shifts over your hands, as if reading your fortune from the lines in your palms. ",
     "CharacterHandle.795": "You now know that you are to find one that is lost, where three have stayed one has strayed far away.",
     "CharacterHandle.801": "Verse 2 of 4. The one that was lost has returned, and their silent vigil has concluded.",
@@ -1163,7 +1339,12 @@
     "CharacterHandle.842": "Your hands do not smell sweet to the hungry fox. (Come back when you have built a Deluxe Barn or Deluxe Coop) ",
     "CharacterHandle.848": "The fox's grin appears to widen. Your hands have touched the splendid creatures. ",
     "CharacterHandle.858": "Verse 4 of 4. They are free to crumble into the unburdened nothing of dust.",
+
+    // Tactical Gear
     // Shrine Attendant
+    "CharacterHandle.310.2": "(relics) I've located your lost brethren. Some of them were holding equipment.",
+    "CharacterHandle.310.3": "(relics) Can you speak? Can you tell me what happened here.",
+    // After gathering all relics
     "CharacterHandle.310.4": "Shrine Attendant: Thank you. Cheep. We tore at the shadow raiders. Cheep. Tore off their clothes. Cheep. Tore until we could no longer fly. Or sing. ",
     "CharacterHandle.310.5": "The articles of defilement must be purified. We need a righteous flame. A big flame. Too big for shrine. Cheep.",
     "CharacterHandle.310.6": "I'll look for a furnace strong enough to incinerate the items. Perhaps the disused boiler in the community center.",
@@ -1174,35 +1355,101 @@
     "CharacterHandle.310.10": "You defeated him. Now the great church of bats is defeated. Is diminished. Cheep. I continue to serve the Lady. I light the lamps. I sleep. I listen for her voice. ",
     "CharacterHandle.310.11": "She asks for a kind pilgrim. A good pilgrim to seek out the scattered faithful. Entreat them to return. Cheep.",
 
+    // Restoration Tokens
+    // Elder Memory
+    "CharacterHandle.329.12": "(relics) I have brought vitality back to the sacred spaces.",
+    "CharacterHandle.329.13": "(relics) I have committed myself to honouring the elderfolk by assuming the title of caretaker of the sacred spaces. What other locations require my attention?",
+    // Hint of restoration of sacred spaces
+    "CharacterHandle.329.14": "Keeper of Memories: The sacred spaces respond to the gentle touch of the King's power. ",
+    "CharacterHandle.329.15": "I know of three such locations, these hallowed grounds, the Shrine of the Sacred Spring, and a Nursery for forest spirits hidden within the eastern woodlands. Return to me when you have tended to all three.",
+    "CharacterHandle.329.16": "Keeper of Memories: Each token you've collected is a symbol of reverence for the care you've shown to the sacred spaces. They are also vestiges of a forgotten age, and should be kept in safety. ",
+    "CharacterHandle.329.17": "I need to dispose of a hinge-shot vault in the old community center. Perhaps I can move it to the farmstead and fix it up to hold all my cool Druid stuff.",
+    "CharacterHandle.329.18": "Keeper of Memories: Keeping a wealth of Elderfolk culture and memory in a reinforced repository. What a new and fascinating idea.",
+
+    // Memory Keeper restoration
+    "CharacterHandle.329.19": "(restoration) The Circle of Druids was tasked with custodianship of the Old Graves. What work needs to be done?",
+    "CharacterHandle.329.20": "(restoration) The grounds have begun to reflect the majesty of the elderfolk.",
+    "CharacterHandle.329.21": "Keeper of Memories: Grime and rough stone have settled on the hallowed graves of the Elders. Clear them away, and you will have begun the good work of the caretakers of the Weald.",
+    "CharacterHandle.329.22": "Keeper of Memories: Wealdbroom is a perennial flower favoured by the folk of the past. The calming scent of wealdbroom blooms and waxed candles will complete the restoration of the Elder Graves.",
+    "CharacterHandle.329.23": "Keeper of Memories: Thank you for honouring the wishes of the gentlefolk who first put their heroes to rest on these hallowed grounds. ",
+    "CharacterHandle.329.24": "Take a coin from the offering. Such tokens were left by pilgrims in gratitude for the good work of the first caretakers.",
+
+    // Shrine Attendant Spring restoration
+    "CharacterHandle.329.1": "(restoration) Do you require any assistance with care for the sacred spring?",
+    "CharacterHandle.329.2": "(restoration) The sacred lilies have returned to the spring",
+    "CharacterHandle.329.3": "Cheep. Make the lilies, cheep. Do the nature sings thing.",
+    "CharacterHandle.329.4": "More lilies, cheep. The Lady's favourite they are.",
+    "CharacterHandle.329.5": "Cheep. The presence of the Lady dwells with us. Her misty form flows across the waters, breathing in the scent of the lilies.",
+    "CharacterHandle.329.6": " A stamp for you. Cheep. Please visit again.",
+
+    // Shrine Engine
+    "CharacterHandle.323.13": "(blessing) Siphon some aether from a release valve.",
+    "CharacterHandle.323.14": "You have received {{aether}} aether.",
+    "CharacterHandle.323.15": "You carefully engage the valve lever and let a trickle of liquid aether fill up your bottle.",
+    "CharacterHandle.323.16": "Pressure levels are optimal throughout the system. The shrine has no more aether to share today.",
+    "CharacterHandle.323.17": "(warp) So this engine powers the whole warp shrine network...",
+    "CharacterHandle.323.18": "You stare into the great, glowing eyes of the aether boiler. It's smile appears to widen. Your mind is now enraptured with the gleeful thought of slipping into a stream of ether...",
+    "CharacterHandle.323.19": "Take me now.",
+
+    // About companion tasks
+    "CharacterHandle.381": "(adventure) I have a task for you.",
+    "CharacterHandle.392": "(adventure) It's adventure time Jester'.",
+    "CharacterHandle.403": "(adventure) Lets talk about our partnership.",
+    "CharacterHandle.323.3": "(adventure) Let's see the world together",
+
     // Answers about companion tasks
+    // Effigy
     "CharacterHandle.896": "The Effigy: It is time to roam the wilds once more.",
-    "CharacterHandle.901": "(follow) Come explore the valley with me.",
+    "CharacterHandle.901": "(follow) Come walk the wild paths of the valley with me.",
     "CharacterHandle.909": "(work) My farm would benefit from your gentle stewardship.",
     "CharacterHandle.919": "(rest) Thank you for everything you do for the circle.",
+    "CharacterHandle.1076": "I will see how you exercise the authority of the sleeping kings.",
+    "CharacterHandle.1105": "I will take my place amongst the posts and furrows of my old master's home.",
+    "CharacterHandle.1133": "I will return to where I may hear the rumbling energies of the valley's leylines.",
+    // Jester
     "CharacterHandle.939": "The Jester of Fates: I'm ready to explore the world.",
     "CharacterHandle.944": "(follow) Let us continue our quest.",
     "CharacterHandle.953": "(work) There's plenty going on on the farm.",
     "CharacterHandle.963": "(rest) The Druid's grove is where it's all happening.",
+    "CharacterHandle.1082": "Lead the way, fateful one.",
+    "CharacterHandle.1111": "Let's see who's around to bother.",
+    "CharacterHandle.1139": "(Jester grins) That's my favourite place to nap!",
+    // Shadowtin
     "CharacterHandle.982": "Shadowtin Bear: What do you propose?",
     "CharacterHandle.987": "(follow) Let us continue our investigation.",
     "CharacterHandle.996": "(work) There's plenty of research material on the farm.",
     "CharacterHandle.1006": "(rest) That's enough treasure hunting for now.",
+    "CharacterHandle.1088": "Indeed. How about we split the spoils fifty fifty.",
+    "CharacterHandle.1117": "Lets see how profitable this agricultural venture is.",
+    "CharacterHandle.1145": "Good idea. I require a quiet, shaded place to ruminate.",
+    // Blackfeather
+    "CharacterHandle.323.4": "Blackfeather: It would be good to stretch my legs and see my friends.",
+    "CharacterHandle.323.5": "(follow) There's a lot to do today, let's get started.",
+    "CharacterHandle.323.6": "(work) I have some delicate plants that would benefit from your gentle touch.",
+    "CharacterHandle.323.7": "(rest) You've been a great help today, Blackfeather.",
+    "CharacterHandle.323.8": "You sound just like the founders of the circle, when they tasked with restoring this broken world.",
+    "CharacterHandle.323.9": "I'm still baffled by your human farming techniques but I'll give it a try.",
+    "CharacterHandle.323.10": "Yes, it's good to have time to attend to one's own needs.",
+
+    // non companion features
+    "CharacterHandle.411": "(warp) Why is the monument to the lady all the way out here?",
+    "CharacterHandle.415": "(warp) What is it like to be a servant of Chaos, Buffin? I imagine your duties take you to all sorts of random places.",
+    "CharacterHandle.419": "(warp) It was worth the treacherous ascent to witness the unfurling of the curtain of the sky. ",
+    "CharacterHandle.420": "The stage is set with the heroes of the constellations, and their radiance inspires me. Can I sleep here?",
+    "CharacterHandle.427": "(hammer) Break and store the contents of all geodes in inventory.",
+    "CharacterHandle.466": "(herbalism) Replenish potions",
+
+    // non companion answers
+    // waves
     "CharacterHandle.1018": "Murmurs of the waves: Still yourself, and let the rolling motions of the mists carry you home.",
     "CharacterHandle.1020": "I feel... wet? Wait what... !",
+    // Buffin
     "CharacterHandle.1031": "The Buffoonette of Chaos: Indeed they do, and I'm glad you asked me to demonstrate. Now, close your eyes. Prepare for your mind to be swept along the Great Stream.",
     "CharacterHandle.1033": "Sorry, Buffin, what did you just say?",
+    // Revenant
     "CharacterHandle.1043": "The Revenant: Best you be off home farmer, you don't want to be around when the bats have their rave. ",
     "CharacterHandle.1044": "There's a cart-line that extends from here all the way to the main network. It was working well the last time I used it, but tell me if it requires any repairs.",
     "CharacterHandle.1046": "Has it been inspected recent- (Revenant pushes you into the cart bed and disengages the brake-lever)",
-    "CharacterHandle.1076": "I will see how you exercise the authority of the sleeping kings.",
-    "CharacterHandle.1082": "Lead the way, fateful one.",
-    "CharacterHandle.1088": "Indeed. How about we split the spoils fifty fifty.",
-    "CharacterHandle.1105": "I will take my place amongst the posts and furrows of my old master's home.",
-    "CharacterHandle.1111": "Let's see who's around to bother.",
-    "CharacterHandle.1117": "Lets see how profitable this agricultural venture is.",
-    "CharacterHandle.1133": "I will return to where I may hear the rumbling energies of the valley's leylines.",
-    "CharacterHandle.1139": "(Jester grins) That's my favourite place to nap!",
-    "CharacterHandle.1145": "Good idea. I require a quiet, shaded place to ruminate.",
 
     // Answers about attunement
     // Energies, Weald
@@ -1239,10 +1486,8 @@
     // Blackfeather, Bones
     "CharacterHandle.315.4": "You said you found the {{tool}} in the forgotten orchard. I suspect it was used to carve the heartwood out of the Thane of the Weald, the great host of spirits, the father of the forest. ",
     "CharacterHandle.315.5": "What the crowmother did with the heartwood is a mystery to me, as I was already consumed by the Dustfiend when the orchard fell. The {{tool}} keeps the crowmother's secrets.",
-    "CharacterHandle.315.6": "This {{tool}} is no longer a part of the crowmother's plan",
-    "CharacterHandle.315.7": "This {{tool}} will play it's part in the crowmother's plan",
-
-
+    "CharacterHandle.315.6": "This {{tool}} is no longer a part of the crowmother's plan.",
+    "CharacterHandle.315.7": "This {{tool}} will play it's part in the crowmother's plan.",
 
     // Herbalism quest
     "CharacterHandle.472": "The bowl beckons. You reach out, tentatively, and touch its rim with your fingertip.",
@@ -1255,6 +1500,30 @@
     "CharacterHandle.1478": "With a bit of amateur effort, three stoppered flasks, each with a small amount of herbal remedy, dangle from your belt. ",
     "CharacterHandle.1479": "The bowl is pleased. (Herbalism journal unlocked)",
 
+    // Shrine Forge
+    "CharacterHandle.328.2": "(forge) Requires an upgradeable tool (in hand) and an amount of aether (in apothecary) proportional to the upgrade cost. Limit 1 upgrade per day.",
+    "CharacterHandle.328.3": "(forge) {{aether}} Aether required to upgrade {{tool}} to {{upgrade}}.",
+    "CharacterHandle.328.4": "(forge) Upgrade {{tool}} to {{upgrade}} for {{aether}} Aether.",
+
+    // Epitaphs
+    // Prince
+    "CharacterHandle.329.8": "For the Prince of the Isles and his Celestial Bride, the Young Dove. While they are gone, the world knows a little less light. ",
+    // Isles
+    "CharacterHandle.329.9": "For the elderfolk of the Isles. They fell on a distant shore, and the abyss will never claim them.",
+    // Knolls
+    "CharacterHandle.329.10": "For the elderfolk of the Knolls. The last of their holds remains unbroken under the weight of a boundless sky.",
+    // Servants Oak
+    "CharacterHandle.329.11": "For the Servants of the Weald. May those awake guard the change of seasons.",
+    // Servants Holly
+    "CharacterHandle.329.26": "For the Defenders of Humankind. The youngerfolk inherit a calm world.",
+    // Kings Oak
+    "CharacterHandle.329.27": "For the Sleeping King of Oaks, lord of Golden leaves.",
+    // Kings Holly
+    "CharacterHandle.329.28": "For the Sleeping King of Holly, lord of the Evergreen.",
+    // Guardian
+    "CharacterHandle.329.29": "For the Guardians of the Star, the bane of Dragons.",
+    // Dragon
+    "CharacterHandle.329.30": "For the Allies of the Dragons. Be at peace now.",
 
     // ===========================================================================
     // VILLAGER REACTIONS
@@ -1330,7 +1599,7 @@
     "ReactionData.374": "I know you're trying.",
     "ReactionData.376": "But maybe you're trying too hard to be funny? Just be yourself.",
     "ReactionData.381": "What?",
-    "ReactionData.383": "I dont get what happened.",
+    "ReactionData.383": "I don't get what happened.",
     "ReactionData.391": "Well that was an... experience. Now back to business.",
     "ReactionData.399": "Hmmm. Well, I think {{trick}} might not be your strongest trick. How about cake out of a hat?",
     "ReactionData.402": "I mean, who doesn't like cake? Maybe a couple of the older guys.",
@@ -1346,7 +1615,7 @@
     "ReactionData.482": "Maybe you could practice a different kind of talent. Something that would benefit the town. ",
     "ReactionData.490": " grumbles). The Fates should not be trifled with! ",
     "ReactionData.507": "Well {{name}}, I'm not sure how you did that, but it seemed dangerous.",
-    "ReactionData.510": "Please dont put the town in peril.",
+    "ReactionData.510": "Please don't put the town in peril.",
     "ReactionData.516": "I remember an old story about a star falling to the ground.",
     "ReactionData.518": "I think it was a love story, but it was a long time ago when I heard it. ",
     "ReactionData.524": "By Yoba. The sky opened up, and, fire came down, and, and, I blanked out.",
@@ -1495,6 +1764,9 @@
     "RelicData.27": "Otherworldly Posessions",
     "RelicData.28": "Implements from outside this realm",
 
+    "RelicData.329.5": "Elderfolk Mementos",
+    "RelicData.329.6": "Tokens of appreciation from a bygone era",
+
     // Relics
     "RelicData.41": "Enameled Star Crest",
     "RelicData.46": "Given to me by the Forgotten Effigy, the only surviving member of the old Circle of Druids.",
@@ -1514,6 +1786,11 @@
     "RelicData.86": "Dragonomicon",
     "RelicData.90": "Retrieved by Shadowtin Bear from the tomb of a Dragon King.",
     "RelicData.91": "You received the Dragonomicon! It can be used to configure dragon form. Check the relics journal to view further details.",
+
+    "RelicData.323.1": "The Other Glove",
+    "RelicData.323.2": "Give to me by Blackfeather, the First Gardener of the Circle.",
+    "RelicData.323.3": "The reunion of the gardener's gloves seems to be symbolic of something.",
+    "RelicData.323.4": "You received Blackfeather's Other Glove! It can be used to summon Blackfeather to accompany you on your adventures. Check the relics journal to view further details.",
 
     "RelicData.96": "Crumbly Druid Cookie",
     "RelicData.99": "Congratulations on reaching the end of Stardew Druid!",
@@ -1638,8 +1915,8 @@
     "RelicData.405": "A low court of the Fates has been established to administer the valley in the aftermath of the war. ",
     "RelicData.406": "It sits on the banks of the mountain stream that flows from the sacred spring, and the Justiciar of the Fates resides over the proceedings. ",
     "RelicData.407": "The Justiciar's prosecutor, the Reaper, continues to grow in reverence with the assembly. ",
-    "RelicData.408": "His obsession with the recovery of the hidden Star-born is on full display, and the refugees listen fervently to his rhetoric. ",
-    "RelicData.409": "They applaud the viciousness with which the Mortician demonstrates against the surviving elderborn. ",
+    "RelicData.408": "His obsession with the recovery of the hidden Celestial is on full display, and the refugees listen fervently to his rhetoric. ",
+    "RelicData.409": "They applaud the viciousness with which the Mortician demonstrates against the surviving elderfolk. ",
     "RelicData.410": "They desire justice for the destruction of lives and families, but what comfort can be found in the humiliation of an endangered race. ",
     "RelicData.411": "So few civilisations remain after the devastation of war.",
     "RelicData.413": "Winter, Second Year",
@@ -1661,9 +1938,9 @@
     "RelicData.430": "The Crowmother has threatened to forsake the mortal plane for lack of order and continuity. ",
     "RelicData.432": "Summer, Third Year",
     "RelicData.433": "I have incorporated the remainder of my order into the circle. It was the prudent choice considering our fragmented morale and numbers. ",
-    "RelicData.434": "The court has been disestablished, but the unresolved issue of the missing Star-born does not sit well with the Justiciar and Reaper. ",
+    "RelicData.434": "The court has been disestablished, but the unresolved issue of the missing Celestial does not sit well with the Justiciar and Reaper. ",
     "RelicData.435": "They are desperate to bring the Bull of the Heavens before the high Fae Court to answer for his actions. ",
-    "RelicData.436": "As far as I'm aware, our great general vanished with the Elderborn prince, and that is the story we have stuck too. ",
+    "RelicData.436": "As far as I'm aware, our great general vanished with the Elderfolk prince, and that is the story we have stuck too. ",
     "RelicData.437": "Still, the Reaper's acolytes continue to harrass us in the public forums. ",
     "RelicData.438": "The Hound of Chaos, long since banished from the low court for stirring trouble, has been seen amongst their number. ",
     "RelicData.439": "I fear an escalation.",
@@ -1746,7 +2023,7 @@
     "RelicData.591": "Mortician's Box",
     "RelicData.594": "An empty box, left amongst the monuments of the disused low court of the Fates, a sign the Morticians were in attendance.",
     "RelicData.595": "Buffin suggests holding a prehistoric fossil or bone in the presence of the owl monument.",
-    "RelicData.598": "Masayoshi, Justiciar of the Fates, exchanged boxes with his brother Thanatoshi before the latter left on the trial of the fugitive Starborn.",
+    "RelicData.598": "Masayoshi, Justiciar of the Fates, exchanged boxes with his brother Thanatoshi before the latter left on the trial of the fugitive Celestial.",
     "RelicData.600": "You received the Mortician's Shears! This might have belonged to a member of the Fae Court. Buffin should know more about it.",
 
     "RelicData.605": "Artisan's Box",
@@ -1755,7 +2032,7 @@
     "RelicData.611": "You received the Artisan's Box! This might have belonged to a member of the Fae Court. Buffin should know more about it.",
 
     "RelicData.616": "Box of Chaos",
-    "RelicData.619": "An hierloom of the Hound of Chaos, one of the first Agents of Chaos to visit the valley.",
+    "RelicData.619": "An heirloom of the Hound of Chaos, one of the first Agents of Chaos to visit the valley.",
     "RelicData.620": "Buffin suggests building a deluxe coop or barn to raise animals that please the foxes of Chaos.",
     "RelicData.622": "You received the Box of Chaos! This might have belonged to a member of the Fae Court. Buffin should know more about it.",
 
@@ -1769,6 +2046,7 @@
     "RelicData.665": "Click to summon The Effigy. Rightclick to dismiss.",
     "RelicData.676": "Click to summon The Jester of Fates. Rightclick to dismiss.",
     "RelicData.687": "Click to summon Shadowtin Bear. Rightclick to dismiss.",
+    "RelicData.323.11": "Click to summon Blackfeather. Rightclick to dismiss.",
     "RelicData.691": "Click when at the beach to summon a vessel to the Remote Atoll.",
     "RelicData.695": "Click when on level 60 of the mines to open the passage way to the Chapel of the Stars. Rightclick to close.",
     "RelicData.699": "Click when on level 100 of the mines to open the passage way to the Molten Lair. Rightclick to close.",
@@ -1833,8 +2111,24 @@
     "RelicData.313.2": "Whether used to sharpen tools, or as a paperweight, this stone seems as much a part of this farm as the burrowed hills it sits on.",
     "RelicData.313.3": "Use while on the farm to warp to the secluded grove, otherwise accessible from the Farmcave entrance.",
     "RelicData.313.4": "Use while in the secluded grove to warp back to outside the Farmhouse",
-    "RelicData.313.5": "You've recieved Grandpa's Whetstone'! This relic provides access to the Secluded Grove. See the Relics Journal for more details.",
+    "RelicData.313.5": "You've recieved Grandpa's Whetstone! This relic provides access to the Secluded Grove. See the Relics Journal for more details.",
 
+    // Relics 329
+    "RelicData.329.1": "Sacred Spring Goshuin",
+    "RelicData.329.2": "A commemorative stamp provided by the Shrine attendant of the Spring in gratitude for the restoration of the sacred lilies",
+    "RelicData.329.3": "Channel Rite of the Weald in the Sacred Spring.",
+    "RelicData.329.4": "You've recieved the Sacred Spring Guishuin! The Memory of the Elders in the Old Graves may be interested to see it.",
+
+    "RelicData.329.7": "Elderfolk Denarius",
+    "RelicData.329.8": "Silver currency from a time when pilgrims paid tribute to the Elderfolk at the graves of fallen heroes.",
+    "RelicData.329.9": "Channel Rite of the Weald in the Elder Graves, as per the instructions of the Keeper of Memory.",
+    "RelicData.329.10": "You've recieved the Elderfolk Denarius!",
+
+    "RelicData.330.1": "Antique Cloth",
+    "RelicData.330.2": "This loomed piece of cloth is embossed with golden thread. ",
+    "RelicData.330.3": "It must have belonged to a druid who tended the now forgotten orchard. The embossment depicts a feminine figure working amongst saplings, flanked by large birds.",
+    "RelicData.330.4": "Channel Rite of the Weald in the Forgotten Orchard.",
+    "RelicData.330.5": "You've recieved the Antique Cloth! The Memory of the Elders in the Old Graves may be interested to see it.",
 
     // ===========================================================================
     // QUEST DATA
@@ -2052,22 +2346,22 @@
     "QuestData.1056": "The revenant has waited a long time for a resolution to his plight, something I have been unable to give. Now our hopes are vested with you. ",
 
     "QuestData.1080": "Lesson Ten: Meteor Rain",
-    "QuestData.1082": "The appearance of comets in the night sky would inpire the divinations of druid astronomers.",
+    "QuestData.1082": "The appearance of comets in the night sky would inspire the divinations of druid astronomers.",
     "QuestData.1084": "Hit monsters twenty times with Rite of the Stars: Meteor Rain. Mastery will provide a small chance for an additional meteor fall per cast.",
     "QuestData.1086": "monsters hit",
     "QuestData.1098": "So you want to call down the wrath of the heavens. Well farmer, its pretty simple. You pray and hope that the starfire will fall where you want it to. ",
     "QuestData.1099": "It's the celestials that will answer your call, for they have committed themselves to the work of our warrior order, and our work is far from finished. ",
     "QuestData.1100": "The rite can be quite taxing, so I say make yourself a couple of tonics using this old still here. It's in pretty good knick, only had to wipe the guano off every few seasons. ",
-    "QuestData.1101": "(New lesson received)",
+    "QuestData.1101": "(New lesson received! Note: A melee weapon is required to trigger this effect)",
 
     "QuestData.1123": "Lesson Eleven: Gravity Well",
     "QuestData.1125": "The lights of the heavens share their home with the vast and ravenous dark, the progenitor of the void.",
-    "QuestData.1127": "Channel Rite of the Stars to create ten gravity wells at the position of your cursor (set distance in facing direction on controllers). ",
-    "QuestData.1128": "Harvests crops and forageables. Mastery will spawn a massive comet when Stars:Meteor Rain is cast within proximity to a well.",
+    "QuestData.1127": "Channel Rite of the Stars to create ten gravity wells at the position of your cursor. Check the effects journal for more information on the effects. ",
+    "QuestData.1128": "Mastery will spawn a massive comet when Stars: Meteor Rain is cast within proximity to a well.",
     "QuestData.1130": "gravity wells created",
     "QuestData.1142": "Why do the stars shine so bright? Where does all that light go once it's touched us? It goes into the dark, farmer. The vast dark that grasps at the stars. ",
     "QuestData.1143": "The hungry dark that would feast on all the bliss and colour. That is the true nature of the void, the backdrop to the celestial realm. ",
-    "QuestData.1144": "(New lesson received! Note: use a normal non-weapon tool to cast gravity well on the farm without triggering meteor rain)",
+    "QuestData.1144": "(New lesson received! Note: Effect changes on whether a tool or weapon was used to channel)",
     "QuestData.1152": "It would serve you well to ascend to the mountain chapel, to receive the last instructions from our guardian friend. ",
     "QuestData.1153": "I abandoned my own journey to master the blessings of the celestial realm. The powers of the voided space do not lend themselves to me. ",
     "QuestData.1154": "It is up to you to gain and safeguard all the traditions of our circle and allies.",
@@ -2119,7 +2413,7 @@
     "QuestData.1378": "(New Quest Received)",
     "QuestData.1386": "By releasing several souls from the tethers that bound them to this material plane, you have surely defied the judgments of the Fates. ",
     "QuestData.1387": "Our undying friend once told me a tragic story of one of the founding members of circle, who was also a stalwart guardian of the stars. ",
-    "QuestData.1388": "The Revanant believes the Fae court played a role in the tragedy. I entreat you to attend the chapel and hear the tale yourself.",
+    "QuestData.1388": "The Revenant believes the Fae court played a role in the tragedy. I entreat you to ascend to the chapel again and hear the tale yourself.",
     "QuestData.1395": "Prismatic Shard",
     "QuestData.1402": "Hail to you, dragon slayer. Judging by the fact you have his relics, I'd say the old champion of our order has passed on. ",
     "QuestData.1403": "I was his squire, so it is a small comfort to know he has not been bound by the Fates. ",
@@ -2127,7 +2421,7 @@
 
     "QuestData.1439": "The Jester",
     "QuestData.1441": "My work with the power of the Stars has caught the attention of the Fates, the primeval beings that serve under the creator Yoba. ",
-    "QuestData.1442": "Long ago, the Fae Court issued a warrant to arrest and trial the Fallen Star, the very one that was a catalyst for the ancient war between elderborn and dragons. ",
+    "QuestData.1442": "Long ago, the Fae Court issued a warrant to arrest and trial the Fallen Star, the very one that was a catalyst for the ancient war between elderfolk and dragons. ",
     "QuestData.1443": "The Reaper of Fates tried in vain to administer the arrest, but did not succeed, and even after an age has passed, the charges still stand. ",
     "QuestData.1444": "As the bearer of the sacred duty of the Star Guardians, though I have never met the Fallen Star, and have no clue as to their whereabouts, I am obliged to meet an envoy of the Fates to discuss the matter.",
     "QuestData.1446": "Meet the envoy of the Fates near the bridge by the adventurer's guild.",
@@ -2137,7 +2431,7 @@
     "QuestData.1451": "Jester needs the services of someone with 'earth sense', and so a deal was struck, that I might learn some mysteries of the Fates in exchange for my services.",
     "QuestData.1467": "Well, I knew this fateful day would come. The wing-mother of the bats came to see me this morning, and this time I managed to make some sense of what she was screeching about. ",
     "QuestData.1468": "It seems the Fates once again cast the gaze of judgment on our lowly order, as an envoy from the Fae Court has been out on the slopes, scaring all the bats, asking to see you, 'the star bringer'. ",
-    "QuestData.1469": "They wait for you at the ravine, near the site where the Star-born made ground-fall all those years ago. ",
+    "QuestData.1469": "They wait for you at the ravine, near the site where the Celestial made ground-fall all those years ago. ",
     "QuestData.1470": "Apparently that place has been mined down to the bare bones of the mountain, when the valleyfolk had a keen eye for star-touched ores. ",
     "QuestData.1471": "Anyhow, remember to speak well of me when you do find the representative of our Lady of Fortune. ",
     "QuestData.1472": "(New Quest Received)",
@@ -2235,14 +2529,14 @@
 
     "QuestData.1949": "The Tomb of Tyrannus",
     "QuestData.1951": "Shadowtin Bear has divulged the intentions of Lord Deep and his shadowy allies. ",
-    "QuestData.1952": "They hunt for the power of the ancient race of Dragons, who were diminished in their vain war against the Elderborn for the Fallen Star. ",
+    "QuestData.1952": "They hunt for the power of the ancient race of Dragons, who were diminished in their vain war against the Elderfolk for the Fallen Star. ",
     "QuestData.1953": "The best lead is the Tomb of Tyrannus Jin, once master of the shamans of Calico, and the Revenant has provided the means to reach it.",
     "QuestData.1955": "Travel to the entrance of the Skull Cavern in Calico Desert, and use the Ceremonial Lantern in the relics journal to access the Tomb.",
-    "QuestData.1957": "We were set upon by the wraith of Thanatoshi, who had been trapped within the sealed tomb at the culmination of his mad quest to find the missing Starborn. ",
+    "QuestData.1957": "We were set upon by the wraith of Thanatoshi, who had been trapped within the sealed tomb at the culmination of his mad quest to find the missing Celestial. ",
     "QuestData.1958": "Though the reaper's mind had deteriorated with the burden of unfulfilled purpose, he continued to tether himself to this world by the power of a Tyrant dragon tooth, which has been fashioned into a weapon of ethereal might.",
     "QuestData.1966": "Faeth x20",
     "QuestData.1977": "I confess, this partnership with the mercenary captain infuriates me. ",
-    "QuestData.1978": "If it was my decision, he would be stripped of his ill-gotten trinkets and sent him back to Lord Deep in shame, as a warning to those that would disturb the sanctity of the valley. ",
+    "QuestData.1978": "If it was my decision, he would be stripped of his ill-gotten trinkets and sent back to Lord Deep in shame, as a warning to those that would disturb the sanctity of the valley. ",
     "QuestData.1979": "Perhaps that is merely vindictiveness on my part. I have no recourse for this... anger I feel. ",
     "QuestData.1980": "I have little comprehension of the events described in the text the captain provided, but perhaps our revenant friend would be able to assist. ",
     "QuestData.1981": "He is more clear-headed, if only because his skull is empty.",
@@ -2251,7 +2545,7 @@
     "QuestData.1992": "I'm often asked if I have a Large Cat permit, and Jester often interjects 'Large Cat? Where?'",
     "QuestData.1995": "Ah. so all this time, that annal was hiding in the haunted halls of the followers of the Reaper. Those guys were a bunch of crazies. ",
     "QuestData.1996": "They styled the Reaper of Fates as the great avenger of humanity, and made sure the veterans of the war couldn't live in peace. ",
-    "QuestData.1997": "That's one of the reasons why your Lady Beyond left for the Isle. Once there were no more Elderborn around, the crazies started to point fingers at the circle, at those that revere the Old Monarchs and the Stars. ",
+    "QuestData.1997": "That's one of the reasons why your Lady Beyond left for the Isle. Once there were no more Elderfolk around, the crazies started to point fingers at the circle, at those that revere the Old Monarchs and the Stars. ",
     "QuestData.1998": "So good Knight Wyrven left to confront them. Shortly afterwards, the Reaper attacked us openly. I was cursed, and all our secrets were laid bare, including the location of the Tyrant of Calico's tomb. ",
     "QuestData.1999": "Now, this lamp here is one of the few things that remains of ancient Calico culture. You'll find the tomb in the cavern of skulls in the desert waste. ",
     "QuestData.2000": "This guiding lamp is yours, but it comes with a warning, too. The place was given the skull moniker for good reason. ",
@@ -2282,7 +2576,7 @@
     "QuestData.2141": "(New lesson received)",
 
     "QuestData.2161": "Lesson 18: Dragon Dive",
-    "QuestData.2163": "The ether flows everywhere, through the thickened forest, the rugged mountain, and the frigid depths.",
+    "QuestData.2163": "The ether flows everywhere, through the thickened forests, the rugged mountains, and the frigid depths.",
     "QuestData.2165": "Fly onto the water and perform ten dives with the special button/right click.",
     "QuestData.2167": "dive attempts",
     "QuestData.2179": "You might find this very unsettling, as I did when I learned of it's existence. ",
@@ -2375,31 +2669,64 @@
     "QuestData.310.9": "I left it to the forest spirits to clean up the boiler room and dispose of the volatile material responsibly. ",
     "QuestData.310.10": "(The Junimos left a bag of gifts for me by their little hut, I should remember to pick them up).",
 
-    // Thane of the Weald - Rite of Bones Quest 1
-    "QuestData.315.3": "Thane of the Weald",
+    // Rite of Bones Quest 1
+    "QuestData.315.3": "Nursery of the Weald",
     // Description
     "QuestData.315.4": "Blackfeather was the first gardener appointed by the Circle, a dryad spirit given a physical form by the crowmother herself. ",
-    "QuestData.315.5": "She was trained to tend to the spiritual needs of the Weald in the Two Kings absense, but fell to the treachery of the corrupted Druids, ",
+    "QuestData.315.5": "She was trained to tend to the spiritual needs of the Weald in the Two Kings absense, but fell victim to the treachery of the corrupted Druids, ",
     "QuestData.315.6": "Cannoli and Gelatin, before she could see the realisation of the crowmother's plan. ",
-    "QuestData.315.7": "I have been asked by Blackfeather to investigate the forgotten orchard for clues as to what transpired after she was consumed by dust. ",
+    "QuestData.315.7": "I have been asked by Blackfeather to investigate the forgotten orchard for clues as to what transpired after she was banished by the traitor's forbidden magic. ",
     // Instruction 
     "QuestData.315.8": "Use the gardener's glove to access the forgotten orchard, and cast a rite at the quest marker.",
     // Explanation
-    "QuestData.315.9": "I showed Blackfeather the excavation site that Shadowtin had discovered in the forgotten orchard. ",
-    "QuestData.315.10": "We studied the items at length, and found traces of the crowmother's witchcraft. ",
-    "QuestData.315.11": "A spectral scene from the past played out before my eyes, and I witnessed the tragic destruction of the Thane of the Weald, a great tree that hosted the forest spirits. ",
-    "QuestData.315.12": "The crowmother incorporated the still vibrant heartwood of the thane to a new idea, and Blackfeather's role as First Gardener was given to a farmer. The first farmer.",
+    "QuestData.315.9": "I met Blackfeather at the forgotten orchard, once a nursery that hosted forest spirits. It wasn't long before we were joined by the Wisps of the Mists. A spectral scene from the past played out before my eyes, and I saw glimpses of Crowmother's grief at the discovery of the nursery's destruction and the undoing of her plans for the Weald.",
+    "QuestData.315.10": "Inside the warp shrine engine room, another scene showed Crowmother devise a new plan in concert with a powerful ally, the elderfolk princess who would become the Voice Beyond the Shore. ",
+    "QuestData.315.11": "On the lonely atoll, a final scene showed how the brothers of Justice, Thanatoshi and Masuyoshi, dealt with the defiance of the first farmer as he acted to protect the Lady Beyond and Effigy from a vicious persecution by the fates and their zealots. ",
+    "QuestData.315.12": "The Lady's misted consciousness possessed Blackfeather and attacked me in retribution for the crowmother's broken promises. Four magical corvids, once familiars to the Crowmother, rallied to my defense and pacified the Lady's anger, as their presence signifies that the promises made to her long ago will be upheld.",
     // Intro - Effigy
     "QuestData.315.13": "I am troubled to learn of the revival of that old fiend, the Dust Chef. ",
     "QuestData.315.14": "At least the return of a lost member of our Circle is some encouragement. Perhaps she might offer guidance on how to handle the re-emergence of our foes.",
     // Intro - Blackfeather
     "QuestData.315.15": "I do not think it is a coincidence that you were the one to summon me to the material plane. ",
-    "QuestData.315.16": "You are in possession of one of my gloves, the ones I used to tend the wounded boughs of the great Thane. ",
-    "QuestData.315.17": "I could not protect my ward against the treachery of those fiend chefs, Gelatin and Cannoli, but I yearn to see what remains of the glade where the Thane stood. ",
-    "QuestData.315.18": "The paths that I walked in my own time have disappeared, but I hear from your golem friend that the old glove remembers the way to the orchard.",
-    // Outro - Blackfeather
-    "QuestData.315.19": "It seems the crowmother wasted no time in appointing my replacement. So the sacred rite of bones was entrusted to mortals. I hope they had your temperment and competence.",
+    "QuestData.315.16": "You are in possession of one of my gloves, the ones I used to tend a nursery of other forest spirits. ",
+    "QuestData.315.17": "I could not protect my wards against the treachery of those fiend chefs, Gelatin and Cannoli, but I yearn to see what remains of the glade where the nursery stood. ",
+    "QuestData.315.18": "The paths that I walked in my own time have disappeared, but I hear from your golem friend that the old gloves remember the way, so I bid you to make use of the one I held through the darkness of my captivity.",
 
+    // Bones Lesson One
+    "QuestData.324.1": "Familiars",
+    "QuestData.324.2": "Spirits of the otherworld became familiars to those mortals they discern to possess special gifts.",
+    "QuestData.324.3": "Channel Rite of Bones to summon four corvid familiars. The familiars can be directed by casting rite of bones using the cursor. ",
+    "QuestData.324.4": "Send the familiars into attack mode against enemies twenty times. Mastery unlocks higher frequency of attacks and tasks.",
+    "QuestData.324.5": "enemies pecked",
+    "QuestData.324.6": "Thank you for confronting the past with me. The promises made by my mother of crows feel like a heavy burden on my shoulders. The rite of bones will require a lot of effort, from all of us. ",
+    "QuestData.324.7": "I don't think I would even have the willpower to start if wasn't for you. You have a strengthening presence, Archdruid. I can't think of a better leader for my mother of crow's old familiars.  (New lesson received)",
+
+    // Bones Lesson Two
+    "QuestData.324.8": "Retrievers",
+    "QuestData.324.9": "Though they can be trained to seek and retrieve, Familiars are about as tame as they can ever be, for they cannot abide the captivity inherent in a grounded life.",
+    "QuestData.324.10": "Cast Rite of Bones with familiars active to send them to places where debris, stones and forageables are present. They will attempt to collect and transfer the objects to you. Mastery unlocks empowered pecks. Task them twenty times.",
+    "QuestData.324.11": "objects retrieved",
+    "QuestData.324.12": "There are many things present in the natural world that are useful to the daily work of the Circle. It's good to have a little help with reaching things in high or tight spaces. (New lesson received)",
+
+    // Bones Lesson Three
+    "QuestData.324.13": "Opportunists",
+    "QuestData.324.14": "Complex social arrangements and relationships are not beyond the intelligence and tenacity of a Druid's familiar.",
+    "QuestData.324.15": "Cast Rite of Bones with familiars active to send them to greet nearby villagers. ",
+    "QuestData.324.16": "They will attempt to socialise, though they may be tempted to pilfer an item (with mastery), albeit one liked by the victim, who will be pleased if you return it. Greet villagers this way ten times. ",
+    "QuestData.324.17": "villagers greeted",
+    "QuestData.324.18": "My mother of crows was quite the socialite. She spent a lot of time learning the way social structures of humans form and operate, and often attempted to devise schemes or technology to further the interest of her favourites. ",
+    "QuestData.324.19": "There's a bit of her personality in each of her familiars. Make sure to let them see and touch the world in their own way. (New lesson received)",
+
+    // Relic quest for Vault
+    "QuestData.329.1": "A Safe For All My Stuff",
+    // Description
+    "QuestData.329.2": "I've garnered a fantastic collection of relics, some with lasting significance to the Circle and the history of the valley. I plan to refurbish the hinge-shot vault in the community center and use it to store all my cool stuff.",
+    // Instruction
+    "QuestData.329.3": "Perform a Rite of the Weald in the office room in the community center.",
+    // Explanation
+    "QuestData.329.4": "I harnessed a tremendous amount of woodland power to shake the vault free from it's rusting anchor bolts. All that did was broadcast my immense power to every forest spirit in the greater valley area. ",
+    "QuestData.329.5": "This was still a great outcome for me, as I sat down in the midst of my little apple friends and presented all the cool stuff in my Druid's reliquary, with commentary on all the spectacular battles and feats of power that led to their acquisition. ",
+    "QuestData.329.6": "They were so impressed, they promptly reinstated the whole office to be used by myself as the newly appointed High Antiquarian of the Woodland Realm. I refused the stipend but opted for their adulation instead.",
 
     // ===========================================================================
     // NPC LORE DIALOGUE
@@ -2411,13 +2738,18 @@
     "LoreData.18": "(lore) After so many years, you must have a lot to talk about.",
     "LoreData.22": "(lore) I'm eager to know the Chaos perspective on things happening around here",
     "LoreData.26": "(lore) Do you have time to talk?",
+    "LoreData.320.1": "(lore) I'd like to know more about the time after the war",
+    "LoreData.329.1": "(lore) Keeper, can you share a memory of with me?",
+
 
     // NPC lore introductions
     "LoreData.41": "The Effigy: Our traditions are etched into the bedrock of the valley.",
     "LoreData.45": "The Jester of Fates: I enjoy answering questions. One of my dearest sisters was a sphinx.",
     "LoreData.49": "The Revenant: The bats are chatty. So I never want for something to talk to. Or yell at.",
     "LoreData.53": "The Buffoonette of Chaos: Sure... listening to the Stream's opinions is like hearing a cryptic riddle spoken underwater.",
-    "LoreData.57": "Shadowtin Bear: Certainly. As long as the discussion relates to treasure. Or Dragons.",
+    "LoreData.57": "Shadowtin Bear: Certainly. As long as the discussion relates to antiques. Or gooey substances.",
+    "LoreData.320.2": "Blackfeather: As you wish, though I think the times we live in now are far more interesting.",
+    "LoreData.329.2": "Keeper of Elder Memories: It is my honour to fulfil my purpose, to enliven the memories of the fallen through their recollection.",
 
     // Lore
     "LoreData.75": "What role do the Two Kings play?",
@@ -2426,7 +2758,7 @@
     "LoreData.78": "They rest now, dormant. May those awake guard the change of seasons.",
 
     "LoreData.86": "I want to know more about the First Farmer",
-    "LoreData.87": "The first farmer was blessed by the elderborn, the monarchs of the valley, to cultivate and protect this special land. ",
+    "LoreData.87": "The first farmer was blessed by the elderfolk, the monarchs of the valley, to cultivate and protect this special land. ",
     "LoreData.88": "He and the Circle elders taught me their techniques and stories, that I might be a repository of tradition for future generations of the circle. ",
     "LoreData.89": "Though my former mentor's long gone, I remain, because the power of the elders remain. For now.",
 
@@ -2449,16 +2781,16 @@
     "LoreData.134": "The Stars have no names that can be uttered by earthly dwellers. ",
     "LoreData.135": "They exist in the Great Expanse of the celestial realm, and care not for the life of our world, though their light sustains much of it. ",
     "LoreData.136": "The Stars that have shone on you belong to a broken constellation of Sisters, who all mourn for one who fell to our realm. ",
-    "LoreData.137": "In fact, the circle of druids afforded a worldly name to the missing star-born. (Effigy's flaming eyes flicker). Merra. ",
+    "LoreData.137": "In fact, the circle of druids afforded a worldly name to the missing Celestial. (Effigy's flaming eyes flicker). Merra. ",
 
     "LoreData.145": "Tell me how you ended up like this",
-    "LoreData.146": "Well now. It's hard to believe, seeing as they are so pretty and we're so, well, plain, but a star came here once. ",
-    "LoreData.147": "For a time, as the star graced our humble realm, the kings stopped warring over the seasons. They gardened palaces, wrote ballads, made wine, played music. ",
-    "LoreData.148": "Still, the world turns, the seasons must change, and the old war resumed. But the stakes had changed. The ancient ones, the dragons, wanted the star for themselves. ",
-    "LoreData.149": "What came next was fire, death, and misery everywhere. I believed in the mission of the Star Guardians, so I trained as a holy warrior, and was accepted into their order. ",
+    "LoreData.146": "Well now. It's hard to believe, seeing as they are so pretty and we're so, well, plain, but a star, an actual celestial being, came to our world. ",
+    "LoreData.147": "She was so radiant, that everyone fell in love with her, the young dove, and she was to become a princess of the elderfolk. ",
+    "LoreData.148": "But dragons be dragons, and they wanted the shiny princess for themselves, so we rushed to protect her. ",
+    "LoreData.149": "I trained to become a holy warrior of the guardians of the Star, and was accepted into their order. ",
     "LoreData.150": "I survived much of the fighting, but many fell to the wrath of the heavens, so much so that it was hard to know whether our cause was just or folly. ",
-    "LoreData.151": "I think for all those lost, Yoba wept, because the Fates were sent to make it right. The Star-born, however, had already vanished. ",
-    "LoreData.152": "The Reaper of Fates tracked me here, and when he found me, he accused me of circumventing justice. He cursed me, never to die, never to rest, and never to leave. ",
+    "LoreData.151": "I think for all those lost, Yoba wept, because the Fates were sent to make it right. Our princess dove, however, had already vanished. ",
+    "LoreData.152": "The Reaper of Fates tracked me here, and when he found me, he accused me of treason against Yoba. He cursed me, never to die, never to rest, and never to leave. ",
     "LoreData.153": "So I remain here, a feeble skeleton of a man, while the reaper is still out there, still looking for the star that fell so long ago.",
 
     "LoreData.161": "So, giant bats. Friends of yours?",
@@ -2506,8 +2838,8 @@
     "LoreData.250": "She's probably trying to outdo me right now in some manner. But she still can't reach the places I do when I lick myself!",
 
     "LoreData.259": "I've seen the sculpted likeness of the first envoys of the Fates. What were they really like?",
-    "LoreData.260": "Eh, the monuments are more symbolic than anything. I remember the Artisan being a bit of a hag. The Justiciar was like Thanatoshi, another seven foot tall staff-wielding thug. ",
-    "LoreData.261": "The Hound of Chaos, well, the moniker is deceptive, because that creature was massive. The point is, they weren't cute little creatures of the forest like the sculptor would have you believe. ",
+    "LoreData.260": "Eh, the monuments are more symbolic than anything. I remember the Artisan being an ageless beauty. The Justiciar was like Thanatoshi, another seven foot tall staff-wielding thug. ",
+    "LoreData.261": "The Hound of Chaos, well, the moniker is deceptive, because that creature was massive. The point is, they weren't cute little creatures of the forest like the court sculptors would have you believe. ",
     "LoreData.262": "The Fae Court sent envoys strong enough to wrestle dragons and arrest celestials. ",
     "LoreData.263": "We could not defy them, and even your scarecrow friend was forbidden to approach them, lest they capture him and 'undo' all of the hardwork that went into making him. ",
     "LoreData.264": "I managed to avoid them all until, well, you've heard that story already. Don't be in any hurry to meet the Reaper.",
@@ -2527,7 +2859,7 @@
     "LoreData.299": "Still, I think he has a part to play for Yoba in our great purpose. (Jester grins) You can just beat him up again if he tries to double-cross us.",
 
     "LoreData.307": "From your perspective, the Effigy must seem a strange mystical artifact",
-    "LoreData.308": "Of all the constructs embued with the power of the elderborn, I've never heard of one so loyal to his former master. ",
+    "LoreData.308": "Of all the constructs embued with the power of the elderfolk, I've never heard of one so loyal to his former master. ",
     "LoreData.309": "I've done my own assessment of the quality of his make. The clothes and head-dress are cheap garbage. And threadbare. ",
     "LoreData.310": "I suspect a large cat has been kneading them, as the back is scratched and covered in fur. ",
     "LoreData.311": "You'll probably need to replace them at some point. Or burn them. The real value in the Effigy is a fashioned inner core that is saturated with elder power. ",
@@ -2543,7 +2875,7 @@
     "LoreData.333": "The folklore of shadows is enscribed on the surface of the Great Shadow Vessel of our city. The narrative begins with the coalescence of shadows into sentient life by the cosmic power of Lord Deep. ",
     "LoreData.334": "But I have uncovered something to the contrary, a bizarre account that suggests those first enscriptions have been tampered with, and that Lord Deep is a fraud. ",
     "LoreData.335": "It's a dangerous opinion to have in my homeland, as we are a warring people, and he is a warlord of great measure, ",
-    "LoreData.336": "but I have come to admire the cultures that we have battled and plundered, and I can't shake these dissident thoughts, that he has burdened and slowly corrupted my people. ",
+    "LoreData.336": "but I have come to admire the cultures that we have battled and plundered, and I can't shake these dissident thoughts, that he has burdened and slowly corrupted the people of my city. ",
     "LoreData.337": "I hope my travels and the treasures we uncover yield answers.",
 
     "LoreData.346": "I remember a strange man was involved with your gang",
@@ -2596,7 +2928,7 @@
 
     "LoreData.458": "About the old circle, what can you tell me of the brothers Cannoli and Gelatin?",
     "LoreData.459": "The brothers were stewards of the Weald. They served in the kitchens during the conflict, and when the circle was founded, their knowledge of all the different varieties of flora and fauna proved invaluable to our efforts. ",
-    "LoreData.460": "Cannoli even claimed he and Gelatin were pastry chefs to the royal court, in the personal service of the elderborn prince of the Isles. ",
+    "LoreData.460": "Cannoli even claimed he and Gelatin were pastry chefs to the royal court, in the personal service of the elderfolk prince of the Isles. ",
     "LoreData.461": "Despite their oaths to the Weald, the brothers fell to wickedness, and had to be put down by Wyrven's guardians, though I never got to witness the fight, or attend the funerary rites. ",
     "LoreData.462": "It was about the time the Fates and their zealots began to openly oppose the circle. Wyrven and the rest retreated to the mountain. The First Farmer told me to hide. ",
     "LoreData.463": "Though it pains me to admit my suspicions, it appears he abandoned the circle, to pursue unrequited love across the gem sea. When I finally emerged from the cave, the circle was gone.",
@@ -2620,17 +2952,63 @@
     "LoreData.499": "When the dragons perished, waves of liberated, ethereal energy swept across the realms, and from this, the artisans set to work, capturing and organising this energy into new forms. ",
     "LoreData.500": "The Stream observed this artifice, and was displeased, as the designs possessed no nuances of interest, for they were boring, mechanical and utilitarian. ",
     "LoreData.501": "So the Stream sabotaged the craft, and from the imperfections, the elementals emerged, and were unleashed upon this world. It was the advent of the arcane epoch. ",
-    "LoreData.502": "As was the intention of Chaos, many of the mortal races were threatened by the new, subsuming powers, and were forced to adapt to survive. ",
-    "LoreData.503": "But the Artisans opposed the initiative of Chaos, and provided gifts of knowledge and inspiration, that some races might harness the elementals for their own purposes, and achieve the zenith of their civilisations. ",
-    "LoreData.504": "I believe the engine you beheld is one such divinely inspired device. It is a precursor to the marvels of Stellarfolk and Shadowfolk engineering. ",
-    "LoreData.505": "Still, The Stream resented the development of such organised systems, and presented it's own gifts, in dreams and mysteries, to the first mortals to learn the arcane arts, to rival the technomancers. ",
-    "LoreData.506": "Is that sufficient to explain the elemental wars or have you not learned about that yet?",
 
     "LoreData.514": "When will you return to the darkened plane?",
-    "LoreData.515": "My folk have been slowly consumed by the hunger of a tyrant, who expends the lives of our best folk to construct his cities and continue his conquests, ",
+    "LoreData.515": "My folk have been slowly consumed by the hunger of a tyrant, who expends the lives of our best folk to construct his fortresses and continue his conquests, ",
     "LoreData.516": "all under the pretense that we are his property, his souls to enflame and extinguish to his purposes. ",
-    "LoreData.517": "I want to expose him as an imposter, before he gains the power of dragons and heaps the souls of my people into an engine of war, ",
-    "LoreData.518": "and to do that I need the truth of his past. Unequivocable testimony of his fraud. I cannot return empty-handed.",
+    "LoreData.517": "I want to expose him as an imposter, before he gains the power of dragons and heaps the souls of my people into an engine of war, and to do that I need the truth of his past.",
+    "LoreData.518": "Unequivocable testimony of his fraud. I cannot return empty-handed.",
+
+    // Effigy Bones
+    "LoreData.320.3": "It seems that you were made by the mother of crows and the princess of the mists to replace Blackfeather when she was lost to the realm beyond. The Weald needed a protector.",
+    "LoreData.320.4": "Indeed. I am content with the purpose given to my creation, though I do not consider myself to have the gentle touch needed to nurture the elementals of the forest, and I do wonder about the possibilities of a new life free from duty to my old friends. ",
+    "LoreData.320.5": "Yet, even with such thoughts, I feel a sense of weariness and desire to rest from the burdens I've carried for so long.",
+
+    // Jester Bones
+    "LoreData.320.6": "I haven't had the pleasure of meeting an Artisan of the Fates. What are they like?",
+    "LoreData.320.7": "I guess, well, to a human, all the fates must seem like crazy creatures. I would say the artisans take the prize for being the most weird. ",
+    "LoreData.320.8": "There aren't many of them, and they only accept the most clever members into their forge-holds, which they barely leave, unless they want everyone to witness a prototype test, or they get summoned to court to answer for some unexpected side effects. ",
+    "LoreData.320.9": "Oh, I remember there was this dimensional inversion door. ",
+    "LoreData.320.10": "You have to walk into it backwards to come out forwards, and everything you say comes out like a riddle, all back to front. We tried to push a sphinx through it to force her to talk sense.",
+
+    // Revenant Bones
+    "LoreData.323.1": "When the traitor druids attacked the circle, Knight Wyrven stood against them. Were you there as well?",
+    "LoreData.323.2": "No, no I was not. That whole affair was just one of a few stabs in the back for the combined ranks of the guardians and druids. I'm sure more truths will come to light as you hasten towards the rite of bones. ",
+    "LoreData.323.3": "My own shameful act included. That will be the time. The time to settle all the old debts.",
+
+    // Buffin Bones
+    "LoreData.323.4": "Buffin, did your ancestor Carnevellion play a role in the downfall of the Circle?",
+    "LoreData.323.5": "When the elementals emerged, many of the mortal races were threatened by the  were forced to adapt to survive. But some, such as the stellarfolk, harnessed the elementals for their own purposes, and many achieved the zenith of their civilisations. This displeased the stream, which did not want to see it's new creations subsumed by the old orders. ",
+    "LoreData.323.6": "My ancestor came to represent the elementals in the low Court. It was he who helped the crowmother build the nursery, restricted the technomatic ambitions of the dwarves, and opposed the authoritarian edicts of the brothers, perhaps leading to his own destruction. I will know the truth of it when I find his bones. ",
+
+    // Shadowtin Bones
+    "LoreData.323.7": "Is there anything in the texts you studied about a rite of bones?",
+    "LoreData.323.8": "The fall of Dragons created a vacuum of power across many dominions, and those with the ability to wield the unleashed tides of ether became the new Lords. This is what I think the rite of bones is about, a mechanism to seal the extraordinary residual power of the old war in the twilight realms of the Fates, ",
+    "LoreData.323.9": "where they cannot tempt or corrupt mortals, lest a new tyranny abound. It appears the mother of crows was successful in sealing great power here, though it cost your forebearers much, and despots like Doja and Lord Deep seem intent on breaking through. But you are here to stop them. It's no coincidence powers have been afforded to you to fight tyranny.",
+
+    // Blackfeather Self 1
+    "LoreData.323.10": "What was it like, to be imprisoned within the Dust Chef?",
+    "LoreData.323.11": "I was barely conscious of it, if it was a thing at all. The last memory I have from before you liberated me is the craven face of the chefs as they assaulted the nursery. Your scholar friend, with the facial apparatus, posits that the effects of the rite of bones practiced by the traitors resulted in temporal transference. ",
+    "LoreData.323.12": "He talked at length about the blind purgatories that exist beyond the voided plane, where the stream of chaos flows. The stream might have held my naked, sleeping body within it's tendrils, to place back into this realm at it's whim. I'm trying not to freak out about it.",
+
+    // Blackfeather Self 2
+    "LoreData.323.13": "Do you intend to remain a Gardener of the Circle?",
+    "LoreData.323.14": "Hope has been put in my heart, seeded by the mother of crows and watered by the princess of the isles. What's more, I recognise the Stream of Chaos held me in safety until it was time to see these hopes start to bud. ",
+    "LoreData.323.15": "So I will remain a steadfast gardener of the Weald. In any case, I may have to retrieve such duties from your friend the Effigy, as I sense he will have an outsized role in the trials ahead of us.",
+
+    // Keeper Memories
+    "LoreData.329.3": "What were the folk of the Isles doing in the lands of the Weald?",
+    "LoreData.329.4": "The maw of the abyssal trench widens with every passing age. This phenomenon has always threatened the sea colonies of the elderfolk of the Isles, though they were unprepared for the hour when their greatest city succumbed to the sinking power of the abyss. ",
+    "LoreData.329.5": "The Prince of the Isles inherited his title from his drowned liege and father, and embarked to these shores to seek aid and council from the Two Kings. His attentions soon shifted from the plight of his people to the desires of his own heart.",
+
+    "LoreData.329.6": "What caused the Two Kings to fall into endless slumber?",
+    "LoreData.329.7": "A Celestial descended from the heavens to grace the Woodland realms For a time, as they fawned over the radiance of the star, the Two Kings stopped warring over the seasons. They gardened their palaces, wrote ballads, made wine and played music. ",
+    "LoreData.329.8": "Still, the world turns, the seasons must change, and the old conflicts resumed. But the stakes had changed. The ancient ones, the dragons, desired the starlight for their own dominions, and their draconic might overpowered the courts of both Kings.",
+
+    "LoreData.329.9": "The dragons have disappeared. Does that mean the elderfolk won the war?",
+    "LoreData.329.10": "Blessings of power were granted by the heavens to those who swore to defend the Celestial, now a princess amongst the elderfolk, against the dragon onslaught. After the Kings were wounded in the battle of the fields of Winter, the dragon alliance laid siege to the Eldercastle. ",
+    "LoreData.329.11": "The wrath of heavens descended upon the ancient ones, broke the siege and rallied the surviving forces of the Weald, the Isles and the Knolls. ",
+    "LoreData.329.12": "The tyrant realm of Calico was the first to fall in the counterattack, and then the war abided. The Celestial princess had vanished. Neither side could account for her disappearance, and they turned from war with empty hands and broken hearts.",
 
 
     // ===========================================================================
@@ -2648,74 +3026,74 @@
 
     "HerbalData.25": "Ligna",
     "HerbalData.27": "Nature, liquified and sticky.",
-    "HerbalData.39": "Restores: 10 Health, 15 Stamina",
+    //"HerbalData.39": "Restores: 10 Health, 15 Stamina",
     "HerbalData.40": "Requires: 1x Organic Substance",
     "HerbalData.61": "Melius Ligna",
     "HerbalData.63": "Like bark-root tea, with more bark, and root to boot.",
-    "HerbalData.75": "Restores: 15 Health, 30 Stamina",
+    //"HerbalData.75": "Restores: 15 Health, 30 Stamina",
     "HerbalData.76": "Effect: Alignment Level 1, 3 Hours",
     "HerbalData.77": "Requires: Base, 1x Tree Seed",
     "HerbalData.98": "Satius Ligna",
     "HerbalData.100": "Infused with the leaves and petals of weeds. Toxic to dogs.",
-    "HerbalData.112": "Restores: 20 Health, 80 Stamina",
+    //"HerbalData.112": "Restores: 20 Health, 80 Stamina",
     "HerbalData.113": "Effect: Alignment Level 2, 4 Hours",
     "HerbalData.114": "Requires: Base, 1x Meadow Flower",
     "HerbalData.135": "Magnus Ligna",
     "HerbalData.137": "Potent oils enhance the rich, nutty flavour profile of the base mixture.",
-    "HerbalData.149": "Restores: 50 Health, 200 Stamina",
+    //"HerbalData.149": "Restores: 50 Health, 200 Stamina",
     "HerbalData.150": "Effect: Alignment Level 3, 6 Hours",
     "HerbalData.151": "Ingredients: Base, 1x Vegetable Oil",
     "HerbalData.171": "Optimus Ligna",
     "HerbalData.173": "Brims with the vibrant colours of creation",
-    "HerbalData.185": "Restores: 100 Health, 400 Stamina",
+    //"HerbalData.185": "Restores: 100 Health, 400 Stamina",
     "HerbalData.186": "Effect: Vigorous Level 4, 8 Hours",
     "HerbalData.187": "Requires: Base, Aether",
     "HerbalData.206": "Vigores",
     "HerbalData.208": "The flavours of the earth in a bottle.",
-    "HerbalData.220": "Restores: 15 Health, 40 Stamina",
+    //"HerbalData.220": "Restores: 15 Health, 40 Stamina",
     "HerbalData.221": "Requires: 1x Wild Tuber",
     "HerbalData.242": "Melius Vigores",
     "HerbalData.244": "Contains the essence of cave.",
-    "HerbalData.256": "Restores: 30 Health, 80 Stamina",
+    //"HerbalData.256": "Restores: 30 Health, 80 Stamina",
     "HerbalData.257": "Effect: Vigorous Level 1, 3 Hours",
     "HerbalData.258": "Requires: Base, 1x Cave Forage",
     "HerbalData.279": "Satius Vigores",
     "HerbalData.281": "Gently raise to boiling temperature then leave to simmer.",
-    "HerbalData.293": "Restores: 45 Health, 160 Stamina",
+    //"HerbalData.293": "Restores: 45 Health, 160 Stamina",
     "HerbalData.294": "Effect: Vigorous Level 2, 4 Hours",
     "HerbalData.296": "Requires: Base, 1x Combustible Material",
     "HerbalData.317": "Magnus Vigores",
     "HerbalData.319": "The spicy tang that enflames the regions.",
-    "HerbalData.331": "Restores: 70 Health, 320 Stamina",
+    //"HerbalData.331": "Restores: 70 Health, 320 Stamina",
     "HerbalData.332": "Effect: Vigorous Level 3, 6 Hours",
     "HerbalData.333": "Requires: Base, 1x Spicy Ingredient",
     "HerbalData.353": "Optimus Vigores",
     "HerbalData.355": "It burns, but it stays down.",
-    "HerbalData.367": "Restores: 180 Health, 560 Stamina",
+    //"HerbalData.367": "Restores: 180 Health, 560 Stamina",
     "HerbalData.368": "Effect: Vigorous Level 4, 8 Hours",
     "HerbalData.369": "Requires: Base, Aether",
     "HerbalData.388": "Celeri",
     "HerbalData.390": "With mineral extracts for revitalised skin and circulation.",
-    "HerbalData.402": "Restores: 10 Health, 30 Stamina",
+    //"HerbalData.402": "Restores: 10 Health, 30 Stamina",
     "HerbalData.403": "Requires: 1x Mineral-Rich Substance",
     "HerbalData.423": "Melius Celeri",
     "HerbalData.425": "Now with extra fiber for good gut health.",
-    "HerbalData.437": "Restores: 20 Health, 60 Stamina",
+    //"HerbalData.437": "Restores: 20 Health, 60 Stamina",
     "HerbalData.438": "Effect: Celerity Level 1, 3 Hours",
     "HerbalData.439": "Requires: Base, 1x Energy Supplement",
     "HerbalData.460": "Satius Celeri",
     "HerbalData.462": "Good for your joints and memory retention.",
-    "HerbalData.474": "Restores: 30 Health, 120 Stamina",
+    //"HerbalData.474": "Restores: 30 Health, 120 Stamina",
     "HerbalData.475": "Effect: Celerity Level 2, 4 Hours",
     "HerbalData.476": "Requires: Base, 1x Common Fish",
     "HerbalData.497": "Magnus Celeri",
     "HerbalData.499": "Now with organically sourced protein for heightened muscle recovery.",
-    "HerbalData.511": "Restores: 60 Health, 240 Stamina",
+    //"HerbalData.511": "Restores: 60 Health, 240 Stamina",
     "HerbalData.512": "Effect: Celerity Level 3, 6 Hours",
     "HerbalData.513": "Requires: Base, 1x Common Shellfish",
     "HerbalData.533": "Optimus Celeri",
     "HerbalData.535": "Now with fluff and sprinkles for added bliss.",
-    "HerbalData.547": "Restores: 120 Health, 480 Stamina",
+    //"HerbalData.547": "Restores: 120 Health, 480 Stamina",
     "HerbalData.548": "Effect: Celerity Level 4, 8 hours",
     "HerbalData.549": "Requires: Base, Aether",
     "HerbalData.570": "Faeth",
@@ -2735,6 +3113,7 @@
     "HerbalData.1313": "Stardew Druid",
     "HerbalData.1314": "Herbalism",
     "HerbalData.1318": "Druid Herbalism",
+    "HerbalData.327.1": "Restores: {{health}} Health, {{stamina}} Stamina",
 
     // ===========================================================================
     // MOD CONFIGURATION
@@ -2759,7 +3138,7 @@
     "ModConfig.73": "Active Journal",
     "ModConfig.74": "Show active quests on the front pages of the Stardew Druid journal. Default: active entries on front page. Disabled: no change in order.",
     "ModConfig.83": "Mod Difficulty",
-    "ModConfig.84": "Select Mod difficulty level. Affects monetary rewards, stamina costs, monster difficulty.",
+    "ModConfig.84": "Select Mod difficulty level. Affects monetary rewards, stamina costs, replenishment from potions and monster difficulty.",
     "ModConfig.92": "Disable Cast Hands",
     "ModConfig.93": "(Full mode only) Disables farmer sprite 'cast hands' animation when triggering events. Recommended disable if other game modifications make changes to the farmer rendering or draw cycle.",
     "ModConfig.100": "Auto Progress",
@@ -2811,10 +3190,14 @@
     "ModConfig.308": "Cardinal Targetting",
     "ModConfig.309": "Disables isometric (6 way) targetting for transformation effects. Might look a little misaligned with the transformation animations.",
     "ModConfig.316": "Cast Anywhere",
-    "ModConfig.317": "Disables the Map-based cast restrictions so that any rite effect can be cast anywhere. Proceed with caution!",
+    "ModConfig.317": "Disables the Map-based cast restrictions so that any rite effect can be cast anywhere. Use at own discretion.",
 
     "ModConfig.313.1": "Mod Version",
     "ModConfig.313.2": "Choose between the full version of Stardew Druid or the Magic only version. Default will load the magic-only version if Magic by Neosinf mod is enabled.",
+
+    "ModConfig.326.1": "Decorate Grove",
+    "ModConfig.326.2": "Enables placement of furniture and craftables in the Druid Grove. The mod will attempt to save these objects. Use at own discretion.",
+
 
     // ===========================================================================
     // EFFECTS JOURNAL
@@ -2919,8 +3302,6 @@
     "EffectsData.170": "Deposits of minerals litter the valley, some potent in energy, some precious in lustre. ",
     "EffectsData.171": "Some even appear to be the eroded detritus of the great marvels of the past. The hammer will know for sure.",
     "EffectsData.172": "The herbalist's bench in the druid's grove now provides the option to break apart all geodes in the player's inventory. ",
-
-
     "EffectsData.175": "Activate: Select the break geodes option when in dialogue at the bench.",
     "EffectsData.176": "Uses the base game randomisation logic.",
     "EffectsData.177": "The results are stored in the bench's inventory. Overflow will be thrown to the player.",
@@ -2932,7 +3313,9 @@
     "EffectsData.195": "Runestones are gained by defeating challenges that appear throughout the Druid questline.",
     "EffectsData.196": "Collection methods vary per set of relics.",
     "EffectsData.197": "Presenting a full set of relics to the NPC referred to in the relic tooltip will unlock a relic quest.",
-    "EffectsData.198": "Relic quests will clear automatically if the corresponding community bundle is finished.",
+    "EffectsData.198": "Relic quests will clear automatically if the corresponding community bundle is finished or if player has a Joja membership.",
+    "EffectsData.330.1": "Hint 1: Travel to various woodland locations to find wayward bats from the Church of Bats and use Weald:Gentle Touch to call them home.",
+    "EffectsData.330.2": "Hint 2: Channel Rite of the Weald in sacred but neglected spaces, such as the Sacred Spring, in order to restore them to their former condition.",
 
     "EffectsData.209": "Cursor Targetting",
 
@@ -3020,8 +3403,8 @@
     "EffectsData.369": "Meteor Rain",
 
     "EffectsData.371": "If nature extends to the celestial realm, then the stars themselves are it's greatest force, a force now granted to me in order to burn away the taint and decay of a stagnated world.",
-    "EffectsData.372": "Cast Rite of the Stars to produce a meteor that strikes objects and monsters within the impact radius of a random point near the Farmer. ",
-    "EffectsData.373": "Will dislodge most set down objects. A melee weapon is required to cast meteors on farmland.",
+    "EffectsData.372": "A melee weapon is required to trigger this effect. Cast Rite of the Stars to produce a meteor that strikes objects and monsters within the impact radius of a random point near the Farmer. ",
+    "EffectsData.373": "Will dislodge most set down objects.",
     "EffectsData.376": "Cost: 12 - Player Combat Level, minimum 5",
     "EffectsData.377": "Activate: Hold the rite button to continue to produce a shower of meteors around the Farmer",
     "EffectsData.378": "Mastery: Chance for an additional meteor to be produced per cast cycle",
@@ -3046,12 +3429,13 @@
     "EffectsData.409": "Gravity Well",
 
     "EffectsData.411": "I have become familiar with the dark side of celestial magic, the anti-star, the ravenous void that pulls at the fabric of the material plane",
-    "EffectsData.412": "Cast and hold the rite button to channel a gravity well at the cursor location.",
-    "EffectsData.415": "Activate: Hold the rite button until the channel cursor expands past the rite indicator",
-    "EffectsData.416": "Mastery: A massive instance of meteor rain will be drawn to the black hole.",
-    "EffectsData.417": "Nearby harvestable crops will be harvested and pulled towards the well, with boosts to quantity and quality based on Weald:Cultivation settings.",
-    "EffectsData.418": "Nearby forage will be harvested and pulled towards the well, and normal harvesting rules apply for quantity and quality",
-    "EffectsData.419": "Monsters will be stunned and pulled in. Uses directional and cursor targetting.",
+    "EffectsData.412": "Cast and hold the rite button to channel a gravity well at the cursor location. The effect may change depent on whether a tool or weapon is used to cast.",
+    "EffectsData.323.1": "Stamina Cost: 48",
+    "EffectsData.415": "Mastery: A massive instance of meteor rain will be drawn to the black hole.",
+    "EffectsData.416": "Water Effect: Creates a whirlpool that sucks in low tier fish",
+    "EffectsData.417": "Tool Effect: Nearby harvestable crops will be harvested and pulled towards the well, with boosts to quantity and quality based on Weald:Cultivation settings.",
+    "EffectsData.418": "Tool Effect: Nearby forage, tree and grass matter will be harvested and pulled towards the well, and normal foraging rules apply for quantity and quality",
+    "EffectsData.419": "Weapon / Mineshaft effect: Monsters will be stunned and pulled towards the well. Uses directional and cursor targetting.",
 
     "EffectsData.430": "Adventures with Jester",
 
@@ -3165,16 +3549,14 @@
     "EffectsData.628": "Thieves: There is a chance a monster will attempt to abscond with the treasure.",
     "EffectsData.629": "Mastery: Dig spots spawn in every 3rd and 7th out of 10 mineshafts, and generate descending ladders or holes.",
 
-    "EffectsData.313.1": "Summon Corvids",
+    "EffectsData.313.1": "Summon Familiars",
 
     "EffectsData.313.2": "Spirits of the otherworld became familiars to those mortals they discern to possess special gifts.",
-    "EffectsData.313.3": "Channel (stand still and hold the rite button) the rite of bones to summon four plucky corvids to assist you. ",
-    "EffectsData.313.4": "Cast Rite of Bones normally to direct the corvids to the cursor position. Casting with the cursor over the player will call the corvids to the player's position.",
+    "EffectsData.313.3": "Channel (stand still and hold the rite button) the rite of bones to summon four familiars to assist you. ",
+    "EffectsData.313.4": "Cast Rite of Bones normally to direct the familiars to the cursor position. Casting with the cursor over the player will call the familiars back to the player's position.",
     "EffectsData.313.5": "Limitation: Corvids will follow you everywhere, but can only be dismissed by channelling again.",
-    "EffectsData.313.6": "Corvids will gather up forage and loose items near to them and carry those items to the player.",
-    "EffectsData.313.7": "Corvids will greet villagers and have a small chance to pickpocket an item liked or loved by that villager.",
-    "EffectsData.313.8": "Corvids will peck at nearby debris, including stone nodes and twigs.",
-    "EffectsData.313.9": "Corvids will attack nearby enemies if they are in a good position to attack.",
+    "EffectsData.313.6": "Corvids will attack nearby enemies if they are in a good position to attack.",
+    "EffectsData.313.7": "Mastery: Increases task frequency.",
 
     "EffectsData.313.10": "Magic",
 
@@ -3183,6 +3565,28 @@
     "EffectsData.313.13": "Targetting: Some rites use special cursor targetting. For controllers, this target will be a specified distance in the direction the farmer is facing.",
     "EffectsData.313.14": "Indicator: The decorative rite circle, cursor and HUD-buff icon should indicate the currently selected rite",
     "EffectsData.313.15": "Restrictions: Some of the game maps (mostly interiors) have effect restrictions. These restrictions can be disabled if 'cast anywhere' is set to true in the configuration.",
-    "EffectsData.313.16": "Stamina Cost: Most rites have an innate stamina cost that can be adjusted with the mod difficulty level. Engage with the herbalism system for additional ways to replenish spent stamina."
+    "EffectsData.313.16": "Stamina Cost: Most rites have an innate stamina cost that can be adjusted with the mod difficulty level. Engage with the herbalism system for additional ways to replenish spent stamina.",
+
+    "EffectsData.324.1": "Familiars: Retrieval",
+
+    "EffectsData.324.2": "Though they can be trained to seek and retrieve, Familiars are about as tame as they can ever be, for they cannot abide the captivity inherent in a grounded life.",
+    "EffectsData.324.3": "Cast Rite of Bones with familiars active to send them to places where debris, stones and forageables are present.",
+    "EffectsData.324.4": "Corvids will gather up forage and loose items near to them and carry those items to the player.",
+    "EffectsData.324.5": "Mastery: Corvids will peck at nearby debris, including stone nodes and twigs.",
+
+    "EffectsData.324.6": "Familiars: Opportunity",
+
+    "EffectsData.324.7": "Complex social arrangements and relationships are not beyond the intelligence and tenacity of a Druid's familiar.",
+    "EffectsData.324.8": "Cast Rite of Bones with familiars active to send them to greet nearby villagers.",
+    "EffectsData.324.9": "Corvids will greet villagers for soft frienship points.",
+    "EffectsData.324.10": "Mastery: Small chance to pickpocket an item liked or loved by that villager.",
+
+    "EffectsData.326.1": "Gardener of the Circle Two",
+
+    "EffectsData.326.2": "The original gardener of the circle has returned. The tasks and technology are vastly different, but her gentle touch remains as nurturing as ever.",
+    "EffectsData.326.3": "Approach Blackfeather and select (adventure) from the dialogue menu to give her instructions.",
+    "EffectsData.326.4": "'Blackfeather's Other Glove' can be used in the relics menu to summon Blackfeather for an adventure.",
+    "EffectsData.326.5": "Now that she has received an aspect of The Lady Beyond's power, Blackfeather can do many of the same tasks that the Effigy does, and can wield her own lightning attack.",
+    "EffectsData.326.6": "Seeds placed in Blackfeather's inventory will be sewn in tilled, empty soil within range of targetted scarecrows."
 
 }

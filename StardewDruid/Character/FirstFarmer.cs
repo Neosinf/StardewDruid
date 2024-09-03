@@ -26,6 +26,8 @@ namespace StardewDruid.Character
         
         public Texture2D hatsTexture;
 
+        public int hatsIndex;
+
         public FirstFarmer()
         {
         }
@@ -39,78 +41,86 @@ namespace StardewDruid.Character
 
         public override void LoadOut()
         {
+            
             base.LoadOut();
 
             hatsTexture = Game1.content.Load<Texture2D>("Characters\\Farmer\\hats");
+
+            hatsIndex = 55;
+
+            WeaponLoadout();
+
+            weaponRender.LoadWeapon(Render.WeaponRender.weapons.sword);
+
         }
+
 
         public override void draw(SpriteBatch b, float alpha = 1f)
         {
+
+            base.draw(b, alpha);
 
             if (IsInvisible || !Utility.isOnScreen(Position, 128) || characterTexture == null)
             {
                 return;
             }
 
-
             Vector2 localPosition = Game1.GlobalToLocal(Position);
+
+            Vector2 spritePosition = SpritePosition(localPosition);
 
             float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
 
-            DrawEmote(b);
-            
-            if (netSpecial.Value != 0)
+            float fade = fadeOut == 0 ? 1f : fadeOut;
+
+            DrawHat(b, spritePosition, drawLayer, fade);
+
+
+        }
+
+        public virtual void DrawHat(SpriteBatch b, Vector2 spritePosition,  float drawLayer, float fade)
+        {
+
+            int UseIndex = hatsIndex + 0;
+
+            int hatOffset = 0;
+
+            switch (netDirection.Value)
             {
+                case 0:
 
-                b.Draw(
-                    characterTexture,
-                    localPosition - new Vector2(32, 64f),
-                    new(32, 0, 32, 32),
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    4f,
-                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    drawLayer
-                );
+                    UseIndex += 36;
 
-                b.Draw(
-                    hatsTexture,
-                    localPosition + new Vector2(0, -84f),
-                    Game1.getSourceRectForStandardTileSheet(hatsTexture, 67, 20, 20),
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    3.5f,
-                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    drawLayer + 0.0001f
-                );
+                    break;
+
+                case 1:
+
+                    UseIndex += 12;
+
+                    break;
+
+                case 3:
+
+                    UseIndex += 24;
+
+                    hatOffset -= (int)(1 * setScale);
+
+                    break;
 
             }
-            else if (netDirection.Value == 2)
+
+            if (netIdle.Value == (int)Character.idles.kneel)
             {
 
                 b.Draw(
-                    characterTexture,
-                    localPosition - new Vector2(32, 64f),
-                    new(64, 0, 32, 32),
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    4f,
-                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    drawLayer
-                );
-
-                b.Draw(
                     hatsTexture,
-                    localPosition + new Vector2(0, -62f),
-                    Game1.getSourceRectForStandardTileSheet(hatsTexture, 67, 20, 20),
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    3.5f,
-                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    spritePosition - new Vector2(hatOffset, 6*setScale),
+                    Game1.getSourceRectForStandardTileSheet(hatsTexture, UseIndex, 20, 20),
+                    Color.White * fade,
+                    0.0f,
+                    new Vector2(10),
+                    setScale,
+                    SpriteAngle() ? (SpriteEffects)1 : 0,
                     drawLayer + 0.0001f
                 );
 
@@ -119,33 +129,65 @@ namespace StardewDruid.Character
             {
 
                 b.Draw(
-                    characterTexture,
-                    localPosition - new Vector2(32, 64f),
-                    new(0,0,32,32),
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    4f,
-                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    drawLayer
-                );
-
-                b.Draw(
                     hatsTexture,
-                    localPosition + new Vector2(0, -84f),
-                    Game1.getSourceRectForStandardTileSheet(hatsTexture, 67, 20, 20),
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    3.5f,
-                    flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                    spritePosition - new Vector2(hatOffset, 13 * setScale),
+                    Game1.getSourceRectForStandardTileSheet(hatsTexture, UseIndex, 20, 20),
+                    Color.White * fade,
+                    0.0f,
+                    new Vector2(10),
+                    setScale,
+                    SpriteAngle() ? (SpriteEffects)1 : 0,
                     drawLayer + 0.0001f
                 );
 
             }
 
         }
+        public override void DrawDash(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        {
 
+
+            if (netDash.Value != (int)dashes.smash)
+            {
+
+                base.DrawDash(b, localPosition, drawLayer, fade);
+
+                return;
+
+            }
+
+            int dashSeries = netDirection.Value + (netDashProgress.Value * 4);
+
+            int dashSetto = Math.Min(dashFrame, (dashFrames[(dashes)netDash.Value][dashSeries].Count - 1));
+
+            Vector2 dashVector = SpritePosition(localPosition) - new Vector2(0, dashHeight);
+
+            Rectangle dashTangle = dashFrames[(dashes)netDash.Value][dashSeries][dashSetto];
+
+            b.Draw(
+                characterTexture,
+                dashVector,
+                dashTangle,
+                Color.White * fade,
+                0f,
+                new Vector2(16),
+                setScale,
+                SpriteFlip() ? (SpriteEffects)1 : 0,
+                drawLayer
+            );
+
+            DrawShadow(b, localPosition, drawLayer);
+
+            weaponRender.DrawWeapon(b, dashVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = dashTangle, flipped = SpriteFlip() });
+
+            if (netDashProgress.Value >= 2)
+            {
+
+                weaponRender.DrawSwipe(b, dashVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = dashTangle, flipped = SpriteFlip() });
+
+            }
+
+        }
         public override void behaviorOnFarmerPushing()
         {
 

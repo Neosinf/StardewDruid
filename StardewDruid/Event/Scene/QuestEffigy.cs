@@ -142,6 +142,8 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(1);
 
+                    Mod.instance.relicsData.RelicFunction(IconData.relics.wayfinder_censer.ToString());
+
                     //activeCounter = 300;
 
                     break;
@@ -149,6 +151,8 @@ namespace StardewDruid.Event.Scene
                 case 3:
 
                     companions[0].ResetActives();
+
+                    companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
                     DialogueCue(2);
 
@@ -158,6 +162,11 @@ namespace StardewDruid.Event.Scene
 
                     DialogueLoad(0, 1);
 
+                    break;
+
+                case 12:
+
+                    companions[0].netIdle.Set((int)Character.Character.idles.standby);
                     break;
 
                 case 16: activeCounter = 100; break;
@@ -557,6 +566,8 @@ namespace StardewDruid.Event.Scene
 
                 case 301:
 
+                    location.warps.Clear();
+
                     DialogueCue(13);
 
                     break;
@@ -859,6 +870,8 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(33);
 
+                    SetTrack("night_market");
+
                     Wisps wispNew = new();
 
                     wispNew.EventSetup(mistVector * 64, "wisps");
@@ -868,6 +881,8 @@ namespace StardewDruid.Event.Scene
                     wispNew.EventActivate();
 
                     wispNew.WispArray();
+
+                    (location as Atoll).ambientDarkness = true;
 
                     break;
 
@@ -964,8 +979,6 @@ namespace StardewDruid.Event.Scene
 
                     companions[2].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-                    companions[2].netDirection.Set(1);
-
                     if (companions[2].currentLocation.Name != location.Name)
                     {
                         companions[2].currentLocation.characters.Remove(companions[2]);
@@ -984,12 +997,9 @@ namespace StardewDruid.Event.Scene
 
                     companions[3].SwitchToMode(Character.Character.mode.scene,Game1.player);
 
-                    companions[3].netDirection.Set(1);
-
-                    companions[3].flip = true;
-
                     if (companions[3].currentLocation.Name != location.Name)
                     {
+                        
                         companions[3].currentLocation.characters.Remove(companions[3]);
 
                         companions[3].currentLocation = location;
@@ -999,6 +1009,10 @@ namespace StardewDruid.Event.Scene
                     }
 
                     companions[3].Position = (mistVector + new Vector2(2, -2)) * 64;
+
+                    companions[2].LookAtTarget(companions[3].Position, true);
+
+                    companions[3].LookAtTarget(companions[2].Position, true);
 
                     break;
 
@@ -1011,10 +1025,19 @@ namespace StardewDruid.Event.Scene
                 case 514: 
                     companions[3].netSpecial.Set((int)Character.Character.specials.gesture); companions[3].specialTimer = 90;
                     break;
-                case 523: 
+                case 517:
+                    companions[3].TargetEvent(0, companions[3].Position + new Vector2(0, -192));
+                    break;
+                case 520:
+                    companions[2].LookAtTarget(companions[3].Position, true);
+                    companions[3].TargetEvent(0, companions[3].Position + new Vector2(0, 192));
+                    break;
+                case 523:
+                    companions[2].LookAtTarget(companions[3].Position, true);
                     companions[2].netSpecial.Set((int)Character.Character.specials.gesture); companions[2].specialTimer = 90;
                     break;
-                case 526: 
+                case 526:
+                    companions[3].LookAtTarget(companions[2].Position, true);
                     companions[3].netSpecial.Set((int)Character.Character.specials.gesture); companions[3].specialTimer = 90; 
                     break;
                 case 529: 
@@ -1037,14 +1060,20 @@ namespace StardewDruid.Event.Scene
                 case 553: 
                     companions[2].netSpecial.Set((int)Character.Character.specials.gesture); companions[2].specialTimer = 90;
                     break;
-                case 556: 
-                    companions[3].netSpecial.Set((int)Character.Character.specials.gesture); companions[3].specialTimer = 90;
+                case 556:
+                    companions[3].ResetActives();
+                    companions[3].TargetEvent(0, companions[3].Position + new Vector2(128, 0));
                     break;
-                case 559: 
-                    companions[3].netDirection.Set(2);
+                case 559:
+                    companions[2].ResetActives();
+                    companions[2].TargetEvent(0, companions[2].Position + new Vector2(128, 0));
+                    companions[3].ResetActives();
+                    companions[3].netDirection.Set(1);
+                    companions[3].netIdle.Set((int)Character.Character.idles.jump);
                     break;
-                case 561: 
-                    companions[2].netDirection.Set(2);
+                case 561:
+                    companions[2].ResetActives();
+                    companions[2].netIdle.Set((int)Character.Character.idles.kneel);
                     companions[3].currentLocation.characters.Remove(companions[3]);
                     companions.Remove(3);
                     break;
@@ -1091,8 +1120,6 @@ namespace StardewDruid.Event.Scene
                 case 609:
 
                     companions[0].netDirection.Set(1);
-
-                    //Mod.instance.questHandle.CompleteQuest(eventId);
 
                     companions[0].SwitchToMode(Character.Character.mode.random, Game1.player);
 

@@ -31,10 +31,13 @@ namespace StardewDruid.Journal
             interfaceComponents = new()
             {
 
+
                 [101] = addButton(journalButtons.quests),
                 [102] = addButton(journalButtons.effects),
                 [103] = addButton(journalButtons.relics),
                 [104] = addButton(journalButtons.herbalism),
+                [105] = addButton(journalButtons.lore),
+                [106] = addButton(journalButtons.transform),
 
                 [201] = addButton(journalButtons.back),
                 [202] = addButton(journalButtons.start),

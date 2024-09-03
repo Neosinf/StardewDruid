@@ -79,6 +79,8 @@ namespace StardewDruid
 
         public bool castAnywhere { get; set; }
 
+        public bool decorateGrove { get; set; }
+
         public bool reverseJournal { get; set; }
 
         public bool activeJournal { get; set; }
@@ -157,7 +159,7 @@ namespace StardewDruid
             convert219 = false;
             maxDamage = false;
             modDifficulty = difficulties.medium.ToString();
-            slotAttune = true;
+            slotAttune = false;
             slotConsume = true;
             slotFreedom = false;
             slotReverse = false;
@@ -177,6 +179,7 @@ namespace StardewDruid
             meteorBehaviour = 3;
             cardinalMovement = false;
             castAnywhere = false;
+            decorateGrove = false;
             dragonScale = 3;
             dragonScheme = (int)IconData.schemes.dragon_red;
             dragonBreath = (int)IconData.schemes.stars;
@@ -220,6 +223,7 @@ namespace StardewDruid
             AccessHandle,
             AccessDoor,
             HaltCharacter,
+            GimmeMoney,
         }
 
         public QueryData()

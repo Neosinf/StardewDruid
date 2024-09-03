@@ -53,7 +53,7 @@ namespace StardewDruid.Journal
                 ritesOfTheDruids = new()
                 {
                     title = Mod.instance.Helper.Translation.Get("EffectsData.313.10"),
-                    icon = IconData.displays.chaos,
+                    icon = IconData.displays.effect,
                     description = Mod.instance.Helper.Translation.Get("EffectsData.313.11"),
                     details = new()
                     {
@@ -67,6 +67,21 @@ namespace StardewDruid.Journal
 
 
             }
+
+            Effect attunement = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("EffectsData.51"),
+                icon = IconData.displays.chaos,
+                description = Mod.instance.Helper.Translation.Get("EffectsData.53"),
+                instruction = Mod.instance.Helper.Translation.Get("EffectsData.54"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("EffectsData.57"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.58"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.59")
+
+                }
+            };
 
             Effect herbalism = new()
             {
@@ -106,22 +121,7 @@ namespace StardewDruid.Journal
                 }
             };
 
-            Effect attunement = new()
-            {
-                title = Mod.instance.Helper.Translation.Get("EffectsData.51"),
-                icon = IconData.displays.weald,
-                description = Mod.instance.Helper.Translation.Get("EffectsData.53"),
-                instruction = Mod.instance.Helper.Translation.Get("EffectsData.54"),
-                details = new()
-                {
-                    Mod.instance.Helper.Translation.Get("EffectsData.57"),
-                    Mod.instance.Helper.Translation.Get("EffectsData.58"),
-                    Mod.instance.Helper.Translation.Get("EffectsData.59")
-
-                }
-            };
-
-            effects[QuestHandle.wealdOne] = new() { ritesOfTheDruids, herbalism, clear, attunement, };
+            effects[QuestHandle.wealdOne] = new() { ritesOfTheDruids, attunement, herbalism, clear, };
 
             Effect caress = new()
             {
@@ -264,6 +264,8 @@ namespace StardewDruid.Journal
                         Mod.instance.Helper.Translation.Get("EffectsData.196"),
                         Mod.instance.Helper.Translation.Get("EffectsData.197"),
                         Mod.instance.Helper.Translation.Get("EffectsData.198"),
+                        Mod.instance.Helper.Translation.Get("EffectsData.330.1"),
+                        Mod.instance.Helper.Translation.Get("EffectsData.330.2"),
                     }
                 };
 
@@ -363,7 +365,7 @@ namespace StardewDruid.Journal
                 {
                     Mod.instance.Helper.Translation.Get("EffectsData.294"),
                     Mod.instance.Helper.Translation.Get("EffectsData.295"),
-                    Mod.instance.Helper.Translation.Get("EffectsData.296")
+                    Mod.instance.Helper.Translation.Get("EffectsData.296"),
                 }
             };
 
@@ -488,6 +490,7 @@ namespace StardewDruid.Journal
                 instruction = Mod.instance.Helper.Translation.Get("EffectsData.412"),
                 details = new()
                 {
+                    Mod.instance.Helper.Translation.Get("EffectsData.323.1"),
                     Mod.instance.Helper.Translation.Get("EffectsData.415"),
                     Mod.instance.Helper.Translation.Get("EffectsData.416"),
                     Mod.instance.Helper.Translation.Get("EffectsData.417"),
@@ -723,6 +726,27 @@ namespace StardewDruid.Journal
 
             }
 
+            if (!Mod.instance.magic)
+            {
+
+                Effect summonBlackfeather = new()
+                {
+                    title = Mod.instance.Helper.Translation.Get("EffectsData.326.1"),
+                    icon = IconData.displays.blackfeather,
+                    description = Mod.instance.Helper.Translation.Get("EffectsData.326.2"),
+                    instruction = Mod.instance.Helper.Translation.Get("EffectsData.326.3"),
+                    details = new()
+                    {
+                        Mod.instance.Helper.Translation.Get("EffectsData.326.4"),
+                        Mod.instance.Helper.Translation.Get("EffectsData.326.5"),
+                        Mod.instance.Helper.Translation.Get("EffectsData.326.6"),
+                    }
+                };
+
+                effects[QuestHandle.questBlackfeather] = new() { summonBlackfeather, };
+
+            }
+
             Effect corvidsSummon = new()
             {
                 title = Mod.instance.Helper.Translation.Get("EffectsData.313.1"),
@@ -734,12 +758,41 @@ namespace StardewDruid.Journal
                         Mod.instance.Helper.Translation.Get("EffectsData.313.5"),
                         Mod.instance.Helper.Translation.Get("EffectsData.313.6"),
                         Mod.instance.Helper.Translation.Get("EffectsData.313.7"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.313.8"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.313.9"),
                     }
             };
 
-            effects[QuestHandle.etherFour] = new() { corvidsSummon, };
+            effects[QuestHandle.bonesOne] = new() { corvidsSummon, };
+
+            Effect corvidsRetrieve = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("EffectsData.324.1"),
+                icon = IconData.displays.bones,
+                description = Mod.instance.Helper.Translation.Get("EffectsData.324.2"),
+                instruction = Mod.instance.Helper.Translation.Get("EffectsData.324.3"),
+                details = new()
+                    {
+                        Mod.instance.Helper.Translation.Get("EffectsData.324.4"),
+                        Mod.instance.Helper.Translation.Get("EffectsData.324.5"),
+                    }
+            };
+
+            effects[QuestHandle.bonesTwo] = new() { corvidsRetrieve, };
+
+            Effect corvidsOpportunist = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("EffectsData.324.6"),
+                icon = IconData.displays.bones,
+                description = Mod.instance.Helper.Translation.Get("EffectsData.324.7"),
+                instruction = Mod.instance.Helper.Translation.Get("EffectsData.324.8"),
+                details = new()
+                    {
+                        Mod.instance.Helper.Translation.Get("EffectsData.324.9"),
+                        Mod.instance.Helper.Translation.Get("EffectsData.324.10")
+                    }
+            };
+
+            effects[QuestHandle.bonesThree] = new() { corvidsOpportunist, };
+
 
             return effects;
 

@@ -26,10 +26,11 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using xTile.Dimensions;
 using xTile.Tiles;
-using static StardewDruid.Character.Character;
 using static StardewDruid.Character.CharacterHandle;
+
 
 namespace StardewDruid.Character
 {
@@ -45,6 +46,7 @@ namespace StardewDruid.Character
             court,
             archaeum,
             gate,
+            rest,
         }
 
         public enum characters
@@ -65,10 +67,24 @@ namespace StardewDruid.Character
             attendant,
             waves,
             herbalism,
+            keeper,
+
+            epitaph_prince,
+            epitaph_isles,
+            epitaph_knoll,
+            epitaph_servants_oak,
+            epitaph_servants_holly,
+            epitaph_kings_oak,
+            epitaph_kings_holly,
+            epitaph_guardian,
+            epitaph_dragon,
+
             monument_artisans,
             monument_priesthood,
             monument_morticians,
             monument_chaos,
+            shrine_engine,
+            shrine_forge,
 
             // event
             Marlon,
@@ -78,6 +94,11 @@ namespace StardewDruid.Character
             LadyBeyond,
             Dwarf,
             Dragon,
+            Crowmother,
+            Paladin,
+            Justiciar,
+            Reaper,
+            Seafarer,
 
             // animals
             Shadowcat,
@@ -144,6 +165,30 @@ namespace StardewDruid.Character
 
         }
 
+        public static characters CharacterType(string name)
+        {
+
+            Dictionary<string, characters> types = new()
+            {
+                [Mod.instance.Helper.Translation.Get("CharacterHandle.311.1")] = characters.Effigy,
+                [Mod.instance.Helper.Translation.Get("CharacterHandle.311.2")] = characters.Revenant,
+                [Mod.instance.Helper.Translation.Get("CharacterHandle.311.3")] = characters.Jester,
+                [Mod.instance.Helper.Translation.Get("CharacterHandle.311.4")] = characters.Buffin,
+                [Mod.instance.Helper.Translation.Get("CharacterHandle.311.5")] = characters.Shadowtin,
+                [Mod.instance.Helper.Translation.Get("CharacterHandle.315.1")] = characters.Blackfeather,
+
+            };
+
+            if (types.ContainsKey(name))
+            { 
+                
+                return types[name];
+            }
+
+            return Enum.Parse<CharacterHandle.characters>(name);
+
+        }
+
         public static string CharacterTitle(characters character)
         {
             switch (character)
@@ -167,6 +212,10 @@ namespace StardewDruid.Character
                 case characters.Blackfeather:
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.315.2");
+                
+                case characters.keeper:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.329.25");
 
                 default:
 
@@ -176,7 +225,7 @@ namespace StardewDruid.Character
 
         }
 
-        public static Vector2 CharacterStart(locations location, characters character = characters.none)
+        public static Vector2 CharacterStart(locations location, characters entity = characters.none)
         {
 
             switch (location)
@@ -191,8 +240,12 @@ namespace StardewDruid.Character
 
                 case locations.grove:
 
-                    switch (character)
+                    switch (entity)
                     {
+
+                        case characters.Blackfeather:
+
+                            return new Vector2(41, 17) * 64;
 
                         case characters.Shadowtin:
 
@@ -206,6 +259,33 @@ namespace StardewDruid.Character
 
                             return new Vector2(39, 15) * 64;
 
+
+                    }
+
+                case locations.rest:
+
+                    switch (entity)
+                    {
+
+                        case characters.Blackfeather:
+
+                            return new Vector2(36, 15) * 64;
+
+                        case characters.Shadowtin:
+
+                            return new Vector2(1696,896);
+
+                        case characters.Jester:
+
+                            return new Vector2(36, 16) * 64;
+
+                        case characters.Effigy:
+
+                            return new Vector2(31, 15) * 64;
+
+                        default:
+
+                            return Vector2.Zero;
 
                     }
 
@@ -227,9 +307,10 @@ namespace StardewDruid.Character
 
                     if (homeOfFarmer != null)
                     {
+                        
                         Point frontDoorSpot = homeOfFarmer.getFrontDoorSpot();
 
-                        farmTry = frontDoorSpot.ToVector2() + new Vector2(0, 128);
+                        farmTry = frontDoorSpot.ToVector2() + new Vector2(0, 2);
 
                     } 
                     else
@@ -239,7 +320,7 @@ namespace StardewDruid.Character
 
                     }
 
-                    List<Vector2> tryVectors = ModUtility.GetOccupiableTilesNearby(farm, ModUtility.PositionToTile(farmTry), -1, 0, 2);
+                    List<Vector2> tryVectors = ModUtility.GetOccupiableTilesNearby(farm, farmTry, -1, 0, 2);
 
                     if(tryVectors.Count > 0)
                     {
@@ -249,8 +330,6 @@ namespace StardewDruid.Character
                     }
 
                     break;
-
-
 
             }
 
@@ -269,6 +348,7 @@ namespace StardewDruid.Character
                     return LocationData.druid_court_name;
 
                 case locations.grove:
+                case locations.rest:
 
                     return LocationData.druid_grove_name;
 
@@ -364,7 +444,36 @@ namespace StardewDruid.Character
             }
 
         }
+        
+        public static locations CharacterRest(characters entity)
+        {
 
+            if (Mod.instance.magic)
+            {
+
+                return locations.farm;
+
+            }
+
+            switch (entity)
+            {
+
+                case characters.Buffin:
+
+                    return locations.court;
+
+                case characters.Revenant:
+
+                    return locations.chapel;
+
+                default:
+
+                    return locations.grove;
+
+            }
+
+        }
+        
         public static void CharacterWarp(Character entity, locations destination, bool instant = false)
         {
 
@@ -751,7 +860,14 @@ namespace StardewDruid.Character
 
                 case characters.Blackfeather:
 
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.315.3");
+                    if (Mod.instance.questHandle.IsGiven(QuestHandle.questBlackfeather))
+                    {
+
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.315.3");
+
+                    }
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.323.1");
 
                 // other characters
 
@@ -771,6 +887,10 @@ namespace StardewDruid.Character
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.115");
 
+                case characters.keeper:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.329.7");
+
                 case characters.monument_artisans:
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.119");
@@ -787,6 +907,53 @@ namespace StardewDruid.Character
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.131");
 
+                case characters.shrine_engine:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.323.20");
+
+                case characters.shrine_forge:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.328.1");
+
+                // epitaphs
+
+                case characters.epitaph_prince:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.329.8");
+
+                case characters.epitaph_isles:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.329.9");
+
+                case characters.epitaph_knoll:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.329.10");
+
+                case characters.epitaph_servants_oak:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.329.11");
+
+                case characters.epitaph_servants_holly:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.329.26");
+
+                case characters.epitaph_kings_oak:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.329.27");
+
+                case characters.epitaph_kings_holly:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.329.28");
+
+                case characters.epitaph_guardian:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.329.29");
+
+                case characters.epitaph_dragon:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.329.30");
+
+
             }
 
             return null;
@@ -796,9 +963,39 @@ namespace StardewDruid.Character
         public static string DialogueNevermind(characters character)
         {
 
+            switch (character)
+            {
 
-            return Mod.instance.Helper.Translation.Get("CharacterHandle.143");
+                // companion characters
 
+                default:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.143");
+
+                // epitaphs
+
+                case characters.epitaph_prince:
+
+                case characters.epitaph_isles:
+
+                case characters.epitaph_knoll:
+
+                case characters.epitaph_servants_oak:
+
+                case characters.epitaph_servants_holly:
+
+                case characters.epitaph_kings_oak:
+
+                case characters.epitaph_kings_holly:
+
+                case characters.epitaph_guardian:
+
+                case characters.epitaph_dragon:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.329.31");
+
+
+            }
 
         }
 
@@ -828,25 +1025,37 @@ namespace StardewDruid.Character
 
                 case subjects.lore:
 
-                    if (Mod.instance.questHandle.lorekey != null)
+                    switch (character)
                     {
 
-                        foreach (LoreData.stories story in Mod.instance.questHandle.loresets[Mod.instance.questHandle.lorekey])
-                        {
+                        case characters.keeper:
 
-                            if (Mod.instance.questHandle.lores.ContainsKey(story))
+                            return LoreData.RequestLore(character);
+
+                        default:
+
+                            if (Mod.instance.questHandle.lorekey != null)
                             {
 
-                                if (Mod.instance.questHandle.lores[story].character == character)
+                                foreach (LoreData.stories story in Mod.instance.questHandle.loresets[Mod.instance.questHandle.lorekey])
                                 {
 
-                                    return LoreData.RequestLore(character);
+                                    if (Mod.instance.questHandle.lores.ContainsKey(story))
+                                    {
+
+                                        if (Mod.instance.questHandle.lores[story].character == character)
+                                        {
+
+                                            return LoreData.RequestLore(character);
+
+                                        }
+
+                                    }
 
                                 }
-
                             }
-
-                        }
+                                
+                            break;
 
                     }
 
@@ -992,6 +1201,32 @@ namespace StardewDruid.Character
 
                             return null;
 
+                        case characters.keeper:
+
+                            int restores = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.restore);
+
+                            if (restores == -1)
+                            {
+
+                                return null;
+
+                            }
+
+                            if (restores == 3)
+                            {
+
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.329.12");
+
+                            }
+                            else if (restores >= 1)
+                            {
+
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.329.13");
+
+                            }
+
+                            return null;
+
                         case characters.monument_artisans:
 
                             return Mod.instance.Helper.Translation.Get("CharacterHandle.302");
@@ -1023,7 +1258,7 @@ namespace StardewDruid.Character
 
                         case characters.Effigy:
 
-                            if (Mod.instance.questHandle.IsComplete(QuestHandle.questEffigy) && Context.IsMainPlayer)
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.questEffigy))
                             {
 
                                 return Mod.instance.Helper.Translation.Get("CharacterHandle.329");
@@ -1034,21 +1269,19 @@ namespace StardewDruid.Character
 
                         case characters.Jester:
 
-                            if (Context.IsMainPlayer)
-                            {
-
-                                return Mod.instance.Helper.Translation.Get("CharacterHandle.340");
-
-                            }
-
-                            break;
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.340");
 
                         case characters.Shadowtin:
 
-                            if (Context.IsMainPlayer)
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.351");
+
+
+                        case characters.Blackfeather:
+
+                            if (Mod.instance.questHandle.IsGiven(QuestHandle.questBlackfeather))
                             {
 
-                                return Mod.instance.Helper.Translation.Get("CharacterHandle.351");
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.323.2");
 
                             }
 
@@ -1056,19 +1289,47 @@ namespace StardewDruid.Character
 
                         case characters.herbalism:
 
-                            if (Context.IsMainPlayer)
-                            {
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.362");
 
-                                return Mod.instance.Helper.Translation.Get("CharacterHandle.362");
 
-                            }
-
-                            break;
                     }
 
                     break;
 
                 case subjects.adventure:
+
+                    switch (character)
+                    {
+
+                        case characters.waves:
+
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.411");
+
+                        case characters.Buffin:
+
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.415");
+
+                        case characters.Revenant:
+
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.419") +
+                                Mod.instance.Helper.Translation.Get("CharacterHandle.420");                        
+
+                        case characters.herbalism:
+
+                            if (Journal.RelicData.HasRelic(IconData.relics.crow_hammer))
+                            {
+
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.427");
+
+                            }
+
+                            break;
+
+                        case characters.shrine_engine:
+
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.323.17");
+
+                    }
 
                     if (!Context.IsMainPlayer)
                     {
@@ -1082,7 +1343,7 @@ namespace StardewDruid.Character
 
                         case characters.Effigy:
 
-                            if (Mod.instance.questHandle.IsComplete(QuestHandle.questEffigy) && Context.IsMainPlayer)
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.questEffigy))
                             {
 
                                 return Mod.instance.Helper.Translation.Get("CharacterHandle.381");
@@ -1093,45 +1354,18 @@ namespace StardewDruid.Character
 
                         case characters.Jester:
 
-                            if (Context.IsMainPlayer)
-                            {
-
-                                return Mod.instance.Helper.Translation.Get("CharacterHandle.392");
-
-                            }
-
-                            break;
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.392");
 
                         case characters.Shadowtin:
 
-                            if (Context.IsMainPlayer)
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.403");
+
+                        case characters.Blackfeather:
+
+                            if (Mod.instance.questHandle.IsGiven(QuestHandle.questBlackfeather))
                             {
 
-                                return Mod.instance.Helper.Translation.Get("CharacterHandle.403");
-
-                            }
-
-                            break;
-
-                        case characters.waves:
-
-                            return Mod.instance.Helper.Translation.Get("CharacterHandle.411");
-
-                        case characters.Buffin:
-
-                            return Mod.instance.Helper.Translation.Get("CharacterHandle.415");
-
-                        case characters.Revenant:
-
-                            return Mod.instance.Helper.Translation.Get("CharacterHandle.419") +
-                                Mod.instance.Helper.Translation.Get("CharacterHandle.420");
-
-                        case characters.herbalism:
-
-                            if (Journal.RelicData.HasRelic(IconData.relics.crow_hammer))
-                            {
-
-                                return Mod.instance.Helper.Translation.Get("CharacterHandle.427");
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.323.3");
 
                             }
 
@@ -1174,7 +1408,7 @@ namespace StardewDruid.Character
 
                         case characters.Blackfeather:
 
-                            if (Mod.instance.questHandle.IsComplete(QuestHandle.bonesClearing))
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.questBlackfeather))
                             {
 
                                 return AttunementIntro(Rite.rites.bones);
@@ -1199,6 +1433,111 @@ namespace StardewDruid.Character
                             }
 
                             return null;
+
+                        case characters.monument_priesthood:
+
+                            if (Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_court_name))
+                            {
+
+                                if (Mod.instance.rite.specialCasts[LocationData.druid_court_name].Contains("FaethBlessing"))
+                                {
+                                
+                                    return null;
+                                
+                                }
+
+                            }
+
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.323.11");
+
+                        case characters.shrine_engine:
+
+                            if (Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_engineum_name))
+                            {
+
+                                if (Mod.instance.rite.specialCasts[LocationData.druid_engineum_name].Contains("AetherBlessing"))
+                                {
+
+                                    return null;
+
+                                }
+
+                            }
+
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.323.13");
+
+                        case characters.shrine_forge:
+
+                            if (Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_engineum_name))
+                            {
+
+                                if (Mod.instance.rite.specialCasts[LocationData.druid_engineum_name].Contains("ForgeBlessing"))
+                                {
+
+                                    return null;
+
+                                }
+
+                            }
+                            else
+                            {
+
+                                Mod.instance.rite.specialCasts[LocationData.druid_engineum_name] = new();
+
+                            }
+
+                            string upgradeOption = HerbalData.ForgeCheck();
+
+                            if (upgradeOption == String.Empty)
+                            {
+
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.328.2");
+
+                            }
+
+                            Tool tooling = (Tool)ItemRegistry.Create(upgradeOption);
+
+                            string upgradeName =  tooling.DisplayName;
+
+                            int upgradeRequirement = HerbalData.ForgeRequirement(upgradeOption);
+
+                            if (!Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.aether))
+                            {
+
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.328.3").Tokens(new { tool = Game1.player.CurrentTool.Name, upgrade = upgradeName, aether = upgradeRequirement, });
+
+                            }
+
+                            if (Mod.instance.save.herbalism[HerbalData.herbals.aether] < upgradeRequirement)
+                            {
+
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.328.3").Tokens(new { tool = Game1.player.CurrentTool.Name, upgrade = upgradeName, aether = upgradeRequirement, });
+
+                            }
+
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.328.4").Tokens(new { tool = Game1.player.CurrentTool.Name, upgrade = upgradeName, aether = upgradeRequirement, });
+
+                        case characters.keeper:
+
+                            if (Mod.instance.save.restoration[LocationData.druid_graveyard_name] >= 4)
+                            {
+
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.329.20");
+
+                            }
+
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.329.19");
+
+                        case characters.attendant:
+
+                            if (Mod.instance.save.restoration[LocationData.druid_spring_name] >= 5)
+                            {
+
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.329.2");
+
+                            }
+
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.329.1");
 
                     }
 
@@ -1226,31 +1565,64 @@ namespace StardewDruid.Character
 
                 case subjects.lore:
 
-                    if (Mod.instance.questHandle.lorekey != null)
+                    switch (character)
                     {
-                        foreach (LoreData.stories story in Mod.instance.questHandle.loresets[Mod.instance.questHandle.lorekey])
-                        {
 
-                            if (Mod.instance.questHandle.lores.ContainsKey(story))
+                        case characters.keeper:
+
+                            foreach (LoreData.stories story in Mod.instance.questHandle.loresets[QuestHandle.swordEther])
                             {
 
-                                if (Mod.instance.questHandle.lores[story].character == character)
+                                if (Mod.instance.questHandle.lores.ContainsKey(story))
                                 {
 
-                                    generate.intro = LoreData.CharacterLore(character);
+                                    if (Mod.instance.questHandle.lores[story].character == character)
+                                    {
 
-                                    generate.responses.Add(Mod.instance.questHandle.lores[story].question);
+                                        generate.intro = LoreData.CharacterLore(character);
 
-                                    generate.answers.Add(Mod.instance.questHandle.lores[story].answer);
+                                        generate.responses.Add(Mod.instance.questHandle.lores[story].question);
+
+                                        generate.answers.Add(Mod.instance.questHandle.lores[story].answer);
+
+                                    }
 
                                 }
 
                             }
 
-                        }
+                            break;
+
+                        default:
+
+                            if (Mod.instance.questHandle.lorekey != null)
+                            {
+                                foreach (LoreData.stories story in Mod.instance.questHandle.loresets[Mod.instance.questHandle.lorekey])
+                                {
+
+                                    if (Mod.instance.questHandle.lores.ContainsKey(story))
+                                    {
+
+                                        if (Mod.instance.questHandle.lores[story].character == character)
+                                        {
+
+                                            generate.intro = LoreData.CharacterLore(character);
+
+                                            generate.responses.Add(Mod.instance.questHandle.lores[story].question);
+
+                                            generate.answers.Add(Mod.instance.questHandle.lores[story].answer);
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                            break;
 
                     }
-
 
                     break;
 
@@ -1394,6 +1766,49 @@ namespace StardewDruid.Character
 
                             return generate;
 
+                        case characters.keeper:
+
+                            int restoration = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.restore);
+
+                            if (restoration == -1)
+                            {
+
+                                return null;
+
+                            }
+
+                            if (restoration == 3)
+                            {
+
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.16");
+
+                                if (CommunityCheck(4))
+                                {
+                                    Mod.instance.questHandle.AssignQuest(QuestHandle.relicRestore);
+
+                                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.329.17"));
+
+                                    generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.329.18"));
+
+                                }
+                                else
+                                {
+
+                                    Mod.instance.questHandle.CompleteQuest(QuestHandle.relicRestore);
+
+                                }
+
+                            }
+                            else if (restoration >= 1)
+                            {
+
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.14") +
+                                    Mod.instance.Helper.Translation.Get("CharacterHandle.329.15");
+
+                            }
+
+                            return generate;
+
                         case characters.Revenant:
 
                             int books = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.books);
@@ -1531,28 +1946,6 @@ namespace StardewDruid.Character
 
                             int priestProgress = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.boxes);
 
-                            if (!Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.faeth))
-                            {
-
-                                Mod.instance.save.herbalism[HerbalData.herbals.faeth] = 0;
-
-                            }
-
-                            if (Mod.instance.save.herbalism[HerbalData.herbals.faeth] == 0)
-                            {
-
-                                int faethBlessing = Mod.instance.randomIndex.Next(1, 4);
-
-                                Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.780").Tokens(new { faeth = faethBlessing.ToString(), }));
-
-                                Mod.instance.save.herbalism[HerbalData.herbals.faeth] = faethBlessing;
-
-                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.785");
-
-                                return generate;
-
-                            }
-
                             if (priestProgress >= 0)
                             {
 
@@ -1644,7 +2037,6 @@ namespace StardewDruid.Character
 
                         case 0:
 
-
                             switch (character)
                             {
 
@@ -1690,7 +2082,6 @@ namespace StardewDruid.Character
                                     generate.lead = true;
 
                                     return generate;
-
 
                                 case characters.Jester:
 
@@ -1778,6 +2169,49 @@ namespace StardewDruid.Character
 
                                     return generate;
 
+                                case characters.Blackfeather:
+
+                                    if (!Mod.instance.questHandle.IsGiven(QuestHandle.questBlackfeather))
+                                    {
+
+                                        break;
+
+                                    }
+
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.323.4"); ;
+
+                                    if (Mod.instance.characters[character].modeActive != Character.mode.track)
+                                    {
+
+                                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.323.5"));
+
+                                        generate.answers.Add(1.ToString());
+
+                                    }
+
+                                    if (Mod.instance.characters[character].modeActive != Character.mode.roam)
+                                    {
+
+                                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.323.6"));
+
+                                        generate.answers.Add(2.ToString());
+
+                                    }
+
+                                    if (Mod.instance.characters[character].modeActive != Character.mode.home
+                                        && Mod.instance.characters[character].currentLocation.Name != CharacterLocation(locations.gate))
+                                    {
+
+                                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.323.7"));
+
+                                        generate.answers.Add(3.ToString());
+
+                                    }
+
+                                    generate.lead = true;
+
+                                    return generate;
+
                                 case characters.waves:
 
                                     generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1018");
@@ -1789,7 +2223,6 @@ namespace StardewDruid.Character
                                     generate.lead = true;
 
                                     return generate;
-
 
                                 case characters.Buffin:
 
@@ -1811,6 +2244,18 @@ namespace StardewDruid.Character
                                     generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.1046"));
 
                                     generate.answers.Add(12.ToString());
+
+                                    generate.lead = true;
+
+                                    return generate;
+
+                                case characters.shrine_engine:
+
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.323.18");
+
+                                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.323.19"));
+
+                                    generate.answers.Add(10.ToString());
 
                                     generate.lead = true;
 
@@ -1854,6 +2299,11 @@ namespace StardewDruid.Character
 
                                             break;
 
+                                        case characters.Blackfeather:
+
+                                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.323.8");
+
+                                            break;
                                     }
 
                                     Mod.instance.characters[character].SwitchToMode(Character.mode.track, Game1.player);
@@ -1882,6 +2332,12 @@ namespace StardewDruid.Character
                                             generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1117");
 
                                             break;
+
+                                        case characters.Blackfeather:
+
+                                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.323.9");
+
+                                            break;
                                     }
 
                                     Mod.instance.characters[character].SwitchToMode(Character.mode.roam, Game1.player);
@@ -1908,6 +2364,12 @@ namespace StardewDruid.Character
                                         case characters.Shadowtin:
 
                                             generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1145");
+
+                                            break;
+
+                                        case characters.Blackfeather:
+
+                                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.323.10");
 
                                             break;
                                     }
@@ -2254,6 +2716,199 @@ namespace StardewDruid.Character
                                     Mod.instance.questHandle.CompleteQuest(QuestHandle.herbalism);
 
                                     break;
+
+                            }
+
+                            return generate;
+
+                        case characters.monument_priesthood:
+
+                            if (!Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.faeth))
+                            {
+
+                                Mod.instance.save.herbalism[HerbalData.herbals.faeth] = 0;
+
+                            }
+
+                            if (!Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_court_name))
+                            {
+
+                                Mod.instance.rite.specialCasts[LocationData.druid_court_name] = new() { "FaethBlessing", };
+
+                                int faethBlessing = Mod.instance.randomIndex.Next(3, 6);
+
+                                Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.780").Tokens(new { faeth = faethBlessing.ToString(), }));
+
+                                Mod.instance.save.herbalism[HerbalData.herbals.faeth] += faethBlessing;
+
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.785");
+
+                                return generate;
+
+                            }
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.323.12");
+
+                            return generate;
+
+                        case characters.shrine_engine:
+
+                            if (!Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.aether))
+                            {
+
+                                Mod.instance.save.herbalism[HerbalData.herbals.aether] = 0;
+
+                            }
+
+                            if (Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_engineum_name))
+                            {
+
+                                if (Mod.instance.rite.specialCasts[LocationData.druid_engineum_name].Contains("AetherBlessing"))
+                                {
+
+                                    generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.323.16");
+
+                                    return generate;
+
+                                }
+
+                            }
+                            else
+                            {
+
+                                Mod.instance.rite.specialCasts[LocationData.druid_engineum_name] = new();
+
+                            }
+
+                            Mod.instance.rite.specialCasts[LocationData.druid_engineum_name].Add("AetherBlessing");
+
+                            int aetherBlessing = Mod.instance.randomIndex.Next(4, 6);
+
+                            Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.323.14").Tokens(new { aether = aetherBlessing.ToString(), }));
+
+                            Mod.instance.save.herbalism[HerbalData.herbals.aether] += aetherBlessing;
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.323.15");
+
+                            return generate;
+
+                        case characters.shrine_forge:
+
+                            if (Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_engineum_name))
+                            {
+
+                                if (Mod.instance.rite.specialCasts[LocationData.druid_engineum_name].Contains("ForgeBlessing"))
+                                {
+
+                                    Game1.player.currentLocation.playSound(SpellHandle.sounds.ghost.ToString());
+
+                                    return null;
+
+                                }
+
+                            }
+                            else
+                            {
+
+                                Mod.instance.rite.specialCasts[LocationData.druid_engineum_name] = new();
+
+                            }
+
+                            string upgradeOption = HerbalData.ForgeCheck();
+
+                            if (upgradeOption == String.Empty)
+                            {
+                                
+                                Game1.player.currentLocation.playSound(SpellHandle.sounds.ghost.ToString());
+
+                                return null;
+
+                            }
+
+                            int upgradeRequirement = HerbalData.ForgeRequirement(upgradeOption);
+
+                            if (!Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.aether))
+                            {
+                                
+                                Game1.player.currentLocation.playSound(SpellHandle.sounds.ghost.ToString());
+
+                                return null;
+
+                            }
+
+                            if (Mod.instance.save.herbalism[HerbalData.herbals.aether] < upgradeRequirement)
+                            {
+                                
+                                Game1.player.currentLocation.playSound(SpellHandle.sounds.ghost.ToString());
+
+                                return null;
+
+                            }
+
+                            Mod.instance.rite.specialCasts[LocationData.druid_engineum_name].Add("ForgeBlessing");
+
+                            Mod.instance.save.herbalism[HerbalData.herbals.aether] -= upgradeRequirement;
+
+                            HerbalData.ForgeUpgrade();
+
+                            return null;
+
+                        case characters.keeper:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.22");
+
+                            if (Mod.instance.save.restoration[LocationData.druid_graveyard_name] < 2)
+                            {
+
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.21");
+
+                            }
+                            else if (Mod.instance.save.restoration[LocationData.druid_graveyard_name] >= 4)
+                            {
+
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.23");
+
+                                if (!RelicData.HasRelic(IconData.relics.restore_offering))
+                                {
+
+                                    generate.intro += Mod.instance.Helper.Translation.Get("CharacterHandle.329.24");
+
+                                    ThrowHandle throwOffering = new(Game1.player, Game1.player.Position + new Vector2(64, -192), IconData.relics.restore_offering);
+
+                                    throwOffering.register();
+
+                                }
+
+                            }
+
+                            return generate;
+
+                        case characters.attendant:
+                        
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.4");
+
+                            if (Mod.instance.save.restoration[LocationData.druid_spring_name] < 2)
+                            {
+
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.3");
+
+                            }
+                            else if (Mod.instance.save.restoration[LocationData.druid_spring_name] >= 3)
+                            {
+
+                                generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.5");
+
+                                if (!RelicData.HasRelic(IconData.relics.restore_goshuin))
+                                {
+
+                                    generate.intro += Mod.instance.Helper.Translation.Get("CharacterHandle.329.6");
+
+                                    ThrowHandle throwGoshuin = new(Game1.player, Game1.player.Position + new Vector2(64, -192), IconData.relics.restore_goshuin);
+
+                                    throwGoshuin.register();
+
+                                }
 
                             }
 

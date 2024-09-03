@@ -47,13 +47,20 @@ namespace StardewDruid.Character
             if (characterType == CharacterHandle.characters.none)
             {
 
-                characterType = Enum.Parse<CharacterHandle.characters>(Name);
+                characterType = CharacterHandle.CharacterType(Name);
 
             }
 
             characterTexture = CharacterHandle.CharacterTexture(characterType);
 
             LoadIntervals();
+
+            if (Mod.instance.questHandle.IsComplete(QuestHandle.bonesOne))
+            {
+
+                cooldownInterval = 225;
+
+            }
 
             warpDisplay = IconData.warps.smoke;
 
@@ -67,7 +74,7 @@ namespace StardewDruid.Character
 
             setScale = 3.75f;
 
-            gait = 4.5f;
+            gait = 3.6f;
 
             modeActive = mode.random;
 
@@ -127,7 +134,7 @@ namespace StardewDruid.Character
         public override void DrawShadow(SpriteBatch b, Vector2 localPosition, float drawLayer)
         {
 
-            float shadowRatio = 0.8f;
+            float shadowRatio = 0.6f;
 
             Vector2 shadowPosition = localPosition + new Vector2(32, 48);
 
@@ -136,7 +143,7 @@ namespace StardewDruid.Character
 
                 shadowPosition.Y += dashHeight;
 
-                shadowRatio = 0.75f;
+                shadowRatio = 0.55f;
 
             }
             else
@@ -145,7 +152,7 @@ namespace StardewDruid.Character
 
                 shadowPosition.Y += 48;
 
-                shadowRatio = 0.7f;
+                shadowRatio = 0.5f;
 
             }
 
@@ -198,6 +205,7 @@ namespace StardewDruid.Character
 
         public override bool TrackToFar(int limit = 960, int nodeLimit = 20)
         {
+
             return false;
 
         }
@@ -227,6 +235,8 @@ namespace StardewDruid.Character
                     Mod.instance.trackers[characterType].nodes.Clear();
 
                     followTimer = 180 + (60 * Mod.instance.randomIndex.Next(5));
+
+                    pathActive = pathing.player;
 
                     return true;
 
@@ -297,6 +307,8 @@ namespace StardewDruid.Character
 
                 destination = traversal.Keys.Last();
 
+                pathActive = pathing.circling;
+
                 return true;
 
             }
@@ -329,15 +341,20 @@ namespace StardewDruid.Character
         public override void ConnectSweep()
         {
 
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.bonesOne))
+            {
+
+                Mod.instance.questHandle.UpdateTask(QuestHandle.bonesOne, 1);
+
+            }
+
             SpellHandle swipeEffect = new(Game1.player, Position, 192, Mod.instance.CombatDamage() / 2);
 
-            swipeEffect.instant = true;
+            swipeEffect.type = SpellHandle.spells.swipe;
 
             swipeEffect.added = new() { SpellHandle.effects.mug, };
 
             swipeEffect.sound = SpellHandle.sounds.crow;
-
-            //swipeEffect.display = IconData.impacts.puff;
 
             Mod.instance.spellRegister.Add(swipeEffect);
 
@@ -369,6 +386,34 @@ namespace StardewDruid.Character
             
             }
 
+            if (ValidVillagerTarget())
+            {
+
+                return true;
+
+            };
+
+            if (ValidDebrisTarget())
+            {
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+        public bool ValidVillagerTarget()
+        {
+
+            if (!Mod.instance.questHandle.IsGiven(QuestHandle.bonesThree))
+            {
+                
+                return false;
+
+            }
+
             foreach (NPC witness in ModUtility.GetFriendsInLocation(Game1.player.currentLocation, true))
             {
 
@@ -379,11 +424,11 @@ namespace StardewDruid.Character
 
                     if (Mod.instance.Witnessed(ReactionData.reactions.corvid, witness))
                     {
-                        
+
                         continue;
-                    
+
                     }
-                    
+
                     workVector = ModUtility.PositionToTile(witness.Position);
 
                     netSpecial.Set((int)specials.special);
@@ -397,7 +442,7 @@ namespace StardewDruid.Character
                         if (PathTarget(witness.Position + offset, 2, 1))
                         {
 
-                            SetDash(destination*64, false);
+                            SetDash(destination * 64, false);
 
                             specialTimer += 30;
 
@@ -408,6 +453,20 @@ namespace StardewDruid.Character
                     return true;
 
                 }
+
+            }
+
+            return false;
+
+        }
+
+        public bool ValidDebrisTarget()
+        {
+
+            if (!Mod.instance.questHandle.IsGiven(QuestHandle.bonesTwo))
+            {
+                
+                return false;
 
             }
 
@@ -445,16 +504,16 @@ namespace StardewDruid.Character
 
                             if (Vector2.Distance(workPosition, Position) > 80)
                             {
-                                
+
                                 if (PathTarget(workPosition, 2, 1))
                                 {
 
                                     SetDash(workPosition, false);
 
                                     specialTimer += 30;
-                                
+
                                 }
-  
+
                             }
 
                             return true;
@@ -467,13 +526,13 @@ namespace StardewDruid.Character
 
             }
 
-            foreach(Debris debris in currentLocation.debris)
+            foreach (Debris debris in currentLocation.debris)
             {
 
                 if (debris.Chunks.Count > 0)
                 {
-                    
-                    if (Vector2.Distance(debris.Chunks.First().position.Value,Position) <= 192)
+
+                    if (Vector2.Distance(debris.Chunks.First().position.Value, Position) <= 192)
                     {
 
                         switch (debris.debrisType.Value)
@@ -506,23 +565,35 @@ namespace StardewDruid.Character
         public bool ValidWorkTarget(StardewValley.Object targetObject)
         {
 
-            if (
-                targetObject.IsBreakableStone() ||
-                targetObject.IsTwig() || 
-                targetObject.QualifiedItemId == "(O)169" ||
-                targetObject.IsWeeds() ||
-                targetObject.Name.Contains("SupplyCrate") ||
-                targetObject is BreakableContainer breakableContainer ||
-                targetObject.QualifiedItemId == "(O)590" ||
-                targetObject.QualifiedItemId == "(O)SeedSpot" ||
-                targetObject.isForage()
-            )
+            if (targetObject.isForage())
             {
 
                 return true;
 
             }
 
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.bonesTwo))
+            {
+
+                return false;
+
+            }
+
+            if (
+                targetObject.IsBreakableStone() ||
+                targetObject.IsTwig() ||
+                targetObject.QualifiedItemId == "(O)169" ||
+                targetObject.IsWeeds() ||
+                targetObject.Name.Contains("SupplyCrate") ||
+                targetObject is BreakableContainer breakableContainer ||
+                targetObject.QualifiedItemId == "(O)590" ||
+                targetObject.QualifiedItemId == "(O)SeedSpot"
+            )
+            {
+
+                return true;
+
+            }
             return false;
 
         }
@@ -591,7 +662,6 @@ namespace StardewDruid.Character
         public virtual void MidWorkFunction()
         {
 
-
             foreach (NPC witness in ModUtility.GetFriendsInLocation(Game1.player.currentLocation, true))
             {
 
@@ -609,7 +679,16 @@ namespace StardewDruid.Character
 
                     int friendship = 15;
 
-                    switch (Mod.instance.randomIndex.Next(3))
+                    int friendshipBehaviour = Mod.instance.randomIndex.Next(2);
+
+                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.bonesThree))
+                    {
+
+                        friendshipBehaviour = 1;
+
+                    }
+
+                    switch (friendshipBehaviour)
                     {
 
                         case 0:
@@ -682,48 +761,64 @@ namespace StardewDruid.Character
 
                     ReactionData.ReactTo(witness, ReactionData.reactions.corvid, friendship);
 
+                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.bonesThree))
+                    {
+
+                        Mod.instance.questHandle.UpdateTask(QuestHandle.bonesThree, 1);
+
+                    }
+
                     return;
 
                 }
 
             }
 
-            if (currentLocation.objects.ContainsKey(workVector))
+            if (!currentLocation.objects.ContainsKey(workVector))
             {
 
-                if (SpawnData.ForageCheck(currentLocation.objects[workVector]))
-                {
-
-                    StardewValley.Item objectInstance = ModUtility.ExtractForage(currentLocation, workVector, false);
-
-                    currentLocation.objects.Remove(workVector);
-
-                    carryItems.Add(objectInstance);
-
-                    return;
-
-                }
-
-                SpellHandle explode = new(Game1.player, workVector * 64, 128, -1);
-
-                explode.type = SpellHandle.spells.explode;
-
-                explode.indicator = IconData.cursors.none;
-
-                if (currentLocation.objects[workVector].IsBreakableStone())
-                {
-
-                    explode.sound = SpellHandle.sounds.hammer;
-
-                }
-
-                explode.power = 2;
-
-                explode.terrain = 2;
-
-                Mod.instance.spellRegister.Add(explode);
+                return;
 
             }
+
+            if (SpawnData.ForageCheck(currentLocation.objects[workVector]))
+            {
+
+                StardewValley.Item objectInstance = ModUtility.ExtractForage(currentLocation, workVector, false);
+
+                currentLocation.objects.Remove(workVector);
+
+                carryItems.Add(objectInstance);
+
+                return;
+
+            }
+
+            if(!Mod.instance.questHandle.IsComplete(QuestHandle.bonesTwo))
+            {
+
+                return;
+
+            }
+
+            SpellHandle explode = new(Game1.player, workVector * 64, 128, -1);
+
+            explode.type = SpellHandle.spells.explode;
+
+            explode.indicator = IconData.cursors.none;
+
+            if (currentLocation.objects[workVector].IsBreakableStone())
+            {
+
+                explode.sound = SpellHandle.sounds.hammer;
+
+            }
+
+            explode.power = 2;
+
+            explode.terrain = 2;
+
+            Mod.instance.spellRegister.Add(explode);
 
         }
 
@@ -739,6 +834,13 @@ namespace StardewDruid.Character
                     ThrowHandle throwItem = new(Game1.player, Position, item);
 
                     Mod.instance.throwRegister.Add(throwItem);
+
+                }
+
+                if (!Mod.instance.questHandle.IsComplete(QuestHandle.bonesTwo))
+                {
+
+                    Mod.instance.questHandle.UpdateTask(QuestHandle.bonesTwo, 1);
 
                 }
 

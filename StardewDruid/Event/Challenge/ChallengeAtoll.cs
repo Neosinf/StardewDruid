@@ -68,8 +68,6 @@ namespace StardewDruid.Event.Challenge
 
             EventBar(Mod.instance.questHandle.quests[eventId].title,0);
 
-            SetTrack("PIRATE_THEME");
-
             ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 
             //Mod.instance.iconData.AnimateBolt(location, origin);
@@ -140,6 +138,8 @@ namespace StardewDruid.Event.Challenge
 
                     cues.Clear();
 
+                    eventComplete = true;
+
                 }
 
             }
@@ -166,6 +166,23 @@ namespace StardewDruid.Event.Challenge
                     voices[0] = bosses[0];
 
                     SpawnData.MonsterDrops(bosses[0], SpawnData.drops.seafarer);
+
+                    location.playSound(SpellHandle.sounds.thunder_small.ToString());
+
+                    break;
+                case 2:
+                    location.playSound(SpellHandle.sounds.thunder_small.ToString());
+                    break;
+                case 3:
+                    location.playSound(SpellHandle.sounds.thunder_small.ToString());
+                    break;
+                case 4:
+                    location.playSound(SpellHandle.sounds.thunder_small.ToString());
+                    break;
+
+                case 5:
+
+                    SetTrack("PIRATE_THEME");
 
                     break;
 
@@ -228,7 +245,7 @@ namespace StardewDruid.Event.Challenge
 
                 Vector2 impact = cannonPositions[k] * 64;
 
-                SpellHandle missile = new(location, impact, new(impact.X > 27 * 64 ? 55 * 64 : 0, impact.Y), 192, bosses[0].GetThreat(), Mod.instance.CombatDamage());
+                SpellHandle missile = new(location, impact, new(impact.X > 27 * 64 ? 55 * 64 : 0, impact.Y), 256, bosses[0].GetThreat(), Mod.instance.CombatDamage());
 
                 missile.type = SpellHandle.spells.ballistic;
 

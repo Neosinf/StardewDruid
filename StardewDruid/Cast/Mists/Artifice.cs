@@ -71,8 +71,8 @@ namespace StardewDruid.Cast.Mists
                 }
                 else
                 {
-                    tileVectors = ModUtility.GetTilesWithinRadius(location, castVector, i);
 
+                    tileVectors = ModUtility.GetTilesWithinRadius(location, castVector, i);
 
                 }
 
@@ -242,8 +242,6 @@ namespace StardewDruid.Cast.Mists
 
                                     Mod.instance.rite.castCost += tryCost < 8 ? 8 : tryCost;
 
-                                    Mod.instance.rite.specialCasts[locationName].Add(scid);
-
                                     casts++;
 
                                 }
@@ -396,6 +394,10 @@ namespace StardewDruid.Cast.Mists
             int radius = ((int)(Mod.instance.PowerLevel) + 3);
 
             radius = Math.Min(8, radius);
+
+            string scid = "scarecrow_" + targetVector.X.ToString() + "_" + targetVector.Y.ToString();
+
+            Mod.instance.rite.specialCasts[location.Name].Add(scid);
 
             for (int i = 1; i < radius; i++)
             {

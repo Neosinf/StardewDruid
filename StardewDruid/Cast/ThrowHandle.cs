@@ -203,6 +203,30 @@ namespace StardewDruid.Cast
 
         }
 
+
+        public ThrowHandle(Farmer Player, Vector2 Origin, StardewValley.Tool implement)
+        {
+
+            localisation = Player.currentLocation.Name;
+
+            index = implement.ParentSheetIndex;
+
+            tooling = implement;
+
+            thrown = throwing.sword;
+
+            destination = Game1.player.Position + new Vector2(32, 0);
+
+            origin = Origin;
+
+            pocket = true;
+
+            track = true;
+
+            queried = true;
+
+        }
+
         public void register()
         {
 
@@ -348,7 +372,7 @@ namespace StardewDruid.Cast
                     query = new()
                     {
                         name = index.ToString(),
-
+                        value = index.ToString(),
                         location = localisation,
 
                     };
@@ -362,7 +386,7 @@ namespace StardewDruid.Cast
                     query = new()
                     {
                         name = index.ToString(),
-
+                        value = index.ToString(),
                         location = localisation,
 
                     };
@@ -380,6 +404,15 @@ namespace StardewDruid.Cast
         public bool update()
         {
 
+            if (delay > 0)
+            {
+
+                delay--;
+
+                return true;
+
+            }
+
             if (!queried)
             {
 
@@ -391,15 +424,6 @@ namespace StardewDruid.Cast
             {
 
                 return false;
-
-            }
-
-            if(delay > 0)
-            {
-
-                delay--;
-
-                return true;
 
             }
 

@@ -31,10 +31,12 @@ namespace StardewDruid.Journal
             effects,
             relics,
             herbalism,
+            lore,
 
             questPage,
             effectPage,
             relicPage,
+            lorePage,
             dragonPage,
 
         }
@@ -52,6 +54,8 @@ namespace StardewDruid.Journal
             effects,
             relics,
             herbalism,
+            lore,
+            transform,
 
             active,
             reverse,
@@ -251,6 +255,27 @@ namespace StardewDruid.Journal
 
                     break;
 
+                case journalTypes.lore:
+
+                    if (Mod.instance.magic)
+                    {
+
+                        Game1.activeClickableMenu = new EffectJournal(Id, Record);
+
+                        break;
+
+                    }
+
+                    Game1.activeClickableMenu = new LoreJournal(Id, Record);
+
+                    break;
+
+                case journalTypes.lorePage:
+
+                    Game1.activeClickableMenu = new LorePage(Id, Record);
+
+                    break;
+
                 case journalTypes.herbalism:
 
                     Game1.activeClickableMenu = new HerbalJournal(Id, Record);
@@ -313,9 +338,11 @@ namespace StardewDruid.Journal
                 [102] = addButton(journalButtons.effects),
                 [103] = addButton(journalButtons.relics),
                 [104] = addButton(journalButtons.herbalism),
+                [105] = addButton(journalButtons.lore),
+                [106] = addButton(journalButtons.transform),
 
-                [105] = addButton(journalButtons.active),
-                [106] = addButton(journalButtons.reverse),
+                [107] = addButton(journalButtons.active),
+                [108] = addButton(journalButtons.reverse),
 
                 [201] = addButton(journalButtons.back),
                 [202] = addButton(journalButtons.start),
@@ -403,10 +430,34 @@ namespace StardewDruid.Journal
 
             }
 
+            if (type != journalTypes.lore)
+            {
+
+                interfaceComponents[105].fade = 0.8f;
+
+            }
+
+            if (!Mod.instance.questHandle.IsGiven(QuestHandle.etherOne))
+            {
+
+                interfaceComponents[106].active = false;
+
+            }
+            else if (type != journalTypes.dragonPage)
+            {
+
+                interfaceComponents[106].fade = 0.8f;
+
+            }
+
             if (Mod.instance.magic)
             {
 
                 interfaceComponents[101].active = false;
+
+                interfaceComponents[103].active = false;
+
+                interfaceComponents[105].active = false;
 
             }
 
@@ -419,17 +470,23 @@ namespace StardewDruid.Journal
 
             fadeMenu();
 
+            if (type != journalTypes.quests)
+            {
+
+                interfaceComponents[107].active = false;
+
+            }else
             if (!Mod.instance.Config.activeJournal)
             {
 
-                interfaceComponents[105].fade = 0.8f;
+                interfaceComponents[107].fade = 0.8f;
 
             }
 
             if (!Mod.instance.Config.reverseJournal)
             {
 
-                interfaceComponents[106].fade = 0.8f;
+                interfaceComponents[108].fade = 0.8f;
 
             }
 
@@ -474,9 +531,11 @@ namespace StardewDruid.Journal
 
             int yP = yPositionOnScreen;
 
+            //int xH = xP - 68 - 68;
+
             int xR = xP + width;
 
-            int yT = yP - (4 + 32);
+            int yT = yP - 36;
 
             int yB = yP + height;
 
@@ -487,11 +546,11 @@ namespace StardewDruid.Journal
 
                 case journalButtons.back:
 
-                    return new JournalComponent(Button, new Vector2(xP - (4 + 32), yP +4 + 32), IconData.displays.forward, new() { flip = true, });
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 36), IconData.displays.forward, new() { flip = true, });
 
                 case journalButtons.start:
 
-                    return new JournalComponent(Button, new Vector2(xP - (4 + 32), yP + 4 + 64 + 4 + 32), IconData.displays.end, new() { flip = true, });
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 36), IconData.displays.end, new() { flip = true, });
 
                 case journalButtons.headerOne:
 
@@ -511,97 +570,107 @@ namespace StardewDruid.Journal
                 default:
                 case journalButtons.quests:
 
-                    return new JournalComponent(Button, new Vector2(xP + 4 + 32, yT), IconData.displays.quest, new());
+                    return new JournalComponent(Button, new Vector2(xP + 36, yT), IconData.displays.quest, new());
 
                 case journalButtons.effects:
 
-                    return new JournalComponent(Button, new Vector2(xP + 4 + 64 + 4 + 32, yT), IconData.displays.effect, new());
+                    return new JournalComponent(Button, new Vector2(xP + 68 + 36, yT), IconData.displays.effect, new());
 
                 case journalButtons.relics:
 
-                    return new JournalComponent(Button, new Vector2(xP + 4 + 64 + 4 + 64 + 4 + 32, yT), IconData.displays.relic, new());
+                    return new JournalComponent(Button, new Vector2(xP + 68 + 68 + 36, yT), IconData.displays.relic, new());
 
                 case journalButtons.herbalism:
 
-                    return new JournalComponent(Button, new Vector2(xP + 4 + 64 + 4 + 64 + 4 + 64 + 4 + 32, yT), IconData.displays.herbalism, new());
+                    return new JournalComponent(Button, new Vector2(xP + 68 + 68 + 68 + 36, yT), IconData.displays.herbalism, new());
+
+                case journalButtons.lore:
+
+                    return new JournalComponent(Button, new Vector2(xR - 68 - 68 - 68 - 36, yT), IconData.displays.lore, new());
+
+                case journalButtons.transform:
+
+                    return new JournalComponent(Button, new Vector2(xR - 68 - 68 - 36, yT), IconData.displays.transform, new());
+
+                // ====================================== variant top buttons
 
                 case journalButtons.active:
 
-                    return new JournalComponent(Button, new Vector2(xR - (4 + 64 + 4 + 32), yT), IconData.displays.active, new());
+                    return new JournalComponent(Button, new Vector2(xR - 68 - 36, yT), IconData.displays.active, new());
 
                 case journalButtons.reverse:
 
-                    return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.reverse, new());
+                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.reverse, new());
 
                 case journalButtons.refresh:
 
-                    return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.knock, new());
+                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.knock, new());
 
                 case journalButtons.viewQuest:
 
-                    return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.quest, new());
+                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.quest, new());
 
                 case journalButtons.viewEffect:
 
-                    return new JournalComponent(Button, new Vector2(xR - (4 + 64 + 4 + 32), yT), IconData.displays.effect, new());
+                    return new JournalComponent(Button, new Vector2(xR - 68 - 36, yT), IconData.displays.effect, new());
 
                 case journalButtons.skipQuest:
 
-                    return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.end, new());
+                    return new JournalComponent(Button, new Vector2(xP + 68 + 36, yT), IconData.displays.skip, new());
 
                 case journalButtons.replayQuest:
 
-                    return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.replay, new());
+                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.replay, new());
 
                 case journalButtons.replayTomorrow:
 
-                    return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.flag, new());
+                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.flag, new());
 
                 case journalButtons.cancelReplay:
 
-                    return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.active, new());
+                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.active, new());
 
                 // dragon menu
 
                 case journalButtons.dragonReset:
 
-                    return new JournalComponent(Button, new Vector2(xR - (4 + 64 + 4 + 32), yT), IconData.displays.replay, new());
+                    return new JournalComponent(Button, new Vector2(xR - 68 - 36, yT), IconData.displays.replay, new());
 
                 case journalButtons.dragonSave:
 
-                    return new JournalComponent(Button, new Vector2(xR - (4 + 32), yT), IconData.displays.complete, new());
+                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.complete, new());
 
                 // ======================================  right side
 
                 case journalButtons.exit:
 
-                    return new JournalComponent(Button, new Vector2(xR + 4 + 32, yP + 4 + 32), IconData.displays.exit, new() { scale = 4f, });
+                    return new JournalComponent(Button, new Vector2(xR + 36, yP + 36), IconData.displays.exit, new() { scale = 4f, });
 
                 case journalButtons.scrollUp:
 
-                    return new JournalComponent(Button, new Vector2(xR + 4 + 32, yP + (4 + 64 + 4 + 64 + 4 + 32)), IconData.displays.up, new() { flip = true, });
+                    return new JournalComponent(Button, new Vector2(xR + 36, yP + 68 + 68 + 36), IconData.displays.up, new() { flip = true, });
 
                 case journalButtons.scrollBar:
 
-                    int scrollUpper = yP + (4 + 64 + 4 + 64 + 4 + 64 + 4);
+                    int scrollUpper = yP + 68 + 68 + 68 + 4;
 
-                    int scrollLower = yB - (4 + 64 + 4 + 64 + 4 + 64 + 4);
+                    int scrollLower = yB - 68 - 68 - 68 - 4;
 
-                    scrollBox = new(xR + 4 + 32, scrollUpper, 64, scrollLower - scrollUpper);
+                    scrollBox = new(xR + 36, scrollUpper, 64, scrollLower - scrollUpper);
 
-                    return new JournalComponent(Button, new Vector2(xR + 4 + 32, yP + (4 + 64 + 4 + 64 + 4 + 64 + 4 + 32)), IconData.displays.scroll, new() { flip = true, });
+                    return new JournalComponent(Button, new Vector2(xR + 36, yP + 68 + 68 + 68 + 36), IconData.displays.scroll, new() { flip = true, });
 
                 case journalButtons.scrollDown:
 
-                    return new JournalComponent(Button, new Vector2(xR + 4 + 32, yB - (4 + 64 + 4 + 64 + 4 + 32)), IconData.displays.down, new() { flip = true, });
+                    return new JournalComponent(Button, new Vector2(xR + 36, yB - 68 - 68 - 36), IconData.displays.down, new() { flip = true, });
 
                 case journalButtons.forward:
 
-                    return new JournalComponent(Button, new Vector2(xR + 4 + 32, yB - (4 + 32)), IconData.displays.forward, new());
+                    return new JournalComponent(Button, new Vector2(xR + 36, yB - 36), IconData.displays.forward, new());
 
                 case journalButtons.end:
 
-                    return new JournalComponent(Button, new Vector2(xR + 4 + 32, yB - (4 + 64 + 4 + 32)), IconData.displays.end, new());
+                    return new JournalComponent(Button, new Vector2(xR + 36, yB - 68 - 36), IconData.displays.end, new());
 
             }
 
@@ -635,6 +704,18 @@ namespace StardewDruid.Journal
                 case journalButtons.herbalism:
 
                     DruidJournal.openJournal(journalTypes.herbalism);
+
+                    break;
+
+                case journalButtons.lore:
+
+                    DruidJournal.openJournal(journalTypes.lore);
+
+                    break;
+
+                case journalButtons.transform:
+
+                    DruidJournal.openJournal(journalTypes.dragonPage);
 
                     break;
 
@@ -726,7 +807,7 @@ namespace StardewDruid.Journal
 
                 case journalButtons.end:
 
-                    record = contentComponents.Count - (contentComponents.Count % pagination);
+                    record = (contentComponents.Count-1) - ((contentComponents.Count-1) % pagination);
 
                     activateInterface();
 

@@ -17,11 +17,14 @@ using StardewValley;
 using StardewValley.Buffs;
 using StardewValley.Locations;
 using StardewValley.Objects;
+using StardewValley.Quests;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using xTile;
+using xTile.Dimensions;
 using xTile.Layers;
 using static StardewValley.Minigames.CraneGame;
 
@@ -54,7 +57,7 @@ namespace StardewDruid.Cast
             [rites.stars] = QuestHandle.milestones.stars_weapon,
             [rites.fates] = QuestHandle.milestones.fates_weapon,
             [rites.ether] = QuestHandle.milestones.ether_weapon,
-            [rites.bones] = QuestHandle.milestones.ether_challenge,
+            [rites.bones] = QuestHandle.milestones.bones_weapon,
 
         };
 
@@ -303,43 +306,6 @@ namespace StardewDruid.Cast
 
                     start();
 
-                    /*Mod.instance.Monitor.Log(ModUtility.PositionToTile(Game1.player.Position).ToString(), LogLevel.Debug);
-
-                    Mod.instance.Monitor.Log(Game1.player.currentLocation.Name, LogLevel.Debug);
-
-                    for (int i = 0; i < Game1.player.currentLocation.map.Layers.Count; i++)
-                    {
-
-                        Layer layer = Game1.player.currentLocation.map.Layers.ElementAt(i);
-
-                        Mod.instance.Monitor.Log(layer.Id, LogLevel.Debug);
-
-                        for (int y = 0; y < layer.LayerHeight; y++)
-                        {
-
-                            string debug = "";
-
-                            for(int x = 0; x < layer.LayerWidth; x++)
-                            {
-
-                                if(layer.Tiles[x, y] != null)
-                                {
-
-                                    debug += layer.Tiles[x, y].TileIndex.ToString();
-
-
-                                }
-
-                                debug += ",";
-
-                            }
-
-                            Mod.instance.Monitor.Log(debug,LogLevel.Debug);
-
-                        }
-
-                    }*/
-
                     break;
 
             }
@@ -473,6 +439,13 @@ namespace StardewDruid.Cast
                 }
                 else
                 {
+
+                    if(castTool != tool)
+                    {
+
+                        Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.defaultToolAttunement));
+
+                    }
 
                     blessing = Mod.instance.save.rite;
 
@@ -626,7 +599,7 @@ namespace StardewDruid.Cast
 
                 }
 
-                if (castType != rites.ether && Game1.player.Stamina <= (Game1.player.MaxStamina / 4) || Game1.player.health <= (Game1.player.maxHealth / 3))
+                if (castType != rites.ether && (Game1.player.Stamina <= (Game1.player.MaxStamina / 4) || Game1.player.health <= (Game1.player.maxHealth / 3)))
                 {
 
                     Mod.instance.AutoConsume();
@@ -835,8 +808,6 @@ namespace StardewDruid.Cast
                         sapeffect.added.Add(SpellHandle.effects.backstab);
 
                         sapeffect.scheme = IconData.schemes.weald;
-
-                        //sapeffect.display = IconData.impacts.glare;
 
                         sapeffect.radius = 192;
 
@@ -1222,7 +1193,7 @@ namespace StardewDruid.Cast
 
                 case rites.mists:
                 case rites.fates:
-
+                    
                     Vector2 cursorVector = GetTargetCursor(Game1.player.FacingDirection, 320);
 
                     castVector = ModUtility.PositionToTile(cursorVector);
@@ -1235,8 +1206,8 @@ namespace StardewDruid.Cast
 
                     break;
 
-                default: // earth / stars / ether
-
+                default: // weald / stars / ether
+                    
                     castVector = Game1.player.Tile;
 
                     break;
@@ -1450,7 +1421,7 @@ namespace StardewDruid.Cast
                 Game1.player.currentLocation is VolcanoDungeon ||
                 Game1.player.currentLocation is Vault ||
                 Game1.player.currentLocation is Tomb ||
-                Game1.player.currentLocation is Spring
+                (Game1.player.currentLocation is Spring && Mod.instance.activeEvent.Count > 0)
             )
             {
 
@@ -1500,7 +1471,13 @@ namespace StardewDruid.Cast
             {
 
                 CastCultivate();
+            }
 
+            if (LocationData.RestoreLocation(Game1.player.currentLocation.Name) != -1)
+            {
+
+                CastRestoration();
+            
             }
 
         }
@@ -1621,7 +1598,7 @@ namespace StardewDruid.Cast
 
                 }
 
-                return;
+                //return;
 
             }
 
@@ -1720,6 +1697,26 @@ namespace StardewDruid.Cast
                 cultivateEvent.EventActivate();
 
             }
+
+        }
+
+        public void CastRestoration()
+        {
+
+            if (castLevel != 0)
+            {
+
+                return;
+
+            }
+
+            Restoration restoreEvent = new();
+
+            restoreEvent.EventSetup(Game1.player.Position, "restoration");
+
+            restoreEvent.EventActivate();
+
+            return;
 
         }
 
@@ -2275,8 +2272,8 @@ namespace StardewDruid.Cast
                 }
 
             }
-
-            if(Game1.player.currentLocation.IsFarm && Game1.player.CurrentTool is not MeleeWeapon)
+            else
+            if(Game1.player.CurrentTool is not MeleeWeapon || Game1.player.CurrentTool.isScythe())
             {
 
                 return;

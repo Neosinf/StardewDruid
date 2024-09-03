@@ -90,8 +90,6 @@ namespace StardewDruid.Event.Challenge
 
             trashbar.colour = Microsoft.Xna.Framework.Color.LightGreen;
 
-            SetTrack("cowboy_outlawsong");
-
             ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 
             Mod.instance.rite.CastMeteors();
@@ -149,7 +147,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 1:
 
-                    bosses[0] = new StardewDruid.Monster.Blobfiend(ModUtility.PositionToTile(origin) - new Vector2(3,3), Mod.instance.CombatDifficulty());
+                    bosses[0] = new StardewDruid.Monster.Blobfiend(ModUtility.PositionToTile(origin) + new Vector2(3,-3), Mod.instance.CombatDifficulty());
 
                     bosses[0].netScheme.Set(2);
 
@@ -176,15 +174,27 @@ namespace StardewDruid.Event.Challenge
 
                     Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, IconData.impacts.splatter, 5f, new() { scheme = schemes.pumpkin,});
 
+                    location.playSound(SpellHandle.sounds.slime.ToString());
+
+                    break;
+                case 2:
+                    location.playSound(SpellHandle.sounds.slime.ToString());
+                    break;
+                case 3:
+                    location.playSound(SpellHandle.sounds.slime.ToString());
+                    break;
+                case 4:
+                    location.playSound(SpellHandle.sounds.slime.ToString());
+                    break;
+
+                case 5:
+
+                    SetTrack("cowboy_outlawsong");
                     break;
 
                 case 17:
 
                     bosses[0].netPosturing.Set(false);
-
-                    bosses[0].MaxHealth *= 3;
-
-                    bosses[0].Health = bosses[0].MaxHealth;
 
                     BossBar(0, 0);
 

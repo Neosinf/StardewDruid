@@ -250,6 +250,20 @@ namespace StardewDruid.Monster
 
         }
 
+        public virtual int GetHeight()
+        {
+
+            return 32;
+
+        }
+
+        public virtual int GetWidth()
+        {
+
+            return 32;
+
+        }
+
         public virtual Vector2 GetPosition(Vector2 localPosition, float spriteScale = -1f, bool shadow = false)
         {
 
@@ -260,9 +274,9 @@ namespace StardewDruid.Monster
 
             }
 
-            int width = idleFrames[0][0].Width;
+            int width = GetWidth();
 
-            int height = idleFrames[0][0].Height;
+            int height = GetHeight();
 
             Vector2 spritePosition = localPosition + new Vector2(32,64) - new Vector2(width / 2f * spriteScale, height * spriteScale);
 
@@ -300,9 +314,9 @@ namespace StardewDruid.Monster
 
             float spriteScale = GetScale();
 
-            int width = idleFrames[0][0].Width;
+            int width = GetWidth();
 
-            int height = idleFrames[0][0].Height;
+            int height = GetHeight();
 
             Rectangle box =  new(
                 (int)(spritePosition.X + (spriteScale * 2)), 
@@ -339,7 +353,7 @@ namespace StardewDruid.Monster
 
                 case 1: // slightly bigger
 
-                    MaxHealth = combatModifier * basePulp * 3;
+                    MaxHealth = combatModifier * basePulp * 4;
 
                     Health = MaxHealth;
 
@@ -352,7 +366,7 @@ namespace StardewDruid.Monster
                 default:
                 case 2: // multiple bosses
 
-                    MaxHealth = combatModifier * basePulp * 6;
+                    MaxHealth = combatModifier * basePulp * 8;
 
                     Health = MaxHealth;
 
@@ -364,7 +378,7 @@ namespace StardewDruid.Monster
 
                 case 3: // single boss
 
-                    MaxHealth = combatModifier * basePulp * 12;
+                    MaxHealth = combatModifier * basePulp * 18;
 
                     Health = MaxHealth;
 
@@ -376,7 +390,7 @@ namespace StardewDruid.Monster
 
                 case 4: // hard boss
 
-                    MaxHealth = combatModifier * basePulp * 18;
+                    MaxHealth = combatModifier * basePulp * 24;
 
                     Health = MaxHealth;
 

@@ -4,6 +4,7 @@ using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewDruid.Event;
 using StardewDruid.Journal;
+using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;

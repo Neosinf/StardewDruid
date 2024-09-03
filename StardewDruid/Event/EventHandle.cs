@@ -671,7 +671,9 @@ namespace StardewDruid.Event
         public void SetTrack(string track)
         {
 
-            Game1.changeMusicTrack(track, false, MusicContext.Default);
+            Game1.stopMusicTrack(MusicContext.Default);
+
+            Game1.changeMusicTrack(track, false, MusicContext.MusicPlayer);
 
             soundTrack = true;
 
@@ -747,7 +749,7 @@ namespace StardewDruid.Event
 
                     break;
 
-                case 1:
+                default:
 
                     progress = SpecialProgress(displayId);
 
@@ -1047,6 +1049,13 @@ namespace StardewDruid.Event
         public virtual void DialogueSetups(StardewDruid.Character.Character npc, int dialogueId)
         {
 
+            if (!conversations.ContainsKey(dialogueId))
+            {
+
+                return;
+
+            }
+
             string intro = conversations[dialogueId].intro;
 
             List<Response> responseList = new();
@@ -1300,7 +1309,7 @@ namespace StardewDruid.Event
             if (soundTrack)
             {
 
-                Game1.stopMusicTrack(MusicContext.Default);
+                Game1.stopMusicTrack(MusicContext.MusicPlayer);
 
                 soundTrack = false;
 

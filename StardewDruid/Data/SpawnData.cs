@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using xTile.Dimensions;
 using static StardewDruid.Journal.HerbalData;
+using System.Runtime.CompilerServices;
 
 namespace StardewDruid.Data
 {
@@ -35,6 +36,7 @@ namespace StardewDruid.Data
 
         public enum swords
         {
+            none,
             forest,
             neptune,
             holy,
@@ -49,6 +51,7 @@ namespace StardewDruid.Data
 
             switch (sword)
             {
+
                 default:
                 case swords.forest:
 
@@ -1182,7 +1185,7 @@ namespace StardewDruid.Data
 
         }
 
-        public static string RandomHighFish(GameLocation location, bool enableRare)
+        public static string RandomHighFish(GameLocation location, bool enableRare, int set = 0)
         {
 
             Dictionary<int, int> objectIndexes;
@@ -1191,7 +1194,7 @@ namespace StardewDruid.Data
 
             int forest = ForestWaterCheck(location);
 
-            if (location is Woods || location is Desert || location is Caldera || location is MineShaft)
+            if (location is Woods || location is Desert || location is Caldera || location is MineShaft || set == 1)
             {
 
                 switch (Game1.currentSeason)
@@ -1226,7 +1229,7 @@ namespace StardewDruid.Data
 
                 }
             }
-            else if (location is Beach || location.Name.Contains("Beach") || location is IslandLocation || location is Atoll || forest == 3)
+            else if (location is Beach || location.Name.Contains("Beach") || location is IslandLocation || location is Atoll || forest == 3 || set == 2)
             {
 
                 switch (Game1.currentSeason)
@@ -1402,7 +1405,7 @@ namespace StardewDruid.Data
             }
             else if (location is Beach || location is Atoll)
             {
-                fishIndex = 705; // puff ball 
+                fishIndex = 704; // dorado 
             }
             else if (location is IslandLocation)
             {
@@ -1808,6 +1811,7 @@ namespace StardewDruid.Data
         public bool weeds;
         public bool cultivate;
         public bool wilderness;
+        public bool restoration;
         public bool fishspot;
         public bool crate;
 
@@ -1850,7 +1854,7 @@ namespace StardewDruid.Data
                 if (Game1.player.currentLocation is IslandWest islandWest)
                 {
 
-                    if (Vector2.Distance(Game1.player.Position, new Vector2(90, 55) * 64) <= 1280)
+                    if (Vector2.Distance(Game1.player.Position, new Vector2(90, 55) * 64) <= 1600)
                     {
 
                         cultivate = true;
@@ -1899,6 +1903,7 @@ namespace StardewDruid.Data
 
                 weeds = true;
                 cultivate = true;
+                fishspot = true;
 
             }
             else if (location.isGreenhouse.Value || location is Shed || location is AnimalHouse)
@@ -1930,7 +1935,7 @@ namespace StardewDruid.Data
                 }
 
             }
-            else if (location is Forest || location is Mountain || location is Desert || location is BugLand || location is Clearing)
+            else if (location is Forest || location is Mountain || location is Desert || location is BugLand)
             {
 
                 weeds = true;
@@ -2036,9 +2041,21 @@ namespace StardewDruid.Data
                 fishspot = true;
 
             }
+            else if (location is DruidLocation)
+            {
+
+                if (location.Map.Layers[0].LayerWidth * location.Map.Layers[0].LayerHeight > 2000)
+                {
+
+                    crate = true;
+
+                }
+
+                fishspot = true;
+
+            }
             else if (
                 location.Name.Contains("Saloon") 
-                || location is DruidLocation 
                 || location is FarmCave 
                 || location.Name.Equals("Tunnel")
             )
@@ -2056,8 +2073,15 @@ namespace StardewDruid.Data
                 || location.Name.Contains("Custom_CapeCaving"))
                 {
 
-                    cast = true;
+                    weeds = true;
+                    fishspot = true;
 
+                    if (Game1.player.currentLocation.Map.Layers[0].LayerWidth * Game1.player.currentLocation.Map.Layers[0].LayerHeight > 1600)
+                    {
+
+                        crate = true;
+
+                    }
 
                 }
                 else
@@ -2067,6 +2091,34 @@ namespace StardewDruid.Data
 
                 }
 
+            }
+            else if(Mod.instance.Helper.ModRegistry.IsLoaded("FlashShifter.StardewValleyExpandedCP"))
+            {
+                if (location.Name.Contains("Custom_TownEast")
+                || location.Name.Contains("Custom_CrimsonBadlands")
+                || location.Name.Contains("Custom_Grampleton")
+                || location.Name.Contains("Custom_BusStop")
+                || location.Name.Contains("Custom_Forest")
+                || location.Name.Contains("Custom_BlueMoon"))
+                {
+
+                    weeds = true;
+                    fishspot = true;
+
+                    if (Game1.player.currentLocation.Map.Layers[0].LayerWidth * Game1.player.currentLocation.Map.Layers[0].LayerHeight > 1600)
+                    {
+
+                        crate = true;
+
+                    }
+
+                }
+                else
+                {
+
+                    cast = false;
+
+                }
             }
             else
             {

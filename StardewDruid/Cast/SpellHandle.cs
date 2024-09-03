@@ -16,6 +16,7 @@ using StardewDruid.Cast.Effect;
 using StardewDruid.Journal;
 using static StardewValley.Menus.QuestContainerMenu;
 using static System.Net.Mime.MediaTypeNames;
+using static StardewDruid.Character.Character;
 
 
 namespace StardewDruid.Cast
@@ -96,6 +97,7 @@ namespace StardewDruid.Cast
         public enum spells
         {
             effect,
+            swipe,
             explode,
             orbital,
             ballistic,
@@ -179,6 +181,8 @@ namespace StardewDruid.Cast
             crow,
             hammer,
             leafrustle,
+            slime,
+            ghost
         }
 
         public sounds sound = sounds.none;
@@ -463,6 +467,29 @@ namespace StardewDruid.Cast
 
                     return true;
 
+                case spells.swipe:
+
+                    if (counter == 1)
+                    {
+
+                        ApplyDamage(impact, radius, damageFarmers, damageMonsters, new());
+
+                        RadialDisplay();
+
+                        ApplyEffects(impact);
+
+                    }
+
+                    if (counter == 60)
+                    {
+
+                        Shutdown();
+
+                        return false;
+
+                    }
+
+                    return true;
 
                 case spells.explode:
 
@@ -1243,7 +1270,6 @@ namespace StardewDruid.Cast
             cursor = Mod.instance.iconData.CursorIndicator(location, impact, indicator, addEffects);
 
             animations.Add(cursor);
-
 
         }
 
@@ -2081,14 +2107,14 @@ namespace StardewDruid.Cast
                     explosion = 3;
 
                 }
-                Mod.instance.Monitor.Log(ModUtility.PositionToTile(impact).ToString(), LogLevel.Debug);
+
                 ModUtility.Explode(location, ModUtility.PositionToTile(impact), Game1.player, explosion, power);
 
             }
 
             if (terrain > 0)
             {
-                Mod.instance.Monitor.Log(ModUtility.PositionToTile(impact).ToString(), LogLevel.Debug);
+
                 ModUtility.Reave(location, ModUtility.PositionToTile(impact), Game1.player, terrain);
 
             }
@@ -2379,6 +2405,8 @@ namespace StardewDruid.Cast
 
             }
 
+            Mod.instance.iconData.ImpactIndicator(location, Game1.player.Position, IconData.impacts.mists, 3f, new());
+
         }
 
         public void CurseEffect(effects effect = effects.knock)
@@ -2650,6 +2678,8 @@ namespace StardewDruid.Cast
                 bolt.projectile = shockSize;
 
                 bolt.monsters = new() { victim, };
+
+                bolt.scheme = scheme;
 
                 bolt.type = SpellHandle.spells.zap;
 

@@ -274,6 +274,20 @@ namespace StardewDruid.Monster
 
         }
 
+        public override int GetHeight()
+        {
+
+            return 48;
+
+        }
+
+        public override int GetWidth()
+        {
+
+            return 48;
+
+        }
+
         public override Rectangle GetBoundingBox()
         {
 
@@ -281,9 +295,9 @@ namespace StardewDruid.Monster
 
             float spriteScale = GetScale();
 
-            int width = idleFrames[0][0].Width;
+            int width = GetWidth();
 
-            int height = idleFrames[0][0].Height;
+            int height = GetHeight();
 
             Rectangle box = new(
                 (int)(spritePosition.X + (spriteScale * 2)),

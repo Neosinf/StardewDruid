@@ -38,8 +38,10 @@ namespace StardewDruid.Journal
                 [102] = addButton(journalButtons.effects),
                 [103] = addButton(journalButtons.relics),
                 [104] = addButton(journalButtons.herbalism),
+                [105] = addButton(journalButtons.lore),
+                [106] = addButton(journalButtons.transform),
 
-                [106] = addButton(journalButtons.refresh),
+                [107] = addButton(journalButtons.refresh),
 
                 [201] = addButton(journalButtons.back),
                 [202] = addButton(journalButtons.start),
@@ -190,13 +192,15 @@ namespace StardewDruid.Journal
 
                     populateContent();
 
+                    activateInterface();
+
                     return;
 
                 case journalButtons.headerOne:
 
                     Mod.instance.herbalData.PotionBehaviour(HerbalData.herbals.ligna);
 
-                    populateContent();
+                    activateInterface();
 
                     return;
 
@@ -204,7 +208,7 @@ namespace StardewDruid.Journal
 
                     Mod.instance.herbalData.PotionBehaviour(HerbalData.herbals.impes);
 
-                    populateContent();
+                    activateInterface();
 
                     return;
 
@@ -212,7 +216,7 @@ namespace StardewDruid.Journal
 
                     Mod.instance.herbalData.PotionBehaviour(HerbalData.herbals.celeri);
 
-                    populateContent();
+                    activateInterface();
 
                     return;
 
@@ -314,9 +318,13 @@ namespace StardewDruid.Journal
         public override void drawContent(SpriteBatch b)
         {
 
-            b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.HP) + " " + Game1.player.health + "/" + Game1.player.maxHealth, new Vector2(xPositionOnScreen + width - 304, yPositionOnScreen - 64), Color.Wheat, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.88f);
+            b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.HP), new Vector2(xPositionOnScreen + width + 16, yPositionOnScreen + 96), Color.Wheat, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.88f);
 
-            b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.STM) + " " + (int)Game1.player.Stamina + " /" + Game1.player.MaxStamina, new Vector2(xPositionOnScreen + width - 304, yPositionOnScreen - 32), Color.Wheat, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.88f);
+            b.DrawString(Game1.smallFont, Game1.player.health + "/" + Game1.player.maxHealth, new Vector2(xPositionOnScreen + width + 16, yPositionOnScreen + 128), Color.Wheat, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.88f);
+
+            b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.STM), new Vector2(xPositionOnScreen + width + 16, yPositionOnScreen + 176), Color.Wheat, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.88f);
+
+            b.DrawString(Game1.smallFont, (int)Game1.player.Stamina + " /" + Game1.player.MaxStamina, new Vector2(xPositionOnScreen + width + 16, yPositionOnScreen + 208), Color.Wheat, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.88f);
 
             int top = record - (record % pagination);
 
@@ -470,6 +478,19 @@ namespace StardewDruid.Journal
             string herbalDescription = herbal.description;
 
             details = new(herbal.details);
+
+            if (herbal.stamina > 0)
+            {
+
+                float difficulty = 1.6f - (Mod.instance.ModDifficulty() * 0.1f);
+
+                int staminaGain = (int)(herbal.stamina * difficulty);
+
+                int healthGain = (int)(herbal.health * difficulty);
+
+                details.Add(Mod.instance.Helper.Translation.Get("HerbalData.327.1").Tokens(new { stamina = staminaGain.ToString(), health = healthGain.ToString() }));
+
+            }
 
             foreach (string ingredient in herbal.ingredients)
             {

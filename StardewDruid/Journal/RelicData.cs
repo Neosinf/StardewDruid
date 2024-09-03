@@ -45,6 +45,7 @@ namespace StardewDruid.Journal
             avalant,
             books,
             boxes,
+            restore,
 
         }
 
@@ -55,6 +56,7 @@ namespace StardewDruid.Journal
                 IconData.relics.jester_dice,
                 IconData.relics.shadowtin_tome,
                 IconData.relics.dragon_form,
+                IconData.relics.blackfeather_glove,
                 IconData.relics.stardew_druid,
             },
             [relicsets.wayfinder] = new() {
@@ -112,7 +114,11 @@ namespace StardewDruid.Journal
                 IconData.relics.box_artisan,
                 IconData.relics.box_chaos,
             },
-
+            [relicsets.restore] = new() {
+                IconData.relics.restore_goshuin,
+                IconData.relics.restore_offering,
+                IconData.relics.restore_cloth,
+            },
         };
 
         public Dictionary<relicsets, string> quests = new()
@@ -122,6 +128,7 @@ namespace StardewDruid.Journal
             [relicsets.avalant] = QuestHandle.relicMists,
             [relicsets.books] = QuestHandle.relicEther,
             [relicsets.boxes] = QuestHandle.relicFates,
+            [relicsets.restore] = QuestHandle.relicRestore,
         };
 
         public Dictionary<string, Relic> reliquary = new();
@@ -201,23 +208,30 @@ namespace StardewDruid.Journal
 
             foreach (relicsets set in lines.Keys)
             {
-
-                if (set == relicsets.avalant)
+                switch (set)
                 {
 
-                    if (ProgressRelicQuest(relicsets.avalant) == 0)
-                    {
+                    case relicsets.avalant:
+                    case relicsets.restore:
 
-                        continue;
+                        if (ProgressRelicQuest(set) == 0)
+                        {
 
-                    }
+                            continue;
 
+                        }
+                        break;
 
-                } else
-                if (!HasRelic(lines[set][0]))
-                {
+                    default:
 
-                    continue;
+                        if (!HasRelic(lines[set][0]))
+                        {
+
+                            continue;
+
+                        }
+
+                        break;
 
                 }
 
@@ -242,6 +256,7 @@ namespace StardewDruid.Journal
                             case relicsets.avalant:
                             case relicsets.books:
                             case relicsets.boxes:
+                            case relicsets.restore:
 
                                 content.relicColours[0] = Color.Black * 0.01f;
 
@@ -287,23 +302,31 @@ namespace StardewDruid.Journal
 
             foreach (KeyValuePair<relicsets, List<string>> section in titles)
             {
-
-                if (section.Key == relicsets.avalant)
+                switch (section.Key)
                 {
 
-                    if (ProgressRelicQuest(relicsets.avalant) == 0)
-                    {
+                    case relicsets.avalant:
+                    case relicsets.restore:
 
-                        continue;
 
-                    }
+                        if (ProgressRelicQuest(section.Key) == 0)
+                        {
 
-                }
-                else
-                if (!HasRelic(lines[section.Key][0]))
-                {
+                            continue;
 
-                    continue;
+                        }
+                        break;
+
+                    default:
+
+                        if (!HasRelic(lines[section.Key][0]))
+                        {
+
+                            continue;
+
+                        }
+
+                        break;
 
                 }
 
@@ -409,7 +432,6 @@ namespace StardewDruid.Journal
 
                     break;
 
-
                 case IconData.relics.shadowtin_tome:
 
                     if (!Context.IsMainPlayer)
@@ -430,6 +452,36 @@ namespace StardewDruid.Journal
                             Mod.instance.characters[CharacterHandle.characters.Shadowtin].SwitchToMode(Character.Character.mode.track, Game1.player);
 
                             Mod.instance.CastMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Shadowtin) +
+                                DialogueData.Strings(DialogueData.stringkeys.joinedPlayer), 0, true);
+
+                            return 1;
+
+                        }
+
+                    }
+
+                    break;
+
+                case IconData.relics.blackfeather_glove:
+
+                    if (!Context.IsMainPlayer)
+                    {
+
+                        break;
+
+                    }
+
+                    if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Blackfeather))
+                    {
+
+                        List<StardewDruid.Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, Character.Character.mode.track, };
+
+                        if (!reservedModes.Contains(Mod.instance.characters[CharacterHandle.characters.Blackfeather].modeActive))
+                        {
+
+                            Mod.instance.characters[CharacterHandle.characters.Blackfeather].SwitchToMode(Character.Character.mode.track, Game1.player);
+
+                            Mod.instance.CastMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Blackfeather) +
                                 DialogueData.Strings(DialogueData.stringkeys.joinedPlayer), 0, true);
 
                             return 1;
@@ -494,7 +546,7 @@ namespace StardewDruid.Journal
                     if (Game1.player.currentLocation is Beach)
                     {
 
-                        (Mod.instance.locations[LocationData.druid_atoll_name] as Atoll).AddBoatAccess(Game1.player.currentLocation);
+                        (Mod.instance.locations[LocationData.druid_atoll_name] as Atoll).AddBoatAccess();
 
                         return 1;
 
@@ -546,9 +598,9 @@ namespace StardewDruid.Journal
                         if (Vector2.Distance(Game1.player.Position, new Vector2(79, 78) * 64) <= 1560)
                         {
 
-                            SpellHandle warp = new(Mod.instance.locations[LocationData.druid_clearing_name], new Vector2(28, 8), new Vector2(0, 2)) { type = SpellHandle.spells.warp, };
+                            SpellHandle warpGlove = new(Mod.instance.locations[LocationData.druid_clearing_name], new Vector2(28, 8), new Vector2(0, 2)) { type = SpellHandle.spells.warp, };
 
-                            Mod.instance.spellRegister.Add(warp);
+                            Mod.instance.spellRegister.Add(warpGlove);
 
                             return 1;
 
@@ -610,7 +662,7 @@ namespace StardewDruid.Journal
 
                         destination = WarpData.WarpEntrance(Game1.getLocationFromName("Town"), new Vector2(98, 8) * 64);
 
-                        SpellHandle warp = new(backToTown, new Vector2((int)destination.X, (int)destination.Y), new Vector2(0, 0)) { type = SpellHandle.spells.warp, };
+                        SpellHandle warp = new(backToTown, ModUtility.PositionToTile(destination), new Vector2(0, 0)) { type = SpellHandle.spells.warp, };
 
                         Mod.instance.spellRegister.Add(warp);
 
@@ -947,7 +999,7 @@ namespace StardewDruid.Journal
                 return IconData.relics.avalant_gears;
 
             }
-            else if (Game1.player.currentLocation is MineShaft)
+            else if (Game1.player.currentLocation is MineShaft || Game1.player.currentLocation is Spring)
             {
 
                 return IconData.relics.avalant_casing;
@@ -1174,6 +1226,7 @@ namespace StardewDruid.Journal
 
         }
 
+        
         public Dictionary<relicsets, List<string>> titles = new()
         {
 
@@ -1204,7 +1257,9 @@ namespace StardewDruid.Journal
             [relicsets.boxes] = new() {
                 Mod.instance.Helper.Translation.Get("RelicData.24"),
                 Mod.instance.Helper.Translation.Get("RelicData.25"), },
-
+            [relicsets.restore] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.329.5"),
+                Mod.instance.Helper.Translation.Get("RelicData.329.6"), },
         };
 
         public static Dictionary<string, Relic> RelicsList()
@@ -1279,6 +1334,24 @@ namespace StardewDruid.Journal
                 },
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.91"),
             };
+            
+            relics[IconData.relics.blackfeather_glove.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.323.1"),
+                relic = IconData.relics.blackfeather_glove,
+                line = RelicData.relicsets.companion,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.323.2"),
+                details = new(){
+                    Mod.instance.Helper.Translation.Get("RelicData.323.3"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.323.4"),
+            };
+
+            if (Context.IsMainPlayer)
+            {
+                relics[IconData.relics.blackfeather_glove.ToString()].details.Add(Mod.instance.Helper.Translation.Get("RelicData.323.11"));
+            }
 
             relics[IconData.relics.stardew_druid.ToString()] = new()
             {
@@ -1948,6 +2021,42 @@ namespace StardewDruid.Journal
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.622"),
             };
 
+            // ====================================================================
+            // Restore Relics
+
+            relics[IconData.relics.restore_goshuin.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.329.1"),
+                relic = IconData.relics.restore_goshuin,
+                line = RelicData.relicsets.restore,
+                description = Mod.instance.Helper.Translation.Get("RelicData.329.2"),
+                hint = Mod.instance.Helper.Translation.Get("RelicData.329.3"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.329.4"),
+            };
+
+            relics[IconData.relics.restore_offering.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.329.7"),
+                relic = IconData.relics.restore_offering,
+                line = RelicData.relicsets.restore,
+                description = Mod.instance.Helper.Translation.Get("RelicData.329.8"),
+                hint = Mod.instance.Helper.Translation.Get("RelicData.329.9"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.329.10"),
+            };
+
+            relics[IconData.relics.restore_cloth.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.330.1"),
+                relic = IconData.relics.restore_cloth,
+                line = RelicData.relicsets.restore,
+                description = Mod.instance.Helper.Translation.Get("RelicData.330.2"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.330.3"),
+                },
+                hint = Mod.instance.Helper.Translation.Get("RelicData.330.4"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.330.5"),
+            };
 
             return relics;
 

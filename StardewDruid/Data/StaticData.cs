@@ -2,6 +2,7 @@
 using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Journal;
+using StardewDruid.Location;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using System;
@@ -30,11 +31,15 @@ namespace StardewDruid.Data
 
         public Dictionary<HerbalData.herbals, int> potions;
 
+        public Dictionary<string, int> restoration;
+
         public Dictionary<string, int> reliquary;
 
         public QuestHandle.milestones milestone;
 
         public int set;
+
+        public string serialise;
 
         public StaticData()
         {
@@ -67,7 +72,11 @@ namespace StardewDruid.Data
 
             chests = new();
 
+            restoration = new();
+
             set = 0;
+
+            serialise = string.Empty;
 
         }
 

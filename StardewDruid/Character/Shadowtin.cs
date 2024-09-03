@@ -7,10 +7,12 @@ using StardewDruid.Event;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.GameData.Machines;
 using StardewValley.Objects;
 using System;
 using System.Collections.Generic;
-using static StardewValley.Minigames.TargetGame;
+using System.Linq;
+using System.Reflection.PortableExecutable;
 
 
 namespace StardewDruid.Character
@@ -65,6 +67,8 @@ namespace StardewDruid.Character
                     new Rectangle(160, 288, 32, 32),
                 },
             };
+
+            restSet = true;
 
         }
 
@@ -191,6 +195,13 @@ namespace StardewDruid.Character
 
         }
 
+        public override void DrawRest(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        {
+
+            base.DrawRest(b, localPosition, drawLayer+0.064f, fade);
+
+        }
+
         public override void NewDay()
         {
 
@@ -198,29 +209,47 @@ namespace StardewDruid.Character
 
             CharacterHandle.RetrieveInventory(characterType);
 
-            List<StardewValley.Object> marmalade = new();
+            List<StardewValley.Item> marmalade = new();
+
+            StardewValley.Object preserveJar = ItemRegistry.Create<StardewValley.Object>("(BC)15");
+
+            MachineData machineData = preserveJar.GetMachineData();
+
+            GameLocation farm = Game1.getFarm();
+
+            MachineOutputRule outputRule;
+
+            int? overrideMinutesUntilReady;
 
             for (int i = Mod.instance.chests[characterType].Items.Count - 1; i >= 0; i--)
             {
 
-                StardewValley.Object @object = ItemRegistry.Create<StardewValley.Object>(Mod.instance.chests[characterType].Items[i].QualifiedItemId);
+                Item getItem = Mod.instance.chests[characterType].Items.ElementAt(i);
+
+                StardewValley.Object @object = ItemRegistry.Create<StardewValley.Object>(getItem.QualifiedItemId);
 
                 if (@object.Category == -79)
                 {
 
-                    StardewValley.Object conversion = new StardewValley.Object("344", 1);
+                    if (!MachineDataUtility.TryGetMachineOutputRule(preserveJar, machineData, MachineOutputTrigger.ItemPlacedInMachine, getItem, Game1.player, farm, out outputRule, out var _, out var _, out var _))
+                    {
+                        continue;
+                    }
 
-                    conversion.name = @object.Name + " Marmalade";
-                    
-                    conversion.Price = 50 + @object.Price * 2;
-                    
-                    conversion.preserve.Value = StardewValley.Object.PreserveType.Jelly;
-                    
-                    conversion.preservedParentSheetIndex.Value = @object.ParentSheetIndex.ToString();
+                    MachineItemOutput outputData = MachineDataUtility.GetOutputData(preserveJar, machineData, outputRule, getItem, Game1.player, farm);
 
-                    conversion.Stack = Mod.instance.chests[characterType].Items[i].Stack;
+                    Item outputItem = MachineDataUtility.GetOutputItem(preserveJar, outputData, getItem, Game1.player, false, out overrideMinutesUntilReady);
 
-                    marmalade.Add(conversion);
+                    if(outputItem == null)
+                    {
+
+                        continue;
+
+                    }
+
+                    outputItem.Stack = getItem.Stack;
+
+                    marmalade.Add(outputItem);
 
                     Mod.instance.chests[characterType].Items.RemoveAt(i);
 
@@ -228,7 +257,7 @@ namespace StardewDruid.Character
 
             }
 
-            foreach (StardewValley.Object conversion in marmalade)
+            foreach (StardewValley.Item conversion in marmalade)
             {
 
                 Mod.instance.chests[characterType].addItem(conversion);
@@ -305,13 +334,13 @@ namespace StardewDruid.Character
                         if (ValidWorkTarget(targetObject))
                         {
 
+                            ResetActives();
+
                             workVector = objectVector;
 
                             Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position, true);
 
                             Position = (workVector * 64);
-
-                            SettleOccupied();
 
                             Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position);
 
@@ -543,6 +572,12 @@ namespace StardewDruid.Character
         public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
         {
 
+            if (currentLocation.IsFarm)
+            {
+
+                return false;
+
+            }
             ResetActives();
 
             netSpecial.Set((int)specials.launch);

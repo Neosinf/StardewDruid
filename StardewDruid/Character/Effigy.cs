@@ -86,6 +86,8 @@ namespace StardewDruid.Character
 
             gait = 1.4f;
 
+            restSet = true;
+
         }
 
         public override void DrawLaunch(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
@@ -156,6 +158,7 @@ namespace StardewDruid.Character
 
         public override void DrawSweep(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
         {
+            
             Vector2 sweepVector = SpritePosition(localPosition);
 
             Rectangle sweepFrame = specialFrames[(specials)netSpecial.Value][netDirection.Value][specialFrame];
@@ -177,7 +180,6 @@ namespace StardewDruid.Character
             weaponRender.DrawWeapon(b, sweepVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = sweepFrame, });
 
             weaponRender.DrawSwipe(b, sweepVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = sweepFrame, });
-
 
         }
 
@@ -211,29 +213,23 @@ namespace StardewDruid.Character
 
             int chooseFrame = IdleFrame(idles.standby);
 
+            Vector2 spritePosition = SpritePosition(localPosition);
+
+            bool standbyFlip = SpriteAngle();
+
             b.Draw(
                 characterTexture,
-                SpritePosition(localPosition),
+                spritePosition,
                 idleFrames[idles.standby][0][chooseFrame],
                 Color.White,
                 0f,
                 new Vector2(16),
                 4f,
-                netDirection.Value == 1 || netAlternative.Value == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                standbyFlip ? (SpriteEffects)1 : 0,
                 drawLayer
             );
 
-            b.Draw(
-                characterTexture,
-                SpritePosition(localPosition) + new Vector2(2,4),
-                idleFrames[idles.standby][0][chooseFrame],
-                Color.Black * 0.25f,
-                0f,
-                new Vector2(16),
-                setScale,
-                netDirection.Value == 1 || netAlternative.Value == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                drawLayer - 0.001f
-            );
+            DrawUnder(b, spritePosition, drawLayer, idleFrames[idles.standby][0][chooseFrame], standbyFlip);
 
             return;
 
@@ -301,20 +297,6 @@ namespace StardewDruid.Character
         public override bool TargetWork()
         {
 
-            if (Game1.currentSeason == "winter")
-            {
-                
-                return false;
-
-            }
-
-            if (Game1.IsRainingHere(currentLocation))
-            {
-
-                return false;
-
-            }
-
             if(new SpawnIndex(currentLocation).cultivate == false)
             {
 
@@ -322,7 +304,7 @@ namespace StardewDruid.Character
 
             }
 
-            if (currentLocation.objects.Count() < 0)
+            if (currentLocation.objects.Count() <= 0)
             {
                 
                 return false;
@@ -331,7 +313,7 @@ namespace StardewDruid.Character
             
             List<Vector2> tileVectors;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 5; i++)
             {
 
                 tileVectors = ModUtility.GetTilesWithinRadius(currentLocation, occupied, i);
@@ -346,11 +328,28 @@ namespace StardewDruid.Character
 
                     }
 
+
                     if (currentLocation.objects.ContainsKey(scarevector))
                     {
 
                         if (currentLocation.Objects[scarevector].IsScarecrow())
                         {
+
+                            string scid = "scarecrow_" + scarevector.X.ToString() + "_" + scarevector.Y.ToString();
+                            
+                            if (!Mod.instance.rite.specialCasts.ContainsKey(currentLocation.Name))
+                            {
+
+                                Mod.instance.rite.specialCasts[currentLocation.Name] = new();
+
+                            }
+
+                            if (Mod.instance.rite.specialCasts[currentLocation.Name].Contains(scid))
+                            {
+
+                                continue;
+
+                            }
 
                             ResetActives();
 
@@ -425,7 +424,7 @@ namespace StardewDruid.Character
 
             }
 
-            if(specialTimer == 20)
+            if (specialTimer == 20 && !Game1.IsRainingHere(currentLocation) && Game1.currentSeason != "winter")
             {
 
                 Artifice artificeHandle = new();
@@ -438,6 +437,13 @@ namespace StardewDruid.Character
 
         public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
         {
+
+            if (currentLocation.IsFarm)
+            {
+
+                return false;
+
+            }
 
             ResetActives();
 
@@ -463,11 +469,11 @@ namespace StardewDruid.Character
 
             special.power = 4;
 
-            special.explosion = 256;
+            special.explosion = 4;
 
             special.terrain = 4;
 
-            special.display = IconData.impacts.impact;
+            special.display = IconData.impacts.bomb;
 
             Mod.instance.spellRegister.Add(special);
 

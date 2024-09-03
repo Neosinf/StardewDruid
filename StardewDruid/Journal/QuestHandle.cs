@@ -23,8 +23,6 @@ using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
-using xTile.Dimensions;
-using static StardewValley.Menus.CharacterCustomization;
 
 
 namespace StardewDruid.Journal
@@ -70,7 +68,8 @@ namespace StardewDruid.Journal
             quest_shadowtin,
             ether_treasure,
             ether_challenge,
-            //bones_clearing,
+            bones_weapon,
+            bones_lessons,
             //bones_vault,
             //bones_chapel,
             //bones_tomb,
@@ -98,13 +97,15 @@ namespace StardewDruid.Journal
             [milestones.fates_weapon] = new() { swordFates, },
             [milestones.fates_lessons] = new() { fatesOne, fatesTwo, fatesThree, },
             [milestones.quest_jester] = new() { questJester, },
-            [milestones.fates_enchant] = new() { fatesFour,  },
+            [milestones.fates_enchant] = new() { fatesFour, },
             [milestones.fates_challenge] = new() { challengeFates, },
             [milestones.ether_weapon] = new() { swordEther, },
-            [milestones.ether_lessons] = new() { etherOne, etherTwo, etherThree,  },
+            [milestones.ether_lessons] = new() { etherOne, etherTwo, etherThree, },
             [milestones.quest_shadowtin] = new() { questShadowtin, },
             [milestones.ether_treasure] = new() { etherFour, },
             [milestones.ether_challenge] = new() { challengeEther, },
+            [milestones.bones_weapon] = new() { questBlackfeather, },
+            [milestones.bones_lessons] = new() { bonesOne, bonesTwo, bonesThree, },
             [milestones.end] = new() { },
 
         };
@@ -183,15 +184,21 @@ namespace StardewDruid.Journal
 
         public const string challengeEther = "dustfiends";
 
-        public const string bonesClearing = "bonesClearing";
+        public const string questBlackfeather = "questBlackfeather";
 
-        public const string bonesVault = "bonesVault";
+        public const string bonesOne = "familiars";
 
-        public const string bonesChapel = "bonesChapel";
+        public const string bonesTwo = "retrievers";
 
-        public const string bonesTomb = "bonesTomb";
+        public const string bonesThree = "opportunists";
 
-        public const string bonesGate = "bonesGate";
+        public const string challengeBerserker = "berserker";
+
+        public const string challengeSiege = "siege";
+
+        public const string challengeTyrant = "tyrant";
+
+        public const string challengePyre = "pyre";
 
         // optional
 
@@ -204,6 +211,8 @@ namespace StardewDruid.Journal
         public const string relicFates = "relicFates";
 
         public const string relicEther = "relicEther";
+
+        public const string relicRestore = "relicRestore";
 
         public const string treasureChase = "treasureChase";
 
@@ -260,7 +269,7 @@ namespace StardewDruid.Journal
 
         }
 
-        public Dictionary<int,Journal.ContentComponent> JournalQuests()
+        public Dictionary<int, Journal.ContentComponent> JournalQuests()
         {
 
             Dictionary<int, Journal.ContentComponent> journal = new();
@@ -368,7 +377,7 @@ namespace StardewDruid.Journal
 
         }
 
-        public KeyValuePair<string,int> questEffects(string questId)
+        public KeyValuePair<string, int> questEffects(string questId)
         {
 
             Dictionary<int, Journal.ContentComponent> effectComponents = JournalEffects();
@@ -389,13 +398,13 @@ namespace StardewDruid.Journal
 
             }
 
-            return new(null,0);
+            return new(null, 0);
 
         }
 
         public Dictionary<int, Journal.ContentComponent> JournalEffects()
         {
-            
+
             Dictionary<int, Journal.ContentComponent> journal = new();
 
             List<string> pageList = new();
@@ -408,7 +417,7 @@ namespace StardewDruid.Journal
             }
             else
             {
-                
+
                 foreach (KeyValuePair<string, QuestProgress> pair in Mod.instance.save.progress)
                 {
 
@@ -497,12 +506,94 @@ namespace StardewDruid.Journal
 
         }
 
+        public Dictionary<int, Journal.ContentComponent> JournalLore()
+        {
+
+            Dictionary<int, Journal.ContentComponent> journal = new();
+
+            List<string> pageList = new();
+
+            foreach (KeyValuePair<string, QuestProgress> pair in Mod.instance.save.progress)
+            {
+
+                string id = pair.Key;
+
+                QuestProgress progress = pair.Value;
+
+                if (!quests.ContainsKey(id))
+                {
+
+                    continue;
+
+                }
+
+                if (IsComplete(id))
+                {
+
+                    if (loresets.ContainsKey(id))
+                    {
+
+                        pageList.Add(id + ".lore");
+
+                    }
+
+                    if (DialogueData.DialogueScene(id).Count > 0 && quests[id].type == Quest.questTypes.challenge)
+                    {
+
+                        pageList.Add(id + ".transcript");
+
+                    }
+
+                }
+
+            }
+
+            if (Mod.instance.Config.reverseJournal)
+            {
+
+                pageList.Reverse();
+
+            }
+
+            int start = 0;
+
+            foreach (string id in pageList)
+            {
+
+                Journal.ContentComponent content = new(ContentComponent.contentTypes.list, id);
+
+                List<string> pageIds = id.Split('.').ToList();
+
+                if (pageIds[1] == "lore")
+                {
+
+                    content.text[0] = quests[pageIds[0]].title;
+
+                }
+                else
+                {
+
+                    content.text[0] = quests[pageIds[0]].title + " (transcript)";
+
+                }
+
+                content.icons[0] = quests[pageIds[0]].icon;
+
+                journal[start++] = content;
+
+            }
+
+            return journal;
+
+        }
+
+
         // ----------------------------------------------------------------------
 
         public void Ready()
         {
 
-            if(Mod.instance.magic)
+            if (Mod.instance.magic)
             {
 
                 return;
@@ -534,7 +625,7 @@ namespace StardewDruid.Journal
 
             keys = new(Mod.instance.save.progress.Keys);
 
-            foreach(string key in keys)
+            foreach (string key in keys)
             {
 
                 if (Mod.instance.save.progress[key].delay > 0)
@@ -561,25 +652,23 @@ namespace StardewDruid.Journal
 
                         Mod.instance.save.progress[key].status = 1;
 
-                        Initialise(key);
-
                     }
 
                     DialogueBefore(key);
 
                 }
-                else
-                if (Mod.instance.save.progress[key].status == 1)
+
+                if (Mod.instance.save.progress[key].status == 1 || Mod.instance.save.progress[key].status == 4)
                 {
 
                     Initialise(key);
 
                 }
-                else
+
                 if (Mod.instance.save.progress[key].status >= 2)
                 {
 
-                    if(loresets.ContainsKey(key))
+                    if (loresets.ContainsKey(key))
                     {
 
                         lorekey = key;
@@ -656,9 +745,9 @@ namespace StardewDruid.Journal
 
             }
 
-            foreach(KeyValuePair<milestones,List<string>> mile in milestoneQuests)
+            foreach (KeyValuePair<milestones, List<string>> mile in milestoneQuests)
             {
-                
+
                 if (mile.Key == milestone)
                 {
                     foreach (string questId in mile.Value)
@@ -668,6 +757,7 @@ namespace StardewDruid.Journal
                         {
 
                             Mod.instance.save.progress[questId] = new();
+
                         }
                         else
                         {
@@ -712,7 +802,7 @@ namespace StardewDruid.Journal
 
             }
 
-            if (quests[questId].give == Quest.questGivers.dialogue)
+            if (quests[questId].give == Quest.questGivers.dialogue && !Mod.instance.Config.autoProgress)
             {
 
                 Mod.instance.save.progress[questId] = new();
@@ -795,6 +885,8 @@ namespace StardewDruid.Journal
 
                 }
 
+                Mod.instance.save.progress[questId].status = 3;
+
                 OnComplete(questId,questRating);
 
                 Implement(questId);
@@ -805,11 +897,11 @@ namespace StardewDruid.Journal
             else
             {
 
+                Mod.instance.save.progress[questId].status = 3;
+
                 OnReplayComplete(questId, questRating);
 
             }
-
-            Mod.instance.save.progress[questId].status = 3;
 
             Mod.instance.CastMessage(quests[questId].title + " " + DialogueData.Strings(DialogueData.stringkeys.questComplete), 1, true);
 
@@ -817,7 +909,17 @@ namespace StardewDruid.Journal
             {
                 float adjustReward = 1.2f - ((float)Mod.instance.ModDifficulty() * 0.1f);
 
-                Game1.player.Money += (int)((float)quests[questId].reward * adjustReward);
+                int gimmeMoney = (int)((float)quests[questId].reward * adjustReward);
+
+                Game1.player.Money += gimmeMoney;
+
+                QueryData moneyQuery = new()
+                {
+                    name = quests[questId].title,
+                    value = gimmeMoney.ToString(),
+                };
+
+                Mod.instance.EventQuery(moneyQuery, QueryData.queries.GimmeMoney);
 
             }
 
@@ -938,20 +1040,6 @@ namespace StardewDruid.Journal
 
         }
 
-        /*public bool IsOpen(string quest)
-        {
-
-            if (Mod.instance.save.progress.ContainsKey(quest))
-            {
-
-                return (Mod.instance.save.progress[quest].status <= 1);
-
-            }
-
-            return false;
-
-        }*/
-
         public bool IsGiven(string quest)
         {
             
@@ -975,6 +1063,20 @@ namespace StardewDruid.Journal
 
         public bool IsReplayable(string quest)
         {
+
+            if (!Mod.instance.save.progress.ContainsKey(quest))
+            {
+
+                return false;
+
+            }
+
+            if (Mod.instance.save.progress[quest].status == 3)
+            {
+
+                return false;
+
+            }
 
             switch (quests[quest].type)
             {
@@ -1034,6 +1136,8 @@ namespace StardewDruid.Journal
                 case approachEffigy:
 
                     LocationData.DruidLocations(LocationData.druid_grove_name);
+
+                    LocationData.DruidLocations(LocationData.druid_gate_name);
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_stone.ToString());
 
@@ -1149,11 +1253,13 @@ namespace StardewDruid.Journal
 
                     return;
 
-                case challengeEther:
+                case questBlackfeather:
 
-                    LocationData.DruidLocations(LocationData.druid_gate_name);
+                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.blackfeather_glove.ToString());
 
                     return;
+
+
 
             }
 
@@ -1468,6 +1574,17 @@ namespace StardewDruid.Journal
 
                     return;
 
+                case questBlackfeather:
+
+                    if (!Mod.instance.eventRegister.ContainsKey(questId))
+                    {
+
+                        new Event.Scene.QuestBlackfeather().EventSetup(questId);
+
+                    }
+
+                    return;
+
                 // =====================================================================
                 case relicTactical:
 
@@ -1524,17 +1641,16 @@ namespace StardewDruid.Journal
 
                     return;
 
-                case bonesClearing:
+                case relicRestore:
 
                     if (!Mod.instance.eventRegister.ContainsKey(questId))
                     {
 
-                        new Event.Bones.BonesClearing().EventSetup(questId);
+                        new Event.Relics.RelicRestore().EventSetup(questId);
 
                     }
 
                     return;
-
             }
 
         }
@@ -1549,13 +1665,9 @@ namespace StardewDruid.Journal
 
                     LocationData.DruidLocations(LocationData.druid_grove_name);
 
+                    LocationData.DruidLocations(LocationData.druid_gate_name);
+
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_stone.ToString());
-
-                    return;
-
-                case swordWeald:
-
-                    (Mod.instance.locations[LocationData.druid_grove_name] as Grove).addDialogue();
 
                     return;
 
@@ -1577,8 +1689,6 @@ namespace StardewDruid.Journal
 
                     LocationData.DruidLocations(LocationData.druid_spring_name);
 
-                    (Mod.instance.locations[LocationData.druid_spring_name] as Spring).addDialogue();
-
                     return;
 
                 case swordMists:
@@ -1588,8 +1698,6 @@ namespace StardewDruid.Journal
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.tactical_discombobulator.ToString());
 
                     LocationData.DruidLocations(LocationData.druid_atoll_name);
-
-                    (Mod.instance.locations[LocationData.druid_atoll_name] as Atoll).addDialogue();
 
                     return;
 
@@ -1653,6 +1761,9 @@ namespace StardewDruid.Journal
                         Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_water.ToString());
 
                         Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.runestones_cat.ToString());
+
+                        LocationData.DruidLocations(LocationData.druid_vault_name);
+
                     }
 
                     return;
@@ -1699,8 +1810,6 @@ namespace StardewDruid.Journal
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.box_measurer.ToString());
 
-                    (Mod.instance.locations[LocationData.druid_court_name] as Court).addDialogue();
-
                     return;
 
                 case etherOne:
@@ -1723,9 +1832,13 @@ namespace StardewDruid.Journal
 
                     return;
 
-                case challengeEther:
+                case questBlackfeather:
 
-                    LocationData.DruidLocations(LocationData.druid_gate_name);
+                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.blackfeather_glove.ToString());
+
+                    return;
+
+                case bonesThree:
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.stardew_druid.ToString());
 
@@ -1925,7 +2038,7 @@ namespace StardewDruid.Journal
 
                 case approachJester:
 
-                    if(!Mod.instance.characters.ContainsKey(CharacterHandle.characters.Buffin))
+                    if(!Mod.instance.characters.ContainsKey(CharacterHandle.characters.Jester))
                     {
                         Character.Character.mode jesterMode =
                         Mod.instance.save.characters.ContainsKey(CharacterHandle.characters.Jester) ?
@@ -2012,7 +2125,7 @@ namespace StardewDruid.Journal
 
                     }
 
-                    CheckAssignment(swordEther,0);
+                    CheckAssignment(swordEther,1);
 
                     Milecrossed(milestones.fates_challenge);
 
@@ -2057,6 +2170,13 @@ namespace StardewDruid.Journal
 
                     Milecrossed(milestones.quest_shadowtin);
 
+                    if (!(Mod.instance.locations[LocationData.druid_clearing_name] as Clearing).accessOpen)
+                    {
+        
+                        (Mod.instance.locations[LocationData.druid_clearing_name] as Clearing).OpenAccessDoor();
+
+                    }
+
                     return;
 
                 case etherFour:
@@ -2068,8 +2188,6 @@ namespace StardewDruid.Journal
                     return;
 
                 case challengeEther:
-
-                    Milecrossed(milestones.ether_challenge);
 
                     if (!Mod.instance.characters.ContainsKey(CharacterHandle.characters.Blackfeather))
                     {
@@ -2083,7 +2201,40 @@ namespace StardewDruid.Journal
 
                     }
 
-                    //CheckAssignment(bonesClearing, 0);
+                    CheckAssignment(questBlackfeather, 1);
+
+                    Milecrossed(milestones.ether_challenge);
+
+                    return;
+
+                case questBlackfeather:
+
+                    CheckAssignment(bonesOne, 0);
+
+                    Milecrossed(milestones.bones_weapon);
+
+                    return;
+
+                case bonesOne:
+
+                    CheckAssignment(bonesTwo, 1);
+
+                    return;
+
+                case bonesTwo:
+
+                    CheckAssignment(bonesThree, 1);
+
+                    return;
+
+                case bonesThree:
+
+                    //CheckAssignment(challengeberserker, 1);
+
+                    if (!IsComplete(bonesOne)) { return; }
+                    if (!IsComplete(bonesTwo)) { return; }
+
+                    Milecrossed(milestones.bones_lessons);
 
                     return;
 
@@ -2101,9 +2252,9 @@ namespace StardewDruid.Journal
 
                 case mistsTwo:
 
-                    ThrowHandle throwPan = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.herbalism_pan);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.herbalism_pan);
 
-                    throwPan.register();
+                    throwRelic.register();
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_pan.ToString());
 
@@ -2117,9 +2268,9 @@ namespace StardewDruid.Journal
 
                 case wealdFive:
 
-                    ThrowHandle throwHammer = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.crow_hammer);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.crow_hammer);
 
-                    throwHammer.register();
+                    throwRelic.register();
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.crow_hammer.ToString());
 
@@ -2137,9 +2288,9 @@ namespace StardewDruid.Journal
 
                 case swordMists:
 
-                    ThrowHandle throwCenser = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.wayfinder_censer);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.wayfinder_censer);
 
-                    throwCenser.register();
+                    throwRelic.register();
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_censer.ToString());
 
@@ -2157,9 +2308,9 @@ namespace StardewDruid.Journal
 
                 case swordStars:
 
-                    ThrowHandle throwLantern = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.wayfinder_lantern);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.wayfinder_lantern);
 
-                    throwLantern.register();
+                    throwRelic.register();
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_lantern.ToString());
 
@@ -2167,17 +2318,11 @@ namespace StardewDruid.Journal
 
                 case starsOne:
 
-                    ThrowHandle throwStill = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Revenant].Position, IconData.relics.herbalism_still);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Revenant].Position, IconData.relics.herbalism_still);
 
-                    throwStill.register();
+                    throwRelic.register();
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_still.ToString());
-
-                    Mod.instance.save.herbalism[HerbalData.herbals.satius_ligna] = 3;
-
-                    Mod.instance.save.herbalism[HerbalData.herbals.satius_impes] = 3;
-
-                    Mod.instance.save.herbalism[HerbalData.herbals.satius_celeri] = 3;
 
                     break;
 
@@ -2191,11 +2336,21 @@ namespace StardewDruid.Journal
 
                     break;
 
+                case challengeDragon:
+
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Revenant].Position, IconData.relics.wayfinder_water);
+
+                    throwRelic.register();
+
+                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_water.ToString());
+
+                    break;
+
                 case fatesOne:
 
-                    ThrowHandle throwEye = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Jester].Position, IconData.relics.wayfinder_eye);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Jester].Position, IconData.relics.wayfinder_eye);
 
-                    throwEye.register();
+                    throwRelic.register();
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_eye.ToString());
 
@@ -2203,17 +2358,11 @@ namespace StardewDruid.Journal
 
                 case fatesFour:
 
-                    ThrowHandle throwCup = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Buffin].Position, IconData.relics.herbalism_crucible);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Buffin].Position, IconData.relics.herbalism_crucible);
 
-                    throwCup.register();
+                    throwRelic.register();
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_crucible.ToString());
-
-                    Mod.instance.save.herbalism[HerbalData.herbals.magnus_ligna] = 3;
-
-                    Mod.instance.save.herbalism[HerbalData.herbals.magnus_impes] = 3;
-
-                    Mod.instance.save.herbalism[HerbalData.herbals.magnus_celeri] = 3;
 
                     Mod.instance.save.herbalism[HerbalData.herbals.faeth] = 5;
 
@@ -2221,9 +2370,9 @@ namespace StardewDruid.Journal
 
                 case swordEther:
 
-                    ThrowHandle throwCeremonial = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Revenant].Position, IconData.relics.wayfinder_ceremonial);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Revenant].Position, IconData.relics.wayfinder_ceremonial);
 
-                    throwCeremonial.register();
+                    throwRelic.register();
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_ceremonial.ToString());
 
@@ -2231,9 +2380,9 @@ namespace StardewDruid.Journal
 
                 case etherOne:
 
-                    ThrowHandle throwDragononomicon = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Shadowtin].Position, IconData.relics.dragon_form);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Shadowtin].Position, IconData.relics.dragon_form);
 
-                    throwDragononomicon.register();
+                    throwRelic.register();
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.dragon_form.ToString());
 
@@ -2241,22 +2390,25 @@ namespace StardewDruid.Journal
 
                 case etherFour:
 
-                    ThrowHandle throwGauge = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Shadowtin].Position, IconData.relics.herbalism_gauge);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Shadowtin].Position, IconData.relics.herbalism_gauge);
 
-                    throwGauge.register();
+                    throwRelic.register();
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_gauge.ToString());
-
-                    Mod.instance.save.herbalism[HerbalData.herbals.optimus_ligna] = 3;
-
-                    Mod.instance.save.herbalism[HerbalData.herbals.optimus_impes] = 3;
-
-                    Mod.instance.save.herbalism[HerbalData.herbals.optimus_celeri] = 3;
 
                     Mod.instance.save.herbalism[HerbalData.herbals.aether] = 5;
 
                     break;
 
+                case questBlackfeather:
+
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Blackfeather].Position, IconData.relics.blackfeather_glove);
+
+                    throwRelic.register();
+
+                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.blackfeather_glove.ToString());
+
+                    break;
             }
 
             return;
@@ -2448,7 +2600,17 @@ namespace StardewDruid.Journal
 
                     break;
 
-                case challengeEther:
+                case questBlackfeather:
+
+                    Mod.instance.save.rite = Rite.rites.bones;
+
+                    swordThrow = new(Game1.player, Game1.player.Position + new Vector2(192, -64), SpawnData.swords.knife);
+
+                    swordThrow.register();
+
+                    break;
+
+                case bonesThree:
 
                     if (!Journal.RelicData.HasRelic(IconData.relics.stardew_druid))
                     {
@@ -2624,9 +2786,9 @@ namespace StardewDruid.Journal
 
         // ----------------------------------------------------------------------
 
-        public void DialogueBefore(string questId, CharacterHandle.characters character = CharacterHandle.characters.none)
+        public void DialogueBefore(string questId, CharacterHandle.characters character = CharacterHandle.characters.none, bool force = false)
         {
-            
+
             if (quests[questId].before.Count > 0)
             {
 
@@ -2652,17 +2814,6 @@ namespace StardewDruid.Journal
 
                     }
 
-                    if (!Mod.instance.dialogue.ContainsKey(special.Key))
-                    {
-
-                        Mod.instance.dialogue[special.Key] = new(special.Key);
-
-                    }
-
-                    special.Value.questId = questId;
-
-                    Mod.instance.dialogue[special.Key].AddSpecialDialogue(questId, special.Value);
-
                     if (!prompts.ContainsKey(special.Key))
                     {
 
@@ -2676,6 +2827,36 @@ namespace StardewDruid.Journal
                         prompts[special.Key].Add(questId);
 
                     }
+
+                    if (!force)
+                    {
+
+                        if (Mod.instance.save.progress[questId].given == 2)
+                        {
+
+                            continue;
+
+                        }
+
+                        if (special.Value.questContext != 0 && Mod.instance.save.progress[questId].given == 1)
+                        {
+
+                            continue;
+
+                        }
+
+                    }
+
+                    if (!Mod.instance.dialogue.ContainsKey(special.Key))
+                    {
+
+                        Mod.instance.dialogue[special.Key] = new(special.Key);
+
+                    }
+
+                    special.Value.questId = questId;
+
+                    Mod.instance.dialogue[special.Key].AddSpecialDialogue(questId, special.Value);
 
                 }
 
@@ -2727,32 +2908,54 @@ namespace StardewDruid.Journal
         public void DialogueCheck(string questId, int context, CharacterHandle.characters characterType, int answer = 0)
         {
 
-            if (Mod.instance.save.progress.ContainsKey(questId))
+            if (!Mod.instance.save.progress.ContainsKey(questId))
+            {
+                
+                return;
+            
+            }
+
+            if (Mod.instance.save.progress[questId].status != 0)
             {
 
-                if(Mod.instance.save.progress[questId].status == 0 && context == 0)
+                return;
+
+            }
+
+            if(context != 0)
+            {
+
+                if(Mod.instance.save.progress[questId].given < 2)
                 {
 
-                    Mod.instance.save.progress[questId].status = 1;
-
-                    Mod.instance.save.progress[questId].delay = 0;
-
-                    OnAccept(questId);
-
-                    Initialise(questId);
-
-                    foreach (KeyValuePair<CharacterHandle.characters,Dialogue.Dialogue> dialogues in Mod.instance.dialogue)
-                    {
-
-                        dialogues.Value.RemoveSpecialDialogue(questId);
-
-                    }
-
-                    Mod.instance.SyncMultiplayer();
+                    Mod.instance.save.progress[questId].given = 1;
 
                 }
 
+                return;
+
             }
+
+            Mod.instance.save.progress[questId].status = 1;
+
+            Mod.instance.save.progress[questId].delay = 0;
+
+            OnAccept(questId);
+
+            Initialise(questId);
+
+            foreach (KeyValuePair<CharacterHandle.characters, Dialogue.Dialogue> dialogues in Mod.instance.dialogue)
+            {
+
+                dialogues.Value.RemoveSpecialDialogue(questId);
+
+            }
+
+            Mod.instance.SyncMultiplayer();
+
+            Mod.instance.save.progress[questId].given = 2;
+
+            return;
 
         }
 
@@ -2776,7 +2979,7 @@ namespace StardewDruid.Journal
 
                     }
 
-                    DialogueBefore(loadout[q],character);
+                    DialogueBefore(loadout[q],character,true);
 
                 }
 

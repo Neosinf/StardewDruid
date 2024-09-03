@@ -72,7 +72,7 @@ namespace StardewDruid.Data
             jester,
             buffin,
             shadowtin,
-            blank1,
+            blackfeather,
 
             active,
             reverse,
@@ -85,8 +85,8 @@ namespace StardewDruid.Data
             effect,
             relic,
             herbalism,
-            replay,
-            flag,
+            lore,
+            transform,
 
             speech,
             blaze,
@@ -99,11 +99,11 @@ namespace StardewDruid.Data
             up,
             down,
             scroll,
-            blank2,
-            blank3,
+            replay,
+            flag,
 
             bones,
-
+            skip,
 
         }
 
@@ -326,8 +326,8 @@ namespace StardewDruid.Data
             jester_dice,
             shadowtin_tome,
             dragon_form,
-            stardew_druid, 
-            companion_5,
+            blackfeather_glove,
+            stardew_druid,
             wayfinder_pot,
             wayfinder_censer,
             wayfinder_lantern,
@@ -378,6 +378,13 @@ namespace StardewDruid.Data
             box_5,
             skull_saurus,
             skull_gelatin,
+            skull_3,
+            skull_4,
+            skull_5,
+            skull_6,
+            restore_goshuin,
+            restore_offering,
+            restore_cloth
 
         }
 
@@ -1097,6 +1104,7 @@ namespace StardewDruid.Data
                     additional.alpha = 0.1f;
 
                     CreateImpact(location, Game1.player.Position - new Vector2(0,64), IconData.impacts.spiral, 5f, additional);
+
                     return;
 
             }
@@ -1539,25 +1547,25 @@ namespace StardewDruid.Data
 
                 case 0:
 
-                    emberAnimations.Add(CreateImpact(location, origin + new Vector2(32) - (new Vector2(16, 28) * scale), impacts.plume, scale, new() { interval = 200, loops = Time, layer = layer - 0.0001f, alpha = 0.75f, flip = Mod.instance.randomIndex.NextBool() }));
+                    emberAnimations.Add(CreateImpact(location, origin + new Vector2(32) - (new Vector2(16, 28) * scale), impacts.plume, scale, new() { interval = 200, loops = Math.Min(3,Time), layer = layer - 0.0001f, alpha = 0.75f, flip = Mod.instance.randomIndex.NextBool() }));
 
                     break;
 
                 case 1:
 
-                    emberAnimations.Add(CreateImpact(location, origin + new Vector2(32) - (new Vector2(16, 28) * scale), impacts.plume, scale, new() { interval = 200, loops = Time, color = Microsoft.Xna.Framework.Color.LightGray, layer = layer - 0.0001f, alpha = 0.75f, flip = Mod.instance.randomIndex.NextBool() }));
+                    emberAnimations.Add(CreateImpact(location, origin + new Vector2(32) - (new Vector2(16, 28) * scale), impacts.plume, scale, new() { interval = 200, loops = Math.Min(3, Time), color = Microsoft.Xna.Framework.Color.LightGray, layer = layer - 0.0001f, alpha = 0.75f, flip = Mod.instance.randomIndex.NextBool() }));
 
                     break;
 
                 case 2:
 
-                    emberAnimations.Add(CreateImpact(location, origin + new Vector2(32) - (new Vector2(16, 28) * scale), impacts.smoke, scale, new() { interval = 200, loops = Time, layer = layer - 0.0001f, alpha = 0.75f, flip = Mod.instance.randomIndex.NextBool() }));
+                    emberAnimations.Add(CreateImpact(location, origin + new Vector2(32) - (new Vector2(16, 28) * scale), impacts.smoke, scale, new() { interval = 200, loops = Math.Min(3, Time), layer = layer - 0.0001f, alpha = 0.75f, flip = Mod.instance.randomIndex.NextBool() }));
 
                     break;
 
                 case 3:
 
-                    emberAnimations.Add(CreateImpact(location, origin + new Vector2(32) - (new Vector2(16, 28) * scale), impacts.smoke, scale, new() { interval = 200, loops = Time, color = Microsoft.Xna.Framework.Color.LightGray, layer = layer - 0.0001f, alpha = 0.75f, flip = Mod.instance.randomIndex.NextBool() }));
+                    emberAnimations.Add(CreateImpact(location, origin + new Vector2(32) - (new Vector2(16, 28) * scale), impacts.smoke, scale, new() { interval = 200, loops = Math.Min(3, Time), color = Microsoft.Xna.Framework.Color.LightGray, layer = layer - 0.0001f, alpha = 0.75f, flip = Mod.instance.randomIndex.NextBool() }));
 
                     break;
             }
@@ -2254,12 +2262,19 @@ namespace StardewDruid.Data
         public void AnimateMistic()
         {
 
-            Vector2 mistCorner = Game1.player.Position - new Vector2(96, 128);
+            AnimateMistic(Game1.player.Position - new Vector2(96, 128));
 
-            for (int i = 0; i < 4; i++)
+        }
+
+        public void AnimateMistic(Vector2 position, int amount = 4)
+        {
+            
+            Vector2 mistCorner = position;
+
+            for (int i = 0; i < amount; i++)
             {
 
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < amount; j++)
                 {
 
                     if ((i == 0 || i == 5) && (j == 0 || j == 5))

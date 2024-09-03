@@ -28,7 +28,7 @@ namespace StardewDruid.Location
     public class Engineum : DruidLocation
     {
 
-        public Dictionary<Vector2, int> blueLights = new();
+        public List<Vector2> blueLights = new();
 
         public Engineum() { }
 
@@ -43,26 +43,25 @@ namespace StardewDruid.Location
 
             base.draw(b);
 
-            List<Vector2> vectors = new()
+            blueLights = new()
             {
-                new Vector2(1664,420),
-                new Vector2(1752,472),
-                new Vector2(1832,472),
-                new Vector2(1920,420),
+            
+                new Vector2(1664,430),
+                new Vector2(1752,480),
+                new Vector2(1832,480),
+                new Vector2(1920,430),
+                new Vector2(1252,1034),
+                //new Vector2(1374,1120),
 
             };
 
-            int start = 0;
-
-            foreach (KeyValuePair<Vector2, int> light in blueLights)
+            foreach (Vector2 blueLight in blueLights)
             {
 
-                if (Utility.isOnScreen(light.Key, 64 * light.Value))
+                if (Utility.isOnScreen(blueLight, 128))
                 {
 
                     Texture2D texture2D = Game1.sconceLight;
-
-                    Vector2 blueLight = vectors[start++];
 
                     Microsoft.Xna.Framework.Vector2 position = new(blueLight.X - (float)Game1.viewport.X, blueLight.Y - (float)Game1.viewport.Y);
 
@@ -75,7 +74,7 @@ namespace StardewDruid.Location
                         Microsoft.Xna.Framework.Color.LightBlue,
                         0f,
                         new Vector2(texture2D.Bounds.Width / 2, texture2D.Bounds.Height / 2),
-                        0.1f + (0.005f * sparkle),
+                        0.1f + (0.0025f * sparkle),
                         SpriteEffects.None,
                         0.9f
                     );
@@ -202,11 +201,11 @@ namespace StardewDruid.Location
                 [7] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 76 }, new() { 11, 76 }, new() { 12, 196 }, new() { 13, 200 }, new() { 14, 257 }, new() { 15, 258 }, new() { 16, 258 }, new() { 17, 258 }, new() { 18, 258 }, new() { 19, 258 }, new() { 20, 258 }, new() { 21, 258 }, new() { 22, 308 }, new() { 23, 274 }, new() { 24, 274 }, new() { 25, 274 }, new() { 26, 274 }, new() { 27, 274 }, new() { 28, 274 }, new() { 29, 274 }, new() { 30, 274 }, new() { 31, 274 }, new() { 32, 274 }, new() { 33, 274 }, new() { 34, 274 }, new() { 35, 274 }, new() { 36, 292 }, new() { 37, 259 }, new() { 38, 194 }, new() { 39, 196 }, new() { 40, 196 }, new() { 41, 198 }, new() { 42, 198 }, new() { 43, 196 }, new() { 44, 180 }, new() { 45, 166 }, new() { 46, 164 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
                 [8] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 76 }, new() { 11, 164 }, new() { 12, 169 }, new() { 13, 257 }, new() { 14, 308 }, new() { 15, 274 }, new() { 16, 274 }, new() { 17, 274 }, new() { 18, 274 }, new() { 19, 274 }, new() { 20, 274 }, new() { 21, 274 }, new() { 22, 274 }, new() { 23, 274 }, new() { 24, 274 }, new() { 25, 274 }, new() { 26, 274 }, new() { 27, 274 }, new() { 28, 274 }, new() { 29, 274 }, new() { 30, 274 }, new() { 31, 274 }, new() { 32, 274 }, new() { 33, 274 }, new() { 34, 274 }, new() { 35, 274 }, new() { 36, 274 }, new() { 37, 292 }, new() { 38, 258 }, new() { 39, 258 }, new() { 40, 258 }, new() { 41, 258 }, new() { 42, 259 }, new() { 43, 193 }, new() { 44, 196 }, new() { 45, 182 }, new() { 46, 180 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
                 [9] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 76 }, new() { 11, 180 }, new() { 12, 185 }, new() { 13, 273 }, new() { 14, 274 }, new() { 15, 274 }, new() { 16, 274 }, new() { 17, 274 }, new() { 18, 291 }, new() { 19, 290 }, new() { 20, 290 }, new() { 21, 290 }, new() { 22, 290 }, new() { 23, 290 }, new() { 24, 290 }, new() { 25, 290 }, new() { 26, 290 }, new() { 27, 290 }, new() { 28, 290 }, new() { 29, 290 }, new() { 30, 290 }, new() { 31, 290 }, new() { 32, 290 }, new() { 33, 290 }, new() { 34, 290 }, new() { 35, 290 }, new() { 36, 290 }, new() { 37, 289 }, new() { 38, 274 }, new() { 39, 274 }, new() { 40, 274 }, new() { 41, 274 }, new() { 42, 292 }, new() { 43, 259 }, new() { 44, 195 }, new() { 45, 198 }, new() { 46, 196 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
-                [10] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 76 }, new() { 11, 196 }, new() { 12, 200 }, new() { 13, 273 }, new() { 14, 274 }, new() { 15, 274 }, new() { 16, 274 }, new() { 17, 291 }, new() { 18, 400 }, new() { 19, 424 }, new() { 20, 424 }, new() { 21, 423 }, new() { 22, 400 }, new() { 23, 437 }, new() { 24, 437 }, new() { 25, 438 }, new() { 26, 437 }, new() { 27, 437 }, new() { 28, 437 }, new() { 29, 437 }, new() { 30, 437 }, new() { 31, 437 }, new() { 32, 437 }, new() { 33, 400 }, new() { 34, 421 }, new() { 35, 424 }, new() { 36, 424 }, new() { 37, 459 }, new() { 38, 289 }, new() { 39, 274 }, new() { 40, 274 }, new() { 41, 274 }, new() { 42, 274 }, new() { 43, 292 }, new() { 44, 258 }, new() { 45, 259 }, new() { 46, 96 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
+                [10] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 76 }, new() { 11, 196 }, new() { 12, 200 }, new() { 13, 273 }, new() { 14, 274 }, new() { 15, 274 }, new() { 16, 274 }, new() { 17, 291 }, new() { 18, 400 }, new() { 19, 423 }, new() { 20, 424 }, new() { 21, 423 }, new() { 22, 400 }, new() { 23, 437 }, new() { 24, 437 }, new() { 25, 438 }, new() { 26, 437 }, new() { 27, 437 }, new() { 28, 437 }, new() { 29, 437 }, new() { 30, 437 }, new() { 31, 437 }, new() { 32, 437 }, new() { 33, 400 }, new() { 34, 421 }, new() { 35, 424 }, new() { 36, 423 }, new() { 37, 459 }, new() { 38, 289 }, new() { 39, 274 }, new() { 40, 274 }, new() { 41, 274 }, new() { 42, 274 }, new() { 43, 292 }, new() { 44, 258 }, new() { 45, 259 }, new() { 46, 96 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
                 [11] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 164 }, new() { 11, 171 }, new() { 12, 257 }, new() { 13, 308 }, new() { 14, 274 }, new() { 15, 274 }, new() { 16, 291 }, new() { 18, 400 }, new() { 19, 439 }, new() { 20, 438 }, new() { 21, 439 }, new() { 22, 400 }, new() { 33, 400 }, new() { 34, 437 }, new() { 35, 438 }, new() { 36, 437 }, new() { 37, 459 }, new() { 39, 289 }, new() { 40, 274 }, new() { 41, 274 }, new() { 42, 274 }, new() { 43, 274 }, new() { 44, 274 }, new() { 45, 275 }, new() { 46, 96 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
                 [12] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 180 }, new() { 11, 185 }, new() { 12, 273 }, new() { 13, 274 }, new() { 14, 274 }, new() { 15, 291 }, new() { 18, 400 }, new() { 19, 469 }, new() { 20, 468 }, new() { 21, 469 }, new() { 22, 416 }, new() { 33, 416 }, new() { 34, 455 }, new() { 35, 471 }, new() { 36, 455 }, new() { 37, 459 }, new() { 40, 289 }, new() { 41, 274 }, new() { 42, 274 }, new() { 43, 274 }, new() { 44, 274 }, new() { 45, 275 }, new() { 46, 112 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
-                [13] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 196 }, new() { 11, 200 }, new() { 12, 273 }, new() { 13, 274 }, new() { 14, 275 }, new() { 18, 400 }, new() { 20, 487 }, new() { 22, 432 }, new() { 33, 432 }, new() { 35, 454 }, new() { 37, 459 }, new() { 41, 273 }, new() { 42, 274 }, new() { 43, 274 }, new() { 44, 274 }, new() { 45, 275 }, new() { 46, 96 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
-                [14] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 139 }, new() { 11, 257 }, new() { 12, 308 }, new() { 13, 274 }, new() { 14, 275 }, new() { 18, 400 }, new() { 22, 448 }, new() { 23, 545 }, new() { 24, 545 }, new() { 31, 545 }, new() { 32, 545 }, new() { 33, 448 }, new() { 35, 487 }, new() { 37, 459 }, new() { 41, 273 }, new() { 42, 274 }, new() { 43, 274 }, new() { 44, 274 }, new() { 45, 275 }, new() { 46, 112 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
+                [13] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 196 }, new() { 11, 200 }, new() { 12, 273 }, new() { 13, 274 }, new() { 14, 275 }, new() { 18, 400 }, new() { 22, 432 }, new() { 33, 432 }, new() { 37, 459 }, new() { 41, 273 }, new() { 42, 274 }, new() { 43, 274 }, new() { 44, 274 }, new() { 45, 275 }, new() { 46, 96 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
+                [14] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 139 }, new() { 11, 257 }, new() { 12, 308 }, new() { 13, 274 }, new() { 14, 275 }, new() { 18, 400 }, new() { 22, 448 }, new() { 23, 545 }, new() { 24, 545 }, new() { 31, 545 }, new() { 32, 545 }, new() { 33, 448 }, new() { 37, 459 }, new() { 41, 273 }, new() { 42, 274 }, new() { 43, 274 }, new() { 44, 274 }, new() { 45, 275 }, new() { 46, 112 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
                 [15] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 107 }, new() { 11, 273 }, new() { 12, 274 }, new() { 13, 274 }, new() { 14, 275 }, new() { 18, 400 }, new() { 37, 459 }, new() { 41, 273 }, new() { 42, 274 }, new() { 43, 274 }, new() { 44, 274 }, new() { 45, 275 }, new() { 46, 112 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
                 [16] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 107 }, new() { 11, 273 }, new() { 12, 274 }, new() { 13, 274 }, new() { 14, 275 }, new() { 18, 400 }, new() { 37, 459 }, new() { 41, 273 }, new() { 42, 274 }, new() { 43, 274 }, new() { 44, 274 }, new() { 45, 275 }, new() { 46, 96 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
                 [17] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 107 }, new() { 11, 273 }, new() { 12, 274 }, new() { 13, 274 }, new() { 14, 275 }, new() { 18, 400 }, new() { 37, 459 }, new() { 41, 273 }, new() { 42, 274 }, new() { 43, 274 }, new() { 44, 274 }, new() { 45, 275 }, new() { 46, 112 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
@@ -220,7 +219,7 @@ namespace StardewDruid.Location
                 [25] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 76 }, new() { 11, 91 }, new() { 12, 273 }, new() { 13, 274 }, new() { 14, 274 }, new() { 15, 274 }, new() { 16, 292 }, new() { 17, 259 }, new() { 22, 436 }, new() { 23, 437 }, new() { 24, 435 }, new() { 31, 436 }, new() { 32, 438 }, new() { 33, 435 }, new() { 34, 455 }, new() { 40, 257 }, new() { 41, 308 }, new() { 42, 274 }, new() { 43, 274 }, new() { 44, 274 }, new() { 45, 291 }, new() { 46, 112 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
                 [26] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 76 }, new() { 11, 91 }, new() { 12, 289 }, new() { 13, 274 }, new() { 14, 274 }, new() { 15, 274 }, new() { 16, 274 }, new() { 17, 275 }, new() { 22, 468 }, new() { 23, 469 }, new() { 24, 455 }, new() { 31, 471 }, new() { 32, 454 }, new() { 33, 471 }, new() { 39, 257 }, new() { 40, 308 }, new() { 41, 274 }, new() { 42, 274 }, new() { 43, 274 }, new() { 44, 291 }, new() { 46, 76 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
                 [27] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 76 }, new() { 11, 76 }, new() { 13, 289 }, new() { 14, 274 }, new() { 15, 274 }, new() { 16, 274 }, new() { 17, 292 }, new() { 18, 259 }, new() { 37, 257 }, new() { 38, 258 }, new() { 39, 308 }, new() { 40, 274 }, new() { 41, 274 }, new() { 42, 274 }, new() { 43, 291 }, new() { 45, 76 }, new() { 46, 76 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
-                [28] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 76 }, new() { 11, 76 }, new() { 12, 76 }, new() { 14, 289 }, new() { 15, 290 }, new() { 16, 274 }, new() { 17, 274 }, new() { 18, 292 }, new() { 19, 259 }, new() { 36, 273 }, new() { 37, 308 }, new() { 38, 274 }, new() { 39, 274 }, new() { 40, 274 }, new() { 41, 274 }, new() { 42, 291 }, new() { 44, 76 }, new() { 45, 76 }, new() { 46, 76 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
+                [28] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 76 }, new() { 11, 76 }, new() { 12, 76 }, new() { 14, 289 }, new() { 15, 290 }, new() { 16, 274 }, new() { 17, 274 }, new() { 18, 292 }, new() { 19, 259 }, new() { 36, 257 }, new() { 37, 308 }, new() { 38, 274 }, new() { 39, 274 }, new() { 40, 274 }, new() { 41, 274 }, new() { 42, 291 }, new() { 44, 76 }, new() { 45, 76 }, new() { 46, 76 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
                 [29] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 76 }, new() { 11, 76 }, new() { 12, 76 }, new() { 13, 76 }, new() { 16, 289 }, new() { 17, 290 }, new() { 18, 290 }, new() { 19, 291 }, new() { 36, 273 }, new() { 37, 290 }, new() { 38, 290 }, new() { 39, 290 }, new() { 40, 290 }, new() { 41, 291 }, new() { 43, 76 }, new() { 44, 76 }, new() { 45, 76 }, new() { 46, 76 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
                 [30] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 76 }, new() { 11, 76 }, new() { 12, 76 }, new() { 13, 76 }, new() { 14, 76 }, new() { 15, 153 }, new() { 42, 76 }, new() { 43, 76 }, new() { 44, 76 }, new() { 45, 76 }, new() { 46, 76 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
                 [31] = new() { new() { 0, 76 }, new() { 1, 76 }, new() { 2, 76 }, new() { 3, 76 }, new() { 4, 76 }, new() { 5, 76 }, new() { 6, 76 }, new() { 7, 76 }, new() { 8, 76 }, new() { 9, 76 }, new() { 10, 76 }, new() { 11, 76 }, new() { 12, 76 }, new() { 13, 76 }, new() { 14, 76 }, new() { 15, 76 }, new() { 16, 76 }, new() { 17, 76 }, new() { 18, 76 }, new() { 19, 76 }, new() { 20, 76 }, new() { 21, 76 }, new() { 22, 76 }, new() { 23, 76 }, new() { 24, 76 }, new() { 25, 285 }, new() { 30, 287 }, new() { 31, 76 }, new() { 32, 76 }, new() { 33, 76 }, new() { 34, 76 }, new() { 35, 76 }, new() { 36, 76 }, new() { 37, 76 }, new() { 38, 76 }, new() { 39, 76 }, new() { 40, 76 }, new() { 41, 76 }, new() { 42, 76 }, new() { 43, 76 }, new() { 44, 76 }, new() { 45, 76 }, new() { 46, 76 }, new() { 47, 76 }, new() { 48, 76 }, new() { 49, 76 }, new() { 50, 76 }, new() { 51, 76 }, new() { 52, 76 }, new() { 53, 76 }, new() { 54, 76 }, new() { 55, 76 }, },
@@ -254,7 +253,7 @@ namespace StardewDruid.Location
                 [8] = new() { new() { 11, 107 }, new() { 44, 176 }, new() { 46, 128 }, },
                 [9] = new() { new() { 11, 123 }, new() { 18, 410 }, new() { 19, 405 }, new() { 20, 405 }, new() { 21, 405 }, new() { 22, 390 }, new() { 23, 405 }, new() { 24, 406 }, new() { 25, 405 }, new() { 26, 405 }, new() { 27, 406 }, new() { 28, 405 }, new() { 29, 390 }, new() { 30, 405 }, new() { 31, 406 }, new() { 32, 405 }, new() { 33, 390 }, new() { 34, 405 }, new() { 35, 405 }, new() { 36, 405 }, new() { 37, 409 }, new() { 46, 112 }, },
                 [10] = new() { new() { 11, 153 }, new() { 37, 400 }, },
-                [11] = new() { new() { 10, 107 }, new() { 20, 452 }, new() { 21, 453 }, new() { 37, 400 }, },
+                [11] = new() { new() { 10, 107 }, new() { 37, 400 }, },
                 [12] = new() { new() { 10, 91 }, new() { 37, 400 }, },
                 [13] = new() { new() { 10, 91 }, new() { 37, 400 }, },
                 [14] = new() { new() { 37, 400 }, },
@@ -278,6 +277,7 @@ namespace StardewDruid.Location
                 [32] = new() { },
                 [33] = new() { new() { 26, 318 }, new() { 27, 318 }, new() { 28, 318 }, new() { 29, 318 }, },
 
+
             };
 
             foreach (KeyValuePair<int, List<List<int>>> code in codes)
@@ -294,7 +294,12 @@ namespace StardewDruid.Location
 
             codes = new()
             {
-                [6] = new() { new() { 24, 1 }, },
+                [6] = new() { new() { 23, 1 }, },
+
+                [10] = new() { new() { 19, 5 }, new() { 26, 4 }, new() { 34, 6 }, },
+
+                [15] = new() { new() { 19, 8 }, new() { 35, 7 }, },
+
             };
 
             foreach (KeyValuePair<int, List<List<int>>> code in codes)
@@ -321,23 +326,41 @@ namespace StardewDruid.Location
 
             codes = new()
             {
-
+                [0] = new() { },
+                [1] = new() { },
+                [2] = new() { },
+                [3] = new() { },
+                [4] = new() { },
+                [5] = new() { },
                 [6] = new() { new() { 25, 2 }, new() { 30, 2 }, },
                 [7] = new() { new() { 22, 1 }, new() { 27, 2 }, new() { 28, 2 }, new() { 34, 1 }, },
-
+                [8] = new() { },
                 [9] = new() { new() { 15, 1 }, },
                 [10] = new() { new() { 41, 1 }, },
-                [11] = new() { new() { 21, 1 }, new() { 35, 1 }, },
-
+                [11] = new() { },
+                [12] = new() { },
+                [13] = new() { },
                 [14] = new() { new() { 43, 1 }, },
-
+                [15] = new() { },
                 [16] = new() { new() { 12, 1 }, },
- 
+                [17] = new() { },
+                [18] = new() { },
+                [19] = new() { },
+                [20] = new() { },
                 [21] = new() { new() { 43, 1 }, },
                 [22] = new() { new() { 12, 1 }, },
-
+                [23] = new() { },
+                [24] = new() { },
+                [25] = new() { },
                 [26] = new() { new() { 15, 1 }, },
                 [27] = new() { new() { 41, 1 }, },
+                [28] = new() { },
+                [29] = new() { },
+                [30] = new() { },
+                [31] = new() { },
+                [32] = new() { },
+                [33] = new() { },
+
 
             };
 
@@ -362,19 +385,59 @@ namespace StardewDruid.Location
 
                     }
 
-                    if (array[1] == 2)
-                    {
-
-                        blueLights.Add(new Vector2(array[0], code.Key) * 64 + new Vector2(0, 32), 4);
-
-                    }
-
                 }
 
             }
 
+            blueLights = new()
+            {
+                new Vector2(1664,428),
+                new Vector2(1752,480),
+                new Vector2(1832,480),
+                new Vector2(1920,428),
+                new Vector2(1312,1056),
+                new Vector2(1440,1056),
+
+            };
+
+            addDialogue();
+
             this.map = newMap;
 
+        }
+
+        public override void addDialogue()
+        {
+
+            if (dialogueTiles.Count > 0) { return; }
+
+            dialogueTiles.Add(new(26, 12), CharacterHandle.characters.shrine_engine);
+
+            dialogueTiles.Add(new(27, 12), CharacterHandle.characters.shrine_engine);
+
+            dialogueTiles.Add(new(28, 12), CharacterHandle.characters.shrine_engine);
+
+            dialogueTiles.Add(new(29, 12), CharacterHandle.characters.shrine_engine);
+
+            dialogueTiles.Add(new(26, 13), CharacterHandle.characters.shrine_engine);
+
+            dialogueTiles.Add(new(27, 13), CharacterHandle.characters.shrine_engine);
+
+            dialogueTiles.Add(new(28, 13), CharacterHandle.characters.shrine_engine);
+
+            dialogueTiles.Add(new(29, 13), CharacterHandle.characters.shrine_engine);
+
+            dialogueTiles.Add(new(20, 16), CharacterHandle.characters.shrine_forge);
+
+            dialogueTiles.Add(new(20, 17), CharacterHandle.characters.shrine_forge);
+
+            dialogueTiles.Add(new(20, 18), CharacterHandle.characters.shrine_forge);
+
+            dialogueTiles.Add(new(21, 16), CharacterHandle.characters.shrine_forge);
+
+            dialogueTiles.Add(new(21, 17), CharacterHandle.characters.shrine_forge);
+
+            dialogueTiles.Add(new(21, 18), CharacterHandle.characters.shrine_forge);
         }
 
         public override void updateWarps()

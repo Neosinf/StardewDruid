@@ -5,6 +5,7 @@ using StardewDruid.Data;
 using StardewDruid.Location;
 using StardewValley;
 using System;
+using System.Collections.Generic;
 
 namespace StardewDruid.Event.Scene
 {
@@ -164,7 +165,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].ResetActives();
 
-                    companions[0].netSpecial.Set((int)Character.Character.specials.pickup);
+                    companions[0].netSpecial.Set((int)Character.Character.specials.greet);
 
                     companions[0].specialTimer = 120;
 
@@ -246,6 +247,7 @@ namespace StardewDruid.Event.Scene
                     companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
                     DialogueCue(14);
+
                     break;
 
                 case 133:
@@ -555,6 +557,8 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(41);
 
+                    companions[0].ResetActives();
+
                     // Jester route
 
                     Vector2 jesterRace = companions[0].Position + new Vector2(-240, 640);
@@ -579,6 +583,8 @@ namespace StardewDruid.Event.Scene
 
 
                     // Buffin route
+
+                    companions[1].ResetActives();
 
                     Vector2 buffinRace = companions[1].Position + new Vector2(-384, 640);
 
@@ -640,6 +646,7 @@ namespace StardewDruid.Event.Scene
                     
                     break;
 
+
                 // --------------------------------------
                 // Cat fight
 
@@ -697,6 +704,10 @@ namespace StardewDruid.Event.Scene
 
                 case 421:
 
+                    companions[0].ResetActives(true);
+
+                    companions[0].LookAtTarget(companions[1].Position);
+
                     DialogueCue(53 );
 
                     companions[0].doEmote(16);
@@ -704,6 +715,10 @@ namespace StardewDruid.Event.Scene
                     break;
 
                 case 424:
+
+                    companions[1].ResetActives(true);
+
+                    companions[1].LookAtTarget(companions[0].Position);
 
                     DialogueCue(54);
 
@@ -851,15 +866,17 @@ namespace StardewDruid.Event.Scene
 
                     Vector2 cornerVector = companionVector + new Vector2(0, -448);
 
-                    for (int i = 1; i < 10; i++)
+                    for (int i = 1; i < 10; i+=2)
                     {
 
-                        for (int j = 1; j < 6; j++)
+                        for (int j = 1; j < 6; j+=2)
                         {
 
                             Vector2 burnVector = cornerVector + new Vector2((i * 64), (j * 64)) - new Vector2(16 * Mod.instance.randomIndex.Next(0, 4), 16 * Mod.instance.randomIndex.Next(0, 4));
 
-                            Mod.instance.iconData.EmberConstruct(location, IconData.schemes.stars, burnVector, 2f + (0.5f * Mod.instance.randomIndex.Next(5)), 60, 999f);
+                            List<TemporaryAnimatedSprite> embers = Mod.instance.iconData.EmberConstruct(location, IconData.schemes.stars, burnVector, 2f + (0.5f * Mod.instance.randomIndex.Next(5)), 60, 999f);
+
+                            animations.AddRange(embers);
 
                             if(i % 3 == 0 && j % 3 == 0)
                             {
@@ -1282,6 +1299,8 @@ namespace StardewDruid.Event.Scene
 
                 case 921:
 
+                    SetTrack("tribal");
+
                     StardewDruid.Monster.Dinosaur dinosaur = new(new Vector2(27, 16), Mod.instance.CombatDifficulty());
 
                     dinosaur.netScheme.Set(2);
@@ -1389,11 +1408,11 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].ResetActives();
 
-                    companions[0].TargetEvent(0, new Vector2(27, 32) * 64);
+                    companions[0].TargetEvent(0, new Vector2(27, 28) * 64);
 
                     companions[1].ResetActives();
 
-                    companions[1].TargetEvent(0, new Vector2(27, 32) * 64);
+                    companions[1].TargetEvent(0, new Vector2(27, 28) * 64);
 
                     break;
 

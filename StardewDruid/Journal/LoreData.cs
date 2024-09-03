@@ -79,6 +79,22 @@ namespace StardewDruid.Journal
             Buffin_Circle,
             Shadowtin_Circle,
 
+            //-----------------
+
+            Effigy_Bones,
+            Jester_Bones,
+            Revenant_Bones,
+            Buffin_Bones,
+            Shadowtin_Bones,
+            Blackfeather_self_1,
+            Blackfeather_self_2,
+
+            //----------------
+
+            Memory_Prince,
+            Memory_Kings,
+            Memory_Dragons,
+
         }
 
         public static Dictionary<string,List<stories>> StorySets()
@@ -129,7 +145,6 @@ namespace StardewDruid.Journal
 
                     LoreData.stories.Revenant_Marlon,
 
-
                 },
 
                 [QuestHandle.challengeEther] = new(){
@@ -151,16 +166,16 @@ namespace StardewDruid.Journal
 
 
                     LoreData.stories.Effigy_Ether,
-
                     LoreData.stories.Jester_Tomb,
                     LoreData.stories.Jester_Ether,
-
                     LoreData.stories.Shadowtin_Ether,
-
                     LoreData.stories.Revenant_Ether,
-
                     LoreData.stories.Buffin_Ether,
-                
+
+                    LoreData.stories.Memory_Prince,
+                    LoreData.stories.Memory_Kings,
+                    LoreData.stories.Memory_Dragons,
+
                 },
 
                 [QuestHandle.questShadowtin] = new(){
@@ -176,6 +191,23 @@ namespace StardewDruid.Journal
 
                     LoreData.stories.Shadowtin_Circle,
                 
+                },
+
+                [QuestHandle.questBlackfeather] = new(){
+
+                    LoreData.stories.Effigy_Bones,
+
+                    LoreData.stories.Jester_Bones,
+
+                    LoreData.stories.Revenant_Bones,
+
+                    LoreData.stories.Buffin_Bones,
+
+                    LoreData.stories.Shadowtin_Bones,
+
+                    LoreData.stories.Blackfeather_self_1,
+                    LoreData.stories.Blackfeather_self_2,
+
                 },
 
             };
@@ -210,6 +242,14 @@ namespace StardewDruid.Journal
 
                     return Mod.instance.Helper.Translation.Get("LoreData.26");
 
+                case characters.Blackfeather:
+
+                    return Mod.instance.Helper.Translation.Get("LoreData.320.1");
+
+                case characters.keeper:
+
+                    return Mod.instance.Helper.Translation.Get("LoreData.329.1");
+
             }
 
         }
@@ -240,6 +280,14 @@ namespace StardewDruid.Journal
                 case characters.Shadowtin:
 
                     return Mod.instance.Helper.Translation.Get("LoreData.57");
+
+                case characters.Blackfeather:
+
+                    return Mod.instance.Helper.Translation.Get("LoreData.320.2");
+
+                case characters.keeper:
+
+                    return Mod.instance.Helper.Translation.Get("LoreData.329.2");
 
             }
 
@@ -550,7 +598,40 @@ namespace StardewDruid.Journal
 
             };
 
+            // ===========================================
+            // Keeper Memories
 
+            storylist[stories.Memory_Prince] = new()
+            {
+                story = stories.Memory_Prince,
+                character = characters.keeper,
+                question = Mod.instance.Helper.Translation.Get("LoreData.329.3"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.329.4") +
+                Mod.instance.Helper.Translation.Get("LoreData.329.5")
+
+            };
+
+            storylist[stories.Memory_Kings] = new()
+            {
+                story = stories.Memory_Kings,
+                character = characters.keeper,
+                question = Mod.instance.Helper.Translation.Get("LoreData.329.6"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.329.7") +
+                Mod.instance.Helper.Translation.Get("LoreData.329.8")
+
+            };
+
+            storylist[stories.Memory_Dragons] = new()
+            {
+                story = stories.Memory_Dragons,
+                character = characters.keeper,
+                question = Mod.instance.Helper.Translation.Get("LoreData.329.9"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.329.10") +
+                Mod.instance.Helper.Translation.Get("LoreData.329.11") +
+                Mod.instance.Helper.Translation.Get("LoreData.329.12")
+
+            };
+            
             // ===========================================
             // Ether
 
@@ -683,12 +764,7 @@ namespace StardewDruid.Journal
                 answer = Mod.instance.Helper.Translation.Get("LoreData.498") +
                 Mod.instance.Helper.Translation.Get("LoreData.499") +
                 Mod.instance.Helper.Translation.Get("LoreData.500") +
-                Mod.instance.Helper.Translation.Get("LoreData.501") +
-                Mod.instance.Helper.Translation.Get("LoreData.502") +
-                Mod.instance.Helper.Translation.Get("LoreData.503") +
-                Mod.instance.Helper.Translation.Get("LoreData.504") +
-                Mod.instance.Helper.Translation.Get("LoreData.505") +
-                Mod.instance.Helper.Translation.Get("LoreData.506"),
+                Mod.instance.Helper.Translation.Get("LoreData.501"),
 
             };
 
@@ -702,6 +778,74 @@ namespace StardewDruid.Journal
                 Mod.instance.Helper.Translation.Get("LoreData.517") +
                 Mod.instance.Helper.Translation.Get("LoreData.518"),
             };
+
+            // After Blackfeather quest
+
+            storylist[stories.Effigy_Bones] = new()
+            {
+                story = stories.Effigy_Bones,
+                character = characters.Effigy,
+                question = Mod.instance.Helper.Translation.Get("LoreData.320.3"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.320.4") +
+                Mod.instance.Helper.Translation.Get("LoreData.320.5"),
+            };
+
+            storylist[stories.Jester_Bones] = new()
+            {
+                story = stories.Jester_Bones,
+                character = characters.Jester,
+                question = Mod.instance.Helper.Translation.Get("LoreData.320.6"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.320.7") +
+                Mod.instance.Helper.Translation.Get("LoreData.320.8") +
+                Mod.instance.Helper.Translation.Get("LoreData.320.9") +
+                Mod.instance.Helper.Translation.Get("LoreData.320.10"),
+            };
+
+            storylist[stories.Revenant_Bones] = new()
+            {
+                story = stories.Revenant_Bones,
+                character = characters.Revenant,
+                question = Mod.instance.Helper.Translation.Get("LoreData.323.1"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.323.2") +
+                Mod.instance.Helper.Translation.Get("LoreData.323.3"),
+            };
+
+            storylist[stories.Buffin_Bones] = new()
+            {
+                story = stories.Buffin_Bones,
+                character = characters.Buffin,
+                question = Mod.instance.Helper.Translation.Get("LoreData.323.4"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.323.5") +
+                Mod.instance.Helper.Translation.Get("LoreData.323.6"),
+            };
+
+            storylist[stories.Shadowtin_Bones] = new()
+            {
+                story = stories.Shadowtin_Bones,
+                character = characters.Shadowtin,
+                question = Mod.instance.Helper.Translation.Get("LoreData.323.7"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.323.8") +
+                Mod.instance.Helper.Translation.Get("LoreData.323.9"),
+            };
+
+            storylist[stories.Blackfeather_self_1] = new()
+            {
+                story = stories.Blackfeather_self_1,
+                character = characters.Blackfeather,
+                question = Mod.instance.Helper.Translation.Get("LoreData.323.10"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.323.11") +
+                Mod.instance.Helper.Translation.Get("LoreData.323.12"),
+            };
+
+            storylist[stories.Blackfeather_self_2] = new()
+            {
+                story = stories.Blackfeather_self_2,
+                character = characters.Blackfeather,
+                question = Mod.instance.Helper.Translation.Get("LoreData.323.13"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.323.14") +
+                Mod.instance.Helper.Translation.Get("LoreData.323.15"),
+            };
+
 
             return storylist;
 

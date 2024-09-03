@@ -36,7 +36,7 @@ namespace StardewDruid.Character
             if (characterType == CharacterHandle.characters.none)
             {
 
-                characterType = Enum.Parse<CharacterHandle.characters>(Name);
+                characterType = CharacterHandle.CharacterType(Name);
 
             }
 
@@ -300,6 +300,21 @@ namespace StardewDruid.Character
 
         }
 
+        public virtual int GetHeight()
+        {
+
+            return 32;
+
+        }
+
+        public virtual int GetWidth()
+        {
+
+            return 32;
+
+        }
+
+
         public virtual Vector2 GetPosition(Vector2 localPosition, float spriteScale = -1f, bool shadow = false)
         {
 
@@ -309,9 +324,9 @@ namespace StardewDruid.Character
 
             }
 
-            int width = idleFrames[idles.standby][0][0].Width;
+            int width = GetWidth();
 
-            int height = idleFrames[idles.standby][0][0].Height;
+            int height = GetHeight();
 
             Vector2 spritePosition = localPosition + new Vector2(width, width * 2) - new Vector2(width / 2 * spriteScale, height * spriteScale);
 
@@ -349,9 +364,9 @@ namespace StardewDruid.Character
 
             float spriteScale = setScale;
 
-            int width = walkFrames[0][0].Width;
+            int width = GetWidth();
 
-            int height = walkFrames[0][0].Height;
+            int height = GetHeight();
 
             Rectangle box = new(
                 (int)(spritePosition.X + (spriteScale * 2)),
@@ -383,7 +398,7 @@ namespace StardewDruid.Character
 
                 hoverFrame++;
 
-                if (hoverFrame >= idleFrames.Count)
+                if (hoverFrame >= walkFrames[0].Count)
                 {
 
                     hoverFrame = 0;

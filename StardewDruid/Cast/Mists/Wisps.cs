@@ -18,9 +18,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Timers;
-using static StardewDruid.Cast.SpellHandle;
-using static StardewValley.Minigames.TargetGame;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace StardewDruid.Cast.Mists
 {
@@ -104,6 +101,8 @@ namespace StardewDruid.Cast.Mists
                     }
 
                     wisps[wispVector] = new(location, tryVector, colour, charge);
+
+                    return tryVector;
 
                 }
 
@@ -207,40 +206,42 @@ namespace StardewDruid.Cast.Mists
 
         public virtual void WispArray()
         {
-
             wispCounter = Mod.instance.randomIndex.Next(8);
 
-            Vector2 wispVector = AddWisps(wispCounter);
+            List<Vector2> wispVectors = new()
+            {
 
-            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                AddWisps(wispCounter),
 
-            wispVector = AddWisps((wispCounter + 2) % 8);
+                AddWisps((wispCounter + 2) % 8),
 
-            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                AddWisps((wispCounter + 4) % 8),
 
-            wispVector = AddWisps((wispCounter + 4) % 8);
+                AddWisps((wispCounter + 6) % 8),
 
-            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                AddWisps((wispCounter + 1) % 8, 120, 384),
 
-            wispVector = AddWisps((wispCounter + 6) % 8);
+                AddWisps((wispCounter + 3) % 8, 120, 384),
 
-            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                AddWisps((wispCounter + 5) % 8, 120, 384),
 
-            wispVector = AddWisps((wispCounter + 1) % 8, 120, 384);
+                AddWisps((wispCounter + 7) % 8, 120, 384),
 
-            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+            };
 
-            wispVector = AddWisps((wispCounter + 3) % 8, 120, 384);
+            foreach(Vector2 wispVector in wispVectors)
+            {
 
-            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                if(wispVector == Vector2.Zero)
+                {
 
-            wispVector = AddWisps((wispCounter + 5) % 8, 120, 384);
+                    continue;
 
-            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                }
 
-            wispVector = AddWisps((wispCounter + 7) % 8, 120, 384);
+                Mod.instance.spellRegister.Add(new(wispVector * 64, 192, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
 
-            Mod.instance.spellRegister.Add(new(wispVector * 64, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+            }
 
         }
 
@@ -293,9 +294,11 @@ namespace StardewDruid.Cast.Mists
                 {
                     
                     victims.AddRange(closeby);
-
+                    
                     moment.Value.flash = 60;
-                
+
+                    Mod.instance.iconData.AnimateMistic(moment.Value.position - new Vector2(64, 96),3);
+
                 }
 
             }
@@ -309,9 +312,9 @@ namespace StardewDruid.Cast.Mists
 
                 bolt.projectile = 4;
 
-                bolt.sound = sounds.thunder;
+                bolt.sound = SpellHandle.sounds.thunder;
 
-                bolt.added = new() { effects.push, effects.drain, effects.shock, };
+                bolt.added = new() { SpellHandle.effects.push, SpellHandle.effects.drain, SpellHandle.effects.shock, };
 
                 Mod.instance.spellRegister.Add(bolt);
 
@@ -398,29 +401,39 @@ namespace StardewDruid.Cast.Mists
 
             b.Draw(
                 Mod.instance.iconData.wispTexture,
-                localPosition - new Vector2(32, 80f),
+                localPosition + new Vector2(32, -16f),
                 new Microsoft.Xna.Framework.Rectangle(0 + (wispFrame * 32), 0, 32, 32),
                 colour * (0.90f - (0.05f * wispOffset)),
                 0f,
-                Vector2.Zero,
-                4f,
+                new Vector2(16),
+                3f,
                 flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 drawLayer
             );
 
             b.Draw(
                 Mod.instance.iconData.wispTexture,
-                localPosition - new Vector2(32, 80f),
+                localPosition + new Vector2(32, -16f),
                 new Microsoft.Xna.Framework.Rectangle(0 + (wispFrame*32),32,32,32),
                 Microsoft.Xna.Framework.Color.White * 0.90f,
                 0f,
-                Vector2.Zero,
-                4f,
+                new Vector2(16),
+                3f,
                 flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 drawLayer
             );
 
-            b.Draw(Mod.instance.iconData.cursorTexture, localPosition + new Vector2(32, 56), Mod.instance.iconData.shadowRectangle, Microsoft.Xna.Framework.Color.White * 0.15f, 0.0f, new Vector2(24), 1.2f + (wispOffset * 0.1f), 0, drawLayer - 0.0001f);
+            b.Draw(
+                Mod.instance.iconData.cursorTexture, 
+                localPosition + new Vector2(32, 56), 
+                Mod.instance.iconData.shadowRectangle, 
+                Microsoft.Xna.Framework.Color.White * 0.15f, 
+                0.0f, 
+                new Vector2(24), 
+                1f + (wispOffset * 0.05f), 
+                0, 
+                drawLayer - 0.0001f
+            );
 
         }
 
@@ -432,6 +445,7 @@ namespace StardewDruid.Cast.Mists
 
             for (int l = Game1.currentLightSources.Count - 1; l >= 0; l--)
             {
+                
                 LightSource lightSource = Game1.currentLightSources.ElementAt(l);
 
                 if (lightSource.Identifier == id)

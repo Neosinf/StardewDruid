@@ -6,13 +6,7 @@ using StardewDruid.Render;
 using StardewValley;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
-using static StardewDruid.Cast.SpellHandle;
-using static StardewDruid.Data.IconData;
+
 
 namespace StardewDruid.Monster
 {
@@ -532,13 +526,13 @@ namespace StardewDruid.Monster
 
             missile.projectile = 3;
 
-            missile.missile = missiles.cannonball;
+            missile.missile = IconData.missiles.cannonball;
 
             missile.display = IconData.impacts.bomb;
 
             missile.indicator = IconData.cursors.death;
 
-            missile.sound = sounds.flameSpellHit;
+            missile.sound = SpellHandle.sounds.flameSpellHit;
 
             Mod.instance.spellRegister.Add(missile);
 

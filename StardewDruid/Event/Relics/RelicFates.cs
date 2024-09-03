@@ -96,7 +96,7 @@ namespace StardewDruid.Event.Relics
                         sourceRect = relicRect,
                         sourceRectStartingPos = new(relicRect.X, relicRect.Y),
                         texture = Mod.instance.iconData.relicsTexture,
-                        layerDepth = (companions[0].Position.Y + 65) / 10000,
+                        layerDepth = (Game1.player.Position.Y + 65) / 10000,
                         scale = 3f,
                     };
 

@@ -37,7 +37,7 @@ namespace StardewDruid.Event.Sword
 
             companions[0].ResetActives();
 
-            companions[0].netIdle.Set((int)Character.Character.idles.kneel);
+            companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
             companions[0] = Mod.instance.characters[CharacterHandle.characters.Revenant];
 

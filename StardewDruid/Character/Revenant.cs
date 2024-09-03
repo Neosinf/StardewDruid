@@ -27,6 +27,8 @@ namespace StardewDruid.Character
 
         public Revenant()
         {
+
+
         }
 
         public Revenant(CharacterHandle.characters type)
@@ -34,6 +36,24 @@ namespace StardewDruid.Character
         {
 
             
+        }
+
+        public override void DrawStandby(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        {
+
+            b.Draw(
+                 characterTexture,
+                 SpritePosition(localPosition),
+                 new(160,32,32,32),
+                 Color.White * fade,
+                 0f,
+                 new Vector2(16,16),
+                 setScale,
+                 0,
+                 drawLayer
+             );
+
+            DrawShadow(b, localPosition, drawLayer);
         }
 
     }

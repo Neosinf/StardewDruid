@@ -242,8 +242,6 @@ namespace StardewDruid.Event.Challenge
 
                     bosses[0].SetMode(3);
 
-                    bosses[0].MaxHealth *= 3;
-
                     bosses[0].netPosturing.Set(true);
 
                     bosses[0].netDirection.Set(2);

@@ -54,6 +54,14 @@ namespace StardewDruid.Character
 
             };
 
+            idleFrames[idles.rest] = new()
+            {
+                [0] = new(){
+                    new(96, 288, 32, 32),
+                },
+
+            };
+
             specialFrames[specials.special] = new()
             {
 
@@ -67,10 +75,32 @@ namespace StardewDruid.Character
 
             };
 
+            specialIntervals[specials.special] = 90;
+            specialCeilings[specials.special] = 0;
+            specialFloors[specials.special] = 0;
+
             specialFrames[specials.greet] = new()
             {
 
                 [0] = new() {new(0, 288, 32, 32),
+                    new(32, 288, 32, 32),
+                    new(64, 288, 32, 32),
+                    new(32, 288, 32, 32),
+                },
+
+                [1] = new() {new(0, 288, 32, 32),
+                    new(32, 288, 32, 32),
+                    new(64, 288, 32, 32),
+                    new(32, 288, 32, 32),
+                },
+
+                [2] = new() {new(0, 288, 32, 32),
+                    new(32, 288, 32, 32),
+                    new(64, 288, 32, 32),
+                    new(32, 288, 32, 32),
+                },
+
+                [3] = new() {new(0, 288, 32, 32),
                     new(32, 288, 32, 32),
                     new(64, 288, 32, 32),
                     new(32, 288, 32, 32),
@@ -82,11 +112,19 @@ namespace StardewDruid.Character
             specialCeilings[specials.greet] = 3;
             specialFloors[specials.greet] = 1;
 
+            restSet = true;
+
         }
 
         public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
         {
 
+            if (currentLocation.IsFarm)
+            {
+
+                return false;
+
+            }
             if (!Mod.instance.questHandle.IsComplete(Journal.QuestHandle.questJester))
             {
 
@@ -97,6 +135,10 @@ namespace StardewDruid.Character
             ResetActives();
 
             netSpecial.Set((int)specials.special);
+
+            specialIntervals[specials.special] = 90;
+            specialCeilings[specials.special] = 0;
+            specialFloors[specials.special] = 0;
 
             specialTimer = 90;
 
@@ -194,7 +236,6 @@ namespace StardewDruid.Character
 
         }
 
-
         public override List<Vector2> RoamAnalysis()
         {
 
@@ -240,7 +281,6 @@ namespace StardewDruid.Character
             return scarelist;
 
         }
-
 
         public override bool TargetWork()
         {
@@ -291,14 +331,14 @@ namespace StardewDruid.Character
                     if (Vector2.Distance(rubVictim.Position, Position) < 480)
                     {
 
-                        bool alreadyRubbed = Game1.player.hasPlayerTalkedToNPC(rubVictim.Name);
+                        /*bool alreadyRubbed = Game1.player.hasPlayerTalkedToNPC(rubVictim.Name);
 
                         if (alreadyRubbed)
                         {
 
                             continue;
 
-                        }
+                        }*/
 
                         if (ModUtility.GroundCheck(currentLocation, rubVictim.Tile - new Vector2(1, 0), true) != "ground")
                         {
@@ -327,9 +367,9 @@ namespace StardewDruid.Character
 
                         ReactionData.ReactTo(rubVictim, ReactionData.reactions.jester);
 
-                        Position = rubVictim.Position - new Vector2(64, 0);
+                        ResetActives();
 
-                        SettleOccupied();
+                        Position = rubVictim.Position - new Vector2(64, 0);
 
                         Mod.instance.iconData.AnimateQuickWarp(currentLocation, Position);
 
@@ -404,6 +444,13 @@ namespace StardewDruid.Character
             foreach(FarmAnimal victim in victims)
             {
 
+                if(victim is null)
+                {
+
+                    continue;
+
+                }
+
                 bool milk = false;
 
                 bool shear = false;
@@ -411,25 +458,35 @@ namespace StardewDruid.Character
                 if (victim.isAdult())
                 {
 
-                    if (victim.CanGetProduceWithTool(Mod.instance.virtualPail))
+                    if(Mod.instance.virtualPail != null)
                     {
 
-                        if (victim.currentProduce.Value != null)
+                        if (victim.CanGetProduceWithTool(Mod.instance.virtualPail))
                         {
 
-                            milk = true;
+                            if (victim.currentProduce.Value != null)
+                            {
+
+                                milk = true;
+
+                            }
 
                         }
 
                     }
-
-                    if (victim.CanGetProduceWithTool(Mod.instance.virtualShears))
+                    
+                    if (Mod.instance.virtualPail != null)
                     {
-
-                        if (victim.currentProduce.Value != null)
+                        
+                        if (victim.CanGetProduceWithTool(Mod.instance.virtualShears))
                         {
 
-                            shear = true;
+                            if (victim.currentProduce.Value != null)
+                            {
+
+                                shear = true;
+
+                            }
 
                         }
 

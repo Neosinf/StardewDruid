@@ -44,14 +44,6 @@ namespace StardewDruid.Journal
 
         }
 
-        public override void activateInterface()
-        {
-            base.activateInterface();
-
-            interfaceComponents[105].active = false;
-
-        }
-
         public override void pressContent()
         {
 

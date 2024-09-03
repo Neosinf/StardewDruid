@@ -30,7 +30,7 @@ namespace StardewDruid.Character
             if (characterType == CharacterHandle.characters.none)
             {
 
-                characterType = Enum.Parse<CharacterHandle.characters>(Name);
+                characterType = CharacterHandle.CharacterType(Name);
 
             }
 
@@ -42,7 +42,7 @@ namespace StardewDruid.Character
 
             setScale = 3.75f;
 
-            gait = 1.8f;
+            gait = 2.5f;
 
             modeActive = mode.random;
 
@@ -54,7 +54,7 @@ namespace StardewDruid.Character
 
             runningFrames = FrameSeries(32, 32, 0, 128, 6, FrameSeries(32, 32, 0, 0, 1));
 
-            specialFrames[specials.special] = new()
+            specialFrames[specials.invoke] = new()
             {
 
                 [0] = new() { new(128, 192, 32, 32), },
@@ -67,9 +67,9 @@ namespace StardewDruid.Character
 
             };
 
-            specialIntervals[specials.special] = 90;
-            specialCeilings[specials.special] = 0;
-            specialFloors[specials.special] = 0;
+            specialIntervals[specials.invoke] = 90;
+            specialCeilings[specials.invoke] = 0;
+            specialFloors[specials.invoke] = 0;
 
             specialFrames[specials.sweep] = FrameSeries(32, 32, 0, 128, 3);
 
@@ -88,6 +88,28 @@ namespace StardewDruid.Character
             dashFrames[dashes.smash] = new(dashFrames[dashes.dash]);
 
             loadedOut = true;
+        }
+
+        public override void DrawStandby(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        {
+            Vector2 spritePosition = localPosition + new Vector2(32, 64) - (new Vector2(16, 32) * setScale);
+
+            int idleFrame = IdleFrame(idles.standby);
+
+            b.Draw(
+                characterTexture,
+                spritePosition,
+                idleFrames[idles.standby][0][idleFrame],
+                Color.White * fade,
+                0f,
+                Vector2.Zero,
+                setScale,
+                (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                drawLayer
+            );
+
+            DrawShadow(b, localPosition, drawLayer);
+
         }
 
         public override void DrawWalk(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
@@ -155,6 +177,14 @@ namespace StardewDruid.Character
             return new Rectangle((int)Position.X - 16, (int)Position.Y + 8, 96, 48);
 
         }
+
+        public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
+        {
+            
+            return base.SmashAttack(monster);
+
+        }
+
 
     }
 

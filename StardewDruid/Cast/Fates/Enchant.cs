@@ -4,6 +4,7 @@ using StardewDruid.Dialogue;
 using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Buildings;
 using StardewValley.Extensions;
 using StardewValley.GameData.Machines;
 using System;
@@ -211,7 +212,9 @@ namespace StardewDruid.Cast.Fates
                     case "Loom":
                     case "Oil Maker":
                     case "Furnace":
+                    case "Heavy Furnace":
                     case "Geode Crusher":
+                    case "Fish Smoker":
                     case "Bee House":
 
                         // registered for use
@@ -266,6 +269,8 @@ namespace StardewDruid.Cast.Fates
 
                     }
 
+                    int cost = 1;
+
                     switch (target.name)
                     {
 
@@ -287,7 +292,32 @@ namespace StardewDruid.Cast.Fates
 
                         case "Oil Maker": FillOilMaker(target); break;
 
-                        case "Furnace": FillFurnace(target); break;
+                        case "Furnace": 
+                            
+                            FillFurnace(target); 
+                            
+                            break;
+
+                        case "Heavy Furnace": 
+                            
+                            if(Mod.instance.save.herbalism[HerbalData.herbals.faeth] < 3)
+                            { 
+                                
+                                continue; 
+                            
+                            } 
+                            
+                            cost = 3;  
+                            
+                            FillFurnace(target, 25, cost); 
+                            
+                            break;
+
+                        case "Fish Smoker":
+
+                            FillFishSmoker(target);
+
+                            break;
 
                         case "Geode Crusher": FillGeodeCrusher(target); break;
 
@@ -297,9 +327,16 @@ namespace StardewDruid.Cast.Fates
 
                     }
 
+                    if(target.heldObject.Value == null)
+                    {
+
+                        continue;
+
+                    }
+
                     Mod.instance.rite.targetCasts[location.Name][tile] = target.name;
 
-                    Mod.instance.save.herbalism[HerbalData.herbals.faeth] -= 1;
+                    Mod.instance.save.herbalism[HerbalData.herbals.faeth] -= cost;
 
                     Vector2 cursorVector = tile * 64 + new Vector2(32, 32);
 
@@ -307,7 +344,7 @@ namespace StardewDruid.Cast.Fates
 
                     Mod.instance.iconData.ImpactIndicator(location, cursorVector, IconData.impacts.glare, 0.75f + Mod.instance.randomIndex.Next(5) * 0.25f, new() { color = colour, });
 
-                    faeth++;
+                    faeth += cost;
 
                 }
  
@@ -325,28 +362,6 @@ namespace StardewDruid.Cast.Fates
             CraftingRecipe newThing = new(craftingRecipe.Key);
 
             targetObject.PlaceInMachine(machineData, ItemRegistry.Create(newThing.itemToProduce.FirstOrDefault(),1), false, Game1.player);
-
-            /*string[] array = craftingRecipe.Value.Split('/')[0].Split(' ');
-
-            List<StardewValley.Object> list = new();
-
-            for (int i = 0; i < array.Count(); i += 2)
-            {
-                list.Add(new StardewValley.Object(array[i], Convert.ToInt32(array[i + 1])));
-            }
-
-            if (list.Count == 0)
-            {
-                return;
-            }
-
-            list.Sort((StardewValley.Object a, StardewValley.Object b) => a.sellToStorePrice(-1L) * a.Stack - b.sellToStorePrice(-1L) * b.Stack);
-
-            targetObject.heldObject.Value = list.Last();
-
-            targetObject.MinutesUntilReady = 240;
-
-            Game1.playSound("furnace");*/
 
         }
 
@@ -429,40 +444,13 @@ namespace StardewDruid.Cast.Fates
         public void FillBoneMill(StardewValley.Object targetObject)
         {
 
-            int num2 = -1;
-            int num3 = 1;
-            switch (Game1.random.Next(4))
-            {
-                case 0:
-                    num2 = 466;
-                    num3 = 3;
-                    break;
-                case 1:
-                    num2 = 465;
-                    num3 = 5;
-                    break;
-                case 2:
-                    num2 = 369;
-                    num3 = 10;
-                    break;
-                case 3:
-                    num2 = 805;
-                    num3 = 5;
-                    break;
-            }
+            StardewValley.Item input = ItemRegistry.Create("(O)580", 1);
 
-            if (Game1.random.NextDouble() < 0.1)
-            {
-                num3 *= 2;
-            }
+            if (input == null) { location.playSound("ghost"); return; }
 
-            targetObject.heldObject.Value = new StardewValley.Object(num2.ToString(), num3);
+            MachineData machineData = targetObject.GetMachineData();
 
-            targetObject.MinutesUntilReady = 240;
-
-            location.playSound("skeletonStep");
-
-            DelayedAction.playSoundAfterDelay("skeletonHit", 150);
+            targetObject.PlaceInMachine(machineData, input, false, Game1.player);
 
         }
 
@@ -527,101 +515,6 @@ namespace StardewDruid.Cast.Fates
 
             targetObject.PlaceInMachine(machineData, input, false, Game1.player);
 
-            /*StardewValley.Object input = new(cropIndex.ToString(), 1);
-
-            if (input == null) { location.playSound("ghost"); return; }
-
-            switch (@input.ParentSheetIndex)
-            {
-                case 262:
-                    targetObject.heldObject.Value = new StardewValley.Object("346",1);
-                    targetObject.heldObject.Value.name = "Beer";
-                    break;
-                case 304:
-                    targetObject.heldObject.Value = new StardewValley.Object("303", 1);
-                    targetObject.heldObject.Value.name = "Pale Ale";
-                    break;
-                case 815:
-                    targetObject.heldObject.Value = new StardewValley.Object("614", 1);
-                    targetObject.heldObject.Value.name = "Green Tea";
-                    break;
-                case 433:
-                    targetObject.heldObject.Value = new StardewValley.Object("395", 1);
-                    targetObject.heldObject.Value.name = "Coffee";
-                    break;
-                case 340:
-                    targetObject.heldObject.Value = new StardewValley.Object("459", 1);
-                    targetObject.heldObject.Value.name = "Mead";
-                    break;
-
-            }
-
-            if (targetObject.heldObject.Value == null)
-            {
-                
-                switch (@input.Category)
-                {
-                    case -75:
-                        targetObject.heldObject.Value = new StardewValley.Object("350", 1);
-                        targetObject.heldObject.Value.Price = (int)(@input.Price * 2.25);
-                        targetObject.heldObject.Value.name = @input.Name + " Juice";
-                        targetObject.heldObject.Value.preserve.Value = StardewValley.Object.PreserveType.Juice;
-                        targetObject.heldObject.Value.preservedParentSheetIndex.Value = @input.ParentSheetIndex.ToString();
-                        targetObject.MinutesUntilReady = 6000;
-                        break;
-                    case -79:
-                        targetObject.heldObject.Value = new StardewValley.Object("348", 1);
-                        targetObject.heldObject.Value.Price = @input.Price * 3;
-                        targetObject.heldObject.Value.name = @input.Name + " Wine";
-                        targetObject.heldObject.Value.preserve.Value = StardewValley.Object.PreserveType.Wine;
-                        targetObject.heldObject.Value.preservedParentSheetIndex.Value = @input.ParentSheetIndex.ToString();
-                        targetObject.MinutesUntilReady = 10000;
-                        break;
-                    default:
-                        targetObject.heldObject.Value = new StardewValley.Object("346", 1);
-                        targetObject.heldObject.Value.name = "Beer";
-                        break;
-
-                }
-
-            }
-
-            if (targetObject.heldObject.Value == null)
-            {
-                location.playSound("ghost");
-                return;
-            }
-
-
-            location.playSound("Ship");
-
-            location.playSound("bubbles");
-
-            TemporaryAnimatedSprite temporarySprite = new(
-                "TileSheets\\animations", 
-                new Microsoft.Xna.Framework.Rectangle(256, 1856, 64, 128), 
-                80f, 
-                6, 
-                999999,
-                targetObject.TileLocation * 64f + new Vector2(0f, -128f), 
-                flicker: false, 
-                flipped: false, 
-                (targetObject.TileLocation.Y + 1f) * 64f / 10000f + 0.0001f, 
-                0f, 
-                Color.Yellow * 0.75f, 
-                1f, 
-                0f, 
-                0f, 
-                0f
-                )
-            {
-                alphaFade = 0.005f
-            };
-
-            location.temporarySprites.Add(temporarySprite);
-
-            targetObject.MinutesUntilReady = 1000;*/
-
         }
 
         public void FillPreservesJar(StardewValley.Object targetObject)
@@ -683,81 +576,20 @@ namespace StardewDruid.Cast.Fates
 
             targetObject.PlaceInMachine(machineData, input, false, Game1.player);
 
-            /*StardewValley.Object input = new(cropIndex.ToString(), 0);
-
-            if (input == null) { location.playSound("ghost"); return; }
-
-            switch (@input.Category)
-            {
-                case -75:
-                    targetObject.heldObject.Value = new StardewValley.Object("342", 1);
-                    targetObject.heldObject.Value.Price = 50 + @input.Price * 2;
-                    targetObject.heldObject.Value.name = "Pickled " + @input.Name;
-                    targetObject.heldObject.Value.preserve.Value = StardewValley.Object.PreserveType.Pickle;
-                    targetObject.heldObject.Value.preservedParentSheetIndex.Value = @input.ParentSheetIndex.ToString();
-                    break;
-                case -79:
-                    targetObject.heldObject.Value = new StardewValley.Object("344", 1);
-                    targetObject.heldObject.Value.Price = 50 + @input.Price * 2;
-                    targetObject.heldObject.Value.name = @input.Name + " Jelly";
-                    targetObject.heldObject.Value.preserve.Value = StardewValley.Object.PreserveType.Jelly;
-                    targetObject.heldObject.Value.preservedParentSheetIndex.Value = @input.ParentSheetIndex.ToString();
-                    break;
-            }
-
-            if(targetObject.heldObject.Value == null)
-            {
-                location.playSound("ghost");
-                return;
-
-            }
-
-            location.playSound("Ship");
-
-            location.playSound("bubbles");
-
-            TemporaryAnimatedSprite temporarySprite = new(
-                "TileSheets\\animations",
-                new Microsoft.Xna.Framework.Rectangle(256, 1856, 64, 128),
-                80f,
-                6,
-                999999,
-                targetObject.TileLocation * 64f + new Vector2(0f, -128f),
-                flicker: false,
-                flipped: false,
-                (targetObject.TileLocation.Y + 1f) * 64f / 10000f + 0.0001f,
-                0f,
-                Color.Yellow * 0.75f,
-                1f,
-                0f,
-                0f,
-                0f
-                )
-            {
-                alphaFade = 0.005f
-            };
-            location.temporarySprites.Add(temporarySprite);
-
-            targetObject.MinutesUntilReady = 4000;
-            */
         }
 
         public void FillCheesePress(StardewValley.Object targetObject)
         {
 
-            location.playSound("Ship");
+            string milk = Mod.instance.randomIndex.Next(2) == 0 ? "(0)186" : "(O)438";
 
-            targetObject.MinutesUntilReady = 240;
+            StardewValley.Item input = ItemRegistry.Create(milk, 1);
 
-            switch (Mod.instance.randomIndex.Next(2))
-            {
-                case 0:
-                    targetObject.heldObject.Value = new StardewValley.Object("426", 1);
-                    break;
-                default:
-                    targetObject.heldObject.Value = new StardewValley.Object("424", 1);
-                    break;
-            }
+            if (input == null) { location.playSound("ghost"); return; }
+
+            MachineData machineData = targetObject.GetMachineData();
+
+            targetObject.PlaceInMachine(machineData, input, false, Game1.player);
 
         }
 
@@ -789,73 +621,18 @@ namespace StardewDruid.Cast.Fates
 
             targetObject.PlaceInMachine(machineData, input, false, Game1.player);
 
-            /*
-            location.playSound("Ship");
-
-            targetObject.MinutesUntilReady = 240;
-
-            switch (eggIndex)
-            {
-                case 289:
-                    targetObject.heldObject.Value = new StardewValley.Object("306", 1);
-                    targetObject.heldObject.Value.Stack = 10;
-                    targetObject.heldObject.Value.Quality = 2;
-
-                    break;
-
-                case 174:
-                case 182:
-                    targetObject.heldObject.Value = new StardewValley.Object("306", 1)
-                    {
-                        Quality = 2
-                    };
-
-                    break;
-
-                case 176:
-                case 180:
-                    targetObject.heldObject.Value = new StardewValley.Object("306", 1);
-
-                    break;
-
-                case 442:
-                    targetObject.heldObject.Value = new StardewValley.Object("307", 1);
-
-                    break;
-
-                case 305:
-                    targetObject.heldObject.Value = new StardewValley.Object("308", 1);
-
-                    break;
-
-                case 107:
-                    targetObject.heldObject.Value = new StardewValley.Object("807", 1);
-
-                    break;
-
-                case 928:
-                    targetObject.heldObject.Value = new StardewValley.Object("306", 1)
-                    {
-                        Quality = 2
-                    };
-                    targetObject.heldObject.Value.Stack = 3;
-
-                    break;
-            }
-            */
-
         }
 
         public void FillLoom(StardewValley.Object targetObject)
         {
 
-            location.playSound("Ship");
+            StardewValley.Item input = ItemRegistry.Create("(O)440", 1);
 
-            targetObject.heldObject.Value = new StardewValley.Object("428", 1)
-            {
-                Stack = 2
-            };
-            targetObject.MinutesUntilReady = 240;
+            if (input == null) { location.playSound("ghost"); return; }
+
+            MachineData machineData = targetObject.GetMachineData();
+
+            targetObject.PlaceInMachine(machineData, input, false, Game1.player);
 
         }
 
@@ -874,57 +651,17 @@ namespace StardewDruid.Cast.Fates
 
             int oilIndex = oilList[Mod.instance.randomIndex.Next(oilList.Count)];
 
-            location.playSound("bubbles");
+            StardewValley.Item input = ItemRegistry.Create("(O)" + oilIndex.ToString(), 1);
 
-            location.playSound("sipTea");
+            if (input == null) { location.playSound("ghost"); return; }
 
-            TemporaryAnimatedSprite temporarySprite = new(
-                "TileSheets\\animations",
-                new Microsoft.Xna.Framework.Rectangle(256, 1856, 64, 128),
-                80f,
-                6,
-                999999,
-                targetObject.TileLocation * 64f + new Vector2(0f, -128f),
-                flicker: false,
-                flipped: false,
-                (targetObject.TileLocation.Y + 1f) * 64f / 10000f + 0.0001f,
-                0f,
-                Color.Yellow * 0.75f,
-                1f,
-                0f,
-                0f,
-                0f
-                )
-            {
-                alphaFade = 0.005f
-            };
-            location.temporarySprites.Add(temporarySprite);
+            MachineData machineData = targetObject.GetMachineData();
 
-            targetObject.MinutesUntilReady = 1000;
-
-            switch (oilIndex)
-            {
-                case 270:
-                    targetObject.heldObject.Value = new StardewValley.Object("247", 1);
-                    break;
-
-                case 421:
-                    targetObject.heldObject.Value = new StardewValley.Object("247", 1);
-                    break;
-
-                case 430:
-                    targetObject.heldObject.Value = new StardewValley.Object("432", 1);
-                    break;
-
-                case 431:
-                    targetObject.heldObject.Value = new StardewValley.Object("247", 1);
-                    break;
-
-            }
+            targetObject.PlaceInMachine(machineData, input, false, Game1.player);
 
         }
 
-        public void FillFurnace(StardewValley.Object targetObject)
+        public void FillFurnace(StardewValley.Object targetObject, int ore = 5, int coal = 1)
         {
 
             List<int> furnaceList = new()
@@ -942,45 +679,17 @@ namespace StardewDruid.Cast.Fates
 
             int furnaceIndex = furnaceList[Mod.instance.randomIndex.Next(furnaceList.Count)];
 
-            switch (furnaceIndex)
-            {
-                case 378:
-                    targetObject.heldObject.Value = new StardewValley.Object("334", 1);
+            StardewValley.Item extra = ItemRegistry.Create("(O)382", coal);
 
-                    break;
-                case 380:
-                    targetObject.heldObject.Value = new StardewValley.Object("335", 1);
+            Game1.player.addItemToInventory(extra);
 
-                    break;
-                case 384:
-                    targetObject.heldObject.Value = new StardewValley.Object("336", 1);
+            StardewValley.Item input = ItemRegistry.Create("(O)" + furnaceIndex.ToString(), ore);
 
-                    break;
-                case 386:
-                    targetObject.heldObject.Value = new StardewValley.Object("337", 1);
+            if (input == null) { location.playSound("ghost"); return; }
 
-                    break;
-                case 80:
-                    targetObject.heldObject.Value = new StardewValley.Object("338", 1);
+            MachineData machineData = targetObject.GetMachineData();
 
-                    break;
-                case 82:
-                    targetObject.heldObject.Value = new StardewValley.Object("338", 3);
-
-                    break;
-                case 909:
-                    targetObject.heldObject.Value = new StardewValley.Object("910", 1);
-
-                    break;
-            }
-
-            location.playSound("furnace");
-
-            targetObject.initializeLightSource(targetObject.TileLocation);
-
-            targetObject.showNextIndex.Value = true;
-
-            targetObject.MinutesUntilReady = 240;
+            targetObject.PlaceInMachine(machineData, input, false, Game1.player);
 
         }
 
@@ -995,17 +704,22 @@ namespace StardewDruid.Cast.Fates
 
             targetObject.PlaceInMachine(machineData, input, false, Game1.player);
 
-            /*targetObject.heldObject.Value = (StardewValley.Object)Utility.getTreasureFromGeode(new StardewValley.Object("749", 1));
+        }
 
-            Game1.stats.GeodesCracked++;
+        public void FillFishSmoker(StardewValley.Object targetObject)
+        {
 
-            targetObject.MinutesUntilReady = 240;
+            MachineData machineData = targetObject.GetMachineData();
 
-            Game1.playSound("drumkit4");
+            StardewValley.Item input = ItemRegistry.Create("(O)"+ SpawnData.RandomHighFish(location,true,Mod.instance.randomIndex.Next(3)), 1);
 
-            Game1.playSound("stoneCrack");
+            if (input == null) { location.playSound("ghost"); return; }
 
-            DelayedAction.playSoundAfterDelay("steam", 200);*/
+            StardewValley.Item extra = ItemRegistry.Create("(O)382", 1);
+
+            Game1.player.addItemToInventory(extra);
+
+            targetObject.PlaceInMachine(machineData, input, false, Game1.player);
 
         }
 

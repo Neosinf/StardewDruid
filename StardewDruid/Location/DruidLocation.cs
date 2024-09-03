@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
+using StardewModdingAPI;
+using StardewDruid.Event.Sword;
+using StardewDruid.Journal;
 
 namespace StardewDruid.Location
 {
@@ -74,7 +77,7 @@ namespace StardewDruid.Location
                 else
                 {
 
-                    Game1.ambientLight = new(192, 192, 160);
+                    Game1.ambientLight = new(160, 160, 128);
 
                 }
 
@@ -135,6 +138,18 @@ namespace StardewDruid.Location
         public override bool CanItemBePlacedHere(Vector2 tile, bool itemIsPassable = false, CollisionMask collisionMask = CollisionMask.All, CollisionMask ignorePassables = ~CollisionMask.Objects, bool useFarmerTile = false, bool ignorePassablesExactly = false)
         {
 
+            if(Name == LocationData.druid_grove_name)
+            {
+                
+                if (Mod.instance.Config.decorateGrove)
+                {
+
+                    return base.CanItemBePlacedHere(tile, itemIsPassable, collisionMask, ignorePassables, useFarmerTile, ignorePassablesExactly);
+
+                }
+
+            }
+
             return false;
 
         }
@@ -147,7 +162,7 @@ namespace StardewDruid.Location
             if (dialogueTiles.ContainsKey(actionTile) && Mod.instance.activeEvent.Count == 0)
             {
 
-                return true;
+                return readyDialogue();
 
             }
 
@@ -164,6 +179,19 @@ namespace StardewDruid.Location
             }
 
             return base.isActionableTile(xTile, yTile, who);
+
+        }
+
+        public virtual bool readyDialogue()
+        {
+
+            return true;
+
+        }
+
+        public virtual void addDialogue()
+        {
+
 
         }
 
@@ -210,9 +238,18 @@ namespace StardewDruid.Location
 
         }
 
-        public virtual void addDialogue()
-        {
 
+        public override bool isTileFishable(int tileX, int tileY)
+        {
+            
+            if (Mod.instance.Helper.ModRegistry.IsLoaded("shekurika.WaterFish") && !Mod.instance.eventRegister.ContainsKey("fishspot"))
+            {
+
+                return false;
+
+            }
+
+            return ModUtility.WaterCheck(this, new(tileX, tileY), 1);
 
         }
 

@@ -3,8 +3,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewDruid.Cast;
+using StardewDruid.Cast.Mists;
+using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
 using StardewDruid.Journal;
+using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Monsters;
@@ -12,11 +15,6 @@ using StardewValley.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using xTile.Tiles;
-using static StardewDruid.Data.IconData;
-using static StardewValley.Menus.CharacterCustomization;
-
 
 namespace StardewDruid.Location
 {
@@ -72,16 +70,24 @@ namespace StardewDruid.Location
 
         public int shake;
 
+        public float fadeout;
+
+        public float shade;
+
+        public Microsoft.Xna.Framework.Color color;
+
         public enum shadows
         {
             none,
             offset,
+            dropset,
             smallleafy,
             leafy,
             moreleafy,
             bigleafy,
             bush,
             massive,
+            reflection,
         }
 
         public shadows shadow;
@@ -95,6 +101,8 @@ namespace StardewDruid.Location
 
             position = Position;
 
+            color = Color.White;
+
             source = LocationData.TerrainRectangles(tilesheet, Index);
 
             baseTiles = LocationData.TerrainBases(tilesheet, Index, position, source);
@@ -105,16 +113,38 @@ namespace StardewDruid.Location
 
             shadow = LocationData.TerrainShadows(tilesheet, Index, Shadow);
 
+            fadeout = LocationData.TerrainFadeout(tilesheet, Index);
+
             flip = Flip;
+
+            shade = 0.4f;
 
         }
 
         public void draw(SpriteBatch b, GameLocation location)
         {
 
-            if (Utility.isOnScreen(position + source.Center.ToVector2(), source.Height*8))
+            if (Utility.isOnScreen(position + source.Center.ToVector2(), source.Height*8+128))
             {
-                
+
+                if (Mod.instance.iconData.sheetTextures.ContainsKey(tilesheet))
+                {
+                    
+                    if (Mod.instance.iconData.sheetTextures[tilesheet].IsDisposed)
+                    {
+
+                        return;
+
+                    }
+
+                }
+                else
+                {
+
+                    return;
+
+                }
+
                 float opacity = 1f;
 
                 if (special)
@@ -125,99 +155,57 @@ namespace StardewDruid.Location
                 }
 
                 Microsoft.Xna.Framework.Vector2 origin = new(position.X - (float)Game1.viewport.X, position.Y - (float)Game1.viewport.Y);
-                
-                Microsoft.Xna.Framework.Rectangle bounds = new((int)position.X + 8, (int)position.Y, (source.Width*4) -16, (source.Height*4) - 72);
 
-                foreach (Farmer character in location.farmers)
+                if (fadeout < 1f)
                 {
 
-                    if (bounds.Contains(character.Position.X, character.Position.Y))
-                    {
+                    Microsoft.Xna.Framework.Rectangle bounds = new((int)position.X + 8, (int)position.Y, (source.Width * 4) - 16, (source.Height * 4) - 72);
 
-                        opacity = 0.75f;
-
-                    }
-
-                }
-
-                if (opacity == 1f)
-                {
-
-                    foreach (NPC character in location.characters)
+                    foreach (Farmer character in location.farmers)
                     {
 
                         if (bounds.Contains(character.Position.X, character.Position.Y))
                         {
 
-                            opacity = 0.75f;
+                            opacity = fadeout;
+
                         }
 
                     }
 
-                }
-
-                /*if (shake > 0)
-                {
-
-                    switch(shake % 8)
+                    if (opacity == 1f)
                     {
 
-                        case 0:
+                        foreach (NPC character in location.characters)
+                        {
 
-                            origin.X += 24;
+                            if (bounds.Contains(character.Position.X, character.Position.Y))
+                            {
 
-                            break;
+                                opacity = fadeout;
+                            }
 
-                        case 1:
-
-                            origin.X += 48;
-
-                            break;
-
-                        case 2:
-
-                            origin.X += 24;
-
-                            break;
-
-                        case 3:
-
-                            break;
-
-                        case 4:
-
-                            origin.X -= 24;
-
-                            break;
-
-                        case 5:
-
-                            origin.X -= 48;
-
-                            break;
-
-                        case 6:
-
-                            origin.X -= 24;
-
-                            break;
-
-                        case 7:
-
-                            break;
+                        }
 
                     }
 
-                }*/
 
-                b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin, source, Microsoft.Xna.Framework.Color.White * opacity, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer);
+                }
 
                 switch (shadow)
                 {
 
                     case shadows.offset:
 
-                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(2, 8), source, Microsoft.Xna.Framework.Color.Black * 0.4f, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
+                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(2, 8), source, Microsoft.Xna.Framework.Color.Black * shade, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
+
+                        break;
+
+                    case shadows.dropset:
+
+                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(0, 12), source, Microsoft.Xna.Framework.Color.DarkBlue * 0.4f, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
+
+                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(0, 428), source, Microsoft.Xna.Framework.Color.DarkBlue * shade, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
 
                         break;
 
@@ -241,17 +229,17 @@ namespace StardewDruid.Location
 
                     case shadows.bigleafy:
 
-                        origin.X += 32;
-
-                        b.Draw(Game1.mouseCursors, origin + new Vector2((source.Width * 2), (source.Height * 4) - 64), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White*0.7f, 0f, new Vector2(20, 15), 9f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+                        b.Draw(Game1.mouseCursors, origin + new Vector2((source.Width * 2) + 32, (source.Height * 4) - 64), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White*0.7f, 0f, new Vector2(20, 15), 9f, flip ? (SpriteEffects)1 : 0, 1E-06f);
 
                         break;
 
                     case shadows.massive:
 
-                        origin.X += 32;
+                        //b.Draw(Game1.mouseCursors, origin + new Vector2((source.Width * 2) - 256, (source.Height * 4) - 80), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 8f, flip ? (SpriteEffects)1 : 0, 1E-06f);
 
-                        b.Draw(Game1.mouseCursors, origin + new Vector2((source.Width * 2)-80, (source.Height * 4) - 80), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 12f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+                        //b.Draw(Game1.mouseCursors, origin + new Vector2((source.Width * 2), (source.Height * 4) + 48), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 8f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+
+                        //b.Draw(Game1.mouseCursors, origin + new Vector2((source.Width * 2) + 256, (source.Height * 4) - 80), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 8f, flip ? (SpriteEffects)1 : 0, 1E-06f);
 
                         break;
                     case shadows.bush:
@@ -259,11 +247,69 @@ namespace StardewDruid.Location
                         b.Draw(Game1.mouseCursors_1_6, origin + new Vector2((source.Width * 2), (source.Height * 4) - 18), new Microsoft.Xna.Framework.Rectangle(469, 298, 42, 31), Color.White, 0f, new Vector2(20, 15), 3f, flip ? (SpriteEffects)1 : 0, 1E-06f);
 
                         break;
+
+                    case shadows.reflection:
+
+                        //shadow
+                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(2, 8), source, Microsoft.Xna.Framework.Color.Black * 0.4f, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
+
+                        Microsoft.Xna.Framework.Rectangle reflectSource = new(source.X,source.Y+source.Height,source.Width,2);
+
+                        Vector2 reflectOrigin = new(origin.X + (source.Width * 2), origin.Y + (source.Height * 4)-32);
+
+                        Vector2 reflectOut = new(source.Width/2,1);
+
+                        float reflectFade = 0f;
+
+                        for (int i = 0; i < 32; i++)
+                        {
+                            reflectSource.Y -= 2;
+
+                            reflectOrigin.Y += 8;
+
+                            if(i >= 16)
+                            {
+
+
+                                reflectFade -= 0.03f;
+
+
+                            }
+                            else
+                            {
+
+                                reflectFade += 0.03f;
+
+
+                            }
+
+                            if (flip)
+                            {
+
+                                b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], reflectOrigin, reflectSource, Microsoft.Xna.Framework.Color.White * reflectFade, (float)Math.PI, reflectOut, 4, 0, 1E-06f);
+
+                            }
+                            else
+                            {
+                                
+                                b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], reflectOrigin, reflectSource, Microsoft.Xna.Framework.Color.White * reflectFade, 0, reflectOut, 4,(SpriteEffects)2, 1E-06f);
+
+                            }
+
+                        }
+
+                        break;
                      
                 }
+
+                b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin, source, color * opacity, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer);
+
             }
+
         }
+    
     }
+
     public class LightField
     {
         public Vector2 origin;
@@ -427,7 +473,6 @@ namespace StardewDruid.Location
         public int series;
 
         public int crate;
-
 
         public CrateTile(Vector2 Origin, int Series, int Crate)
         {
@@ -639,9 +684,84 @@ namespace StardewDruid.Location
                     break;
             }
 
+            RestoreLocation(map);
+
             Game1.locations.Add(location);
 
             Mod.instance.locations.Add(map, location);
+
+        }
+
+        public static int RestoreLocation(string map)
+        {
+
+            if (!Context.IsMainPlayer)
+            {
+
+                return -1;
+
+            }
+
+            switch (map)
+            {
+
+                case druid_spring_name:
+                    
+                    if (!Mod.instance.save.restoration.ContainsKey(map))
+                    {
+
+                        Mod.instance.save.restoration[map] = 0;
+
+                    }
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.challengeWeald))
+                    {
+                        
+                            return 3;
+                    
+                    }
+
+                    break;
+
+                case druid_graveyard_name:
+
+                    if (!Mod.instance.save.restoration.ContainsKey(map))
+                    {
+
+                        Mod.instance.save.restoration[map] = 0;
+
+                    }
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.challengeMists))
+                    {
+                        
+                        return 4;
+                    
+                    }
+
+                    break;
+
+                case druid_clearing_name:
+
+                    if (!Mod.instance.save.restoration.ContainsKey(map))
+                    {
+
+                        Mod.instance.save.restoration[map] = 0;
+
+                    }
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.challengeStars))
+                    {
+                        
+                        return 3;
+                    
+                    }
+
+                    break;
+
+            }
+
+            return -1;
 
         }
 
@@ -651,7 +771,7 @@ namespace StardewDruid.Location
             switch (sheet)
             {
 
-                case tilesheets.outdoors:
+                case IconData.tilesheets.outdoors:
 
                     switch (key)
                     {
@@ -727,7 +847,7 @@ namespace StardewDruid.Location
 
                     break;
 
-                case tilesheets.outdoorsTwo:
+                case IconData.tilesheets.outdoorsTwo:
 
                     switch (key)
                     {
@@ -743,49 +863,51 @@ namespace StardewDruid.Location
 
                     break;
 
-                case tilesheets.grove:
-
+                case IconData.tilesheets.grove:
 
                     switch (key)
                     {
 
                         case 1:
 
-                            return new(0, 32,32, 32);
+                            return new(0, 0,96, 48);
 
                         case 2:
 
-                            return new(32, 0, 32, 48);
+                            return new(96, 0, 32, 64);
 
                         case 3:
 
-                            return new(80, 16, 16, 48);
+                            return new(128, 0, 32, 64);
 
                         case 4:
 
-                            return new(96, 0, 16, 32);
+                            return new(160, 0, 32, 48);
 
                         case 5:
 
-                            return new(112, 16, 16, 16);
+                            return new(192, 0, 32, 64);
 
                         case 6:
 
-                            return new(96, 32, 16, 32);
+                            return new(224, 0, 32, 64);
 
                         case 7:
 
-                            return new(112, 32, 16, 32);
+                            return new(96, 64, 64, 32);
 
                         case 8:
 
-                            return new(128, 0, 48, 32);
+                            return new(160, 48, 32, 32);
 
+                        case 9:
+
+                            return new(0, 48, 64, 32);
                     }
 
                     break;
 
-                case tilesheets.magnolia:
+                case IconData.tilesheets.magnolia:
 
 
                     switch (key)
@@ -793,17 +915,53 @@ namespace StardewDruid.Location
 
                         case 1:
 
-                            return new(0, 0, 176, 112);
+                            return new(0, 0, 192, 128);
 
                         case 2:
 
-                            return new(64, 112, 64, 64);
+                            return new(64, 128, 64, 64);
+
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 6: 
+                        case 7: 
+                        case 8:
+
+                            return new(0 + (32 * (key - 3)), 192, 32, 32);
+
+                        case 9: 
+                        case 10:
+                        case 11:
+                        case 12:
+                        case 13:
+                        case 14:
+
+                            return new(0 + (32*(key- 9)), 224, 32, 32);
+
+                        case 15:
+                        case 16:
+                        case 17:
+                        case 18:
+                        case 19:
+                        case 20:
+
+                            return new(0 + (32 * (key - 15)), 256, 32, 32);
+
+                        case 21:
+                        case 22:
+                        case 23:
+                        case 24:
+                        case 25:
+                        case 26:
+
+                            return new(0 + (32 * (key - 21)), 288, 32, 32);
 
                     }
 
                     break;
 
-                case tilesheets.spring:
+                case IconData.tilesheets.spring:
 
 
                     switch (key)
@@ -833,11 +991,28 @@ namespace StardewDruid.Location
 
                             return new(48, 64, 48, 64);
 
+                        case 7:
+                        case 8:
+                        case 9:
+                        case 10:
+                        case 11:
+                        case 12:
+                        case 13:
+                        case 14:
+
+                            return new((key - 7) *32, 128, 32, 32);
+
+                        case 15:
+                        case 16:
+
+                            return new((key - 15) * 32, 160, 32, 32);
+
+
                     }
 
                     break;
 
-                case tilesheets.atoll:
+                case IconData.tilesheets.atoll:
 
 
                     switch (key)
@@ -845,41 +1020,32 @@ namespace StardewDruid.Location
 
                         case 1:
 
-                            return new(0, 0, 48, 96);
+                            return new(0, 0, 32, 128);
 
                         case 2:
 
-                            return new(48, 16, 16, 48);
+                            return new(32, 0, 32, 96);
 
                         case 3:
 
-                            return new(64, 0, 32, 64);
+                            return new(64, 0, 48, 96);
 
                         case 4:
 
-                            return new(96, 16, 16, 48);
+                            return new(112, 0, 32, 128);
 
                         case 5:
 
-                            return new(112, 16, 32, 48);
+                            return new(144, 0, 112, 192);
 
                         case 6:
 
-                            return new(144, 0, 16, 32);
-
-                        case 7:
-
-                            return new(144, 32, 16, 32);
-
-                        case 8:
-
-                            return new(160, 32, 16, 32);
-
+                            return new(144, 192, 112, 64);
                     }
 
                     break;
 
-                case tilesheets.graveyard:
+                case IconData.tilesheets.graveyard:
 
                     switch (key)
                     {
@@ -955,11 +1121,13 @@ namespace StardewDruid.Location
 
                             return new(96, 80, 48, 32);
 
-                        // larger statues
+                        // gargoyle
 
                         case 17:
 
                             return new(144, 48, 32, 64);
+
+                        // angel
 
                         case 18:
 
@@ -975,14 +1143,134 @@ namespace StardewDruid.Location
 
                         case 20:
 
-                            return new(48, 128, 48, 80);
+                            return new(0, 160, 48, 80);
 
+                        // larger sarcophagus 2
 
+                        case 21:
+
+                            return new(0, 128, 48, 32);
+
+                        case 22:
+
+                            return new(48, 112, 48, 32);
+
+                        case 23:
+
+                            return new(96, 112, 48, 32);
+
+                        case 24:
+
+                            return new(144, 112, 32, 48);
+
+                        // memory stone
+
+                        case 25:
+
+                            return new(96, 144, 32, 48);
+
+                        // king statues
+
+                        case 26:
+
+                            return new(48, 144, 48, 112);
+
+                        case 27:
+
+                            return new(96, 144, 48, 112);
+
+                        // building structure
+
+                        case 28:
+
+                            return new(144, 112, 96, 112);
+
+                        case 29:
+
+                            return new(144, 224, 96, 128);
+
+                        // building floor:
+
+                        case 30:
+
+                            return new(0, 256, 128, 96);
+
+                        // flowers
+
+                        case 31:
+
+                            return new(0,352,16,32);
+
+                        case 32:
+
+                            return new(16, 352, 16, 32);
+
+                        case 33:
+
+                            return new(32, 352, 16, 32);
+
+                        case 34:
+
+                            return new(48, 352, 16, 32);
+
+                        // candles
+
+                        case 35:
+
+                            return new(64, 352, 16, 32);
+
+                        case 36:
+
+                            return new(80, 352, 16, 32);
+
+                        case 37:
+
+                            return new(96, 352, 16, 32);
+
+                        case 38:
+
+                            return new(112, 352, 16, 32);
+
+                        // flowers
+
+                        case 41:
+
+                            return new(128, 352, 16, 32);
+
+                        case 42:
+
+                            return new(144, 352, 16, 32);
+
+                        case 43:
+
+                            return new(160, 352, 16, 32);
+
+                        case 44:
+
+                            return new(176, 352, 16, 32);
+
+                        // candles
+
+                        case 45:
+
+                            return new(192, 352, 16, 32);
+
+                        case 46:
+
+                            return new(208, 352, 16, 32);
+
+                        case 47:
+
+                            return new(224, 352, 16, 32);
+
+                        case 48:
+
+                            return new(128, 320, 16, 32);
                     }
 
                     break;
 
-                case tilesheets.chapel:
+                case IconData.tilesheets.chapel:
 
                     switch (key)
                     {
@@ -1000,7 +1288,7 @@ namespace StardewDruid.Location
                     break;
 
 
-                case tilesheets.court:
+                case IconData.tilesheets.court:
 
                     switch (key)
                     {
@@ -1026,7 +1314,7 @@ namespace StardewDruid.Location
                     break;
 
 
-                case tilesheets.tomb:
+                case IconData.tilesheets.tomb:
 
                     switch (key)
                     {
@@ -1039,28 +1327,48 @@ namespace StardewDruid.Location
                     break;
 
 
-                case tilesheets.engineum:
+                case IconData.tilesheets.engineum:
 
                     switch (key)
                     {
 
                         case 1:
 
-                            return new(0, 0, 128, 128);
+                            return new(0, 0, 160, 128);
 
                         case 2:
 
-                            return new(128, 0, 48, 64);
+                            return new(0, 128, 48, 64);
 
                         case 3:
 
-                            return new(128, 64, 48, 64);
+                            return new(48, 128, 48, 64);
+
+                        case 4:
+
+                            return new(160, 0, 32, 48);
+
+                        case 5:
+
+                            return new(192, 0, 48, 64);
+
+                        case 6:
+
+                            return new(192, 64, 48, 64);
+
+                        case 7:
+
+                            return new(240, 0, 32, 64);
+
+                        case 8:
+
+                            return new(96, 128, 48, 80);
 
                     }
 
                     break;
 
-                case tilesheets.gate:
+                case IconData.tilesheets.gate:
 
                     switch (key)
                     {
@@ -1125,7 +1433,6 @@ namespace StardewDruid.Location
 
         }
 
-
         public static List<Microsoft.Xna.Framework.Vector2> TerrainBases(IconData.tilesheets sheet, int key, Vector2 position, Rectangle source)
         {
 
@@ -1138,7 +1445,38 @@ namespace StardewDruid.Location
             switch (sheet)
             {
 
-                case tilesheets.magnolia:
+                case IconData.tilesheets.grove:
+
+                    if(key == 1)
+                    {
+
+                        footPrint = 2;
+
+                    }
+
+                    break;
+
+                case IconData.tilesheets.atoll:
+
+
+                    switch (key)
+                    {
+
+                        default:
+
+                            return new();
+
+                        case 6:
+
+                            footPrint = 2;
+
+                            break;
+
+                    }
+
+                    break;
+
+                case IconData.tilesheets.magnolia:
 
                     switch (key)
                     {
@@ -1156,7 +1494,7 @@ namespace StardewDruid.Location
 
                     break;
 
-                case tilesheets.outdoors:
+                case IconData.tilesheets.outdoors:
 
                     switch (key)
                     {
@@ -1176,7 +1514,7 @@ namespace StardewDruid.Location
 
                     break;
 
-                case tilesheets.outdoorsTwo:
+                case IconData.tilesheets.outdoorsTwo:
 
                     switch (key)
                     {
@@ -1204,7 +1542,7 @@ namespace StardewDruid.Location
 
                     break;
 
-                case tilesheets.spring:
+                case IconData.tilesheets.spring:
 
                     switch (key)
                     {
@@ -1221,7 +1559,7 @@ namespace StardewDruid.Location
 
                     break;
 
-                case tilesheets.graveyard:
+                case IconData.tilesheets.graveyard:
 
                     switch (key)
                     {
@@ -1229,6 +1567,9 @@ namespace StardewDruid.Location
                         case 13:
                         case 14:
                         case 20:
+                        case 24:
+                        case 26:
+                        case 27:
 
                             footPrint = 2;
 
@@ -1248,11 +1589,48 @@ namespace StardewDruid.Location
 
                             break;
 
+                        case 28:
+                        case 29:
+
+                            return new()
+                            {
+
+
+                            };
+
+                        case 30:
+
+                            return new()
+                            {
+                                new Vector2(tile.X+1,tile.Y),
+                                new Vector2(tile.X+2,tile.Y),
+                                new Vector2(tile.X+5,tile.Y),
+                                new Vector2(tile.X+6,tile.Y),
+
+                                new Vector2(tile.X+1,tile.Y+1),
+                                new Vector2(tile.X+6,tile.Y+1),
+
+                                new Vector2(tile.X+1,tile.Y+2),
+                                new Vector2(tile.X+6,tile.Y+2),
+
+                                new Vector2(tile.X+1,tile.Y+3),
+                                new Vector2(tile.X+6,tile.Y+3),
+
+                                new Vector2(tile.X+1,tile.Y+4),
+                                new Vector2(tile.X+6,tile.Y+4),
+
+                                new Vector2(tile.X+1,tile.Y+5),
+                                new Vector2(tile.X+2,tile.Y+5),
+                                new Vector2(tile.X+5,tile.Y+5),
+                                new Vector2(tile.X+6,tile.Y+5),
+
+                            };
+
                     }
 
                     break;
 
-                case tilesheets.gate:
+                case IconData.tilesheets.gate:
 
                     switch (key)
                     {
@@ -1281,11 +1659,36 @@ namespace StardewDruid.Location
 
                     break;
 
-                case tilesheets.engineum:
+                case IconData.tilesheets.engineum:
 
-                    footPrint = 2;
+                    switch (key)
+                    {
+
+                        default:
+
+                            footPrint = 2;
+
+                            break;
+
+                        case 4:
+
+                            return new();
+
+                        case 7:
+
+                            footPrint = 3;
+
+                            break;
+
+                        case 8:
+
+                            footPrint = 4;
+
+                            break;
+                    }
 
                     break;
+
                 default:
 
                     break;
@@ -1317,7 +1720,7 @@ namespace StardewDruid.Location
 
             switch (sheet)
             {
-                case tilesheets.outdoors:
+                case IconData.tilesheets.outdoors:
 
                     switch (key)
                     {
@@ -1336,7 +1739,7 @@ namespace StardewDruid.Location
 
                     break;
 
-                case tilesheets.outdoorsTwo:
+                case IconData.tilesheets.outdoorsTwo:
 
                     switch (key)
                     {
@@ -1349,7 +1752,7 @@ namespace StardewDruid.Location
 
                     break;
 
-                case tilesheets.spring:
+                case IconData.tilesheets.spring:
 
                     switch (key)
                     {
@@ -1358,6 +1761,60 @@ namespace StardewDruid.Location
 
                             return (position.Y + 512) / 10000;
 
+                        case 15:
+                        case 16:
+
+                            return (position.Y + 224) / 10000;
+
+                    }
+
+                    break;
+
+                case IconData.tilesheets.graveyard:
+
+                    switch (key)
+                    {
+
+                        case 30:
+
+                            return 0.00001f;
+
+                        // flowers
+
+                        case 31:
+                        case 33:
+
+                            return (position.Y - 63 + (source.Height * 4)) / 10000;
+
+                        case 32:
+                        case 34:
+
+                            return (position.Y - 63 + (source.Height * 4)) / 10000;
+
+                        // candles
+
+                        case 35:
+                        case 36:
+
+                            return (position.Y - 63 + (source.Height * 4)) / 10000;
+
+                        case 37:
+                        case 38:
+
+                            return (position.Y - 63 + (source.Height * 4)) / 10000;
+
+                    }
+
+                    break;
+
+                case IconData.tilesheets.engineum:
+
+                    switch (key)
+                    {
+
+                        case 4:
+
+                            return (position.Y + (source.Height * 4) + 128) / 10000;
                     }
 
                     break;
@@ -1373,27 +1830,78 @@ namespace StardewDruid.Location
 
             switch (sheet)
             {
-
-                case tilesheets.magnolia:
-
-                    return true;
-
-                case tilesheets.grove:
+                case IconData.tilesheets.spring:
 
                     switch (key)
                     {
+                        case 7:
                         case 8:
+
+                        case 9:
+                        case 10:
+
+                        case 11:
+                        case 12:
+
+                        case 13:
+                        case 14:
+
+                        case 15:
+                        case 16:
+
+                            return true;
+
+                    }
+
+                    break;
+
+                case IconData.tilesheets.grove:
+
+                    return true;
+
+                case IconData.tilesheets.magnolia:
+
+                    return true;
+
+                case IconData.tilesheets.graveyard:
+
+                    switch (key)
+                    {
+                        // lamps
+                        case 19:
+
+                            return true;
+                        // flowers
+
+                        case 31:
+
+                        case 32:
+
+                        case 33:
+
+                        case 34:
+
+                        // candles
+
+                        case 35:
+
+                        case 36:
+
+                        case 37:
+
+                        case 38:
 
                             return true;
                     }
 
                     break;
 
-                case tilesheets.graveyard:
+                case IconData.tilesheets.engineum:
 
                     switch (key)
                     {
-                        case 19:
+
+                        case 4:
 
                             return true;
                     }
@@ -1413,7 +1921,7 @@ namespace StardewDruid.Location
             {
 
 
-                case tilesheets.magnolia:
+                case IconData.tilesheets.magnolia:
 
 
                     int offset = 0;
@@ -1429,35 +1937,87 @@ namespace StardewDruid.Location
 
                     }
 
-                    switch (key)
+                    if (Game1.player.currentLocation is Clearing && key > 2)
                     {
+                        
+                        switch (Mod.instance.save.restoration[LocationData.druid_clearing_name])
+                        {
 
-                        case 1:
+                            case 0:
 
-                            return new(0 +(offset*176), 0, 176, 112);
+                                return Rectangle.Empty;
 
-                        case 2:
+                            case 1:
 
-                            return new(64 + (offset * 176), 112, 64, 64);
+                                if(key < 15)
+                                {
+
+                                    key += 12;
+
+                                }
+
+                                break;
+
+                            case 2:
+
+                                if (key < 10)
+                                {
+
+                                    key += 12;
+
+                                }
+
+                                break;
+
+                        }
 
                     }
 
-                    break;
+                    Rectangle magnoliaSource = TerrainRectangles(sheet, key);
 
-                case tilesheets.grove:
+                    magnoliaSource.X += 192 * offset;
+
+                    return magnoliaSource;
+
+                case IconData.tilesheets.spring:
 
                     switch (key)
                     {
+                        case 7:
                         case 8:
+                        case 9:
+                        case 10:
 
-                            if (Mod.instance.save.progress.ContainsKey(QuestHandle.herbalism))
+                            if (Mod.instance.save.restoration[LocationData.druid_spring_name] < 1)
                             {
 
-                                if (Mod.instance.save.progress[QuestHandle.herbalism].progress == 1)
-                                {
+                                return Rectangle.Empty;
 
-                                    return new(128, 32, 48, 32);
-                                }
+                            }
+
+                            break;
+
+                        case 11:
+                        case 12:
+                        case 13:
+                        case 14:
+
+                            if (Mod.instance.save.restoration[LocationData.druid_spring_name] < 2)
+                            {
+
+                                return Rectangle.Empty;
+
+                            }
+
+                            break;
+
+                        case 15:
+                        case 16:
+
+                            if (Mod.instance.save.restoration[LocationData.druid_spring_name] < 3)
+                            {
+
+                                return Rectangle.Empty;
 
                             }
 
@@ -1467,7 +2027,58 @@ namespace StardewDruid.Location
 
                     break;
 
-                case tilesheets.graveyard:
+                case IconData.tilesheets.grove:
+
+                    if(Game1.timeOfDay < 1900)
+                    {
+
+                        break;
+
+                    }
+
+                    switch (key)
+                    {
+
+                        case 1:
+
+                            return new(0, 96, 96, 48);
+
+                        case 2:
+
+                            return new(96, 96, 32, 64);
+
+                        case 3:
+
+                            return new(128, 96, 32, 64);
+
+                        case 4:
+
+                            return new(160, 96, 32, 48);
+
+                        case 5:
+
+                            return new(192, 96, 32, 64);
+
+                        case 6:
+
+                            return new(224, 96, 32, 64);
+
+                        case 7:
+
+                            return new(96, 160, 64, 32);
+
+                        case 8:
+
+                            return new(160, 144, 32, 32);
+
+                        case 9:
+
+                            return new(0, 144, 64, 32);
+                    }
+
+                    break;
+
+                case IconData.tilesheets.graveyard:
 
                     switch (key)
                     {
@@ -1481,6 +2092,76 @@ namespace StardewDruid.Location
 
                             break;
 
+                        // flowers
+
+                        case 31:
+                        case 32:
+                        case 33:
+                        case 34:
+
+                            if (Mod.instance.save.restoration[LocationData.druid_graveyard_name] < 2)
+                            {
+
+                                return TerrainRectangles(sheet, key+10);
+
+                            }
+                            else
+                            if (Mod.instance.save.restoration[LocationData.druid_graveyard_name] < 3)
+                            {
+
+                                return Rectangle.Empty;
+
+                            }
+
+                            break;
+
+                        // candles
+
+                        case 35:
+                        case 36:
+                        case 37:
+                        case 38:
+
+
+                            if (Mod.instance.save.restoration[LocationData.druid_graveyard_name] < 1)
+                            {
+
+                                return TerrainRectangles(sheet, key + 10);
+
+                            }
+                            else
+                            if (Mod.instance.save.restoration[LocationData.druid_graveyard_name] < 4)
+                            {
+
+                                return Rectangle.Empty;
+
+                            }
+
+                            break;
+                    }
+
+                    break;
+
+                case IconData.tilesheets.engineum:
+
+                    switch (key)
+                    {
+                        
+                        case 4:
+
+                            if (Mod.instance.rite.specialCasts.ContainsKey(druid_engineum_name))
+                            {
+
+                                if (Mod.instance.rite.specialCasts[druid_engineum_name].Contains("AetherBlessing"))
+                                {
+
+                                    return new(160, 48, 32, 48);
+
+                                }
+
+                            }
+
+                        break;
                     }
 
                     break;
@@ -1497,7 +2178,20 @@ namespace StardewDruid.Location
             switch (sheet)
             {
 
-                case tilesheets.magnolia:
+                case IconData.tilesheets.atoll:
+
+                    switch (key)
+                    {
+
+                        case 5:
+
+                            return TerrainTile.shadows.none;
+
+                    }
+
+                    return TerrainTile.shadows.reflection;
+
+                case IconData.tilesheets.magnolia:
 
                     switch (key)
                     {
@@ -1513,9 +2207,9 @@ namespace StardewDruid.Location
 
                     }
 
-                    break;
+                    return TerrainTile.shadows.dropset;
 
-                case tilesheets.outdoors:
+                case IconData.tilesheets.outdoors:
 
                     switch (key)
                     {
@@ -1540,7 +2234,7 @@ namespace StardewDruid.Location
 
                     return TerrainTile.shadows.none;
 
-                case tilesheets.outdoorsTwo:
+                case IconData.tilesheets.outdoorsTwo:
 
                     switch (key)
                     {
@@ -1553,7 +2247,27 @@ namespace StardewDruid.Location
 
                     return TerrainTile.shadows.none;
 
-                case tilesheets.gate:
+                case IconData.tilesheets.spring:
+
+                    switch (key)
+                    {
+
+                        case 1:
+
+                            return TerrainTile.shadows.none;
+
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+
+                            return TerrainTile.shadows.reflection;
+
+                    }
+
+                    break;
+
+                case IconData.tilesheets.gate:
 
                     switch (key)
                     {
@@ -1577,6 +2291,44 @@ namespace StardewDruid.Location
             }
 
             return shadow;
+
+        }
+
+        public static float TerrainFadeout(IconData.tilesheets sheet, int key)
+        {
+
+            switch (sheet)
+            {
+                case IconData.tilesheets.magnolia:
+
+                    return 1f;
+
+                case IconData.tilesheets.grove:
+
+                    switch (key)
+                    {
+                        case 1:
+
+                            return 1f;
+
+                    }
+
+                    break;
+
+                case IconData.tilesheets.graveyard:
+
+                    switch (key)
+                    {
+                        case 28:
+
+                            return 0.25f;
+
+                    }
+
+                    break;
+            }
+
+            return 0.75f;
 
         }
 

@@ -15,6 +15,8 @@ namespace StardewDruid.Event.Challenge
     public class ChallengeMists : EventHandle
     {
 
+        int progressCounter = 0;
+
         public ChallengeMists()
         {
 
@@ -154,9 +156,22 @@ namespace StardewDruid.Event.Challenge
         public override float SpecialProgress(int displayId)
         {
 
-            return (float)eventRating / 7;
+            switch (displayId)
+            {
+
+                case 1:
+
+                    return ((float)progressCounter / 80f);
+
+                default:
+
+                    return ((float)eventRating / 7f);
+
+
+            }
 
         }
+
 
         public override void EventInterval()
         {
@@ -285,15 +300,16 @@ namespace StardewDruid.Event.Challenge
 
         public void SegmentThree()
         {
-            
+            progressCounter++;
+
             if(activeCounter == 201)
             {
                 
-                EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
+                EventBar(Mod.instance.questHandle.quests[eventId].title, 1);
 
-                EventDisplay trashbar = EventBar(DialogueData.Strings(DialogueData.stringkeys.bomberInterruptions), 0);
+                EventDisplay bomberbar = EventBar(DialogueData.Strings(DialogueData.stringkeys.bomberInterruptions), 2);
 
-                trashbar.colour = Microsoft.Xna.Framework.Color.LightGreen;
+                bomberbar.colour = Microsoft.Xna.Framework.Color.LightGreen;
 
                 SetTrack("tribal");
 
@@ -346,7 +362,7 @@ namespace StardewDruid.Event.Challenge
             
             }
 
-            if (activeCounter % 3 == 0)
+            if (activeCounter % 5 == 0)
             {
 
                 monsterHandle.SpawnInterval();
@@ -366,6 +382,7 @@ namespace StardewDruid.Event.Challenge
 
         public void SegmentFour()
         {
+            progressCounter++;
 
             DialogueCue(activeCounter);
 
@@ -504,7 +521,7 @@ namespace StardewDruid.Event.Challenge
 
             bosses[0].specialFrame = 0;
 
-            DialogueCue(901 + Mod.instance.randomIndex.Next(3));
+            DialogueCue(902 + Mod.instance.randomIndex.Next(3));
 
             Mod.instance.iconData.CursorIndicator(location, Game1.player.Position, IconData.cursors.scope, new() { scale = 4f, scheme = IconData.schemes.stars, });
 

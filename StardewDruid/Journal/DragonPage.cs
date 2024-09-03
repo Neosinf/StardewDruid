@@ -5,6 +5,7 @@ using StardewDruid.Data;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Locations;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
@@ -49,37 +50,20 @@ namespace StardewDruid.Journal
 
             title = DialogueData.Strings(DialogueData.stringkeys.dragonomicon);
 
-            if (Mod.instance.magic)
-            {
-                interfaceComponents = new()
-                {
-
-                    [101] = addButton(journalButtons.quests),
-                    [102] = addButton(journalButtons.effects),
-                    [103] = addButton(journalButtons.relics),
-                    [104] = addButton(journalButtons.herbalism),
-
-                    [301] = addButton(journalButtons.exit),
-
-                    [302] = addButton(journalButtons.dragonReset),
-
-                    [303] = addButton(journalButtons.dragonSave),
-
-                };
-                return;
-
-            }
-
             interfaceComponents = new()
             {
 
-                [201] = addButton(journalButtons.back),
+                [101] = addButton(journalButtons.quests),
+                [102] = addButton(journalButtons.effects),
+                [103] = addButton(journalButtons.relics),
+                [104] = addButton(journalButtons.herbalism),
+                [105] = addButton(journalButtons.lore),
+                [106] = addButton(journalButtons.transform),
+
+                [107] = addButton(journalButtons.dragonReset),
+                [108] = addButton(journalButtons.dragonSave),
 
                 [301] = addButton(journalButtons.exit),
-
-                [302] = addButton(journalButtons.dragonReset),
-
-                [303] = addButton(journalButtons.dragonSave),
 
             };
 
@@ -218,10 +202,10 @@ namespace StardewDruid.Journal
 
             resetInterface();
 
+            fadeMenu();
+
             if (Mod.instance.magic)
             {
-
-                fadeMenu();
 
                 interfaceComponents[101].active = false;
 

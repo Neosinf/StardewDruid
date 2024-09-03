@@ -10,6 +10,7 @@ using StardewValley;
 using StardewValley.GameData.Minecarts;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -143,7 +144,7 @@ namespace StardewDruid.Cast.Stars
                 hole.added = new() { SpellHandle.effects.tornado, };
 
             }
-            else if (location.IsFarm || location.isFarmBuildingInterior() || location.IsGreenhouse || location is Shed)
+            else if (Game1.player.CurrentTool is not MeleeWeapon || Game1.player.CurrentTool.isScythe())
             {
 
                 hole.added = new() { SpellHandle.effects.harvest, };
@@ -159,6 +160,10 @@ namespace StardewDruid.Cast.Stars
             Mod.instance.spellRegister.Add(hole);
 
             blackhole = true;
+
+            Mod.instance.rite.castCost = 48;
+
+            Mod.instance.rite.ApplyCost();
 
         }
 

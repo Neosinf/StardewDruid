@@ -97,8 +97,19 @@ namespace StardewDruid.Cast.Effect
 
                     if(Mod.instance.randomIndex.Next(15 - Mod.instance.PowerLevel) == 0)
                     {
-                        
                         string randomFish = SpawnData.RandomLowFish(location);
+
+                        switch (Mod.instance.randomIndex.Next(5))
+                        {
+                            case 0:
+                                randomFish = SpawnData.RandomHighFish(location, false);
+                                break;
+                            case 1:
+                                randomFish = SpawnData.RandomTrash(location).ToString();
+                                break;
+
+                        }
+
 
                         tornado.Value.AddCatch(randomFish, tileVector);
 
@@ -177,7 +188,7 @@ namespace StardewDruid.Cast.Effect
                 motion = movement,
                 timeBasedMotion = true,
                 rotationChange = (float)Math.PI / 1000f,
-                scale = 2.5f,
+                scale = 3f,
 
             };
 
@@ -191,7 +202,7 @@ namespace StardewDruid.Cast.Effect
             foreach(string fish in fishes)
             {
 
-                if(Mod.instance.randomIndex.Next(3) != 0)
+                if(Mod.instance.randomIndex.Next(2) != 0)
                 {
 
                     continue;

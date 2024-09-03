@@ -154,14 +154,28 @@ namespace StardewDruid.Journal
             if (questRecord.type == Quest.questTypes.lesson)
             {
 
-                string completeString = isComplete ? "Mastered " : "";
+                string completeString = "";
 
                 string lessonProgress =
-                    completeString +
-                    Mod.instance.save.progress[questId].progress.ToString() + " " + 
-                    DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.outOf) + " " + 
-                    questRecord.requirement.ToString() + " " + 
-                    questRecord.progression;
+                            completeString +
+                            Mod.instance.save.progress[questId].progress.ToString() + " " +
+                            DialogueData.Strings(DialogueData.stringkeys.outOf) + " " +
+                            questRecord.requirement.ToString() + " " +
+                            questRecord.progression;
+
+                if (isComplete)
+                {
+                    
+                    completeString = DialogueData.Strings(DialogueData.stringkeys.mastered);
+
+                    if(Mod.instance.save.progress[questId].progress < questRecord.requirement)
+                    {
+
+                        lessonProgress = DialogueData.Strings(DialogueData.stringkeys.lessonSkipped);
+
+                    }
+
+                }
 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "progress");
 
@@ -180,7 +194,7 @@ namespace StardewDruid.Journal
 
                 float adjustReward = 1.2f - ((float)Mod.instance.ModDifficulty() * 0.1f);
 
-                questReward = (int)(questReward * adjustReward);
+                questReward = (int)((float)questReward * adjustReward);
 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "lesson");
 
@@ -206,82 +220,6 @@ namespace StardewDruid.Journal
                 contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
 
                 textHeight += contentComponents[start++].bounds.Height;
-
-            }
-
-            if (isComplete && !isReplayed && questRecord.type == Quest.questTypes.challenge)
-            {
-
-                Dictionary<int, Dictionary<int, string>> dialogueScene = DialogueData.DialogueScene(questId);
-
-                Dictionary<int, string> narrators = DialogueData.DialogueNarrators(questId);
-
-                if (dialogueScene.Count > 0)
-                {
-
-                    foreach (KeyValuePair<int, Dictionary<int, string>> sceneEntry in dialogueScene)
-                    {
-
-                        foreach (KeyValuePair<int, string> sceneMoment in sceneEntry.Value)
-                        {
-
-                            if (sceneMoment.Key == 999)
-                            {
-
-                                continue;
-
-                            }
-
-                            contentComponents[start] = new(ContentComponent.contentTypes.text, "narration" + start.ToString());
-
-                            contentComponents[start].text[0] = narrators[sceneMoment.Key] + ": " + sceneMoment.Value;
-
-                            contentComponents[start].textColours[0] = Mod.instance.iconData.schemeColours.ElementAt(sceneMoment.Key + 1).Value;
-
-                            contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
-
-                            textHeight += contentComponents[start++].bounds.Height;
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            if (isComplete && !isReplayed && Mod.instance.questHandle.loresets.ContainsKey(questId))
-            {
-
-                foreach (LoreData.stories story in Mod.instance.questHandle.loresets[questId])
-                {
-
-                    if (Mod.instance.questHandle.lores.ContainsKey(story))
-                    {
-
-                        contentComponents[start] = new(ContentComponent.contentTypes.text, "lore" + start.ToString());
-
-                        contentComponents[start].text[0] = Mod.instance.questHandle.lores[story].answer;
-
-                        contentComponents[start].textColours[0] = Mod.instance.iconData.schemeColours.ElementAt((int)Mod.instance.questHandle.lores[story].character + 1).Value;
-
-                        contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
-
-                        textHeight += contentComponents[start++].bounds.Height;
-
-                        contentComponents[start] = new(ContentComponent.contentTypes.text, "lore" + start.ToString());
-
-                        contentComponents[start].text[0] = "(" + CharacterHandle.CharacterTitle(Mod.instance.questHandle.lores[story].character) + ")";
-
-                        contentComponents[start].textColours[0] = Mod.instance.iconData.schemeColours.ElementAt((int)Mod.instance.questHandle.lores[story].character + 1).Value;
-
-                        contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
-
-                        textHeight += contentComponents[start++].bounds.Height;
-
-                    }
-
-                }
 
             }
 

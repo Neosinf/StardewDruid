@@ -54,8 +54,10 @@ namespace StardewDruid.Character
             };
 
         }
+
         public override void draw(SpriteBatch b, float alpha = 1f)
         {
+            
             base.draw(b, alpha);
 
             if (IsInvisible || !Utility.isOnScreen(Position, 128) || characterTexture == null)

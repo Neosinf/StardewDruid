@@ -141,9 +141,20 @@ namespace StardewDruid.Cast.Bones
         }
 
 
-        public void SummonCorvids()
+        public static void SummonCorvids()
         {
 
+            SummonRaven();
+
+            SummonCrow();
+
+            SummonRook();
+
+            SummonMagpie();
+
+        }
+        public static void SummonRaven()
+        {
             // -------------------------------------- Raven
 
             Mod.instance.characters[CharacterHandle.characters.Raven] = new Character.Flyer(CharacterHandle.characters.Raven);
@@ -155,7 +166,10 @@ namespace StardewDruid.Cast.Bones
             Mod.instance.characters[CharacterHandle.characters.Raven].SwitchToMode(Character.Character.mode.track, Game1.player);
 
             Mod.instance.trackers[CharacterHandle.characters.Raven].WarpToPlayer();
+        }
 
+        public static void SummonCrow()
+        {
             // -------------------------------------- Crow
 
             Mod.instance.characters[CharacterHandle.characters.Crow] = new Character.Flyer(CharacterHandle.characters.Crow);
@@ -167,7 +181,10 @@ namespace StardewDruid.Cast.Bones
             Mod.instance.characters[CharacterHandle.characters.Crow].SwitchToMode(Character.Character.mode.track, Game1.player);
 
             Mod.instance.trackers[CharacterHandle.characters.Crow].WarpToPlayer();
+        }
 
+        public static void SummonRook()
+        {
             // -------------------------------------- Rook
 
             Mod.instance.characters[CharacterHandle.characters.Rook] = new Character.Flyer(CharacterHandle.characters.Rook);
@@ -179,7 +196,10 @@ namespace StardewDruid.Cast.Bones
             Mod.instance.characters[CharacterHandle.characters.Rook].SwitchToMode(Character.Character.mode.track, Game1.player);
 
             Mod.instance.trackers[CharacterHandle.characters.Rook].WarpToPlayer();
+        }
 
+        public static void SummonMagpie()
+        {
             // -------------------------------------- Magpie
 
             Mod.instance.characters[CharacterHandle.characters.Magpie] = new Character.Flyer(CharacterHandle.characters.Magpie);
@@ -191,10 +211,9 @@ namespace StardewDruid.Cast.Bones
             Mod.instance.characters[CharacterHandle.characters.Magpie].SwitchToMode(Character.Character.mode.track, Game1.player);
 
             Mod.instance.trackers[CharacterHandle.characters.Magpie].WarpToPlayer();
-
         }
 
-        public void RemoveCorvids()
+        public static void RemoveCorvids()
         {
             List<CharacterHandle.characters> corvids = new()
             {

@@ -85,7 +85,7 @@ namespace StardewDruid.Event.Challenge
             if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Blackfeather))
             {
 
-                if (Mod.instance.characters[CharacterHandle.characters.Blackfeather].modeActive == Character.Character.mode.track && !Mod.instance.questHandle.IsComplete(QuestHandle.bonesClearing))
+                if (Mod.instance.characters[CharacterHandle.characters.Blackfeather].modeActive == Character.Character.mode.track && !Mod.instance.questHandle.IsComplete(QuestHandle.questBlackfeather))
                 {
 
                     Mod.instance.characters[CharacterHandle.characters.Blackfeather].SwitchToMode(Character.Character.mode.home, Game1.player);
@@ -155,6 +155,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 1:
 
+
                     SetTrack("tribal");
 
                     bosses[0] = new Dustfiend(ModUtility.PositionToTile(origin) - new Vector2(1,3), Mod.instance.CombatDifficulty());
@@ -171,7 +172,15 @@ namespace StardewDruid.Event.Challenge
 
                     voices[0] = bosses[0];
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, IconData.impacts.puff, 3f, new());
+                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0,128), IconData.impacts.smoke, 4f, new() { interval = 150, color = Microsoft.Xna.Framework.Color.Gray,});
+
+                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.steam, 4f, new() { interval = 150, });
+
+                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.steam, 4f, new() { interval = 150, flip = true, });
+
+                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.puff, 4f, new() { interval = 150, });
+
+                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.plume, 4f, new() { interval = 150, color = Microsoft.Xna.Framework.Color.DarkGray, });
 
                     break;
 

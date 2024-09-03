@@ -6,7 +6,6 @@ using StardewDruid.Event;
 using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
-
 using System.Collections.Generic;
 
 
@@ -22,6 +21,8 @@ namespace StardewDruid.Cast.Weald
         public StardewValley.Inventories.Inventory inventory = new();
 
         public List<string> ignore = new();
+
+        public Farmer puppet = null;
 
         public Cultivate()
         {
@@ -215,14 +216,14 @@ namespace StardewDruid.Cast.Weald
 
                             hoeDirt.destroyCrop(true);
 
-                            if (Game1.currentSeason == "winter" && !location.IsGreenhouse)
+                            /*if (Game1.currentSeason == "winter" && !location.IsGreenhouse)
                             {
 
                                 Mod.instance.rite.targetCasts[location.Name][tile] = "Hoed";
 
                                 continue;
 
-                            }
+                            }*/
 
                             string wildSeed = "498";
 
@@ -246,7 +247,30 @@ namespace StardewDruid.Cast.Weald
 
                             }
 
-                            hoeDirt.plant(wildSeed, Game1.player, false);
+                            if (inabsentia)
+                            {
+
+                                if(puppet == null)
+                                {
+
+                                    puppet = new();
+
+                                    puppet.currentLocation = location;
+
+                                    puppet.professions.Add(5);
+
+                                }
+
+                                hoeDirt.plant(wildSeed, puppet, false);
+
+
+                            }
+                            else {
+
+
+                                hoeDirt.plant(wildSeed, Game1.player, false);
+
+                            }
 
                         }
 
@@ -386,12 +410,12 @@ namespace StardewDruid.Cast.Weald
 
                     }
 
-                    if (hoeDirt.crop.isWildSeedCrop() && hoeDirt.crop.currentPhase.Value <= 1 && (Game1.currentSeason != "winter" || location.isGreenhouse.Value))
+                    if (hoeDirt.crop.isWildSeedCrop() && hoeDirt.crop.currentPhase.Value <= 1)// && (Game1.currentSeason != "winter" || location.isGreenhouse.Value)
                     {
 
                         int quality = Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour) ? Mod.instance.Config.cultivateBehaviour : 0;
 
-                        ModUtility.UpgradeCrop(hoeDirt, Game1.player, location, quality);
+                        UpgradeCrop(hoeDirt, location, quality);
 
                         if (hoeDirt.crop == null)
                         {
@@ -429,7 +453,18 @@ namespace StardewDruid.Cast.Weald
 
                     }
 
-                    Mod.instance.rite.targetCasts[location.Name][tile] = "Crop" + hoeDirt.crop.indexOfHarvest.Value.ToString();
+                    if(hoeDirt.crop.indexOfHarvest.Value != null)
+                    {
+
+                        Mod.instance.rite.targetCasts[location.Name][tile] = "Crop" + hoeDirt.crop.indexOfHarvest.Value.ToString();
+
+                    }
+                    else
+                    {
+
+                        Mod.instance.rite.targetCasts[location.Name][tile] = "CropUnknown";
+
+                    }
 
                     if (!inabsentia)
                     {
@@ -467,6 +502,49 @@ namespace StardewDruid.Cast.Weald
                 }
 
             }
+
+        }
+
+        public static void UpgradeCrop(StardewValley.TerrainFeatures.HoeDirt hoeDirt, GameLocation targetLocation, int qualityFactor)
+        {
+
+            string generateItem = "770";
+
+            if (qualityFactor > 0)
+            {
+
+                List<string> objectIndexes = SpawnData.CropList(targetLocation);
+
+                for (int q = 3 - qualityFactor; q >= 0; q--)
+                {
+
+                    objectIndexes.Add(generateItem);
+                    objectIndexes.Add(generateItem);
+
+                }
+
+                generateItem = objectIndexes[Mod.instance.randomIndex.Next(objectIndexes.Count)];
+
+            }
+
+            hoeDirt.destroyCrop(true);
+
+            if (generateItem == "829")
+            {
+
+                Crop newGinger = new(true, "2", (int)hoeDirt.Tile.X, (int)hoeDirt.Tile.Y, targetLocation);
+
+                hoeDirt.crop = newGinger;
+
+                targetLocation.playSound("dirtyHit");
+
+                Game1.stats.SeedsSown++;
+
+                return;
+
+            }
+
+            hoeDirt.plant(generateItem, Game1.player, false);
 
         }
 

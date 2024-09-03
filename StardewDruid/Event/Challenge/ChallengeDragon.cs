@@ -63,6 +63,8 @@ namespace StardewDruid.Event.Challenge
 
             warpExit = new Warp(26, 32, "Mine", 17, 6, flipFarmer: false);
 
+            Mod.instance.iconData.ImpactIndicator(location, origin, impacts.smoke, 4f, new());
+
             bosses[0] = new Dragon(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
 
             bosses[0].netScheme.Set(2);
@@ -86,8 +88,6 @@ namespace StardewDruid.Event.Challenge
             location.playSound("DragonRoar");
 
             HoldCompanions();
-
-            SetTrack("cowboy_boss");
 
         }
 
@@ -153,10 +153,24 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            if(activeCounter == 4)
+            if (activeCounter == 2)
             {
 
                 location.playSound("DragonRoar");
+
+            }
+
+            if (activeCounter == 4)
+            {
+
+                location.playSound("DragonRoar");
+
+            }
+
+            if(activeCounter == 6)
+            {
+
+                SetTrack("cowboy_boss");
 
             }
 

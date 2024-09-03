@@ -161,6 +161,7 @@ namespace StardewDruid.Event.Scene
             }
 
         }
+        
         public override bool AttemptReset()
         {
 
@@ -170,41 +171,6 @@ namespace StardewDruid.Event.Scene
 
         }
 
-        public override void EventRemove()
-        {
-
-            foreach (KeyValuePair<int, Boss> boss in bosses)
-            {
-
-                boss.Value.currentLocation.characters.Remove(boss.Value);
-
-            }
-
-            bosses.Clear();
-
-            foreach (KeyValuePair<int, StardewDruid.Character.Character> companion in companions)
-            {
-
-                if (Mod.instance.characters.ContainsKey(companion.Value.characterType))
-                {
-
-                    companion.Value.SwitchToMode(Character.Character.mode.track, Game1.player);
-
-                }
-                else
-                {
-
-                    companion.Value.currentLocation.characters.Remove(companion.Value);
-
-                }
-
-            }
-
-            companions.Clear();
-
-            base.EventRemove();
-
-        }
 
         public override void EventInterval()
         {
@@ -1499,40 +1465,6 @@ namespace StardewDruid.Event.Scene
 
         }
 
-        public override void DialogueSetups(StardewDruid.Character.Character npc, int dialogueId)
-        {
-
-            string intro = conversations[dialogueId].intro;
-
-            List<Response> responseList = new();
-
-            foreach (string response in conversations[dialogueId].responses)
-            {
-
-                responseList.Add(new Response(eventId+"."+dialogueId.ToString(), response));
-
-            }
-
-            GameLocation.afterQuestionBehavior questionBehavior = new(DialogueResponses);
-
-            Game1.player.currentLocation.createQuestionDialogue(intro, responseList.ToArray(), questionBehavior, npc);
-
-            return;
-
-        }
-
-        public override void DialogueResponses(Farmer visitor, string dialogueId)
-        {
-
-            int dialogueIndex = Convert.ToInt32(dialogueId.Replace(eventId + ".", ""));
-
-            StardewValley.NPC npc = companions[conversations[dialogueIndex].companion];
-
-            activeCounter = Math.Max(conversations[dialogueIndex].questContext, activeCounter);
-
-            DialogueDraw(npc, conversations[dialogueIndex].answers.First());
-
-        }
 
     }
 
