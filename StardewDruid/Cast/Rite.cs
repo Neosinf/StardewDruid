@@ -1419,7 +1419,7 @@ namespace StardewDruid.Cast
 
             if (Game1.player.currentLocation is MineShaft || 
                 Game1.player.currentLocation is VolcanoDungeon ||
-                Game1.player.currentLocation is Vault ||
+                Game1.player.currentLocation is Lair ||
                 Game1.player.currentLocation is Tomb ||
                 (Game1.player.currentLocation is Spring && Mod.instance.activeEvent.Count > 0)
             )
@@ -1598,7 +1598,7 @@ namespace StardewDruid.Cast
 
                 }
 
-                //return;
+                return;
 
             }
 
@@ -2003,7 +2003,6 @@ namespace StardewDruid.Cast
             // Water effect
             // ---------------------------------------------
 
-            //if (progressLevel >= 11 && chargeLevel == 1)
             if((castLevel % 4) != 0)
             {
             

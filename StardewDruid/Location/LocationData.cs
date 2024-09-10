@@ -74,6 +74,8 @@ namespace StardewDruid.Location
 
         public float shade;
 
+        public Vector2 shadeOffset;
+
         public Microsoft.Xna.Framework.Color color;
 
         public enum shadows
@@ -117,7 +119,9 @@ namespace StardewDruid.Location
 
             flip = Flip;
 
-            shade = 0.4f;
+            shade = 0.3f;
+
+            shadeOffset = new Vector2(2, 8);
 
         }
 
@@ -147,10 +151,12 @@ namespace StardewDruid.Location
 
                 float opacity = 1f;
 
+                Microsoft.Xna.Framework.Rectangle useSource = new(source.X, source.Y, source.Width, source.Height);
+
                 if (special)
                 {
 
-                    source = LocationData.TerrainSpecials(tilesheet, index);
+                    useSource = LocationData.TerrainSpecials(tilesheet, index, useSource);
 
                 }
 
@@ -159,7 +165,16 @@ namespace StardewDruid.Location
                 if (fadeout < 1f)
                 {
 
-                    Microsoft.Xna.Framework.Rectangle bounds = new((int)position.X + 8, (int)position.Y, (source.Width * 4) - 16, (source.Height * 4) - 72);
+                    int backing = 0;
+
+                    if(baseTiles.Count > 0)
+                    {
+
+                        backing = 72;
+
+                    }
+
+                    Microsoft.Xna.Framework.Rectangle bounds = new((int)position.X + 8, (int)position.Y, (useSource.Width * 4) - 16, (useSource.Height * 4) - backing);
 
                     foreach (Farmer character in location.farmers)
                     {
@@ -196,74 +211,86 @@ namespace StardewDruid.Location
                 {
 
                     case shadows.offset:
-
-                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(2, 8), source, Microsoft.Xna.Framework.Color.Black * shade, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
+                        
+                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(1, 6), useSource, Microsoft.Xna.Framework.Color.Black * shade, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
 
                         break;
 
                     case shadows.dropset:
 
-                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(0, 12), source, Microsoft.Xna.Framework.Color.DarkBlue * 0.4f, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
+                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(0, 12), useSource, Microsoft.Xna.Framework.Color.DarkBlue * 0.4f, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
 
-                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(0, 428), source, Microsoft.Xna.Framework.Color.DarkBlue * shade, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
+                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(0, 428), useSource, Microsoft.Xna.Framework.Color.Black * 0.1f, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
 
                         break;
 
                     case shadows.smallleafy:
 
-                        b.Draw(Game1.mouseCursors, origin + new Vector2((source.Width * 2), (source.Height * 4) - 18), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White, 0f, new Vector2(20, 15), 3f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+                        b.Draw(Game1.mouseCursors, origin + new Vector2((useSource.Width * 2), (useSource.Height * 4) - 18), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White, 0f, new Vector2(20, 15), 3f, flip ? (SpriteEffects)1 : 0, 1E-06f);
 
                         break;
 
                     case shadows.leafy:
 
-                        b.Draw(Game1.mouseCursors, origin + new Vector2((source.Width * 2), (source.Height * 4) - 24), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White, 0f, new Vector2(20,15), 4f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+                        b.Draw(Game1.mouseCursors, origin + new Vector2((useSource.Width * 2), (useSource.Height * 4) - 24), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White, 0f, new Vector2(20,15), 4f, flip ? (SpriteEffects)1 : 0, 1E-06f);
 
                         break;
 
                     case shadows.moreleafy:
 
-                        b.Draw(Game1.mouseCursors, origin + new Vector2((source.Width * 2), (source.Height * 4) - 36), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 7f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+                        b.Draw(Game1.mouseCursors, origin + new Vector2((useSource.Width * 2), (useSource.Height * 4) - 36), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 7f, flip ? (SpriteEffects)1 : 0, 1E-06f);
 
                         break;
 
                     case shadows.bigleafy:
 
-                        b.Draw(Game1.mouseCursors, origin + new Vector2((source.Width * 2) + 32, (source.Height * 4) - 64), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White*0.7f, 0f, new Vector2(20, 15), 9f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+                        if (flip)
+                        {
+
+                            b.Draw(Game1.mouseCursors, origin + new Vector2((useSource.Width * 2) - 32, (useSource.Height * 4) - 64), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 9f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+
+                        }
+                        else
+                        {
+
+                            b.Draw(Game1.mouseCursors, origin + new Vector2((useSource.Width * 2) + 32, (useSource.Height * 4) - 64), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 9f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+
+                        }
 
                         break;
 
                     case shadows.massive:
 
-                        //b.Draw(Game1.mouseCursors, origin + new Vector2((source.Width * 2) - 256, (source.Height * 4) - 80), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 8f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+                        //b.Draw(Game1.mouseCursors, origin + new Vector2((useSource.Width * 2) - 256, (useSource.Height * 4) - 80), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 8f, flip ? (SpriteEffects)1 : 0, 1E-06f);
 
-                        //b.Draw(Game1.mouseCursors, origin + new Vector2((source.Width * 2), (source.Height * 4) + 48), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 8f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+                        //b.Draw(Game1.mouseCursors, origin + new Vector2((useSource.Width * 2), (useSource.Height * 4) + 48), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 8f, flip ? (SpriteEffects)1 : 0, 1E-06f);
 
-                        //b.Draw(Game1.mouseCursors, origin + new Vector2((source.Width * 2) + 256, (source.Height * 4) - 80), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 8f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+                        //b.Draw(Game1.mouseCursors, origin + new Vector2((useSource.Width * 2) + 256, (useSource.Height * 4) - 80), new Microsoft.Xna.Framework.Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 8f, flip ? (SpriteEffects)1 : 0, 1E-06f);
 
                         break;
+
                     case shadows.bush:
 
-                        b.Draw(Game1.mouseCursors_1_6, origin + new Vector2((source.Width * 2), (source.Height * 4) - 18), new Microsoft.Xna.Framework.Rectangle(469, 298, 42, 31), Color.White, 0f, new Vector2(20, 15), 3f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+                        b.Draw(Game1.mouseCursors_1_6, origin + new Vector2((useSource.Width * 2), (useSource.Height * 4) - 18), new Microsoft.Xna.Framework.Rectangle(469, 298, 42, 31), Color.White, 0f, new Vector2(20, 15), 3f, flip ? (SpriteEffects)1 : 0, 1E-06f);
 
                         break;
 
                     case shadows.reflection:
 
                         //shadow
-                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(2, 8), source, Microsoft.Xna.Framework.Color.Black * 0.4f, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
+                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(2, 8), useSource, Microsoft.Xna.Framework.Color.Black * 0.4f, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
 
-                        Microsoft.Xna.Framework.Rectangle reflectSource = new(source.X,source.Y+source.Height,source.Width,2);
+                        Microsoft.Xna.Framework.Rectangle reflectuseSource = new(useSource.X,useSource.Y+useSource.Height,useSource.Width,2);
 
-                        Vector2 reflectOrigin = new(origin.X + (source.Width * 2), origin.Y + (source.Height * 4)-32);
+                        Vector2 reflectOrigin = new(origin.X + (useSource.Width * 2), origin.Y + (useSource.Height * 4)-32);
 
-                        Vector2 reflectOut = new(source.Width/2,1);
+                        Vector2 reflectOut = new(useSource.Width/2,1);
 
                         float reflectFade = 0f;
 
                         for (int i = 0; i < 32; i++)
                         {
-                            reflectSource.Y -= 2;
+                            reflectuseSource.Y -= 2;
 
                             reflectOrigin.Y += 8;
 
@@ -286,13 +313,13 @@ namespace StardewDruid.Location
                             if (flip)
                             {
 
-                                b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], reflectOrigin, reflectSource, Microsoft.Xna.Framework.Color.White * reflectFade, (float)Math.PI, reflectOut, 4, 0, 1E-06f);
+                                b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], reflectOrigin, reflectuseSource, Microsoft.Xna.Framework.Color.White * reflectFade, (float)Math.PI, reflectOut, 4, 0, 1E-06f);
 
                             }
                             else
                             {
                                 
-                                b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], reflectOrigin, reflectSource, Microsoft.Xna.Framework.Color.White * reflectFade, 0, reflectOut, 4,(SpriteEffects)2, 1E-06f);
+                                b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], reflectOrigin, reflectuseSource, Microsoft.Xna.Framework.Color.White * reflectFade, 0, reflectOut, 4,(SpriteEffects)2, 1E-06f);
 
                             }
 
@@ -302,7 +329,7 @@ namespace StardewDruid.Location
                      
                 }
 
-                b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin, source, color * opacity, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer);
+                b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin, useSource, color * opacity, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer);
 
             }
 
@@ -312,8 +339,11 @@ namespace StardewDruid.Location
 
     public class LightField
     {
+
         public Vector2 origin;
+
         public int luminosity = 4;
+
         public Microsoft.Xna.Framework.Color colour = Microsoft.Xna.Framework.Color.LightGoldenrodYellow;
 
         public enum lightTypes
@@ -321,7 +351,8 @@ namespace StardewDruid.Location
             sconceLight,
             tableLight,
             lantern,
-            brazier
+            brazier,
+            brazierDark,
 
         }
 
@@ -371,35 +402,32 @@ namespace StardewDruid.Location
             if (Utility.isOnScreen(origin, 64 * luminosity))
             {
 
-
-                //Texture2D texture2D;
-
                 int type = 4;
 
                 switch (lightType)
                 {
-
+                    case lightTypes.brazierDark:
                     case lightTypes.brazier:
 
                         int brazierTime = (int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 1000) / 250;
 
-                        int frame = (brazierTime + lightFrame) % 4;
+                        int frame = (brazierTime + lightFrame) % 5;
 
                         Microsoft.Xna.Framework.Vector2 position = new(origin.X - (float)Game1.viewport.X, origin.Y - (float)Game1.viewport.Y);
 
+                        IconData.tilesheets useSheet = lightType == lightTypes.brazier ? IconData.tilesheets.tomb : IconData.tilesheets.lair;
+
                         b.Draw(
-                        Mod.instance.iconData.sheetTextures[IconData.tilesheets.tomb],
+                        Mod.instance.iconData.sheetTextures[useSheet],
                             position,
                             new Microsoft.Xna.Framework.Rectangle(32 + (frame * 32), 0, 32, 32),
-                            Microsoft.Xna.Framework.Color.White,
+                            Microsoft.Xna.Framework.Color.White * 0.75f,
                             0f,
-                            Vector2.Zero,
+                            new(16),
                             4,
                             0,
                             (origin.Y + 384) / 10000
                             );
-
-                        //texture2D = Game1.sconceLight;
 
                         position += new Vector2(64);
 
@@ -407,32 +435,11 @@ namespace StardewDruid.Location
 
                     case lightTypes.lantern:
 
-                        //texture2D = Game1.lantern;
-
                         type = 1;
 
                         break;
 
-                    default:
-
-                        //texture2D = Game1.sconceLight;
-
-
-                        break;
-
                 }
-
-                /*b.Draw(
-                    texture2D,
-                    position,
-                    texture2D.Bounds,
-                    Microsoft.Xna.Framework.Color.Purple * 0.9f,
-                    0f,
-                    new Vector2(texture2D.Bounds.Width / 2, texture2D.Bounds.Height / 2),
-                    0.25f * 6,
-                    SpriteEffects.None,
-                    origin.Y / 10000 + 0.9f + lightLayer
-                );*/
 
                 int id = (int)(origin.X*10000 + origin.Y);
 
@@ -442,8 +449,6 @@ namespace StardewDruid.Location
 
                     if (lightSource.Identifier == id)
                     {
-
-                        //Game1.currentLightSources.Remove(lightSource);
 
                         return;
 
@@ -565,7 +570,7 @@ namespace StardewDruid.Location
 
         public const string druid_chapel_name = "18465_Chapel";
 
-        public const string druid_vault_name = "18465_Treasure";
+        public const string druid_lair_name = "18465_Lair";
 
         public const string druid_tunnel_name = "18465_Tunnel";
 
@@ -641,9 +646,9 @@ namespace StardewDruid.Location
 
                     break;
 
-                case druid_vault_name:
+                case druid_lair_name:
 
-                    location = new Location.Vault(map);
+                    location = new Location.Lair(map);
 
                     break;
 
@@ -1309,6 +1314,40 @@ namespace StardewDruid.Location
 
                             return new(192, 0, 64, 128);
 
+                        // hangouts
+                        case 5:
+
+                            return new(256, 0, 32, 64);
+
+                        case 6:
+
+                            return new(288, 0, 16, 64);
+
+                        case 7:
+
+                            return new(304, 0, 48, 64);
+
+                        case 8:
+
+                            return new(352, 0, 32, 64);
+
+                        // lanterns
+                        case 9:
+
+                            return new(256, 64, 32, 64);
+
+                        case 10:
+
+                            return new(288, 64, 32, 64);
+
+                        case 11:
+
+                            return new(320, 64, 32, 64);
+
+                        case 12:
+
+                            return new(352, 64, 32, 64);
+
                     }
 
                     break;
@@ -1318,14 +1357,45 @@ namespace StardewDruid.Location
 
                     switch (key)
                     {
+
                         case 1:
 
-                            return new(0, 0, 32, 64);
+                            return new(0, 0, 32, 80);
+                        
+                        case 2:
+                            return new(96, 192, 32, 64);
+
+                        case 3:
+                            return new(128, 192, 32, 64);
+                        
+                        // section 1
+                        case 4:
+                            return new(0, 192, 48, 64);
+
+                        case 5:
+                            return new(48, 192, 48, 48);
+
 
                     }
 
                     break;
 
+                case IconData.tilesheets.lair:
+
+                    switch (key)
+                    {
+
+                        case 1:
+
+                            return new(0, 0, 32, 80);
+
+                        case 2:
+
+                            return new(32, 32, 80, 48);
+
+                    }
+
+                    break;
 
                 case IconData.tilesheets.engineum:
 
@@ -1374,55 +1444,44 @@ namespace StardewDruid.Location
                     {
                         case 1:
 
-                            return new(0, 0, 128, 80);
+                            return new(0, 0, 160, 128);
 
                         case 2:
 
-                            return new(0, 112, 48, 192);
+                            return new(0, 144, 48, 192);
 
                         case 3:
 
-                            return new(128, 0, 128, 96);
+                            return new(176, 0, 128, 96);
 
                         case 4:
 
-                            return new(256, 0, 128, 96);
+                            return new(304, 0, 128, 96);
 
                         case 5:
 
-                            return new(128, 96, 128, 96);
+                            return new(176, 96, 128, 96);
 
                         case 6:
 
-                            return new(128, 192, 128, 96);
+                            return new(176, 192, 128, 96);
 
                         case 7:
 
-                            return new(128, 288, 128, 96);
+                            return new(176, 288, 128, 96);
 
                         case 8:
                             
-                            return new(256, 288, 96, 96);
+                            return new(304, 288, 96, 96);
 
                         case 9:
 
-                            return new(48, 112, 48, 144);
+                            return new(48, 144, 48, 144);
 
                         case 10:
 
-                            return new(48, 256, 48, 96);
+                            return new(48, 288, 48, 96);
 
-                        case 11:
-
-                            return new(352, 96, 96, 96);
-
-                        case 12:
-
-                            return new(352, 192, 96, 96);
-
-                        case 13:
-
-                            return new(352, 288, 96, 96);
 
                     }
 
@@ -1444,6 +1503,17 @@ namespace StardewDruid.Location
 
             switch (sheet)
             {
+
+                case IconData.tilesheets.court:
+
+                    if(key < 5)
+                    {
+
+                        footPrint = 2;
+
+                    }
+
+                    break;
 
                 case IconData.tilesheets.grove:
 
@@ -1630,11 +1700,19 @@ namespace StardewDruid.Location
 
                     break;
 
+
+                case IconData.tilesheets.tomb:
+
+                    break;
+
                 case IconData.tilesheets.gate:
 
                     switch (key)
                     {
+                        case 1:
 
+                            footPrint = 3;
+                            break;
                         case 2:
                         case 9:
                         case 10:
@@ -1807,6 +1885,20 @@ namespace StardewDruid.Location
 
                     break;
 
+                case IconData.tilesheets.tomb:
+
+                    switch (key)
+                    {
+
+                        case 2:
+                        case 3:
+
+                            return ((position.Y + (source.Height * 4)) / 10000) + 0.0001f;
+                    
+                    }
+
+                    break;
+
                 case IconData.tilesheets.engineum:
 
                     switch (key)
@@ -1863,6 +1955,10 @@ namespace StardewDruid.Location
 
                     return true;
 
+                case IconData.tilesheets.court:
+
+                    return true;
+
                 case IconData.tilesheets.graveyard:
 
                     switch (key)
@@ -1914,7 +2010,7 @@ namespace StardewDruid.Location
 
         }
 
-        public static Rectangle TerrainSpecials(IconData.tilesheets sheet, int key)
+        public static Rectangle TerrainSpecials(IconData.tilesheets sheet, int key, Microsoft.Xna.Framework.Rectangle source)
         {
 
             switch (sheet)
@@ -2029,51 +2125,11 @@ namespace StardewDruid.Location
 
                 case IconData.tilesheets.grove:
 
-                    if(Game1.timeOfDay < 1900)
+                    if (Game1.timeOfDay > 1700)
                     {
 
-                        break;
+                        source.Y += 96;
 
-                    }
-
-                    switch (key)
-                    {
-
-                        case 1:
-
-                            return new(0, 96, 96, 48);
-
-                        case 2:
-
-                            return new(96, 96, 32, 64);
-
-                        case 3:
-
-                            return new(128, 96, 32, 64);
-
-                        case 4:
-
-                            return new(160, 96, 32, 48);
-
-                        case 5:
-
-                            return new(192, 96, 32, 64);
-
-                        case 6:
-
-                            return new(224, 96, 32, 64);
-
-                        case 7:
-
-                            return new(96, 160, 64, 32);
-
-                        case 8:
-
-                            return new(160, 144, 32, 32);
-
-                        case 9:
-
-                            return new(0, 144, 64, 32);
                     }
 
                     break;
@@ -2142,6 +2198,17 @@ namespace StardewDruid.Location
 
                     break;
 
+                case IconData.tilesheets.court:
+
+                    if (Game1.timeOfDay > 1700)
+                    {
+
+                        source.Y += 128;
+
+                    }
+
+                    break;
+
                 case IconData.tilesheets.engineum:
 
                     switch (key)
@@ -2168,7 +2235,7 @@ namespace StardewDruid.Location
 
             }
 
-            return TerrainRectangles(sheet, key);
+            return source;
 
         }
 
@@ -2264,7 +2331,6 @@ namespace StardewDruid.Location
                             return TerrainTile.shadows.reflection;
 
                     }
-
                     break;
 
                 case IconData.tilesheets.gate:

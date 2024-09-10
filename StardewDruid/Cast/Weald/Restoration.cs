@@ -117,7 +117,7 @@ namespace StardewDruid.Cast.Weald
                 
                 }
 
-                /*if (Mod.instance.rite.specialCasts[location.Name].Contains("restoration"))
+                if (Mod.instance.rite.specialCasts[location.Name].Contains("restoration"))
                 {
 
                     Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.restoreTomorrow));
@@ -126,7 +126,7 @@ namespace StardewDruid.Cast.Weald
 
                     return;
 
-                }*/
+                }
 
                 Mod.instance.rite.specialCasts[location.Name].Add("restoration");
 

@@ -292,11 +292,13 @@ namespace StardewDruid.Data
             graveyard,
             atoll,
             chapel,
+            lair,
             court,
             tomb,
             engineum,
             gate,
             magnolia,
+            pavement,
         }
 
         public Dictionary<tilesheets, Texture2D> sheetTextures = new();
@@ -621,6 +623,8 @@ namespace StardewDruid.Data
 
             sheetTextures[tilesheets.chapel] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Chapel.png"));
 
+            sheetTextures[tilesheets.lair] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Lair.png"));
+
             sheetTextures[tilesheets.court] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Court.png"));
 
             sheetTextures[tilesheets.tomb] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Tomb.png"));
@@ -630,6 +634,8 @@ namespace StardewDruid.Data
             sheetTextures[tilesheets.gate] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Gate.png"));
 
             sheetTextures[tilesheets.magnolia] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Magnolia.png"));
+
+            sheetTextures[tilesheets.pavement] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Pavement.png"));
 
             relicsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Relics.png"));
 

@@ -1412,7 +1412,7 @@ namespace StardewDruid.Journal
 
                 trigger = true,
 
-                triggerLocation = LocationData.druid_vault_name,
+                triggerLocation = LocationData.druid_lair_name,
 
                 triggerTime = 0,
 

@@ -595,8 +595,8 @@ namespace StardewDruid.Journal
                     if (Game1.player.currentLocation is Forest)
                     {
 
-                        if (Vector2.Distance(Game1.player.Position, new Vector2(79, 78) * 64) <= 1560)
-                        {
+                        //if (Vector2.Distance(Game1.player.Position, new Vector2(79, 78) * 64) <= 1560)
+                        //{
 
                             SpellHandle warpGlove = new(Mod.instance.locations[LocationData.druid_clearing_name], new Vector2(28, 8), new Vector2(0, 2)) { type = SpellHandle.spells.warp, };
 
@@ -604,7 +604,7 @@ namespace StardewDruid.Journal
 
                             return 1;
 
-                        }
+                        //}
                     }
 
                     break;
@@ -616,7 +616,7 @@ namespace StardewDruid.Journal
 
                         Event.Access.AccessHandle lanternAccess = new();
 
-                        lanternAccess.AccessSetup("UndergroundMine100", Location.LocationData.druid_vault_name, new(24, 13), new(27, 30));
+                        lanternAccess.AccessSetup("UndergroundMine100", Location.LocationData.druid_lair_name, new(24, 13), new(27, 30));
 
                         lanternAccess.AccessCheck(Game1.player.currentLocation);
 
@@ -627,7 +627,6 @@ namespace StardewDruid.Journal
                     break;
 
                 case IconData.relics.wayfinder_eye:
-
 
                     Vector2 destination;
 
@@ -644,9 +643,9 @@ namespace StardewDruid.Journal
                         if (Vector2.Distance(Game1.player.Position, new Vector2(98, 8) * 64) <= 640)
                         {
 
-                            SpellHandle warp = new(Mod.instance.locations[LocationData.druid_court_name], new Vector2((int)28, (int)29), new Vector2(0, 0)) { type = SpellHandle.spells.warp, };
+                            SpellHandle warpEye = new(Mod.instance.locations[LocationData.druid_court_name], new Vector2((int)28, (int)29), new Vector2(0, 0)) { type = SpellHandle.spells.warp, };
 
-                            Mod.instance.spellRegister.Add(warp);
+                            Mod.instance.spellRegister.Add(warpEye);
 
                             return 1;
 
@@ -897,7 +896,7 @@ namespace StardewDruid.Journal
 
                         access = new();
 
-                        access.AccessSetup("UndergroundMine100", Location.LocationData.druid_vault_name, new(24, 13), new(27, 30));
+                        access.AccessSetup("UndergroundMine100", Location.LocationData.druid_lair_name, new(24, 13), new(27, 30));
 
                         access.AccessCheck(Game1.player.currentLocation, true);
 
@@ -942,7 +941,7 @@ namespace StardewDruid.Journal
 
             }
 
-            if (Game1.player.currentLocation is Forest)
+            if (Game1.player.currentLocation is Forest || Game1.player.currentLocation.Name.Contains("Custom_Forest"))
             {
 
                 return IconData.relics.tactical_cell;

@@ -209,28 +209,31 @@ namespace StardewDruid.Cast.Effect
 
                 }
 
-                int objectQuality = 0;
-
                 int experienceGain = 4;
 
-                if (Game1.player.FishingLevel >= 10)
+                StardewValley.Object candidate = new(fish, 1);
+
+                if(candidate.Category == StardewValley.Object.FishCategory)
                 {
 
-                    objectQuality = 2;
+                    if (Game1.player.FishingLevel >= 9)
+                    {
 
-                    experienceGain = 8;
+                        candidate.Quality = 4;
+
+                        experienceGain = 12;
+
+                    }
+                    else if (Mod.instance.randomIndex.Next(11 - Game1.player.FishingLevel) <= 0)
+                    {
+
+                        candidate.Quality = 2;
+
+                        experienceGain = 8;
+
+                    }
 
                 }
-                else if (Mod.instance.randomIndex.Next(11 - Game1.player.FishingLevel) == 0)
-                {
-
-                    objectQuality = 2;
-
-                    experienceGain = 8;
-
-                }
-
-                StardewValley.Object candidate = new(fish, 1, quality: objectQuality);
 
                 Vector2 offset = tile * 64 + new Vector2(-64 + Mod.instance.randomIndex.Next(10) * 16, -64 + Mod.instance.randomIndex.Next(10) * 16);
 

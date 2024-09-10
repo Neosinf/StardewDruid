@@ -12,19 +12,21 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Character;
 using StardewDruid.Cast;
-
+using StardewDruid.Data;
 
 namespace StardewDruid.Location
 {
-    public class Vault : DruidLocation
+    public class Lair : DruidLocation
     {
 
 
         Texture2D dungeonTexture;
 
-        public Vault() { }
+        public Texture2D waterfallTexture;
 
-        public Vault(string Name)
+        public Lair() { }
+
+        public Lair(string Name)
             : base(Name)
         {
 
@@ -33,14 +35,14 @@ namespace StardewDruid.Location
         public override void drawWaterTile(SpriteBatch b, int x, int y)
         {
 
-            bool num = y == map.Layers[0].LayerHeight - 1 || !waterTiles[x, y + 1];
-            bool flag = y == 0 || !waterTiles[x, y - 1];
-            int num2 = 0;
-            int num3 = 320;
-            b.Draw(dungeonTexture, Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64, y * 64 - (int)((!flag) ? waterPosition : 0f))), new Microsoft.Xna.Framework.Rectangle(num2 + waterAnimationIndex * 16, num3 + (((x + y) % 2 != 0) ? ((!waterTileFlip) ? 32 : 0) : (waterTileFlip ? 32 : 0)) + (flag ? ((int)waterPosition / 4) : 0), 16, 16 + (flag ? ((int)(0f - waterPosition) / 4) : 0)), waterColor.Value, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.56f);
-            if (num)
+            drawWaterTile(b, x, y, (Color.Red * 0.8f));
+        }
+
+        public override void checkForMusic(GameTime time)
+        {
+            if (Game1.getMusicTrackName() == "none" || Game1.getMusicTrackName() == "rain" || Game1.isMusicContextActiveButNotPlaying() || (Game1.getMusicTrackName().EndsWith("_Ambient") && Game1.getMusicTrackName() != "Lava_Ambient"))
             {
-                b.Draw(dungeonTexture, Game1.GlobalToLocal(Game1.viewport, new Vector2(x * 64, (y + 1) * 64 - (int)waterPosition)), new Microsoft.Xna.Framework.Rectangle(num2 + waterAnimationIndex * 16, num3 + (((x + (y + 1)) % 2 != 0) ? ((!waterTileFlip) ? 32 : 0) : (waterTileFlip ? 32 : 0)), 16, 16 - (int)(16f - waterPosition / 4f) - 1), waterColor.Value, 0f, Vector2.Zero, 4f, SpriteEffects.None, 0.56f);
+                Game1.changeMusicTrack("Lava_Ambient");
             }
         }
 
@@ -75,11 +77,15 @@ namespace StardewDruid.Location
 
             newMap.AddLayer(alwaysfront);
 
-            TileSheet outdoor = new(LocationData.druid_vault_name + "_dungeon", newMap, "Maps\\Mines\\volcano_dungeon", new(16, 36), tileSize);
+            TileSheet dungeon = new(LocationData.druid_lair_name + "_dungeon", newMap, "Maps\\Mines\\volcano_dungeon", new(16, 36), tileSize);
 
-            newMap.AddTileSheet(outdoor); //map.TileSheets[1].ImageSource
+            newMap.AddTileSheet(dungeon); //map.TileSheets[1].ImageSource
 
             waterTiles = new(56, 34);
+
+            IsOutdoors = false;
+
+            ignoreOutdoorLighting.Set(true);
 
             Dictionary<int, List<List<int>>> codes = new()
             {
@@ -125,7 +131,7 @@ namespace StardewDruid.Location
                 foreach (List<int> array in code.Value)
                 {
 
-                    back.Tiles[array[0], code.Key] = new StaticTile(back, outdoor, BlendMode.Alpha, array[1]);
+                    back.Tiles[array[0], code.Key] = new StaticTile(back, dungeon, BlendMode.Alpha, array[1]);
 
                     if (array[1] == 4)
                     {
@@ -191,7 +197,7 @@ namespace StardewDruid.Location
                 foreach (List<int> array in code.Value)
                 {
 
-                    buildings.Tiles[array[0], code.Key] = new StaticTile(buildings, outdoor, BlendMode.Alpha, array[1]);
+                    buildings.Tiles[array[0], code.Key] = new StaticTile(buildings, dungeon, BlendMode.Alpha, array[1]);
 
                 }
 
@@ -232,7 +238,7 @@ namespace StardewDruid.Location
                 foreach (List<int> array in code.Value)
                 {
 
-                    front.Tiles[array[0], code.Key] = new StaticTile(front, outdoor, BlendMode.Alpha, array[1]);
+                    front.Tiles[array[0], code.Key] = new StaticTile(front, dungeon, BlendMode.Alpha, array[1]);
 
                 }
 
@@ -284,25 +290,23 @@ namespace StardewDruid.Location
                 foreach (List<int> array in code.Value)
                 {
 
-                    alwaysfront.Tiles[array[0], code.Key] = new StaticTile(alwaysfront, outdoor, BlendMode.Alpha, array[1]);
+                    alwaysfront.Tiles[array[0], code.Key] = new StaticTile(alwaysfront, dungeon, BlendMode.Alpha, array[1]);
 
                 }
 
             }
-            
+
+
             codes = new()
             {
 
-                [9] = new() { new() { 24, 1 }, new() { 29, 1 }, new() { 34, 1 }, },
-                [10] = new() { new() { 20, 1 }, },
-                [11] = new() { new() { 15, 1 }, },
-                [12] = new() { new() { 37, 1 }, },
-                [15] = new() { new() { 40, 1 }, },
-                [17] = new() { new() { 13, 1 }, },
-                [22] = new() { new() { 12, 1 }, },
-                [25] = new() { new() { 42, 1 }, },
-                [26] = new() { new() { 15, 1 }, new() { 37, 1 }, },
-                [28] = new() { new() { 21, 1 }, },
+                [6] = new() { new() { 21, 2 }, new() { 33, 2 }, },
+
+                [10] = new() { new() { 21, 1 }, new() { 35, 1 }, },
+
+                [13] = new() { new() { 40, 2 }, },
+
+                [22] = new() { new() { 21, 1 }, new() { 35, 1 }, },
 
             };
 
@@ -312,12 +316,96 @@ namespace StardewDruid.Location
                 foreach (List<int> array in code.Value)
                 {
 
+                    TerrainTile tTile = new(IconData.tilesheets.lair, array[1], new Vector2(array[0], code.Key) * 64);
 
-                    LightField light = new(new Vector2(array[0], code.Key) * 64, 6, Microsoft.Xna.Framework.Color.Coral);
+                    foreach (Vector2 bottom in tTile.baseTiles)
+                    {
 
-                    light.lightFrame = Mod.instance.randomIndex.Next(4);
+                        if (buildings.Tiles[(int)bottom.X, (int)bottom.Y] == null)
+                        {
 
-                    lightFields.Add(light);
+                            buildings.Tiles[(int)bottom.X, (int)bottom.Y] = new StaticTile(buildings, dungeon, BlendMode.Alpha, back.Tiles[(int)bottom.X, (int)bottom.Y].TileIndex);
+
+                        }
+
+                    }
+
+                    tTile.shade = 0.2f;
+
+                    tTile.shadeOffset = new Vector2(0, 6);
+
+                    if (array[0] > 26)
+                    {
+
+                        tTile.flip = true;
+
+                    }
+
+                    tTile.layer += 0.0001f;
+
+                    terrainTiles.Add(tTile);
+
+                }
+
+            }
+
+            lightFields = new();
+
+            codes = new()
+            {
+
+                [10] = new() { new() { 22, 2 }, new() { 36, 2 }, },
+
+                [11] = new() { new() { 15, 1 }, },
+
+                [17] = new() { new() { 13, 1 }, },
+
+                [22] = new() { new() { 12, 1 }, new() { 22, 2 }, new() { 36, 2 }, },
+
+                [26] = new() { new() { 15, 1 }, },
+
+            };
+
+            foreach (KeyValuePair<int, List<List<int>>> code in codes)
+            {
+
+                foreach (List<int> array in code.Value)
+                {
+                    
+                    LightField light;
+                    
+                    switch (array[1])
+                    {
+
+                        case 1:
+
+                            light = new(new Vector2(array[0], code.Key) * 64, 6, Microsoft.Xna.Framework.Color.Coral);
+
+                            light.lightFrame = Mod.instance.randomIndex.Next(4);
+
+                            lightFields.Add(light);
+
+                            break;
+
+                        case 2:
+
+                            light = new(new Vector2(array[0], code.Key) * 64);
+
+                            light.lightType = LightField.lightTypes.brazierDark;
+
+                            light.lightFrame = Mod.instance.randomIndex.Next(5);
+
+                            light.luminosity = 3;
+
+                            light.lightLayer = 1;
+
+                            lightFields.Add(light);
+
+                            break;
+
+                    }
+
+                    
 
                 }
 
@@ -325,7 +413,7 @@ namespace StardewDruid.Location
 
             this.map = newMap;
 
-            dungeonTexture = Game1.temporaryContent.Load<Texture2D>(outdoor.ImageSource);
+            dungeonTexture = Game1.temporaryContent.Load<Texture2D>(dungeon.ImageSource);
 
         }
 

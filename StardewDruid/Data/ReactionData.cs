@@ -86,6 +86,9 @@ namespace StardewDruid.Data
 
             Mod.instance.AddWitness(reaction, entity.Name);
 
+
+            // Custom Reactions
+
             List<string> stringList = VillagerData.CustomReaction(reaction, entity);
 
             if (stringList.Count > 0)
@@ -1045,37 +1048,162 @@ namespace StardewDruid.Data
                     {
                         case 0:
 
-                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.1"));
+                            switch (Mod.instance.randomIndex.Next(3))
+                            {
+                                default:
+                                case 0:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.1"));
+
+                                    break;
+
+                                case 1:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.332.1"));
+
+                                    break;
+
+                                case 2:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.332.7"));
+
+                                    break;
+
+                            }
 
                             break;
 
                         case 1:
 
-                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.2") + shots[portraits.happy]);
+                            switch (Mod.instance.randomIndex.Next(3))
+                            {
+                                default:
+                                case 0:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.2") + shots[portraits.happy]);
+
+                                    break;
+                                case 1:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.332.2") + shots[portraits.happy]);
+
+                                    break;
+
+                                case 2:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.332.8") + shots[portraits.happy]);
+
+                                    break;
+
+                            }
 
                             break;
 
                         case 2:
+                            switch (Mod.instance.randomIndex.Next(3))
+                            {
+                                default:
+                                case 0:
 
-                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.935"));
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.935"));
+
+                                    break;
+
+                                case 1:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.332.3"));
+
+                                    break;
+
+                                case 2:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.332.9"));
+
+                                    break;
+
+                            }
 
                             break;
 
                         case 3:
 
-                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.3"));
+                            switch (Mod.instance.randomIndex.Next(3))
+                            {
+                                default:
+                                case 0:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.3"));
+
+                                    break;
+
+                                case 1:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.332.4"));
+
+                                    break;
+
+                                case 2:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.332.10"));
+
+                                    break;
+
+                            }
 
                             break;
 
                         case 4:
 
-                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.4"));
+                            switch (Mod.instance.randomIndex.Next(3))
+                            {
+                                default:
+                                case 0:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.4"));
+
+                                    break;
+
+                                case 1:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.332.5"));
+
+                                    break;
+
+                                case 2:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.332.11") + Mod.instance.Helper.Translation.Get("ReactionData.332.111"));
+
+                                    break;
+
+                            }
 
                             break;
 
                         default:
 
-                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.5"));
+                            switch (Mod.instance.randomIndex.Next(3))
+                            {
+                                default:
+                                case 0:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.313.5"));
+
+                                    break;
+
+                                case 1:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.332.6") + Mod.instance.Helper.Translation.Get("ReactionData.332.61"));
+
+                                    break;
+
+                                case 2:
+
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.332.12"));
+
+                                    break;
+
+
+                            }
 
                             break;
 
@@ -1230,6 +1358,27 @@ namespace StardewDruid.Data
 
             }
 
+            // Limit Reactions
+
+            if (Mod.instance.reactionLimits.ContainsKey(reaction))
+            {
+
+                if (Mod.instance.reactionLimits[reaction] > 4)
+                {
+
+                    return;
+
+                }
+
+            }
+            else
+            {
+
+                Mod.instance.reactionLimits[reaction] = 0;
+
+            }
+
+            Mod.instance.reactionLimits[reaction] += 1;
 
             for (int index = stringList.Count - 1; index >= 0; --index)
             {

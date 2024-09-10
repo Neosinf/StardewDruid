@@ -456,7 +456,7 @@ namespace StardewDruid.Data
                 oreLevel = 1;
 
             }
-            else if(location is Vault)
+            else if(location is Lair)
             {
 
                 oreLevel = 3;
@@ -1601,7 +1601,7 @@ namespace StardewDruid.Data
         public static void CrateTreasure(GameLocation location, Microsoft.Xna.Framework.Vector2 origin, Microsoft.Xna.Framework.Vector2 vector)
         {
 
-            if(location is Vault)
+            if(location is Lair)
             {
 
                 switch (vector.Y)
@@ -2000,7 +2000,7 @@ namespace StardewDruid.Data
             else if (
                 location is MineShaft ||
                 location is VolcanoDungeon ||
-                location is Vault ||
+                location is Lair ||
                 location is Court ||
                 location is Engineum
                 )

@@ -83,6 +83,10 @@ namespace StardewDruid.Character
             monument_priesthood,
             monument_morticians,
             monument_chaos,
+
+            engraving_left,
+            engraving_right,
+
             shrine_engine,
             shrine_forge,
 
@@ -232,7 +236,7 @@ namespace StardewDruid.Character
             {
                 case locations.court:
 
-                    return new Vector2(17, 17) * 64;
+                    return new Vector2(18, 18) * 64;
 
                 case locations.archaeum:
 
@@ -245,19 +249,19 @@ namespace StardewDruid.Character
 
                         case characters.Blackfeather:
 
-                            return new Vector2(41, 17) * 64;
+                            return new Vector2(43, 17) * 64;
 
                         case characters.Shadowtin:
 
-                            return new Vector2(41, 15) * 64;
+                            return new Vector2(43, 15) * 64;
 
                         case characters.Jester:
 
-                            return new Vector2(39, 17) * 64;
+                            return new Vector2(40, 17) * 64;
 
                         default:
 
-                            return new Vector2(39, 15) * 64;
+                            return new Vector2(40, 15) * 64;
 
 
                     }
@@ -295,7 +299,7 @@ namespace StardewDruid.Character
 
                 case locations.gate:
 
-                    return new Vector2(26, 15) * 64;
+                    return new Vector2(27, 18) * 64;
 
                 case locations.farm:
 
@@ -953,6 +957,15 @@ namespace StardewDruid.Character
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.329.30");
 
+                // engravings
+
+                case characters.engraving_left:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.331.1") + Mod.instance.Helper.Translation.Get("CharacterHandle.331.2");
+
+                case characters.engraving_right:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.331.3");
 
             }
 

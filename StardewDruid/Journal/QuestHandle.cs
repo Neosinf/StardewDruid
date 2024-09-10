@@ -1203,7 +1203,7 @@ namespace StardewDruid.Journal
 
                 case challengeDragon:
 
-                    LocationData.DruidLocations(LocationData.druid_vault_name);
+                    LocationData.DruidLocations(LocationData.druid_lair_name);
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_water.ToString());
 
@@ -1762,7 +1762,7 @@ namespace StardewDruid.Journal
 
                         Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.runestones_cat.ToString());
 
-                        LocationData.DruidLocations(LocationData.druid_vault_name);
+                        LocationData.DruidLocations(LocationData.druid_lair_name);
 
                     }
 
@@ -2531,7 +2531,7 @@ namespace StardewDruid.Journal
 
                     }
 
-                    if(Game1.player.currentLocation is Vault vault)
+                    if(Game1.player.currentLocation is Lair vault)
                     {
                         
                         vault.AddCrateTile(24, 10, 1);

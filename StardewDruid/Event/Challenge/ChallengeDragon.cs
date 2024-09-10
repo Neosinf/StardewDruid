@@ -101,7 +101,7 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            if (location.Name == LocationData.druid_vault_name)
+            if (location.Name == LocationData.druid_lair_name)
             {
 
                 Game1.player.warpFarmer(warpExit, 2);

@@ -76,6 +76,8 @@ namespace StardewDruid
 
         public Dictionary<string, List<ReactionData.reactions>> reactions = new();
 
+        public Dictionary<ReactionData.reactions, int> reactionLimits = new();
+
         public Dictionary<CharacterHandle.characters,CharacterMover> movers = new();
 
         public double messageBuffer;
@@ -317,6 +319,8 @@ namespace StardewDruid
 
             reactions = new();
 
+            reactionLimits = new();
+
             displayRegister = new();
 
             locations = new();
@@ -506,6 +510,8 @@ namespace StardewDruid
             dialogue.Clear();
 
             reactions.Clear();
+
+            reactionLimits.Clear();
 
             Game1.currentSpeaker = null;
 

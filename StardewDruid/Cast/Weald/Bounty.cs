@@ -14,6 +14,7 @@ using static StardewValley.Minigames.TargetGame;
 using StardewValley.Locations;
 using StardewDruid.Location;
 using System.ComponentModel.Design;
+using StardewDruid.Character;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -351,7 +352,31 @@ namespace StardewDruid.Cast.Weald
 
                     };
 
-                    creature.AddCreature(location, flyers[Mod.instance.randomIndex.Next(flyers.Count)], treeTop, target, 3f);
+
+                    CharacterHandle.characters treeCharacter = flyers[Mod.instance.randomIndex.Next(flyers.Count)];
+
+                    if(treeCharacter is CharacterHandle.characters.Shadowbat)
+                    {
+
+                        dropRelic = Mod.instance.relicsData.RelicTacticalLocations();
+
+                        if (dropRelic != IconData.relics.none)
+                        {
+
+                            if (!Journal.RelicData.HasRelic(dropRelic))
+                            {
+
+                                throwRelic = new(Game1.player, treeTop, dropRelic);
+
+                                throwRelic.register();
+
+                            }
+
+                        }
+
+                    }
+
+                    creature.AddCreature(location, treeCharacter, treeTop, target, 3f);
 
                     break;
 

@@ -1274,7 +1274,7 @@
     "CharacterHandle.551": "Whispering on the wind: (laughs) You already possess conduits for the energies represented in the runes. Well, I can't remember what the cat means. ",
     "CharacterHandle.552": "Sighs of the Earth: The calico shamans served the ancient ones, the dragons. Their wild shape-shifting has been forgotten to time and ruin. The runestones are useless to you now.",
     "CharacterHandle.559": "Oh. Well the craftsmanship is rather neat. I think I'll use them to redecorate the craftroom at the community center.",
-    "CharacterHandle.561": "Rustling in the woodland: When sourcing materials for your redecoration project, consider nearby sources and support your local woodlands! We have the best timber products on the market. (New quest recieved)",
+    "CharacterHandle.561": "Rustling in the woodland: When sourcing materials for your redecoration project, consider nearby sources and support your local woodlands! We have the best timber products on the market. (Optional community center completion quest received)",
     "CharacterHandle.576": "Rustling in the woodland: It is one of the runestones gifted to your forebearers, those tasked to govern in the Kings' stead. ",
     "CharacterHandle.577": "The other stones belong to creatures that do not care for the old ways. To gather all four would be a boon to the Weald.",
 
@@ -1286,7 +1286,7 @@
     "CharacterHandle.598": "You see, it points towards the broken forgehall of the drowned city, deep within the abyssal trench, where mortals cannot tread. It is useless to you.",
     "CharacterHandle.604": "The parts appear to be quite sea-resistant. Perhaps I can use them to repair the community center fishtank.",
     "CharacterHandle.606": "Fish... Tank? We weren't aware the little creatures had armed themselves with war machines. ",
-    "CharacterHandle.607": "We will warn the guardians of the depths to prepare for a fish uprising! But do as you will with the Avalant. (New Quest Received)",
+    "CharacterHandle.607": "We will warn the guardians of the depths to prepare for a fish uprising! But do as you will with the Avalant. (Optional community center completion quest received)",
     "CharacterHandle.621": "Murmurs of the Waves: The Avalant, to guide the blessed pilgrim through the judgements of the mists. ",
     "CharacterHandle.622": "It was broken, but can be restored. The finned faithful carry the pieces from the sea to the sacred spring. ",
     "CharacterHandle.623": "Continue to use the power of the lady to fish the waters, and you might collect all the scattered pieces.",
@@ -1297,7 +1297,7 @@
     // The Revenant in regards to the treasure hunt texts
     "CharacterHandle.650": "The Revenant: ",
     "CharacterHandle.652": "I guess there's no great mystery to glean from these texts, but at least I can add the recipes to the digests in the community pantry.",
-    "CharacterHandle.654": "Even the one for Fish Stew? Some of the ideas of my day are best left in the past. (New Quest Received)",
+    "CharacterHandle.654": "Even the one for Fish Stew? Some of the ideas of my day are best left in the past. (Optional community center completion quest received)",
     "CharacterHandle.664": "I think the Lady Beyond must have stashed these texts, farmer. The letters were penned by the prince of the sunken city, heir to the Isle of Mists, and the one who seduced our fair Celestial. ",
     "CharacterHandle.665": "I have nothing to say about the tome. The green book might have been too personal to leave intact, as it's been scrubbed down to just the boring parts. Recipes and potting tips. ",
     "CharacterHandle.671": "All the annals are accounted for, but if you find any manuscripts that weren't profaned by those crazies, bring them to me, might be good for a memory or a laugh.",
@@ -1311,7 +1311,7 @@
     "CharacterHandle.700": "I think these boxes would be perfect to put the memories of the community in.",
     "CharacterHandle.702": "You make me smile, farmer. There's so much goodwill the Fates have for the people of this valley, ",
     "CharacterHandle.703": "though we are limited in how we can share it, and the desperate, cruel legacy of Thanatoshi hasn't helped. ",
-    "CharacterHandle.704": "I count you as a friend to the Fae and blessed by Yoba. (New quest recieved)",
+    "CharacterHandle.704": "I count you as a friend to the Fae and blessed by Yoba. (Optional community center completion quest received)",
     "CharacterHandle.715": "Nonsense, farmer, they're full. Full of imperceptible wonders. Good will, happy memories and lessons learned by the Fates that experienced life on this realm.",
     "CharacterHandle.721": "Very valuable, farmer, for the Fate that possessed it. These trinkets are keepsakes of home, to comfort those of us on assignment to the realms. ",
     "CharacterHandle.722": "This belonged to a kindred spirit of Thanatoshi's. Masayoshi, the Justiciar of the Fates at a moment in the history of this world. ",
@@ -1348,12 +1348,12 @@
     "CharacterHandle.310.4": "Shrine Attendant: Thank you. Cheep. We tore at the shadow raiders. Cheep. Tore off their clothes. Cheep. Tore until we could no longer fly. Or sing. ",
     "CharacterHandle.310.5": "The articles of defilement must be purified. We need a righteous flame. A big flame. Too big for shrine. Cheep.",
     "CharacterHandle.310.6": "I'll look for a furnace strong enough to incinerate the items. Perhaps the disused boiler in the community center.",
-    "CharacterHandle.310.7": "Shrine Attendant: The Lady will learn of your devotion. Good two-legged. Good pilgrim. Cheep Cheep. Cheep.",
+    "CharacterHandle.310.7": "Shrine Attendant: The Lady will learn of your devotion. Good two-legged. Good pilgrim. Cheep Cheep. Cheep. (Optional community center completion quest received)",
     // Hint on relic locations
     "CharacterHandle.310.8": "Shrine Attendant: Cheep. The device you hold makes a scratchy-noise. My brethren cannot abide scratchy scratchy. They flew. They fled. To the lowland forests. Cheep. ",
     "CharacterHandle.310.9": "The ones that stayed. Feral. Feral bats rally under the spiteful rhetoric of the Mitred One. ",
     "CharacterHandle.310.10": "You defeated him. Now the great church of bats is defeated. Is diminished. Cheep. I continue to serve the Lady. I light the lamps. I sleep. I listen for her voice. ",
-    "CharacterHandle.310.11": "She asks for a kind pilgrim. A good pilgrim to seek out the scattered faithful. Entreat them to return. Cheep.",
+    "CharacterHandle.310.11": "She asks for a kind pilgrim. A good pilgrim to seek out the scattered faithful. Entreat them to return. Cheep. (Cast Gentle Touch in woodland locations to find wayward bats and collect relics for this quest)",
 
     // Restoration Tokens
     // Elder Memory
@@ -1361,10 +1361,10 @@
     "CharacterHandle.329.13": "(relics) I have committed myself to honouring the elderfolk by assuming the title of caretaker of the sacred spaces. What other locations require my attention?",
     // Hint of restoration of sacred spaces
     "CharacterHandle.329.14": "Keeper of Memories: The sacred spaces respond to the gentle touch of the King's power. ",
-    "CharacterHandle.329.15": "I know of three such locations, these hallowed grounds, the Shrine of the Sacred Spring, and a Nursery for forest spirits hidden within the eastern woodlands. Return to me when you have tended to all three.",
+    "CharacterHandle.329.15": "I know of three such locations, these hallowed grounds, the Shrine of the Sacred Spring, and a Nursery for forest spirits hidden within the eastern woodlands. Return to me when you have tended to all three. (Channel Rite of the Weald in these sacred spaces to restore them)",
     "CharacterHandle.329.16": "Keeper of Memories: Each token you've collected is a symbol of reverence for the care you've shown to the sacred spaces. They are also vestiges of a forgotten age, and should be kept in safety. ",
     "CharacterHandle.329.17": "I need to dispose of a hinge-shot vault in the old community center. Perhaps I can move it to the farmstead and fix it up to hold all my cool Druid stuff.",
-    "CharacterHandle.329.18": "Keeper of Memories: Keeping a wealth of Elderfolk culture and memory in a reinforced repository. What a new and fascinating idea.",
+    "CharacterHandle.329.18": "Keeper of Memories: Keeping a wealth of Elderfolk culture and memory in a reinforced repository. What a new and fascinating idea. (Optional community center completion quest received)",
 
     // Memory Keeper restoration
     "CharacterHandle.329.19": "(restoration) The Circle of Druids was tasked with custodianship of the Old Graves. What work needs to be done?",
@@ -1524,6 +1524,14 @@
     "CharacterHandle.329.29": "For the Guardians of the Star, the bane of Dragons.",
     // Dragon
     "CharacterHandle.329.30": "For the Allies of the Dragons. Be at peace now.",
+
+    // Engravings
+    // Left
+    "CharacterHandle.331.1": "The engraving describes the defeat of the Dragon Tyrant King during the cataclysm of meteorite showers that turned his domain in an arid basin. ",
+    "CharacterHandle.331.2": "The King's bones were scorched but not consumed by the starfire, and so it is important they remain buried, lest they be claimed by those who would tempt Chaos.",
+    // Right
+    "CharacterHandle.331.3": "A list of names, all practitioners of the shamanic tradition of Calico, and the favoured servants of Tyrannus Jin. Something has slashed at the symbols to isolate a pattern that reads 'Mysterus Prime'.",
+
 
     // ===========================================================================
     // VILLAGER REACTIONS
@@ -1685,12 +1693,28 @@
     "ReactionData.916": "Until the crows come home for the golden bones...",
 
     // Reactions to Jester
-    "ReactionData.935": "I feel like I just brushed up against a massive cat.",
-    "ReactionData.313.1": "How were you able to dress that Caracal in such an interesting costume. The felt fool's ears looked so real.",
+    "ReactionData.935": "I feel like I just rubbed up against a massive cat.",
+    "ReactionData.313.1": "How were you able to dress that Caracal in such an interesting costume. The felt fool's ears look so real.",
     "ReactionData.313.2": "That kitty is MASSIVE. It must be from the north pole.",
-    "ReactionData.313.3": "I'm not really superstitious but I feel like having fish for dinner tonight would be perilous, while a taco would bring me great fortune.",
-    "ReactionData.313.4": "This friendly creature appears to be be blessed by the fae, a faithful servant of yoba sent to make us repent.",
-    "ReactionData.313.5": "There is much the young envoys of the Fates will need to learn about this world. Such as, what is acceptable to rub. And lick. In the presence of humans.",
+    "ReactionData.313.3": "I asked your feline companion if it was enjoying the weather, and I could it nodded in agreement. It must be very clever or very well trained.",
+    "ReactionData.313.4": "It's a very likeable form, your fae companion has taken. A friendly cat is a comforting presence, like any servant of the High Priestess of Yoba should be.",
+    "ReactionData.313.5": "It's known that when aspects of the Fates enter our realm they adopt a form that reflects their identity and purpose. I wonder what a clown cat guise implies for your friends intentions here.'",
+    // 2
+    "ReactionData.332.1": "I felt a cold, moist sensation on my hand, like a cat lick, and in that moment, I felt a conflict between my trust in concrete reality and my desire for a universe of magical possibilities.",
+    "ReactionData.332.2": "I didn't know we could get licenses for oversized cats here. I wonder if I can apply to own a Gotoro turtle. They're as big as a donkey.",
+    "ReactionData.332.3": "Your Kitty gave me a grumpy look. I think it wants me to travel on the left side of the bridge today. I don't know why I know that, but its seems like the right thing to do for some reason.",
+    "ReactionData.332.4": "I'm not really superstitious but I feel like Lady Fortune just spoke to me. I think she said having fish for dinner tonight would be perilous, while eating a taco instead would bring me great fortune.",
+    "ReactionData.332.5": "This friendly creature appears to be be blessed by the fae, a faithful servant of yoba sent to make us repent.",
+    "ReactionData.332.6": "Four heroes of the Fae came to our world to solve mankind's problems. They each tried to help in their own way, and each failed on their own. The artisan gave us tools, the justice, truths, the reaper, orders, and the servant of Chaos, magic.",
+    "ReactionData.332.61": "The heroes are gone, but what their gifts remain, and one day, we will use them together as intended, and the way forward will reveal itself.",
+    // 3
+    "ReactionData.332.7": "I've just noticed little fibres all over my side here. They're sparkly too, and, is this fairy dust? Maybe I brushed up against a bush or something.",
+    "ReactionData.332.8": "(To Jester) Good cat. I was scared for a moment that you would topple me over, but you have just the right amount of gentleness in you.",
+    "ReactionData.332.9": "Wow {{farmer}}, your kitty is keen for the pats. It zipped here so fast!",
+    "ReactionData.332.10": "Your cat doesn't seem very interested in chasing the birds and critters around here. It must get more than enough excitement following you around.",
+    "ReactionData.332.11": "My family has an old belief in a strange happening in this part of the valley. ",
+    "ReactionData.332.111": "Somewhere nearby is a cavern sacred to the fae, and once a lifetime, on an odd moon and strange night, they will host a party for the otherfolk. A fae menagerie. What a sight that would be. ",
+    "ReactionData.332.12": "There is much the young envoys of the Fates will need to learn about this world. Such as, what is acceptable to rub. And lick. In the presence of humans.",
 
     // Reactions to corvids
     "ReactionData.313.6": "It's strange to see different corvid species get along in a small mob. They must all be oddballs and misfits amongst their respective flocks.",
@@ -2065,27 +2089,27 @@
     "RelicData.309.5": "When held to your ear you can hear a 'Wooooo ooooo oooo oooo' sound.",
     "RelicData.309.6": "You received the Creepy Teapot! This provides access to the Sacred Spring on level 20 of the mines.",
     "RelicData.309.7": "Click when near the water on level 20 of the mines to open the passage way to the Sacred Spring. Rightclick to close.",
-    "RelicData.309.8": "(Creepy Teapot) Wooooooo ooooooo oooooo ooooo...",
+    "RelicData.309.8": "(Creepy Teapot) Wooooooo oooooo ooooo oooo..",
 
     // Relics 310
     "RelicData.310.1": "Tactical Discombobulator",
-    "RelicData.310.2": "Used to confuse and disorientate overly-protective bats",
+    "RelicData.310.2": "Used by a marauder to confuse and disorientate the religious bats that protect the sacred spring.",
     "RelicData.310.3": "The Shrine Attendant at the sacred spring may know where this came from",
     "RelicData.310.4": "You received the Tactical Discombobulator! The Shrine Attendant at the sacred spring might know who it belonged to.",
 
     "RelicData.310.5": "Tactical Mask",
-    "RelicData.310.6": "Strange internal reflectors in the visor appear to diffract the light instead of enhance it",
+    "RelicData.310.6": "Strange internal reflectors in the visor appear to diffract the light instead of enhance it.",
     "RelicData.310.7": "Search for bats in the secret woods.",
     "RelicData.310.8": "You received the Tactical Mask! The Shrine Attendant at the sacred spring might know what it was used for.",
 
     "RelicData.310.9": "Tactical Cell",
     "RelicData.310.10": "An energy cell expended by those that raided the sacred shrine.",
-    "RelicData.310.11": "Search for bats in the local forest.",
+    "RelicData.310.11": "Search for bats in the local forests.",
     "RelicData.310.12": "You received the Tactical Cell! The Shrine Attendant at the sacred spring might know what it was used for.",
 
     "RelicData.310.13": "Tactical Lunchbox",
     "RelicData.310.14": "The bats rejected the tasty morsels neatly packaged into this rations box.",
-    "RelicData.310.15": "Search for bats at the Busstop and Backwoods.",
+    "RelicData.310.15": "Search for bats at the Busstop, the Bus Tunnel or the Backwoods.",
     "RelicData.310.16": "You received the Tactical Lunchbox! The Shrine Attendant at the sacred spring might know what it was used for.",
 
     "RelicData.310.17": "Tactical Peppermint Cream",
@@ -2101,14 +2125,16 @@
 
     // Relics 312
     "RelicData.312.1": "The Gardener's Glove",
-    "RelicData.312.2": "One of the sacred spaces of the valley, a garden of prized malus trees, has since been claimed by the forest.",
-    "RelicData.312.3": "Use while in the southern clearing of Cindersap Forest to access the Forgotten Orchard.",
-    "RelicData.312.4": "The clearing is east of arrowhead island, west of the door to Grandpa's grotto, and north-west of the sewer outlet.",
+    "RelicData.312.2": "This glove belonged to a member of the old circle of Druids. They were the caretaker of a nursury of orchard trees, a now neglected sacred space which has been reclaimed by the forest.",
+    //"RelicData.312.3": "Use while in the southern clearing of Cindersap Forest to access the Forgotten Orchard.",
+    "RelicData.312.3": "Use while in Cindersap Forest to access the Forgotten Orchard.",
+    //"RelicData.312.4": "The clearing is east of arrowhead island, west of the door to Grandpa's grotto, and north-west of the sewer outlet.",
+    "RelicData.312.4": "What happened to the glove for the other hand?",
     "RelicData.312.5": "You've recieved the Gardener's Glove! This relic provides access to the Forgotten Orchard. See the Relics Journal for more details.",
 
     // Relics 313
     "RelicData.313.1": "Grandpa's Whetstone",
-    "RelicData.313.2": "Whether used to sharpen tools, or as a paperweight, this stone seems as much a part of this farm as the burrowed hills it sits on.",
+    "RelicData.313.2": "Whether used to sharpen tools, or as a paperweight, this stone seems as much a part of this farm as the burrowed hills the farm was founded on.",
     "RelicData.313.3": "Use while on the farm to warp to the secluded grove, otherwise accessible from the Farmcave entrance.",
     "RelicData.313.4": "Use while in the secluded grove to warp back to outside the Farmhouse",
     "RelicData.313.5": "You've recieved Grandpa's Whetstone! This relic provides access to the Secluded Grove. See the Relics Journal for more details.",
@@ -2230,7 +2256,7 @@
     "QuestData.501": "I have gathered all the runestones crafted by the founding members of the circle of druids. ",
     "QuestData.502": "Ironically, during the course of the recovery of the runestones, I gained enough experience to master the powers my forebearers sought to acquire, and so the runestones themselves offer little use to me now. ",
     "QuestData.503": "Perhaps they might attain some status, and inspire some new art, if I put them on display in the craftsroom of the local community center.",
-    "QuestData.505": "Perform a Rite of the Weald in the craftroom in the community center.",
+    "QuestData.505": "This is an optional quest. Perform a Rite of the Weald in the craftroom in the community center to repair it.",
     "QuestData.507": "I placed the runestones in organised positions around the craftsroom, and incidentally created a happy zone of harmonised energies. ",
     "QuestData.508": "Then the forest spirits took the runestones off the wall and decorated the craftroom with pictures of happy apples.",
 
@@ -2280,7 +2306,7 @@
     "QuestData.755": "The Avalant",
     "QuestData.757": "I have gathered all the major components of the Avalant, an ancient navigation device used for passage to a city drowned within the abyssal trench. ",
     "QuestData.758": "I do not have the means to explore the trench, but I could use the components to spruce up the disused fishtank in the community center.",
-    "QuestData.760": "Perform a Rite of Mists at the fish tank in the community center.",
+    "QuestData.760": "This is an optional quest. Perform a Rite of Mists at the fish tank in the community center to repair it.",
     "QuestData.762": "Through artifice bolstered by the power of the Lady Beyond the Shore, the repairs have been completed to the derelict fish tank. Then the forest spirits replaced it with a better model.",
     "QuestData.781": "Lesson Nine: Smite",
     "QuestData.783": "I now have an answer for some of the more terrifying threats I've encountered in my adventures. Bolts of lightning strike at my foes.",
@@ -2555,7 +2581,7 @@
 
     "QuestData.2055": "Keepsake Boxes",
     "QuestData.2057": "There are many memories plastered on the walls and bulletin board of the community center, and all of them will have a home in the keepsake boxes left behind by the Fates that once served this very community.",
-    "QuestData.2059": "Perform a Rite of the Fates at the bulletin board in the community center.",
+    "QuestData.2059": "This is an optional quest. Perform a Rite of the Fates at the bulletin board in the community center to repair it.",
     "QuestData.2061": "As I placed the last wall-dried photograph away, I sensed a spell of goodwill had just spouted and spread over the community. Then I raced after a forest spirit who tried to put the keepsake boxes in storage.",
 
     "QuestData.2079": "Lesson 16: Dragon Form",
@@ -2624,7 +2650,7 @@
     "QuestData.2359": "Antiquated Recipes",
     "QuestData.2361": "Fearing zealots, the Lady Beyond stashed away several important texts, including testimonies of the war for the fallen star, and the efforts of the first circle to restore the Weald. ",
     "QuestData.2362": "Though I have recovered these records, there is not much that would make sense to the community of today, save for some cooking and gardening instructions. I'll add them to the cooking digests in the community pantry. ",
-    "QuestData.2364": "Perform a Rite of the Ether in the pantry in the community center.",
+    "QuestData.2364": "This is an optional quest. Perform a Rite of the Ether in the pantry in the community center to repair it.",
     "QuestData.2366": "I added the ether-smudged book of recipes, tips and poetry to the other digests in the disused pantry. ",
     "QuestData.2367": "It felt right, like a piece missing from the community's collection had finally been restored. Then all the shelves collapsed and I had to call the forest spirit repair service.",
 
@@ -2661,7 +2687,7 @@
     "QuestData.310.3": "The bats have now been pacified and can safely return to the resanctified spring. Still, there is the matter of tactical equipment left behind by the raiders. ",
     "QuestData.310.4": "The Shrine attendant is reluctant to handle the profane items, so I have agreed to destroy them myself.",
     // Instruction
-    "QuestData.310.5": "Perform a Rite of the Weald in the boiler room in the community center.",
+    "QuestData.310.5": "This is an optional quest. Perform a Rite of the Weald in the boiler room in the community center to repair it.",
     // Explanation
     "QuestData.310.6": "I set a small stack of combustible material in the boiler furnace and prepared the tactical equipment for destruction. ",
     "QuestData.310.7": "Fortunately, I was interrupted by a forest spirit who, after many vain attempts to communicate, ",
@@ -2722,7 +2748,7 @@
     // Description
     "QuestData.329.2": "I've garnered a fantastic collection of relics, some with lasting significance to the Circle and the history of the valley. I plan to refurbish the hinge-shot vault in the community center and use it to store all my cool stuff.",
     // Instruction
-    "QuestData.329.3": "Perform a Rite of the Weald in the office room in the community center.",
+    "QuestData.329.3": "This is an optional quest. Perform a Rite of the Weald in the vault room in the community center to repair it.",
     // Explanation
     "QuestData.329.4": "I harnessed a tremendous amount of woodland power to shake the vault free from it's rusting anchor bolts. All that did was broadcast my immense power to every forest spirit in the greater valley area. ",
     "QuestData.329.5": "This was still a great outcome for me, as I sat down in the midst of my little apple friends and presented all the cool stuff in my Druid's reliquary, with commentary on all the spectacular battles and feats of power that led to their acquisition. ",
