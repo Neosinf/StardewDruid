@@ -36,8 +36,8 @@ namespace StardewDruid.Monster
         {
         }
 
-        public Dinosaur(Vector2 vector, int CombatModifier, string name = "Dinosaur", string template = "Pepper Rex")
-          : base(vector, CombatModifier, name, template)
+        public Dinosaur(Vector2 vector, int CombatModifier, string name = "Dinosaur")
+          : base(vector, CombatModifier, name)
         {
 
             SpawnData.MonsterDrops(this, SpawnData.drops.dragon);

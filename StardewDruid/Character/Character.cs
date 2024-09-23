@@ -2546,12 +2546,14 @@ namespace StardewDruid.Character
 
             }
 
-            if(currentLocation.Name != LocationData.druid_grove_name)
+            CharacterHandle.locations characterRest = CharacterHandle.CharacterRest(characterType);
+
+            if (currentLocation.Name != CharacterHandle.CharacterLocation(characterRest))
             {
 
                 ResetActives();
 
-                CharacterHandle.CharacterWarp(this, CharacterHandle.locations.rest, false);
+                CharacterHandle.CharacterWarp(this, characterRest, false);
 
                 idleTimer = 180;
 
@@ -3179,7 +3181,7 @@ namespace StardewDruid.Character
                 case pathing.scene:
 
                     
-                    if (distance > 640)
+                    if (distance > 640 || netMovement.Value == (int)movements.run)
                     {
 
                         useFrame -= 3;

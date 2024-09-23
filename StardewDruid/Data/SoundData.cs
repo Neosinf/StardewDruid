@@ -33,6 +33,7 @@ namespace StardewDruid.Data
 
             Game1.soundBank.AddCue(myCueDefinition);
 
+
             /*DragonFlight: Fire (7s) by Matt Script Personal Use License SoundSnap.com */
 
             CueDefinition dragonFlight = new CueDefinition();
@@ -50,6 +51,7 @@ namespace StardewDruid.Data
             dragonFlight.SetSound(dragonFlightSound, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
             Game1.soundBank.AddCue(dragonFlight);
+
 
             /*DragonBreath: Fire (2s) by Lynne Publishing Personal Use License SoundSnap.com */
 
@@ -69,6 +71,7 @@ namespace StardewDruid.Data
 
             Game1.soundBank.AddCue(dragonFire);
 
+
             /*DragonBreath: Fire (1s) by Matt Script Personal Use License SoundSnap.com */
 
             CueDefinition dragonFireTwo = new CueDefinition();
@@ -86,6 +89,84 @@ namespace StardewDruid.Data
             dragonFireTwo.SetSound(dragonFireTwoSound, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
             Game1.soundBank.AddCue(dragonFireTwo);
+
+
+            /*WolfGrowl: 410920-Monster_Within_-Werewolf_-Bark-03-04 by Sound Morph, Personal Use License SoundSnap.com */
+
+            CueDefinition wolfGrowl = new CueDefinition();
+
+            wolfGrowl.name = "WolfGrowl";
+
+            wolfGrowl.instanceLimit = 1;
+
+            wolfGrowl.limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest;
+
+            FileStream wolfGrowlStream = new(Path.Combine(Mod.instance.Helper.DirectoryPath, "Sounds", "WolfGrowl.wav"), FileMode.Open);
+
+            SoundEffect wolfGrowlSound = SoundEffect.FromStream(wolfGrowlStream);
+
+            wolfGrowl.SetSound(wolfGrowlSound, Game1.audioEngine.GetCategoryIndex("Sound"), false);
+
+            Game1.soundBank.AddCue(wolfGrowl);
+            
+
+            /*BearGrowl: 83105-Monster_snarl_slow_growl_creature-BLASTWAVEFX-20519 Personal Use License SoundSnap.com */
+
+            CueDefinition bearGrowl = new CueDefinition();
+
+            bearGrowl.name = "BearGrowl";
+
+            bearGrowl.instanceLimit = 1;
+
+            bearGrowl.limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest;
+
+            FileStream bearGrowlStream = new(Path.Combine(Mod.instance.Helper.DirectoryPath, "Sounds", "BearGrowl.wav"), FileMode.Open);
+
+            SoundEffect bearGrowlSound = SoundEffect.FromStream(bearGrowlStream);
+
+            bearGrowl.SetSound(bearGrowlSound, Game1.audioEngine.GetCategoryIndex("Sound"), false);
+
+            Game1.soundBank.AddCue(bearGrowl);
+
+
+            /*BearGrowlTwo: 83056-Monster_snarl_growl_creature-BLASTWAVEFX-20517 Personal Use License SoundSnap.com */
+
+            CueDefinition bearGrowlTwo = new CueDefinition();
+
+            bearGrowlTwo.name = "BearGrowlTwo";
+
+            bearGrowlTwo.instanceLimit = 1;
+
+            bearGrowlTwo.limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest;
+
+            FileStream bearGrowlTwoStream = new(Path.Combine(Mod.instance.Helper.DirectoryPath, "Sounds", "BearGrowlTwo.wav"), FileMode.Open);
+
+            SoundEffect bearGrowlTwoSound = SoundEffect.FromStream(bearGrowlTwoStream);
+
+            bearGrowlTwo.SetSound(bearGrowlTwoSound, Game1.audioEngine.GetCategoryIndex("Sound"), false);
+
+            Game1.soundBank.AddCue(bearGrowlTwo);
+
+
+            /*BearGrowlThree: 74733-Monster_snarl_growl_creature-BLASTWAVEFX-10267 Personal Use License SoundSnap.com */
+
+            CueDefinition bearGrowlThree = new CueDefinition();
+
+            bearGrowlThree.name = "BearGrowlThree";
+
+            bearGrowlThree.instanceLimit = 1;
+
+            bearGrowlThree.limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest;
+
+            FileStream bearGrowlThreeStream = new(Path.Combine(Mod.instance.Helper.DirectoryPath, "Sounds", "BearGrowlThree.wav"), FileMode.Open);
+
+            SoundEffect bearGrowlThreeSound = SoundEffect.FromStream(bearGrowlThreeStream);
+
+            bearGrowlThree.SetSound(bearGrowlThreeSound, Game1.audioEngine.GetCategoryIndex("Sound"), false);
+
+            Game1.soundBank.AddCue(bearGrowlThree);
+
+
 
         }
 

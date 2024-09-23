@@ -18,6 +18,7 @@ using StardewValley.Buffs;
 using StardewValley.Buildings;
 using StardewValley.Characters;
 using StardewValley.Enchantments;
+using StardewValley.GameData;
 using StardewValley.GameData.Crops;
 using StardewValley.GameData.FarmAnimals;
 using StardewValley.GameData.WildTrees;
@@ -43,9 +44,7 @@ using xTile.Dimensions;
 using xTile.Layers;
 using xTile.ObjectModel;
 using xTile.Tiles;
-using static StardewDruid.Character.Character;
-using static StardewDruid.Character.CharacterHandle;
-using static StardewValley.Minigames.TargetGame;
+
 
 namespace StardewDruid
 {
@@ -385,26 +384,19 @@ namespace StardewDruid
 
         // ======================== Gameworld Interactions
 
-        public static bool RandomTree(GameLocation targetLocation, Vector2 targetVector)
+        public static void ChangeFriendship(Farmer player, NPC friend, int friendship)
         {
 
-            if (targetLocation.terrainFeatures.ContainsKey(targetVector))
+            if (Mod.instance.Helper.ModRegistry.IsLoaded("drbirbdev.SocializingSkill"))
             {
-                return false;
+
+                player.changeFriendship(friendship/5, friend);
+
+                return;
 
             }
 
-            Tree newTree = SpawnData.RandomTree(targetLocation);
-
-            if (newTree == null)
-            {
-                return false;
-
-            }
-
-            targetLocation.terrainFeatures.Add(targetVector, newTree);
-
-            return true;
+            player.changeFriendship(friendship, friend);
 
         }
 
@@ -428,7 +420,7 @@ namespace StardewDruid
                 if (characterFromName != null)
                 {
 
-                    player.changeFriendship(friendship, characterFromName);
+                    ChangeFriendship(player,characterFromName, friendship);
 
                 }
 
@@ -508,6 +500,25 @@ namespace StardewDruid
             if (data != null)
             {
 
+                if (data.HarvestMinStack > 1)
+                {
+                    quantityMin = data.HarvestMinStack;
+                }
+
+                if (data.HarvestMaxStack > 1)
+                {
+
+                    quantityMax = data.HarvestMaxStack - data.HarvestMinStack;
+
+                }
+
+                if (data.HarvestMaxIncreasePerFarmingLevel > 0f)
+                {
+
+                    quantityMax += (int)Math.Floor(data.HarvestMaxIncreasePerFarmingLevel * Game1.player.FarmingLevel);
+
+                }
+
                 if (data.ExtraHarvestChance >= 0.3)
                 {
 
@@ -526,19 +537,6 @@ namespace StardewDruid
                 {
 
                     quantityMax++;
-
-                }
-
-                if (data.HarvestMaxStack > 1)
-                {
-                    quantityMin = data.HarvestMaxStack;
-                }
-
-
-                if (data.HarvestMaxIncreasePerFarmingLevel > 0f)
-                {
-
-                    quantityMin += (int)Math.Floor(data.HarvestMaxIncreasePerFarmingLevel * Game1.player.FarmingLevel);
 
                 }
 
@@ -2369,6 +2367,7 @@ namespace StardewDruid
             return move;
 
         }
+        
         public static Vector2 DirectionAsVectorOffset(int direction)
         {
 
@@ -2396,6 +2395,7 @@ namespace StardewDruid
             return move;
 
         }
+        
         public static Vector2 PathMovement(Vector2 origin, Vector2 destination, float speed)
         {
 
@@ -2795,7 +2795,7 @@ namespace StardewDruid
 
             threshold = Math.Max(64, threshold);
 
-            foreach (KeyValuePair<characters, TrackHandle> tracker in Mod.instance.trackers)
+            foreach (KeyValuePair<CharacterHandle.characters, TrackHandle> tracker in Mod.instance.trackers)
             {
 
                 if(Mod.instance.characters[tracker.Key].currentLocation.Name != targetLocation.Name)
@@ -3118,12 +3118,16 @@ namespace StardewDruid
 
                 if (monster.Sprite.SpriteWidth > 16)
                 {
+                        
                     monsterThreshold += 32f;
+                    
                 }
 
                 if (monster.Sprite.SpriteWidth > 32)
                 {
+                        
                     monsterThreshold += 32f;
+                    
                 }
 
                 float difference = Proximation(monster.Position, targetPositions, monsterThreshold);
@@ -3387,12 +3391,26 @@ namespace StardewDruid
                 {
                     if (who.IsLocalPlayer)
                     {
-                        Game1.stats.monsterKilled(monster.Name);
+                        //if(monster is StardewDruid.Monster.Boss bossMonster)
+                        //{
+
+                        //    Game1.stats.monsterKilled(SpawnData.MonsterSlayer(bossMonster));
+                        //}
+                        //else
+                        //{
+
+                            Game1.stats.monsterKilled(monster.Name);
+
+                        //}
+
                     }
                     else if (Game1.IsMasterGame)
                     {
+
                         who.queueMessage(25, Game1.player, monster.Name);
+
                     }
+
                 }
 
                 if (monster is DinoMonster)
@@ -3721,7 +3739,7 @@ namespace StardewDruid
 
 
                             }
-                            else if (targetTree.growthStage.Value == 0)
+                            else if (targetTree.growthStage.Value == 0 && i <= 1)
                             {
 
                                 targetTree.performToolAction(Mod.instance.virtualHoe, 0, tileVector);
@@ -3735,7 +3753,16 @@ namespace StardewDruid
                                 if (targetTree.growthStage.Value >= 5)
                                 {
 
+                                    if(targetTree.Location is Town)
+                                    {
+
+                                        targetTree.Location = Game1.getFarm();
+
+                                    }
+
                                     targetTree.performToolAction(Axe, (int)targetTree.health.Value, tileVector);
+
+                                    targetTree.Location = targetLocation;
 
                                 }
                                 else
@@ -3749,10 +3776,22 @@ namespace StardewDruid
                                         targetLocation.debris.Add(new Debris(ItemQueryResolver.TryResolveRandomItem(data.SeedItemId, new ItemQueryContext(targetLocation, Game1.player, null)), tileVector * 64f));
                                     
                                     }
-                                    
+
+                                    if (targetTree.Location is Town)
+                                    {
+
+                                        targetTree.Location = Game1.getFarm();
+
+
+                                    }
+
                                     targetTree.performToolAction(Axe, 0, tileVector);
 
                                     targetLocation.terrainFeatures.Remove(tileVector);
+
+                                    targetTree.Location = targetLocation;
+
+
 
                                 }
 

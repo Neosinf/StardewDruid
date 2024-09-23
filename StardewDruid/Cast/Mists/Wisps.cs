@@ -194,6 +194,12 @@ namespace StardewDruid.Cast.Mists
             if(decimalCounter == 15)
             {
 
+                //SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new());
+
+                //circleHandle.scheme = IconData.schemes.mists;
+
+                //Mod.instance.spellRegister.Add(circleHandle);
+
                 location.playSound("thunder");
 
                 WispArray();

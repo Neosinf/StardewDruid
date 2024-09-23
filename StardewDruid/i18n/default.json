@@ -752,7 +752,7 @@
     // ===========================================================================
 
     // Effigy intro quest
-    "DialogueData.1613": "The Forgotten Effigy: So a successor appears. I am the Effigy, crafted by the First Farmer, sustained by the old powers, and bored.",
+    "DialogueData.1613": "The Forgotten Effigy: So a successor appears. I am the Effigy, crafted by the First Farmer, and sustained by the old powers.",
     "DialogueData.1617": "Who stuck you in the ceiling?",
     "DialogueData.1618": "I inherited this plot from my grandfather. His notes didn't say anything about a magic scarecrow.",
     "DialogueData.1619": "(Say nothing)",
@@ -968,7 +968,7 @@
     "DialogueData.2472": "I recognise that your Circle of Druids are a boon to the valley, not just for your sacred spaces, but for the elemental spirits that I seek to guide and protect.",
     "DialogueData.2473": "As your co-custodian, I do have some information about this antiquated machine. It is the Shrine Engine. It powers the warp statues and other such artifacts in the valley. ",
     "DialogueData.2474": "Coincidentally, I recently came into possession of what I believe are the machine's specifications, in the tome your friend attempted to pilfer. ",
-    "DialogueData.2475": "It was in the stump of a tree, the recent victim of celestial power, I believe, within the clearings south-east of the forest. ",
+    "DialogueData.2475": "It was in the stump of a tree, the recent victim of celestial power, I believe, within the orchard groves above us. ",
     "DialogueData.2476": "The tome is cryptic. Without a practical cipher, I have only managed to discern the identity of the author from a scribble that defaces the first page. 'Mother of Crows'. ",
     "DialogueData.2489": "Shadowtin Bear: I imagine I will have to endure many more hardships on my journey to expose Lord Deep. The petty ego of that recluse is of no consequence to me.",
     "DialogueData.2493": "The Wizard's words are worth considering, Shadowtin. Should you forsake your own shadowmanity to redeem that of your people?",
@@ -977,7 +977,7 @@
     "DialogueData.2500": "So what if a cow got frosty teats, or we trespassed into a fabulous magician's sanctum. ",
     "DialogueData.2501": "I know it's wrong, but I can't afford to care, especially when no one shows a damn bit of care to us. ",
     "DialogueData.2502": "The Fates don't answer our prayers or pleas. The Lady doesn't smite my enemies. ",
-    "DialogueData.2503": "(Shadowtin calms as he looks to the exit) There may be answers hidden out in the cliffs south east of here, if my enhanced feline senses heard the wizard correctly. ",
+    "DialogueData.2503": "(Shadowtin calms as he looks to the exit) There may be answers hidden out in the old Druid orchard, if my enhanced feline senses heard the wizard correctly. ",
     "DialogueData.2504": "As a show of good faith, I'll give you the access key, and you can be certain I won't return for a bit of 'shadowthievery'.",
     "DialogueData.2514": "Shadowtin Bear: It seems to be a cautionary warning, written in one of the older human tongues, from a Druid, no less.",
     "DialogueData.2519": "That's great news, the more I learn of the Circle's past, the better I can understand our current situation.",
@@ -1042,7 +1042,7 @@
     "DialogueData.324.18": "How can this be, how have the dragons returned?",
     "DialogueData.324.19": "No. This blaze was created by shamanic magic",
     "DialogueData.324.20": "Indeed. The guardians performed a purification here",
-    "DialogueData.324.21": "What, what do you mean, purification?",
+    "DialogueData.324.21": "Wyrven, what do you mean, purification?",
     "DialogueData.324.22": "The Druids... fell to corruption. They consumed your garden",
     "DialogueData.324.23": "The traitors have been destroyed",
     "DialogueData.324.24": "But their bones remain",
@@ -1180,6 +1180,13 @@
     "DialogueData.324.125": "Forever encircled around the resting place of the Two Kings. Her voice becomes the thunder, and she still awaits her time of retribution. ",
     "DialogueData.324.126": "But for now she is content. You are the hope of those that believe in the crowmother's plan, to restore the harmony that existed before the downfall of the elders and dragons, and to that end, I will follow you.",
 
+    // Shield effect
+    "DialogueData.335.1": "Starblessed Shield",
+    "DialogueData.335.2": "Temporarily increases defense.",
+
+    // Active attunement 
+    "DialogueData.336.1": "Normal Attunement: Rite is based on the attunement of current tool/weapon",
+    "DialogueData.336.2": "Slot Attunement: Rite is based on currently selected inventory slot",
 
     // ===========================================================================
     // NPC DIALOGUE
@@ -1289,7 +1296,7 @@
     "CharacterHandle.607": "We will warn the guardians of the depths to prepare for a fish uprising! But do as you will with the Avalant. (Optional community center completion quest received)",
     "CharacterHandle.621": "Murmurs of the Waves: The Avalant, to guide the blessed pilgrim through the judgements of the mists. ",
     "CharacterHandle.622": "It was broken, but can be restored. The finned faithful carry the pieces from the sea to the sacred spring. ",
-    "CharacterHandle.623": "Continue to use the power of the lady to fish the waters, and you might collect all the scattered pieces.",
+    "CharacterHandle.623": "Continue to use the power of the lady to fish the waters, and you might collect all the scattered pieces. (Fishing at Fishspots created by Rite of the Mists at various locations will yield relics for this quest)",
 
     // Manuscripts
     "CharacterHandle.262": "(relics) I've managed to find three manuscripts hidden by the first farmer before he disappeared.",
@@ -1532,6 +1539,8 @@
     // Right
     "CharacterHandle.331.3": "A list of names, all practitioners of the shamanic tradition of Calico, and the favoured servants of Tyrannus Jin. Something has slashed at the symbols to isolate a pattern that reads 'Mysterus Prime'.",
 
+    // Energies (before first quests)
+    "CharacterHandle.336.1": "You can hear the whispers of the wind, the rustling of the woodland, and the sighs of the earth, but you do not understand their voices. Not yet.",
 
     // ===========================================================================
     // VILLAGER REACTIONS
@@ -1696,7 +1705,7 @@
     "ReactionData.935": "I feel like I just rubbed up against a massive cat.",
     "ReactionData.313.1": "How were you able to dress that Caracal in such an interesting costume. The felt fool's ears look so real.",
     "ReactionData.313.2": "That kitty is MASSIVE. It must be from the north pole.",
-    "ReactionData.313.3": "I asked your feline companion if it was enjoying the weather, and I could it nodded in agreement. It must be very clever or very well trained.",
+    "ReactionData.313.3": "I asked your feline companion if it was enjoying the weather, and I'm sure it nodded in agreement. It must be very clever or very well trained.",
     "ReactionData.313.4": "It's a very likeable form, your fae companion has taken. A friendly cat is a comforting presence, like any servant of the High Priestess of Yoba should be.",
     "ReactionData.313.5": "It's known that when aspects of the Fates enter our realm they adopt a form that reflects their identity and purpose. I wonder what a clown cat guise implies for your friends intentions here.'",
     // 2
@@ -1906,7 +1915,7 @@
     "RelicData.325": "You received a Ancient Bronze Disc! The servants of the Lady Beyond the Shore might know more about this artifact.",
 
     "RelicData.330": "Ancient Bronze Chassis",
-    "RelicData.333": "The structural core of an ancient device,",
+    "RelicData.333": "The structural core of an ancient device.",
     "RelicData.334": "Located in the waters of the mountain lake.",
     "RelicData.336": "You received a Ancient Bronze Chassis! The servants of the Lady Beyond the Shore might know more about this artifact.",
 
@@ -2099,7 +2108,7 @@
 
     "RelicData.310.5": "Tactical Mask",
     "RelicData.310.6": "Strange internal reflectors in the visor appear to diffract the light instead of enhance it.",
-    "RelicData.310.7": "Search for bats in the secret woods.",
+    "RelicData.310.7": "Search for bats around the old statue in the secret woods.",
     "RelicData.310.8": "You received the Tactical Mask! The Shrine Attendant at the sacred spring might know what it was used for.",
 
     "RelicData.310.9": "Tactical Cell",
@@ -2164,7 +2173,7 @@
     "QuestData.34": "There's a note stuck to grandpa's old scythe: ",
     "QuestData.35": "For the new farmer. Before my forefathers came to the valley, the secluded grove behind the farm was a frequent meeting ground for a circle of Druids. ",
     "QuestData.36": "An eeriness hangs over the place, so I have kept my father's tradition of leaving it well enough alone. Perhaps you should too.",
-    "QuestData.38": "Investigate the secluded grove and old farm cave. Press one of {{button}} to cast a rite at the quest icon.",
+    "QuestData.38": "Investigate the secluded grove, accessible from the entrance to the old farm cave. Enter the actual farm cave from a new entrance at the back of the grove and press one of {{button}} to cast a rite at the quest icon.",
     "QuestData.41": "I heard a voice in the cave, and it bid me to speak words in a forgotten dialect. ",
     "QuestData.42": "I raised my hands, recited a chant, and a wooden effigy crashed to the floor, which then started to talk! ",
     "QuestData.43": "It spoke to me and told me how I could learn the ways of the valley Druids. And so my apprenticeship begins...",
@@ -2182,7 +2191,7 @@
     "QuestData.119": "I heard some really weird voices. Something touched me. I'm ok.",
     "QuestData.120": "So it is real. The power of the Druids.",
     "QuestData.121": "I have a sword shaped like a branch. It's a stick of power.",
-    "QuestData.124": "The energies of the Weald are unsettling. And dumb as rocks. Seek them out again if you would like to dedicate a different implement to the work of the Kings.",
+    "QuestData.124": "The energies of the Weald are unsettling, but their loyalty to the sleeping monarchs endures. Seek them out again if you would like to dedicate a different implement to the work of the Kings.",
 
     "QuestData.149": "The Druid Tradition",
     "QuestData.151": "I have the opportunity to augment my natural abilities with tonics and potions brewed in the Druidic tradition.",
@@ -2207,26 +2216,26 @@
 
     "QuestData.269": "Lesson Three: Wild Growth",
     "QuestData.271": "Years of stagnation have starved the valley of it's wilderness. I now have the means and power to recolour the barren spaces with new plant-life.",
-    "QuestData.273": "Perform Rite of the Weald: Wild Growth five times on open outdoor maps (excluding the farm) to spawn a variety of different forageables and features. ",
+    "QuestData.273": "Perform Rite of the Weald: Wild Growth five times on open outdoor maps (excluding the farm) or within mineshafts to spawn a variety of different forageables and features. ",
     "QuestData.275": "Channelling the Weald requires you to stand still, then cast, and hold for 1-2 seconds until you see the channeling indicator appear and fully expand. ",
     "QuestData.277": "Mastery unlocks garden flower spawns.",
     "QuestData.279": "wild growth rites completed",
     "QuestData.291": "This is your task today. Perform the rite as you have been taught, only this time, stand still, and concentrate your energies, ",
     "QuestData.292": "so you may convince the wild to sprout new shoots and buds. Now go, fill the barren spaces with life. ",
-    "QuestData.293": "(New lesson received)",
+    "QuestData.293": "(New lesson received. Note: does not work on farm maps)",
 
     "QuestData.315": "Lesson Four: Cultivation",
     "QuestData.317": "My connection to the otherworld deepens. I may channel the power of the Two Kings to enhance the quality and growth of my crops.",
-    "QuestData.319": "While on the farm, hold the rite button for 2-3 seconds while standing still to channel this effect. Complete 5 times. ",
+    "QuestData.319": "While on the farm, hold the rite button for 2-3 seconds while standing still to channel this effect. Complete 2 times. ",
     "QuestData.320": "Converts planted seasonal wild seeds into domestic crops. Updates growth cycle of all planted seeds. Unlocks quality conversions.",
     "QuestData.322": "cultivation rites completed",
     "QuestData.334": "For those who plan for a life of toil in the fields and meadows, they should know that farmer and druid share many of the same ideals. ",
     "QuestData.335": "You'll need to remain still to channel the energies required to bring the seeds to sprout. May the blessings of the two kings assist you in your farmwork. ",
-    "QuestData.336": "(New lesson received)",
+    "QuestData.336": "(New lesson received. Note: only works on farm maps)",
 
     "QuestData.358": "Lesson Five: Rockfall",
     "QuestData.360": "The power of the two Kings resonates through the deep earth, and in the mines, the earth responds in kind.",
-    "QuestData.362": "Gather one hundred stone from creating rockfalls in the mines with Rite of the Weald. Unlocks rockfall damage to monsters.",
+    "QuestData.362": "Gather twenty stone from creating rockfalls in the mines with Rite of the Weald. Unlocks rockfall damage to monsters.",
     "QuestData.364": "rockfall events",
     "QuestData.376": "Be careful in the mines. The Druid draws power from the deep rock, and it will answer your call, both above and below you. ",
     "QuestData.377": "For those rocks that prove recalcitrant, gather them to the crafters' bench in the grove, and employ the use of this hammer. ",
@@ -2237,7 +2246,7 @@
     "QuestData.416": "The Polluted Aquifier",
     "QuestData.418": "The mountain spring, from an aquifer of special significance to the otherworld, has been polluted by rubbish dumped in the abandoned mineshafts. ",
     "QuestData.419": "The Effigy believes I am strong enough to cleanse the waters with the power of the Two Kings.",
-    "QuestData.421": "Perform a Rite of the Weald in the sacred spring, accessible from a pathway opened by using the creepy teapot in level 20 of the mines.",
+    "QuestData.421": "Perform a Rite of the Weald in the sacred spring, accessible from a pathway opened by using the creepy teapot (from the reliquary menu) in level 20 of the mines.",
     "QuestData.423": "I reached a large cavern with a once pristine lake, and used the Rite of the Weald to purify it. ",
     "QuestData.424": "There was so much trash, and so many bats. A big one in a cleric's mitre claimed to serve a higher power, one with a vendetta against the polluters. ",
     "QuestData.425": "The residents of the mountain and their friends are pleased with the cleanup: Sebastian, Sam, Maru, Abigail, Robin, Demetrius, Linus.",
@@ -2626,7 +2635,7 @@
     "QuestData.2247": "I never thought to study them before, but with your inspiration, I have managed to make a crude chart. ",
     "QuestData.2248": "(Shadowtin presents an articulate map of ether flows with intricate signs and labels) ",
     "QuestData.2249": "It appears the currents converge at a nexus, at this point in the nearby Forest. ",
-    "QuestData.2250": "There's a concealed bunker there, secured with a lock-system of dwarven origin, but I have managed to source an access key from one of my mercenary contacts.",
+    "QuestData.2250": "There's a concealed bunker there, secured with a lock-system of dwarven origin, but I have managed to source an access key from one of my mercenary contacts. ",
     "QuestData.2251": "I doubt the truths I seek lay inside, but regardless, I think it would be beneficial to the circle to be present for the discovery. ",
     "QuestData.2252": "Though I would recommend leaving our friends at home, as they might scare my contact. (New quest recieved)",
     "QuestData.2259": "Metalface is planning for an adventure, and I was excited about it, but when I asked him where we were going he said somewhere that doesn't allow pets. ",
@@ -2643,7 +2652,7 @@
     "QuestData.2310": "(Shadowtin has a new lesson)",
     "QuestData.2319": "About the map. I hope to make amends for its loss by offering you this ether-pressure gauge, which should help you locate more nodes of concentrated ether. ",
     "QuestData.2320": "I suspect that a lot of the hidden troves contain treasures sealed by Dragons and their servants, ",
-    "QuestData.2321": "who would have taught the technique to your forebearers, so your bound to find more than just books and weird skulls.",
+    "QuestData.2321": "who would have taught the technique to your forebearers, so your bound to find more than just books and weird skulls. ",
     "QuestData.2322": "The gauge might also help with some of your more audacious alchemical experiments. ",
     "QuestData.2323": "(New lesson received)",
 
@@ -2713,10 +2722,10 @@
     "QuestData.315.13": "I am troubled to learn of the revival of that old fiend, the Dust Chef. ",
     "QuestData.315.14": "At least the return of a lost member of our Circle is some encouragement. Perhaps she might offer guidance on how to handle the re-emergence of our foes.",
     // Intro - Blackfeather
-    "QuestData.315.15": "I do not think it is a coincidence that you were the one to summon me to the material plane. ",
+    "QuestData.315.15": "Archdruid, I do not think it is a coincidence that you were the one to summon me to the material plane. ",
     "QuestData.315.16": "You are in possession of one of my gloves, the ones I used to tend a nursery of other forest spirits. ",
     "QuestData.315.17": "I could not protect my wards against the treachery of those fiend chefs, Gelatin and Cannoli, but I yearn to see what remains of the glade where the nursery stood. ",
-    "QuestData.315.18": "The paths that I walked in my own time have disappeared, but I hear from your golem friend that the old gloves remember the way, so I bid you to make use of the one I held through the darkness of my captivity.",
+    "QuestData.315.18": "The paths that I walked in my own time have disappeared, but I hear from your golem friend that the old gloves remember the way, so I bid you to make use of the one I held through the darkness of my captivity. (New Quest Received)",
 
     // Bones Lesson One
     "QuestData.324.1": "Familiars",
@@ -3028,7 +3037,7 @@
     "LoreData.329.5": "The Prince of the Isles inherited his title from his drowned liege and father, and embarked to these shores to seek aid and council from the Two Kings. His attentions soon shifted from the plight of his people to the desires of his own heart.",
 
     "LoreData.329.6": "What caused the Two Kings to fall into endless slumber?",
-    "LoreData.329.7": "A Celestial descended from the heavens to grace the Woodland realms For a time, as they fawned over the radiance of the star, the Two Kings stopped warring over the seasons. They gardened their palaces, wrote ballads, made wine and played music. ",
+    "LoreData.329.7": "A Celestial descended from the heavens to grace the Woodland realms. For a time, as they fawned over the radiance of the star, the Two Kings stopped warring over the seasons. They gardened their palaces, wrote ballads, made wine and played music. ",
     "LoreData.329.8": "Still, the world turns, the seasons must change, and the old conflicts resumed. But the stakes had changed. The ancient ones, the dragons, desired the starlight for their own dominions, and their draconic might overpowered the courts of both Kings.",
 
     "LoreData.329.9": "The dragons have disappeared. Does that mean the elderfolk won the war?",
@@ -3224,6 +3233,8 @@
     "ModConfig.326.1": "Decorate Grove",
     "ModConfig.326.2": "Enables placement of furniture and craftables in the Druid Grove. The mod will attempt to save these objects. Use at own discretion.",
 
+    "ModConfig.335.1": "Disable Shopdata",
+    "ModConfig.335.2": "By default the mod will browse the shopdata registered for Pierre and Sandy in order to create a list of possible cultivations for seed conversion and upgrade behaviour. When disabled, a base list of vanilla items will be used instead.",
 
     // ===========================================================================
     // EFFECTS JOURNAL

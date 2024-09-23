@@ -163,7 +163,7 @@ namespace StardewDruid.Event.Challenge
 
             SetTrack("tribal");
 
-            EventRender ritePortal = new(eventId, location.Name, origin, IconData.skies.mountain,5f);
+            EventRender ritePortal = new(eventId, location.Name, origin, IconData.circles.summoning, Color.White);
 
             eventRenders.Add(ritePortal);
 
@@ -194,12 +194,12 @@ namespace StardewDruid.Event.Challenge
 
             }
             
-            if (activeCounter % 2 == 0)
-            {
+            //if (activeCounter % 2 == 0)
+            //{
                 
-                Mod.instance.iconData.ImpactIndicator(location, origin, IconData.impacts.nature, 6f, new() { alpha = 0.3f, });
+            //    Mod.instance.iconData.ImpactIndicator(location, origin, IconData.impacts.nature, 6f, new() { alpha = 0.3f, });
             
-            }
+            //}
 
             if (activeCounter % 20 == 0)
             {

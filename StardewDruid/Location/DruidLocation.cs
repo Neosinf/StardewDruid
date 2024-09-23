@@ -11,6 +11,7 @@ using StardewDruid.Cast;
 using StardewModdingAPI;
 using StardewDruid.Event.Sword;
 using StardewDruid.Journal;
+using static StardewValley.Minigames.MineCart;
 
 namespace StardewDruid.Location
 {
@@ -32,6 +33,8 @@ namespace StardewDruid.Location
         public bool internalDarkness;
 
         public bool ambientDarkness;
+
+        public bool summonActive;
 
         public DruidLocation()
         {

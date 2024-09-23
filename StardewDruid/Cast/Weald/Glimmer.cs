@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using StardewValley.Locations;
+using StardewValley.Buildings;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -53,7 +54,7 @@ namespace StardewDruid.Cast.Weald
 
                 Game1.player.friendshipData[witness.Name].TalkedToToday = true;
 
-                Game1.player.changeFriendship(25, witness);
+                ModUtility.ChangeFriendship(Game1.player, witness, 25);
 
                 ReactionData.ReactTo(witness, ReactionData.reactions.weald, 25);
 

@@ -40,6 +40,21 @@ namespace StardewDruid.Monster
 
         }
 
+        public override void SetBase()
+        {
+
+            tempermentActive = temperment.cautious;
+
+            baseMode = 2;
+
+            baseJuice = 3;
+
+            basePulp = 25;
+
+            cooldownInterval = 180;
+
+        }
+
         public override void RandomTemperment()
         {
             
@@ -75,10 +90,6 @@ namespace StardewDruid.Monster
         {
 
             characterTexture = MonsterHandle.MonsterTexture(realName.Value);
-
-            baseJuice = 3;
-
-            basePulp = 25;
 
             BlobWalk();
 

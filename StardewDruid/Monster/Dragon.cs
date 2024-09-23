@@ -36,8 +36,8 @@ namespace StardewDruid.Monster
         {
         }
 
-        public Dragon(Vector2 vector, int CombatModifier, string name = "Dragon", string template = "Pepper Rex")
-          : base(vector, CombatModifier, name, template)
+        public Dragon(Vector2 vector, int CombatModifier, string name = "Dragon")
+          : base(vector, CombatModifier, name)
         {
 
             SpawnData.MonsterDrops(this, SpawnData.drops.dragon);
@@ -59,7 +59,7 @@ namespace StardewDruid.Monster
 
             walkInterval = 9;
 
-            flightInterval = 9;
+            flightInterval = 12;
 
             flightSpeed = 12;
 

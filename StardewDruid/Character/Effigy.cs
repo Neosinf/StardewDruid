@@ -297,7 +297,9 @@ namespace StardewDruid.Character
         public override bool TargetWork()
         {
 
-            if(new SpawnIndex(currentLocation).cultivate == false)
+            CharacterHandle.RetrieveInventory(CharacterHandle.characters.Effigy);
+
+            if (new SpawnIndex(currentLocation).cultivate == false)
             {
 
                 return false;
@@ -335,7 +337,7 @@ namespace StardewDruid.Character
                         if (currentLocation.Objects[scarevector].IsScarecrow())
                         {
 
-                            string scid = "scarecrow_" + scarevector.X.ToString() + "_" + scarevector.Y.ToString();
+                            string scid = "scarecrow_companion_" + scarevector.X.ToString() + "_" + scarevector.Y.ToString();
                             
                             if (!Mod.instance.rite.specialCasts.ContainsKey(currentLocation.Name))
                             {
@@ -405,8 +407,6 @@ namespace StardewDruid.Character
             if(specialTimer == 50)
             {
 
-                CharacterHandle.RetrieveInventory(CharacterHandle.characters.Effigy);
-
                 if(Mod.instance.chests[CharacterHandle.characters.Effigy].Items.Count > 0)
                 {
 
@@ -429,7 +429,7 @@ namespace StardewDruid.Character
 
                 Artifice artificeHandle = new();
 
-                artificeHandle.ArtificeScarecrow(currentLocation, workVector);
+                artificeHandle.ArtificeScarecrow(currentLocation, workVector, true);
 
             }
 

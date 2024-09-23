@@ -379,7 +379,7 @@ namespace StardewDruid.Cast.Mists
 
         }
 
-        public void ArtificeScarecrow(GameLocation location, Vector2 targetVector)
+        public void ArtificeScarecrow(GameLocation location, Vector2 targetVector, bool companion = false)
         {
 
             bool animate = true;
@@ -396,6 +396,13 @@ namespace StardewDruid.Cast.Mists
             radius = Math.Min(8, radius);
 
             string scid = "scarecrow_" + targetVector.X.ToString() + "_" + targetVector.Y.ToString();
+
+            if (companion)
+            {
+
+                scid = "scarecrow_companion_" + targetVector.X.ToString() + "_" + targetVector.Y.ToString();
+            
+            }
 
             Mod.instance.rite.specialCasts[location.Name].Add(scid);
 

@@ -30,6 +30,7 @@ namespace StardewDruid.Location
             return;
 
         }
+        
         public override void checkForMusic(GameTime time)
         {
             if (Game1.getMusicTrackName() == "none" || Game1.getMusicTrackName() == "rain" || Game1.isMusicContextActiveButNotPlaying() || (Game1.getMusicTrackName().EndsWith("_Ambient") && Game1.getMusicTrackName() != "Upper_Ambient"))
@@ -37,6 +38,7 @@ namespace StardewDruid.Location
                 Game1.changeMusicTrack("Upper_Ambient");
             }
         }
+
         public override void OnMapLoad(xTile.Map map)
         {
             /*

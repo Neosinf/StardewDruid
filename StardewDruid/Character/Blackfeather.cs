@@ -302,7 +302,7 @@ namespace StardewDruid.Character
                         if (currentLocation.Objects[scarevector].IsScarecrow())
                         {
 
-                            string scid = "scarecrow_" + scarevector.X.ToString() + "_" + scarevector.Y.ToString();
+                            string scid = "scarecrow_companion_" + scarevector.X.ToString() + "_" + scarevector.Y.ToString();
 
                             if (!Mod.instance.rite.specialCasts.ContainsKey(currentLocation.Name))
                             {
@@ -372,9 +372,9 @@ namespace StardewDruid.Character
             if (specialTimer == 50)
             {
 
-                CharacterHandle.RetrieveInventory(CharacterHandle.characters.Effigy);
+                CharacterHandle.RetrieveInventory(CharacterHandle.characters.Blackfeather);
 
-                if (Mod.instance.chests[CharacterHandle.characters.Effigy].Items.Count > 0)
+                if (Mod.instance.chests[CharacterHandle.characters.Blackfeather].Items.Count > 0)
                 {
 
                     Cultivate cultivateEvent = new();
@@ -383,7 +383,7 @@ namespace StardewDruid.Character
 
                     cultivateEvent.inabsentia = true;
 
-                    cultivateEvent.inventory = Mod.instance.chests[CharacterHandle.characters.Effigy].Items;
+                    cultivateEvent.inventory = Mod.instance.chests[CharacterHandle.characters.Blackfeather].Items;
 
                     cultivateEvent.EventActivate();
 
@@ -396,7 +396,7 @@ namespace StardewDruid.Character
 
                 Artifice artificeHandle = new();
 
-                artificeHandle.ArtificeScarecrow(currentLocation, workVector);
+                artificeHandle.ArtificeScarecrow(currentLocation, workVector,true);
 
             }
         }

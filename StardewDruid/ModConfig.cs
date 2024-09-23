@@ -322,6 +322,14 @@ namespace StardewDruid
                 setValue: value => Config.cultivateBehaviour = value
             );
 
+            configMenu.AddBoolOption(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.335.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.335.1"),
+                getValue: () => Config.disableShopdata,
+                setValue: value => Config.disableShopdata = value
+            );
+
             configMenu.AddNumberOption(
                 mod: mod.ModManifest,
                 name: () => Mod.instance.Helper.Translation.Get("ModConfig.289"),

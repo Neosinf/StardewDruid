@@ -73,6 +73,8 @@ namespace StardewDruid
 
         public int cultivateBehaviour { get; set; }
 
+        public bool disableShopdata { get; set; }
+
         public int meteorBehaviour { get; set; }
 
         public bool cardinalMovement { get; set; }
@@ -176,6 +178,7 @@ namespace StardewDruid
             slotEleven = slotOptions.lunch.ToString();
             slotTwelve = slotOptions.lunch.ToString();
             cultivateBehaviour = 2;
+            disableShopdata = false;
             meteorBehaviour = 3;
             cardinalMovement = false;
             castAnywhere = false;

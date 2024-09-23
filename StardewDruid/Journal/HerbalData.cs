@@ -159,12 +159,12 @@ namespace StardewDruid.Journal
 
                         "(O)80", // "Quartz", 
                         "(O)86", // "Earth Crystal", 
-                        "(O)84", // "Frozen Tear",
+                        "(O)330", // "Clay",
                         "(O)881", // "Bone Fragment", 
                         "(O)168", // "Trash", 
                         "(O)169", // "Driftwood", 
                         "(O)170", // "Broken Glasses", 
-                        "(O)171", // "Broken CD", 
+                        "(O)171", // "Broken CD",
                     };
 
                 case herbals.melius_celeri:

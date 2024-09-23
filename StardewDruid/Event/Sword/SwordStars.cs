@@ -27,19 +27,15 @@ namespace StardewDruid.Event.Sword
 
             }
 
-            Mod.instance.characters[CharacterHandle.characters.Revenant].SwitchToMode(Character.Character.mode.random, Game1.player);
-
             companions[0] = Mod.instance.characters[CharacterHandle.characters.Revenant];
 
             companions[0].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-            companions[0].Position = new Vector2(27, 16) * 64;
+            companions[0].Position = new Vector2(26, 19) * 64;
 
             companions[0].ResetActives();
 
             companions[0].netIdle.Set((int)Character.Character.idles.standby);
-
-            companions[0] = Mod.instance.characters[CharacterHandle.characters.Revenant];
 
             companions[0].eventName = eventId;
 

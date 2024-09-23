@@ -373,7 +373,7 @@ namespace StardewDruid.Cast.Ether
 
                     character.faceTowardFarmerForPeriod(3000, 4, false, Game1.player);
 
-                    Game1.player.changeFriendship(15, character);
+                    ModUtility.ChangeFriendship(Game1.player, character, 15);
 
                     ReactionData.ReactTo(character, ReactionData.reactions.dragon, 15);
 

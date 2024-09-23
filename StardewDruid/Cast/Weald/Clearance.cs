@@ -19,7 +19,7 @@ namespace StardewDruid.Cast.Weald
         public Clearance()
         {
             
-            damageLevel = (int)(Mod.instance.CombatDamage() * 0.25);
+            damageLevel = (int)(Mod.instance.CombatDamage() * 0.1);
 
             powerLevel = Mod.instance.PowerLevel;
 

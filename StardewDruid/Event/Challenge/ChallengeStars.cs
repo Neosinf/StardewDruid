@@ -86,9 +86,9 @@ namespace StardewDruid.Event.Challenge
 
             EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
-            EventDisplay trashbar = EventBar(DialogueData.Strings(DialogueData.stringkeys.slimesDestroyed), 0);
+            EventDisplay slimebar = EventBar(DialogueData.Strings(DialogueData.stringkeys.slimesDestroyed), 1);
 
-            trashbar.colour = Microsoft.Xna.Framework.Color.LightGreen;
+            slimebar.colour = Microsoft.Xna.Framework.Color.LightGreen;
 
             ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 
@@ -103,12 +103,16 @@ namespace StardewDruid.Event.Challenge
 
             HoldCompanions();
 
+            //EventRender ritePortal = new(eventId, location.Name, origin, IconData.circles.summoning, Microsoft.Xna.Framework.Color.White);
+
+           // eventRenders.Add(ritePortal);
+
         }
 
         public override float SpecialProgress(int displayId)
         {
 
-            return (float)eventRating / 30;
+            return (float)eventRating / 30f;
 
         }
 

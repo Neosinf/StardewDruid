@@ -44,6 +44,14 @@ namespace StardewDruid.Character
                 [0] = new() { new(0, 256, 32, 32), new(32, 256, 32, 32), },
             };
 
+            restSet = true;
+
+            idleFrames[idles.rest] = new()
+            {
+                [0] = new() { new(64, 256, 32, 32), },
+
+            };
+
         }
 
     }

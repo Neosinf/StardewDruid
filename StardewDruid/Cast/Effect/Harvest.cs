@@ -90,10 +90,10 @@ namespace StardewDruid.Cast.Effect
 
                 List<HoeDirt> hoeDirts = new();
 
-                if (!Mod.instance.rite.targetCasts.ContainsKey(location.Name))
+                if (!Mod.instance.rite.targetCasts.ContainsKey(location.Name + "_harvest"))
                 {
 
-                    Mod.instance.rite.targetCasts[location.Name] = new();
+                    Mod.instance.rite.targetCasts[location.Name + "_harvest"] = new();
 
                 }
 
@@ -150,7 +150,7 @@ namespace StardewDruid.Cast.Effect
 
                             }
 
-                            Mod.instance.rite.targetCasts[location.Name][tileVector] = "Tree";
+                            Mod.instance.rite.targetCasts[location.Name + "_harvest"][tileVector] = "Tree";
 
                             continue;
 
@@ -189,7 +189,7 @@ namespace StardewDruid.Cast.Effect
 
                             fruitTree.performUseAction(tileVector);
 
-                            if (Mod.instance.rite.targetCasts[location.Name].ContainsKey(tileVector))
+                            if (Mod.instance.rite.targetCasts[location.Name + "_harvest"].ContainsKey(tileVector))
                             {
 
                                 continue;
@@ -280,7 +280,7 @@ namespace StardewDruid.Cast.Effect
 
                             }
 
-                            Mod.instance.rite.targetCasts[location.Name][tileVector] = "Tree";
+                            Mod.instance.rite.targetCasts[location.Name + "_harvest"][tileVector] = "Tree";
 
                         }
                         else if (toHarvest.Value.location.terrainFeatures[tileVector] is StardewValley.TerrainFeatures.Tree treeFeature)
@@ -295,7 +295,7 @@ namespace StardewDruid.Cast.Effect
 
                             treeFeature.performUseAction(tileVector);
 
-                            if (Mod.instance.rite.targetCasts[location.Name].ContainsKey(tileVector))
+                            if (Mod.instance.rite.targetCasts[location.Name + "_harvest"].ContainsKey(tileVector))
                             {
 
                                 continue;
@@ -391,7 +391,7 @@ namespace StardewDruid.Cast.Effect
 
                             }
 
-                            Mod.instance.rite.targetCasts[location.Name][tileVector] = "Tree";
+                            Mod.instance.rite.targetCasts[location.Name + "_harvest"][tileVector] = "Tree";
 
                         }
                         else if (toHarvest.Value.location.terrainFeatures[tileVector] is StardewValley.TerrainFeatures.Grass grassFeature)
@@ -401,7 +401,7 @@ namespace StardewDruid.Cast.Effect
 
                             grassFeature.doCollisionAction(tileRectangle, 2, tileVector, Game1.player);
 
-                            if (Mod.instance.rite.targetCasts[location.Name].ContainsKey(tileVector))
+                            if (Mod.instance.rite.targetCasts[location.Name + "_harvest"].ContainsKey(tileVector))
                             {
 
                                 continue;
@@ -456,7 +456,7 @@ namespace StardewDruid.Cast.Effect
 
                             }
 
-                            Mod.instance.rite.targetCasts[location.Name][tileVector] = "Grass";
+                            Mod.instance.rite.targetCasts[location.Name + "_harvest"][tileVector] = "Grass";
 
                         }
 
@@ -465,7 +465,7 @@ namespace StardewDruid.Cast.Effect
                     if (toHarvest.Value.location.objects.ContainsKey(tileVector))
                     {
 
-                        if (Mod.instance.rite.targetCasts[location.Name].ContainsKey(tileVector))
+                        if (Mod.instance.rite.targetCasts[location.Name + "_harvest"].ContainsKey(tileVector))
                         {
 
                             continue;
@@ -513,7 +513,7 @@ namespace StardewDruid.Cast.Effect
 
                         }
 
-                        Mod.instance.rite.targetCasts[location.Name][tileVector] = "Pot";
+                        Mod.instance.rite.targetCasts[location.Name + "_harvest"][tileVector] = "Pot";
 
 
                     }

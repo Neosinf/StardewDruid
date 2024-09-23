@@ -61,8 +61,6 @@ namespace StardewDruid.Event.Challenge
 
             ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 
-            location.playSound("discoverMineral");
-
             if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Blackfeather))
             {
                 
@@ -74,6 +72,12 @@ namespace StardewDruid.Event.Challenge
                 }
 
             }
+
+            location.playSound("furnace");
+
+            location.playSound("furnace");
+
+            location.playSound("furnace");
 
             HoldCompanions();
 
@@ -247,9 +251,9 @@ namespace StardewDruid.Event.Challenge
                 new Vector2(32,7),
                 new Vector2(42,11),
                 new Vector2(38,13),
-                new Vector2(42,16),
-                new Vector2(32,23),
-                new Vector2(38,23),
+                new Vector2(42,17),
+                new Vector2(32,24),
+                new Vector2(38,24),
 
             };
 
@@ -394,7 +398,7 @@ namespace StardewDruid.Event.Challenge
 
                     voices[1] = Mod.instance.characters[CharacterHandle.characters.Blackfeather];
 
-                    Vector2 blackfeather = (ModUtility.PositionToTile(origin) - new Vector2(1, 3)) * 64;
+                    Vector2 blackfeather = (ModUtility.PositionToTile(origin) - new Vector2(1, 5)) * 64;
 
                     CharacterMover.Warp(location, companions[0], blackfeather, false);
 

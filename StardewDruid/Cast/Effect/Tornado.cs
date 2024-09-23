@@ -97,9 +97,10 @@ namespace StardewDruid.Cast.Effect
 
                     if(Mod.instance.randomIndex.Next(15 - Mod.instance.PowerLevel) == 0)
                     {
-                        string randomFish = SpawnData.RandomLowFish(location);
+                        
+                        string randomFish = SpawnData.RandomLowFish(location, tileVector);
 
-                        switch (Mod.instance.randomIndex.Next(5))
+                        /*switch (Mod.instance.randomIndex.Next(5))
                         {
                             case 0:
                                 randomFish = SpawnData.RandomHighFish(location, false);
@@ -108,8 +109,7 @@ namespace StardewDruid.Cast.Effect
                                 randomFish = SpawnData.RandomTrash(location).ToString();
                                 break;
 
-                        }
-
+                        }*/
 
                         tornado.Value.AddCatch(randomFish, tileVector);
 
@@ -209,7 +209,7 @@ namespace StardewDruid.Cast.Effect
 
                 }
 
-                int experienceGain = 4;
+                int experienceGain = 12;
 
                 StardewValley.Object candidate = new(fish, 1);
 
@@ -221,7 +221,7 @@ namespace StardewDruid.Cast.Effect
 
                         candidate.Quality = 4;
 
-                        experienceGain = 12;
+                        experienceGain = 48;
 
                     }
                     else if (Mod.instance.randomIndex.Next(11 - Game1.player.FishingLevel) <= 0)
@@ -229,9 +229,11 @@ namespace StardewDruid.Cast.Effect
 
                         candidate.Quality = 2;
 
-                        experienceGain = 8;
+                        experienceGain = 36;
 
                     }
+
+                    experienceGain = 24;
 
                 }
 

@@ -86,11 +86,19 @@ namespace StardewDruid.Cast.Weald
 
                     eventLocked = true;
 
+                    ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
+
                     SpellHandle spellHandle = new(origin, 384, IconData.impacts.nature, new());
 
                     Mod.instance.spellRegister.Add(spellHandle);
 
-                    ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
+                    //SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new());
+
+                    //circleHandle.scheme = IconData.schemes.grannysmith;
+
+                    //circleHandle.sound = SpellHandle.sounds.discoverMineral;
+
+                    //Mod.instance.spellRegister.Add(circleHandle);
 
                     if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour))
                     {
@@ -140,10 +148,10 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if (!Mod.instance.rite.targetCasts.ContainsKey(location.Name))
+            if (!Mod.instance.rite.targetCasts.ContainsKey(location.Name + "_cultivate"))
             {
 
-                Mod.instance.rite.targetCasts[location.Name] = new();
+                Mod.instance.rite.targetCasts[location.Name + "_cultivate"] = new();
 
             }
 
@@ -170,10 +178,10 @@ namespace StardewDruid.Cast.Weald
                     // ----------------------------------------------------------------------
                     // check recasts
 
-                    if (Mod.instance.rite.targetCasts[location.Name].ContainsKey(tile))
+                    if (Mod.instance.rite.targetCasts[location.Name + "_cultivate"].ContainsKey(tile))
                     {
 
-                        if (Mod.instance.rite.targetCasts[location.Name][tile].Contains("Crop"))
+                        if (Mod.instance.rite.targetCasts[location.Name + "_cultivate"][tile].Contains("Crop"))
                         {
 
                             if (hoeDirt.crop != null)
@@ -181,7 +189,7 @@ namespace StardewDruid.Cast.Weald
 
                                 string cropName = "Crop" + hoeDirt.crop.indexOfHarvest.Value.ToString();
 
-                                if (cropName == Mod.instance.rite.targetCasts[location.Name][tile])
+                                if (cropName == Mod.instance.rite.targetCasts[location.Name + "_cultivate"][tile])
                                 {
 
                                     continue;
@@ -191,7 +199,7 @@ namespace StardewDruid.Cast.Weald
                             }
 
                         }
-                        else if (Mod.instance.rite.targetCasts[location.Name][tile] == "Hoed")
+                        else if (Mod.instance.rite.targetCasts[location.Name + "_cultivate"][tile] == "Hoed")
                         {
 
                             if (hoeDirt.crop == null)
@@ -392,7 +400,7 @@ namespace StardewDruid.Cast.Weald
                             else
                             {
                                 
-                                Mod.instance.rite.targetCasts[location.Name][tile] = "Hoed";
+                                Mod.instance.rite.targetCasts[location.Name + "_cultivate"][tile] = "Hoed";
                                 
                                 continue;
 
@@ -402,7 +410,7 @@ namespace StardewDruid.Cast.Weald
                         else
                         {
                             
-                            Mod.instance.rite.targetCasts[location.Name][tile] = "Hoed";
+                            Mod.instance.rite.targetCasts[location.Name + "_cultivate"][tile] = "Hoed";
                             
                             continue;
 
@@ -420,7 +428,7 @@ namespace StardewDruid.Cast.Weald
                         if (hoeDirt.crop == null)
                         {
 
-                            Mod.instance.rite.targetCasts[location.Name][tile] = "Hoed";
+                            Mod.instance.rite.targetCasts[location.Name + "_cultivate"][tile] = "Hoed";
 
                             continue;
 
@@ -456,13 +464,13 @@ namespace StardewDruid.Cast.Weald
                     if(hoeDirt.crop.indexOfHarvest.Value != null)
                     {
 
-                        Mod.instance.rite.targetCasts[location.Name][tile] = "Crop" + hoeDirt.crop.indexOfHarvest.Value.ToString();
+                        Mod.instance.rite.targetCasts[location.Name + "_cultivate"][tile] = "Crop" + hoeDirt.crop.indexOfHarvest.Value.ToString();
 
                     }
                     else
                     {
 
-                        Mod.instance.rite.targetCasts[location.Name][tile] = "CropUnknown";
+                        Mod.instance.rite.targetCasts[location.Name + "_cultivate"][tile] = "CropUnknown";
 
                     }
 

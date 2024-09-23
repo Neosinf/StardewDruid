@@ -139,6 +139,56 @@ namespace StardewDruid.Cast.Effect
             switch (characterType)
             {
 
+                case Character.CharacterHandle.characters.Shadowbear:
+
+                    creature = new StardewDruid.Character.Growler(characterType);
+
+                    switch (Mod.instance.randomIndex.Next(3))
+                    {
+
+                        case 0:
+
+                            location.playSound("BearGrowl");
+
+                            break;
+
+                        case 1:
+
+                            location.playSound("BearGrowlTwo");
+
+                            break;
+
+                        case 2:
+
+                            location.playSound("BearGrowlThree");
+
+                            break;
+
+                    }
+
+                    creature.netMovement.Set((int)Character.Character.movements.run);
+
+                    break;
+
+                case Character.CharacterHandle.characters.Shadowwolf:
+
+                    creature = new StardewDruid.Character.Growler(characterType);
+
+                    switch (Mod.instance.randomIndex.Next(3))
+                    {
+
+                        case 0:
+
+                            location.playSound("WolfGrowl");
+
+                            break;
+
+                    }
+
+                    creature.netMovement.Set((int)Character.Character.movements.run);
+
+                    break;
+
                 case Character.CharacterHandle.characters.Shadowcat:
                 case Character.CharacterHandle.characters.Shadowfox:
 

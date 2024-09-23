@@ -13,6 +13,7 @@ using StardewValley.Projectiles;
 using static StardewDruid.Cast.SpellHandle;
 using System.Diagnostics.Metrics;
 using StardewValley.Mods;
+using xTile.Tiles;
 
 namespace StardewDruid.Event
 {
@@ -34,12 +35,16 @@ namespace StardewDruid.Event
 
         public float scale;
 
+        public Microsoft.Xna.Framework.Color colour = Microsoft.Xna.Framework.Color.White;
+
         public enum renders
         {
 
             target,
             decoration,
             sky,
+            circle,
+
         }
 
         public renders render;
@@ -97,6 +102,25 @@ namespace StardewDruid.Event
 
         }
 
+        public EventRender(string Id, string Location, Vector2 Origin, IconData.circles circle, Microsoft.Xna.Framework.Color Colour)
+        {
+
+            eventId = Id;
+
+            location = Location;
+
+            origin = Origin;
+
+            display = displays.none;
+
+            render = renders.circle;
+
+            rectangle = IconData.CircleRectangle(circle);
+
+            colour = Colour; 
+
+        }
+
         public void draw(SpriteBatch b)
         {
 
@@ -121,7 +145,11 @@ namespace StardewDruid.Event
                     drawSky(b);
 
                     break;
+                case renders.circle:
 
+                    drawCircle(b);
+
+                    break;
                 default:
                 case renders.target:
 
@@ -168,6 +196,29 @@ namespace StardewDruid.Event
                 Color.White * 0.75f,
                 0,
                 new Vector2(32),
+                4f,
+                SpriteEffects.None,
+                0.0001f
+            );
+
+        }        
+        
+        public void drawCircle(SpriteBatch b)
+        {
+
+            Microsoft.Xna.Framework.Vector2 drawPosition = new(origin.X - (float)Game1.viewport.X, origin.Y - (float)Game1.viewport.Y);
+
+            float circleSeconds = (float)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 5000);
+
+            Microsoft.Xna.Framework.Color drawColour = colour * (0.25f + Math.Abs((float)(circleSeconds == 0 ? 0 : circleSeconds / 5000f) - 0.5f));
+
+            b.Draw(
+                Mod.instance.iconData.circleTexture,
+                drawPosition + new Vector2(32),
+                rectangle,
+                drawColour,
+                0,
+                new Vector2(72),
                 4f,
                 SpriteEffects.None,
                 0.0001f

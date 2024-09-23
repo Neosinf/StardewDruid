@@ -1821,7 +1821,7 @@ namespace StardewDruid.Cast.Ether
 
                     Vector2 burnVector = splash[i];
 
-                    SpellHandle burn = new(Game1.player, burnVector * 64, 256, Mod.instance.CombatDamage());
+                    SpellHandle burn = new(Game1.player, burnVector * 64, 320, Mod.instance.CombatDamage()/2);
 
                     burn.type = SpellHandle.spells.explode;
 
@@ -1841,7 +1841,7 @@ namespace StardewDruid.Cast.Ether
                     {
 
 
-                        burn.added = new() { SpellHandle.effects.embers, };
+                        burn.added = new() { SpellHandle.effects.embers, SpellHandle.effects.immolate, };
 
                     }
 
@@ -2049,11 +2049,11 @@ namespace StardewDruid.Cast.Ether
 
                 Vector2 treasurePosition = Position + new Vector2(64, 0);
 
-                StardewValley.Object treasureItem = SpawnData.RandomTreasure(currentLocation, Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherThree));
+                StardewValley.Object treasureItem = SpawnData.RandomTreasure(currentLocation, ModUtility.PositionToTile(treasurePosition), Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherThree));
 
                 ThrowHandle treasure = new(Game1.player, treasurePosition, treasureItem);
 
-                if (treasure.item.Category == -4)
+                if (treasure.item.Category == StardewValley.Object.FishCategory)
                 {
 
                     Game1.player.checkForQuestComplete(null, -1, 1, null, treasureItem.QualifiedItemId, 7);
@@ -2123,7 +2123,7 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            int cost = (int)Mod.instance.ModDifficulty();
+            int cost = (int)Mod.instance.ModDifficulty() / 2;
 
             if (Game1.player.Stamina <= cost)
             {

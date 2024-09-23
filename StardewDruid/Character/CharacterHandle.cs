@@ -112,6 +112,8 @@ namespace StardewDruid.Character
             ShadowCrow,
             ShadowRaven,
             ShadowMagpie,
+            Shadowbear,
+            Shadowwolf,
 
             // crows
             Rook,
@@ -287,6 +289,14 @@ namespace StardewDruid.Character
 
                             return new Vector2(31, 15) * 64;
 
+                        case characters.Revenant:
+
+                            return new Vector2(20, 13) * 64;
+
+                        case characters.Buffin:
+
+                            return new Vector2(17, 16) * 64;
+
                         default:
 
                             return Vector2.Zero;
@@ -299,7 +309,7 @@ namespace StardewDruid.Character
 
                 case locations.gate:
 
-                    return new Vector2(27, 18) * 64;
+                    return new Vector2(27, 17) * 64;
 
                 case locations.farm:
 
@@ -352,7 +362,6 @@ namespace StardewDruid.Character
                     return LocationData.druid_court_name;
 
                 case locations.grove:
-                case locations.rest:
 
                     return LocationData.druid_grove_name;
 
@@ -877,6 +886,13 @@ namespace StardewDruid.Character
 
                 case characters.energies:
 
+                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.swordWeald))
+                    {
+
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.336.1");
+
+                    }
+
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.107");
 
                 case characters.attendant:
@@ -1394,9 +1410,23 @@ namespace StardewDruid.Character
 
                         case characters.energies:
 
+                            if (!Mod.instance.questHandle.IsComplete(QuestHandle.swordWeald))
+                            {
+
+                                return null;
+
+                            }
+
                             return AttunementIntro(Rite.rites.weald);
 
                         case characters.waves:
+
+                            if (!Mod.instance.questHandle.IsComplete(QuestHandle.swordMists))
+                            {
+
+                                return null;
+
+                            }
 
                             return AttunementIntro(Rite.rites.mists);
 
@@ -2987,6 +3017,12 @@ namespace StardewDruid.Character
 
         public static string AttunementIntro(Rite.rites compare)
         {
+
+            if(Mod.instance.Config.slotAttune){
+
+                return null;
+
+            }
 
             int toolIndex = Mod.instance.AttuneableWeapon();
 

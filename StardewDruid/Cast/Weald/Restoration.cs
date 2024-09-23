@@ -80,9 +80,17 @@ namespace StardewDruid.Cast.Weald
 
                     eventLocked = true;
 
-                    SpellHandle spellHandle = new(origin, 384, IconData.impacts.nature, new());
+                    //SpellHandle spellHandle = new(origin, 384, IconData.impacts.nature, new());
 
-                    Mod.instance.spellRegister.Add(spellHandle);
+                    //Mod.instance.spellRegister.Add(spellHandle);
+
+                    SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new());
+
+                    circleHandle.scheme = IconData.schemes.grannysmith;
+
+                    circleHandle.sound = SpellHandle.sounds.discoverMineral;
+
+                    Mod.instance.spellRegister.Add(circleHandle);
 
                     ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 

@@ -36,15 +36,25 @@ namespace StardewDruid.Monster
             SpawnData.MonsterDrops(this, SpawnData.drops.dust);
 
         }
+        public override void SetBase()
+        {
+
+            tempermentActive = temperment.cautious;
+
+            baseMode = 2;
+
+            baseJuice = 2;
+
+            basePulp = 20;
+
+            cooldownInterval = 180;
+
+        }
 
         public override void LoadOut()
         {
 
             base.LoadOut();
-
-            baseJuice = 2;
-
-            basePulp += 5;
 
             specialSet = false;
 

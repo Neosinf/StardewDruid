@@ -49,12 +49,12 @@ namespace StardewDruid.Event.Scene
             // dwarf leave forest
             [5] = new Vector2(114, 26),
 
-            // warp farmer to arrowhead
+            // warp farmer to clearing
             //[10] = new Vector2(58, 71),
-            [10] = new Vector2(32,7),
-            // warp companion to arrowhead
+            [10] = new Vector2(32,15),
+            // warp companion to clearing
             //[11] = new Vector2(56, 70),
-            [11] = new Vector2(35,8),
+            [11] = new Vector2(35,16),
             // look at access to shrine
             //[12] = new Vector2(49, 70),
             [12] = new Vector2(44, 9),
@@ -96,23 +96,23 @@ namespace StardewDruid.Event.Scene
             [29] = new Vector2(28, 28),
 
             // forest cache enter farmer
-            [30] = new Vector2(28, 20),
+            [30] = new Vector2(28, 13),
             // forest cache enter shadowtin
-            [31] = new Vector2(27, 22),
+            [31] = new Vector2(27, 15),
             // forest cache location
-            [32] = new Vector2(27, 25),
+            [32] = new Vector2(27, 18),
             // forest enter rogue
-            [33] = new Vector2(24, 20),
+            [33] = new Vector2(24, 13),
             // forest enter goblin
-            [34] = new Vector2(26, 19),
+            [34] = new Vector2(26, 12),
             // forest cache enter dwarf
-            [35] = new Vector2(25, 19),
+            [35] = new Vector2(25, 12),
             // rogue exit
-            [36] = new Vector2(5, 18),
+            [36] = new Vector2(5, 11),
             // dwarf exit
             [37] = new Vector2(27, 6),
             // shadowtin contemplation
-            [38] = new Vector2(27, 28),
+            [38] = new Vector2(27, 21),
 
         };
 
@@ -559,7 +559,7 @@ namespace StardewDruid.Event.Scene
                         sourceRect = relicRect,
                         sourceRectStartingPos = new(relicRect.X, relicRect.Y),
                         texture = Mod.instance.iconData.relicsTexture,
-                        layerDepth = (eventVectors[19] * 64).Y / 10000,
+                        layerDepth = (eventVectors[19] * 64).Y / 10000 + 0.032f,
                         scale = 4f,
                     };
 

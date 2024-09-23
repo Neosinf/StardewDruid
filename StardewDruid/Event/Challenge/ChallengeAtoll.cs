@@ -117,6 +117,10 @@ namespace StardewDruid.Event.Challenge
 
             (location as Atoll).ambientDarkness = true;
 
+           // EventRender ritePortal = new(eventId, location.Name, origin, IconData.circles.summoning, Microsoft.Xna.Framework.Color.White);
+
+            //eventRenders.Add(ritePortal);
+        
         }
 
         public override void EventInterval()
@@ -149,7 +153,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 1:
 
-                    bosses[0] = new Phantom(ModUtility.PositionToTile(origin) - new Vector2(3, 2), Mod.instance.CombatDifficulty());
+                    bosses[0] = new Phantom(ModUtility.PositionToTile(origin) - new Vector2(5), Mod.instance.CombatDifficulty());
 
                     bosses[0].SetMode(3);
 

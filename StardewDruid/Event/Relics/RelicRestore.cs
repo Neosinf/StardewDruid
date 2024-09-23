@@ -64,9 +64,7 @@ namespace StardewDruid.Event.Relics
 
             Mod.instance.iconData.DecorativeIndicator(location, Game1.player.Position, IconData.decorations.weald, 4f, new());
 
-            location.playSound(SpellHandle.sounds.discoverMineral.ToString());
-            location.playSound(SpellHandle.sounds.discoverMineral.ToString());
-            location.playSound(SpellHandle.sounds.discoverMineral.ToString());
+            location.playSound(SpellHandle.sounds.Ship.ToString());
 
         }
 
@@ -87,11 +85,11 @@ namespace StardewDruid.Event.Relics
 
                 })
                 {
-                    ThrowHandle throwRelic = new(Game1.player.Position, origin + new Vector2((Mod.instance.randomIndex.Next(5) * 8) - 40, -256), relic);
+                    ThrowHandle throwRelic = new(Game1.player.Position, origin + new Vector2((Mod.instance.randomIndex.Next(5) * 8) + 320, -256), relic);
 
                     throwRelic.delay = Mod.instance.randomIndex.Next(5) * 10;
 
-                    throwRelic.impact = IconData.impacts.splash;
+                    throwRelic.impact = IconData.impacts.puff;
 
                     throwRelic.register();
 

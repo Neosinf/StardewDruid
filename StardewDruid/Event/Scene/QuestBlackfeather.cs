@@ -1191,7 +1191,7 @@ namespace StardewDruid.Event.Scene
 
                     location = Mod.instance.locations[LocationData.druid_atoll_name];
 
-                    Game1.warpFarmer(location.Name, (int)eventVectors[302].X, (int)eventVectors[302].Y, 0);
+                    Game1.warpFarmer(location.Name, (int)eventVectors[302].X, (int)eventVectors[302].Y, 1);
 
                     CharacterMover.Warp(location, companions[0], eventVectors[303] * 64, false);
 

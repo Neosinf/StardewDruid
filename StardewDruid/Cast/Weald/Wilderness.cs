@@ -8,6 +8,7 @@ using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
+using StardewValley.TerrainFeatures;
 using System.Collections.Generic;
 using xTile.Layers;
 using xTile.Tiles;
@@ -109,11 +110,19 @@ namespace StardewDruid.Cast.Weald
 
                     eventLocked = true;
 
-                    SpellHandle spellHandle = new(origin, 384, IconData.impacts.nature, new());
+                    //SpellHandle spellHandle = new(origin, 384, IconData.impacts.nature, new());
 
-                    Mod.instance.spellRegister.Add(spellHandle);
+                    //Mod.instance.spellRegister.Add(spellHandle);
 
                     ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
+
+                    SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new());
+
+                    circleHandle.scheme = IconData.schemes.grannysmith;
+
+                    circleHandle.sound = SpellHandle.sounds.discoverMineral;
+
+                    Mod.instance.spellRegister.Add(circleHandle);
 
                     if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdThree))
                     {
@@ -166,7 +175,6 @@ namespace StardewDruid.Cast.Weald
             List<Vector2> affected = ModUtility.GetTilesWithinRadius(location, ModUtility.PositionToTile(origin), radialCounter * 2);
 
             Dictionary<Vector2, List<spawns>> spawnProspects = new();
-
 
             if(location is Beach || location is StardewDruid.Location.Atoll || location is IslandWest || location is IslandSouth || location is IslandSouthEast)
             {
@@ -248,6 +256,15 @@ namespace StardewDruid.Cast.Weald
 
                 }
 
+                if (location is MineShaft)
+                {
+
+                    spawnProspects[prospect].Add(spawns.weed);
+
+                    continue;
+
+                }
+
                 int tileX = (int)prospect.X;
 
                 int tileY = (int)prospect.Y;
@@ -266,9 +283,9 @@ namespace StardewDruid.Cast.Weald
 
                         spawnProspects[prospect].Add(spawns.weed);
 
-                        spawnProspects[prospect].Add(spawns.twig);
-
                         spawnProspects[prospect].Add(spawns.rock);
+
+                        spawnProspects[prospect].Add(spawns.twig);
 
                         if (beachTerrain)
                         {
@@ -279,12 +296,12 @@ namespace StardewDruid.Cast.Weald
 
                         }
 
-                        spawnProspects[prospect].Add(spawns.forage);
-
-                        if (Mod.instance.questHandle.IsComplete(QuestHandle.wealdThree))
+                        if (Mod.instance.randomIndex.Next(3) == 0)
                         {
 
-                            if (Mod.instance.randomIndex.Next(2) == 0)
+                            spawnProspects[prospect].Add(spawns.forage);
+
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.wealdThree))
                             {
 
                                 spawnProspects[prospect].Add(spawns.flower);
@@ -292,7 +309,7 @@ namespace StardewDruid.Cast.Weald
                             }
 
                         }
-
+                        
                         Dictionary<string, List<Vector2>> neighbour = ModUtility.NeighbourCheck(location, prospect, 0, 1);
 
                         if (neighbour.Count == 0)
@@ -447,8 +464,45 @@ namespace StardewDruid.Cast.Weald
 
         public void SpawnWeeds(Vector2 prospect)
         {
+            string randomWeed;
 
-            string randomWeed = GameLocation.getWeedForSeason(Mod.instance.randomIndex, location.GetSeason());
+            if (location is MineShaft mineShaft)
+            {
+                
+                if (mineShaft.getMineArea() == 40)
+                {
+                    randomWeed = "(O)"+Mod.instance.randomIndex.Next(319, 322).ToString();
+
+                    if (mineShaft.GetAdditionalDifficulty() > 0)
+                    {
+
+                        randomWeed = "(O)" + Mod.instance.randomIndex.Next(313,316).ToString();
+
+                    }
+
+                }
+                else if (mineShaft.getMineArea() == 80)
+                {
+                    
+                    randomWeed = "(O)" + Mod.instance.randomIndex.Next(316, 319).ToString();
+
+                }
+                else
+                {
+
+                    randomWeed = "(O)" + Mod.instance.randomIndex.Next(313, 316).ToString();
+
+                }
+
+                spawnCount++;
+
+            }
+            else
+            {
+
+                randomWeed = GameLocation.getWeedForSeason(Mod.instance.randomIndex, location.GetSeason());
+
+            }
 
             Object @object = ItemRegistry.Create<Object>(randomWeed);
 
@@ -490,7 +544,15 @@ namespace StardewDruid.Cast.Weald
             
             }
 
-            ModUtility.RandomTree(location, prospect);
+            Tree newTree = SpawnData.RandomTree(location);
+
+            if (newTree == null)
+            {
+                return;
+
+            }
+
+            location.terrainFeatures.Add(prospect, newTree);
 
             Mod.instance.iconData.CursorIndicator(location, prospect * 64 + new Vector2(0, 8), IconData.cursors.weald, new());
 
@@ -508,7 +570,7 @@ namespace StardewDruid.Cast.Weald
             
             }
 
-            int randomCrop;
+            string randomCrop;
 
             if (flower)
             {
@@ -523,7 +585,7 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            StardewValley.Object newForage = new StardewValley.Object(randomCrop.ToString(), 1);
+            StardewValley.Object newForage = new StardewValley.Object(randomCrop, 1);
 
             newForage.IsSpawnedObject = true;
 

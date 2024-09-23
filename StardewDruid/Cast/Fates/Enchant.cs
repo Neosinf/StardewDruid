@@ -75,9 +75,9 @@ namespace StardewDruid.Cast.Fates
                 if (decimalCounter == 5)
                 {
 
-                    Mod.instance.rite.channel(IconData.skies.sunset, 75);
+                    Mod.instance.rite.channel(IconData.skies.temple, 75);
 
-                    channel = IconData.skies.sunset;
+                    channel = IconData.skies.temple;
 
                 }
 
@@ -86,9 +86,13 @@ namespace StardewDruid.Cast.Fates
 
                     eventLocked = true;
 
-                    SpellHandle spellHandle = new(origin, 320, IconData.impacts.nature, new());
+                    ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
+
+                    SpellHandle spellHandle = new(origin, 256, IconData.impacts.summoning, new());
 
                     spellHandle.scheme = IconData.schemes.fates;
+
+                    spellHandle.sound = SpellHandle.sounds.discoverMineral;
 
                     Mod.instance.spellRegister.Add(spellHandle);
 
@@ -149,10 +153,10 @@ namespace StardewDruid.Cast.Fates
         public void Enchantment()
         {
 
-            if (!Mod.instance.rite.targetCasts.ContainsKey(location.Name))
+            if (!Mod.instance.rite.targetCasts.ContainsKey(location.Name + "_enchant"))
             {
 
-                Mod.instance.rite.targetCasts[location.Name] = new();
+                Mod.instance.rite.targetCasts[location.Name + "_enchant"] = new();
 
             }
 
@@ -175,7 +179,7 @@ namespace StardewDruid.Cast.Fates
 
                 }
 
-                if (Mod.instance.rite.targetCasts[location.Name].ContainsKey(tile))
+                if (Mod.instance.rite.targetCasts[location.Name + "_enchant"].ContainsKey(tile))
                 {
 
                     continue;
@@ -226,9 +230,9 @@ namespace StardewDruid.Cast.Fates
                         continue;
 
                 }
+                
 
-
-                if (target.MinutesUntilReady > 0)
+                if (target.MinutesUntilReady > 2)
                 {
 
                     Utility.addSprinklesToLocation(location, (int)tile.X, (int)tile.Y, 1, 2, 400, 40, Color.White);
@@ -237,7 +241,7 @@ namespace StardewDruid.Cast.Fates
 
                     DelayedAction.functionAfterDelay(delegate { target.minutesElapsed(10); }, 50);
 
-                    Mod.instance.rite.targetCasts[location.Name][tile] = target.name;
+                    Mod.instance.rite.targetCasts[location.Name + "_enchant"][tile] = target.name;
 
                     Mod.instance.save.herbalism[HerbalData.herbals.faeth] -= 1;
 
@@ -334,7 +338,7 @@ namespace StardewDruid.Cast.Fates
 
                     }
 
-                    Mod.instance.rite.targetCasts[location.Name][tile] = target.name;
+                    Mod.instance.rite.targetCasts[location.Name + "_enchant"][tile] = target.name;
 
                     Mod.instance.save.herbalism[HerbalData.herbals.faeth] -= cost;
 
@@ -668,14 +672,19 @@ namespace StardewDruid.Cast.Fates
             {
 
                 378,
+                378,
+                380,
                 380,
                 384,
                 386,
                 80,
-                82,
-                909,
 
             };
+
+            /*if (Mod.instance.questHandle.IsComplete(QuestHandle.challengeEther))
+            {
+                furnaceList.Add(909);
+            }*/
 
             int furnaceIndex = furnaceList[Mod.instance.randomIndex.Next(furnaceList.Count)];
 

@@ -94,8 +94,6 @@ namespace StardewDruid.Monster
         public Vector2 followIncrement;
         public int followTimer;
         public float gait;
-        //public int reachThreshold;
-        //public int safeThreshold;
 
         public Dictionary<int, List<Rectangle>> walkFrames = new();
         public int walkFrame;
@@ -129,7 +127,6 @@ namespace StardewDruid.Monster
         public Dictionary<int, List<Rectangle>> sweepFrames = new();
         public int sweepInterval;
         public Vector2 sweepIncrement;
-        //public int sweepThreshold;
 
         // ============================= Flight
 
@@ -165,7 +162,6 @@ namespace StardewDruid.Monster
         public NetBool netSpecialActive = new NetBool(false);
         public Dictionary<int, List<Rectangle>> specialFrames = new();
         public Dictionary<int, List<Rectangle>> channelFrames = new();
-        //public int specialThreshold;
         public int specialCeiling;
         public int specialFloor;
         public int specialInterval;
@@ -176,7 +172,6 @@ namespace StardewDruid.Monster
         public NetBool netChannelActive = new NetBool(false);
         public int channelCeiling;
         public int channelFloor;
-        //public int barrageThreshold;
 
         // ============================= Shield ability
 
@@ -187,13 +182,14 @@ namespace StardewDruid.Monster
         {
         }
 
-        public Boss(Vector2 vector, int CombatModifier, string name = "Boss", string template = "Pepper Rex")
-          : base(template, new(vector.X * 64, vector.Y * 64))
+        public Boss(Vector2 vector, int CombatModifier, string name = "Boss")
+          : base("Pepper Rex", new(vector.X * 64, vector.Y * 64))
         {
 
             realName.Set(name);
             localMonster = true;
             combatModifier = CombatModifier;
+            Name = SpawnData.MonsterSlayer(name);
 
             //=================== base fields
 
@@ -205,12 +201,7 @@ namespace StardewDruid.Monster
 
             //=================== reconfigurable fields
 
-            tempermentActive = temperment.cautious;
-
-            baseMode = 2;
-            baseJuice = 4;
-            basePulp = 25;
-            cooldownInterval = 180;
+            SetBase();
 
             LoadOut();
 
@@ -218,6 +209,18 @@ namespace StardewDruid.Monster
 
             Halt();
             idleTimer = 30;
+
+        }
+
+        public virtual void SetBase()
+        {
+
+            tempermentActive = temperment.cautious;
+
+            baseMode = 2;
+            baseJuice = 4;
+            basePulp = 25;
+            cooldownInterval = 180;
 
         }
 
@@ -378,7 +381,7 @@ namespace StardewDruid.Monster
 
                 case 3: // single boss
 
-                    MaxHealth = combatModifier * basePulp * 18;
+                    MaxHealth = combatModifier * basePulp * 12;
 
                     Health = MaxHealth;
 
@@ -390,7 +393,7 @@ namespace StardewDruid.Monster
 
                 case 4: // hard boss
 
-                    MaxHealth = combatModifier * basePulp * 24;
+                    MaxHealth = combatModifier * basePulp * 16;
 
                     Health = MaxHealth;
 
@@ -408,7 +411,7 @@ namespace StardewDruid.Monster
 
         public virtual int GetThreat()
         {
-
+            
             switch (netMode.Value)
             {
 
@@ -577,7 +580,17 @@ namespace StardewDruid.Monster
 
             DrawEmote(b, localPosition, drawLayer);
 
-            b.Draw(characterTexture, new Vector2(localPosition.X - 96f, localPosition.Y - 192f), new Rectangle?(walkFrames[adjustDirection][walkFrame]), Color.White * 0.65f, 0.0f, new Vector2(0.0f, 0.0f), 4f, netDirection.Value % 2 == 0 && netAlternative.Value == 3 || netDirection.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+            b.Draw(
+                characterTexture, 
+                localPosition + new Vector2(32,64 - (16f*GetScale())), 
+                new Rectangle?(walkFrames[adjustDirection][walkFrame]), 
+                Color.White, 
+                0.0f, 
+                new Vector2(GetWidth()/2, GetHeight()/2), 
+                GetScale(), 
+                netDirection.Value % 2 == 0 && netAlternative.Value == 3 || netDirection.Value == 3 ? (SpriteEffects)1 : 0, 
+                drawLayer
+            );
 
         }
 
@@ -1258,7 +1271,7 @@ namespace StardewDruid.Monster
 
         }
 
-        public void UpdateMultiplayer()
+        public virtual void UpdateMultiplayer()
         {
 
             if (netSweepActive.Value)
@@ -1535,7 +1548,7 @@ namespace StardewDruid.Monster
 
         }
 
-        public void UpdateWalk()
+        public virtual void UpdateWalk()
         {
 
             if(hoverInterval > 0)
@@ -2286,7 +2299,7 @@ namespace StardewDruid.Monster
 
             if (!sweepSet) { return false; }
 
-            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 192);
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 96f + (GetWidth() * 3));
 
             if (targets.Count > 0)
             {
@@ -2299,7 +2312,20 @@ namespace StardewDruid.Monster
 
                 SetCooldown(0.5f);
 
-                sweepIncrement = new((targetFarmer.X - Position.X) / sweepTimer, (targetFarmer.Y - Position.Y) / sweepTimer);
+                float limit = 32f + GetWidth();
+
+                float distance = Vector2.Distance(targetFarmer, Position);
+
+                if (distance > limit)
+                {
+
+                    float sweepDistance = (distance - limit) / sweepTimer;
+
+                    sweepIncrement = ModUtility.PathFactor(Position, targetFarmer) * sweepDistance;
+
+                    //sweepIncrement = new((targetFarmer.X - Position.X) / sweepTimer, (targetFarmer.Y - Position.Y) / sweepTimer);
+
+                }
 
                 netSweepActive.Set(true);
 

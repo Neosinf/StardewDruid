@@ -191,6 +191,8 @@ namespace StardewDruid.Data
             mists,
             deathwhirl,
 
+            summoning,
+
         }
 
         public Texture2D impactsTexture;
@@ -206,10 +208,19 @@ namespace StardewDruid.Data
             mountain,
             moon,
             night,
+            temple,
             sunset,
         }
 
         public Texture2D skyTexture;
+
+        public enum circles
+        {
+            none,
+            summoning,
+        }
+
+        public Texture2D circleTexture;
 
         public Texture2D missileTexture;
 
@@ -610,6 +621,8 @@ namespace StardewDruid.Data
             impactsTextureThree = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ImpactsThree.png"));
 
             skyTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Skies.png"));
+
+            circleTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Circle.png"));
 
             missileTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Missiles.png"));
 
@@ -1113,6 +1126,11 @@ namespace StardewDruid.Data
 
                     return;
 
+                case impacts.summoning:
+
+                    CircleIndicator(location, origin, circles.summoning, size, new() { color = schemeColours[additional.scheme],});
+
+                    return;
             }
 
             CreateImpact(location, origin, impact, size, additional);
@@ -1279,6 +1297,60 @@ namespace StardewDruid.Data
             location.temporarySprites.Add(skyAnimation);
 
             return skyAnimation;
+
+        }
+
+        public static Microsoft.Xna.Framework.Rectangle CircleRectangle(circles circle)
+        {
+
+            return new(((int)circle - 1) * 144, 0, 144, 144);
+
+        }
+
+        public TemporaryAnimatedSprite CircleIndicator(GameLocation location, Vector2 origin, circles circle, float scale, CircleAdditional additional)
+        {
+
+            Vector2 originOffset = origin + new Vector2(32f, 32f) - (new Vector2(72f, 72f) * scale);
+
+            if (circle == circles.none)
+            {
+
+                return null;
+
+            }
+
+            float layer = 0.0002f;
+
+            Microsoft.Xna.Framework.Rectangle circleRectangle = CircleRectangle(circle);
+
+            TemporaryAnimatedSprite circleAnimation = new(0, additional.interval, 1, additional.loops, originOffset, false, false)
+            {
+
+                sourceRect = circleRectangle,
+
+                sourceRectStartingPos = new Vector2(circleRectangle.X, circleRectangle.Y),
+
+                texture = circleTexture,
+
+                color = additional.color,
+
+                scale = scale,
+
+                layerDepth = layer,
+
+                alpha = additional.alpha,
+
+                delayBeforeAnimationStart = additional.delay,
+
+                timeBasedMotion = true,
+
+                alphaFade = additional.fade,
+
+            };
+
+            location.temporarySprites.Add(circleAnimation);
+
+            return circleAnimation;
 
         }
 
@@ -2397,4 +2469,22 @@ namespace StardewDruid.Data
         public int loops = 1;
 
     }
+
+    public class CircleAdditional
+    {
+
+        public float interval = 3000f;
+
+        public float alpha = 0.99f;
+
+        public int delay = 0;
+
+        public int loops = 1;
+
+        public float fade = 0.00033f;
+
+        public Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
+
+    }
+
 }

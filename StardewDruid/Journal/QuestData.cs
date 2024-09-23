@@ -356,7 +356,7 @@ namespace StardewDruid.Journal
 
                 progression = Mod.instance.Helper.Translation.Get("QuestData.322"),
 
-                requirement = 5,
+                requirement = 2,
 
                 reward = 500,
 
@@ -398,7 +398,7 @@ namespace StardewDruid.Journal
 
                 progression = Mod.instance.Helper.Translation.Get("QuestData.364"),
 
-                requirement = 100,
+                requirement = 20,
 
                 reward = 500,
 
@@ -444,7 +444,7 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.weald,
 
-                origin = new Vector2(26f, 17f) * 64,
+                origin = new Vector2(27f, 18f) * 64,
 
                 // -----------------------------------------------
 
@@ -1073,7 +1073,7 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.stars,
 
-                origin = new Vector2(27, 16) * 64,
+                origin = new Vector2(26, 19) * 64,
 
                 // -----------------------------------------------
 
@@ -1256,7 +1256,7 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.stars,
 
-                origin = new Vector2(27,15) * 64,
+                origin = new Vector2(29,17) * 64,
 
                 // -----------------------------------------------
 
@@ -1343,7 +1343,7 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.mists,
 
-                origin = new Vector2(24, 10f) * 64,
+                origin = new Vector2(21, 13f) * 64,
 
                 // -----------------------------------------------
 

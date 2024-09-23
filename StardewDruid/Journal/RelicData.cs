@@ -527,11 +527,11 @@ namespace StardewDruid.Journal
                     if (Game1.player.currentLocation.Name == "UndergroundMine20")
                     {
 
-                        Event.Access.AccessHandle lanternAccess = new();
+                        Event.Access.AccessHandle potAccess = new();
 
-                        lanternAccess.AccessSetup("UndergroundMine20", Location.LocationData.druid_spring_name, new(24, 13), new(27, 31));
+                        potAccess.AccessSetup("UndergroundMine20", Location.LocationData.druid_spring_name, new(24, 13), new(27, 31));
 
-                        lanternAccess.AccessCheck(Game1.player.currentLocation);
+                        potAccess.AccessCheck(Game1.player.currentLocation);
 
                         Mod.instance.CastDisplay(Mod.instance.Helper.Translation.Get("RelicData.309.8"));
 
@@ -575,6 +575,12 @@ namespace StardewDruid.Journal
 
                 case IconData.relics.wayfinder_lantern:
 
+                    /*SpellHandle lanternWarp = new(Mod.instance.locations[LocationData.druid_chapel_name], new(27, 30), new Vector2(0, 0)) { type = SpellHandle.spells.warp, };
+
+                    Mod.instance.spellRegister.Add(lanternWarp);
+
+                    return 1;*/
+
                     if (Game1.player.currentLocation.Name == "UndergroundMine60")
                     {
 
@@ -614,11 +620,11 @@ namespace StardewDruid.Journal
                     if (Game1.player.currentLocation.Name == "UndergroundMine100")
                     {
 
-                        Event.Access.AccessHandle lanternAccess = new();
+                        Event.Access.AccessHandle waterAccess = new();
 
-                        lanternAccess.AccessSetup("UndergroundMine100", Location.LocationData.druid_lair_name, new(24, 13), new(27, 30));
+                        waterAccess.AccessSetup("UndergroundMine100", Location.LocationData.druid_lair_name, new(24, 13), new(27, 30));
 
-                        lanternAccess.AccessCheck(Game1.player.currentLocation);
+                        waterAccess.AccessCheck(Game1.player.currentLocation);
 
                         return 1;
 
@@ -700,11 +706,11 @@ namespace StardewDruid.Journal
                     if (Game1.player.currentLocation.Name == "SkullCave")
                     {
 
-                        Event.Access.AccessHandle lanternAccess = new();
+                        Event.Access.AccessHandle ceremonialAccess = new();
 
-                        lanternAccess.AccessSetup("SkullCave", Location.LocationData.druid_tomb_name, new(10, 5), new(27, 30));
+                        ceremonialAccess.AccessSetup("SkullCave", Location.LocationData.druid_tomb_name, new(10, 5), new(27, 30));
 
-                        lanternAccess.AccessCheck(Game1.player.currentLocation);
+                        ceremonialAccess.AccessCheck(Game1.player.currentLocation);
 
                         return 1;
 
@@ -947,7 +953,7 @@ namespace StardewDruid.Journal
                 return IconData.relics.tactical_cell;
 
             }
-            else if (Game1.player.currentLocation is Woods)
+            else if (Game1.player.currentLocation is Woods || Game1.player.currentLocation.Name.Contains("Custom_Woods"))
             {
 
                 return IconData.relics.tactical_mask;

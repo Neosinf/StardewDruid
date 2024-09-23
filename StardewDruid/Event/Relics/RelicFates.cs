@@ -65,8 +65,6 @@ namespace StardewDruid.Event.Relics
             Mod.instance.iconData.DecorativeIndicator(location, Game1.player.Position, IconData.decorations.fates, 4f, new());
 
             location.playSound(SpellHandle.sounds.discoverMineral.ToString());
-            location.playSound(SpellHandle.sounds.discoverMineral.ToString());
-            location.playSound(SpellHandle.sounds.discoverMineral.ToString());
 
         }
 

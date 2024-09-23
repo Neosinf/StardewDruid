@@ -64,9 +64,8 @@ namespace StardewDruid.Event.Relics
 
             Mod.instance.iconData.DecorativeIndicator(location, Game1.player.Position, IconData.decorations.weald, 4f, new());
 
-            location.playSound(SpellHandle.sounds.discoverMineral.ToString());
-            location.playSound(SpellHandle.sounds.discoverMineral.ToString());
-            location.playSound(SpellHandle.sounds.discoverMineral.ToString());
+            location.playSound("furnace");
+
 
         }
 
@@ -92,7 +91,7 @@ namespace StardewDruid.Event.Relics
 
                     throwRelic.delay = Mod.instance.randomIndex.Next(5) * 10;
 
-                    throwRelic.impact = IconData.impacts.splash;
+                    throwRelic.impact = IconData.impacts.deathbomb;
 
                     throwRelic.register();
 

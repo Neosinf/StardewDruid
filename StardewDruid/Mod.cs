@@ -1945,7 +1945,12 @@ namespace StardewDruid
                 if (Game1.player.CurrentToolIndex == 999 && eventRegister.ContainsKey("transform"))
                 {
 
-                    return (eventRegister["transform"] as Cast.Ether.Transform).attuneableIndex;
+                    if (eventRegister["transform"] is Cast.Ether.Transform transform)
+                    {
+
+                        return transform.attuneableIndex;
+
+                    }
 
                 }
 
@@ -2187,11 +2192,11 @@ namespace StardewDruid
             if (Context.IsMultiplayer)
             {
 
-                difficulty += 1;
+                difficulty += 2;
 
             }
 
-            return 1 + (PowerLevel / 2) * difficulty;
+            return 3 + (PowerLevel * difficulty / 2);
 
         }
 

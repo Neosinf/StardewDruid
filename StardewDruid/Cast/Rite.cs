@@ -26,6 +26,7 @@ using System.Linq;
 using xTile;
 using xTile.Dimensions;
 using xTile.Layers;
+using static StardewDruid.Character.CharacterHandle;
 using static StardewValley.Minigames.CraneGame;
 
 namespace StardewDruid.Cast
@@ -647,6 +648,22 @@ namespace StardewDruid.Cast
 
             if (castType == rites.bones) { return; }
 
+            if(castType == rites.stars)
+            {
+
+                if (!Mod.instance.eventRegister.ContainsKey("star_shield"))
+                {
+
+                    Cast.Effect.Shield shieldEffect = new();
+
+                    shieldEffect.EventSetup(Game1.player.Position, "star_shield");
+
+                    shieldEffect.EventActivate();
+
+                }
+
+            }
+
             if (!Mod.instance.questHandle.IsGiven(chargeRequirement[castType]))
             {
 
@@ -913,7 +930,7 @@ namespace StardewDruid.Cast
 
                 case charges.mistsCharge:
 
-                    chargeCooldown = (int)(60f * celeri);
+                    chargeCooldown = (int)(120f * celeri);
 
                     return SpellHandle.effects.drain;
 
@@ -1414,6 +1431,30 @@ namespace StardewDruid.Cast
             }
 
             //---------------------------------------------
+            // Cultivate / Wilderness
+            //---------------------------------------------
+
+            if (Mod.instance.questHandle.IsGiven(QuestHandle.wealdThree))
+            {
+
+                CastWilderness();
+
+            }
+
+            if (Mod.instance.questHandle.IsGiven(QuestHandle.wealdFour))
+            {
+
+                CastCultivate();
+            }
+
+            if (LocationData.RestoreLocation(Game1.player.currentLocation.Name) != -1)
+            {
+
+                CastRestoration();
+
+            }
+
+            //---------------------------------------------
             // Rockfall
             //---------------------------------------------
 
@@ -1456,29 +1497,7 @@ namespace StardewDruid.Cast
 
             }
 
-            //---------------------------------------------
-            // Cultivate / Wilderness
-            //---------------------------------------------
 
-            if (Mod.instance.questHandle.IsGiven(QuestHandle.wealdThree))
-            {
-
-                CastWilderness();
-
-            }
-
-            if (Mod.instance.questHandle.IsGiven(QuestHandle.wealdFour))
-            {
-
-                CastCultivate();
-            }
-
-            if (LocationData.RestoreLocation(Game1.player.currentLocation.Name) != -1)
-            {
-
-                CastRestoration();
-            
-            }
 
         }
 
@@ -1619,6 +1638,13 @@ namespace StardewDruid.Cast
         {
 
             if (castLevel != 0)
+            {
+
+                return;
+
+            }
+
+            if(Game1.player.stamina <= 48)
             {
 
                 return;
@@ -2180,7 +2206,7 @@ namespace StardewDruid.Cast
 
                 witness.faceTowardFarmerForPeriod(3000, 4, false, Game1.player);
 
-                Game1.player.changeFriendship(-10, witness);
+                ModUtility.ChangeFriendship(Game1.player, witness, -10);
 
                 ReactionData.ReactTo(witness, ReactionData.reactions.mists, -10);
 
@@ -2934,7 +2960,7 @@ namespace StardewDruid.Cast
 
                 int friendship = Mod.instance.randomIndex.Next(0, 5) * 25 - 25;
 
-                Game1.player.changeFriendship(friendship, witness);
+                ModUtility.ChangeFriendship(Game1.player, witness, friendship);
 
                 Game1.player.friendshipData[witness.Name].TalkedToToday = true;
 
@@ -3068,7 +3094,7 @@ namespace StardewDruid.Cast
 
             if (Mod.instance.eventRegister.ContainsKey("crate_"+ Game1.player.currentLocation.Name))
             {
-                
+
                 return;
 
             }
@@ -3336,6 +3362,8 @@ namespace StardewDruid.Cast
 
             appliedBuff = blessing;
 
+            //DialogueData.stringkeys attunementChoice = Mod.instance.Config.slotAttune ? DialogueData.stringkeys.slotAttunementActive : DialogueData.stringkeys.normalAttunementActive;
+
             Buff riteBuff = new(
                 "184651", 
                 source: DialogueData.Strings(DialogueData.stringkeys.stardewDruid), 
@@ -3344,7 +3372,7 @@ namespace StardewDruid.Cast
                 iconTexture:Mod.instance.iconData.displayTexture, 
                 iconSheetIndex: (int)Mod.instance.iconData.riteDisplays[blessing] - 1, 
                 displayName: DialogueData.RiteNames(blessing), 
-                description: DialogueData.Strings(DialogueData.stringkeys.riteBuffDescription)
+                description: DialogueData.Strings(DialogueData.stringkeys.riteBuffDescription) //+ DialogueData.Strings(attunementChoice)
                 );
 
             Game1.player.buffs.Apply(riteBuff);

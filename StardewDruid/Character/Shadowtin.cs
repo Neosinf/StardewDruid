@@ -284,14 +284,7 @@ namespace StardewDruid.Character
         public override bool TargetWork()
         {
 
-            if (!Mod.instance.chests.ContainsKey(CharacterHandle.characters.Shadowtin))
-            {
-
-                Mod.instance.chests[CharacterHandle.characters.Shadowtin] = new();
-
-            }
-
-            Chest chest = Mod.instance.chests[CharacterHandle.characters.Shadowtin];
+            CharacterHandle.RetrieveInventory(CharacterHandle.characters.Shadowtin);
 
             if (!workVectors.ContainsKey(currentLocation.Name))
             {

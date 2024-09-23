@@ -16,9 +16,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
-using static StardewDruid.Cast.SpellHandle;
-using static StardewDruid.Data.IconData;
-
 
 namespace StardewDruid.Cast.Effect
 {
@@ -200,13 +197,13 @@ namespace StardewDruid.Cast.Effect
 
                 case SpellHandle.effects.morph:
 
-                    display = displays.morph;
+                    display = IconData.displays.morph;
 
                     break;
                 
                 case SpellHandle.effects.mug:
 
-                    display = displays.herbalism;
+                    display = IconData.displays.herbalism;
 
                     if (victim.objectsToDrop.Count > 0)
                     {
@@ -245,7 +242,7 @@ namespace StardewDruid.Cast.Effect
 
                 case SpellHandle.effects.glare:
 
-                    display = displays.glare;
+                    display = IconData.displays.glare;
 
                     stats.Add((float)victim.Health);
 
@@ -253,7 +250,7 @@ namespace StardewDruid.Cast.Effect
 
                 case SpellHandle.effects.daze:
 
-                    display = displays.blind;
+                    display = IconData.displays.blind;
 
                     if (victim is StardewDruid.Monster.Boss boss)
                     {
@@ -283,20 +280,20 @@ namespace StardewDruid.Cast.Effect
 
                     timer *= 2;
 
-                    display = displays.skull;
+                    display = IconData.displays.skull;
 
                     break;
                 
                 case SpellHandle.effects.immolate:
 
-                    display = displays.blaze;
+                    display = IconData.displays.blaze;
 
                     break;
 
                 default:
                 case SpellHandle.effects.knock:
 
-                    display = displays.knock;
+                    display = IconData.displays.knock;
 
                     stats.Add(Victim.rotation);
 
@@ -477,9 +474,9 @@ namespace StardewDruid.Cast.Effect
 
             SpellHandle death = new(Game1.player, new() { victim }, 999);
 
-            death.display = impacts.deathbomb;
+            death.display = IconData.impacts.deathbomb;
 
-            death.scheme = schemes.fates;
+            death.scheme = IconData.schemes.fates;
 
             Mod.instance.spellRegister.Add(death);
 
@@ -490,9 +487,9 @@ namespace StardewDruid.Cast.Effect
 
             SpellHandle critical = new(Game1.player, new() { victim }, Mod.instance.CombatDamage() / 2);
 
-            critical.display = impacts.flashbang;
+            critical.display = IconData.impacts.flashbang;
 
-            critical.scheme = schemes.golden;
+            critical.scheme = IconData.schemes.golden;
 
             Mod.instance.spellRegister.Add(critical);
 
@@ -506,7 +503,7 @@ namespace StardewDruid.Cast.Effect
             if (new Random().Next(5) == 0)
             {
 
-                Mod.instance.iconData.ImpactIndicator(location, victim.Position, IconData.impacts.deathbomb, 4f, new() { scheme = schemes.stars, });
+                Mod.instance.iconData.ImpactIndicator(location, victim.Position, IconData.impacts.deathbomb, 4f, new() { scheme = IconData.schemes.stars, });
 
                 int barbeque = SpawnData.RandomBarbeque();
 

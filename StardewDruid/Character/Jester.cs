@@ -285,12 +285,7 @@ namespace StardewDruid.Character
         public override bool TargetWork()
         {
 
-            if (!Mod.instance.chests.ContainsKey(CharacterHandle.characters.Jester))
-            {
-
-                Mod.instance.chests[CharacterHandle.characters.Jester] = new();
-
-            }
+            CharacterHandle.RetrieveInventory(CharacterHandle.characters.Jester);
 
             if (currentLocation.characters.Count > 0 && !Mod.instance.eventRegister.ContainsKey("active"))
             {
@@ -352,7 +347,7 @@ namespace StardewDruid.Character
 
                             Game1.player.friendshipData[rubVictim.Name].TalkedToToday = true;
 
-                            Game1.player.changeFriendship(25, rubVictim);
+                            ModUtility.ChangeFriendship(Game1.player, rubVictim,25);
 
                         }
 

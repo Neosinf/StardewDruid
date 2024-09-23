@@ -61,6 +61,8 @@ namespace StardewDruid.Data
             energyContinue,
             energyRite,
             riteBuffDescription,
+            normalAttunementActive,
+            slotAttunementActive,
             energySkill,
             dragonBuff,
             dragonBuffDescription,
@@ -68,6 +70,8 @@ namespace StardewDruid.Data
             speedIncrease,
             questComplete,
             percentComplete,
+            druidShield,
+            defenseIncrease,
 
             // Journal
 
@@ -281,6 +285,14 @@ namespace StardewDruid.Data
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.273");
 
+                case stringkeys.normalAttunementActive:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.336.1");
+
+                case stringkeys.slotAttunementActive:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.336.2");
+
                 case stringkeys.dragonBuff:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.277");
@@ -348,6 +360,14 @@ namespace StardewDruid.Data
                 case stringkeys.percentComplete:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.337");
+
+                case stringkeys.druidShield:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.335.1");
+
+                case stringkeys.defenseIncrease:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.335.2");
 
                 // ============================================ JOURNAL
 

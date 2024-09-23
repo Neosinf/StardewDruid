@@ -757,7 +757,7 @@ namespace StardewDruid.Character
 
                     }
 
-                    Game1.player.changeFriendship(friendship, witness);
+                    ModUtility.ChangeFriendship(Game1.player, witness, friendship);
 
                     ReactionData.ReactTo(witness, ReactionData.reactions.corvid, friendship);
 

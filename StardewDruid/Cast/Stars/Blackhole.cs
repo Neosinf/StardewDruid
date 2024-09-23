@@ -97,7 +97,13 @@ namespace StardewDruid.Cast.Stars
 
                     eventLocked = true;
 
-                    if(ModUtility.GroundCheck(location, ModUtility.PositionToTile(target)) == "water"){
+                    //SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new());
+
+                    //circleHandle.scheme = IconData.schemes.stars;
+
+                    //Mod.instance.spellRegister.Add(circleHandle);
+
+                    if (ModUtility.GroundCheck(location, ModUtility.PositionToTile(target)) == "water"){
 
                         water = true;
                         meteor = true;
@@ -138,10 +144,14 @@ namespace StardewDruid.Cast.Stars
 
             hole.type = SpellHandle.spells.blackhole;
 
+            int castCost = 48;
+
             if (water)
             {
 
                 hole.added = new() { SpellHandle.effects.tornado, };
+
+                castCost = 96;
 
             }
             else if (Game1.player.CurrentTool is not MeleeWeapon || Game1.player.CurrentTool.isScythe())
@@ -161,7 +171,7 @@ namespace StardewDruid.Cast.Stars
 
             blackhole = true;
 
-            Mod.instance.rite.castCost = 48;
+            Mod.instance.rite.castCost = castCost;
 
             Mod.instance.rite.ApplyCost();
 

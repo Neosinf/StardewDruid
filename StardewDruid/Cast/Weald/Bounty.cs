@@ -189,7 +189,7 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if (location is Woods)
+            if (location is Woods || location.Name.Contains("Custom_Woods"))
             {
 
                 if (!Mod.instance.rite.specialCasts[location.Name].Contains("WoodsBats"))
@@ -318,18 +318,48 @@ namespace StardewDruid.Cast.Weald
                     if (target != Vector2.Zero)
                     {
 
-                        if (Mod.instance.randomIndex.Next(2) == 0)
+                        if(location is Town || location is Mountain || location is Beach)
                         {
+                            
+                            switch (Mod.instance.randomIndex.Next(2))
+                            {
+                                default:
+                                case 0:
+                                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowfox, prospect.Key * 64 - new Vector2(0, 64), target * 64 - new Vector2(0, 64), 3f);
 
-                            creature.AddCreature(location, Character.CharacterHandle.characters.Shadowfox, prospect.Key * 64 - new Vector2(0, 64), target * 64 - new Vector2(0, 64), 3f);
+                                    break;
+
+                                case 1:
+
+                                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowcat, prospect.Key * 64 - new Vector2(0, 64), target * 64 - new Vector2(0, 64), 3f);
+
+                                    break;
+
+
+                            }
 
                         }
                         else
                         {
 
-                            creature.AddCreature(location, Character.CharacterHandle.characters.Shadowcat, prospect.Key * 64 - new Vector2(0, 64), target * 64 - new Vector2(0, 64), 3f);
+                            switch (Mod.instance.randomIndex.Next(2))
+                            {
+                                default:
+                                case 0:
+                                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowwolf, prospect.Key * 64 - new Vector2(0, 64), target * 64 - new Vector2(0, 64), 3f);
+
+                                    break;
+
+                                case 1:
+
+                                    creature.AddCreature(location, Character.CharacterHandle.characters.Shadowbear, prospect.Key * 64 - new Vector2(0, 64), target * 64 - new Vector2(0, 64), 3f);
+
+                                    break;
+
+                            }
 
                         }
+
 
                     }
 
@@ -341,9 +371,24 @@ namespace StardewDruid.Cast.Weald
 
                     target = treeTop + (ModUtility.DirectionAsVector(direction) * 6400);
 
+                    bool batRelic = false;
+
+                    dropRelic = Mod.instance.relicsData.RelicTacticalLocations();
+
+                    if (dropRelic != IconData.relics.none)
+                    {
+
+                        if (!Journal.RelicData.HasRelic(dropRelic))
+                        {
+
+                            batRelic = true;
+
+                        }
+
+                    }
+
                     List<Character.CharacterHandle.characters> flyers = new()
                     {
-                        Character.CharacterHandle.characters.Shadowbat,
                         Character.CharacterHandle.characters.Shadowbat,
                         Character.CharacterHandle.characters.ShadowRaven,
                         Character.CharacterHandle.characters.ShadowRook,
@@ -352,27 +397,32 @@ namespace StardewDruid.Cast.Weald
 
                     };
 
+                    if (batRelic)
+                    {
+
+                        flyers = new()
+                        {
+                            Character.CharacterHandle.characters.Shadowbat,
+                            Character.CharacterHandle.characters.Shadowbat,
+                            Character.CharacterHandle.characters.Shadowbat,
+                            Character.CharacterHandle.characters.Shadowbat,
+                            Character.CharacterHandle.characters.ShadowRaven,
+                            Character.CharacterHandle.characters.ShadowRook,
+                            Character.CharacterHandle.characters.ShadowCrow,
+                            Character.CharacterHandle.characters.ShadowMagpie,
+
+                        };
+
+                    }
 
                     CharacterHandle.characters treeCharacter = flyers[Mod.instance.randomIndex.Next(flyers.Count)];
 
-                    if(treeCharacter is CharacterHandle.characters.Shadowbat)
+                    if(treeCharacter is CharacterHandle.characters.Shadowbat && batRelic)
                     {
 
-                        dropRelic = Mod.instance.relicsData.RelicTacticalLocations();
+                        throwRelic = new(Game1.player, treeTop, dropRelic);
 
-                        if (dropRelic != IconData.relics.none)
-                        {
-
-                            if (!Journal.RelicData.HasRelic(dropRelic))
-                            {
-
-                                throwRelic = new(Game1.player, treeTop, dropRelic);
-
-                                throwRelic.register();
-
-                            }
-
-                        }
+                        throwRelic.register();
 
                     }
 

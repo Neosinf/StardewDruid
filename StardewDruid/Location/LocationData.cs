@@ -366,6 +366,8 @@ namespace StardewDruid.Location
 
         public int lightTimer = -1;
 
+        public float lightScale = 4f;
+
         public LightField(Vector2 Origin)
         { 
             
@@ -424,9 +426,9 @@ namespace StardewDruid.Location
                             Microsoft.Xna.Framework.Color.White * 0.75f,
                             0f,
                             new(16),
-                            4,
+                            lightScale,
                             0,
-                            (origin.Y + 384) / 10000
+                            (origin.Y + 384 + lightLayer) / 10000
                             );
 
                         position += new Vector2(64);
@@ -782,51 +784,51 @@ namespace StardewDruid.Location
                     {
                         case 1:
 
-                            return new(0,0,48,64);
+                            return new(0, 0, 48, 64);
 
                         case 2:
 
-                            return new(16,64,16,32);
+                            return new(16, 64, 16, 32);
 
                         case 3:
 
-                            return new(48,0,48,64);
+                            return new(48, 0, 48, 64);
 
                         case 4:
 
-                            return new(64,64,16,32);
+                            return new(64, 64, 16, 32);
 
                         case 5:
 
-                            return new(96,0,64,64);
+                            return new(96, 0, 64, 64);
 
                         case 6:
 
-                            return new(112,64,32,48);
+                            return new(112, 64, 32, 48);
 
                         case 7:
 
-                            return new(160,0,48,64);
+                            return new(160, 0, 48, 64);
 
                         case 8:
 
-                            return new(176,64,16,32);
+                            return new(176, 64, 16, 32);
 
                         case 9:
 
-                            return new(208,0,48,48);
+                            return new(208, 0, 48, 48);
 
                         case 10:
 
-                            return new(208, 48,32,32);
+                            return new(208, 48, 32, 32);
 
                         case 11:
 
-                            return new(256,0,96,64);
+                            return new(256, 0, 96, 64);
 
                         case 12:
 
-                            return new(288,64,32,48);
+                            return new(288, 64, 32, 48);
 
                         case 13: //left
 
@@ -858,11 +860,11 @@ namespace StardewDruid.Location
                     {
                         case 1:
 
-                            return new(0,112,112,80);
+                            return new(0, 112, 112, 80);
 
                         case 2:
 
-                            return new(16,192,64,32);
+                            return new(16, 192, 64, 32);
 
                     }
 
@@ -875,7 +877,7 @@ namespace StardewDruid.Location
 
                         case 1:
 
-                            return new(0, 0,96, 48);
+                            return new(0, 0, 96, 48);
 
                         case 2:
 
@@ -929,20 +931,20 @@ namespace StardewDruid.Location
                         case 3:
                         case 4:
                         case 5:
-                        case 6: 
-                        case 7: 
+                        case 6:
+                        case 7:
                         case 8:
 
                             return new(0 + (32 * (key - 3)), 192, 32, 32);
 
-                        case 9: 
+                        case 9:
                         case 10:
                         case 11:
                         case 12:
                         case 13:
                         case 14:
 
-                            return new(0 + (32*(key- 9)), 224, 32, 32);
+                            return new(0 + (32 * (key - 9)), 224, 32, 32);
 
                         case 15:
                         case 16:
@@ -1005,7 +1007,7 @@ namespace StardewDruid.Location
                         case 13:
                         case 14:
 
-                            return new((key - 7) *32, 128, 32, 32);
+                            return new((key - 7) * 32, 128, 32, 32);
 
                         case 15:
                         case 16:
@@ -1204,7 +1206,7 @@ namespace StardewDruid.Location
 
                         case 31:
 
-                            return new(0,352,16,32);
+                            return new(0, 352, 16, 32);
 
                         case 32:
 
@@ -1281,12 +1283,36 @@ namespace StardewDruid.Location
                     {
 
                         case 1:
-
-                            return new(0, 0, 32, 80);
-
                         case 2:
+                            return new(80, 0, 48, 240);
 
-                            return new(0, 112, 64, 32);
+                        case 3:
+
+                            return new(128, 64, 96, 48);
+
+                        case 4:
+
+                            return new(128, 0, 32, 48);
+
+                        case 5:
+
+                            return new(144, 0, 64, 48);
+
+                        case 6:
+
+                            return new(192, 0, 32, 48);
+
+                        case 7:
+
+                            return new(128, 128, 64, 64);
+
+                        case 8:
+
+                            return new(0, 128, 64, 96);
+
+                        case 9:
+
+                            return new(0, 0, 32, 64);
 
                     }
 
@@ -1361,13 +1387,13 @@ namespace StardewDruid.Location
                         case 1:
 
                             return new(0, 0, 32, 80);
-                        
+
                         case 2:
                             return new(96, 192, 32, 64);
 
                         case 3:
                             return new(128, 192, 32, 64);
-                        
+
                         // section 1
                         case 4:
                             return new(0, 192, 48, 64);
@@ -1460,19 +1486,19 @@ namespace StardewDruid.Location
 
                         case 5:
 
-                            return new(176, 96, 128, 96);
+                            return new(160, 96, 144, 112);
 
                         case 6:
 
-                            return new(176, 192, 128, 96);
+                            return new(160, 208, 144, 96);
 
                         case 7:
 
-                            return new(176, 288, 128, 96);
+                            return new(176, 304, 128, 96);
 
                         case 8:
-                            
-                            return new(304, 288, 96, 96);
+
+                            return new(304, 304, 96, 96);
 
                         case 9:
 
@@ -1482,10 +1508,14 @@ namespace StardewDruid.Location
 
                             return new(48, 288, 48, 96);
 
+                        case 11:
+
+                            return new(96, 288, 80, 96);
 
                     }
 
                     break;
+
             }
 
             return new(0, 0, 0, 0);
@@ -1541,6 +1571,63 @@ namespace StardewDruid.Location
                             footPrint = 2;
 
                             break;
+
+                    }
+
+                    break;
+
+                case IconData.tilesheets.chapel:
+
+                    switch (key)
+                    {
+
+                        case 1:
+
+                            return new()
+                            {
+
+                                new Vector2(tile.X,tile.Y+12),
+                                new Vector2(tile.X+1,tile.Y+12),
+
+                                new Vector2(tile.X,tile.Y+13),
+                                new Vector2(tile.X+1,tile.Y+13),
+
+                                new Vector2(tile.X,tile.Y+14),
+                                new Vector2(tile.X+1,tile.Y+14),
+
+
+                            };
+
+                        case 2:
+
+                            return new()
+                            {
+
+                                new Vector2(tile.X+1,tile.Y+12),
+                                new Vector2(tile.X+2,tile.Y+12),
+
+                                new Vector2(tile.X+1,tile.Y+13),
+                                new Vector2(tile.X+2,tile.Y+13),
+
+                                new Vector2(tile.X+1,tile.Y+14),
+                                new Vector2(tile.X+2,tile.Y+14),
+
+
+                            };
+
+                        case 3:
+
+                            footPrint = 2;
+
+                            break;
+
+                        case 4:
+                        case 5:
+                        case 6:
+                        case 7:
+                        case 8:
+
+                            return new();
 
                     }
 
@@ -1709,10 +1796,16 @@ namespace StardewDruid.Location
 
                     switch (key)
                     {
-                        case 1:
 
-                            footPrint = 3;
-                            break;
+                        case 3:
+                        case 4:
+                        case 5:
+                        case 6:
+                        case 7:
+                        case 8:
+
+                            return new();
+
                         case 2:
                         case 9:
                         case 10:
@@ -1721,18 +1814,37 @@ namespace StardewDruid.Location
 
                             break;
 
-                        case 3:
-                        case 4:
-                        case 5:
-                        case 6:
-                        case 7:
-                        case 8:
+                        case 1:
+
+                            footPrint = 3;
+
+                            break;
+
                         case 11:
-                        case 12:
-                        case 13:
 
-                            return new();
+                            return new()
+                            {
+                                new Vector2(tile.X+1,tile.Y+2),
+                                new Vector2(tile.X+2,tile.Y+2),
+                                new Vector2(tile.X+3,tile.Y+2),
+                                new Vector2(tile.X+4,tile.Y+2),
 
+                                new Vector2(tile.X+1,tile.Y+3),
+                                new Vector2(tile.X+2,tile.Y+3),
+                                new Vector2(tile.X+3,tile.Y+3),
+                                new Vector2(tile.X+4,tile.Y+3),
+
+                                new Vector2(tile.X+1,tile.Y+4),
+                                new Vector2(tile.X+2,tile.Y+4),
+                                new Vector2(tile.X+3,tile.Y+4),
+                                new Vector2(tile.X+4,tile.Y+4),
+
+                                new Vector2(tile.X+1,tile.Y+5),
+                                new Vector2(tile.X+2,tile.Y+5),
+                                new Vector2(tile.X+3,tile.Y+5),
+                                new Vector2(tile.X+4,tile.Y+5),
+
+                            };
                     }
 
                     break;
@@ -2345,15 +2457,12 @@ namespace StardewDruid.Location
                         case 7:
                         case 8:
 
-                        case 11:
-                        case 12:
-                        case 13:
-
                             return TerrainTile.shadows.none;
 
                     }
 
                     break;
+
             }
 
             return shadow;
@@ -2392,6 +2501,8 @@ namespace StardewDruid.Location
                     }
 
                     break;
+
+
             }
 
             return 0.75f;
