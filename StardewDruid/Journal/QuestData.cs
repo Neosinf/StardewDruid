@@ -2591,7 +2591,7 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.none,
 
-                origin = new Vector2(23, 15) * 64,
+                origin = new Vector2(28, 15) * 64,
 
                 title = Mod.instance.Helper.Translation.Get("QuestData.315.3"),
 
@@ -2607,7 +2607,7 @@ namespace StardewDruid.Journal
                 Mod.instance.Helper.Translation.Get("QuestData.315.11") +
                 Mod.instance.Helper.Translation.Get("QuestData.315.12"),
 
-                reward = 1000,
+                reward = 15000,
 
                 before = new()
                 {
@@ -2766,6 +2766,157 @@ namespace StardewDruid.Journal
             };
 
             quests.Add(bonesThree.name, bonesThree);
+
+            // =====================================================
+            // Quest Buffin
+
+            Quest questBuffin = new()
+            {
+
+                name = QuestHandle.questBuffin,
+
+                icon = IconData.displays.buffin,
+
+                type = Quest.questTypes.heart,
+
+                give = Quest.questGivers.dialogue,
+
+                trigger = true,
+
+                triggerLocation = LocationData.druid_lair_name,
+
+                triggerRite = Rite.rites.bones,
+
+                origin = new Vector2(27, 18) * 64,
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.339.1.1"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.339.1.2") +
+                Mod.instance.Helper.Translation.Get("QuestData.339.1.3") +
+                Mod.instance.Helper.Translation.Get("QuestData.339.1.4"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.339.1.5"),
+
+                explanation = Mod.instance.Helper.Translation.Get("QuestData.339.1.6") +
+                Mod.instance.Helper.Translation.Get("QuestData.339.1.7") +
+                Mod.instance.Helper.Translation.Get("QuestData.339.1.8") +
+                Mod.instance.Helper.Translation.Get("QuestData.339.1.9") +
+                Mod.instance.Helper.Translation.Get("QuestData.339.1.10") +
+                Mod.instance.Helper.Translation.Get("QuestData.339.1.11") +
+                Mod.instance.Helper.Translation.Get("QuestData.339.1.12") +
+                Mod.instance.Helper.Translation.Get("QuestData.339.1.13") +
+                Mod.instance.Helper.Translation.Get("QuestData.339.1.14"),
+
+                reward = 15000,
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Blackfeather] = new()
+                    {
+                        prompt = true,
+                        questContext = 1,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.339.1.22") +
+                        Mod.instance.Helper.Translation.Get("QuestData.339.1.23"),
+                    },
+
+                    [CharacterHandle.characters.Buffin] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.339.1.28") +
+                        Mod.instance.Helper.Translation.Get("QuestData.339.1.29"),
+
+                    },
+                },
+
+                after = new()
+                {
+
+                    [CharacterHandle.characters.Jester] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.339.1.30"),
+
+                    },
+
+                },
+
+            };
+
+            quests.Add(questBuffin.name, questBuffin);
+
+            // =====================================================
+            // Quest Buffin
+
+            /*Quest questRevenant = new()
+            {
+
+                name = QuestHandle.questRevenant,
+
+                icon = IconData.displays.revenant,
+
+                type = Quest.questTypes.heart,
+
+                give = Quest.questGivers.dialogue,
+
+                trigger = true,
+
+                triggerTime = 1200,
+
+                triggerLocation = LocationData.druid_graveyard_name,
+
+                origin = new Vector2(27, 14) * 64,
+
+                title = "The Last Guardian",
+
+                description = "The Rite of Bones requires the participation of two individuals, the Successor of the Elements and the Successor of the Wilds. " +
+                "Linus has revealed himself as the current titleholder of the Wilds, but it remains to be seen whether the Mage Doja, the one responsible for the shadowrogue infiltration that's pillaged the valley's sacred spaces, will answer to the other title. " +
+                "Shadowtin has attempted contact with a member of his former mercenary unit to arrange a meeting with Doja and determine the mage's intentions.",
+
+                instruction = "Around 12 noon, with 5-6 hours to spare, cast any rite at the quest icon in the Old Graves.",
+
+                explanation = "",
+
+                reward = 15000,
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Shadowtin] = new()
+                    {
+                        prompt = true,
+                        intro = "I sent a message through our dwarven contact to my former mercenary unit about a possible parlay with Doja. " +
+                        "The return message instructs us to meet at a familiar location, the Old Graves. " +
+                        "It will be up to you to determine if Doja is the Successor of the Elements, and if so, what is necessary to convince, or coerce, him to fulfil his duties.",
+                    },
+
+                },
+
+                after = new()
+                {
+
+                    [CharacterHandle.characters.Shadowtin] = new()
+                    {
+                        prompt = true,
+                        intro = "Doja has been eliminated, and tyranny has been denied the power of the ancient ones. " +
+                        "That's the end of the shadowrogue expedition to the surfaceworld. I still haven't advanced my own cause, so I'll remain in partnership with your circle until I've exhausted my search for the truth.",
+
+                    },
+
+                    [CharacterHandle.characters.Jester] = new()
+                    {
+                        prompt = true,
+                        intro = "",
+
+                    },
+
+                },
+
+            };
+
+            quests.Add(questRevenant.name, questRevenant);*/
+
+            // RETURN
 
             return quests;
 

@@ -415,8 +415,8 @@ namespace StardewDruid.Location
                 [0] = new() { },
                 [1] = new() { },
                 [2] = new() { },
-                [3] = new() { new() { 20, 1 }, new() { 31, 1 }, },
-                [4] = new() { new() { 20, 2 }, new() { 31, 3 }, },
+                [3] = new() { new() { 20, 1 }, new() { 26, 6 }, new() { 32, 1 }, },
+                [4] = new() { new() { 20, 2 }, new() { 32, 3 }, },
                 [5] = new() { },
                 [6] = new() { new() { 13, 1 }, new() { 39, 1 }, },
                 [7] = new() { },
@@ -492,19 +492,32 @@ namespace StardewDruid.Location
             codes = new()
             {
 
-                [3] = new() { new() { 21, 1 }, new() { 32, 1 }, },
-
+                [3] = new() { new() { 21, 1 }, new() { 33, 1 }, },
+                [4] = new() { },
+                [5] = new() { },
                 [6] = new() { new() { 14, 1 }, new() { 40, 1 }, },
-
+                [7] = new() { },
+                [8] = new() { },
+                [9] = new() { },
                 [10] = new() { new() { 21, 1 }, new() { 33, 1 }, },
-
+                [11] = new() { },
+                [12] = new() { },
+                [13] = new() { },
                 [14] = new() { new() { 12, 1 }, new() { 42, 1 }, },
-
+                [15] = new() { },
+                [16] = new() { },
+                [17] = new() { },
+                [18] = new() { },
+                [19] = new() { },
                 [20] = new() { new() { 21, 1 }, new() { 33, 1 }, },
-
+                [21] = new() { },
                 [22] = new() { new() { 14, 1 }, new() { 40, 1 }, },
-
+                [23] = new() { },
+                [24] = new() { },
+                [25] = new() { },
                 [26] = new() { new() { 21, 1 }, new() { 33, 1 }, },
+                [27] = new() { },
+
 
 
             };
@@ -545,10 +558,12 @@ namespace StardewDruid.Location
 
             Dictionary<int, List<List<int>>> codes = new()
             {
-                [1] = new() { },
                 [2] = new() { new() { 23, 1 }, new() { 24, 1 }, new() { 26, 2 }, new() { 27, 2 }, },
                 [3] = new() { new() { 23, 1 }, new() { 24, 1 }, new() { 26, 2 }, new() { 27, 2 }, },
                 [4] = new() { },
+                [5] = new() { new() { 26, 3 }, new() { 27, 3 }, },
+                [6] = new() { new() { 26, 3 }, new() { 27, 3 }, },
+
 
             };
 
@@ -563,14 +578,16 @@ namespace StardewDruid.Location
                     switch (array[1])
                     {
                         case 1:
-
                             dialogueTiles.Add(new Vector2(array[0], code.Key), CharacterHandle.characters.engraving_left);
+                            break;
 
+                        case 2:
+                            dialogueTiles.Add(new Vector2(array[0], code.Key), CharacterHandle.characters.engraving_right);
                             break;
 
                         default:
-                        case 2:
-                            dialogueTiles.Add(new Vector2(array[0], code.Key), CharacterHandle.characters.engraving_right);
+                        case 3:
+                            dialogueTiles.Add(new Vector2(array[0], code.Key), CharacterHandle.characters.dragon_statue);
                             break;
 
 

@@ -24,8 +24,6 @@ namespace StardewDruid.Character
     public class Crowmother : StardewDruid.Character.Character
     {
 
-        public Dictionary<int, List<Rectangle>> hatFrames = new();
-
         public Crowmother()
         {
         }
@@ -70,34 +68,20 @@ namespace StardewDruid.Character
 
         }
 
-        public override void draw(SpriteBatch b, float alpha = 1f)
+        public override void DrawHat(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
         {
 
-            base.draw(b, alpha);
-
-            if (IsInvisible || !Utility.isOnScreen(Position, 128) || characterTexture == null)
-            {
-                return;
-            }
-
-            Vector2 localPosition = Game1.GlobalToLocal(Position);
-
-            float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
-
-            float fade = fadeOut == 0 ? 1f : fadeOut;
-
             b.Draw(
-                characterTexture,
-                SpritePosition(localPosition)- new Vector2(0,14f*setScale),
-                hatFrames[netDirection.Value][0],
-                Color.White * fade,
-                0.0f,
-                new Vector2(16),
-                setScale,
-                SpriteFlip() ? (SpriteEffects)1 : 0,
-                drawLayer + 0.0001f
-            );
-
+            characterTexture,
+            SpritePosition(localPosition) - new Vector2(0, 14f * setScale),
+            hatFrames[netDirection.Value][0],
+            Color.White * fade,
+            0.0f,
+            new Vector2(16),
+            setScale,
+            SpriteFlip() ? (SpriteEffects)1 : 0,
+            drawLayer + 0.0001f
+);
         }
 
         public override void behaviorOnFarmerPushing()

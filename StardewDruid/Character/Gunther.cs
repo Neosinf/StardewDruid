@@ -26,8 +26,6 @@ namespace StardewDruid.Character
     public class Gunther : StardewDruid.Character.Character
     {
 
-        public Dictionary<int, List<Rectangle>> hatFrames = new();
-
         public Gunther()
         {
         }
@@ -70,29 +68,20 @@ namespace StardewDruid.Character
             };
 
         }
-        public override void draw(SpriteBatch b, float alpha = 1f)
+
+        public override void DrawHat(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
         {
-            base.draw(b, alpha);
-
-            if (IsInvisible || !Utility.isOnScreen(Position, 128) || characterTexture == null)
-            {
-                return;
-            }
-
-            Vector2 localPosition = Game1.GlobalToLocal(Position);
-
-            float drawLayer = (float)StandingPixel.Y / 10000f + 0.002f;
 
             b.Draw(
                 characterTexture,
-                localPosition - new Vector2(netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? 30 : 32,72),
+                localPosition - new Vector2(netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? 30 : 32, 72),
                 hatFrames[netDirection.Value][0],
                 Color.White,
                 0f,
                 Vector2.Zero,
                 4f,
                 netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                drawLayer + 0.0001f
+                drawLayer + 0.002f
             );
 
         }

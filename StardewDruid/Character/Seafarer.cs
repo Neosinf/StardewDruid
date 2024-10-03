@@ -98,31 +98,10 @@ namespace StardewDruid.Character
 
         }
 
-        public override void draw(SpriteBatch b, float alpha = 1f)
+        public override void DrawHat(SpriteBatch b, Vector2 localPosition,  float drawLayer, float fade)
         {
-
-            base.draw(b, alpha);
-
-            if (IsInvisible || !Utility.isOnScreen(Position, 128) || characterTexture == null)
-            {
-                return;
-            }
-
-            Vector2 localPosition = Game1.GlobalToLocal(Position);
-
+            
             Vector2 spritePosition = SpritePosition(localPosition);
-
-            float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
-
-            float fade = fadeOut == 0 ? 1f : fadeOut;
-
-            DrawHat(b, spritePosition, drawLayer, fade);
-
-
-        }
-
-        public virtual void DrawHat(SpriteBatch b, Vector2 spritePosition,  float drawLayer, float fade)
-        {
 
             int UseIndex = hatsIndex + 0;
 

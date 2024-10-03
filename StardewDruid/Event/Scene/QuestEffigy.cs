@@ -874,7 +874,7 @@ namespace StardewDruid.Event.Scene
 
                     Wisps wispNew = new();
 
-                    wispNew.EventSetup(mistVector * 64, "wisps");
+                    wispNew.EventSetup(mistVector * 64, Rite.eventWisps);
 
                     wispNew.eventLocked = true;
 

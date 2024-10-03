@@ -8,35 +8,165 @@ using System.Text;
 using System.Threading.Tasks;
 using static StardewDruid.Character.CharacterHandle;
 using StardewValley.Minigames;
+using System.Security.Cryptography.X509Certificates;
+using StardewDruid.Data;
+using StardewDruid.Journal;
 
 namespace StardewDruid.Journal
 {
-    public class LoreData
+
+    public class LoreSet
     {
 
+        public enum settypes
+        {
+            character,
+            location,
+            transcript,
+        }
+
+        public enum loresets
+        {
+
+            Grove,
+
+            Effigy,
+
+            Spring,
+
+            challengeWeald,
+
+            Atoll,
+
+            Graves,
+
+            Keeper,
+
+            challengeMists,
+
+            Chapel,
+
+            Revenant,
+
+            Clearing,
+
+            challengeStars,
+
+            challengeAtoll,
+
+            Lair,
+
+            challengeDragon,
+
+            Jester,
+
+            Court,
+
+            Buffin,
+
+            challengeFates,
+
+            Shadowtin,
+
+            Tomb,
+
+            swordEther,
+
+            Engine,
+
+            Gate,
+
+            challengeEther,
+
+            Blackfeather,
+
+        }
+
+        public settypes settype;
+
+        public loresets loreset;
+
+        public string title;
+
+        public string quest;
+
+        public IconData.displays display;
+
+    }
+
+    public class LoreStory
+    {
+
+        public enum loretypes
+        {
+            information,
+            story,
+            transcript,
+        }
 
         public enum stories
         {
-            //------------------           
-            
+
+            // ------------- profiles
+
+            Effigy_Profile,
+            Effigy_Adventure,
+
+            Keeper_Profile,
+
+            Revenant_Profile,
+
+            Jester_Profile,
+            Jester_Adventure,
+
+            Buffin_Profile,
+
+            Shadowtin_Profile,
+            Shadowtin_Adventure,
+
+            Blackfeather_Profile,
+            Blackfeather_Adventure,
+
+            // ------------- profiles
+
+            Grove_Profile,
+
+            Spring_Profile,
+
+            Atoll_Profile,
+
+            Graves_Profile,
+
+            Chapel_Profile,
+
+            Clearing_Profile,
+
+            Lair_Profile,
+
+            Court_Profile,
+
+            Tomb_Profile,
+
+            Engine_Profile,
+
+            Gate_Profile,
+
+            // ------------- profiles
+
             Effigy_Weald,
             Effigy_self_1,
 
-            //------------------
-
             Effigy_Mists,
 
-            //------------------
-            
             Effigy_self_2,
 
-            //------------------
+            Memory_Prince,
+            Memory_Kings,
+            Memory_Dragons,
 
             Effigy_Stars,
             Revenant_Stars,
             Revenant_self_1,
-
-            //------------------
 
             Effigy_Jester,
             Jester_Effigy,
@@ -44,14 +174,11 @@ namespace StardewDruid.Journal
             Jester_Fates,
             Revenant_Fates,
 
-            //------------------
-
             Effigy_Buffin,
             Jester_Buffin,
             Revenant_court,
             Revenant_Marlon,
-
-            //------------------
+            Buffin_self_1,
 
             Effigy_Shadowtin,
             Jester_Shadowtin,
@@ -61,8 +188,6 @@ namespace StardewDruid.Journal
             Shadowtin_self_2,
             Buffin_court,
 
-            //------------------
-
             Effigy_Ether,
             Jester_Tomb,
             Jester_Ether,
@@ -70,16 +195,12 @@ namespace StardewDruid.Journal
             Revenant_Ether,
             Buffin_Ether,
 
-            //------------------
-
             Effigy_Circle,
             Effigy_Circle_2,
             Jester_Circle,
             Revenant_Circle,
             Buffin_Circle,
             Shadowtin_Circle,
-
-            //-----------------
 
             Effigy_Bones,
             Jester_Bones,
@@ -89,139 +210,425 @@ namespace StardewDruid.Journal
             Blackfeather_self_1,
             Blackfeather_self_2,
 
-            //----------------
-
-            Memory_Prince,
-            Memory_Kings,
-            Memory_Dragons,
 
         }
 
-        public static Dictionary<string,List<stories>> StorySets()
+        public loretypes loretype;
+
+        public LoreSet.loresets loreset;
+
+        public string quest;
+
+        public string title;
+
+        public string description;
+
+        public List<string> details;
+
+        // story properties
+
+        public stories story;
+
+        public CharacterHandle.characters character;
+
+        public string question;
+
+        public string answer;
+
+
+    }
+
+    public class LoreData
+    {
+
+        public static Dictionary<LoreSet.loresets,LoreSet> LoreSets()
         {
-            
-            Dictionary<string, List<stories>> storySets = new()
+
+            Dictionary<LoreSet.loresets, LoreSet> sets = new()
             {
 
-                [QuestHandle.swordWeald] = new(){
-                    LoreData.stories.Effigy_Weald,
-                    LoreData.stories.Effigy_self_1,
-                },
 
-                [QuestHandle.swordMists] = new(){
-                    LoreData.stories.Effigy_Mists,
-                },
+                [LoreSet.loresets.Grove] = new()
+                {
 
-                [QuestHandle.questEffigy] = new(){
-                    LoreData.stories.Effigy_self_2,
-                },
+                    settype = LoreSet.settypes.location,
 
-                [QuestHandle.swordStars] = new(){
+                    loreset = LoreSet.loresets.Grove,
 
-                    LoreData.stories.Effigy_Stars,
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.6"),
 
-                    LoreData.stories.Revenant_Stars,
-                    LoreData.stories.Revenant_self_1,
-                },
+                    quest = QuestHandle.startPoint,
 
-                [QuestHandle.approachJester] = new(){
-
-                    LoreData.stories.Effigy_Jester,
-
-                    LoreData.stories.Jester_Effigy,
-                    LoreData.stories.Jester_self_1,
-                    LoreData.stories.Jester_Fates,
-
-                    LoreData.stories.Revenant_Fates,
-                },
-
-                [QuestHandle.questJester] = new(){
-
-                    LoreData.stories.Effigy_Buffin,
-
-                    LoreData.stories.Jester_Buffin,
-
-                    LoreData.stories.Revenant_court,
-
-                    LoreData.stories.Revenant_Marlon,
+                    display = IconData.displays.weald,
 
                 },
 
-                [QuestHandle.challengeEther] = new(){
-                    
-                    LoreData.stories.Effigy_Shadowtin,
+                [LoreSet.loresets.Effigy] = new()
+                {
 
-                    LoreData.stories.Jester_Shadowtin,
+                    settype = LoreSet.settypes.character,
 
-                    LoreData.stories.Shadowtin_Effigy,
-                    LoreData.stories.Shadowtin_Jester,
-                    LoreData.stories.Shadowtin_self_1,
-                    LoreData.stories.Shadowtin_self_2,
+                    loreset = LoreSet.loresets.Effigy,
 
-                    LoreData.stories.Buffin_court,
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.14"),
 
-                },
+                    quest = QuestHandle.approachEffigy,
 
-                [QuestHandle.swordEther] = new(){
-
-
-                    LoreData.stories.Effigy_Ether,
-                    LoreData.stories.Jester_Tomb,
-                    LoreData.stories.Jester_Ether,
-                    LoreData.stories.Shadowtin_Ether,
-                    LoreData.stories.Revenant_Ether,
-                    LoreData.stories.Buffin_Ether,
-
-                    LoreData.stories.Memory_Prince,
-                    LoreData.stories.Memory_Kings,
-                    LoreData.stories.Memory_Dragons,
+                    display = IconData.displays.effigy,
 
                 },
 
-                [QuestHandle.questShadowtin] = new(){
+                [LoreSet.loresets.Spring] = new()
+                {
 
-                    LoreData.stories.Effigy_Circle,
-                    LoreData.stories.Effigy_Circle_2,
+                    settype = LoreSet.settypes.location,
 
-                    LoreData.stories.Jester_Circle,
-                    
-                    LoreData.stories.Revenant_Circle,
+                    loreset = LoreSet.loresets.Spring,
 
-                    LoreData.stories.Buffin_Circle,
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.22"),
 
-                    LoreData.stories.Shadowtin_Circle,
-                
-                },
+                    quest = QuestHandle.challengeWeald,
 
-                [QuestHandle.questBlackfeather] = new(){
-
-                    LoreData.stories.Effigy_Bones,
-
-                    LoreData.stories.Jester_Bones,
-
-                    LoreData.stories.Revenant_Bones,
-
-                    LoreData.stories.Buffin_Bones,
-
-                    LoreData.stories.Shadowtin_Bones,
-
-                    LoreData.stories.Blackfeather_self_1,
-                    LoreData.stories.Blackfeather_self_2,
+                    display = IconData.displays.weald,
 
                 },
+
+                [LoreSet.loresets.challengeWeald] = new()
+                {
+
+                    settype = LoreSet.settypes.transcript,
+
+                    loreset = LoreSet.loresets.challengeWeald,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.30"),
+
+                    quest = QuestHandle.swordMists,
+
+                    display = IconData.displays.weald,
+
+                },
+
+                [LoreSet.loresets.Atoll] = new()
+                {
+
+                    settype = LoreSet.settypes.location,
+
+                    loreset = LoreSet.loresets.Atoll,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.38"),
+
+                    quest = QuestHandle.swordMists,
+
+                    display = IconData.displays.mists,
+
+                },
+
+                [LoreSet.loresets.Graves] = new()
+                {
+
+                    settype = LoreSet.settypes.location,
+
+                    loreset = LoreSet.loresets.Graves,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.46"),
+
+                    quest = QuestHandle.challengeMists,
+
+                    display = IconData.displays.mists,
+
+                },
+
+                [LoreSet.loresets.challengeMists] = new()
+                {
+
+                    settype = LoreSet.settypes.transcript,
+
+                    loreset = LoreSet.loresets.challengeMists,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.54"),
+
+                    quest = QuestHandle.challengeMists,
+
+                    display = IconData.displays.mists,
+
+                },
+
+                [LoreSet.loresets.Keeper] = new()
+                {
+
+                    settype = LoreSet.settypes.character,
+
+                    loreset = LoreSet.loresets.Keeper,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.62"),
+
+                    quest = QuestHandle.challengeMists,
+
+                    display = IconData.displays.chaos,
+
+                },
+
+                [LoreSet.loresets.Chapel] = new()
+                {
+
+                    settype = LoreSet.settypes.location,
+
+                    loreset = LoreSet.loresets.Chapel,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.70"),
+
+                    quest = QuestHandle.swordStars,
+
+                    display = IconData.displays.stars,
+
+                },
+
+                [LoreSet.loresets.Revenant] = new()
+                {
+
+                    settype = LoreSet.settypes.character,
+
+                    loreset = LoreSet.loresets.Revenant,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.78"),
+
+                    quest = QuestHandle.swordStars,
+
+                    display = IconData.displays.revenant,
+
+                },
+
+                [LoreSet.loresets.Clearing] = new()
+                {
+
+                    settype = LoreSet.settypes.location,
+
+                    loreset = LoreSet.loresets.Clearing,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.86"),
+
+                    quest = QuestHandle.challengeStars,
+
+                    display = IconData.displays.stars,
+
+                },
+
+                [LoreSet.loresets.challengeStars] = new()
+                {
+
+                    settype = LoreSet.settypes.transcript,
+
+                    loreset = LoreSet.loresets.challengeStars,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.94"),
+
+                    quest = QuestHandle.challengeStars,
+
+                    display = IconData.displays.stars,
+
+                },
+
+                [LoreSet.loresets.challengeAtoll] = new()
+                {
+
+                    settype = LoreSet.settypes.transcript,
+
+                    loreset = LoreSet.loresets.challengeAtoll,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.102"),
+
+                    quest = QuestHandle.challengeAtoll,
+
+                    display = IconData.displays.mists,
+
+                },
+
+                [LoreSet.loresets.Lair] = new()
+                {
+
+                    settype = LoreSet.settypes.location,
+
+                    loreset = LoreSet.loresets.Lair,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.110"),
+
+                    quest = QuestHandle.challengeDragon,
+
+                    display = IconData.displays.stars,
+
+                },
+
+                [LoreSet.loresets.challengeDragon] = new()
+                {
+
+                    settype = LoreSet.settypes.transcript,
+
+                    loreset = LoreSet.loresets.challengeDragon,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.118"),
+
+                    quest = QuestHandle.challengeDragon,
+
+                    display = IconData.displays.stars,
+
+                },
+
+                [LoreSet.loresets.Jester] = new()
+                {
+                    settype = LoreSet.settypes.character,
+
+                    loreset = LoreSet.loresets.Jester,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.126"),
+
+                    quest = QuestHandle.approachJester,
+
+                    display = IconData.displays.jester,
+                },
+
+                [LoreSet.loresets.Court] = new()
+                {
+                    settype = LoreSet.settypes.location,
+
+                    loreset = LoreSet.loresets.Court,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.134"),
+
+                    quest = QuestHandle.fatesOne,
+
+                    display = IconData.displays.fates,
+                },
+
+                [LoreSet.loresets.Buffin] = new()
+                {
+                    settype = LoreSet.settypes.character,
+
+                    loreset = LoreSet.loresets.Buffin,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.142"),
+
+                    quest = QuestHandle.questJester,
+
+                    display = IconData.displays.buffin,
+                },
+
+                [LoreSet.loresets.challengeFates] = new()
+                {
+                    settype = LoreSet.settypes.transcript,
+
+                    loreset = LoreSet.loresets.challengeFates,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.150"),
+
+                    quest = QuestHandle.challengeFates,
+
+                    display = IconData.displays.fates,
+                },
+
+                [LoreSet.loresets.Shadowtin] = new()
+                {
+                    settype = LoreSet.settypes.character,
+
+                    loreset = LoreSet.loresets.Shadowtin,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.158"),
+
+                    quest = QuestHandle.challengeFates,
+
+                    display = IconData.displays.shadowtin,
+                },
+
+                [LoreSet.loresets.Tomb] = new()
+                {
+                    settype = LoreSet.settypes.location,
+
+                    loreset = LoreSet.loresets.Tomb,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.166"),
+
+                    quest = QuestHandle.swordEther,
+
+                    display = IconData.displays.ether,
+                },
+
+                [LoreSet.loresets.swordEther] = new()
+                {
+                    settype = LoreSet.settypes.transcript,
+
+                    loreset = LoreSet.loresets.swordEther,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.174"),
+
+                    quest = QuestHandle.swordEther,
+
+                    display = IconData.displays.ether,
+                },
+
+                [LoreSet.loresets.Engine] = new()
+                {
+                    settype = LoreSet.settypes.location,
+
+                    loreset = LoreSet.loresets.Engine,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.182"),
+
+                    quest = QuestHandle.questShadowtin,
+
+                    display = IconData.displays.ether,
+                },
+
+                [LoreSet.loresets.Gate] = new()
+                {
+                    settype = LoreSet.settypes.location,
+
+                    loreset = LoreSet.loresets.Gate,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.190"),
+
+                    quest = QuestHandle.challengeEther,
+
+                    display = IconData.displays.bones,
+                },
+
+                [LoreSet.loresets.challengeEther] = new()
+                {
+                    settype = LoreSet.settypes.transcript,
+
+                    loreset = LoreSet.loresets.challengeEther,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.198"),
+
+                    quest = QuestHandle.challengeEther,
+
+                    display = IconData.displays.ether,
+                },
+
+                [LoreSet.loresets.Blackfeather] = new()
+                {
+                    settype = LoreSet.settypes.character,
+
+                    loreset = LoreSet.loresets.Blackfeather,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.340.1.206"),
+
+                    quest = QuestHandle.challengeEther,
+
+                    display = IconData.displays.blackfeather,
+                },
+
 
             };
 
-            return storySets;
+            return sets;
 
         }
 
-        public static string RequestLore(CharacterHandle.characters character)
+        public static string LoreOption(CharacterHandle.characters character)
         {
 
             switch (character)
             {
-                default:
+
                 case characters.Effigy:
 
                     return Mod.instance.Helper.Translation.Get("LoreData.10");
@@ -251,10 +658,10 @@ namespace StardewDruid.Journal
                     return Mod.instance.Helper.Translation.Get("LoreData.329.1");
 
             }
-
+            return null;
         }
 
-        public static string CharacterLore(CharacterHandle.characters character)
+        public static string LoreIntro(CharacterHandle.characters character)
         {
 
             switch (character)
@@ -293,18 +700,392 @@ namespace StardewDruid.Journal
 
         }
 
-        public static Dictionary<LoreData.stories, Lorestory> LoreList()
+        public static List<LoreStory> RetrieveLore(CharacterHandle.characters character)
         {
 
-            Dictionary<LoreData.stories, Lorestory> storylist = new();
+            List<LoreStory> list = new();
+
+            int limit = 0;
+
+            for(int i = Mod.instance.questHandle.lores.Count - 1; i >= 0; i-- )
+            {
+
+                LoreStory story = Mod.instance.questHandle.lores.ElementAt(i).Value;
+
+                if (story.loretype != LoreStory.loretypes.story)
+                {
+
+                    continue;
+
+                }
+
+                if (story.character != character)
+                {
+
+                    continue;
+
+                }
+
+                if (!Mod.instance.questHandle.IsComplete(story.quest))
+                {
+
+                    continue;
+
+                }
+
+                list.Add(story);
+
+                limit++;
+
+                if(limit == 3)
+                {
+
+                    break;
+
+                }
+
+            }
+
+            return list;
+
+        }
+
+        public static Dictionary<LoreStory.stories, LoreStory> LoreList()
+        {
+
+            Dictionary<LoreStory.stories, LoreStory> storylist = new();
+
+            // ===========================================
+            // Characters
+            storylist[LoreStory.stories.Effigy_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Effigy,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.approachEffigy,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.215"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("LoreData.340.1.218"),
+                    Mod.instance.Helper.Translation.Get("LoreData.340.1.219"),
+                }
+            };
+
+
+            storylist[LoreStory.stories.Effigy_Adventure] = new()
+            {
+                loreset = LoreSet.loresets.Effigy,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.approachEffigy,
+                description = Mod.instance.Helper.Translation.Get("EffectsData.351"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("EffectsData.352"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.355"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.356"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.357"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.358"),
+                }
+            };
+
+            storylist[LoreStory.stories.Keeper_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Keeper,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.challengeMists,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.227"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("LoreData.340.1.230"),
+                    Mod.instance.Helper.Translation.Get("LoreData.340.1.231")
+                }
+            };
+
+            storylist[LoreStory.stories.Revenant_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Revenant,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.swordStars,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.239") +
+                Mod.instance.Helper.Translation.Get("LoreData.340.1.240"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("LoreData.340.1.243"),
+                    Mod.instance.Helper.Translation.Get("LoreData.340.1.244")
+                }
+            };
+
+            storylist[LoreStory.stories.Jester_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Jester,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.approachJester,
+                description =
+                Mod.instance.Helper.Translation.Get("LoreData.340.1.253") +
+                Mod.instance.Helper.Translation.Get("LoreData.340.1.254"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("LoreData.340.1.257"),
+                    Mod.instance.Helper.Translation.Get("LoreData.340.1.258"),
+                }
+            };
+
+
+            storylist[LoreStory.stories.Jester_Adventure] = new()
+            {
+                loreset = LoreSet.loresets.Jester,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.approachJester,
+                description = Mod.instance.Helper.Translation.Get("EffectsData.432"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("EffectsData.433"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.436"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.437"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.438") +
+                    Mod.instance.Helper.Translation.Get("EffectsData.439"),
+                }
+            };
+
+            storylist[LoreStory.stories.Buffin_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Buffin,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.questJester,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.266"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("LoreData.340.1.269"),
+                    Mod.instance.Helper.Translation.Get("LoreData.340.1.270"),
+                }
+            };
+
+            storylist[LoreStory.stories.Shadowtin_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Shadowtin,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.challengeFates,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.278") +
+                Mod.instance.Helper.Translation.Get("LoreData.340.1.279"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("LoreData.340.1.282"),
+                    Mod.instance.Helper.Translation.Get("LoreData.340.1.283")
+                }
+
+            };
+
+            storylist[LoreStory.stories.Shadowtin_Adventure] = new()
+            {
+                loreset = LoreSet.loresets.Shadowtin,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.challengeFates,
+                description = Mod.instance.Helper.Translation.Get("EffectsData.537") +
+                Mod.instance.Helper.Translation.Get("EffectsData.538"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("EffectsData.539"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.542"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.543"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.544"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.545"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.546")
+                }
+            };
+
+            storylist[LoreStory.stories.Blackfeather_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Blackfeather,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.questBlackfeather,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.291") +
+                Mod.instance.Helper.Translation.Get("LoreData.340.1.292") +
+                Mod.instance.Helper.Translation.Get("LoreData.340.1.293"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("LoreData.340.1.296"),
+                    Mod.instance.Helper.Translation.Get("LoreData.340.1.297")
+
+                },
+            };
+
+            storylist[LoreStory.stories.Blackfeather_Adventure] = new()
+            {
+                loreset = LoreSet.loresets.Blackfeather,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.questBlackfeather,
+                description = Mod.instance.Helper.Translation.Get("EffectsData.326.2"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("EffectsData.326.3"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.326.4"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.326.5"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.326.6"),
+                }
+            };
+
+            // ===========================================
+            // Locations
+
+            storylist[LoreStory.stories.Grove_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Grove,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.startPoint,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.305"),
+                details = new()
+               {
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.308"),
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.309"),
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.310"),
+               }
+            };
+
+            storylist[LoreStory.stories.Spring_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Spring,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.challengeWeald,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.318"),
+                details = new()
+               {
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.321"),
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.322"),
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.323"),
+               }
+            };
+
+            storylist[LoreStory.stories.Atoll_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Atoll,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.swordMists,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.332"),
+                details = new()
+               {
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.335"),
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.336")
+               }
+            };
+
+            storylist[LoreStory.stories.Graves_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Graves,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.challengeMists,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.344"),
+                details = new()
+               {
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.347"),
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.348"),
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.349"),
+               }
+            };
+
+            storylist[LoreStory.stories.Chapel_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Chapel,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.swordStars,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.357"),
+                details = new()
+               {
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.360"),
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.361")
+               }
+            };
+
+            storylist[LoreStory.stories.Clearing_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Clearing,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.challengeStars,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.369"),
+                details = new()
+               {
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.372"),
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.373"),
+               }
+            };
+
+            storylist[LoreStory.stories.Lair_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Lair,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.challengeDragon,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.381"),
+                details = new()
+               {
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.384"),
+               }
+            };
+
+            storylist[LoreStory.stories.Court_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Court,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.swordFates,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.392") +
+                    Mod.instance.Helper.Translation.Get("LoreData.340.1.393"),
+                details = new()
+               {
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.396"),
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.397"),
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.398")
+               }
+            };
+
+            storylist[LoreStory.stories.Tomb_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Tomb,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.swordEther,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.406"),
+                details = new()
+               {
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.409"),
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.410")
+               }
+            };
+
+            storylist[LoreStory.stories.Engine_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Engine,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.questShadowtin,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.418"),
+                details = new()
+               {
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.421"),
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.422"),
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.423"),
+               }
+            };
+
+            storylist[LoreStory.stories.Gate_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Gate,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.challengeEther,
+                description = Mod.instance.Helper.Translation.Get("LoreData.340.1.431"),
+                details = new()
+               {
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.434"),
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.435")
+               }
+            };
+
 
             // ===========================================
             // Weald
 
-            storylist[stories.Effigy_Weald] = new()
+            storylist[LoreStory.stories.Effigy_Weald] = new()
             {
-                story = stories.Effigy_Weald,
+                loreset = LoreSet.loresets.Effigy,
                 character = characters.Effigy,
+                story = LoreStory.stories.Effigy_Weald,
+                quest = QuestHandle.swordWeald,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.75"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.76") +
                 Mod.instance.Helper.Translation.Get("LoreData.77") +
@@ -312,10 +1093,14 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Effigy_self_1] = new()
+            storylist[LoreStory.stories.Effigy_self_1] = new()
             {
-                story = stories.Effigy_self_1,
+                loreset = LoreSet.loresets.Effigy,
+                story = LoreStory.stories.Effigy_self_1,
                 character = characters.Effigy,
+                quest = QuestHandle.swordWeald,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.86"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.87") +
                     Mod.instance.Helper.Translation.Get("LoreData.88") +
@@ -326,10 +1111,14 @@ namespace StardewDruid.Journal
             // ===========================================
             // Mists
 
-            storylist[stories.Effigy_Mists] = new()
+            storylist[LoreStory.stories.Effigy_Mists] = new()
             {
-                story = stories.Effigy_Mists,
+                loreset = LoreSet.loresets.Effigy,
+                story = LoreStory.stories.Effigy_Mists,
                 character = characters.Effigy,
+                quest = QuestHandle.swordMists,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.100"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.101") +
                 Mod.instance.Helper.Translation.Get("LoreData.102") +
@@ -340,10 +1129,14 @@ namespace StardewDruid.Journal
             // ===========================================
             // Effigy Quest
 
-            storylist[stories.Effigy_self_2] = new()
+            storylist[LoreStory.stories.Effigy_self_2] = new()
             {
-                story = stories.Effigy_self_2,
+                loreset = LoreSet.loresets.Effigy,
+                story = LoreStory.stories.Effigy_self_2,
                 character = characters.Effigy,
+                quest = QuestHandle.questEffigy,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.114"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.115") +
                     Mod.instance.Helper.Translation.Get("LoreData.116") +
@@ -357,12 +1150,64 @@ namespace StardewDruid.Journal
             };
 
             // ===========================================
+            // Keeper Memories
+
+            storylist[LoreStory.stories.Memory_Prince] = new()
+            {
+                loreset = LoreSet.loresets.Keeper,
+                story = LoreStory.stories.Memory_Prince,
+                character = characters.keeper,
+                quest = QuestHandle.challengeMists,
+
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.329.3"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.329.4") +
+                Mod.instance.Helper.Translation.Get("LoreData.329.5")
+
+            };
+
+            storylist[LoreStory.stories.Memory_Kings] = new()
+            {
+
+                loreset = LoreSet.loresets.Keeper,
+                story = LoreStory.stories.Memory_Kings,
+                character = characters.keeper,
+                quest = QuestHandle.challengeMists,
+
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.329.6"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.329.7") +
+                Mod.instance.Helper.Translation.Get("LoreData.329.8")
+
+            };
+
+            storylist[LoreStory.stories.Memory_Dragons] = new()
+            {
+
+                loreset = LoreSet.loresets.Keeper,
+                story = LoreStory.stories.Memory_Dragons,
+                character = characters.keeper,
+                quest = QuestHandle.challengeMists,
+
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.329.9"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.329.10") +
+                Mod.instance.Helper.Translation.Get("LoreData.329.11") +
+                Mod.instance.Helper.Translation.Get("LoreData.329.12")
+
+            };
+
+            // ===========================================
             // Stars
 
-            storylist[stories.Effigy_Stars] = new()
+            storylist[LoreStory.stories.Effigy_Stars] = new()
             {
-                story = stories.Effigy_Stars,
+                loreset = LoreSet.loresets.Effigy,
+                story = LoreStory.stories.Effigy_Stars,
                 character = characters.Effigy,
+                quest = QuestHandle.swordStars,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.133"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.134") +
                     Mod.instance.Helper.Translation.Get("LoreData.135") +
@@ -371,10 +1216,14 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Revenant_Stars] = new()
+            storylist[LoreStory.stories.Revenant_Stars] = new()
             {
-                story = stories.Revenant_Stars,
+                loreset = LoreSet.loresets.Revenant,
+                story = LoreStory.stories.Revenant_Stars,
                 character = characters.Revenant,
+                quest = QuestHandle.swordStars,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.145"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.146") +
                         Mod.instance.Helper.Translation.Get("LoreData.147") +
@@ -387,10 +1236,14 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Revenant_self_1] = new()
+            storylist[LoreStory.stories.Revenant_self_1] = new()
             {
-                story = stories.Revenant_self_1,
+                loreset = LoreSet.loresets.Revenant,
+                story = LoreStory.stories.Revenant_self_1,
                 character = characters.Revenant,
+                quest = QuestHandle.swordStars,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.161"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.162") +
                         Mod.instance.Helper.Translation.Get("LoreData.163") +
@@ -402,10 +1255,14 @@ namespace StardewDruid.Journal
             // ===========================================
             // Fates
 
-            storylist[stories.Effigy_Jester] = new()
+            storylist[LoreStory.stories.Effigy_Jester] = new()
             {
-                story = stories.Effigy_Jester,
+                loreset = LoreSet.loresets.Effigy,
+                story = LoreStory.stories.Effigy_Jester,
                 character = characters.Effigy,
+                quest = QuestHandle.approachJester,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.176"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.177") +
                             Mod.instance.Helper.Translation.Get("LoreData.178") +
@@ -414,29 +1271,42 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Jester_Effigy] = new()
+            storylist[LoreStory.stories.Jester_Effigy] = new()
             {
-                story = stories.Jester_Effigy,
+                loreset = LoreSet.loresets.Jester,
+                story = LoreStory.stories.Jester_Effigy,
                 character = characters.Jester,
+                quest = QuestHandle.approachJester,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.188"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.189") +
                             Mod.instance.Helper.Translation.Get("LoreData.190"),
 
             };
 
-            storylist[stories.Jester_self_1] = new()
+            storylist[LoreStory.stories.Jester_self_1] = new()
             {
-                story = stories.Jester_self_1,
+                loreset = LoreSet.loresets.Jester,
+                story = LoreStory.stories.Jester_self_1,
                 character = characters.Jester,
+                quest = QuestHandle.approachJester,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.198"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.199"),
 
             };
 
-            storylist[stories.Jester_Fates] = new()
+            storylist[LoreStory.stories.Jester_Fates] = new()
             {
-                story = stories.Jester_Fates,
+
+                loreset = LoreSet.loresets.Jester,
+                story = LoreStory.stories.Jester_Fates,
                 character = characters.Jester,
+                quest = QuestHandle.approachJester,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.207"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.208") +
                 Mod.instance.Helper.Translation.Get("LoreData.209") +
@@ -444,10 +1314,14 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Revenant_Fates] = new()
+            storylist[LoreStory.stories.Revenant_Fates] = new()
             {
-                story = stories.Revenant_Fates,
+                loreset = LoreSet.loresets.Revenant,
+                story = LoreStory.stories.Revenant_Fates,
                 character = characters.Revenant,
+                quest = QuestHandle.approachJester,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.218"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.219") +
                 Mod.instance.Helper.Translation.Get("LoreData.220") +
@@ -460,10 +1334,14 @@ namespace StardewDruid.Journal
             // ===========================================
             // Jester Quest
 
-            storylist[stories.Effigy_Buffin] = new()
+            storylist[LoreStory.stories.Effigy_Buffin] = new()
             {
-                story = stories.Effigy_Buffin,
+                loreset = LoreSet.loresets.Effigy,
+                story = LoreStory.stories.Effigy_Buffin,
                 character = characters.Effigy,
+                quest = QuestHandle.questJester,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.234"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.235") +
                 Mod.instance.Helper.Translation.Get("LoreData.236") +
@@ -471,10 +1349,14 @@ namespace StardewDruid.Journal
                 Mod.instance.Helper.Translation.Get("LoreData.238"),
             };
 
-            storylist[stories.Jester_Buffin] = new()
+            storylist[LoreStory.stories.Jester_Buffin] = new()
             {
-                story = stories.Jester_Buffin,
+                loreset = LoreSet.loresets.Jester,
+                story = LoreStory.stories.Jester_Buffin,
                 character = characters.Jester,
+                quest = QuestHandle.questJester,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.245"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.246") +
                 Mod.instance.Helper.Translation.Get("LoreData.247") +
@@ -485,10 +1367,14 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Revenant_court] = new()
+            storylist[LoreStory.stories.Revenant_court] = new()
             {
-                story = stories.Revenant_court,
+                loreset = LoreSet.loresets.Revenant,
+                story = LoreStory.stories.Revenant_court,
                 character = characters.Revenant,
+                quest = QuestHandle.questJester,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.259"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.260") +
                 Mod.instance.Helper.Translation.Get("LoreData.261") +
@@ -498,10 +1384,14 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Revenant_Marlon] = new()
+            storylist[LoreStory.stories.Revenant_Marlon] = new()
             {
-                story = stories.Revenant_Marlon,
+                loreset = LoreSet.loresets.Revenant,
+                story = LoreStory.stories.Revenant_Marlon,
                 character = characters.Revenant,
+                quest = QuestHandle.questJester,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.272"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.273") +
                 Mod.instance.Helper.Translation.Get("LoreData.274") +
@@ -510,33 +1400,59 @@ namespace StardewDruid.Journal
 
             };
 
+            storylist[LoreStory.stories.Buffin_self_1] = new()
+            {
+                loreset = LoreSet.loresets.Buffin,
+                story = LoreStory.stories.Buffin_self_1,
+                character = characters.Buffin,
+                quest = QuestHandle.questJester,
+
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.340.1"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.340.2") +
+                Mod.instance.Helper.Translation.Get("LoreData.340.3"),
+
+            };
             // ===========================================
             // Shadowtin
 
-            storylist[stories.Effigy_Shadowtin] = new()
+            storylist[LoreStory.stories.Effigy_Shadowtin] = new()
             {
-                story = stories.Effigy_Shadowtin,
+                loreset = LoreSet.loresets.Effigy,
+                story = LoreStory.stories.Effigy_Shadowtin,
                 character = characters.Effigy,
+                quest = QuestHandle.challengeEther,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.287"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.288") +
                 Mod.instance.Helper.Translation.Get("LoreData.289")
 
             };
 
-            storylist[stories.Jester_Shadowtin] = new()
+            storylist[LoreStory.stories.Jester_Shadowtin] = new()
             {
-                story = stories.Jester_Shadowtin,
+
+                loreset = LoreSet.loresets.Jester,
+                story = LoreStory.stories.Jester_Shadowtin,
                 character = characters.Jester,
+                quest = QuestHandle.challengeEther,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.297"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.298") +
                 Mod.instance.Helper.Translation.Get("LoreData.299"),
 
             };
 
-            storylist[stories.Shadowtin_Effigy] = new()
+            storylist[LoreStory.stories.Shadowtin_Effigy] = new()
             {
-                story = stories.Shadowtin_Effigy,
+                loreset = LoreSet.loresets.Shadowtin,
+                story = LoreStory.stories.Shadowtin_Effigy,
                 character = characters.Shadowtin,
+                quest = QuestHandle.challengeEther,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.307"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.308") +
                 Mod.instance.Helper.Translation.Get("LoreData.309") +
@@ -546,20 +1462,28 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Shadowtin_Jester] = new()
+            storylist[LoreStory.stories.Shadowtin_Jester] = new()
             {
-                story = stories.Shadowtin_Jester,
+                loreset = LoreSet.loresets.Shadowtin,
+                story = LoreStory.stories.Shadowtin_Jester,
                 character = characters.Shadowtin,
+                quest = QuestHandle.challengeEther,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.320"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.321") +
                 Mod.instance.Helper.Translation.Get("LoreData.322")
 
             };
 
-            storylist[stories.Shadowtin_self_1] = new()
+            storylist[LoreStory.stories.Shadowtin_self_1] = new()
             {
-                story = stories.Shadowtin_self_1,
+                loreset = LoreSet.loresets.Shadowtin,
+                story = LoreStory.stories.Shadowtin_self_1,
                 character = characters.Shadowtin,
+                quest = QuestHandle.challengeEther,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.330"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.331") +
                 Mod.instance.Helper.Translation.Get("LoreData.332") +
@@ -572,10 +1496,14 @@ namespace StardewDruid.Journal
             };
 
 
-            storylist[stories.Shadowtin_self_2] = new()
+            storylist[LoreStory.stories.Shadowtin_self_2] = new()
             {
-                story = stories.Shadowtin_self_2,
+                loreset = LoreSet.loresets.Shadowtin,
+                story = LoreStory.stories.Shadowtin_self_2,
                 character = characters.Shadowtin,
+                quest = QuestHandle.challengeEther,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.346"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.347") +
                 Mod.instance.Helper.Translation.Get("LoreData.348") +
@@ -586,10 +1514,14 @@ namespace StardewDruid.Journal
             };
 
 
-            storylist[stories.Buffin_court] = new()
+            storylist[LoreStory.stories.Buffin_court] = new()
             {
-                story = stories.Buffin_court,
+                loreset = LoreSet.loresets.Buffin,
+                story = LoreStory.stories.Buffin_court,
                 character = characters.Buffin,
+                quest = QuestHandle.challengeEther,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.360"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.361") +
                 Mod.instance.Helper.Translation.Get("LoreData.362") +
@@ -599,46 +1531,16 @@ namespace StardewDruid.Journal
             };
 
             // ===========================================
-            // Keeper Memories
-
-            storylist[stories.Memory_Prince] = new()
-            {
-                story = stories.Memory_Prince,
-                character = characters.keeper,
-                question = Mod.instance.Helper.Translation.Get("LoreData.329.3"),
-                answer = Mod.instance.Helper.Translation.Get("LoreData.329.4") +
-                Mod.instance.Helper.Translation.Get("LoreData.329.5")
-
-            };
-
-            storylist[stories.Memory_Kings] = new()
-            {
-                story = stories.Memory_Kings,
-                character = characters.keeper,
-                question = Mod.instance.Helper.Translation.Get("LoreData.329.6"),
-                answer = Mod.instance.Helper.Translation.Get("LoreData.329.7") +
-                Mod.instance.Helper.Translation.Get("LoreData.329.8")
-
-            };
-
-            storylist[stories.Memory_Dragons] = new()
-            {
-                story = stories.Memory_Dragons,
-                character = characters.keeper,
-                question = Mod.instance.Helper.Translation.Get("LoreData.329.9"),
-                answer = Mod.instance.Helper.Translation.Get("LoreData.329.10") +
-                Mod.instance.Helper.Translation.Get("LoreData.329.11") +
-                Mod.instance.Helper.Translation.Get("LoreData.329.12")
-
-            };
-            
-            // ===========================================
             // Ether
 
-            storylist[stories.Effigy_Ether] = new()
+            storylist[LoreStory.stories.Effigy_Ether] = new()
             {
-                story = stories.Effigy_Ether,
+                loreset = LoreSet.loresets.Effigy,
+                story = LoreStory.stories.Effigy_Ether,
                 character = characters.Effigy,
+                quest = QuestHandle.swordEther,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.376"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.377") +
                 Mod.instance.Helper.Translation.Get("LoreData.378") +
@@ -646,10 +1548,15 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Jester_Tomb] = new()
+            storylist[LoreStory.stories.Jester_Tomb] = new()
             {
-                story = stories.Jester_Tomb,
+
+                loreset = LoreSet.loresets.Jester,
+                story = LoreStory.stories.Jester_Tomb,
                 character = characters.Jester,
+                quest = QuestHandle.swordEther,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.387"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.388") +
                 Mod.instance.Helper.Translation.Get("LoreData.389") +
@@ -657,30 +1564,43 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Jester_Ether] = new()
+            storylist[LoreStory.stories.Jester_Ether] = new()
             {
-                story = stories.Jester_Ether,
+
+                loreset = LoreSet.loresets.Jester,
+                story = LoreStory.stories.Jester_Ether,
                 character = characters.Jester,
+                quest = QuestHandle.swordEther,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.398"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.399") +
                 Mod.instance.Helper.Translation.Get("LoreData.400"),
 
             };
 
-            storylist[stories.Shadowtin_Ether] = new()
+            storylist[LoreStory.stories.Shadowtin_Ether] = new()
             {
-                story = stories.Shadowtin_Ether,
+                loreset = LoreSet.loresets.Shadowtin,
+                story = LoreStory.stories.Shadowtin_Ether,
                 character = characters.Shadowtin,
+                quest = QuestHandle.swordEther,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.408"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.409") +
                 Mod.instance.Helper.Translation.Get("LoreData.410"),
 
             };
 
-            storylist[stories.Revenant_Ether] = new()
+            storylist[LoreStory.stories.Revenant_Ether] = new()
             {
-                story = stories.Revenant_Ether,
+                loreset = LoreSet.loresets.Revenant,
+                story = LoreStory.stories.Revenant_Ether,
                 character = characters.Revenant,
+                quest = QuestHandle.swordEther,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.418"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.419") +
                 Mod.instance.Helper.Translation.Get("LoreData.420") +
@@ -690,10 +1610,14 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Buffin_Ether] = new()
+            storylist[LoreStory.stories.Buffin_Ether] = new()
             {
-                story = stories.Buffin_Ether,
+                loreset = LoreSet.loresets.Buffin,
+                story = LoreStory.stories.Buffin_Ether,
                 character = characters.Buffin,
+                quest = QuestHandle.swordEther,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.431"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.432") +
                 Mod.instance.Helper.Translation.Get("LoreData.433") +
@@ -701,14 +1625,17 @@ namespace StardewDruid.Journal
 
             };
 
-
             // ===========================================
-            // Ether
+            // Shadowtin
 
-            storylist[stories.Effigy_Circle] = new()
+            storylist[LoreStory.stories.Effigy_Circle] = new()
             {
-                story = stories.Effigy_Circle,
+                loreset = LoreSet.loresets.Effigy,
+                story = LoreStory.stories.Effigy_Circle,
                 character = characters.Effigy,
+                quest = QuestHandle.questShadowtin,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.446"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.447") +
                 Mod.instance.Helper.Translation.Get("LoreData.448") +
@@ -716,11 +1643,14 @@ namespace StardewDruid.Journal
 
             };
 
-
-            storylist[stories.Effigy_Circle_2] = new()
+            storylist[LoreStory.stories.Effigy_Circle_2] = new()
             {
-                story = stories.Effigy_Circle_2,
+                loreset = LoreSet.loresets.Effigy,
+                story = LoreStory.stories.Effigy_Circle_2,
                 character = characters.Effigy,
+                quest = QuestHandle.questShadowtin,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.458"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.459") +
                 Mod.instance.Helper.Translation.Get("LoreData.460") +
@@ -730,10 +1660,15 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Jester_Circle] = new()
+            storylist[LoreStory.stories.Jester_Circle] = new()
             {
-                story = stories.Jester_Ether,
+
+                loreset = LoreSet.loresets.Jester,
+                story = LoreStory.stories.Jester_Ether,
                 character = characters.Jester,
+                quest = QuestHandle.questShadowtin,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.471"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.472") +
                 Mod.instance.Helper.Translation.Get("LoreData.473") +
@@ -743,10 +1678,14 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Revenant_Circle] = new()
+            storylist[LoreStory.stories.Revenant_Circle] = new()
             {
-                story = stories.Revenant_Ether,
+                loreset = LoreSet.loresets.Revenant,
+                story = LoreStory.stories.Revenant_Ether,
                 character = characters.Revenant,
+                quest = QuestHandle.questShadowtin,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.484"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.485") +
                     Mod.instance.Helper.Translation.Get("LoreData.486") +
@@ -756,10 +1695,14 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Buffin_Circle] = new()
+            storylist[LoreStory.stories.Buffin_Circle] = new()
             {
-                story = stories.Buffin_Ether,
+                loreset = LoreSet.loresets.Buffin,
+                story = LoreStory.stories.Buffin_Ether,
                 character = characters.Buffin,
+                quest = QuestHandle.questShadowtin,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.497"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.498") +
                 Mod.instance.Helper.Translation.Get("LoreData.499") +
@@ -768,10 +1711,14 @@ namespace StardewDruid.Journal
 
             };
 
-            storylist[stories.Shadowtin_Circle] = new()
+            storylist[LoreStory.stories.Shadowtin_Circle] = new()
             {
-                story = stories.Shadowtin_Circle,
+                loreset = LoreSet.loresets.Shadowtin,
+                story = LoreStory.stories.Shadowtin_Circle,
                 character = characters.Shadowtin,
+                quest = QuestHandle.questShadowtin,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.514"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.515") +
                 Mod.instance.Helper.Translation.Get("LoreData.516") +
@@ -779,21 +1726,32 @@ namespace StardewDruid.Journal
                 Mod.instance.Helper.Translation.Get("LoreData.518"),
             };
 
+            // ===========================================
             // After Blackfeather quest
 
-            storylist[stories.Effigy_Bones] = new()
+            storylist[LoreStory.stories.Effigy_Bones] = new()
             {
-                story = stories.Effigy_Bones,
+                loreset = LoreSet.loresets.Effigy,
+                story = LoreStory.stories.Effigy_Bones,
                 character = characters.Effigy,
+                quest = QuestHandle.questBlackfeather,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.320.3"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.320.4") +
                 Mod.instance.Helper.Translation.Get("LoreData.320.5"),
             };
 
-            storylist[stories.Jester_Bones] = new()
+            storylist[LoreStory.stories.Jester_Bones] = new()
             {
-                story = stories.Jester_Bones,
+
+                loreset = LoreSet.loresets.Jester,
+                story = LoreStory.stories.Jester_Bones,
                 character = characters.Jester,
+                quest = QuestHandle.questBlackfeather,
+
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.320.6"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.320.7") +
                 Mod.instance.Helper.Translation.Get("LoreData.320.8") +
@@ -801,51 +1759,72 @@ namespace StardewDruid.Journal
                 Mod.instance.Helper.Translation.Get("LoreData.320.10"),
             };
 
-            storylist[stories.Revenant_Bones] = new()
+            storylist[LoreStory.stories.Revenant_Bones] = new()
             {
-                story = stories.Revenant_Bones,
+                loreset = LoreSet.loresets.Revenant,
+                story = LoreStory.stories.Revenant_Bones,
                 character = characters.Revenant,
+                quest = QuestHandle.questBlackfeather,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.323.1"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.323.2") +
                 Mod.instance.Helper.Translation.Get("LoreData.323.3"),
             };
 
-            storylist[stories.Buffin_Bones] = new()
+            storylist[LoreStory.stories.Buffin_Bones] = new()
             {
-                story = stories.Buffin_Bones,
+                loreset = LoreSet.loresets.Buffin,
+                story = LoreStory.stories.Buffin_Bones,
                 character = characters.Buffin,
+                quest = QuestHandle.questBlackfeather,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.323.4"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.323.5") +
                 Mod.instance.Helper.Translation.Get("LoreData.323.6"),
             };
 
-            storylist[stories.Shadowtin_Bones] = new()
+            storylist[LoreStory.stories.Shadowtin_Bones] = new()
             {
-                story = stories.Shadowtin_Bones,
+                loreset = LoreSet.loresets.Shadowtin,
+                story = LoreStory.stories.Shadowtin_Bones,
                 character = characters.Shadowtin,
+                quest = QuestHandle.questBlackfeather,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.323.7"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.323.8") +
                 Mod.instance.Helper.Translation.Get("LoreData.323.9"),
             };
 
-            storylist[stories.Blackfeather_self_1] = new()
+            storylist[LoreStory.stories.Blackfeather_self_1] = new()
             {
-                story = stories.Blackfeather_self_1,
+                
+                loreset = LoreSet.loresets.Blackfeather,
+                story = LoreStory.stories.Blackfeather_self_1,
                 character = characters.Blackfeather,
+                quest = QuestHandle.questBlackfeather,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.323.10"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.323.11") +
                 Mod.instance.Helper.Translation.Get("LoreData.323.12"),
             };
 
-            storylist[stories.Blackfeather_self_2] = new()
+            storylist[LoreStory.stories.Blackfeather_self_2] = new()
             {
-                story = stories.Blackfeather_self_2,
+
+                loreset = LoreSet.loresets.Blackfeather,
+                story = LoreStory.stories.Blackfeather_self_2,
                 character = characters.Blackfeather,
+                quest = QuestHandle.questBlackfeather,
+
+                loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.323.13"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.323.14") +
                 Mod.instance.Helper.Translation.Get("LoreData.323.15"),
             };
-
 
             return storylist;
 
@@ -853,17 +1832,5 @@ namespace StardewDruid.Journal
 
     }
 
-    public class Lorestory
-    {
-
-        public LoreData.stories story;
-
-        public CharacterHandle.characters character;
-
-        public string question;
-
-        public string answer;
-
-    }
 
 }

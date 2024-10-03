@@ -9,30 +9,11 @@ using StardewDruid.Data;
 using StardewDruid.Dialogue;
 using StardewDruid.Location;
 using StardewModdingAPI;
-using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Buffs;
-using StardewValley.Enchantments;
-using StardewValley.GameData.BigCraftables;
-using StardewValley.GameData.Characters;
-using StardewValley.GameData.Tools;
-using StardewValley.Internal;
-using StardewValley.Locations;
-using StardewValley.Menus;
-using StardewValley.Objects;
-using StardewValley.Tools;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using xTile.Dimensions;
-using static StardewDruid.Cast.SpellHandle;
-using static StardewDruid.Character.Character;
-using static StardewDruid.Character.CharacterHandle;
-using static StardewDruid.Journal.HerbalData;
-using static StardewValley.Menus.CharacterCustomization;
 
 namespace StardewDruid.Journal
 {
@@ -375,6 +356,10 @@ namespace StardewDruid.Journal
 
                                 journal[start++] = blank;
 
+                                Journal.ContentComponent blankToggle = new(ContentComponent.contentTypes.toggle, key, false);
+
+                                journal[start++] = blankToggle;
+
                                 continue;
 
                             }
@@ -389,6 +374,10 @@ namespace StardewDruid.Journal
                                 Journal.ContentComponent blank = new(ContentComponent.contentTypes.potion, key, false);
 
                                 journal[start++] = blank;
+
+                                Journal.ContentComponent blankToggle = new(ContentComponent.contentTypes.toggle, key, false);
+
+                                journal[start++] = blankToggle;
 
                                 continue;
 
@@ -407,9 +396,15 @@ namespace StardewDruid.Journal
                     
                     journal[start++] = blank;
 
+                    Journal.ContentComponent blankToggle = new(ContentComponent.contentTypes.toggle, key, false);
+
+                    journal[start++] = blankToggle;
+
                     continue;
 
                 }
+
+                // =============================================================== potion button
 
                 Journal.ContentComponent content = new(ContentComponent.contentTypes.potion, key);
 
@@ -447,11 +442,66 @@ namespace StardewDruid.Journal
 
                 journal[start++] = content;
 
+                // =============================================================== active button
+
+                Journal.ContentComponent toggle = new(ContentComponent.contentTypes.toggle, key);
+
+                IconData.displays flag = IconData.displays.complete;
+
+                DialogueData.stringkeys hovertext = DialogueData.stringkeys.acEnabled;
+
+                if (Mod.instance.save.potions.ContainsKey(herbal))
+                {
+
+                    switch (Mod.instance.save.potions[herbal])
+                    {
+
+                        case 0:
+
+                            flag = IconData.displays.exit;
+
+                            hovertext = DialogueData.stringkeys.acDisabled;
+
+                            break;
+
+                        case 1:
+
+                            flag = IconData.displays.complete;
+
+                            break;
+
+                        case 2:
+
+                            flag = IconData.displays.flag;
+
+                            hovertext = DialogueData.stringkeys.acPriority;
+
+                            break;
+
+                        case 3:
+
+                            flag = IconData.displays.active;
+
+                            hovertext = DialogueData.stringkeys.acIgnored;
+
+                            break;
+
+
+                    }
+                }
+
+                toggle.icons[0] = flag;
+
+                toggle.text[0] = DialogueData.Strings(hovertext);
+
+                journal[start++] = toggle;
+
             }
 
             return journal;
 
         }
+
 
         public Dictionary<int, Journal.ContentComponent> JournalHeaders()
         {
@@ -1102,54 +1152,34 @@ namespace StardewDruid.Journal
             return potions;
 
         }
-
-        public void PotionBehaviour(int index)
+        
+        public void PotionBehaviour(string id)
         {
 
-            HerbalData.herbals potion = herbals.ligna;
+            Herbal herbal = herbalism[id];
 
-            switch (index)
+            if (!Mod.instance.save.potions.ContainsKey(herbal.herbal))
             {
 
-                case 11:
-
-                    potion = herbals.impes;
-                    break;
-
-                case 17:
-
-                    potion = herbals.celeri;
-                    break;
+                Mod.instance.save.potions.Add(herbal.herbal, 1);
 
             }
 
-            PotionBehaviour(potion);
-
-        }
-
-        public void PotionBehaviour(HerbalData.herbals potion)
-        {
-
-            if (!Mod.instance.save.potions.ContainsKey(potion))
-            {
-
-                Mod.instance.save.potions.Add(potion, 1);
-
-            }
-
-            switch (Mod.instance.save.potions[potion])
+            switch (Mod.instance.save.potions[herbal.herbal])
             {
 
                 case 0:
-                    Mod.instance.save.potions[potion] = 1;
+                    Mod.instance.save.potions[herbal.herbal] = 1;
                     break;
                 case 1:
-                    Mod.instance.save.potions[potion] = 2;
+                    Mod.instance.save.potions[herbal.herbal] = 2;
                     break;
                 case 2:
-                    Mod.instance.save.potions[potion] = 0;
+                    Mod.instance.save.potions[herbal.herbal] = 3;
                     break;
-
+                case 3:
+                    Mod.instance.save.potions[herbal.herbal] = 0;
+                    break;
             }
 
         }
@@ -1339,6 +1369,18 @@ namespace StardewDruid.Journal
             Herbal herbal = herbalism[id];
 
             int brewed = 0;
+
+            if (Mod.instance.save.potions.ContainsKey(herbal.herbal))
+            {
+
+                if(Mod.instance.save.potions[herbal.herbal] == 0 || Mod.instance.save.potions[herbal.herbal] == 3)
+                {
+
+                    return;
+
+                }
+
+            }
 
             if (Mod.instance.save.herbalism.ContainsKey(herbal.herbal))
             {
@@ -1591,6 +1633,18 @@ namespace StardewDruid.Journal
         {
 
             Herbal herbal = herbalism[id];
+
+            /*if (Mod.instance.save.potions.ContainsKey(herbal.herbal))
+            {
+
+                if (Mod.instance.save.potions[herbal.herbal] == 0)
+                {
+
+                    return;
+
+                }
+
+            }*/
 
             float difficulty = 1.6f - (Mod.instance.ModDifficulty() * 0.1f);
 

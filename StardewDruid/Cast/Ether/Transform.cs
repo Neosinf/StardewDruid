@@ -9,12 +9,6 @@ using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buffs;
-using StardewValley.Minigames;
-using System;
-using System.Drawing;
-using System.IO;
-using xTile.Dimensions;
-using static StardewDruid.Cast.Rite;
 
 namespace StardewDruid.Cast.Ether
 {
@@ -77,9 +71,9 @@ namespace StardewDruid.Cast.Ether
         public override void EventActivate()
         {
 
-            eventId = "transform";
+            eventId = Rite.eventTransform;
 
-            Mod.instance.RegisterEvent(this, "transform");
+            Mod.instance.RegisterEvent(this, Rite.eventTransform);
 
             CreateAvatar();
 
@@ -108,7 +102,7 @@ namespace StardewDruid.Cast.Ether
 
             buffEffect.Defense.Set(5);
 
-            Buff speedBuff = new("184655", 
+            Buff dragonBuff = new(Rite.buffIdDragon, 
                 source: DialogueData.RiteNames(Rite.rites.ether),
                 displaySource: DialogueData.RiteNames(Rite.rites.ether),
                 duration: Buff.ENDLESS, 
@@ -116,7 +110,7 @@ namespace StardewDruid.Cast.Ether
                 description: DialogueData.Strings(DialogueData.stringkeys.dragonBuffDescription),
                 effects: buffEffect);
 
-            Game1.player.buffs.Apply(speedBuff);
+            Game1.player.buffs.Apply(dragonBuff);
 
         }
 
@@ -226,10 +220,10 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            if (Game1.player.buffs.IsApplied("184655"))
+            if (Game1.player.buffs.IsApplied(Rite.buffIdDragon))
             {
 
-                Game1.player.buffs.Remove("184655");
+                Game1.player.buffs.Remove(Rite.buffIdDragon);
 
             }
 

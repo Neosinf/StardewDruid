@@ -46,7 +46,7 @@ namespace StardewDruid.Journal
             books,
             boxes,
             restore,
-
+            skulls,
         }
 
         public Dictionary<relicsets, List<IconData.relics>> lines = new()
@@ -118,6 +118,12 @@ namespace StardewDruid.Journal
                 IconData.relics.restore_goshuin,
                 IconData.relics.restore_offering,
                 IconData.relics.restore_cloth,
+            },            
+            [relicsets.skulls] = new() {
+                IconData.relics.skull_saurus,
+                IconData.relics.skull_gelatin,
+                IconData.relics.skull_cannoli,
+                IconData.relics.skull_fox,
             },
         };
 
@@ -617,6 +623,12 @@ namespace StardewDruid.Journal
 
                 case IconData.relics.wayfinder_water:
 
+                    /*SpellHandle waterWarp = new(Mod.instance.locations[LocationData.druid_lair_name], new(24, 13), new Vector2(0, 0)) { type = SpellHandle.spells.warp, };
+
+                    Mod.instance.spellRegister.Add(waterWarp);
+
+                    return 1;*/
+
                     if (Game1.player.currentLocation.Name == "UndergroundMine100")
                     {
 
@@ -851,6 +863,36 @@ namespace StardewDruid.Journal
                             Mod.instance.characters[CharacterHandle.characters.Shadowtin].SwitchToMode(Character.Character.mode.home, Game1.player);
 
                             Mod.instance.CastMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Shadowtin) +
+                                DialogueData.Strings(DialogueData.stringkeys.returnedHome), 0, true);
+
+                            return 1;
+
+                        }
+
+                    }
+
+                    break;
+
+                case IconData.relics.blackfeather_glove:
+
+                    if (!Context.IsMainPlayer)
+                    {
+
+                        break;
+
+                    }
+
+                    if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Blackfeather))
+                    {
+
+                        List<StardewDruid.Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, };
+
+                        if (!reservedModes.Contains(Mod.instance.characters[CharacterHandle.characters.Shadowtin].modeActive))
+                        {
+
+                            Mod.instance.characters[CharacterHandle.characters.Blackfeather].SwitchToMode(Character.Character.mode.home, Game1.player);
+
+                            Mod.instance.CastMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Blackfeather) +
                                 DialogueData.Strings(DialogueData.stringkeys.returnedHome), 0, true);
 
                             return 1;
@@ -1265,6 +1307,9 @@ namespace StardewDruid.Journal
             [relicsets.restore] = new() {
                 Mod.instance.Helper.Translation.Get("RelicData.329.5"),
                 Mod.instance.Helper.Translation.Get("RelicData.329.6"), },
+            [relicsets.skulls] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.339.1"),
+                Mod.instance.Helper.Translation.Get("RelicData.339.2"), },
         };
 
         public static Dictionary<string, Relic> RelicsList()
@@ -2061,6 +2106,46 @@ namespace StardewDruid.Journal
                 },
                 hint = Mod.instance.Helper.Translation.Get("RelicData.330.4"),
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.330.5"),
+            };
+
+
+            // ====================================================================
+            // Rite of Bones Skull relics
+
+            relics[IconData.relics.skull_saurus.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.339.3"),
+                relic = IconData.relics.skull_saurus,
+                line = RelicData.relicsets.skulls,
+                description = Mod.instance.Helper.Translation.Get("RelicData.339.4"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.339.5"),
+            };
+
+            relics[IconData.relics.skull_gelatin.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.339.6"),
+                relic = IconData.relics.skull_gelatin,
+                line = RelicData.relicsets.skulls,
+                description = Mod.instance.Helper.Translation.Get("RelicData.339.7"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.339.8"),
+            };
+
+            relics[IconData.relics.skull_cannoli.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.339.9"),
+                relic = IconData.relics.skull_cannoli,
+                line = RelicData.relicsets.skulls,
+                description = Mod.instance.Helper.Translation.Get("RelicData.339.10"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.339.11"),
+            };
+
+            relics[IconData.relics.skull_fox.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.339.12"),
+                relic = IconData.relics.skull_fox,
+                line = RelicData.relicsets.skulls,
+                description = Mod.instance.Helper.Translation.Get("RelicData.339.13"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.339.14"),
             };
 
             return relics;

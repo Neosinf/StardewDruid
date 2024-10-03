@@ -24,9 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static StardewDruid.Character.Character;
-using System.Threading;
-using StardewValley.Buildings;
 
 
 namespace StardewDruid.Event.Scene
@@ -127,15 +124,6 @@ namespace StardewDruid.Event.Scene
 
         }
 
-        public override void EventSetup(string id)
-        {
-
-            base.EventSetup(id);
-
-            origin = eventVectors[1] * 64;
-
-        }
-
         public override void EventActivate()
         {
 
@@ -153,14 +141,7 @@ namespace StardewDruid.Event.Scene
 
             location.playSound("discoverMineral");
 
-            for(int t = Mod.instance.trackers.Count - 1; t >= 0; t--)
-            {
-
-                TrackHandle tracker = Mod.instance.trackers.ElementAt(t).Value;
-
-                Mod.instance.characters[tracker.trackFor].SwitchToMode(Character.Character.mode.home, Game1.player);
-
-            }
+            SendFriendsHome();
 
         }
         
@@ -333,7 +314,7 @@ namespace StardewDruid.Event.Scene
 
                     Wisps wispNew = new();
 
-                    wispNew.EventSetup(eventVectors[101] * 64, "wisps");
+                    wispNew.EventSetup(eventVectors[101] * 64, Rite.eventWisps);
 
                     wispNew.eventLocked = true;
 
@@ -818,7 +799,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].TargetEvent(0, eventVectors[201] * 64, true);
 
-                    Mod.instance.eventRegister["wisps"].eventAbort = true;
+                    Mod.instance.eventRegister[Rite.eventWisps].eventAbort = true;
 
                     break;
 
@@ -1257,7 +1238,7 @@ namespace StardewDruid.Event.Scene
 
                     Wisps wispNew = new();
 
-                    wispNew.EventSetup(eventVectors[307] * 64, "wisps");
+                    wispNew.EventSetup(eventVectors[307] * 64, Rite.eventWisps);
 
                     wispNew.eventLocked = true;
 
@@ -1548,7 +1529,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[4].TargetEvent(401, companions[5].Position + new Vector2(64, 64), true);
 
-                    companions[4].pathActive = pathing.monster;
+                    companions[4].pathActive = StardewDruid.Character.Character.pathing.monster;
 
                     companions[4].SetDash(companions[5].Position, true);
 
@@ -1591,7 +1572,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[6].TargetEvent(402, companions[4].Position + new Vector2(64,0), true);
 
-                    companions[6].pathActive = pathing.monster;
+                    companions[6].pathActive = StardewDruid.Character.Character.pathing.monster;
 
                     companions[6].SetDash(companions[4].Position, true);
 
@@ -1846,7 +1827,7 @@ namespace StardewDruid.Event.Scene
 
                     SetTrack("cowboy_boss");
 
-                    (Mod.instance.eventRegister["wisps"] as Wisps).WispArray();
+                    (Mod.instance.eventRegister[Rite.eventWisps] as Wisps).WispArray();
                     
                     break;
 

@@ -2840,7 +2840,7 @@ namespace StardewDruid
             foreach (Farmer farmer in farmers)
             {
 
-                if (farmer.health < 10 + farmer.buffs.Defense && Mod.instance.activeEvent.Count > 0)
+                if (farmer.health < 5 && Mod.instance.activeEvent.Count > 0)
                 {
 
                     Mod.instance.CriticalCondition();

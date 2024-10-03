@@ -343,6 +343,36 @@ namespace StardewDruid.Event
 
         }
 
+        public virtual void SendFriendsHome()
+        {
+
+            if (Mod.instance.eventRegister.ContainsKey(Rite.eventCorvids))
+            {
+
+                if(Mod.instance.eventRegister[Rite.eventCorvids] is Cast.Bones.Corvids corvids)
+                {
+
+                    Cast.Bones.Corvids.RemoveCorvids();
+
+                    corvids.EventRemove();
+
+                    Mod.instance.eventRegister.Remove(Rite.eventCorvids);
+
+                }
+
+            }
+
+            for (int t = Mod.instance.trackers.Count - 1; t >= 0; t--)
+            {
+
+                TrackHandle tracker = Mod.instance.trackers.ElementAt(t).Value;
+
+                Mod.instance.characters[tracker.trackFor].SwitchToMode(Character.Character.mode.home, Game1.player);
+
+            }
+
+        }
+
         // ------------------------------------
 
         public virtual void EventActivate()
@@ -882,7 +912,7 @@ namespace StardewDruid.Event
 
         }
 
-        public void DialogueCueWithFeeling(int cueIndex, int frame = 1)
+        public void DialogueCueWithFeeling(int cueIndex, int frame = 1, Character.Character.specials special = Character.Character.specials.point)
         {
 
             if (cues.ContainsKey(cueIndex))
@@ -897,7 +927,7 @@ namespace StardewDruid.Event
                         if (voices[cue.Key] is StardewDruid.Character.Character companion)
                         {
 
-                            companion.netSpecial.Set((int)Character.Character.specials.point);
+                            companion.netSpecial.Set((int)special);
 
                             companion.specialFrame = frame;
 
@@ -1101,7 +1131,7 @@ namespace StardewDruid.Event
 
             }
 
-            if(companions.Count > conversations[dialogueIndex].companion)
+            if(companions.ContainsKey(conversations[dialogueIndex].companion))
             {
 
                 StardewValley.NPC npc = companions[conversations[dialogueIndex].companion];
@@ -1200,6 +1230,32 @@ namespace StardewDruid.Event
                 monsterHandle.ShutDown();
 
             }
+
+        }
+
+        public virtual void RemoveSummons()
+        {
+
+            List<string> summons = new()
+            {
+                Rite.eventCorvids,
+                Rite.eventWisps,
+
+            };
+
+            foreach(string riteSummon in summons)
+            {
+
+                if (Mod.instance.eventRegister.ContainsKey(riteSummon))
+                {
+
+                    Mod.instance.eventRegister[riteSummon].eventAbort = true;
+
+                }
+
+            }
+
+            Cast.Bones.Corvids.RemoveCorvids();
 
         }
 

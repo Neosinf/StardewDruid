@@ -22,6 +22,7 @@ using StardewDruid.Character;
 using StardewDruid.Data;
 using xTile.Dimensions;
 using StardewValley.Extensions;
+using StardewDruid.Monster;
 
 namespace StardewDruid.Location
 {
@@ -32,6 +33,8 @@ namespace StardewDruid.Location
         public TerrainTile accessDoor;
 
         public bool accessOpen;
+
+        public List<Location.TerrainTile> leafTiles = new();
 
         public Clearing() { }
 
@@ -47,6 +50,52 @@ namespace StardewDruid.Location
             base.draw(b);
 
             accessDoor.draw(b, this);
+
+        }
+
+        public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
+        {
+
+            base.drawAboveAlwaysFrontLayer(b);
+
+            foreach (TerrainTile tile in leafTiles)
+            {
+
+                float forceFade = 1f;
+
+                Microsoft.Xna.Framework.Rectangle bounds = new((int)leafTiles[0].position.X - 64, (int)leafTiles[0].position.Y - 64, 768, 512);
+
+                foreach (Farmer character in farmers)
+                {
+
+                    if (bounds.Contains(character.Position.X, character.Position.Y))
+                    {
+
+                        forceFade = leafTiles[0].fadeout;
+
+                    }
+
+                }
+
+                if (forceFade >= 1f)
+                {
+
+                    foreach (NPC character in characters)
+                    {
+
+                        if (bounds.Contains(character.Position.X, character.Position.Y))
+                        {
+
+                            forceFade = leafTiles[0].fadeout;
+                        }
+
+                    }
+
+                }
+
+                tile.draw(b, this, forceFade);
+
+            }
 
         }
 
@@ -755,7 +804,7 @@ namespace StardewDruid.Location
 
                     tTile.flip = Mod.instance.randomIndex.NextBool();
 
-                    frontTiles.Add(tTile);
+                    leafTiles.Add(tTile);
 
                 }
 
@@ -858,6 +907,71 @@ namespace StardewDruid.Location
                 }
 
             }*/
+
+            codes = new()
+            {
+                [0] = new() { },
+                [1] = new() { new() { 18, 1 }, },
+                [2] = new() { },
+                [3] = new() { new() { 10, 3 }, },
+                [4] = new() { new() { 38, 2 }, },
+                [5] = new() { },
+                [6] = new() { },
+                [7] = new() { },
+                [8] = new() { },
+                [9] = new() { },
+                [10] = new() { },
+                [11] = new() { },
+                [12] = new() { },
+                [13] = new() { },
+                [14] = new() { },
+                [15] = new() { new() { 47, 1 }, },
+                [16] = new() { new() { 6, 1 }, },
+                [17] = new() { },
+                [18] = new() { },
+                [19] = new() { },
+                [20] = new() { },
+                [21] = new() { },
+                [22] = new() { new() { 13, 2 }, },
+                [23] = new() { new() { 36, 3 }, },
+                [24] = new() { },
+                [25] = new() { },
+                [26] = new() { },
+
+
+            };
+
+            foreach (KeyValuePair<int, List<List<int>>> code in codes)
+            {
+
+                foreach (List<int> array in code.Value)
+                {
+
+                    TerrainTile tTile = new(IconData.tilesheets.clearing, array[1], new Vector2(array[0], code.Key) * 64, TerrainTile.shadows.smallleafy, array[0] > 27);
+
+                    if (back.Tiles[array[0]+1, code.Key+7] != null)
+                    {
+
+                        buildings.Tiles[array[0] + 1, code.Key + 7] = new StaticTile(buildings, back.Tiles[array[0] + 1, code.Key + 7].TileSheet, BlendMode.Alpha, back.Tiles[array[0] + 1, code.Key + 7].TileIndex);
+
+                    }
+
+
+                    terrainTiles.Add(tTile);
+
+                    LightField light = new(new Vector2(array[0], code.Key) * 64 + new Vector2(128,128));
+
+                    light.luminosity = 6;
+
+                    light.colour = Microsoft.Xna.Framework.Color.LightBlue;
+
+                    light.lightTimer = 1900;
+
+                    lightFields.Add(light);
+
+                }
+
+            }
 
             this.map = newMap;
 

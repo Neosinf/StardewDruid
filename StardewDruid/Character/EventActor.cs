@@ -26,8 +26,6 @@ namespace StardewDruid.Character
     public class EventActor : StardewDruid.Character.Character
     {
 
-        public Dictionary<int, List<Rectangle>> hatFrames = new();
-
         public EventActor()
         {
         }

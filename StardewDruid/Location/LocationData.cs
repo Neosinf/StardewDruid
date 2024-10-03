@@ -82,6 +82,7 @@ namespace StardewDruid.Location
         {
             none,
             offset,
+            deepset,
             dropset,
             smallleafy,
             leafy,
@@ -125,7 +126,7 @@ namespace StardewDruid.Location
 
         }
 
-        public void draw(SpriteBatch b, GameLocation location)
+        public void draw(SpriteBatch b, GameLocation location, float forceFade = -1f)
         {
 
             if (Utility.isOnScreen(position + source.Center.ToVector2(), source.Height*8+128))
@@ -162,6 +163,13 @@ namespace StardewDruid.Location
 
                 Microsoft.Xna.Framework.Vector2 origin = new(position.X - (float)Game1.viewport.X, position.Y - (float)Game1.viewport.Y);
 
+                if(forceFade > 0)
+                {
+
+                    opacity = forceFade;
+
+                }
+                else
                 if (fadeout < 1f)
                 {
 
@@ -216,11 +224,27 @@ namespace StardewDruid.Location
 
                         break;
 
+                    case shadows.deepset:
+
+                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(2, 10), useSource, Microsoft.Xna.Framework.Color.Black * shade, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
+
+                        break;
+
                     case shadows.dropset:
 
-                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(0, 12), useSource, Microsoft.Xna.Framework.Color.DarkBlue * 0.4f, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
+                        if (opacity >= 1f)
+                        {
 
-                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(0, 428), useSource, Microsoft.Xna.Framework.Color.Black * 0.1f, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
+                            b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(0, 12), useSource, Microsoft.Xna.Framework.Color.DarkBlue * 0.4f, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
+                        
+                        }
+                        
+                        if (Game1.timeOfDay < 2100) 
+                        { 
+
+                            b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(0, 428), useSource, Microsoft.Xna.Framework.Color.Black * 0.1f, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
+
+                        }
 
                         break;
 
@@ -739,7 +763,7 @@ namespace StardewDruid.Location
 
                     }
 
-                    if (Mod.instance.questHandle.IsComplete(QuestHandle.challengeMists))
+                    if (Mod.instance.questHandle.IsGiven(QuestHandle.challengeMists))
                     {
                         
                         return 4;
@@ -757,7 +781,7 @@ namespace StardewDruid.Location
 
                     }
 
-                    if (Mod.instance.questHandle.IsComplete(QuestHandle.challengeStars))
+                    if (Mod.instance.questHandle.IsGiven(QuestHandle.challengeStars))
                     {
                         
                         return 3;
@@ -1318,6 +1342,25 @@ namespace StardewDruid.Location
 
                     break;
 
+                case IconData.tilesheets.clearing:
+
+                    switch (key)
+                    {
+
+                        case 1:
+
+                            return new(0, 0, 48, 128);
+
+                        case 2:
+
+                            return new(48, 0, 48, 128);
+
+                        case 3:
+
+                            return new(96, 0, 48, 128);
+                    }
+
+                    break;
 
                 case IconData.tilesheets.court:
 
@@ -1400,6 +1443,10 @@ namespace StardewDruid.Location
 
                         case 5:
                             return new(48, 192, 48, 48);
+
+                        case 6:
+
+                            return new(160, 32, 32, 64);
 
 
                     }
@@ -1516,6 +1563,17 @@ namespace StardewDruid.Location
 
                     break;
 
+                case IconData.tilesheets.ritual:
+
+                    switch (key)
+                    {
+                        case 1:
+
+                            return new(0,0,112,96);
+
+                    }
+
+                    break;
             }
 
             return new(0, 0, 0, 0);
@@ -2067,6 +2125,10 @@ namespace StardewDruid.Location
 
                     return true;
 
+                case IconData.tilesheets.clearing:
+
+                    return true;
+
                 case IconData.tilesheets.court:
 
                     return true;
@@ -2166,17 +2228,6 @@ namespace StardewDruid.Location
 
                                 break;
 
-                            case 2:
-
-                                if (key < 10)
-                                {
-
-                                    key += 12;
-
-                                }
-
-                                break;
-
                         }
 
                     }
@@ -2186,6 +2237,19 @@ namespace StardewDruid.Location
                     magnoliaSource.X += 192 * offset;
 
                     return magnoliaSource;
+
+                case IconData.tilesheets.clearing:
+
+                    Rectangle clearingSource = TerrainRectangles(sheet, key);
+
+                    if(Mod.instance.save.restoration[LocationData.druid_clearing_name] > 2)
+                    {
+
+                        clearingSource.X += 144;
+
+                    }
+
+                    return clearingSource;
 
                 case IconData.tilesheets.spring:
 
@@ -2476,7 +2540,16 @@ namespace StardewDruid.Location
             {
                 case IconData.tilesheets.magnolia:
 
-                    return 1f;
+                    switch (key)
+                    {
+                        case 1:
+                        case 2:
+
+                            return 0.45f;
+
+                    }
+
+                    return 0.35f;
 
                 case IconData.tilesheets.grove:
 

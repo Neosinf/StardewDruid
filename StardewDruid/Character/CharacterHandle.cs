@@ -61,6 +61,12 @@ namespace StardewDruid.Character
             Shadowtin,
             Blackfeather,
 
+            // crows
+            Rook,
+            Crow,
+            Raven,
+            Magpie,
+
             // map interaction
             disembodied,
             energies,
@@ -79,6 +85,8 @@ namespace StardewDruid.Character
             epitaph_guardian,
             epitaph_dragon,
 
+            star_altar,
+
             monument_artisans,
             monument_priesthood,
             monument_morticians,
@@ -87,13 +95,18 @@ namespace StardewDruid.Character
             engraving_left,
             engraving_right,
 
+            dragon_statue,
+
             shrine_engine,
             shrine_forge,
+
+            crow_brazier,
 
             // event
             Marlon,
             Gunther,
             Wizard,
+            Witch,
             FirstFarmer,
             LadyBeyond,
             Dwarf,
@@ -103,23 +116,28 @@ namespace StardewDruid.Character
             Justiciar,
             Reaper,
             Seafarer,
+            Linus,
 
             // animals
-            Shadowcat,
-            Shadowfox,
-            Shadowbat,
+            ShadowBat,
             ShadowRook,
             ShadowCrow,
             ShadowRaven,
             ShadowMagpie,
-            Shadowbear,
-            Shadowwolf,
 
-            // crows
-            Rook,
-            Crow,
-            Raven,
-            Magpie,
+            BlackCat,
+            GingerCat,
+            TabbyCat,
+            RedFox,
+            YellowFox,
+            BlackBear,
+            BrownBear,
+            GreyWolf,
+            BlackWolf,
+            RedWolf,
+            BrownOwl,
+            GreyOwl,
+
 
         }
 
@@ -131,6 +149,7 @@ namespace StardewDruid.Character
             inventory,
             adventure,
             attune,
+            offering,
         }
 
         public static string CharacterName(characters entity)
@@ -605,7 +624,7 @@ namespace StardewDruid.Character
 
                     return Mod.instance.Helper.GameContent.Load<Texture2D>(Path.Combine("Characters", "Dwarf"));
 
-                case characters.Shadowbat:
+                case characters.ShadowBat:
 
                     return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Batwing.png"));
 
@@ -638,10 +657,7 @@ namespace StardewDruid.Character
 
             switch (character)
             {
-                /*case characters.jester:
-                case characters.shadowtin:
 
-                    return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", CharacterNames()[character] + "Portrait.png"));*/
                 case characters.Revenant:
 
                     return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "RevenantPortrait.png"));
@@ -665,9 +681,13 @@ namespace StardewDruid.Character
                 case characters.Dwarf:
 
                     return Mod.instance.Helper.GameContent.Load<Texture2D>(Path.Combine("Portraits", "Dwarf"));
+                    
+                case characters.Linus:
+
+                    return Mod.instance.Helper.GameContent.Load<Texture2D>(Path.Combine("Portraits", "Linus"));
 
                 case characters.Wizard:
-
+                case characters.Witch:
                     return Mod.instance.Helper.GameContent.Load<Texture2D>(Path.Combine("Portraits", "Wizard"));
 
                 default:
@@ -909,6 +929,13 @@ namespace StardewDruid.Character
 
                 case characters.keeper:
 
+                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.swordWeald))
+                    {
+
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.337.1");
+
+                    }
+
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.329.7");
 
                 case characters.monument_artisans:
@@ -983,6 +1010,21 @@ namespace StardewDruid.Character
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.331.3");
 
+                // other
+
+                case characters.star_altar:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.340.1");
+
+                case characters.dragon_statue:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.340.2");
+
+                case characters.crow_brazier:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.340.3");
+
+
             }
 
             return null;
@@ -1054,41 +1096,48 @@ namespace StardewDruid.Character
 
                 case subjects.lore:
 
-                    switch (character)
-                    {
+                    return LoreData.LoreOption(character);
 
-                        case characters.keeper:
+                /*switch (character)
+                {
 
-                            return LoreData.RequestLore(character);
+                    case characters.keeper:
 
-                        default:
+                        if (!Mod.instance.questHandle.IsComplete(QuestHandle.challengeMists))
+                        {
+                            return null;
+                        }
 
-                            if (Mod.instance.questHandle.lorekey != null)
+                        return LoreData.RequestLore(character);
+
+                    default:
+
+                        if (Mod.instance.questHandle.lorekey != null)
+                        {
+
+                            foreach (LoreData.stories story in Mod.instance.questHandle.loresets[Mod.instance.questHandle.lorekey])
                             {
 
-                                foreach (LoreData.stories story in Mod.instance.questHandle.loresets[Mod.instance.questHandle.lorekey])
+                                if (Mod.instance.questHandle.lores.ContainsKey(story))
                                 {
 
-                                    if (Mod.instance.questHandle.lores.ContainsKey(story))
+                                    if (Mod.instance.questHandle.lores[story].character == character)
                                     {
 
-                                        if (Mod.instance.questHandle.lores[story].character == character)
-                                        {
-
-                                            return LoreData.RequestLore(character);
-
-                                        }
+                                        return LoreData.RequestLore(character);
 
                                     }
 
                                 }
+
                             }
-                                
-                            break;
+                        }
 
-                    }
+                        break;
 
-                    break;
+                }
+
+                break;*/
 
                 case subjects.relics:
 
@@ -1231,6 +1280,11 @@ namespace StardewDruid.Character
                             return null;
 
                         case characters.keeper:
+
+                            if (!Mod.instance.questHandle.IsComplete(QuestHandle.challengeMists))
+                            {
+                                return null;
+                            }
 
                             int restores = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.restore);
 
@@ -1405,36 +1459,51 @@ namespace StardewDruid.Character
 
                 case subjects.attune:
 
+                    if (Mod.instance.Config.slotAttune)
+                    {
+
+                        return null;
+
+                    }
+
                     switch (character)
                     {
 
                         case characters.energies:
 
-                            if (!Mod.instance.questHandle.IsComplete(QuestHandle.swordWeald))
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.swordWeald))
                             {
 
-                                return null;
+                                return AttunementIntro(Rite.rites.weald);
+
+                                
 
                             }
-
-                            return AttunementIntro(Rite.rites.weald);
+                            return null;
 
                         case characters.waves:
 
-                            if (!Mod.instance.questHandle.IsComplete(QuestHandle.swordMists))
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.swordMists))
                             {
-
-                                return null;
+                                return AttunementIntro(Rite.rites.mists);
+                                
 
                             }
 
-                            return AttunementIntro(Rite.rites.mists);
+                            return null;
 
-                        case characters.Revenant:
+                        case characters.star_altar:
 
-                            return AttunementIntro(Rite.rites.stars);
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.swordStars))
+                            {
 
-                        case characters.Jester:
+                                return AttunementIntro(Rite.rites.stars);
+
+                            }
+
+                            return null;
+
+                        case characters.monument_priesthood:
 
                             if (Mod.instance.questHandle.IsComplete(QuestHandle.swordFates))
                             {
@@ -1445,11 +1514,18 @@ namespace StardewDruid.Character
 
                             return null;
 
-                        case characters.Shadowtin:
+                        case characters.dragon_statue:
 
-                            return AttunementIntro(Rite.rites.ether);
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.swordEther))
+                            {
 
-                        case characters.Blackfeather:
+                                return AttunementIntro(Rite.rites.ether);
+
+                            }
+
+                            return null;
+
+                        case characters.crow_brazier:
 
                             if (Mod.instance.questHandle.IsComplete(QuestHandle.questBlackfeather))
                             {
@@ -1459,6 +1535,15 @@ namespace StardewDruid.Character
                             }
 
                             return null;
+
+                    }
+
+                    break;
+
+                case subjects.offering:
+
+                    switch (character)
+                    {
 
                         case characters.herbalism:
 
@@ -1562,6 +1647,11 @@ namespace StardewDruid.Character
 
                         case characters.keeper:
 
+                            if (!Mod.instance.questHandle.IsComplete(QuestHandle.challengeMists))
+                            {
+                                return null;
+                            }
+
                             if (Mod.instance.save.restoration[LocationData.druid_graveyard_name] >= 4)
                             {
 
@@ -1608,12 +1698,58 @@ namespace StardewDruid.Character
 
                 case subjects.lore:
 
-                    switch (character)
+                    List<LoreStory> stories = LoreData.RetrieveLore(character);
+
+                    foreach (LoreStory story in stories)
                     {
+                        generate.intro = LoreData.LoreIntro(character);
 
-                        case characters.keeper:
+                        generate.responses.Add(story.question);
 
-                            foreach (LoreData.stories story in Mod.instance.questHandle.loresets[QuestHandle.swordEther])
+                        generate.answers.Add(story.answer);
+
+                    }
+
+                    break;
+
+                /*switch (character)
+                {
+
+                    case characters.keeper:
+
+                        if (!Mod.instance.questHandle.IsComplete(QuestHandle.challengeMists))
+                        {
+                            return null;
+                        }
+
+                        foreach (LoreData.stories story in Mod.instance.questHandle.loresets[QuestHandle.swordEther])
+                        {
+
+                            if (Mod.instance.questHandle.lores.ContainsKey(story))
+                            {
+
+                                if (Mod.instance.questHandle.lores[story].character == character)
+                                {
+
+                                    generate.intro = LoreData.CharacterLore(character);
+
+                                    generate.responses.Add(Mod.instance.questHandle.lores[story].question);
+
+                                    generate.answers.Add(Mod.instance.questHandle.lores[story].answer);
+
+                                }
+
+                            }
+
+                        }
+
+                        break;
+
+                    default:
+
+                        if (Mod.instance.questHandle.lorekey != null)
+                        {
+                            foreach (LoreData.stories story in Mod.instance.questHandle.loresets[Mod.instance.questHandle.lorekey])
                             {
 
                                 if (Mod.instance.questHandle.lores.ContainsKey(story))
@@ -1634,40 +1770,13 @@ namespace StardewDruid.Character
 
                             }
 
-                            break;
+                        }
 
-                        default:
+                        break;
 
-                            if (Mod.instance.questHandle.lorekey != null)
-                            {
-                                foreach (LoreData.stories story in Mod.instance.questHandle.loresets[Mod.instance.questHandle.lorekey])
-                                {
+                }
 
-                                    if (Mod.instance.questHandle.lores.ContainsKey(story))
-                                    {
-
-                                        if (Mod.instance.questHandle.lores[story].character == character)
-                                        {
-
-                                            generate.intro = LoreData.CharacterLore(character);
-
-                                            generate.responses.Add(Mod.instance.questHandle.lores[story].question);
-
-                                            generate.answers.Add(Mod.instance.questHandle.lores[story].answer);
-
-                                        }
-
-                                    }
-
-                                }
-
-                            }
-
-                            break;
-
-                    }
-
-                    break;
+                break;*/
 
                 case subjects.relics:
 
@@ -1810,6 +1919,11 @@ namespace StardewDruid.Character
                             return generate;
 
                         case characters.keeper:
+
+                            if (!Mod.instance.questHandle.IsComplete(QuestHandle.challengeMists))
+                            {
+                                return null;
+                            }
 
                             int restoration = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.restore);
 
@@ -2490,6 +2604,13 @@ namespace StardewDruid.Character
 
                 case subjects.attune:
 
+                    if (Mod.instance.Config.slotAttune)
+                    {
+
+                        return null;
+
+                    }
+
                     int toolIndex = Mod.instance.AttuneableWeapon();
 
                     int attuneUpdate;
@@ -2570,7 +2691,7 @@ namespace StardewDruid.Character
 
                             return generate;
 
-                        case characters.Revenant:
+                        case characters.star_altar:
 
                             attuneUpdate = AttunementUpdate(Rite.rites.stars);
 
@@ -2605,7 +2726,7 @@ namespace StardewDruid.Character
 
                             return generate;
 
-                        case characters.Jester:
+                        case characters.monument_priesthood:
 
                             attuneUpdate = AttunementUpdate(Rite.rites.fates);
 
@@ -2642,7 +2763,7 @@ namespace StardewDruid.Character
 
                             return generate;
 
-                        case characters.Shadowtin:
+                        case characters.dragon_statue:
 
                             attuneUpdate = AttunementUpdate(Rite.rites.ether);
 
@@ -2678,7 +2799,7 @@ namespace StardewDruid.Character
 
                             return generate;
 
-                        case characters.Blackfeather:
+                        case characters.crow_brazier:
 
                             attuneUpdate = AttunementUpdate(Rite.rites.bones);
 
@@ -2713,6 +2834,15 @@ namespace StardewDruid.Character
 
                             return generate;
 
+                    }
+
+                    break;
+
+                case subjects.offering:
+
+                    switch (character)
+                    {
+        
                         case characters.herbalism:
 
                             if (Mod.instance.questHandle.IsComplete(QuestHandle.herbalism))
@@ -2898,6 +3028,11 @@ namespace StardewDruid.Character
 
                         case characters.keeper:
 
+                            if (!Mod.instance.questHandle.IsComplete(QuestHandle.challengeMists))
+                            {
+                                return null;
+                            }
+
                             generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.22");
 
                             if (Mod.instance.save.restoration[LocationData.druid_graveyard_name] < 2)
@@ -3017,12 +3152,6 @@ namespace StardewDruid.Character
 
         public static string AttunementIntro(Rite.rites compare)
         {
-
-            if(Mod.instance.Config.slotAttune){
-
-                return null;
-
-            }
 
             int toolIndex = Mod.instance.AttuneableWeapon();
 

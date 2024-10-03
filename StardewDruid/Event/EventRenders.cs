@@ -37,6 +37,8 @@ namespace StardewDruid.Event
 
         public Microsoft.Xna.Framework.Color colour = Microsoft.Xna.Framework.Color.White;
 
+        public float layer;
+
         public enum renders
         {
 
@@ -44,6 +46,7 @@ namespace StardewDruid.Event
             decoration,
             sky,
             circle,
+            relic,
 
         }
 
@@ -62,6 +65,8 @@ namespace StardewDruid.Event
 
             render = renders.target;
 
+            layer = 0.9f;
+
             rectangle = IconData.DisplayRectangle(display);
 
         }
@@ -79,6 +84,8 @@ namespace StardewDruid.Event
 
             render = renders.decoration;
 
+            layer = 0.0001f;
+
             rectangle = IconData.DecorativeRectangle(Decoration);
 
         }
@@ -95,6 +102,8 @@ namespace StardewDruid.Event
             display = displays.none;
 
             render = renders.sky;
+
+            layer = 0.0001f;
 
             rectangle = IconData.SkyRectangle(sky);
 
@@ -115,9 +124,30 @@ namespace StardewDruid.Event
 
             render = renders.circle;
 
+            layer = 0.0001f;
+
             rectangle = IconData.CircleRectangle(circle);
 
             colour = Colour; 
+
+        }        
+        
+        public EventRender(string Id, string Location, Vector2 Origin, IconData.relics relic)
+        {
+
+            eventId = Id;
+
+            location = Location;
+
+            origin = Origin;
+
+            display = displays.none;
+
+            render = renders.relic;
+
+            layer = Origin.Y / 10000 - 0.0001f;
+
+            rectangle = IconData.RelicRectangles(relic);
 
         }
 
@@ -133,6 +163,12 @@ namespace StardewDruid.Event
 
             switch (render)
             {
+
+                case renders.relic:
+
+                    drawRelic(b);
+
+                    break;
 
                 case renders.decoration:
 
@@ -162,6 +198,25 @@ namespace StardewDruid.Event
 
         }
 
+        public void drawRelic(SpriteBatch b)
+        {
+
+            Microsoft.Xna.Framework.Vector2 drawPosition = new(origin.X - (float)Game1.viewport.X, origin.Y - (float)Game1.viewport.Y);
+
+            b.Draw(
+                Mod.instance.iconData.relicsTexture,
+                drawPosition + new Vector2(32),
+                rectangle,
+                Color.White,
+                0,
+                new Vector2(10),
+                4f,
+                SpriteEffects.None,
+                layer
+            );
+
+        }
+
         public void drawDecoration(SpriteBatch b)
         {
 
@@ -180,7 +235,7 @@ namespace StardewDruid.Event
                 new Vector2(32),
                 3f,
                 SpriteEffects.None,
-                0.0001f
+                layer
             );
 
         }
@@ -198,7 +253,7 @@ namespace StardewDruid.Event
                 new Vector2(32),
                 4f,
                 SpriteEffects.None,
-                0.0001f
+                layer
             );
 
         }        
@@ -221,7 +276,7 @@ namespace StardewDruid.Event
                 new Vector2(72),
                 4f,
                 SpriteEffects.None,
-                0.0001f
+                layer
             );
 
         }
@@ -244,7 +299,7 @@ namespace StardewDruid.Event
                 Vector2.Zero,
                 4f,
                 SpriteEffects.None,
-                0.9f
+                layer
             );
 
             //}

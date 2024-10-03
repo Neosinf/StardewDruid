@@ -526,6 +526,8 @@ namespace StardewDruid.Character
 
                             }
 
+                            objectInstance.Stack = targetObject.heldObject.Value.Stack;
+
                             if (
                                 currentLocation.Name == Game1.player.currentLocation.Name &&
                                 Vector2.Distance(Game1.player.Position, Position) <= 640

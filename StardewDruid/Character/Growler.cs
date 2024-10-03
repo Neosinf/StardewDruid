@@ -16,7 +16,7 @@ namespace StardewDruid.Character
         {
         }
 
-        public Growler(CharacterHandle.characters type = CharacterHandle.characters.Shadowbear)
+        public Growler(CharacterHandle.characters type = CharacterHandle.characters.BrownBear)
           : base(type)
         {
 

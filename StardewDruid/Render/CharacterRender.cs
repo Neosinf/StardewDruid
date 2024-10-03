@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static StardewDruid.Character.Character;
 
 namespace StardewDruid.Render
 {
@@ -351,48 +350,48 @@ namespace StardewDruid.Render
 
         }
 
-        public static Dictionary<specials,int> HumanoidIntervals()
+        public static Dictionary<StardewDruid.Character.Character.specials, int> HumanoidIntervals()
         {
 
             return new()
             {
-                [specials.invoke] = 30,
-                [specials.special] = 30,
-                [specials.launch] = 12,
-                [specials.point] = 60,
-                [specials.sweep] = 15,
-                [specials.pickup] = 30,
-                [specials.gesture] = 60,
+                [StardewDruid.Character.Character.specials.invoke] = 30,
+                [StardewDruid.Character.Character.specials.special] = 30,
+                [StardewDruid.Character.Character.specials.launch] = 12,
+                [StardewDruid.Character.Character.specials.point] = 60,
+                [StardewDruid.Character.Character.specials.sweep] = 15,
+                [StardewDruid.Character.Character.specials.pickup] = 30,
+                [StardewDruid.Character.Character.specials.gesture] = 60,
             };
 
         }
-        public static Dictionary<specials, int> HumanoidCeilings()
+        public static Dictionary<StardewDruid.Character.Character.specials, int> HumanoidCeilings()
         {
 
             return new()
             {
-                [specials.invoke] = 1,
-                [specials.special] = 1,
-                [specials.launch] = 1,
-                [specials.point] = 0,
-                [specials.sweep] = 3,
-                [specials.pickup] = 1,
-                [specials.gesture] = 0,
+                [StardewDruid.Character.Character.specials.invoke] = 1,
+                [StardewDruid.Character.Character.specials.special] = 1,
+                [StardewDruid.Character.Character.specials.launch] = 1,
+                [StardewDruid.Character.Character.specials.point] = 0,
+                [StardewDruid.Character.Character.specials.sweep] = 3,
+                [StardewDruid.Character.Character.specials.pickup] = 1,
+                [StardewDruid.Character.Character.specials.gesture] = 0,
             };
         }
 
-        public static Dictionary<specials, int> HumanoidFloors()
+        public static Dictionary<StardewDruid.Character.Character.specials, int> HumanoidFloors()
         {
 
             return new()
             {
-                [specials.invoke] = 1,
-                [specials.special] = 1,
-                [specials.launch] = 1,
-                [specials.point] = 0,
-                [specials.sweep] = 0,
-                [specials.pickup] = 1,
-                [specials.gesture] = 0,
+                [StardewDruid.Character.Character.specials.invoke] = 1,
+                [StardewDruid.Character.Character.specials.special] = 1,
+                [StardewDruid.Character.Character.specials.launch] = 1,
+                [StardewDruid.Character.Character.specials.point] = 0,
+                [StardewDruid.Character.Character.specials.sweep] = 0,
+                [StardewDruid.Character.Character.specials.pickup] = 1,
+                [StardewDruid.Character.Character.specials.gesture] = 0,
             };
         }
 
@@ -697,330 +696,6 @@ namespace StardewDruid.Render
 
             };
         }
-
-
-
-        public enum flyerFrames
-        {
-
-            downIdle,
-            downPeck,
-            downLift,
-            downFullOut,
-            downHalfOut,
-            downGlide,
-            downHalfIn,
-            downFullIn,
-
-            rightIdle,
-            rightPeck,
-            rightLift,
-            rightFullOut,
-            rightHalfOut,
-            rightGlide,
-            rightHalfIn,
-            rightFullIn,
-
-            upIdle,
-            upPeck,
-            upLift,
-            upFullOut,
-            upHalfOut,
-            upGlide,
-            upHalfIn,
-            upFullIn,
-
-        }
-
-        public static Microsoft.Xna.Framework.Rectangle FlyerRectangle(flyerFrames frame)
-        {
-            return new((int)frame % 8 * 48, (int)frame / 8 * 48, 48, 48);
-        }
- 
-        public static Dictionary<Character.Character.idles, Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>>> FlyerIdle()
-        {
-            
-            Dictionary<Character.Character.idles, Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>>> idleFrames = new();
-            
-            idleFrames[Character.Character.idles.standby] = new()
-            {
-
-                [0] = new() {
-                    FlyerRectangle(flyerFrames.upIdle),
-                    FlyerRectangle(flyerFrames.upPeck),
-                    FlyerRectangle(flyerFrames.upIdle),
-                    FlyerRectangle(flyerFrames.upPeck),
-                    FlyerRectangle(flyerFrames.upIdle),
-                    FlyerRectangle(flyerFrames.upIdle),
-                },
-
-                [1] = new() {
-                    FlyerRectangle(flyerFrames.rightIdle),
-                    FlyerRectangle(flyerFrames.rightPeck),
-                    FlyerRectangle(flyerFrames.rightIdle),
-                    FlyerRectangle(flyerFrames.rightPeck),
-                    FlyerRectangle(flyerFrames.rightIdle),
-                    FlyerRectangle(flyerFrames.rightIdle),
-                },
-
-                [2] = new() {
-                    FlyerRectangle(flyerFrames.downIdle),
-                    FlyerRectangle(flyerFrames.downPeck),
-                    FlyerRectangle(flyerFrames.downIdle),
-                    FlyerRectangle(flyerFrames.downPeck),
-                    FlyerRectangle(flyerFrames.downIdle),
-                    FlyerRectangle(flyerFrames.downIdle),
-                },
-
-                [3] = new() {
-                    FlyerRectangle(flyerFrames.rightIdle),
-                    FlyerRectangle(flyerFrames.rightPeck),
-                    FlyerRectangle(flyerFrames.rightIdle),
-                    FlyerRectangle(flyerFrames.rightPeck),
-                    FlyerRectangle(flyerFrames.rightIdle),
-                    FlyerRectangle(flyerFrames.rightIdle),
-                },
-
-            };
-
-            return idleFrames;
-
-        }
-
-        public static Dictionary<Character.Character.specials, Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>>> FlyerSpecial()
-        {
-
-            return new();
-
-        }
-
-        public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> FlyerWalk()
-        {
-
-            return new()
-            {
-
-                [0] = new() {
-                    FlyerRectangle(flyerFrames.upIdle),
-                    FlyerRectangle(flyerFrames.upLift),
-                    FlyerRectangle(flyerFrames.upHalfOut),
-                    FlyerRectangle(flyerFrames.upFullOut),
-                    FlyerRectangle(flyerFrames.upHalfOut),
-                    FlyerRectangle(flyerFrames.upGlide),
-                    FlyerRectangle(flyerFrames.upHalfIn),
-                    FlyerRectangle(flyerFrames.upFullIn),
-                    FlyerRectangle(flyerFrames.upHalfIn),
-                },
-
-                [1] = new() {
-                    FlyerRectangle(flyerFrames.rightIdle),
-                    FlyerRectangle(flyerFrames.rightLift),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightFullOut),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightHalfIn),
-                    FlyerRectangle(flyerFrames.rightFullIn),
-                    FlyerRectangle(flyerFrames.rightHalfIn),
-                },
-
-                [2] = new() {
-                    FlyerRectangle(flyerFrames.downIdle),
-                    FlyerRectangle(flyerFrames.downLift),
-                    FlyerRectangle(flyerFrames.downHalfOut),
-                    FlyerRectangle(flyerFrames.downFullOut),
-                    FlyerRectangle(flyerFrames.downHalfOut),
-                    FlyerRectangle(flyerFrames.downGlide),
-                    FlyerRectangle(flyerFrames.downHalfIn),
-                    FlyerRectangle(flyerFrames.downFullIn),
-                    FlyerRectangle(flyerFrames.downHalfIn),
-                },
-
-                [3] = new() {
-                    FlyerRectangle(flyerFrames.rightIdle),
-                    FlyerRectangle(flyerFrames.rightLift),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightFullOut),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightHalfIn),
-                    FlyerRectangle(flyerFrames.rightFullIn),
-                    FlyerRectangle(flyerFrames.rightHalfIn),
-                },
-
-            };
-
-        }
-
-        public static Dictionary<Character.Character.dashes, Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>>> FlyerDash()
-        {
-
-
-            Dictionary<Character.Character.dashes, Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>>> dashes = new();
-
-            dashes[Character.Character.dashes.dash] = new()
-            {
-
-                [0] = new() {
-                    FlyerRectangle(flyerFrames.upLift),
-                    FlyerRectangle(flyerFrames.upHalfOut),
-                    FlyerRectangle(flyerFrames.upFullOut),
-                    FlyerRectangle(flyerFrames.upHalfOut),
-                },
-                [1] = new() {
-                    FlyerRectangle(flyerFrames.rightLift),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightFullOut),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                },
-                [2] = new() {
-                    FlyerRectangle(flyerFrames.downLift),
-                    FlyerRectangle(flyerFrames.downHalfOut),
-                    FlyerRectangle(flyerFrames.downFullOut),
-                    FlyerRectangle(flyerFrames.downHalfOut),
-                },
-                [3] = new() {
-                    FlyerRectangle(flyerFrames.rightLift),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightFullOut),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                },
-                [4] = new() {
-                    FlyerRectangle(flyerFrames.upGlide),
-                    FlyerRectangle(flyerFrames.upGlide),
-                    FlyerRectangle(flyerFrames.upGlide),
-                    FlyerRectangle(flyerFrames.upGlide),
-                    FlyerRectangle(flyerFrames.upGlide),
-                    FlyerRectangle(flyerFrames.upGlide),
-                    FlyerRectangle(flyerFrames.upGlide),
-                    FlyerRectangle(flyerFrames.upGlide),
-                    FlyerRectangle(flyerFrames.upGlide),
-                    FlyerRectangle(flyerFrames.upGlide),
-                    FlyerRectangle(flyerFrames.upGlide),
-                    FlyerRectangle(flyerFrames.upGlide),
-                    FlyerRectangle(flyerFrames.upHalfOut),
-                    FlyerRectangle(flyerFrames.upFullOut),
-                    FlyerRectangle(flyerFrames.upHalfOut),
-                    FlyerRectangle(flyerFrames.upGlide),
-                    FlyerRectangle(flyerFrames.upHalfIn),
-                    FlyerRectangle(flyerFrames.upFullIn),
-                    FlyerRectangle(flyerFrames.upHalfIn),
-                    FlyerRectangle(flyerFrames.upGlide),
-                    FlyerRectangle(flyerFrames.upHalfOut),
-                    FlyerRectangle(flyerFrames.upFullOut),
-                    FlyerRectangle(flyerFrames.upHalfOut),
-                    FlyerRectangle(flyerFrames.upGlide),
-                },
-                [5] = new() {
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightFullOut),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightHalfIn),
-                    FlyerRectangle(flyerFrames.rightFullIn),
-                    FlyerRectangle(flyerFrames.rightHalfIn),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightFullOut),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                },
-                [6] = new() {
-                    FlyerRectangle(flyerFrames.downGlide),
-                    FlyerRectangle(flyerFrames.downGlide),
-                    FlyerRectangle(flyerFrames.downGlide),
-                    FlyerRectangle(flyerFrames.downGlide),
-                    FlyerRectangle(flyerFrames.downGlide),
-                    FlyerRectangle(flyerFrames.downGlide),
-                    FlyerRectangle(flyerFrames.downGlide),
-                    FlyerRectangle(flyerFrames.downGlide),
-                    FlyerRectangle(flyerFrames.downGlide),
-                    FlyerRectangle(flyerFrames.downGlide),
-                    FlyerRectangle(flyerFrames.downGlide),
-                    FlyerRectangle(flyerFrames.downGlide),
-                    FlyerRectangle(flyerFrames.downHalfOut),
-                    FlyerRectangle(flyerFrames.downFullOut),
-                    FlyerRectangle(flyerFrames.downHalfOut),
-                    FlyerRectangle(flyerFrames.downGlide),
-                    FlyerRectangle(flyerFrames.downHalfIn),
-                    FlyerRectangle(flyerFrames.downFullIn),
-                    FlyerRectangle(flyerFrames.downHalfIn),
-                    FlyerRectangle(flyerFrames.downGlide),
-                    FlyerRectangle(flyerFrames.downHalfOut),
-                    FlyerRectangle(flyerFrames.downFullOut),
-                    FlyerRectangle(flyerFrames.downHalfOut),
-                    FlyerRectangle(flyerFrames.downGlide),
-                },
-                [7] = new() {
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightFullOut),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightHalfIn),
-                    FlyerRectangle(flyerFrames.rightFullIn),
-                    FlyerRectangle(flyerFrames.rightHalfIn),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightFullOut),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightGlide),
-                },
-                [8] = new() {
-                    FlyerRectangle(flyerFrames.upHalfOut),
-                    FlyerRectangle(flyerFrames.upFullOut),
-                    FlyerRectangle(flyerFrames.upHalfOut),
-                    FlyerRectangle(flyerFrames.upLift),
-                },
-                [9] = new() {
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightFullOut),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightLift),
-                },
-                [10] = new() {
-                    FlyerRectangle(flyerFrames.downHalfOut),
-                    FlyerRectangle(flyerFrames.downFullOut),
-                    FlyerRectangle(flyerFrames.downHalfOut),
-                    FlyerRectangle(flyerFrames.downLift),
-                },
-                [11] = new() {
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightFullOut),
-                    FlyerRectangle(flyerFrames.rightHalfOut),
-                    FlyerRectangle(flyerFrames.rightLift),
-                },
-            };
-
-            dashes[Character.Character.dashes.smash] = new(dashes[Character.Character.dashes.dash]);
-
-            return dashes;
-
-        }
-
 
     }
 

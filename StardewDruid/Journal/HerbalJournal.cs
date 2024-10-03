@@ -43,17 +43,17 @@ namespace StardewDruid.Journal
 
                 [107] = addButton(journalButtons.refresh),
 
-                [201] = addButton(journalButtons.back),
-                [202] = addButton(journalButtons.start),
+                //[201] = addButton(journalButtons.back),
+                //[202] = addButton(journalButtons.start),
 
-                [203] = addButton(journalButtons.headerOne),
-                [204] = addButton(journalButtons.headerTwo),
-                [205] = addButton(journalButtons.headerThree),
+                //[203] = addButton(journalButtons.headerOne),
+                //[204] = addButton(journalButtons.headerTwo),
+                //[205] = addButton(journalButtons.headerThree),
 
                 [301] = addButton(journalButtons.exit),
 
-                [305] = addButton(journalButtons.end),
-                [306] = addButton(journalButtons.forward),
+                //[305] = addButton(journalButtons.end),
+                //[306] = addButton(journalButtons.forward),
 
             };
 
@@ -62,11 +62,11 @@ namespace StardewDruid.Journal
         public override void populateContent()
         {
 
-            pagination = 18;
+            pagination = 36;
 
             contentComponents = Mod.instance.herbalData.JournalHerbals(); //Mod.instance.questHandle.JournalEffects();
 
-            otherComponents = Mod.instance.herbalData.JournalHeaders();
+            //otherComponents = Mod.instance.herbalData.JournalHeaders();
 
             if (record >= contentComponents.Count)
             {
@@ -78,16 +78,27 @@ namespace StardewDruid.Journal
             foreach (KeyValuePair<int, ContentComponent> component in contentComponents)
             {
 
-                component.Value.setBounds(component.Key % pagination, xPositionOnScreen, yPositionOnScreen, width, height);
+                if(component.Value.type == ContentComponent.contentTypes.potion)
+                {
+
+                    component.Value.setBounds((int)(component.Key / 2), xPositionOnScreen, yPositionOnScreen, width, height);
+
+                }
+                else
+                {
+
+                    component.Value.setBounds((int)(component.Key / 2), xPositionOnScreen, yPositionOnScreen, width, height);
+
+                }
 
             }
 
-            foreach (KeyValuePair<int, ContentComponent> component in otherComponents)
+            /*foreach (KeyValuePair<int, ContentComponent> component in otherComponents)
             {
 
-                component.Value.setBounds(component.Key % 3, xPositionOnScreen + 56, yPositionOnScreen, width - 56, height);
-
-            }
+                //component.Value.setBounds(component.Key % 3, xPositionOnScreen + 56, yPositionOnScreen, width - 56, height);
+                component.Value.setBounds(component.Key % 3, xPositionOnScreen, yPositionOnScreen, width, height);
+            }*/
 
         }
 
@@ -98,7 +109,7 @@ namespace StardewDruid.Journal
 
             fadeMenu();
 
-            Dictionary<int, HerbalData.herbals> herbalButtons = new()
+            /*Dictionary<int, HerbalData.herbals> herbalButtons = new()
             {
                 [203] = HerbalData.herbals.ligna,
                 [204] = HerbalData.herbals.impes,
@@ -176,7 +187,7 @@ namespace StardewDruid.Journal
                 // end
                 interfaceComponents[306].active = false;
 
-            }
+            }*/
 
         }
 
@@ -196,7 +207,7 @@ namespace StardewDruid.Journal
 
                     return;
 
-                case journalButtons.headerOne:
+                /*case journalButtons.headerOne:
 
                     Mod.instance.herbalData.PotionBehaviour(HerbalData.herbals.ligna);
 
@@ -218,7 +229,7 @@ namespace StardewDruid.Journal
 
                     activateInterface();
 
-                    return;
+                    return;*/
 
                 default:
 
@@ -232,6 +243,17 @@ namespace StardewDruid.Journal
 
         public override void pressContent()
         {
+            
+            if (contentComponents[focus].type == ContentComponent.contentTypes.toggle)
+            {
+
+                Mod.instance.herbalData.PotionBehaviour(contentComponents[focus].id);
+
+                populateContent();
+
+                return;
+
+            }
 
             string herbalId = contentComponents[focus].id;
 
@@ -353,7 +375,7 @@ namespace StardewDruid.Journal
 
             }
 
-            int header = (top / (pagination / 3));
+            /*int header = (top / (pagination / 3));
 
             for (int i = 0; i < 3; i++)
             {
@@ -369,7 +391,7 @@ namespace StardewDruid.Journal
 
                 component.draw(b, Microsoft.Xna.Framework.Vector2.Zero);
 
-            }
+            }*/
 
         }
 
@@ -379,6 +401,13 @@ namespace StardewDruid.Journal
             base.drawHover(b);
 
             if (!browsing)
+            {
+
+                return;
+
+            }
+
+            if (contentComponents[focus].type == ContentComponent.contentTypes.toggle)
             {
 
                 return;

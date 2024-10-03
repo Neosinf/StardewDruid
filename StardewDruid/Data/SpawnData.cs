@@ -13,12 +13,10 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using xTile.Dimensions;
-using static StardewDruid.Journal.HerbalData;
 using System.Runtime.CompilerServices;
 using StardewValley.GameData.Locations;
 using System.Linq;
 using StardewValley.GameData.Shops;
-using static System.Formats.Asn1.AsnWriter;
 using StardewValley.Monsters;
 using StardewValley.GameData.Crops;
 
@@ -64,7 +62,7 @@ namespace StardewDruid.Data
                     if (Mod.instance.Helper.ModRegistry.IsLoaded("DaLion.Overhaul"))
                     {
                         return new MeleeWeapon("44");
-                    }
+                    }                    
 
                     return new MeleeWeapon("15");
 
@@ -708,7 +706,7 @@ namespace StardewDruid.Data
                                 {
 
                                     continue;
-
+                                    
                                 }
 
                             }
@@ -843,12 +841,17 @@ namespace StardewDruid.Data
                     {
                         "478", // rhubarb
                         "476", // garlic
-                        "433", // coffee
                         "745", // strawberry
                         "473", // bean
                         //"477", // kale
                         "CarrotSeeds",
                     };
+
+                    if(Mod.instance.randomIndex.Next(3) == 0)
+                    {
+
+                        objectIndexes.Add("433"); // coffee
+                    }
 
                     break;
 
@@ -1363,7 +1366,16 @@ namespace StardewDruid.Data
         public static string RandomLowFish(GameLocation location, Vector2 vector)
         {
 
-            /*List<string> indexes = new();
+            Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
+
+            if (!fish.HasContextTag("fish_legendary"))
+            {
+
+                return fish.QualifiedItemId.Replace("(O)", "");
+
+            }
+
+            List<string> indexes = new();
 
             int forest = ForestWaterCheck(location);
 
@@ -1498,13 +1510,11 @@ namespace StardewDruid.Data
 
             string randomFish = indexes[Game1.random.Next(indexes.Count)];
 
-            return randomFish;*/
-
-            return location.getFish(5000,"(O)DeluxeBait",5,Game1.player,1.0,vector).QualifiedItemId.Replace("(O)","");
+            return randomFish;
 
         }
 
-        public static string RandomHighFish(GameLocation location, bool enableRare, int set = 0)
+        public static string RandomHighFish(GameLocation location, bool enableRare, Vector2 vector, int set = 0)
         {
 
             Dictionary<int, int> objectIndexes;
@@ -1513,42 +1523,78 @@ namespace StardewDruid.Data
 
             int forest = ForestWaterCheck(location);
 
-            if (location is Woods || location is Desert || location is Caldera || location is MineShaft || set == 1)
+            if (location is Woods)
             {
 
-                switch (Game1.currentSeason)
+                Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
+
+                if (!fish.HasContextTag("fish_legendary"))
                 {
-                    case "spring":
-                        seasonStar = 734; // woodskip
-                        break;
-                    case "fall":
-                    case "winter":
-                        seasonStar = 161; // icepip
-                        break;
-                    default:
-                        seasonStar = 162; // lava eel
-                        break;
+
+                    return fish.QualifiedItemId.Replace("(O)", "");
 
                 }
 
-                objectIndexes = new()
-                {
-                    [0] = 161, // ice pip
-                    [1] = 734, // wood skip
-                    [2] = 164, // sand fish
-                    [3] = 165, // scorpion carp
-                    [4] = 156, // ghost fish
-                    [5] = seasonStar,
-                    [6] = seasonStar,
-                };
+                objectIndexes = new() { [0] = 734, };
 
-                if (enableRare)
-                {
-                    objectIndexes[7] = 162;  // lava eel
-
-                }
             }
-            else if (location is Beach || location.Name.Contains("Beach") || location is IslandLocation || location is Atoll || forest == 3 || set == 2)
+            else if (location is Desert)
+            {
+                Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
+
+                if (!fish.HasContextTag("fish_legendary"))
+                {
+
+                    return fish.QualifiedItemId.Replace("(O)", "");
+
+                }
+
+                objectIndexes = new() { [0] = 164, [1] = 165, };
+
+            }
+            else if (location is Caldera || location.Name == "UndergroundMine100")
+            {
+                Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
+
+                if (!fish.HasContextTag("fish_legendary"))
+                {
+
+                    return fish.QualifiedItemId.Replace("(O)", "");
+
+                }
+
+                objectIndexes = new() { [0] = 162, };
+
+            }
+            else if (location.Name == "UndergroundMine20")
+            {
+                Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
+
+                if (!fish.HasContextTag("fish_legendary"))
+                {
+
+                    return fish.QualifiedItemId.Replace("(O)", "");
+
+                }
+
+                objectIndexes = new() { [0] = 158, [1] = 156, };
+
+            }
+            else if (location.Name == "UndergroundMine60")
+            {
+                Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
+
+                if (!fish.HasContextTag("fish_legendary"))
+                {
+
+                    return fish.QualifiedItemId.Replace("(O)", "");
+
+                }
+
+                objectIndexes = new() { [0] = 161, [1] = 156, };
+
+            }
+            else if (location is Beach || location.Name.Contains("Beach") || location is IslandLocation || location is Atoll || forest == 3 || set == 1)
             {
 
                 switch (Game1.currentSeason)
@@ -1918,7 +1964,7 @@ namespace StardewDruid.Data
 
                 case 3:
 
-                    string fish = RandomHighFish(location,true);
+                    string fish = RandomHighFish(location,true,vector);
 
                     StardewValley.Object highfish = new StardewValley.Object(fish, 1);
 
@@ -2155,12 +2201,12 @@ namespace StardewDruid.Data
         public SpawnIndex()
         {
 
-            if (Mod.instance.Config.castAnywhere)
-            {
+            //if (Mod.instance.Config.castAnywhere)
+            //{
 
-                SpawnAnywhere();
+            //    SpawnAnywhere();
 
-            }
+            //}
 
         }
 
@@ -2222,14 +2268,14 @@ namespace StardewDruid.Data
         public SpawnIndex(GameLocation location)
         {
 
-            if (Mod.instance.Config.castAnywhere)
-            {
+            //if (Mod.instance.Config.castAnywhere)
+            //{
                 
-                SpawnAnywhere();
+            //    SpawnAnywhere();
 
-                return;
+            //    return;
 
-            }
+            //}
 
             cast = true;
 

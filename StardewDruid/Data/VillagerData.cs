@@ -10,10 +10,6 @@ using StardewValley.Objects;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
-using System.Reflection.PortableExecutable;
-using System.Threading.Channels;
-using static StardewDruid.Data.ReactionData;
-using static StardewValley.Minigames.BoatJourney;
 
 namespace StardewDruid.Data
 {
@@ -500,7 +496,7 @@ namespace StardewDruid.Data
         public static int Affinity(NPC entity)
         {
 
-            int affinity = 3;
+            //int affinity = 3;
 
             CharacterData customData = entity.GetData();
 
@@ -511,7 +507,7 @@ namespace StardewDruid.Data
                     
                     int affinityParse = Convert.ToInt32(affinityValue);
 
-                    if (affinityParse < -1 || affinityParse > 4)
+                    if (affinityParse < -1 || affinityParse > 5)
                     {
 
                         return 3;
@@ -537,16 +533,13 @@ namespace StardewDruid.Data
                     [villagers.Kent] = 0,
                     [villagers.Harvey] = 0,
                     [villagers.Maru] = 0,
-                    [villagers.Robin] = 0,
 
                     // Ignorant / Don't know
-                    [villagers.Jas] = 1,
                     [villagers.Alex] = 1,
-                    [villagers.Vincent] = 1,
                     [villagers.Sam] = 1,
                     [villagers.Haley] = 1,
                     [villagers.Marnie] = 1,
-                    [villagers.Leo] = 1,
+                    [villagers.Robin] = 0,
 
                     // Indifferent / Unconcerned
                     [villagers.Shane] = 2,
@@ -576,6 +569,11 @@ namespace StardewDruid.Data
                     [villagers.Linus] = 5,
                     [villagers.Wizard] = 5,
 
+                    // Childish Wonder
+                    [villagers.Jas] = 6,
+                    [villagers.Vincent] = 6,
+                    [villagers.Leo] = 6,
+
                 };
 
                 if (villagerAffinities.ContainsKey(result))
@@ -593,6 +591,9 @@ namespace StardewDruid.Data
                 // Can't talk
                 ["FC.Roswell"] = -1,
                 ["FC.Boxy"] = -1,
+                ["DustyNPC"] = -1,
+                ["Lee"] = -1,
+                ["MisterGinger"] = -1,
 
                 ["Mateo"] = 4,
 
@@ -605,7 +606,7 @@ namespace StardewDruid.Data
 
             }
 
-            return affinity;
+            return Mod.instance.randomIndex.Next(5);
 
         }
 

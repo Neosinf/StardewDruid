@@ -1,5 +1,6 @@
-﻿====================================
-Stardew Druid - 1.6 Ready
+﻿
+====================================
+Stardew Druid - 1.6 Ready!
 ====================================
 
 40+ quests, 25+ abilities, 6 unique NPCs, 10 custom locations, 30+ collectables, 3500+ lines of dialogue and lore, Stardew Druid is a unique kind of expansion created to satisfy a desire for adventure.
@@ -10,9 +11,10 @@ The expansive questline starts with a custom NPC, the Effigy, who can be found i
 
 Your journey is recorded in the Stardew Druid journal, a custom journal menu that provides all the instruction and lore you could ask for. 
 
-For any mod support, discussion, translation queries or feedback we recommend you join us on discord as opposed to posting on Nexus. Depending on timezones you might be able to get a response in under a minute!
+For any mod support, discussion, translation queries or feedback we recommend you join us on Stardew Druid Discord as opposed to posting on Nexus. Depending on timezones you might be able to get a response in under a minute!
 
-Stardew Druid Discord﻿
+Server url:
+discord.gg/XK29PHPqSg
 
 ==========================================
 Casting System
@@ -20,9 +22,13 @@ Casting System
 
 The mod works primarily though the use of the 'rite button', which is by default configured to keyboard V, mouse button 4, mouse button 5 and controller LeftShoulder.
 
+Any of the main line of vanilla tools (Pickaxe, Axe, Hoe, WateringCan etc) or any Melee Weapon (Including Scythe) must be selected in toolbar to perform a rite (cast).
+
 There are two possible methods for selecting a rite to use.
 
-The default is normal attunement, where the rite you have selected is based on what is attuned to the weapon or tool you are holding. Some weapons have fixed attunement to a rite, for instance the forest sword always casts Weald. More weapons/tools can be attuned to Weald by talking to the standing stones in the druid grove. You will encounter more NPCs that offer attunement as you progress in the storyline. All unattuned weapons will cast the last rite unlocked in your progression as a default.
+The default is normal attunement, where the rite you have selected is based on what is attuned to the weapon or tool you are holding. Some weapons have fixed attunement to a rite, for instance the forest sword always casts Weald. More weapons/tools can be attuned to Weald by talking to the standing stones in the druid grove while the tool/weapon you want to attune is selected in your inventory. All unattuned weapons will cast the last rite unlocked in your progression as a default.
+
+An attuned weapon will be provided for every rite learnt. Patrons will be encountered throughout the storyline that provide additional attunement options
 
 The second method for rite selection is slot attunement, which can be enabled in the configuration. This will fix the slots to use to slot 1 - 6 in the inventory, so no matter what weapon or tool is in slot 1, it will always cast Weald.
 
@@ -30,42 +36,47 @@ The second method for rite selection is slot attunement, which can be enabled in
 1. Rite of the Weald
 -----------------------------------------
 Weald is an old fashioned name for a woodland area, where ancient druids would perform ceremonies honouring the kings of Oak and Holly. This rite is about rewilding the empty spaces of the Valley and drawing on the life essence of the Earth.
+
 Draw out the hidden bounty of the valley, add trees and grass to barren spaces, enhance the growth rate of crops, explode weeds, twigs, ore veins and trigger rock falls in the mines.
 
 -----------------------------------------
 2. Rite of Mists
 -----------------------------------------
 The isle of mists is an important place in medieval sagas, and the residence of the Lady Beyond the Shore. This rite is about being a commanding presence with awesome displays of power and lots of lightning bolts.
+
 Extract power from totem shrines, target scarecrows, rods and campfires for special functions, create high-yield fishing spots, and smite any obstacle in your way. 
 
 -----------------------------------------
 3. Rite of the Stars 
 -----------------------------------------
 Celestial bodies and formations were an important device of storytelling and calendar traditions. That's all very wonderful and this rite is about calling down little stars as fireballs.
+
 Call a meteor shower and rain down fire from the sky with reckless abandon, or create an anomaly in space-time with a gravity well that pulls in crops and enemies.
 
 -----------------------------------------
 4. Rite of the Fates
 -----------------------------------------
 The fates are mentioned in many traditions of cultures that were adjacent to or inspired by the Fates of Greek mythology, and are the etymological root for faeries, fae and the like. This rite is about chance and destiny intertwined to produce random effects.
+
 Meddle with the powers of the Fates to warp travel, curse enemies, impress villagers with magic tricks and enchant farm machines.
 
 -----------------------------------------
 5. Rite of Ether
 ----------------------------------------
 The fifth element, ether, which inspires a lot of alchemical traditions, is considered to incorporate both the spiritual/divine and the material. The traditional progenitors and agents of this element were... Dragons.
+
 Transform into a Dragon!
 
 -----------------------------------------
 6. Rite of Bones
 ----------------------------------------
 The Corvidae family of birds are often used as a motif in old superstitions, in which they are likely depicted as manifestations of close familial bonds between mortals and otherworldly spirits.
+
 Summon four corvid familiars to assist you
 
 -----------------------------------------
 + Additional Features
 -----------------------------------------
-
 Gently caress your farm animals and neighbours with magic for soft friendship points each day.
 Prove yourself in new, unique challenges that test your ability with each rite.
 Encounter customised creatures with enhanced stats, cosmetics and behaviour.
@@ -73,29 +84,24 @@ Boost your output with the specialised herbalism feature, unique to Stardew Drui
 Gain a dungeon delving companion, a treasure hunting friend and a gardener for your farm.
 
 ==========================================
-SETUP
+SETUP | COMPATIBILITY
 ==========================================
 
-Optimised for:  PC - Single Player - English
+Only requires SMAPI
+
+Compatible with all other mods including SVE, RSV, ES. If there is a mod compatibility issue, come onto discord and log a ticket!
+
+Stable for remote multiplayer games (splitscreen is still WIP)
+
+Compatible with controllers/gamepads
 
 i18n Format implemented
-SMAPI 4.0.1 required
-Generic Mod Configuration Menu recommended
 
-Expected to work without issue on multiplayer, with controllers and with popular expansions
+Generic Mod Configuration Menu implemented
 
-2.0.1 is available on the Stardew Druid discord server as the last stable release for SDV 1.5.6
-2.1.9 is available on the Stardew Druid discord server as the pre-redevelopment version for SDV 1.6
+Custom data model stored in save files - only affects the mod, so won't impact any save files after uninstalling/installing
 
------------------------------------------
-CASTING RITES
------------------------------------------
-
-Any of the main line of vanilla tools (Pickaxe, Axe, Hoe, WateringCan etc) or any Melee Weapon (Including Scythe) must be selected in toolbar to perform a rite (cast). This restriction can be changed with the Slot Attune and Slot Freedom configuration options.
-
-An attuned weapon will be provided for every rite learnt.
-
-Not every rite effect works in every location, and most interior locations are disabled, with the exception of farm buildings and the Stardrop Saloon. Use the 'cast anywhere' option and the 'disable seeds etc' options to enable and restrict effects in custom locations.
+Enable and Disable the mod with confidence on any of your save files at any season/year of your playthrough
 
 -----------------------------------------
 QUEST PROGRESSION (3.0.0+)
@@ -141,14 +147,12 @@ Rite of Ether:
 Rite of Bones
 24. Weapon/Companion Quest (Blackfeather)
 25. Lessons (Summon Familiars, Retrieve, Opportunity)
-
-**COMING SOON**
-26. Companion Quest (The Effigy part 3)
+26. Companion Quest (Buffin)
+27. Companion Quest (Revenant) **COMING SOON**
 
 -----------------------------------------
 CONFIG FILE
 -----------------------------------------
-GMCM has been integrated
 
 Rite Buttons "riteButtons" is a list of keybinds set to MouseX1, MouseX2, Keyboard.V and LeftShoulder
 Action Buttons "actionButtons" is a list of keybinds set to MouseLeft, ControllerX and Keyboard.C
@@ -237,30 +241,7 @@ Calculated damage (when disabled, default)
 
 -----------------------------------------
 Cardinal Targetting
-
 Disables isometric (6 way) targetting for transformation effects. Might look a little misaligned with the transformation animations."
-
------------------------------------------
-Cast Anywhere "castAnywhere"
-
-Disables the Map-based cast restrictions so that any rite effect can be cast anywhere. Proceed with caution!
-
------------------------------------------
-COMPATIBILITY AND SAVE DATA
------------------------------------------
-Custom data model stored in save files
-- only affects the mod, so won't impact any save files after uninstalling/installing
-
-Enable and Disable the mod with confidence on any of your save files
-
-Stardew Druid is stable with most popular mods, including
-- Expansions like SVE, ES and RSV (for now it is not optimised for the custom content)
-- DeepWoods
-- NPC Adventures
-- Immersive Farm
-- All the major frameworks including SpaceCore, Content Patcher, etc
-
-If there is a mod compatibility issue, come onto discord and log a ticket!
 
 -----------------------------------------
 OPENSOURCE

@@ -123,7 +123,6 @@ namespace StardewDruid.Location
         public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
         {
 
-
             foreach (TerrainTile tile in frontTiles)
             {
 
@@ -132,7 +131,6 @@ namespace StardewDruid.Location
             }
 
             base.drawAboveAlwaysFrontLayer(b);
-
 
         }
 

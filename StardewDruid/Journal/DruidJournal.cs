@@ -638,7 +638,7 @@ namespace StardewDruid.Journal
 
                 case journalButtons.dragonSave:
 
-                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.complete, new());
+                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.save, new());
 
                 // ======================================  right side
 
@@ -1657,30 +1657,48 @@ namespace StardewDruid.Journal
                 if (interfaceComponents[focus].text != null)
                 {
 
-                    Vector2 textOffset = Game1.smallFont.MeasureString(interfaceComponents[focus].text) * 1.25f;
-
-                    Microsoft.Xna.Framework.Rectangle hoverbox = drawHoverBox(b,(int)textOffset.X+64, (int)textOffset.Y+32);
-
-                    b.DrawString(
-                        Game1.smallFont, 
-                        interfaceComponents[focus].text, 
-                        new Vector2(hoverbox.Center.X-(textOffset.X/2), 
-                        hoverbox.Center.Y - (textOffset.Y / 2) + 2f), 
-                        Game1.textColor, 
-                        0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
-
-                    b.DrawString(
-                        Game1.smallFont, 
-                        interfaceComponents[focus].text, 
-                        new Vector2(hoverbox.Center.X - (textOffset.X / 2) - 1f, 
-                        hoverbox.Center.Y - (textOffset.Y / 2) + 2f + 1.5f), 
-                        Microsoft.Xna.Framework.Color.Brown * 0.35f, 
-                        0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
-
+                    drawHoverText(b, interfaceComponents[focus].text);
 
                 }
 
             }
+
+            if (browsing)
+            {
+
+                if (contentComponents[focus].type == ContentComponent.contentTypes.toggle)
+                {
+
+                    drawHoverText(b, contentComponents[focus].text[0]);
+
+                }
+
+            }
+
+        }
+
+        public virtual void drawHoverText(SpriteBatch b, string t)
+        {
+
+            Vector2 textOffset = Game1.smallFont.MeasureString(t) * 1.25f;
+
+            Microsoft.Xna.Framework.Rectangle hoverbox = drawHoverBox(b, (int)textOffset.X + 64, (int)textOffset.Y + 32);
+
+            b.DrawString(
+                Game1.smallFont,
+                t,
+                new Vector2(hoverbox.Center.X - (textOffset.X / 2),
+                hoverbox.Center.Y - (textOffset.Y / 2) + 2f),
+                Game1.textColor,
+                0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
+
+            b.DrawString(
+                Game1.smallFont,
+                t,
+                new Vector2(hoverbox.Center.X - (textOffset.X / 2) - 1f,
+                hoverbox.Center.Y - (textOffset.Y / 2) + 2f + 1.5f),
+                Microsoft.Xna.Framework.Color.Brown * 0.35f,
+                0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
 
         }
 

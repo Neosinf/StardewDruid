@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static StardewDruid.Character.CharacterHandle;
 
 namespace StardewDruid.Journal
 {
@@ -53,55 +54,30 @@ namespace StardewDruid.Journal
         public override void populateContent()
         {
 
-            string[] loreParts = journalId.Split(".");
-
-            string questId = loreParts[0];
-
-            bool isTranscript = loreParts[1] == "transcript";
-
-            // ---------------------------- quest
-
-            Quest questRecord = Mod.instance.questHandle.quests[questId];
-
-            int questReward = questRecord.reward;
+            LoreSet.loresets set = Enum.Parse<LoreSet.loresets>(journalId);
 
             // ----------------------------- title
 
             int textHeight = 48;
 
-            title = questRecord.title;
+            title = Mod.instance.questHandle.loresets[set].title;
 
             int start = 0;
 
-            // ----------------------------- description
-
-            contentComponents[start] = new(ContentComponent.contentTypes.text, "description");
-
-            if (isTranscript)
+            if (Mod.instance.questHandle.loresets[set].settype == LoreSet.settypes.transcript)
             {
                 
+                contentComponents[start] = new(ContentComponent.contentTypes.text, "description");
+
                 contentComponents[start].text[0] = DialogueData.Strings(DialogueData.stringkeys.questTranscript);
 
-            }
-            else
-            {
-                
-                contentComponents[start].text[0] = DialogueData.Strings(DialogueData.stringkeys.questLore);
+                contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
 
-            }
+                textHeight += contentComponents[start++].bounds.Height;
 
-            contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+                Dictionary<int, Dictionary<int, string>> dialogueScene = DialogueData.DialogueScene(Mod.instance.questHandle.loresets[set].quest);
 
-            textHeight += contentComponents[start++].bounds.Height;
-
-            // ----------------------------- lore
-
-            if (isTranscript && questRecord.type == Quest.questTypes.challenge)
-            {
-
-                Dictionary<int, Dictionary<int, string>> dialogueScene = DialogueData.DialogueScene(questId);
-
-                Dictionary<int, string> narrators = DialogueData.DialogueNarrators(questId);
+                Dictionary<int, string> narrators = DialogueData.DialogueNarrators(Mod.instance.questHandle.loresets[set].quest);
 
                 if (dialogueScene.Count > 0)
                 {
@@ -123,8 +99,6 @@ namespace StardewDruid.Journal
 
                             contentComponents[start].text[0] = narrators[sceneMoment.Key] + ": " + sceneMoment.Value;
 
-                            //contentComponents[start].textColours[0] = Mod.instance.iconData.schemeColours.ElementAt(sceneMoment.Key + 1).Value;
-
                             contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
 
                             textHeight += contentComponents[start++].bounds.Height;
@@ -133,46 +107,79 @@ namespace StardewDruid.Journal
 
                     }
                 }
+
             }
-
-            if (!isTranscript && Mod.instance.questHandle.loresets.ContainsKey(questId))
+            else
             {
-
-                foreach (LoreData.stories story in Mod.instance.questHandle.loresets[questId])
+                
+                foreach (KeyValuePair<LoreStory.stories, LoreStory> story in Mod.instance.questHandle.lores)
                 {
 
-                    if (Mod.instance.questHandle.lores.ContainsKey(story))
+                    if (story.Value.loreset != set)
                     {
-                        
-                        contentComponents[start] = new(ContentComponent.contentTypes.text, "lore" + start.ToString());
 
-                        contentComponents[start].text[0] = Mod.instance.questHandle.lores[story].question;
+                        continue;
 
-                        contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkGreen;
+                    }
 
-                        contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+                    if (!Mod.instance.questHandle.IsComplete(story.Value.quest))
+                    {
 
-                        textHeight += contentComponents[start++].bounds.Height;
+                        continue;
 
-                        contentComponents[start] = new(ContentComponent.contentTypes.text, "lore" + start.ToString());
+                    }
 
-                        contentComponents[start].text[0] = Mod.instance.questHandle.lores[story].answer;
+                    contentComponents[start] = new(ContentComponent.contentTypes.text, "description");
 
-                        //contentComponents[start].textColours[0] = Mod.instance.iconData.schemeColours.ElementAt((int)Mod.instance.questHandle.lores[story].character + 1).Value;
+                    contentComponents[start].text[0] = story.Value.description;
 
-                        contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+                    contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
 
-                        textHeight += contentComponents[start++].bounds.Height;
+                    textHeight += contentComponents[start++].bounds.Height;
 
-                        contentComponents[start] = new(ContentComponent.contentTypes.text, "lore" + start.ToString());
+                    switch (story.Value.loretype)
+                    {
 
-                        contentComponents[start].text[0] = "(" + CharacterHandle.CharacterTitle(Mod.instance.questHandle.lores[story].character) + ")";
+                        case LoreStory.loretypes.information:
 
-                        //contentComponents[start].textColours[0] = Mod.instance.iconData.schemeColours.ElementAt((int)Mod.instance.questHandle.lores[story].character + 1).Value;
+                            foreach (string detail in story.Value.details)
+                            {
 
-                        contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+                                contentComponents[start] = new(ContentComponent.contentTypes.text, "detail" + start.ToString());
 
-                        textHeight += contentComponents[start++].bounds.Height;
+                                contentComponents[start].text[0] = detail;
+
+                                contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkBlue;
+
+                                contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+                                textHeight += contentComponents[start++].bounds.Height;
+
+                            }
+
+                            break;
+
+                        case LoreStory.loretypes.story:
+
+                            contentComponents[start] = new(ContentComponent.contentTypes.text, "lore" + start.ToString());
+
+                            contentComponents[start].text[0] = story.Value.question;
+
+                            contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkGreen;
+
+                            contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+                            textHeight += contentComponents[start++].bounds.Height;
+
+                            contentComponents[start] = new(ContentComponent.contentTypes.text, "lore" + start.ToString());
+
+                            contentComponents[start].text[0] = story.Value.answer;
+
+                            contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+                            textHeight += contentComponents[start++].bounds.Height;
+
+                            break;
 
                     }
 

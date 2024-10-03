@@ -28,6 +28,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using xTile.Dimensions;
+using static StardewDruid.Journal.HerbalData;
 
 
 namespace StardewDruid
@@ -714,9 +715,17 @@ namespace StardewDruid
             locations[LocationData.druid_grove_name].passTimeForObjects(overnightMinutesElapsed);
 
             proxyGrove.furniture.Set(locations[LocationData.druid_grove_name].furniture);
-            proxyGrove.largeTerrainFeatures.Set(locations[LocationData.druid_grove_name].largeTerrainFeatures);
+
             proxyGrove.netObjects.Set(locations[LocationData.druid_grove_name].netObjects.Pairs);
-            proxyGrove.terrainFeatures.Set(locations[LocationData.druid_grove_name].terrainFeatures.Pairs);
+
+            if (Config.plantGrove)
+            {
+
+                proxyGrove.largeTerrainFeatures.Set(locations[LocationData.druid_grove_name].largeTerrainFeatures);
+
+                proxyGrove.terrainFeatures.Set(locations[LocationData.druid_grove_name].terrainFeatures.Pairs);
+
+            }
 
             XmlSerializer serializer = new XmlSerializer(typeof(GameLocation));
 
@@ -778,29 +787,12 @@ namespace StardewDruid
             stringReader.Close();
 
             locations[LocationData.druid_grove_name].furniture.Set(proxyGrove.furniture);
-            locations[LocationData.druid_grove_name].largeTerrainFeatures.Set(proxyGrove.largeTerrainFeatures);
+
             locations[LocationData.druid_grove_name].netObjects.Set(proxyGrove.netObjects.Pairs);
-            locations[LocationData.druid_grove_name].terrainFeatures.Set(proxyGrove.terrainFeatures.Pairs);
 
             foreach (Furniture item2 in locations[LocationData.druid_grove_name].furniture)
             {
                 item2.updateDrawPosition();
-            }
-
-            foreach (LargeTerrainFeature largeTerrainFeature in locations[LocationData.druid_grove_name].largeTerrainFeatures)
-            {
-                largeTerrainFeature.Location = locations[LocationData.druid_grove_name];
-                largeTerrainFeature.loadSprite();
-            }
-
-            foreach (TerrainFeature value4 in locations[LocationData.druid_grove_name].terrainFeatures.Values)
-            {
-                value4.Location = locations[LocationData.druid_grove_name];
-                value4.loadSprite();
-                if (value4 is HoeDirt hoeDirt)
-                {
-                    hoeDirt.updateNeighbors();
-                }
             }
 
             foreach (KeyValuePair<Vector2, StardewValley.Object> pair in locations[LocationData.druid_grove_name].objects.Pairs)
@@ -808,6 +800,32 @@ namespace StardewDruid
                 pair.Value.initializeLightSource(pair.Key);
                 pair.Value.reloadSprite();
             }
+
+            if (Config.plantGrove)
+            {
+
+                locations[LocationData.druid_grove_name].largeTerrainFeatures.Set(proxyGrove.largeTerrainFeatures);
+
+                locations[LocationData.druid_grove_name].terrainFeatures.Set(proxyGrove.terrainFeatures.Pairs);
+
+                foreach (LargeTerrainFeature largeTerrainFeature in locations[LocationData.druid_grove_name].largeTerrainFeatures)
+                {
+                    largeTerrainFeature.Location = locations[LocationData.druid_grove_name];
+                    largeTerrainFeature.loadSprite();
+                }
+
+                foreach (TerrainFeature value4 in locations[LocationData.druid_grove_name].terrainFeatures.Values)
+                {
+                    value4.Location = locations[LocationData.druid_grove_name];
+                    value4.loadSprite();
+                    if (value4 is HoeDirt hoeDirt)
+                    {
+                        hoeDirt.updateNeighbors();
+                    }
+                }
+
+            }
+
 
         }
 
@@ -1149,10 +1167,10 @@ namespace StardewDruid
             if (Game1.isWarping)
             {
 
-                if (eventRegister.ContainsKey("transform"))
+                if (eventRegister.ContainsKey(Rite.eventTransform))
                 {
 
-                    (eventRegister["transform"] as Cast.Ether.Transform).EventWarp();
+                    (eventRegister[Rite.eventTransform] as Cast.Ether.Transform).EventWarp();
 
                 }
 
@@ -1942,10 +1960,10 @@ namespace StardewDruid
 
                 }
 
-                if (Game1.player.CurrentToolIndex == 999 && eventRegister.ContainsKey("transform"))
+                if (Game1.player.CurrentToolIndex == 999 && eventRegister.ContainsKey(Rite.eventTransform))
                 {
 
-                    if (eventRegister["transform"] is Cast.Ether.Transform transform)
+                    if (eventRegister[Rite.eventTransform] is Cast.Ether.Transform transform)
                     {
 
                         return transform.attuneableIndex;
@@ -2375,9 +2393,14 @@ namespace StardewDruid
 
             ConsumeLunch();
 
-            List<HerbalData.herbals> potions = new() {};
+            List<HerbalData.herbals> lines = new()
+            {
+                HerbalData.herbals.ligna,
+                HerbalData.herbals.impes,
+                HerbalData.herbals.celeri,
+            };
 
-            for (int i = herbalData.lines.Count - 1; i >= 0; i--)
+            /*for (int i = herbalData.lines.Count - 1; i >= 0; i--)
             {
 
                 if(Mod.instance.save.herbalism.Count == 0)
@@ -2411,25 +2434,23 @@ namespace StardewDruid
 
                 }
 
-            }
+            }*/
+
+            List<HerbalData.herbals> potions = new();
+
+            List<HerbalData.herbals> prioritised = new();
 
             int max = herbalData.MaxHerbal();
 
-            foreach(HerbalData.herbals potion in potions)
+            foreach (HerbalData.herbals potion in potions)
             {
 
-                if (Game1.player.Stamina >= (Game1.player.MaxStamina * 0.5) && Game1.player.health >= (Game1.player.maxHealth * 0.5))
+                for (int i = herbalData.lines[potion].Count - 1; i >= 0; i--)
                 {
 
-                    break;
+                    bool priority = false;
 
-                }
-
-                for (int i = herbalData.lines[potion].Count-1; i >= 0; i--)
-                {
-                    
                     HerbalData.herbals herbal = herbalData.lines[potion][i];
-
 
                     if (herbalData.herbalism[herbal.ToString()].level > max)
                     {
@@ -2438,13 +2459,41 @@ namespace StardewDruid
 
                     }
 
+                    if (save.potions.ContainsKey(herbal))
+                    {
+
+                        if (save.potions[herbal] == 0)
+                        {
+
+                            continue;
+
+                        }
+
+                        if (save.potions[herbal] == 2)
+                        {
+
+                            priority = true;
+
+                        }
+
+                    }
+
                     if (save.herbalism.ContainsKey(herbal))
                     {
 
                         if (save.herbalism[herbal] > 0)
                         {
+                            if (priority)
+                            {
 
-                            herbalData.ConsumeHerbal(herbal.ToString());
+                                prioritised.Add(herbal);
+
+                            }
+                            else
+                            {
+                                potions.Add(herbal);
+
+                            }
 
                             break;
 
@@ -2453,6 +2502,20 @@ namespace StardewDruid
                     }
 
                 }
+
+            }
+
+            prioritised.AddRange(potions);
+
+            foreach (HerbalData.herbals potion in prioritised)
+            {
+
+                if (Game1.player.Stamina >= (Game1.player.MaxStamina * 0.5) && Game1.player.health >= (Game1.player.maxHealth * 0.5))
+                {
+                    break;
+                }
+
+                herbalData.ConsumeHerbal(potion.ToString());
 
             }
 

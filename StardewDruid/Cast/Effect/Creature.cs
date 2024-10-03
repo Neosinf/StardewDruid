@@ -139,58 +139,22 @@ namespace StardewDruid.Cast.Effect
             switch (characterType)
             {
 
-                case Character.CharacterHandle.characters.Shadowbear:
+                case Character.CharacterHandle.characters.GreyWolf:
+                case Character.CharacterHandle.characters.BlackWolf:
+                case Character.CharacterHandle.characters.BrownBear:
+                case Character.CharacterHandle.characters.BlackBear:
 
                     creature = new StardewDruid.Character.Growler(characterType);
-
-                    switch (Mod.instance.randomIndex.Next(3))
-                    {
-
-                        case 0:
-
-                            location.playSound("BearGrowl");
-
-                            break;
-
-                        case 1:
-
-                            location.playSound("BearGrowlTwo");
-
-                            break;
-
-                        case 2:
-
-                            location.playSound("BearGrowlThree");
-
-                            break;
-
-                    }
 
                     creature.netMovement.Set((int)Character.Character.movements.run);
 
                     break;
 
-                case Character.CharacterHandle.characters.Shadowwolf:
-
-                    creature = new StardewDruid.Character.Growler(characterType);
-
-                    switch (Mod.instance.randomIndex.Next(3))
-                    {
-
-                        case 0:
-
-                            location.playSound("WolfGrowl");
-
-                            break;
-
-                    }
-
-                    creature.netMovement.Set((int)Character.Character.movements.run);
-
-                    break;
-
-                case Character.CharacterHandle.characters.Shadowcat:
-                case Character.CharacterHandle.characters.Shadowfox:
+                case Character.CharacterHandle.characters.RedFox:
+                case Character.CharacterHandle.characters.YellowFox:
+                case Character.CharacterHandle.characters.BlackCat:
+                case Character.CharacterHandle.characters.GingerCat:
+                case Character.CharacterHandle.characters.TabbyCat:
 
                     creature = new StardewDruid.Character.Critter(characterType);
 
@@ -202,6 +166,8 @@ namespace StardewDruid.Cast.Effect
                 case Character.CharacterHandle.characters.ShadowRaven:
                 case Character.CharacterHandle.characters.ShadowRook:
                 case Character.CharacterHandle.characters.ShadowMagpie:
+                case Character.CharacterHandle.characters.BrownOwl:
+                case Character.CharacterHandle.characters.GreyOwl:
 
                     creature = new StardewDruid.Character.Flyer(characterType);
 
@@ -211,7 +177,7 @@ namespace StardewDruid.Cast.Effect
 
                 default:
 
-                    creature = new StardewDruid.Character.Hoverer(Character.CharacterHandle.characters.Shadowbat);
+                    creature = new StardewDruid.Character.Hoverer(Character.CharacterHandle.characters.ShadowBat);
 
                     creature.netMovement.Set((int)Character.Character.movements.run);
 
@@ -251,17 +217,17 @@ namespace StardewDruid.Cast.Effect
 
             }
 
-            if(!sounded && creature is Character.Flyer)
+            if(!sounded)
             {
 
                 if(Mod.instance.randomIndex.Next(24) == 0)
                 {
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    playCall();
+
+                    sounded = true;
 
                 }
-
-                sounded = true;
 
             }
 
@@ -284,19 +250,9 @@ namespace StardewDruid.Cast.Effect
 
                         drop = true;
 
-                        if (creature is Flyer)
-                        {
+                        playCall();
 
-                            location.playSound(SpellHandle.sounds.crow.ToString());
-
-                        }
-                        else
-                        if (creature is Hoverer)
-                        {
-
-                            location.playSound(SpellHandle.sounds.batScreech.ToString());
-
-                        }
+                        sounded = true;
 
                     }
 
@@ -315,19 +271,9 @@ namespace StardewDruid.Cast.Effect
 
                     drop = true;
 
-                    if (creature is Flyer)
-                    {
+                    playCall();
 
-                        location.playSound(SpellHandle.sounds.crow.ToString());
-
-                    }
-                    else
-                    if (creature is Hoverer)
-                    {
-
-                        location.playSound(SpellHandle.sounds.batScreech.ToString());
-
-                    }
+                    sounded = true;
 
                 }
 
@@ -341,13 +287,100 @@ namespace StardewDruid.Cast.Effect
                 if (check != "ground")
                 {
 
-                    creature.fadeOut -= 0.2f;
+                    creature.fadeOut -= 0.1f;
 
                 }
 
             }
 
             return true;
+
+        }
+
+        public void playCall()
+        {
+
+            if (creature is Flyer)
+            {
+                if (creature.characterType == CharacterHandle.characters.BrownOwl || creature.characterType == CharacterHandle.characters.GreyOwl)
+                {
+
+
+                    location.playSound(SpellHandle.sounds.owl.ToString());
+
+                }
+                else
+                {
+
+                    location.playSound(SpellHandle.sounds.crow.ToString());
+
+
+                }
+            }
+            else
+            if (creature is Hoverer)
+            {
+
+                location.playSound(SpellHandle.sounds.batScreech.ToString());
+
+            }
+            else
+            if (creature is Critter)
+            {
+                if (creature.characterType == CharacterHandle.characters.YellowFox || creature.characterType == CharacterHandle.characters.RedFox)
+                {
+
+                    location.playSound(SpellHandle.sounds.dog_bark.ToString());
+
+                }
+                else
+                {
+
+                    location.playSound(SpellHandle.sounds.cat.ToString());
+
+                }
+
+            }
+            else
+            if (creature is Growler)
+            {
+
+                if (creature.characterType == CharacterHandle.characters.GreyWolf || creature.characterType == CharacterHandle.characters.BlackWolf)
+                {
+
+
+                    location.playSound(SpellHandle.sounds.dog_bark.ToString());
+
+                }
+                else
+                {
+
+                    switch (Mod.instance.randomIndex.Next(3))
+                    {
+
+                        case 0:
+
+                            location.playSound("BearGrowl");
+
+                            break;
+
+                        case 1:
+
+                            location.playSound("BearGrowlTwo");
+
+                            break;
+
+                        case 2:
+
+                            location.playSound("BearGrowlThree");
+
+                            break;
+
+                    }
+
+                }
+
+            }
 
         }
 

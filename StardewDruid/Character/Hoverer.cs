@@ -24,7 +24,7 @@ namespace StardewDruid.Character
         {
         }
 
-        public Hoverer(CharacterHandle.characters type = CharacterHandle.characters.Shadowbat)
+        public Hoverer(CharacterHandle.characters type = CharacterHandle.characters.ShadowBat)
           : base(type)
         {
 

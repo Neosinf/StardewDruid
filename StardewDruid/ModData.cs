@@ -79,9 +79,11 @@ namespace StardewDruid
 
         public bool cardinalMovement { get; set; }
 
-        public bool castAnywhere { get; set; }
+        //public bool castAnywhere { get; set; }
 
         public bool decorateGrove { get; set; }
+
+        public bool plantGrove { get; set; }
 
         public bool reverseJournal { get; set; }
 
@@ -181,8 +183,9 @@ namespace StardewDruid
             disableShopdata = false;
             meteorBehaviour = 3;
             cardinalMovement = false;
-            castAnywhere = false;
+            //castAnywhere = false;
             decorateGrove = false;
+            plantGrove = false;
             dragonScale = 3;
             dragonScheme = (int)IconData.schemes.dragon_red;
             dragonBreath = (int)IconData.schemes.stars;

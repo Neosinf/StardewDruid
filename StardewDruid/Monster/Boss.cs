@@ -1707,6 +1707,8 @@ namespace StardewDruid.Monster
 
                     }
 
+
+
                 }
 
             }
@@ -2340,7 +2342,7 @@ namespace StardewDruid.Monster
         public virtual void ConnectSweep()
         {
 
-            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 96 + (32 * GetScale()));
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 64 + (32 * GetScale()));
 
             if(targets.Count > 0)
             {

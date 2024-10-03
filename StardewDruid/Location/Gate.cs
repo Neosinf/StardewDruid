@@ -544,7 +544,31 @@ namespace StardewDruid.Location
 
             }
 
+            addDialogue();
+
             this.map = newMap;
+
+        }
+        public override void addDialogue()
+        {
+
+            if (dialogueTiles.Count > 0) { return; }
+
+            dialogueTiles.Add(new(26, 24), CharacterHandle.characters.crow_brazier);
+
+            dialogueTiles.Add(new(27, 24), CharacterHandle.characters.crow_brazier);
+
+            dialogueTiles.Add(new(28, 24), CharacterHandle.characters.crow_brazier);
+
+            dialogueTiles.Add(new(29, 24), CharacterHandle.characters.crow_brazier);
+
+            dialogueTiles.Add(new(26, 25), CharacterHandle.characters.crow_brazier);
+
+            dialogueTiles.Add(new(27, 25), CharacterHandle.characters.crow_brazier);
+
+            dialogueTiles.Add(new(28, 25), CharacterHandle.characters.crow_brazier);
+
+            dialogueTiles.Add(new(29, 25), CharacterHandle.characters.crow_brazier);
 
         }
 

@@ -172,7 +172,7 @@ namespace StardewDruid.Cast.Mists
 
                 }
 
-                string objectIndex = SpawnData.RandomHighFish(Game1.player.currentLocation, enableRare);
+                string objectIndex = SpawnData.RandomHighFish(Game1.player.currentLocation, enableRare, ModUtility.PositionToTile(bobberPosition));
 
                 int animationRow = 10;
 

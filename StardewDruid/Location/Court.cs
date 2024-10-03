@@ -30,6 +30,10 @@ namespace StardewDruid.Location
 
         public Texture2D waterfallTexture;
 
+        public List<Location.TerrainTile> circleTiles = new();
+
+        public bool circleActive;
+
         public Court() { }
 
         public Court(string Name)
@@ -93,11 +97,40 @@ namespace StardewDruid.Location
                 999f
             );
 
+            if (circleActive)
+            {
+
+                foreach (TerrainTile tile in circleTiles)
+                {
+
+                    tile.draw(b, this);
+
+                }
+
+            }
+
         }
 
         protected override void _updateAmbientLighting()
         {
+            if (ambientDarkness)
+            {
 
+                if (Game1.player.currentLocation.Name != Name)
+                {
+
+                    ambientDarkness = false;
+
+                }
+                else
+                {
+
+                    Game1.ambientLight = new(128, 128, 104);
+
+                    return;
+                }
+
+            } else
             if (Game1.timeOfDay > 2100)
             {
 
@@ -584,6 +617,39 @@ namespace StardewDruid.Location
 
             }
 
+
+            // CIRCLE
+
+            TerrainTile circleTile = new(IconData.tilesheets.ritual, 1, new Vector2(2016, 1120), TerrainTile.shadows.none);
+
+            switch (Game1.season)
+            {
+                case Season.Spring:
+                    circleTile.color = Microsoft.Xna.Framework.Color.White * 0.6f;
+
+                    break;
+                case Season.Summer:
+                    circleTile.color = Microsoft.Xna.Framework.Color.White * 0.75f;
+
+                    break;
+                case Season.Fall:
+                    circleTile.color = Microsoft.Xna.Framework.Color.White * 0.5f;
+
+                    break;
+                case Season.Winter:
+                    circleTile.color = Microsoft.Xna.Framework.Color.LightBlue * 0.75f;
+
+                    break;
+            }
+
+
+            circleTile.fadeout = 1f;
+
+            circleTile.layer = 0.00064f;
+
+            circleTiles.Add(circleTile);
+
+
             addDialogue();
 
             this.map = newMap;
@@ -672,9 +738,17 @@ namespace StardewDruid.Location
 
             Town town = Game1.getLocationFromName("Town") as Town;
 
+            town.warps.Add(new Warp(97, 4, LocationData.druid_court_name, 28, 29, flipFarmer: false));
+
+            town.warps.Add(new Warp(97, 5, LocationData.druid_court_name, 28, 29, flipFarmer: false));
+
             town.warps.Add(new Warp(98, 4, LocationData.druid_court_name, 28, 29, flipFarmer: false));
 
             town.warps.Add(new Warp(98, 5, LocationData.druid_court_name, 28, 29, flipFarmer: false));
+
+            town.warps.Add(new Warp(99, 4, LocationData.druid_court_name, 28, 29, flipFarmer: false));
+
+            town.warps.Add(new Warp(99, 5, LocationData.druid_court_name, 28, 29, flipFarmer: false));
 
             warpSets.Add(new WarpTile(27, 32, "Town", 98, 8));
 

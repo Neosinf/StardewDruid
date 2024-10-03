@@ -108,6 +108,7 @@ namespace StardewDruid.Character
             kneel,
             daze,
             jump,
+            idle,
         }
 
         public enum movements
@@ -144,6 +145,7 @@ namespace StardewDruid.Character
         public Dictionary<idles, Dictionary<int, List<Rectangle>>> idleFrames = new();
         public Dictionary<dashes, Dictionary<int, List<Rectangle>>> dashFrames = new();
         public Dictionary<specials,Dictionary<int, List<Rectangle>>> specialFrames = new();
+        public Dictionary<int, List<Rectangle>> hatFrames = new();
 
         public int idleTimer;
         public int idleInterval;
@@ -403,6 +405,8 @@ namespace StardewDruid.Character
 
             DrawEmote(b);
 
+            DrawHat(b, localPosition, drawLayer, fade);
+
             if (netSpecial.Value != 0)
             {
                 
@@ -504,6 +508,12 @@ namespace StardewDruid.Character
 
                     break;
 
+                case idles.idle:
+
+                    DrawIdle(b, localPosition, drawLayer, fade);
+
+                    break;
+
                 case idles.kneel:
 
                     b.Draw(
@@ -545,6 +555,7 @@ namespace StardewDruid.Character
                     DrawShadow(b, localPosition, drawLayer);
 
                     break;
+
                 case idles.daze:
 
                     b.Draw(
@@ -558,6 +569,7 @@ namespace StardewDruid.Character
                         SpriteEffects.None,
                         drawLayer
                     );
+
                     DrawWalk(b, localPosition, drawLayer, fade);
 
                     break;
@@ -818,16 +830,39 @@ namespace StardewDruid.Character
 
         }
 
+        public virtual void DrawIdle(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        {
+
+            Vector2 standbyVector = SpritePosition(localPosition);
+
+            int standbyTo = IdleFrame(idles.idle);
+
+            Rectangle standbyFrame = idleFrames[idles.idle][netDirection.Value][standbyTo];
+
+            b.Draw(
+                 characterTexture,
+                 standbyVector,
+                 standbyFrame,
+                 Color.White * fade,
+                 0f,
+                 new Vector2(16),
+                 setScale,
+                 SpriteAngle() ? (SpriteEffects)1 : 0,
+                 drawLayer
+             );
+
+            DrawShadow(b, localPosition, drawLayer);
+
+        }
+
         public int IdleFrame(idles idleType)
         {
 
-            int interval = 12 / idleFrames[idleType][0].Count();
+            int count = idleFrames[idleType][0].Count();
 
-            int timeLapse = (int)(Game1.currentGameTime.TotalGameTime.TotalSeconds % 12);
+            if (count == 0) { return 0; }
 
-            if (timeLapse == 0) { return 0; }
-
-            int frame = (int)timeLapse / interval;
+            int frame = (int)((Game1.currentGameTime.TotalGameTime.TotalSeconds + (int)(Position.Y / 64)) % count);
 
             return frame;
 
@@ -883,6 +918,11 @@ namespace StardewDruid.Character
                 flip ? (SpriteEffects)1 : 0,
                 drawLayer - 0.001f
             );
+
+        }
+        
+        public virtual void DrawHat(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        {
 
         }
 
@@ -962,7 +1002,7 @@ namespace StardewDruid.Character
 
             }
 
-            if (Mod.instance.eventRegister.ContainsKey("transform"))
+            if (Mod.instance.eventRegister.ContainsKey(Rite.eventTransform))
             {
 
                 Mod.instance.CastMessage("Unable to converse while transformed");
@@ -1789,7 +1829,7 @@ namespace StardewDruid.Character
                             
                             stuck++;
 
-                            if (stuck>= 4)
+                            if (stuck >= 4)
                             {
 
                                 CharacterHandle.locations home = CharacterHandle.CharacterHome(characterType);
@@ -1804,9 +1844,7 @@ namespace StardewDruid.Character
 
                             }
 
-                            TargetRandom();
-
-                            return true;
+                            break;
 
                         case mode.roam:
 
@@ -1839,11 +1877,9 @@ namespace StardewDruid.Character
 
                                 }
 
-                                TargetRandom();
-
-                                return true;
-
                             }
+
+                            break;
 
                     }
 
@@ -1886,6 +1922,8 @@ namespace StardewDruid.Character
                 netDirection.Set(2);
 
             }
+
+            netIdle.Set((int)idles.idle);
 
             idleTimer = timer;
 
@@ -2441,6 +2479,7 @@ namespace StardewDruid.Character
             if (Mod.instance.trackers.ContainsKey(characterType))
             {
 
+                
 
             }
             else

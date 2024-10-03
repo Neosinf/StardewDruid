@@ -105,7 +105,7 @@ namespace StardewDruid.Event.Challenge
 
             Wisps wispNew = new();
 
-            wispNew.EventSetup(Game1.player.Position, "wisps");
+            wispNew.EventSetup(Game1.player.Position, Rite.eventWisps);
 
             wispNew.EventActivate();
 

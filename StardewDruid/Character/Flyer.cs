@@ -10,14 +10,9 @@ using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewValley.Objects;
 using StardewDruid.Journal;
-using StardewValley.Monsters;
 using System.Linq;
-using System.Runtime.Intrinsics;
-using System.Threading;
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.Xna.Framework.Graphics.PackedVector;
 using StardewDruid.Render;
-using StardewValley.Tools;
+
 
 
 namespace StardewDruid.Character
@@ -78,23 +73,34 @@ namespace StardewDruid.Character
 
             modeActive = mode.random;
 
-            idleFrames = CharacterRender.FlyerIdle();
+            idleFrames = FlyerRender.FlyerIdle();
 
-            specialFrames[specials.special] = new(idleFrames[idles.standby]);
+            specialFrames = FlyerRender.FlyerSpecial();
 
-            specialIntervals[specials.special] = 9;
+            specialIntervals[specials.special] = 12;
+
+            specialIntervals[specials.sweep] = 15;
 
             specialCeilings[specials.special] = 5;
 
+            specialCeilings[specials.sweep] = 3;
+
             specialFloors[specials.special] = 0;
 
-            walkFrames = CharacterRender.FlyerWalk();
+            specialFloors[specials.sweep] = 0;
 
-            specialFrames[specials.sweep] = new(walkFrames);
+            walkFrames = FlyerRender.FlyerWalk();
 
-            dashFrames = CharacterRender.FlyerDash();
+            dashFrames = FlyerRender.FlyerDash();
 
             loadedOut = true;
+        }
+
+        public override Vector2 SpritePosition(Vector2 localPosition)
+        {
+
+            return localPosition + new Vector2(32, 64 - (int)(24 * setScale));
+
         }
 
         public override void draw(SpriteBatch b, float alpha = 1f)
@@ -124,6 +130,27 @@ namespace StardewDruid.Character
 
         }
 
+        public override void DrawSweep(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        {
+
+            Rectangle useFrame = specialFrames[(specials)netSpecial.Value][netDirection.Value][specialFrame];
+
+            b.Draw(
+                characterTexture,
+                SpritePosition(localPosition),
+                useFrame,
+                Color.White * fade,
+                0.0f,
+                new Vector2(useFrame.Width / 2, useFrame.Height / 2),
+                setScale,
+                SpriteAngle() ? (SpriteEffects)1 : 0,
+                drawLayer
+            );
+
+            DrawShadow(b, localPosition, drawLayer);
+
+        }
+
         public override bool SpriteAngle()
         {
 
@@ -136,7 +163,7 @@ namespace StardewDruid.Character
 
             float shadowRatio = 0.6f;
 
-            Vector2 shadowPosition = localPosition + new Vector2(32, 48);
+            Vector2 shadowPosition = localPosition + new Vector2(32, 4f*setScale);
 
             if(netDash.Value != 0)
             {
@@ -170,7 +197,7 @@ namespace StardewDruid.Character
                 new Vector2(24), 
                 setScale * shadowRatio, 
                 0, 
-                drawLayer - 0.0001f
+                drawLayer - 0.001f
             );
 
         }
@@ -231,7 +258,6 @@ namespace StardewDruid.Character
 
                     destination = traversal.Keys.Last();
 
-                    
                     Mod.instance.trackers[characterType].nodes.Clear();
 
                     followTimer = 180 + (60 * Mod.instance.randomIndex.Next(5));
@@ -431,7 +457,7 @@ namespace StardewDruid.Character
 
                     workVector = ModUtility.PositionToTile(witness.Position);
 
-                    netSpecial.Set((int)specials.special);
+                    netSpecial.Set((int)specials.sweep);
 
                     specialTimer = 60;
 

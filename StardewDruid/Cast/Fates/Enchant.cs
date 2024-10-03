@@ -720,7 +720,7 @@ namespace StardewDruid.Cast.Fates
 
             MachineData machineData = targetObject.GetMachineData();
 
-            StardewValley.Item input = ItemRegistry.Create("(O)"+ SpawnData.RandomHighFish(location,true,Mod.instance.randomIndex.Next(3)), 1);
+            StardewValley.Item input = ItemRegistry.Create("(O)"+ SpawnData.RandomHighFish(location,true,Game1.player.Tile,Mod.instance.randomIndex.Next(2)));
 
             if (input == null) { location.playSound("ghost"); return; }
 

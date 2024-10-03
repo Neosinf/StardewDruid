@@ -264,6 +264,12 @@ namespace StardewDruid.Event.Challenge
 
                 case 91:
 
+                    ThrowHandle newThrowRelic = new(Game1.player, origin, IconData.relics.skull_cannoli);
+
+                    newThrowRelic.impact = IconData.impacts.puff;
+
+                    newThrowRelic.register();
+
                     SetTrack("fall3");
 
                     corvid = new Flyer(CharacterHandle.characters.ShadowCrow);

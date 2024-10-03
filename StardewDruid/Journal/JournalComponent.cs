@@ -99,6 +99,7 @@ namespace StardewDruid.Journal
             list,
             header,
             potion,
+            toggle,
             relic,
             title,
             text,
@@ -234,6 +235,17 @@ namespace StardewDruid.Journal
                     return;
 
                 case contentTypes.potion:
+
+                    bounds = new Rectangle(xP + 16 + 4 + (index % 6) * ((width - 32) / 6), yP + 16 + (int)(index / 6) * (146 + 56), (width - 32) / 6 - 8, 146);
+
+                    return;
+
+                case contentTypes.toggle:
+
+                    bounds = new Rectangle(xP + 16 + 4 + (index % 6) * ((width - 32) / 6), yP + 16 + 146 + (int)(index / 6) * (146 + 56), (width - 32) / 6 - 8, 56);
+
+                    return;
+
                 case contentTypes.relic:
 
                     bounds = new Rectangle(xP + 16 + 4 + (index % 6) * ((width - 32) / 6), yP + 16 + 56 + (int)(index / 6) * (146 + 56), (width - 32) / 6 - 8, 146);
@@ -448,6 +460,34 @@ namespace StardewDruid.Journal
                     b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Center.X - 40f, bounds.Center.Y - 60f), relicSources[0], relicColours[0], 0f, Vector2.Zero, 4f, 0, 0.901f);
 
                     b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Center.X - 40f, bounds.Center.Y - 60f), relicSources[1], relicColours[1], 0f, Vector2.Zero, 4f, 0, 0.902f);
+
+                    return;
+
+                case contentTypes.toggle:
+
+                    b.Draw(
+                        Mod.instance.iconData.displayTexture,
+                        bounds.Center.ToVector2() + new Vector2(-1f,2f),
+                        iconSources[0],
+                        Microsoft.Xna.Framework.Color.Black * 0.35f,
+                        0f,
+                        new Vector2(8),
+                        2.5f,
+                        0,
+                        0.900f
+                    );
+
+                    b.Draw(
+                        Mod.instance.iconData.displayTexture,
+                        bounds.Center.ToVector2(),
+                        iconSources[0],
+                        Microsoft.Xna.Framework.Color.White,
+                        0f,
+                        new Vector2(8),
+                        2.5f,
+                        0,
+                        0.901f
+                    );
 
                     return;
 

@@ -92,6 +92,7 @@ namespace StardewDruid.Dialogue
                 CharacterHandle.subjects.inventory,
                 CharacterHandle.subjects.adventure,
                 CharacterHandle.subjects.attune,
+                CharacterHandle.subjects.offering,
             };
 
             foreach(CharacterHandle.subjects subject in subjects)
@@ -131,6 +132,7 @@ namespace StardewDruid.Dialogue
                 CharacterHandle.subjects.inventory,
                 CharacterHandle.subjects.adventure,
                 CharacterHandle.subjects.attune,
+                CharacterHandle.subjects.offering,
             };
 
             foreach (CharacterHandle.subjects subject in subjects)

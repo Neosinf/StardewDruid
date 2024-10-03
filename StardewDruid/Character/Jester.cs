@@ -171,7 +171,15 @@ namespace StardewDruid.Character
 
             buffEffect.LuckLevel.Set(1);
 
-            Buff luckBuff = new("184656", source: "Jester of Fate", displaySource: "Jester of Fate", duration: Buff.ENDLESS, displayName: "Jester's Luck", description: "Luck increased by companion", effects: buffEffect);
+            Buff luckBuff = new(
+                Rite.buffIdJester, 
+                source: DialogueData.Strings(DialogueData.stringkeys.jesterBuff), 
+                displaySource: DialogueData.Strings(DialogueData.stringkeys.jesterBuff), 
+                duration: Buff.ENDLESS, 
+                displayName: DialogueData.Strings(DialogueData.stringkeys.jesterBuffTitle), 
+                description: DialogueData.Strings(DialogueData.stringkeys.jesterBuffDescription), 
+                effects: buffEffect
+                );
 
             player.buffs.Apply(luckBuff);
 
@@ -180,10 +188,10 @@ namespace StardewDruid.Character
         public override void RemoveCompanionBuff(Farmer player)
         {
             
-            if (player.buffs.IsApplied("184656"))
+            if (player.buffs.IsApplied(Rite.buffIdJester))
             {
 
-                player.buffs.Remove("184656");
+                player.buffs.Remove(Rite.buffIdJester);
 
             }
 

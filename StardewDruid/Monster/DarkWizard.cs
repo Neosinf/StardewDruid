@@ -12,7 +12,6 @@ namespace StardewDruid.Monster
 {
     public class DarkWizard : DarkRogue
     {
-        public Dictionary<int, List<Rectangle>> hatFrames = new();
 
         public DarkWizard()
         {
@@ -82,25 +81,16 @@ namespace StardewDruid.Monster
 
         }
 
-        public override void draw(SpriteBatch b, float alpha = 1f)
+        public override void DrawHat(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer)
         {
-            base.draw(b, alpha);
 
-            if (IsInvisible || !Utility.isOnScreen(Position, 128))
-            {
-                return;
-            }
-
-            Vector2 localPosition = Game1.GlobalToLocal(Position);
-
-            float drawLayer = (float)StandingPixel.Y / 10000f;
 
             if (realName.Value == "Doja")
             {
 
                 b.Draw(
                     characterTexture,
-                    localPosition + new Vector2(32) - new Vector2(netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? -4 : 4, 48),
+                    Game1.GlobalToLocal(Position) + new Vector2(32) - new Vector2(netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? -4 : 4, 48),
                     hatFrames[netDirection.Value][0],
                     Color.White,
                     0f,
@@ -115,7 +105,7 @@ namespace StardewDruid.Monster
 
             b.Draw(
                 characterTexture,
-                localPosition - new Vector2(netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? 30 : 32, 76),
+                Game1.GlobalToLocal(Position) - new Vector2(netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? 30 : 32, 76),
                 hatFrames[netDirection.Value][0],
                 Color.White,
                 0f,
@@ -172,14 +162,14 @@ namespace StardewDruid.Monster
             for (int i = 0; i < 4; i++)
             {
 
-                List<Vector2> castSelection = ModUtility.GetTilesWithinRadius(currentLocation, ModUtility.PositionToTile(Position), Mod.instance.randomIndex.Next(4, 6), true, (i * 2) + offset % 8);
+                List<Vector2> castSelection = ModUtility.GetTilesWithinRadius(currentLocation, ModUtility.PositionToTile(Game1.player.Position), Mod.instance.randomIndex.Next(2, 3), true, (i * 2) + offset % 8);
 
                 if (castSelection.Count > 0)
                 {
 
                     Vector2 tryVector = castSelection[Mod.instance.randomIndex.Next(castSelection.Count)];
 
-                    SpellHandle fireball = new(currentLocation, tryVector * 64, GetBoundingBox().Center.ToVector2(), 256, GetThreat());
+                    SpellHandle fireball = new(currentLocation, tryVector * 64, GetBoundingBox().Center.ToVector2(), 192, GetThreat());
 
                     fireball.type = SpellHandle.spells.missile;
 

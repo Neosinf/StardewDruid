@@ -178,11 +178,14 @@ namespace StardewDruid.Cast
             batScreech,
             batFlap,
             Ship,
-            crow,
             hammer,
             leafrustle,
             slime,
-            ghost
+            ghost,
+            owl,
+            crow,
+            cat,
+            dog_bark,
         }
 
         public sounds sound = sounds.none;
@@ -2774,7 +2777,7 @@ namespace StardewDruid.Cast
 
             }
 
-            Tornado tornado;
+            Whirlpool tornado;
 
             if (!Mod.instance.eventRegister.ContainsKey("tornadoEffect"))
             {
@@ -2789,7 +2792,7 @@ namespace StardewDruid.Cast
             else
             {
 
-                tornado = Mod.instance.eventRegister["tornadoEffect"] as Tornado;
+                tornado = Mod.instance.eventRegister["tornadoEffect"] as Whirlpool;
             }
 
             tornado.AddTarget(location, ModUtility.PositionToTile(impact));

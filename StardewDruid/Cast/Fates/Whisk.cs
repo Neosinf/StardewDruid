@@ -169,7 +169,7 @@ namespace StardewDruid.Cast.Fates
 
             }
 
-            if (Mod.instance.eventRegister.ContainsKey("transform"))
+            if (Mod.instance.eventRegister.ContainsKey(Rite.eventTransform))
             {
 
                 return false;

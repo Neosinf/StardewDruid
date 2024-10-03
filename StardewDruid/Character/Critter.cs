@@ -18,7 +18,7 @@ namespace StardewDruid.Character
         {
         }
 
-        public Critter(CharacterHandle.characters type = CharacterHandle.characters.Shadowcat)
+        public Critter(CharacterHandle.characters type = CharacterHandle.characters.BlackCat)
           : base(type)
         {
 

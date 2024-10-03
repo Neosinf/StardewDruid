@@ -23,10 +23,6 @@ using StardewDruid.Data;
 using xTile.Dimensions;
 using System.IO;
 using StardewValley.Extensions;
-using static StardewDruid.Data.IconData;
-using Netcode;
-using StardewValley.Network;
-using static StardewDruid.Character.Character;
 using StardewDruid.Journal;
 
 namespace StardewDruid.Location
@@ -35,11 +31,59 @@ namespace StardewDruid.Location
     public class Grove : DruidLocation
     {
 
+        public List<Location.TerrainTile> leafTiles = new();
+
         public Grove() { }
 
         public Grove(string name)
             : base(name) 
         {
+
+        }
+        
+        public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
+        {
+
+            base.drawAboveAlwaysFrontLayer(b);
+
+            foreach (TerrainTile tile in leafTiles)
+            {
+
+                float forceFade = 1f;
+
+                Microsoft.Xna.Framework.Rectangle bounds = new((int)leafTiles[0].position.X - 64, (int)leafTiles[0].position.Y - 64, 768, 512);
+
+                foreach (Farmer character in farmers)
+                {
+
+                    if (bounds.Contains(character.Position.X, character.Position.Y))
+                    {
+
+                        forceFade = leafTiles[0].fadeout;
+
+                    }
+
+                }
+
+                if (forceFade >= 1f)
+                {
+
+                    foreach (NPC character in characters)
+                    {
+
+                        if (bounds.Contains(character.Position.X, character.Position.Y))
+                        {
+
+                            forceFade = leafTiles[0].fadeout;
+                        }
+
+                    }
+
+                }
+
+                tile.draw(b, this, forceFade);
+
+            }
 
         }
 
@@ -91,14 +135,14 @@ namespace StardewDruid.Location
                 [9] = new() { new() { 8, 380 }, new() { 9, 380 }, new() { 10, 380 }, new() { 11, 357 }, new() { 12, 406 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 351 }, new() { 19, 351 }, new() { 20, 351 }, new() { 21, 351 }, new() { 22, 351 }, new() { 23, 351 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 404 }, new() { 30, 407 }, new() { 31, 380 }, new() { 32, 380 }, new() { 33, 380 }, new() { 34, 380 }, new() { 35, 380 }, new() { 36, 380 }, new() { 37, 380 }, new() { 38, 380 }, new() { 39, 380 }, new() { 40, 380 }, new() { 41, 381 }, new() { 42, 999 }, new() { 43, 379 }, new() { 44, 380 }, new() { 45, 380 }, new() { 46, 380 }, new() { 47, 380 }, },
                 [10] = new() { new() { 8, 380 }, new() { 9, 357 }, new() { 10, 405 }, new() { 11, 406 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 351 }, new() { 19, 351 }, new() { 20, 351 }, new() { 21, 351 }, new() { 22, 351 }, new() { 23, 351 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 404 }, new() { 31, 405 }, new() { 32, 405 }, new() { 33, 405 }, new() { 34, 405 }, new() { 35, 405 }, new() { 36, 405 }, new() { 37, 405 }, new() { 38, 405 }, new() { 39, 405 }, new() { 40, 405 }, new() { 41, 406 }, new() { 42, 973 }, new() { 43, 404 }, new() { 44, 405 }, new() { 45, 405 }, new() { 46, 407 }, new() { 47, 380 }, },
                 [11] = new() { new() { 8, 380 }, new() { 9, 381 }, new() { 10, 351 }, new() { 11, 351 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 351 }, new() { 19, 351 }, new() { 20, 351 }, new() { 21, 351 }, new() { 22, 351 }, new() { 23, 351 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 351 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 351 }, new() { 41, 972 }, new() { 42, 973 }, new() { 43, 974 }, new() { 44, 351 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
-                [12] = new() { new() { 8, 380 }, new() { 9, 381 }, new() { 10, 351 }, new() { 11, 351 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 351 }, new() { 19, 351 }, new() { 20, 351 }, new() { 21, 351 }, new() { 22, 351 }, new() { 23, 351 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 351 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 351 }, new() { 41, 351 }, new() { 42, 998 }, new() { 43, 351 }, new() { 44, 300 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
-                [13] = new() { new() { 8, 380 }, new() { 9, 381 }, new() { 10, 351 }, new() { 11, 300 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 351 }, new() { 19, 351 }, new() { 20, 351 }, new() { 21, 351 }, new() { 22, 351 }, new() { 23, 351 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 351 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 351 }, new() { 41, 351 }, new() { 42, 351 }, new() { 43, 351 }, new() { 44, 351 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
-                [14] = new() { new() { 8, 380 }, new() { 9, 381 }, new() { 10, 351 }, new() { 11, 351 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 351 }, new() { 19, 351 }, new() { 20, 351 }, new() { 21, 351 }, new() { 22, 351 }, new() { 23, 351 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 351 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 351 }, new() { 41, 351 }, new() { 42, 351 }, new() { 43, 351 }, new() { 44, 351 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
-                [15] = new() { new() { 8, 380 }, new() { 9, 381 }, new() { 10, 351 }, new() { 11, 351 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 351 }, new() { 19, 351 }, new() { 20, 351 }, new() { 21, 351 }, new() { 22, 351 }, new() { 23, 351 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 351 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 351 }, new() { 41, 351 }, new() { 42, 351 }, new() { 43, 351 }, new() { 44, 351 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
-                [16] = new() { new() { 8, 380 }, new() { 9, 381 }, new() { 10, 351 }, new() { 11, 351 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 351 }, new() { 19, 351 }, new() { 20, 351 }, new() { 21, 351 }, new() { 22, 351 }, new() { 23, 351 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 351 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 351 }, new() { 41, 351 }, new() { 42, 351 }, new() { 43, 351 }, new() { 44, 351 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
-                [17] = new() { new() { 8, 380 }, new() { 9, 381 }, new() { 10, 351 }, new() { 11, 351 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 351 }, new() { 19, 351 }, new() { 20, 351 }, new() { 21, 351 }, new() { 22, 351 }, new() { 23, 351 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 351 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 300 }, new() { 41, 351 }, new() { 42, 351 }, new() { 43, 351 }, new() { 44, 351 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
-                [18] = new() { new() { 8, 380 }, new() { 9, 382 }, new() { 10, 355 }, new() { 11, 356 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 351 }, new() { 19, 351 }, new() { 20, 351 }, new() { 21, 351 }, new() { 22, 351 }, new() { 23, 351 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 300 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 351 }, new() { 41, 351 }, new() { 42, 948 }, new() { 43, 351 }, new() { 44, 351 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
-                [19] = new() { new() { 8, 380 }, new() { 9, 380 }, new() { 10, 380 }, new() { 11, 382 }, new() { 12, 356 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 351 }, new() { 19, 351 }, new() { 20, 351 }, new() { 21, 351 }, new() { 22, 351 }, new() { 23, 351 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 300 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 351 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 351 }, new() { 41, 972 }, new() { 42, 973 }, new() { 43, 974 }, new() { 44, 351 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
+                [12] = new() { new() { 8, 380 }, new() { 9, 381 }, new() { 10, 351 }, new() { 11, 351 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 353 }, new() { 19, 376 }, new() { 20, 376 }, new() { 21, 376 }, new() { 22, 376 }, new() { 23, 403 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 351 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 351 }, new() { 41, 351 }, new() { 42, 998 }, new() { 43, 351 }, new() { 44, 300 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
+                [13] = new() { new() { 8, 380 }, new() { 9, 381 }, new() { 10, 351 }, new() { 11, 300 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 353 }, new() { 18, 377 }, new() { 19, 175 }, new() { 20, 175 }, new() { 21, 175 }, new() { 22, 175 }, new() { 23, 375 }, new() { 24, 403 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 351 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 351 }, new() { 41, 351 }, new() { 42, 351 }, new() { 43, 351 }, new() { 44, 351 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
+                [14] = new() { new() { 8, 380 }, new() { 9, 381 }, new() { 10, 351 }, new() { 11, 351 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 352 }, new() { 18, 175 }, new() { 19, 175 }, new() { 20, 175 }, new() { 21, 175 }, new() { 22, 175 }, new() { 23, 175 }, new() { 24, 350 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 351 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 351 }, new() { 41, 351 }, new() { 42, 351 }, new() { 43, 351 }, new() { 44, 351 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
+                [15] = new() { new() { 8, 380 }, new() { 9, 381 }, new() { 10, 351 }, new() { 11, 351 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 352 }, new() { 18, 175 }, new() { 19, 175 }, new() { 20, 175 }, new() { 21, 175 }, new() { 22, 175 }, new() { 23, 175 }, new() { 24, 350 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 351 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 351 }, new() { 41, 351 }, new() { 42, 351 }, new() { 43, 351 }, new() { 44, 351 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
+                [16] = new() { new() { 8, 380 }, new() { 9, 381 }, new() { 10, 351 }, new() { 11, 351 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 352 }, new() { 18, 175 }, new() { 19, 175 }, new() { 20, 175 }, new() { 21, 175 }, new() { 22, 175 }, new() { 23, 175 }, new() { 24, 350 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 351 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 351 }, new() { 41, 351 }, new() { 42, 351 }, new() { 43, 351 }, new() { 44, 351 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
+                [17] = new() { new() { 8, 380 }, new() { 9, 381 }, new() { 10, 351 }, new() { 11, 351 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 378 }, new() { 18, 327 }, new() { 19, 175 }, new() { 20, 175 }, new() { 21, 175 }, new() { 22, 175 }, new() { 23, 325 }, new() { 24, 328 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 351 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 300 }, new() { 41, 351 }, new() { 42, 351 }, new() { 43, 351 }, new() { 44, 351 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
+                [18] = new() { new() { 8, 380 }, new() { 9, 382 }, new() { 10, 355 }, new() { 11, 356 }, new() { 12, 351 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 378 }, new() { 19, 326 }, new() { 20, 326 }, new() { 21, 326 }, new() { 22, 326 }, new() { 23, 328 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 300 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 351 }, new() { 41, 351 }, new() { 42, 948 }, new() { 43, 351 }, new() { 44, 351 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
+                [19] = new() { new() { 8, 380 }, new() { 9, 380 }, new() { 10, 380 }, new() { 11, 382 }, new() { 12, 356 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 351 }, new() { 19, 351 }, new() { 20, 351 }, new() { 21, 351 }, new() { 22, 351 }, new() { 23, 304 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 300 }, new() { 28, 351 }, new() { 29, 351 }, new() { 30, 351 }, new() { 31, 351 }, new() { 32, 351 }, new() { 33, 351 }, new() { 34, 351 }, new() { 35, 351 }, new() { 36, 351 }, new() { 37, 351 }, new() { 38, 351 }, new() { 39, 351 }, new() { 40, 351 }, new() { 41, 972 }, new() { 42, 973 }, new() { 43, 974 }, new() { 44, 351 }, new() { 45, 351 }, new() { 46, 379 }, new() { 47, 380 }, },
                 [20] = new() { new() { 10, 380 }, new() { 11, 380 }, new() { 12, 381 }, new() { 13, 351 }, new() { 14, 351 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 351 }, new() { 19, 351 }, new() { 20, 351 }, new() { 21, 351 }, new() { 22, 351 }, new() { 23, 351 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 354 }, new() { 30, 355 }, new() { 31, 355 }, new() { 32, 355 }, new() { 33, 355 }, new() { 34, 355 }, new() { 35, 355 }, new() { 36, 355 }, new() { 37, 355 }, new() { 38, 355 }, new() { 39, 355 }, new() { 40, 355 }, new() { 41, 356 }, new() { 42, 973 }, new() { 43, 354 }, new() { 44, 355 }, new() { 45, 355 }, new() { 46, 332 }, new() { 47, 380 }, },
                 [21] = new() { new() { 11, 380 }, new() { 12, 382 }, new() { 13, 355 }, new() { 14, 356 }, new() { 15, 351 }, new() { 16, 351 }, new() { 17, 351 }, new() { 18, 351 }, new() { 19, 351 }, new() { 20, 351 }, new() { 21, 351 }, new() { 22, 351 }, new() { 23, 351 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 351 }, new() { 27, 354 }, new() { 28, 355 }, new() { 29, 332 }, new() { 30, 380 }, new() { 31, 380 }, new() { 32, 380 }, new() { 33, 380 }, new() { 34, 380 }, new() { 35, 380 }, new() { 36, 380 }, new() { 37, 380 }, new() { 38, 380 }, new() { 39, 380 }, new() { 40, 380 }, new() { 41, 381 }, new() { 42, 973 }, new() { 43, 379 }, new() { 44, 380 }, new() { 45, 380 }, new() { 46, 380 }, new() { 47, 380 }, },
                 [22] = new() { new() { 11, 380 }, new() { 12, 380 }, new() { 13, 380 }, new() { 14, 382 }, new() { 15, 356 }, new() { 16, 351 }, new() { 17, 300 }, new() { 18, 351 }, new() { 19, 351 }, new() { 20, 351 }, new() { 21, 351 }, new() { 22, 351 }, new() { 23, 351 }, new() { 24, 351 }, new() { 25, 351 }, new() { 26, 354 }, new() { 27, 332 }, new() { 28, 380 }, new() { 29, 380 }, new() { 30, 380 }, new() { 40, 380 }, new() { 41, 381 }, new() { 42, 973 }, new() { 43, 379 }, new() { 44, 380 }, },
@@ -454,7 +498,7 @@ namespace StardewDruid.Location
                     foreach (List<int> array in code.Value)
                     {
 
-                        TerrainTile tTile = new(IconData.tilesheets.grove, array[1], new Vector2(array[0], code.Key) * 64);
+                        TerrainTile tTile = new(IconData.tilesheets.grove, array[1], new Vector2(array[0], code.Key) * 64, TerrainTile.shadows.deepset);
 
                         foreach (Vector2 bottom in tTile.baseTiles)
                         {
@@ -550,6 +594,43 @@ namespace StardewDruid.Location
                 }
             
             }
+
+            // CIRCLE
+
+            if (Mod.instance.Config.decorateGrove)
+            {
+
+                TerrainTile circleTile = new(IconData.tilesheets.ritual, 1, new Vector2(1120, 812), TerrainTile.shadows.none);
+
+                switch (Game1.season)
+                {
+                    case Season.Spring:
+                        circleTile.color = Microsoft.Xna.Framework.Color.White * 0.6f;
+
+                        break;
+                    case Season.Summer:
+                        circleTile.color = Microsoft.Xna.Framework.Color.White * 0.75f;
+
+                        break;
+                    case Season.Fall:
+                        circleTile.color = Microsoft.Xna.Framework.Color.White * 0.5f;
+
+                        break;
+                    case Season.Winter:
+                        circleTile.color = Microsoft.Xna.Framework.Color.LightBlue * 0.75f;
+
+                        break;
+                }
+
+
+                circleTile.fadeout = 1f;
+
+                circleTile.layer = 0.00064f;
+
+                terrainTiles.Add(circleTile);
+
+            }
+
 
             // MAGNOLIA
             Vector2 foliageCenter = new Vector2(33f, 9) * 64;
@@ -727,7 +808,7 @@ namespace StardewDruid.Location
 
                     tTile.flip = Mod.instance.randomIndex.NextBool();
 
-                    frontTiles.Add(tTile);
+                    leafTiles.Add(tTile);
 
                 }
 

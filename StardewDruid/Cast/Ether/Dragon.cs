@@ -490,7 +490,7 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            if (!Mod.instance.eventRegister.ContainsKey("transform"))
+            if (!Mod.instance.eventRegister.ContainsKey(Rite.eventTransform))
             {
 
                 Mod.instance.movers.Add(CharacterHandle.characters.Dragon, new(CharacterHandle.characters.Dragon));

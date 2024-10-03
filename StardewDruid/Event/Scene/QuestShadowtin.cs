@@ -18,6 +18,7 @@ using StardewValley.GameData;
 using StardewValley.Locations;
 using StardewValley.Monsters;
 using StardewValley.TerrainFeatures;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -57,10 +58,10 @@ namespace StardewDruid.Event.Scene
             [11] = new Vector2(35,16),
             // look at access to shrine
             //[12] = new Vector2(49, 70),
-            [12] = new Vector2(44, 9),
+            [12] = new Vector2(44, 15),
             // trigger access to shrine
             //[13] = new Vector2(50, 73),
-            [13] = new Vector2(47, 11),
+            [13] = new Vector2(47, 13),
             // shrine warp farmer
             [14] = new Vector2(27, 26),
             // shrine warp companion
@@ -593,7 +594,7 @@ namespace StardewDruid.Event.Scene
 
                     location.characters.Remove(companions[0]);
 
-                    companions[2] = new Critter(CharacterHandle.characters.Shadowcat);
+                    companions[2] = new Critter(CharacterHandle.characters.BlackCat);
 
                     companions[2].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -645,7 +646,18 @@ namespace StardewDruid.Event.Scene
 
                 case 237:
 
-                    companions[3] = new Wizard(CharacterHandle.characters.Wizard);
+                    if (Mod.instance.Helper.ModRegistry.IsLoaded("Nom0ri.RomRas"))
+                    {
+
+                        companions[3] = new Witch(CharacterHandle.characters.Witch);
+
+                    }
+                    else
+                    {
+
+                        companions[3] = new Wizard(CharacterHandle.characters.Wizard);
+
+                    }
 
                     companions[3].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -762,7 +774,19 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.iconData.AnimateQuickWarp(location, companions[3].Position, true);
 
-                    bosses[0] = new DarkWizard(ModUtility.PositionToTile(eventVectors[27] * 64), Mod.instance.CombatDifficulty());
+                    if (Mod.instance.Helper.ModRegistry.IsLoaded("Nom0ri.RomRas"))
+                    {
+
+                        bosses[0] = new DarkWitch(ModUtility.PositionToTile(eventVectors[27] * 64), Mod.instance.CombatDifficulty(),"Witch");
+
+
+                    }
+                    else
+                    {
+
+                        bosses[0] = new DarkWizard(ModUtility.PositionToTile(eventVectors[27] * 64), Mod.instance.CombatDifficulty());
+
+                    }
 
                     Mod.instance.iconData.AnimateQuickWarp(location, bosses[0].Position);
 
@@ -1000,7 +1024,7 @@ namespace StardewDruid.Event.Scene
 
                 case 421:
 
-                    DialogueCueWithFeeling(407);
+                    DialogueCueWithFeeling(407,0,Character.Character.specials.gesture);
 
                     companions[3].LookAtTarget(Game1.player.Position, true);
 
@@ -1124,7 +1148,7 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.rite.CastTransform();
 
-                    StardewDruid.Cast.Ether.Dragon dragon = (Mod.instance.eventRegister["transform"] as Transform).avatar;
+                    StardewDruid.Cast.Ether.Dragon dragon = (Mod.instance.eventRegister[Rite.eventTransform] as Transform).avatar;
 
                     dragon.netDigActive.Set(true);
 
@@ -1140,9 +1164,9 @@ namespace StardewDruid.Event.Scene
 
                 case 515:
 
-                    (Mod.instance.eventRegister["transform"] as Transform).EventRemove();
+                    (Mod.instance.eventRegister[Rite.eventTransform] as Transform).EventRemove();
 
-                    Mod.instance.eventRegister.Remove("transform");
+                    Mod.instance.eventRegister.Remove(Rite.eventTransform);
 
                     SpellHandle burn = new(Game1.player, eventVectors[32] * 64, 320, Mod.instance.CombatDamage());
 
@@ -1192,7 +1216,7 @@ namespace StardewDruid.Event.Scene
 
                     Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles(IconData.relics.skull_gelatin);
 
-                    TemporaryAnimatedSprite animation = new(0, 10000, 1, 1, eventVectors[32] * 64, false, false)
+                    TemporaryAnimatedSprite animation = new(0, 6000, 1, 1, eventVectors[32] * 64, false, false)
                     {
                         sourceRect = relicRect,
                         sourceRectStartingPos = new(relicRect.X, relicRect.Y),
@@ -1212,6 +1236,12 @@ namespace StardewDruid.Event.Scene
                     break;
 
                 case 522:
+
+                    ThrowHandle newThrowRelic = new(Game1.player, eventVectors[32] * 64, IconData.relics.skull_gelatin);
+
+                    newThrowRelic.impact = IconData.impacts.puff;
+
+                    newThrowRelic.register();
 
                     DialogueLoad(0, 6);
 

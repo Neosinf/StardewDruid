@@ -30,8 +30,8 @@ namespace StardewDruid.Cast.Effect
 
             buffEffect.Defense.Set(99);
 
-            Buff speedBuff = new(
-                "184657",
+            Buff shieldBuff = new(
+                Rite.buffIdShield,
                 source: DialogueData.Strings(DialogueData.stringkeys.druidShield),
                 displaySource: DialogueData.RiteNames(Rite.rites.stars),
                 duration: 3000,
@@ -39,14 +39,14 @@ namespace StardewDruid.Cast.Effect
                 description: DialogueData.Strings(DialogueData.stringkeys.defenseIncrease),
                 effects: buffEffect);
 
-            Game1.player.buffs.Apply(speedBuff);
+            Game1.player.buffs.Apply(shieldBuff);
 
         }
 
         public override void EventDraw(SpriteBatch b)
         {
 
-            if (!Game1.player.hasBuff("184657"))
+            if (!Game1.player.hasBuff(Rite.buffIdShield))
             {
 
                 return;
@@ -89,7 +89,7 @@ namespace StardewDruid.Cast.Effect
         {
             base.EventRemove();
 
-            Game1.player.buffs.Remove("184657");
+            Game1.player.buffs.Remove(Rite.buffIdShield);
 
         }
 

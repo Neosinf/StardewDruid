@@ -77,10 +77,6 @@ namespace StardewDruid.Cast.Bones
 
                     eventLocked = true;
 
-                    //SpellHandle spellHandle = new(origin, 384, IconData.impacts.plume, new());
-
-                    //Mod.instance.spellRegister.Add(spellHandle);
-
                     ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 
                     if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour))

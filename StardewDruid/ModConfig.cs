@@ -325,7 +325,7 @@ namespace StardewDruid
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => Mod.instance.Helper.Translation.Get("ModConfig.335.1"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.335.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.335.2"),
                 getValue: () => Config.disableShopdata,
                 setValue: value => Config.disableShopdata = value
             );
@@ -357,13 +357,13 @@ namespace StardewDruid
                 setValue: value => Config.cardinalMovement = value
             );
 
-            configMenu.AddBoolOption(
+            /*configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => Mod.instance.Helper.Translation.Get("ModConfig.316"),
                 tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.317"),
                 getValue: () => Config.castAnywhere,
                 setValue: value => Config.castAnywhere = value
-            );
+            );*/
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
@@ -371,6 +371,14 @@ namespace StardewDruid
                 tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.326.2"),
                 getValue: () => Config.decorateGrove,
                 setValue: value => Config.decorateGrove = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.340.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.340.2"),
+                getValue: () => Config.plantGrove,
+                setValue: value => Config.plantGrove = value
             );
 
             return configMenu;

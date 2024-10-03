@@ -19,6 +19,8 @@ namespace StardewDruid.Monster
 
         public bool meleeSet;
 
+        public Dictionary<int, List<Rectangle>> hatFrames = new();
+
         public DarkRogue()
         {
 
@@ -777,9 +779,23 @@ namespace StardewDruid.Monster
 
             }
 
-            Vector2 shadowPosition = new(spritePosition.X + (spriteScale*4), spritePosition.Y + (spriteScale * 18));
+            DrawShadow(b, spritePosition, spriteScale, drawLayer);
 
-            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White*0.35f, 0.0f, Vector2.Zero, spriteScale /2, 0, drawLayer - 1E-06f);
+            DrawHat(b, spritePosition, spriteScale, drawLayer);
+
+        }
+
+        public virtual void DrawShadow(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer)
+        {
+
+            Vector2 shadowPosition = new(spritePosition.X + (spriteScale * 4), spritePosition.Y + (spriteScale * 18));
+
+            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * 0.35f, 0.0f, Vector2.Zero, spriteScale / 2, 0, drawLayer - 1E-06f);
+
+        }
+
+        public virtual void DrawHat(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer)
+        {
 
         }
 

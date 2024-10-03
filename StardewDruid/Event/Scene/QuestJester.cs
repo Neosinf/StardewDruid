@@ -290,18 +290,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(20);
 
-                    Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles(IconData.relics.skull_saurus);
-
-                    TemporaryAnimatedSprite animation = new(0, 5000, 1, 1, companions[0].Position + new Vector2(32,32), false, false)
-                    {
-                        sourceRect = relicRect,
-                        sourceRectStartingPos = new(relicRect.X, relicRect.Y),
-                        texture = Mod.instance.iconData.relicsTexture,
-                        layerDepth = (companions[0].Position.Y + 65) / 10000,
-                        scale = 4f,
-                    };
-
-                    location.TemporarySprites.Add(animation);
+                    eventRenders.Add(new("skull_saurus", location.Name, companions[0].Position + new Vector2(32, 32), IconData.relics.skull_saurus));
 
                     break;
 
@@ -322,6 +311,8 @@ namespace StardewDruid.Event.Scene
                     DialogueCue(23 );
 
                     companions[2].TargetEvent(302, origin + new Vector2 (448, 64));
+
+                    eventRenders.RemoveAt(eventRenders.Count - 1);
 
                     break;
 
@@ -740,7 +731,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(57);
 
-                    companions[1].Position = companions[1].Position + new Vector2(196, 0);
+                    companions[1].Position = companions[1].Position + new Vector2(128, 0);
 
                     Mod.instance.iconData.AnimateQuickWarp(location, companions[1].Position - new Vector2(0.0f, 32f));
 
@@ -750,7 +741,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(58);
 
-                    companions[0].Position = companions[0].Position + new Vector2(-196, 0);
+                    companions[0].Position = companions[0].Position + new Vector2(-128, 0);
 
                     Mod.instance.iconData.AnimateQuickWarp(location, companions[0].Position - new Vector2(0.0f, 32f));
 
@@ -869,7 +860,7 @@ namespace StardewDruid.Event.Scene
                     for (int i = 1; i < 10; i+=2)
                     {
 
-                        for (int j = 1; j < 6; j+=2)
+                        for (int j = 1; j < 4; j+=2)
                         {
 
                             Vector2 burnVector = cornerVector + new Vector2((i * 64), (j * 64)) - new Vector2(16 * Mod.instance.randomIndex.Next(0, 4), 16 * Mod.instance.randomIndex.Next(0, 4));
@@ -1177,7 +1168,7 @@ namespace StardewDruid.Event.Scene
 
                 DialogueClear(0);
 
-                    companions[0].ResetActives();
+                companions[0].ResetActives();
 
                 companions[0].TargetEvent(203, archaeum, true);
 
@@ -1256,18 +1247,7 @@ namespace StardewDruid.Event.Scene
 
                     SetTrack("libraryTheme");
 
-                    Microsoft.Xna.Framework.Rectangle relicRectTwo = IconData.RelicRectangles(IconData.relics.skull_saurus);
-
-                    TemporaryAnimatedSprite animationTwo = new(0, 20000, 1, 1, new Vector2(27, 15) * 64 + new Vector2(32), false, false)
-                    {
-                        sourceRect = relicRectTwo,
-                        sourceRectStartingPos = new(relicRectTwo.X, relicRectTwo.Y),
-                        texture = Mod.instance.iconData.relicsTexture,
-                        layerDepth = 900f,
-                        scale = 4f,
-                    };
-
-                    location.TemporarySprites.Add(animationTwo);
+                    eventRenders.Add(new("skull_saurus", location.Name, new Vector2(27, 15) * 64 + new Vector2(32), IconData.relics.skull_saurus));
 
                     break;
 
@@ -1281,7 +1261,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].netDirection.Set(3);
 
-                    Mod.instance.iconData.DecorativeIndicator(location, new Vector2(27, 15) * 64 + new Vector2(32), IconData.decorations.fates, 3f, new() { interval = 6000 });
+                    Mod.instance.spellRegister.Add(new(new Vector2(27, 15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, projectile = 1 });
 
                     break;
 
@@ -1293,7 +1273,15 @@ namespace StardewDruid.Event.Scene
 
                 case 920:
 
-                    Mod.instance.spellRegister.Add(new(new Vector2(27, 15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, projectile = 1 });
+                    SpellHandle circleHandle = new(new Vector2(27, 15) * 64 + new Vector2(32), 256, IconData.impacts.summoning, new());
+
+                    circleHandle.scheme = IconData.schemes.fates;
+
+                    circleHandle.sound = SpellHandle.sounds.shadowDie;
+
+                    Mod.instance.spellRegister.Add(circleHandle);
+
+                    eventRenders.RemoveAt(eventRenders.Count - 1);
 
                     break;
 
@@ -1380,7 +1368,7 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.spellRegister.Add(new(bosses[0].Position, 320, IconData.impacts.deathbomb, new()));
 
-                    ThrowHandle newThrowRelic = new(bosses[0].Position, companions[1].Position, IconData.relics.skull_saurus);
+                    ThrowHandle newThrowRelic = new(Game1.player, companions[1].Position, IconData.relics.skull_saurus);
 
                     newThrowRelic.impact = IconData.impacts.puff;
 

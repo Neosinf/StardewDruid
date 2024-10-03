@@ -21,14 +21,14 @@ using System.Timers;
 
 namespace StardewDruid.Cast.Effect
 {
-    public class Tornado : EventHandle
+    public class Whirlpool : EventHandle
     {
 
         public Dictionary<Vector2, TornadoTarget> tornadoes = new();
 
         public bool iridium;
 
-        public Tornado()
+        public Whirlpool()
         {
 
             iridium = (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areAllAreasComplete();

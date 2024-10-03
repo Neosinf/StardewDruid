@@ -26,7 +26,6 @@ namespace StardewDruid.Journal
             // ====================================================================
             // Weald effects
 
-
             Effect ritesOfTheDruids;
 
             if (!Mod.instance.magic)
@@ -34,7 +33,7 @@ namespace StardewDruid.Journal
                 ritesOfTheDruids = new()
                 {
                     title = Mod.instance.Helper.Translation.Get("EffectsData.6"),
-                    icon = IconData.displays.weald,
+                    icon = IconData.displays.chaos,
                     description = Mod.instance.Helper.Translation.Get("EffectsData.8"),
                     instruction = Mod.instance.Helper.Translation.Get("EffectsData.9"),
                     details = new()
@@ -65,23 +64,33 @@ namespace StardewDruid.Journal
                     }
                 };
 
-
             }
 
-            Effect attunement = new()
+            effects[QuestHandle.wealdOne] = new() { ritesOfTheDruids, };
+
+            if (!Mod.instance.magic)
             {
-                title = Mod.instance.Helper.Translation.Get("EffectsData.51"),
-                icon = IconData.displays.chaos,
-                description = Mod.instance.Helper.Translation.Get("EffectsData.53"),
-                instruction = Mod.instance.Helper.Translation.Get("EffectsData.54"),
-                details = new()
+                Effect attunement = new()
                 {
+                    title = Mod.instance.Helper.Translation.Get("EffectsData.51"),
+                    icon = IconData.displays.chaos,
+                    description = Mod.instance.Helper.Translation.Get("EffectsData.53"),
+                    instruction = Mod.instance.Helper.Translation.Get("EffectsData.54"),
+                    details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("EffectsData.340.1"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.340.2"),
+                    Mod.instance.Helper.Translation.Get("EffectsData.340.3"),
                     Mod.instance.Helper.Translation.Get("EffectsData.57"),
                     Mod.instance.Helper.Translation.Get("EffectsData.58"),
                     Mod.instance.Helper.Translation.Get("EffectsData.59")
 
                 }
-            };
+                };
+
+                effects[QuestHandle.wealdOne].Add(attunement);
+
+            }
 
             Effect herbalism = new()
             {
@@ -106,7 +115,56 @@ namespace StardewDruid.Journal
 
             }
 
-            Effect clear = new()
+            effects[QuestHandle.wealdOne].Add(herbalism);
+
+            // ====================================================================
+            // Relicsets
+
+            if (!Mod.instance.magic)
+            {
+
+                Effect relicsets = new()
+                {
+                    title = Mod.instance.Helper.Translation.Get("EffectsData.189"),
+                    icon = IconData.displays.relic,
+                    description = Mod.instance.Helper.Translation.Get("EffectsData.191"),
+                    instruction = Mod.instance.Helper.Translation.Get("EffectsData.192"),
+                    details = new()
+                    {
+                        Mod.instance.Helper.Translation.Get("EffectsData.195") +
+                        Mod.instance.Helper.Translation.Get("EffectsData.196"),
+                        Mod.instance.Helper.Translation.Get("EffectsData.197"),
+                        Mod.instance.Helper.Translation.Get("EffectsData.198"),
+                        Mod.instance.Helper.Translation.Get("EffectsData.330.1"),
+                        Mod.instance.Helper.Translation.Get("EffectsData.330.2"),
+                    }
+                };
+
+                effects[QuestHandle.wealdOne].Add (relicsets);
+
+            }
+
+            // ====================================================================
+            // Weald effects
+
+            Effect riteOfTheWeald = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("EffectsData.340.4"),
+                icon = IconData.displays.weald,
+                description = Mod.instance.Helper.Translation.Get("EffectsData.340.5"),
+                instruction = Mod.instance.Helper.Translation.Get("EffectsData.340.6"),
+            };
+
+            if (!Mod.instance.magic)
+            {
+
+                riteOfTheWeald.details.Add(Mod.instance.Helper.Translation.Get("EffectsData.340.7"));
+
+            }
+
+            effects[QuestHandle.wealdOne].Add(riteOfTheWeald);
+
+            Effect clearance = new()
             {
                 title = Mod.instance.Helper.Translation.Get("EffectsData.36"),
                 icon = IconData.displays.weald,
@@ -121,7 +179,7 @@ namespace StardewDruid.Journal
                 }
             };
 
-            effects[QuestHandle.wealdOne] = new() { ritesOfTheDruids, attunement, herbalism, clear, };
+            effects[QuestHandle.wealdOne].Add(clearance);
 
             Effect caress = new()
             {
@@ -247,34 +305,23 @@ namespace StardewDruid.Journal
             }
 
             // ====================================================================
-            // Relicsets
+            // Mists effects
+
+            Effect riteOfTheMists = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("EffectsData.340.8"),
+                icon = IconData.displays.mists,
+                description = Mod.instance.Helper.Translation.Get("EffectsData.340.9"),
+                instruction = Mod.instance.Helper.Translation.Get("EffectsData.340.10"),
+
+            };
 
             if (!Mod.instance.magic)
             {
 
-                Effect relicsets = new()
-                {
-                    title = Mod.instance.Helper.Translation.Get("EffectsData.189"),
-                    icon = IconData.displays.relic,
-                    description = Mod.instance.Helper.Translation.Get("EffectsData.191"),
-                    instruction = Mod.instance.Helper.Translation.Get("EffectsData.192"),
-                    details = new()
-                    {
-                        Mod.instance.Helper.Translation.Get("EffectsData.195") +
-                        Mod.instance.Helper.Translation.Get("EffectsData.196"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.197"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.198"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.330.1"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.330.2"),
-                    }
-                };
-
-                effects[QuestHandle.challengeWeald] = new() { relicsets };
+                riteOfTheMists.details.Add(Mod.instance.Helper.Translation.Get("EffectsData.340.11"));
 
             }
-
-            // ====================================================================
-            // Mists effects
 
             Effect cursorTargetting = new()
             {
@@ -306,7 +353,7 @@ namespace StardewDruid.Journal
                 }
             };
 
-            effects[QuestHandle.mistsOne] = new() { cursorTargetting, sunder };
+            effects[QuestHandle.mistsOne] = new() { riteOfTheMists, cursorTargetting, sunder };
 
             Effect campfire = new()
             {
@@ -334,7 +381,6 @@ namespace StardewDruid.Journal
                     Mod.instance.Helper.Translation.Get("EffectsData.262"),
                 }
             };
-
 
             Effect artifice = new()
             {
@@ -417,30 +463,26 @@ namespace StardewDruid.Journal
 
             };
 
+            // ====================================================================
+            // Stars effects
+
+            Effect riteOfTheStars = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("EffectsData.340.12"),
+                icon = IconData.displays.stars,
+                description = Mod.instance.Helper.Translation.Get("EffectsData.340.13"),
+                instruction = Mod.instance.Helper.Translation.Get("EffectsData.340.14"),
+
+            };
+
             if (!Mod.instance.magic)
             {
 
-                Effect summonEffigy = new()
-                {
-                    title = Mod.instance.Helper.Translation.Get("EffectsData.349"),
-                    icon = IconData.displays.effigy,
-                    description = Mod.instance.Helper.Translation.Get("EffectsData.351"),
-                    instruction = Mod.instance.Helper.Translation.Get("EffectsData.352"),
-                    details = new()
-                    {
-                        Mod.instance.Helper.Translation.Get("EffectsData.355"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.356"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.357"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.358"),
-                    }
-                };
-
-                effects[QuestHandle.questEffigy] = new() { summonWisps, summonEffigy };
+                riteOfTheStars.details.Add(Mod.instance.Helper.Translation.Get("EffectsData.340.15"));
 
             }
 
             // ====================================================================
-            // Stars Effects
 
             Effect meteorRain = new()
             {
@@ -480,7 +522,7 @@ namespace StardewDruid.Journal
                 }
             };
 
-            effects[QuestHandle.starsOne] = new() { meteorRain, starBurst, };
+            effects[QuestHandle.starsOne] = new() { riteOfTheStars, meteorRain, starBurst, };
 
             Effect gravityWell = new()
             {
@@ -501,28 +543,23 @@ namespace StardewDruid.Journal
 
             effects[QuestHandle.starsTwo] = new() { gravityWell, };
 
+
             // ====================================================================
-            // Stars Effects
+            // Fates effects
+
+            Effect riteOfTheFates = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("EffectsData.340.16"),
+                icon = IconData.displays.fates,
+                description = Mod.instance.Helper.Translation.Get("EffectsData.340.17"),
+                instruction = Mod.instance.Helper.Translation.Get("EffectsData.340.18"),
+
+            };
 
             if (!Mod.instance.magic)
             {
 
-                Effect summonJester = new()
-                {
-                    title = Mod.instance.Helper.Translation.Get("EffectsData.430"),
-                    icon = IconData.displays.jester,
-                    description = Mod.instance.Helper.Translation.Get("EffectsData.432"),
-                    instruction = Mod.instance.Helper.Translation.Get("EffectsData.433"),
-                    details = new()
-                    {
-                        Mod.instance.Helper.Translation.Get("EffectsData.436"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.437"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.438") +
-                        Mod.instance.Helper.Translation.Get("EffectsData.439"),
-                    }
-                };
-
-                effects[QuestHandle.approachJester] = new() { summonJester, };
+                riteOfTheFates.details.Add(Mod.instance.Helper.Translation.Get("EffectsData.340.19"));
 
             }
 
@@ -542,7 +579,7 @@ namespace StardewDruid.Journal
                 }
             };
 
-            effects[QuestHandle.fatesOne] = new() { whisk, };
+            effects[QuestHandle.fatesOne] = new() { riteOfTheFates, whisk, };
 
             Effect warpstrike = new()
             {
@@ -614,32 +651,24 @@ namespace StardewDruid.Journal
 
             effects[QuestHandle.fatesFour] = new() { enchant, };
 
+            // ====================================================================
+            // Ether effects
+
+            Effect riteOfTheEther = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("EffectsData.340.20"),
+                icon = IconData.displays.ether,
+                description = Mod.instance.Helper.Translation.Get("EffectsData.340.21"),
+                instruction = Mod.instance.Helper.Translation.Get("EffectsData.340.22"),
+
+            };
+
             if (!Mod.instance.magic)
             {
 
-                Effect summonShadowtin = new()
-                {
-                    title = Mod.instance.Helper.Translation.Get("EffectsData.535"),
-                    icon = IconData.displays.shadowtin,
-                    description = Mod.instance.Helper.Translation.Get("EffectsData.537") +
-                    Mod.instance.Helper.Translation.Get("EffectsData.538"),
-                    instruction = Mod.instance.Helper.Translation.Get("EffectsData.539"),
-                    details = new()
-                    {
-                        Mod.instance.Helper.Translation.Get("EffectsData.542"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.543"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.544"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.545"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.546")
-                    }
-                };
-
-                effects[QuestHandle.challengeFates] = new() { summonShadowtin, };
+                riteOfTheEther.details.Add(Mod.instance.Helper.Translation.Get("EffectsData.340.23"));
 
             }
-
-            // ====================================================
-            // Dragon Effects
 
             Effect dragonForm = new()
             {
@@ -670,7 +699,7 @@ namespace StardewDruid.Journal
                 }
             };
 
-            effects[QuestHandle.etherOne] = new() { dragonForm, dragonFlight, };
+            effects[QuestHandle.etherOne] = new() { riteOfTheEther, dragonForm, dragonFlight, };
 
             Effect dragonBreath = new()
             {
@@ -726,26 +755,28 @@ namespace StardewDruid.Journal
 
             }
 
+            // ====================================================================
+            // Bones effects
+
+            Effect riteOfTheBones = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("EffectsData.340.24"),
+                icon = IconData.displays.bones,
+                description = Mod.instance.Helper.Translation.Get("EffectsData.340.25"),
+                instruction = Mod.instance.Helper.Translation.Get("EffectsData.340.26"),
+
+            };
+
             if (!Mod.instance.magic)
             {
 
-                Effect summonBlackfeather = new()
-                {
-                    title = Mod.instance.Helper.Translation.Get("EffectsData.326.1"),
-                    icon = IconData.displays.blackfeather,
-                    description = Mod.instance.Helper.Translation.Get("EffectsData.326.2"),
-                    instruction = Mod.instance.Helper.Translation.Get("EffectsData.326.3"),
-                    details = new()
-                    {
-                        Mod.instance.Helper.Translation.Get("EffectsData.326.4"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.326.5"),
-                        Mod.instance.Helper.Translation.Get("EffectsData.326.6"),
-                    }
-                };
-
-                effects[QuestHandle.questBlackfeather] = new() { summonBlackfeather, };
+                riteOfTheBones.details.Add(Mod.instance.Helper.Translation.Get("EffectsData.340.27"));
 
             }
+
+            effects[QuestHandle.bonesOne] = new() { riteOfTheBones, };
+
+            // ====================================================================
 
             Effect corvidsSummon = new()
             {
@@ -761,7 +792,7 @@ namespace StardewDruid.Journal
                     }
             };
 
-            effects[QuestHandle.bonesOne] = new() { corvidsSummon, };
+            effects[QuestHandle.bonesOne].Add(corvidsSummon);
 
             Effect corvidsRetrieve = new()
             {
@@ -814,7 +845,7 @@ namespace StardewDruid.Journal
 
         public string instruction;
 
-        public List<string> details;
+        public List<string> details = new();
 
 
     }
