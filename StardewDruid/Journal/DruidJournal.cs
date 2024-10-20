@@ -39,6 +39,9 @@ namespace StardewDruid.Journal
             lorePage,
             dragonPage,
 
+            questionPage,
+            herbalTrade,
+
         }
 
         public journalTypes type = journalTypes.quests;
@@ -63,6 +66,7 @@ namespace StardewDruid.Journal
 
             viewQuest,
             viewEffect,
+            question,
             skipQuest,
             replayTomorrow,
             replayQuest,
@@ -288,6 +292,18 @@ namespace StardewDruid.Journal
 
                     break;
 
+                case journalTypes.questionPage:
+
+                    Game1.activeClickableMenu = new QuestionPage(Id, Record);
+
+                    break;
+
+                case journalTypes.herbalTrade:
+
+                    Game1.activeClickableMenu = new HerbalTrade(Id, Record);
+
+                    break;
+
             }
 
 
@@ -341,11 +357,12 @@ namespace StardewDruid.Journal
                 [105] = addButton(journalButtons.lore),
                 [106] = addButton(journalButtons.transform),
 
-                [107] = addButton(journalButtons.active),
-                [108] = addButton(journalButtons.reverse),
+                [108] = addButton(journalButtons.active),
+                [109] = addButton(journalButtons.reverse),
 
                 [201] = addButton(journalButtons.back),
                 [202] = addButton(journalButtons.start),
+                [203] = addButton(journalButtons.question),
 
                 [301] = addButton(journalButtons.exit),
 
@@ -473,20 +490,20 @@ namespace StardewDruid.Journal
             if (type != journalTypes.quests)
             {
 
-                interfaceComponents[107].active = false;
+                interfaceComponents[108].active = false;
 
             }else
             if (!Mod.instance.Config.activeJournal)
             {
 
-                interfaceComponents[107].fade = 0.8f;
+                interfaceComponents[108].fade = 0.8f;
 
             }
 
             if (!Mod.instance.Config.reverseJournal)
             {
 
-                interfaceComponents[108].fade = 0.8f;
+                interfaceComponents[109].fade = 0.8f;
 
             }
 
@@ -614,6 +631,10 @@ namespace StardewDruid.Journal
 
                     return new JournalComponent(Button, new Vector2(xR - 68 - 36, yT), IconData.displays.effect, new());
 
+                case journalButtons.question:
+
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.question, new());
+
                 case journalButtons.skipQuest:
 
                     return new JournalComponent(Button, new Vector2(xP + 68 + 36, yT), IconData.displays.skip, new());
@@ -634,11 +655,15 @@ namespace StardewDruid.Journal
 
                 case journalButtons.dragonReset:
 
-                    return new JournalComponent(Button, new Vector2(xR - 68 - 36, yT), IconData.displays.replay, new());
+                    return new JournalComponent(Button, new Vector2(xR - 400, yB - 96), IconData.displays.replay, new());
+
+                //return new JournalComponent(Button, new Vector2(xR - 68 - 36, yT), IconData.displays.replay, new());
 
                 case journalButtons.dragonSave:
 
-                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.save, new());
+                    return new JournalComponent(Button, new Vector2(xR - 320, yB - 96), IconData.displays.save, new());
+
+                //return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.save, new());
 
                 // ======================================  right side
 
@@ -812,6 +837,13 @@ namespace StardewDruid.Journal
                     activateInterface();
 
                     break;
+
+                case journalButtons.question:
+
+                    DruidJournal.openJournal(journalTypes.questionPage);
+
+                    break;
+
 
             }
 
@@ -1367,6 +1399,15 @@ namespace StardewDruid.Journal
 
                         focus--;
 
+                        if (!contentComponents.ContainsKey(focus))
+                        {
+
+                            shiftInterface(100, 1);
+
+                            return;
+
+                        }
+
                         if (contentComponents[focus].active)
                         {
 
@@ -1385,6 +1426,7 @@ namespace StardewDruid.Journal
                     return;
 
                 case 2:
+
                     while (!active)
                     {
 
@@ -1398,6 +1440,15 @@ namespace StardewDruid.Journal
                         }
 
                         focus++;
+
+                        if (!contentComponents.ContainsKey(focus))
+                        {
+
+                            shiftInterface(100, 1);
+
+                            return;
+
+                        }
 
                         if (contentComponents[focus].active)
                         {
@@ -1418,9 +1469,14 @@ namespace StardewDruid.Journal
 
             }
 
-            browsing = true;
+            if (contentComponents.ContainsKey(focus))
+            {
 
-            Mouse.SetPosition(contentComponents[focus].bounds.Center.X, contentComponents[focus].bounds.Center.Y);
+                browsing = true;
+
+                Mouse.SetPosition(contentComponents[focus].bounds.Center.X, contentComponents[focus].bounds.Center.Y);
+
+            }
 
         }
 
@@ -1442,8 +1498,10 @@ namespace StardewDruid.Journal
 
                 Mouse.SetPosition(contentComponents[focus].bounds.Center.X, contentComponents[focus].bounds.Center.Y);
 
+                return;
+
             }
-            else
+            else if (interfaceComponents.Count > 0)
             {
 
                 interfacing = true;
@@ -1451,6 +1509,8 @@ namespace StardewDruid.Journal
                 focus = interfaceComponents.First().Key;
 
                 Mouse.SetPosition(interfaceComponents[focus].bounds.Center.X, interfaceComponents[focus].bounds.Center.Y);
+
+                return;
 
             }
 

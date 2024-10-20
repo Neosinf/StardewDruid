@@ -247,21 +247,21 @@ namespace StardewDruid.Location
 
             }
 
-            warpSets.Add(new WarpTile(27, 25, "Town", 100, 95));
+            warpSets.Add(new WarpTile(26, 26, "Town", 100, 95));
 
-            warpSets.Add(new WarpTile(28, 25, "Town", 100, 95));
+            warpSets.Add(new WarpTile(27, 26, "Town", 100, 95));
 
-            warpSets.Add(new WarpTile(29, 25, "Town", 100, 95));
-            
-            warpSets.Add(new WarpTile(30, 25, "Town", 100, 95));
+            warpSets.Add(new WarpTile(28, 26, "Town", 100, 95));
 
-            warps.Add(new Warp(27, 25, "Town", 100, 95, flipFarmer: false));
+            warpSets.Add(new WarpTile(29, 26, "Town", 100, 95));
 
-            warps.Add(new Warp(28, 25, "Town", 100, 95, flipFarmer: false));
+            warps.Add(new Warp(26, 26, "Town", 100, 95, flipFarmer: false));
 
-            warps.Add(new Warp(29, 25, "Town", 100, 95, flipFarmer: false));
+            warps.Add(new Warp(27, 26, "Town", 100, 95, flipFarmer: false));
 
-            warps.Add(new Warp(30, 25, "Town", 100, 95, flipFarmer: false));
+            warps.Add(new Warp(28, 26, "Town", 100, 95, flipFarmer: false));
+
+            warps.Add(new Warp(29, 26, "Town", 100, 95, flipFarmer: false));
 
         }
 

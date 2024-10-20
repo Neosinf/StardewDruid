@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
+using StardewDruid.Cast.Bones;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Cast.Ether;
 using StardewDruid.Cast.Mists;
@@ -258,7 +259,6 @@ namespace StardewDruid.Event.Scene
 
             // ========================== Introduction
 
-
             switch (activeCounter)
             {
 
@@ -345,7 +345,9 @@ namespace StardewDruid.Event.Scene
 
                     Cast.Bones.Corvids.SummonRaven();
 
-                    companions[1] = Mod.instance.characters[CharacterHandle.characters.Raven];
+                    Mod.instance.trackers[CharacterHandle.characters.Raven].eventLock = true;
+
+                    //companions[1] = Mod.instance.characters[CharacterHandle.characters.Raven];
 
                     location.playSound(SpellHandle.sounds.crow.ToString());
 
@@ -359,13 +361,17 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(103);
 
-                    companions[1].SwitchToMode(Character.Character.mode.scene, Game1.player);
+                    //companions[1].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-                    companions[1].ResetActives(true);
+                    //companions[1].ResetActives(true);
 
-                    companions[1].doEmote(20);
+                    Mod.instance.characters[CharacterHandle.characters.Raven].doEmote(20);
 
-                    companions[1].TargetEvent(103, eventVectors[103] * 64, true);
+                    Mod.instance.trackers[CharacterHandle.characters.Raven].linger = 600;
+
+                    Mod.instance.trackers[CharacterHandle.characters.Raven].lingerSpot = eventVectors[103] * 64;
+
+                    //companions[1].TargetEvent(103, eventVectors[103] * 64, true);
 
                     break;
 
@@ -373,7 +379,7 @@ namespace StardewDruid.Event.Scene
 
                     Cast.Bones.Corvids.SummonCrow();
 
-                    companions[2] = Mod.instance.characters[CharacterHandle.characters.Crow];
+                    //companions[2] = Mod.instance.characters[CharacterHandle.characters.Crow];
 
                     location.playSound(SpellHandle.sounds.crow.ToString());
 
@@ -385,13 +391,19 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(107);
 
-                    companions[2].SwitchToMode(Character.Character.mode.scene, Game1.player);
+                    Mod.instance.characters[CharacterHandle.characters.Crow].doEmote(20);
 
-                    companions[2].ResetActives(true);
+                    Mod.instance.trackers[CharacterHandle.characters.Crow].linger = 600;
 
-                    companions[2].doEmote(20);
+                    Mod.instance.trackers[CharacterHandle.characters.Crow].lingerSpot = eventVectors[106] * 64;
 
-                    companions[2].TargetEvent(106, eventVectors[106] * 64, true);
+                    //companions[2].SwitchToMode(Character.Character.mode.scene, Game1.player);
+
+                    //companions[2].ResetActives(true);
+
+                    //companions[2].doEmote(20);
+
+                    //companions[2].TargetEvent(106, eventVectors[106] * 64, true);
 
                     break;
 
@@ -399,7 +411,7 @@ namespace StardewDruid.Event.Scene
 
                     Cast.Bones.Corvids.SummonMagpie();
 
-                    companions[3] = Mod.instance.characters[CharacterHandle.characters.Magpie];
+                    //companions[3] = Mod.instance.characters[CharacterHandle.characters.Magpie];
 
                     location.playSound(SpellHandle.sounds.crow.ToString());
 
@@ -411,19 +423,25 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(111);
 
-                    companions[3].SwitchToMode(Character.Character.mode.scene, Game1.player);
+                    Mod.instance.characters[CharacterHandle.characters.Magpie].doEmote(20);
 
-                    companions[3].ResetActives(true);
+                    Mod.instance.trackers[CharacterHandle.characters.Magpie].linger = 600;
 
-                    companions[3].doEmote(20);
+                    Mod.instance.trackers[CharacterHandle.characters.Magpie].lingerSpot = eventVectors[109] * 64;
 
-                    companions[3].TargetEvent(109, eventVectors[109] * 64, true);
+                    //companions[3].SwitchToMode(Character.Character.mode.scene, Game1.player);
+
+                    //companions[3].ResetActives(true);
+
+                    //companions[3].doEmote(20);
+
+                    //companions[3].TargetEvent(109, eventVectors[109] * 64, true);
 
                     // Raven
 
-                    companions[1].ResetActives();
+                    //companions[1].ResetActives();
 
-                    companions[1].netIdle.Set((int)Character.Character.idles.standby);
+                    // companions[1].netIdle.Set((int)Character.Character.idles.standby);
 
                     break;
 
@@ -431,7 +449,7 @@ namespace StardewDruid.Event.Scene
 
                     Cast.Bones.Corvids.SummonRook();
 
-                    companions[4] = Mod.instance.characters[CharacterHandle.characters.Rook];
+                    //companions[4] = Mod.instance.characters[CharacterHandle.characters.Rook];
 
                     location.playSound(SpellHandle.sounds.crow.ToString());
 
@@ -443,19 +461,25 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(115);
 
-                    companions[4].SwitchToMode(Character.Character.mode.scene, Game1.player);
+                    Mod.instance.characters[CharacterHandle.characters.Rook].doEmote(20);
 
-                    companions[4].ResetActives(true);
+                    Mod.instance.trackers[CharacterHandle.characters.Rook].linger = 600;
 
-                    companions[4].doEmote(20);
+                    Mod.instance.trackers[CharacterHandle.characters.Rook].lingerSpot = eventVectors[112] * 64;
 
-                    companions[4].TargetEvent(112, eventVectors[112] * 64, true);
+                    //companions[4].SwitchToMode(Character.Character.mode.scene, Game1.player);
+
+                    //companions[4].ResetActives(true);
+
+                    //companions[4].doEmote(20);
+
+                    //companions[4].TargetEvent(112, eventVectors[112] * 64, true);
 
                     // Crow
 
-                    companions[2].ResetActives();
+                    //companions[2].ResetActives();
 
-                    companions[2].netIdle.Set((int)Character.Character.idles.standby);
+                    //companions[2].netIdle.Set((int)Character.Character.idles.standby);
 
                     break;
 
@@ -479,7 +503,7 @@ namespace StardewDruid.Event.Scene
 
                 case 123:
 
-                    companions[4].netIdle.Set((int)Character.Character.idles.standby);
+                    /*companions[4].netIdle.Set((int)Character.Character.idles.standby);
 
                     companions[3].ResetActives();
 
@@ -494,6 +518,38 @@ namespace StardewDruid.Event.Scene
                     companions[4].SwitchToMode(Character.Character.mode.track, Game1.player);
 
                     ThrowHandle throwSkull = new(Game1.player, companions[3].Position, IconData.relics.skull_fox);
+
+                    throwSkull.register();*/
+
+                    List<CharacterHandle.characters> corvids = new()
+                    {
+                        CharacterHandle.characters.Raven,
+                        CharacterHandle.characters.Crow,
+                        CharacterHandle.characters.Rook,
+                        CharacterHandle.characters.Magpie,
+                    };
+
+                    foreach (CharacterHandle.characters corvid in corvids)
+                    {
+
+                        if (Mod.instance.characters.ContainsKey(corvid))
+                        {
+
+                            Mod.instance.characters[corvid].ResetActives();
+
+                            Mod.instance.trackers[corvid].linger = 0;
+
+                            Mod.instance.trackers[corvid].lingerSpot = Vector2.Zero;
+
+                            Mod.instance.characters[corvid].doEmote(16);
+
+                        }
+
+                    }
+
+                    Mod.instance.characters[CharacterHandle.characters.Magpie].doEmote(32);
+
+                    ThrowHandle throwSkull = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Magpie].Position, IconData.relics.skull_fox);
 
                     throwSkull.register();
 
@@ -580,7 +636,7 @@ namespace StardewDruid.Event.Scene
 
             // add Macarbbi
 
-            companions[3] = new Flyer(CharacterHandle.characters.GreyOwl);
+            companions[3] = new Flyer(CharacterHandle.characters.Macarbi);
 
             voices[3] = companions[3];
 
@@ -658,13 +714,11 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].TargetEvent(0, eventVectors[1] * 64, true);
 
-                    companions.Clear();
-
-                    companions[0] = Mod.instance.characters[CharacterHandle.characters.Buffin];
-
                     break;
 
                 case 202:
+
+                    Mod.instance.trackers[CharacterHandle.characters.Raven].eventLock = false;
 
                     Cast.Bones.Corvids.RemoveCorvids();
 
@@ -1191,7 +1245,7 @@ namespace StardewDruid.Event.Scene
 
                 case 319:
 
-                    companions[7] = new Growler(CharacterHandle.characters.RedWolf);
+                    companions[7] = new Barker(CharacterHandle.characters.Carnivellion);
 
                     companions[7].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -1376,10 +1430,10 @@ namespace StardewDruid.Event.Scene
                 if (bosses[0].netWoundedActive.Value)
                 {
 
-                    if (activeCounter < 450)
+                    if (activeCounter < 449)
                     {
 
-                        activeCounter = 450;
+                        activeCounter = 449;
 
                         return;
 
@@ -1393,7 +1447,7 @@ namespace StardewDruid.Event.Scene
 
                     bosses[0].Health = bosses[0].MaxHealth;
 
-                    activeCounter = 450;
+                    activeCounter = 449;
 
                     return;
 
@@ -1502,7 +1556,7 @@ namespace StardewDruid.Event.Scene
 
                     location.playSound("WolfGrowl");
 
-                    bosses[2] = new ShadowWolf(ModUtility.PositionToTile(eventVectors[409] * 64), Mod.instance.CombatDifficulty());
+                    bosses[2] = new ShadowWolf(ModUtility.PositionToTile(eventVectors[409] * 64), Mod.instance.CombatDifficulty(),"BlackWolf");
 
                     bosses[2].netScheme.Set(2);
 
@@ -1518,7 +1572,7 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 433:
+                /*case 433:
 
                     location.playSound("WolfGrowl");
 
@@ -1536,7 +1590,7 @@ namespace StardewDruid.Event.Scene
 
                     bosses[3].PerformFollow(Game1.player.Position);
 
-                    break;
+                    break;*/
 
                 case 450:
 

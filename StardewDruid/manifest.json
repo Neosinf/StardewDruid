@@ -1,8 +1,8 @@
 {
     "Name": "StardewDruid",
     "Author": "Neosinf",
-    "Version": "3.4.2",
-    "Description": "Stardew Druid Mod for Stardew Valley",
+    "Version": "3.4.9",
+    "Description": "Stardew Druid is a myth themed adventure expansion for Stardew Valley",
     "UniqueID": "neosinf.StardewDruid",
     "EntryDll": "StardewDruid.dll",
     "MinimumApiVersion": "4.0.8",

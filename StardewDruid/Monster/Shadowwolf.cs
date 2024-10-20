@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewDruid.Render;
 using StardewValley;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace StardewDruid.Monster
         {
         }
 
-        public ShadowWolf(Vector2 vector, int CombatModifier, string name = "Shadowwolf")
+        public ShadowWolf(Vector2 vector, int CombatModifier, string name = "GreyWolf")
             : base(vector, CombatModifier, name)
         {
 
@@ -41,7 +42,7 @@ namespace StardewDruid.Monster
         public override float GetScale()
         {
 
-            float spriteScale = 2.5f + (0.5f * netMode.Value);
+            float spriteScale = 2f + (0.5f * netMode.Value);
 
             return spriteScale;
 
@@ -91,13 +92,9 @@ namespace StardewDruid.Monster
 
             gait = 2.4f;
 
-            idleFrames = FrameSeries(64, 64, 0, 0, 1);
+            idleFrames = WolfRender.WalkFrames();
 
-            idleFrames[3] = new(idleFrames[1]);
-
-            walkFrames = FrameSeries(64, 64, 0, 0, 7);
-
-            walkFrames[3] = new(walkFrames[1]);
+            walkFrames = WolfRender.WalkFrames();
 
             overHead = new(0, -128);
 
@@ -114,65 +111,7 @@ namespace StardewDruid.Monster
 
             flightPeak = 128;
 
-            flightFrames = new Dictionary<int, List<Rectangle>>()
-            {
-                // 
-                [0] = new()
-                {
-                    new(0, 320, 64, 64),
-                },
-                [1] = new()
-                {
-                    new(0, 256, 64, 64),
-                },
-                [2] = new()
-                {
-                    new(0, 192, 64, 64),
-                },
-                [3] = new()
-                {
-                    new(0, 256, 64, 64),
-                },
-                //
-                [4] = new()
-                {
-                    new(64, 320, 64, 64),
-                },
-                [5] = new()
-                {
-                    new(64, 256, 64, 64),
-                },
-                [6] = new()
-                {
-                    new(64, 192, 64, 64),
-                },
-                [7] = new()
-                {
-                    new(64, 256, 64, 64),
-                },
-                //
-                [8] = new()
-                {
-                    new(128, 320, 64, 64),
-                    new(192, 320, 64, 64),
-                },
-                [9] = new()
-                {
-                    new(128, 256, 64, 64),
-                    new(192, 256, 64, 64),
-                },
-                [10] = new()
-                {
-                    new(128, 192, 64, 64),
-                    new(192, 192, 64, 64),
-                },
-                [11] = new()
-                {
-                    new(128, 256, 64, 64),
-                    new(192, 256, 64, 64),
-                },
-
-            };
+            flightFrames = WolfRender.DashFrames();
 
         }
 
@@ -181,65 +120,7 @@ namespace StardewDruid.Monster
 
             smashSet = true;
 
-            smashFrames = new()
-            {
-                // 
-                [0] = new()
-                {
-                    new(0, 320, 64, 64),
-                },
-                [1] = new()
-                {
-                    new(0, 256, 64, 64),
-                },
-                [2] = new()
-                {
-                    new(0, 192, 64, 64),
-                },
-                [3] = new()
-                {
-                    new(0, 256, 64, 64),
-                },
-                //
-                [4] = new()
-                {
-                    new(64, 320, 64, 64),
-                },
-                [5] = new()
-                {
-                    new(64, 256, 64, 64),
-                },
-                [6] = new()
-                {
-                    new(64, 192, 64, 64),
-                },
-                [7] = new()
-                {
-                    new(64, 256, 64, 64),
-                },
-                //
-                [8] = new()
-                {
-                    new(128, 320, 64, 64),
-                    new(192, 320, 64, 64),
-                },
-                [9] = new()
-                {
-                    new(128, 256, 64, 64),
-                    new(192, 256, 64, 64),
-                },
-                [10] = new()
-                {
-                    new(128, 192, 64, 64),
-                    new(192, 192, 64, 64),
-                },
-                [11] = new()
-                {
-                    new(128, 256, 64, 64),
-                    new(192, 256, 64, 64),
-                },
-
-            };
+            smashFrames = WolfRender.DashFrames();
 
         }
 
@@ -250,37 +131,54 @@ namespace StardewDruid.Monster
 
             sweepInterval = 12;
 
-            sweepFrames = new()
+            sweepFrames = WolfRender.SweepFrames();
+
+        }
+
+        public override Rectangle GetBoundingBox()
+        {
+
+            Vector2 spritePosition = GetPosition(Position);
+
+            float spriteScale = GetScale();
+
+            int width = GetWidth();
+
+            int height = GetHeight();
+
+            Rectangle box = new(
+                (int)(spritePosition.X - (width * spriteScale / 2) + (spriteScale * 2)),
+                (int)(spritePosition.Y - (height * spriteScale / 2) + (spriteScale * 16)),
+                (int)((spriteScale * width) - (spriteScale * 4)),
+                (int)((spriteScale * height) - (spriteScale * 16))
+            );
+
+            return box;
+
+        }
+
+        public override Vector2 GetPosition(Vector2 localPosition, float spriteScale = -1f, bool shadow = false)
+        {
+
+            if (spriteScale == -1f)
             {
-                [0] = new()
-                {
-                    new(0, 320, 64, 64),
-                    new(64, 320, 64, 64),
-                    new(128, 320, 64, 64),
-                    new(192, 320, 64, 64),
-                },
-                [1] = new()
-                {
-                    new(0, 256, 64, 64),
-                    new(64, 256, 64, 64),
-                    new(128, 256, 64, 64),
-                    new(192, 256, 64, 64),
-                },
-                [2] = new()
-                {
-                    new(0, 192, 64, 64),
-                    new(64, 192, 64, 64),
-                    new(128, 192, 64, 64),
-                    new(192, 192, 64, 64),
-                },
-                [3] = new()
-                {
-                    new(0, 256, 64, 64),
-                    new(64, 256, 64, 64),
-                    new(128, 256, 64, 64),
-                    new(192, 256, 64, 64),
-                },
-            };
+
+                spriteScale = GetScale();
+
+            }
+
+            int height = GetHeight();
+
+            Vector2 spritePosition = localPosition + new Vector2(32, 64) - new Vector2(0, height * spriteScale / 2);
+
+            if (netFlightActive.Value || netSmashActive.Value)
+            {
+
+                spritePosition.Y -= flightHeight;
+
+            }
+
+            return spritePosition;
 
         }
 
@@ -334,7 +232,32 @@ namespace StardewDruid.Monster
                     flightSource,
                     Color.White,
                     0f,
-                    Vector2.Zero,
+                    new Vector2(flightSource.Width / 2, flightSource.Height / 2),
+                    spriteScale,
+                    flippity ? (SpriteEffects)1 : 0,
+                    drawLayer
+                );
+
+
+            }
+            else if (netSweepActive.Value)
+            {
+
+                Rectangle sweepSource = sweepFrames[netDirection.Value][sweepFrame];
+
+                if (growl)
+                {
+
+                    sweepSource.Y += 384;
+                }
+
+                b.Draw(
+                    characterTexture,
+                    spritePosition,
+                    sweepSource,
+                    Color.White,
+                    0f,
+                    new Vector2(sweepSource.Width / 2, sweepSource.Height / 2),
                     spriteScale,
                     flippity ? (SpriteEffects)1 : 0,
                     drawLayer
@@ -358,7 +281,7 @@ namespace StardewDruid.Monster
                     walkSource,
                     Color.White,
                     0,
-                    Vector2.Zero,
+                    new Vector2(walkSource.Width / 2, walkSource.Height / 2),
                     spriteScale,
                     flippity ? (SpriteEffects)1 : 0,
                     drawLayer);

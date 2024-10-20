@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.Xna.Framework;
+using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewValley;
 
@@ -19,11 +20,11 @@ namespace StardewDruid.Event.Sword
 
             base.EventActivate();
 
-            ModUtility.AnimateHands(Game1.player,Game1.player.FacingDirection,600);
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.getNewSpecialItem, scheme = IconData.schemes.weald, });
 
             Mod.instance.iconData.DecorativeIndicator(location, Game1.player.Position, IconData.decorations.weald, 4f, new());
 
-            location.playSound("discoverMineral");
+            //location.playSound("discoverMineral");
 
             AddActor(0, origin + new Vector2(-192, -32));
             AddActor(1, origin + new Vector2(128, -96));
@@ -82,9 +83,7 @@ namespace StardewDruid.Event.Sword
 
                     //---------------------- throw Forest Sword
 
-                    Mod.instance.iconData.ImpactIndicator(location, origin, IconData.impacts.nature, 6f, new());
-
-                    location.playSound("discoverMineral");
+                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.discoverMineral, scheme = IconData.schemes.weald, });
 
                     break;
 

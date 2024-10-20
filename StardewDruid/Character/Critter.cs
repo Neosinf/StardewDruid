@@ -90,9 +90,8 @@ namespace StardewDruid.Character
             loadedOut = true;
         }
 
-        public override void DrawStandby(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawStandby(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
-            Vector2 spritePosition = localPosition + new Vector2(32, 64) - (new Vector2(16, 32) * setScale);
 
             int idleFrame = IdleFrame(idles.standby);
 
@@ -102,19 +101,18 @@ namespace StardewDruid.Character
                 idleFrames[idles.standby][0][idleFrame],
                 Color.White * fade,
                 0f,
-                Vector2.Zero,
+                new Vector2(16),
                 setScale,
                 (netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3 ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 drawLayer
             );
 
-            DrawShadow(b, localPosition, drawLayer);
+            DrawShadow(b, spritePosition, drawLayer);
 
         }
 
-        public override void DrawWalk(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawWalk(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
-            Vector2 spritePosition = localPosition + new Vector2(32, 64) - (new Vector2(16, 32) * setScale);
 
             if (netMovement.Value == (int)movements.run)
             {
@@ -124,7 +122,7 @@ namespace StardewDruid.Character
                     runningFrames[netDirection.Value][moveFrame],
                     Color.White * fade,
                     0f,
-                    Vector2.Zero,
+                    new Vector2(16),
                     setScale,
                     (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                     drawLayer
@@ -138,43 +136,53 @@ namespace StardewDruid.Character
                     walkFrames[netDirection.Value][moveFrame],
                     Color.White * fade,
                     0f,
-                    Vector2.Zero,
+                    new Vector2(16),
                     setScale,
                     (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                     drawLayer
                 );
 
             }
-            DrawShadow(b, localPosition, drawLayer);
+            DrawShadow(b, spritePosition, drawLayer);
         }
 
-        public override void DrawShadow(SpriteBatch b, Vector2 localPosition, float drawLayer)
+        public override void DrawShadow(SpriteBatch b, Vector2 spritePosition, float drawLayer)
         {
 
             float fade = fadeOut == 0 ? 0.35f : fadeOut * 0.35f;
 
-            Vector2 shadowPosition = localPosition + new Vector2(32,56);
+            Vector2 shadowPosition = spritePosition + new Vector2(0, setScale * 12);
 
             if (netDirection.Value % 2 == 1)
             {
                 shadowPosition.Y += 4;
             }
 
-            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * fade, 0.0f, new Vector2(24), setScale/2, 0, drawLayer - 0.0001f);
+            b.Draw(
+                Mod.instance.iconData.cursorTexture, 
+                shadowPosition, 
+                Mod.instance.iconData.shadowRectangle, 
+                Color.White * fade, 
+                0.0f, 
+                new Vector2(24), 
+                setScale/2, 
+                0, 
+                drawLayer - 0.0001f
+            );
 
         }
 
         public override Rectangle GetBoundingBox()
         {
 
-            if (netDirection.Value % 2 == 0)
-            {
+            //if (netDirection.Value % 2 == 0)
+            //{
 
                 return new Rectangle((int)Position.X + 8, (int)Position.Y + 8, 48, 48);
 
-            }
+            //}
 
-            return new Rectangle((int)Position.X - 16, (int)Position.Y + 8, 96, 48);
+            //return new Rectangle((int)Position.X - 16, (int)Position.Y + 8, 96, 48);
 
         }
 

@@ -38,12 +38,6 @@ namespace StardewDruid.Character
             
             base.LoadOut();
 
-            WeaponLoadout();
-
-            weaponRender.LoadWeapon(WeaponRender.weapons.carnyx);
-
-            weaponRender.LoadWeapon(WeaponRender.weapons.bazooka);
-
             specialFrames[specials.launch] = CharacterRender.WeaponLaunch();
 
             idleFrames[idles.standby] = new(specialFrames[specials.sweep]);
@@ -68,18 +62,66 @@ namespace StardewDruid.Character
                 },
             };
 
+            WeaponLoadout();
+
+            switch(characterType)
+            {
+
+                default:
+                case CharacterHandle.characters.Shadowtin:
+
+                    weaponRender.LoadWeapon(WeaponRender.weapons.carnyx);
+
+                    break;
+
+                case CharacterHandle.characters.DarkRogue:
+
+                    weaponRender.LoadWeapon(WeaponRender.weapons.estoc);
+
+                    idleFrames[idles.kneel] = new()
+                    {
+                        [0] = new()
+                        {
+                            new Rectangle(128, 32, 32, 32),
+                        },
+
+                    };
+
+                    break;
+
+                case CharacterHandle.characters.DarkGoblin:
+
+                    weaponRender.LoadWeapon(WeaponRender.weapons.axe);
+
+                    idleFrames[idles.kneel] = new()
+                    {
+                        [0] = new()
+                        {
+                            new Rectangle(128, 32, 32, 32),
+                        },
+
+                    };
+
+                    break;
+
+
+
+            }
+
+            weaponRender.LoadWeapon(WeaponRender.weapons.bazooka);
+
             restSet = true;
 
         }
 
-        public override void DrawDash(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawDash(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
 
 
             if (netDash.Value != (int)dashes.smash)
             {
 
-                base.DrawDash(b, localPosition, drawLayer, fade);
+                base.DrawDash(b, spritePosition, drawLayer, fade);
 
                 return;
 
@@ -89,7 +131,7 @@ namespace StardewDruid.Character
 
             int dashSetto = Math.Min(dashFrame, (dashFrames[(dashes)netDash.Value][dashSeries].Count - 1));
 
-            Vector2 dashVector = SpritePosition(localPosition) - new Vector2(0, dashHeight);
+            Vector2 dashVector = spritePosition - new Vector2(0, dashHeight);
 
             Rectangle dashTangle = dashFrames[(dashes)netDash.Value][dashSeries][dashSetto];
 
@@ -105,7 +147,7 @@ namespace StardewDruid.Character
                 drawLayer
             );
 
-            DrawShadow(b, localPosition, drawLayer);
+            DrawShadow(b, spritePosition, drawLayer);
 
             weaponRender.DrawWeapon(b, dashVector - new Vector2(16)*setScale, drawLayer, new() { scale = setScale, source = dashTangle, flipped = SpriteFlip() });
 
@@ -118,9 +160,8 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawSweep(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawSweep(SpriteBatch b, Vector2 sweepVector, float drawLayer, float fade)
         {
-            Vector2 sweepVector = SpritePosition(localPosition);
 
             Rectangle sweepFrame = specialFrames[(specials)netSpecial.Value][netDirection.Value][specialFrame];
 
@@ -136,7 +177,7 @@ namespace StardewDruid.Character
                 drawLayer
             );
 
-            DrawShadow(b, localPosition, drawLayer);
+            DrawShadow(b, sweepVector, drawLayer);
 
             weaponRender.DrawWeapon(b, sweepVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = sweepFrame, });
 
@@ -145,16 +186,14 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawAlert(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawAlert(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
-
-            Vector2 alertVector = SpritePosition(localPosition);
 
             Rectangle alertFrame = idleFrames[idles.alert][netDirection.Value][0];
 
             b.Draw(
                  characterTexture,
-                 alertVector,
+                 spritePosition,
                  alertFrame,
                  Color.White * fade,
                  0f,
@@ -164,22 +203,20 @@ namespace StardewDruid.Character
                  drawLayer
              );
 
-            DrawShadow(b, localPosition, drawLayer);
+            DrawShadow(b, spritePosition, drawLayer);
 
-            weaponRender.DrawWeapon(b, alertVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = alertFrame, flipped = SpriteAngle() });
+            weaponRender.DrawWeapon(b, spritePosition - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = alertFrame, flipped = SpriteAngle() });
 
         }
 
-        public override void DrawLaunch(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawLaunch(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
-
-            Vector2 launchVector = SpritePosition(localPosition);
 
             Rectangle launchFrame = specialFrames[specials.launch][netDirection.Value][specialFrame];
 
             b.Draw(
                 characterTexture,
-                launchVector,
+                spritePosition,
                 launchFrame,
                 Color.White * fade,
                 0.0f,
@@ -189,16 +226,16 @@ namespace StardewDruid.Character
                 drawLayer
             );
 
-            DrawShadow(b, localPosition, drawLayer);
+            DrawShadow(b, spritePosition, drawLayer);
 
-            weaponRender.DrawFirearm(b, launchVector - new Vector2(16) * setScale, drawLayer, new() { scale = 4f, source = launchFrame, flipped = SpriteFlip() });
+            weaponRender.DrawFirearm(b, spritePosition - new Vector2(16) * setScale, drawLayer, new() { scale = 4f, source = launchFrame, flipped = SpriteFlip() });
 
         }
 
-        public override void DrawRest(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawRest(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
 
-            base.DrawRest(b, localPosition, drawLayer+0.064f, fade);
+            base.DrawRest(b, spritePosition, drawLayer+0.064f, fade);
 
         }
 

@@ -107,6 +107,7 @@ namespace StardewDruid.Journal
                 IconData.relics.book_letters,
                 IconData.relics.book_manual,
                 IconData.relics.book_druid,
+                IconData.relics.book_knight,
             },
             [relicsets.boxes] = new() {
                 IconData.relics.box_measurer,
@@ -124,6 +125,7 @@ namespace StardewDruid.Journal
                 IconData.relics.skull_gelatin,
                 IconData.relics.skull_cannoli,
                 IconData.relics.skull_fox,
+                IconData.relics.golden_core,
             },
         };
 
@@ -260,9 +262,22 @@ namespace StardewDruid.Journal
                             case relicsets.tactical:
                             case relicsets.runestones:
                             case relicsets.avalant:
-                            case relicsets.books:
                             case relicsets.boxes:
                             case relicsets.restore:
+
+                                content.relicColours[0] = Color.Black * 0.01f;
+
+                                break;
+
+                            case relicsets.books:
+
+                                if (relicName == IconData.relics.book_knight)
+                                {
+
+                                    content.active = false;
+
+                                    break;
+                                }
 
                                 content.relicColours[0] = Color.Black * 0.01f;
 
@@ -368,14 +383,54 @@ namespace StardewDruid.Journal
 
         }
 
-        public int RelicFunction(string id)
+        public static void WarpFunction() 
+        {
+
+            List<IconData.relics> access = new()
+            {
+                IconData.relics.wayfinder_stone,
+                IconData.relics.wayfinder_pot,
+                IconData.relics.wayfinder_censer,
+                IconData.relics.wayfinder_key,
+                IconData.relics.wayfinder_lantern,
+                IconData.relics.wayfinder_glove,
+                IconData.relics.wayfinder_water,
+                IconData.relics.wayfinder_ceremonial,
+                IconData.relics.wayfinder_eye,
+
+            };
+
+            foreach(IconData.relics relic in access)
+            {
+
+                if (!HasRelic(relic))
+                {
+
+                    continue;
+
+                }
+
+                if(RelicFunction(relic.ToString()) == 1)
+                {
+
+                    return;
+
+                }
+
+            }
+
+            Game1.player.currentLocation.playSound(SpellHandle.sounds.ghost.ToString());
+
+        }
+
+        public static int RelicFunction(string id)
         {
 
             if (Mod.instance.activeEvent.Count > 0) { return 0; }
 
-            Relic relic = reliquary[id];
+            IconData.relics relic = Enum.Parse<IconData.relics>(id);
 
-            switch (relic.relic)
+            switch (relic)
             {
 
                 case IconData.relics.effigy_crest:
@@ -387,18 +442,26 @@ namespace StardewDruid.Journal
 
                     }
 
-                    if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Effigy))
+                    CharacterHandle.characters crestSummon = CharacterHandle.characters.Effigy;
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.challengeBones))
+                    {
+
+                        crestSummon = CharacterHandle.characters.Aldebaran;
+
+                    }
+
+                    if (Mod.instance.characters.ContainsKey(crestSummon))
                     {
 
                         List<StardewDruid.Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, Character.Character.mode.track, };
 
-                        if (!reservedModes.Contains(Mod.instance.characters[CharacterHandle.characters.Effigy].modeActive))
+                        if (!reservedModes.Contains(Mod.instance.characters[crestSummon].modeActive))
                         {
 
-                            Mod.instance.characters[CharacterHandle.characters.Effigy].SwitchToMode(Character.Character.mode.track, Game1.player);
+                            Mod.instance.characters[crestSummon].SwitchToMode(Character.Character.mode.track, Game1.player);
 
-                            Mod.instance.CastMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Effigy) +
-                                DialogueData.Strings(DialogueData.stringkeys.joinedPlayer), 0, true);
+                            Mod.instance.CastMessage(CharacterHandle.CharacterTitle(crestSummon) + DialogueData.Strings(DialogueData.stringkeys.joinedPlayer), 0, true);
 
                             return 1;
 
@@ -503,11 +566,15 @@ namespace StardewDruid.Journal
                     if (Game1.player.currentLocation is Farm || Game1.player.currentLocation is FarmHouse)
                     {
 
-                        Game1.warpFarmer(LocationData.druid_grove_name, 21, 13, 0);
+                        //Game1.warpFarmer(LocationData.druid_grove_name, 21, 13, 0);
 
-                        Game1.xLocationAfterWarp = 21;
+                        //Game1.xLocationAfterWarp = 21;
 
-                        Game1.yLocationAfterWarp = 13;
+                        //Game1.yLocationAfterWarp = 13;
+
+                        SpellHandle gravesWarp = new(Mod.instance.locations[LocationData.druid_grove_name], new Vector2(20, 15), Game1.player.Position) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, sound = SpellHandle.sounds.wand, projectile = 0 };
+
+                        Mod.instance.spellRegister.Add(gravesWarp);
 
                         return 1;
 
@@ -516,13 +583,25 @@ namespace StardewDruid.Journal
                     if (Game1.player.currentLocation is Grove)
                     {
 
-                        Wand wand = new();
+                        //Wand wand = new();
 
-                        wand.lastUser = Game1.player;
+                        //wand.lastUser = Game1.player;
 
-                        wand.DoFunction(Game1.player.currentLocation, 0, 0, 0, Game1.player);
+                        //wand.DoFunction(Game1.player.currentLocation, 0, 0, 0, Game1.player);
 
-                        return 1;
+                        FarmHouse homeOfFarmer = Utility.getHomeOfFarmer(Game1.player);
+
+                        if (homeOfFarmer != null)
+                        {
+                            Point frontDoorSpot = homeOfFarmer.getFrontDoorSpot();
+
+                            SpellHandle gravesWarp = new(Game1.getFarm(), new Vector2(frontDoorSpot.X, frontDoorSpot.Y), Game1.player.Position) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, sound = SpellHandle.sounds.wand, projectile = 0 };
+
+                            Mod.instance.spellRegister.Add(gravesWarp);
+
+                            return 1;
+
+                        }
 
                     }
 
@@ -562,13 +641,19 @@ namespace StardewDruid.Journal
 
                 case IconData.relics.wayfinder_key:
 
+                    /*SpellHandle keyWarp = new(Mod.instance.locations[LocationData.druid_graveyard_name], new Vector2(28, 29), new Vector2(0, 0)) { type = SpellHandle.spells.warp, }; ;
+
+                    Mod.instance.spellRegister.Add(keyWarp);
+
+                    return 1; */
+
                     if (Game1.player.currentLocation is Town)
                     {
 
-                        if (Vector2.Distance(Game1.player.Position, new Vector2(47, 88) * 64) <= 480)
+                        if (Vector2.Distance(Game1.player.Position, new Vector2(47, 88) * 64) <= 640)
                         {
 
-                            SpellHandle warp = new(Mod.instance.locations[LocationData.druid_graveyard_name], new Vector2(28, 29), new Vector2(0, 0)) { type = SpellHandle.spells.warp, };
+                            SpellHandle warp = new(Mod.instance.locations[LocationData.druid_graveyard_name], new Vector2(28, 29), Game1.player.Position) { type = SpellHandle.spells.warp, projectile = 0, };
 
                             Mod.instance.spellRegister.Add(warp);
 
@@ -592,7 +677,7 @@ namespace StardewDruid.Journal
 
                         Event.Access.AccessHandle lanternAccess = new();
 
-                        lanternAccess.AccessSetup("UndergroundMine60", Location.LocationData.druid_chapel_name, new(24, 13), new(27, 30));
+                        lanternAccess.AccessSetup("UndergroundMine60", Location.LocationData.druid_chapel_name, new(17, 10), new(27, 30),Event.Access.AccessHandle.types.door);
 
                         lanternAccess.AccessCheck(Game1.player.currentLocation);
 
@@ -610,7 +695,7 @@ namespace StardewDruid.Journal
                         //if (Vector2.Distance(Game1.player.Position, new Vector2(79, 78) * 64) <= 1560)
                         //{
 
-                            SpellHandle warpGlove = new(Mod.instance.locations[LocationData.druid_clearing_name], new Vector2(28, 8), new Vector2(0, 2)) { type = SpellHandle.spells.warp, };
+                            SpellHandle warpGlove = new(Mod.instance.locations[LocationData.druid_clearing_name], new Vector2(28, 8), Game1.player.Position) { type = SpellHandle.spells.warp, projectile = 2, };
 
                             Mod.instance.spellRegister.Add(warpGlove);
 
@@ -648,20 +733,31 @@ namespace StardewDruid.Journal
 
                     Vector2 destination;
 
-                    if (Game1.player.currentLocation is MineShaft)
+                    if (Game1.player.currentLocation is MineShaft mineShaft)
                     {
 
-                        destination = WarpData.WarpXZone(Game1.player.currentLocation);
+                        if(mineShaft.mineLevel == MineShaft.quarryMineShaft)
+                        {
+
+                            SpellHandle warpEye = new(Mod.instance.locations[LocationData.druid_court_name], new Vector2((int)28, (int)29), Game1.player.Position) { type = SpellHandle.spells.warp, projectile = 0, };
+
+                            Mod.instance.spellRegister.Add(warpEye);
+
+                            return 1;
+
+                        }
+
+                        destination = WarpData.WarpXZone(mineShaft);
 
 
                     }
                     else if (Game1.player.currentLocation is Town)
                     {
 
-                        if (Vector2.Distance(Game1.player.Position, new Vector2(98, 8) * 64) <= 640)
+                        if (Vector2.Distance(Game1.player.Position, new Vector2(98, 8) * 64) <= 800)
                         {
 
-                            SpellHandle warpEye = new(Mod.instance.locations[LocationData.druid_court_name], new Vector2((int)28, (int)29), new Vector2(0, 0)) { type = SpellHandle.spells.warp, };
+                            SpellHandle warpEye = new(Mod.instance.locations[LocationData.druid_court_name], new Vector2((int)28, (int)29), Game1.player.Position) { type = SpellHandle.spells.warp, projectile = 0, };
 
                             Mod.instance.spellRegister.Add(warpEye);
 
@@ -679,7 +775,7 @@ namespace StardewDruid.Journal
 
                         destination = WarpData.WarpEntrance(Game1.getLocationFromName("Town"), new Vector2(98, 8) * 64);
 
-                        SpellHandle warp = new(backToTown, ModUtility.PositionToTile(destination), new Vector2(0, 0)) { type = SpellHandle.spells.warp, };
+                        SpellHandle warp = new(backToTown, ModUtility.PositionToTile(destination), Game1.player.Position) { type = SpellHandle.spells.warp, projectile = 0, };
 
                         Mod.instance.spellRegister.Add(warp);
 
@@ -755,6 +851,7 @@ namespace StardewDruid.Journal
                 case IconData.relics.book_letters:
                 case IconData.relics.book_manual:
                 case IconData.relics.book_druid:
+                case IconData.relics.book_knight:
 
                     return 2;
 
@@ -790,18 +887,27 @@ namespace StardewDruid.Journal
 
                     }
 
-                    if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Effigy))
+                    CharacterHandle.characters crestSummon = CharacterHandle.characters.Effigy;
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.challengeBones))
+                    {
+
+                        crestSummon = CharacterHandle.characters.Aldebaran;
+
+                    }
+
+                    if (Mod.instance.characters.ContainsKey(crestSummon))
                     {
 
                         List<StardewDruid.Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, };
 
-                        if (!reservedModes.Contains(Mod.instance.characters[CharacterHandle.characters.Effigy].modeActive))
+                        if (!reservedModes.Contains(Mod.instance.characters[crestSummon].modeActive))
                         {
 
-                            Mod.instance.characters[CharacterHandle.characters.Effigy].SwitchToMode(Character.Character.mode.home, Game1.player);
+                            Mod.instance.characters[crestSummon].SwitchToMode(Character.Character.mode.home, Game1.player);
 
                             Mod.instance.CastMessage(
-                                CharacterHandle.CharacterTitle(CharacterHandle.characters.Effigy) +
+                                CharacterHandle.CharacterTitle(crestSummon) +
                                 DialogueData.Strings(DialogueData.stringkeys.returnedHome), 0, true);
 
                             return 1;
@@ -887,7 +993,7 @@ namespace StardewDruid.Journal
 
                         List<StardewDruid.Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, };
 
-                        if (!reservedModes.Contains(Mod.instance.characters[CharacterHandle.characters.Shadowtin].modeActive))
+                        if (!reservedModes.Contains(Mod.instance.characters[CharacterHandle.characters.Blackfeather].modeActive))
                         {
 
                             Mod.instance.characters[CharacterHandle.characters.Blackfeather].SwitchToMode(Character.Character.mode.home, Game1.player);
@@ -927,7 +1033,7 @@ namespace StardewDruid.Journal
 
                         access = new();
 
-                        access.AccessSetup("UndergroundMine60", Location.LocationData.druid_chapel_name, new(24, 13), new(27, 30));
+                        access.AccessSetup("UndergroundMine60", Location.LocationData.druid_chapel_name, new(17,10), new(27, 30), Event.Access.AccessHandle.types.door);
 
                         access.AccessCheck(Game1.player.currentLocation, true);
 
@@ -1260,6 +1366,13 @@ namespace StardewDruid.Journal
             foreach (IconData.relics relic in lines[relicset])
             {
 
+                if (relic == IconData.relics.book_knight)
+                {
+
+                    continue;
+
+                }
+
                 if (HasRelic(relic))
                 {
 
@@ -1273,7 +1386,6 @@ namespace StardewDruid.Journal
 
         }
 
-        
         public Dictionary<relicsets, List<string>> titles = new()
         {
 
@@ -1391,6 +1503,7 @@ namespace StardewDruid.Journal
                 relic = IconData.relics.blackfeather_glove,
                 line = RelicData.relicsets.companion,
                 function = true,
+                cancel = true,
                 description = Mod.instance.Helper.Translation.Get("RelicData.323.2"),
                 details = new(){
                     Mod.instance.Helper.Translation.Get("RelicData.323.3"),
@@ -1567,6 +1680,7 @@ namespace StardewDruid.Journal
                 {Mod.instance.Helper.Translation.Get("RelicData.703"),
                     Mod.instance.Helper.Translation.Get("RelicData.154"),
                     Mod.instance.Helper.Translation.Get("RelicData.155"),
+                    Mod.instance.Helper.Translation.Get("RelicData.346.1"),
                 },
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.156"),
             };
@@ -2018,6 +2132,32 @@ namespace StardewDruid.Journal
 
             };
 
+            relics[IconData.relics.book_knight.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.343.4"),
+                relic = IconData.relics.book_knight,
+                line = RelicData.relicsets.books,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.343.5"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.343.6"),
+
+                narrative = new()
+                {
+
+                    Mod.instance.Helper.Translation.Get("RelicData.343.7"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.8"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.9"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.10"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.11"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.12"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.13"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.14"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.15"),
+
+                }
+
+            };
+
             // ====================================================================
             // Fates Relics
 
@@ -2148,9 +2288,19 @@ namespace StardewDruid.Journal
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.339.14"),
             };
 
+            relics[IconData.relics.golden_core.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.343.1"),
+                relic = IconData.relics.golden_core,
+                line = RelicData.relicsets.skulls,
+                description = Mod.instance.Helper.Translation.Get("RelicData.343.2"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.343.3"),
+            };
+
             return relics;
 
         }
+
 
     }
 

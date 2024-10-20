@@ -27,7 +27,32 @@ namespace StardewDruid.Event.Challenge
     public class ChallengeAtoll : EventHandle
     {
 
-        public List<Vector2> cannonPositions = new();
+        public Dictionary<int,Vector2> eventVectors = new()  
+        {
+
+            [1] = new Vector2(51, 8),
+            [2] = new Vector2(46, 13),
+
+            [3] = new Vector2(44, 6),
+            [4] = new Vector2(44, 12),
+
+            [5] = new Vector2(41, 5),
+            [6] = new Vector2(41, 12),
+
+            [7] = new Vector2(52, 10),
+            [8] = new Vector2(48, 12),
+
+            [9] = new Vector2(54, 14),
+            [10] = new Vector2(49, 16),
+
+            [101] = new Vector2(47, 3),
+            [102] = new Vector2(48, 5),
+            [103] = new Vector2(54, 9),
+
+            [201] = new Vector2(47, 19),
+            [202] = new Vector2(43, 12),
+            [203] = new Vector2(36, 10),
+        };
 
         public ChallengeAtoll()
         {
@@ -45,7 +70,7 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle = new(origin, location);
 
-            monsterHandle.spawnSchedule = new();
+            /*monsterHandle.spawnSchedule = new();
 
             for (int i = 1; i <= 12; i++)
             {
@@ -64,13 +89,11 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.spawnRange = new(16, 7);
 
-            monsterHandle.spawnGroup = true;
+            monsterHandle.spawnGroup = true;*/
 
             EventBar(Mod.instance.questHandle.quests[eventId].title,0);
 
-            ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
-
-            //Mod.instance.iconData.AnimateBolt(location, origin);
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.nature, new()) { scheme = IconData.schemes.mists, sound = SpellHandle.sounds.getNewSpecialItem, });
 
             Mod.instance.spellRegister.Add(new(origin, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
 
@@ -84,24 +107,6 @@ namespace StardewDruid.Event.Challenge
             HoldCompanions();
 
             location.playSound("thunder_small");
-
-            cannonPositions = new()
-            {
-                monsterHandle.spawnWithin + new Vector2(1,9),
-
-                monsterHandle.spawnWithin + new Vector2(7,9),
-
-                monsterHandle.spawnWithin + new Vector2(13,9),
-
-                monsterHandle.spawnWithin + new Vector2(-2,4),
-
-                monsterHandle.spawnWithin + new Vector2(4,4),
-
-                monsterHandle.spawnWithin + new Vector2(10,4),
-
-                monsterHandle.spawnWithin + new Vector2(16,4),
-
-            };
 
             Wisps wispNew = new();
 
@@ -130,6 +135,73 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.SpawnCheck();
 
+            if(activeCounter > 5)
+            {
+
+                int spawn1 = -1;
+
+                int spawn2 = 2;
+
+                switch (activeCounter % 25)
+                {
+
+                    case 1:
+
+                        spawn1 = 1;
+                        spawn2 = 2;
+                        break;
+
+                    case 6:
+
+                        spawn1 = 3;
+                        spawn2 = 4;
+                        break;
+
+                    case 11:
+
+                        spawn1 = 5;
+                        spawn2 = 6;
+                        break;
+
+                    case 16:
+
+                        spawn1 = 7;
+                        spawn2 = 8;
+                        break;
+
+                    case 21:
+
+                        spawn1 = 9;
+                        spawn2 = 10;
+
+                        break;
+                }
+
+                if(spawn1 != -1)
+                {
+
+                    Phantom phantom1 = new(eventVectors[spawn1], Mod.instance.CombatDifficulty());
+
+                    phantom1.RandomTemperment();
+
+                    monsterHandle.SpawnImport(phantom1, false);
+
+                    phantom1.SetMode(3);
+
+                    phantom1.ResetActives();
+
+                    phantom1.PerformFollow(eventVectors[spawn2] * 64);
+
+                    phantom1.followTimer = 72;
+
+                    phantom1.fadeFactor = 0.005f;
+
+
+                }
+
+
+            }
+
             if (bosses.Count > 0)
             {
 
@@ -153,7 +225,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 1:
 
-                    bosses[0] = new Phantom(ModUtility.PositionToTile(origin) - new Vector2(5), Mod.instance.CombatDifficulty());
+                    bosses[0] = new Phantom(eventVectors[1], Mod.instance.CombatDifficulty());
 
                     bosses[0].SetMode(3);
 
@@ -163,28 +235,42 @@ namespace StardewDruid.Event.Challenge
 
                     bosses[0].update(Game1.currentGameTime, location);
 
-                    bosses[0].LookAtFarmer();
+                    bosses[0].ResetActives();
 
-                    (bosses[0] as Phantom).fadeFactor = 0.75f;
+                    bosses[0].PerformFollow(eventVectors[2] * 64);
+
+                    bosses[0].followTimer = 132;
+
+                    (bosses[0] as Phantom).fadeFactor = 0.005f;
 
                     voices[0] = bosses[0];
 
                     SpawnData.MonsterDrops(bosses[0], SpawnData.drops.seafarer);
 
-                    location.playSound(SpellHandle.sounds.thunder_small.ToString());
+                    break;
 
-                    break;
                 case 2:
+
                     location.playSound(SpellHandle.sounds.thunder_small.ToString());
                     break;
+
                 case 3:
-                    location.playSound(SpellHandle.sounds.thunder_small.ToString());
-                    break;
-                case 4:
-                    location.playSound(SpellHandle.sounds.thunder_small.ToString());
+
+                    bosses[0].ResetActives();
+
                     break;
 
                 case 5:
+                    
+                    location.playSound(SpellHandle.sounds.thunder_small.ToString());
+
+                    bosses[0].ResetActives();
+
+                    bosses[0].netSpecialActive.Set(true);
+
+                    bosses[0].specialTimer = 300;
+
+                    bosses[0].specialInterval = 180;
 
                     SetTrack("PIRATE_THEME");
 
@@ -244,14 +330,16 @@ namespace StardewDruid.Event.Challenge
 
             DialogueCue(995);
 
-            for (int k = 0; k < cannonPositions.Count; k++)
+            for (int k = 1; k < 4; k++)
             {
 
-                Vector2 impact = cannonPositions[k] * 64;
+                Vector2 impact = eventVectors[200+k] * 64;
 
-                SpellHandle missile = new(location, impact, new(impact.X > 27 * 64 ? 55 * 64 : 0, impact.Y), 256, bosses[0].GetThreat(), Mod.instance.CombatDamage());
+                SpellHandle missile = new(location, impact, eventVectors[100 + k] * 64, 256, bosses[0].GetThreat(), Mod.instance.CombatDamage());
 
                 missile.type = SpellHandle.spells.ballistic;
+
+                missile.impactLayer = 999f;
 
                 missile.projectile = 3;
 
@@ -259,7 +347,7 @@ namespace StardewDruid.Event.Challenge
 
                 missile.display = IconData.impacts.bomb;
 
-                missile.scheme = IconData.schemes.death;
+                missile.scheme = IconData.schemes.stars;
 
                 missile.indicator = IconData.cursors.death;
 
@@ -272,6 +360,13 @@ namespace StardewDruid.Event.Challenge
 
                 Mod.instance.spellRegister.Add(missile);
 
+                SpellHandle effect = new(eventVectors[100 + k]*64, 256, impacts.flashbang, new()) { impactLayer = 999f };
+
+                Mod.instance.spellRegister.Add(effect);
+
+                SpellHandle effect2 = new(eventVectors[100 + k] * 64, 256, impacts.plume, new()) { counter = -15, impactLayer = 999f };
+
+                Mod.instance.spellRegister.Add(effect2);
             }
 
             List<string> textList = new()
@@ -301,16 +396,18 @@ namespace StardewDruid.Event.Challenge
 
             DialogueCue(994);
 
+            bosses[0].ResetActives();
+
             bosses[0].netSpecialActive.Set(true);
 
             bosses[0].specialTimer = 300;
 
             bosses[0].specialInterval = 180;
 
-            for (int k = 0; k < cannonPositions.Count; k++)
+            for (int k = 1; k < 4; k++)
             {
 
-                Vector2 impact = cannonPositions[k] * 64;
+                Vector2 impact = eventVectors[200 + k] * 64;
 
                 CursorAdditional addEffects = new() { interval = 3000, scale = 3, scheme = IconData.schemes.death, alpha = 0.4f, };
 

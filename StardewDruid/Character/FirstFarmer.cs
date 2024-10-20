@@ -4,6 +4,7 @@ using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
+using StardewDruid.Data;
 using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewValley;
@@ -52,13 +53,14 @@ namespace StardewDruid.Character
 
             weaponRender.LoadWeapon(Render.WeaponRender.weapons.sword);
 
+            weaponRender.swordScheme = IconData.schemes.sword_warp;
+
         }
 
 
-        public override void DrawHat(SpriteBatch b, Vector2 localPosition,  float drawLayer, float fade)
+        public override void DrawHat(SpriteBatch b, Vector2 spritePosition,  float drawLayer, float fade)
         {
 
-            Vector2 spritePosition = SpritePosition(localPosition);
 
             int UseIndex = hatsIndex + 0;
 
@@ -122,14 +124,14 @@ namespace StardewDruid.Character
             }
 
         }
-        public override void DrawDash(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawDash(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
 
 
             if (netDash.Value != (int)dashes.smash)
             {
 
-                base.DrawDash(b, localPosition, drawLayer, fade);
+                base.DrawDash(b, spritePosition, drawLayer, fade);
 
                 return;
 
@@ -139,7 +141,7 @@ namespace StardewDruid.Character
 
             int dashSetto = Math.Min(dashFrame, (dashFrames[(dashes)netDash.Value][dashSeries].Count - 1));
 
-            Vector2 dashVector = SpritePosition(localPosition) - new Vector2(0, dashHeight);
+            Vector2 dashVector = spritePosition - new Vector2(0, dashHeight);
 
             Rectangle dashTangle = dashFrames[(dashes)netDash.Value][dashSeries][dashSetto];
 
@@ -155,7 +157,7 @@ namespace StardewDruid.Character
                 drawLayer
             );
 
-            DrawShadow(b, localPosition, drawLayer);
+            DrawShadow(b, spritePosition, drawLayer);
 
             weaponRender.DrawWeapon(b, dashVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = dashTangle, flipped = SpriteFlip() });
 

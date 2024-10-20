@@ -99,6 +99,14 @@ namespace StardewDruid
                 setValue: value => Config.herbalismButtons = value
             );
 
+            configMenu.AddKeybindList(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.348.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.348.2"),
+                getValue: () => Config.warpButtons,
+                setValue: value => Config.warpButtons = value
+            );
+
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => Mod.instance.Helper.Translation.Get("ModConfig.65"),
@@ -126,13 +134,13 @@ namespace StardewDruid
                 setValue: value => Config.modDifficulty = value
             );
 
-            configMenu.AddBoolOption(
+            /*configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => Mod.instance.Helper.Translation.Get("ModConfig.92"),
                 tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.93"),
                 getValue: () => Config.disableHands,
                 setValue: value => Config.disableHands = value
-            );
+            );*/
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
@@ -161,13 +169,13 @@ namespace StardewDruid
                 setValue: value => Config.setOnce = value
             );
 
-            configMenu.AddBoolOption(
+            /*configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => Mod.instance.Helper.Translation.Get("ModConfig.128"),
                 tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.129"),
                 getValue: () => Config.convert219,
                 setValue: value => Config.convert219 = value
-            );
+            );*/
 
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,

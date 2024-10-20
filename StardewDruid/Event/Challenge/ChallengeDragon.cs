@@ -63,7 +63,9 @@ namespace StardewDruid.Event.Challenge
 
             warpExit = new Warp(26, 32, "Mine", 17, 6, flipFarmer: false);
 
-            Mod.instance.iconData.ImpactIndicator(location, origin, impacts.smoke, 4f, new());
+            Mod.instance.iconData.ImpactIndicator(location, origin - new Vector2(0,128), impacts.smoke, 6f, new());
+
+            Mod.instance.iconData.ImpactIndicator(location, origin - new Vector2(0,128), impacts.puff, 6f, new());
 
             bosses[0] = new Dragon(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
 

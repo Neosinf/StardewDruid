@@ -142,7 +142,7 @@ namespace StardewDruid.Journal
 
             }
 
-            int function = Mod.instance.relicsData.RelicFunction(relicId);
+            int function = RelicData.RelicFunction(relicId);
 
             switch (function)
             {

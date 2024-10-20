@@ -67,8 +67,25 @@ namespace StardewDruid.Cast.Weald
             if (location is Farm farmLocation)
             {
 
+                foreach(Building building in farmLocation.buildings)
+                {
 
-                Vector2 bowl = farmLocation.GetStarterPetBowlLocation();
+                    if(building is PetBowl petBowl)
+                    {
+                        
+                        if (Vector2.Distance(new Vector2(petBowl.tileX.Value,petBowl.tileY.Value)*64, origin) <= threshold)
+                        {
+
+                            petBowl.watered.Set(true);
+
+                        }
+                        
+
+                    }
+
+                }
+
+                /*Vector2 bowl = farmLocation.GetStarterPetBowlLocation();
 
                 if (Vector2.Distance(bowl * 64, origin) <= threshold)
                 {
@@ -76,8 +93,8 @@ namespace StardewDruid.Cast.Weald
                     Mod.instance.virtualCan.WaterLeft = 100;
 
                     farmLocation.performToolAction(Mod.instance.virtualCan, (int)bowl.X + 1, (int)bowl.Y);
-
-                }
+                
+                }*/
 
                 foreach (NPC witness in location.characters)
                 {

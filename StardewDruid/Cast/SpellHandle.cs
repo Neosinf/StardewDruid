@@ -17,6 +17,9 @@ using StardewDruid.Journal;
 using static StardewValley.Menus.QuestContainerMenu;
 using static System.Net.Mime.MediaTypeNames;
 using static StardewDruid.Character.Character;
+using StardewDruid.Cast.Fates;
+using static StardewValley.Minigames.TargetGame;
+using StardewDruid.Location;
 
 
 namespace StardewDruid.Cast
@@ -78,6 +81,8 @@ namespace StardewDruid.Cast
 
         public Vector2 impact;
 
+        public float impactLayer;
+
         public Monster.Boss boss;
 
         public List<StardewValley.Monsters.Monster> monsters = new();
@@ -113,6 +118,9 @@ namespace StardewDruid.Cast
             trick,
             zap,
             warp,
+            warpout,
+            warpin,
+            shockwave,
         }
 
         public spells type;
@@ -148,6 +156,7 @@ namespace StardewDruid.Cast
             backstab,
             crate,
             teleport,
+            stomping,
 
         }
 
@@ -186,6 +195,7 @@ namespace StardewDruid.Cast
             crow,
             cat,
             dog_bark,
+            getNewSpecialItem,
         }
 
         public sounds sound = sounds.none;
@@ -868,8 +878,6 @@ namespace StardewDruid.Cast
                     if(counter == 1)
                     {
 
-
-
                         TeleportStart();
 
                         if (instant)
@@ -910,7 +918,6 @@ namespace StardewDruid.Cast
                         {
 
                             monsters = ModUtility.MonsterProximity(location, new() { origin }, 64, true);
-
 
                         }
 
@@ -990,28 +997,82 @@ namespace StardewDruid.Cast
 
                 case spells.warp:
 
-                    if (counter == 1)
+                    if (external)
                     {
 
-                        Mod.instance.iconData.AnimateQuickWarp(Game1.player.currentLocation, Game1.player.Position, true);
+                        Shutdown();
+
+                        return false;
 
                     }
 
-                    if(counter == 15)
+                    if(counter == 1)
+                    {
+
+                        SpellHandle warpOut = new(Game1.player.currentLocation, Vector2.Zero, origin);
+
+                        warpOut.type = spells.warpout;
+
+                        warpOut.scheme = scheme;
+
+                        Mod.instance.spellRegister.Add(warpOut);
+
+                        if(sound != sounds.none)
+                        {
+
+                            Game1.player.currentLocation.playSound(sound.ToString());
+
+                        }
+
+                    }
+
+                    if (counter == 15)
                     {
 
                         WarpEffect();
 
+                        Vector2 warpRender = destination * 64;
+
+                        if(location is Grove)
+                        {
+
+                            warpRender.X += 32;
+
+                        }
+
+                        SpellHandle warpIn = new(location, Vector2.Zero, warpRender);
+
+                        warpIn.type = spells.warpin;
+
+                        warpIn.scheme = scheme;
+
+                        Mod.instance.spellRegister.Add(warpIn);
+
                     }
 
-                    if(counter == 60)
+                    return true;
+
+                case spells.warpout:
+                case spells.warpin:
+
+                    if (counter == 1)
                     {
 
-                        Mod.instance.iconData.AnimateQuickWarp(Game1.player.currentLocation, Game1.player.Position);
+                        if (scheme != IconData.schemes.none)
+                        {
 
+                            Mod.instance.iconData.AnimateQuickWarp(location, origin, false, IconData.warps.circle, scheme);
+
+                        }
+                        else
+                        {
+
+                            Mod.instance.iconData.AnimateQuickWarp(location, origin, type == spells.warpout);
+
+                        }
                     }
 
-                    if (counter == 75)
+                    if (counter == 15)
                     {
 
                         Shutdown();
@@ -1023,6 +1084,8 @@ namespace StardewDruid.Cast
                     return true;
 
             }
+
+            
 
             return true;
         }
@@ -1337,7 +1400,15 @@ namespace StardewDruid.Cast
         public void LaunchMissile()
         {
 
-            float targetDepth = location.IsOutdoors ? destination.Y / 10000 + 0.001f : 999f;
+            float targetDepth = impactLayer;
+
+            if (impactLayer < 0.001f)
+            {
+
+                targetDepth = location.IsOutdoors ? destination.Y / 10000 + 0.001f : 999f;
+
+
+            }
 
             if (projectileIncrements == 0)
             {
@@ -1478,7 +1549,12 @@ namespace StardewDruid.Cast
                 if(type != spells.orbital)
                 {
 
-                    construct[i].layerDepth = targetDepth + (i * 0.0001f);
+                    if (impactLayer < 0.001f)
+                    {
+
+                        construct[i].layerDepth = targetDepth + (i * 0.0001f);
+
+                    }
 
                 }
 
@@ -1773,7 +1849,7 @@ namespace StardewDruid.Cast
 
             impact = position;
 
-            construct = Mod.instance.iconData.AnimateWarpStrike(location, position, projectile);
+            construct = Mod.instance.iconData.AnimateWarpStrike(location, position, projectile, scheme);
 
         }
 
@@ -1815,9 +1891,18 @@ namespace StardewDruid.Cast
             if (display != IconData.impacts.none)
             {
 
-                float radial = Math.Min(6,(int)(radius / 64)) - 0.5f;
+                float layer = impactLayer;
 
-                Mod.instance.iconData.ImpactIndicator(location, impact, display, radial, new() { scheme = scheme,});
+                if (impactLayer < 0.001f)
+                {
+
+                    layer = -1f;
+
+                }
+
+                float radial = Math.Min(6, (int)(radius / 64)) - 0.5f;
+
+                Mod.instance.iconData.ImpactIndicator(location, impact, display, radial, new() { scheme = scheme, layer = layer });
 
             }
 
@@ -1855,18 +1940,88 @@ namespace StardewDruid.Cast
             switch (projectile)
             {
 
-                default:
                 case 0:
-                    ModUtility.AnimateRandomCritter(location, ModUtility.PositionToTile(impact));
-                    break;
+
+                    ModUtility.AnimateRandomFish(location, ModUtility.PositionToTile(impact));
+
+                    return;
 
                 case 1:
-                    ModUtility.AnimateRandomFish(location, ModUtility.PositionToTile(impact));
-                    break;
 
-                case 2:
                     ModUtility.AnimateButterflySpray(location, ModUtility.PositionToTile(impact));
-                    break;
+
+                    return;
+
+            }
+
+            List<NPC> villagers = ModUtility.GetFriendsInLocation(location, true);
+
+            foreach (NPC witness in villagers)
+            {
+
+                if (Vector2.Distance(witness.Position, impact) >= 64)
+                {
+
+                    continue;
+
+                }
+
+                bool invis = true;
+
+                if (external)
+                {
+                    
+                    if (!witness.IsInvisible)
+                    {
+
+                        continue;
+
+                    }
+
+                    invis = false;
+
+                }
+                else if(witness.IsInvisible)
+                {
+
+                    continue;
+
+                }
+
+                switch (projectile)
+                {
+
+                    default:
+                    case 2:
+
+                        Slimification slimification = new(witness, invis);
+
+                        slimification.EventActivate();
+
+                        break;
+
+                    case 3:
+
+                        Polymorph polymorph = new(witness, invis);
+
+                        polymorph.EventActivate();
+
+                        Mod.instance.iconData.ImpactIndicator(location, witness.Position - new Vector2(0,60), IconData.impacts.smoke, 5, new() { layer = 1f,});
+
+                        break;
+
+                    case 4:
+
+                        Levitate levitation = new(witness, invis);
+
+                        levitation.EventActivate();
+
+                        break;
+
+                }
+
+                return;
+
             }
 
         }
@@ -1887,9 +2042,9 @@ namespace StardewDruid.Cast
 
                 layerDepth = origin.Y / 10000,
 
-                scaleChange = 0.001f,
+                scaleChange = 0.002f,
 
-                motion = new Vector2(-0.016f, -0.064f),
+                motion = new Vector2(-0.032f, -0.096f),
 
                 timeBasedMotion = true,
 
@@ -1904,7 +2059,7 @@ namespace StardewDruid.Cast
         public void CrateOpen()
         {
 
-            TemporaryAnimatedSprite crateOpen = new(0, 167, 3, 1, origin - new Vector2(0, 64), false, false)
+            TemporaryAnimatedSprite crateOpen = new(0, 167, 3, 1, origin - new Vector2(16, 96), false, false)
             {
 
                 sourceRect = new(0, 0, 32, 64),
@@ -1913,9 +2068,9 @@ namespace StardewDruid.Cast
 
                 texture = Mod.instance.iconData.crateTexture,
 
-                scale = 2f,
+                scale = 3f,
 
-                layerDepth = origin.Y / 10000,
+                layerDepth = (origin.Y+64) / 10000,
 
             };
 
@@ -1928,7 +2083,7 @@ namespace StardewDruid.Cast
         public void CrateRelease()
         {
 
-            TemporaryAnimatedSprite crateOpen = new(0, 3000, 1, 1, origin - new Vector2(0, 64), false, false)
+            TemporaryAnimatedSprite crateOpen = new(0, 3000, 1, 1, origin - new Vector2(16, 96), false, false)
             {
 
                 sourceRect = new(64, 0, 32, 64),
@@ -1937,9 +2092,9 @@ namespace StardewDruid.Cast
 
                 texture = Mod.instance.iconData.crateTexture,
 
-                scale = 2f,
+                scale =3f,
 
-                layerDepth = origin.Y / 10000,
+                layerDepth = (origin.Y + 64) / 10000,
 
             };
 
@@ -2225,6 +2380,11 @@ namespace StardewDruid.Cast
 
                         break;
 
+                    case effects.stomping:
+
+                        StompEffect();
+
+                        break;
                 }
 
             }
@@ -2799,6 +2959,8 @@ namespace StardewDruid.Cast
 
         }
 
+        // ========================================= other effect
+
         public void CrateEffect()
         {
             
@@ -2829,7 +2991,7 @@ namespace StardewDruid.Cast
         public void WarpEffect()
         {
 
-            int direction = (int)origin.Y;
+            int direction = (int)projectile;
 
             if (direction < 0 || direction > 3)
             {
@@ -2845,7 +3007,24 @@ namespace StardewDruid.Cast
             Game1.yLocationAfterWarp = (int)destination.Y;
 
         }
+        
+        public void StompEffect()
+        {
 
+            if (external)
+            {
+
+                return;
+
+            }
+
+            Cast.Ether.Stomping stompEvent = new();
+
+            stompEvent.EventSetup(origin, "stomp" + origin.ToString());
+
+            stompEvent.EventActivate();
+
+        }
     }
 
 }

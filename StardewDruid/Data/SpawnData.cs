@@ -254,21 +254,11 @@ namespace StardewDruid.Data
                     break;
 
                 case drops.seafarer:
+                case drops.dragon:
 
                     monster.objectsToDrop.Clear();
 
-                    switch (Game1.random.Next(4))
-                    {
-                        default:
-                        case 0: monster.objectsToDrop.Add("797"); break;
-
-                        case 1: monster.objectsToDrop.Add("166"); break;
-
-                        case 2: monster.objectsToDrop.Add("265"); break;
-
-                        case 3: monster.objectsToDrop.Add("275"); break;
-
-                    }
+                    monster.objectsToDrop.Add(SpawnData.RandomTreasure().itemId.Value);
 
                     break;
 
@@ -1528,7 +1518,7 @@ namespace StardewDruid.Data
 
                 Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
 
-                if (!fish.HasContextTag("fish_legendary"))
+                if (!fish.HasContextTag("fish_legendary") && fish.Category == StardewValley.Object.FishCategory)
                 {
 
                     return fish.QualifiedItemId.Replace("(O)", "");
@@ -1542,7 +1532,7 @@ namespace StardewDruid.Data
             {
                 Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
 
-                if (!fish.HasContextTag("fish_legendary"))
+                if (!fish.HasContextTag("fish_legendary") && fish.Category == StardewValley.Object.FishCategory)
                 {
 
                     return fish.QualifiedItemId.Replace("(O)", "");
@@ -1556,7 +1546,7 @@ namespace StardewDruid.Data
             {
                 Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
 
-                if (!fish.HasContextTag("fish_legendary"))
+                if (!fish.HasContextTag("fish_legendary") && fish.Category == StardewValley.Object.FishCategory)
                 {
 
                     return fish.QualifiedItemId.Replace("(O)", "");
@@ -1570,7 +1560,7 @@ namespace StardewDruid.Data
             {
                 Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
 
-                if (!fish.HasContextTag("fish_legendary"))
+                if (!fish.HasContextTag("fish_legendary") && fish.Category == StardewValley.Object.FishCategory)
                 {
 
                     return fish.QualifiedItemId.Replace("(O)", "");
@@ -1584,7 +1574,7 @@ namespace StardewDruid.Data
             {
                 Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
 
-                if (!fish.HasContextTag("fish_legendary"))
+                if (!fish.HasContextTag("fish_legendary") && fish.Category == StardewValley.Object.FishCategory)
                 {
 
                     return fish.QualifiedItemId.Replace("(O)", "");
@@ -2006,35 +1996,74 @@ namespace StardewDruid.Data
 
             }
 
-            switch (Mod.instance.randomIndex.Next(6))
+            StardewValley.Object treasure = RandomTreasure();
+
+            new ThrowHandle(Game1.player, origin, treasure).register();
+
+            return;
+
+        }
+
+        public static StardewValley.Object RandomTreasure()
+        {
+
+            StardewValley.Object treasure;
+
+            switch (Mod.instance.randomIndex.Next(12))
             {
-                
+
                 default:
                 case 0:
-                    new ThrowHandle(Game1.player, origin, new StardewValley.Object("166", 1)).register();
-                    return; //"Treasure Chest/5000/-300/Basic/Treasure Chest/Wow, it's loaded with treasure! This is sure to fetch a good price./Day Night^Spring Summer Fall Winter//",
+                    treasure = new StardewValley.Object("166", 1);
+                    break; //"Treasure Chest/5000/-300/Basic/Treasure Chest/Wow, it's loaded with treasure! This is sure to fetch a good price./Day Night^Spring Summer Fall Winter//",
 
                 case 1:
-                    new ThrowHandle(Game1.player, origin, new StardewValley.Object("336", 5)).register();
-                    return; // Gold bars
+                    treasure = new StardewValley.Object("336", 4);
+                    break; // Gold bars
 
                 case 2:
-                    new ThrowHandle(Game1.player, origin, new StardewValley.Object("74", 1)).register();
-                    return; // Prismatic Shard
+                    treasure = new StardewValley.Object("74", 1);
+                    break; // Prismatic Shard
 
                 case 3:
-                    new ThrowHandle(Game1.player, origin, new StardewValley.Object("797", 1)).register();
-                    return; //"Pearl/2500/-300/Basic/Pearl/A rare treasure from the sea.///",
+                    treasure = new StardewValley.Object("797", 1);
+                    break; //"Pearl/2500/-300/Basic/Pearl/A rare treasure from the sea.///",
 
                 case 4:
-                    new ThrowHandle(Game1.player, origin, new StardewValley.Object("852", 2)).register();
-                    return; //"Dragon Tooth/500/-300/Basic/Dragon Tooth/These are rumored to be the teeth of ancient serpents. The enamel is made of pure iridium!///",
+                    treasure = new StardewValley.Object("852", 2);
+                    break;//"Dragon Tooth/500/-300/Basic/Dragon Tooth/These are rumored to be the teeth of ancient serpents. The enamel is made of pure iridium!///",
 
                 case 5:
-                    new ThrowHandle(Game1.player, origin, new StardewValley.Object("275", 3)).register();
-                    return; //"Artifact Trove/0/-300/Basic/Artifact Trove/A blacksmith can open this for you. These troves often contain ancient relics and curiosities./100 101 103 104 105 106 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 166 373 797//",
+                    treasure = new StardewValley.Object("275", 3);
+                    break; //"Artifact Trove/0/-300/Basic/Artifact Trove/A blacksmith can open this for you. These troves often contain ancient relics and curiosities./100 101 103 104 105 106 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 166 373 797//",
+
+                case 6:
+                    treasure = new StardewValley.Object("265", 1);
+                    break; //Seafoam Pudding
+
+                case 7:
+                    treasure = new StardewValley.Object("MysteryBox", 2);
+                    break; //Mystery Box
+
+                case 8:
+                    treasure = new StardewValley.Object("PrizeTicket", 1);
+                    break; //Prize Ticket
+
+                case 9:
+                    treasure = new StardewValley.Object("848", 4);
+                    break; //Cinder Shards
+
+                case 10:
+                    treasure = new StardewValley.Object("787", 1);
+                    break; // Battery Pack
+
+                case 11:
+                    treasure = new StardewValley.Object("337", 1);
+                    break; // Iridium Bars
 
             }
+
+            return treasure;
 
         }
 

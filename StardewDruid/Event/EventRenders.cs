@@ -4,16 +4,7 @@ using StardewDruid.Data;
 using StardewValley;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static StardewDruid.Data.IconData;
-using StardewValley.Monsters;
-using StardewValley.Projectiles;
-using static StardewDruid.Cast.SpellHandle;
-using System.Diagnostics.Metrics;
-using StardewValley.Mods;
-using xTile.Tiles;
+
 
 namespace StardewDruid.Event
 {
@@ -80,7 +71,7 @@ namespace StardewDruid.Event
 
             origin = Origin;
 
-            display = displays.none;
+            display = StardewDruid.Data.IconData.displays.none;
 
             render = renders.decoration;
 
@@ -99,7 +90,7 @@ namespace StardewDruid.Event
 
             origin = Origin;
 
-            display = displays.none;
+            display = StardewDruid.Data.IconData.displays.none;
 
             render = renders.sky;
 
@@ -120,7 +111,7 @@ namespace StardewDruid.Event
 
             origin = Origin;
 
-            display = displays.none;
+            display = StardewDruid.Data.IconData.displays.none;
 
             render = renders.circle;
 
@@ -141,7 +132,7 @@ namespace StardewDruid.Event
 
             origin = Origin;
 
-            display = displays.none;
+            display = StardewDruid.Data.IconData.displays.none;
 
             render = renders.relic;
 
@@ -154,7 +145,7 @@ namespace StardewDruid.Event
         public void draw(SpriteBatch b)
         {
 
-            if (!Utility.isOnScreen(origin, 64))
+            if (!Utility.isOnScreen(origin, 64) || location != Game1.player.currentLocation.Name)
             {
 
                 return;

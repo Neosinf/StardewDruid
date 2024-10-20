@@ -125,6 +125,7 @@ namespace StardewDruid.Character
                 return false;
 
             }
+
             if (!Mod.instance.questHandle.IsComplete(Journal.QuestHandle.questJester))
             {
 
@@ -152,7 +153,7 @@ namespace StardewDruid.Character
 
             beam.type = SpellHandle.spells.beam;
 
-            beam.scheme = IconData.schemes.Void;
+            beam.scheme = IconData.schemes.Solar;
 
             beam.display = IconData.impacts.deathbomb;
 

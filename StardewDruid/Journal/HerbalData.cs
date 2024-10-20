@@ -11,9 +11,16 @@ using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buffs;
+using StardewValley.GameData.BigCraftables;
+using StardewValley.GameData.Machines;
+using StardewValley.GameData.Shops;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using xTile.Dimensions;
+using static StardewDruid.Data.IconData;
+using static StardewDruid.Journal.LoreSet;
 
 namespace StardewDruid.Journal
 {
@@ -48,6 +55,8 @@ namespace StardewDruid.Journal
         public Dictionary<string, Herbal> herbalism = new();
 
         public Dictionary<herbals, HerbalBuff> applied = new();
+
+        public Dictionary<herbals, int> orders = new();
 
         public bool applyChange;
 
@@ -115,7 +124,6 @@ namespace StardewDruid.Journal
                         "(O)257", // "Morel", 
                         "(O)767", // "Batwings", 
                     };
-
 
                 case herbals.satius_impes:
                     return new() { 
@@ -295,6 +303,78 @@ namespace StardewDruid.Journal
 
         }
 
+        public void Ready()
+        {
+
+            orders.Clear();
+
+            int max = MaxHerbal();
+
+            List<herbals> candidates = new();
+
+            foreach (herbals herbal in herbalLayout)
+            {
+
+                if ((herbalism[herbal.ToString()].level -1) > max)
+                {
+
+                    continue;
+
+                }
+
+                candidates.Add(herbal);
+
+            }
+
+            for(int i = 0; i< Mod.instance.randomIndex.Next(4,7); i++)
+            {
+
+                herbals candidate = candidates[Mod.instance.randomIndex.Next(candidates.Count)];
+
+                switch (Mod.instance.randomIndex.Next(10))
+                {
+                    
+                    case 0:
+
+                        orders[candidate] = 1;
+
+                        break;
+
+                    case 1:
+                    case 2:
+                    case 3:
+
+                        orders[candidate] = 5;
+
+                        break;
+
+                    case 4:
+                    case 5:
+                        orders[candidate] = 10;
+
+                        break;
+
+                    case 6:
+                    case 7:
+
+                        orders[candidate] = 20;
+
+                        break;
+
+                    case 8:
+                    case 9:
+
+                        orders[candidate] = 50;
+
+                        break;
+
+
+                }
+
+            }
+
+        }
+
         public int MaxHerbal()
         {
 
@@ -423,11 +503,11 @@ namespace StardewDruid.Journal
 
                 content.text[0] = amount.ToString();
 
-                content.relics[0] = herbalism[key].container;
+                content.relics[0] = herbalism[key].display;
 
-                content.relicColours[0] = Color.White;
+                /*content.relicColours[0] = Color.White;
 
-                content.relics[1] = herbalism[key].content;
+                content.relics[1] = herbalism[key].grayed;
 
                 IconData.schemes scheme = schemes[herbalism[key].line];
 
@@ -438,7 +518,12 @@ namespace StardewDruid.Journal
                     potionColour = Microsoft.Xna.Framework.Color.LightGray;
                 }
 
-                content.relicColours[1] = potionColour;
+                content.relicColours[1] = potionColour;*/
+
+                if (amount == 0)
+                {
+                    content.relics[0] = herbalism[key].grayed;
+                }
 
                 journal[start++] = content;
 
@@ -502,8 +587,73 @@ namespace StardewDruid.Journal
 
         }
 
+        public Dictionary<int, Journal.ContentComponent> TradeHerbals()
+        {
 
-        public Dictionary<int, Journal.ContentComponent> JournalHeaders()
+            Dictionary<int, Journal.ContentComponent> journal = new();
+
+            int start = 0;
+
+            foreach (KeyValuePair<herbals,int> order in orders)
+            {
+
+                string herb = order.Key.ToString();
+
+                Journal.ContentComponent content = new(ContentComponent.contentTypes.potionlist, herb);
+
+                Herbal herbalData = herbalism[herb];
+
+                content.text[0] = herbalData.title + " " + DialogueData.Strings(DialogueData.stringkeys.multiplier) + order.Value.ToString();
+
+                content.text[1] = (herbalData.price * order.Value).ToString() + DialogueData.Strings(DialogueData.stringkeys.currency);
+
+                /*content.relics[0] = herbalism[herb].container;
+                
+                content.relicColours[0] = Color.White;
+
+                content.relics[1] = herbalism[herb].content;
+
+                IconData.schemes scheme = schemes[herbalism[herb].line];
+
+                Microsoft.Xna.Framework.Color potionColour = Mod.instance.iconData.schemeColours[scheme];*/
+
+                content.relics[0] = herbalism[herb].display;
+
+                if (!Mod.instance.save.herbalism.ContainsKey(order.Key))
+                {
+
+                    //potionColour = Microsoft.Xna.Framework.Color.LightGray;
+
+                    content.relics[0] = herbalism[herb].grayed;
+
+                    content.text[0] += " " + Mod.instance.Helper.Translation.Get("DialogueData.347.5").Tokens(new { stock = order.Value.ToString().ToString() });
+
+                }
+                else
+                {
+                    if (Mod.instance.save.herbalism[order.Key] < order.Value)
+                    {
+                        //potionColour = Microsoft.Xna.Framework.Color.LightGray;
+
+                        content.relics[0] = herbalism[herb].grayed;
+
+                        content.text[0] += " " + Mod.instance.Helper.Translation.Get("DialogueData.347.5").Tokens(new { stock = (order.Value - Mod.instance.save.herbalism[order.Key]).ToString() });
+                    
+                    }
+
+                }
+
+                //content.relicColours[1] = potionColour;
+
+                journal[start++] = content;
+
+            }
+
+            return journal;
+
+        }
+
+        /*public Dictionary<int, Journal.ContentComponent> JournalHeaders()
         {
 
             Dictionary<int, Journal.ContentComponent> journal = new();
@@ -525,8 +675,8 @@ namespace StardewDruid.Journal
 
             return journal;
 
-        }
-        
+        }*/
+
         public static Dictionary<string, Herbal> HerbalList()
         {
 
@@ -542,9 +692,9 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.ligna,
 
-                container = IconData.relics.flask,
+                display = IconData.relics.ligna,
 
-                content = IconData.relics.flask1,
+                grayed = IconData.relics.lignaGray,
 
                 level = 0,
 
@@ -562,11 +712,13 @@ namespace StardewDruid.Journal
 
                 stamina = 12,
 
+                price = 50,
+
                 details = new()
                 {
                     //Mod.instance.Helper.Translation.Get("HerbalData.39"),
                     Mod.instance.Helper.Translation.Get("HerbalData.40")
-                }
+                },
 
             };
 
@@ -578,9 +730,9 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.melius_ligna,
 
-                container = IconData.relics.flask,
+                display = IconData.relics.ligna1,
 
-                content = IconData.relics.flask2,
+                grayed = IconData.relics.lignaGray1,
 
                 level = 1,
 
@@ -597,6 +749,8 @@ namespace StardewDruid.Journal
                 health = 15,
 
                 stamina = 30,
+
+                price = 150,
 
                 details = new()
                 {
@@ -615,9 +769,9 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.satius_ligna,
 
-                container = IconData.relics.flask,
+                display = IconData.relics.ligna2,
 
-                content = IconData.relics.flask3,
+                grayed = IconData.relics.lignaGray2,
 
                 level = 2,
 
@@ -634,6 +788,8 @@ namespace StardewDruid.Journal
                 health = 20,
 
                 stamina = 80,
+
+                price = 300,
 
                 details = new()
                 {
@@ -652,9 +808,9 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.magnus_ligna,
 
-                container = IconData.relics.flask,
+                display = IconData.relics.ligna3,
 
-                content = IconData.relics.flask4,
+                grayed = IconData.relics.lignaGray3,
 
                 level = 3,
 
@@ -672,6 +828,8 @@ namespace StardewDruid.Journal
 
                 stamina = 200,
 
+                price = 600,
+
                 details = new()
                 {
                     //Mod.instance.Helper.Translation.Get("HerbalData.149"),
@@ -688,9 +846,9 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.optimus_ligna,
 
-                container = IconData.relics.flask,
+                display = IconData.relics.ligna4,
 
-                content = IconData.relics.flask5,
+                grayed = IconData.relics.lignaGray4,
 
                 level = 4,
 
@@ -707,6 +865,8 @@ namespace StardewDruid.Journal
                 health = 100,
 
                 stamina = 400,
+
+                price = 1200,
 
                 details = new()
                 {
@@ -727,9 +887,9 @@ namespace StardewDruid.Journal
 
                 herbal = herbals.impes,
 
-                container = IconData.relics.bottle,
+                display = IconData.relics.impes,
 
-                content = IconData.relics.bottle1,
+                grayed = IconData.relics.impesGray,
 
                 title = Mod.instance.Helper.Translation.Get("HerbalData.206"),
 
@@ -742,6 +902,8 @@ namespace StardewDruid.Journal
                 health = 15,
 
                 stamina = 40,
+
+                price = 50,
 
                 details = new()
                 {
@@ -759,9 +921,9 @@ namespace StardewDruid.Journal
 
                 herbal = herbals.melius_impes,
 
-                container = IconData.relics.bottle,
+                display = IconData.relics.impes1,
 
-                content = IconData.relics.bottle2,
+                grayed = IconData.relics.impesGray1,
 
                 level = 1,
 
@@ -778,6 +940,8 @@ namespace StardewDruid.Journal
                 health = 30,
 
                 stamina = 80,
+
+                price = 150,
 
                 details = new()
                 {
@@ -796,9 +960,9 @@ namespace StardewDruid.Journal
 
                 herbal = herbals.satius_impes,
 
-                container = IconData.relics.bottle,
+                display = IconData.relics.impes2,
 
-                content = IconData.relics.bottle3,
+                grayed = IconData.relics.impesGray2,
 
                 level = 2,
 
@@ -815,6 +979,8 @@ namespace StardewDruid.Journal
                 health = 45,
 
                 stamina = 160,
+
+                price = 300,
 
                 details = new()
                 {
@@ -834,9 +1000,9 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.magnus_impes,
 
-                container = IconData.relics.bottle,
+                display = IconData.relics.impes3,
 
-                content = IconData.relics.bottle4,
+                grayed = IconData.relics.impesGray3,
 
                 level = 3,
 
@@ -854,6 +1020,8 @@ namespace StardewDruid.Journal
 
                 stamina = 320,
 
+                price = 600,
+
                 details = new()
                 {
                     //Mod.instance.Helper.Translation.Get("HerbalData.331"),
@@ -870,9 +1038,9 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.optimus_impes,
 
-                container = IconData.relics.bottle,
+                display = IconData.relics.impes4,
 
-                content = IconData.relics.bottle5,
+                grayed = IconData.relics.impesGray4,
 
                 level = 4,
 
@@ -889,6 +1057,8 @@ namespace StardewDruid.Journal
                 health = 180,
 
                 stamina = 560,
+
+                price = 1200,
 
                 details = new()
                 {
@@ -909,9 +1079,9 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.celeri,
 
-                container = IconData.relics.vial,
+                display = IconData.relics.celeri,
 
-                content = IconData.relics.vial1,
+                grayed = IconData.relics.celeriGray,
 
                 title = Mod.instance.Helper.Translation.Get("HerbalData.388"),
 
@@ -925,6 +1095,8 @@ namespace StardewDruid.Journal
                 health = 15,
 
                 stamina = 25,
+
+                price = 50,
 
                 details = new()
                 {
@@ -941,9 +1113,9 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.melius_celeri,
 
-                container = IconData.relics.vial,
+                display = IconData.relics.celeri1,
 
-                content = IconData.relics.vial2,
+                grayed = IconData.relics.celeriGray1,
 
                 level = 1,
 
@@ -958,6 +1130,8 @@ namespace StardewDruid.Journal
                 health = 20,
 
                 stamina = 60,
+
+                price = 150,
 
                 bases = new() { herbals.celeri, },
 
@@ -978,9 +1152,9 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.satius_celeri,
 
-                container = IconData.relics.vial,
+                display = IconData.relics.celeri2,
 
-                content = IconData.relics.vial3,
+                grayed = IconData.relics.celeriGray2,
 
                 level = 2,
 
@@ -995,6 +1169,8 @@ namespace StardewDruid.Journal
                 health = 30,
 
                 stamina = 120,
+
+                price = 300,
 
                 bases = new() { herbals.melius_celeri, },
 
@@ -1015,9 +1191,9 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.magnus_celeri,
 
-                container = IconData.relics.vial,
+                display = IconData.relics.celeri3,
 
-                content = IconData.relics.vial4,
+                grayed = IconData.relics.celeriGray3,
 
                 level = 3,
 
@@ -1032,6 +1208,8 @@ namespace StardewDruid.Journal
                 health = 60,
 
                 stamina = 240,
+
+                price = 600,
 
                 bases = new() { herbals.satius_celeri, },
 
@@ -1051,9 +1229,9 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.optimus_celeri,
 
-                container = IconData.relics.vial,
+                display = IconData.relics.celeri4,
 
-                content = IconData.relics.vial5,
+                grayed = IconData.relics.celeriGray4,
 
                 level = 4,
 
@@ -1068,6 +1246,8 @@ namespace StardewDruid.Journal
                 health = 120,
 
                 stamina = 480,
+
+                price = 1200,
 
                 bases = new() { herbals.magnus_celeri, herbals.aether, },
 
@@ -1090,9 +1270,9 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.faeth,
 
-                container = IconData.relics.bottle,
+                display = IconData.relics.faeth,
 
-                content = IconData.relics.bottle5,
+                grayed = IconData.relics.faethGray,
 
                 level = 99,
 
@@ -1103,6 +1283,8 @@ namespace StardewDruid.Journal
                 ingredients = HerbalIngredients(herbals.faeth),
 
                 bases = new() { },
+
+                price = 250,
 
                 details = new()
                 {
@@ -1126,9 +1308,9 @@ namespace StardewDruid.Journal
 
                 herbal = HerbalData.herbals.aether,
 
-                container = IconData.relics.bottle,
+                display = IconData.relics.aether,
 
-                content = IconData.relics.bottle5,
+                grayed = IconData.relics.aetherGray,
 
                 level = 99,
 
@@ -1139,6 +1321,8 @@ namespace StardewDruid.Journal
                 ingredients = HerbalIngredients(herbals.aether),
 
                 bases = new() { },
+
+                price = 500,
 
                 details = new()
                 {
@@ -1363,14 +1547,14 @@ namespace StardewDruid.Journal
 
         }
 
-        public void BrewHerbal(string id, int draught, bool bench = false)
+        public void BrewHerbal(string id, int draught, bool bench = false, bool force = false)
         {
 
             Herbal herbal = herbalism[id];
 
             int brewed = 0;
 
-            if (Mod.instance.save.potions.ContainsKey(herbal.herbal))
+            if (Mod.instance.save.potions.ContainsKey(herbal.herbal) && !force)
             {
 
                 if(Mod.instance.save.potions[herbal.herbal] == 0 || Mod.instance.save.potions[herbal.herbal] == 3)
@@ -2175,6 +2359,155 @@ namespace StardewDruid.Journal
 
         }
 
+        public static bool RandomStudy()
+        {
+
+            Dictionary<string, string> recipes = new();
+
+            foreach (KeyValuePair<string, string> allRecipes in CraftingRecipe.cookingRecipes)
+            {
+
+                if (!Game1.player.cookingRecipes.ContainsKey(allRecipes.Key))
+                {
+
+                    recipes[allRecipes.Key] = allRecipes.Value;
+
+                }
+
+            }
+
+            if((recipes.Count == 0 || Mod.instance.randomIndex.Next(3) == 0) && !Mod.instance.Config.disableShopdata)
+            {
+
+                Dictionary<string, ShopData> shopData = DataLoader.Shops(Game1.content);
+
+                if (shopData != null && shopData.Count > 0)
+                {
+
+                    if (shopData.ContainsKey("Bookseller"))
+                    {
+
+                        List<string> books = new();
+
+                        foreach (ShopItemData shopItem in shopData["Bookseller"].Items)
+                        {
+
+                            if (shopItem == null)
+                            {
+
+                                continue;
+
+                            }
+
+                            if (shopItem.Condition != null)
+                            {
+
+                                if (!GameStateQuery.CheckConditions(shopItem.Condition, Game1.getLocationFromName("Town"), Game1.player, null, null, Mod.instance.randomIndex))
+                                {
+
+                                    continue;
+
+                                }
+
+                            }
+
+                            books.Add(shopItem.ItemId);
+
+                        }
+
+                        if(books.Count > 0)
+                        {
+
+                            StardewValley.Item newBook = ItemRegistry.Create(books[Mod.instance.randomIndex.Next(books.Count)], 1);
+
+                            new ThrowHandle(Game1.player, Game1.player.Position + new Vector2(64, 128), newBook) { delay = 10, holdup = true }.register();
+
+                            return true;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            if (recipes.Count == 0)
+            {
+
+                return false;
+
+            }
+
+            KeyValuePair<string, string> craftingRecipe = recipes.ElementAt(Mod.instance.randomIndex.Next(recipes.Count));
+
+            Game1.player.cookingRecipes.Add(craftingRecipe.Key, 0);
+
+            CraftingRecipe newThing = new(craftingRecipe.Key);
+
+            ThrowHandle.AnimateHoldup();
+
+            Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles(IconData.relics.book_letters);
+
+            TemporaryAnimatedSprite animation = new(0, 2000, 1, 1, Game1.player.Position + new Vector2(2, -124f), false, false)
+            {
+                sourceRect = relicRect,
+                sourceRectStartingPos = new(relicRect.X, relicRect.Y),
+                texture = Mod.instance.iconData.relicsTexture,
+                layerDepth = 900f,
+                delayBeforeAnimationStart = 175,
+                scale = 3f,
+
+            };
+
+            Game1.player.currentLocation.TemporarySprites.Add(animation);
+
+            string text = "Learned how to cook " + newThing.DisplayName;
+
+            Game1.drawObjectDialogue(text);
+
+            return true;
+
+        }
+
+        public static bool RandomTinker()
+        {
+
+            List<string> list = new()
+            {
+                "(BC)10",
+                "(BC)12",
+                "(BC)13",
+                "(BC)16",
+                "(BC)19",
+                "(BC)21",
+                "(BC)25",
+                "(BC)156",
+                "(BC)158",
+                "(BC)165",
+                "(BC)182",
+                "(BC)208",
+                "(BC)211",
+                "(BC)216",
+                "(BC)239",
+                "(BC)246",
+                "(BC)265",
+                "(BC)272",
+                "(BC)275",
+                //"(BC)MushroomLog",
+                "(BC)BaitMaker",
+                "(BC)Dehydrator",
+                "(BC)FishSmoker",
+
+            };
+
+            StardewValley.Item newMachine = ItemRegistry.Create(list[Mod.instance.randomIndex.Next(list.Count)], 1);
+
+            new ThrowHandle(Game1.player, Game1.player.Position + new Vector2(128,0), newMachine) { delay = 10, holdup = true }.register();
+
+            return true;
+
+        }
 
     }
 
@@ -2188,9 +2521,9 @@ namespace StardewDruid.Journal
 
         public HerbalData.herbals herbal = HerbalData.herbals.none;
 
-        public IconData.relics container = IconData.relics.flask;
+        public IconData.relics display = IconData.relics.ligna;
 
-        public IconData.relics content = IconData.relics.flask1;
+        public IconData.relics grayed = IconData.relics.lignaGray;
 
         public string title;
 
@@ -2215,6 +2548,8 @@ namespace StardewDruid.Journal
         public int stamina;
 
         public bool resource;
+
+        public int price;
 
     }
 

@@ -572,7 +572,7 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.none,
 
-                origin = new Vector2(26, 21) * 64,
+                origin = new Vector2(30, 23) * 64,
 
                 // -----------------------------------------------
 
@@ -1343,7 +1343,7 @@ namespace StardewDruid.Journal
 
                 triggerRite = Rite.rites.mists,
 
-                origin = new Vector2(21, 13f) * 64,
+                origin = new Vector2(45, 16) * 64,
 
                 // -----------------------------------------------
 
@@ -2848,7 +2848,7 @@ namespace StardewDruid.Journal
             // =====================================================
             // Quest Buffin
 
-            /*Quest questRevenant = new()
+            Quest questRevenant = new()
             {
 
                 name = QuestHandle.questRevenant,
@@ -2865,17 +2865,29 @@ namespace StardewDruid.Journal
 
                 triggerLocation = LocationData.druid_graveyard_name,
 
-                origin = new Vector2(27, 14) * 64,
+                origin = new Vector2(28, 18) * 64,
 
                 title = "The Last Guardian",
 
-                description = "The Rite of Bones requires the participation of two individuals, the Successor of the Elements and the Successor of the Wilds. " +
-                "Linus has revealed himself as the current titleholder of the Wilds, but it remains to be seen whether the Mage Doja, the one responsible for the shadowrogue infiltration that's pillaged the valley's sacred spaces, will answer to the other title. " +
-                "Shadowtin has attempted contact with a member of his former mercenary unit to arrange a meeting with Doja and determine the mage's intentions.",
+                description = Mod.instance.Helper.Translation.Get("QuestData.342.1.2") +
+                Mod.instance.Helper.Translation.Get("QuestData.342.1.3") +
+                Mod.instance.Helper.Translation.Get("QuestData.342.1.4"),
 
-                instruction = "Around 12 noon, with 5-6 hours to spare, cast any rite at the quest icon in the Old Graves.",
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.342.1.5"),
 
-                explanation = "",
+                explanation = Mod.instance.Helper.Translation.Get("QuestData.342.1.6") +
+                Mod.instance.Helper.Translation.Get("QuestData.342.1.7") +
+                Mod.instance.Helper.Translation.Get("QuestData.342.1.8") +
+                Mod.instance.Helper.Translation.Get("QuestData.342.1.9") +
+                Mod.instance.Helper.Translation.Get("QuestData.342.1.10") +
+                Mod.instance.Helper.Translation.Get("QuestData.342.1.11") +
+                Mod.instance.Helper.Translation.Get("QuestData.342.1.12") +
+                Mod.instance.Helper.Translation.Get("QuestData.342.1.13") +
+                Mod.instance.Helper.Translation.Get("QuestData.342.1.14") +
+                Mod.instance.Helper.Translation.Get("QuestData.342.1.15") +
+                Mod.instance.Helper.Translation.Get("QuestData.342.1.16") +
+                Mod.instance.Helper.Translation.Get("QuestData.342.1.17"),
+
 
                 reward = 15000,
 
@@ -2885,9 +2897,9 @@ namespace StardewDruid.Journal
                     [CharacterHandle.characters.Shadowtin] = new()
                     {
                         prompt = true,
-                        intro = "I sent a message through our dwarven contact to my former mercenary unit about a possible parlay with Doja. " +
-                        "The return message instructs us to meet at a familiar location, the Old Graves. " +
-                        "It will be up to you to determine if Doja is the Successor of the Elements, and if so, what is necessary to convince, or coerce, him to fulfil his duties.",
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.342.1.24") +
+                        Mod.instance.Helper.Translation.Get("QuestData.342.1.25") +
+                        Mod.instance.Helper.Translation.Get("QuestData.342.1.26"),
                     },
 
                 },
@@ -2898,15 +2910,95 @@ namespace StardewDruid.Journal
                     [CharacterHandle.characters.Shadowtin] = new()
                     {
                         prompt = true,
-                        intro = "Doja has been eliminated, and tyranny has been denied the power of the ancient ones. " +
-                        "That's the end of the shadowrogue expedition to the surfaceworld. I still haven't advanced my own cause, so I'll remain in partnership with your circle until I've exhausted my search for the truth.",
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.342.1.34") +
+                        Mod.instance.Helper.Translation.Get("QuestData.342.1.35"),
 
                     },
 
                     [CharacterHandle.characters.Jester] = new()
                     {
                         prompt = true,
-                        intro = "",
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.342.1.40") +
+                        Mod.instance.Helper.Translation.Get("QuestData.342.1.41"),
+
+                    },
+
+                },
+
+
+            };
+
+            quests.Add(questRevenant.name, questRevenant);
+
+
+            // =====================================================
+            // Challenge Bones
+
+            Quest challengeBones = new()
+            {
+
+                name = QuestHandle.challengeBones,
+
+                icon = IconData.displays.bones,
+
+                type = Quest.questTypes.challenge,
+
+                give = Quest.questGivers.dialogue,
+
+                trigger = true,
+
+                triggerTime = 1700,
+
+                triggerLocation = LocationData.druid_gate_name,
+
+                origin = new Vector2(27, 28) * 64,
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.343.1.2"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.343.1.3") +
+                Mod.instance.Helper.Translation.Get("QuestData.343.1.4"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.343.1.5"),
+
+                explanation = Mod.instance.Helper.Translation.Get("QuestData.343.1.6") +
+                Mod.instance.Helper.Translation.Get("QuestData.343.1.7") +
+                Mod.instance.Helper.Translation.Get("QuestData.343.1.8") +
+                Mod.instance.Helper.Translation.Get("QuestData.343.1.9") +
+                Mod.instance.Helper.Translation.Get("QuestData.343.1.10") +
+                Mod.instance.Helper.Translation.Get("QuestData.343.1.11") +
+                Mod.instance.Helper.Translation.Get("QuestData.343.1.12") +
+                Mod.instance.Helper.Translation.Get("QuestData.343.1.13"),
+
+
+                reward = 15000,
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Blackfeather] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.343.1.20"),
+                    },
+
+                    [CharacterHandle.characters.Effigy] = new()
+                    {
+                        prompt = true,
+                        questContext = 1,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.343.1.26"),
+                    },
+
+                },
+
+                after = new()
+                {
+
+                    [CharacterHandle.characters.Blackfeather] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.343.1.34") +
+                        Mod.instance.Helper.Translation.Get("QuestData.343.1.35") +
+                        Mod.instance.Helper.Translation.Get("QuestData.343.1.36"),
 
                     },
 
@@ -2914,7 +3006,7 @@ namespace StardewDruid.Journal
 
             };
 
-            quests.Add(questRevenant.name, questRevenant);*/
+            quests.Add(challengeBones.name, challengeBones);
 
             // RETURN
 

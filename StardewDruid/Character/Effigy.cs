@@ -6,6 +6,7 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Journal;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
@@ -46,7 +47,7 @@ namespace StardewDruid.Character
 
             WeaponLoadout();
 
-            weaponRender.swordScheme = IconData.schemes.stars;
+            weaponRender.swordScheme = IconData.schemes.sword_stars;
 
             specialFrames[specials.launch] = new()
             {
@@ -65,21 +66,37 @@ namespace StardewDruid.Character
                 [0] = new()
                 {
                     new Rectangle(192, 0, 32, 32),
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(224, 0, 32, 32),
                     new Rectangle(224, 0, 32, 32),
                 },
                 [1] = new()
                 {
                     new Rectangle(192, 0, 32, 32),
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(224, 0, 32, 32),
                     new Rectangle(224, 0, 32, 32),
                 },
                 [2] = new()
                 {
                     new Rectangle(192, 0, 32, 32),
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(224, 0, 32, 32),
                     new Rectangle(224, 0, 32, 32),
                 },
                 [3] = new()
                 {
                     new Rectangle(192, 0, 32, 32),
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(192, 0, 32, 32),
+                    new Rectangle(224, 0, 32, 32),
                     new Rectangle(224, 0, 32, 32),
                 },
             };
@@ -90,13 +107,13 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawLaunch(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawLaunch(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
             Rectangle useFrame = specialFrames[specials.launch][netDirection.Value][specialFrame];
 
             b.Draw(
                 characterTexture,
-                SpritePosition(localPosition),
+                spritePosition,
                 useFrame,
                 Color.White * fade,
                 0.0f,
@@ -106,18 +123,17 @@ namespace StardewDruid.Character
                 drawLayer
             );
 
-            DrawShadow(b, localPosition, drawLayer);
+            DrawShadow(b, spritePosition, drawLayer);
 
         }
 
-        public override void DrawDash(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawDash(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
-
 
             if (netDash.Value != (int)dashes.smash)
             {
 
-                base.DrawDash(b, localPosition, drawLayer, fade);
+                base.DrawDash(b, spritePosition, drawLayer, fade);
 
                 return;
 
@@ -127,7 +143,7 @@ namespace StardewDruid.Character
 
             int dashSetto = Math.Min(dashFrame, (dashFrames[(dashes)netDash.Value][dashSeries].Count - 1));
 
-            Vector2 dashVector = SpritePosition(localPosition) - new Vector2(0, dashHeight);
+            Vector2 dashVector = spritePosition - new Vector2(0, dashHeight);
 
             Rectangle dashTangle = dashFrames[(dashes)netDash.Value][dashSeries][dashSetto];
 
@@ -143,7 +159,7 @@ namespace StardewDruid.Character
                 drawLayer
             );
 
-            DrawShadow(b, localPosition, drawLayer);
+            DrawShadow(b, spritePosition, drawLayer);
 
             weaponRender.DrawWeapon(b, dashVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = dashTangle, flipped = SpriteFlip() });
 
@@ -156,11 +172,9 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawSweep(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawSweep(SpriteBatch b, Vector2 sweepVector, float drawLayer, float fade)
         {
             
-            Vector2 sweepVector = SpritePosition(localPosition);
-
             Rectangle sweepFrame = specialFrames[(specials)netSpecial.Value][netDirection.Value][specialFrame];
 
             b.Draw(
@@ -175,7 +189,7 @@ namespace StardewDruid.Character
                 drawLayer
             );
 
-            DrawShadow(b, localPosition, drawLayer);
+            DrawShadow(b, sweepVector, drawLayer);
 
             weaponRender.DrawWeapon(b, sweepVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = sweepFrame, });
 
@@ -183,16 +197,14 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawAlert(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawAlert(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
-
-            Vector2 alertVector = SpritePosition(localPosition);
 
             Rectangle alertFrame = idleFrames[idles.alert][netDirection.Value][0];
 
             b.Draw(
                  characterTexture,
-                 alertVector,
+                 spritePosition,
                  alertFrame,
                  Color.White * fade,
                  0f,
@@ -202,18 +214,16 @@ namespace StardewDruid.Character
                  drawLayer
              );
 
-            DrawShadow(b, localPosition, drawLayer);
+            DrawShadow(b, spritePosition, drawLayer);
 
-            weaponRender.DrawWeapon(b, alertVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = alertFrame, flipped = SpriteAngle() });
+            weaponRender.DrawWeapon(b, spritePosition - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = alertFrame, flipped = SpriteAngle() });
 
         }
 
-        public override void DrawStandby(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawStandby(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
 
             int chooseFrame = IdleFrame(idles.standby);
-
-            Vector2 spritePosition = SpritePosition(localPosition);
 
             bool standbyFlip = SpriteAngle();
 
@@ -465,7 +475,7 @@ namespace StardewDruid.Character
 
             special.scheme = IconData.schemes.stars;
 
-            special.projectile = 2;
+            special.projectile = 3;
 
             special.power = 4;
 
@@ -485,6 +495,34 @@ namespace StardewDruid.Character
         {
 
             ritesDone.Clear();
+
+        }
+
+        public override mode SpecialMode(mode modechoice)
+        {
+
+            switch (modechoice)
+            {
+
+                case mode.home:
+
+                case mode.random:
+
+                case mode.roam:
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.challengeBones))
+                    {
+
+                        return mode.limbo;
+
+                    }
+
+
+                    break;
+
+            }
+
+            return modechoice;
 
         }
 

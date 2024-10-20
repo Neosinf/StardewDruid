@@ -86,19 +86,7 @@ namespace StardewDruid.Cast.Weald
 
                     eventLocked = true;
 
-                    ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
-
-                    SpellHandle spellHandle = new(origin, 384, IconData.impacts.nature, new());
-
-                    Mod.instance.spellRegister.Add(spellHandle);
-
-                    //SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new());
-
-                    //circleHandle.scheme = IconData.schemes.grannysmith;
-
-                    //circleHandle.sound = SpellHandle.sounds.discoverMineral;
-
-                    //Mod.instance.spellRegister.Add(circleHandle);
+                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.nature, new()) { scheme = IconData.schemes.weald, sound = SpellHandle.sounds.getNewSpecialItem, });
 
                     if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour))
                     {
@@ -128,6 +116,7 @@ namespace StardewDruid.Cast.Weald
 
         public override void EventRemove()
         {
+            
             base.EventRemove();
 
             Mod.instance.rite.castCost = castCost;

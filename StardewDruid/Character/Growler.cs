@@ -6,6 +6,7 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using StardewDruid.Render;
 
 namespace StardewDruid.Character
 {
@@ -44,9 +45,37 @@ namespace StardewDruid.Character
 
             modeActive = mode.random;
 
-            walkFrames = FrameSeries(64, 64, 0, 0, 7);
+            walkFrames = BearRender.WalkFrames();
 
-            walkFrames[3] = new(walkFrames[1]);
+            dashFrames = new()
+            {
+                [dashes.dash] = BearRender.DashFrames(),
+                [dashes.smash] = BearRender.DashFrames(),
+            };
+
+            specialFrames = new()
+            {
+                [specials.special] = FrameSeries(64, 64, 0, 192, 1),
+                [specials.sweep] = BearRender.SweepFrames(),
+            };
+
+            specialIntervals = new()
+            {
+                [specials.special] = 12,
+                [specials.sweep] = 9,
+            };
+
+            specialFloors = new()
+            {
+                [specials.special] = 0,
+                [specials.sweep] = 0,
+            };
+
+            specialCeilings = new()
+            {
+                [specials.special] = 0,
+                [specials.sweep] = 5,
+            };
 
             loadedOut = true;
 
@@ -59,23 +88,27 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawShadow(SpriteBatch b, Vector2 localPosition, float drawLayer)
+        public override void DrawShadow(SpriteBatch b, Vector2 spritePosition, float drawLayer)
         {
 
-            float fade = fadeOut == 0 ? 0.35f : fadeOut * 0.35f;
-
-            Vector2 shadowPosition = localPosition + new Vector2(32, 96);
-
-            float offset = setScale + (Math.Abs(0 - (walkFrames[0].Count() / 2) + moveFrame) * 0.1f);
+            Vector2 shadowPosition = spritePosition + new Vector2(0, setScale * 24);
 
             if (netDirection.Value % 2 == 1)
             {
-
                 shadowPosition.Y += 4;
-
             }
 
-            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White*fade, 0.0f, new Vector2(24), 3f, 0, drawLayer - 0.0001f);
+            b.Draw(
+                Mod.instance.iconData.cursorTexture,
+                shadowPosition,
+                Mod.instance.iconData.shadowRectangle,
+                Color.White * 0.35f,
+                0.0f,
+                new Vector2(24),
+                (setScale * 1f) + (Math.Abs(0 - (walkFrames[0].Count() / 2) + moveFrame) * 0.05f),
+                0,
+                drawLayer - 0.0001f
+            );
 
         }
 

@@ -35,6 +35,7 @@ namespace StardewDruid.Monster
         public int combatModifier;
         public NetInt netDirection = new NetInt(0);
         public NetInt netAlternative = new NetInt(0);
+        public NetInt netLayer = new NetInt(0);
 
         // ============================= Differentiation
 
@@ -241,6 +242,14 @@ namespace StardewDruid.Monster
             NetFields.AddField(netWoundedActive, "netWoundedActive");
             NetFields.AddField(netShieldActive, "netShieldActive");
             NetFields.AddField(netScheme, "netScheme");
+            NetFields.AddField(netLayer, "netLayer");
+
+        }
+        
+        public virtual int LayerOffset()
+        {
+            
+            return netLayer.Value;
 
         }
 
@@ -267,6 +276,13 @@ namespace StardewDruid.Monster
 
         }
 
+        public virtual float GetGait(int mode = 0)
+        {
+
+            return 2f + 0.1f * mode;
+
+        }
+
         public virtual Vector2 GetPosition(Vector2 localPosition, float spriteScale = -1f, bool shadow = false)
         {
 
@@ -281,7 +297,7 @@ namespace StardewDruid.Monster
 
             int height = GetHeight();
 
-            Vector2 spritePosition = localPosition + new Vector2(32,64) - new Vector2(width / 2f * spriteScale, height * spriteScale);
+            Vector2 spritePosition = localPosition + new Vector2(32,64) - new Vector2((width / 2f) * spriteScale, height * spriteScale);
 
             if (shadow)
             {
@@ -352,11 +368,13 @@ namespace StardewDruid.Monster
 
                     experienceGained.Set(10);
 
+                    gait = GetGait(0);
+
                     break;
 
                 case 1: // slightly bigger
 
-                    MaxHealth = combatModifier * basePulp * 4;
+                    MaxHealth = combatModifier * basePulp * 3;
 
                     Health = MaxHealth;
 
@@ -364,12 +382,14 @@ namespace StardewDruid.Monster
 
                     experienceGained.Set(20);
 
+                    gait = GetGait(1);
+
                     break;
 
                 default:
                 case 2: // multiple bosses
 
-                    MaxHealth = combatModifier * basePulp * 8;
+                    MaxHealth = combatModifier * basePulp * 7;
 
                     Health = MaxHealth;
 
@@ -377,11 +397,13 @@ namespace StardewDruid.Monster
 
                     experienceGained.Set(50);
 
+                    gait = GetGait(2);
+
                     break;
 
                 case 3: // single boss
 
-                    MaxHealth = combatModifier * basePulp * 12;
+                    MaxHealth = combatModifier * basePulp * 11;
 
                     Health = MaxHealth;
 
@@ -389,17 +411,21 @@ namespace StardewDruid.Monster
 
                     experienceGained.Set(100);
 
+                    gait = GetGait(3);
+
                     break;
 
                 case 4: // hard boss
 
-                    MaxHealth = combatModifier * basePulp * 16;
+                    MaxHealth = combatModifier * basePulp * 15;
 
                     Health = MaxHealth;
 
                     tempermentActive = temperment.aggressive;
 
                     experienceGained.Set(200);
+
+                    gait = GetGait(4);
 
                     break;
 
@@ -515,7 +541,7 @@ namespace StardewDruid.Monster
 
             walkInterval = 9;
 
-            gait = 2f;
+            gait = GetGait();
 
             idleFrames = FrameSeries(32, 32,0,0,1);
 
@@ -574,7 +600,7 @@ namespace StardewDruid.Monster
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            float drawLayer = StandingPixel.Y / 10000f;
+            float drawLayer = (Position.Y + (float)LayerOffset()) / 10000f;
 
             int adjustDirection = netDirection.Value == 3 ? 1 : netDirection.Value;
 
@@ -2342,7 +2368,35 @@ namespace StardewDruid.Monster
         public virtual void ConnectSweep()
         {
 
-            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 64 + (32 * GetScale()));
+            Microsoft.Xna.Framework.Rectangle box = GetBoundingBox();
+
+            Microsoft.Xna.Framework.Vector2 sweepVector = new(box.Center.X, box.Top);
+
+            switch (netDirection.Value)
+            {
+
+                case 1:
+
+                    sweepVector = new(box.Right, box.Center.Y);
+
+                    break;
+
+                case 2:
+
+                    sweepVector = new(box.Center.X, box.Bottom);
+
+                    break;
+
+                case 3:
+
+
+                    sweepVector = new(box.Left, box.Center.Y);
+
+                    break;
+
+            }
+
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { sweepVector, }, GetWidth() * GetScale() * 0.7f);
 
             if(targets.Count > 0)
             {

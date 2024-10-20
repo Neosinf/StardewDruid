@@ -98,10 +98,10 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawHat(SpriteBatch b, Vector2 localPosition,  float drawLayer, float fade)
+        public override void DrawHat(SpriteBatch b, Vector2 spritePosition,  float drawLayer, float fade)
         {
             
-            Vector2 spritePosition = SpritePosition(localPosition);
+            //Vector2 spritePosition = SpritePosition(localPosition);
 
             int UseIndex = hatsIndex + 0;
 

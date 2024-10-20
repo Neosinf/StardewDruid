@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Xna.Framework;
 using StardewDruid.Character;
+using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewValley;
 
@@ -31,7 +32,7 @@ namespace StardewDruid.Event.Sword
 
             companions[0].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-            companions[0].Position = new Vector2(26, 19) * 64;
+            CharacterMover.Warp(Mod.instance.locations[LocationData.druid_chapel_name], companions[0], new Vector2(26, 19) * 64);
 
             companions[0].ResetActives();
 

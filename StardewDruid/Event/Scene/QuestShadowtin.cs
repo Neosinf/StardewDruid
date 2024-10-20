@@ -97,23 +97,23 @@ namespace StardewDruid.Event.Scene
             [29] = new Vector2(28, 28),
 
             // forest cache enter farmer
-            [30] = new Vector2(28, 13),
+            [30] = new Vector2(30, 17),
             // forest cache enter shadowtin
-            [31] = new Vector2(27, 15),
+            [31] = new Vector2(29, 19),
             // forest cache location
-            [32] = new Vector2(27, 18),
+            [32] = new Vector2(29, 22),
             // forest enter rogue
-            [33] = new Vector2(24, 13),
+            [33] = new Vector2(26, 15),
             // forest enter goblin
-            [34] = new Vector2(26, 12),
+            [34] = new Vector2(27, 16),
             // forest cache enter dwarf
-            [35] = new Vector2(25, 12),
+            [35] = new Vector2(28, 16),
             // rogue exit
-            [36] = new Vector2(5, 11),
+            [36] = new Vector2(9, 9),
             // dwarf exit
-            [37] = new Vector2(27, 6),
+            [37] = new Vector2(29, 10),
             // shadowtin contemplation
-            [38] = new Vector2(27, 21),
+            [38] = new Vector2(29, 24),
 
         };
 
@@ -912,11 +912,11 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(310);
 
-                    StopTrack();
-
                     break;
 
                 case 360:
+
+                    StopTrack();
 
                     CharacterMover.Warp(location, companions[3], bosses[0].Position, false);
 
@@ -1024,7 +1024,7 @@ namespace StardewDruid.Event.Scene
 
                 case 421:
 
-                    DialogueCueWithFeeling(407,0,Character.Character.specials.gesture);
+                    DialogueCueWithFeeling(407);
 
                     companions[3].LookAtTarget(Game1.player.Position, true);
 
@@ -1214,18 +1214,13 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCueWithFeeling(504);
 
-                    Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles(IconData.relics.skull_gelatin);
+                    EventRender gelatinBone = new("gelatinBone", location.Name, eventVectors[32] * 64 + new Vector2(32), IconData.relics.skull_gelatin) { layer = 1f };
 
-                    TemporaryAnimatedSprite animation = new(0, 6000, 1, 1, eventVectors[32] * 64, false, false)
-                    {
-                        sourceRect = relicRect,
-                        sourceRectStartingPos = new(relicRect.X, relicRect.Y),
-                        texture = Mod.instance.iconData.relicsTexture,
-                        layerDepth = (eventVectors[32] * 64).Y / 10000,
-                        scale = 4f,
-                    };
+                    eventRenders.Add(gelatinBone);
 
-                    location.TemporarySprites.Add(animation);
+                    EventRender cannoliBone = new("cannoliBone", location.Name, eventVectors[32] * 64 + new Vector2(96,32), IconData.relics.skull_cannoli) { layer = 1f };
+
+                    eventRenders.Add(cannoliBone);
 
                     break;
 
@@ -1237,11 +1232,13 @@ namespace StardewDruid.Event.Scene
 
                 case 522:
 
-                    ThrowHandle newThrowRelic = new(Game1.player, eventVectors[32] * 64, IconData.relics.skull_gelatin);
+                    //ThrowHandle newThrowRelic = new(Game1.player, eventVectors[32] * 64, IconData.relics.skull_gelatin);
 
-                    newThrowRelic.impact = IconData.impacts.puff;
+                    //newThrowRelic.impact = IconData.impacts.puff;
 
-                    newThrowRelic.register();
+                    //newThrowRelic.register();
+
+                    eventRenders.Clear();
 
                     DialogueLoad(0, 6);
 
@@ -1269,33 +1266,35 @@ namespace StardewDruid.Event.Scene
 
                     DialogueClear(0);
 
-                    bosses[1] = new DarkRogue(ModUtility.PositionToTile(eventVectors[33] * 64), Mod.instance.CombatDifficulty());
+                    // Rogue character switch
 
-                    Mod.instance.iconData.AnimateQuickWarp(location, bosses[1].Position);
+                    companions[7] = new Shadowtin(CharacterHandle.characters.DarkRogue);
 
-                    location.characters.Add(bosses[1]);
+                    voices[7] = companions[7];
 
-                    bosses[1].netPosturing.Set(true);
+                    companions[7].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-                    bosses[1].SetDirection(companions[0].Position);
+                    CharacterMover.Warp(location, companions[7], eventVectors[33]*64, false);
 
-                    bosses[1].update(Game1.currentGameTime, location);
+                    companions[7].eventName = eventId;
 
-                    voices[7] = bosses[1];
+                    companions[7].LookAtTarget(companions[0].Position, true);
 
-                    bosses[2] = new DarkGoblin(ModUtility.PositionToTile(eventVectors[34] * 64), Mod.instance.CombatDifficulty());
+                    // Rogue 2 character switch
 
-                    Mod.instance.iconData.AnimateQuickWarp(location, bosses[2].Position);
+                    companions[8] = new Shadowtin(CharacterHandle.characters.DarkGoblin);
 
-                    location.characters.Add(bosses[2]);
+                    voices[8] = companions[8];
 
-                    bosses[2].netPosturing.Set(true);
+                    companions[8].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-                    bosses[2].SetDirection(companions[0].Position);
+                    CharacterMover.Warp(location, companions[8], eventVectors[34] * 64, false);
 
-                    bosses[2].update(Game1.currentGameTime, location);
+                    companions[8].eventName = eventId;
 
-                    voices[8] = bosses[2];
+                    companions[8].LookAtTarget(companions[0].Position, true);
+
+                    // Dwarf
 
                     CharacterMover.Warp(location, companions[1], eventVectors[35] * 64);
 
@@ -1305,7 +1304,7 @@ namespace StardewDruid.Event.Scene
 
                 case 601:
 
-                    companions[0].LookAtTarget(bosses[1].Position,true);
+                    companions[0].LookAtTarget(companions[7].Position, true);
 
                     DialogueCueWithFeeling(600);
 
@@ -1319,7 +1318,7 @@ namespace StardewDruid.Event.Scene
 
                 case 607:
 
-                    companions[0].LookAtTarget(bosses[1].Position, true);
+                    companions[0].LookAtTarget(companions[7].Position, true);
 
                     DialogueCueWithFeeling(602);
 
@@ -1333,7 +1332,7 @@ namespace StardewDruid.Event.Scene
 
                 case 613:
 
-                    companions[0].LookAtTarget(bosses[1].Position, true);
+                    companions[0].LookAtTarget(companions[7].Position, true);
 
                     DialogueCueWithFeeling(604);
 
@@ -1391,7 +1390,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCueWithFeeling(613);
 
-                    ThrowHandle throwMap = new(companions[0].Position, bosses[1].Position, IconData.relics.book_chart);
+                    ThrowHandle throwMap = new(companions[0].Position, companions[7].Position, IconData.relics.book_chart);
 
                     throwMap.register();
 
@@ -1411,15 +1410,13 @@ namespace StardewDruid.Event.Scene
 
                 case 648:
 
-                    bosses[1].PerformFlight(eventVectors[36] * 64, 5);
+                    companions[8].ResetActives();
+
+                    companions[7].TargetEvent(650,eventVectors[36] * 64);
 
                     break;
 
                 case 649:
-
-                    Mod.instance.iconData.AnimateQuickWarp(location, bosses[1].Position, true);
-
-                    location.characters.Remove(bosses[1]);
 
                     DialogueCue(616);
 
@@ -1435,15 +1432,11 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].netDirection.Set(1);
 
-                    bosses[2].PerformFlight(eventVectors[36] * 64, 5);
+                    companions[8].TargetEvent(651, eventVectors[36] * 64);
 
                     break;
 
                 case 652:
-
-                    Mod.instance.iconData.AnimateQuickWarp(location, bosses[2].Position, true);
-
-                    location.characters.Remove(bosses[2]);
 
                     companions[1].LookAtTarget(companions[0].Position, true);
 
@@ -1461,7 +1454,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].ResetActives();
 
-                    companions[1].TargetEvent(0,eventVectors[37]*64,true);
+                    companions[1].TargetEvent(652,eventVectors[37]*64,true);
 
                     break;
 
@@ -1470,11 +1463,6 @@ namespace StardewDruid.Event.Scene
                     companions[0].ResetActives();
 
                     companions[0].TargetEvent(0, eventVectors[38] * 64);
-
-                    Mod.instance.iconData.AnimateQuickWarp(location, companions[1].Position, true);
-
-                    location.characters.Remove(companions[1]);
-
                     break;
 
                 case 663:
@@ -1495,6 +1483,51 @@ namespace StardewDruid.Event.Scene
 
         }
 
+        public override void EventScene(int index)
+        {
+
+            switch (index)
+            {
+
+                case 650:
+
+                    Mod.instance.iconData.AnimateQuickWarp(location, companions[7].Position, true);
+
+                    companions[7].currentLocation.characters.Remove(companions[7]);
+
+                    companions.Remove(7);
+
+                    voices.Remove(7);
+
+                    break;
+
+                case 651:
+
+                    Mod.instance.iconData.AnimateQuickWarp(location, companions[8].Position, true);
+
+                    companions[8].currentLocation.characters.Remove(companions[8]);
+
+                    companions.Remove(8);
+
+                    voices.Remove(8);
+
+                    break;
+
+                case 652:
+
+                    Mod.instance.iconData.AnimateQuickWarp(location, companions[1].Position, true);
+
+                    companions[1].currentLocation.characters.Remove(companions[1]);
+
+                    companions.Remove(1);
+
+                    voices.Remove(1);
+
+                    break;
+
+            }
+
+        }
 
     }
 

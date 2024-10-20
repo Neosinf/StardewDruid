@@ -199,7 +199,7 @@ namespace StardewDruid.Cast.Ether
 
         public override void EventRemove()
         {
-            
+
             if (Game1.player.CurrentToolIndex == 999)
             {
 

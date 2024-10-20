@@ -71,7 +71,7 @@ namespace StardewDruid.Dialogue
 
             }
 
-            string str = CharacterHandle.DialogueApproach(characterType);
+            string str = DialogueIntroduction.DialogueApproach(characterType);
 
             if(introDialogue.Count > 0)
             {
@@ -109,7 +109,7 @@ namespace StardewDruid.Dialogue
 
             }
 
-            Response nevermind = new ("none", CharacterHandle.DialogueNevermind(characterType));
+            Response nevermind = new ("none", DialogueIntroduction.DialogueNevermind(characterType));
 
             nevermind.SetHotKey(Microsoft.Xna.Framework.Input.Keys.Escape);
 
@@ -217,7 +217,7 @@ namespace StardewDruid.Dialogue
 
             }
 
-            responseList.Add(new Response("999", CharacterHandle.DialogueNevermind(characterType)).SetHotKey(Microsoft.Xna.Framework.Input.Keys.Escape));
+            responseList.Add(new Response("999", DialogueIntroduction.DialogueNevermind(characterType)).SetHotKey(Microsoft.Xna.Framework.Input.Keys.Escape));
 
             Game1.player.currentLocation.createQuestionDialogue(specialEntry.intro, responseList.ToArray(), questionBehavior, npc);
 

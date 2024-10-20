@@ -8,12 +8,17 @@ using Microsoft.Xna.Framework;
 
 using StardewDruid.Data;
 using StardewDruid.Character;
+using Microsoft.Xna.Framework.Graphics;
 
 
 namespace StardewDruid.Location
 {
     public class Tomb : DruidLocation
     {
+
+        public bool activeCircle;
+
+        public List<Location.TerrainTile> circleTiles = new();
 
         public Tomb() { }
 
@@ -22,6 +27,24 @@ namespace StardewDruid.Location
         {
 
         }
+        public override void draw(SpriteBatch b)
+        {
+
+            base.draw(b);
+
+            if (activeCircle)
+            {
+
+                foreach (TerrainTile tile in circleTiles)
+                {
+
+                    tile.draw(b, this);
+
+                }
+
+            }
+        }
+
         protected override void _updateAmbientLighting()
         {
 
@@ -412,14 +435,13 @@ namespace StardewDruid.Location
 
             codes = new()
             {
-                [0] = new() { },
                 [1] = new() { },
                 [2] = new() { },
                 [3] = new() { new() { 20, 1 }, new() { 26, 6 }, new() { 32, 1 }, },
-                [4] = new() { new() { 20, 2 }, new() { 32, 3 }, },
+                [4] = new() { },
                 [5] = new() { },
                 [6] = new() { new() { 13, 1 }, new() { 39, 1 }, },
-                [7] = new() { },
+                [7] = new() { new() { 13, 3 }, new() { 39, 2 }, },
                 [8] = new() { },
                 [9] = new() { },
                 [10] = new() { new() { 19, 5 }, new() { 32, 5 }, },
@@ -427,7 +449,7 @@ namespace StardewDruid.Location
                 [12] = new() { },
                 [13] = new() { },
                 [14] = new() { new() { 11, 1 }, new() { 41, 1 }, },
-                [15] = new() { new() { 41, 2 }, },
+                [15] = new() { },
                 [16] = new() { },
                 [17] = new() { },
                 [18] = new() { },
@@ -439,15 +461,9 @@ namespace StardewDruid.Location
                 [24] = new() { },
                 [25] = new() { },
                 [26] = new() { new() { 20, 1 }, new() { 32, 1 }, },
-                [27] = new() { new() { 20, 3 }, },
+                [27] = new() { },
                 [28] = new() { },
                 [29] = new() { },
-                [30] = new() { },
-                [31] = new() { },
-                [32] = new() { },
-                [33] = new() { },
-                [34] = new() { },
-                [35] = new() { },
 
 
             };
@@ -545,6 +561,19 @@ namespace StardewDruid.Location
                 }
 
             }
+
+            // CIRCLE
+
+            TerrainTile circleTile = new(IconData.tilesheets.ritual, 1, new Vector2(1504, 864), TerrainTile.shadows.none);
+
+            circleTile.color = Microsoft.Xna.Framework.Color.DarkRed * 0.3f;
+
+            circleTile.fadeout = 1f;
+
+            circleTile.layer = 0.00064f;
+
+            circleTiles.Add(circleTile);
+
 
             addDialogue();
 

@@ -28,6 +28,14 @@ namespace StardewDruid.Character
                 [0] = new List<Rectangle> { new Rectangle(160, 32, 32, 32), },
             };
 
+            restSet = true;
+
+            idleFrames[idles.rest] = new()
+            {
+                [0] = new() { new(0, 64, 32, 32), },
+
+            };
+
         }
 
     }

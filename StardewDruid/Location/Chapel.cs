@@ -31,11 +31,49 @@ namespace StardewDruid.Location
 
         public Vector2 backgroundOffset;
 
+        public List<Location.TerrainTile> altarTiles = new();
+
+        public List<Location.TerrainTile> circleTiles = new();
+
+        public bool activeCircle;
+
+
         public Chapel() { }
 
         public Chapel(string Name)
             : base(Name) 
         {
+
+        }
+
+        public override void draw(SpriteBatch b)
+        {
+            
+            base.draw(b);
+
+            if (activeCircle)
+            {
+
+                foreach (TerrainTile tile in circleTiles)
+                {
+
+                    tile.draw(b, this);
+
+                }
+
+            }
+            else
+            {
+
+                foreach (TerrainTile tile in altarTiles)
+                {
+
+                    tile.draw(b, this);
+
+                }
+
+            }
+
 
         }
 
@@ -142,8 +180,8 @@ namespace StardewDruid.Location
                 [12] = new() { },
                 [13] = new() { new() { 15, 3 }, new() { 16, 3 }, new() { 17, 3 }, new() { 18, 3 }, new() { 19, 17 }, new() { 20, 18 }, new() { 21, 17 }, new() { 22, 18 }, new() { 23, 17 }, new() { 24, 18 }, new() { 25, 17 }, new() { 26, 18 }, new() { 27, 17 }, new() { 28, 18 }, new() { 29, 17 }, new() { 30, 18 }, new() { 31, 17 }, new() { 32, 18 }, new() { 33, 17 }, new() { 34, 18 }, new() { 35, 3 }, new() { 36, 3 }, new() { 37, 3 }, new() { 38, 3 }, },
                 [14] = new() { new() { 15, 3 }, new() { 16, 3 }, new() { 17, 3 }, new() { 18, 3 }, new() { 19, 31 }, new() { 20, 32 }, new() { 21, 31 }, new() { 22, 32 }, new() { 23, 31 }, new() { 24, 32 }, new() { 25, 31 }, new() { 26, 32 }, new() { 27, 31 }, new() { 28, 32 }, new() { 29, 31 }, new() { 30, 32 }, new() { 31, 31 }, new() { 32, 32 }, new() { 33, 31 }, new() { 34, 32 }, new() { 35, 3 }, new() { 36, 3 }, new() { 37, 3 }, new() { 38, 3 }, },
-                [15] = new() { new() { 15, 3 }, new() { 16, 3 }, new() { 17, 17 }, new() { 18, 18 }, new() { 19, 17 }, new() { 20, 18 }, new() { 21, 45 }, new() { 22, 46 }, new() { 23, 45 }, new() { 24, 46 }, new() { 25, 45 }, new() { 26, 46 }, new() { 27, 45 }, new() { 28, 46 }, new() { 29, 45 }, new() { 30, 46 }, new() { 31, 45 }, new() { 32, 46 }, new() { 33, 17 }, new() { 34, 18 }, new() { 35, 17 }, new() { 36, 18 }, new() { 37, 3 }, new() { 38, 3 }, },
-                [16] = new() { new() { 15, 3 }, new() { 16, 3 }, new() { 17, 31 }, new() { 18, 32 }, new() { 19, 31 }, new() { 20, 32 }, new() { 21, 59 }, new() { 22, 60 }, new() { 23, 59 }, new() { 24, 60 }, new() { 25, 59 }, new() { 26, 60 }, new() { 27, 59 }, new() { 28, 60 }, new() { 29, 59 }, new() { 30, 60 }, new() { 31, 59 }, new() { 32, 60 }, new() { 33, 31 }, new() { 34, 32 }, new() { 35, 31 }, new() { 36, 32 }, new() { 37, 3 }, new() { 38, 3 }, },
+                [15] = new() { new() { 15, 3 }, new() { 16, 3 }, new() { 17, 17 }, new() { 18, 18 }, new() { 19, 17 }, new() { 20, 18 }, new() { 21, 45 }, new() { 22, 46 }, new() { 23, 45 }, new() { 24, 46 }, new() { 25, 73 }, new() { 26, 74 }, new() { 27, 73 }, new() { 28, 74 }, new() { 29, 45 }, new() { 30, 46 }, new() { 31, 45 }, new() { 32, 46 }, new() { 33, 17 }, new() { 34, 18 }, new() { 35, 17 }, new() { 36, 18 }, new() { 37, 3 }, new() { 38, 3 }, },
+                [16] = new() { new() { 15, 3 }, new() { 16, 3 }, new() { 17, 31 }, new() { 18, 32 }, new() { 19, 31 }, new() { 20, 32 }, new() { 21, 59 }, new() { 22, 60 }, new() { 23, 59 }, new() { 24, 60 }, new() { 25, 87 }, new() { 26, 88 }, new() { 27, 87 }, new() { 28, 88 }, new() { 29, 59 }, new() { 30, 60 }, new() { 31, 59 }, new() { 32, 60 }, new() { 33, 31 }, new() { 34, 32 }, new() { 35, 31 }, new() { 36, 32 }, new() { 37, 3 }, new() { 38, 3 }, },
                 [17] = new() { new() { 15, 3 }, new() { 16, 3 }, new() { 17, 17 }, new() { 18, 18 }, new() { 19, 45 }, new() { 20, 46 }, new() { 21, 45 }, new() { 22, 46 }, new() { 23, 45 }, new() { 24, 46 }, new() { 25, 45 }, new() { 26, 46 }, new() { 27, 45 }, new() { 28, 46 }, new() { 29, 45 }, new() { 30, 46 }, new() { 31, 45 }, new() { 32, 46 }, new() { 33, 45 }, new() { 34, 46 }, new() { 35, 17 }, new() { 36, 18 }, new() { 37, 3 }, new() { 38, 3 }, },
                 [18] = new() { new() { 15, 3 }, new() { 16, 3 }, new() { 17, 31 }, new() { 18, 32 }, new() { 19, 59 }, new() { 20, 60 }, new() { 21, 59 }, new() { 22, 60 }, new() { 23, 59 }, new() { 24, 60 }, new() { 25, 59 }, new() { 26, 60 }, new() { 27, 59 }, new() { 28, 60 }, new() { 29, 59 }, new() { 30, 60 }, new() { 31, 59 }, new() { 32, 60 }, new() { 33, 59 }, new() { 34, 60 }, new() { 35, 31 }, new() { 36, 32 }, new() { 37, 3 }, new() { 38, 3 }, },
                 [19] = new() { new() { 13, 3 }, new() { 14, 3 }, new() { 15, 3 }, new() { 16, 3 }, new() { 17, 17 }, new() { 18, 18 }, new() { 19, 45 }, new() { 20, 46 }, new() { 21, 45 }, new() { 22, 46 }, new() { 23, 45 }, new() { 24, 46 }, new() { 25, 45 }, new() { 26, 46 }, new() { 27, 45 }, new() { 28, 46 }, new() { 29, 45 }, new() { 30, 46 }, new() { 31, 45 }, new() { 32, 46 }, new() { 33, 45 }, new() { 34, 46 }, new() { 35, 17 }, new() { 36, 18 }, new() { 37, 3 }, new() { 38, 3 }, new() { 39, 3 }, new() { 40, 3 }, },
@@ -164,7 +202,6 @@ namespace StardewDruid.Location
                 [34] = new() { new() { 9, 3 }, new() { 10, 3 }, new() { 11, 31 }, new() { 12, 32 }, new() { 13, 31 }, new() { 14, 32 }, new() { 15, 31 }, new() { 16, 32 }, new() { 17, 31 }, new() { 18, 32 }, new() { 19, 31 }, new() { 20, 32 }, new() { 24, 4 }, new() { 25, 4 }, new() { 26, 4 }, new() { 27, 4 }, new() { 28, 4 }, new() { 29, 4 }, new() { 33, 31 }, new() { 34, 32 }, new() { 35, 31 }, new() { 36, 32 }, new() { 37, 31 }, new() { 38, 32 }, new() { 39, 31 }, new() { 40, 32 }, new() { 41, 31 }, new() { 42, 32 }, new() { 43, 3 }, new() { 44, 3 }, },
                 [35] = new() { new() { 25, 4 }, new() { 26, 4 }, new() { 27, 4 }, new() { 28, 4 }, },
 
-
             };
 
             foreach (KeyValuePair<int, List<List<int>>> code in codes)
@@ -183,7 +220,10 @@ namespace StardewDruid.Location
 
             codes = new()
             {
-                [20] = new() { new() { 19, 176 }, new() { 20, 177 }, new() { 21, 178 }, new() { 22, 178 }, new() { 23, 178 }, new() { 24, 178 }, new() { 25, 178 }, new() { 26, 178 }, new() { 27, 179 }, new() { 28, 179 }, new() { 29, 179 }, new() { 30, 179 }, new() { 31, 179 }, new() { 32, 179 }, new() { 33, 180 }, new() { 34, 181 }, },
+                [17] = new() { },
+                [18] = new() { new() { 19, 176 }, new() { 20, 177 }, new() { 21, 178 }, new() { 22, 178 }, new() { 23, 178 }, new() { 24, 178 }, new() { 25, 178 }, new() { 26, 178 }, new() { 27, 179 }, new() { 28, 179 }, new() { 29, 179 }, new() { 30, 179 }, new() { 31, 179 }, new() { 32, 179 }, new() { 33, 180 }, new() { 34, 181 }, },
+                [19] = new() { new() { 19, 190 }, new() { 20, 191 }, new() { 21, 192 }, new() { 22, 192 }, new() { 23, 192 }, new() { 24, 192 }, new() { 25, 192 }, new() { 26, 192 }, new() { 27, 193 }, new() { 28, 193 }, new() { 29, 193 }, new() { 30, 193 }, new() { 31, 193 }, new() { 32, 193 }, new() { 33, 194 }, new() { 34, 195 }, },
+                [20] = new() { new() { 19, 190 }, new() { 20, 191 }, new() { 21, 192 }, new() { 22, 192 }, new() { 23, 192 }, new() { 24, 192 }, new() { 25, 192 }, new() { 26, 192 }, new() { 27, 193 }, new() { 28, 193 }, new() { 29, 193 }, new() { 30, 193 }, new() { 31, 193 }, new() { 32, 193 }, new() { 33, 194 }, new() { 34, 195 }, },
                 [21] = new() { new() { 19, 190 }, new() { 20, 191 }, new() { 21, 192 }, new() { 22, 192 }, new() { 23, 192 }, new() { 24, 192 }, new() { 25, 192 }, new() { 26, 192 }, new() { 27, 193 }, new() { 28, 193 }, new() { 29, 193 }, new() { 30, 193 }, new() { 31, 193 }, new() { 32, 193 }, new() { 33, 194 }, new() { 34, 195 }, },
                 [22] = new() { new() { 19, 190 }, new() { 20, 191 }, new() { 21, 192 }, new() { 22, 192 }, new() { 23, 192 }, new() { 24, 192 }, new() { 25, 192 }, new() { 26, 192 }, new() { 27, 193 }, new() { 28, 193 }, new() { 29, 193 }, new() { 30, 193 }, new() { 31, 193 }, new() { 32, 193 }, new() { 33, 194 }, new() { 34, 195 }, },
                 [23] = new() { new() { 19, 190 }, new() { 20, 191 }, new() { 21, 192 }, new() { 22, 192 }, new() { 23, 192 }, new() { 24, 192 }, new() { 25, 192 }, new() { 26, 192 }, new() { 27, 193 }, new() { 28, 193 }, new() { 29, 193 }, new() { 30, 193 }, new() { 31, 193 }, new() { 32, 193 }, new() { 33, 194 }, new() { 34, 195 }, },
@@ -192,6 +232,7 @@ namespace StardewDruid.Location
                 [26] = new() { new() { 19, 190 }, new() { 20, 191 }, new() { 21, 192 }, new() { 22, 192 }, new() { 23, 192 }, new() { 24, 192 }, new() { 25, 192 }, new() { 26, 192 }, new() { 27, 193 }, new() { 28, 193 }, new() { 29, 193 }, new() { 30, 193 }, new() { 31, 193 }, new() { 32, 193 }, new() { 33, 194 }, new() { 34, 195 }, },
                 [27] = new() { new() { 19, 190 }, new() { 20, 191 }, new() { 21, 192 }, new() { 22, 192 }, new() { 23, 192 }, new() { 24, 192 }, new() { 25, 192 }, new() { 26, 192 }, new() { 27, 193 }, new() { 28, 193 }, new() { 29, 193 }, new() { 30, 193 }, new() { 31, 193 }, new() { 32, 193 }, new() { 33, 194 }, new() { 34, 195 }, },
                 [28] = new() { new() { 19, 204 }, new() { 20, 205 }, new() { 21, 206 }, new() { 22, 206 }, new() { 23, 206 }, new() { 24, 206 }, new() { 25, 206 }, new() { 26, 206 }, new() { 27, 207 }, new() { 28, 207 }, new() { 29, 207 }, new() { 30, 207 }, new() { 31, 207 }, new() { 32, 207 }, new() { 33, 208 }, new() { 34, 209 }, },
+                [29] = new() { },
 
             };
 
@@ -277,7 +318,7 @@ namespace StardewDruid.Location
                 [12] = new() { new() { 16, 9 }, new() { 36, 9 }, },
                 [13] = new() { new() { 12, 8 }, new() { 38, 8 }, },
                 [14] = new() { },
-                [15] = new() { new() { 24, 3 }, },
+                [15] = new() { },
                 [16] = new() { new() { 8, 2 }, new() { 11, 1 }, new() { 40, 2 }, new() { 43, 1 }, },
                 [17] = new() { },
                 [18] = new() { },
@@ -292,14 +333,12 @@ namespace StardewDruid.Location
                 [27] = new() { },
                 [28] = new() { new() { 10, 9 }, new() { 42, 9 }, },
                 [29] = new() { new() { 6, 8 }, new() { 44, 8 }, },
-                [30] = new() { },
-                [31] = new() { new() { 18, 9 }, new() { 34, 9 }, },
+                [30] = new() { new() { 15, 10 }, new() { 35, 11 }, },
+                [31] = new() { },
                 [32] = new() { },
                 [33] = new() { },
                 [34] = new() { },
                 [35] = new() { },
-
-
 
             };
 
@@ -311,8 +350,9 @@ namespace StardewDruid.Location
 
                     TerrainTile tTile = new(IconData.tilesheets.chapel, array[1], new Vector2(array[0], code.Key) * 64);
 
-                    if (array[1] == 2)
+                    if (array[1] == 2 || array[1] == 11)
                     {
+                        
                         tTile.flip = true;
 
                     }
@@ -338,6 +378,54 @@ namespace StardewDruid.Location
 
             }
 
+            // ALTAR
+
+            codes = new()
+            {
+                [14] = new() { new() { 24, 3 }, },
+
+            };
+
+            foreach (KeyValuePair<int, List<List<int>>> code in codes)
+            {
+
+                foreach (List<int> array in code.Value)
+                {
+
+                    TerrainTile tTile = new(IconData.tilesheets.chapel, array[1], new Vector2(array[0], code.Key) * 64);
+
+                    foreach (Vector2 bottom in tTile.baseTiles)
+                    {
+
+                        if (buildings.Tiles[(int)bottom.X, (int)bottom.Y] == null && back.Tiles[(int)bottom.X, (int)bottom.Y] != null)
+                        {
+
+                            buildings.Tiles[(int)bottom.X, (int)bottom.Y] = new StaticTile(buildings, chapelsheet, BlendMode.Alpha, back.Tiles[(int)bottom.X, (int)bottom.Y].TileIndex);
+                        }
+
+                    }
+
+                    altarTiles.Add(tTile);
+
+                }
+
+            }
+
+            // CIRCLE
+
+            TerrainTile circleTile = new(IconData.tilesheets.ritual, 1, new Vector2(1504, 832), TerrainTile.shadows.none);
+
+            circleTile.color = Microsoft.Xna.Framework.Color.White * 0.1f;
+
+            circleTile.fadeout = 1f;
+
+            circleTile.layer = 0.00064f;
+
+            circleTiles.Add(circleTile);
+
+            
+            // OVERHEAD
+
             codes = new()
             {
                 [0] = new() { new() { 13, 4 }, new() { 15, 5 }, new() { 19, 5 }, new() { 23, 5 }, new() { 27, 5 }, new() { 31, 5 }, new() { 35, 5 }, new() { 39, 6 }, },
@@ -362,6 +450,13 @@ namespace StardewDruid.Location
 
             codes = new()
             {
+                [0] = new() { },
+                [1] = new() { },
+                [2] = new() { },
+                [3] = new() { },
+                [4] = new() { },
+                [5] = new() { },
+                [6] = new() { },
                 [7] = new() { },
                 [8] = new() { },
                 [9] = new() { },
@@ -369,8 +464,8 @@ namespace StardewDruid.Location
                 [11] = new() { },
                 [12] = new() { new() { 16, 1 }, new() { 36, 1 }, },
                 [13] = new() { },
-                [14] = new() { },
-                [15] = new() { new() { 25, 1 }, new() { 28, 1 }, },
+                [14] = new() { new() { 25, 1 }, new() { 28, 1 }, },
+                [15] = new() { },
                 [16] = new() { },
                 [17] = new() { },
                 [18] = new() { },
@@ -386,11 +481,11 @@ namespace StardewDruid.Location
                 [28] = new() { new() { 10, 1 }, new() { 42, 1 }, },
                 [29] = new() { },
                 [30] = new() { },
-                [31] = new() { new() { 18, 1 }, new() { 34, 1 }, },
+                [31] = new() { new() { 17, 1 }, new() { 35, 1 }, },
                 [32] = new() { },
                 [33] = new() { },
-                [32] = new() { },
-
+                [34] = new() { },
+                [35] = new() { },
 
             };
 
@@ -423,6 +518,14 @@ namespace StardewDruid.Location
 
             if (dialogueTiles.Count > 0) { return; }
 
+            dialogueTiles.Add(new(25, 15), CharacterHandle.characters.star_altar);
+
+            dialogueTiles.Add(new(26, 15), CharacterHandle.characters.star_altar);
+
+            dialogueTiles.Add(new(27, 15), CharacterHandle.characters.star_altar);
+
+            dialogueTiles.Add(new(28, 15), CharacterHandle.characters.star_altar);
+
             dialogueTiles.Add(new(25, 16), CharacterHandle.characters.star_altar);
 
             dialogueTiles.Add(new(26, 16), CharacterHandle.characters.star_altar);
@@ -431,13 +534,21 @@ namespace StardewDruid.Location
 
             dialogueTiles.Add(new(28, 16), CharacterHandle.characters.star_altar);
 
-            dialogueTiles.Add(new(25, 17), CharacterHandle.characters.star_altar);
+            dialogueTiles.Add(new(16, 31), CharacterHandle.characters.star_desk);
 
-            dialogueTiles.Add(new(26, 17), CharacterHandle.characters.star_altar);
+            dialogueTiles.Add(new(17, 31), CharacterHandle.characters.star_desk);
 
-            dialogueTiles.Add(new(27, 17), CharacterHandle.characters.star_altar);
+            dialogueTiles.Add(new(16, 32), CharacterHandle.characters.star_desk);
 
-            dialogueTiles.Add(new(28, 17), CharacterHandle.characters.star_altar);
+            dialogueTiles.Add(new(17, 32), CharacterHandle.characters.star_desk);
+
+            dialogueTiles.Add(new(36, 31), CharacterHandle.characters.star_bench);
+
+            dialogueTiles.Add(new(37, 31), CharacterHandle.characters.star_bench);
+
+            dialogueTiles.Add(new(36, 32), CharacterHandle.characters.star_bench);
+
+            dialogueTiles.Add(new(37, 32), CharacterHandle.characters.star_bench);
 
         }
 
@@ -460,6 +571,7 @@ namespace StardewDruid.Location
                 return;
 
             }
+            warpSets.Add(new WarpTile(25, 35, "Mine", 17, 5));
 
             warpSets.Add(new WarpTile(26, 35, "Mine", 17, 5));
 
@@ -469,6 +581,10 @@ namespace StardewDruid.Location
 
             warpSets.Add(new WarpTile(29, 35, "Mine", 17, 5));
 
+            warpSets.Add(new WarpTile(30, 35, "Mine", 17, 5));
+
+            warps.Add(new Warp(25, 35, "Mine", 17, 5, flipFarmer: false));
+
             warps.Add(new Warp(26, 35, "Mine", 17, 5, flipFarmer: false));
 
             warps.Add(new Warp(27, 35, "Mine", 17, 5, flipFarmer: false));
@@ -476,6 +592,8 @@ namespace StardewDruid.Location
             warps.Add(new Warp(28, 35, "Mine", 17, 5, flipFarmer: false));
 
             warps.Add(new Warp(29, 35, "Mine", 17, 5, flipFarmer: false));
+
+            warps.Add(new Warp(30, 35, "Mine", 17, 5, flipFarmer: false));
 
         }
 

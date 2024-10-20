@@ -29,7 +29,14 @@ namespace StardewDruid.Location
     public class Gate : DruidLocation
     {
 
+        public bool alightBrazier;
+
         public List<LightField> brazierFields = new();
+
+        public List<TerrainTile> brazierTiles = new();
+
+        public List<TerrainTile> maypoleTiles = new();
+
 
         public Gate() { }
 
@@ -44,7 +51,37 @@ namespace StardewDruid.Location
             
             base.draw(b);
 
-            if ((Game1.timeOfDay == 1900 && Mod.instance.questHandle.IsComplete(QuestHandle.challengeEther)) || Mod.instance.activeEvent.ContainsKey(QuestHandle.challengeEther))
+            bool showFlame = false;
+
+            if(Mod.instance.activeEvent.Count > 0)
+            {
+
+                if (alightBrazier)
+                {
+
+                    showFlame = true;
+
+                }
+
+                foreach (TerrainTile maypoleTile in maypoleTiles)
+                {
+
+                    maypoleTile.draw(b, this);
+
+                }
+
+            }
+            else
+            if ((Game1.timeOfDay >= 1900 && Mod.instance.questHandle.IsComplete(QuestHandle.challengeEther)))
+            {
+
+
+                showFlame = true;
+
+
+            }
+
+            if (showFlame)
             {
 
                 foreach (LightField brazier in brazierFields)
@@ -54,7 +91,32 @@ namespace StardewDruid.Location
 
                 }
 
+                if (brazierTiles.First().index == 11)
+                {
+
+                    brazierTiles.First().index = 12;
+
+                    brazierTiles.First().reset();
+
+                }
+
             }
+            else
+            {
+
+                if (brazierTiles.First().index == 12)
+                {
+
+                    brazierTiles.First().index = 11;
+
+                    brazierTiles.First().reset();
+
+                }
+
+            }
+
+            brazierTiles.First().draw(b,this);
+
 
         }
 
@@ -418,19 +480,16 @@ namespace StardewDruid.Location
                 [12] = new() { },
                 [13] = new() { new() { 37, 10 }, },
                 [14] = new() { },
-                [15] = new() { },
-                [16] = new() { },
                 [17] = new() { new() { 12, 2 }, new() { 41, 2 }, },
                 [18] = new() { },
                 [19] = new() { },
-                [20] = new() { new() { 25, 11 }, },
+
                 [21] = new() { new() { 16, 2 }, },
                 [22] = new() { },
                 [23] = new() { },
                 [24] = new() { new() { 22, 2 }, new() { 31, 2 }, new() { 37, 9 }, },
                 [25] = new() { },
-                [26] = new() { },
-                [27] = new() { },
+
 
 
             };
@@ -451,27 +510,6 @@ namespace StardewDruid.Location
                     }
 
                     Vector2 codeVector = new Vector2(array[0], codeTile) * 64;
-
-                    if (array[1] == 11)
-                    {
-
-                        codeVector.X += 32;
-
-                        LightField brazierLight = new(new Vector2(array[0]+3, code.Key+1) * 64 + new Vector2(0, 8));
-
-                        brazierLight.lightType = LightField.lightTypes.brazier;
-
-                        brazierLight.lightFrame = Mod.instance.randomIndex.Next(5);
-
-                        brazierLight.luminosity = 8;
-
-                        brazierLight.lightLayer = 1;
-
-                        brazierLight.lightScale = 5f;
-
-                        brazierFields.Add(brazierLight);
-
-                    }
 
                     TerrainTile tTile = new(IconData.tilesheets.gate, array[1], codeVector, TerrainTile.shadows.offset, array[0] > 27);
 
@@ -495,6 +533,81 @@ namespace StardewDruid.Location
                     }
 
                     terrainTiles.Add(tTile);
+
+                }
+
+            }
+
+            codes = new()
+            {
+                
+                [15] = new() { new() { 15, 15 }, new() { 38, 15 }, },
+
+            };
+
+            foreach (KeyValuePair<int, List<List<int>>> code in codes)
+            {
+
+                foreach (List<int> array in code.Value)
+                {
+
+                    int codeTile = code.Key;
+
+                    Vector2 codeVector = new Vector2(array[0], codeTile) * 64;
+
+                    TerrainTile tTile = new(IconData.tilesheets.gate, array[1], codeVector, TerrainTile.shadows.offset, array[0] > 27);
+
+                    maypoleTiles.Add(tTile);
+
+                }
+
+            }
+
+            // CENTRAL BRAZIER
+
+            codes = new()
+            {
+
+                [20] = new() { new() { 25, 11 }, },
+
+            };
+
+            foreach (KeyValuePair<int, List<List<int>>> code in codes)
+            {
+
+                foreach (List<int> array in code.Value)
+                {
+
+                    int codeTile = code.Key;
+
+                    Vector2 codeVector = new Vector2(array[0], codeTile) * 64;
+
+                    codeVector.X += 32;
+
+                    LightField brazierLight = new(new Vector2(array[0] + 3, code.Key + 1) * 64 + new Vector2(0, 8));
+
+                    brazierLight.lightType = LightField.lightTypes.brazier;
+
+                    brazierLight.lightFrame = Mod.instance.randomIndex.Next(5);
+
+                    brazierLight.luminosity = 8;
+
+                    brazierLight.lightLayer = 1;
+
+                    brazierLight.lightScale = 5f;
+
+                    brazierFields.Add(brazierLight);
+
+                    TerrainTile tTile = new(IconData.tilesheets.gate, array[1], codeVector, TerrainTile.shadows.offset, array[0] > 27);
+
+                    foreach (Vector2 bottom in tTile.baseTiles)
+                    {
+
+                        buildings.Tiles[(int)bottom.X, (int)bottom.Y] = new StaticTile(buildings, back2.Tiles[(int)bottom.X, (int)bottom.Y].TileSheet, BlendMode.Alpha, back2.Tiles[(int)bottom.X, (int)bottom.Y].TileIndex);
+
+                    }
+
+                    brazierTiles.Add(tTile);
 
                 }
 
@@ -569,6 +682,14 @@ namespace StardewDruid.Location
             dialogueTiles.Add(new(28, 25), CharacterHandle.characters.crow_brazier);
 
             dialogueTiles.Add(new(29, 25), CharacterHandle.characters.crow_brazier);
+
+            dialogueTiles.Add(new(27, 7), CharacterHandle.characters.crow_brazier);
+
+            dialogueTiles.Add(new(28, 7), CharacterHandle.characters.crow_brazier);
+
+            dialogueTiles.Add(new(27, 8), CharacterHandle.characters.crow_brazier);
+
+            dialogueTiles.Add(new(28, 8), CharacterHandle.characters.crow_brazier);
 
         }
 

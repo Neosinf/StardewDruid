@@ -125,7 +125,7 @@ namespace StardewDruid.Event.Challenge
 
             // Voice 4
 
-            bosses[4] = new DarkWizard(ModUtility.PositionToTile(origin) + new Vector2(1, 0),Mod.instance.CombatDifficulty(), "Doja");
+            bosses[4] = new DarkMage(ModUtility.PositionToTile(origin) + new Vector2(1, 0),Mod.instance.CombatDifficulty());
 
             bosses[4].SetMode(2);
 

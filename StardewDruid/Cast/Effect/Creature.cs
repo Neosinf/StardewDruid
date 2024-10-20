@@ -65,7 +65,7 @@ namespace StardewDruid.Cast.Effect
 
         }
 
-        public void AddCreature(GameLocation Location, Character.CharacterHandle.characters CharacterType, Vector2 Origin, Vector2 Target, float Scale)
+        public void AddCreature(GameLocation Location, Character.CharacterHandle.characters CharacterType, Vector2 Origin, Vector2 Target, float Scale, bool forceDrop = false)
         {
 
             if (creatures.ContainsKey(Origin))
@@ -75,7 +75,7 @@ namespace StardewDruid.Cast.Effect
 
             }
 
-            creatures[Origin] =  new(Location,CharacterType,Origin,Target,eventId, Scale);
+            creatures[Origin] =  new(Location,CharacterType,Origin,Target,eventId, Scale, forceDrop);
 
         }
 
@@ -105,7 +105,7 @@ namespace StardewDruid.Cast.Effect
 
         public bool sounded;
 
-        public CreatureHandle(GameLocation Location, Character.CharacterHandle.characters CharacterType, Vector2 Origin, Vector2 Target, string EventId, float Scale)
+        public CreatureHandle(GameLocation Location, Character.CharacterHandle.characters CharacterType, Vector2 Origin, Vector2 Target, string EventId, float Scale, bool forceDrop = false)
         {
 
             origin = Origin;
@@ -122,7 +122,7 @@ namespace StardewDruid.Cast.Effect
 
             scale = Scale;
 
-            if(Mod.instance.randomIndex.Next(3) != 0)
+            if(Mod.instance.randomIndex.Next(3) != 0 || forceDrop)
             {
 
                 drop = true;
@@ -141,6 +141,13 @@ namespace StardewDruid.Cast.Effect
 
                 case Character.CharacterHandle.characters.GreyWolf:
                 case Character.CharacterHandle.characters.BlackWolf:
+
+                    creature = new StardewDruid.Character.Barker(characterType);
+
+                    creature.netMovement.Set((int)Character.Character.movements.run);
+
+                    break;
+
                 case Character.CharacterHandle.characters.BrownBear:
                 case Character.CharacterHandle.characters.BlackBear:
 
@@ -149,7 +156,6 @@ namespace StardewDruid.Cast.Effect
                     creature.netMovement.Set((int)Character.Character.movements.run);
 
                     break;
-
                 case Character.CharacterHandle.characters.RedFox:
                 case Character.CharacterHandle.characters.YellowFox:
                 case Character.CharacterHandle.characters.BlackCat:
@@ -166,10 +172,31 @@ namespace StardewDruid.Cast.Effect
                 case Character.CharacterHandle.characters.ShadowRaven:
                 case Character.CharacterHandle.characters.ShadowRook:
                 case Character.CharacterHandle.characters.ShadowMagpie:
+
+                    creature = new StardewDruid.Character.Flyer(characterType);
+
+                    if (Mod.instance.randomIndex.Next(4) == 0)
+                    {
+
+                        sounded = true;
+
+                    }
+
+                    location.playSound(SpellHandle.sounds.batFlap.ToString());
+
+                    break;
+
                 case Character.CharacterHandle.characters.BrownOwl:
                 case Character.CharacterHandle.characters.GreyOwl:
 
                     creature = new StardewDruid.Character.Flyer(characterType);
+
+                    if (Mod.instance.randomIndex.Next(2) == 0)
+                    {
+                        
+                        sounded = true;
+
+                    }
 
                     location.playSound(SpellHandle.sounds.batFlap.ToString());
 
@@ -342,41 +369,36 @@ namespace StardewDruid.Cast.Effect
 
             }
             else
+            if (creature is Barker)
+            {
+
+                location.playSound(SpellHandle.sounds.dog_bark.ToString());
+
+            }
+            else
             if (creature is Growler)
             {
 
-                if (creature.characterType == CharacterHandle.characters.GreyWolf || creature.characterType == CharacterHandle.characters.BlackWolf)
+                switch (Mod.instance.randomIndex.Next(3))
                 {
 
+                    case 0:
 
-                    location.playSound(SpellHandle.sounds.dog_bark.ToString());
+                        location.playSound("BearGrowl");
 
-                }
-                else
-                {
+                        break;
 
-                    switch (Mod.instance.randomIndex.Next(3))
-                    {
+                    case 1:
 
-                        case 0:
+                        location.playSound("BearGrowlTwo");
 
-                            location.playSound("BearGrowl");
+                        break;
 
-                            break;
+                    case 2:
 
-                        case 1:
+                        location.playSound("BearGrowlThree");
 
-                            location.playSound("BearGrowlTwo");
-
-                            break;
-
-                        case 2:
-
-                            location.playSound("BearGrowlThree");
-
-                            break;
-
-                    }
+                        break;
 
                 }
 

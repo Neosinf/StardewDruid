@@ -6,6 +6,7 @@ using StardewModdingAPI;
 using StardewValley;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace StardewDruid.Cast.Fates
 {
@@ -14,34 +15,54 @@ namespace StardewDruid.Cast.Fates
 
         public NPC npc;
 
-        public Vector2 oldPosition;
+        public bool invis;
 
-        public float oldRotation;
-
-        public float upwards;
-
-        public Levitate(NPC witness)
+        public Levitate(NPC witness, bool Invis)
         {
 
             npc = witness;
 
+            invis = Invis;
+
+            eventId = "levitation_" + witness.Name;
+
+            if (Invis)
+            {
+
+                npc.IsInvisible = true;
+
+            }
+
             activeLimit = 5;
 
-            oldPosition = npc.Position;
+            // NPC frame
 
-            oldRotation = npc.rotation;
+            Microsoft.Xna.Framework.Rectangle npcSource = npc.Sprite.SourceRect;
+
+            TemporaryAnimatedSprite frame = new(0, 5000, 1, 1, npc.Position, false, false)
+            {
+                texture = npc.Sprite.Texture,
+                sourceRect = npcSource,
+                sourceRectStartingPos = new Vector2(npcSource.X, npcSource.Y),
+                layerDepth = npc.Position.Y / 10000 + 0.0005f,
+                scale = 4f,
+            };
+
+            frame.Position -= new Vector2(0, npc.Sprite.SpriteHeight * 2f);
+
+            npc.currentLocation.temporarySprites.Add(frame);
+
+            animations.Add(frame);
 
         }
 
         public override void EventRemove()
         {
 
-            if (!eventComplete)
+            if (invis)
             {
 
-                npc.Position = oldPosition;
-
-                npc.rotation = oldRotation;
+                npc.IsInvisible = false;
 
             }
 
@@ -54,36 +75,23 @@ namespace StardewDruid.Cast.Fates
 
             if (!EventActive())
             {
-                return;
-            }
 
-            npc.Halt();
+                return;
+
+            }
 
             decimalCounter++;
 
-            npc.position.X = oldPosition.X;
+            animations[0].rotation += (float)Math.PI / 10;
 
-            npc.rotation += (float)Math.PI / 10;
+            animations[0].position = npc.Position;
 
-            if (decimalCounter <= 10)
-            {
+            animations[0].position -= new Vector2(0, npc.Sprite.SpriteHeight * 2f);
 
-                npc.position.Y -= 6.4f;
-
-            }
-            else
-            {
-
-                npc.position.Y += 6.4f;
-
-            }
+            animations[0].position.Y -= 12f * (10 - Math.Abs(decimalCounter - 10));
 
             if (decimalCounter >= 20)
             {
-
-                npc.Position = oldPosition;
-
-                npc.rotation = oldRotation;
 
                 eventComplete = true;
 

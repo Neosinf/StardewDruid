@@ -38,6 +38,8 @@ namespace StardewDruid.Character
 
         public Vector2 lingerSpot;
 
+        public bool eventLock;
+
         public TrackHandle(CharacterHandle.characters For, Farmer follow = null, int quadrant = 0)
         {
             
@@ -103,9 +105,7 @@ namespace StardewDruid.Character
 
             }
 
-            if (
-                //Mod.instance.characters[trackFor].currentLocation == null || 
-                Mod.instance.characters[trackFor].currentLocation.Name != followPlayer.currentLocation.Name)
+            if (Mod.instance.characters[trackFor].currentLocation.Name != followPlayer.currentLocation.Name)
             {
 
                 if (Mod.instance.characters[trackFor].netSceneActive.Value)
@@ -234,22 +234,11 @@ namespace StardewDruid.Character
 
                 }
                 else
-                //if (afterSpace >= 256)
                 {
 
-                    //warp between player and warp point
                     direction = ModUtility.DirectionToTarget(followPlayer.Position, warpSpot)[2];
 
                 }
-                //else
-                //{
-                    
-                //    direction = ModUtility.DirectionToTarget(followPlayer.Position, warpSpot)[2];
-                    
-                    // warp to other side of warp point
-                 //   direction = (direction + 4) % 8;
-
-                //}
 
             }
 
@@ -302,7 +291,7 @@ namespace StardewDruid.Character
 
             // get player tile
 
-            Vector2 center = ModUtility.PositionToTile(followPlayer.Position);// new Vector2((int)(followPlayer.Position.X / 64), (int)(followPlayer.Position.Y / 64));
+            Vector2 center = ModUtility.PositionToTile(followPlayer.Position);
 
             // get occupiable tiles
 
@@ -319,7 +308,7 @@ namespace StardewDruid.Character
 
                 if (friends.Value is Actor) { continue; }
 
-                //if (friends.Value.currentLocation == null) { continue; }
+                if (friends.Value.currentLocation == null) { continue; }
 
                 if (friends.Value.currentLocation.Name != followPlayer.currentLocation.Name) { continue; }
 
@@ -338,10 +327,6 @@ namespace StardewDruid.Character
                     // avoid if another character got there first
 
                     if (occupied.Contains(warppoint)) { continue; }
-
-                    //Mod.instance.characters[trackFor].Position = warppoint*64;
-
-                    //Mod.instance.characters[trackFor].occupied = warppoint;
 
                     CharacterMover mover = new(Mod.instance.characters[trackFor], followPlayer.currentLocation, warppoint * 64, true);
 

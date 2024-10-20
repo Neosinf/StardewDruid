@@ -48,6 +48,8 @@ namespace StardewDruid.Cast
 
         public bool queried;
 
+        public bool holdup;
+
         public enum throwing
         {
             item,
@@ -68,6 +70,8 @@ namespace StardewDruid.Cast
         public bool complete;
 
         public IconData.impacts impact = IconData.impacts.none;
+
+        public string holdText;
 
         public ThrowHandle()
         {
@@ -474,7 +478,7 @@ namespace StardewDruid.Cast
                             sourceRect = itemRect,
                             sourceRectStartingPos = new(itemRect.X, itemRect.Y),
                             texture = dataOrErrorItem.GetTexture(),
-                            layerDepth = origin.Y / 10000f,
+                            layerDepth = 900f,
                             alphaFade = fade,
                             rotationChange = rotation,
                             scale = 3.5f,
@@ -515,7 +519,7 @@ namespace StardewDruid.Cast
                             sourceRect = itemRect,
                             sourceRectStartingPos = new(itemRect.X, itemRect.Y),
                             texture = dataOrErrorItem.GetTexture(),
-                            layerDepth = origin.Y / 10000f,
+                            layerDepth = 900f,
                             alphaFade = fade,
                             rotationChange = 0.2f,
                             scale = 4f,
@@ -578,6 +582,16 @@ namespace StardewDruid.Cast
 
                     if (track)
                     {
+
+                        if (holdup)
+                        {
+
+                            Game1.player.addItemByMenuIfNecessaryElseHoldUp(item, null);
+
+                            break;
+
+                        }
+
                         if (Game1.player.addItemToInventoryBool(item))
                         {
 
@@ -603,6 +617,15 @@ namespace StardewDruid.Cast
 
                     }
 
+                    if (holdup)
+                    {
+
+                        Game1.player.addItemByMenuIfNecessaryElseHoldUp(item, null);
+
+                        break;
+
+                    }
+
                     Game1.createItemDebris(item, destination, 2, Game1.player.currentLocation, -1);
 
                     break;
@@ -619,7 +642,7 @@ namespace StardewDruid.Cast
 
                     Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles((IconData.relics)index);
 
-                    animation = new(0, 2500, 1, 1, Game1.player.Position + new Vector2(2, -124f), false, false)
+                    animation = new(0, 2000, 1, 1, Game1.player.Position + new Vector2(2, -124f), false, false)
                     {
                         sourceRect = relicRect,
                         sourceRectStartingPos = new(relicRect.X, relicRect.Y),
@@ -643,40 +666,26 @@ namespace StardewDruid.Cast
 
         }
 
-        public void AnimateHoldup()
+        public static void AnimateHoldup()
         {
-
-            if (Mod.instance.Config.disableHands)
-            {
-
-                return;
-
-            }
-
-            if (Mod.instance.Helper.ModRegistry.IsLoaded("PeacefulEnd.FashionSense"))
-            {
-
-                return;
-
-            }
 
             Game1.player.completelyStopAnimatingOrDoingAction();
 
             Game1.MusicDuckTimer = 2000f;
 
-            DelayedAction.playSoundAfterDelay("getNewSpecialItem", 750);
+            DelayedAction.playSoundAfterDelay("getNewSpecialItem", 750,Game1.player.currentLocation);
 
             Game1.player.faceDirection(2);
 
-            Game1.player.freezePause = 3000;
+            Game1.player.freezePause = 2500;
 
             Game1.player.FarmerSprite.animateOnce(
-                    new FarmerSprite.AnimationFrame[3]{
-                                new FarmerSprite.AnimationFrame(57, 0),
-                                new FarmerSprite.AnimationFrame(57, 2500, secondaryArm: false, flip: false ),
-                                new FarmerSprite.AnimationFrame((short)Game1.player.FarmerSprite.CurrentFrame, 500, secondaryArm: false, flip: false)
-                    }
-                );
+                new FarmerSprite.AnimationFrame[2]{
+                    new FarmerSprite.AnimationFrame(57, 0),
+                    new FarmerSprite.AnimationFrame(57, 2500, secondaryArm: false, flip: false ),
+                    //new FarmerSprite.AnimationFrame((short)Game1.player.FarmerSprite.CurrentFrame, 500, secondaryArm: false, flip: false)
+                }
+            );
 
         }
 

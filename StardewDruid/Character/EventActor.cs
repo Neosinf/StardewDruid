@@ -69,32 +69,25 @@ namespace StardewDruid.Character
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
+            Rectangle useFrame = walkFrames[netDirection.Value][moveFrame];
+
+            Vector2 spritePosition = localPosition + new Vector2(32, 64f - (2f * useFrame.Height));
+
             float drawLayer = (float)StandingPixel.Y / 10000f;
 
             b.Draw(
                 characterTexture,
-                localPosition - new Vector2(0,64),
-                walkFrames[netDirection.Value][moveFrame],
+                spritePosition,
+                useFrame,
                 Color.White,
                 0f,
-                Vector2.Zero,
+                new Vector2(useFrame.Width/2,useFrame.Height/2),
                 4f,
                 SpriteEffects.None,
                 drawLayer + 0.0001f
             );
 
-            if (characterType == CharacterHandle.characters.Dwarf)
-            {
-
-                DrawShadow(b, localPosition - new Vector2(0,32), drawLayer);
-
-            }
-            else
-            {
-
-                DrawShadow(b, localPosition, drawLayer);
-
-            }
+            DrawShadow(b, spritePosition, drawLayer);
 
         }
 

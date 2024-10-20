@@ -362,7 +362,26 @@ namespace StardewDruid.Cast.Weald
                                 Character.CharacterHandle.characters.BlackBear,
                             };
 
-                            creature.AddCreature(location, creatureTypes[Mod.instance.randomIndex.Next(creatureTypes.Count)], prospect.Key * 64 - new Vector2(0, 64), target * 64 - new Vector2(0, 64), 2.5f);
+
+                            Character.CharacterHandle.characters creatureSelect = creatureTypes[Mod.instance.randomIndex.Next(creatureTypes.Count)];
+
+                            switch (creatureSelect)
+                            {
+                                case Character.CharacterHandle.characters.GreyWolf:
+                                case Character.CharacterHandle.characters.BlackWolf:
+
+                                    creature.AddCreature(location, creatureSelect, prospect.Key * 64 - new Vector2(0, 64), target * 64 - new Vector2(0, 64), 2.5f + Mod.instance.randomIndex.Next(2)*0.5f);
+
+
+                                    break;
+                                case Character.CharacterHandle.characters.BrownBear:
+                                case Character.CharacterHandle.characters.BlackBear:
+                                    creature.AddCreature(location, creatureSelect, prospect.Key * 64 - new Vector2(0, 64), target * 64 - new Vector2(0, 64), 3f + Mod.instance.randomIndex.Next(3) * 0.5f);
+
+
+                                    break;
+
+                            }
 
                         }
 
@@ -544,7 +563,7 @@ namespace StardewDruid.Cast.Weald
 
                                     owlCount++;
 
-                                    creature.AddCreature(location, owls[Mod.instance.randomIndex.Next(owls.Count)], exit+new Vector2(16*owlCount,0), roost, 2.5f + (0.25f * Mod.instance.randomIndex.Next(3)));
+                                    creature.AddCreature(location, owls[Mod.instance.randomIndex.Next(owls.Count)], exit+new Vector2(16*owlCount,0), roost, 2.5f + (0.25f * Mod.instance.randomIndex.Next(3)), true);
 
                                     if (!Journal.RelicData.HasRelic(IconData.relics.restore_cloth))
                                     {

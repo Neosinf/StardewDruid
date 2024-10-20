@@ -84,28 +84,9 @@ namespace StardewDruid.Monster
         public override void DrawHat(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer)
         {
 
-
-            if (realName.Value == "Doja")
-            {
-
-                b.Draw(
-                    characterTexture,
-                    Game1.GlobalToLocal(Position) + new Vector2(32) - new Vector2(netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? -4 : 4, 48),
-                    hatFrames[netDirection.Value][0],
-                    Color.White,
-                    0f,
-                    new Vector2(16),
-                    GetScale(),
-                    netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    drawLayer + 0.0001f
-                );
-
-                return;
-            }
-
             b.Draw(
                 characterTexture,
-                Game1.GlobalToLocal(Position) - new Vector2(netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? 30 : 32, 76),
+                spritePosition - new Vector2(0,64),
                 hatFrames[netDirection.Value][0],
                 Color.White,
                 0f,
@@ -175,7 +156,7 @@ namespace StardewDruid.Monster
 
                     fireball.projectile = 2;
 
-                    fireball.missile = IconData.missiles.fireball;
+                    fireball.missile = IconData.missiles.warpball;
 
                     fireball.display = IconData.impacts.puff;
 

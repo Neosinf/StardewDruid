@@ -16,14 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using xTile.Dimensions;
-using static StardewDruid.Data.IconData;
-using static StardewValley.Menus.CharacterCustomization;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace StardewDruid.Data
 {
@@ -105,6 +97,8 @@ namespace StardewDruid.Data
             bones,
             skip,
             save,
+            aldebaran,
+            question,
 
         }
 
@@ -193,6 +187,7 @@ namespace StardewDruid.Data
             deathwhirl,
 
             summoning,
+            shockwave,
 
         }
 
@@ -235,6 +230,10 @@ namespace StardewDruid.Data
             slimeball,
             rockfall,
             whisk,
+            warpball,
+            shuriken,
+            knife,
+            axe,
         }
 
         public enum missileIndexes
@@ -243,55 +242,66 @@ namespace StardewDruid.Data
             blazeCore2,
             blazeCore3,
             blazeCore4,
+
             blazeInner1,
             blazeInner2,
             blazeInner3,
             blazeInner4,
+
             blazeOuter1,
             blazeOuter2,
             blazeOuter3,
             blazeOuter4,
+
             blazeOutline1,
             blazeOutline2,
             blazeOutline3,
             blazeOutline4,
+
             trail1,
             trail2,
             trail3,
             trail4,
+
             trailOutline1,
-            trailOutline2,
-            trailOutline3,
+            trailOutline2, 
+            trailOutline3, 
             trailOutline4,
-            sparkCore1,
-            sparkCore2,
-            sparkCore3,
-            sparkCore4,
-            sparkInner1,
-            sparkInner2,
-            sparkInner3,
-            sparkInner4,
-            sparkOutline1,
-            sparkOutline2,
-            sparkOutline3,
-            sparkOutline4,
+
+            fates1,
+            fates2,
+            fates3,
+            blank1,
+
+            fiery1,
+            fiery2,
+            fiery3,
+            fiery4,
+
+            warp1,
+            warp2,
+            warp3,
+            warp4,
+
             scatter1,
-            scatter2,
-            scatter3,
-            scatter4,
+            slimeball,
+            slimeball2,
+            slimeball3,
+
             meteor1,
             meteor2,
             meteor3,
             rock1,
+
             rock2, 
-            rock3, 
+            rock3,
             death,
             cannonball,
-            star1,
-            star2,
-            star3,
-            star4,
 
+            shuriken,
+            knife,
+            axe,
+            blank2,
         }
 
         public enum tilesheets
@@ -313,6 +323,7 @@ namespace StardewDruid.Data
             magnolia,
             pavement,
             ritual,
+            access,
         }
 
         public Dictionary<tilesheets, Texture2D> sheetTextures = new();
@@ -320,24 +331,42 @@ namespace StardewDruid.Data
         public enum relics
         {
             none,
-            flask,
-            flask1,
-            flask2,
-            flask3,
-            flask4,
-            flask5,
-            bottle,
-            bottle1,
-            bottle2,
-            bottle3,
-            bottle4,
-            bottle5,
-            vial,
-            vial1,
-            vial2,
-            vial3,
-            vial4,
-            vial5,
+            ligna,
+            ligna1,
+            ligna2,
+            ligna3,
+            ligna4,
+            faeth,
+            impes,
+            impes1,
+            impes2,
+            impes3,
+            impes4,
+            aether,
+            celeri,
+            celeri1,
+            celeri2,
+            celeri3,
+            celeri4,
+            celeriblank,
+            lignaGray,
+            lignaGray1,
+            lignaGray2,
+            lignaGray3,
+            lignaGray4,
+            faethGray,
+            impesGray,
+            impesGray1,
+            impesGray2,
+            impesGray3,
+            impesGray4,
+            aetherGray,
+            celeriGray,
+            celeriGray1,
+            celeriGray2,
+            celeriGray3,
+            celeriGray4,
+            celeriblank2,
             effigy_crest,
             jester_dice,
             shadowtin_tome,
@@ -385,7 +414,7 @@ namespace StardewDruid.Data
             book_manual, 
             book_druid, 
             book_chart,
-            texts_5,
+            book_knight,
             box_measurer,
             box_mortician,
             box_artisan,
@@ -396,8 +425,8 @@ namespace StardewDruid.Data
             skull_gelatin,
             skull_cannoli,
             skull_fox,
-            skull_5,
-            skull_6,
+            golden_pot,
+            golden_core,
             restore_goshuin,
             restore_offering,
             restore_cloth
@@ -409,6 +438,8 @@ namespace StardewDruid.Data
 
             portal,
             smoke,
+            corvids,
+            circle,
 
         }
 
@@ -457,6 +488,7 @@ namespace StardewDruid.Data
             snazzle,
             stardew,
             wisps,
+            white,
 
             rock,
             rockTwo,
@@ -513,6 +545,7 @@ namespace StardewDruid.Data
             [schemes.golden] = new(251, 201, 38),
             [schemes.snazzle] = new(214, 0, 175),
             [schemes.stardew] = new(210,164,89),
+            [schemes.white] = Microsoft.Xna.Framework.Color.White,
 
             [schemes.rock] = new(120, 154, 160),
             [schemes.rockTwo] = new(196, 164, 122),
@@ -565,9 +598,9 @@ namespace StardewDruid.Data
             [schemes.dragon_purple] = new() { new(159, 80, 191), new(69, 186, 235), new(0, 167, 157) },
 
             [schemes.sword_steel] = new() { new(200,212,212), new(68, 80, 80), new(48, 60, 60) },
-            [schemes.sword_stars] = new() { new(255, 192, 128),  new(48, 20, 16), new(64, 48, 16), },
+            [schemes.sword_stars] = new() { new(255, 192, 128),  new(192, 140, 60), new(64, 48, 16), },
             [schemes.sword_lightsaber] = new() { new(214, 0, 175), new(16, 16, 16), new(37, 34, 74), },
-            [schemes.sword_warp] = new() { new(159, 80, 191), new(16, 16, 16), new(37, 34, 74), },
+            [schemes.sword_warp] = new() { new(16, 16, 16), new(159, 80, 191), new(37, 34, 74), },
         };
 
         public Dictionary<IconData.schemes,string> DragonOptions = new()
@@ -656,6 +689,8 @@ namespace StardewDruid.Data
             sheetTextures[tilesheets.pavement] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Pavement.png"));
 
             sheetTextures[tilesheets.ritual] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Ritual.png"));
+
+            sheetTextures[tilesheets.access] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Access.png"));
 
             relicsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Relics.png"));
 
@@ -1007,19 +1042,14 @@ namespace StardewDruid.Data
 
                 case impacts.nature:
 
-                    if(additional.scheme == schemes.none)
-                    {
-
-                        additional.scheme = schemes.weald;
-
-                    }
-
                     if(additional.alpha == 0.35f)
                     {
 
-                        additional.alpha = 0.75f;
+                        additional.alpha = 0.45f;
 
                     }
+
+                    additional.alpha = 0.5f;
 
                     additional.layer = 700f;
 
@@ -1040,6 +1070,7 @@ namespace StardewDruid.Data
                     additional.light = 0.005f;
 
                     CreateImpact(location, origin, IconData.impacts.sparkle, size, additional);
+
                     return;
 
                 case impacts.boltswirl:
@@ -1136,6 +1167,20 @@ namespace StardewDruid.Data
                 case impacts.summoning:
 
                     CircleIndicator(location, origin, circles.summoning, size, new() { color = schemeColours[additional.scheme],});
+
+                    return;
+
+                case impacts.shockwave:
+
+                    CreateImpact(location, origin + new Vector2(0, -192), IconData.impacts.smoke, 3f, additional);
+
+                    CreateImpact(location, origin + new Vector2(-160, -48), IconData.impacts.steam, 3f, additional);
+
+                    additional.flip = true;
+
+                    CreateImpact(location, origin + new Vector2(160, -48), IconData.impacts.steam, 3f, additional);
+
+                    CreateImpact(location, origin + new Vector2(0, 48), IconData.impacts.smoke, 3f, additional);
 
                     return;
             }
@@ -1237,7 +1282,7 @@ namespace StardewDruid.Data
                 {
                     texture = Game1.mouseCursors,
                     light = true,
-                    lightRadius = scale,
+                    lightRadius = scale * 0.1f,
                     lightcolor = Microsoft.Xna.Framework.Color.Black,
                     alphaFade = additional.light,
                     Parent = location
@@ -1401,6 +1446,56 @@ namespace StardewDruid.Data
 
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, gradient[2], 0.75f));
 
+                    Vector2 fireCoreSet = origin - (new Vector2(48, 48) * (scale * 0.75f)) + new Vector2(32, 32);
+
+                    TemporaryAnimatedSprite fireball = MissileAnimation(location, missileIndexes.fiery4, fireCoreSet, scale * 0.75f, interval * frames * loops, 1, 1, depth + 0.0001f, coreColour, 1f);
+                    fireball.rotationChange = (float)Math.PI / 60;
+                    missileAnimations.Add(fireball);
+
+                    TemporaryAnimatedSprite fireball1 = MissileAnimation(location, missileIndexes.fiery3, fireCoreSet, scale * 0.75f, interval * frames * loops, 1, 1, depth + 0.0002f, gradient[0], 1f);
+                    fireball1.rotationChange = (float)Math.PI / 60;
+                    missileAnimations.Add(fireball1);
+
+                    TemporaryAnimatedSprite fireball2 = MissileAnimation(location, missileIndexes.fiery2, fireCoreSet, scale * 0.75f, interval * frames * loops, 1, 1, depth + 0.0003f, gradient[1], 1f);
+                    fireball2.rotationChange = (float)Math.PI / 60;
+                    missileAnimations.Add(fireball2);
+
+                    TemporaryAnimatedSprite fireball3 = MissileAnimation(location, missileIndexes.fiery1, fireCoreSet, scale * 0.75f, interval * frames * loops, 1, 1, depth + 0.0004f, gradient[2], 1f);
+                    fireball3.rotationChange = (float)Math.PI / 60;
+                    missileAnimations.Add(fireball3);
+
+                    break;
+
+                case missiles.warpball:
+
+                    gradient = ConvertToGradient(scheme);
+
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, coreColour, 0.75f));
+
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, gradient[0], 0.75f));
+
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, gradient[1], 0.75f));
+
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, gradient[2], 0.75f));
+
+                    Vector2 warpCoreSet = origin - (new Vector2(48, 48) * (scale * 0.75f)) + new Vector2(32, 32);
+
+                    TemporaryAnimatedSprite warpball = MissileAnimation(location, missileIndexes.warp4, warpCoreSet, scale * 0.75f, interval * frames * loops, 1, 1, depth + 0.0001f, gradient[2], 1f);
+                    warpball.rotationChange = (float)Math.PI / 60;
+                    missileAnimations.Add(warpball);
+
+                    TemporaryAnimatedSprite warpball1 = MissileAnimation(location, missileIndexes.warp3, warpCoreSet, scale * 0.75f, interval * frames * loops, 1, 1, depth + 0.0002f, gradient[0], 1f);
+                    warpball1.rotationChange = (float)Math.PI / 60;
+                    missileAnimations.Add(warpball1);
+
+                    TemporaryAnimatedSprite warpball2 = MissileAnimation(location, missileIndexes.warp2, warpCoreSet, scale * 0.75f, interval * frames * loops, 1, 1, depth + 0.0003f, gradient[1], 1f);
+                    warpball2.rotationChange = (float)Math.PI / 60;
+                    missileAnimations.Add(warpball2);
+                    
+                    TemporaryAnimatedSprite warpball3 = MissileAnimation(location, missileIndexes.warp1, warpCoreSet, scale * 0.75f, interval * frames * loops, 1, 1, depth + 0.0004f, gradient[2], 1f);
+                    warpball3.rotationChange = (float)Math.PI / 60;
+                    missileAnimations.Add(warpball3);
+                    
                     break;
 
                 case missiles.meteor:
@@ -1437,7 +1532,7 @@ namespace StardewDruid.Data
 
                     rockfalling = (missileIndexes)((int)rockfalling + Mod.instance.randomIndex.Next(3));
 
-                    TemporaryAnimatedSprite rockScatter = MissileAnimation(location, missileIndexes.scatter1, setat, scale, interval, frames, loops, depth, rockColour, 1f);
+                    TemporaryAnimatedSprite rockScatter = MissileAnimation(location, missileIndexes.scatter1, setat, scale, interval * frames * loops, 1, 1, depth, rockColour, 1f);
 
                     switch (Mod.instance.randomIndex.Next(2))
                     {
@@ -1467,6 +1562,10 @@ namespace StardewDruid.Data
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.trail1, setat, scale, interval, frames, loops, depth, gradient[1], 0.75f));
 
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.trailOutline1, setat, scale, interval, frames, loops, depth, gradient[2], 0.75f));
+
+                    missileIndexes slimeball = (missileIndexes)((int)missileIndexes.slimeball + Mod.instance.randomIndex.Next(3));
+
+                    missileAnimations.Add(MissileAnimation(location, slimeball, setat, (int)(scale * 0.75f), interval * frames * loops, 1, 1, depth + 0.0001f, SchemeColour(scheme), 0.75f));
 
                     break;
 
@@ -1508,23 +1607,60 @@ namespace StardewDruid.Data
 
                 case missiles.whisk:
 
-                    TemporaryAnimatedSprite whisk1 = MissileAnimation(location, missileIndexes.star3, setat, scale, interval * frames * loops, 1, 1, depth, gradientColours[schemes.fates][3], 0.8f);
+                    TemporaryAnimatedSprite whisk1 = MissileAnimation(location, missileIndexes.fates3, setat, scale, interval * frames * loops, 1, 1, depth, gradientColours[schemes.fates][3], 0.8f);
 
                     whisk1.rotationChange = (float)(Math.PI / 60);
 
                     missileAnimations.Add(whisk1);
 
-                    TemporaryAnimatedSprite whisk2 = MissileAnimation(location, missileIndexes.star2, setat, scale, interval * frames * loops, 1, 1, depth, gradientColours[schemes.fates][0], 0.8f);
+                    TemporaryAnimatedSprite whisk2 = MissileAnimation(location, missileIndexes.fates2, setat, scale, interval * frames * loops, 1, 1, depth, gradientColours[schemes.fates][0], 0.8f);
 
                     whisk2.rotationChange = (float)(Math.PI / 60);
 
                     missileAnimations.Add(whisk2);
 
-                    TemporaryAnimatedSprite whisk3 = MissileAnimation(location, missileIndexes.star1, setat, scale, interval * frames * loops, 1, 1, depth, gradientColours[schemes.fates][1], 0.8f);
+                    TemporaryAnimatedSprite whisk3 = MissileAnimation(location, missileIndexes.fates1, setat, scale, interval * frames * loops, 1, 1, depth, gradientColours[schemes.fates][1], 0.8f);
 
                     whisk3.rotationChange = (float)(Math.PI / 60);
 
                     missileAnimations.Add(whisk3);
+
+                    break;
+
+                case missiles.shuriken:
+
+                case missiles.knife:
+
+                case missiles.axe:
+
+                    gradient = ConvertToGradient(scheme);
+
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, coreColour, 0.25f));
+
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, coreColour, 0.25f));
+
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, coreColour, 0.25f));
+
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, gradient[2], 0.25f));
+
+                    TemporaryAnimatedSprite thrownWeapon;
+
+                    if (missile == missiles.shuriken)
+                    {
+                        thrownWeapon = MissileAnimation(location, missileIndexes.shuriken, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, Microsoft.Xna.Framework.Color.White, 0.75f);
+                    }
+                    else if (missile == missiles.knife)
+                    {
+                        thrownWeapon = MissileAnimation(location, missileIndexes.knife, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, Microsoft.Xna.Framework.Color.White, 0.75f);
+                    }
+                    else
+                    {
+                        thrownWeapon = MissileAnimation(location, missileIndexes.axe, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, Microsoft.Xna.Framework.Color.White, 0.75f);
+                    }
+
+                    thrownWeapon.rotationChange = (float)Math.PI / 30;
+
+                    missileAnimations.Add(thrownWeapon);
 
                     break;
 
@@ -1743,7 +1879,7 @@ namespace StardewDruid.Data
 
         }
 
-        public List<TemporaryAnimatedSprite> BoltAnimation(GameLocation location, Vector2 origin, IconData.schemes scheme = schemes.mists, int size = 2)
+        public List<TemporaryAnimatedSprite> BoltAnimation(GameLocation location, Vector2 origin, schemes scheme = schemes.mists, int size = 2)
         {
 
             List<TemporaryAnimatedSprite> animations = new();
@@ -1982,7 +2118,7 @@ namespace StardewDruid.Data
 
         }
 
-        public List<TemporaryAnimatedSprite> ZapAnimation(GameLocation location, Vector2 origin, Vector2 destination, IconData.schemes scheme = schemes.golden, int size = 2)
+        public List<TemporaryAnimatedSprite> ZapAnimation(GameLocation location, Vector2 origin, Vector2 destination, schemes scheme = schemes.golden, int size = 2)
         {
 
             List<TemporaryAnimatedSprite> animations = new();
@@ -2147,7 +2283,7 @@ namespace StardewDruid.Data
 
         }
 
-        public void AnimateQuickWarp(GameLocation location, Vector2 origin, bool reverse = false, warps warp = warps.portal)
+        public void AnimateQuickWarp(GameLocation location, Vector2 origin, bool reverse = false, warps warp = warps.portal, schemes scheme = schemes.none)
         {
 
             TemporaryAnimatedSprite animation;
@@ -2186,7 +2322,46 @@ namespace StardewDruid.Data
 
                     break;
 
+                case warps.circle:
+
+                    rect = CircleRectangle((circles)1);
+
+                    animation = new(0, 5000, 1, 1, origin + new Vector2(32) - new Vector2(rect.Width * 2), false, false)
+                    {
+
+                        sourceRect = rect,
+
+                        sourceRectStartingPos = new Vector2(rect.X, rect.Y),
+
+                        color = schemeColours[scheme],
+
+                        texture = circleTexture,
+
+                        scale = 4f,
+
+                        layerDepth = 0.001f,
+
+                        alpha = 0.6f,
+
+                        alphaFade = 0.0003f,
+
+                        timeBasedMotion = true
+
+                    };
+
+                    location.temporarySprites.Add(animation);
+
+                    break;
+
                 case warps.smoke:
+
+                    CreateImpact(location, origin, impacts.plume, 3f, new() { alpha = 1f, });
+
+                    CreateImpact(location, origin, impacts.smoke, 2f, new() { alpha = 1f, });
+
+                    break;
+
+                case warps.corvids:
 
                     CreateImpact(location, origin, impacts.plume, 2f, new() { color = schemeColours[schemes.npc_blackfeather], alpha = 1f, });
 
@@ -2195,7 +2370,7 @@ namespace StardewDruid.Data
 
         }
 
-        public List<TemporaryAnimatedSprite> AnimateWarpStrike(GameLocation location, Vector2 origin, int direction, IconData.schemes scheme = schemes.sword_steel)
+        public List<TemporaryAnimatedSprite> AnimateWarpStrike(GameLocation location, Vector2 origin, int direction, schemes scheme = schemes.sword_steel)
         {
 
             List<TemporaryAnimatedSprite> animations = new();

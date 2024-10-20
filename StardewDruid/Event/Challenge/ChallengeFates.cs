@@ -69,23 +69,26 @@ namespace StardewDruid.Event.Challenge
         public override void EventRemove()
         {
 
-            if (location != null)
-            {
-
-                location.updateWarps();
-
-            }
-
-            for (int c = companions.Count - 1; c >= 0; c--)
-            {
-
-                companions[c].SwitchToMode(Character.Character.mode.random, Game1.player);
-
-            }
-
-            companions.Clear();
-
             base.EventRemove();
+
+            if (eventActive)
+            {
+
+                if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Shadowtin))
+                {
+
+                    if (!Mod.instance.questHandle.IsComplete(eventId))
+                    {
+
+                        CharacterMover mover = new(CharacterHandle.characters.Shadowtin, CharacterMover.moveType.purge);
+
+                        Mod.instance.movers[CharacterHandle.characters.Shadowtin] = mover;
+
+                    }
+
+                }
+
+            }
 
         }
 
@@ -391,7 +394,7 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            if(activeCounter == 23)
+            if(activeCounter == 24)
             {
 
                 activeSection = 1;
@@ -405,7 +408,7 @@ namespace StardewDruid.Event.Challenge
 
             DialogueCue(activeCounter);
 
-            if (activeCounter == 24)
+            if (activeCounter == 25)
             {
 
                 EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
@@ -547,7 +550,19 @@ namespace StardewDruid.Event.Challenge
 
                     break;
 
-                case 135:
+                case 126:
+
+                    companions[3].doEmote(28);
+
+                    break;
+
+                case 132:
+
+                    companions[3].doEmote(16);
+
+                    break;
+
+                case 138:
 
                     DialogueSetups(companions[3], 1);
 

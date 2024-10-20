@@ -237,7 +237,7 @@ namespace StardewDruid.Monster
         public override float GetScale()
         {
 
-            return 3f + netMode.Value * 0.5f;
+            return 3.5f + netMode.Value * 0.5f;
 
         }
 

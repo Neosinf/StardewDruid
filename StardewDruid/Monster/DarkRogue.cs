@@ -845,9 +845,9 @@ namespace StardewDruid.Monster
 
             fireball.projectile = 2;
 
-            fireball.missile = IconData.missiles.fireball;
+            fireball.missile = IconData.missiles.shuriken;
 
-            fireball.display = IconData.impacts.impact;
+            fireball.display = IconData.impacts.none;
 
             fireball.boss = this;
 

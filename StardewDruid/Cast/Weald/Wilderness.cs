@@ -12,7 +12,6 @@ using StardewValley.TerrainFeatures;
 using System.Collections.Generic;
 using xTile.Layers;
 using xTile.Tiles;
-using static System.Net.Mime.MediaTypeNames;
 
 
 namespace StardewDruid.Cast.Weald
@@ -110,12 +109,6 @@ namespace StardewDruid.Cast.Weald
 
                     eventLocked = true;
 
-                    //SpellHandle spellHandle = new(origin, 384, IconData.impacts.nature, new());
-
-                    //Mod.instance.spellRegister.Add(spellHandle);
-
-                    ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
-
                     SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new());
 
                     circleHandle.scheme = IconData.schemes.grannysmith;
@@ -123,6 +116,8 @@ namespace StardewDruid.Cast.Weald
                     circleHandle.sound = SpellHandle.sounds.discoverMineral;
 
                     Mod.instance.spellRegister.Add(circleHandle);
+
+                    Mod.instance.rite.specialCasts[location.Name].Add(Rite.eventWilderness + costing.ToString());
 
                     if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdThree))
                     {

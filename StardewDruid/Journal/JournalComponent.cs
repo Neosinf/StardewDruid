@@ -104,6 +104,7 @@ namespace StardewDruid.Journal
             title,
             text,
             custom,
+            potionlist,
 
         }
 
@@ -200,6 +201,7 @@ namespace StardewDruid.Journal
             {
 
                 case contentTypes.list:
+                case contentTypes.potionlist:
 
                     bounds = new Rectangle(xP + 16, yP + 16 + index * ((height - 32) / 6), width - 32, (height - 32) / 6 + 4);
 
@@ -263,6 +265,7 @@ namespace StardewDruid.Journal
             {
 
                 case contentTypes.list:
+                case contentTypes.potionlist:
 
                     IClickableMenu.drawTextureBox(
                         b,
@@ -364,6 +367,39 @@ namespace StardewDruid.Journal
                         0.901f
                     );
 
+                    if(type == contentTypes.potionlist)
+                    {
+
+                        b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Left + 20f + 32f - 1.5f, bounds.Center.Y + 3f), relicSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(10), 2.5f, 0, 0.900f);
+
+                        b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Left + 20f + 32f, bounds.Center.Y), relicSources[0], Color.White, 0f, new Vector2(10), 2.5f, 0, 0.901f);
+
+                        b.DrawString(
+                            Game1.dialogueFont,
+                            textParse[1],
+                            new Vector2(bounds.Right - 144f - 1.5f, bounds.Center.Y - (textMeasures[0].Y / 2) + 1.5f),
+                            Microsoft.Xna.Framework.Color.Brown * 0.35f,
+                            0f,
+                            Vector2.Zero,
+                            1f,
+                            SpriteEffects.None,
+                            0.900f
+                        );
+
+                        b.DrawString(
+                            Game1.dialogueFont,
+                            textParse[1],
+                            new Vector2(bounds.Right - 144f, bounds.Center.Y - (textMeasures[0].Y / 2)),
+                            defaultColour,
+                            0f,
+                            Vector2.Zero,
+                            1f,
+                            SpriteEffects.None,
+                            0.901f
+                        );
+
+                    }
+
                     return;
 
                 case contentTypes.title:
@@ -457,9 +493,7 @@ namespace StardewDruid.Journal
 
                     b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Center.X - 40f + 2f, bounds.Center.Y - 60f + 4f), relicSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 4f, 0, 0.900f);
 
-                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Center.X - 40f, bounds.Center.Y - 60f), relicSources[0], relicColours[0], 0f, Vector2.Zero, 4f, 0, 0.901f);
-
-                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Center.X - 40f, bounds.Center.Y - 60f), relicSources[1], relicColours[1], 0f, Vector2.Zero, 4f, 0, 0.902f);
+                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Center.X - 40f, bounds.Center.Y - 60f), relicSources[0], Color.White, 0f, Vector2.Zero, 4f, 0, 0.901f);
 
                     return;
 

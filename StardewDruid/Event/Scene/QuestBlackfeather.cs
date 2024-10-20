@@ -81,37 +81,37 @@ namespace StardewDruid.Event.Scene
             // walk towards shrine engine door
             [301] = new Vector2(28, 26),
             // farmer atoll entry
-            [302] = new Vector2(15, 11),
+            [302] = new Vector2(12, 11),
             // Blackfeather entry
-            [303] = new Vector2(17, 12),
+            [303] = new Vector2(12, 13),
             // Blackfeather walk into center
-            [304] = new Vector2(24, 17),
+            [304] = new Vector2(17, 17),
             // Blackfeather walk down
-            [305] = new Vector2(26, 22),
+            [305] = new Vector2(19, 22),
             // Blackfeather turn to center
-            [306] = new Vector2(24, 14),
+            [306] = new Vector2(19, 14),
             // Wisps
-            [307] = new Vector2(26, 12),
+            [307] = new Vector2(19, 12),
             // First Farmer
-            [308] = new Vector2(29, 15),
+            [308] = new Vector2(22, 15),
             // Justiciar
-            [309] = new Vector2(26, 11),
+            [309] = new Vector2(19, 11),
             // Reaper
-            [310] = new Vector2(21, 13),
+            [310] = new Vector2(16, 13),
             // Seafarer
-            [311] = new Vector2(18, 15),
+            [311] = new Vector2(13, 15),
             // Seafarer2
-            [312] = new Vector2(16, 14),
+            [312] = new Vector2(11, 14),
             // Seafarer3
-            [313] = new Vector2(17, 16),
+            [313] = new Vector2(12, 16),
 
             // Lady move 1
-            [401] = new Vector2(25, 17),
+            [401] = new Vector2(18, 17),
             // Lady move 2
-            [402] = new Vector2(18, 14),
+            [402] = new Vector2(13, 14),
 
             // Blackfeather return
-            [501] = new Vector2(25, 17),
+            [501] = new Vector2(18, 17),
 
         };
 
@@ -156,6 +156,12 @@ namespace StardewDruid.Event.Scene
 
         public override void RemoveActors()
         {
+            if (Mod.instance.trackers.ContainsKey(CharacterHandle.characters.Raven))
+            {
+
+                Mod.instance.trackers[CharacterHandle.characters.Raven].eventLock = false;
+
+            }
 
             base.RemoveActors();
 
@@ -322,7 +328,11 @@ namespace StardewDruid.Event.Scene
 
                     wispNew.WispArray();
 
-                    (location as Clearing).ambientDarkness = true;
+                    Game1.flashAlpha = 1f;
+
+                    location.playSound(SpellHandle.sounds.thunder.ToString());
+
+                    (Mod.instance.locations[LocationData.druid_clearing_name] as Clearing).ambientDarkness = true;
 
                     break;
 
@@ -509,7 +519,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].LookAtTarget(companions[1].Position, true);
 
-                    Mod.instance.iconData.ImpactIndicator(location, companions[1].Position - new Vector2(0, 64), IconData.impacts.plume, 4f, new() { color = Microsoft.Xna.Framework.Color.Magenta,});
+                    Mod.instance.iconData.ImpactIndicator(location, companions[1].Position - new Vector2(0, 64), IconData.impacts.plume, 4f, new() { });
 
                     // Raven Familiar
                     companions[4] = new Flyer(CharacterHandle.characters.Raven);
@@ -536,7 +546,7 @@ namespace StardewDruid.Event.Scene
 
                     location.playSound(SpellHandle.sounds.crow.ToString());
 
-                    Mod.instance.iconData.ImpactIndicator(location, companions[4].Position - new Vector2(0, 64), IconData.impacts.plume, 2f, new() { color = Microsoft.Xna.Framework.Color.Black, });
+                    Mod.instance.iconData.ImpactIndicator(location, companions[4].Position - new Vector2(0, 64), IconData.impacts.plume, 2f, new() {  });
 
                     break;
 
@@ -587,7 +597,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[2].Position = eventVectors[107] * 64;
 
-                    Mod.instance.iconData.ImpactIndicator(location, companions[2].Position- new Vector2(0,64), IconData.impacts.plume, 4f, new() { color = Microsoft.Xna.Framework.Color.Cyan, });
+                    Mod.instance.iconData.ImpactIndicator(location, companions[2].Position- new Vector2(0,64), IconData.impacts.plume, 4f, new() {  });
 
                     companions[1].LookAtTarget(companions[2].Position, true);
 
@@ -625,8 +635,8 @@ namespace StardewDruid.Event.Scene
                     foreach (Vector2 hut in boltLocations)
                     {
 
-                        Mod.instance.iconData.ImpactIndicator(location, hut * 64, IconData.impacts.puff, 4f, new() { color = Microsoft.Xna.Framework.Color.DarkCyan, });
-                        Mod.instance.iconData.ImpactIndicator(location, hut * 64, IconData.impacts.plume, 4f, new() { color = Microsoft.Xna.Framework.Color.Cyan, });
+                        Mod.instance.iconData.ImpactIndicator(location, hut * 64, IconData.impacts.puff, 4f, new() { });
+                        Mod.instance.iconData.ImpactIndicator(location, hut * 64, IconData.impacts.plume, 4f, new() {});
                     }
 
                     companions[1].ResetActives();
@@ -827,7 +837,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(202);
 
-                    companions[0].LookAtTarget(Game1.player.Position);
+                    companions[0].LookAtTarget(Game1.player.Position,true);
 
                     companions[0].netSpecial.Set((int)Character.Character.specials.gesture);
 
@@ -920,7 +930,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].Position = eventVectors[206] * 64;
 
-                    Mod.instance.iconData.ImpactIndicator(location, companions[1].Position - new Vector2(0, 64), IconData.impacts.plume, 4f, new() { color = Microsoft.Xna.Framework.Color.Magenta, });
+                    Mod.instance.iconData.ImpactIndicator(location, companions[1].Position - new Vector2(0, 64), IconData.impacts.plume, 4f, new() {  });
 
                     companions[1].LookAtTarget(eventVectors[207] * 64, true);
 
@@ -951,7 +961,7 @@ namespace StardewDruid.Event.Scene
 
                     location.playSound(SpellHandle.sounds.crow.ToString());
 
-                    Mod.instance.iconData.ImpactIndicator(location, companions[3].Position - new Vector2(0, 64), IconData.impacts.plume, 2f, new() { color = Microsoft.Xna.Framework.Color.Black, });
+                    Mod.instance.iconData.ImpactIndicator(location, companions[3].Position - new Vector2(0, 64), IconData.impacts.plume, 2f, new() {  });
 
                     break;
 
@@ -994,7 +1004,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[2].Position = eventVectors[207] * 64;
 
-                    Mod.instance.iconData.ImpactIndicator(location, companions[2].Position - new Vector2(0, 64), IconData.impacts.plume, 4f, new() { color = Microsoft.Xna.Framework.Color.Cyan, });
+                    Mod.instance.iconData.ImpactIndicator(location, companions[2].Position - new Vector2(0, 64), IconData.impacts.plume, 4f, new() {  });
 
                     companions[2].LookAtTarget(companions[1].Position, true);
 
@@ -1246,7 +1256,11 @@ namespace StardewDruid.Event.Scene
 
                     wispNew.WispArray();
 
-                    (location as Atoll).ambientDarkness = true;
+                    Game1.flashAlpha = 1f;
+
+                    location.playSound(SpellHandle.sounds.thunder.ToString());
+
+                    (Mod.instance.locations[LocationData.druid_atoll_name] as Atoll).ambientDarkness = true;
 
                     break;
 
@@ -1305,7 +1319,7 @@ namespace StardewDruid.Event.Scene
 
 
                     // Reaper
-                    companions[6] = new Thanatoshi(CharacterHandle.characters.Reaper);
+                    companions[6] = new Thanatoshi(CharacterHandle.characters.Thanatoshi);
 
                     companions[6].fadeOut = 0.8f;
 
@@ -1828,7 +1842,11 @@ namespace StardewDruid.Event.Scene
                     SetTrack("cowboy_boss");
 
                     (Mod.instance.eventRegister[Rite.eventWisps] as Wisps).WispArray();
-                    
+
+                    Game1.flashAlpha = 1f;
+
+                    location.playSound(SpellHandle.sounds.thunder.ToString());
+
                     break;
 
                 case 502:
@@ -1848,6 +1866,8 @@ namespace StardewDruid.Event.Scene
                     DialogueCue(503);
 
                     Cast.Bones.Corvids.SummonRaven();
+
+                    Mod.instance.trackers[CharacterHandle.characters.Raven].eventLock = true;
 
                     location.playSound(SpellHandle.sounds.crow.ToString());
 

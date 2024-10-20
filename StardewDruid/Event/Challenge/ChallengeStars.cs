@@ -90,7 +90,7 @@ namespace StardewDruid.Event.Challenge
 
             slimebar.colour = Microsoft.Xna.Framework.Color.LightGreen;
 
-            ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.nature, new()) {sound = SpellHandle.sounds.getNewSpecialItem, });
 
             Mod.instance.rite.CastMeteors();
 
@@ -176,7 +176,7 @@ namespace StardewDruid.Event.Challenge
 
                     voices[0] = bosses[0];
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, IconData.impacts.splatter, 5f, new() { scheme = schemes.pumpkin,});
+                    Mod.instance.spellRegister.Add(new(bosses[0].Position, 288, IconData.impacts.splatter, new()) { scheme = schemes.pumpkin, });
 
                     location.playSound(SpellHandle.sounds.slime.ToString());
 

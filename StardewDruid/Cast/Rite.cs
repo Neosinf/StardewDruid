@@ -164,6 +164,10 @@ namespace StardewDruid.Cast
 
         // ----------------------------------------------------
 
+        public const string eventCultivate = "eventCultivate";
+
+        public const string eventWilderness = "eventWilderness";
+
         public const string eventShield = "eventShield";
 
         public const string eventTransform = "eventTransform";
@@ -667,7 +671,17 @@ namespace StardewDruid.Cast
 
             if (castType == rites.ether) { return; }
 
-            if (castType == rites.bones) { return; }
+            if (castType == rites.bones) 
+            {
+
+                castVector = ModUtility.PositionToTile(Game1.player.Position);
+
+                CastMob(true);
+
+                return; 
+            
+            
+            }
 
             if(castType == rites.stars)
             {
@@ -1455,8 +1469,6 @@ namespace StardewDruid.Cast
             // Cultivate / Wilderness
             //---------------------------------------------
 
-
-
             if (LocationData.RestoreLocation(Game1.player.currentLocation.Name) != -1)
             {
 
@@ -1502,31 +1514,27 @@ namespace StardewDruid.Cast
                 }
 
             }
+            else if (
+                Game1.player.currentLocation is MineShaft ||
+                Game1.player.currentLocation is VolcanoDungeon )
+            {
+
+                CastWilderness();
+
+            }
             else if (Game1.player.currentLocation.isGreenhouse.Value || Game1.player.currentLocation is Shed || Game1.player.currentLocation is AnimalHouse)
             {
 
                 CastCultivate();
 
             }
-            /*if (Mod.instance.questHandle.IsGiven(QuestHandle.wealdThree) && spawnIndex.wilderness)
-            {
-
-                CastWilderness();
-
-            }
-            else
-            if (Mod.instance.questHandle.IsGiven(QuestHandle.wealdFour) && spawnIndex.cultivate)
-            {
-
-                CastCultivate();
-            }*/
-
 
             //---------------------------------------------
             // Rockfall
             //---------------------------------------------
 
-            if (Game1.player.currentLocation is MineShaft || 
+            if (
+                Game1.player.currentLocation is MineShaft ||
                 Game1.player.currentLocation is VolcanoDungeon ||
                 Game1.player.currentLocation is Lair ||
                 Game1.player.currentLocation is Tomb ||
@@ -1719,7 +1727,7 @@ namespace StardewDruid.Cast
 
             }
 
-            if (Mod.instance.eventRegister.ContainsKey("wilderness"))
+            if (Mod.instance.eventRegister.ContainsKey(eventWilderness))
             {
 
                 return;
@@ -1740,7 +1748,7 @@ namespace StardewDruid.Cast
 
                 costing += i * 4;
 
-                if (!specialCasts[Game1.player.currentLocation.Name].Contains("wilderness" + i.ToString()))
+                if (!specialCasts[Game1.player.currentLocation.Name].Contains(eventWilderness + i.ToString()))
                 {
 
                     break;
@@ -1751,7 +1759,7 @@ namespace StardewDruid.Cast
 
             Wilderness wildernessEvent = new();
 
-            wildernessEvent.EventSetup(Game1.player.Position, "wilderness");
+            wildernessEvent.EventSetup(Game1.player.Position, eventWilderness);
 
             wildernessEvent.costing = costing;
 
@@ -1769,7 +1777,7 @@ namespace StardewDruid.Cast
 
             }
 
-            if (Mod.instance.eventRegister.ContainsKey("cultivate"))
+            if (Mod.instance.eventRegister.ContainsKey(eventCultivate))
             {
 
                 return;
@@ -1778,7 +1786,7 @@ namespace StardewDruid.Cast
 
             Cultivate cultivateEvent = new();
 
-            cultivateEvent.EventSetup(Game1.player.Position, "cultivate");
+            cultivateEvent.EventSetup(Game1.player.Position, eventCultivate);
 
             cultivateEvent.EventActivate();
 
@@ -3011,18 +3019,7 @@ namespace StardewDruid.Cast
 
                 Mod.instance.iconData.CursorIndicator(location, witness.Position + new Vector2(32), IconData.cursors.fates, new());
 
-                // Trick reaction
-
-                int roster = 3;
-
-                if (Mod.instance.questHandle.IsComplete(QuestHandle.fatesThree))
-                {
-
-                    roster++;
-
-                }
-
-                int display = Mod.instance.randomIndex.Next(roster);
+                int display = Mod.instance.randomIndex.Next(5);
 
                 int friendship = Mod.instance.randomIndex.Next(0, 5) * 25 - 25;
 
@@ -3034,26 +3031,13 @@ namespace StardewDruid.Cast
 
                 // Trick performance
 
-                if (display == 3)
-                {
+                SpellHandle trick = new(witness.Position, 192, IconData.impacts.nature, new()) { instant = true };
 
-                    Levitate levitation = new(witness);
+                trick.type = SpellHandle.spells.trick;
 
-                    levitation.EventActivate();
+                trick.projectile = display;
 
-                }
-                else
-                {
-
-                    SpellHandle trick = new(witness.Position, 192, IconData.impacts.nature, new()) { instant = true };
-
-                    trick.type = SpellHandle.spells.trick;
-
-                    trick.projectile = display;
-
-                    Mod.instance.spellRegister.Add(trick);
-
-                }
+                Mod.instance.spellRegister.Add(trick);
 
             }
 
@@ -3321,7 +3305,7 @@ namespace StardewDruid.Cast
 
         }
 
-        public void CastMob()
+        public void CastMob(bool returnToPlayer = false)
         {
 
             List<CharacterHandle.characters> corvids = new()
@@ -3332,7 +3316,12 @@ namespace StardewDruid.Cast
                 CharacterHandle.characters.Magpie,
             };
 
-            bool returnToPlayer = Vector2.Distance(castVector * 64, Game1.player.Position) <= 192;
+            if (!returnToPlayer)
+            {
+
+                returnToPlayer = Vector2.Distance(castVector * 64, Game1.player.Position) <= 160;
+
+            }
 
             foreach (CharacterHandle.characters corvid in corvids)
             {
@@ -3342,7 +3331,7 @@ namespace StardewDruid.Cast
 
                     Mod.instance.characters[corvid].ResetActives();
 
-                    if (returnToPlayer)
+                    if (returnToPlayer && Mod.instance.trackers[corvid].linger != 0)
                     {
 
                         Mod.instance.trackers[corvid].linger = 0;
@@ -3478,8 +3467,6 @@ namespace StardewDruid.Cast
             }
 
             appliedBuff = blessing;
-
-            //DialogueData.stringkeys attunementChoice = Mod.instance.Config.slotAttune ? DialogueData.stringkeys.slotAttunementActive : DialogueData.stringkeys.normalAttunementActive;
 
             Buff riteBuff = new(
                 buffIdRite, 

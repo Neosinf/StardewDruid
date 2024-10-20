@@ -929,10 +929,53 @@ namespace StardewDruid.Location
 
         }
 
+        public override void performTenMinuteUpdate(int timeOfDay)
+        {
+
+            base.performTenMinuteUpdate(timeOfDay);
+
+            farmToGrove();
+
+        }
+
+        public virtual void farmToGrove()
+        {
+
+            GameLocation farmLocation = Game1.getFarm();
+
+            for (int w = farmLocation.warps.Count - 1; w >= 0; w--)
+            {
+
+                Warp warp = farmLocation.warps[w];
+
+                if(warp.TargetName == LocationData.druid_grove_name)
+                {
+
+                    break;
+
+                }
+
+                GameLocation caveLocation = Game1.getLocationFromName(warp.TargetName);
+
+                if (caveLocation is FarmCave)
+                {
+
+                    Vector2 farmExit = new Vector2(warp.X, warp.Y);
+
+                    Warp change = new((int)farmExit.X, (int)farmExit.Y, LocationData.druid_grove_name, 42, 20, false);
+
+                    farmLocation.warps[w] = change;
+
+                    break;
+
+                }
+
+            }
+
+        }
 
         public override void updateWarps()
         {
-            //warps.Clear();
 
             if(warpSets.Count > 0)
             {
@@ -950,12 +993,6 @@ namespace StardewDruid.Location
 
             }
 
-            Layer back = map.GetLayer("Back");
-
-            int width = back.LayerWidth;
-
-            int height = back.LayerHeight;
-
             Vector2 caveEntry = new(19,15);
 
             Vector2 farmEntry = new(43,10);
@@ -965,10 +1002,6 @@ namespace StardewDruid.Location
             string farmName = "Farm";
 
             string caveName = "FarmCave";
-
-            bool caveSet = false;
-
-            Vector2 firstSet = Vector2.Zero;
 
             for (int w = farmLocation.warps.Count - 1; w >= 0; w--)
             {
@@ -984,54 +1017,27 @@ namespace StardewDruid.Location
 
                     Vector2 farmExit = new Vector2(warp.X, warp.Y);
 
-                    if(firstSet != Vector2.Zero)
-                    {
-
-                        if(Vector2.Distance(farmExit,firstSet) > 2)
-                        {
-
-                            continue;
-
-                        }
-
-                    }
-                    else
-                    {
-
-                        firstSet = farmExit;
-
-                    }
-
                     farmEntry = farmExit + new Vector2(0, 2);
 
-                    Warp change = new((int)farmExit.X, (int)farmExit.Y, LocationData.druid_grove_name, 42, 20, false);
-
-                    farmLocation.warps[w] = change;
-
-                    if (!caveSet)
+                    for (int c = caveLocation.warps.Count - 1; c >= 0; c--)
                     {
 
-                        for (int c = caveLocation.warps.Count - 1; c >= 0; c--)
+                        Warp caveWarp = caveLocation.warps[c];
+
+                        if (caveWarp.TargetName == farmLocation.Name)
                         {
 
-                            Warp caveWarp = caveLocation.warps[c];
+                            Vector2 caveExit = new Vector2(caveWarp.X, caveWarp.Y);
 
-                            if (caveWarp.TargetName == farmLocation.Name)
-                            {
+                            Warp caveChange = new((int)caveExit.X, (int)caveExit.Y, LocationData.druid_grove_name, 42, 10, false);
 
-                                Vector2 caveExit = new Vector2(caveWarp.X, caveWarp.Y);
-
-                                Warp caveChange = new((int)caveExit.X, (int)caveExit.Y, LocationData.druid_grove_name, 42, 10, false);
-
-                                caveLocation.warps[c] = caveChange;
-
-                            }
+                            caveLocation.warps[c] = caveChange;
 
                         }
 
-                        caveSet = true;
-
                     }
+
+                    break;
 
                 }
 
@@ -1073,6 +1079,8 @@ namespace StardewDruid.Location
             warps.Add(new Warp(23, 3, LocationData.druid_gate_name, 27, 33, flipFarmer: false));
 
             lightFields.Add(new(new Vector2(21, 3) * 64, 6, Microsoft.Xna.Framework.Color.LightGoldenrodYellow));
+
+            farmToGrove();
 
         }
 

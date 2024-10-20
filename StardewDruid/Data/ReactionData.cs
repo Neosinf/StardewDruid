@@ -371,16 +371,18 @@ namespace StardewDruid.Data
                     switch (context.First())
                     {
 
-                        case 0:
+                        case 1:
                             trick = Mod.instance.Helper.Translation.Get("ReactionData.226");
                             break;
-                        case 1:
+                        case 2:
                             trick = Mod.instance.Helper.Translation.Get("ReactionData.229");
                             break;
-                        case 2:
+                        case 3:
                             trick = Mod.instance.Helper.Translation.Get("ReactionData.232");
                             break;
-
+                        case 4:
+                            trick = Mod.instance.Helper.Translation.Get("ReactionData.346.1");
+                            break;
                     }
 
                     if (friendship >= 75)
@@ -1202,7 +1204,7 @@ namespace StardewDruid.Data
 
                                 case 2:
 
-                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.332.9"));
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.332.9").Tokens(new { name = Game1.player.Name, }));
 
                                     break;
 

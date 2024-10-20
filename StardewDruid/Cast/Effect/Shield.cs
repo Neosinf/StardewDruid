@@ -87,6 +87,7 @@ namespace StardewDruid.Cast.Effect
 
         public override void EventRemove()
         {
+            
             base.EventRemove();
 
             Game1.player.buffs.Remove(Rite.buffIdShield);

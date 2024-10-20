@@ -1,11 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewDruid.Render;
 using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Monster
 {
@@ -22,7 +24,7 @@ namespace StardewDruid.Monster
         {
         }
 
-        public ShadowBear(Vector2 vector, int CombatModifier, string name = "Shadowbear")
+        public ShadowBear(Vector2 vector, int CombatModifier, string name = "BrownBear")
             : base(vector, CombatModifier, name)
         {
 
@@ -38,29 +40,6 @@ namespace StardewDruid.Monster
             basePulp = 40;
             cooldownInterval = 180;
             
-
-        }
-
-        public override float GetScale()
-        {
-
-            float spriteScale = 3f + (0.5f * netMode.Value);
-
-            return spriteScale;
-
-        }
-
-        public override int GetHeight()
-        {
-
-            return 64;
-
-        }
-
-        public override int GetWidth()
-        {
-
-            return 64;
 
         }
 
@@ -100,15 +79,11 @@ namespace StardewDruid.Monster
 
             walkInterval = 12;
 
-            gait = 2.4f;
+            gait = GetGait();
 
-            idleFrames = FrameSeries(64, 64, 0, 0, 1);
+            idleFrames = BearRender.WalkFrames();
 
-            idleFrames[3] = new(idleFrames[1]);
-
-            walkFrames = FrameSeries(64, 64, 0, 0, 7);
-
-            walkFrames[3] = new(walkFrames[1]);
+            walkFrames = BearRender.WalkFrames();
 
             overHead = new(0, -128);
 
@@ -119,56 +94,85 @@ namespace StardewDruid.Monster
 
             sweepInterval = 9;
 
-            sweepFrames = new()
-            {
-                [0] = new()
-                {
-                    new(64,128,64,64),
-                    new(448,128,64,64),
-                    new(448,128,64,64),
-
-                    new(256,128,64,64),
-                    new(512,128,64,64),
-                    new(512,128,64,64),
-
-                },
-                [1] = new()
-                {
-                    new(64,64,64,64),
-                    new(448,64,64,64),
-                    new(448,64,64,64),
-
-                    new(256,64,64,64),
-                    new(512,64,64,64),
-                    new(512,64,64,64),
-
-                },
-                [2] = new()
-                {
-                    new(64,0,64,64),
-                    new(448,0,64,64),
-                    new(448,0,64,64),
-
-                    new(256,0,64,64),
-                    new(512,0,64,64),
-                    new(512,0,64,64),
-
-                },
-                [3] = new()
-                {
-                    new(64,64,64,64),
-                    new(448,64,64,64),
-                    new(448,64,64,64),
-
-                    new(256,64,64,64),
-                    new(512,64,64,64),
-                    new(512,64,64,64),
-
-                },
-
-            };
+            sweepFrames = BearRender.SweepFrames();
 
             sweepSet = true;
+
+        }
+
+        public override float GetScale()
+        {
+
+            float spriteScale = 3.5f + (0.5f * netMode.Value);
+
+            return spriteScale;
+
+        }
+
+        public override int GetHeight()
+        {
+
+            return 64;
+
+        }
+
+        public override int GetWidth()
+        {
+
+            return 64;
+
+        }
+        public override float GetGait(int mode = 0)
+        {
+
+             return 2.4f + 0.2f * mode;
+
+        }
+
+        public override Rectangle GetBoundingBox()
+        {
+
+            Vector2 spritePosition = GetPosition(Position);
+
+            float spriteScale = GetScale();
+
+            int width = GetWidth();
+
+            int height = GetHeight();
+
+            Rectangle box = new(
+                (int)((spritePosition.X - (width * spriteScale / 2)) + (spriteScale * 2)),
+                (int)((spritePosition.Y - (height * spriteScale / 2)) + (spriteScale * 16)),
+                (int)((spriteScale * width) - (spriteScale * 4)),
+                (int)((spriteScale * height) - (spriteScale * 16))
+            );
+
+            return box;
+
+        }
+
+        public override Vector2 GetPosition(Vector2 localPosition, float spriteScale = -1f, bool shadow = false)
+        {
+
+            if (spriteScale == -1f)
+            {
+
+                spriteScale = GetScale();
+
+            }
+
+            int height = GetHeight();
+
+            Vector2 spritePosition = localPosition + new Vector2(32, 64) - new Vector2(0, height * spriteScale / 2);
+
+            if (netFlightActive.Value || netSmashActive.Value)
+            {
+
+                spritePosition.Y -= flightHeight;
+
+            }
+
+            return spritePosition;
 
         }
 
@@ -218,7 +222,7 @@ namespace StardewDruid.Monster
                     sweepSource,
                     Color.White,
                     0,
-                    Vector2.Zero,
+                    new Vector2(sweepSource.Width / 2, sweepSource.Height / 2),
                     spriteScale,
                     flippity ? (SpriteEffects)1 : 0,
                     drawLayer);
@@ -240,7 +244,7 @@ namespace StardewDruid.Monster
                     walkSource,
                     Color.White,
                     0,
-                    Vector2.Zero,
+                    new Vector2(walkSource.Width / 2, walkSource.Height / 2),
                     spriteScale,
                     flippity ? (SpriteEffects)1 : 0,
                     drawLayer);
@@ -254,10 +258,26 @@ namespace StardewDruid.Monster
 
             if (netDirection.Value % 2 == 1)
             {
-                shadowPosition.Y += 4;
+                shadowPosition.Y += 8;
             }
 
-            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * 0.35f, 0.0f, new Vector2(24), 6f * (GetWidth() / 32) / offset, 0, drawLayer - 0.0001f);
+            b.Draw(Mod.instance.iconData.cursorTexture, 
+                
+                shadowPosition, 
+                
+                Mod.instance.iconData.shadowRectangle, 
+                
+                Color.White * 0.35f, 0.0f, 
+                
+                new Vector2(24), 
+                
+                6f * (GetWidth() / 32) / offset, 
+                
+                0, 
+                
+                drawLayer - 0.0001f
+            );
+
 
         }
 

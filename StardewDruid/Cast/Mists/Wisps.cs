@@ -200,6 +200,8 @@ namespace StardewDruid.Cast.Mists
 
                 //Mod.instance.spellRegister.Add(circleHandle);
 
+                Game1.flashAlpha = 1f;
+
                 location.playSound("thunder");
 
                 WispArray();
@@ -235,7 +237,7 @@ namespace StardewDruid.Cast.Mists
 
             };
 
-            foreach(Vector2 wispVector in wispVectors)
+            /*foreach(Vector2 wispVector in wispVectors)
             {
 
                 if(wispVector == Vector2.Zero)
@@ -247,7 +249,7 @@ namespace StardewDruid.Cast.Mists
 
                 Mod.instance.spellRegister.Add(new(wispVector * 64, 192, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
 
-            }
+            }*/
 
         }
 
@@ -409,10 +411,10 @@ namespace StardewDruid.Cast.Mists
                 Mod.instance.iconData.wispTexture,
                 localPosition + new Vector2(32, -16f),
                 new Microsoft.Xna.Framework.Rectangle(0 + (wispFrame * 32), 0, 32, 32),
-                colour * (0.90f - (0.05f * wispOffset)),
+                colour * (0.75f - (0.05f * wispOffset)),
                 0f,
                 new Vector2(16),
-                3f,
+                4f,
                 flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 drawLayer
             );
@@ -421,10 +423,10 @@ namespace StardewDruid.Cast.Mists
                 Mod.instance.iconData.wispTexture,
                 localPosition + new Vector2(32, -16f),
                 new Microsoft.Xna.Framework.Rectangle(0 + (wispFrame*32),32,32,32),
-                Microsoft.Xna.Framework.Color.White * 0.90f,
+                Microsoft.Xna.Framework.Color.White * 0.75f,
                 0f,
                 new Vector2(16),
-                3f,
+                4f,
                 flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 drawLayer
             );

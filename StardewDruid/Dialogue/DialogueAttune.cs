@@ -1,0 +1,464 @@
+﻿using StardewDruid.Journal;
+using StardewValley;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using StardewDruid.Character;
+using StardewModdingAPI;
+using StardewDruid.Cast;
+using StardewDruid.Data;
+using StardewValley.Locations;
+using Microsoft.Xna.Framework;
+using StardewValley.Tools;
+using System.Reflection;
+
+namespace StardewDruid.Dialogue
+{
+    public static class DialogueAttune
+    {
+
+        public static string DialogueOption(CharacterHandle.characters character)
+        {
+
+            if (Mod.instance.Config.slotAttune)
+            {
+
+                return null;
+
+            }
+
+            switch (character)
+            {
+
+                case CharacterHandle.characters.energies:
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.swordWeald))
+                    {
+
+                        return AttunementIntro(Rite.rites.weald);
+
+
+
+                    }
+                    return null;
+
+                case CharacterHandle.characters.waves:
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.swordMists))
+                    {
+                        return AttunementIntro(Rite.rites.mists);
+
+
+                    }
+
+                    return null;
+
+                case CharacterHandle.characters.star_altar:
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.swordStars))
+                    {
+
+                        return AttunementIntro(Rite.rites.stars);
+
+                    }
+
+                    return null;
+
+                case CharacterHandle.characters.monument_priesthood:
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.swordFates))
+                    {
+
+                        return AttunementIntro(Rite.rites.fates);
+
+                    }
+
+                    return null;
+
+                case CharacterHandle.characters.dragon_statue:
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.swordEther))
+                    {
+
+                        return AttunementIntro(Rite.rites.ether);
+
+                    }
+
+                    return null;
+
+                case CharacterHandle.characters.crow_brazier:
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.questBlackfeather))
+                    {
+
+                        return AttunementIntro(Rite.rites.bones);
+
+                    }
+
+                    return null;
+
+            }
+
+            return null;
+
+        }
+
+        public static DialogueSpecial DialogueGenerate(CharacterHandle.characters character, int index = 0 , int answer = 0)
+        {
+
+            if (Mod.instance.Config.slotAttune)
+            {
+
+                return null;
+
+            }
+
+            DialogueSpecial generate = new();
+
+            int toolIndex = Mod.instance.AttuneableWeapon();
+
+            int attuneUpdate;
+
+            switch (character)
+            {
+
+                case CharacterHandle.characters.energies:
+
+                    attuneUpdate = AttunementUpdate(Rite.rites.weald);
+
+                    switch (attuneUpdate)
+                    {
+
+                        case 0:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1239").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                        case 1:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1246").Tokens(new { tool = Game1.player.CurrentTool.Name, }) +
+                                Mod.instance.Helper.Translation.Get("CharacterHandle.1249");
+
+                            break;
+
+                        case 2:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1255").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                        case 3:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1263").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                    }
+
+                    return generate;
+
+                case CharacterHandle.characters.waves:
+
+                    attuneUpdate = AttunementUpdate(Rite.rites.mists);
+
+                    switch (attuneUpdate)
+                    {
+
+                        case 0:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1239").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                        case 1:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1290").Tokens(new { tool = Game1.player.CurrentTool.Name, }) +
+                                Mod.instance.Helper.Translation.Get("CharacterHandle.1293");
+
+
+                            break;
+
+                        case 2:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1300").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                        case 3:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1308").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                    }
+
+                    return generate;
+
+                case CharacterHandle.characters.star_altar:
+
+                    attuneUpdate = AttunementUpdate(Rite.rites.stars);
+
+                    switch (attuneUpdate)
+                    {
+
+                        case 0:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1239").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                        case 1:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1334").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                        case 2:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1341").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                        case 3:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1348").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                    }
+
+                    return generate;
+
+                case CharacterHandle.characters.monument_priesthood:
+
+                    attuneUpdate = AttunementUpdate(Rite.rites.fates);
+
+                    switch (attuneUpdate)
+                    {
+
+                        case 0:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1239").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                        case 1:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1373").Tokens(new { tool = Game1.player.CurrentTool.Name, }) +
+                                Mod.instance.Helper.Translation.Get("CharacterHandle.1375") +
+                                Mod.instance.Helper.Translation.Get("CharacterHandle.1376");
+
+                            break;
+
+                        case 2:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1382").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                        case 3:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1389").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                    }
+
+                    return generate;
+
+                case CharacterHandle.characters.dragon_statue:
+
+                    attuneUpdate = AttunementUpdate(Rite.rites.ether);
+
+                    switch (attuneUpdate)
+                    {
+
+                        case 0:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1239").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                        case 1:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1414") +
+                                            Mod.instance.Helper.Translation.Get("CharacterHandle.1415");
+
+                            break;
+
+                        case 2:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1421").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                        case 3:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1428").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                    }
+
+                    return generate;
+
+                case CharacterHandle.characters.crow_brazier:
+
+                    attuneUpdate = AttunementUpdate(Rite.rites.bones);
+
+                    switch (attuneUpdate)
+                    {
+
+                        case 0:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1239").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                        case 1:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.315.4").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                        case 2:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.315.5").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                        case 3:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.315.6").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                            break;
+
+                    }
+
+                    return generate;
+
+            }
+            return generate;
+
+        }
+
+        public static string AttunementIntro(Rite.rites compare)
+        {
+
+            int toolIndex = Mod.instance.AttuneableWeapon();
+
+            if (toolIndex == -1 || toolIndex == 999 || Game1.player.CurrentTool == null)
+            {
+
+                return null;
+
+            }
+
+            Dictionary<int, Rite.rites> comparison = SpawnData.WeaponAttunement(true);
+
+            if (comparison.ContainsKey(toolIndex))
+            {
+
+                if (comparison[toolIndex] == compare)
+                {
+
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.1557").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                }
+                else
+                {
+
+                    return null;
+
+                }
+
+            }
+
+            if (Mod.instance.save.attunement.ContainsKey(toolIndex))
+            {
+
+                if (Mod.instance.save.attunement[toolIndex] == compare)
+                {
+
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.1577").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+
+                }
+
+            }
+
+            return Mod.instance.Helper.Translation.Get("CharacterHandle.1584").Tokens(new { tool = Game1.player.CurrentTool.Name, rite = DialogueData.RiteNames(compare), });
+
+        }
+
+        public static int AttunementUpdate(Rite.rites compare)
+        {
+
+            int toolIndex = Mod.instance.AttuneableWeapon();
+
+            if (toolIndex == -1 || toolIndex == 999)
+            {
+
+                return 0;
+
+            }
+
+            Dictionary<int, Rite.rites> comparison = SpawnData.WeaponAttunement(true);
+
+            if (comparison.ContainsKey(toolIndex))
+            {
+
+                if (comparison[toolIndex] == compare)
+                {
+
+                    return 1;
+
+                }
+                else
+                {
+
+                    return 0;
+
+                }
+
+            }
+
+            if (Mod.instance.save.attunement.ContainsKey(toolIndex))
+            {
+
+                if (Mod.instance.save.attunement[toolIndex] == compare)
+                {
+
+                    Mod.instance.iconData.ImpactIndicator(Game1.player.currentLocation, Game1.player.Position, IconData.impacts.nature, 6f, new());
+
+                    Game1.player.currentLocation.playSound(SpellHandle.sounds.yoba.ToString());
+
+                    Mod.instance.DetuneWeapon();
+
+                    return 2;
+
+                }
+
+                //return 0;
+
+            }
+
+            Mod.instance.iconData.ImpactIndicator(Game1.player.currentLocation, Game1.player.Position, IconData.impacts.nature, 6f, new());
+
+            Game1.player.currentLocation.playSound(SpellHandle.sounds.yoba.ToString());
+
+            Mod.instance.AttuneWeapon(compare);
+
+            return 3;
+
+        }
+
+
+    }
+
+
+}

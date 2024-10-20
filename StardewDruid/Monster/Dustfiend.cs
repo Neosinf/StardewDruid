@@ -15,9 +15,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Diagnostics.Metrics;
 using System.IO;
-using System.Linq;
-using static StardewDruid.Cast.SpellHandle;
-using static StardewDruid.Data.IconData;
 
 
 namespace StardewDruid.Monster
@@ -75,6 +72,12 @@ namespace StardewDruid.Monster
             netScheme.Set(newScheme);
 
         }
+        public override int LayerOffset()
+        {
+
+            return 32 + netLayer.Value;
+
+        }
 
         public override void draw(SpriteBatch b)
         {
@@ -86,7 +89,7 @@ namespace StardewDruid.Monster
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            float drawLayer = ((float)Position.Y + 32f) / 10000f;
+            float drawLayer = (Position.Y + (float)LayerOffset()) / 10000f;
 
             DrawEmote(b, localPosition, drawLayer);
 
@@ -98,13 +101,16 @@ namespace StardewDruid.Monster
 
             Vector2 shadowPosition = GetPosition(localPosition, spriteSize, true);
 
+            // Outer fire
+
             Rectangle bubbleRect;
 
             int shadowOffset = 48;
 
             int faceOffset = 0;
 
-            if (netFlightActive.Value || netSmashActive.Value){
+            if (netFlightActive.Value || netSmashActive.Value)
+            {
 
                 int setFlightSeries = netDirection.Value + (netFlightProgress.Value * 4);
 
@@ -112,7 +118,7 @@ namespace StardewDruid.Monster
 
                 bubbleRect = flightFrames[setFlightSeries][setFlightFrame].Clone();
 
-                b.Draw(characterTexture, spritePosition, bubbleRect, schemeColor * 0.4f, 0.0f, Vector2.Zero, spriteSize, 0, drawLayer - 0.002f);
+                b.Draw(characterTexture, spritePosition, bubbleRect, schemeColor * 0.75f, 0.0f, Vector2.Zero, spriteSize, 0, drawLayer - 0.003f);
 
                 if (netSmashActive.Value)
                 {
@@ -122,12 +128,13 @@ namespace StardewDruid.Monster
                 }
 
             }
-            else {
+            else
+            {
 
 
                 bubbleRect = idleFrames[netDirection.Value][hoverFrame].Clone();
 
-                b.Draw(characterTexture, spritePosition, bubbleRect, schemeColor * 0.4f, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, 0, drawLayer - 0.002f);
+                b.Draw(characterTexture, spritePosition, bubbleRect, schemeColor * 0.75f, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, 0, drawLayer - 0.003f);
 
                 if (netSpecialActive.Value)
                 {
@@ -138,9 +145,21 @@ namespace StardewDruid.Monster
 
             }
 
+            // Shadow
+
             bubbleRect.Y += shadowOffset;
 
-            b.Draw(characterTexture, shadowPosition, bubbleRect, schemeColor * 0.2f, 0.0f, Vector2.Zero, spriteSize, 0, drawLayer - 0.003f);
+            b.Draw(characterTexture, shadowPosition, bubbleRect, schemeColor * 0.15f, 0.0f, Vector2.Zero, spriteSize, 0, drawLayer - 0.004f);
+
+            // Inner fire
+
+            int timelapse = ((int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 3000) * 6 / 3000);
+
+            Rectangle dust = new(timelapse * 48, 336, 48, 48);
+
+            b.Draw(characterTexture, spritePosition, dust, Color.White * 0.2f, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, 0, drawLayer - 0.002f);
+
+            // Face
 
             List<Microsoft.Xna.Framework.Color> colors = new()
             {
@@ -152,12 +171,20 @@ namespace StardewDruid.Monster
                 Color.LightPink,
             };
 
+
+            if (netMode.Value >= 3)
+            {
+
+                faceOffset += 96;
+
+            }
+
             switch (netDirection.Value)
             {
 
                 case 0:
 
-                    b.Draw(characterTexture, spritePosition, new(netScheme.Value*48, 96, 48, 48), schemeColor * 0.75f, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 0.001f);
+                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48, 96, 48, 48), schemeColor * 0.75f, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 0.001f);
 
                     break;
 
@@ -165,7 +192,7 @@ namespace StardewDruid.Monster
 
                     b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48, 48, 48, 48), schemeColor * 0.75f, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, 0, drawLayer - 0.001f);
 
-                    b.Draw(characterTexture, spritePosition, new(0+ faceOffset, 192, 48, 48), colors[netMode.Value], 0.0f, new Vector2(0.0f, 0.0f), spriteSize, 0, drawLayer);
+                    b.Draw(characterTexture, spritePosition, new(0 + faceOffset, 192, 48, 48), colors[netMode.Value], 0.0f, new Vector2(0.0f, 0.0f), spriteSize, 0, drawLayer);
 
                     break;
 
@@ -187,32 +214,25 @@ namespace StardewDruid.Monster
 
             }
 
-            int timelapse = ((int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 3000) * 6 / 3000);
-
-            Rectangle dust = new(144 + (timelapse % 3) * 48, 0 + (int)(timelapse / 3) * 48, 48, 48);
-
-            b.Draw(characterTexture, spritePosition, dust, schemeColor*0.1f, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, 0, drawLayer + 0.001f);
-
-
         }
 
         public override IconData.schemes GetScheme()
         {
 
-            IconData.schemes scheme = schemes.rock;
+            IconData.schemes scheme = IconData.schemes.rock;
 
             switch (netScheme.Value)
             {
 
                 case 1:
 
-                    scheme = schemes.rockTwo;
+                    scheme = IconData.schemes.rockTwo;
 
                     break;
 
                 case 2:
 
-                    scheme = schemes.rockThree;
+                    scheme = IconData.schemes.rockThree;
 
                     break;
 
@@ -229,7 +249,7 @@ namespace StardewDruid.Monster
 
             SpellHandle dustbomb = new(currentLocation, box.Center.ToVector2(), box.Center.ToVector2(), 96 + (int)(24 * GetScale()), GetThreat());
 
-            dustbomb.type = spells.explode;
+            dustbomb.type = SpellHandle.spells.explode;
 
             dustbomb.scheme = GetScheme();
 
@@ -237,7 +257,7 @@ namespace StardewDruid.Monster
 
             dustbomb.display = IconData.impacts.puff;
 
-            dustbomb.sound = sounds.dustMeep;
+            dustbomb.sound = SpellHandle.sounds.dustMeep;
 
             dustbomb.boss = this;
 

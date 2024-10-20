@@ -354,7 +354,19 @@ namespace StardewDruid.Cast.Mists
                                 }
 
                             }
+                            /*else if (targetObject.QualifiedItemId.Contains("93"))
+                            {
 
+                                DarkMage bear = new(tileVector, Mod.instance.CombatDifficulty());
+
+                                location.characters.Add(bear);
+
+                                bear.currentLocation = location;
+
+                                bear.update(Game1.currentGameTime, location);
+
+                            }*/
+                                
                             continue;
 
                         }

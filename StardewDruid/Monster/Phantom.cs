@@ -294,6 +294,8 @@ namespace StardewDruid.Monster
         public void PhantomSpecial()
         {
 
+            specialSet = true;
+
             specialCeiling = 1;
 
             specialFloor = 0;
@@ -360,6 +362,13 @@ namespace StardewDruid.Monster
             float spriteScale = GetScale();
 
             Vector2 spritePosition = GetPosition(localPosition, spriteScale);
+
+            if(fadeFactor < 0.75f)
+            {
+
+                fadeFactor += 0.0025f;
+
+            }
 
             Color fadeout = Color.White * fadeFactor;
 
@@ -524,13 +533,13 @@ namespace StardewDruid.Monster
 
             missile.type = SpellHandle.spells.missile;
 
-            missile.projectile = 3;
+            missile.projectile = 2;
 
-            missile.missile = IconData.missiles.cannonball;
+            missile.missile = IconData.missiles.knife;
 
-            missile.display = IconData.impacts.bomb;
+            missile.display = IconData.impacts.none;
 
-            missile.indicator = IconData.cursors.death;
+            missile.scheme = IconData.schemes.mists;
 
             missile.sound = SpellHandle.sounds.flameSpellHit;
 

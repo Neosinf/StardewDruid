@@ -786,6 +786,7 @@ namespace StardewDruid.Journal
                 instruction = Mod.instance.Helper.Translation.Get("EffectsData.313.3") + Mod.instance.Helper.Translation.Get("EffectsData.313.4"),
                 details = new()
                     {
+                        Mod.instance.Helper.Translation.Get("EffectsData.346.1"),
                         Mod.instance.Helper.Translation.Get("EffectsData.313.5"),
                         Mod.instance.Helper.Translation.Get("EffectsData.313.6"),
                         Mod.instance.Helper.Translation.Get("EffectsData.313.7"),

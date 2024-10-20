@@ -167,9 +167,7 @@ namespace StardewDruid.Event.Challenge
 
             eventRenders.Add(ritePortal);
 
-            ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
-
-            location.playSound("discoverMineral");
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
 
         }
 

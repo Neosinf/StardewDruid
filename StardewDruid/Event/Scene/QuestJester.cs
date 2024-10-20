@@ -59,9 +59,8 @@ namespace StardewDruid.Event.Scene
 
             companions[0].netDirection.Set(1);
 
-            ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
 
-            location.playSound("discoverMineral");
 
         }
 
@@ -79,7 +78,23 @@ namespace StardewDruid.Event.Scene
             
             base.EventRemove();
 
-            Mod.instance.locations[LocationData.druid_archaeum_name].updateWarps();
+            if (eventActive)
+            {
+                if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Buffin))
+                {
+
+                    if (!Mod.instance.questHandle.IsComplete(eventId))
+                    {
+
+                        CharacterMover mover = new(CharacterHandle.characters.Buffin, CharacterMover.moveType.purge);
+
+                        Mod.instance.movers[CharacterHandle.characters.Buffin] = mover;
+
+                    }
+
+                }
+
+            }
 
         }
 
@@ -290,7 +305,11 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(20);
 
-                    eventRenders.Add(new("skull_saurus", location.Name, companions[0].Position + new Vector2(32, 32), IconData.relics.skull_saurus));
+                    EventRender saurusSkull = new("skull_saurus", location.Name, companions[0].Position + new Vector2(32, 32), IconData.relics.skull_saurus);
+
+                    saurusSkull.layer += 0.0064f;
+
+                    eventRenders.Add( saurusSkull);
 
                     break;
 
@@ -829,7 +848,7 @@ namespace StardewDruid.Event.Scene
 
                     beam.type = SpellHandle.spells.beam;
 
-                    beam.scheme = IconData.schemes.ether;
+                    beam.scheme = IconData.schemes.Solar;
 
                     Mod.instance.spellRegister.Add(beam);
 
@@ -837,7 +856,9 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].ResetActives(true);
 
-                    companions[1].netSpecial.Set((int)Character.Character.specials.special);
+                    companions[1].doEmote(16);
+
+                    /*companions[1].netSpecial.Set((int)Character.Character.specials.special);
 
                     companions[1].specialTimer = 120;
 
@@ -849,7 +870,7 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.spellRegister.Add(beamTwo);
 
-                    Mod.instance.iconData.ImpactIndicator(location, companions[0].Position + new Vector2(416, 32), Data.IconData.impacts.flashbang, 3, new());
+                    Mod.instance.iconData.ImpactIndicator(location, companions[0].Position + new Vector2(416, 32), Data.IconData.impacts.flashbang, 3, new());*/
 
                     break;
 
@@ -1137,7 +1158,7 @@ namespace StardewDruid.Event.Scene
             if (bosses.Count > 0 && activeCounter < 965)
             {
 
-                if (!ModUtility.MonsterVitals(bosses[0], location))
+                if (!ModUtility.MonsterVitals(bosses[0], location) || bosses[0].netWoundedActive.Value)
                 {
 
                     activeCounter = 965;

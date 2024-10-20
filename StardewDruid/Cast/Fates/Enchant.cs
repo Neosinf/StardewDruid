@@ -86,13 +86,14 @@ namespace StardewDruid.Cast.Fates
 
                     eventLocked = true;
 
-                    ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
+                    //ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
+                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
 
                     SpellHandle spellHandle = new(origin, 256, IconData.impacts.summoning, new());
 
                     spellHandle.scheme = IconData.schemes.fates;
 
-                    spellHandle.sound = SpellHandle.sounds.discoverMineral;
+                    //spellHandle.sound = SpellHandle.sounds.discoverMineral;
 
                     Mod.instance.spellRegister.Add(spellHandle);
 

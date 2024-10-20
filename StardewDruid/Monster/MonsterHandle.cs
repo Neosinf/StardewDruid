@@ -7,7 +7,6 @@ using StardewValley.Monsters;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using static StardewDruid.Monster.MonsterHandle;
 
 namespace StardewDruid.Monster
 {
@@ -52,6 +51,7 @@ namespace StardewDruid.Monster
             batwing,
             blobfiend,
             dustfiend,
+            firefiend,
             darkbrute,
             darkshooter,
             spectre,
@@ -92,6 +92,8 @@ namespace StardewDruid.Monster
 
         public bool spawnGroup;
 
+        public IconData.warps warpout;
+
         public MonsterHandle(Vector2 target, GameLocation location)
         {
 
@@ -104,6 +106,8 @@ namespace StardewDruid.Monster
             spawnWater = false;
 
             spawnLimit = 5 + (Mod.instance.ModDifficulty() / 2);
+
+            warpout = IconData.warps.portal;
 
         }
 
@@ -146,7 +150,7 @@ namespace StardewDruid.Monster
             for (int i = monsterSpawns.Count - 1; i >= 0; i--)
             {
 
-                Mod.instance.iconData.AnimateQuickWarp(spawnLocation, monsterSpawns[i].Position, true);
+                Mod.instance.iconData.AnimateQuickWarp(spawnLocation, monsterSpawns[i].Position, true, warpout);
 
                 monsterSpawns[i].Health = 0;
 
@@ -330,7 +334,7 @@ namespace StardewDruid.Monster
 
         }
 
-        public void SpawnImport(StardewValley.Monsters.Monster theMonster)
+        public void SpawnImport(StardewValley.Monsters.Monster theMonster, bool warpIn = true)
         {
 
             monsterSpawns.Add(theMonster);
@@ -343,7 +347,12 @@ namespace StardewDruid.Monster
 
             spawnTotal++;
 
-            Mod.instance.iconData.AnimateQuickWarp(spawnLocation, theMonster.Position - new Vector2(0, 32));
+            if (warpIn)
+            {
+
+                Mod.instance.iconData.AnimateQuickWarp(spawnLocation, theMonster.Position - new Vector2(0, 32));
+
+            }
 
         }
 
@@ -386,6 +395,12 @@ namespace StardewDruid.Monster
                 case bosses.dustfiend:
 
                     theMonster = new Dustfiend(spawnVector, combatModifier);
+
+                    break;
+
+                case bosses.firefiend:
+
+                    theMonster = new Firefiend(spawnVector, combatModifier);
 
                     break;
 

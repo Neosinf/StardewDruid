@@ -33,9 +33,17 @@ namespace StardewDruid.Event.Access
 
         public QueryData.queries queryHandle = QueryData.queries.AccessHandle;
 
+        public enum types
+        {
+            stair,
+            door,
+        }
+
+        public types type;
+
         public AccessHandle() { }
 
-        public void AccessSetup(string Entrance, string Access, Vector2 Start, Vector2 Exit)
+        public void AccessSetup(string Entrance, string Access, Vector2 Start, Vector2 Exit, types AccessType = types.stair)
         {
 
             start = Start;
@@ -45,6 +53,8 @@ namespace StardewDruid.Event.Access
             access = Access;
 
             exit = Exit;
+
+            type = AccessType;
 
         }
 
@@ -59,6 +69,7 @@ namespace StardewDruid.Event.Access
                 access,
                 exit.X.ToString(),
                 exit.Y.ToString(),
+                type.ToString(),
             };
 
             QueryData query = new()
@@ -85,6 +96,8 @@ namespace StardewDruid.Event.Access
             access = accessData[3];
 
             exit = new(Convert.ToInt32(accessData[4]), Convert.ToInt32(accessData[5]));
+
+            type = Enum.Parse<types>(accessData[6]);
 
         }
 
@@ -119,7 +132,7 @@ namespace StardewDruid.Event.Access
             foreach (Warp warp in location.warps)
             {
 
-                if (warp.X == start.X && warp.Y == start.Y)
+                if ((warp.X == start.X || warp.X == start.X + 1 || warp.X == start.X + 2) && (warp.Y == start.Y || warp.Y == start.Y + 1))
                 {
 
                     return true;
@@ -141,24 +154,63 @@ namespace StardewDruid.Event.Access
 
             Layer buildings = location.map.GetLayer("Buildings");
 
-            buildings.Tiles[tilex, tiley] = null;
+            switch (type)
+            {
 
-            buildings.Tiles[tilex + 1, tiley] = null;
+                case types.stair:
 
-            buildings.Tiles[tilex + 2, tiley] = null;
+                    buildings.Tiles[tilex, tiley] = null;
 
-            buildings.Tiles[tilex, tiley + 1] = null;
+                    buildings.Tiles[tilex + 1, tiley] = null;
 
-            buildings.Tiles[tilex + 1, tiley + 1] = null;
+                    buildings.Tiles[tilex + 2, tiley] = null;
 
-            buildings.Tiles[tilex + 2, tiley + 1] = null;
+                    buildings.Tiles[tilex, tiley + 1] = null;
+
+                    buildings.Tiles[tilex + 1, tiley + 1] = null;
+
+                    buildings.Tiles[tilex + 2, tiley + 1] = null;
+
+                    break;
+
+                case types.door:
+
+                    Layer front = location.map.GetLayer("Front");
+
+                    buildings.Tiles[tilex, tiley] = null;
+
+                    buildings.Tiles[tilex + 1, tiley] = null;
+
+                    buildings.Tiles[tilex + 2, tiley] = null;
+
+                    front.Tiles[tilex, tiley - 1] = null;
+
+                    front.Tiles[tilex + 1, tiley - 1] = null;
+
+                    front.Tiles[tilex + 2, tiley - 1] = null;
+
+                    front.Tiles[tilex, tiley - 2] = null;
+
+                    front.Tiles[tilex + 1, tiley - 2] = null;
+
+                    front.Tiles[tilex + 2, tiley - 2] = null;
+
+                    front.Tiles[tilex, tiley - 3] = null;
+
+                    front.Tiles[tilex + 1, tiley - 3] = null;
+
+                    front.Tiles[tilex + 2, tiley - 3] = null;
+
+                    break;
+
+            }
 
             for(int w = location.warps.Count - 1; w >= 0; w--)
             {
 
                 Warp warp = location.warps.ElementAt(w);
 
-                if (warp.X == start.X && (warp.Y == start.Y || warp.Y == start.Y + 1))
+                if ((warp.X == start.X || warp.X == start.X + 1 || warp.X == start.X + 2) && (warp.Y == start.Y || warp.Y == start.Y + 1))
                 {
 
                     location.warps.RemoveAt(w);
@@ -172,9 +224,7 @@ namespace StardewDruid.Event.Access
             if (Utility.isOnScreen(start * 64, 64))
             {
 
-                Mod.instance.iconData.ImpactIndicator(location, start * 64 + new Vector2(64, 0), IconData.impacts.impact, 6, new());
-
-                location.playSound("boulderCrack");
+                Mod.instance.spellRegister.Add(new(start * 64 + new Vector2(64, 0), 384, IconData.impacts.impact, new()) { sound = SpellHandle.sounds.boulderBreak, impactLayer = 999f, });
 
             }
 
@@ -183,12 +233,14 @@ namespace StardewDruid.Event.Access
         public virtual void AccessStart(bool animate = true)
         {
 
+            string accessSheet = "StardewDruid.Tilesheets.access";
+
             TileSheet tileSheet = new(
                 location.map,
-                "StardewDruid.Tilesheets.chapel",
+                accessSheet,
                 new(
-                    Mod.instance.iconData.sheetTextures[IconData.tilesheets.chapel].Width / 16,
-                    Mod.instance.iconData.sheetTextures[IconData.tilesheets.chapel].Height / 16
+                    Mod.instance.iconData.sheetTextures[IconData.tilesheets.access].Width / 16,
+                    Mod.instance.iconData.sheetTextures[IconData.tilesheets.access].Height / 16
                 ),
                 new(16, 16)
             );
@@ -203,21 +255,68 @@ namespace StardewDruid.Event.Access
 
             Layer buildings = location.map.GetLayer("Buildings");
 
-            buildings.Tiles[tilex, tiley] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 70);
+            switch (type)
+            {
 
-            buildings.Tiles[tilex, tiley].TileIndexProperties.Add("Passable", new(true));
+                case types.stair:
 
-            buildings.Tiles[tilex + 1, tiley] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 71);
+                    buildings.Tiles[tilex, tiley] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 0);
 
-            buildings.Tiles[tilex + 2, tiley] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 72);
+                    buildings.Tiles[tilex, tiley].TileIndexProperties.Add("Passable", new(true));
 
-            buildings.Tiles[tilex, tiley + 1] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 84);
+                    buildings.Tiles[tilex + 1, tiley] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 1);
 
-            buildings.Tiles[tilex, tiley + 1].TileIndexProperties.Add("Passable", new(true));
+                    buildings.Tiles[tilex + 2, tiley] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 2);
 
-            buildings.Tiles[tilex + 1, tiley + 1] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 85);
+                    buildings.Tiles[tilex, tiley + 1] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 12);
 
-            buildings.Tiles[tilex + 2, tiley + 1] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 86);
+                    buildings.Tiles[tilex, tiley + 1].TileIndexProperties.Add("Passable", new(true));
+
+                    buildings.Tiles[tilex + 1, tiley + 1] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 13);
+
+                    buildings.Tiles[tilex + 2, tiley + 1] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 14);
+
+                    break;
+
+                case types.door:
+
+                    Layer front = location.map.GetLayer("Front");
+
+                    Layer alwaysfront = location.map.GetLayer("AlwaysFront");
+
+                    buildings.Tiles[tilex, tiley] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 39);
+
+                    //buildings.Tiles[tilex, tiley].TileIndexProperties.Add("Passable", new(true));
+
+                    buildings.Tiles[tilex + 1, tiley] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 40);
+
+                    buildings.Tiles[tilex, tiley].TileIndexProperties.Add("Passable", new(true));
+
+                    buildings.Tiles[tilex + 2, tiley] = new StaticTile(buildings, tileSheet, BlendMode.Alpha,41);
+
+                    //buildings.Tiles[tilex, tiley].TileIndexProperties.Add("Passable", new(true));
+
+                    front.Tiles[tilex, tiley - 1] = new StaticTile(front, tileSheet, BlendMode.Alpha, 27);
+
+                    front.Tiles[tilex + 1, tiley - 1] = new StaticTile(front, tileSheet, BlendMode.Alpha, 28);
+
+                    front.Tiles[tilex + 2, tiley - 1] = new StaticTile(front, tileSheet, BlendMode.Alpha, 29);
+
+                    front.Tiles[tilex, tiley - 2] = new StaticTile(front, tileSheet, BlendMode.Alpha, 15);
+
+                    front.Tiles[tilex + 1, tiley - 2] = new StaticTile(front, tileSheet, BlendMode.Alpha, 16);
+
+                    front.Tiles[tilex + 2, tiley - 2] = new StaticTile(front, tileSheet, BlendMode.Alpha, 17);
+
+                    front.Tiles[tilex, tiley - 3] = new StaticTile(front, tileSheet, BlendMode.Alpha, 3);
+
+                    front.Tiles[tilex + 1, tiley - 3] = new StaticTile(front, tileSheet, BlendMode.Alpha, 4);
+
+                    front.Tiles[tilex + 2, tiley - 3] = new StaticTile(front, tileSheet, BlendMode.Alpha, 5);
+
+                    break;
+
+            }
 
             if (Context.IsMultiplayer && Context.IsMainPlayer)
             {
@@ -229,11 +328,7 @@ namespace StardewDruid.Event.Access
             if (Utility.isOnScreen(start * 64, 64) && animate)
             {
 
-                ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
-
-                Mod.instance.iconData.ImpactIndicator(location, start * 64 + new Vector2(64, 0), IconData.impacts.impact, 6, new());
-
-                location.playSound(SpellHandle.sounds.boulderBreak.ToString());
+                Mod.instance.spellRegister.Add(new(start * 64 + new Vector2(64, 0), 384, IconData.impacts.impact, new()) { sound = SpellHandle.sounds.boulderBreak, impactLayer = 999f, });
 
                 location.playSound(SpellHandle.sounds.secret1.ToString());
 
@@ -248,9 +343,29 @@ namespace StardewDruid.Event.Access
 
             int tiley = (int)start.Y;
 
-            location.warps.Add(new Warp(tilex, tiley, access, (int)exit.X, (int)exit.Y, flipFarmer: false));
+            switch (type)
+            {
 
-            location.warps.Add(new Warp(tilex, tiley + 1, access, (int)exit.X, (int)exit.Y, flipFarmer: false));
+                case types.stair:
+
+                    location.warps.Add(new Warp(tilex, tiley, access, (int)exit.X, (int)exit.Y, flipFarmer: false));
+
+                    location.warps.Add(new Warp(tilex, tiley + 1, access, (int)exit.X, (int)exit.Y, flipFarmer: false));
+
+                    break;
+
+                case types.door:
+
+                    //location.warps.Add(new Warp(tilex, tiley, access, (int)exit.X, (int)exit.Y, flipFarmer: false));
+
+                    location.warps.Add(new Warp(tilex + 1, tiley, access, (int)exit.X, (int)exit.Y, flipFarmer: false));
+
+                    //location.warps.Add(new Warp(tilex + 2, tiley, access, (int)exit.X, (int)exit.Y, flipFarmer: false));
+
+                    break;
+
+            }
+
 
         }
 

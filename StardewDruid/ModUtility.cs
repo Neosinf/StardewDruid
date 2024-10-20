@@ -53,65 +53,38 @@ namespace StardewDruid
 
         // ======================== Animations
 
-        public static void AnimateHands(Farmer player, int direction, int timeFrame)
+        public static void AnimateRandomFish(GameLocation location, Vector2 vector)
         {
+            if (vector == Vector2.Zero)
+            {
+                return;
+            }
 
-            if (Mod.instance.Config.disableHands)
+            Vector2 position = vector * 64;
+
+            if (!Utility.isOnScreen(position, 128))
             {
 
                 return;
 
             }
 
-            if (Mod.instance.Helper.ModRegistry.IsLoaded("PeacefulEnd.FashionSense"))
+            if (location == null)
             {
-
                 return;
-
             }
 
-            player.Halt();
+            List<int> fishIndexes = new() { 138, 146, 717, };
 
-            FarmerSprite.AnimationFrame carryAnimation;
+            int fishIndex = fishIndexes[Game1.random.Next(fishIndexes.Count)];
 
-            int frameIndex;
+            AnimateFishJump(location, position - new Vector2(32, 64), fishIndex, true);
 
-            bool frameFlip = false;
+            AnimateFishJump(location, position + new Vector2(32, 64), fishIndex, false);
 
-            switch (direction)
-            {
+            AnimateFishJump(location, position - new Vector2(32, 0), fishIndex, true);
 
-                case 0: // Up
-
-                    frameIndex = 12;
-
-                    break;
-
-                case 1: // Right
-
-                    frameIndex = 6;
-
-                    break;
-
-                case 2: // Down
-
-                    frameIndex = 0;
-
-                    break;
-
-                default: // Left
-
-                    frameIndex = 6;
-
-                    frameFlip = true; // same as right but flipped
-
-                    break;
-
-            }
-
-            carryAnimation = new(frameIndex, timeFrame, true, frameFlip);
-
-            player.FarmerSprite.animateOnce(new FarmerSprite.AnimationFrame[1] { carryAnimation });
+            AnimateFishJump(location, position + new Vector2(32, 0), fishIndex, false);
 
         }
 
@@ -213,109 +186,14 @@ namespace StardewDruid
 
         }
 
-        public static void AnimateRandomCritter(GameLocation location, Vector2 vector)
-        {
-
-            if (vector == Vector2.Zero)
-            {
-                return;
-            }
-
-            if (!Utility.isOnScreen(vector * 64, 128))
-            {
-
-                return;
-
-            }
-
-            if (location == null)
-            {
-                return;
-            }
-
-            Dictionary<int, List<int>> critterList = new()
-            {
-                // base frame, move frame, frame length, loops, rect x, rect y, columns, offset x 64, offset y 64, left/right, upper/lower
-                [0] = new() { 286, 280, 5, 3, 16, 16, 20, -88, 16, 1, 1 },
-                [1] = new() { 306, 300, 5, 3, 16, 16, 20, -88, 16, 1, 1 },
-                [2] = new() { 68, 54, 6, 2, 32, 32, 10, -160, 16, 1, 1 },
-                [3] = new() { 69, 74, 6, 2, 32, 32, 10, -160, 16, 1, 1 },
-                [4] = new() { 61, 62, 6, 2, 32, 32, 10, -160, 16, 1, 1 },
-
-            };
-            Dictionary<int, List<int>> birdList = new()
-            {
-                [0] = new() { 31, 31, 3, 4, 32, 32, 10, 160, -144, -1, -1 },
-                [1] = new() { 51, 31, 3, 4, 32, 32, 10, 160, -144, -1, -1 },
-            };
-
-            for (int i = 0; i < 5; i++)
-            {
-                List<int> critterConfig;
-
-                if (i < 3)
-                {
-
-                    critterConfig = critterList[Game1.random.Next(critterList.Count)];
-
-                }
-                else
-                {
-
-                    critterConfig = birdList[Game1.random.Next(birdList.Count)];
-
-                }
-
-                int offset = i % 2;
-
-                int baseColumn = critterConfig[1] % critterConfig[6];
-
-                int baseRow = (critterConfig[1] - baseColumn) / critterConfig[6];
-
-                Microsoft.Xna.Framework.Rectangle animationRectangle = new(baseColumn * critterConfig[4], baseRow * critterConfig[5], critterConfig[4], critterConfig[5]);
-
-                float animationInterval = 80f;
-
-                int animationLength = critterConfig[2];
-
-                int animationLoops = critterConfig[3];
-
-                float critterOffsetX = 32f * offset * critterConfig[9];
-
-                float critterOffsetY = 32f * offset * critterConfig[10];
-
-                Color animationColor = Color.White;
-
-                Vector2 animationPosition = new(vector.X * 64 + critterConfig[7] + critterOffsetX, vector.Y * 64 + critterConfig[8] + critterOffsetY);
-
-                float animationSort = vector.Y / 10000 + 0.00001f;
-
-                TemporaryAnimatedSprite critterAnimation = new("TileSheets\\critters", animationRectangle, animationInterval, animationLength, animationLoops, animationPosition, flicker: false, flipped: false, animationSort, 0.001f, animationColor, 3f, 0f, 0f, 0f)
-                {
-                    motion = new Vector2(critterConfig[4] / 80f * critterConfig[9], 0), // (float)critterConfig[4] / 80f * critterConfig[9]
-                    timeBasedMotion = true,
-                };
-
-                location.temporarySprites.Add(critterAnimation);
-
-                // ---------------------------- puff
-
-                animationSort = vector.Y / 10000 + 0.00002f;
-
-                TemporaryAnimatedSprite boltCloud = new("TileSheets\\animations", new(128, 5 * 64, 64, 64), 333f, 3, 1, animationPosition, flicker: false, false, animationSort, 0.02f, Color.White, 0.5f, 0f, 0f, 0f);
-
-                location.temporarySprites.Add(boltCloud);
-
-            }
-
-        }
-
         public static void AnimateButterflySpray(GameLocation location, Vector2 vector)
         {
 
             if (vector == Vector2.Zero)
             {
+                
                 return;
+            
             }
 
             if (!Utility.isOnScreen(vector * 64, 128))
@@ -327,12 +205,16 @@ namespace StardewDruid
 
             if (location == null)
             {
+                
                 return;
+            
             }
 
             if (location.critters == null)
             {
+                
                 return;
+            
             }
 
             location.critters.Add(new Butterfly(location, vector, false));
@@ -345,42 +227,16 @@ namespace StardewDruid
 
             location.critters.Add(new Butterfly(location, vector + new Vector2(2, 0), false));
 
-        }
+            location.critters.Add(new Butterfly(location, vector - new Vector2(1, -1), false));
 
-        public static void AnimateRandomFish(GameLocation location, Vector2 vector)
-        {
-            if (vector == Vector2.Zero)
-            {
-                return;
-            }
+            location.critters.Add(new Butterfly(location, vector + new Vector2(1, -1), false));
 
-            Vector2 position = vector * 64;
+            location.critters.Add(new Butterfly(location, vector - new Vector2(2, -1), false));
 
-            if (!Utility.isOnScreen(position, 128))
-            {
-
-                return;
-
-            }
-
-            if (location == null)
-            {
-                return;
-            }
-
-            List<int> fishIndexes = new() { 138, 146, 717, };
-
-            int fishIndex = fishIndexes[Game1.random.Next(fishIndexes.Count)];
-
-            AnimateFishJump(location, position - new Vector2(32, 64), fishIndex, true);
-
-            AnimateFishJump(location, position + new Vector2(32, 64), fishIndex, false);
-
-            AnimateFishJump(location, position - new Vector2(32, 0), fishIndex, true);
-
-            AnimateFishJump(location, position + new Vector2(32, 0), fishIndex, false);
+            location.critters.Add(new Butterfly(location, vector + new Vector2(2, -1), false));
 
         }
+
 
         // ======================== Gameworld Interactions
 
@@ -3626,7 +3482,7 @@ namespace StardewDruid
 
                             targetObject.onExplosion(targetPlayer);
 
-                            targetLocation.debris.Add(new Debris(ItemRegistry.Create("(O)388", Mod.instance.randomIndex.Next(1, 4)), tileVector * 64f));
+                            targetLocation.debris.Add(new Debris(ItemRegistry.Create("(O)388", Mod.instance.randomIndex.Next(1, 3)), tileVector * 64f));
 
                             targetLocation.objects.Remove(tileVector);
 

@@ -28,17 +28,17 @@ namespace StardewDruid.Character
 
             WeaponLoadout();
 
-            weaponRender.LoadWeapon(Render.WeaponRender.weapons.scythe);
+            weaponRender.LoadWeapon(Render.WeaponRender.weapons.sword);
 
         }
-        public override void DrawDash(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawDash(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
 
 
             if (netDash.Value != (int)dashes.smash)
             {
 
-                base.DrawDash(b, localPosition, drawLayer, fade);
+                base.DrawDash(b, spritePosition, drawLayer, fade);
 
                 return;
 
@@ -48,7 +48,7 @@ namespace StardewDruid.Character
 
             int dashSetto = Math.Min(dashFrame, (dashFrames[(dashes)netDash.Value][dashSeries].Count - 1));
 
-            Vector2 dashVector = SpritePosition(localPosition) - new Vector2(0, dashHeight);
+            Vector2 dashVector = spritePosition - new Vector2(0, dashHeight);
 
             Rectangle dashTangle = dashFrames[(dashes)netDash.Value][dashSeries][dashSetto];
 
@@ -64,7 +64,7 @@ namespace StardewDruid.Character
                 drawLayer
             );
 
-            DrawShadow(b, localPosition, drawLayer);
+            DrawShadow(b, spritePosition, drawLayer);
 
             weaponRender.DrawWeapon(b, dashVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = dashTangle, flipped = SpriteFlip() });
 
@@ -85,6 +85,13 @@ namespace StardewDruid.Character
 
         public override bool checkAction(Farmer who, GameLocation l)
         {
+
+            if (netSceneActive.Value)
+            {
+
+                return EngageDialogue(who);
+
+            }
 
             return false;
 

@@ -165,7 +165,7 @@ namespace StardewDruid.Event
 
             cues = DialogueData.DialogueScene(Id);
 
-            conversations = DialogueData.SceneConversations(Id);
+            conversations = ConversationData.SceneConversations(Id);
 
         }
 
@@ -546,10 +546,15 @@ namespace StardewDruid.Event
 
             }
 
-            if (location is StardewDruid.Location.DruidLocation druidLocation)
+            foreach (string local in locales)
             {
 
-                druidLocation.updateWarps();
+                if (Mod.instance.locations.ContainsKey(local))
+                {
+
+                    Mod.instance.locations[local].updateWarps();
+
+                }
 
             }
 
@@ -746,6 +751,34 @@ namespace StardewDruid.Event
         public virtual void EventScene(int index)
         {
             
+        }
+
+        public void LoadBoss(StardewDruid.Monster.Boss boss, int index = 0, int mode = 2, int voice = -1)
+        {
+
+            bosses[index] = boss;
+
+            boss.SetMode(mode);
+
+            boss.netPosturing.Set(true);
+
+            location.characters.Add(boss);
+
+            boss.currentLocation = location;
+
+            boss.update(Game1.currentGameTime, location);
+
+            if(voice != -1)
+            {
+
+                voices[voice] = boss;
+
+                EventDisplay bossBar = BossBar(index,voice);
+
+                bossBar.colour = Microsoft.Xna.Framework.Color.LightCoral;
+
+            }
+
         }
 
         // ------------------------------------
@@ -982,9 +1015,7 @@ namespace StardewDruid.Event
                         if (voices[cue.Key] is StardewDruid.Character.Character companion)
                         {
 
-                            companion.onAlert = true;
-
-                            companion.idleTimer = 180;
+                            companion.netIdle.Set((int)Character.Character.idles.alert);
 
                         }
                         else if (voices[cue.Key] is StardewDruid.Monster.Boss boss)

@@ -60,11 +60,8 @@ namespace StardewDruid.Event.Relics
 
             base.EventActivate();
 
-            ModUtility.AnimateHands(Game1.player,Game1.player.FacingDirection,600);
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
 
-            Mod.instance.iconData.DecorativeIndicator(location, Game1.player.Position, IconData.decorations.weald, 4f, new());
-
-            location.playSound(SpellHandle.sounds.discoverMineral.ToString());
 
         }
 

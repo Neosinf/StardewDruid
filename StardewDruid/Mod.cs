@@ -11,6 +11,7 @@ using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.ItemTypeDefinitions;
 using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Objects;
@@ -402,7 +403,7 @@ namespace StardewDruid
 
             }
 
-            if (Config.convert219)
+            /*if (Config.convert219)
             {
 
                 save = VersionData.Reconfigure();
@@ -425,7 +426,7 @@ namespace StardewDruid
                 SaveConfig();
 
             }
-            else
+            else*/
             if (Config.setMilestone != 0)
             {
 
@@ -489,7 +490,9 @@ namespace StardewDruid
             questHandle.Ready();
 
             relicsData.Ready();
-            
+
+            herbalData.Ready();
+
             return;
 
         }
@@ -563,6 +566,7 @@ namespace StardewDruid
 
                         case Character.Character.mode.scene:
                         case Character.Character.mode.random:
+                        case Character.Character.mode.limbo:
 
                             save.characters[character.Key] = Character.Character.mode.home;
 
@@ -601,6 +605,8 @@ namespace StardewDruid
 
                     }
 
+                    List<string> removal = new();
+
                     foreach (Item item in chest.Value.Items)
                     {
                         
@@ -611,7 +617,30 @@ namespace StardewDruid
 
                         }
 
+                        if(item is Tool)
+                        {
+
+                            if (!Game1.player.addItemToInventoryBool(item))
+                            {
+
+                                Game1.player.dropItem(item);
+
+                            }
+
+                            removal.Add(item.ItemId);
+
+                            continue;
+
+                        }
+
                         save.chests[chest.Key].Add(new() { id = item.QualifiedItemId, quality = item.quality.Value, stack = item.stack.Value, });
+
+                    }
+
+                    foreach(string removeId in removal)
+                    {
+
+                        chest.Value.Items.ReduceId(removeId,999);
 
                     }
 
@@ -1084,18 +1113,6 @@ namespace StardewDruid
 
                     return;
 
-                case QueryData.queries.AccessDoor:
-
-                    AccessDoor accessDoor = new();
-
-                    List<string> doorData = System.Text.Json.JsonSerializer.Deserialize<List<string>>(queryData.value);
-
-                    accessDoor.AccessSetup(doorData);
-
-                    accessDoor.AccessCheck(Game1.getLocationFromName(queryData.name));
-
-                    return;
-
                 case QueryData.queries.GimmeMoney:
 
                     int gimmeMoney = Convert.ToInt32(queryData.value);
@@ -1200,7 +1217,9 @@ namespace StardewDruid
 
             if (Game1.player.freezePause > 0)
             {
+
                 return true;
+
             }
 
             if (Context.IsMultiplayer)
@@ -1542,6 +1561,14 @@ namespace StardewDruid
                 return;
 
             }
+            else if (WarpButtonPressed())
+            {
+
+                rite.shutdown();
+
+                RelicData.WarpFunction();
+
+            }
 
             if (journalPressed != DruidJournal.journalTypes.none)
             {
@@ -1579,6 +1606,34 @@ namespace StardewDruid
             }
             
             return EventHandle.actionButtons.none;
+
+        }
+
+        public bool WarpButtonPressed()
+        {
+
+            if (magic)
+            {
+
+                return false;
+
+            }
+
+            if (Config.warpButtons.GetState() == SButtonState.Pressed)
+            {
+                
+                if (activeEvent.Count > 0)
+                {
+
+                    return false;
+
+                }
+
+                return true;
+
+            }
+
+            return false;
 
         }
 
@@ -1872,7 +1927,7 @@ namespace StardewDruid
 
             }
 
-            if (CasterGone() || CasterBusy())
+            if (CasterGone())
             {
 
                 return;
@@ -1888,12 +1943,12 @@ namespace StardewDruid
 
             }
 
-            /*if (CasterMenu())
+            if (CasterBusy())
             {
 
                 return;
 
-            }*/
+            }
 
             rite.draw(e.SpriteBatch);
 
@@ -2021,20 +2076,22 @@ namespace StardewDruid
         public int CombatDamage()
         {
 
-            int damageLevel = 300;
+            int damageLevel = 200;
 
             if (!Config.maxDamage)
             {
 
-                damageLevel = 5 * Game1.player.CombatLevel; // 50
+                damageLevel = 3 * Game1.player.CombatLevel; // 30
 
-                damageLevel += 2 * Game1.player.MiningLevel; // 20
+                damageLevel += 2 * Game1.player.MiningLevel; // 10
 
-                damageLevel += 2 * Game1.player.ForagingLevel; // 20
+                damageLevel += 1 * Game1.player.ForagingLevel; // 10
 
                 damageLevel += 1 * Game1.player.FarmingLevel; // 10
 
                 damageLevel += 1 * Game1.player.FishingLevel; // 10
+
+                damageLevel = Math.Min(80, damageLevel); // 80
 
                 if (magic)
                 {
@@ -2045,9 +2102,11 @@ namespace StardewDruid
                 else
                 {
 
-                    damageLevel += save.progress.Count * 4; // 120
+                    damageLevel += save.progress.Count * 3; // 90
 
                 }
+
+                damageLevel = Math.Min(150, damageLevel); // 150
 
                 if (Game1.player.CurrentTool is Tool currentTool) // 25
                 {
@@ -2055,7 +2114,7 @@ namespace StardewDruid
                     if (currentTool.enchantments.Count > 0)
                     {
                         
-                        damageLevel += 30;
+                        damageLevel += 20;
 
                     }
 
@@ -2063,13 +2122,15 @@ namespace StardewDruid
 
                 if (Game1.player.professions.Contains(24)) // 25
                 {
-                    damageLevel += 30;
+                    damageLevel += 15;
                 }
 
                 if (Game1.player.professions.Contains(26)) // 25
                 {
-                    damageLevel += 30;
+                    damageLevel += 15;
                 }
+
+                damageLevel = Math.Min(200, damageLevel); // 150
 
             }
 
@@ -2084,19 +2145,19 @@ namespace StardewDruid
 
                 case 2:
 
-                    damageLevel = Math.Min(damageLevel, 120);
+                    damageLevel = Math.Min(damageLevel, 90);
 
                     break;
 
                 case 3:
 
-                    damageLevel = Math.Min(damageLevel, 180);
+                    damageLevel = Math.Min(damageLevel, 120);
 
                     break;
 
                 case 4:
 
-                    damageLevel = Math.Min(damageLevel, 240);
+                    damageLevel = Math.Min(damageLevel, 150);
 
                     break;
 
@@ -2220,6 +2281,13 @@ namespace StardewDruid
 
         public void RegisterEvent(Event.EventHandle eventHandle, string placeHolder, bool active = false)
         {
+
+            if (placeHolder == String.Empty || placeHolder == null)
+            {
+
+                placeHolder = eventHandle.GetType().ToString() + "_" + Game1.currentGameTime.TotalGameTime.Milliseconds.ToString();
+
+            }
 
             if (active)
             {
@@ -2442,15 +2510,15 @@ namespace StardewDruid
 
             int max = herbalData.MaxHerbal();
 
-            foreach (HerbalData.herbals potion in potions)
+            foreach (HerbalData.herbals line in lines)
             {
 
-                for (int i = herbalData.lines[potion].Count - 1; i >= 0; i--)
+                for (int i = herbalData.lines[line].Count - 1; i >= 0; i--)
                 {
 
                     bool priority = false;
 
-                    HerbalData.herbals herbal = herbalData.lines[potion][i];
+                    HerbalData.herbals herbal = herbalData.lines[line][i];
 
                     if (herbalData.herbalism[herbal.ToString()].level > max)
                     {

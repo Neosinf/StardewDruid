@@ -369,6 +369,8 @@ namespace StardewDruid.Monster
 
             b.Draw(Game1.shadowTexture, new(localPosition.X, localPosition.Y + 64f), Game1.shadowTexture.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, 0, drawLayer - 1E-06f);
 
+            Microsoft.Xna.Framework.Rectangle boundSource = GetBoundingBox();
+
         }
 
         public override bool PerformSpecial(Vector2 farmerPosition)

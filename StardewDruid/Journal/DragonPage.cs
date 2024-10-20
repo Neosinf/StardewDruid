@@ -318,6 +318,15 @@ namespace StardewDruid.Journal
 
         }
 
+        public virtual void SwitchToCustomScheme()
+        {
+
+            dragonScheme = (int)IconData.schemes.dragon_custom;
+
+            Mod.instance.Config.dragonScheme = (int)IconData.schemes.dragon_custom;
+
+        }
+
         public override void pressEnter(int x, int y)
         {
 
@@ -325,6 +334,8 @@ namespace StardewDruid.Journal
             {
 
                 dragonPrimary.click(x, y);
+
+                SwitchToCustomScheme();
 
                 DragonUpdateColour();
 
@@ -336,6 +347,8 @@ namespace StardewDruid.Journal
 
                 dragonSecondary.click(x, y);
 
+                SwitchToCustomScheme();
+
                 DragonUpdateColour();
 
                 return;
@@ -345,6 +358,8 @@ namespace StardewDruid.Journal
             {
 
                 dragonTertiary.click(x, y);
+
+                SwitchToCustomScheme();
 
                 DragonUpdateColour();
 
@@ -421,6 +436,8 @@ namespace StardewDruid.Journal
 
                 dragonPrimary.releaseClick();
 
+                SwitchToCustomScheme();
+
                 DragonUpdateColour();
 
             }
@@ -429,6 +446,8 @@ namespace StardewDruid.Journal
 
                 dragonSecondary.releaseClick();
 
+                SwitchToCustomScheme();
+
                 DragonUpdateColour();
 
             }
@@ -436,6 +455,8 @@ namespace StardewDruid.Journal
             {
 
                 dragonTertiary.releaseClick();
+
+                SwitchToCustomScheme();
 
                 DragonUpdateColour();
 
@@ -457,7 +478,7 @@ namespace StardewDruid.Journal
             foreach (KeyValuePair<int,ContentComponent> component in contentComponents)
             {
                 
-                highlight = Color.Wheat;
+                highlight = new(233,212,171);
 
                 switch (component.Value.id)
                 {
@@ -538,9 +559,18 @@ namespace StardewDruid.Journal
                                 -1.1f
                             );
 
-                            stamina = new Vector2(component.Value.bounds.X + 8, component.Value.bounds.Y + 8);
+                            stamina = new Vector2(component.Value.bounds.X + 11, component.Value.bounds.Y + 11);
 
-                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width - 16, component.Value.bounds.Height - 16), Mod.instance.iconData.gradientColours[scheme][0], 0f, Vector2.Zero, 1f, 0, -1f);
+                            b.Draw(
+                                Game1.staminaRect, 
+                                stamina, 
+                                new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width - 24, component.Value.bounds.Height - 24), 
+                                Mod.instance.iconData.gradientColours[scheme][0], 
+                                0f, 
+                                Vector2.Zero, 
+                                1f, 
+                                0, 
+                                -1f);
 
                         }
                         else
@@ -560,9 +590,19 @@ namespace StardewDruid.Journal
                                  -1.1f
                              );
 
-                            stamina = new Vector2(component.Value.bounds.X + 9, component.Value.bounds.Y + 9);
+                            stamina = new Vector2(component.Value.bounds.X + 12, component.Value.bounds.Y + 12);
 
-                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width - 18, component.Value.bounds.Height - 18), Mod.instance.iconData.gradientColours[scheme][0], 0f, Vector2.Zero, 1f, 0, -1f);
+                            b.Draw(
+                                Game1.staminaRect, 
+                                stamina, 
+                                new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width - 24, component.Value.bounds.Height - 24), 
+                                Mod.instance.iconData.gradientColours[scheme][0], 
+                                0f, 
+                                Vector2.Zero, 
+                                1f, 
+                                0, 
+                                -1f
+                             );
 
                         }
 
@@ -595,9 +635,9 @@ namespace StardewDruid.Journal
                                 -1.1f
                             );
 
-                            stamina = new Vector2(component.Value.bounds.X + 8, component.Value.bounds.Y + 8);
+                            stamina = new Vector2(component.Value.bounds.X + 11, component.Value.bounds.Y + 11);
 
-                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width -16, component.Value.bounds.Height - 16), Mod.instance.iconData.gradientColours[scheme][1], 0f, Vector2.Zero, 1f, 0, -1f);
+                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width -24, component.Value.bounds.Height - 24), Mod.instance.iconData.gradientColours[scheme][1], 0f, Vector2.Zero, 1f, 0, -1f);
 
                         }
                         else {
@@ -616,9 +656,9 @@ namespace StardewDruid.Journal
                                  -1.1f
                              );
 
-                            stamina = new Vector2(component.Value.bounds.X + 9, component.Value.bounds.Y + 9);
+                            stamina = new Vector2(component.Value.bounds.X + 12, component.Value.bounds.Y + 12);
 
-                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width - 18, component.Value.bounds.Height - 18), Mod.instance.iconData.gradientColours[scheme][1], 0f, Vector2.Zero, 1f, 0, -1f);
+                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width - 24, component.Value.bounds.Height - 24), Mod.instance.iconData.gradientColours[scheme][1], 0f, Vector2.Zero, 1f, 0, -1f);
 
                         }
 
@@ -711,6 +751,31 @@ namespace StardewDruid.Journal
 
                         break;
 
+
+                }
+
+            }
+
+        }
+
+
+        public override void drawHover(SpriteBatch b)
+        {
+            
+            base.drawHover(b);
+
+            if (browsing)
+            {
+
+                switch (contentComponents[focus].id)
+                {
+
+                    case "dragon":
+                    case "breath":
+
+                        drawHoverText(b, contentComponents[focus].text[0]);
+
+                        break;
 
                 }
 

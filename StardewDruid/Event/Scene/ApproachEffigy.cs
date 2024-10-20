@@ -93,11 +93,7 @@ namespace StardewDruid.Event.Scene
 
             activeLimit = eventCounter + 302;
 
-            ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
-
-            Mod.instance.iconData.DecorativeIndicator(location, Game1.player.Position, IconData.decorations.weald, 4f, new());
-
-            location.playSound("discoverMineral");
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.discoverMineral, });
 
             Mod.instance.rite.CastRockfall(true);
             Mod.instance.rite.CastRockfall(true);

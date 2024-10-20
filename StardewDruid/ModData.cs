@@ -25,9 +25,11 @@ namespace StardewDruid
 
         public KeybindList herbalismButtons { get; set; }
 
+        public KeybindList warpButtons { get; set; }
+
         public string modDifficulty { get; set; }
 
-        public bool disableHands { get; set; }
+        //public bool disableHands { get; set; }
 
         public bool autoProgress { get; set; }
 
@@ -35,7 +37,7 @@ namespace StardewDruid
 
         public bool setOnce { get; set; }
 
-        public bool convert219 { get; set; }
+        //public bool convert219 { get; set; }
 
         public bool maxDamage { get; set; }
 
@@ -154,13 +156,14 @@ namespace StardewDruid
             effectsButtons = KeybindList.Parse("L");
             relicsButtons = KeybindList.Parse("I");
             herbalismButtons = KeybindList.Parse("O");
+            warpButtons = KeybindList.Parse("P");
             reverseJournal = false;
             activeJournal = true;
-            disableHands = false;
+            //disableHands = false;
             autoProgress = false;
             setMilestone = 0;
             setOnce = false;
-            convert219 = false;
+            //convert219 = false;
             maxDamage = false;
             modDifficulty = difficulties.medium.ToString();
             slotAttune = false;

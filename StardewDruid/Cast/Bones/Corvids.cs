@@ -77,7 +77,7 @@ namespace StardewDruid.Cast.Bones
 
                     eventLocked = true;
 
-                    ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
+                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.nature, new()) {  sound = SpellHandle.sounds.getNewSpecialItem, });
 
                     if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour))
                     {
@@ -95,7 +95,12 @@ namespace StardewDruid.Cast.Bones
             if (CheckCorvids())
             {
 
-                RemoveCorvids();
+                if (!Mod.instance.trackers[CharacterHandle.characters.Raven].eventLock)
+                {
+
+                    RemoveCorvids();
+
+                }
 
             }
             else
@@ -211,6 +216,7 @@ namespace StardewDruid.Cast.Bones
 
         public static void RemoveCorvids()
         {
+            
             List<CharacterHandle.characters> corvids = new()
             {
                 CharacterHandle.characters.Rook,
@@ -229,7 +235,7 @@ namespace StardewDruid.Cast.Bones
 
                 }
 
-                Mod.instance.iconData.ImpactIndicator(Mod.instance.characters[corvid].currentLocation, Mod.instance.characters[corvid].Position, IconData.impacts.plume, 3, new());
+                Mod.instance.iconData.AnimateQuickWarp(Mod.instance.characters[corvid].currentLocation, Mod.instance.characters[corvid].Position, false, IconData.warps.corvids);
 
                 Mod.instance.characters[corvid].currentLocation.characters.Remove(Mod.instance.characters[corvid]);
 

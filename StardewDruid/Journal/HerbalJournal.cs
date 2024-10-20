@@ -279,7 +279,7 @@ namespace StardewDruid.Journal
                     amount = 50;
                 }
 
-                Mod.instance.herbalData.BrewHerbal(herbalId, amount);
+                Mod.instance.herbalData.BrewHerbal(herbalId, amount, false, true);
 
                 populateContent();
 
@@ -702,9 +702,7 @@ namespace StardewDruid.Journal
 
                     Microsoft.Xna.Framework.Color colour = Mod.instance.iconData.SchemeColour(Mod.instance.herbalData.schemes[basePotion.line]);
 
-                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(textMargin, textPosition), IconData.RelicRectangles(basePotion.container), Color.White, 0f, Vector2.Zero, 1.5f, 0, 0.901f);
-
-                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(textMargin, textPosition), IconData.RelicRectangles(basePotion.content), colour, 0f, Vector2.Zero, 1.5f, 0, 0.902f);
+                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(textMargin, textPosition), IconData.RelicRectangles(basePotion.display), Color.White, 0f, Vector2.Zero, 1.5f, 0, 0.901f);
 
                     b.DrawString(Game1.smallFont, basePotion.title, new Vector2(textMargin + 40, textPosition + 2), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1f);
 

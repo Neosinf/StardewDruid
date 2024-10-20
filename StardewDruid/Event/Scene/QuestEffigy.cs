@@ -37,7 +37,16 @@ namespace StardewDruid.Event.Scene
 
         public Vector2 atollVector;
 
-        public Vector2 mistVector;
+        public Dictionary<int, Vector2> eventVectors = new()
+        {
+            [100] = new Vector2(10, 13),
+            [101] = new Vector2(13, 14),
+            [102] = new Vector2(28, 12),
+            [103] = new Vector2(16, 12),
+            [104] = new Vector2(19, 20),
+            [105] = new Vector2(45, 19),
+            [106] = new Vector2(45, 17),
+        };
 
         public QuestEffigy()
         {
@@ -73,19 +82,10 @@ namespace StardewDruid.Event.Scene
 
             bridgeVector = new Vector2(55, 13);
 
-            //blobVector = new Vector2(75, 8);
-
-            blobVector = new Vector2(25, 10);
-
             atollVector = new Vector2(92, 7);
 
-            mistVector = new Vector2(25, 15);
 
-            ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
-
-            location.playSound("discoverMineral");
-
-            //(Mod.instance.locations[LocationData.druid_atoll_name] as Atoll).ambientDarkness = true;
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
 
         }
 
@@ -142,7 +142,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(1);
 
-                    Mod.instance.relicsData.RelicFunction(IconData.relics.wayfinder_censer.ToString());
+                    RelicData.RelicFunction(IconData.relics.wayfinder_censer.ToString());
 
                     //activeCounter = 300;
 
@@ -206,10 +206,7 @@ namespace StardewDruid.Event.Scene
 
                 case 113:
 
-
-                    location.playSound("discoverMineral", null, 800);
-
-                    Mod.instance.iconData.ImpactIndicator(location, (beachWarp - new Vector2(6, 0)) * 64, IconData.impacts.nature, 4f, new());
+                    Mod.instance.spellRegister.Add(new(companions[0].Position, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.discoverMineral, scheme = IconData.schemes.weald, });
 
                     break;
 
@@ -239,12 +236,12 @@ namespace StardewDruid.Event.Scene
                         new(9,-2),
                     };
 
-                    Mod.instance.iconData.DecorativeIndicator(location, companions[0].Position, IconData.decorations.weald, 3f, new() { interval = 1200, });
+                    Mod.instance.spellRegister.Add(new(companions[0].Position, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.discoverMineral, scheme = IconData.schemes.weald, });
 
                     for (int i = 0; i < vectors25.Count; i++)
                     {
 
-                        Mod.instance.iconData.ImpactIndicator(location, (beachWarp - vectors25[i]) * 64, IconData.impacts.nature, 4f, new());
+                        Mod.instance.spellRegister.Add(new((beachWarp - vectors25[i]) * 64, 384, IconData.impacts.nature, new()) {scheme = IconData.schemes.weald, });
 
                     }
 
@@ -531,50 +528,35 @@ namespace StardewDruid.Event.Scene
 
                     DialogueClear(0);
 
-                    Game1.warpFarmer(LocationData.druid_atoll_name, 15, 11, 1);
-
-                    Game1.xLocationAfterWarp = 15;
-
-                    Game1.yLocationAfterWarp = 11;
-
-                    location = Mod.instance.locations[LocationData.druid_atoll_name];
-
-                    location.warps.Clear();
-
-                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_atoll_name], companions[0], new Vector2(17, 12) * 64, false);
+                    activeCounter = 300;
 
                     break;
-
-                case 277:
-                case 278:
-                case 279:
-                case 280:
-
-                    if (Game1.player.currentLocation.Name == LocationData.druid_atoll_name)
-                    {
-
-                        activeCounter = 300;
-
-                    }
-
-                    break;
-
-
                 // ------------------------------------------
                 // 4 Jellyking
                 // ------------------------------------------
 
                 case 301:
 
+
+                    location = Mod.instance.locations[LocationData.druid_atoll_name];
+
                     location.warps.Clear();
 
-                    DialogueCue(13);
+                    Game1.warpFarmer(LocationData.druid_atoll_name, 13, 11, 1);
+
+                    Game1.xLocationAfterWarp = 15;
+
+                    Game1.yLocationAfterWarp = 11;
+
+                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_atoll_name], companions[0], eventVectors[100] * 64, false);
+
+                    companions[0].TargetEvent(301, eventVectors[101]*64);
 
                     break;
 
                 case 302:
 
-                    companions[0].netIdle.Set((int)Character.Character.idles.standby);
+                    DialogueCue(13);
 
                     break;
 
@@ -588,7 +570,7 @@ namespace StardewDruid.Event.Scene
                     
                     DialogueCue(15); 
  
-                    Blobfiend blobking = new Blobfiend(blobVector, Mod.instance.CombatDifficulty());
+                    Blobfiend blobking = new Blobfiend(eventVectors[102], Mod.instance.CombatDifficulty());
 
                     blobking.netScheme.Set(2);
 
@@ -607,6 +589,10 @@ namespace StardewDruid.Event.Scene
                     voices[1] = blobking;
 
                     bosses[0] = blobking;
+
+                    bosses[0].ResetActives();
+
+                    bosses[0].PerformFlight(eventVectors[103] * 64, 5);
 
                     break;
 
@@ -686,25 +672,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].SmashAttack(bosses[0]);
 
-                    //companions[0].netSmashActive.Set(true);
-
-                    //companions[0].TargetEvent(340, bosses[0].Position - new Vector2(64, 0), true);
-
                     SetTrack("Cowboy_undead");
-
-                    break;
-
-                //340 blobking fight triggered
-
-                case 341:
-
-                   // DialogueCue(24);
-
-                    //bosses[0].netPosturing.Set(false);
-
-                    //bosses[0].Health = 9999;
-
-                    //bosses[0].MaxHealth = 9999;
 
                     break;
 
@@ -787,70 +755,21 @@ namespace StardewDruid.Event.Scene
                     break;
 
                 case 373:
-                case 410:
 
-                    //activeCounter = 400; 
-                    activeCounter = 450;
+                    activeCounter = 400;
 
                     break;
-
                 // ------------------------------------------
-                // 4.5 Transfer to Atoll
+                // 4.6 Wisps
                 // ------------------------------------------
 
-                /*case 401:
+                case 401:
 
-                    DialogueClear(0);
+                    companions[0].TargetEvent(0, eventVectors[104] * 64, true);
 
-                    companions[0].TargetEvent(420, atollVector * 64, true);
-
-                    break;
-
-                case 402:
-
-                    DialogueCue(31);
-
-                    inabsentia = true;
+                    companions[0].TargetEvent(450, eventVectors[105] * 64, false);
 
                     break;
-
-                case 421:
-
-                    Game1.warpFarmer(LocationData.druid_atoll_name, 14, 10, 1);
-
-                    Game1.xLocationAfterWarp = 14;
-
-                    Game1.yLocationAfterWarp = 10;
-
-                    location = Mod.instance.locations[LocationData.druid_atoll_name];
-
-                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_atoll_name], companions[0], new Vector2(16, 11) * 64, false);
-
-                    break;
-
-                case 422:
-                case 423:
-                case 424:
-                case 425:
-
-                    if(Game1.player.currentLocation.Name == LocationData.druid_atoll_name)
-                    {
-
-                        inabsentia = false;
-
-                        activeCounter = 450;
-
-                    }
-
-                    break;
-
-                case 426:
-
-                    inabsentia = false;
-
-                    activeCounter = 450;
-
-                    break;*/
 
                 // ------------------------------------------
                 // 5 Wisps
@@ -858,23 +777,17 @@ namespace StardewDruid.Event.Scene
 
                 case 451:
 
-                    //Game1.ambientLight = new(64, 0, 0);
-
-                    //(location as Atoll).ambientDarkness = true;
-
-                    companions[0].TargetEvent(455, mistVector * 64, true);
-
-                    break;
-
-                case 452:
-
                     DialogueCue(33);
 
                     SetTrack("night_market");
 
+                    Game1.flashAlpha = 1f;
+
+                    location.playSound(SpellHandle.sounds.thunder.ToString());
+
                     Wisps wispNew = new();
 
-                    wispNew.EventSetup(mistVector * 64, Rite.eventWisps);
+                    wispNew.EventSetup(eventVectors[106] * 64, Rite.eventWisps);
 
                     wispNew.eventLocked = true;
 
@@ -894,7 +807,7 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 473:
+                case 465:
 
                     activeCounter = 500; 
                     
@@ -926,7 +839,7 @@ namespace StardewDruid.Event.Scene
 
                 case 506:
 
-                    Vector2 mistCorner = mistVector * 64 - new Vector2(72*3,72*5);
+                    Vector2 mistCorner = eventVectors[106] * 64 - new Vector2(72*3,72*5);
 
                     List<int> cornersX = new() { 0, 6,};
 
@@ -967,7 +880,7 @@ namespace StardewDruid.Event.Scene
                     TemporaryAnimatedSprite cloudAnimation = Mod.instance.iconData.CreateImpact(
                         
                         location, 
-                        (mistVector + new Vector2(1,-3)) * 64, 
+                        (eventVectors[106] + new Vector2(1,-3)) * 64, 
                         IconData.impacts.spiral, 
                         9f, 
                         new() { interval = 125f, loops = 13*5, flip = true, alpha = 0.1f, layer = mistCorner.Y / 10000 }
@@ -989,7 +902,7 @@ namespace StardewDruid.Event.Scene
 
                     }
 
-                    companions[2].Position = (mistVector + new Vector2(-2, -3)) * 64;
+                    companions[2].Position = (eventVectors[106] + new Vector2(-2, -3)) * 64;
 
                     companions[3] = new LadyBeyond(CharacterHandle.characters.LadyBeyond);
 
@@ -1008,7 +921,7 @@ namespace StardewDruid.Event.Scene
 
                     }
 
-                    companions[3].Position = (mistVector + new Vector2(2, -2)) * 64;
+                    companions[3].Position = (eventVectors[106] + new Vector2(2, -2)) * 64;
 
                     companions[2].LookAtTarget(companions[3].Position, true);
 
@@ -1149,29 +1062,23 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                /*case 300: // Skygazing position
-
-                    activeCounter = 300;
-
-                    break;*/
-
                 case 275: // Skygazing position on Atoll
 
                     activeCounter = 275;
 
                     break;
 
-                // 340: // Jellyking position
+                case 301:
 
-                //    activeCounter = 340;
+                    companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
-                //   break;
+                    break;
 
-                //case 420: // mist position
+                case 450:
 
-                //    activeCounter = 420;
+                    activeCounter = 450;
 
-                //   break;
+                    break;
 
 
             }

@@ -29,6 +29,7 @@ namespace StardewDruid.Character
             remove,
             wipe,
             purge,
+            limbo,
 
         }
 
@@ -135,6 +136,14 @@ namespace StardewDruid.Character
                     break;
 
                 case moveType.purge:
+
+                    TryPurge();
+
+                    TryDeregister();
+
+                    break;
+
+                case moveType.limbo:
 
                     TryPurge();
 
@@ -390,6 +399,8 @@ namespace StardewDruid.Character
                             if (entity.characterType == characterisation)
                             {
 
+                                entity.currentLocation = null;
+
                                 location.characters.RemoveAt(c);
 
                             }
@@ -402,7 +413,12 @@ namespace StardewDruid.Character
 
             }
 
-            if (!Context.IsMainPlayer)
+        }
+
+        public void TryDeregister()
+        {
+
+            if (Context.IsMainPlayer)
             {
 
                 Mod.instance.characters.Remove(characterisation);
@@ -417,6 +433,7 @@ namespace StardewDruid.Character
             }
 
         }
+
 
         public void RemoveDragons(bool avatars = true)
         {

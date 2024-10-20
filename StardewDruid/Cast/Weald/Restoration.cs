@@ -18,6 +18,8 @@ namespace StardewDruid.Cast.Weald
     public class Restoration : EventHandle
     {
 
+        public int castCost;
+
         public Restoration()
         {
 
@@ -80,10 +82,6 @@ namespace StardewDruid.Cast.Weald
 
                     eventLocked = true;
 
-                    //SpellHandle spellHandle = new(origin, 384, IconData.impacts.nature, new());
-
-                    //Mod.instance.spellRegister.Add(spellHandle);
-
                     SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new());
 
                     circleHandle.scheme = IconData.schemes.grannysmith;
@@ -91,8 +89,6 @@ namespace StardewDruid.Cast.Weald
                     circleHandle.sound = SpellHandle.sounds.discoverMineral;
 
                     Mod.instance.spellRegister.Add(circleHandle);
-
-                    ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
 
                     decimalCounter = 0;
 
@@ -176,7 +172,7 @@ namespace StardewDruid.Cast.Weald
 
                 location.playSound(SpellHandle.sounds.secret1.ToString());
 
-                Mod.instance.rite.castCost = 24;
+                castCost = 24;
 
                 return;
 
@@ -217,7 +213,10 @@ namespace StardewDruid.Cast.Weald
 
         public override void EventRemove()
         {
+            
             base.EventRemove();
+
+            Mod.instance.rite.castCost = castCost;
 
             Mod.instance.rite.ApplyCost();
 

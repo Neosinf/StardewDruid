@@ -281,7 +281,7 @@ namespace StardewDruid.Monster
         public override float GetScale()
         {
 
-            return 2f + netMode.Value;
+            return 3f + netMode.Value*0.5f;
 
         }
 
@@ -340,7 +340,7 @@ namespace StardewDruid.Monster
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            float drawLayer = ((float)Position.Y + 32f) / 10000f;
+            float drawLayer = (Position.Y + 32f + (float)LayerOffset()) / 10000f ;
 
             DrawEmote(b, localPosition, drawLayer);
 

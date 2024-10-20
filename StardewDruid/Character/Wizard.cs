@@ -52,18 +52,40 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawHat(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawHat(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
+
+            bool fliphat = SpriteFlip();
+
+            Vector2 hatPosition = spritePosition - new Vector2(0, 16 * setScale);
+
+            if (netDirection.Value == 2)
+            {
+
+                if (fliphat)
+                {
+
+                    hatPosition.X += 2;
+
+                } 
+                else
+                {
+                    
+                    hatPosition.X -= 2;
+
+                }
+
+            }
 
             b.Draw(
                 characterTexture,
-                localPosition - new Vector2(netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? 30 : 32,76),
+                hatPosition,
                 hatFrames[netDirection.Value][0],
                 Color.White * fade,
                 0f,
-                Vector2.Zero,
+                new Vector2(16),
                 setScale,
-                netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                fliphat ? (SpriteEffects)1 : 0,
                 drawLayer + 0.0001f
             );
 

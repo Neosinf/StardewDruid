@@ -51,7 +51,8 @@ namespace StardewDruid.Location
                 new Vector2(1832,480),
                 new Vector2(1920,430),
                 new Vector2(1252,1034),
-                //new Vector2(1374,1120),
+                new Vector2(2332,1072),
+                new Vector2(2336,1082),
 
             };
 
@@ -438,6 +439,27 @@ namespace StardewDruid.Location
             dialogueTiles.Add(new(21, 17), CharacterHandle.characters.shrine_forge);
 
             dialogueTiles.Add(new(21, 18), CharacterHandle.characters.shrine_forge);
+
+            dialogueTiles.Add(new(35, 16), CharacterHandle.characters.shrine_desk);
+
+            dialogueTiles.Add(new(35, 17), CharacterHandle.characters.shrine_desk);
+
+            dialogueTiles.Add(new(35, 18), CharacterHandle.characters.shrine_desk);
+
+            dialogueTiles.Add(new(36, 16), CharacterHandle.characters.shrine_desk);
+
+            dialogueTiles.Add(new(36, 17), CharacterHandle.characters.shrine_desk);
+
+            dialogueTiles.Add(new(36, 18), CharacterHandle.characters.shrine_desk);
+
+            dialogueTiles.Add(new(20, 12), CharacterHandle.characters.shrine_locker);
+
+            dialogueTiles.Add(new(20, 13), CharacterHandle.characters.shrine_locker);
+
+            dialogueTiles.Add(new(35, 12), CharacterHandle.characters.shrine_shelf);
+
+            dialogueTiles.Add(new(35, 13), CharacterHandle.characters.shrine_shelf);
+
         }
 
         public override void updateWarps()

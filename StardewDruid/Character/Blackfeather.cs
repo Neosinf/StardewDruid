@@ -162,7 +162,7 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawLaunch(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawLaunch(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
             
             Rectangle useFrame = specialFrames[specials.launch][netDirection.Value][specialFrame];
@@ -189,7 +189,7 @@ namespace StardewDruid.Character
 
             b.Draw(
                 characterTexture,
-                SpritePosition(localPosition) - new Vector2(0,specialHover),
+                spritePosition - new Vector2(0,specialHover),
                 useFrame,
                 Color.White * fade,
                 0.0f,
@@ -199,7 +199,7 @@ namespace StardewDruid.Character
                 drawLayer
             );
 
-            DrawShadow(b, localPosition, drawLayer);
+            DrawShadow(b, spritePosition, drawLayer);
 
         }
 

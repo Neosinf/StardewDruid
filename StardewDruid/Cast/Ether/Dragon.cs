@@ -23,8 +23,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using static StardewDruid.Data.IconData;
-using static System.Net.WebRequestMethods;
 
 namespace StardewDruid.Cast.Ether
 {
@@ -71,7 +69,7 @@ namespace StardewDruid.Cast.Ether
         public Vector2 flightInterval;
         public bool flightFlip;
         public int flightIncrement;
-        public int strikeTimer;
+        public bool flightLift;
         public int flightExtend;
         public string flightTerrain;
 
@@ -942,8 +940,6 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            strikeTimer = 56;
-
             flightActive = true;
 
             flightDelay = 3;
@@ -951,6 +947,8 @@ namespace StardewDruid.Cast.Ether
             flightFrame = 0;
 
             flightTimer = flightIncrement * flightRange;
+
+            flightLift = false;
 
             if (!flightCue.IsPlaying)
             {
@@ -970,6 +968,14 @@ namespace StardewDruid.Cast.Ether
             Game1.player.temporaryInvincibilityTimer = 0;
 
             Game1.player.currentTemporaryInvincibilityDuration = 100 * flightIncrement;
+
+            if (swimActive)
+            {
+                currentLocation.playSound("waterSlosh");
+
+                Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 64), IconData.impacts.fish, dragonScale+1f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
+
+            }
 
 
         }
@@ -1005,7 +1011,7 @@ namespace StardewDruid.Cast.Ether
 
             flightTimer--;
 
-            if (strikeTimer > 0)
+            /*if (strikeTimer > 0)
             {
 
                 if (strikeTimer % (flightIncrement * 3) == 0)
@@ -1017,7 +1023,7 @@ namespace StardewDruid.Cast.Ether
 
                 strikeTimer--;
 
-            }
+            }*/
 
             if (flightTimer == 0)
             {
@@ -1033,7 +1039,6 @@ namespace StardewDruid.Cast.Ether
 
                 }
                 
-
                 if (flightTerrain == "water")
                 {
 
@@ -1041,9 +1046,18 @@ namespace StardewDruid.Cast.Ether
 
                     netSwimActive.Set(true);
 
-                }
+                    if (flightLift)
+                    {
+                        
+                        currentLocation.playSound("waterSlosh");
 
-                if (strikeTimer == 0)
+                        Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 64), IconData.impacts.splash, dragonScale + 1f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
+
+                    }
+
+                }
+                else
+                if (flightLift)
                 {
 
                     FlightStrike();
@@ -1088,6 +1102,8 @@ namespace StardewDruid.Cast.Ether
                 {
 
                     flightFrame = flightFrame + 1;
+
+                    flightLift = true;
 
                 }
 
@@ -1135,7 +1151,7 @@ namespace StardewDruid.Cast.Ether
 
         public void FlightStrike()
         {
-
+            
             if (!Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherOne))
             {
 
@@ -1143,9 +1159,13 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            SpellHandle sweep = new(Game1.player, Game1.player.Position, 160, Mod.instance.CombatDamage() * 3 / 2);
+            SpellHandle sweep = new(Game1.player, Game1.player.Position, 256, Mod.instance.CombatDamage() * 2 / 3);
+
+            sweep.display = IconData.impacts.shockwave;
 
             sweep.instant = true;
+
+            sweep.added = new() { SpellHandle.effects.knock, SpellHandle.effects.stomping };
 
             Mod.instance.spellRegister.Add(sweep);
 
@@ -1245,7 +1265,7 @@ namespace StardewDruid.Cast.Ether
         public void SweepStrike()
         {
 
-            SpellHandle sweep = new(Game1.player, Game1.player.Position, 160, Mod.instance.CombatDamage() * 3 / 2);
+            SpellHandle sweep = new(Game1.player, Game1.player.Position, 160, Mod.instance.CombatDamage() * 2 / 3);
 
             sweep.instant = true;
 
@@ -1319,23 +1339,29 @@ namespace StardewDruid.Cast.Ether
 
             Vector2 flightOffset = flightVectors[key];
 
-            int flightRange = 16;
+            //Vector2 tile = new Vector2((int)(Position.X / 64), (int)(Position.Y / 64));
 
-            Vector2 tile = new Vector2((int)(Position.X / 64), (int)(Position.Y / 64));
+            Vector2 tile = ModUtility.PositionToTile(Position);
 
-            for (int index = flightRange; index > 0; index--)
+            List<int> flightRanges = new()
+            {
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                3,
+                2,
+                1,
+            };
+
+            foreach(int checkRange in flightRanges)
             {
 
-                int checkRange = 17 - index;
-
-                if (index > 12)
-                {
-
-                    checkRange = index - 12;
-
-                }
-
-                Vector2 neighbour = tile + flightOffset * checkRange;
+                Vector2 neighbour = tile + (flightOffset * checkRange);
 
                 List<string> safeTerrain = new() { "ground", };
 
@@ -1837,11 +1863,12 @@ namespace StardewDruid.Cast.Ether
 
                     burn.explosion = 2;
 
+                    burn.added = new() { SpellHandle.effects.embers, };
+
                     if (Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherTwo))
                     {
 
-
-                        burn.added = new() { SpellHandle.effects.embers, SpellHandle.effects.immolate, };
+                         burn.added.Add(SpellHandle.effects.immolate);
 
                     }
 
@@ -2004,7 +2031,7 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 64), IconData.impacts.splash, 4f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
+            Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 64), IconData.impacts.splash, dragonScale + 1f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
 
         }
 
@@ -2036,9 +2063,9 @@ namespace StardewDruid.Cast.Ether
 
                 currentLocation.playSound("quickSlosh");
 
-                Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 64), IconData.impacts.splash, 4f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
+                Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 64), IconData.impacts.splash, dragonScale + 1f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
 
-                Mod.instance.iconData.ImpactIndicator(currentLocation, Position + new Vector2(64, -64), IconData.impacts.fish, 3f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
+                Mod.instance.iconData.ImpactIndicator(currentLocation, Position + new Vector2(64, -64), IconData.impacts.fish, dragonScale, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
 
                 if (TreasureZone(true))
                 {

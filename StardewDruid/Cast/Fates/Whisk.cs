@@ -26,8 +26,6 @@ namespace StardewDruid.Cast.Fates
 
         public Vector2 destination;
 
-        public int strikeTimer;
-
         public int warpTimer;
 
         public Whisk()
@@ -176,6 +174,13 @@ namespace StardewDruid.Cast.Fates
 
             }
 
+            if (whiskSpell.shutdown)
+            {
+
+                return false;
+
+            }
+
             if (Mod.instance.eventRegister.ContainsKey("curse"))
             {
 
@@ -188,6 +193,8 @@ namespace StardewDruid.Cast.Fates
                     {
 
                         int delay = 0;
+
+                        int newStrikes = 0;
 
                         for (int g = Math.Min(8,curseEffect.victims.Count - 1); g >= 0; g--)
                         {
@@ -228,6 +235,8 @@ namespace StardewDruid.Cast.Fates
 
                                 sweep.type = SpellHandle.spells.warpstrike;
 
+                                sweep.scheme = IconData.schemes.sword_steel;
+
                                 sweep.counter = 0 - delay;
 
                                 int d = directions[Mod.instance.randomIndex.Next(directions.Count)];
@@ -240,6 +249,8 @@ namespace StardewDruid.Cast.Fates
 
                                 warpSpells.Add(sweep);
 
+                                newStrikes++;
+
                                 delay += 15;
 
                             }
@@ -249,6 +260,12 @@ namespace StardewDruid.Cast.Fates
                         eventActive = true;
 
                         activeLimit = 5;
+
+                        //strikeTimer = 12;
+
+                        Mod.instance.rite.castCost += (newStrikes * 12);
+
+                        Mod.instance.rite.ApplyCost();
 
                         Game1.displayFarmer = false;
 
@@ -355,7 +372,12 @@ namespace StardewDruid.Cast.Fates
             
             base.EventRemove();
 
-            Game1.displayFarmer = true;
+            if (!Mod.instance.eventRegister.ContainsKey(Rite.eventTransform))
+            {
+
+                Game1.displayFarmer = true;
+
+            }
 
         }
 

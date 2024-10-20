@@ -76,7 +76,7 @@ namespace StardewDruid.Character
 
                 b.Draw(
                     characterTexture,
-                    SpritePosition(localPosition) - new Vector2(0, 8f * setScale),
+                    localPosition - new Vector2(0, 8f * setScale),
                     hatFrames[1][0],
                     Color.White * fade,
                     0.0f,
@@ -91,7 +91,7 @@ namespace StardewDruid.Character
 
                 b.Draw(
                     characterTexture,
-                    SpritePosition(localPosition) - new Vector2(0, 14f * setScale),
+                    localPosition - new Vector2(0, 14f * setScale),
                     hatFrames[1][0],
                     Color.White * fade,
                     0.0f,
@@ -106,7 +106,7 @@ namespace StardewDruid.Character
 
                 b.Draw(
                     characterTexture,
-                    SpritePosition(localPosition) - new Vector2(0, 14f * setScale),
+                    localPosition - new Vector2(0, 14f * setScale),
                     hatFrames[netDirection.Value][0],
                     Color.White * fade,
                     0.0f,

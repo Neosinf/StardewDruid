@@ -12,6 +12,9 @@ using StardewValley.Objects;
 using StardewDruid.Journal;
 using System.Linq;
 using StardewDruid.Render;
+using static StardewDruid.Cast.Rite;
+using StardewValley.Monsters;
+using static StardewDruid.Data.SpawnData;
 
 
 
@@ -25,6 +28,8 @@ namespace StardewDruid.Character
         public bool circling;
 
         public List<StardewValley.Item> carryItems = new();
+
+        public bool pat;
 
         public Flyer()
         {
@@ -57,7 +62,7 @@ namespace StardewDruid.Character
 
             }
 
-            warpDisplay = IconData.warps.smoke;
+            warpDisplay = IconData.warps.corvids;
 
             moveInterval = 12;
 
@@ -130,14 +135,14 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawSweep(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawSweep(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
 
             Rectangle useFrame = specialFrames[(specials)netSpecial.Value][netDirection.Value][specialFrame];
 
             b.Draw(
                 characterTexture,
-                SpritePosition(localPosition),
+                spritePosition,
                 useFrame,
                 Color.White * fade,
                 0.0f,
@@ -147,7 +152,7 @@ namespace StardewDruid.Character
                 drawLayer
             );
 
-            DrawShadow(b, localPosition, drawLayer);
+            DrawShadow(b, spritePosition, drawLayer);
 
         }
 
@@ -158,12 +163,12 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawShadow(SpriteBatch b, Vector2 localPosition, float drawLayer)
+        public override void DrawShadow(SpriteBatch b, Vector2 spritePosition, float drawLayer)
         {
 
             float shadowRatio = 0.6f;
 
-            Vector2 shadowPosition = localPosition + new Vector2(32, 4f*setScale);
+            Vector2 shadowPosition = spritePosition + new Vector2(0, setScale * 12);
 
             if(netDash.Value != 0)
             {
@@ -218,7 +223,48 @@ namespace StardewDruid.Character
 
         public override bool checkAction(Farmer who, GameLocation l)
         {
-            
+
+            if (!Mod.instance.rite.specialCasts.ContainsKey("corvid" + characterType.ToString()))
+            {
+
+                switch (who.CurrentItem.ItemId)
+                {
+
+                    case "770":
+                    case "MixedFlowerSeeds":
+                    case "495":
+                    case "496":
+                    case "497":
+                    case "498":
+                    case "684":
+
+                        who.Items.ReduceId(who.CurrentItem.ItemId, 1);
+
+                        Mod.instance.rite.specialCasts["corvid" + characterType.ToString()] = new();
+
+                        StardewValley.Object dropItem = new(SpawnData.RandomForageFrom(Game1.getLocationFromName("Forest")),Mod.instance.randomIndex.Next(1,3));
+
+                        Game1.createItemDebris(dropItem, Position + new Vector2(0, 32), 2, currentLocation, -1);
+
+                        doEmote(20);
+
+                        return false;
+
+                }
+
+            }
+
+            if (!pat && !IsEmoting)
+            {
+
+                currentLocation.playSound(SpellHandle.sounds.crow.ToString());
+
+                doEmote(32);
+
+                pat = true;
+
+            }
+
             return false;
 
         }
@@ -253,8 +299,10 @@ namespace StardewDruid.Character
 
                 if (open.Count > 0)
                 {
+                    
+                    Vector2 tryPath = open[Mod.instance.randomIndex.Next(open.Count)];
 
-                    traversal.Add(open[Mod.instance.randomIndex.Next(open.Count)], 1);
+                    traversal[tryPath] = 1;
 
                     destination = traversal.Keys.Last();
 
@@ -408,12 +456,16 @@ namespace StardewDruid.Character
 
                 }
 
+                pat = false;
+
                 return true;
             
             }
 
             if (ValidVillagerTarget())
             {
+
+                pat = false;
 
                 return true;
 

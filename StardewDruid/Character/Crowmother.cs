@@ -68,12 +68,12 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawHat(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawHat(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
 
             b.Draw(
             characterTexture,
-            SpritePosition(localPosition) - new Vector2(0, 14f * setScale),
+            spritePosition - new Vector2(0, 14f * setScale),
             hatFrames[netDirection.Value][0],
             Color.White * fade,
             0.0f,

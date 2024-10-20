@@ -1,5 +1,4 @@
-﻿
-====================================
+﻿====================================
 Stardew Druid - 1.6 Ready!
 ====================================
 
@@ -7,7 +6,9 @@ Stardew Druid - 1.6 Ready!
 
 This mod provides an alternative to early tool-based gameplay in the form of six schools of magic, which incorporate motifs and themes inspired by the Druids of antiquity!
 
-The expansive questline starts with a custom NPC, the Effigy, who can be found in the Farmcave, the entrance to which is placed at the back of the druid grove. The Effigy will initially offer a new lesson or quest each day. The mod includes over ten epic boss battles to test your skills, with a range of configuration options to suit your playstyle. There are 21 lessons in total 
+The expansive questline starts with a custom NPC, the Effigy, who can be found in the Farmcave, the entrance to which is placed at the back of the druid grove. 
+
+The Effigy will initially offer a new lesson or quest each day. The mod includes over ten epic boss battles to test your skills, with a range of configuration options to suit your playstyle. There are 21 lessons in total 
 
 Your journey is recorded in the Stardew Druid journal, a custom journal menu that provides all the instruction and lore you could ask for. 
 
@@ -91,6 +92,8 @@ Only requires SMAPI
 
 Compatible with all other mods including SVE, RSV, ES. If there is a mod compatibility issue, come onto discord and log a ticket!
 
+Some modded farm maps start with locked or obscured farmcave locations. The mod starts with a relic, Grandpa's Whetstone, in the reliquary (keybind I) that when used will warp your farmer to the Druid Grove and back to the farmhouse. This will enable you to access the farmcave and start your journey straight away.
+
 Stable for remote multiplayer games (splitscreen is still WIP)
 
 Compatible with controllers/gamepads
@@ -148,7 +151,8 @@ Rite of Bones
 24. Weapon/Companion Quest (Blackfeather)
 25. Lessons (Summon Familiars, Retrieve, Opportunity)
 26. Companion Quest (Buffin)
-27. Companion Quest (Revenant) **COMING SOON**
+27. Companion Quest (Revenant)
+28. Challenge Quest  **COMING SOON**
 
 -----------------------------------------
 CONFIG FILE

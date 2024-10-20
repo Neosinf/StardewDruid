@@ -21,90 +21,12 @@ namespace StardewDruid.Event.Sword
     internal class SwordFates : EventHandle
     {
 
-        //public bool entranceFound;
-
         public Vector2 statueVector;
-
-        //public Dictionary<Vector2, Tile> heldTiles = new();
-
-        //public Event.Access.AccessHandle CourtAccess;
-
-        //public Event.Access.AccessHandle TunnelAccess;
 
         public SwordFates()
         {
 
         }
-
-        /*public override void TriggerInterval()
-        {
-            
-            if (!entranceFound)
-            {
-                
-                Vector2 entrance = (location as MineShaft).tileBeneathLadder;
-
-                origin = (entrance + new Vector2(0, 2)) * 64;
-
-                statueVector = new Vector2(30,6) * 64;
-
-                for (int x = 28; x < 32; x++)
-                {
-
-                    for (int y = 4; y < 8; y++)
-                    {
-
-                        if (location.isActionableTile(x, y, Game1.player))
-                        {
-
-                            foreach (Layer layer in location.map.Layers)
-                            {
-
-                                if (layer.Tiles[x, y] != null)
-                                {
-
-                                    Vector2 tileVector = new(x, y);
-
-                                    heldTiles[tileVector] = layer.Tiles[x, y];
-
-                                    layer.Tiles[x, y] = new StaticTile(layer, heldTiles[tileVector].TileSheet, BlendMode.Alpha, heldTiles[tileVector].TileIndex);
-
-                                }
-
-                            }
-
-                        };
-
-                    }
-
-                }
-
-                entranceFound = true;
-
-            }
-
-            base.TriggerInterval();
-
-        }
-
-        public override void EventRemove()
-        {
-
-            base.EventRemove();
-
-            foreach(KeyValuePair<Vector2,Tile> tile in heldTiles)
-            {
-
-                Layer layer = tile.Value.Layer;
-
-                layer.Tiles[(int)tile.Key.X, (int)tile.Key.Y] = tile.Value;
-
-            }
-
-            heldTiles.Clear();
-
-        }*/
-
         public override void EventRemove()
         {
 
@@ -129,8 +51,6 @@ namespace StardewDruid.Event.Sword
                     Game1.xLocationAfterWarp = (int)warpBack.X;
 
                     Game1.yLocationAfterWarp = (int)warpBack.Y;
-
-                    //Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.leftEvent), 3);
 
                 }
 
@@ -168,8 +88,6 @@ namespace StardewDruid.Event.Sword
             monsterHandle.spawnVoid = true;
 
             activeLimit = 155;
-
-            //EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
         }
 
@@ -292,7 +210,6 @@ namespace StardewDruid.Event.Sword
                 }
 
                 DialogueCue(900);
-                //SetTrack("spirits_eve");
 
             }
 
@@ -427,6 +344,8 @@ namespace StardewDruid.Event.Sword
 
                 case 121:
 
+                    StopTrack();
+
                     companions[0].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
                     companions[0].eventName = eventId;
@@ -453,17 +372,50 @@ namespace StardewDruid.Event.Sword
 
                     break;
 
-                case 132:
+                case 134:
 
-                    DialogueSetups(companions[0], 2);
+                    companions[0].LookAtTarget(new Vector2(1280,0));
+
+                    DialogueLoad(0, 2);
+
+                    break;
+
+                case 135:
+
+                    companions[0].LookAtTarget(new Vector2(6400, 1280));
+
+                    break;
+
+                case 136:
+
+                    companions[0].LookAtTarget(Game1.player.Position);
+
+                    break;
+
+                case 137:
+
+                    DialogueNext(companions[0]);
 
                     break;
 
                 case 141:
 
+                    companions[0].TargetEvent(0, new Vector2(29, 20) * 64, true);
+
+                    break;
+
+                case 144:
+
                     companions[0].LookAtTarget(Game1.player.Position);
 
-                    DialogueSetups(companions[0], 3);
+                    DialogueLoad(0, 3);
+
+                    break;
+
+                case 147:
+                    companions[0].LookAtTarget(Game1.player.Position);
+
+                    DialogueNext(companions[0]);
 
                     break;
 

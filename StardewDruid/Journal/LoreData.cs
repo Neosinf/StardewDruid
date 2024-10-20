@@ -80,6 +80,8 @@ namespace StardewDruid.Journal
 
             Blackfeather,
 
+            Aldebaran,
+
         }
 
         public settypes settype;
@@ -111,10 +113,12 @@ namespace StardewDruid.Journal
 
             Effigy_Profile,
             Effigy_Adventure,
+            Effigy_Conclusion,
 
             Keeper_Profile,
 
             Revenant_Profile,
+            Revenant_Conclusion,
 
             Jester_Profile,
             Jester_Adventure,
@@ -127,7 +131,9 @@ namespace StardewDruid.Journal
             Blackfeather_Profile,
             Blackfeather_Adventure,
 
-            // ------------- profiles
+            Aldebaran_Profile,
+
+            // ------------- location profiles
 
             Grove_Profile,
 
@@ -151,7 +157,7 @@ namespace StardewDruid.Journal
 
             Gate_Profile,
 
-            // ------------- profiles
+            // ------------- character lore
 
             Effigy_Weald,
             Effigy_self_1,
@@ -202,6 +208,8 @@ namespace StardewDruid.Journal
             Buffin_Circle,
             Shadowtin_Circle,
 
+            // After Blackfeather quest
+
             Effigy_Bones,
             Jester_Bones,
             Revenant_Bones,
@@ -209,6 +217,28 @@ namespace StardewDruid.Journal
             Shadowtin_Bones,
             Blackfeather_self_1,
             Blackfeather_self_2,
+
+            // After Buffin quest
+
+            Effigy_Linus,
+            Buffin_Carnivellion,
+            Shadowtin_Doja,
+            Revenant_Carnivellion,
+
+            // After Revenant quest
+
+            Jester_Visions,
+            Shadowtin_Crew,
+            Effigy_Successor,
+            Blackfeather_Successor,
+
+            // After Rite of Bones
+
+            Aldebaran_Self,
+            Aldebaran_Self_2,
+            Jester_FallenStar,
+            Buffin_RiteOfBones,
+            Blackfeather_Gate,
 
 
         }
@@ -616,7 +646,18 @@ namespace StardewDruid.Journal
                     display = IconData.displays.blackfeather,
                 },
 
+                [LoreSet.loresets.Aldebaran] = new()
+                {
+                    settype = LoreSet.settypes.character,
 
+                    loreset = LoreSet.loresets.Aldebaran,
+
+                    title = Mod.instance.Helper.Translation.Get("LoreData.343.1"),
+
+                    quest = QuestHandle.challengeBones,
+
+                    display = IconData.displays.aldebaran,
+                },
             };
 
             return sets;
@@ -657,6 +698,10 @@ namespace StardewDruid.Journal
 
                     return Mod.instance.Helper.Translation.Get("LoreData.329.1");
 
+                case characters.Aldebaran:
+
+                    return Mod.instance.Helper.Translation.Get("LoreData.343.2");
+
             }
             return null;
         }
@@ -695,6 +740,10 @@ namespace StardewDruid.Journal
                 case characters.keeper:
 
                     return Mod.instance.Helper.Translation.Get("LoreData.329.2");
+
+                case characters.Aldebaran:
+
+                    return Mod.instance.Helper.Translation.Get("LoreData.343.3");
 
             }
 
@@ -775,7 +824,7 @@ namespace StardewDruid.Journal
             {
                 loreset = LoreSet.loresets.Effigy,
                 loretype = LoreStory.loretypes.information,
-                quest = QuestHandle.approachEffigy,
+                quest = QuestHandle.questEffigy,
                 description = Mod.instance.Helper.Translation.Get("EffectsData.351"),
                 details = new()
                 {
@@ -784,6 +833,19 @@ namespace StardewDruid.Journal
                     Mod.instance.Helper.Translation.Get("EffectsData.356"),
                     Mod.instance.Helper.Translation.Get("EffectsData.357"),
                     Mod.instance.Helper.Translation.Get("EffectsData.358"),
+                }
+            };
+
+            storylist[LoreStory.stories.Effigy_Conclusion] = new()
+            {
+                loreset = LoreSet.loresets.Effigy,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.questEffigy,
+                description = Mod.instance.Helper.Translation.Get("LoreData.343.4"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("LoreData.343.5"),
+                    Mod.instance.Helper.Translation.Get("LoreData.343.6"),
                 }
             };
 
@@ -811,6 +873,18 @@ namespace StardewDruid.Journal
                 {
                     Mod.instance.Helper.Translation.Get("LoreData.340.1.243"),
                     Mod.instance.Helper.Translation.Get("LoreData.340.1.244")
+                }
+            };
+
+            storylist[LoreStory.stories.Revenant_Conclusion] = new()
+            {
+                loreset = LoreSet.loresets.Revenant,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.questRevenant,
+                description = Mod.instance.Helper.Translation.Get("LoreData.343.7"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("LoreData.343.8"),
                 }
             };
 
@@ -923,6 +997,19 @@ namespace StardewDruid.Journal
                 }
             };
 
+            storylist[LoreStory.stories.Aldebaran_Profile] = new()
+            {
+                loreset = LoreSet.loresets.Aldebaran,
+                loretype = LoreStory.loretypes.information,
+                quest = QuestHandle.challengeBones,
+                description = Mod.instance.Helper.Translation.Get("LoreData.343.9") + Mod.instance.Helper.Translation.Get("LoreData.343.10"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("LoreData.343.11"),
+                    Mod.instance.Helper.Translation.Get("LoreData.343.12"),
+                }
+            };
+
             // ===========================================
             // Locations
 
@@ -937,6 +1024,7 @@ namespace StardewDruid.Journal
                    Mod.instance.Helper.Translation.Get("LoreData.340.1.308"),
                    Mod.instance.Helper.Translation.Get("LoreData.340.1.309"),
                    Mod.instance.Helper.Translation.Get("LoreData.340.1.310"),
+                   Mod.instance.Helper.Translation.Get("LoreData.347.4"),
                }
             };
 
@@ -990,7 +1078,9 @@ namespace StardewDruid.Journal
                 details = new()
                {
                    Mod.instance.Helper.Translation.Get("LoreData.340.1.360"),
-                   Mod.instance.Helper.Translation.Get("LoreData.340.1.361")
+                   Mod.instance.Helper.Translation.Get("LoreData.340.1.361"),
+                   Mod.instance.Helper.Translation.Get("LoreData.347.1"),
+                   Mod.instance.Helper.Translation.Get("LoreData.347.2")
                }
             };
 
@@ -1058,6 +1148,7 @@ namespace StardewDruid.Journal
                    Mod.instance.Helper.Translation.Get("LoreData.340.1.421"),
                    Mod.instance.Helper.Translation.Get("LoreData.340.1.422"),
                    Mod.instance.Helper.Translation.Get("LoreData.340.1.423"),
+                   Mod.instance.Helper.Translation.Get("LoreData.347.3"),
                }
             };
 
@@ -1824,6 +1915,173 @@ namespace StardewDruid.Journal
                 question = Mod.instance.Helper.Translation.Get("LoreData.323.13"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.323.14") +
                 Mod.instance.Helper.Translation.Get("LoreData.323.15"),
+            };
+
+            // ===========================================
+            // After Buffin quest
+
+            storylist[LoreStory.stories.Effigy_Linus] = new()
+            {
+                loreset = LoreSet.loresets.Effigy,
+                story = LoreStory.stories.Effigy_Linus,
+                character = characters.Effigy,
+                quest = QuestHandle.questBuffin,
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.343.1.11"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.343.1.12") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.13") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.14"),
+            };
+
+            storylist[LoreStory.stories.Buffin_Carnivellion] = new()
+            {
+                loreset = LoreSet.loresets.Buffin,
+                story = LoreStory.stories.Buffin_Carnivellion,
+                character = characters.Buffin,
+                quest = QuestHandle.questBuffin,
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.343.1.23"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.343.1.24") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.25") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.26"),
+            };
+
+            storylist[LoreStory.stories.Shadowtin_Doja] = new()
+            {
+                loreset = LoreSet.loresets.Shadowtin,
+                story = LoreStory.stories.Shadowtin_Doja,
+                character = characters.Shadowtin,
+                quest = QuestHandle.questBuffin,
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.343.1.35"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.343.1.36") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.37") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.38"),
+            };
+
+            storylist[LoreStory.stories.Revenant_Carnivellion] = new()
+            {
+                loreset = LoreSet.loresets.Revenant,
+                story = LoreStory.stories.Revenant_Carnivellion,
+                character = characters.Revenant,
+                quest = QuestHandle.questBuffin,
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.343.1.47"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.343.1.48") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.49") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.50") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.51"),
+            };
+
+            // ===========================================
+            // After Revenant quest
+
+            storylist[LoreStory.stories.Jester_Visions] = new()
+            {
+                loreset = LoreSet.loresets.Jester,
+                story = LoreStory.stories.Jester_Visions,
+                character = characters.Jester,
+                quest = QuestHandle.questRevenant,
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.343.1.62"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.343.1.63") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.64") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.65"),
+            };
+
+            storylist[LoreStory.stories.Effigy_Successor] = new()
+            {
+                loreset = LoreSet.loresets.Effigy,
+                story = LoreStory.stories.Effigy_Successor,
+                character = characters.Effigy,
+                quest = QuestHandle.questRevenant,
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.343.1.74"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.343.1.75") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.76"),
+            };
+            storylist[LoreStory.stories.Blackfeather_Successor] = new()
+            {
+                loreset = LoreSet.loresets.Blackfeather,
+                story = LoreStory.stories.Blackfeather_Successor,
+                character = characters.Blackfeather,
+                quest = QuestHandle.questRevenant,
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.343.1.85"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.343.1.86") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.87") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.88"),
+            };
+
+            // ===========================================
+            // After Rite of Bones
+
+            storylist[LoreStory.stories.Aldebaran_Self] = new()
+            {
+                loreset = LoreSet.loresets.Aldebaran,
+                story = LoreStory.stories.Aldebaran_Self,
+                character = characters.Aldebaran,
+                quest = QuestHandle.challengeBones,
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.343.1.99"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.343.1.100") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.101") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.102") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.103"),
+            };
+            storylist[LoreStory.stories.Aldebaran_Self_2] = new()
+            {
+                loreset = LoreSet.loresets.Aldebaran,
+                story = LoreStory.stories.Aldebaran_Self_2,
+                character = characters.Aldebaran,
+                quest = QuestHandle.challengeBones,
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.343.1.112"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.343.1.113") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.114") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.115"),
+            };
+            storylist[LoreStory.stories.Jester_FallenStar] = new()
+            {
+                loreset = LoreSet.loresets.Jester,
+                story = LoreStory.stories.Jester_FallenStar,
+                character = characters.Jester,
+                quest = QuestHandle.challengeBones,
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.343.1.124"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.343.1.125") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.126"),
+            };
+            storylist[LoreStory.stories.Shadowtin_Crew] = new()
+            {
+                loreset = LoreSet.loresets.Shadowtin,
+                story = LoreStory.stories.Shadowtin_Crew,
+                character = characters.Shadowtin,
+                quest = QuestHandle.challengeBones,
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.343.1.135"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.343.1.136"),
+            };
+            storylist[LoreStory.stories.Buffin_RiteOfBones] = new()
+            {
+                loreset = LoreSet.loresets.Buffin,
+                story = LoreStory.stories.Buffin_RiteOfBones,
+                character = characters.Buffin,
+                quest = QuestHandle.challengeBones,
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.343.1.145"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.343.1.146"),
+            };
+            storylist[LoreStory.stories.Blackfeather_Gate] = new()
+            {
+                loreset = LoreSet.loresets.Blackfeather,
+                story = LoreStory.stories.Blackfeather_Gate,
+                character = characters.Blackfeather,
+                quest = QuestHandle.challengeBones,
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.343.1.155"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.343.1.156") +
+                Mod.instance.Helper.Translation.Get("LoreData.343.1.157"),
             };
 
             return storylist;

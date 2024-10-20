@@ -21,6 +21,16 @@ namespace StardewDruid.Event.Challenge
     public class ChallengeEther : EventHandle
     {
 
+        public Dictionary<int,Vector2> eventVectors = new()
+        {
+
+            // Focus vector
+            [1] = new Vector2(27, 21),
+            // Boss vector
+            [2] = new Vector2(28, 22),
+
+        };
+
         public ChallengeEther()
         {
 
@@ -59,7 +69,7 @@ namespace StardewDruid.Event.Challenge
 
             EventBar(DialogueData.Strings(DialogueData.stringkeys.theDusting),0);
 
-            ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
 
             if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Blackfeather))
             {
@@ -72,6 +82,12 @@ namespace StardewDruid.Event.Challenge
                 }
 
             }
+
+            (Mod.instance.locations[LocationData.druid_gate_name] as Gate).alightBrazier = true;
+
+            EventRender cannoliBone = new("cannoliBone", location.Name, eventVectors[1] * 64 + new Vector2(32,18), IconData.relics.skull_cannoli) { layer = 1f };
+
+            eventRenders.Add(cannoliBone);
 
             location.playSound("furnace");
 
@@ -86,19 +102,37 @@ namespace StardewDruid.Event.Challenge
         public override void EventRemove()
         {
 
-            if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Blackfeather))
-            {
+            base.EventRemove();
 
-                if (Mod.instance.characters[CharacterHandle.characters.Blackfeather].modeActive == Character.Character.mode.track && !Mod.instance.questHandle.IsComplete(QuestHandle.questBlackfeather))
+            if (eventActive)
+            {
+                
+                (Mod.instance.locations[LocationData.druid_gate_name] as Gate).alightBrazier = false;
+
+                eventRenders.Clear();
+
+                if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Blackfeather))
                 {
 
-                    Mod.instance.characters[CharacterHandle.characters.Blackfeather].SwitchToMode(Character.Character.mode.home, Game1.player);
+                    if (!Mod.instance.questHandle.IsComplete(eventId))
+                    {
+
+                        CharacterMover mover = new(CharacterHandle.characters.Blackfeather, CharacterMover.moveType.purge);
+
+                        Mod.instance.movers[CharacterHandle.characters.Blackfeather] = mover;
+
+                    }
+
+                    if (Mod.instance.characters[CharacterHandle.characters.Blackfeather].modeActive == Character.Character.mode.track && !Mod.instance.questHandle.IsComplete(QuestHandle.questBlackfeather))
+                    {
+
+                        Mod.instance.characters[CharacterHandle.characters.Blackfeather].SwitchToMode(Character.Character.mode.home, Game1.player);
+
+                    }
 
                 }
 
             }
-
-            base.EventRemove();
 
         }
 
@@ -157,12 +191,11 @@ namespace StardewDruid.Event.Challenge
             switch (activeCounter)
             {
 
-                case 1:
-
+                case 3:
 
                     SetTrack("tribal");
 
-                    bosses[0] = new Dustfiend(ModUtility.PositionToTile(origin) - new Vector2(1,3), Mod.instance.CombatDifficulty());
+                    bosses[0] = new Dustfiend(eventVectors[2], Mod.instance.CombatDifficulty());
 
                     bosses[0].SetMode(4);
 
@@ -170,21 +203,25 @@ namespace StardewDruid.Event.Challenge
 
                     bosses[0].netPosturing.Set(true);
 
+                    bosses[0].netLayer.Set(12000);
+
                     location.characters.Add(bosses[0]);
 
                     bosses[0].update(Game1.currentGameTime, location);
 
                     voices[0] = bosses[0];
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0,128), IconData.impacts.smoke, 4f, new() { interval = 150, color = Microsoft.Xna.Framework.Color.Gray,});
+                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0,128), IconData.impacts.smoke, 5f, new() { interval = 150, color = Microsoft.Xna.Framework.Color.Gray,});
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.steam, 4f, new() { interval = 150, });
+                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.steam, 5f, new() { interval = 150, });
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.steam, 4f, new() { interval = 150, flip = true, });
+                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.steam, 5f, new() { interval = 150, flip = true, });
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.puff, 4f, new() { interval = 150, });
+                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.puff, 5f, new() { interval = 150, });
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.plume, 4f, new() { interval = 150, color = Microsoft.Xna.Framework.Color.DarkGray, });
+                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.plume, 5f, new() { interval = 150, color = Microsoft.Xna.Framework.Color.DarkGray, });
+
+                    location.playSound(SpellHandle.sounds.explosion.ToString());
 
                     break;
 
@@ -264,11 +301,6 @@ namespace StardewDruid.Event.Challenge
 
                 case 91:
 
-                    ThrowHandle newThrowRelic = new(Game1.player, origin, IconData.relics.skull_cannoli);
-
-                    newThrowRelic.impact = IconData.impacts.puff;
-
-                    newThrowRelic.register();
 
                     SetTrack("fall3");
 

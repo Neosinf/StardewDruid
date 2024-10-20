@@ -465,12 +465,12 @@ namespace StardewDruid.Render
 
             Microsoft.Xna.Framework.Color colour = Color.White;
 
-            if (weaponSelection == weapons.sword)
-            {
+            //if (weaponSelection == weapons.sword)
+            //{
 
-                colour = Mod.instance.iconData.gradientColours[swordScheme][0];
+                //colour = Mod.instance.iconData.gradientColours[swordScheme][0];
 
-            }
+            //}
 
             b.Draw(
                  swipeTexture,

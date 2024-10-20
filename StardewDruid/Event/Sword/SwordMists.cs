@@ -22,11 +22,7 @@ namespace StardewDruid.Event.Sword
 
             base.EventActivate();
 
-            ModUtility.AnimateHands(Game1.player,Game1.player.FacingDirection,600);
-
-            Mod.instance.iconData.DecorativeIndicator(location, Game1.player.Position, IconData.decorations.mists, 4f, new());
-
-            location.playSound("thunder_small");
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.thunder_small, });
 
             AddActor(0, origin + new Vector2(-64, 256));
             AddActor(1, origin + new Vector2(192, 320));
