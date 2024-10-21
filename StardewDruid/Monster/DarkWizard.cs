@@ -6,6 +6,7 @@ using StardewDruid.Render;
 using StardewValley;
 using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Monster
@@ -84,9 +85,18 @@ namespace StardewDruid.Monster
         public override void DrawHat(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer)
         {
 
+            Vector2 hatPosition = spritePosition - new Vector2(0, 64);
+
+            if (netWoundedActive.Value)
+            {
+
+                hatPosition.Y += 20;
+
+            }
+
             b.Draw(
                 characterTexture,
-                spritePosition - new Vector2(0,64),
+                hatPosition,
                 hatFrames[netDirection.Value][0],
                 Color.White,
                 0f,
@@ -150,11 +160,11 @@ namespace StardewDruid.Monster
 
                     Vector2 tryVector = castSelection[Mod.instance.randomIndex.Next(castSelection.Count)];
 
-                    SpellHandle fireball = new(currentLocation, tryVector * 64, GetBoundingBox().Center.ToVector2(), 192, GetThreat());
+                    SpellHandle fireball = new(currentLocation, tryVector * 64, GetBoundingBox().Center.ToVector2(), 128, GetThreat());
 
                     fireball.type = SpellHandle.spells.missile;
 
-                    fireball.projectile = 2;
+                    fireball.projectile = 3;
 
                     fireball.missile = IconData.missiles.warpball;
 

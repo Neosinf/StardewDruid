@@ -4,21 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-
 using System.Linq;
-
 using StardewModdingAPI;
-
 using StardewDruid.Data;
-
 using StardewDruid.Cast.Effect;
-
 using StardewDruid.Journal;
-using static StardewValley.Menus.QuestContainerMenu;
-using static System.Net.Mime.MediaTypeNames;
-using static StardewDruid.Character.Character;
 using StardewDruid.Cast.Fates;
-using static StardewValley.Minigames.TargetGame;
 using StardewDruid.Location;
 
 
@@ -2805,7 +2796,7 @@ namespace StardewDruid.Cast
 
                 float shockDistance = Vector2.Distance(shockOrigin, victimPosition);
 
-                if(shockDistance > (192f * shockSize))
+                if(shockDistance > (112f * shockSize))
                 { 
                 
                     continue;

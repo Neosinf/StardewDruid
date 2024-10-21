@@ -203,6 +203,8 @@ namespace StardewDruid.Journal
 
         public const string challengeBones = "bonefire";
 
+        public const string questAldebaran = "questAldebaran";
+
         // optional
 
         public const string relicTactical = "relicTactical";

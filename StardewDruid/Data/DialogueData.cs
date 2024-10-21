@@ -84,6 +84,7 @@ namespace StardewDruid.Data
             acDisabled,
             acPriority,
             acIgnored,
+            acRestricted,
             MAX,
             HP,
             STM,
@@ -463,6 +464,10 @@ namespace StardewDruid.Data
                 case stringkeys.acIgnored:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.340.1");
+
+                case stringkeys.acRestricted:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.350.1");
 
                 case stringkeys.MAX:
 
@@ -1536,7 +1541,7 @@ namespace StardewDruid.Data
 
                         [126] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.1343"), },
                         [129] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.1344"), },
-                        [132] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.343.8"), },
+                        [132] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.343.8"), },
                         [135] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.1345"), },
                     };
 

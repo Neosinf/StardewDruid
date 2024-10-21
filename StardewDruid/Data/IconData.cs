@@ -2123,7 +2123,7 @@ namespace StardewDruid.Data
 
             List<TemporaryAnimatedSprite> animations = new();
 
-            float boltScale = 0.5f * size;
+            float boltScale = 0.35f * size;
 
             float distance = Vector2.Distance(origin, destination);
 
@@ -2216,7 +2216,7 @@ namespace StardewDruid.Data
 
             // Zap indicator
 
-            Microsoft.Xna.Framework.Rectangle sourceRect3 = new(12 + Mod.instance.randomIndex.Next(2)*48, 400, 24, 24);
+            Microsoft.Xna.Framework.Rectangle sourceRect3 = new(12, 400, 24, 24);
 
             TemporaryAnimatedSprite zap1 = new(0, 300, 1, 1, origin - new Vector2(boltScale * 12), false, false)
             {
@@ -2261,6 +2261,52 @@ namespace StardewDruid.Data
             location.temporarySprites.Add(zap2);
 
             animations.Add(zap2);
+
+            Microsoft.Xna.Framework.Rectangle sourceRect4 = new(60, 400, 24, 24);
+
+            TemporaryAnimatedSprite zap3 = new(0, 300, 1, 1, origin - new Vector2(boltScale * 12), false, false)
+            {
+
+                sourceRect = sourceRect4,
+
+                sourceRectStartingPos = new Vector2(sourceRect4.X, sourceRect4.Y),
+
+                texture = boltTexture,
+
+                layerDepth = 803f,
+
+                scale = boltScale,
+
+                color = Microsoft.Xna.Framework.Color.White,
+
+            };
+
+            location.temporarySprites.Add(zap3);
+
+            animations.Add(zap3);
+
+            sourceRect4.X += 192;
+
+            TemporaryAnimatedSprite zap4 = new(0, 300, 1, 1, origin - new Vector2(boltScale * 12), false, false)
+            {
+
+                sourceRect = sourceRect4,
+
+                sourceRectStartingPos = new Vector2(sourceRect4.X, sourceRect4.Y),
+
+                texture = boltTexture,
+
+                layerDepth = 802f,
+
+                scale = boltScale,
+
+                color = gradientColours[scheme][0],
+
+            };
+
+            location.temporarySprites.Add(zap4);
+
+            animations.Add(zap4);
 
 
             // Light

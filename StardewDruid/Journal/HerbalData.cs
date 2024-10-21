@@ -14,6 +14,7 @@ using StardewValley.Buffs;
 using StardewValley.GameData.BigCraftables;
 using StardewValley.GameData.Machines;
 using StardewValley.GameData.Shops;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ using System.Reflection;
 using xTile.Dimensions;
 using static StardewDruid.Data.IconData;
 using static StardewDruid.Journal.LoreSet;
+using static StardewValley.Minigames.BoatJourney;
 
 namespace StardewDruid.Journal
 {
@@ -571,6 +573,13 @@ namespace StardewDruid.Journal
 
                             break;
 
+                        case 4:
+
+                            flag = IconData.displays.skull;
+
+                            hovertext = DialogueData.stringkeys.acRestricted;
+
+                            break;
 
                     }
                 }
@@ -1362,6 +1371,10 @@ namespace StardewDruid.Journal
                     Mod.instance.save.potions[herbal.herbal] = 3;
                     break;
                 case 3:
+                    Mod.instance.save.potions[herbal.herbal] = 4;
+                    break;
+                default:
+                case 4:
                     Mod.instance.save.potions[herbal.herbal] = 0;
                     break;
             }
@@ -1557,7 +1570,7 @@ namespace StardewDruid.Journal
             if (Mod.instance.save.potions.ContainsKey(herbal.herbal) && !force)
             {
 
-                if(Mod.instance.save.potions[herbal.herbal] == 0 || Mod.instance.save.potions[herbal.herbal] == 3)
+                if(Mod.instance.save.potions[herbal.herbal] == 3 || Mod.instance.save.potions[herbal.herbal] == 4)
                 {
 
                     return;
@@ -2378,55 +2391,52 @@ namespace StardewDruid.Journal
 
             if((recipes.Count == 0 || Mod.instance.randomIndex.Next(3) == 0) && !Mod.instance.Config.disableShopdata)
             {
+                List<string> books = new()
+                {
+                    "Book_Trash",
+                    "Book_Crabbing",
+                    "Book_Bombs",
+                    "Book_Roe",
+                    "Book_WildSeeds",
+                    "Book_Woodcutting",
+                    "Book_Defense",
+                    "Book_Friendship",
+                    "Book_Void",
+                    "Book_Speed",
+                    "Book_Marlon",
+                    "Book_QueenOfSauce",
+                    "Book_Diamonds",
+                    "Book_Mystery",
+                    "Book_Speed2",
+                    "Book_Artifact",
+                    "Book_Horse",
+                    "Book_Grass",
+                };
 
-                Dictionary<string, ShopData> shopData = DataLoader.Shops(Game1.content);
+                List<string> bookCandidates = new();
 
-                if (shopData != null && shopData.Count > 0)
+                foreach(string book in books)
                 {
 
-                    if (shopData.ContainsKey("Bookseller"))
+                    if(Game1.player.stats.Get(book) != 0)
                     {
 
-                        List<string> books = new();
-
-                        foreach (ShopItemData shopItem in shopData["Bookseller"].Items)
-                        {
-
-                            if (shopItem == null)
-                            {
-
-                                continue;
-
-                            }
-
-                            if (shopItem.Condition != null)
-                            {
-
-                                if (!GameStateQuery.CheckConditions(shopItem.Condition, Game1.getLocationFromName("Town"), Game1.player, null, null, Mod.instance.randomIndex))
-                                {
-
-                                    continue;
-
-                                }
-
-                            }
-
-                            books.Add(shopItem.ItemId);
-
-                        }
-
-                        if(books.Count > 0)
-                        {
-
-                            StardewValley.Item newBook = ItemRegistry.Create(books[Mod.instance.randomIndex.Next(books.Count)], 1);
-
-                            new ThrowHandle(Game1.player, Game1.player.Position + new Vector2(64, 128), newBook) { delay = 10, holdup = true }.register();
-
-                            return true;
-
-                        }
+                        continue;
 
                     }
+
+                    bookCandidates.Add(book);
+
+                }
+
+                if (bookCandidates.Count > 0)
+                {
+
+                    StardewValley.Item newBook = ItemRegistry.Create(books[Mod.instance.randomIndex.Next(bookCandidates.Count)], 1);
+
+                    new ThrowHandle(Game1.player, Game1.player.Position + new Vector2(64, 128), newBook) { delay = 10, holdup = true }.register();
+
+                    return true;
 
                 }
 

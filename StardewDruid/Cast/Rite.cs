@@ -343,14 +343,23 @@ namespace StardewDruid.Cast
 
             castInterval = 60;
 
-            int castFast = 4;
+            int castFast = 3;
+
+            if (castType == rites.mists)
+            {
+
+                castInterval = 50;
+
+                castFast = 3;
+
+            }
 
             if (castType == rites.stars)
             {
 
                 castInterval = 45;
 
-                castFast = 3;
+                castFast = 2;
 
             }
 
@@ -359,7 +368,7 @@ namespace StardewDruid.Cast
 
                 castInterval = 120;
 
-                castFast = 8;
+                castFast = 6;
 
             }
 
@@ -368,7 +377,7 @@ namespace StardewDruid.Cast
 
                 castInterval = 120;
 
-                castFast = 8;
+                castFast = 6;
 
             }
 
@@ -933,7 +942,7 @@ namespace StardewDruid.Cast
             {
                 case charges.fatesCharge:
 
-                    chargeCooldown = (int)(180f * celeri);
+                    chargeCooldown = (int)(240f * celeri);
 
                     //switch (Mod.instance.randomIndex.Next(4))
                     switch (Mod.instance.randomIndex.Next(3))
@@ -959,20 +968,20 @@ namespace StardewDruid.Cast
 
                 case charges.starsCharge:
 
-                    chargeCooldown = (int)(120f * celeri);
+                    chargeCooldown = (int)(240f * celeri);
 
                     return SpellHandle.effects.knock;
 
                 case charges.mistsCharge:
 
-                    chargeCooldown = (int)(120f * celeri);
+                    chargeCooldown = (int)(240f * celeri);
 
                     return SpellHandle.effects.drain;
 
                 default:
                 case charges.wealdCharge:
 
-                    chargeCooldown = (int)(30f * celeri);
+                    chargeCooldown = (int)(60f * celeri);
 
                     return SpellHandle.effects.sap;
 
@@ -1246,7 +1255,7 @@ namespace StardewDruid.Cast
                 case rites.mists:
                 case rites.fates:
                     
-                    Vector2 cursorVector = GetTargetCursor(Game1.player.FacingDirection, 320);
+                    Vector2 cursorVector = GetTargetCursor(Game1.player.FacingDirection, 512);
 
                     castVector = ModUtility.PositionToTile(cursorVector);
 
@@ -1905,12 +1914,12 @@ namespace StardewDruid.Cast
 
             }
 
-            if (chargeActive && chargeCooldown == 0)
+            /*if (chargeActive && chargeCooldown == 0)
             {
 
                 rockSpell.added.Add(ChargeEffect(chargeType));
 
-            }
+            }*/
 
             Mod.instance.spellRegister.Add(rockSpell);
 
@@ -1930,7 +1939,7 @@ namespace StardewDruid.Cast
 
             }
 
-            cursor(IconData.cursors.mists, 75, 320);
+            cursor(IconData.cursors.mists, 75, 512);
 
             //---------------------------------------------
             // Sunder
@@ -2216,17 +2225,17 @@ namespace StardewDruid.Cast
 
                 bolt.criticalModifier = crits[1];
 
-                if (chargeActive && chargeCooldown == 0)
-                {
+                //if (chargeActive && chargeCooldown == 0)
+                //{
 
-                    bolt.added = new() { ChargeEffect(chargeType), SpellHandle.effects.shock, };
+                //    bolt.added = new() { ChargeEffect(chargeType), SpellHandle.effects.shock, };
 
-                }
-                else
-                {
+                //}
+                //else
+                //{
 
                     bolt.added = new() { SpellHandle.effects.push, SpellHandle.effects.shock, };
-                }
+                //}
 
                 Mod.instance.spellRegister.Add(bolt);
 
@@ -2745,12 +2754,12 @@ namespace StardewDruid.Cast
 
                 }
 
-                if (chargeActive && chargeCooldown == 0)
-                {
+                //if (chargeActive && chargeCooldown == 0)
+                //{
 
-                    meteor.added = new() { ChargeEffect(chargeType) };
+                //    meteor.added = new() { ChargeEffect(chargeType) };
 
-                }
+                //}
 
                 Mod.instance.spellRegister.Add(meteor);
 

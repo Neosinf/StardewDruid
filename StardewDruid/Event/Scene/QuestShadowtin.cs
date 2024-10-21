@@ -101,13 +101,13 @@ namespace StardewDruid.Event.Scene
             // forest cache enter shadowtin
             [31] = new Vector2(29, 19),
             // forest cache location
-            [32] = new Vector2(29, 22),
+            [32] = new Vector2(27, 22),
             // forest enter rogue
-            [33] = new Vector2(26, 15),
+            [33] = new Vector2(26, 17),
             // forest enter goblin
-            [34] = new Vector2(27, 16),
+            [34] = new Vector2(28, 16),
             // forest cache enter dwarf
-            [35] = new Vector2(28, 16),
+            [35] = new Vector2(27, 16),
             // rogue exit
             [36] = new Vector2(9, 9),
             // dwarf exit

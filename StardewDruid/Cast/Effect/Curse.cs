@@ -88,6 +88,8 @@ namespace StardewDruid.Cast.Effect
 
                     morph.MaxHealth = monster.MaxHealth * 2;
 
+                    morph.resilience.Set(0);
+
                     morph.Health = morph.MaxHealth;
 
                     morph.Scale *= 3;

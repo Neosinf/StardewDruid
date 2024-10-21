@@ -68,12 +68,12 @@ namespace StardewDruid.Cast.Fates
                 sourceRectStartingPos = new Vector2(slimeSource.X, slimeSource.Y),
                 layerDepth = npc.Position.Y / 10000 + 0.0006f,
                 alpha = 0.35f,
-                scale = 5.5f,
-                color = Mod.instance.iconData.schemeColours[(IconData.schemes)scheme] * 0.5f,
+                scale = 5f,
+                color = Mod.instance.iconData.schemeColours[(IconData.schemes)scheme] * 0.75f,
 
             };
 
-            slime.position -= new Vector2(100,84);
+            slime.position -= new Vector2(48,40);
 
             npc.currentLocation.temporarySprites.Add(slime);
 

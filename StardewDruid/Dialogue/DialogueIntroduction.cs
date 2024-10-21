@@ -318,7 +318,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.crow_gate:
 
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.347.7");
+                    return Mod.instance.Helper.Translation.Get("DialogueIntroduction.347.7");
 
 
             }

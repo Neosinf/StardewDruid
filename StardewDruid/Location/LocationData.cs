@@ -1660,11 +1660,12 @@ namespace StardewDruid.Location
 
                         case 15:
 
-                            return new(0, 0, 0, 0);
+                            return new(96, 224, 64, 160);
 
                         case 16:
 
-                            return new(96, 224, 64, 160);
+                            return new(96, 144, 64, 64);
+
                     }
 
                     break;
@@ -1996,6 +1997,7 @@ namespace StardewDruid.Location
                         case 6:
                         case 7:
                         case 8:
+                        case 15:
                         case 16:
 
                             return new();
@@ -2231,6 +2233,18 @@ namespace StardewDruid.Location
 
                     break;
 
+                case IconData.tilesheets.gate:
+
+                    switch (key)
+                    {
+
+                        case 16:
+
+                            return (position.Y + (source.Height * 4) + 8) / 10000;
+                    }
+
+                    break;
+
             }
 
             return (position.Y + (source.Height * 4)) / 10000;
@@ -2328,6 +2342,22 @@ namespace StardewDruid.Location
 
                     break;
 
+                case IconData.tilesheets.gate:
+
+                    switch (key)
+                    {
+
+                        case 15:
+
+                            return true;
+
+                        case 16:
+
+                            return true;
+
+                    }
+
+                    break;
 
             }
  
@@ -2556,6 +2586,44 @@ namespace StardewDruid.Location
                             }
 
                         break;
+                    }
+
+                    break;
+
+                case IconData.tilesheets.gate:
+
+                    switch (key)
+                    {
+
+                        case 15:
+
+                            if (!Mod.instance.activeEvent.ContainsKey(QuestHandle.challengeBones))
+                            {
+
+                                return Rectangle.Empty;
+
+                            }
+
+                            if (Mod.instance.eventRegister[QuestHandle.challengeBones].activeCounter < 300)
+                            {
+                                
+                                return Rectangle.Empty;
+
+                            }
+
+                            break;
+
+                        case 16:
+
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.questAldebaran))
+                            {
+
+                                return Rectangle.Empty;
+
+                            }
+
+                            break;
+
                     }
 
                     break;

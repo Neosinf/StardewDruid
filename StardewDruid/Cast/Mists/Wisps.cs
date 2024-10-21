@@ -383,14 +383,14 @@ namespace StardewDruid.Cast.Mists
 
         public void draw(SpriteBatch b)
         {
-            if (!Utility.isOnScreen(position, 128) && Game1.player.currentLocation.Name == location.Name)
+            if (!Utility.isOnScreen(position, 128) || Game1.player.currentLocation.Name != location.Name)
             {
                 return;
             }
 
             Vector2 localPosition = Game1.GlobalToLocal(position);
 
-            float drawLayer = (float)position.Y / 10000f + 0.001f;
+            float drawLayer = 999f;//(float)position.Y / 10000f + 0.001f;
 
             int wispFrame = (int)((Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 2000) / 250);
 

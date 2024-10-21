@@ -35,9 +35,6 @@ namespace StardewDruid.Location
 
         public List<TerrainTile> brazierTiles = new();
 
-        public List<TerrainTile> maypoleTiles = new();
-
-
         public Gate() { }
 
         public Gate(string Name)
@@ -60,13 +57,6 @@ namespace StardewDruid.Location
                 {
 
                     showFlame = true;
-
-                }
-
-                foreach (TerrainTile maypoleTile in maypoleTiles)
-                {
-
-                    maypoleTile.draw(b, this);
 
                 }
 
@@ -465,32 +455,26 @@ namespace StardewDruid.Location
 
             Dictionary<int, List<List<int>>> codes = new()
             {
+                
                 [0] = new() { new() { 23, 1 }, },
-                [1] = new() { },
-                [2] = new() { },
-                [3] = new() { },
+
+                [3] = new() { new() { 26, 16 }, },
+
                 [4] = new() { new() { 22, 2 }, },
-                [5] = new() { },
-                [6] = new() { },
+
                 [7] = new() { new() { 16, 2 }, new() { 31, 9 }, },
-                [8] = new() { },
-                [9] = new() { },
-                [10] = new() { },
+
                 [11] = new() { new() { 12, 2 }, new() { 41, 2 }, },
-                [12] = new() { },
+
                 [13] = new() { new() { 37, 10 }, },
-                [14] = new() { },
+
+                [15] = new() { new() { 15, 15 }, new() { 38, 15 }, },
+
                 [17] = new() { new() { 12, 2 }, new() { 41, 2 }, },
-                [18] = new() { },
-                [19] = new() { },
 
                 [21] = new() { new() { 16, 2 }, },
-                [22] = new() { },
-                [23] = new() { },
+
                 [24] = new() { new() { 22, 2 }, new() { 31, 2 }, new() { 37, 9 }, },
-                [25] = new() { },
-
-
 
             };
 
@@ -538,38 +522,12 @@ namespace StardewDruid.Location
 
             }
 
-            codes = new()
-            {
-                
-                [15] = new() { new() { 15, 15 }, new() { 38, 15 }, },
-
-            };
-
-            foreach (KeyValuePair<int, List<List<int>>> code in codes)
-            {
-
-                foreach (List<int> array in code.Value)
-                {
-
-                    int codeTile = code.Key;
-
-                    Vector2 codeVector = new Vector2(array[0], codeTile) * 64;
-
-                    TerrainTile tTile = new(IconData.tilesheets.gate, array[1], codeVector, TerrainTile.shadows.offset, array[0] > 27);
-
-                    maypoleTiles.Add(tTile);
-
-                }
-
-            }
-
             // CENTRAL BRAZIER
 
             codes = new()
             {
 
                 [20] = new() { new() { 25, 11 }, },
-
             };
 
             foreach (KeyValuePair<int, List<List<int>>> code in codes)
@@ -683,13 +641,13 @@ namespace StardewDruid.Location
 
             dialogueTiles.Add(new(29, 25), CharacterHandle.characters.crow_brazier);
 
-            dialogueTiles.Add(new(27, 7), CharacterHandle.characters.crow_brazier);
+            dialogueTiles.Add(new(27, 7), CharacterHandle.characters.crow_gate);
 
-            dialogueTiles.Add(new(28, 7), CharacterHandle.characters.crow_brazier);
+            dialogueTiles.Add(new(28, 7), CharacterHandle.characters.crow_gate);
 
-            dialogueTiles.Add(new(27, 8), CharacterHandle.characters.crow_brazier);
+            dialogueTiles.Add(new(27, 8), CharacterHandle.characters.crow_gate);
 
-            dialogueTiles.Add(new(28, 8), CharacterHandle.characters.crow_brazier);
+            dialogueTiles.Add(new(28, 8), CharacterHandle.characters.crow_gate);
 
         }
 

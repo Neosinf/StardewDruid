@@ -226,14 +226,14 @@ namespace StardewDruid.Event.Scene
 
             }
 
-            foreach (TerrainTile maypoleTile in (Mod.instance.locations[LocationData.druid_gate_name] as Gate).maypoleTiles)
+            /*foreach (TerrainTile maypoleTile in (Mod.instance.locations[LocationData.druid_gate_name] as Gate).maypoleTiles)
             {
 
                 maypoleTile.index = 15;
 
                 maypoleTile.reset();
 
-            }
+            }*/
 
             if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.BrownBear))
             {
@@ -871,14 +871,14 @@ namespace StardewDruid.Event.Scene
 
                     }
 
-                    foreach (TerrainTile maypoleTile in (Mod.instance.locations[LocationData.druid_gate_name] as Gate).maypoleTiles)
+                    /*foreach (TerrainTile maypoleTile in (Mod.instance.locations[LocationData.druid_gate_name] as Gate).maypoleTiles)
                     {
 
                         maypoleTile.index = 16;
 
                         maypoleTile.reset();
 
-                    }
+                    }*/
 
                     // relic brazier
 

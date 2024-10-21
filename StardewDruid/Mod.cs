@@ -259,6 +259,8 @@ namespace StardewDruid
 
             ModConfig.MenuConfig(this);
 
+            QuicksaveConfig.SaveConfig(this);
+
             SoundData.AddSounds();
 
             iconData = new IconData();
@@ -267,6 +269,12 @@ namespace StardewDruid
 
         private void SaveLoaded(object sender, SaveLoadedEventArgs e)
         {
+
+            LoadState();
+
+        }
+
+        public void LoadState() {
 
             switch (Config.modVersion)
             {
@@ -403,30 +411,6 @@ namespace StardewDruid
 
             }
 
-            /*if (Config.convert219)
-            {
-
-                save = VersionData.Reconfigure();
-
-                if(save.milestone != QuestHandle.milestones.none)
-                {
-                    
-                    questHandle.Promote(save.milestone);
-
-                }
-
-                Config.convert219 = false;
-
-                Config.setOnce = false;
-
-                Config.setMilestone = 0;
-
-                save.set = (int)save.milestone;
-
-                SaveConfig();
-
-            }
-            else*/
             if (Config.setMilestone != 0)
             {
 
@@ -528,6 +512,8 @@ namespace StardewDruid
             ShiftCharacters();
 
             ShiftLocations();
+
+            Helper.Data.WriteSaveData("saveData_" + version.ToString(), save);
 
         }
 
@@ -645,8 +631,6 @@ namespace StardewDruid
                     }
 
                 }
-
-                Helper.Data.WriteSaveData("saveData_" + version.ToString(), save);
 
             }
 
@@ -2206,9 +2190,9 @@ namespace StardewDruid
             if (herbalData.applied.ContainsKey(HerbalData.herbals.impes))
             {
 
-                critChance += (0.05f * herbalData.applied[HerbalData.herbals.impes].level);
+                critChance += (0.03f * herbalData.applied[HerbalData.herbals.impes].level);
 
-                critModifier += (0.25f * herbalData.applied[HerbalData.herbals.impes].level);
+                critModifier += (0.1f * herbalData.applied[HerbalData.herbals.impes].level);
 
             }
 

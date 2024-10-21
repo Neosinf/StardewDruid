@@ -79,8 +79,9 @@
     "DialogueData.419": " (transcript)",
     "DialogueData.423": "Autoconsume",
     "DialogueData.427": "Autoconsume off",
-    "DialogueData.431": "Prioritised",
+    "DialogueData.431": "Autoconsume priority",
     "DialogueData.340.1": "Autobrew off",
+    "DialogueData.350.1": "Autobrew & Autoconsume off",
 
     "DialogueData.435": "(MAX)",
     "DialogueData.439": "HP",
@@ -3140,7 +3141,7 @@
     "QuestData.1879": "Iridium Sprinkler",
     "QuestData.1888": "There's something nice about that old cave with the big statues, but lately it's felt a bit, uh, unhomely. ",
     "QuestData.1889": "It no longer seems like the kind of place an important envoy of the Fates should hang out in. ",
-    "QuestData.1890": "(Jester scrunches his face in thought) Buffin would be able to explain better than me.",
+    "QuestData.1890": "(Jester scrunches his face in thought) Buffin would be able to explain better than me. (Buffin has a new quest)",
     "QuestData.1895": "Farmer! Beware of... the spawn of the void! Creatures of the darkened plane, lurking somewhere nearby. ",
     "QuestData.1896": "Rally your allies, for you must challenge the shadowy foe for dominion of the cave and my honour. ",
     "QuestData.1897": "(Buffin grins) I hear they have a techno-punk aesthetic, and that will be cool to see square off against your, uh, country style. ",
@@ -3202,7 +3203,7 @@
     "QuestData.2165": "Fly onto the water and perform ten dives with the special button/right click.",
     "QuestData.2167": "dive attempts",
     "QuestData.2179": "You might find this very unsettling, as I did when I learned of its existence. ",
-    "QuestData.2180": "Are you aware, that there is a strange technique that can be learned by some landborne creatures to stay alive in water. It's called swimming.",
+    "QuestData.2180": "Are you aware, that there is a strange technique that can be learned by some landborne creatures to stay alive in water. It's called swimming. ",
     "QuestData.2181": "(New lesson received)",
 
     "QuestData.2219": "The Shadow Scholar",
@@ -3226,7 +3227,7 @@
     "QuestData.2251": "I doubt the truths I seek about Lord Deep lay inside, but regardless, I think it would be beneficial to the circle to be present for the discovery. ",
     "QuestData.2252": "Though I would recommend leaving our friends at home, as they might scare my contact. (New quest recieved)",
     "QuestData.2259": "Metalface is planning for an adventure, and I was excited about it, but when I asked him where we were going he said somewhere that doesn't allow pets. ",
-    "QuestData.2260": "I said that Fates aren't allowed to keep pets either, then he seemed to get annoyed. Maybe you can talk to him and clear up this whole misunderstanding.",
+    "QuestData.2260": "I said that Fates aren't allowed to keep pets either, then he seemed to get annoyed. Maybe you can talk to him and clear up this whole misunderstanding. (Shadowtin has a new quest)",
 
     "QuestData.2287": "Lesson 19: Dragon Treasure",
     "QuestData.2289": "The ancient ones hoarded their immeasurable treasures in vaults of the ethereal realm, where only they could enjoy them.",

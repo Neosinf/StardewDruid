@@ -318,7 +318,7 @@ namespace StardewDruid.Cast.Weald
                     if (target != Vector2.Zero)
                     {
 
-                        if(location is Town || location is Mountain || location is Beach)
+                        if(location is Town || location is Mountain || location is Beach || location is Farm)
                         {
 
                             List<Character.CharacterHandle.characters> creatureTypes = new()
