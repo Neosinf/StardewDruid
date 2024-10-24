@@ -124,14 +124,14 @@ namespace StardewDruid.Character
         public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
         {
 
-            base.drawAboveAlwaysFrontLayer(b);
-
             if (netDash.Value != 0 || netSceneActive.Value)
             {
 
                 base.draw(b, 1f);
 
             }
+
+            base.drawAboveAlwaysFrontLayer(b);
 
         }
 
@@ -224,9 +224,8 @@ namespace StardewDruid.Character
         public override bool checkAction(Farmer who, GameLocation l)
         {
 
-            if (!Mod.instance.rite.specialCasts.ContainsKey("corvid" + characterType.ToString()))
+            if (!Mod.instance.rite.specialCasts.ContainsKey("corvid" + characterType.ToString()) && who.CurrentItem != null)
             {
-
                 switch (who.CurrentItem.ItemId)
                 {
 

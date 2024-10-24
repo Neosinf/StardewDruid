@@ -65,6 +65,8 @@ namespace StardewDruid.Monster
             rogue,
             scavenger,
             shadowfox,
+            shadowbear,
+            shadowwolf,
 
         }
 
@@ -372,8 +374,6 @@ namespace StardewDruid.Monster
 
             }
 
-            System.Random randomise = new();
-
             StardewDruid.Monster.Boss theMonster;
 
             switch (spawnMob)
@@ -425,6 +425,47 @@ namespace StardewDruid.Monster
                 case bosses.phantom:
 
                     theMonster = new Phantom(spawnVector, combatModifier);
+
+                    break;
+
+
+                case bosses.shadowbear:
+
+                    switch (Mod.instance.randomIndex.Next(2))
+                    {
+                        default:
+
+                            theMonster = new ShadowBear(spawnVector, combatModifier);
+
+                            break;
+
+                        case 1:
+
+                            theMonster = new ShadowBear(spawnVector, combatModifier, "BlackBear");
+
+                            break;
+
+                    }
+
+                    break;
+
+                case bosses.shadowwolf:
+
+                    switch (Mod.instance.randomIndex.Next(2))
+                    {
+                        default:
+
+                            theMonster = new ShadowWolf(spawnVector, combatModifier);
+
+                            break;
+
+                        case 1:
+
+                            theMonster = new ShadowWolf(spawnVector, combatModifier, "BlackWolf");
+
+                            break;
+
+                    }
 
                     break;
 

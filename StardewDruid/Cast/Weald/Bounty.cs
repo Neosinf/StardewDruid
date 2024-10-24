@@ -15,6 +15,9 @@ using StardewValley.Locations;
 using StardewDruid.Location;
 using System.ComponentModel.Design;
 using StardewDruid.Character;
+using StardewValley.BellsAndWhistles;
+using StardewDruid.Journal;
+using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -30,6 +33,7 @@ namespace StardewDruid.Cast.Weald
             flyby,
             orchard,
             tunnel,
+            alchemistry
         }
 
         public GameLocation location;
@@ -237,6 +241,25 @@ namespace StardewDruid.Cast.Weald
                     creatureProspects[new Vector2(1, 1)] = bounties.tunnel;
 
                     Mod.instance.rite.specialCasts[location.Name].Add("TunnelBats");
+
+                }
+
+            }
+
+            if (location is Forest)
+            {
+
+                if (
+                    Mod.instance.Helper.ModRegistry.IsLoaded("Morghoula.AlchemistryCP") 
+                    && Game1.player.mailReceived.Contains("Morghoula.AlchemistryMFM_SevinaeIntroMail")
+                    && !RelicData.HasRelic(IconData.relics.runestones_alchemistry) 
+                    && !Mod.instance.eventRegister.ContainsKey("RelicAlchemistry")
+                )
+                {
+
+                    creatureProspects.Clear();
+
+                    creatureProspects[new Vector2(1, 1)] = bounties.alchemistry;
 
                 }
 
@@ -705,6 +728,22 @@ namespace StardewDruid.Cast.Weald
                             throwRelic.register();
 
                         }
+
+                    }
+
+                    break;
+
+                case bounties.alchemistry:
+
+
+                    if (!Mod.instance.eventRegister.ContainsKey("RelicAlchemistry"))
+                    {
+
+                        Event.Relics.RelicAlchemistry alch = new();
+
+                        alch.eventId = "RelicAlchemistry";
+
+                        alch.EventActivate();
 
                     }
 

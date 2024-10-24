@@ -8,12 +8,6 @@ using StardewValley;
 using StardewValley.GameData.Minecarts;
 using StardewValley.Inventories;
 using StardewValley.ItemTypeDefinitions;
-using StardewValley.Tools;
-using System;
-using System.Diagnostics.Metrics;
-using System.Reflection;
-using xTile.Dimensions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace StardewDruid.Cast
 {

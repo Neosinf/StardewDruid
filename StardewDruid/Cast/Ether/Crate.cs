@@ -111,6 +111,8 @@ namespace StardewDruid.Cast.Ether
 
             thief.baseJuice = 1;
 
+            thief.basePulp = 18;
+
             thief.SetMode(2);
 
             thief.tempermentActive = Monster.Boss.temperment.coward;

@@ -22,12 +22,15 @@ using StardewDruid.Character;
 using StardewDruid.Data;
 using xTile.Dimensions;
 using StardewDruid.Journal;
+using static StardewValley.Menus.InventoryMenu;
 
 namespace StardewDruid.Location
 {
 
     public class Gate : DruidLocation
     {
+
+        public bool gateOpen;
 
         public bool alightBrazier;
 
@@ -653,31 +656,8 @@ namespace StardewDruid.Location
 
         public override void updateWarps()
         {
-            //warps.Clear();
 
-            if(warpSets.Count > 0)
-            {
-
-                warps.Clear();
-
-                foreach(WarpTile warpSet in warpSets)
-                {
-
-                    warps.Add(new Warp(warpSet.enterX, warpSet.enterY, warpSet.location, warpSet.exitX, warpSet.exitY, flipFarmer: false));
-
-                }
-
-                return;
-
-            }
-
-            warpSets.Add(new WarpTile(26, 38, LocationData.druid_grove_name, 21, 5));
-
-            warpSets.Add(new WarpTile(27, 38, LocationData.druid_grove_name, 21, 5));
-
-            warpSets.Add(new WarpTile(28, 38, LocationData.druid_grove_name, 21, 5));
-
-            warpSets.Add(new WarpTile(29, 38, LocationData.druid_grove_name, 21, 5));
+            warps.Clear();
 
             warps.Add(new Warp(26, 38, LocationData.druid_grove_name, 21, 5, flipFarmer: false));
 
@@ -686,6 +666,40 @@ namespace StardewDruid.Location
             warps.Add(new Warp(28, 38, LocationData.druid_grove_name, 21, 5, flipFarmer: false));
 
             warps.Add(new Warp(29, 38, LocationData.druid_grove_name, 21, 5, flipFarmer: false));
+
+            if (gateOpen)
+            {
+
+                OpenGate();
+
+            }
+
+        }
+
+        public void OpenGate()
+        {
+
+            Layer buildings = map.GetLayer("Buildings");
+
+            buildings.Tiles[27, 5] = null;
+
+            buildings.Tiles[28, 5] = null;
+
+            buildings.Tiles[26, 6] = null;
+
+            buildings.Tiles[27, 6] = null;
+
+            buildings.Tiles[28, 6] = null;
+
+            buildings.Tiles[29, 6] = null;
+
+            warps.Add(new Warp(27, 5, LocationData.druid_moors_name, 55, 69, flipFarmer: false));
+
+            warps.Add(new Warp(28, 5, LocationData.druid_moors_name, 56, 69, flipFarmer: false));
+
+            gateOpen = true;
+
+            return;
 
         }
 

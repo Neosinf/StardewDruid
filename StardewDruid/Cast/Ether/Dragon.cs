@@ -101,7 +101,6 @@ namespace StardewDruid.Cast.Ether
         public NetBool netDiveActive = new NetBool(false);
         public NetBool netSwimActive = new NetBool(false);
         public List<float> diveRotates;
-        public bool terrainActive;
         public bool swimActive;
         public int swimCheckTimer;
         public bool diveActive;
@@ -140,7 +139,7 @@ namespace StardewDruid.Cast.Ether
 
             netAnchor.Set(Farmer.UniqueMultiplayerID);
 
-            SetSchemes((IconData.schemes)Mod.instance.Config.dragonScheme, (IconData.schemes)Mod.instance.Config.dragonBreath);
+            SetSchemes();
 
             dragonScale = 2f + ((float)Mod.instance.Config.dragonScale * 0.5f);
 
@@ -151,13 +150,6 @@ namespace StardewDruid.Cast.Ether
             netDirection.Set(moveDirection);
 
             FacingDirection = moveDirection;
-
-            //if (Mod.instance.CurrentProgress >= 31)
-            //{
-
-            terrainActive = true;
-
-            //}
 
             if (ModUtility.GroundCheck(currentLocation, new Vector2((int)(Position.X / 64), (int)(Position.Y / 64))) == "water")
             {
@@ -174,31 +166,20 @@ namespace StardewDruid.Cast.Ether
 
         }
 
-        public void SetSchemes(IconData.schemes scheme, IconData.schemes breath)
+        public void SetSchemes()
         {
 
-            if (!Mod.instance.iconData.gradientColours.ContainsKey(scheme))
-            {
+            dragonRender = new();
 
-                scheme = IconData.schemes.dragon_red;
-            }
+            dragonRender.LoadConfigScheme();
 
-            if (!Mod.instance.iconData.gradientColours.ContainsKey(breath))
-            {
+            netPrimary.Set(dragonRender.primary);
 
-                breath = IconData.schemes.stars;
+            netSecondary.Set(dragonRender.secondary);
 
-            }
+            netTertiary.Set(dragonRender.tertiary);
 
-            List<Color> colors = Mod.instance.iconData.gradientColours[scheme];
-
-            netPrimary.Set(colors[0]);
-
-            netSecondary.Set(colors[1]);
-
-            netTertiary.Set(colors[2]);
-
-            netFire.Set((int)breath);
+            netFire.Set((int)dragonRender.fire);
 
         }
 
@@ -211,7 +192,7 @@ namespace StardewDruid.Cast.Ether
 
             dragonRender.tertiary = netTertiary.Value;
 
-            dragonRender.fire = (IconData.schemes)netFire.Value;
+            dragonRender.fire = (DragonRender.breathSchemes)netFire.Value;
 
         }
 
@@ -231,9 +212,14 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            dragonRender = new();
+            if(dragonRender == null)
+            {
 
-            DragonSchemes();
+                dragonRender = new();
+
+                DragonSchemes();
+
+            }
 
             loadedOut = true;
 
@@ -1339,8 +1325,6 @@ namespace StardewDruid.Cast.Ether
 
             Vector2 flightOffset = flightVectors[key];
 
-            //Vector2 tile = new Vector2((int)(Position.X / 64), (int)(Position.Y / 64));
-
             Vector2 tile = ModUtility.PositionToTile(Position);
 
             List<int> flightRanges = new()
@@ -1363,12 +1347,7 @@ namespace StardewDruid.Cast.Ether
 
                 Vector2 neighbour = tile + (flightOffset * checkRange);
 
-                List<string> safeTerrain = new() { "ground", };
-
-                if (terrainActive)
-                {
-                    safeTerrain.Add("water");
-                }
+                List<string> safeTerrain = new() { "ground", "water", };
 
                 string groundCheck = ModUtility.GroundCheck(currentLocation, neighbour);
 

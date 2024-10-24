@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Character;
@@ -10,6 +11,7 @@ using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.ItemTypeDefinitions;
 using StardewValley.Locations;
@@ -66,6 +68,10 @@ namespace StardewDruid
 
         public List<Event.EventDisplay> displayRegister = new();
 
+        public int displayOffset = 0;
+
+        public int barOffset = 0;
+
         public Dictionary<string, string> activeEvent = new();
 
         public Dictionary<string, string> drawEvent = new();
@@ -115,6 +121,8 @@ namespace StardewDruid
         public Dictionary<Vector2,string> features = new();
 
         public Random randomIndex = new();
+
+        public List<SButton> suppress = new();
 
         public int version = 220;
 
@@ -509,9 +517,11 @@ namespace StardewDruid
 
             SerialiseGrove();
             
-            ShiftCharacters();
+            SaveCharacters();
 
-            ShiftLocations();
+            RemoveCharacters();
+
+            RemoveLocations();
 
             Helper.Data.WriteSaveData("saveData_" + version.ToString(), save);
 
@@ -531,121 +541,126 @@ namespace StardewDruid
 
         }
 
-        public void ShiftCharacters()
+        public void SaveCharacters()
         {
 
-            if (Context.IsMainPlayer)
+            if (!Context.IsMainPlayer)
             {
+                return;
+            }
 
-                foreach (KeyValuePair<CharacterHandle.characters, StardewDruid.Character.Character> character in characters)
-                {
+            foreach (KeyValuePair<CharacterHandle.characters, StardewDruid.Character.Character> character in characters)
+            {
                     
-                    if (character.Value == null)
-                    {
+                if (character.Value == null)
+                {
 
-                        continue;
-
-                    }
-
-                    switch (character.Value.modeActive)
-                    {
-
-                        case Character.Character.mode.scene:
-                        case Character.Character.mode.random:
-                        case Character.Character.mode.limbo:
-
-                            save.characters[character.Key] = Character.Character.mode.home;
-
-                            break;
-
-                        default:
-
-                            save.characters[character.Key] = character.Value.modeActive;
-
-                            break;
-
-                    }
+                    continue;
 
                 }
 
-                foreach (KeyValuePair<CharacterHandle.characters, StardewValley.Objects.Chest> chest in chests)
+                switch (character.Value.modeActive)
                 {
-                    
-                    if (chest.Value == null)
-                    {
 
-                        continue;
+                    case Character.Character.mode.scene:
+                    case Character.Character.mode.random:
+                    case Character.Character.mode.limbo:
 
-                    }
+                        save.characters[character.Key] = Character.Character.mode.home;
 
-                    if (save.chests.ContainsKey(chest.Key))
-                    {
+                        break;
 
-                        save.chests[chest.Key].Clear();
+                    default:
 
-                    }
-                    else
-                    {
+                        save.characters[character.Key] = character.Value.modeActive;
 
-                        save.chests[chest.Key] = new();
-
-                    }
-
-                    List<string> removal = new();
-
-                    foreach (Item item in chest.Value.Items)
-                    {
-                        
-                        if (item == null)
-                        {
-
-                            continue;
-
-                        }
-
-                        if(item is Tool)
-                        {
-
-                            if (!Game1.player.addItemToInventoryBool(item))
-                            {
-
-                                Game1.player.dropItem(item);
-
-                            }
-
-                            removal.Add(item.ItemId);
-
-                            continue;
-
-                        }
-
-                        save.chests[chest.Key].Add(new() { id = item.QualifiedItemId, quality = item.quality.Value, stack = item.stack.Value, });
-
-                    }
-
-                    foreach(string removeId in removal)
-                    {
-
-                        chest.Value.Items.ReduceId(removeId,999);
-
-                    }
+                        break;
 
                 }
 
             }
+
+            foreach (KeyValuePair<CharacterHandle.characters, StardewValley.Objects.Chest> chest in chests)
+            {
+                    
+                if (chest.Value == null)
+                {
+
+                    continue;
+
+                }
+
+                if (save.chests.ContainsKey(chest.Key))
+                {
+
+                    save.chests[chest.Key].Clear();
+
+                }
+                else
+                {
+
+                    save.chests[chest.Key] = new();
+
+                }
+
+                List<string> removal = new();
+
+                foreach (Item item in chest.Value.Items)
+                {
+                        
+                    if (item == null)
+                    {
+
+                        continue;
+
+                    }
+
+                    if(item is Tool)
+                    {
+
+                        if (!Game1.player.addItemToInventoryBool(item))
+                        {
+
+                            Game1.player.dropItem(item);
+
+                        }
+
+                        removal.Add(item.ItemId);
+
+                        continue;
+
+                    }
+
+                    save.chests[chest.Key].Add(new() { id = item.QualifiedItemId, quality = item.quality.Value, stack = item.stack.Value, });
+
+                }
+
+                foreach(string removeId in removal)
+                {
+
+                    chest.Value.Items.ReduceId(removeId,999);
+
+                }
+
+            }
+
+        }
+
+        public void RemoveCharacters()
+        {
 
             foreach (GameLocation location in (IEnumerable<GameLocation>)Game1.locations)
             {
 
                 if (location.characters.Count > 0)
                 {
-                    
+
                     for (int index = location.characters.Count - 1; index >= 0; index--)
                     {
 
                         NPC npc = location.characters.ElementAt(index);
 
-                        if(npc == null)
+                        if (npc == null)
                         {
 
                             continue;
@@ -667,7 +682,7 @@ namespace StardewDruid
 
         }
 
-        public void ShiftLocations()
+        public void RemoveLocations()
         {
 
             foreach (KeyValuePair<string, GameLocation> location in locations)
@@ -699,6 +714,41 @@ namespace StardewDruid
                 Game1.locations.Remove(location);
 
                 Game1.removeLocationFromLocationLookup(location);
+
+            }
+
+        }
+
+        public void ReinstateLocations()
+        {
+
+            foreach (KeyValuePair<string, GameLocation> location in Mod.instance.locations)
+            {
+
+                Game1.locations.Add(location.Value);
+
+                location.Value.updateWarps();
+
+            }
+
+        }
+
+        public void ReinstateCharacters()
+        {
+
+            foreach (KeyValuePair<CharacterHandle.characters, StardewDruid.Character.Character> character in Mod.instance.characters)
+            {
+
+                if (character.Value.modeActive == Character.Character.mode.limbo || character.Value.currentLocation == null)
+                {
+
+                    continue;
+
+                }
+
+                character.Value.currentLocation.characters.Add(character.Value);
+
+                character.Value.SwitchToMode(Mod.instance.save.characters[character.Key], Game1.player);
 
             }
 
@@ -845,14 +895,7 @@ namespace StardewDruid
         private void SaveUpdated(object sender, SavedEventArgs e)
         {
 
-            foreach (KeyValuePair<string, GameLocation> location in locations)
-            {
-
-                Game1.locations.Add(location.Value);
-
-                location.Value.updateWarps();
-
-            }
+            ReinstateLocations();
 
             if (!Context.IsMainPlayer)
             {
@@ -867,14 +910,7 @@ namespace StardewDruid
 
             DeserialiseGrove();
 
-            foreach (KeyValuePair<CharacterHandle.characters, StardewDruid.Character.Character> character in characters)
-            {
-
-                character.Value.NewDay();
-
-                character.Value.SwitchToMode(save.characters[character.Key], Game1.player);
-
-            }
+            ReinstateCharacters();
 
             rite = new();
 
@@ -1582,7 +1618,9 @@ namespace StardewDruid
 
             }
 
-            if (Config.riteButtons.GetState() == SButtonState.Pressed)
+            SButtonState riteButtonState = Config.riteButtons.GetState();
+
+            if (riteButtonState == SButtonState.Pressed)
             {
 
                 return EventHandle.actionButtons.rite;
@@ -1614,6 +1652,82 @@ namespace StardewDruid
                 }
 
                 return true;
+
+            }
+
+            return false;
+
+        }
+
+        public void RiteButtonSuppress()
+        {
+
+            if (Game1.options.gamepadControls)
+            {
+
+                foreach (Keybind keybind in Mod.instance.Config.riteButtons.Keybinds)
+                {
+
+                    foreach (SButton bind in keybind.Buttons)
+                    {
+
+                        Helper.Input.Suppress(bind);
+
+                        suppress.Add(bind);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        public bool RiteButtonHeld()
+        {
+
+            SButtonState riteButtonState = Config.riteButtons.GetState();
+
+            if (riteButtonState == SButtonState.Held)
+            {
+
+                return true;
+
+            }
+
+            if (Game1.options.gamepadControls) 
+            { 
+
+                foreach (Keybind keybind in Config.riteButtons.Keybinds)
+                {
+
+                    foreach (SButton bind in keybind.Buttons)
+                    {
+
+                        if (suppress.Contains(bind))
+                        {
+
+                            if (Helper.Input.IsSuppressed(bind))
+                            {
+
+                                continue;
+
+                            }
+
+                            suppress.Remove(bind);
+
+                        }
+                                
+                    }
+
+                }
+
+                if (suppress.Count > 0)
+                {
+
+                    return true;
+
+                }
 
             }
 
@@ -1693,20 +1807,6 @@ namespace StardewDruid
 
             }
 
-            if (displayRegister.Count > 0)
-            {
-
-                for (int d = displayRegister.Count - 1; d >= 0; d--)
-                {
-
-                    EventDisplay display = displayRegister[d];
-
-                    display.timeLeft = display.time * 1000;
-
-                }
-
-            }
-
             if (business)
             {
 
@@ -1740,7 +1840,7 @@ namespace StardewDruid
         public void EveryDecimal()
         {
 
-            if (displayRegister.Count > 0)
+            /*if (displayRegister.Count > 0)
             {
 
                 int bh = 1;
@@ -1791,6 +1891,25 @@ namespace StardewDruid
                                 break;
 
                         }
+
+                    }
+
+                }
+
+            }*/
+
+            if (displayRegister.Count > 0)
+            {
+
+                for (int d = displayRegister.Count - 1; d >= 0; d--)
+                {
+
+                    EventDisplay display = displayRegister[d];
+
+                    if (!display.update())
+                    {
+
+                        displayRegister.RemoveAt(d);
 
                     }
 
@@ -1905,36 +2024,58 @@ namespace StardewDruid
 
             }
 
-            if(e.Step != StardewValley.Mods.RenderSteps.World_Sorted)
-            {
-                return;
-
-            }
-
-            if (CasterGone())
+            switch (e.Step)
             {
 
-                return;
+                case StardewValley.Mods.RenderSteps.HUD:
+
+                    displayOffset = 112;
+
+                    barOffset = 300;
+
+                    for (int d = displayRegister.Count - 1; d >= 0; d--)
+                    {
+
+                        EventDisplay display = displayRegister.ElementAt(d);
+
+                        display.draw(e.SpriteBatch);
+
+                    }
+
+                    break;
+
+                case StardewValley.Mods.RenderSteps.World_Sorted:
+
+
+                    if (CasterGone())
+                    {
+
+                        return;
+
+                    }
+
+                    for (int er = eventRegister.Count - 1; er >= 0; er--)
+                    {
+
+                        KeyValuePair<string, Event.EventHandle> eventHandle = eventRegister.ElementAt(er);
+
+                        eventHandle.Value.EventDraw(e.SpriteBatch);
+
+                    }
+
+                    if (CasterBusy())
+                    {
+
+                        return;
+
+                    }
+
+                    rite.draw(e.SpriteBatch);
+
+                    break;
+
 
             }
-
-            for (int er = eventRegister.Count - 1; er >= 0; er--)
-            {
-                
-                KeyValuePair<string, Event.EventHandle> eventHandle = eventRegister.ElementAt(er);
-
-                eventHandle.Value.EventDraw(e.SpriteBatch);
-
-            }
-
-            if (CasterBusy())
-            {
-
-                return;
-
-            }
-
-            rite.draw(e.SpriteBatch);
 
         }
 
@@ -1962,11 +2103,11 @@ namespace StardewDruid
         public EventDisplay CastDisplay(string text, int index = 0)
         {
 
-            EventDisplay display = new(index.ToString(), text, 5, EventDisplay.displayTypes.plain);
+            EventDisplay display = new(index.ToString(), text, 7, EventDisplay.displayTypes.plain);
 
             displayRegister.Add(display);
 
-            Game1.addHUDMessage(display);
+           // Game1.addHUDMessage(display);
 
             return display;
 
@@ -1975,11 +2116,11 @@ namespace StardewDruid
         public EventDisplay CastDisplay(string title, string text)
         {
 
-            EventDisplay display = new(title, text, 5, EventDisplay.displayTypes.title);
+            EventDisplay display = new(title, text, 7, EventDisplay.displayTypes.title);
 
             displayRegister.Add(display);
 
-            Game1.addHUDMessage(display);
+            //Game1.addHUDMessage(display);
 
             return display;
 

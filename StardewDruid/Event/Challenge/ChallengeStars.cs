@@ -8,11 +8,6 @@ using StardewValley;
 using StardewValley.Locations;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using static StardewDruid.Cast.SpellHandle;
-using static StardewDruid.Data.IconData;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace StardewDruid.Event.Challenge
 {
@@ -176,7 +171,7 @@ namespace StardewDruid.Event.Challenge
 
                     voices[0] = bosses[0];
 
-                    Mod.instance.spellRegister.Add(new(bosses[0].Position, 288, IconData.impacts.splatter, new()) { scheme = schemes.pumpkin, });
+                    Mod.instance.spellRegister.Add(new(bosses[0].Position, 288, IconData.impacts.splatter, new()) { scheme = IconData.schemes.pumpkin, });
 
                     location.playSound(SpellHandle.sounds.slime.ToString());
 
@@ -211,13 +206,13 @@ namespace StardewDruid.Event.Challenge
 
                         SpellHandle meteor = new(Game1.player, bosses[0].Position, 8 * 64, 9999);
 
-                        meteor.type = spells.orbital;
+                        meteor.type = SpellHandle.spells.orbital;
 
-                        meteor.missile = missiles.meteor;
+                        meteor.missile = IconData.missiles.meteor;
 
                         meteor.projectile = 5;
 
-                        meteor.sound = sounds.explosion;
+                        meteor.sound = SpellHandle.sounds.explosion;
 
                         meteor.explosion = 8;
 
@@ -240,7 +235,7 @@ namespace StardewDruid.Event.Challenge
                     if (bosses.Count > 0)
                     {
 
-                        Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, impacts.splatter, 5f, new() { scheme = schemes.pumpkin, });
+                        Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, IconData.impacts.splatter, 5f, new() { scheme = IconData.schemes.pumpkin, });
 
                         bosses[0].currentLocation.characters.Remove(bosses[0]);
 

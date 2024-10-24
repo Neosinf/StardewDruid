@@ -13,6 +13,7 @@ using StardewDruid.Event;
 using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewModdingAPI;
+using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Buffs;
 using StardewValley.Locations;
@@ -23,6 +24,7 @@ using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using xTile;
 using xTile.Dimensions;
 using xTile.Layers;
@@ -330,6 +332,8 @@ namespace StardewDruid.Cast
 
                 case EventHandle.actionButtons.rite:
 
+                    Mod.instance.RiteButtonSuppress();
+
                     start();
 
                     break;
@@ -532,7 +536,7 @@ namespace StardewDruid.Cast
             if (castTimer <= 0)
             {
 
-                if (!(castLevel == 0 || Mod.instance.Config.riteButtons.GetState() == SButtonState.Held))
+                if (!(castLevel == 0 || Mod.instance.RiteButtonHeld()))
                 {
 
                     shutdown();
@@ -3339,6 +3343,15 @@ namespace StardewDruid.Cast
                 {
 
                     Mod.instance.characters[corvid].ResetActives();
+
+                    if (!Mod.instance.trackers.ContainsKey(corvid))
+                    {
+
+                        Mod.instance.characters[corvid].SwitchToMode(Character.Character.mode.track, Game1.player);
+
+                        continue;
+
+                    }
 
                     if (returnToPlayer && Mod.instance.trackers[corvid].linger != 0)
                     {

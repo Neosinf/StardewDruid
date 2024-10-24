@@ -93,6 +93,7 @@ namespace StardewDruid.Journal
                 IconData.relics.runestones_farm,
                 IconData.relics.runestones_moon,
                 IconData.relics.runestones_cat,
+                IconData.relics.runestones_alchemistry,
             },
             [relicsets.avalant] = new() {
                 IconData.relics.avalant_disc,
@@ -218,6 +219,17 @@ namespace StardewDruid.Journal
             {
                 switch (set)
                 {
+
+                    case relicsets.runestones:
+
+                        if (!HasRelic(lines[set][0]) && !HasRelic(lines[set][4]))
+                        {
+
+                            continue;
+
+                        }
+
+                        break;
 
                     case relicsets.avalant:
                     case relicsets.restore:
@@ -396,6 +408,7 @@ namespace StardewDruid.Journal
                 IconData.relics.wayfinder_glove,
                 IconData.relics.wayfinder_water,
                 IconData.relics.wayfinder_ceremonial,
+                IconData.relics.runestones_alchemistry,
                 IconData.relics.wayfinder_eye,
 
             };
@@ -595,7 +608,7 @@ namespace StardewDruid.Journal
                         {
                             Point frontDoorSpot = homeOfFarmer.getFrontDoorSpot();
 
-                            SpellHandle gravesWarp = new(Game1.getFarm(), new Vector2(frontDoorSpot.X, frontDoorSpot.Y), Game1.player.Position) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, sound = SpellHandle.sounds.wand, projectile = 0 };
+                            SpellHandle gravesWarp = new(Game1.getFarm(), new Vector2(frontDoorSpot.X, frontDoorSpot.Y), Game1.player.Position) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, sound = SpellHandle.sounds.wand, projectile = 2 };
 
                             Mod.instance.spellRegister.Add(gravesWarp);
 
@@ -692,16 +705,12 @@ namespace StardewDruid.Journal
                     if (Game1.player.currentLocation is Forest)
                     {
 
-                        //if (Vector2.Distance(Game1.player.Position, new Vector2(79, 78) * 64) <= 1560)
-                        //{
+                        SpellHandle warpGlove = new(Mod.instance.locations[LocationData.druid_clearing_name], new Vector2(28, 8), Game1.player.Position) { type = SpellHandle.spells.warp, projectile = 2, };
 
-                            SpellHandle warpGlove = new(Mod.instance.locations[LocationData.druid_clearing_name], new Vector2(28, 8), Game1.player.Position) { type = SpellHandle.spells.warp, projectile = 2, };
+                        Mod.instance.spellRegister.Add(warpGlove);
 
-                            Mod.instance.spellRegister.Add(warpGlove);
+                        return 1;
 
-                            return 1;
-
-                        //}
                     }
 
                     break;
@@ -835,13 +844,53 @@ namespace StardewDruid.Journal
                         if (!clearing.accessOpen)
                         {
 
-                            clearing.OpenAccessDoor();
+                            clearing.OpenAccess();
 
                             clearing.playSound(SpellHandle.sounds.Ship.ToString());
 
                         }
 
                         return 1;
+
+                    }
+
+                    break;
+
+                case IconData.relics.runestones_alchemistry:
+
+                    if (Game1.player.currentLocation is Forest || Game1.player.currentLocation is Farm || Game1.player.currentLocation is WizardHouse)
+                    {
+
+                        GameLocation MagesRest = Game1.getLocationFromName("Custom_MagesRest");
+
+                        if (MagesRest != null)
+                        {
+
+                            SpellHandle warpGlove = new(MagesRest, new Vector2(48, 29), Game1.player.Position) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, projectile = 3, };
+
+                            Mod.instance.spellRegister.Add(warpGlove);
+
+                            return 1;
+
+                        }
+
+                    }
+                    else if (Game1.player.currentLocation.Name == "Custom_MagesRest")
+                    {
+
+                        FarmHouse homeOfFarmer = Utility.getHomeOfFarmer(Game1.player);
+
+                        if (homeOfFarmer != null)
+                        {
+                            Point frontDoorSpot = homeOfFarmer.getFrontDoorSpot();
+
+                            SpellHandle gravesWarp = new(Game1.getFarm(), new Vector2(frontDoorSpot.X, frontDoorSpot.Y), Game1.player.Position) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, sound = SpellHandle.sounds.wand, projectile = 2 };
+
+                            Mod.instance.spellRegister.Add(gravesWarp);
+
+                            return 1;
+
+                        }
 
                     }
 
@@ -1269,20 +1318,21 @@ namespace StardewDruid.Journal
 
             List<string> boneItems = new()
             {
+                "(O)579", //"Prehistoric Scapula
                 "(O)580", //"Prehistoric Tibia/100/-300/Arch/Prehistoric Tibia/A thick and sturdy leg bone./Forest .01//",
                 "(O)581", //"Prehistoric Skull/100/-300/Arch/Prehistoric Skull/This is definitely a mammalian skull./Mountain .01//",
-                "(O)582", //"Skeletal Hand/100/-300/Arch/Skeletal Hand/It's a wonder all these ancient little pieces lasted so long./Beach .01//",
+                //"(O)582", //"Skeletal Hand/100/-300/Arch/Skeletal Hand/It's a wonder all these ancient little pieces lasted so long./Beach .01//",
                 "(O)583", //"Prehistoric Rib/100/-300/Arch/Prehistoric Rib/Little gouge marks on the side suggest that this rib was someone's dinner./Farm .01//",
                 "(O)584", //"Prehistoric Vertebra/100/-300/Arch/Prehistoric Vertebra/A segment of some prehistoric creature's spine./BusStop .01//",
-                "(O)585", //"Skeletal Tail/100/-300/Arch/Skeletal Tail/It's pretty short for a tail./UndergroundMine .01//",
+                //"(O)585", //"Skeletal Tail/100/-300/Arch/Skeletal Tail/It's pretty short for a tail./UndergroundMine .01//",
                 "(O)820", //"Fossilized Skull/100/-300/Basic/Fossilized Skull/It's a perfect specimen!/Island_North .01//",
                 "(O)821", //"Fossilized Spine/100/-300/Basic/Fossilized Spine/A column of interlocking vertebrae./Island_North .01//",
                 "(O)822", //"Fossilized Tail/100/-300/Basic/Fossilized Tail/This tail has a club-like feature at the tip./Island_North .01//",
                 "(O)823", //"Fossilized Leg/100/-300/Basic/Fossilized Leg/A thick and sturdy leg bone./Island_North .01//",
                 "(O)824", //"Fossilized Ribs/100/-300/Basic/Fossilized Ribs/Long ago, these ribs protected the body of a large animal./Island_North .01//",
-                "(O)825", //"Snake Skull/100/-300/Basic/Snake Skull/A preserved skull that once belonged to a snake./Island_North .01//",
-                "(O)826", //"Snake Vertebrae/100/-300/Basic/Snake Vertebrae/It appears this serpent may have been extremely flexible./Island_North .01//",
-                "(O)119", //119: "Bone Flute/100/-300/Arch/Bone Flute/It's a prehistoric wind instrument carved from an animal's bone. It produces an eerie tone./Mountain .01 Forest .01 UndergroundMine .02 Town .005/Recipe 2 Flute_Block 150/",
+                //"(O)825", //"Snake Skull/100/-300/Basic/Snake Skull/A preserved skull that once belonged to a snake./Island_North .01//",
+                //"(O)826", //"Snake Vertebrae/100/-300/Basic/Snake Vertebrae/It appears this serpent may have been extremely flexible./Island_North .01//",
+                //"(O)119", //119: "Bone Flute/100/-300/Arch/Bone Flute/It's a prehistoric wind instrument carved from an animal's bone. It produces an eerie tone./Mountain .01 Forest .01 UndergroundMine .02 Town .005/Recipe 2 Flute_Block 150/",
             };
 
             for (int i = 0; i < Game1.player.Items.Count; i++)
@@ -1367,6 +1417,13 @@ namespace StardewDruid.Journal
             {
 
                 if (relic == IconData.relics.book_knight)
+                {
+
+                    continue;
+
+                }
+
+                if (relic == IconData.relics.runestones_alchemistry)
                 {
 
                     continue;
@@ -1685,6 +1742,20 @@ namespace StardewDruid.Journal
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.156"),
             };
 
+            relics[IconData.relics.runestones_alchemistry.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.351.1"),
+                relic = IconData.relics.runestones_alchemistry,
+                line = RelicData.relicsets.other,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.351.2"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.351.3"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.351.4"),
+            };
+
             // ====================================================================
             // Tactical Relics
 
@@ -1821,6 +1892,7 @@ namespace StardewDruid.Journal
                 relic = IconData.relics.runestones_spring,
                 line = RelicData.relicsets.runestones,
                 description = Mod.instance.Helper.Translation.Get("RelicData.260"),
+                hint = Mod.instance.Helper.Translation.Get("RelicData.351.5"),
                 details = new(){
                     Mod.instance.Helper.Translation.Get("RelicData.262"),
                     Mod.instance.Helper.Translation.Get("RelicData.263"),

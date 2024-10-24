@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
+using StardewDruid.Cast.Ether;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Event;
@@ -85,7 +86,9 @@ namespace StardewDruid.Monster
 
             dragonRender = new();
 
-            dragonRender.LoadColourScheme(IconData.schemes.dragon_green,IconData.schemes.stars);
+            dragonRender.LoadColourScheme(DragonRender.dragonSchemes.dragon_green);
+
+            dragonRender.LoadBreathScheme(DragonRender.breathSchemes.breath_stars);
 
             loadedOut = true;
 

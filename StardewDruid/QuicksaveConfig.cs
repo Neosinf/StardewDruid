@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static StardewValley.Minigames.BoatJourney;
 
 namespace StardewDruid
 {
@@ -31,46 +32,41 @@ namespace StardewDruid
             api.SavedEvent += QuickSavedEvent;
 
             api.LoadedEvent += QuickLoadedEvent;
+
         }
 
         private static void QuickSavingEvent(object sender, ISavingEventArgs e)
         {
 
-            Mod.instance.AbortAllEvents();
-
             Mod.instance.SerialiseGrove();
 
-            Mod.instance.ShiftCharacters();
-
-            Mod.instance.ShiftLocations();
+            Mod.instance.SaveCharacters();
 
             Mod.instance.Helper.Data.WriteSaveData("saveData_" + Mod.instance.version.ToString(), Mod.instance.save);
+
+            Mod.instance.RemoveCharacters();
+
+            Mod.instance.RemoveLocations();
 
         }
 
         private static void QuickSavedEvent(object sender, ISavedEventArgs e)
         {
-            
-            foreach (KeyValuePair<string, GameLocation> location in Mod.instance.locations)
-            {
 
-                Game1.locations.Add(location.Value);
+            Mod.instance.ReinstateCharacters();
 
-                location.Value.updateWarps();
-
-            }
-
-            foreach (KeyValuePair<CharacterHandle.characters, StardewDruid.Character.Character> character in Mod.instance.characters)
-            {
-
-                character.Value.SwitchToMode(Mod.instance.save.characters[character.Key], Game1.player);
-
-            }
+            Mod.instance.ReinstateLocations();
 
         }
 
         private static void QuickLoadedEvent(object sender, ILoadedEventArgs e)
         {
+
+            Mod.instance.RemoveEvents();
+
+            Mod.instance.RemoveCharacters();
+
+            Mod.instance.RemoveLocations();
 
             Mod.instance.LoadState();
 

@@ -13,8 +13,6 @@ using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static StardewDruid.Data.DialogueData;
-using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Journal
 {
@@ -69,6 +67,13 @@ namespace StardewDruid.Journal
 
         }
 
+        public void FixSchemes()
+        {
+
+
+
+        }
+
         public override void populateContent()
         {
 
@@ -102,16 +107,18 @@ namespace StardewDruid.Journal
 
             int colourArrayY = yPositionOnScreen + 372 + 40;
 
-            int colourCount = Mod.instance.iconData.DragonOptions.Count;
+            int colourCount = Enum.GetValues<DragonRender.dragonSchemes>().Count();
 
             for (int s = 0; s < colourCount; s++)
             {
 
-                KeyValuePair<string, IconData.schemes> scheme = Mod.instance.iconData.DragonSchemery.ElementAt(s);
+                //KeyValuePair<string, IconData.schemes> scheme = Mod.instance.iconData.DragonSchemery.ElementAt(s);
 
                 ContentComponent chooseDragon = new(ContentComponent.contentTypes.custom, "dragon");
 
-                chooseDragon.text[0] = scheme.Key;
+                chooseDragon.text[0] = DragonRender.SchemeDescriptions(s);
+
+                chooseDragon.serial = s;
 
                 chooseDragon.bounds = new Rectangle(colourArrayX + (s * 96), colourArrayY, 64, 64);
 
@@ -123,16 +130,18 @@ namespace StardewDruid.Journal
 
             colourArrayY = yPositionOnScreen + 480 + 40;
 
-            colourCount = Mod.instance.iconData.BreathOptions.Count;
+            colourCount = Enum.GetValues<DragonRender.breathSchemes>().Count();
 
             for (int s = 0; s < colourCount; s++)
             {
 
-                KeyValuePair<string, IconData.schemes> scheme = Mod.instance.iconData.BreathSchemery.ElementAt(s);
+                //KeyValuePair<string, IconData.schemes> scheme = Mod.instance.iconData.BreathSchemery.ElementAt(s);
 
                 ContentComponent chooseBreath = new(ContentComponent.contentTypes.custom, "breath");
 
-                chooseBreath.text[0] = scheme.Key;
+                chooseBreath.text[0] = DragonRender.BreathDescriptions(s);
+
+                chooseBreath.serial = s;
 
                 chooseBreath.bounds = new Rectangle(colourArrayX + (s * 96), colourArrayY, 64, 64);
 
@@ -151,7 +160,9 @@ namespace StardewDruid.Journal
 
                 ContentComponent chooseSize = new(ContentComponent.contentTypes.custom, "size");
 
-                chooseSize.text[0] = s.ToString();
+                chooseSize.text[0] = DragonRender.SizeDescriptions(s);
+
+                chooseSize.serial = s;
 
                 chooseSize.bounds = new Rectangle(sizeArrayX, sizeArrayY + (s * 96), 64, 64);
 
@@ -161,9 +172,9 @@ namespace StardewDruid.Journal
 
             // ===========================================
 
-            dragonPrimary = new(DialogueData.Strings(stringkeys.primaryColour), xPositionOnScreen + (width / 2) + 32, yPositionOnScreen + 96);
+            dragonPrimary = new(DialogueData.Strings(DialogueData.stringkeys.primaryColour), xPositionOnScreen + (width / 2) + 32, yPositionOnScreen + 96);
 
-            dragonPrimary.setColor(Mod.instance.iconData.gradientColours[IconData.schemes.dragon_custom][0]);
+            dragonPrimary.setColor(dragonRender.primary);
 
             ContentComponent choosePrimary = new(ContentComponent.contentTypes.custom, "primary");
 
@@ -173,9 +184,9 @@ namespace StardewDruid.Journal
 
             // ===========================================
 
-            dragonSecondary = new(DialogueData.Strings(stringkeys.secondaryColour), xPositionOnScreen + (width / 2) + 32, yPositionOnScreen + 200);
+            dragonSecondary = new(DialogueData.Strings(DialogueData.stringkeys.secondaryColour), xPositionOnScreen + (width / 2) + 32, yPositionOnScreen + 200);
 
-            dragonSecondary.setColor(Mod.instance.iconData.gradientColours[IconData.schemes.dragon_custom][1]);
+            dragonSecondary.setColor(dragonRender.secondary);
 
             ContentComponent chooseSecondary = new(ContentComponent.contentTypes.custom, "secondary");
 
@@ -185,9 +196,9 @@ namespace StardewDruid.Journal
 
             // ===========================================
 
-            dragonTertiary = new(DialogueData.Strings(stringkeys.tertiaryColour), xPositionOnScreen + (width / 2) + 32, yPositionOnScreen + 304);
+            dragonTertiary = new(DialogueData.Strings(DialogueData.stringkeys.tertiaryColour), xPositionOnScreen + (width / 2) + 32, yPositionOnScreen + 304);
 
-            dragonTertiary.setColor(Mod.instance.iconData.gradientColours[IconData.schemes.dragon_custom][2]);
+            dragonTertiary.setColor(dragonRender.tertiary);
 
             ContentComponent chooseTertiary = new(ContentComponent.contentTypes.custom, "tertiary");
 
@@ -211,7 +222,7 @@ namespace StardewDruid.Journal
 
                 interfaceComponents[103].fade = 1f;
 
-                interfaceComponents[103].text = DialogueData.Strings(stringkeys.dragonomicon);
+                interfaceComponents[103].text = DialogueData.Strings(DialogueData.stringkeys.dragonomicon);
 
             }
 
@@ -231,16 +242,14 @@ namespace StardewDruid.Journal
 
                 case journalButtons.dragonReset:
 
-                    IconData.schemes newScheme = (IconData.schemes)dragonScheme;
-
-                    if (newScheme != schemes.dragon_custom)
+                    if (dragonScheme != 0)
                     {
 
-                        dragonPrimary.setColor(Mod.instance.iconData.gradientColours[newScheme][0]);
+                        dragonPrimary.setColor(dragonRender.gradientColours[(DragonRender.dragonSchemes)dragonScheme][0]);
 
-                        dragonSecondary.setColor(Mod.instance.iconData.gradientColours[newScheme][1]);
+                        dragonSecondary.setColor(dragonRender.gradientColours[(DragonRender.dragonSchemes)dragonScheme][1]);
 
-                        dragonTertiary.setColor(Mod.instance.iconData.gradientColours[newScheme][2]);
+                        dragonTertiary.setColor(dragonRender.gradientColours[(DragonRender.dragonSchemes)dragonScheme][2]);
 
                         DragonUpdateColour();
 
@@ -280,11 +289,11 @@ namespace StardewDruid.Journal
 
                 case "dragon":
 
-                    dragonScheme = (int)Mod.instance.iconData.DragonSchemery[contentComponents[focus].text[0]];
+                    dragonScheme = contentComponents[focus].serial;
 
                     Mod.instance.Config.dragonScheme = dragonScheme;
 
-                    dragonRender.LoadConfigScheme();
+                    dragonRender.LoadColourScheme((DragonRender.dragonSchemes)Mod.instance.Config.dragonScheme);
 
                     Game1.playSound("shwip");
 
@@ -292,11 +301,11 @@ namespace StardewDruid.Journal
 
                 case "breath":
 
-                    breathScheme = (int)Mod.instance.iconData.BreathSchemery[contentComponents[focus].text[0]];
+                    breathScheme = contentComponents[focus].serial;
 
                     Mod.instance.Config.dragonBreath = breathScheme;
 
-                    dragonRender.LoadConfigScheme();
+                    dragonRender.LoadBreathScheme((DragonRender.breathSchemes)Mod.instance.Config.dragonBreath);
 
                     Game1.playSound("shwip");
 
@@ -304,7 +313,7 @@ namespace StardewDruid.Journal
 
                 case "size":
 
-                    Mod.instance.Config.dragonScale = Convert.ToInt32(contentComponents[focus].text[0]);
+                    Mod.instance.Config.dragonScale = contentComponents[focus].serial;
 
                     dragonScale = 2f + (0.5f * Mod.instance.Config.dragonScale);
 
@@ -321,9 +330,11 @@ namespace StardewDruid.Journal
         public virtual void SwitchToCustomScheme()
         {
 
-            dragonScheme = (int)IconData.schemes.dragon_custom;
+            dragonScheme = 0;
 
-            Mod.instance.Config.dragonScheme = (int)IconData.schemes.dragon_custom;
+            Mod.instance.Config.dragonScheme = 0;
+
+            dragonRender.LoadColourScheme(DragonRender.dragonSchemes.dragon_custom);
 
         }
 
@@ -335,9 +346,9 @@ namespace StardewDruid.Journal
 
                 dragonPrimary.click(x, y);
 
-                SwitchToCustomScheme();
-
                 DragonUpdateColour();
+
+                SwitchToCustomScheme();
 
                 return;
 
@@ -347,9 +358,9 @@ namespace StardewDruid.Journal
 
                 dragonSecondary.click(x, y);
 
-                SwitchToCustomScheme();
-
                 DragonUpdateColour();
+
+                SwitchToCustomScheme();
 
                 return;
 
@@ -359,9 +370,9 @@ namespace StardewDruid.Journal
 
                 dragonTertiary.click(x, y);
 
-                SwitchToCustomScheme();
-
                 DragonUpdateColour();
+
+                SwitchToCustomScheme();
 
                 return;
 
@@ -392,14 +403,8 @@ namespace StardewDruid.Journal
             Mod.instance.Config.dragonTertiaryG = tertiary.G;
             Mod.instance.Config.dragonTertiaryB = tertiary.B;
 
-            Mod.instance.iconData.CustomDragonScheme();
+            dragonRender.LoadCustomColour();
 
-            if (dragonScheme == (int)IconData.schemes.dragon_custom)
-            {
-
-                dragonRender.LoadConfigScheme();
-
-            }
 
         }
 
@@ -436,9 +441,10 @@ namespace StardewDruid.Journal
 
                 dragonPrimary.releaseClick();
 
+                DragonUpdateColour();
+
                 SwitchToCustomScheme();
 
-                DragonUpdateColour();
 
             }
             else if (dragonSecondary.containsPoint(x, y))
@@ -446,9 +452,9 @@ namespace StardewDruid.Journal
 
                 dragonSecondary.releaseClick();
 
-                SwitchToCustomScheme();
-
                 DragonUpdateColour();
+
+                SwitchToCustomScheme();
 
             }
             else if (dragonTertiary.containsPoint(x, y))
@@ -456,9 +462,9 @@ namespace StardewDruid.Journal
 
                 dragonTertiary.releaseClick();
 
-                SwitchToCustomScheme();
-
                 DragonUpdateColour();
+
+                SwitchToCustomScheme();
 
             }
 
@@ -470,8 +476,6 @@ namespace StardewDruid.Journal
             int center = xPositionOnScreen + (width / 2);
 
             Color highlight = Color.Wheat;
-
-            IconData.schemes scheme;
 
             Vector2 stamina;
 
@@ -499,7 +503,7 @@ namespace StardewDruid.Journal
                             -1.2f
                         );
 
-                        List<Color> embers = Mod.instance.iconData.gradientColours[(IconData.schemes)breathScheme];
+                        List<Color> embers = dragonRender.breathGradientColours[(DragonRender.breathSchemes)breathScheme];
 
                         for (int e = 0; e < 4; e++)
                         {
@@ -518,25 +522,25 @@ namespace StardewDruid.Journal
 
                         dragonRender.drawWalk(b, new(component.Value.bounds.X + 128, component.Value.bounds.Y + 240), new() { direction = dragonDirection, frame = 0, scale = dragonScale, layer = -1f, flip = dragonDirection == 3, shadow = false, });
 
-                        b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.dragonScheme), new Vector2(component.Value.bounds.X - 1.5f, yPositionOnScreen + 372 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1.1f);
+                        b.DrawString(Game1.smallFont, DialogueData.Strings(DialogueData.stringkeys.dragonScheme), new Vector2(component.Value.bounds.X - 1.5f, yPositionOnScreen + 372 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1.1f);
 
-                        b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.dragonScheme), new Vector2(component.Value.bounds.X, yPositionOnScreen + 372), Game1.textColor, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
+                        b.DrawString(Game1.smallFont, DialogueData.Strings(DialogueData.stringkeys.dragonScheme), new Vector2(component.Value.bounds.X, yPositionOnScreen + 372), Game1.textColor, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
 
-                        b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.breathScheme), new Vector2(component.Value.bounds.X - 1.5f, yPositionOnScreen + 480 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1.1f);
+                        b.DrawString(Game1.smallFont, DialogueData.Strings(DialogueData.stringkeys.breathScheme), new Vector2(component.Value.bounds.X - 1.5f, yPositionOnScreen + 480 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1.1f);
 
-                        b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.breathScheme), new Vector2(component.Value.bounds.X, yPositionOnScreen + 480), Game1.textColor, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
+                        b.DrawString(Game1.smallFont, DialogueData.Strings(DialogueData.stringkeys.breathScheme), new Vector2(component.Value.bounds.X, yPositionOnScreen + 480), Game1.textColor, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
 
-                        b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.dragonSize), new Vector2(xPositionOnScreen + width - 160f - 1.5f, yPositionOnScreen + 64f + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1.1f);
+                        b.DrawString(Game1.smallFont, DialogueData.Strings(DialogueData.stringkeys.dragonSize), new Vector2(xPositionOnScreen + width - 160f - 1.5f, yPositionOnScreen + 64f + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1.1f);
 
-                        b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.dragonSize), new Vector2(xPositionOnScreen + width - 160f, yPositionOnScreen + 64), Game1.textColor, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
+                        b.DrawString(Game1.smallFont, DialogueData.Strings(DialogueData.stringkeys.dragonSize), new Vector2(xPositionOnScreen + width - 160f, yPositionOnScreen + 64), Game1.textColor, 0f, Vector2.Zero, 1.25f, SpriteEffects.None, -1f);
 
                         break;
 
                     case "dragon":
 
-                        scheme = Mod.instance.iconData.DragonSchemery[component.Value.text[0]];
+                        int checkScheme = component.Value.serial;
 
-                        if (Mod.instance.Config.dragonScheme == (int)scheme)
+                        if (Mod.instance.Config.dragonScheme == checkScheme)
                         {
 
                             highlight = Color.White;
@@ -565,7 +569,7 @@ namespace StardewDruid.Journal
                                 Game1.staminaRect, 
                                 stamina, 
                                 new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width - 24, component.Value.bounds.Height - 24), 
-                                Mod.instance.iconData.gradientColours[scheme][0], 
+                                dragonRender.gradientColours[(DragonRender.dragonSchemes)checkScheme][0], 
                                 0f, 
                                 Vector2.Zero, 
                                 1f, 
@@ -596,7 +600,7 @@ namespace StardewDruid.Journal
                                 Game1.staminaRect, 
                                 stamina, 
                                 new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width - 24, component.Value.bounds.Height - 24), 
-                                Mod.instance.iconData.gradientColours[scheme][0], 
+                                dragonRender.gradientColours[(DragonRender.dragonSchemes)checkScheme][0], 
                                 0f, 
                                 Vector2.Zero, 
                                 1f, 
@@ -610,9 +614,9 @@ namespace StardewDruid.Journal
 
                     case "breath":
 
-                        scheme = Mod.instance.iconData.BreathSchemery[component.Value.text[0]];
+                        int checkBreathScheme = component.Value.serial;
 
-                        if (Mod.instance.Config.dragonBreath == (int)scheme)
+                        if (Mod.instance.Config.dragonBreath == checkBreathScheme)
                         {
 
                             highlight = Color.White;
@@ -637,7 +641,7 @@ namespace StardewDruid.Journal
 
                             stamina = new Vector2(component.Value.bounds.X + 11, component.Value.bounds.Y + 11);
 
-                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width -24, component.Value.bounds.Height - 24), Mod.instance.iconData.gradientColours[scheme][1], 0f, Vector2.Zero, 1f, 0, -1f);
+                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width -24, component.Value.bounds.Height - 24), dragonRender.breathGradientColours[(DragonRender.breathSchemes)checkBreathScheme][1], 0f, Vector2.Zero, 1f, 0, -1f);
 
                         }
                         else {
@@ -658,7 +662,7 @@ namespace StardewDruid.Journal
 
                             stamina = new Vector2(component.Value.bounds.X + 12, component.Value.bounds.Y + 12);
 
-                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width - 24, component.Value.bounds.Height - 24), Mod.instance.iconData.gradientColours[scheme][1], 0f, Vector2.Zero, 1f, 0, -1f);
+                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, component.Value.bounds.Width - 24, component.Value.bounds.Height - 24), dragonRender.breathGradientColours[(DragonRender.breathSchemes)checkBreathScheme][1], 0f, Vector2.Zero, 1f, 0, -1f);
 
                         }
 
@@ -666,7 +670,9 @@ namespace StardewDruid.Journal
 
                     case "size":
 
-                        int sizeComponent = Convert.ToInt32(component.Value.text[0]);
+                        //int sizeComponent = Convert.ToInt32(component.Value.text[0];
+
+                        int sizeComponent = component.Value.serial;
 
                         if (dragonScale == (2f + (0.5f*sizeComponent)))
                         {
@@ -693,7 +699,7 @@ namespace StardewDruid.Journal
 
                             stamina = new Vector2(component.Value.bounds.Center.X - 10 - (2 * sizeComponent), component.Value.bounds.Center.Y - 10 - (2 * sizeComponent));
 
-                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, 20 + 4 * sizeComponent, 20 + 4 * sizeComponent), Mod.instance.iconData.gradientColours[(IconData.schemes)dragonScheme][0], 0f, Vector2.Zero, 1f, 0, -1f);
+                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, 20 + 4 * sizeComponent, 20 + 4 * sizeComponent), dragonRender.gradientColours[(DragonRender.dragonSchemes)dragonScheme][0], 0f, Vector2.Zero, 1f, 0, -1f);
 
                         }
                         else
@@ -715,7 +721,7 @@ namespace StardewDruid.Journal
 
                             stamina = new Vector2(component.Value.bounds.Center.X - 8 - (2 * sizeComponent), component.Value.bounds.Center.Y - 8 - (2 * sizeComponent));
 
-                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, 16 + 4 * sizeComponent, 16 + 4 * sizeComponent), Mod.instance.iconData.gradientColours[(IconData.schemes)dragonScheme][0], 0f, Vector2.Zero, 1f, 0, -1f);
+                            b.Draw(Game1.staminaRect, stamina, new Rectangle((int)stamina.X, (int)stamina.Y, 16 + 4 * sizeComponent, 16 + 4 * sizeComponent), dragonRender.gradientColours[(DragonRender.dragonSchemes)dragonScheme][0], 0f, Vector2.Zero, 1f, 0, -1f);
 
                         }
 
@@ -723,9 +729,9 @@ namespace StardewDruid.Journal
 
                     case "primary":
 
-                        b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.primaryColour), new Vector2(center + 32, yPositionOnScreen + 64), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
+                        b.DrawString(Game1.smallFont, DialogueData.Strings(DialogueData.stringkeys.primaryColour), new Vector2(center + 32, yPositionOnScreen + 64), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
 
-                        b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.primaryColour), new Vector2(center + 32 - 1.5f, yPositionOnScreen + 64 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
+                        b.DrawString(Game1.smallFont, DialogueData.Strings(DialogueData.stringkeys.primaryColour), new Vector2(center + 32 - 1.5f, yPositionOnScreen + 64 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
 
                         dragonPrimary.draw(b);
 
@@ -733,9 +739,9 @@ namespace StardewDruid.Journal
 
                     case "secondary":
 
-                        b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.secondaryColour), new Vector2(center + 32, yPositionOnScreen + 168), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
+                        b.DrawString(Game1.smallFont, DialogueData.Strings(DialogueData.stringkeys.secondaryColour), new Vector2(center + 32, yPositionOnScreen + 168), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
 
-                        b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.secondaryColour), new Vector2(center + 32 - 1.5f, yPositionOnScreen + 168 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
+                        b.DrawString(Game1.smallFont, DialogueData.Strings(DialogueData.stringkeys.secondaryColour), new Vector2(center + 32 - 1.5f, yPositionOnScreen + 168 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
 
                         dragonSecondary.draw(b);
 
@@ -743,9 +749,9 @@ namespace StardewDruid.Journal
 
                     case "tertiary":
 
-                        b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.tertiaryColour), new Vector2(center + 32, yPositionOnScreen + 272), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
+                        b.DrawString(Game1.smallFont, DialogueData.Strings(DialogueData.stringkeys.tertiaryColour), new Vector2(center + 32, yPositionOnScreen + 272), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
 
-                        b.DrawString(Game1.smallFont, DialogueData.Strings(stringkeys.tertiaryColour), new Vector2(center + 32 - 1.5f, yPositionOnScreen + 272 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
+                        b.DrawString(Game1.smallFont, DialogueData.Strings(DialogueData.stringkeys.tertiaryColour), new Vector2(center + 32 - 1.5f, yPositionOnScreen + 272 + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
 
                         dragonTertiary.draw(b);
 
@@ -772,7 +778,7 @@ namespace StardewDruid.Journal
 
                     case "dragon":
                     case "breath":
-
+                    case "size":
                         drawHoverText(b, contentComponents[focus].text[0]);
 
                         break;

@@ -114,6 +114,8 @@ namespace StardewDruid.Journal
 
         public string id;
 
+        public int serial;
+
         public Microsoft.Xna.Framework.Rectangle bounds;
 
         // display content

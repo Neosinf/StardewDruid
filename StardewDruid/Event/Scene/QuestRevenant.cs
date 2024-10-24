@@ -1669,7 +1669,9 @@ namespace StardewDruid.Event.Scene
 
                     StardewDruid.Monster.Dragon dragon = new StardewDruid.Monster.Dragon(ModUtility.PositionToTile(companions[4].Position), Mod.instance.CombatDifficulty());
 
-                    dragon.dragonRender.LoadColourScheme(IconData.schemes.dragon_black, IconData.schemes.ether);
+                    dragon.dragonRender.LoadColourScheme(DragonRender.dragonSchemes.dragon_black);
+
+                    dragon.dragonRender.LoadBreathScheme(DragonRender.breathSchemes.breath_ether);
 
                     dragon.basePulp = 50;
 

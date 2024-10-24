@@ -1842,6 +1842,13 @@ namespace StardewDruid.Journal
 
                     LocationData.DruidLocations(LocationData.druid_engineum_name);
 
+                    if (!(Mod.instance.locations[LocationData.druid_clearing_name] as Clearing).accessOpen)
+                    {
+
+                        (Mod.instance.locations[LocationData.druid_clearing_name] as Clearing).OpenAccess();
+
+                    }
+
                     return;
 
                 case etherFour:
@@ -1874,7 +1881,17 @@ namespace StardewDruid.Journal
 
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.stardew_druid.ToString());
 
+                    LocationData.DruidLocations(LocationData.druid_moors_name);
+
+                    if (!(Mod.instance.locations[LocationData.druid_gate_name] as Gate).gateOpen)
+                    {
+
+                        (Mod.instance.locations[LocationData.druid_gate_name] as Gate).OpenGate();
+
+                    }
+
                     return;
+
             }
 
         }
@@ -2201,13 +2218,6 @@ namespace StardewDruid.Journal
 
                     Milecrossed(milestones.quest_shadowtin);
 
-                    if (!(Mod.instance.locations[LocationData.druid_clearing_name] as Clearing).accessOpen)
-                    {
-        
-                        (Mod.instance.locations[LocationData.druid_clearing_name] as Clearing).OpenAccessDoor();
-
-                    }
-
                     return;
 
                 case etherFour:
@@ -2302,6 +2312,13 @@ namespace StardewDruid.Journal
                     }
 
                     Milecrossed(milestones.bones_challenge);
+
+                    if (!Mod.instance.eventRegister.ContainsKey("ChallengeMoors"))
+                    {
+
+                        new Event.Challenge.ChallengeMoors().EventSetup(new Vector2(55,71)*64,"ChallengeMoors",true);
+
+                    }
 
                     return;
 
@@ -2563,6 +2580,7 @@ namespace StardewDruid.Journal
                     Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.blackfeather_glove.ToString());
 
                     break;
+
             }
 
             return;

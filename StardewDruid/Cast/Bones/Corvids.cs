@@ -26,7 +26,7 @@ namespace StardewDruid.Cast.Bones
             if (!inabsentia && !eventLocked)
             {
 
-                if (Mod.instance.Config.riteButtons.GetState() != SButtonState.Held)
+                if (!Mod.instance.RiteButtonHeld())
                 {
 
                     return false;

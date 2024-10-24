@@ -73,7 +73,7 @@ namespace StardewDruid.Cast.Fates
 
             };
 
-            slime.position -= new Vector2(48,40);
+            slime.position -= new Vector2(80, 112);
 
             npc.currentLocation.temporarySprites.Add(slime);
 
@@ -115,7 +115,7 @@ namespace StardewDruid.Cast.Fates
 
             animations[1].position = npc.Position;
 
-            animations[1].position -= new Vector2(112, 160);
+            animations[1].position -= new Vector2(80, 112);
 
             if (decimalCounter >= 30)
             {

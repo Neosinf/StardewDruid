@@ -701,7 +701,6 @@ namespace StardewDruid.Dialogue
                             return generate;
 
 
-
                     }
 
                     break;

@@ -145,7 +145,12 @@ namespace StardewDruid.Event
             
             triggerEvent = trigger;
 
-            locales = new() { Game1.player.currentLocation.Name, };
+            if(locales.Count == 0)
+            {
+
+                locales = new() { Game1.player.currentLocation.Name, };
+
+            }
 
             Mod.instance.RegisterEvent(this, eventId);
 

@@ -383,7 +383,7 @@ namespace StardewDruid.Character
 
                     switch (entity)
                     {
-                        case characters.Buffin:
+                        case characters.Blackfeather:
 
                             return new Vector2(27, 17) * 64;
 

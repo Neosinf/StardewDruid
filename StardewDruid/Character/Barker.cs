@@ -105,7 +105,7 @@ namespace StardewDruid.Character
                 Color.White * 0.35f,
                 0.0f,
                 new Vector2(24),
-                (setScale * 0.8f) + (Math.Abs(0 - (walkFrames[0].Count() / 2) + moveFrame) * 0.05f),
+                (setScale * 0.9f) + (Math.Abs(0 - (walkFrames[0].Count() / 2) + moveFrame) * 0.05f),
                 0,
                 drawLayer - 0.0001f
             );

@@ -425,7 +425,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].specialTimer = 60;
 
-                    (location as Location.Clearing).OpenAccessDoor();
+                    (location as Location.Clearing).OpenAccess();
 
                     break;
 

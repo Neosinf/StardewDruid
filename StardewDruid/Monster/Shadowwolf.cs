@@ -289,17 +289,24 @@ namespace StardewDruid.Monster
             }
 
 
-            Vector2 shadowPosition = localPosition + new Vector2(32, 36);
-
-            float offset = 2f + (Math.Abs(0 - (walkFrames[0].Count() / 2) + walkFrame) * 0.1f);
+            Vector2 shadowPosition = spritePosition + new Vector2(0, spriteScale * 24);
 
             if (netDirection.Value % 2 == 1)
             {
                 shadowPosition.Y += 4;
             }
 
-            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * 0.35f, 0.0f, new Vector2(24), 5f * (GetWidth() / 32) / offset, 0, drawLayer - 0.0001f);
-
+            b.Draw(
+                Mod.instance.iconData.cursorTexture,
+                shadowPosition,
+                Mod.instance.iconData.shadowRectangle,
+                Color.White * 0.35f,
+                0.0f,
+                new Vector2(24),
+                (spriteScale * 0.9f) + (Math.Abs(0 - (walkFrames[0].Count() / 2) + spriteScale) * 0.05f),
+                0,
+                drawLayer - 0.0001f
+            );
         }
 
         public override bool ChangeBehaviour()
@@ -365,6 +372,13 @@ namespace StardewDruid.Monster
         public void WolfGrowl()
         {
             if (growlTimer > 0)
+            {
+
+                return;
+
+            }
+
+            if(Vector2.Distance(Position,Game1.player.Position) > 480)
             {
 
                 return;

@@ -400,8 +400,8 @@ namespace StardewDruid.Data
             runestones_spring,
             runestones_farm,
             runestones_moon,
-            runestones_cat, 
-            runestones_5,
+            runestones_cat,
+            runestones_alchemistry,
             runestones_6,
             avalant_disc,
             avalant_chassis,
@@ -509,13 +509,6 @@ namespace StardewDruid.Data
             blueberry,
             melon,
 
-            dragon_custom,
-            dragon_red,
-            dragon_blue,
-            dragon_black,
-            dragon_green,
-            dragon_purple,
-
             sword_steel,
             sword_stars,
             sword_lightsaber,
@@ -591,54 +584,10 @@ namespace StardewDruid.Data
             [schemes.snazzle] = new() { new(214, 0, 175), new(155, 0, 126), new(37, 34, 74), },
             [schemes.wisps] = new() { new(75, 138, 187), new(69, 186, 235), new(74, 243, 255), new(186, 225, 255), },
 
-            [schemes.dragon_red] = new() { new(190, 30, 45), new(191, 142, 93), new(39, 170, 225) },
-            [schemes.dragon_green] = new() { new(121,172,66), new(207,165,73), new(248, 149, 32) },
-            [schemes.dragon_blue] = new() { new(53, 70, 179), new(147, 149, 151), new(247, 148, 29) },
-            [schemes.dragon_black] = new() { new(57, 52, 53), new(69, 186, 235), new(146,86,163) },
-            [schemes.dragon_purple] = new() { new(159, 80, 191), new(69, 186, 235), new(0, 167, 157) },
-
             [schemes.sword_steel] = new() { new(200,212,212), new(68, 80, 80), new(48, 60, 60) },
             [schemes.sword_stars] = new() { new(255, 192, 128),  new(192, 140, 60), new(64, 48, 16), },
             [schemes.sword_lightsaber] = new() { new(214, 0, 175), new(16, 16, 16), new(37, 34, 74), },
             [schemes.sword_warp] = new() { new(16, 16, 16), new(159, 80, 191), new(37, 34, 74), },
-        };
-
-        public Dictionary<IconData.schemes,string> DragonOptions = new()
-        {
-            [schemes.dragon_custom] = "Custom",
-            [schemes.dragon_red] = "Red",
-            [schemes.dragon_blue] = "Blue",
-            [schemes.dragon_black] = "Black",
-            [schemes.dragon_green] = "Green",
-            [schemes.dragon_purple] = "Purple",
-
-        };
-
-        public Dictionary<string, IconData.schemes> DragonSchemery = new()
-        {
-            ["Custom"] = schemes.dragon_custom,
-            ["Red"] = schemes.dragon_red,
-            ["Blue"] = schemes.dragon_blue,
-            ["Black"] = schemes.dragon_black,
-            ["Green"] = schemes.dragon_green,
-            ["Purple"] = schemes.dragon_purple,
-
-        };
-
-        public Dictionary<IconData.schemes, string> BreathOptions = new()
-        {
-            [schemes.stars] = "Stars",
-            [schemes.fates] = "Fates",
-            [schemes.ether] = "Ether",
-
-        };
-
-        public Dictionary<string, IconData.schemes> BreathSchemery = new()
-        {
-            ["Stars"] = schemes.stars,
-            ["Fates"] = schemes.fates,
-            ["Ether"] = schemes.ether,
-
         };
 
         public IconData()
@@ -730,20 +679,6 @@ namespace StardewDruid.Data
             sheetTextures[tilesheets.outdoors] = Mod.instance.Helper.GameContent.Load<Texture2D>(Path.Combine("Maps", Game1.currentSeason + "_outdoorsTileSheet"));
 
             sheetTextures[tilesheets.outdoorsTwo] = Mod.instance.Helper.GameContent.Load<Texture2D>(Path.Combine("Maps", Game1.currentSeason + "_outdoorsTileSheet2"));
-
-            CustomDragonScheme();
-
-        }
-
-        public void CustomDragonScheme()
-        {
-
-            gradientColours[schemes.dragon_custom] = new()
-            {
-                new(Mod.instance.Config.dragonPrimaryR,Mod.instance.Config.dragonPrimaryG,Mod.instance.Config.dragonPrimaryB),
-                new(Mod.instance.Config.dragonSecondaryR,Mod.instance.Config.dragonSecondaryG,Mod.instance.Config.dragonSecondaryB),
-                new(Mod.instance.Config.dragonTertiaryR,Mod.instance.Config.dragonTertiaryG,Mod.instance.Config.dragonTertiaryB),
-            };
 
         }
 
@@ -1635,30 +1570,30 @@ namespace StardewDruid.Data
 
                     gradient = ConvertToGradient(scheme);
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, coreColour, 0.25f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, coreColour, 0.15f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, coreColour, 0.25f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, coreColour, 0.15f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, coreColour, 0.25f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, coreColour, 0.15f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, gradient[2], 0.25f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, gradient[2], 0.15f));
 
                     TemporaryAnimatedSprite thrownWeapon;
 
                     if (missile == missiles.shuriken)
                     {
-                        thrownWeapon = MissileAnimation(location, missileIndexes.shuriken, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, Microsoft.Xna.Framework.Color.White, 0.75f);
+                        thrownWeapon = MissileAnimation(location, missileIndexes.shuriken, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, Microsoft.Xna.Framework.Color.White, 1f);
                     }
                     else if (missile == missiles.knife)
                     {
-                        thrownWeapon = MissileAnimation(location, missileIndexes.knife, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, Microsoft.Xna.Framework.Color.White, 0.75f);
+                        thrownWeapon = MissileAnimation(location, missileIndexes.knife, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, Microsoft.Xna.Framework.Color.White, 1f);
                     }
                     else
                     {
-                        thrownWeapon = MissileAnimation(location, missileIndexes.axe, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, Microsoft.Xna.Framework.Color.White, 0.75f);
+                        thrownWeapon = MissileAnimation(location, missileIndexes.axe, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, Microsoft.Xna.Framework.Color.White, 1f);
                     }
 
-                    thrownWeapon.rotationChange = (float)Math.PI / 30;
+                    thrownWeapon.rotationChange = 0f - (float)Math.PI / 30;
 
                     missileAnimations.Add(thrownWeapon);
 

@@ -982,7 +982,7 @@
     "DialogueData.339.3": "The Witch: The arcane. It seems to be merely a dim reflection of the mythic powers you have learnt to wield, despite your youth and lack of tutelage.",
     "DialogueData.2466": "Perhaps you and your peers were wrong to dismiss the patrons of the Druids as bygone myths.",
     "DialogueData.2467": "I do not take pleasure in administering harsh lessons, my pupil, but your education was lacking.",
-    "DialogueData.2472": "I recognise that your Circle of Druids are a boon to the valley, not just for your sacred spaces, but for the elemental spirits that I seek to guide and protect.",
+    "DialogueData.2472": "I recognise that your Circle of Druids are a boon to the valley, not just for your sacred spaces, but for the elemental spirits that I seek to guide and protect. ",
     "DialogueData.2473": "As your co-custodian, I do have some information about this antiquated machine. It is the Shrine Engine. It powers the warp statues and other such artifacts in the valley. ",
     "DialogueData.2474": "Coincidentally, I recently came into possession of what I believe are the machine's specifications, in the tome your friend attempted to pilfer. ",
     "DialogueData.2475": "It was in the stump of a tree, the recent victim of celestial power, I believe, within the orchard groves above us. ",
@@ -1632,6 +1632,21 @@
     "DialogueData.347.3": "x",
     "DialogueData.347.4": "g",
     "DialogueData.347.5": "(short {{stock}} stock)",
+
+    "DialogueData.351.1": "Custom Colour",
+    "DialogueData.351.2": "Red",
+    "DialogueData.351.3": "Blue",
+    "DialogueData.351.4": "Black",
+    "DialogueData.351.5": "Green",
+    "DialogueData.351.6": "Purple",
+    "DialogueData.351.7": "Stars",
+    "DialogueData.351.8": "Fates",
+    "DialogueData.351.9": "Ether",
+    "DialogueData.351.10": "Lilest",
+    "DialogueData.351.11": "Small",
+    "DialogueData.351.12": "Medium",
+    "DialogueData.351.13": "Large",
+    "DialogueData.351.14": "Legendary",
 
     // ===========================================================================
     // NPC DIALOGUE
@@ -2334,7 +2349,7 @@
     "RelicData.13": "Used to create potent herbal tonics and potions",
 
     "RelicData.15": "Old Runestones",
-    "RelicData.16": "Recovered from foes of the circle",
+    "RelicData.16": "Once carried by the founders of the Circle",
 
     "RelicData.18": "Bronze Artifacts",
     "RelicData.19": "Retrieved from fishing spots around the valley",
@@ -2753,6 +2768,12 @@
     "RelicData.343.13": "Summer, Fourth Year",
     "RelicData.343.14": "Thanatoshi has amassed a large following, and worse, he's begun to sentence dissidents and fellow humans without trial. He cannot be eliminated, at least not physically, so my squire has devised a plan to isolate and torment the Reaper, and in madness, he will be his own undoing.",
     "RelicData.343.15": "After I slaughter all of Thanatoshi's cultists, I am sure the Hound of Chaos will be drawn to the scent. My squire will be waiting to entrap the monstrous beast in a soul anchor entrusted to us by the chefs. My talons twitch at the thought of glorious battle.",
+
+    "RelicData.351.1": "Runestone of the Arcane Moon",
+    "RelicData.351.2": "A peculiar owl dropped this at your feet. It appears to be intended for a druid to use. ",
+    "RelicData.351.3": "Use while on the Farm, in the Forest or in the Wizards Tower to warp to Mages Rest.",
+    "RelicData.351.4": "You've recieved the Runestone of the Arcane Moon! This relic provides warp access to Mage's Rest. View more details in the runestones section of the relics menu.",
+    "RelicData.351.5": "Could there be more runestones of the old circle scattered around the valley?",
 
     // ===========================================================================
     // QUEST DATA

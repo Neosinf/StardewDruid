@@ -127,18 +127,6 @@ namespace StardewDruid.Location
             
             newMap.AddTileSheet(outdoor); //map.TileSheets[1].ImageSource
 
-            TileSheet gatesheet = new(
-                newMap,
-                "StardewDruid.Tilesheets.graveyard",
-                new(
-                    Mod.instance.iconData.sheetTextures[IconData.tilesheets.graveyard].Width / 16,
-                    Mod.instance.iconData.sheetTextures[IconData.tilesheets.graveyard].Height / 16
-                ),
-                new(16, 16)
-            );
-
-            newMap.AddTileSheet(gatesheet);
-
             IsOutdoors = true;
 
             ignoreOutdoorLighting.Set(false);
@@ -979,40 +967,8 @@ namespace StardewDruid.Location
 
         public override void updateWarps()
         {
-            //warps.Clear();
-
-            if(warpSets.Count > 0)
-            {
-
-                warps.Clear();
-
-                foreach(WarpTile warpSet in warpSets)
-                {
-
-                    warps.Add(new Warp(warpSet.enterX, warpSet.enterY, warpSet.location, warpSet.exitX, warpSet.exitY, flipFarmer: false));
-
-                }
-
-                if (accessOpen)
-                {
-
-                    OpenAccessDoor();
-
-                }
-
-                return;
-
-            }
-
-            // top exit
-
-            warpSets.Add(new WarpTile(26, 2, "Forest", 87,60));
-
-            warpSets.Add(new WarpTile(27, 2, "Forest", 87, 60));
-
-            warpSets.Add(new WarpTile(28, 2, "Forest", 87, 60));
-
-            warpSets.Add(new WarpTile(29, 2, "Forest", 87, 60));
+            
+            warps.Clear();
 
             warps.Add(new Warp(26, 2, "Forest", 87, 60, flipFarmer: false));
 
@@ -1022,16 +978,6 @@ namespace StardewDruid.Location
 
             warps.Add(new Warp(29, 2, "Forest", 87, 60, flipFarmer: false));
 
-            // bottom exit
-
-            warpSets.Add(new WarpTile(26, 32, "Forest", 87, 60));
-
-            warpSets.Add(new WarpTile(27, 32, "Forest", 87, 60));
-
-            warpSets.Add(new WarpTile(28, 32, "Forest", 87, 60));
-
-            warpSets.Add(new WarpTile(29, 32, "Forest", 87, 60));
-            
             warps.Add(new Warp(26, 32, "Forest", 87, 60, flipFarmer: false));
 
             warps.Add(new Warp(27, 32, "Forest", 87, 60, flipFarmer: false));
@@ -1040,9 +986,16 @@ namespace StardewDruid.Location
 
             warps.Add(new Warp(29, 32, "Forest", 87, 60, flipFarmer: false));
 
+            if (accessOpen)
+            {
+
+                OpenAccess();
+
+            }
+
         }
 
-        public void OpenAccessDoor()
+        public void OpenAccess()
         {
 
             warps.Add(new Warp(46, 12, LocationData.druid_engineum_name, 27, 30, flipFarmer: false));
@@ -1058,7 +1011,6 @@ namespace StardewDruid.Location
             return;
 
         }
-
 
     }
 

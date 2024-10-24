@@ -375,21 +375,14 @@ namespace StardewDruid
 
                 }
 
-                if (data.ExtraHarvestChance >= 0.3)
+                if (data.ExtraHarvestChance >= 0.0)
                 {
 
                     quantityMax++;
 
                 }
 
-                if (data.ExtraHarvestChance >= 0.6)
-                {
-
-                    quantityMax++;
-
-                }
-
-                if (data.ExtraHarvestChance >= 0.9)
+                if (data.ExtraHarvestChance >= 0.5 && Mod.instance.ModDifficulty() <= 6)
                 {
 
                     quantityMax++;
@@ -412,14 +405,14 @@ namespace StardewDruid
 
             }
 
-            if(Mod.instance.Config.cultivateBehaviour == 1)
+            if(Mod.instance.Config.cultivateBehaviour == 1 && Mod.instance.ModDifficulty() <= 6)
             {
 
                 quantityMax++;
 
             }
 
-            if(Game1.player.FarmingLevel > 5)
+            if(Game1.player.FarmingLevel > 5 && Mod.instance.ModDifficulty() <= 6)
             {
 
                 qualityMax++;
@@ -444,7 +437,7 @@ namespace StardewDruid
 
             Game1.player.currentLocation.playSound("harvest");
 
-            int quantity = randomIndex.Next(quantityMin, quantityMin + quantityMax);
+            int quantity = randomIndex.Next(quantityMin, Math.Min(5,quantityMin + quantityMax));
 
             for (int i = 0; i < quantity; i++)
             {

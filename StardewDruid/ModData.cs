@@ -190,8 +190,8 @@ namespace StardewDruid
             decorateGrove = false;
             plantGrove = false;
             dragonScale = 3;
-            dragonScheme = (int)IconData.schemes.dragon_red;
-            dragonBreath = (int)IconData.schemes.stars;
+            dragonScheme = 1;
+            dragonBreath = 0;
             dragonPrimaryR = 190;
             dragonPrimaryG = 30;
             dragonPrimaryB = 45;

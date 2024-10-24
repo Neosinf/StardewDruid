@@ -566,10 +566,10 @@ namespace StardewDruid.Character
 
             if (
                 currentLocation.Name == Game1.player.currentLocation.Name &&
-                Vector2.Distance(Game1.player.Position, Position) <= 640
+                Vector2.Distance(Game1.player.Position, cow.Position) <= 640
             )
             {
-                ThrowHandle throwItem = new(Game1.player, Position, @object);
+                ThrowHandle throwItem = new(Game1.player, cow.Position, @object);
 
                 Mod.instance.throwRegister.Add(throwItem);
 
@@ -578,7 +578,7 @@ namespace StardewDruid.Character
             if (chest.addItem(@object) != null)
             {
 
-                ThrowHandle throwItem = new(Game1.player, Position, @object);
+                ThrowHandle throwItem = new(Game1.player, cow.Position, @object);
 
                 Mod.instance.throwRegister.Add(throwItem);
 

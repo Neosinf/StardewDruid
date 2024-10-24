@@ -136,6 +136,8 @@ namespace StardewDruid.Event
 
             render = renders.relic;
 
+            scale = 4f;
+
             layer = Origin.Y / 10000 - 0.0001f;
 
             rectangle = IconData.RelicRectangles(relic);
@@ -201,7 +203,7 @@ namespace StardewDruid.Event
                 Color.White,
                 0,
                 new Vector2(10),
-                4f,
+                scale,
                 SpriteEffects.None,
                 layer
             );

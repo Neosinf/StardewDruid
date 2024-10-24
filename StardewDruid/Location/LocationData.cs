@@ -643,6 +643,8 @@ namespace StardewDruid.Location
 
         public const string druid_gate_name = "18465_Gate";
 
+        public const string druid_moors_name = "18465_Moors";
+
         public static void DruidLocations(string map)
         {
 
@@ -746,6 +748,13 @@ namespace StardewDruid.Location
                     location = new Location.Gate(map);
 
                     break;
+
+                case druid_moors_name:
+
+                    location = new Location.Moors(map);
+
+                    break;
+
             }
 
             RestoreLocation(map);
@@ -2615,10 +2624,15 @@ namespace StardewDruid.Location
 
                         case 16:
 
-                            if (Mod.instance.questHandle.IsComplete(QuestHandle.questAldebaran))
+                            if (Game1.player.currentLocation is Gate gateLocation)
                             {
 
-                                return Rectangle.Empty;
+                                if (gateLocation.gateOpen)
+                                {
+
+                                    return Rectangle.Empty;
+
+                                }
 
                             }
 

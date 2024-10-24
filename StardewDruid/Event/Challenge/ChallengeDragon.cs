@@ -6,24 +6,16 @@ using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewDruid.Monster;
 using StardewValley;
-using StardewValley.Locations;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using static StardewDruid.Cast.SpellHandle;
-using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Event.Challenge
 {
     public class ChallengeDragon : EventHandle
     {
 
-        public Warp warpExit;
-
         public ChallengeDragon()
         {
+
+            mainEvent = true;
 
         }
 
@@ -44,8 +36,6 @@ namespace StardewDruid.Event.Challenge
         public override void EventActivate()
         {
 
-            mainEvent = true;
-
             base.EventActivate();
 
             EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
@@ -61,11 +51,9 @@ namespace StardewDruid.Event.Challenge
 
             location.warps.Clear();
 
-            warpExit = new Warp(26, 32, "Mine", 17, 6, flipFarmer: false);
+            Mod.instance.iconData.ImpactIndicator(location, origin - new Vector2(0,128), IconData.impacts.smoke, 6f, new());
 
-            Mod.instance.iconData.ImpactIndicator(location, origin - new Vector2(0,128), impacts.smoke, 6f, new());
-
-            Mod.instance.iconData.ImpactIndicator(location, origin - new Vector2(0,128), impacts.puff, 6f, new());
+            Mod.instance.iconData.ImpactIndicator(location, origin - new Vector2(0,128), IconData.impacts.puff, 6f, new());
 
             bosses[0] = new Dragon(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
 
@@ -106,7 +94,7 @@ namespace StardewDruid.Event.Challenge
             if (location.Name == LocationData.druid_lair_name)
             {
 
-                Game1.player.warpFarmer(warpExit, 2);
+                Game1.player.warpFarmer(location.warps[0], 2);
 
                 DialogueCue(900);
 

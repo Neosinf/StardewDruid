@@ -12,6 +12,7 @@ using Netcode;
 using System.ComponentModel;
 using StardewDruid.Data;
 using static System.Net.WebRequestMethods;
+using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Render
 {
@@ -42,7 +43,7 @@ namespace StardewDruid.Render
 
         public Color tertiary = new(39, 170, 225);
 
-        public IconData.schemes fire = IconData.schemes.stars;
+        public breathSchemes fire = breathSchemes.breath_stars;
 
         public enum dragonIndexes
         {
@@ -820,6 +821,125 @@ namespace StardewDruid.Render
 
         };
 
+        public enum dragonSchemes
+        {
+
+            dragon_custom,
+            dragon_red,
+            dragon_blue,
+            dragon_black,
+            dragon_green,
+            dragon_purple,
+
+        }
+
+        public Dictionary<dragonSchemes, List<Microsoft.Xna.Framework.Color>> gradientColours = new()
+        {
+
+            [dragonSchemes.dragon_red] = new() { new(190, 30, 45), new(191, 142, 93), new(39, 170, 225) },
+            [dragonSchemes.dragon_green] = new() { new(121, 172, 66), new(207, 165, 73), new(248, 149, 32) },
+            [dragonSchemes.dragon_blue] = new() { new(53, 70, 179), new(147, 149, 151), new(247, 148, 29) },
+            [dragonSchemes.dragon_black] = new() { new(57, 52, 53), new(69, 186, 235), new(146, 86, 163) },
+            [dragonSchemes.dragon_purple] = new() { new(159, 80, 191), new(69, 186, 235), new(0, 167, 157) },
+
+        };
+
+        public enum breathSchemes
+        {
+
+            breath_stars,
+            breath_fates,
+            breath_ether,
+
+        }
+
+        public Dictionary<breathSchemes, List<Microsoft.Xna.Framework.Color>> breathGradientColours = new()
+        {
+
+            [breathSchemes.breath_stars] = new() { new(255, 230, 166), new(255, 173, 84), new(231, 102, 84), },
+            [breathSchemes.breath_fates] = new() { new(119, 75, 131), new(59, 55, 100), new(37, 34, 74), new(236, 118, 124), },
+            [breathSchemes.breath_ether] = new() { new(111, 203, 220), new(84, 163, 218), new(13, 114, 185), },
+
+        };
+
+
+        public static string SchemeDescriptions(int scheme)
+        {
+
+            switch (scheme)
+            {
+                default:
+                case 0:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.351.1");
+                case 1:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.351.2");
+                case 2:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.351.3");
+                case 3:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.351.4");
+                case 4:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.351.5");
+                case 5:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.351.6");
+
+            }
+
+        }
+
+        public static string BreathDescriptions(int breathScheme)
+        {
+
+            switch (breathScheme)
+            {
+                default:
+                case 0:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.351.7");
+                case 1:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.351.8");
+                case 2:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.351.9");
+
+            }
+
+        }
+
+        public static string SizeDescriptions(int size)
+        {
+
+            switch (size)
+            {
+                default:
+
+                case 1:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.351.10");
+                case 2:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.351.11");
+                case 3:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.351.12");
+                case 4:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.351.13");
+                case 5:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.351.14");
+            }
+
+        }
+
+        // =====================================================================================
+
         public DragonRender()
         {
         }
@@ -894,37 +1014,111 @@ namespace StardewDruid.Render
 
         }
 
-        public void LoadConfigScheme()
+        public void LoadCustomColour()
         {
 
-            LoadColourScheme((IconData.schemes)Mod.instance.Config.dragonScheme, (IconData.schemes)Mod.instance.Config.dragonBreath);
+            gradientColours[dragonSchemes.dragon_custom] = new()
+            {
+                new(Mod.instance.Config.dragonPrimaryR,Mod.instance.Config.dragonPrimaryG,Mod.instance.Config.dragonPrimaryB),
+                new(Mod.instance.Config.dragonSecondaryR,Mod.instance.Config.dragonSecondaryG,Mod.instance.Config.dragonSecondaryB),
+                new(Mod.instance.Config.dragonTertiaryR,Mod.instance.Config.dragonTertiaryG,Mod.instance.Config.dragonTertiaryB),
+            };
 
         }
 
-        public void LoadColourScheme(IconData.schemes scheme, IconData.schemes breath)
+        public void LoadConfigScheme()
+        {
+
+            LoadCustomColour();
+
+            switch (Mod.instance.Config.dragonScheme)
+            {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+
+                    break;
+
+                default:
+                case 28:
+                    Mod.instance.Config.dragonScheme = 0;
+                    break;
+                case 29:
+                    Mod.instance.Config.dragonScheme = 1;
+                    break;
+                case 30:
+                    Mod.instance.Config.dragonScheme = 2;
+                    break;
+                case 31:
+                    Mod.instance.Config.dragonScheme = 3;
+                    break;
+                case 32:
+                    Mod.instance.Config.dragonScheme = 4;
+                    break;
+                case 33:
+                    Mod.instance.Config.dragonScheme = 5;
+                    break;
+
+            }
+
+            switch (Mod.instance.Config.dragonBreath)
+            {
+                case 0:
+                case 1:
+                case 2:
+                    break;
+
+                default:
+                case 3:
+                    Mod.instance.Config.dragonBreath = 0;
+                    break;
+                case 4:
+                    Mod.instance.Config.dragonBreath = 1;
+                    break;
+                case 5:
+                    Mod.instance.Config.dragonBreath = 2;
+                    break;
+
+            }
+
+            LoadColourScheme((dragonSchemes)Mod.instance.Config.dragonScheme);
+
+            LoadBreathScheme((breathSchemes)Mod.instance.Config.dragonBreath);
+
+        }
+
+        public void LoadColourScheme(dragonSchemes scheme)
         {
             
-            if (!Mod.instance.iconData.gradientColours.ContainsKey(scheme))
+            if (!gradientColours.ContainsKey(scheme))
             {
 
-                scheme = IconData.schemes.dragon_red;
+                scheme = dragonSchemes.dragon_red;
 
             }
 
-            if (!Mod.instance.iconData.gradientColours.ContainsKey(fire))
-            {
-
-                scheme = IconData.schemes.stars;
-
-            }
-
-            List<Color> colors = Mod.instance.iconData.gradientColours[scheme];
+            List<Color> colors = gradientColours[scheme];
 
             primary = colors[0];
 
             secondary = colors[1];
 
             tertiary = colors[2];
+
+        }
+
+        public void LoadBreathScheme(breathSchemes breath)
+        {
+
+            if (!breathGradientColours.ContainsKey(breath))
+            {
+
+                breath = breathSchemes.breath_stars;
+
+            }
 
             fire = breath;
 
@@ -958,7 +1152,7 @@ namespace StardewDruid.Render
             if (additional.shadow)
             {
                 
-                b.Draw(characterTexture, spriteShadow, RectangleShadowIndex(shadowFrames[additional.direction][0]), Color.White * 0.25f, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer - 0.0002f);
+                b.Draw(characterTexture, spriteShadow, RectangleShadowIndex(shadowFrames[additional.direction][0]), Color.White * 0.15f, 0.0f, new Vector2(0.0f, 0.0f), additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer - 0.0002f);
 
             }
 
@@ -1373,7 +1567,7 @@ namespace StardewDruid.Render
 
             }
 
-            List<Color> colours = Mod.instance.iconData.gradientColours[fire];
+            List<Color> colours = breathGradientColours[fire];
 
             switch (additional.direction)
             {
