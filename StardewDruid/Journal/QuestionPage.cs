@@ -3,13 +3,12 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
+using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using static StardewDruid.Character.CharacterHandle;
 
 namespace StardewDruid.Journal
 {
@@ -49,7 +48,7 @@ namespace StardewDruid.Journal
         public override void populateContent()
         {
 
-            title = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.questionCurrent);
+            title = StringData.Strings(StardewDruid.Data.StringData.stringkeys.questionCurrent);
 
             int textHeight = 48;
 
@@ -72,7 +71,7 @@ namespace StardewDruid.Journal
                     if (Mod.instance.questHandle.IsComplete(questId))
                     {
 
-                        if(Mod.instance.questHandle.quests[questId].type == Quest.questTypes.lesson)
+                        if(Mod.instance.questHandle.quests[questId].type == Data.Quest.questTypes.lesson)
                         {
 
                             recap = Mod.instance.questHandle.quests[questId].title;
@@ -99,7 +98,7 @@ namespace StardewDruid.Journal
                         if(!Context.IsMainPlayer)
                         {
 
-                            instruction = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.hostOnly);
+                            instruction = StringData.Strings(StardewDruid.Data.StringData.stringkeys.hostOnly);
 
                         }
 
@@ -119,7 +118,7 @@ namespace StardewDruid.Journal
 
                         }
 
-                        instruction = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.questionTalkto) + CharacterHandle.CharacterTitle(special.Key);
+                        instruction = StringData.Strings(StardewDruid.Data.StringData.stringkeys.questionTalkto) + CharacterHandle.CharacterTitle(special.Key);
 
                         if(Mod.instance.save.progress.ContainsKey(questId)) //|| Mod.instance.save.progress[questId].delay > 0)
                         {
@@ -127,7 +126,7 @@ namespace StardewDruid.Journal
                             if(Mod.instance.save.progress[questId].delay > 0)
                             {
 
-                                instruction += DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.questionTomorrow);
+                                instruction += StringData.Strings(StardewDruid.Data.StringData.stringkeys.questionTomorrow);
 
                             }
 
@@ -136,7 +135,7 @@ namespace StardewDruid.Journal
                         if (!Context.IsMainPlayer)
                         {
 
-                            instruction = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.hostOnly);
+                            instruction = StringData.Strings(StardewDruid.Data.StringData.stringkeys.hostOnly);
 
                         }
 
@@ -152,9 +151,9 @@ namespace StardewDruid.Journal
             else
             {
 
-                current = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.questionComplete);
+                current = StringData.Strings(StardewDruid.Data.StringData.stringkeys.questionComplete);
 
-                instruction = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.questionCongratulations);
+                instruction = StringData.Strings(StardewDruid.Data.StringData.stringkeys.questionCongratulations);
 
             }
 
@@ -203,7 +202,7 @@ namespace StardewDruid.Journal
 
             contentComponents[start] = new(ContentComponent.contentTypes.text, "instructionIntro");
 
-            contentComponents[start].text[0] = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.questionHint);
+            contentComponents[start].text[0] = StringData.Strings(StardewDruid.Data.StringData.stringkeys.questionHint);
 
             contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkGreen;
 
@@ -228,7 +227,7 @@ namespace StardewDruid.Journal
 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "recapIntro");
 
-                contentComponents[start].text[0] = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.questionPreviously);
+                contentComponents[start].text[0] = StringData.Strings(StardewDruid.Data.StringData.stringkeys.questionPreviously);
 
                 contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkGreen;
 

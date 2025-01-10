@@ -1,11 +1,11 @@
-﻿using StardewDruid.Journal;
-using StardewValley;
+﻿using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using StardewDruid.Character;
+using StardewDruid.Event;
 
 namespace StardewDruid.Dialogue
 {
@@ -110,6 +110,12 @@ namespace StardewDruid.Dialogue
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.343.6");
 
+                case CharacterHandle.characters.recruit_one:
+                case CharacterHandle.characters.recruit_two:
+                case CharacterHandle.characters.recruit_three:
+                case CharacterHandle.characters.recruit_four:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueIntroduction.361.1").Tokens(new { villager = (Mod.instance.characters[character] as Recruit).villager.Name, name = Game1.player.Name, });
 
                 // other characters
 
@@ -268,7 +274,11 @@ namespace StardewDruid.Dialogue
 
                     return Mod.instance.Helper.Translation.Get("DialogueIntroduction.347.6");
 
+                // the moors
 
+                case CharacterHandle.characters.exit_moors:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueIntroduction.352.1");
 
             }
 

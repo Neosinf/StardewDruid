@@ -8,7 +8,7 @@ using StardewValley;
 
 namespace StardewDruid.Monster
 {
-    public class DarkShooter : DarkRogue
+    public class DarkShooter : Dark
     {
 
         public DarkShooter()
@@ -74,11 +74,11 @@ namespace StardewDruid.Monster
 
             SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 192, GetThreat());
 
-            fireball.type = SpellHandle.spells.ballistic;
+            fireball.type = SpellHandle.spells.missile;
 
-            fireball.projectile = 2;
+            fireball.factor =2;
 
-            fireball.missile = IconData.missiles.cannonball;
+            fireball.missile = MissileHandle.missiles.rocket;
 
             fireball.display = IconData.impacts.impact;
 
@@ -107,11 +107,11 @@ namespace StardewDruid.Monster
 
             SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 256, GetThreat());
 
-            fireball.type = SpellHandle.spells.ballistic;
+            fireball.type = SpellHandle.spells.missile;
 
-            fireball.projectile = 3;
+            fireball.factor =3;
 
-            fireball.missile = IconData.missiles.cannonball;
+            fireball.missile = MissileHandle.missiles.rocket;
 
             fireball.display = IconData.impacts.impact;
 

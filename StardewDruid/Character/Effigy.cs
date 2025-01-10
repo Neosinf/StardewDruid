@@ -6,7 +6,6 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
 using StardewDruid.Event;
-using StardewDruid.Journal;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
@@ -27,8 +26,6 @@ namespace StardewDruid.Character
     public class Effigy : StardewDruid.Character.Character
     {
 
-        public List<Vector2> ritesDone = new();
-
         public Effigy()
         {
         }
@@ -47,7 +44,7 @@ namespace StardewDruid.Character
 
             WeaponLoadout();
 
-            weaponRender.swordScheme = IconData.schemes.sword_stars;
+            weaponRender.swordScheme = WeaponRender.swordSchemes.sword_stars;
 
             specialFrames[specials.launch] = new()
             {
@@ -104,144 +101,6 @@ namespace StardewDruid.Character
             gait = 1.4f;
 
             restSet = true;
-
-        }
-
-        public override void DrawLaunch(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
-        {
-            Rectangle useFrame = specialFrames[specials.launch][netDirection.Value][specialFrame];
-
-            b.Draw(
-                characterTexture,
-                spritePosition,
-                useFrame,
-                Color.White * fade,
-                0.0f,
-                new Vector2(useFrame.Width / 2, useFrame.Height / 2),
-                setScale,
-                SpriteFlip() ? (SpriteEffects)1 : 0,
-                drawLayer
-            );
-
-            DrawShadow(b, spritePosition, drawLayer);
-
-        }
-
-        public override void DrawDash(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
-        {
-
-            if (netDash.Value != (int)dashes.smash)
-            {
-
-                base.DrawDash(b, spritePosition, drawLayer, fade);
-
-                return;
-
-            }
-
-            int dashSeries = netDirection.Value + (netDashProgress.Value * 4);
-
-            int dashSetto = Math.Min(dashFrame, (dashFrames[(dashes)netDash.Value][dashSeries].Count - 1));
-
-            Vector2 dashVector = spritePosition - new Vector2(0, dashHeight);
-
-            Rectangle dashTangle = dashFrames[(dashes)netDash.Value][dashSeries][dashSetto];
-
-            b.Draw(
-                characterTexture,
-                dashVector,
-                dashTangle,
-                Color.White * fade,
-                0f,
-                new Vector2(16),
-                setScale,
-                SpriteFlip() ? (SpriteEffects)1 : 0,
-                drawLayer
-            );
-
-            DrawShadow(b, spritePosition, drawLayer);
-
-            weaponRender.DrawWeapon(b, dashVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = dashTangle, flipped = SpriteFlip() });
-
-            if (netDashProgress.Value >= 2)
-            {
-
-                weaponRender.DrawSwipe(b, dashVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = dashTangle, flipped = SpriteFlip() });
-
-            }
-
-        }
-
-        public override void DrawSweep(SpriteBatch b, Vector2 sweepVector, float drawLayer, float fade)
-        {
-            
-            Rectangle sweepFrame = specialFrames[(specials)netSpecial.Value][netDirection.Value][specialFrame];
-
-            b.Draw(
-                characterTexture,
-                sweepVector,
-                sweepFrame,
-                Color.White * fade,
-                0.0f,
-                new Vector2(16),
-                setScale,
-                0,
-                drawLayer
-            );
-
-            DrawShadow(b, sweepVector, drawLayer);
-
-            weaponRender.DrawWeapon(b, sweepVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = sweepFrame, });
-
-            weaponRender.DrawSwipe(b, sweepVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = sweepFrame, });
-
-        }
-
-        public override void DrawAlert(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
-        {
-
-            Rectangle alertFrame = idleFrames[idles.alert][netDirection.Value][0];
-
-            b.Draw(
-                 characterTexture,
-                 spritePosition,
-                 alertFrame,
-                 Color.White * fade,
-                 0f,
-                 new Vector2(16),
-                 setScale,
-                 SpriteAngle() ? (SpriteEffects)1 : 0,
-                 drawLayer
-             );
-
-            DrawShadow(b, spritePosition, drawLayer);
-
-            weaponRender.DrawWeapon(b, spritePosition - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = alertFrame, flipped = SpriteAngle() });
-
-        }
-
-        public override void DrawStandby(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
-        {
-
-            int chooseFrame = IdleFrame(idles.standby);
-
-            bool standbyFlip = SpriteAngle();
-
-            b.Draw(
-                characterTexture,
-                spritePosition,
-                idleFrames[idles.standby][0][chooseFrame],
-                Color.White,
-                0f,
-                new Vector2(16),
-                4f,
-                standbyFlip ? (SpriteEffects)1 : 0,
-                drawLayer
-            );
-
-            DrawUnder(b, spritePosition, drawLayer, idleFrames[idles.standby][0][chooseFrame], standbyFlip);
-
-            return;
 
         }
 
@@ -333,30 +192,15 @@ namespace StardewDruid.Character
                 foreach (Vector2 scarevector in tileVectors)
                 {
 
-                    if (ritesDone.Contains(scarevector))
-                    {
-
-                        continue;
-
-                    }
-
-
                     if (currentLocation.objects.ContainsKey(scarevector))
                     {
 
                         if (currentLocation.Objects[scarevector].IsScarecrow())
                         {
 
-                            string scid = "scarecrow_companion_" + scarevector.X.ToString() + "_" + scarevector.Y.ToString();
-                            
-                            if (!Mod.instance.rite.specialCasts.ContainsKey(currentLocation.Name))
-                            {
+                            string workString = Game1.season.ToString() + Game1.dayOfMonth.ToString() + "_" + currentLocation.Name + "_" + scarevector.X.ToString() + "_" + scarevector.Y.ToString();
 
-                                Mod.instance.rite.specialCasts[currentLocation.Name] = new();
-
-                            }
-
-                            if (Mod.instance.rite.specialCasts[currentLocation.Name].Contains(scid))
+                            if (workRegister.Contains(workString))
                             {
 
                                 continue;
@@ -372,8 +216,6 @@ namespace StardewDruid.Character
                             specialTimer = 90;
 
                             workVector = scarevector;
-
-                            ritesDone.Add(scarevector);
 
                             return true;
 
@@ -432,6 +274,15 @@ namespace StardewDruid.Character
 
                 }
 
+                string workString = Game1.season.ToString() + Game1.dayOfMonth.ToString() + "_" + currentLocation.Name + "_" + workVector.X.ToString() + "_" + workVector.Y.ToString();
+
+                if (!workRegister.Contains(workString))
+                {
+
+                    workRegister.Add(workString);
+
+                }
+
             }
 
             if (specialTimer == 20 && !Game1.IsRainingHere(currentLocation) && Game1.currentSeason != "winter")
@@ -448,16 +299,9 @@ namespace StardewDruid.Character
         public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
         {
 
-            if (currentLocation.IsFarm)
-            {
-
-                return false;
-
-            }
-
             ResetActives();
 
-            netSpecial.Set((int)specials.launch);
+            netSpecial.Set((int)specials.hadouken);
 
             specialTimer = 90;
 
@@ -465,17 +309,17 @@ namespace StardewDruid.Character
 
             LookAtTarget(monster.Position, true);
 
-            //Mod.instance.iconData.DecorativeIndicator(currentLocation, Position, IconData.decorations.mists, 5f, new());
-
             SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 2);
 
             special.type = SpellHandle.spells.missile;
 
-            special.missile = IconData.missiles.fireball;
+            special.missile = MissileHandle.missiles.fireball;
+
+            special.counter = -30;
 
             special.scheme = IconData.schemes.stars;
 
-            special.projectile = 3;
+            special.factor = 2;
 
             special.power = 4;
 
@@ -488,13 +332,6 @@ namespace StardewDruid.Character
             Mod.instance.spellRegister.Add(special);
 
             return true;
-
-        }
-
-        public override void NewDay()
-        {
-
-            ritesDone.Clear();
 
         }
 

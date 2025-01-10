@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static StardewDruid.Character.Character;
 
 namespace StardewDruid.Render
 {
@@ -228,7 +229,45 @@ namespace StardewDruid.Render
 
             custom[Character.Character.specials.special] = new(custom[Character.Character.specials.invoke]);
 
-            custom[Character.Character.specials.launch] = new(custom[Character.Character.specials.invoke]);
+            custom[Character.Character.specials.launch] = new()
+            {
+
+                [0] = RectangleHumanoidList(new(){
+
+                    humanoidFrames.crouchUp,
+                    humanoidFrames.crouchUp,
+                    humanoidFrames.crouchUpTwo,
+
+                }),
+
+                [1] = RectangleHumanoidList(new(){
+
+
+                    humanoidFrames.crouchRight,
+                    humanoidFrames.crouchRight,
+                    humanoidFrames.crouchRightTwo,
+
+                }),
+
+                [2] = RectangleHumanoidList(new(){
+
+
+                    humanoidFrames.crouchDown,
+                    humanoidFrames.crouchDown,
+                    humanoidFrames.crouchDownTwo,
+
+                }),
+
+                [3] = RectangleHumanoidList(new(){
+
+
+                    humanoidFrames.crouchRight,
+                    humanoidFrames.crouchRight,
+                    humanoidFrames.crouchRightTwo,
+
+                }),
+
+            };
 
             custom[Character.Character.specials.point] = new()
             {
@@ -346,6 +385,15 @@ namespace StardewDruid.Render
 
             };
 
+
+            custom[specials.hadouken] = new()
+            {
+                [0] = RectangleHumanoidList(new() { humanoidFrames.sweepRight1, humanoidFrames.sweepRight2, humanoidFrames.sweepRight3, humanoidFrames.sweepRight4, }),
+                [1] = RectangleHumanoidList(new() { humanoidFrames.sweepRight1, humanoidFrames.sweepRight2, humanoidFrames.sweepRight3, humanoidFrames.sweepRight4, }),
+                [2] = RectangleHumanoidList(new() { humanoidFrames.sweepRight1, humanoidFrames.sweepRight2, humanoidFrames.sweepRight3, humanoidFrames.sweepRight4, }),
+                [3] = RectangleHumanoidList(new() { humanoidFrames.sweepRight1, humanoidFrames.sweepRight2, humanoidFrames.sweepRight3, humanoidFrames.sweepRight4, }),
+            };
+
             return custom;
 
         }
@@ -357,11 +405,12 @@ namespace StardewDruid.Render
             {
                 [StardewDruid.Character.Character.specials.invoke] = 30,
                 [StardewDruid.Character.Character.specials.special] = 30,
-                [StardewDruid.Character.Character.specials.launch] = 12,
+                [StardewDruid.Character.Character.specials.launch] = 30,
                 [StardewDruid.Character.Character.specials.point] = 60,
                 [StardewDruid.Character.Character.specials.sweep] = 15,
                 [StardewDruid.Character.Character.specials.pickup] = 30,
                 [StardewDruid.Character.Character.specials.gesture] = 60,
+                [StardewDruid.Character.Character.specials.hadouken] = 15,
             };
 
         }
@@ -372,11 +421,12 @@ namespace StardewDruid.Render
             {
                 [StardewDruid.Character.Character.specials.invoke] = 1,
                 [StardewDruid.Character.Character.specials.special] = 1,
-                [StardewDruid.Character.Character.specials.launch] = 1,
+                [StardewDruid.Character.Character.specials.launch] = 2,
                 [StardewDruid.Character.Character.specials.point] = 0,
                 [StardewDruid.Character.Character.specials.sweep] = 3,
                 [StardewDruid.Character.Character.specials.pickup] = 1,
                 [StardewDruid.Character.Character.specials.gesture] = 0,
+                [StardewDruid.Character.Character.specials.hadouken] = 3,
             };
         }
 
@@ -387,13 +437,177 @@ namespace StardewDruid.Render
             {
                 [StardewDruid.Character.Character.specials.invoke] = 1,
                 [StardewDruid.Character.Character.specials.special] = 1,
-                [StardewDruid.Character.Character.specials.launch] = 1,
+                [StardewDruid.Character.Character.specials.launch] = 2,
                 [StardewDruid.Character.Character.specials.point] = 0,
                 [StardewDruid.Character.Character.specials.sweep] = 0,
                 [StardewDruid.Character.Character.specials.pickup] = 1,
                 [StardewDruid.Character.Character.specials.gesture] = 0,
+                [StardewDruid.Character.Character.specials.hadouken] = 3,
             };
         }
+        
+        public static Dictionary<Character.Character.specials, Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>>> WitchSpecial()
+        {
+
+            Dictionary<Character.Character.specials, Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>>> specialFrames = HumanoidSpecial();
+
+            specialFrames[specials.launch] = new()
+            {
+
+                [0] = RectangleHumanoidList(
+                                new()
+                                {
+                        CharacterRender.humanoidFrames.jumpUp,
+                        CharacterRender.humanoidFrames.boxUp1,
+                        CharacterRender.humanoidFrames.boxUp2,
+                        CharacterRender.humanoidFrames.jumpUp,
+                                }),
+                [1] = RectangleHumanoidList(
+                                new()
+                                {
+                        CharacterRender.humanoidFrames.jumpRight,
+                        CharacterRender.humanoidFrames.boxRight1,
+                        CharacterRender.humanoidFrames.boxRight2,
+                        CharacterRender.humanoidFrames.jumpRight,
+                                }),
+                [2] = RectangleHumanoidList(
+                                new()
+                                {
+                        CharacterRender.humanoidFrames.jumpDown,
+                        CharacterRender.humanoidFrames.boxDown1,
+                        CharacterRender.humanoidFrames.boxDown2,
+                        CharacterRender.humanoidFrames.jumpDown,
+                                }),
+                [3] = RectangleHumanoidList(
+                                new()
+                                {
+                        CharacterRender.humanoidFrames.jumpLeft,
+                        CharacterRender.humanoidFrames.boxLeft1,
+                        CharacterRender.humanoidFrames.boxLeft2,
+                        CharacterRender.humanoidFrames.jumpLeft,
+                                }),
+
+            };
+
+
+            specialFrames[specials.liftup] = new()
+            {
+
+                [0] = RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.jumpUp,
+                        CharacterRender.humanoidFrames.boxUp1,
+                    }),
+                [1] = RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.jumpRight,
+                        CharacterRender.humanoidFrames.boxRight1,
+                    }),
+                [2] = RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.jumpDown,
+                        CharacterRender.humanoidFrames.boxDown1,
+                    }),
+                [3] = RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.jumpLeft,
+                        CharacterRender.humanoidFrames.boxLeft1,
+                    }),
+
+            };
+
+
+
+            specialFrames[specials.liftdown] = new()
+            {
+
+                [0] = RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.boxUp2,
+                        CharacterRender.humanoidFrames.jumpUp,
+                    }),
+                [1] = RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.boxRight2,
+                        CharacterRender.humanoidFrames.jumpRight,
+                    }),
+                [2] = RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.boxDown2,
+                        CharacterRender.humanoidFrames.jumpDown,
+                    }),
+                [3] = RectangleHumanoidList(
+                    new()
+                    {
+                        CharacterRender.humanoidFrames.boxLeft2,
+                        CharacterRender.humanoidFrames.jumpLeft,
+                    }),
+
+            };
+
+            return specialFrames;
+
+        }
+
+        public static Dictionary<StardewDruid.Character.Character.specials, int> WitchIntervals()
+        {
+
+            return new()
+            {
+                [StardewDruid.Character.Character.specials.invoke] = 30,
+                [StardewDruid.Character.Character.specials.special] = 30,
+                [StardewDruid.Character.Character.specials.launch] = 12,
+                [StardewDruid.Character.Character.specials.point] = 60,
+                [StardewDruid.Character.Character.specials.sweep] = 15,
+                [StardewDruid.Character.Character.specials.pickup] = 30,
+                [StardewDruid.Character.Character.specials.gesture] = 60,
+                [StardewDruid.Character.Character.specials.liftup] = 15,
+                [StardewDruid.Character.Character.specials.liftdown] = 15,
+            };
+
+        }
+
+        public static Dictionary<StardewDruid.Character.Character.specials, int> WitchCeilings()
+        {
+            return new()
+            {
+                [StardewDruid.Character.Character.specials.invoke] = 1,
+                [StardewDruid.Character.Character.specials.special] = 1,
+                [StardewDruid.Character.Character.specials.launch] = 3,
+                [StardewDruid.Character.Character.specials.point] = 0,
+                [StardewDruid.Character.Character.specials.sweep] = 3,
+                [StardewDruid.Character.Character.specials.pickup] = 1,
+                [StardewDruid.Character.Character.specials.gesture] = 0,
+                [StardewDruid.Character.Character.specials.liftup] = 1,
+                [StardewDruid.Character.Character.specials.liftdown] = 1,
+            };
+        }
+
+        public static Dictionary<StardewDruid.Character.Character.specials, int> WitchFloors()
+        {
+
+            return new()
+            {
+                [StardewDruid.Character.Character.specials.invoke] = 1,
+                [StardewDruid.Character.Character.specials.special] = 1,
+                [StardewDruid.Character.Character.specials.launch] = 0,
+                [StardewDruid.Character.Character.specials.point] = 0,
+                [StardewDruid.Character.Character.specials.sweep] = 0,
+                [StardewDruid.Character.Character.specials.pickup] = 1,
+                [StardewDruid.Character.Character.specials.gesture] = 0,
+                [StardewDruid.Character.Character.specials.liftup] = 1,
+                [StardewDruid.Character.Character.specials.liftdown] = 0,
+            };
+        }
+
+        
 
         public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> HumanoidWalk()
         {
@@ -628,49 +842,6 @@ namespace StardewDruid.Render
 
         }
 
-        public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> WeaponLaunch()
-        {
-
-            return new()
-            {
-                [0] = RectangleHumanoidList(new(){
-
-                    humanoidFrames.crouchUp,
-                    humanoidFrames.crouchUp,
-                    humanoidFrames.crouchUpTwo,
-
-                }),
-
-                [1] = RectangleHumanoidList(new(){
-
-
-                    humanoidFrames.crouchRight,
-                    humanoidFrames.crouchRight,
-                    humanoidFrames.crouchRightTwo,
-
-                }),
-
-                [2] = RectangleHumanoidList(new(){
-
-
-                    humanoidFrames.crouchDown,
-                    humanoidFrames.crouchDown,
-                    humanoidFrames.crouchDownTwo,
-
-                }),
-
-                [3] = RectangleHumanoidList(new(){
-
-
-                    humanoidFrames.crouchRight,
-                    humanoidFrames.crouchRight,
-                    humanoidFrames.crouchRightTwo,
-
-                }),
-
-            };
-
-        }
         public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> WeaponAlert()
         {
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewDruid.Location;
 using StardewDruid.Render;
 using StardewValley;
 using System;
@@ -19,6 +20,8 @@ namespace StardewDruid.Monster
         public CueWrapper growlCueThree;
 
         public int growlTimer;
+
+        public BearRender bearRender;
 
         public ShadowBear()
         {
@@ -46,9 +49,7 @@ namespace StardewDruid.Monster
         public override void LoadOut()
         {
 
-            BearWalk();
-
-            BearSpecial();
+            bearRender = new(realName.Value);
 
             growlCue = Game1.soundBank.GetCue("BearGrowl") as CueWrapper;
 
@@ -68,35 +69,31 @@ namespace StardewDruid.Monster
 
             growlCueThree.Pitch /= 2;
 
-            loadedOut = true;
-
-        }
-
-        public virtual void BearWalk()
-        {
-
-            characterTexture = MonsterHandle.MonsterTexture(realName.Value);
-
             walkInterval = 12;
 
             gait = GetGait();
 
-            idleFrames = BearRender.WalkFrames();
-
-            walkFrames = BearRender.WalkFrames();
-
             overHead = new(0, -128);
-
-        }
-
-        public virtual void BearSpecial()
-        {
 
             sweepInterval = 9;
 
-            sweepFrames = BearRender.SweepFrames();
-
             sweepSet = true;
+
+            idleFrames = bearRender.idleFrames;
+
+            walkFrames = bearRender.walkFrames;
+
+            flightFrames = bearRender.dashFrames;
+
+            smashFrames = bearRender.dashFrames;
+
+            specialFrames = walkFrames;
+
+            channelFrames = walkFrames;
+
+            sweepFrames = bearRender.sweepFrames;
+
+            loadedOut = true;
 
         }
 
@@ -186,98 +183,44 @@ namespace StardewDruid.Monster
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            float drawLayer = StandingPixel.Y / 10000f;
+            BearRenderAdditional additional = new();
 
-            DrawEmote(b, localPosition, drawLayer);
+            additional.layer = Position.Y / 10000f + 0.0032f;
 
-            float spriteScale = GetScale();
+            additional.scale = GetScale();
 
-            Vector2 spritePosition = GetPosition(localPosition, spriteScale);
+            additional.position = GetPosition(localPosition, additional.scale);
 
-            bool flippity = netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3;
+            DrawEmote(b, localPosition, additional.layer);
 
-            bool growl = false;
+            additional.flip = netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3;
 
-            if (growlCue.IsPlaying || growlCueTwo.IsPlaying || growlCueThree.IsPlaying)
+            if (growlCue.IsPlaying)
             {
 
-                growl = true;
+                additional.mode = BearRenderAdditional.bearmode.growl;
 
             }
 
             if (netSweepActive.Value)
             {
 
-                Rectangle sweepSource = sweepFrames[netDirection.Value][sweepFrame];
+                additional.series = BearRenderAdditional.bearseries.sweep;
 
-                if (growl)
-                {
+                additional.direction = netDirection.Value;
 
-                    sweepSource.Y += 192;
-                }
+                additional.frame = sweepFrame;
 
-                b.Draw(
-                    characterTexture,
-                    spritePosition,
-                    sweepSource,
-                    Color.White,
-                    0,
-                    new Vector2(sweepSource.Width / 2, sweepSource.Height / 2),
-                    spriteScale,
-                    flippity ? (SpriteEffects)1 : 0,
-                    drawLayer);
+                bearRender.DrawNormal(b, additional);
 
-            }
-            else
-            {
-                Rectangle walkSource = walkFrames[netDirection.Value][walkFrame];
-
-                if (growl)
-                {
-
-                    walkSource.Y += 192;
-                }
-
-                b.Draw(
-                    characterTexture,
-                    spritePosition,
-                    walkSource,
-                    Color.White,
-                    0,
-                    new Vector2(walkSource.Width / 2, walkSource.Height / 2),
-                    spriteScale,
-                    flippity ? (SpriteEffects)1 : 0,
-                    drawLayer);
-
+                return;
             }
 
+            additional.direction = netDirection.Value;
 
-            Vector2 shadowPosition = localPosition + new Vector2(32, 36);
+            additional.frame = walkFrame;
 
-            float offset = 2f + (Math.Abs(0 - (walkFrames[0].Count() / 2) + walkFrame) * 0.1f);
-
-            if (netDirection.Value % 2 == 1)
-            {
-                shadowPosition.Y += 8;
-            }
-
-            b.Draw(Mod.instance.iconData.cursorTexture, 
-                
-                shadowPosition, 
-                
-                Mod.instance.iconData.shadowRectangle, 
-                
-                Color.White * 0.35f, 0.0f, 
-                
-                new Vector2(24), 
-                
-                6f * (GetWidth() / 32) / offset, 
-                
-                0, 
-                
-                drawLayer - 0.0001f
-            );
-
+            bearRender.DrawNormal(b, additional);
 
         }
 
@@ -367,6 +310,15 @@ namespace StardewDruid.Monster
                     break;
 
             }
+
+        }
+
+        public override Vector2 PerformRedirect(Vector2 target)
+        {
+
+            Vector2 actual = Position + (ModUtility.PathFactor(Position, target) * 96);
+
+            return LocationHandle.TerrainRedirect(currentLocation, actual, Position);
 
         }
 

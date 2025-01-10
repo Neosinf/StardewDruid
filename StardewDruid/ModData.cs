@@ -206,40 +206,5 @@ namespace StardewDruid
 
     }
 
-    public class QueryData
-    {
-
-        public string name;
-
-        public string value;
-
-        public string description;
-
-        public double time;
-
-        public string location;
-
-        public enum queries
-        {
-            RequestProgress,
-            SyncProgress,
-            QuestUpdate,
-            EventDisplay,
-            EventDialogue,
-            ThrowRelic,
-            ThrowSword,
-            SpellHandle,
-            AccessHandle,
-            AccessDoor,
-            HaltCharacter,
-            GimmeMoney,
-        }
-
-        public QueryData()
-        {
-
-        }
-
-    }
 
 }

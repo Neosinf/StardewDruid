@@ -155,7 +155,7 @@ namespace StardewDruid.Event.Challenge
 
             EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
-            EventDisplay trashbar = EventBar(DialogueData.Strings(DialogueData.stringkeys.trashCollected), 0);
+            EventDisplay trashbar = EventBar(StringData.Strings(StringData.stringkeys.trashCollected), 0);
 
             trashbar.colour = Color.LightGreen;
 
@@ -167,7 +167,7 @@ namespace StardewDruid.Event.Challenge
 
             eventRenders.Add(ritePortal);
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
 
         }
 
@@ -195,7 +195,7 @@ namespace StardewDruid.Event.Challenge
             //if (activeCounter % 2 == 0)
             //{
                 
-            //    Mod.instance.iconData.ImpactIndicator(location, origin, IconData.impacts.nature, 6f, new() { alpha = 0.3f, });
+            //    Mod.instance.iconData.ImpactIndicator(location, origin, IconData.impacts.supree, 6f, new() { alpha = 0.3f, });
             
             //}
 
@@ -236,7 +236,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 1:
 
-                    bosses[0] = new Batwing(new Vector2(27, 11), Mod.instance.CombatDifficulty());
+                    bosses[0] = new ShadowBat(new Vector2(27, 11), Mod.instance.CombatDifficulty());
 
                     bosses[0].SetMode(3);
 
@@ -278,15 +278,15 @@ namespace StardewDruid.Event.Challenge
 
                         rockSpell.display = IconData.impacts.impact;
 
-                        rockSpell.type = SpellHandle.spells.orbital;
+                        rockSpell.type = SpellHandle.spells.missile;
 
-                        rockSpell.projectile = 5;
+                        rockSpell.factor =5;
 
                         rockSpell.scheme = IconData.schemes.rock;
 
                         rockSpell.sound = SpellHandle.sounds.explosion;
 
-                        rockSpell.missile = IconData.missiles.rockfall;
+                        rockSpell.missile = MissileHandle.missiles.rockfall;
 
                         rockSpell.terrain = 3;
 

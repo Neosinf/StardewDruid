@@ -35,22 +35,19 @@ namespace StardewDruid.Event.Sword
             if (eventAbort)
             {
 
-                if (Game1.player.currentLocation.Name == LocationData.druid_tunnel_name)
+                if (Game1.player.currentLocation.Name == LocationHandle.druid_tunnel_name)
                 {
 
                     DialogueCue(901);
 
                     Vector2 warpBack = ModUtility.PositionToTile(Mod.instance.questHandle.quests[eventId].origin);
 
-                    Game1.warpFarmer(
+                    Mod.instance.WarpAllFarmers(
                         Mod.instance.questHandle.quests[eventId].triggerLocation,
                         (int)warpBack.X,
                         (int)warpBack.Y, 
                         2);
 
-                    Game1.xLocationAfterWarp = (int)warpBack.X;
-
-                    Game1.yLocationAfterWarp = (int)warpBack.Y;
 
                 }
 
@@ -66,7 +63,7 @@ namespace StardewDruid.Event.Sword
 
             statueVector = new Vector2(30, 6) * 64;
 
-            locales = new() { location.Name, LocationData.druid_tunnel_name, LocationData.druid_court_name, };
+            locales = new() { location.Name, LocationHandle.druid_tunnel_name, LocationHandle.druid_court_name, };
 
             monsterHandle = new(origin, location);
 
@@ -141,12 +138,8 @@ namespace StardewDruid.Event.Sword
             {
                 
                 case 1:
-                    
-                    Game1.warpFarmer(LocationData.druid_tunnel_name, 22, 99, 3);
 
-                    Game1.xLocationAfterWarp = 22;
-
-                    Game1.yLocationAfterWarp = 99;
+                    Mod.instance.WarpAllFarmers(LocationHandle.druid_tunnel_name, 22, 99, 3);
 
                     CharacterHandle.CharacterLoad(CharacterHandle.characters.Jester, Character.Character.mode.track);
 
@@ -184,7 +177,7 @@ namespace StardewDruid.Event.Sword
 
                     DialogueCue(900);
 
-                    EventDisplay run = EventBar(DialogueData.Strings(DialogueData.stringkeys.reachEnd), 1);
+                    EventDisplay run = EventBar(StringData.Strings(StringData.stringkeys.reachEnd), 1);
 
                     run.colour = Color.Orange;
 
@@ -238,7 +231,7 @@ namespace StardewDruid.Event.Sword
         public void EventPartThree()
         {
 
-            if (Game1.player.currentLocation.Name == LocationData.druid_court_name)
+            if (Game1.player.currentLocation.Name == LocationHandle.druid_court_name)
             {
 
                 activeCounter = 120;
@@ -275,18 +268,12 @@ namespace StardewDruid.Event.Sword
 
                         Game1.player.mailReceived.Add("gotGoldenScythe");
 
-                        location.setMapTileIndex(29, 4, 245, "Front");
-
-                        location.setMapTileIndex(30, 4, 246, "Front");
-
-                        location.setMapTileIndex(29, 5, 261, "Front");
-
-                        location.setMapTileIndex(30, 5, 262, "Front");
-
-                        location.setMapTileIndex(29, 6, 277, "Buildings");
-
-                        location.setMapTileIndex(30, 56, 278, "Buildings");
-
+                        location.setMapTile(29, 4, 245, "Front", "mine");
+                        location.setMapTile(30, 4, 246, "Front", "mine");
+                        location.setMapTile(29, 5, 261, "Front", "mine");
+                        location.setMapTile(30, 5, 262, "Front", "mine");
+                        location.setMapTile(29, 6, 277, "Buildings", "mine");
+                        location.setMapTile(30, 56, 278, "Buildings", "mine");
                     }
 
                     break;
@@ -295,7 +282,7 @@ namespace StardewDruid.Event.Sword
 
                     Event.Access.AccessHandle CourtAccess = new();
 
-                    CourtAccess.AccessSetup(LocationData.druid_tunnel_name, LocationData.druid_court_name, new(29, 8), new(45, 20));
+                    CourtAccess.AccessSetup(LocationHandle.druid_tunnel_name, LocationHandle.druid_court_name, new(29, 8), new(45, 20));
 
                     CourtAccess.location = location;
 
@@ -305,19 +292,15 @@ namespace StardewDruid.Event.Sword
 
                 case 97:
 
-                    Game1.warpFarmer(LocationData.druid_court_name, 41, 20, 1);
+                    Mod.instance.WarpAllFarmers(LocationHandle.druid_court_name, 41, 20, 1);
 
-                    Game1.xLocationAfterWarp = 41;
+                    location = Mod.instance.locations[LocationHandle.druid_court_name];
 
-                    Game1.yLocationAfterWarp = 20;
-
-                    location = Mod.instance.locations[LocationData.druid_court_name];
-
-                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_court_name], companions[0], new Vector2(40, 18) * 64);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_court_name], companions[0], new Vector2(40, 18) * 64);
 
                     Event.Access.AccessHandle TunnelAccess = new();
 
-                    TunnelAccess.AccessSetup( LocationData.druid_court_name, LocationData.druid_tunnel_name, new Vector2(46, 21), new Vector2(29, 8) );
+                    TunnelAccess.AccessSetup( LocationHandle.druid_court_name, LocationHandle.druid_tunnel_name, new Vector2(46, 21), new Vector2(29, 8) );
 
                     TunnelAccess.location = location;
 

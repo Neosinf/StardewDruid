@@ -20,14 +20,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using static StardewDruid.Cast.SpellHandle;
+using static StardewDruid.Character.Character;
 
 namespace StardewDruid.Character
 {
     public class Blackfeather : StardewDruid.Character.Character
     {
-
-        public List<Vector2> ritesDone = new();
 
         public Blackfeather()
         {
@@ -42,122 +40,21 @@ namespace StardewDruid.Character
 
         public override void LoadOut()
         {
+
             base.LoadOut();
 
             setScale = 3.75f;
 
             cooldownInterval = 90;
 
-            specialFrames[specials.launch] = new()
-            {
+            specialFrames = CharacterRender.WitchSpecial();
 
-                [0] = CharacterRender.RectangleHumanoidList(
-                    new()
-                    {
-                        CharacterRender.humanoidFrames.jumpUp,
-                        CharacterRender.humanoidFrames.boxUp1,
-                        CharacterRender.humanoidFrames.boxUp2,
-                        CharacterRender.humanoidFrames.jumpUp,
-                    }),
-                [1] = CharacterRender.RectangleHumanoidList(
-                    new()
-                    {
-                        CharacterRender.humanoidFrames.jumpRight,
-                        CharacterRender.humanoidFrames.boxRight1,
-                        CharacterRender.humanoidFrames.boxRight2,
-                        CharacterRender.humanoidFrames.jumpRight,
-                    }),
-                [2] = CharacterRender.RectangleHumanoidList(
-                    new()
-                    {
-                        CharacterRender.humanoidFrames.jumpDown,
-                        CharacterRender.humanoidFrames.boxDown1,
-                        CharacterRender.humanoidFrames.boxDown2,
-                        CharacterRender.humanoidFrames.jumpDown,
-                    }),
-                [3] = CharacterRender.RectangleHumanoidList(
-                    new()
-                    {
-                        CharacterRender.humanoidFrames.jumpLeft,
-                        CharacterRender.humanoidFrames.boxLeft1,
-                        CharacterRender.humanoidFrames.boxLeft2,
-                        CharacterRender.humanoidFrames.jumpLeft,
-                    }),
+            specialIntervals = CharacterRender.WitchIntervals();
 
-            };
+            specialCeilings = CharacterRender.WitchCeilings();
 
-            specialIntervals[specials.launch] = 12;
-            specialCeilings[specials.launch] = 3;
-            specialFloors[specials.launch] = 0;
-
-            specialFrames[specials.liftup] = new()
-            {
-
-                [0] = CharacterRender.RectangleHumanoidList(
-                    new()
-                    {
-                        CharacterRender.humanoidFrames.jumpUp,
-                        CharacterRender.humanoidFrames.boxUp1,
-                    }),
-                [1] = CharacterRender.RectangleHumanoidList(
-                    new()
-                    {
-                        CharacterRender.humanoidFrames.jumpRight,
-                        CharacterRender.humanoidFrames.boxRight1,
-                    }),
-                [2] = CharacterRender.RectangleHumanoidList(
-                    new()
-                    {
-                        CharacterRender.humanoidFrames.jumpDown,
-                        CharacterRender.humanoidFrames.boxDown1,
-                    }),
-                [3] = CharacterRender.RectangleHumanoidList(
-                    new()
-                    {
-                        CharacterRender.humanoidFrames.jumpLeft,
-                        CharacterRender.humanoidFrames.boxLeft1,
-                    }),
-
-            };
-
-            specialIntervals[specials.liftup] = 15;
-            specialCeilings[specials.liftup] = 1;
-            specialFloors[specials.liftup] = 1;
-
-            specialFrames[specials.liftdown] = new()
-            {
-
-                [0] = CharacterRender.RectangleHumanoidList(
-                    new()
-                    {
-                        CharacterRender.humanoidFrames.boxUp2,
-                        CharacterRender.humanoidFrames.jumpUp,
-                    }),
-                [1] = CharacterRender.RectangleHumanoidList(
-                    new()
-                    {
-                        CharacterRender.humanoidFrames.boxRight2,
-                        CharacterRender.humanoidFrames.jumpRight,
-                    }),
-                [2] = CharacterRender.RectangleHumanoidList(
-                    new()
-                    {
-                        CharacterRender.humanoidFrames.boxDown2,
-                        CharacterRender.humanoidFrames.jumpDown,
-                    }),
-                [3] = CharacterRender.RectangleHumanoidList(
-                    new()
-                    {
-                        CharacterRender.humanoidFrames.boxLeft2,
-                        CharacterRender.humanoidFrames.jumpLeft,
-                    }),
-
-            };
-
-            specialIntervals[specials.liftdown] = 15;
-            specialCeilings[specials.liftdown] = 1;
-            specialFloors[specials.liftdown] = 1;
-
+            specialFloors = CharacterRender.WitchFloors();
+            
             restSet = true;
 
         }
@@ -199,7 +96,7 @@ namespace StardewDruid.Character
                 drawLayer
             );
 
-            DrawShadow(b, spritePosition, drawLayer);
+            DrawShadow(b, spritePosition, drawLayer, fade);
 
         }
 
@@ -286,32 +183,18 @@ namespace StardewDruid.Character
 
                 tileVectors = ModUtility.GetTilesWithinRadius(currentLocation, occupied, i);
 
-                foreach (Vector2 scarevector in tileVectors)
+                foreach (Vector2 scareVector in tileVectors)
                 {
 
-                    if (ritesDone.Contains(scarevector))
+                    if (currentLocation.objects.ContainsKey(scareVector))
                     {
 
-                        continue;
-
-                    }
-
-                    if (currentLocation.objects.ContainsKey(scarevector))
-                    {
-
-                        if (currentLocation.Objects[scarevector].IsScarecrow())
+                        if (currentLocation.Objects[scareVector].IsScarecrow())
                         {
 
-                            string scid = "scarecrow_companion_" + scarevector.X.ToString() + "_" + scarevector.Y.ToString();
+                            string workString = Game1.season.ToString() + Game1.dayOfMonth.ToString() + "_" + currentLocation.Name + "_" + scareVector.X.ToString() + "_" + scareVector.Y.ToString();
 
-                            if (!Mod.instance.rite.specialCasts.ContainsKey(currentLocation.Name))
-                            {
-
-                                Mod.instance.rite.specialCasts[currentLocation.Name] = new();
-
-                            }
-
-                            if (Mod.instance.rite.specialCasts[currentLocation.Name].Contains(scid))
+                            if (workRegister.Contains(workString))
                             {
 
                                 continue;
@@ -320,15 +203,13 @@ namespace StardewDruid.Character
 
                             ResetActives();
 
-                            LookAtTarget(scarevector * 64, true);
+                            LookAtTarget(scareVector * 64, true);
 
                             netSpecial.Set((int)specials.invoke);
 
                             specialTimer = 90;
 
-                            workVector = scarevector;
-
-                            ritesDone.Add(scarevector);
+                            workVector = scareVector;
 
                             return true;
 
@@ -379,13 +260,22 @@ namespace StardewDruid.Character
 
                     Cultivate cultivateEvent = new();
 
-                    cultivateEvent.EventSetup(workVector * 64, "effigy_cultivate_" + workVector.ToString());
+                    cultivateEvent.EventSetup(workVector * 64, "blackfeather_cultivate_" + workVector.ToString());
 
                     cultivateEvent.inabsentia = true;
 
                     cultivateEvent.inventory = Mod.instance.chests[CharacterHandle.characters.Blackfeather].Items;
 
                     cultivateEvent.EventActivate();
+
+                }
+
+                string workString = Game1.season.ToString() + Game1.dayOfMonth.ToString() + "_" + currentLocation.Name + "_" + workVector.X.ToString() + "_" + workVector.Y.ToString();
+
+                if (!workRegister.Contains(workString))
+                {
+
+                    workRegister.Add(workString);
 
                 }
 
@@ -399,6 +289,7 @@ namespace StardewDruid.Character
                 artificeHandle.ArtificeScarecrow(currentLocation, workVector,true);
 
             }
+
         }
 
         public override bool SmashAttack(StardewValley.Monsters.Monster monster)
@@ -408,11 +299,28 @@ namespace StardewDruid.Character
 
         }
 
-        public override bool SweepAttack(StardewValley.Monsters.Monster monster)
+        public override void ConnectSweep()
         {
-            
-            return SpecialAttack(monster);
-        
+
+            SpellHandle swipeEffect = new(Game1.player, Position, 256, Mod.instance.CombatDamage() / 2);
+
+            swipeEffect.type = SpellHandle.spells.explode;
+
+            swipeEffect.display = IconData.impacts.boltnode;
+
+            swipeEffect.instant = true;
+
+            swipeEffect.added = new() { SpellHandle.effects.push, };
+
+            if (Mod.instance.activeEvent.Count == 0)
+            {
+
+                swipeEffect.sound = SpellHandle.sounds.thunder_small;
+
+            }
+
+            Mod.instance.spellRegister.Add(swipeEffect);
+
         }
 
         public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
@@ -428,28 +336,30 @@ namespace StardewDruid.Character
 
             LookAtTarget(monster.Position, true);
 
-            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 3);
+            //SpellHandle glare = new(GetBoundingBox().Center.ToVector2(), 256, IconData.impacts.glare, new()) { scheme = IconData.schemes.mists };
 
-            special.type = SpellHandle.spells.zap;
+            //Mod.instance.spellRegister.Add(glare);
 
-            special.projectile = 6;
+            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage());
 
-            //special.scheme = IconData.schemes.stars;
+            special.type = SpellHandle.spells.lightning;
+
+            special.factor =6;
 
             special.counter = -24;
 
-            special.added = new() { effects.shock, };
+            if(Mod.instance.activeEvent.Count == 0)
+            {
+                
+                special.sound = SpellHandle.sounds.thunder_small;
+
+            }
+
+            //special.added = new() { SpellHandle.effects.shock, };
 
             Mod.instance.spellRegister.Add(special);
 
             return true;
-
-        }
-
-        public override void NewDay()
-        {
-
-            ritesDone.Clear();
 
         }
 

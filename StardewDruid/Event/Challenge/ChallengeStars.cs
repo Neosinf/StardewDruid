@@ -81,11 +81,11 @@ namespace StardewDruid.Event.Challenge
 
             EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
-            EventDisplay slimebar = EventBar(DialogueData.Strings(DialogueData.stringkeys.slimesDestroyed), 1);
+            EventDisplay slimebar = EventBar(StringData.Strings(StringData.stringkeys.slimesDestroyed), 1);
 
             slimebar.colour = Microsoft.Xna.Framework.Color.LightGreen;
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.nature, new()) {sound = SpellHandle.sounds.getNewSpecialItem, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) {sound = SpellHandle.sounds.getNewSpecialItem, });
 
             Mod.instance.rite.CastMeteors();
 
@@ -171,7 +171,7 @@ namespace StardewDruid.Event.Challenge
 
                     voices[0] = bosses[0];
 
-                    Mod.instance.spellRegister.Add(new(bosses[0].Position, 288, IconData.impacts.splatter, new()) { scheme = IconData.schemes.pumpkin, });
+                    Mod.instance.spellRegister.Add(new(bosses[0].Position, 288, IconData.impacts.splatter, new()) { scheme = IconData.schemes.herbal_impes,});
 
                     location.playSound(SpellHandle.sounds.slime.ToString());
 
@@ -206,11 +206,11 @@ namespace StardewDruid.Event.Challenge
 
                         SpellHandle meteor = new(Game1.player, bosses[0].Position, 8 * 64, 9999);
 
-                        meteor.type = SpellHandle.spells.orbital;
+                        meteor.type = SpellHandle.spells.missile;
 
-                        meteor.missile = IconData.missiles.meteor;
+                        meteor.missile = MissileHandle.missiles.meteor;
 
-                        meteor.projectile = 5;
+                        meteor.factor =5;
 
                         meteor.sound = SpellHandle.sounds.explosion;
 
@@ -235,7 +235,7 @@ namespace StardewDruid.Event.Challenge
                     if (bosses.Count > 0)
                     {
 
-                        Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, IconData.impacts.splatter, 5f, new() { scheme = IconData.schemes.pumpkin, });
+                        Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, IconData.impacts.splatter, 5f, new() { scheme = IconData.schemes.herbal_impes, });
 
                         bosses[0].currentLocation.characters.Remove(bosses[0]);
 

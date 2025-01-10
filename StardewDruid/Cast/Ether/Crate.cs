@@ -2,10 +2,11 @@
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
+using StardewDruid.Cast.Effect;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
 using StardewDruid.Event;
-using StardewDruid.Journal;
+using StardewDruid.Location.Druid;
 using StardewValley;
 using StardewValley.Locations;
 using StardewValley.Tools;
@@ -19,12 +20,19 @@ using xTile.Tiles;
 
 namespace StardewDruid.Cast.Ether
 {
+
     public class Crate : EventHandle
     {
 
         public int crateTerrain;
 
         public bool crateThief;
+
+        public bool crateTreasure;
+
+        public bool heldTreasure;
+
+        public List<StardewValley.Object> treasures = new();
 
         public Crate()
         {
@@ -71,10 +79,12 @@ namespace StardewDruid.Cast.Ether
 
                 thief = bosses.First().Value;
 
+                origin = thief.Position;
+
                 if (!ModUtility.MonsterVitals(thief, location) || thief.netWoundedActive.Value)
                 {
 
-                    origin = thief.Position;
+                    thief.deathIsNoEscape();
 
                     eventComplete = true;
 
@@ -88,19 +98,78 @@ namespace StardewDruid.Cast.Ether
 
             activeLimit = 60;
 
-            EventBar(DialogueData.Strings(DialogueData.stringkeys.treasureHunt), 0);
+            EventBar(StringData.Strings(StringData.stringkeys.treasureGuardian), 0);
 
-            switch (Mod.instance.randomIndex.Next(3))
+            switch (crateTerrain)
             {
+
                 default:
-                case 0:
-                    thief = new StardewDruid.Monster.DarkRogue(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+
+                    switch (Mod.instance.randomIndex.Next(3))
+                    {
+                        default:
+                        case 0:
+                            thief = new StardewDruid.Monster.Dark(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+                            break;
+                        case 1:
+                            thief = new StardewDruid.Monster.DarkShooter(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+                            break;
+                        case 2:
+                            thief = new StardewDruid.Monster.DarkGoblin(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+                            break;
+
+                    }
+
                     break;
-                case 1:
-                    thief = new StardewDruid.Monster.DarkShooter(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
-                    break;
+
                 case 2:
-                    thief = new StardewDruid.Monster.DarkGoblin(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+
+                    int forest = SpawnData.ForestWaterCheck(location);
+
+                    if (location is Caldera || location.Name == "UndergroundMine100")
+                    {
+                        thief = new StardewDruid.Monster.ShadowSerpent(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty(),"LavaSerpent");
+
+                        thief.netScheme.Set(2);
+
+                        break;
+
+                    }
+                    else if (location is Beach || location.Name.Contains("Beach") || location is IslandLocation || location is Atoll || forest == 3)
+                    {
+
+                        if (Mod.instance.randomIndex.Next(3) == 0)
+                        {
+
+                            thief = new StardewDruid.Monster.ShadowSerpent(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty(), "NightSerpent");
+
+                            thief.netScheme.Set(4);
+
+                            break;
+
+                        }
+
+                        thief = new StardewDruid.Monster.ShadowSerpent(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+
+                        break;
+
+                    }
+
+                    if (Mod.instance.randomIndex.Next(3) == 0)
+                    {
+
+                        thief = new StardewDruid.Monster.ShadowSerpent(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty(), "NightSerpent");
+
+                        thief.netScheme.Set(4);
+
+                        break;
+
+                    }
+
+                    thief = new StardewDruid.Monster.ShadowSerpent(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty(), "RiverSerpent");
+
+                    thief.netScheme.Set(1);
+
                     break;
 
             }
@@ -109,27 +178,43 @@ namespace StardewDruid.Cast.Ether
 
             location.characters.Add(thief);
 
-            thief.baseJuice = 1;
+            if (crateTreasure)
+            {
 
-            thief.basePulp = 18;
+                thief.tempermentActive = Monster.Boss.temperment.coward;
 
-            thief.SetMode(2);
+                thief.basePulp = 15;
 
-            thief.tempermentActive = Monster.Boss.temperment.coward;
+                thief.SetMode(2);
+
+                narrators = NarratorData.DialogueNarrators(QuestHandle.treasureChase);
+
+                cues = DialogueData.DialogueScene(QuestHandle.treasureChase);
+
+            }
+
+            if (heldTreasure)
+            {
+
+                thief.tempermentActive = Monster.Boss.temperment.aggressive;
+
+                thief.SetMode(treasures.Count);
+
+                narrators = NarratorData.DialogueNarrators(QuestHandle.treasureGuardian);
+
+                cues = DialogueData.DialogueScene(QuestHandle.treasureGuardian);
+
+            }
 
             thief.netHaltActive.Set(true);
 
             thief.idleTimer = 60;
 
-            thief.SetDirection(Game1.player.Position);
+            thief.LookAtTarget(Game1.player.Position);
 
             thief.setWounded = true;
 
             thief.update(Game1.currentGameTime, location);
-
-            narrators = DialogueData.DialogueNarrators("treasureChase");
-
-            cues = DialogueData.DialogueScene("treasureChase");
 
             bosses[0] = thief;
 
@@ -137,17 +222,87 @@ namespace StardewDruid.Cast.Ether
 
             DialogueCue(990);
 
+            Mod.instance.iconData.AnimateQuickWarp(location, origin);
+
         }
 
         public override void EventCompleted()
         {
             
-            if (!Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherFour))
+            if (
+                crateTerrain != 2
+                && location is MineShaft mineShaft 
+                && mineShaft.mineLevel != MineShaft.bottomOfMineLevel 
+                && mineShaft.mineLevel != MineShaft.quarryMineShaft)
             {
 
-                Mod.instance.questHandle.UpdateTask(Journal.QuestHandle.etherFour, 1);
+                OpenHole();
+
+                return;
 
             }
+
+            if(crateTerrain == 2)
+            {
+
+                FishRelic();
+
+            }
+
+            if (crateTreasure)
+            {
+
+                OpenTreasure();
+
+            }
+
+            if (heldTreasure)
+            {
+
+                ReleaseTreasure();
+
+            }
+
+        }
+
+        public void FishRelic()
+        {
+
+            IconData.relics fishRelic = Mod.instance.relicsData.RelicMistsLocations();
+
+            if (fishRelic != IconData.relics.none)
+            {
+
+                if (!RelicData.HasRelic(fishRelic))
+                {
+
+                    ThrowHandle throwRelic = new(Game1.player, origin, fishRelic);
+
+                    throwRelic.register();
+
+                }
+
+            }
+
+        }
+
+        public void OpenHole()
+        {
+
+            Layer layer = location.map.GetLayer("Buildings");
+
+            Vector2 treasureVector = ModUtility.PositionToTile(origin);
+
+            layer.Tiles[(int)treasureVector.X, (int)treasureVector.Y] = new StaticTile(layer, location.map.TileSheets[0], 0, (location as MineShaft).mineLevel > 120 ? 174 : 173);
+
+            Game1.player.TemporaryPassableTiles.Add(new Microsoft.Xna.Framework.Rectangle((int)treasureVector.X * 64, (int)treasureVector.Y * 64, 64, 64));
+
+            DialogueCue(991);
+
+        }
+
+        public void OpenTreasure()
+        {
 
             if (!Mod.instance.rite.specialCasts.ContainsKey(location.Name))
             {
@@ -158,47 +313,22 @@ namespace StardewDruid.Cast.Ether
 
             Mod.instance.rite.specialCasts[location.Name].Add("crate");
 
-            if (
-                location is MineShaft mineShaft 
-                && mineShaft.mineLevel != MineShaft.bottomOfMineLevel 
-                && mineShaft.mineLevel != MineShaft.quarryMineShaft)
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.etherFour))
             {
 
-                Layer layer = location.map.GetLayer("Buildings");
-
-                Vector2 treasureVector = ModUtility.PositionToTile(origin);
-
-                layer.Tiles[(int)treasureVector.X, (int)treasureVector.Y] = new StaticTile(layer, location.map.TileSheets[0], 0, mineShaft.mineLevel > 120 ? 174 : 173);
-
-                Game1.player.TemporaryPassableTiles.Add(new Microsoft.Xna.Framework.Rectangle((int)treasureVector.X * 64, (int)treasureVector.Y * 64, 64, 64));
-
-
-                DialogueCue(991);
-
-                return;
+                Mod.instance.questHandle.UpdateTask(QuestHandle.etherFour, 1);
 
             }
 
-            int aether = Mod.instance.randomIndex.Next(1,4);
+            int aether = Mod.instance.randomIndex.Next(1, 4);
 
             Herbal Aether = Mod.instance.herbalData.herbalism[HerbalData.herbals.aether.ToString()];
 
             DisplayPotion hudmessage = new("+" + aether.ToString() + " " + Aether.title, Aether);
-                
+
             Game1.addHUDMessage(hudmessage);
 
-            if (Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.aether))
-            {
-
-                Mod.instance.save.herbalism[HerbalData.herbals.aether] += Math.Min(aether,999-Mod.instance.save.herbalism[HerbalData.herbals.aether]);
-
-            }
-            else
-            {
-
-                Mod.instance.save.herbalism[HerbalData.herbals.aether] = aether;
-
-            }
+            HerbalData.UpdateHerbalism(HerbalData.herbals.aether, aether);
 
             SpellHandle crate = new(location, new(1), origin);
 
@@ -212,35 +342,12 @@ namespace StardewDruid.Cast.Ether
 
             Mod.instance.spellRegister.Add(crate);
 
-            if(crateTerrain == 2)
-            {
-
-                IconData.relics fishRelic = Mod.instance.relicsData.RelicMistsLocations();
-
-                if (fishRelic != IconData.relics.none)
-                {
-
-                    if (!Journal.RelicData.HasRelic(fishRelic))
-                    {
-
-                        ThrowHandle throwRelic = new(Game1.player, origin, fishRelic);
-
-                        throwRelic.register();
-
-                        return;
-
-                    }
-
-                }
-
-            }
-
             IconData.relics bookRelic = Mod.instance.relicsData.RelicBooksLocations();
 
             if (bookRelic != IconData.relics.none)
             {
 
-                if (!Journal.RelicData.HasRelic(bookRelic))
+                if (!RelicData.HasRelic(bookRelic))
                 {
 
                     ThrowHandle throwRelic = new(Game1.player, origin, bookRelic);
@@ -248,6 +355,28 @@ namespace StardewDruid.Cast.Ether
                     throwRelic.register();
 
                 }
+
+            }
+
+        }
+
+        public void ReleaseTreasure()
+        {
+
+            foreach(StardewValley.Object treasure in treasures)
+            {
+
+                Vector2 offset = origin + new Vector2(Mod.instance.randomIndex.Next(4) * 16, Mod.instance.randomIndex.Next(4) * 16);
+
+                ThrowHandle throwObject = new(Game1.player, offset, treasure);
+
+                throwObject.delay = Mod.instance.randomIndex.Next(5) * 10;
+
+                throwObject.register();
+
+                Game1.player.gainExperience(1, treasure.Quality * 12); // gain fishing experience
+
+                Game1.player.caughtFish(treasure.ItemId, 1, false, 1);
 
             }
 

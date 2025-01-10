@@ -63,6 +63,8 @@ namespace StardewDruid.Monster
 
             flightSpeed = 12;
 
+            flightDefault = flightTypes.past;
+
             sweepInterval = 6;
 
             cooldownInterval = 150;
@@ -117,6 +119,8 @@ namespace StardewDruid.Monster
             {
                 return;
             }
+
+            //DrawBoundingBox(b);
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
@@ -311,11 +315,11 @@ namespace StardewDruid.Monster
 
                 missile.display = IconData.impacts.impact;
 
-                missile.missile = IconData.missiles.fireball;
+                missile.missile = MissileHandle.missiles.fireball;
 
                 missile.projectileSpeed = 1f;
 
-                missile.projectile = (int)radius;
+                missile.factor =(int)radius;
 
                 missile.added = new() { SpellHandle.effects.burn, };
 
@@ -380,7 +384,7 @@ namespace StardewDruid.Monster
 
                 case 1: 
                     
-                    return 4;
+                    return 1;
 
                 case 2: 
                     
@@ -388,7 +392,7 @@ namespace StardewDruid.Monster
 
                 case 3: 
                     
-                    return 6;
+                    return 3;
 
             }
 

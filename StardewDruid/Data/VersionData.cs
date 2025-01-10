@@ -1,4 +1,4 @@
-﻿using StardewDruid.Journal;
+﻿using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewValley;
 using System;

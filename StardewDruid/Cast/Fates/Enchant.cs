@@ -1,18 +1,19 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
-using StardewDruid.Journal;
+using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
+using StardewValley.Events;
 using StardewValley.Extensions;
+using StardewValley.GameData.GiantCrops;
 using StardewValley.GameData.Machines;
+using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
-using System.Reflection.PortableExecutable;
-using static StardewDruid.Journal.HerbalData;
-
 
 namespace StardewDruid.Cast.Fates
 {
@@ -24,8 +25,11 @@ namespace StardewDruid.Cast.Fates
 
         public int faeth = 0;
 
+        public List<Vector2> giantTiles = new();
+
         public Enchant()
         {
+
 
         }
 
@@ -86,14 +90,11 @@ namespace StardewDruid.Cast.Fates
 
                     eventLocked = true;
 
-                    //ModUtility.AnimateHands(Game1.player, Game1.player.FacingDirection, 600);
-                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
+                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
 
                     SpellHandle spellHandle = new(origin, 256, IconData.impacts.summoning, new());
 
                     spellHandle.scheme = IconData.schemes.fates;
-
-                    //spellHandle.sound = SpellHandle.sounds.discoverMineral;
 
                     Mod.instance.spellRegister.Add(spellHandle);
 
@@ -103,10 +104,21 @@ namespace StardewDruid.Cast.Fates
 
             }
 
-            if(radialCounter % 2 == 0)
+            if (radialCounter % 2 == 0)
             {
+                
+                if (!inabsentia)
+                {
+                    
+                    Enchantment();
 
-                Enchantment();
+                }
+                else
+                {
+
+                    KissedByTheStars();
+
+                }
 
             }
 
@@ -120,15 +132,16 @@ namespace StardewDruid.Cast.Fates
             }
 
         }
+
         public override void EventRemove()
         {
-            
+
             base.EventRemove();
 
             if (faeth > 0)
             {
 
-                Herbal resource = Mod.instance.herbalData.herbalism[herbals.faeth.ToString()];
+                Herbal resource = Mod.instance.herbalData.herbalism[HerbalData.herbals.faeth.ToString()];
 
                 string message = "-" + faeth + " " + resource.title;
 
@@ -148,7 +161,7 @@ namespace StardewDruid.Cast.Fates
                 }
 
             }
-  
+
         }
 
         public void Enchantment()
@@ -161,19 +174,12 @@ namespace StardewDruid.Cast.Fates
 
             }
 
-            List<Vector2> affected = ModUtility.GetTilesWithinRadius(location, ModUtility.PositionToTile(origin), radialCounter/2);
+            List<Vector2> affected = ModUtility.GetTilesWithinRadius(location, ModUtility.PositionToTile(origin), radialCounter / 2);
 
             foreach (Vector2 tile in affected)
             {
-
-                if (!Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.faeth))
-                {
-
-                    break;
-
-                }
                 
-                if (Mod.instance.save.herbalism[HerbalData.herbals.faeth] == 0)
+                if (HerbalData.UpdateHerbalism(HerbalData.herbals.faeth) == 0)
                 {
 
                     break;
@@ -187,14 +193,44 @@ namespace StardewDruid.Cast.Fates
 
                 }
 
-                if (!location.objects.ContainsKey(tile))
+                if (location.terrainFeatures.ContainsKey(tile))
                 {
 
-                    continue;
+                    if (location.terrainFeatures[tile] is HoeDirt hoeDirt)
+                    {
+
+                        if (FairyDustCrop(hoeDirt))
+                        {
+
+                            HerbalData.UpdateHerbalism(HerbalData.herbals.faeth,-1);
+
+                            faeth += 1;
+
+                            Mod.instance.rite.targetCasts[location.Name + "_enchant"][tile] = "crop";
+
+
+                        };
+
+                        if (giantTiles.Contains(tile))
+                        {
+
+                            GiantDustCrop(hoeDirt);
+
+                            HerbalData.UpdateHerbalism(HerbalData.herbals.faeth, -1);
+
+                            faeth += 1;
+
+                            Mod.instance.rite.targetCasts[location.Name + "_enchant"][tile] = "giant";
+
+                        }
+
+                        continue;
+
+                    }
 
                 }
 
-                if (!location.objects[tile].HasTypeBigCraftable())
+                if (!location.objects.ContainsKey(tile))
                 {
 
                     continue;
@@ -203,8 +239,14 @@ namespace StardewDruid.Cast.Fates
 
                 StardewValley.Object target = location.objects[tile];
 
+                if (!target.HasTypeBigCraftable())
+                {
 
-                switch (target.name)
+                    continue;
+
+                }
+
+                /*switch (target.name)
                 {
 
                     case "Deconstructor":
@@ -212,7 +254,7 @@ namespace StardewDruid.Cast.Fates
                     case "Bone Mill":
                     case "Keg":
                     case "Preserves Jar":
-                    case "Cheese Press": 
+                    case "Cheese Press":
                     case "Mayonnaise Machine":
                     case "Loom":
                     case "Oil Maker":
@@ -230,130 +272,183 @@ namespace StardewDruid.Cast.Fates
 
                         continue;
 
-                }
-                
+                }*/
+
 
                 if (target.MinutesUntilReady > 2)
                 {
 
-                    Utility.addSprinklesToLocation(location, (int)tile.X, (int)tile.Y, 1, 2, 400, 40, Color.White);
-
-                    target.MinutesUntilReady = 10;
-
-                    DelayedAction.functionAfterDelay(delegate { target.minutesElapsed(10); }, 50);
-
-                    Mod.instance.rite.targetCasts[location.Name + "_enchant"][tile] = target.name;
-
-                    Mod.instance.save.herbalism[HerbalData.herbals.faeth] -= 1;
-
-                    Vector2 cursorVector = tile * 64 + new Vector2(32, 32);
-
-                    Microsoft.Xna.Framework.Color colour = Mod.instance.iconData.gradientColours[IconData.schemes.fates][Mod.instance.randomIndex.Next(3)];
-
-                    Mod.instance.iconData.ImpactIndicator(location, cursorVector, IconData.impacts.glare, 0.75f + Mod.instance.randomIndex.Next(5) * 0.25f, new() { color = colour, });
-
-                    faeth++;
-
-                }
-                else 
-                {
-                    if (target.heldObject.Value != null)
+                    if (target.TryApplyFairyDust())
                     {
 
-                        ThrowHandle throwIt = new(Game1.player, target.TileLocation * 64, target.heldObject.Value);
+                        Mod.instance.rite.targetCasts[location.Name + "_enchant"][tile] = target.name;
 
-                        throwIt.register();
+                        HerbalData.UpdateHerbalism(HerbalData.herbals.faeth, -1);
 
-                        target.heldObject.Set(null);
+                        Vector2 fairyVector = tile * 64 + new Vector2(32, 32);
 
-                        target.MinutesUntilReady = 0;
+                        Microsoft.Xna.Framework.Color fairyColour = Mod.instance.iconData.gradientColours[IconData.schemes.fates][Mod.instance.randomIndex.Next(3)];
 
-                        target.readyForHarvest.Set(false);
+                        Mod.instance.iconData.ImpactIndicator(
+                            Game1.player.currentLocation,
+                            fairyVector,
+                            IconData.impacts.glare,
+                            4f,
+                            new() { alpha = 0.65f, color = fairyColour, rotation = Mod.instance.randomIndex.Next(4) * 0.5f, });
 
-                        target.performDropDownAction(Game1.player);
+                        faeth++;
 
                     }
 
-                    int cost = 1;
+                    continue;
 
-                    switch (target.name)
-                    {
+                }
 
-                        case "Deconstructor": FillDeconstructor(target); break;
+                if (target.heldObject.Value != null)
+                {
 
-                        case "Dehydrator": FillDehydrator(target); break;
+                    ThrowHandle throwIt = new(Game1.player, target.TileLocation * 64, target.heldObject.Value);
 
-                        case "Bone Mill": FillBoneMill(target); break;
+                    throwIt.register();
 
-                        case "Keg": FillKeg(target); break;
+                    target.heldObject.Set(null);
 
-                        case "Preserves Jar": FillPreservesJar(target); break;
+                    target.MinutesUntilReady = 0;
 
-                        case "Cheese Press": FillCheesePress(target); break;
+                    target.readyForHarvest.Set(false);
 
-                        case "Mayonnaise Machine": FillMayonnaiseMachine(target); break;
+                    target.performDropDownAction(Game1.player);
 
-                        case "Loom": FillLoom(target); break;
+                }
 
-                        case "Oil Maker": FillOilMaker(target); break;
+                int cost = 1;
 
-                        case "Furnace": 
-                            
-                            FillFurnace(target); 
-                            
-                            break;
+                switch (target.name)
+                {
 
-                        case "Heavy Furnace": 
-                            
-                            if(Mod.instance.save.herbalism[HerbalData.herbals.faeth] < 3)
-                            { 
-                                
-                                continue; 
-                            
-                            } 
-                            
-                            cost = 3;  
-                            
-                            FillFurnace(target, 25, cost); 
-                            
-                            break;
+                    case "Deconstructor": FillDeconstructor(target); break;
 
-                        case "Fish Smoker":
+                    case "Dehydrator": FillDehydrator(target); break;
 
-                            FillFishSmoker(target);
+                    case "Bone Mill": FillBoneMill(target); break;
 
-                            break;
+                    case "Keg": FillKeg(target); break;
 
-                        case "Geode Crusher": FillGeodeCrusher(target); break;
+                    case "Preserves Jar": FillPreservesJar(target); break;
 
-                        default:
+                    case "Cheese Press": FillCheesePress(target); break;
+
+                    case "Mayonnaise Machine": FillMayonnaiseMachine(target); break;
+
+                    case "Loom": FillLoom(target); break;
+
+                    case "Oil Maker": FillOilMaker(target); break;
+
+                    case "Furnace":
+
+                        FillFurnace(target);
+
+                        break;
+
+                    case "Heavy Furnace":
+
+                        if (HerbalData.UpdateHerbalism(HerbalData.herbals.faeth) < 3)
+                        {
 
                             continue;
 
-                    }
+                        }
 
-                    if(target.heldObject.Value == null)
-                    {
+                        cost = 3;
 
-                        continue;
+                        FillFurnace(target, 25, cost);
 
-                    }
+                        break;
 
-                    Mod.instance.rite.targetCasts[location.Name + "_enchant"][tile] = target.name;
+                    case "Fish Smoker":
 
-                    Mod.instance.save.herbalism[HerbalData.herbals.faeth] -= cost;
+                        FillFishSmoker(target);
 
-                    Vector2 cursorVector = tile * 64 + new Vector2(32, 32);
+                        break;
 
-                    Microsoft.Xna.Framework.Color colour = Mod.instance.iconData.gradientColours[IconData.schemes.fates][Mod.instance.randomIndex.Next(3)];
+                    case "Geode Crusher": FillGeodeCrusher(target); break;
 
-                    Mod.instance.iconData.ImpactIndicator(location, cursorVector, IconData.impacts.glare, 0.75f + Mod.instance.randomIndex.Next(5) * 0.25f, new() { color = colour, });
+                    default:
 
-                    faeth += cost;
+                        FillUniversal(target);
+
+                        break;
 
                 }
- 
+
+                Mod.instance.rite.targetCasts[location.Name + "_enchant"][tile] = target.name;
+
+                if (target.heldObject.Value == null)
+                {
+
+                    continue;
+
+                }
+
+                HerbalData.UpdateHerbalism(HerbalData.herbals.faeth, 0 - cost);
+
+                Vector2 cursorVector = tile * 64 + new Vector2(32, 32);
+
+                Microsoft.Xna.Framework.Color colour = Mod.instance.iconData.gradientColours[IconData.schemes.fates][Mod.instance.randomIndex.Next(3)];
+
+                Mod.instance.iconData.ImpactIndicator(
+                    Game1.player.currentLocation,
+                    cursorVector,
+                    IconData.impacts.glare,
+                    4f,
+                    new() { alpha = 0.65f, color = colour, rotation = Mod.instance.randomIndex.Next(4) * 0.5f, });
+
+                faeth += cost;
+
             }
+
+        }
+
+        public void FillUniversal(StardewValley.Object targetObject)
+        {
+
+            MachineData machineData = targetObject.GetMachineData();
+
+            if(machineData == null || !machineData.HasInput)
+            {
+
+                return;
+
+            }
+
+            Dictionary<string, StardewValley.Item> possibleInputs = new();
+
+            foreach (MachineOutputRule outputRule in machineData.OutputRules)
+            {
+
+                foreach(MachineOutputTriggerRule triggerRule in outputRule.Triggers)
+                {
+
+                    StardewValley.Item requiredInput = ItemRegistry.Create(triggerRule.RequiredItemId, triggerRule.RequiredCount);
+
+                    possibleInputs[requiredInput.ItemId] = requiredInput;
+
+                }
+
+            }
+
+            foreach(MachineItemAdditionalConsumedItems additionalInput in machineData.AdditionalConsumedItems)
+            {
+
+                StardewValley.Item extra = ItemRegistry.Create(additionalInput.ItemId, additionalInput.RequiredCount);
+
+                Game1.player.addItemToInventory(extra);
+
+            }
+
+            StardewValley.Item input = possibleInputs.ElementAt(Mod.instance.randomIndex.Next(possibleInputs.Count)).Value;
+
+            targetObject.PlaceInMachine(machineData, input, false, Game1.player);
 
         }
 
@@ -366,13 +461,13 @@ namespace StardewDruid.Cast.Fates
 
             CraftingRecipe newThing = new(craftingRecipe.Key);
 
-            targetObject.PlaceInMachine(machineData, ItemRegistry.Create(newThing.itemToProduce.FirstOrDefault(),1), false, Game1.player);
+            targetObject.PlaceInMachine(machineData, ItemRegistry.Create(newThing.itemToProduce.FirstOrDefault(), 1), false, Game1.player);
 
         }
 
         public void FillDehydrator(StardewValley.Object targetObject)
         {
-            
+
             MachineData machineData = targetObject.GetMachineData();
 
             Dictionary<int, int> cropList = new()
@@ -705,7 +800,7 @@ namespace StardewDruid.Cast.Fates
 
         public void FillGeodeCrusher(StardewValley.Object targetObject)
         {
-            
+
             MachineData machineData = targetObject.GetMachineData();
 
             StardewValley.Item input = ItemRegistry.Create("(O)749", 1);
@@ -721,7 +816,7 @@ namespace StardewDruid.Cast.Fates
 
             MachineData machineData = targetObject.GetMachineData();
 
-            StardewValley.Item input = ItemRegistry.Create("(O)"+ SpawnData.RandomHighFish(location,true,Game1.player.Tile,Mod.instance.randomIndex.Next(2)));
+            StardewValley.Item input = ItemRegistry.Create("(O)" + SpawnData.RandomHighFish(location, true, Game1.player.Tile, Mod.instance.randomIndex.Next(2)));
 
             if (input == null) { location.playSound("ghost"); return; }
 
@@ -730,6 +825,239 @@ namespace StardewDruid.Cast.Fates
             Game1.player.addItemToInventory(extra);
 
             targetObject.PlaceInMachine(machineData, input, false, Game1.player);
+
+        }
+
+        public bool FairyDustCrop(StardewValley.TerrainFeatures.HoeDirt hoeDirt)
+        {
+
+            if (hoeDirt.crop == null)
+            {
+
+                return false;
+
+            }
+
+            bool regrowable = false;
+
+            int maxGrowth = hoeDirt.crop.phaseDays.Count - 1;
+
+            if (hoeDirt.crop.RegrowsAfterHarvest())
+            {
+
+                regrowable = true;
+
+            }
+
+            if (hoeDirt.crop.currentPhase.Value < maxGrowth)
+            {
+
+                hoeDirt.crop.currentPhase.Value += 1;
+
+                hoeDirt.crop.dayOfCurrentPhase.Value = 0;
+
+                hoeDirt.crop.updateDrawMath(hoeDirt.crop.tilePosition);
+
+                if (hoeDirt.crop.currentPhase.Value == maxGrowth && regrowable)
+                {
+
+                    hoeDirt.crop.fullyGrown.Set(true);
+
+                }
+
+                location.playSound("dirtyHit");
+
+                return true;
+
+            }
+            else
+            if (regrowable)
+            {
+
+                if (!hoeDirt.crop.fullyGrown.Value)
+                {
+
+                    hoeDirt.crop.fullyGrown.Set(true);
+
+                    location.playSound("dirtyHit");
+
+                }
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+        public bool GiantDustCrop(StardewValley.TerrainFeatures.HoeDirt hoeDirt)
+        {
+            
+            if (hoeDirt.crop == null)
+            {
+
+                return false;
+
+            }
+
+            if (hoeDirt.crop.currentPhase.Value < hoeDirt.crop.phaseDays.Count - 1)
+            {
+
+                return false;
+
+            }
+
+            if (!(location is Farm || location.HasMapPropertyWithValue("AllowGiantCrops")))
+            {
+
+                return false;
+
+            }
+
+            if (!hoeDirt.crop.TryGetGiantCrops(out var giantCrops))
+            {
+
+                return false;
+
+            }
+
+            foreach (KeyValuePair<string, GiantCropData> item in giantCrops)
+            {
+
+                string key = item.Key;
+
+                GiantCropData value = item.Value;
+
+                if (!GameStateQuery.CheckConditions(value.Condition, location))
+                {
+
+                    continue;
+
+                }
+
+                bool flag = true;
+
+                List<Vector2> neighbours = ModUtility.GetTilesWithinRadius(location, hoeDirt.Tile, 1);
+
+                foreach (Vector2 neighbour in neighbours)
+                {
+
+                    if (!location.terrainFeatures.ContainsKey(neighbour))
+                    {
+
+                        flag = false;
+
+                        break;
+
+                    }
+
+                    if (location.terrainFeatures[neighbour] is not HoeDirt hoeDirtNeighbour)
+                    {
+
+                        flag = false;
+
+                        break;
+
+                    }
+
+                    if (hoeDirtNeighbour.crop == null)
+                    {
+
+                        flag = false;
+
+                        break;
+
+                    }
+
+                    if (hoeDirtNeighbour.crop.indexOfHarvest != hoeDirt.crop.indexOfHarvest)
+                    {
+
+                        flag = false;
+
+                        break;
+
+                    }
+
+                }
+
+                if (!flag)
+                {
+
+                    continue;
+
+                }
+
+                foreach (Vector2 neighbour in neighbours)
+                {
+
+                    if (location.terrainFeatures[neighbour] is HoeDirt hoeDirtNeighbour)
+                    {
+
+                        hoeDirtNeighbour.crop = null;
+
+                    }
+
+                }
+
+                hoeDirt.crop = null;
+
+                location.resourceClumps.Add(new GiantCrop(key, hoeDirt.Tile - new Vector2(1)));
+
+                location.playSound(SpellHandle.sounds.yoba.ToString());
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+        public void KissedByTheStars()
+        {
+
+            if (!Mod.instance.rite.targetCasts.ContainsKey(location.Name + "_enchant"))
+            {
+
+                Mod.instance.rite.targetCasts[location.Name + "_enchant"] = new();
+
+            }
+
+            List<Vector2> affected = ModUtility.GetTilesWithinRadius(location, ModUtility.PositionToTile(origin), radialCounter / 2);
+
+            foreach (Vector2 tile in affected)
+            {
+
+                if (Mod.instance.rite.targetCasts[location.Name + "_enchant"].ContainsKey(tile))
+                {
+
+                    continue;
+
+                }
+
+                if (location.terrainFeatures.ContainsKey(tile))
+                {
+
+                    if (location.terrainFeatures[tile] is HoeDirt hoeDirt)
+                    {
+
+                        FairyDustCrop(hoeDirt);
+
+                        if (giantTiles.Contains(tile))
+                        {
+
+                            GiantDustCrop(hoeDirt);
+
+                        }
+
+                    }
+
+                    continue;
+
+                }
+
+            }
 
         }
 

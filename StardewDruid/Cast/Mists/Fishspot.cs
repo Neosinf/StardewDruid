@@ -2,7 +2,6 @@
 using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewDruid.Event;
-using StardewDruid.Journal;
 using StardewValley;
 using StardewValley.Minigames;
 using StardewValley.Tools;
@@ -38,7 +37,7 @@ namespace StardewDruid.Cast.Mists
             if (fishRelic != IconData.relics.none)
             {
 
-                if (!Journal.RelicData.HasRelic(fishRelic))
+                if (!RelicData.HasRelic(fishRelic))
                 {
                     fishingRelic = true;
                 }
@@ -114,7 +113,7 @@ namespace StardewDruid.Cast.Mists
 
                 fishTotal++;
 
-                if(fishTotal == 80 && fishingRelic)
+                if(fishTotal >= (checkTime * 3) && fishingRelic)
                 {
 
                     IconData.relics fishRelic = Mod.instance.relicsData.RelicMistsLocations();
@@ -122,12 +121,14 @@ namespace StardewDruid.Cast.Mists
                     if (fishRelic != IconData.relics.none)
                     {
 
-                        if (!Journal.RelicData.HasRelic(fishRelic))
+                        if (!RelicData.HasRelic(fishRelic))
                         {
 
                             ThrowHandle throwRelic = new(Game1.player, origin, fishRelic);
 
                             throwRelic.register();
+
+                            fishingRod.doneFishing(Game1.player,false);
 
                         }
 

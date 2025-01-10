@@ -20,7 +20,7 @@ namespace StardewDruid.Event.Sword
 
             base.EventActivate();
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.getNewSpecialItem, scheme = IconData.schemes.weald, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, scheme = IconData.schemes.weald, });
 
             Mod.instance.iconData.DecorativeIndicator(location, Game1.player.Position, IconData.decorations.weald, 4f, new());
 
@@ -83,7 +83,7 @@ namespace StardewDruid.Event.Sword
 
                     //---------------------- throw Forest Sword
 
-                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.discoverMineral, scheme = IconData.schemes.weald, });
+                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.discoverMineral, scheme = IconData.schemes.weald, });
 
                     break;
 

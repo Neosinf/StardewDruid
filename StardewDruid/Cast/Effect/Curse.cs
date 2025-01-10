@@ -28,6 +28,8 @@ namespace StardewDruid.Cast.Effect
           : base()
         {
 
+            activeLimit = -1;
+
         }
 
         public override void EventDraw(SpriteBatch b)
@@ -122,8 +124,6 @@ namespace StardewDruid.Cast.Effect
 
             victims.Add(monster, new(location, monster, 5, effect));
 
-            activeLimit = eventCounter + 5;
-
         }
 
         public override void EventRemove()
@@ -132,9 +132,9 @@ namespace StardewDruid.Cast.Effect
             for (int g = victims.Count - 1; g >= 0; g--)
             {
 
-                KeyValuePair<StardewValley.Monsters.Monster, CurseTarget> knockTarget = victims.ElementAt(g);
+                KeyValuePair<StardewValley.Monsters.Monster, CurseTarget> cursed = victims.ElementAt(g);
 
-                knockTarget.Value.ShutDown();
+                cursed.Value.ShutDown();
 
             }
 
@@ -156,6 +156,13 @@ namespace StardewDruid.Cast.Effect
                     victims.Remove(knockTarget.Key);
 
                 }
+
+            }
+
+            if(victims.Count == 0)
+            {
+
+                eventComplete = true;
 
             }
 
@@ -402,7 +409,7 @@ namespace StardewDruid.Cast.Effect
 
                 case SpellHandle.effects.glare:
 
-                    if(stats[0] <= ((float)victim.Health - 10f))
+                    if(stats[0] >= ((float)victim.Health - 10f))
                     {
 
                         PerformCritical();

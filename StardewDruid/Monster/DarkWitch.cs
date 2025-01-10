@@ -8,14 +8,13 @@ using StardewValley.Monsters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static StardewDruid.Cast.SpellHandle;
-using static StardewDruid.Character.Character;
-using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Monster
 {
-    public class DarkWitch : DarkRogue
+    public class DarkWitch : Dark
     {
+
+        public IconData.schemes specialScheme = IconData.schemes.snazzle;
 
         public DarkWitch()
         {
@@ -23,7 +22,7 @@ namespace StardewDruid.Monster
 
         }
 
-        public DarkWitch(Vector2 vector, int CombatModifier, string name = "Blackfeather")
+        public DarkWitch(Vector2 vector, int CombatModifier, string name = "Witch")
           : base(vector, CombatModifier, name)
         {
 
@@ -149,46 +148,31 @@ namespace StardewDruid.Monster
         public override void DrawHat(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer)
         {
 
-            if (realName.Value == "Witch")
-            {
-
-                b.Draw(
-                    characterTexture,
-                    Game1.GlobalToLocal(Position) + new Vector2(32, -14f * spriteScale),
-                    hatFrames[netDirection.Value][0],
-                    Color.White,
-                    0f,
-                    new Vector2(16),
-                    spriteScale,
-                    netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                    drawLayer + 0.0001f
-                );
-            
-            }
-
+            b.Draw(
+                characterTexture,
+                Game1.GlobalToLocal(Position) + new Vector2(32, -14f * spriteScale),
+                hatFrames[netDirection.Value][0],
+                Color.White,
+                0f,
+                new Vector2(16),
+                spriteScale,
+                netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                drawLayer + 0.0001f
+            );
 
         }
 
-        public override void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, IconData.schemes scheme = schemes.Void)
+        public override void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, IconData.schemes scheme)
         {
 
-            if (realName.Value == "Witch")
-            {
-
-                base.DrawShield(b, spritePosition, spriteScale, drawLayer, IconData.schemes.snazzle);
-
-                return;
-
-            }
-
-            base.DrawShield(b, spritePosition, spriteScale, drawLayer, IconData.schemes.mists);
+            base.DrawShield(b, spritePosition, spriteScale, drawLayer, specialScheme);
 
         }
 
         public override bool PerformSpecial(Vector2 target)
         {
 
-            SetDirection(target);
+            LookAtTarget(target);
 
             specialTimer = (specialCeiling + 1) * specialInterval;
 
@@ -198,24 +182,17 @@ namespace StardewDruid.Monster
 
             SpellHandle special = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 3);
 
-            if(realName.Value == "Witch")
-            {
+            special.scheme = specialScheme;
 
-                special.scheme = schemes.snazzle;
+            special.type = SpellHandle.spells.lightning;
 
-            }
-
-            special.type = SpellHandle.spells.zap;
-
-            special.projectile = 2;
+            special.factor = 2;
 
             special.counter = -45;
 
-            special.indicator = cursors.mists;
+            special.indicator = IconData.cursors.mists;
 
-            special.TargetCircle(1);
-
-            special.projectile = 6;
+            special.TargetCursor();
 
             Mod.instance.spellRegister.Add(special);
 
@@ -252,70 +229,43 @@ namespace StardewDruid.Monster
         public override bool PerformChannel(Vector2 target)
         {
 
-            if (realName.Value == "Witch")
+            specialTimer = (specialCeiling + 1) * specialInterval;
+
+            netSpecialActive.Set(true);
+
+            SetCooldown(1);
+
+            int offset = Mod.instance.randomIndex.Next(2);
+
+            for (int i = 0; i < 4; i++)
             {
 
-                specialTimer = (specialCeiling + 1) * specialInterval;
+                List<Vector2> castSelection = ModUtility.GetTilesWithinRadius(currentLocation, ModUtility.PositionToTile(Game1.player.Position), Mod.instance.randomIndex.Next(2,3), true, (i * 2) + offset % 8);
 
-                netSpecialActive.Set(true);
-
-                SetCooldown(1);
-
-                int offset = Mod.instance.randomIndex.Next(2);
-
-                for (int i = 0; i < 4; i++)
+                if (castSelection.Count > 0)
                 {
 
-                    List<Vector2> castSelection = ModUtility.GetTilesWithinRadius(currentLocation, ModUtility.PositionToTile(Game1.player.Position), Mod.instance.randomIndex.Next(2,3), true, (i * 2) + offset % 8);
+                    Vector2 tryVector = castSelection[Mod.instance.randomIndex.Next(castSelection.Count)];
 
-                    if (castSelection.Count > 0)
-                    {
+                    SpellHandle fireball = new(currentLocation, tryVector * 64, GetBoundingBox().Center.ToVector2(), 192, GetThreat());
 
-                        Vector2 tryVector = castSelection[Mod.instance.randomIndex.Next(castSelection.Count)];
+                    fireball.type = SpellHandle.spells.missile;
 
-                        SpellHandle fireball = new(currentLocation, tryVector * 64, GetBoundingBox().Center.ToVector2(), 192, GetThreat());
+                    fireball.factor = 2;
 
-                        fireball.type = SpellHandle.spells.missile;
+                    fireball.missile = MissileHandle.missiles.fireball;
 
-                        fireball.projectile = 2;
+                    fireball.display = IconData.impacts.puff;
 
-                        fireball.missile = IconData.missiles.fireball;
+                    fireball.scheme = specialScheme;
 
-                        fireball.display = IconData.impacts.puff;
+                    fireball.boss = this;
 
-                        fireball.scheme = IconData.schemes.snazzle;
-
-                        fireball.boss = this;
-
-                        Mod.instance.spellRegister.Add(fireball);
-
-                    }
+                    Mod.instance.spellRegister.Add(fireball);
 
                 }
 
-                return true;
-
             }
-
-            SpellHandle bolt = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 256, GetThreat());
-
-            bolt.type = SpellHandle.spells.bolt;
-
-            bolt.display = IconData.impacts.bomb;
-
-            bolt.sound = SpellHandle.sounds.thunder;
-
-            bolt.boss = this;
-
-            bolt.counter = -45;
-
-            bolt.indicator = cursors.mists;
-
-            bolt.TargetCircle(1);
-
-            bolt.projectile = 6;
-
-            Mod.instance.spellRegister.Add(bolt);
 
             return true;
 

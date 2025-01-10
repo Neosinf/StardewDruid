@@ -10,6 +10,7 @@ using StardewDruid.Data;
 using StardewDruid.Dialogue;
 using StardewDruid.Journal;
 using StardewDruid.Location;
+using StardewDruid.Location.Druid;
 using StardewDruid.Monster;
 using StardewDruid.Render;
 using StardewModdingAPI;
@@ -131,9 +132,9 @@ namespace StardewDruid.Event.Scene
 
             locales = new()
             {
-                LocationData.druid_clearing_name,
-                LocationData.druid_engineum_name,
-                LocationData.druid_atoll_name,
+                LocationHandle.druid_clearing_name,
+                LocationHandle.druid_engineum_name,
+                LocationHandle.druid_atoll_name,
 
             };
 
@@ -148,7 +149,7 @@ namespace StardewDruid.Event.Scene
         public override bool AttemptReset()
         {
 
-            Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.abortTomorrow), 3, true);
+            Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
 
             return false;
 
@@ -332,7 +333,7 @@ namespace StardewDruid.Event.Scene
 
                     location.playSound(SpellHandle.sounds.thunder.ToString());
 
-                    (Mod.instance.locations[LocationData.druid_clearing_name] as Clearing).ambientDarkness = true;
+                    (Mod.instance.locations[LocationHandle.druid_clearing_name] as Clearing).ambientDarkness = true;
 
                     break;
 
@@ -378,57 +379,6 @@ namespace StardewDruid.Event.Scene
 
                     DialogueClear(companions[0]);
 
-                    /*Vector2 mistCorner = eventVectors[101] * 64 - new Vector2(320,320);
-
-                    List<int> cornersX = new() { 0, 6, };
-
-                    List<int> cornersY = new() { 0, 4, };
-
-                    for (int i = 0; i < 9; i++)
-                    {
-
-                        for (int j = 0; j < 6; j++)
-                        {
-
-                            if (cornersX.Contains(i) && cornersY.Contains(j))
-                            {
-                                continue;
-                            }
-
-                            Vector2 mistVector = mistCorner + new Vector2(i * 72, j * 72);
-
-                            TemporaryAnimatedSprite mistSprite = new TemporaryAnimatedSprite(0, 40000f,1,1, mistVector, false, false)
-                            {
-                                sourceRect = new Microsoft.Xna.Framework.Rectangle(88, 1779, 30, 30),
-                                sourceRectStartingPos = new Vector2(88, 1779),
-                                texture = Game1.mouseCursors,
-                                motion = new Vector2(-0.0004f + Mod.instance.randomIndex.Next(5) * 0.0002f, -0.0004f + Mod.instance.randomIndex.Next(5) * 0.0002f),
-                                scale = 5f,
-                                layerDepth = 991f,
-                                timeBasedMotion = true,
-                                alpha = 0.5f,
-                                color = new Microsoft.Xna.Framework.Color(0.75f, 0.75f, 1f, 1f),
-                            };
-
-                            location.temporarySprites.Add(mistSprite);
-
-                            animations.Add(mistSprite);
-
-                        }
-
-                    }
-
-                    TemporaryAnimatedSprite cloudAnimation = Mod.instance.iconData.CreateImpact(
-
-                        location,
-                        eventVectors[101] * 64,
-                        IconData.impacts.spiral,
-                        11f,
-                        new() { interval = 125f, loops = 40, flip = true, alpha = 0.1f, layer = mistCorner.Y / 10000 }
-                     );
-
-                    animations.Add(cloudAnimation);*/
-
                     break;
 
                 case 102:
@@ -465,14 +415,18 @@ namespace StardewDruid.Event.Scene
 
                         Vector2 burnVector = hut * 64 + new Vector2(32,96);
 
-                        List<TemporaryAnimatedSprite> embers = Mod.instance.iconData.EmberConstruct(location, IconData.schemes.stars, burnVector, 4f, 4, 999f);
+                        Cast.Effect.EmberTarget ember = new(location, burnVector, 2, 0, 0, IconData.schemes.stars);
+
+                        List<TemporaryAnimatedSprite> embers = ember.EmberConstruct(location, IconData.schemes.stars, burnVector, 4f, 4, 999f);
 
                         animations.AddRange(embers);
+
+                        string lightid = "18465_" + (burnVector.X * 10000 + burnVector.Y).ToString();
 
                         TemporaryAnimatedSprite lightCircle = new(23, 200f, 5, 9, burnVector, false, Game1.random.NextDouble() < 0.5)
                         {
                             texture = Game1.mouseCursors,
-                            light = true,
+                            lightId = lightid,
                             lightRadius = 3f,
                             lightcolor = Color.Black,
                             Parent = location,
@@ -576,7 +530,7 @@ namespace StardewDruid.Event.Scene
 
                 case 110:
 
-                    companions[2] = new LadyBeyond(CharacterHandle.characters.LadyBeyond);
+                    companions[2] = new Lady(CharacterHandle.characters.LadyBeyond);
 
                     companions[2].fadeOut = 0.8f;
 
@@ -673,7 +627,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(108);
 
-                    companions[3] = new Paladin(CharacterHandle.characters.Paladin);
+                    companions[3] = new HonourGuard(CharacterHandle.characters.HonourGuard);
 
                     companions[3].fadeOut = 0.8f;
 
@@ -796,6 +750,12 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
+                case 155:
+
+                    activeCounter = 200;
+
+                    break;
+
             }
 
         }
@@ -815,9 +775,9 @@ namespace StardewDruid.Event.Scene
 
                 case 202:
 
-                    location = Mod.instance.locations[LocationData.druid_engineum_name];
+                    location = Mod.instance.locations[LocationHandle.druid_engineum_name];
 
-                    Game1.warpFarmer(location.Name, (int)eventVectors[202].X, (int)eventVectors[202].Y, 0);
+                    Mod.instance.WarpAllFarmers(location.Name, (int)eventVectors[202].X, (int)eventVectors[202].Y, 0);
 
                     CharacterMover.Warp(location, companions[0], eventVectors[203] * 64, false);
 
@@ -851,60 +811,6 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 211:
-
-                    /*Vector2 mistCorner = eventVectors[205] * 64 - new Vector2(320, 320);
-
-                    List<int> cornersX = new() { 0, 6, };
-
-                    List<int> cornersY = new() { 0, 4, };
-
-                    for (int i = 0; i < 9; i++)
-                    {
-
-                        for (int j = 0; j < 6; j++)
-                        {
-
-                            if (cornersX.Contains(i) && cornersY.Contains(j))
-                            {
-                                continue;
-                            }
-
-                            Vector2 mistVector = mistCorner + new Vector2(i * 72, j * 72);
-
-                            TemporaryAnimatedSprite mistSprite = new TemporaryAnimatedSprite(0, 50000f, 1, 1, mistVector, false, false)
-                            {
-                                sourceRect = new Microsoft.Xna.Framework.Rectangle(88, 1779, 30, 30),
-                                sourceRectStartingPos = new Vector2(88, 1779),
-                                texture = Game1.mouseCursors,
-                                motion = new Vector2(-0.0004f + Mod.instance.randomIndex.Next(5) * 0.0002f, -0.0004f + Mod.instance.randomIndex.Next(5) * 0.0002f),
-                                scale = 5f,
-                                layerDepth = 991f,
-                                timeBasedMotion = true,
-                                alpha = 0.5f,
-                                color = new Microsoft.Xna.Framework.Color(0.75f, 0.75f, 1f, 1f),
-                            };
-
-                            location.temporarySprites.Add(mistSprite);
-
-                            animations.Add(mistSprite);
-
-                        }
-
-                    }
-
-                    TemporaryAnimatedSprite cloudAnimation = Mod.instance.iconData.CreateImpact(
-
-                        location,
-                        eventVectors[205] * 64,
-                        IconData.impacts.spiral,
-                        11f,
-                        new() { interval = 125f, loops = 50, flip = true, alpha = 0.1f, layer = mistCorner.Y / 10000 }
-                     );
-
-                    animations.Add(cloudAnimation);*/
-
-                    break;
 
                 case 212:
 
@@ -983,7 +889,7 @@ namespace StardewDruid.Event.Scene
 
                 case 218:
 
-                    companions[2] = new LadyBeyond(CharacterHandle.characters.LadyBeyond);
+                    companions[2] = new Lady(CharacterHandle.characters.LadyBeyond);
 
                     companions[2].fadeOut = 0.8f;
 
@@ -1180,9 +1086,9 @@ namespace StardewDruid.Event.Scene
 
                     Game1.stopMusicTrack(MusicContext.Default);
 
-                    location = Mod.instance.locations[LocationData.druid_atoll_name];
+                    location = Mod.instance.locations[LocationHandle.druid_atoll_name];
 
-                    Game1.warpFarmer(location.Name, (int)eventVectors[302].X, (int)eventVectors[302].Y, 1);
+                    Mod.instance.WarpAllFarmers(location.Name, (int)eventVectors[302].X, (int)eventVectors[302].Y, 1);
 
                     CharacterMover.Warp(location, companions[0], eventVectors[303] * 64, false);
 
@@ -1260,7 +1166,7 @@ namespace StardewDruid.Event.Scene
 
                     location.playSound(SpellHandle.sounds.thunder.ToString());
 
-                    (Mod.instance.locations[LocationData.druid_atoll_name] as Atoll).ambientDarkness = true;
+                    (Mod.instance.locations[LocationHandle.druid_atoll_name] as Atoll).ambientDarkness = true;
 
                     break;
 
@@ -1740,6 +1646,8 @@ namespace StardewDruid.Event.Scene
 
                 case 401:
 
+                    DialogueClear(0);
+
                     companions[0].TargetEvent(0, eventVectors[401] * 64, true);
 
                     DialogueCue(401);
@@ -1813,7 +1721,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueClear(0);
 
-                    bosses[0] = new DarkWitch(ModUtility.PositionToTile(companions[0].Position), Mod.instance.CombatDifficulty(), "LadyBeyond");
+                    bosses[0] = new LightWitch(ModUtility.PositionToTile(companions[0].Position), Mod.instance.CombatDifficulty(), "LadyBeyond");
 
                     location.characters.Remove(companions[0]);
 

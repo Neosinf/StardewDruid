@@ -105,18 +105,6 @@ namespace StardewDruid.Character
                 drawLayer + 0.0001f
             );
 
-            /*b.Draw(
-                characterTexture,
-                //localPosition - new Vector2(netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? 30 : 32, 72),
-                hatFrames[netDirection.Value][0],
-                Color.White,
-                0f,
-                Vector2.Zero,
-                4f,
-                netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                drawLayer + 0.002f
-            );*/
-
         }
 
         public override bool checkAction(Farmer who, GameLocation l)

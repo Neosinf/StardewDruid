@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Dialogue;
-using StardewDruid.Journal;
+using StardewDruid.Event;
 using StardewValley;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,960 +10,6 @@ namespace StardewDruid.Data
 {
     public static class DialogueData
     {
-
-        public static string RiteNames(Rite.rites rite = Rite.rites.weald)
-        {
-            switch (rite)
-            {
-                default:
-                case Rite.rites.weald: return Mod.instance.Helper.Translation.Get("DialogueData.38");
-                case Rite.rites.mists: return Mod.instance.Helper.Translation.Get("DialogueData.39");
-                case Rite.rites.stars: return Mod.instance.Helper.Translation.Get("DialogueData.40");
-                case Rite.rites.fates: return Mod.instance.Helper.Translation.Get("DialogueData.41");
-                case Rite.rites.ether: return Mod.instance.Helper.Translation.Get("DialogueData.42");
-                case Rite.rites.bones: return Mod.instance.Helper.Translation.Get("DialogueData.312.2");
-            }
-
-        }
-
-        public enum stringkeys
-        {
-            stardewDruid,
-
-            // Mod, Rite, ModUtility
-
-            receivedData,
-            challengeAborted,
-            stamina,
-            openJournal,
-            riteTool,
-            noRiteAttuned,
-            noToolAttunement,
-            defaultToolAttunement,
-            nothingHappened,
-            invalidLocation,
-            energyContinue,
-            energyRite,
-            riteBuffDescription,
-            normalAttunementActive,
-            slotAttunementActive,
-            energySkill,
-            dragonBuff,
-            dragonBuffDescription,
-            druidFreneticism,
-            speedIncrease,
-            questComplete,
-            percentComplete,
-            druidShield,
-            defenseIncrease,
-
-            jesterBuff,
-            jesterBuffTitle,
-            jesterBuffDescription,
-
-            // Journal
-
-            grimoire,
-            reliquary,
-            dragonomicon,
-            apothecary,
-            chronicle,
-            herbalTrade,
-
-            hostOnly,
-            questReplay,
-            outOf,
-            lessonSkipped,
-            mastered,
-            reward,
-            replayReward,
-            bounty,
-            transcript,
-
-            acEnabled,
-            acDisabled,
-            acPriority,
-            acIgnored,
-            acRestricted,
-            MAX,
-            HP,
-            STM,
-
-            relicUnknown,
-            relicNotFound,
-
-            primaryColour,
-            secondaryColour,
-            tertiaryColour,
-            dragonScheme,
-            breathScheme,
-            dragonRotate,
-            dragonScale,
-            dragonAccent,
-            dragonEye,
-            dragonSize,
-
-            questLore,
-            questTranscript,
-
-            questionCurrent,
-            questionTalkto,
-            questionTomorrow,
-            questionComplete,
-            questionCongratulations,
-            questionHint,
-            questionPreviously,
-
-            multiplier,
-            currency,
-
-            // Miscellaneous
-            trashCollected,
-            bomberInterruptions,
-            slimesDestroyed,
-            learnRecipes,
-            learnCooking,
-            theDusting,
-            abortTomorrow,
-            noJunimo,
-            noInstructions,
-            leftEvent,
-            leavingEvent,
-            ladderAppeared,
-            returnLater,
-            reachEnd,
-            treasureHunt,
-
-            restoreStart,
-            restorePartial,
-            restoreFully,
-            restoreTomorrow,
-
-            quests,
-            effects,
-            relics,
-            herbalism,
-
-            active,
-            reverse,
-            refresh,
-
-            innerOne,
-            innerTwo,
-
-            close,
-
-            back,
-            start,
-
-            scrollUp,
-            scrollBar,
-            scrollDown,
-            forward,
-            end,
-
-            returnedHome,
-            joinedPlayer,
-            noWarpPoint
-
-
-        }
-
-        public static string ButtonStrings(DruidJournal.journalButtons button)
-        {
-
-            switch (button)
-            {
-                case DruidJournal.journalButtons.back:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.177");
-
-                case DruidJournal.journalButtons.start:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.181");
-
-                case DruidJournal.journalButtons.forward:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.185");
-
-                case DruidJournal.journalButtons.end:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.189");
-
-                case DruidJournal.journalButtons.exit:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.193");
-
-                case DruidJournal.journalButtons.quests:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.197");
-
-                case DruidJournal.journalButtons.effects:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.201");
-
-                case DruidJournal.journalButtons.relics:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.205");
-
-                case DruidJournal.journalButtons.herbalism:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.209");
-
-                case DruidJournal.journalButtons.lore:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.318.1");
-
-                case DruidJournal.journalButtons.transform:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.318.2");
-
-                case DruidJournal.journalButtons.active:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.213");
-
-                case DruidJournal.journalButtons.reverse:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.217");
-
-                case DruidJournal.journalButtons.refresh:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.221");
-
-                case DruidJournal.journalButtons.skipQuest:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.225");
-
-                case DruidJournal.journalButtons.replayQuest:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.229");
-
-                case DruidJournal.journalButtons.replayTomorrow:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.233");
-
-                case DruidJournal.journalButtons.cancelReplay:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.237");
-
-                case DruidJournal.journalButtons.viewEffect:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.241");
-
-                case DruidJournal.journalButtons.viewQuest:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.245");
-
-                case DruidJournal.journalButtons.dragonReset:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.316.1");
-
-                case DruidJournal.journalButtons.dragonSave:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.316.2");
-
-                case DruidJournal.journalButtons.question:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.343.1");
-
-                default:
-
-                    return null;
-            }
-
-        }
-
-
-        public static string Strings(stringkeys key)
-        {
-
-            switch (key)
-            {
-
-                // Mod, Rite, ModUtility, QuestHandle
-
-                case stringkeys.receivedData:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.265");
-
-                case stringkeys.challengeAborted:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.269");
-
-                case stringkeys.riteBuffDescription:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.273");
-
-                case stringkeys.normalAttunementActive:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.336.1");
-
-                case stringkeys.slotAttunementActive:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.336.2");
-
-                case stringkeys.dragonBuff:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.277");
-
-                case stringkeys.dragonBuffDescription:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.281");
-
-                case stringkeys.energySkill:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.285");
-
-                case stringkeys.openJournal:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.289");
-
-                case stringkeys.noRiteAttuned:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.293");
-
-                case stringkeys.riteTool:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.297");
-
-                case stringkeys.noToolAttunement:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.301");
-
-                case stringkeys.defaultToolAttunement:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.330.2").Tokens(new { rite = RiteNames(Mod.instance.save.rite), });
-
-                case stringkeys.nothingHappened:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.305");
-
-                case stringkeys.invalidLocation:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.309");
-
-                case stringkeys.energyContinue:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.313");
-
-                case stringkeys.energyRite:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.317");
-
-                case stringkeys.stamina:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.321");
-
-                case stringkeys.druidFreneticism:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.325");
-
-                case stringkeys.speedIncrease:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.329");
-
-                case stringkeys.questComplete:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.333");
-
-                case stringkeys.percentComplete:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.337");
-
-                case stringkeys.druidShield:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.335.1");
-
-                case stringkeys.defenseIncrease:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.335.2");
-
-                case stringkeys.jesterBuff:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.338.1");
-
-                case stringkeys.jesterBuffDescription:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.338.2");
-
-                case stringkeys.jesterBuffTitle:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.338.3");
-
-
-                // ============================================ JOURNAL
-
-                case stringkeys.stardewDruid:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.343");
-
-                case stringkeys.grimoire:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.347");
-
-                case stringkeys.reliquary:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.351");
-
-                case stringkeys.dragonomicon:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.355");
-
-                case stringkeys.apothecary:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.359");
-
-                case stringkeys.chronicle:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.318.3");
-
-                case stringkeys.herbalTrade:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.347.2");
-
-                case stringkeys.hostOnly:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.399");
-
-                case stringkeys.questReplay:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.403");
-
-                case stringkeys.outOf:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.407");
-
-                case stringkeys.reward:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.411");
-
-                case stringkeys.replayReward:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.519");
-
-                case stringkeys.bounty:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.415");
-
-                case stringkeys.transcript:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.419");
-
-                case stringkeys.acEnabled:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.423");
-
-                case stringkeys.acDisabled:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.427");
-
-                case stringkeys.acPriority:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.431");
-
-                case stringkeys.acIgnored:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.340.1");
-
-                case stringkeys.acRestricted:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.350.1");
-
-                case stringkeys.MAX:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.435");
-
-                case stringkeys.HP:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.439");
-
-                case stringkeys.STM:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.443");
-
-                case stringkeys.relicNotFound:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.447");
-
-                case stringkeys.relicUnknown:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.451");
-
-                case stringkeys.lessonSkipped:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.319.1");
-
-                case stringkeys.mastered:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.319.2");
-
-                // Dragon menu
-
-                case stringkeys.primaryColour:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.455");
-
-                case stringkeys.secondaryColour:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.459");
-
-                case stringkeys.tertiaryColour:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.463");
-
-                case stringkeys.dragonScheme:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.467");
-
-                case stringkeys.breathScheme:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.471");
-
-                case stringkeys.dragonRotate:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.475");
-
-                case stringkeys.dragonScale:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.479");
-
-                case stringkeys.dragonAccent:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.483");
-
-                case stringkeys.dragonEye:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.487");
-
-                case stringkeys.dragonSize:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.316.3");
-
-                case stringkeys.questLore:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.318.4");
-
-                case stringkeys.questTranscript:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.318.5");
-
-
-                case stringkeys.questionCurrent:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.343.1");
-
-                case stringkeys.questionTalkto:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.343.2");
-
-                case stringkeys.questionTomorrow:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.343.3");
-
-                case stringkeys.questionComplete:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.343.4");
-
-                case stringkeys.questionCongratulations:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.343.5");
-
-                case stringkeys.questionHint:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.343.6");
-
-                case stringkeys.questionPreviously:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.343.7");
-
-                case stringkeys.multiplier:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.347.3");
-
-                case stringkeys.currency:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.347.4");
-
-                // ============================ Miscellaneous
-
-                case stringkeys.trashCollected:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.529");
-
-                case stringkeys.bomberInterruptions:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.533");
-
-                case stringkeys.slimesDestroyed:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.537");
-
-                case stringkeys.learnRecipes:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.541");
-
-                case stringkeys.learnCooking:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.347.1");
-
-                case stringkeys.restoreStart:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.329.1");
-
-                case stringkeys.restorePartial:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.329.2");
-
-                case stringkeys.restoreFully:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.329.3");
-
-                case stringkeys.restoreTomorrow:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.330.1");
-
-                // Title for Ether/Gate challenge
-                case stringkeys.theDusting:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.546");
-
-                case stringkeys.abortTomorrow:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.550");
-
-                case stringkeys.noJunimo:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.554");
-
-                case stringkeys.noInstructions:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.558");
-
-                case stringkeys.leftEvent:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.562");
-
-                case stringkeys.leavingEvent:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.566");
-
-                case stringkeys.ladderAppeared:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.570");
-
-                case stringkeys.returnLater:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.574");
-
-                case stringkeys.reachEnd:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.578");
-
-                case stringkeys.treasureHunt:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.582");
-
-                case stringkeys.returnedHome:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.582.1");
-
-                case stringkeys.joinedPlayer:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.582.2");
-
-                case stringkeys.noWarpPoint:
-
-                    return Mod.instance.Helper.Translation.Get("DialogueData.582.3");
-
-
-            }
-
-            return Mod.instance.Helper.Translation.Get("DialogueData.586");
-
-        }
-
-        public static Dictionary<int, string> DialogueNarrators(string scene)
-        {
-            Dictionary<int, string> sceneNarrators = new();
-
-            switch (scene)
-            {
-
-                case QuestHandle.approachEffigy:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.601"),
-                        [1] = Mod.instance.Helper.Translation.Get("DialogueData.602"),
-                    };
-
-                    break;
-
-                case QuestHandle.swordWeald:
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.610"),
-                        [1] = Mod.instance.Helper.Translation.Get("DialogueData.611"),
-                        [2] = Mod.instance.Helper.Translation.Get("DialogueData.612"),
-                    };
-                    break;
-
-                case QuestHandle.challengeWeald:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.619"),
-                    };
-
-                    break;
-
-                case QuestHandle.swordMists:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.628"),
-                        [1] = Mod.instance.Helper.Translation.Get("DialogueData.629"),
-                    };
-
-                    break;
-
-                case QuestHandle.questEffigy:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.638"),
-                        [1] = Mod.instance.Helper.Translation.Get("DialogueData.639"),
-                        [2] = Mod.instance.Helper.Translation.Get("DialogueData.640"),
-                        [3] = Mod.instance.Helper.Translation.Get("DialogueData.641"),
-                    };
-
-                    break;
-
-                case QuestHandle.challengeMists:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.649"),
-                        [1] = Mod.instance.Helper.Translation.Get("DialogueData.650"),
-                        [2] = Mod.instance.Helper.Translation.Get("DialogueData.651"),
-                        [3] = Mod.instance.Helper.Translation.Get("DialogueData.652"),
-                        [4] = Mod.instance.Helper.Translation.Get("DialogueData.311.13"),
-                    };
-
-                    break;
-
-                case QuestHandle.swordStars:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.661"),
-                    };
-
-                    break;
-
-                case QuestHandle.challengeStars:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.670"),
-                        [1] = Mod.instance.Helper.Translation.Get("DialogueData.671"),
-                    };
-
-                    break;
-
-                case QuestHandle.challengeAtoll:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.680"),
-                        [1] = Mod.instance.Helper.Translation.Get("DialogueData.681"),
-                    };
-
-                    break;
-
-                case QuestHandle.challengeDragon:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.690"),
-                    };
-
-                    break;
-
-                case QuestHandle.swordFates:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.699"),
-                    };
-
-                    break;
-
-                case QuestHandle.questJester:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.708"),
-                        [1] = Mod.instance.Helper.Translation.Get("DialogueData.709"),
-                        [2] = Mod.instance.Helper.Translation.Get("DialogueData.710"),
-                        [3] = Mod.instance.Helper.Translation.Get("DialogueData.711"),
-                        [4] = Mod.instance.Helper.Translation.Get("DialogueData.712"),
-                    };
-
-                    break;
-
-                case QuestHandle.challengeFates:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.721"),
-                        [1] = Mod.instance.Helper.Translation.Get("DialogueData.722"),
-                        [2] = Mod.instance.Helper.Translation.Get("DialogueData.723"),
-                        [3] = Mod.instance.Helper.Translation.Get("DialogueData.724"),
-                        [4] = Mod.instance.Helper.Translation.Get("DialogueData.725"),
-                        [5] = Mod.instance.Helper.Translation.Get("DialogueData.726"),
-                        [6] = Mod.instance.Helper.Translation.Get("DialogueData.727"),
-                        [7] = Mod.instance.Helper.Translation.Get("DialogueData.728"),
-                    };
-
-                    break;
-
-                case QuestHandle.swordEther:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.737"),
-                        [1] = Mod.instance.Helper.Translation.Get("DialogueData.738"),
-                    };
-
-                    break;
-
-                case QuestHandle.questShadowtin:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.747"),
-                        [1] = Mod.instance.Helper.Translation.Get("DialogueData.748"),
-                        [2] = Mod.instance.Helper.Translation.Get("DialogueData.749"),
-                        [3] = Mod.instance.Helper.Translation.Get("DialogueData.750"),
-                        [4] = Mod.instance.Helper.Translation.Get("DialogueData.751"),
-                        [5] = Mod.instance.Helper.Translation.Get("DialogueData.752"),
-                        [6] = Mod.instance.Helper.Translation.Get("DialogueData.753"),
-                        [7] = Mod.instance.Helper.Translation.Get("DialogueData.754"),
-                        [8] = Mod.instance.Helper.Translation.Get("DialogueData.755"),
-
-                    };
-
-                    if (Mod.instance.Helper.ModRegistry.IsLoaded("Nom0ri.RomRas"))
-                    {
-
-                        sceneNarrators[5] = Mod.instance.Helper.Translation.Get("DialogueData.339.5");
-                        sceneNarrators[6] = Mod.instance.Helper.Translation.Get("DialogueData.339.6");
-                    }
-
-                    break;
-
-                case QuestHandle.challengeEther:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.765"),
-                    };
-
-                    break;
-
-                case QuestHandle.treasureChase:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.774"),
-                    };
-
-                    break;
-
-                case QuestHandle.questBlackfeather:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.324.1"),
-                        [1] = Mod.instance.Helper.Translation.Get("DialogueData.324.2"),
-                        [2] = Mod.instance.Helper.Translation.Get("DialogueData.324.3"),
-                        [3] = Mod.instance.Helper.Translation.Get("DialogueData.324.4"),
-                        [4] = Mod.instance.Helper.Translation.Get("DialogueData.324.5"),
-                        [5] = Mod.instance.Helper.Translation.Get("DialogueData.324.6"),
-                        [6] = Mod.instance.Helper.Translation.Get("DialogueData.324.7"),
-                        [7] = Mod.instance.Helper.Translation.Get("DialogueData.324.8"),
-                    };
-
-                    break;
-
-                case QuestHandle.questBuffin:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.185"),
-                        [1] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.186"),
-                        [2] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.187"),
-                        [3] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.188"),
-                        [4] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.189"),
-                        [5] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.190"),
-                        [6] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.191"),
-                        [7] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.192"),
-                        [8] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.193"),
-                        [9] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.194"),
-
-                    };
-
-
-                    break;
-
-
-                case QuestHandle.questRevenant:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.342.1.46"),
-                        [1] = Mod.instance.Helper.Translation.Get("DialogueData.342.1.47"),
-                        [2] = Mod.instance.Helper.Translation.Get("DialogueData.342.1.48"),
-                        [3] = Mod.instance.Helper.Translation.Get("DialogueData.342.1.49"),
-                        [4] = Mod.instance.Helper.Translation.Get("DialogueData.342.1.50"),
-                        [5] = Mod.instance.Helper.Translation.Get("DialogueData.342.1.51"),
-                        [6] = Mod.instance.Helper.Translation.Get("DialogueData.342.1.52"),
-                        [7] = Mod.instance.Helper.Translation.Get("DialogueData.342.1.53"),
-                        [8] = Mod.instance.Helper.Translation.Get("DialogueData.342.1.54"),
-                        [9] = Mod.instance.Helper.Translation.Get("DialogueData.342.1.55"),
-                        [10] = Mod.instance.Helper.Translation.Get("DialogueData.342.1.56"),
-                        [11] = Mod.instance.Helper.Translation.Get("DialogueData.342.1.57"),
-
-                    };
-
-                    break;
-
-                case QuestHandle.challengeBones:
-
-                    sceneNarrators = new()
-                    {
-                        [0] = Mod.instance.Helper.Translation.Get("DialogueData.343.1.69"),
-                        [1] = Mod.instance.Helper.Translation.Get("DialogueData.343.1.70"),
-                        [2] = Mod.instance.Helper.Translation.Get("DialogueData.343.1.71"),
-                        [3] = Mod.instance.Helper.Translation.Get("DialogueData.343.1.72"),
-                        [4] = Mod.instance.Helper.Translation.Get("DialogueData.343.1.73"),
-                        [5] = Mod.instance.Helper.Translation.Get("DialogueData.343.1.74"),
-                        [6] = Mod.instance.Helper.Translation.Get("DialogueData.343.1.75"),
-                        [7] = Mod.instance.Helper.Translation.Get("DialogueData.343.1.76"),
-                        [8] = Mod.instance.Helper.Translation.Get("DialogueData.343.1.77"),
-                        [9] = Mod.instance.Helper.Translation.Get("DialogueData.343.1.78"),
-                        [10] = Mod.instance.Helper.Translation.Get("DialogueData.343.1.79"),
-                        [11] = Mod.instance.Helper.Translation.Get("DialogueData.346.1"),
-                    };
-
-                    break;
-
-            };
-
-            return sceneNarrators;
-
-        }
 
         public static Dictionary<int, Dictionary<int, string>> DialogueScene(string scene)
         {
@@ -1504,11 +550,11 @@ namespace StardewDruid.Data
 
                         [30] = new() { [4] = Mod.instance.Helper.Translation.Get("DialogueData.1306"), },
                         [33] = new() { [3] = Mod.instance.Helper.Translation.Get("DialogueData.1307"), },
-                        [36] = new() { [7] = Mod.instance.Helper.Translation.Get("DialogueData.1308"), },
+                        //[36] = new() { [7] = Mod.instance.Helper.Translation.Get("DialogueData.1308"), },
 
                         [40] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.1310"), },
                         [43] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.1311"), },
-                        [46] = new() { [7] = Mod.instance.Helper.Translation.Get("DialogueData.1312"), },
+                        //[46] = new() { [7] = Mod.instance.Helper.Translation.Get("DialogueData.1312"), },
 
                         [50] = new() { [6] = Mod.instance.Helper.Translation.Get("DialogueData.1314"), },
                         [53] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.1315"), },
@@ -1516,7 +562,7 @@ namespace StardewDruid.Data
 
                         [60] = new() { [3] = Mod.instance.Helper.Translation.Get("DialogueData.1318"), },
                         [63] = new() { [3] = Mod.instance.Helper.Translation.Get("DialogueData.1319"), },
-                        [66] = new() { [7] = Mod.instance.Helper.Translation.Get("DialogueData.1320"), },
+                        //[66] = new() { [7] = Mod.instance.Helper.Translation.Get("DialogueData.1320"), },
 
                         [70] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.1322"), },
                         [73] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.1323"), },
@@ -1674,7 +720,8 @@ namespace StardewDruid.Data
                         [615] = new() { [7] = Mod.instance.Helper.Translation.Get("DialogueData.1475"), },
                         [616] = new() { [8] = Mod.instance.Helper.Translation.Get("DialogueData.1476"), },
                         [617] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.1477"), },
-                        [618] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.1478"), },
+                        [618] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.363.1"), },
+                        [619] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.1478"), },
 
                     };
 
@@ -1724,6 +771,18 @@ namespace StardewDruid.Data
 
                         [990] = new() { [999] = Mod.instance.Helper.Translation.Get("DialogueData.1526"), },
                         [991] = new() { [999] = Mod.instance.Helper.Translation.Get("DialogueData.1527"), },
+
+                    };
+
+                    break;
+
+                case QuestHandle.treasureGuardian:
+
+                    sceneDialogue = new()
+                    {
+
+                        [990] = new() { [999] = Mod.instance.Helper.Translation.Get("DialogueData.366.1"), },
+                        [991] = new() { [999] = Mod.instance.Helper.Translation.Get("DialogueData.366.2"), },
 
                     };
 
@@ -2154,6 +1213,97 @@ namespace StardewDruid.Data
                     };
 
                     break;
+
+                case QuestHandle.swordHeirs:
+
+                    sceneDialogue = new()
+                    {
+
+                        [1] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.4"), },
+                        [2] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.5"), },
+                        [3] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.6"), },
+                        [4] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.7"), },
+
+                        [101] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.8"), },
+                        [102] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.9"), },
+                        [103] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.10"), },
+                        [104] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.11"), },
+                        [105] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.12"), },
+                        [106] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.13"), },
+                        [107] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.14"), },
+                        [108] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.15"), },
+                        [109] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.16"), },
+                        [110] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.17"), },
+                        [111] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.18"), },
+                        [112] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.19"), },
+                        [113] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.20"), },
+                        [114] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.21"), },
+                        [115] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.22"), },
+                        [116] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.23"), },
+                        [117] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.24"), },
+                        [118] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.25"), },
+                        [119] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.26"), },
+                        [120] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.27"), },
+                        [121] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.28"), },
+                        [122] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.29"), },
+                        [123] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.30"), },
+                        [124] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.31"), },
+                        [125] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.32"), },
+
+                        [201] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.33"), },
+                        [202] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.34"), },
+                        [203] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.35"), },
+
+                    };
+
+                    break;
+
+                case QuestHandle.challengeMoors:
+
+                    sceneDialogue = new()
+                    {
+
+                        [1] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.41"), },
+                        [2] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.42"), },
+                        [3] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.43"), },
+                        [4] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.44"), },
+
+                        [101] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.45"), },
+                        [102] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.46"), },
+                        [103] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.47"), },
+                        [104] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.48"), },
+                        [105] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.49"), },
+
+                        [201] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.50"), },
+                        [202] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.51"), },
+                        [203] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.52"), },
+                        [204] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.53"), },
+                        [205] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.54"), },
+                        [206] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.55"), },
+                        [207] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.56"), },
+                        [208] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.57"), },
+                        [209] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.58"), },
+                        [210] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.59"), },
+                        [211] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.60"), },
+                        [212] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.61"), },
+                        [213] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.62"), },
+                        [214] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.63"), },
+                        [215] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.64"), },
+                        [216] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.65"), },
+                        [217] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.66"), },
+                        [218] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.67"), },
+                        [219] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.362.68"), },
+                        [220] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.362.69"), },
+
+                        [301] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.70"), },
+                        [302] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.71"), },
+                        [303] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.362.72"), },
+
+                    };
+
+                    break;
+
+
 
             };
 

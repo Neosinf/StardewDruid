@@ -5,7 +5,6 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using StardewDruid.Data;
-using StardewDruid.Journal;
 using System.Linq;
 using StardewValley.TerrainFeatures;
 using Netcode;
@@ -231,7 +230,7 @@ namespace StardewDruid.Cast.Mists
                             else if (targetObject.IsScarecrow())
                             {
 
-                                string scid = "scarecrow_" + tileVector.X.ToString() + "_" + tileVector.Y.ToString();
+                                string scid = "scarecrow_" + Game1.season.ToString() + Game1.dayOfMonth.ToString() + "_" + location.Name + "_" + tileVector.X.ToString() + "_" + tileVector.Y.ToString();
 
                                 if (!Game1.isRaining && !Mod.instance.rite.specialCasts[locationName].Contains(scid))
                                 {
@@ -354,18 +353,6 @@ namespace StardewDruid.Cast.Mists
                                 }
 
                             }
-                            /*else if (targetObject.QualifiedItemId.Contains("93"))
-                            {
-
-                                DarkMage bear = new(tileVector, Mod.instance.CombatDifficulty());
-
-                                location.characters.Add(bear);
-
-                                bear.currentLocation = location;
-
-                                bear.update(Game1.currentGameTime, location);
-
-                            }*/
                                 
                             continue;
 
@@ -403,33 +390,22 @@ namespace StardewDruid.Cast.Mists
 
             }
 
-            int radius = ((int)(Mod.instance.PowerLevel) + 3);
+            int radius = (Mod.instance.PowerLevel * 2) + 1;
 
-            radius = Math.Min(8, radius);
+            radius = Math.Min(11, radius);
 
-            string scid = "scarecrow_" + targetVector.X.ToString() + "_" + targetVector.Y.ToString();
-
-            if (companion)
+            for (int i = 0; i < radius; i++)
             {
 
-                scid = "scarecrow_companion_" + targetVector.X.ToString() + "_" + targetVector.Y.ToString();
-            
-            }
-
-            Mod.instance.rite.specialCasts[location.Name].Add(scid);
-
-            for (int i = 1; i < radius; i++)
-            {
-
-                List<Vector2> hoeVectors = ModUtility.GetTilesWithinRadius(Game1.player.currentLocation, targetVector, i);
+                List<Vector2> hoeVectors = ModUtility.GetTilesWithinRadius(location, targetVector, i);
 
                 foreach (Vector2 hoeVector in hoeVectors)
                 {
 
-                    if (Game1.player.currentLocation.terrainFeatures.ContainsKey(hoeVector))
+                    if (location.terrainFeatures.ContainsKey(hoeVector))
                     {
 
-                        var terrainFeature = Game1.player.currentLocation.terrainFeatures[hoeVector];
+                        var terrainFeature = location.terrainFeatures[hoeVector];
 
                         if (terrainFeature is HoeDirt)
                         {
@@ -466,8 +442,7 @@ namespace StardewDruid.Cast.Mists
 
                                     };
 
-                                    Game1.currentLocation.temporarySprites.Add(newAnimation);
-
+                                    location.temporarySprites.Add(newAnimation);
 
                                 }
 
@@ -486,7 +461,7 @@ namespace StardewDruid.Cast.Mists
             if (animate)
             {
 
-                Mod.instance.spellRegister.Add(new(targetVector * 64 - new Vector2(0, 32), 128, IconData.impacts.boltswirl, new()) { type = SpellHandle.spells.bolt });
+                Mod.instance.spellRegister.Add(new(targetVector * 64 - new Vector2(0, 32), 128, IconData.impacts.spiral, new()) { type = SpellHandle.spells.bolt });
 
             }
 

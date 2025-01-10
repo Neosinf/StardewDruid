@@ -8,6 +8,7 @@ using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Characters;
+using StardewValley.Extensions;
 using StardewValley.GameData.Crops;
 using StardewValley.GameData.FruitTrees;
 using StardewValley.GameData.WildTrees;
@@ -19,10 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Timers;
-using static StardewDruid.Cast.Weald.Bounty;
-using static StardewValley.Minigames.MineCart;
 using static StardewValley.Minigames.TargetGame;
 
 namespace StardewDruid.Cast.Effect
@@ -52,7 +49,7 @@ namespace StardewDruid.Cast.Effect
 
             activeLimit = eventCounter + 8;
 
-            iridium = (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areAllAreasComplete();
+            iridium = (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areAllAreasComplete() || Mod.instance.Config.cultivateBehaviour == 4;
 
         }
 
@@ -115,14 +112,14 @@ namespace StardewDruid.Cast.Effect
                             location.objects.Remove(tileVector);
 
                             continue;
-
                         }
 
                         if (
-                            targetObject.QualifiedItemId == "(BC)9" ||
-                            targetObject.QualifiedItemId == "(BC)10" ||
-                            targetObject.QualifiedItemId == "(BC)MushroomLog" ||
-                            targetObject.IsTapper()
+                            targetObject.HasTypeBigCraftable()
+                            //targetObject.QualifiedItemId == "(BC)9" ||
+                            //targetObject.QualifiedItemId == "(BC)10" ||
+                            //targetObject.QualifiedItemId == "(BC)MushroomLog" ||
+                            //targetObject.IsTapper()
                             )
                         {
 
@@ -138,9 +135,7 @@ namespace StardewDruid.Cast.Effect
 
                                 }
 
-
                                 new ThrowHandle(tileVector * 64, toHarvest.Value.tile * 64, objectInstance) { pocket = true }.register();
-
 
                                 targetObject.heldObject.Value = null;
 
@@ -240,7 +235,7 @@ namespace StardewDruid.Cast.Effect
                                         foreach (FruitTreeFruitData item2 in data.Fruit)
                                         {
 
-                                            StardewValley.Item fruitDrop = ItemQueryResolver.TryResolveRandomItem(item2, new ItemQueryContext(location, null, null), avoidRepeat: false, null, null, null, delegate (string query, string error) { });
+                                            StardewValley.Item fruitDrop = ItemQueryResolver.TryResolveRandomItem(item2, new ItemQueryContext(location, null, null, null), avoidRepeat: false, null, null, null, delegate (string query, string error) { });
                                             
                                             if (fruitDrop == null)
                                             {
@@ -387,7 +382,7 @@ namespace StardewDruid.Cast.Effect
                             if (treeFeature.hasMoss.Value)
                             {
 
-                                new ThrowHandle(tileVector * 64, toHarvest.Value.tile * 64, ItemQueryResolver.TryResolveRandomItem("Moss", new ItemQueryContext(location, Game1.player, null))){ pocket = true }.register();
+                                new ThrowHandle(tileVector * 64, toHarvest.Value.tile * 64, ItemQueryResolver.TryResolveRandomItem("Moss", new ItemQueryContext(location, Game1.player, null, null))){ pocket = true }.register();
 
                             }
 

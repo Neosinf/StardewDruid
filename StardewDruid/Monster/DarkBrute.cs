@@ -7,7 +7,7 @@ using StardewValley;
 
 namespace StardewDruid.Monster
 {
-    public class DarkBrute : DarkRogue
+    public class DarkBrute : Dark
     {
 
         public DarkBrute()

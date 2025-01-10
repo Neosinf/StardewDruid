@@ -341,7 +341,7 @@ namespace StardewDruid.Monster
         {
             weaponRender = new();
 
-            weaponRender.LoadWeapon(WeaponRender.weapons.cutlass);
+            weaponRender.LoadWeapon(WeaponRender.weapons.estoc);
 
         }
 
@@ -444,13 +444,15 @@ namespace StardewDruid.Monster
             }
 
 
-            b.Draw(characterTexture, spritePosition, main, fadeout, 0.0f, new Vector2(0.0f, 0.0f), spriteScale, mirrored ? (SpriteEffects)1 : 0, drawLayer);
+            b.Draw(characterTexture, spritePosition, main, fadeout, 0.0f, new Vector2(16), spriteScale, mirrored ? (SpriteEffects)1 : 0, drawLayer);
 
             main.X += 256;
 
-            b.Draw(characterTexture, spritePosition, main, jacket, 0.0f, new Vector2(0.0f, 0.0f), spriteScale, mirrored ? (SpriteEffects)1 : 0, drawLayer);
+            b.Draw(characterTexture, spritePosition, main, jacket, 0.0f, new Vector2(16), spriteScale, mirrored ? (SpriteEffects)1 : 0, drawLayer);
 
-            b.Draw(Game1.shadowTexture, localPosition + new Vector2(10, 44f), new Rectangle?(Game1.shadowTexture.Bounds), fadeout, 0.0f, Vector2.Zero, 4f, 0, drawLayer - 1E-06f);
+            Vector2 shadowPosition = new(spritePosition.X, spritePosition.Y + (spriteScale * 14));
+
+            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * 0.35f, 0.0f, new Vector2(24), spriteScale / 2, 0, drawLayer - 1E-06f);
 
             DrawHat(b, spritePosition, (spriteScale / 4f), drawLayer);
 
@@ -511,11 +513,11 @@ namespace StardewDruid.Monster
 
             b.Draw(
                 hatsTexture,
-                spritePosition + new Vector2(18*scale,(0 - (32 + hatOffset)) *scale),
+                spritePosition - new Vector2(0,(32 + hatOffset) *scale),
                 Game1.getSourceRectForStandardTileSheet(hatsTexture, hatTile, 20, 20),
                 Color.White * fadeFactor,
                 0f,
-                Vector2.Zero,
+                new Vector2(10),
                 4.5f * scale,
                 flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 drawLayer + 0.0001f
@@ -533,9 +535,9 @@ namespace StardewDruid.Monster
 
             missile.type = SpellHandle.spells.missile;
 
-            missile.projectile = 2;
+            missile.factor =2;
 
-            missile.missile = IconData.missiles.knife;
+            missile.missile = MissileHandle.missiles.knife;
 
             missile.display = IconData.impacts.none;
 

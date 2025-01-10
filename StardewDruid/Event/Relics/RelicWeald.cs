@@ -45,7 +45,7 @@ namespace StardewDruid.Event.Relics
             if (!Game1.player.hasOrWillReceiveMail("canReadJunimoText"))
             {
 
-                Mod.instance.CastDisplay(DialogueData.Strings(DialogueData.stringkeys.noJunimo));
+                Mod.instance.CastDisplay(StringData.Strings(StringData.stringkeys.noJunimo));
 
                 return false;
 
@@ -60,7 +60,7 @@ namespace StardewDruid.Event.Relics
 
             base.EventActivate();
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
 
 
         }

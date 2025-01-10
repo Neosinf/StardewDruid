@@ -203,7 +203,7 @@ namespace StardewDruid.Cast.Ether
         public void LoadOut()
         {
 
-            anchor = Game1.getFarmer(netAnchor.Value);
+            anchor = Game1.GetPlayer(netAnchor.Value);
 
             if(dragonScale == 0f)
             {
@@ -882,8 +882,13 @@ namespace StardewDruid.Cast.Ether
 
                 if (!diveActive && !Mod.instance.eventRegister.ContainsKey("active"))
                 {
+                    
+                    if (AccountStamina())
+                    {
+                        
+                        PerformDive();
 
-                    PerformDive();
+                    }
 
                 }
 
@@ -919,10 +924,10 @@ namespace StardewDruid.Cast.Ether
                 return;
             }
 
-            if (!Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherOne))
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.etherOne))
             {
 
-                Mod.instance.questHandle.UpdateTask(Journal.QuestHandle.etherOne, 1);
+                Mod.instance.questHandle.UpdateTask(QuestHandle.etherOne, 1);
 
             }
 
@@ -1138,7 +1143,7 @@ namespace StardewDruid.Cast.Ether
         public void FlightStrike()
         {
             
-            if (!Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherOne))
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.etherOne))
             {
 
                 return;
@@ -1516,10 +1521,10 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            if (!Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherTwo))
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.etherTwo))
             {
 
-                Mod.instance.questHandle.UpdateTask(Journal.QuestHandle.etherTwo, 1);
+                Mod.instance.questHandle.UpdateTask(QuestHandle.etherTwo, 1);
 
             }
 
@@ -1844,7 +1849,7 @@ namespace StardewDruid.Cast.Ether
 
                     burn.added = new() { SpellHandle.effects.embers, };
 
-                    if (Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherTwo))
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.etherTwo))
                     {
 
                          burn.added.Add(SpellHandle.effects.immolate);
@@ -2003,10 +2008,10 @@ namespace StardewDruid.Cast.Ether
 
             currentLocation.playSound("pullItemFromWater");
 
-            if (!Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherThree))
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.etherThree))
             {
 
-                Mod.instance.questHandle.UpdateTask(Journal.QuestHandle.etherThree, 1);
+                Mod.instance.questHandle.UpdateTask(QuestHandle.etherThree, 1);
 
             }
 
@@ -2055,14 +2060,14 @@ namespace StardewDruid.Cast.Ether
 
                 Vector2 treasurePosition = Position + new Vector2(64, 0);
 
-                StardewValley.Object treasureItem = SpawnData.RandomTreasure(currentLocation, ModUtility.PositionToTile(treasurePosition), Mod.instance.questHandle.IsComplete(Journal.QuestHandle.etherThree));
+                StardewValley.Object treasureItem = SpawnData.RandomTreasure(currentLocation, ModUtility.PositionToTile(treasurePosition), Mod.instance.questHandle.IsComplete(QuestHandle.etherThree));
 
                 ThrowHandle treasure = new(Game1.player, treasurePosition, treasureItem);
 
                 if (treasure.item.Category == StardewValley.Object.FishCategory)
                 {
 
-                    Game1.player.checkForQuestComplete(null, -1, 1, null, treasureItem.QualifiedItemId, 7);
+                    Game1.player.NotifyQuests(quest => quest.OnFishCaught(treasureItem.QualifiedItemId, 1, 1)); //Game1.player.checkForQuestComplete(null, -1, 1, null, treasureItem.QualifiedItemId, 7);
 
                     Game1.player.gainExperience(1, 16); // gain fishing experience
 
@@ -2134,7 +2139,7 @@ namespace StardewDruid.Cast.Ether
             if (Game1.player.Stamina <= cost)
             {
 
-                Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.energySkill), 3);
+                Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.energySkill), 3);
 
                 return false;
 

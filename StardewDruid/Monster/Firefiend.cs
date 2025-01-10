@@ -79,6 +79,36 @@ namespace StardewDruid.Monster
         }
 
 
+        public override Microsoft.Xna.Framework.Color GetSchemeColour()
+        {
+
+            switch (netScheme.Value)
+            {
+
+                default: // apple
+
+                    return Color.IndianRed;
+
+                case 1: // grannysmith
+
+                    return Color.OrangeRed;
+                case 2: // pumpkin
+
+                    return Color.Crimson;
+                case 3: // plum
+
+                    return Color.IndianRed;
+                case 4: // blueberry
+
+                    return Color.OrangeRed;
+                case 5: // melon
+
+                    return Color.Crimson;
+
+            }
+
+        }
+
         public override void draw(SpriteBatch b)
         {
 
@@ -87,13 +117,15 @@ namespace StardewDruid.Monster
                 return;
             }
 
+            //DrawBoundingBox(b);
+
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
             float drawLayer = (Position.Y + (float)LayerOffset()) / 10000f;
 
             DrawEmote(b, localPosition, drawLayer);
 
-            Color schemeColor = Mod.instance.iconData.SchemeColour(GetScheme());
+            Color schemeColor = GetSchemeColour();
 
             float spriteSize = GetScale();
 
@@ -110,18 +142,6 @@ namespace StardewDruid.Monster
             int faceOffset = 0;
 
             int timelapse = ((int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 3000) * 6 / 3000);
-
-            // fire colour
-
-            List<Microsoft.Xna.Framework.Color> colors = new()
-            {
-                Color.IndianRed,
-                Color.OrangeRed,
-                Color.Crimson,
-                Color.IndianRed,
-                Color.OrangeRed,
-                Color.Crimson,
-            };
 
             /*List<Microsoft.Xna.Framework.Color> colors = new()
             {
@@ -142,7 +162,7 @@ namespace StardewDruid.Monster
 
                 bubbleRect = flightFrames[setFlightSeries][setFlightFrame].Clone();
 
-                b.Draw(characterTexture, spritePosition, bubbleRect, colors[netMode.Value] * 0.6f, 0.0f, Vector2.Zero, spriteSize, 0, drawLayer - 0.004f);
+                b.Draw(characterTexture, spritePosition, bubbleRect, schemeColor * 0.6f, 0.0f, new Vector2(24), spriteSize, 0, drawLayer - 0.004f);
 
                 if (netSmashActive.Value)
                 {
@@ -157,7 +177,7 @@ namespace StardewDruid.Monster
 
                 bubbleRect = idleFrames[netDirection.Value][hoverFrame].Clone();
 
-                b.Draw(characterTexture, spritePosition, bubbleRect, colors[netMode.Value] * 0.6f, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, 0, drawLayer - 0.004f);
+                b.Draw(characterTexture, spritePosition, bubbleRect, schemeColor * 0.6f, 0.0f, new Vector2(24), spriteSize, 0, drawLayer - 0.004f);
 
                 if (netSpecialActive.Value)
                 {
@@ -172,13 +192,13 @@ namespace StardewDruid.Monster
 
             bubbleRect.Y += shadowOffset;
 
-            b.Draw(characterTexture, shadowPosition, bubbleRect, colors[netMode.Value] * 0.15f, 0.0f, Vector2.Zero, spriteSize, 0, drawLayer - 0.005f);
+            b.Draw(characterTexture, shadowPosition, bubbleRect, schemeColor * 0.15f, 0.0f, new Vector2(24), spriteSize, 0, drawLayer - 0.005f);
 
             // Inner fire
 
             Rectangle dust = new(timelapse * 48, 336, 48, 48);
 
-            b.Draw(characterTexture, spritePosition, dust, Color.Yellow * 0.25f, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, 0, drawLayer - 0.003f);
+            b.Draw(characterTexture, spritePosition, dust, Color.Yellow * 0.25f, 0.0f, new Vector2(24), spriteSize, 0, drawLayer - 0.003f);
 
             // Face
 
@@ -194,69 +214,43 @@ namespace StardewDruid.Monster
 
                 case 0:
 
-                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48 + 144, 96, 48, 48), colors[netMode.Value] * (0.5f + 0.1f * timelapse), 0.0f, new Vector2(0.0f, 0.0f), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 0.001f);
+                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48 + 144, 96, 48, 48), schemeColor * (0.5f + 0.1f * timelapse), 0.0f, new Vector2(24), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 0.001f);
 
-                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48, 96, 48, 48), schemeColor * 0.75f, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 0.002f);
+                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48, 96, 48, 48), schemeColor * 0.75f, 0.0f, new Vector2(24), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 0.002f);
 
                     break;
 
                 case 1:
 
-                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48 + 144, 48, 48, 48), colors[netMode.Value] * (0.5f + 0.1f*timelapse), 0.0f, new Vector2(0.0f, 0.0f), spriteSize, 0, drawLayer - 0.001f);
+                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48 + 144, 48, 48, 48), schemeColor * (0.5f + 0.1f*timelapse), 0.0f, new Vector2(24), spriteSize, 0, drawLayer - 0.001f);
 
-                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48, 48, 48, 48), schemeColor * 0.75f, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, 0, drawLayer - 0.002f);
+                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48, 48, 48, 48), schemeColor * 0.75f, 0.0f, new Vector2(24), spriteSize, 0, drawLayer - 0.002f);
 
-                    b.Draw(characterTexture, spritePosition, new(0 + faceOffset, 192, 48, 48), Color.LightGoldenrodYellow, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, 0, drawLayer);
+                    b.Draw(characterTexture, spritePosition, new(0 + faceOffset, 192, 48, 48), Color.LightGoldenrodYellow, 0.0f, new Vector2(24), spriteSize, 0, drawLayer);
 
                     break;
 
                 case 2:
 
-                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48 + 144, 0, 48, 48), colors[netMode.Value] * (0.5f + 0.1f * timelapse), 0.0f, new Vector2(0.0f, 0.0f), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 0.001f);
+                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48 + 144, 0, 48, 48), schemeColor * (0.5f + 0.1f * timelapse), 0.0f, new Vector2(24), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 0.001f);
 
-                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48, 0, 48, 48), schemeColor * 0.75f, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 0.002f);
+                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48, 0, 48, 48), schemeColor * 0.75f, 0.0f, new Vector2(24), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 0.002f);
 
-                    b.Draw(characterTexture, spritePosition, new(0 + faceOffset, 144, 48, 48), Color.LightGoldenrodYellow, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
+                    b.Draw(characterTexture, spritePosition, new(0 + faceOffset, 144, 48, 48), Color.LightGoldenrodYellow, 0.0f, new Vector2(24), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
 
                     break;
 
                 case 3:
 
-                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48 + 144, 48, 48, 48), colors[netMode.Value] * (0.5f + 0.1f * timelapse), 0.0f, new Vector2(0.0f, 0.0f), spriteSize, (SpriteEffects)1, drawLayer - 0.001f);
+                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48 + 144, 48, 48, 48), schemeColor * (0.5f + 0.1f * timelapse), 0.0f, new Vector2(24), spriteSize, (SpriteEffects)1, drawLayer - 0.001f);
 
-                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48, 0, 48, 48), schemeColor * 0.75f, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 0.002f);
+                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48, 0, 48, 48), schemeColor * 0.75f, 0.0f, new Vector2(24), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 0.002f);
 
-                    b.Draw(characterTexture, spritePosition, new(0 + faceOffset, 192, 48, 48), Color.LightGoldenrodYellow, 0.0f, new Vector2(0.0f, 0.0f), spriteSize, (SpriteEffects)1, drawLayer);
-
-                    break;
-
-            }
-
-        }
-
-        public override IconData.schemes GetScheme()
-        {
-
-            IconData.schemes scheme = IconData.schemes.rock;
-
-            switch (netScheme.Value)
-            {
-
-                case 1:
-
-                    scheme = IconData.schemes.rockTwo;
-
-                    break;
-
-                case 2:
-
-                    scheme = IconData.schemes.rockThree;
+                    b.Draw(characterTexture, spritePosition, new(0 + faceOffset, 192, 48, 48), Color.LightGoldenrodYellow, 0.0f, new Vector2(24), spriteSize, (SpriteEffects)1, drawLayer);
 
                     break;
 
             }
-
-            return scheme;
 
         }
 
@@ -269,7 +263,7 @@ namespace StardewDruid.Monster
 
             dustbomb.type = SpellHandle.spells.explode;
 
-            dustbomb.scheme = GetScheme();
+            dustbomb.scheme = GetSpellScheme();
 
             dustbomb.instant = true;
 
@@ -290,7 +284,7 @@ namespace StardewDruid.Monster
 
             SpellHandle death = new(new(box.Center.X, box.Top), 64 + (int)(GetScale() * 32f), IconData.impacts.deathbomb, new());
 
-            death.scheme = GetScheme();
+            death.scheme = GetSpellScheme();
 
             Mod.instance.spellRegister.Add(death);
 
@@ -299,7 +293,7 @@ namespace StardewDruid.Monster
         public override void shedChunks(int number, float scale)
         {
 
-            Mod.instance.iconData.ImpactIndicator(currentLocation, Position, IconData.impacts.puff, 1f + (0.25f * netMode.Value), new() { frame = 4, interval = 50, color = Mod.instance.iconData.SchemeColour(GetScheme()) });
+            Mod.instance.iconData.ImpactIndicator(currentLocation, Position, IconData.impacts.puff, 1f + (0.25f * netMode.Value), new() { frame = 4, interval = 50, color = GetSchemeColour() });
 
         }
 

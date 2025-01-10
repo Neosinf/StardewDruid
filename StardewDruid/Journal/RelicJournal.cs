@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using static StardewDruid.Data.DialogueData;
 
 namespace StardewDruid.Journal
 {
@@ -24,13 +23,8 @@ namespace StardewDruid.Journal
         public override void populateInterface()
         {
 
-            type = journalTypes.relics;
-
-            title = DialogueData.Strings(DialogueData.stringkeys.reliquary);
-
             interfaceComponents = new()
             {
-
 
                 [101] = addButton(journalButtons.quests),
                 [102] = addButton(journalButtons.effects),
@@ -38,6 +32,7 @@ namespace StardewDruid.Journal
                 [104] = addButton(journalButtons.herbalism),
                 [105] = addButton(journalButtons.lore),
                 [106] = addButton(journalButtons.transform),
+                [107] = addButton(journalButtons.recruits),
 
                 [201] = addButton(journalButtons.back),
                 [202] = addButton(journalButtons.start),
@@ -53,6 +48,10 @@ namespace StardewDruid.Journal
 
         public override void populateContent()
         {
+
+            type = journalTypes.relics;
+
+            title = StringData.Strings(StringData.stringkeys.reliquary);
 
             pagination = 18;
 
@@ -142,7 +141,7 @@ namespace StardewDruid.Journal
 
             }
 
-            int function = RelicData.RelicFunction(relicId);
+            int function = RelicHandle.RelicFunction(relicId);
 
             switch (function)
             {
@@ -162,6 +161,12 @@ namespace StardewDruid.Journal
                 case 3:
 
                     openJournal(journalTypes.dragonPage, relicId, focus);
+
+                    return;
+
+                case 4:
+
+                    openJournal(journalTypes.recruits, relicId, focus);
 
                     return;
 
@@ -194,7 +199,7 @@ namespace StardewDruid.Journal
 
             }
 
-            int function = Mod.instance.relicsData.RelicCancel(relicId);
+            int function = RelicHandle.RelicCancel(relicId);
 
             switch (function)
             {
@@ -300,9 +305,9 @@ namespace StardewDruid.Journal
             else
             {
 
-                relicTitle = DialogueData.Strings(stringkeys.relicUnknown);
+                relicTitle = StringData.Strings(StringData.stringkeys.relicUnknown);
 
-                relicDescription = DialogueData.Strings(stringkeys.relicNotFound);
+                relicDescription = StringData.Strings(StringData.stringkeys.relicNotFound);
 
                 relicDetails.Add(relic.hint);
 

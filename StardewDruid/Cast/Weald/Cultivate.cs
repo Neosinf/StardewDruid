@@ -3,11 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewDruid.Event;
-using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
 using System.Collections.Generic;
-
 
 namespace StardewDruid.Cast.Weald
 {
@@ -86,12 +84,12 @@ namespace StardewDruid.Cast.Weald
 
                     eventLocked = true;
 
-                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.nature, new()) { scheme = IconData.schemes.weald, sound = SpellHandle.sounds.getNewSpecialItem, });
+                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.supree, new()) { scheme = IconData.schemes.weald, sound = SpellHandle.sounds.getNewSpecialItem, });
 
-                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour))
+                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdThree))
                     {
 
-                        Mod.instance.questHandle.UpdateTask(QuestHandle.wealdFour, 1);
+                        Mod.instance.questHandle.UpdateTask(QuestHandle.wealdThree, 1);
 
                     }
 
@@ -101,9 +99,9 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            Cultivation();
-
             radialCounter++;
+
+            Cultivation();
 
             if (radialCounter == 9)
             {
@@ -146,7 +144,16 @@ namespace StardewDruid.Cast.Weald
 
             Season cropSeason = location.GetSeason();
 
-            List<Vector2> affected = ModUtility.GetTilesWithinRadius(location, ModUtility.PositionToTile(origin), radialCounter);
+            Vector2 center = ModUtility.PositionToTile(origin);
+
+            List<Vector2> affected = ModUtility.GetTilesWithinRadius(location, center, radialCounter);
+
+            if(radialCounter == 1)
+            {
+
+                affected.Add(center);
+
+            }
 
             foreach(Vector2 tile in affected)
             {
@@ -201,7 +208,7 @@ namespace StardewDruid.Cast.Weald
                         }
 
                     }
- 
+
                     // ----------------------------------------------------------------------
                     // cultivate crop
 
@@ -247,7 +254,7 @@ namespace StardewDruid.Cast.Weald
                             if (inabsentia)
                             {
 
-                                if(puppet == null)
+                                if (puppet == null)
                                 {
 
                                     puppet = new();
@@ -262,7 +269,8 @@ namespace StardewDruid.Cast.Weald
 
 
                             }
-                            else {
+                            else
+                            {
 
 
                                 hoeDirt.plant(wildSeed, Game1.player, false);
@@ -280,7 +288,7 @@ namespace StardewDruid.Cast.Weald
 
                         if (Mod.instance.Config.cultivateBehaviour == 1)
                         {
-                            
+
                             if (powerLevel >= 4)
                             {
 
@@ -312,10 +320,10 @@ namespace StardewDruid.Cast.Weald
                             }
 
                         }
-                        else if (Mod.instance.Config.cultivateBehaviour == 3)
+                        else
                         {
 
-                            if (powerLevel >= 4)
+                            if (powerLevel >= 4 || Mod.instance.Config.cultivateBehaviour == 4)
                             {
 
                                 hoeDirt.plant("919", Game1.player, true);
@@ -388,9 +396,9 @@ namespace StardewDruid.Cast.Weald
                             }
                             else
                             {
-                                
+
                                 Mod.instance.rite.targetCasts[location.Name + "_cultivate"][tile] = "Hoed";
-                                
+
                                 continue;
 
                             }
@@ -398,9 +406,9 @@ namespace StardewDruid.Cast.Weald
                         }
                         else
                         {
-                            
+
                             Mod.instance.rite.targetCasts[location.Name + "_cultivate"][tile] = "Hoed";
-                            
+
                             continue;
 
                         }
@@ -425,20 +433,10 @@ namespace StardewDruid.Cast.Weald
 
                     }
 
-                    if (hoeDirt.crop.currentPhase.Value <= 1)
+                    if (Mod.instance.Config.cultivateBehaviour == 3)
                     {
-
-                        if(Mod.instance.Config.cultivateBehaviour <= 2)
-                        {
-
-                            hoeDirt.crop.currentPhase.Value = 2;
-
-                            hoeDirt.crop.dayOfCurrentPhase.Value = 0;
-
-                            hoeDirt.crop.updateDrawMath(hoeDirt.Tile);
-
-                        }
-                        else if (hoeDirt.crop.currentPhase.Value == 0)
+                        
+                        if (hoeDirt.crop.currentPhase.Value == 0)
                         {
 
                             hoeDirt.crop.currentPhase.Value = 1;
@@ -446,11 +444,23 @@ namespace StardewDruid.Cast.Weald
                             hoeDirt.crop.dayOfCurrentPhase.Value = 0;
 
                             hoeDirt.crop.updateDrawMath(hoeDirt.Tile);
+
                         }
 
                     }
+                    else
+                    if (hoeDirt.crop.currentPhase.Value <= 1)
+                    {
 
-                    if(hoeDirt.crop.indexOfHarvest.Value != null)
+                        hoeDirt.crop.currentPhase.Value = 2;
+
+                        hoeDirt.crop.dayOfCurrentPhase.Value = 0;
+
+                        hoeDirt.crop.updateDrawMath(hoeDirt.Tile);
+
+                    }
+
+                    if (hoeDirt.crop.indexOfHarvest.Value != null)
                     {
 
                         Mod.instance.rite.targetCasts[location.Name + "_cultivate"][tile] = "Crop" + hoeDirt.crop.indexOfHarvest.Value.ToString();
@@ -474,7 +484,7 @@ namespace StardewDruid.Cast.Weald
 
                     Microsoft.Xna.Framework.Color randomColour;
 
-                    switch (Mod.instance.randomIndex.Next(3))
+                    switch (Mod.instance.randomIndex.Next(4))
                     {
 
                         case 0:
@@ -487,6 +497,10 @@ namespace StardewDruid.Cast.Weald
                             randomColour = Color.White;
                             break;
 
+                        case 3:
+
+                            continue;
+
                         default:
 
                             randomColour = Color.YellowGreen;
@@ -494,7 +508,13 @@ namespace StardewDruid.Cast.Weald
 
                     }
 
-                    Mod.instance.iconData.ImpactIndicator(location, cursorVector, IconData.impacts.glare, 0.75f + Mod.instance.randomIndex.Next(5)*0.25f, new() { color = randomColour,});
+
+                    Mod.instance.iconData.ImpactIndicator(
+                        Game1.player.currentLocation,
+                        cursorVector,
+                        IconData.impacts.glare,
+                        4f,
+                        new() { alpha = 0.65f, color = randomColour, rotation = Mod.instance.randomIndex.Next(4) * 0.5f, });
 
                 }
 
@@ -506,6 +526,13 @@ namespace StardewDruid.Cast.Weald
         {
 
             string generateItem = "770";
+
+            if (Game1.season == Season.Winter)
+            {
+
+                generateItem = "PowdermelonSeeds";
+
+            }
 
             if (qualityFactor > 0)
             {

@@ -4,7 +4,6 @@ using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Event;
-using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
@@ -77,7 +76,7 @@ namespace StardewDruid.Cast.Bones
 
                     eventLocked = true;
 
-                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.nature, new()) {  sound = SpellHandle.sounds.getNewSpecialItem, });
+                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.supree, new()) {  sound = SpellHandle.sounds.getNewSpecialItem, });
 
                     if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour))
                     {
@@ -128,7 +127,7 @@ namespace StardewDruid.Cast.Bones
             foreach (CharacterHandle.characters corvid in corvids)
             {
 
-                if (Mod.instance.characters.ContainsKey(corvid))
+                if (Mod.instance.trackers.ContainsKey(corvid))
                 {
 
                     return true;
@@ -142,76 +141,91 @@ namespace StardewDruid.Cast.Bones
         }
 
 
-        public static void SummonCorvids()
+        public static void SummonCorvids(CharacterHandle.characters summon = CharacterHandle.characters.none)
         {
+            List<CharacterHandle.characters> corvids = new()
+            {
+                summon
+            };
 
-            SummonRaven();
+            if (summon == CharacterHandle.characters.none)
+            {
+                corvids = new()
+                {
+                    CharacterHandle.characters.Rook,
+                    CharacterHandle.characters.Crow,
+                    CharacterHandle.characters.Raven,
+                    CharacterHandle.characters.Magpie
+                };
 
-            SummonCrow();
+            }
 
-            SummonRook();
+            Dictionary<CharacterHandle.characters, float> corvidScales = new()
+            {
+                [CharacterHandle.characters.Raven] = 3.5f,
+                [CharacterHandle.characters.Crow] = 3.25f,
+                [CharacterHandle.characters.Magpie] = 3f,
+                [CharacterHandle.characters.Rook] = 3f,
 
-            SummonMagpie();
+            };
+
+            Dictionary<CharacterHandle.characters, int> corvidQuadrants = new()
+            {
+                [CharacterHandle.characters.Raven] = 1,
+                [CharacterHandle.characters.Crow] = 3,
+                [CharacterHandle.characters.Magpie] = 5,
+                [CharacterHandle.characters.Rook] = 7,
+
+            };
+
+            foreach (CharacterHandle.characters corvid in corvids)
+            {
+
+                Character.Flyer flyer = new(corvid);
+
+                flyer.setScale = corvidScales[corvid];
+
+                flyer.trackQuadrant = corvidQuadrants[corvid];
+
+                if (Context.IsMainPlayer)
+                {
+
+                    Mod.instance.characters[corvid] = flyer;
+
+                }
+                else
+                {
+
+                    Mod.instance.dopplegangers[corvid] = flyer;
+
+                }
+
+                flyer.SwitchToMode(Character.Character.mode.track, Game1.player);
+
+                Mod.instance.trackers[corvid].WarpToPlayer();
+
+            }
+
 
         }
         public static void SummonRaven()
         {
-            // -------------------------------------- Raven
-
-            Mod.instance.characters[CharacterHandle.characters.Raven] = new Character.Flyer(CharacterHandle.characters.Raven);
-
-            Mod.instance.characters[CharacterHandle.characters.Raven].setScale = 3.5f;
-
-            Mod.instance.characters[CharacterHandle.characters.Raven].trackQuadrant = 1;
-
-            Mod.instance.characters[CharacterHandle.characters.Raven].SwitchToMode(Character.Character.mode.track, Game1.player);
-
-            Mod.instance.trackers[CharacterHandle.characters.Raven].WarpToPlayer();
+            SummonCorvids(CharacterHandle.characters.Raven);
         }
 
         public static void SummonCrow()
         {
-            // -------------------------------------- Crow
-
-            Mod.instance.characters[CharacterHandle.characters.Crow] = new Character.Flyer(CharacterHandle.characters.Crow);
-
-            Mod.instance.characters[CharacterHandle.characters.Crow].setScale = 3.25f;
-
-            Mod.instance.characters[CharacterHandle.characters.Crow].trackQuadrant = 3;
-
-            Mod.instance.characters[CharacterHandle.characters.Crow].SwitchToMode(Character.Character.mode.track, Game1.player);
-
-            Mod.instance.trackers[CharacterHandle.characters.Crow].WarpToPlayer();
+            SummonCorvids(CharacterHandle.characters.Crow);
         }
 
         public static void SummonRook()
         {
-            // -------------------------------------- Rook
-
-            Mod.instance.characters[CharacterHandle.characters.Rook] = new Character.Flyer(CharacterHandle.characters.Rook);
-
-            Mod.instance.characters[CharacterHandle.characters.Rook].setScale = 3f;
-
-            Mod.instance.characters[CharacterHandle.characters.Rook].trackQuadrant = 5;
-
-            Mod.instance.characters[CharacterHandle.characters.Rook].SwitchToMode(Character.Character.mode.track, Game1.player);
-
-            Mod.instance.trackers[CharacterHandle.characters.Rook].WarpToPlayer();
+            SummonCorvids(CharacterHandle.characters.Rook);
         }
 
         public static void SummonMagpie()
         {
-            // -------------------------------------- Magpie
-
-            Mod.instance.characters[CharacterHandle.characters.Magpie] = new Character.Flyer(CharacterHandle.characters.Magpie);
-
-            Mod.instance.characters[CharacterHandle.characters.Magpie].setScale = 3f;
-
-            Mod.instance.characters[CharacterHandle.characters.Magpie].trackQuadrant = 7;
-
-            Mod.instance.characters[CharacterHandle.characters.Magpie].SwitchToMode(Character.Character.mode.track, Game1.player);
-
-            Mod.instance.trackers[CharacterHandle.characters.Magpie].WarpToPlayer();
+            SummonCorvids(CharacterHandle.characters.Magpie);
         }
 
         public static void RemoveCorvids()
@@ -228,18 +242,22 @@ namespace StardewDruid.Cast.Bones
             foreach (CharacterHandle.characters corvid in corvids)
             {
 
-                if (!Mod.instance.characters.ContainsKey(corvid))
+                if (!Mod.instance.trackers.ContainsKey(corvid))
                 {
                     
                     continue;
 
                 }
 
-                Mod.instance.iconData.AnimateQuickWarp(Mod.instance.characters[corvid].currentLocation, Mod.instance.characters[corvid].Position, false, IconData.warps.corvids);
+                StardewDruid.Character.Character companion = Mod.instance.trackers[corvid].TrackSubject();
 
-                Mod.instance.characters[corvid].currentLocation.characters.Remove(Mod.instance.characters[corvid]);
+                Mod.instance.iconData.AnimateQuickWarp(companion.currentLocation, companion.Position, false, IconData.warps.corvids);
+
+                companion.currentLocation.characters.Remove(companion);
 
                 Mod.instance.characters.Remove(corvid);
+
+                Mod.instance.dopplegangers.Remove(corvid);
 
                 Mod.instance.trackers.Remove(corvid);
 

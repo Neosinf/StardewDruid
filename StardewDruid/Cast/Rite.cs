@@ -9,28 +9,29 @@ using StardewDruid.Cast.Stars;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Character;
 using StardewDruid.Data;
+using StardewDruid.Dialogue;
 using StardewDruid.Event;
-using StardewDruid.Journal;
 using StardewDruid.Location;
+using StardewDruid.Location.Druid;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.Buffs;
+using StardewValley.Extensions;
 using StardewValley.Locations;
+using StardewValley.Monsters;
 using StardewValley.Objects;
 using StardewValley.Quests;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using xTile;
 using xTile.Dimensions;
-using xTile.Layers;
-using static StardewDruid.Character.CharacterHandle;
-using static StardewValley.Minigames.CraneGame;
-using static StardewValley.SpecialOrders.Objectives.GiftObjective;
 
 namespace StardewDruid.Cast
 {
@@ -49,12 +50,13 @@ namespace StardewDruid.Cast
             fates,
             ether,
             bones,
+            bombs,
 
         }
 
         public rites castType;
 
-        public Dictionary<rites, Journal.QuestHandle.milestones> requirement = new()
+        public Dictionary<rites, QuestHandle.milestones> requirement = new()
         {
             [rites.weald] = QuestHandle.milestones.weald_weapon,
             [rites.mists] = QuestHandle.milestones.mists_weapon,
@@ -74,8 +76,6 @@ namespace StardewDruid.Cast
         public int castTool;
 
         public string castLocation;
-
-        //public SpawnIndex spawnIndex = new();
 
         public int castInterval;
 
@@ -122,8 +122,6 @@ namespace StardewDruid.Cast
             starsCharge,
             fatesCharge,
 
-            //divineCharge,
-
         }
 
         public Dictionary<rites, charges> riteCharges = new()
@@ -141,8 +139,6 @@ namespace StardewDruid.Cast
             [charges.mistsCharge] = IconData.cursors.mistsCharge,
             [charges.starsCharge] = IconData.cursors.starsCharge,
             [charges.fatesCharge] = IconData.cursors.fatesCharge,
-            
-            //[charges.divineCharge] = IconData.cursors.divineCharge,
 
         };
 
@@ -178,6 +174,12 @@ namespace StardewDruid.Cast
 
         public const string eventWisps = "eventWisps";
 
+        public const string eventWinds = "eventWinds";
+
+        public const string eventWrath = "eventWrath";
+
+        public const string eventDeathwinds = "eventDeathwinds";
+
         public const string buffIdRite = "184650001";
 
         public const string buffIdSpeed = "184650003";
@@ -212,7 +214,7 @@ namespace StardewDruid.Cast
 
             }
 
-            if (castType == rites.ether)
+            if (castType == rites.ether || castType == rites.bombs)
             {
 
                 return;
@@ -332,6 +334,8 @@ namespace StardewDruid.Cast
 
                 case EventHandle.actionButtons.rite:
 
+                    //Game1.timeOfDay = 1500;
+
                     Mod.instance.RiteButtonSuppress();
 
                     start();
@@ -349,46 +353,48 @@ namespace StardewDruid.Cast
 
             int castFast = 3;
 
-            if (castType == rites.mists)
+            switch (castType)
             {
 
-                castInterval = 50;
+                case rites.mists:
 
-                castFast = 3;
+                    castInterval = 50;
+
+                    castFast = 3;
+
+                    break;
+
+                case rites.stars:
+
+                    castInterval = 45;
+
+                    castFast = 2;
+
+                    break;
+
+                case rites.fates:
+                case rites.bones:
+
+                    castInterval = 120;
+
+                    castFast = 6;
+
+                    break;
+
+                case rites.bombs:
+
+                    castInterval = 60;
+
+                    castFast = 3;
+
+                    break;
 
             }
 
-            if (castType == rites.stars)
+            if (Mod.instance.herbalData.applied.ContainsKey(HerbalData.herbalbuffs.celerity))
             {
 
-                castInterval = 45;
-
-                castFast = 2;
-
-            }
-
-            if (castType == rites.fates)
-            {
-
-                castInterval = 120;
-
-                castFast = 6;
-
-            }
-
-            if (castType == rites.bones)
-            {
-
-                castInterval = 120;
-
-                castFast = 6;
-
-            }
-
-            if (Mod.instance.herbalData.applied.ContainsKey(HerbalData.herbals.celeri))
-            {
-
-                castInterval -= (int)(castFast * Mod.instance.herbalData.applied[HerbalData.herbals.celeri].level);
+                castInterval -= (int)(castFast * Mod.instance.herbalData.applied[HerbalData.herbalbuffs.celerity].level);
 
             }
 
@@ -409,6 +415,13 @@ namespace StardewDruid.Cast
 
             int tool = Mod.instance.AttuneableWeapon();
 
+            if (tool == 997)
+            {
+
+                blessing = rites.bombs;
+
+            }
+            else
             if (Mod.instance.Config.slotAttune || Mod.instance.magic)
             {
 
@@ -424,16 +437,16 @@ namespace StardewDruid.Cast
 
                     }
 
-                    if (Mod.instance.save.milestone == Journal.QuestHandle.milestones.none)
+                    if (Mod.instance.save.milestone == QuestHandle.milestones.none)
                     {
 
-                        Mod.instance.CastMessage(Mod.instance.Config.journalButtons.ToString() + " " + DialogueData.Strings(DialogueData.stringkeys.openJournal));
+                        Mod.instance.CastMessage(Mod.instance.Config.journalButtons.ToString() + " " + StringData.Strings(StringData.stringkeys.openJournal));
 
                     }
                     else
                     {
 
-                        Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.noRiteAttuned) + " " + (Game1.player.CurrentToolIndex + 1));
+                        Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.noRiteAttuned) + " " + (Game1.player.CurrentToolIndex + 1));
 
                     }
 
@@ -442,22 +455,24 @@ namespace StardewDruid.Cast
                 }
 
             }
-            else
+            else 
             {
 
                 if (tool == -1)
                 {
 
-                    Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.riteTool));
+                    Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.riteTool));
 
                     return false;
 
                 }
 
-                if (Mod.instance.Attunement.ContainsKey(tool))
+                Dictionary<int,rites> attunement = SpawnData.WeaponAttunement();
+
+                if (attunement.ContainsKey(tool))
                 {
 
-                    blessing = RequirementCheck(Mod.instance.Attunement[tool]);
+                    blessing = RequirementCheck(attunement[tool]);
 
                     if (blessing == rites.none)
                     {
@@ -469,7 +484,7 @@ namespace StardewDruid.Cast
 
                         }
 
-                        Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.noToolAttunement));
+                        Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.noToolAttunement));
 
                         return false;
 
@@ -482,7 +497,7 @@ namespace StardewDruid.Cast
                     if(castTool != tool)
                     {
 
-                        Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.defaultToolAttunement));
+                        Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.defaultToolAttunement));
 
                     }
 
@@ -610,15 +625,15 @@ namespace StardewDruid.Cast
                 if (castType == rites.none)
                 {
 
-                    if (Mod.instance.save.milestone == Journal.QuestHandle.milestones.none)
+                    if (Mod.instance.save.milestone == QuestHandle.milestones.none)
                     {
 
-                        Mod.instance.CastMessage(Mod.instance.Config.journalButtons.ToString() + " " + DialogueData.Strings(DialogueData.stringkeys.openJournal));
+                        Mod.instance.CastMessage(Mod.instance.Config.journalButtons.ToString() + " " + StringData.Strings(StringData.stringkeys.openJournal));
                     }
                     else
                     {
 
-                        Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.nothingHappened));
+                        Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.nothingHappened));
                     }
 
                     shutdown();
@@ -630,7 +645,7 @@ namespace StardewDruid.Cast
                 /*if (!spawnIndex.cast && Mod.instance.activeEvent.Count == 0)
                 {
 
-                    Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.invalidLocation));
+                    Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.invalidLocation));
 
                     shutdown();
 
@@ -648,12 +663,12 @@ namespace StardewDruid.Cast
 
                         if (castLevel > 0)
                         {
-                            Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.energyContinue), 3);
+                            Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.energyContinue), 3);
 
                         }
                         else
                         {
-                            Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.energyRite), 3);
+                            Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.energyRite), 3);
 
                         }
 
@@ -682,7 +697,7 @@ namespace StardewDruid.Cast
 
             if (!castActive) { return; }
 
-            if (castType == rites.ether) { return; }
+            if (castType == rites.ether || castType == rites.bombs) { return; }
 
             if (castType == rites.bones) 
             {
@@ -743,7 +758,9 @@ namespace StardewDruid.Cast
 
             if (!chargeActive) { return; }
 
-            if (Mod.instance.AttuneableWeapon() == -1) { return; }
+            int tool = Mod.instance.AttuneableWeapon();
+
+            if (tool == -1 || tool == 997) { return; }
 
             if (chargeCooldown > 0) { return; }
 
@@ -773,8 +790,6 @@ namespace StardewDruid.Cast
                         knockeffect.type = SpellHandle.spells.explode;
 
                         knockeffect.added.Add(ChargeEffect(charges.fatesCharge));
-                                                
-                        knockeffect.added.Add(SpellHandle.effects.backstab);
 
                         knockeffect.monsters = checkMonsters;
 
@@ -801,10 +816,10 @@ namespace StardewDruid.Cast
 
                         int impes = 1;
 
-                        if (Mod.instance.herbalData.applied.ContainsKey(HerbalData.herbals.impes))
+                        if (Mod.instance.herbalData.applied.ContainsKey(HerbalData.herbalbuffs.vigor))
                         {
 
-                            impes = Mod.instance.herbalData.applied[HerbalData.herbals.impes].level;
+                            impes = Mod.instance.herbalData.applied[HerbalData.herbalbuffs.vigor].level;
 
                         }
 
@@ -815,8 +830,6 @@ namespace StardewDruid.Cast
                         knockeffect.type = SpellHandle.spells.explode;
 
                         knockeffect.added.Add(ChargeEffect(charges.starsCharge));
-
-                        knockeffect.added.Add(SpellHandle.effects.backstab);
 
                         knockeffect.monsters = checkMonsters;
 
@@ -845,9 +858,9 @@ namespace StardewDruid.Cast
 
                         draineffect.added.Add(ChargeEffect(charges.mistsCharge));
 
-                        draineffect.added.Add(SpellHandle.effects.backstab);
-
                         draineffect.display = IconData.impacts.mists;
+
+                        draineffect.radius = 256;
 
                         draineffect.local = true;
 
@@ -869,8 +882,6 @@ namespace StardewDruid.Cast
                         sapeffect.type = SpellHandle.spells.effect;
 
                         sapeffect.added.Add(ChargeEffect(charges.wealdCharge));
-
-                        sapeffect.added.Add(SpellHandle.effects.backstab);
 
                         sapeffect.scheme = IconData.schemes.weald;
 
@@ -928,10 +939,10 @@ namespace StardewDruid.Cast
 
             float celeri = 1f;
 
-            if (Mod.instance.herbalData.applied.ContainsKey(HerbalData.herbals.celeri))
+            if (Mod.instance.herbalData.applied.ContainsKey(HerbalData.herbalbuffs.celerity))
             {
 
-                celeri -= 0.1f * (float)Mod.instance.herbalData.applied[HerbalData.herbals.celeri].level;
+                celeri -= 0.1f * (float)Mod.instance.herbalData.applied[HerbalData.herbalbuffs.celerity].level;
 
             }
 
@@ -951,21 +962,16 @@ namespace StardewDruid.Cast
                     //switch (Mod.instance.randomIndex.Next(4))
                     switch (Mod.instance.randomIndex.Next(3))
                     {
-                        
-                        case 0:
+
+                        default:
 
                             return SpellHandle.effects.daze;
-
-                        //case 1:
-
-                        //return SpellHandle.effects.mug;
 
                         case 2:
 
                             return SpellHandle.effects.morph;
-
-                        default:
-                        //case 3:
+                        
+                        case 3:
 
                             return SpellHandle.effects.doom;
                     }
@@ -1266,6 +1272,7 @@ namespace StardewDruid.Cast
                     break;  
                     
                case rites.bones:
+               case rites.bombs:
 
                     castVector = ModUtility.PositionToTile(GetTargetCursor(Game1.player.FacingDirection, 1280, -1));
 
@@ -1392,6 +1399,12 @@ namespace StardewDruid.Cast
 
                     break;
 
+                case rites.bombs:
+
+                    CastBombs();
+
+                    break;
+
                 default:
 
                     CastWeald();
@@ -1408,7 +1421,7 @@ namespace StardewDruid.Cast
 
             float oldStamina = Game1.player.Stamina;
 
-            float totalCost = castCost * 0.25f * (float)Mod.instance.ModDifficulty();
+            int totalCost = (int)(castCost * (0.17f * (float)Mod.instance.ModDifficulty()));
 
             float staminaCost = Math.Min(castCost, oldStamina - 16);
 
@@ -1454,11 +1467,11 @@ namespace StardewDruid.Cast
 
                     Buff speedBuff = new(
                         buffIdSpeed, 
-                        source: DialogueData.RiteNames(Rite.rites.weald), 
-                        displaySource: DialogueData.RiteNames(Rite.rites.weald), 
+                        source: StringData.RiteNames(Rite.rites.weald), 
+                        displaySource: StringData.RiteNames(Rite.rites.weald), 
                         duration: 6000, 
-                        displayName: DialogueData.Strings(DialogueData.stringkeys.druidFreneticism),
-                        description: DialogueData.Strings(DialogueData.stringkeys.speedIncrease),
+                        displayName: StringData.Strings(StringData.stringkeys.druidFreneticism),
+                        description: StringData.Strings(StringData.stringkeys.speedIncrease),
                         effects: buffEffect);
 
                     Game1.player.buffs.Apply(speedBuff);
@@ -1481,64 +1494,89 @@ namespace StardewDruid.Cast
             //---------------------------------------------
             // Cultivate / Wilderness
             //---------------------------------------------
-
-            if (LocationData.RestoreLocation(Game1.player.currentLocation.Name) != -1)
+            if (castLevel == 0)
             {
 
-                CastRestoration();
-
-            }
-            else
-            if (Game1.player.currentLocation.IsOutdoors)
-            {
-
-                bool cultivate = false;
-
-                if (Game1.player.currentLocation.IsFarm)
+                if (LocationHandle.MaxRestoration(Game1.player.currentLocation.Name) != -1 && Context.IsMainPlayer)
                 {
 
-                    cultivate = true;
+                    CastRestoration();
 
                 }
-
-                if (Game1.player.currentLocation is IslandWest islandWest)
+                else
+                if (Game1.player.currentLocation.IsOutdoors)
                 {
 
-                    if (Vector2.Distance(Game1.player.Position, new Vector2(90, 55) * 64) <= 1600)
+                    bool cultivate = false;
+
+                    if (Game1.player.currentLocation.IsFarm)
                     {
 
                         cultivate = true;
 
                     }
 
+                    if (Game1.player.currentLocation is IslandWest islandWest)
+                    {
+
+                        List<Vector2> IslandCheck = ModUtility.GetTilesWithinRadius(Game1.player.currentLocation, ModUtility.PositionToTile(Game1.player.Position), 1);
+
+                        IslandCheck.Add(ModUtility.PositionToTile(Game1.player.Position));
+
+                        foreach(Vector2 IslandVector in IslandCheck)
+                        {
+
+                            if (Game1.player.currentLocation.terrainFeatures.ContainsKey(IslandVector))
+                            {
+
+                                if (Game1.player.currentLocation.terrainFeatures[IslandVector] is HoeDirt IslandHoeDirt)
+                                {
+
+                                    if(IslandHoeDirt.crop != null)
+                                    {
+
+                                        cultivate = true;
+
+                                        break;
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    if (cultivate)
+                    {
+
+                        CastCultivate();
+
+                    }
+                    else
+                    {
+
+                        CastWilderness();
+
+                    }
+
                 }
-
-                if (cultivate)
-                {
-
-                    CastCultivate();
-
-                }
-                else
+                else if (
+                    Game1.player.currentLocation is MineShaft ||
+                    Game1.player.currentLocation is VolcanoDungeon)
                 {
 
                     CastWilderness();
 
                 }
+                else if (Game1.player.currentLocation.isGreenhouse.Value || Game1.player.currentLocation is Shed || Game1.player.currentLocation is AnimalHouse)
+                {
 
-            }
-            else if (
-                Game1.player.currentLocation is MineShaft ||
-                Game1.player.currentLocation is VolcanoDungeon )
-            {
+                    CastCultivate();
 
-                CastWilderness();
-
-            }
-            else if (Game1.player.currentLocation.isGreenhouse.Value || Game1.player.currentLocation is Shed || Game1.player.currentLocation is AnimalHouse)
-            {
-
-                CastCultivate();
+                }
 
             }
 
@@ -1585,8 +1623,6 @@ namespace StardewDruid.Cast
                 CastBounty();
 
             }
-
-
 
         }
 
@@ -1689,19 +1725,18 @@ namespace StardewDruid.Cast
             Vector2 playerTile = ModUtility.PositionToTile(Game1.player.Position);
 
             Vector2 sqtVector = new((int)(playerTile.X - (playerTile.X % 16)), (int)(playerTile.Y -(playerTile.Y % 16)));
-            
+
             if (terrainCasts[Game1.player.currentLocation.Name].ContainsKey(sqtVector))
             {
                 
-                for(int i = 0; i < 4; i++)
+                for(int i = 0; i < 3; i++)
                 {
-                    
                     Mod.instance.iconData.ImpactIndicator(
                         Game1.player.currentLocation,
                         (sqtVector + new Vector2((i % 2) * 4,i == 0 ? 0 : (i / 2) * 4) + new Vector2(Mod.instance.randomIndex.Next(8), Mod.instance.randomIndex.Next(8))) * 64,
                         IconData.impacts.glare,
-                        0.8f + (Mod.instance.randomIndex.Next(5) * 0.2f),
-                        new() { alpha = 0.35f }
+                        4f,
+                        new() { alpha = 0.65f, rotation = Mod.instance.randomIndex.Next(4)*0.5f, }
                     );
 
                 }
@@ -1732,8 +1767,15 @@ namespace StardewDruid.Cast
                 return;
 
             }
+            
+            if (!Mod.instance.questHandle.IsGiven(QuestHandle.wealdFour))
+            {
 
-            if(Game1.player.stamina <= 48)
+                return;
+
+            }
+
+            if (Game1.player.stamina <= 48)
             {
 
                 return;
@@ -1754,17 +1796,24 @@ namespace StardewDruid.Cast
 
             }
 
-            int costing = 8;
+            int costing = 4;
 
-            for (int i = 0; i < 5; i++)
+            if(Game1.player.currentLocation is not MineShaft)
             {
 
-                costing += i * 4;
+                costing = 8;
 
-                if (!specialCasts[Game1.player.currentLocation.Name].Contains(eventWilderness + i.ToString()))
+                for (int i = 0; i < 5; i++)
                 {
 
-                    break;
+                    costing += i * 4;
+
+                    if (!specialCasts[Game1.player.currentLocation.Name].Contains(eventWilderness + i.ToString()))
+                    {
+
+                        break;
+
+                    }
 
                 }
 
@@ -1784,6 +1833,13 @@ namespace StardewDruid.Cast
         {
 
             if (castLevel != 0)
+            {
+
+                return;
+
+            }
+
+            if (!Mod.instance.questHandle.IsGiven(QuestHandle.wealdThree))
             {
 
                 return;
@@ -1899,11 +1955,9 @@ namespace StardewDruid.Cast
 
             rockSpell.display = display;
 
-            rockSpell.type = SpellHandle.spells.orbital;
+            rockSpell.type = SpellHandle.spells.missile; 
 
-            rockSpell.missile = IconData.missiles.rockfall;
-
-            rockSpell.projectile = 2;
+            rockSpell.missile = MissileHandle.missiles.rockfall;
 
             rockSpell.terrain = 2;
 
@@ -1917,13 +1971,6 @@ namespace StardewDruid.Cast
                 castCost += 3;
 
             }
-
-            /*if (chargeActive && chargeCooldown == 0)
-            {
-
-                rockSpell.added.Add(ChargeEffect(chargeType));
-
-            }*/
 
             Mod.instance.spellRegister.Add(rockSpell);
 
@@ -2197,6 +2244,13 @@ namespace StardewDruid.Cast
         public void CastSmite()
         {
 
+            if (Mod.instance.eventRegister.ContainsKey(eventWrath))
+            {
+
+                return;
+
+            }
+
             // ---------------------------------------------
             // Monster iteration
             // ---------------------------------------------
@@ -2229,17 +2283,11 @@ namespace StardewDruid.Cast
 
                 bolt.criticalModifier = crits[1];
 
-                //if (chargeActive && chargeCooldown == 0)
-                //{
+                bolt.radius = 192;
 
-                //    bolt.added = new() { ChargeEffect(chargeType), SpellHandle.effects.shock, };
+                bolt.display = IconData.impacts.boltnode;
 
-                //}
-                //else
-                //{
-
-                    bolt.added = new() { SpellHandle.effects.push, SpellHandle.effects.shock, };
-                //}
+                bolt.added = new() { SpellHandle.effects.push, };// SpellHandle.effects.shock};
 
                 Mod.instance.spellRegister.Add(bolt);
 
@@ -2283,15 +2331,26 @@ namespace StardewDruid.Cast
 
                 Microsoft.Xna.Framework.Rectangle box = witness.GetBoundingBox();
 
-                SpellHandle bolt = new(new(box.Center.X, box.Top), 192, IconData.impacts.deathbomb, new());
+                SpellHandle bolt = new(new(box.Left, box.Top), 192, IconData.impacts.boltnode, new());
 
                 bolt.type = SpellHandle.spells.bolt;
 
-                bolt.display = IconData.impacts.puff;
+                bolt.scheme = IconData.schemes.mists;
+
+                bolt.radius = 192;
 
                 Mod.instance.spellRegister.Add(bolt);
 
                 witness.faceTowardFarmerForPeriod(3000, 4, false, Game1.player);
+
+                if (ReactionData.RecruitWitness(witness))
+                {
+
+                    Mod.instance.AddWitness(ReactionData.reactions.mists, witness.Name);
+
+                    continue;
+
+                }
 
                 ModUtility.ChangeFriendship(Game1.player, witness, -10);
 
@@ -2320,18 +2379,11 @@ namespace StardewDruid.Cast
                     if (wispEvent.eventLocked && Vector2.Distance(wispEvent.origin,Game1.player.Position) <= 960f)
                     {
 
-                        return;
+                        CastWrath();
 
                     }
 
-                    if (wispEvent.AttemptReset())
-                    {
-
-                        return;
-
-                    }
-
-                    wispEvent.EventRemove();
+                    return;
 
                 }
 
@@ -2342,6 +2394,24 @@ namespace StardewDruid.Cast
             wispNew.EventSetup(Game1.player.Position, eventWisps);
 
             wispNew.EventActivate();
+
+        }
+
+        public void CastWrath()
+        {
+
+            if (Mod.instance.eventRegister.ContainsKey(eventWrath))
+            {
+
+                return;
+
+            }
+
+            Wrath wrathNew = new();
+
+            wrathNew.EventSetup(Game1.player.Position, eventWrath);
+
+            wrathNew.EventActivate();
 
         }
 
@@ -2695,7 +2765,7 @@ namespace StardewDruid.Cast
 
                 }
 
-                int radius = 3 + extra;
+                int radius = 4 + extra;
 
                 SpellHandle.sounds sound = SpellHandle.sounds.flameSpellHit;
 
@@ -2710,7 +2780,7 @@ namespace StardewDruid.Cast
 
                     radius = 8;
 
-                    scale = 5;
+                    scale = 6;
 
                     sound = SpellHandle.sounds.explosion;
 
@@ -2722,9 +2792,9 @@ namespace StardewDruid.Cast
 
                 SpellHandle meteor = new(Game1.player, meteorTarget, radius * 64, damage);
 
-                meteor.type = SpellHandle.spells.orbital;
+                meteor.type = SpellHandle.spells.missile;
 
-                meteor.missile = IconData.missiles.meteor;
+                meteor.missile = MissileHandle.missiles.meteor;
 
                 if (damage > 0)
                 {
@@ -2733,7 +2803,7 @@ namespace StardewDruid.Cast
 
                     meteor.display = IconData.impacts.bomb;
 
-                    meteor.projectile = scale;
+                    meteor.factor = scale;
 
                     meteor.sound = sound;
 
@@ -2830,17 +2900,35 @@ namespace StardewDruid.Cast
 
             CastWhisk();
 
-            if (Mod.instance.questHandle.IsGiven(Journal.QuestHandle.fatesThree))
+            if (Mod.instance.questHandle.IsGiven(QuestHandle.fatesThree))
             {
 
                 CastTricks();
 
             }
 
-            if (Mod.instance.questHandle.IsGiven(Journal.QuestHandle.fatesFour))
+            if (Mod.instance.questHandle.IsGiven(QuestHandle.fatesFour))
+            {
+                if (
+                    Game1.player.currentLocation.IsFarm
+                    || Game1.player.currentLocation.IsGreenhouse
+                    || Game1.player.currentLocation is AnimalHouse
+                    || Game1.player.currentLocation is Shed
+                    )
+                {
+
+                    CastEnchant();
+
+                    return;
+
+                }
+
+            }
+
+            if(Mod.instance.questHandle.IsComplete(QuestHandle.questJester))
             {
 
-                CastEnchant();
+                CastWinds();
 
             }
 
@@ -3030,7 +3118,7 @@ namespace StardewDruid.Cast
 
                 witness.doEmote(8);
 
-                Mod.instance.iconData.CursorIndicator(location, witness.Position + new Vector2(32), IconData.cursors.fates, new());
+                Mod.instance.iconData.CursorIndicator(location, witness.Position, IconData.cursors.fates, new());
 
                 int display = Mod.instance.randomIndex.Next(5);
 
@@ -3044,11 +3132,13 @@ namespace StardewDruid.Cast
 
                 // Trick performance
 
-                SpellHandle trick = new(witness.Position, 192, IconData.impacts.nature, new()) { instant = true };
+                SpellHandle trick = new(witness.Position, 192, IconData.impacts.supree, new()) { instant = true };
 
                 trick.type = SpellHandle.spells.trick;
 
-                trick.projectile = display;
+                trick.scheme = IconData.schemes.fates;
+
+                trick.factor = display;
 
                 Mod.instance.spellRegister.Add(trick);
 
@@ -3081,13 +3171,46 @@ namespace StardewDruid.Cast
 
             }
 
-            if (!Game1.player.currentLocation.IsFarm && !Game1.player.currentLocation.IsGreenhouse && Game1.player.currentLocation is not AnimalHouse && Game1.player.currentLocation is not Shed) { return; }
-
             Enchant enchantmentEvent = new();
 
             enchantmentEvent.EventSetup(Game1.player.Position, "enchant");
 
+            enchantmentEvent.giantTiles.Add(ModUtility.PositionToTile(Game1.player.Position) + (ModUtility.DirectionAsVector((Game1.player.FacingDirection * 2)) * 2));
+
             enchantmentEvent.EventActivate();
+
+        }
+        
+        public void CastWinds()
+        {
+
+            if (castLevel != 0)
+            {
+
+                return;
+
+            }
+
+            if (Mod.instance.eventRegister.ContainsKey(eventWinds))
+            {
+
+                if (Mod.instance.eventRegister[eventWinds] is Winds windEvent)
+                {
+
+                    return;
+
+                }
+
+            }
+
+            Winds windsNew = new();
+
+            windsNew.EventSetup(Game1.player.Position, eventWinds);
+
+            windsNew.EventActivate();
+
+            windsNew.damageMonsters = Mod.instance.CombatDamage() / 5;
+
 
         }
 
@@ -3274,32 +3397,28 @@ namespace StardewDruid.Cast
 
                 string treasureTerrain = ModUtility.GroundCheck(Game1.player.currentLocation, treasureVector);
 
+                treasure = new Crate();
+
+                treasure.EventSetup(treasureVector * 64, "crate_" + Game1.player.currentLocation.Name, true);
+
+                treasure.crateThief = Mod.instance.randomIndex.NextBool();
+
+                treasure.crateTreasure = true;
+
+                treasure.location = Game1.player.currentLocation;
+
                 switch (treasureTerrain)
                 {
 
                     case "ground":
 
-                        treasure = new Crate();
-
-                        treasure.EventSetup(treasureVector*64, "crate_" + Game1.player.currentLocation.Name, true);
-
-                        treasure.crateThief = Mod.instance.randomIndex.Next(2) == 0;
-
                         treasure.crateTerrain = 1;
-
-                        treasure.location = Game1.player.currentLocation;
 
                         return;
 
                     case "water":
 
-                        treasure = new Crate();
-
-                        treasure.EventSetup(treasureVector * 64, "crate_" + Game1.player.currentLocation.Name, true);
-
                         treasure.crateTerrain = 2;
-
-                        treasure.location = Game1.player.currentLocation;
 
                         return;
 
@@ -3339,19 +3458,10 @@ namespace StardewDruid.Cast
             foreach (CharacterHandle.characters corvid in corvids)
             {
 
-                if (Mod.instance.characters.ContainsKey(corvid))
+                if (Mod.instance.trackers.ContainsKey(corvid))
                 {
 
-                    Mod.instance.characters[corvid].ResetActives();
-
-                    if (!Mod.instance.trackers.ContainsKey(corvid))
-                    {
-
-                        Mod.instance.characters[corvid].SwitchToMode(Character.Character.mode.track, Game1.player);
-
-                        continue;
-
-                    }
+                    Mod.instance.trackers[corvid].TrackSubject().ResetActives();
 
                     if (returnToPlayer && Mod.instance.trackers[corvid].linger != 0)
                     {
@@ -3413,6 +3523,169 @@ namespace StardewDruid.Cast
 
         }
 
+        public void CastBombs()
+        {
+
+            SpellHandle special = new(
+                Game1.player.currentLocation, 
+                castVector*64, 
+                Game1.player.Position - new Vector2(0,32), 
+                192, 
+                -1, 
+                Mod.instance.CombatDamage()
+                );
+
+            float distance = Vector2.Distance(castVector * 64, Game1.player.Position);
+
+            bool consumeBomb = true;
+
+            special.instant = true;
+
+            special.type = SpellHandle.spells.missile;
+
+            special.missile = MissileHandle.missiles.bomb;
+
+            special.display = IconData.impacts.bomb;
+
+            special.power = 3;
+
+            special.explosion = 2;
+
+            special.terrain = 2;
+
+            foreach (KeyValuePair<HerbalData.herbalbuffs,HerbalBuff> buff in Mod.instance.herbalData.applied)
+            {
+
+                switch (buff.Key)
+                {
+
+                    case HerbalData.herbalbuffs.imbuement:
+
+                        SpellHandle.effects imbue = ChargeEffect(chargeType);
+
+                        special.added.Add(imbue);
+
+                        break;
+
+                    case HerbalData.herbalbuffs.amorous:
+
+                        special.display = IconData.impacts.lovebomb;
+
+                        special.added.Add(SpellHandle.effects.glare);
+
+                        special.added.Add(SpellHandle.effects.charm);
+
+                        break;
+
+                    case HerbalData.herbalbuffs.donor:
+
+                        if(Mod.instance.randomIndex.Next(3) == 0)
+                        {
+
+                            consumeBomb = false;
+
+                        }
+
+                        break;
+
+                    case HerbalData.herbalbuffs.concussion:
+
+                        special.power = 4;
+
+                        special.added.Add(SpellHandle.effects.embers);
+
+                        if (Mod.instance.randomIndex.Next(6) == 0)
+                        {
+
+                            special.added.Add(SpellHandle.effects.bore);
+
+                        }
+
+                        break;
+
+                    case HerbalData.herbalbuffs.jumper:
+
+                        special.added.Add(SpellHandle.effects.jump);
+
+                        break;
+
+                    case HerbalData.herbalbuffs.feline:
+
+                        special.missile = MissileHandle.missiles.cat;
+
+                        break;
+                }
+
+            }
+
+            switch (Game1.player.CurrentItem.ItemId)
+            {
+
+                default:
+
+                    return;
+
+                case "286": // cherry bomb
+
+                    special.scheme = IconData.schemes.bomb_one;
+
+                    special.sound = SpellHandle.sounds.flameSpellHit;
+
+                    Mod.instance.spellRegister.Add(special);
+
+                    break;
+
+                case "287": // bomb
+
+                    special.scheme = IconData.schemes.bomb_two;
+
+                    special.sound = SpellHandle.sounds.explosion;
+
+                    special.factor = 3;
+
+                    special.radius = 320;
+
+                    special.explosion = 4;
+
+                    special.terrain = 4;
+
+                    special.damageMonsters = Mod.instance.CombatDamage() * 2;
+
+                    Mod.instance.spellRegister.Add(special);
+
+                    break;
+
+                case "288": // mega bomb
+
+                    special.scheme = IconData.schemes.bomb_three;
+
+                    special.sound = SpellHandle.sounds.explosion;
+
+                    special.factor = 4;
+
+                    special.radius = 512;
+
+                    special.explosion = 6;
+
+                    special.terrain = 6;
+
+                    special.damageMonsters = Mod.instance.CombatDamage() * 3;
+
+                    Mod.instance.spellRegister.Add(special);
+
+                    break;
+
+            }
+
+
+            if (consumeBomb)
+            {
+                Game1.player.Items.ReduceId(Game1.player.CurrentItem.ItemId, 1);
+
+            }
+
+        }
+
         public void RiteBuff()
         {
 
@@ -3435,19 +3708,24 @@ namespace StardewDruid.Cast
 
             }
 
-            if(Mod.instance.magic)
+            if (toolIndex == 997)
+            {
+
+                blessing = rites.bombs;
+
+            }
+            else
+            if (Mod.instance.magic)
             {
 
                 blessing = GetSlotBlessing();
 
             }
             else
-            if (Mod.instance.save.milestone < Journal.QuestHandle.milestones.effigy)
+            if (Mod.instance.save.milestone < QuestHandle.milestones.effigy)
             {
 
-                RemoveBuff();
-
-                return;
+                blessing = rites.none;
 
             }
             else if (Mod.instance.Config.slotAttune)
@@ -3459,21 +3737,14 @@ namespace StardewDruid.Cast
             else
             {
 
-                if (Mod.instance.Attunement.ContainsKey(toolIndex))
+                Dictionary<int, rites> attunement = SpawnData.WeaponAttunement();
+
+                if (attunement.ContainsKey(toolIndex))
                 {
 
-                    blessing = RequirementCheck(Mod.instance.Attunement[toolIndex]);
+                    blessing = RequirementCheck(attunement[toolIndex]);
 
                 }
-
-            }
-
-            if (blessing == rites.none)
-            {
-
-                RemoveBuff();
-
-                return;
 
             }
 
@@ -3490,15 +3761,33 @@ namespace StardewDruid.Cast
 
             appliedBuff = blessing;
 
+            string magic_mode = StringData.Strings(StringData.stringkeys.stardewDruid);
+
+            int buffIndex = (int)Enum.Parse<IconData.displays>(blessing.ToString()) - 1;
+
+            if (blessing == rites.none)
+            {
+
+                buffIndex = (int)IconData.displays.chaos - 1;
+
+            }
+
+            if (Mod.instance.magic)
+            {
+
+                magic_mode = StringData.Strings(StringData.stringkeys.magicByNeosinf);
+
+            }
+
             Buff riteBuff = new(
                 buffIdRite, 
-                source: DialogueData.Strings(DialogueData.stringkeys.stardewDruid), 
-                displaySource: DialogueData.Strings(DialogueData.stringkeys.stardewDruid),
+                source: StringData.Strings(StringData.stringkeys.stardewDruid), 
+                displaySource: magic_mode,
                 duration: Buff.ENDLESS, 
                 iconTexture:Mod.instance.iconData.displayTexture, 
-                iconSheetIndex: (int)Mod.instance.iconData.riteDisplays[blessing] - 1, 
-                displayName: DialogueData.RiteNames(blessing), 
-                description: DialogueData.Strings(DialogueData.stringkeys.riteBuffDescription) //+ DialogueData.Strings(attunementChoice)
+                iconSheetIndex: buffIndex, 
+                displayName: StringData.RiteNames(blessing), 
+                description: StringData.Strings(StringData.stringkeys.riteBuffDescription)
                 );
 
             Game1.player.buffs.Apply(riteBuff);

@@ -1,5 +1,6 @@
 ﻿using StardewDruid.Character;
-using StardewDruid.Journal;
+using StardewDruid.Data;
+using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Constants;
@@ -10,10 +11,7 @@ using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.NetworkInformation;
-using xTile.Dimensions;
-using static StardewValley.Menus.SocialPage;
-using static System.Net.Mime.MediaTypeNames;
+using static StardewDruid.Character.CharacterHandle;
 
 namespace StardewDruid.Dialogue
 {
@@ -22,9 +20,9 @@ namespace StardewDruid.Dialogue
 
         public CharacterHandle.characters characterType = CharacterHandle.characters.none;
 
-        public StardewDruid.Character.Character npc = null;
+        public StardewValley.NPC npc = null;
 
-        public Dictionary<string, Journal.Quest.questTypes> promptDialogue = new();
+        public Dictionary<string, Data.Quest.questTypes> promptDialogue = new();
 
         public List<string> introDialogue = new();
 
@@ -32,7 +30,19 @@ namespace StardewDruid.Dialogue
 
         public string currentSpecial;
 
-        public CharacterHandle.subjects currentSubject;
+        public subjects currentSubject;
+
+        public enum subjects
+        {
+            quests,
+            lore,
+            relics,
+            inventory,
+            adventure,
+            warp,
+            attune,
+            offering,
+        }
 
         public int currentIndex;
 
@@ -50,13 +60,22 @@ namespace StardewDruid.Dialogue
                
         }
 
+        public Dialogue(CharacterHandle.characters CharacterType, NPC NPC)
+        {
+
+            characterType = CharacterType;
+
+            npc = NPC;
+
+        }
+
         public virtual void DialogueApproach()
         {
 
             if(promptDialogue.Count > 0)
             {
 
-                KeyValuePair<string,Journal.Quest.questTypes> prompt = promptDialogue.Last();
+                KeyValuePair<string,Data.Quest.questTypes> prompt = promptDialogue.Last();
 
                 promptDialogue.Remove(prompt.Key);
 
@@ -84,20 +103,20 @@ namespace StardewDruid.Dialogue
 
             List<Response> responseList = new List<Response>();
 
-            List<CharacterHandle.subjects> subjects = new()
+            List<subjects> trySubjects = new()
             {
-                CharacterHandle.subjects.quests,
-                CharacterHandle.subjects.lore,
-                CharacterHandle.subjects.relics,
-                CharacterHandle.subjects.inventory,
-                CharacterHandle.subjects.adventure,
-                CharacterHandle.subjects.attune,
-                CharacterHandle.subjects.offering,
+                subjects.quests,
+                subjects.lore,
+                subjects.relics,
+                subjects.inventory,
+                subjects.adventure,
+                subjects.attune,
+                subjects.offering,
             };
 
-            foreach(CharacterHandle.subjects subject in subjects)
+            foreach(subjects subject in trySubjects)
             {
-                string option = CharacterHandle.DialogueOption(characterType, subject);
+                string option = DialogueOption(characterType, subject);
 
                 if (option != null)
                 {
@@ -121,21 +140,220 @@ namespace StardewDruid.Dialogue
 
         }
 
+        public static string DialogueOption(CharacterHandle.characters character, subjects subject)
+        {
+
+
+            switch (subject)
+            {
+
+                case subjects.quests:
+
+                    if (!Context.IsMainPlayer)
+                    {
+                        return null;
+
+                    }
+
+                    if (Mod.instance.questHandle.IsQuestGiver(character))
+                    {
+
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.159");
+
+                    }
+
+                    return null;
+
+                case subjects.lore:
+
+                    return LoreData.LoreOption(character);
+
+                case subjects.inventory:
+
+                    if (!Context.IsMainPlayer)
+                    {
+                        return null;
+
+                    }
+                    switch (character)
+                    {
+
+                        case CharacterHandle.characters.Effigy:
+
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.questEffigy))
+                            {
+
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.329");
+
+                            }
+
+                            break;
+
+                        case CharacterHandle.characters.Jester:
+
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.340");
+
+                        case CharacterHandle.characters.Shadowtin:
+
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.351");
+
+
+                        case CharacterHandle.characters.Blackfeather:
+
+                            if (Mod.instance.questHandle.IsGiven(QuestHandle.questBlackfeather))
+                            {
+
+                                return Mod.instance.Helper.Translation.Get("CharacterHandle.323.2");
+
+                            }
+
+                            break;
+
+                        case CharacterHandle.characters.herbalism:
+
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.362");
+
+
+                        case CharacterHandle.characters.Aldebaran:
+
+                            return Mod.instance.Helper.Translation.Get("CharacterHandle.343.7");
+
+
+                    }
+
+                    break;
+
+                case subjects.relics:
+
+                    return DialogueRelics.DialogueOption(character);
+
+                case subjects.adventure:
+
+                    return DialogueAdventure.DialogueOption(character);
+
+                case subjects.attune:
+
+                    return DialogueAttune.DialogueOption(character);
+
+                case subjects.offering:
+
+                    return DialogueOffering.DialogueOption(character);
+
+            }
+
+            return null;
+
+        }
+
+        public static DialogueSpecial DialogueGenerator(CharacterHandle.characters character, subjects subject, int index = 0, int answer = 0)
+        {
+
+            DialogueSpecial generate = new();
+
+            switch (subject)
+            {
+
+                case subjects.quests:
+
+                    Mod.instance.questHandle.DialogueReload(character);
+
+                    return null;
+
+                case subjects.lore:
+
+                    switch (character)
+                    {
+
+                        case CharacterHandle.characters.recruit_one:
+                        case CharacterHandle.characters.recruit_two:
+                        case CharacterHandle.characters.recruit_three:
+                        case CharacterHandle.characters.recruit_four:
+
+                            NPC villager = (Mod.instance.characters[character] as Recruit).villager;
+
+                            if (villager.canTalk() && villager.CurrentDialogue.Count > 0)
+                            {
+
+                                Game1.drawDialogue(villager);
+
+                            }
+
+                            return null;
+
+                    }
+
+                    List<LoreStory> stories = LoreData.RetrieveLore(character);
+
+                    foreach (LoreStory story in stories)
+                    {
+                        generate.intro = LoreData.LoreIntro(character);
+
+                        generate.responses.Add(story.question);
+
+                        generate.answers.Add(story.answer);
+
+                    }
+
+                    break;
+
+                case subjects.inventory:
+
+                    switch (character)
+                    {
+
+                        case CharacterHandle.characters.Aldebaran:
+
+                            CharacterHandle.OpenInventory(CharacterHandle.characters.Effigy);
+
+                            break;
+
+                        default:
+
+                            CharacterHandle.OpenInventory(character);
+
+                            break;
+
+                    };
+
+                    return null;
+
+                case subjects.relics:
+
+                    return DialogueRelics.DialogueGenerate(character, index, answer);
+
+                case subjects.adventure:
+
+                    return DialogueAdventure.DialogueGenerate(character, index, answer);
+
+                case subjects.attune:
+
+                    return DialogueAttune.DialogueGenerate(character, index, answer);
+
+                case subjects.offering:
+
+                    return DialogueOffering.DialogueGenerate(character, index, answer);
+
+            }
+
+            return generate;
+
+        }
+
         public virtual void AnswerApproach(Farmer visitor, string answer)
         {
 
-            List<CharacterHandle.subjects> subjects = new()
+            List<subjects> trySubjects = new()
             {
-                CharacterHandle.subjects.quests,
-                CharacterHandle.subjects.lore,
-                CharacterHandle.subjects.relics,
-                CharacterHandle.subjects.inventory,
-                CharacterHandle.subjects.adventure,
-                CharacterHandle.subjects.attune,
-                CharacterHandle.subjects.offering,
+                subjects.quests,
+                subjects.lore,
+                subjects.relics,
+                subjects.inventory,
+                subjects.adventure,
+                subjects.attune,
+                subjects.offering,
             };
 
-            foreach (CharacterHandle.subjects subject in subjects)
+            foreach (subjects subject in trySubjects)
             {
                         
                 if (answer == subject.ToString())
@@ -147,7 +365,7 @@ namespace StardewDruid.Dialogue
 
                     currentSpecial = subject.ToString();
 
-                    DialogueSpecial generateSpecial = CharacterHandle.DialogueGenerator(characterType, subject);
+                    DialogueSpecial generateSpecial = DialogueGenerator(characterType, subject);
 
                     if (generateSpecial == null)
                     {
@@ -200,7 +418,6 @@ namespace StardewDruid.Dialogue
 
         }
 
-
         public virtual void RunSpecialQuestion()
         {
 
@@ -228,9 +445,22 @@ namespace StardewDruid.Dialogue
 
             Game1.currentSpeaker = npc;
 
-            StardewValley.Dialogue dialogue = new(npc, "0", answer);
+            if (npc == null)
+            {
 
-            Game1.activeClickableMenu = new DialogueBox(dialogue);
+                List<string> answers = ModUtility.SplitStringByLength(answer, 185);
+
+                Game1.activeClickableMenu = new DialogueBox(answers);
+
+            }
+            else
+            {
+
+                StardewValley.Dialogue dialogue = new(npc, "0", answer);
+
+                Game1.activeClickableMenu = new DialogueBox(dialogue);
+
+            }
 
             Game1.player.Halt();
 
@@ -241,7 +471,7 @@ namespace StardewDruid.Dialogue
 
                 string queryName = npc == null ? "none" : npc.Name;
 
-                QueryData queryData = new()
+                Data.QueryData queryData = new()
                 {
 
                     name = queryName,
@@ -252,7 +482,7 @@ namespace StardewDruid.Dialogue
 
                 };
 
-                Mod.instance.EventQuery(queryData, QueryData.queries.EventDialogue);
+                Mod.instance.EventQuery(queryData, Data.QueryData.queries.EventDialogue);
 
             }
 
@@ -282,7 +512,7 @@ namespace StardewDruid.Dialogue
 
                 int answer = Convert.ToInt32(special.answers[id]);
 
-                DialogueSpecial nextEntry = CharacterHandle.DialogueGenerator(characterType, currentSubject, currentIndex, answer);
+                DialogueSpecial nextEntry = DialogueGenerator(characterType, currentSubject, currentIndex, answer);
 
                 if (nextEntry.intro == null)
                 {
@@ -354,7 +584,7 @@ namespace StardewDruid.Dialogue
 
             }
 
-            Journal.Quest.questTypes dial = Journal.Quest.questTypes.approach;
+            Data.Quest.questTypes dial = Data.Quest.questTypes.approach;
 
             specialDialogue[eventId] = special;
 
@@ -366,21 +596,21 @@ namespace StardewDruid.Dialogue
 
                     switch (Mod.instance.questHandle.quests[eventId].type)
                     {
-                        case Journal.Quest.questTypes.challenge:
+                        case Data.Quest.questTypes.challenge:
 
-                            dial = Journal.Quest.questTypes.challenge;
+                            dial = Data.Quest.questTypes.challenge;
 
                             break;
 
-                        case Journal.Quest.questTypes.lesson:
+                        case Data.Quest.questTypes.lesson:
 
-                            dial = Journal.Quest.questTypes.lesson;
+                            dial = Data.Quest.questTypes.lesson;
 
                             break;
 
                         default:
 
-                            dial = Journal.Quest.questTypes.miscellaneous;
+                            dial = Data.Quest.questTypes.miscellaneous;
 
                             break;
                     }

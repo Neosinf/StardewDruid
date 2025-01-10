@@ -3,12 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewDruid.Event;
-using StardewDruid.Journal;
-using StardewDruid.Location;
+using StardewDruid.Location.Druid;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.ItemTypeDefinitions;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
+using System;
 using System.Collections.Generic;
 using xTile.Layers;
 using xTile.Tiles;
@@ -41,6 +42,7 @@ namespace StardewDruid.Cast.Weald
             twig,
             rock,
             beach,
+            gems,
         }
 
         int spawnCount;
@@ -111,7 +113,7 @@ namespace StardewDruid.Cast.Weald
 
                     SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new());
 
-                    circleHandle.scheme = IconData.schemes.grannysmith;
+                    circleHandle.scheme = IconData.schemes.herbal_ligna;
 
                     circleHandle.sound = SpellHandle.sounds.discoverMineral;
 
@@ -119,10 +121,10 @@ namespace StardewDruid.Cast.Weald
 
                     Mod.instance.rite.specialCasts[location.Name].Add(Rite.eventWilderness + costing.ToString());
 
-                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdThree))
+                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour))
                     {
 
-                        Mod.instance.questHandle.UpdateTask(QuestHandle.wealdThree, 1);
+                        Mod.instance.questHandle.UpdateTask(QuestHandle.wealdFour, 1);
 
                     }
 
@@ -171,7 +173,7 @@ namespace StardewDruid.Cast.Weald
 
             Dictionary<Vector2, List<spawns>> spawnProspects = new();
 
-            if(location is Beach || location is StardewDruid.Location.Atoll || location is IslandWest || location is IslandSouth || location is IslandSouthEast)
+            if(location is Beach || location is Atoll || location is IslandWest || location is IslandSouth || location is IslandSouthEast)
             {
 
                 beachTerrain = true;
@@ -256,6 +258,12 @@ namespace StardewDruid.Cast.Weald
 
                     spawnProspects[prospect].Add(spawns.weed);
 
+                    spawnProspects[prospect].Add(spawns.weed);
+
+                    spawnProspects[prospect].Add(spawns.weed);
+
+                    spawnProspects[prospect].Add(spawns.gems);
+
                     continue;
 
                 }
@@ -296,7 +304,7 @@ namespace StardewDruid.Cast.Weald
 
                             spawnProspects[prospect].Add(spawns.forage);
 
-                            if (Mod.instance.questHandle.IsComplete(QuestHandle.wealdThree))
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour))
                             {
 
                                 spawnProspects[prospect].Add(spawns.flower);
@@ -391,6 +399,12 @@ namespace StardewDruid.Cast.Weald
 
                             break;
 
+                        case spawns.gems:
+
+                            SpawnGems(prospect.Key);
+
+                            break;
+
                     }
 
                 }
@@ -439,6 +453,15 @@ namespace StardewDruid.Cast.Weald
             }
 
             StardewValley.Object newForage = new StardewValley.Object(SpawnData.RandomBeach(location).ToString(), 1);
+
+            ParsedItemData dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(newForage.QualifiedItemId);
+
+            if (dataOrErrorItem.IsErrorItem)
+            {
+
+                return;
+
+            }
 
             newForage.IsSpawnedObject = true;
 
@@ -499,7 +522,16 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            Object @object = ItemRegistry.Create<Object>(randomWeed);
+            StardewValley.Object @object = ItemRegistry.Create<StardewValley.Object>(randomWeed);
+
+            ParsedItemData dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(@object.QualifiedItemId);
+
+            if (dataOrErrorItem.IsErrorItem)
+            {
+
+                return;
+
+            }
 
             @object.MinutesUntilReady = 1;
 
@@ -510,7 +542,7 @@ namespace StardewDruid.Cast.Weald
         public void SpawnTwigs(Vector2 prospect)
         {
 
-            Object @object = ItemRegistry.Create<Object>(SpawnData.RandomTwig(location));
+            StardewValley.Object @object = ItemRegistry.Create<StardewValley.Object>(SpawnData.RandomTwig(location));
 
             @object.MinutesUntilReady = 1;
 
@@ -521,7 +553,7 @@ namespace StardewDruid.Cast.Weald
         public void SpawnRock(Vector2 prospect)
         {
 
-            Object @object = ItemRegistry.Create<Object>(SpawnData.RandomRock(location));
+            StardewValley.Object @object = ItemRegistry.Create<StardewValley.Object>(SpawnData.RandomRock(location));
 
             @object.MinutesUntilReady = 1;
 
@@ -582,6 +614,15 @@ namespace StardewDruid.Cast.Weald
 
             StardewValley.Object newForage = new StardewValley.Object(randomCrop, 1);
 
+            ParsedItemData dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(newForage.QualifiedItemId);
+
+            if (dataOrErrorItem.IsErrorItem)
+            {
+
+                return;
+
+            }
+
             newForage.IsSpawnedObject = true;
 
             newForage.Location = location;
@@ -596,6 +637,64 @@ namespace StardewDruid.Cast.Weald
             }
 
             Mod.instance.iconData.CursorIndicator(location, prospect * 64 + new Vector2(0, 8), IconData.cursors.weald, new());
+
+        }
+
+        public void SpawnGems(Vector2 prospect)
+        {
+            ParsedItemData dataOrErrorItem;
+
+            if (Mod.instance.randomIndex.Next(5) == 0)
+            {
+
+                StardewValley.Object @object = ItemRegistry.Create<StardewValley.Object>("(O)44");
+
+                dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(@object.QualifiedItemId);
+
+                if (dataOrErrorItem.IsErrorItem)
+                {
+
+                    return;
+
+                }
+
+                @object.MinutesUntilReady = 1;
+
+                location.objects.TryAdd(prospect, @object);
+
+                Mod.instance.iconData.CursorIndicator(location, prospect * 64 + new Vector2(0, 8), IconData.cursors.weald, new());
+
+                return;
+
+            }
+
+            string randomGem = SpawnData.RandomForage(location);
+
+            StardewValley.Object newForage = new StardewValley.Object(randomGem, 1);
+
+            dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(newForage.QualifiedItemId);
+
+            if (dataOrErrorItem.IsErrorItem)
+            {
+
+                return;
+
+            }
+
+            newForage.IsSpawnedObject = true;
+
+            newForage.Location = location;
+
+            newForage.TileLocation = prospect;
+
+            if (location.objects.TryAdd(prospect, newForage))
+            {
+
+                spawnCount++;
+
+                Mod.instance.iconData.CursorIndicator(location, prospect * 64 + new Vector2(0, 8), IconData.cursors.weald, new());
+
+            }
 
         }
 

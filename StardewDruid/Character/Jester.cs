@@ -119,14 +119,7 @@ namespace StardewDruid.Character
         public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
         {
 
-            if (currentLocation.IsFarm)
-            {
-
-                return false;
-
-            }
-
-            if (!Mod.instance.questHandle.IsComplete(Journal.QuestHandle.questJester))
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.questJester))
             {
 
                 return false;
@@ -147,15 +140,15 @@ namespace StardewDruid.Character
 
             LookAtTarget(monster.Position, true);
 
-            SpellHandle beam = new(Game1.player,monster.Position,320, Mod.instance.CombatDamage() * 2 / 3);
+            SpellHandle beam = new(Game1.player,monster.Position,320, Mod.instance.CombatDamage());
 
             beam.origin = Position;
 
             beam.type = SpellHandle.spells.beam;
 
-            beam.scheme = IconData.schemes.Solar;
+            beam.scheme = IconData.schemes.fates;
 
-            beam.display = IconData.impacts.deathbomb;
+            beam.display = IconData.impacts.flasher;
 
             beam.sound = SpellHandle.sounds.explosion;
 
@@ -174,11 +167,11 @@ namespace StardewDruid.Character
 
             Buff luckBuff = new(
                 Rite.buffIdJester, 
-                source: DialogueData.Strings(DialogueData.stringkeys.jesterBuff), 
-                displaySource: DialogueData.Strings(DialogueData.stringkeys.jesterBuff), 
+                source: StringData.Strings(StringData.stringkeys.jesterBuff), 
+                displaySource: StringData.Strings(StringData.stringkeys.jesterBuff), 
                 duration: Buff.ENDLESS, 
-                displayName: DialogueData.Strings(DialogueData.stringkeys.jesterBuffTitle), 
-                description: DialogueData.Strings(DialogueData.stringkeys.jesterBuffDescription), 
+                displayName: StringData.Strings(StringData.stringkeys.jesterBuffTitle), 
+                description: StringData.Strings(StringData.stringkeys.jesterBuffDescription), 
                 effects: buffEffect
                 );
 
@@ -197,6 +190,12 @@ namespace StardewDruid.Character
             }
 
         }
+        public override List<StardewValley.Monsters.Monster> FindMonsters()
+        {
+
+            return ModUtility.MonsterProximity(currentLocation, new() { Position, }, 960f, true);
+
+        }
 
         public override void ConnectSweep()
         {
@@ -207,9 +206,9 @@ namespace StardewDruid.Character
 
             swipeEffect.sound = SpellHandle.sounds.swordswipe;
 
-            swipeEffect.display = IconData.impacts.skull;
+            swipeEffect.display = IconData.impacts.flashbang;
 
-            if (Mod.instance.questHandle.IsGiven(Journal.QuestHandle.fatesTwo))
+            if (Mod.instance.questHandle.IsGiven(QuestHandle.fatesTwo))
             {
                 switch (Mod.instance.randomIndex.Next(4))
                 {
@@ -362,10 +361,15 @@ namespace StardewDruid.Character
 
                         if (!currentLocation.IsFarm)
                         {
-                            
-                            rubVictim.Halt();
 
-                            rubVictim.faceDirection(2);
+                            if (rubVictim.isMoving())
+                            {
+                                
+                                rubVictim.Halt();
+
+                            }
+
+                            //rubVictim.faceDirection(2);
 
                         }
 
@@ -584,7 +588,7 @@ namespace StardewDruid.Character
 
             }
 
-            Utility.RecordAnimalProduce(cow, cow.currentProduce.Value);
+            cow.HandleStatsOnProduceCollected(@object);
 
             cow.currentProduce.Value = null;
 

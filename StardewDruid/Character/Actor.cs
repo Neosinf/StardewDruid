@@ -25,8 +25,11 @@ namespace StardewDruid.Character
 
         public override void LoadOut()
         {
+
             characterType = CharacterHandle.characters.disembodied;
+
             loadedOut = true;
+
         }
 
         public override void draw(SpriteBatch b, float alpha = 1f)

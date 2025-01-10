@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 using Netcode;
 using System.ComponentModel;
 using StardewDruid.Data;
-using static System.Net.WebRequestMethods;
-using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Render
 {
@@ -1566,8 +1564,15 @@ namespace StardewDruid.Render
 
 
             }
+            
+            List<Color> colours = breathGradientColours[breathSchemes.breath_stars];
 
-            List<Color> colours = breathGradientColours[fire];
+            if (breathGradientColours.ContainsKey(fire))
+            {
+
+                colours = breathGradientColours[fire];
+
+            }
 
             switch (additional.direction)
             {

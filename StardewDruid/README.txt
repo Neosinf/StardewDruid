@@ -1,8 +1,8 @@
 ﻿====================================
-Stardew Druid - 1.6 Ready!
+Stardew Druid
 ====================================
 
-40+ quests, 25+ abilities, 6 unique NPCs, 10 custom locations, 30+ collectables, 3500+ lines of dialogue and lore, Stardew Druid is a unique kind of expansion created to satisfy a desire for adventure.
+50 quests, 25+ abilities, 6 unique NPCs, 10 custom locations, 50+ collectables, 5000+ lines of dialogue and lore, Stardew Druid is a unique kind of expansion created to satisfy a desire for adventure.
 
 This mod provides an alternative to early tool-based gameplay in the form of six schools of magic, which incorporate motifs and themes inspired by the Druids of antiquity!
 
@@ -82,6 +82,7 @@ Gently caress your farm animals and neighbours with magic for soft friendship po
 Prove yourself in new, unique challenges that test your ability with each rite.
 Encounter customised creatures with enhanced stats, cosmetics and behaviour.
 Boost your output with the specialised herbalism feature, unique to Stardew Druid!
+Throw bombs from your inventory by selecting them and using the rite button. Further augmentation is available with herbalism.
 Gain a dungeon delving companion, a treasure hunting friend and a gardener for your farm.
 
 ==========================================
@@ -152,7 +153,15 @@ Rite of Bones
 25. Lessons (Summon Familiars, Retrieve, Opportunity)
 26. Companion Quest (Buffin)
 27. Companion Quest (Revenant)
-28. Challenge Quest  **COMING SOON**
+28. Challenge Quest  
+
+The Final Rite
+29. Weapon Quest (Gift of the Heiress)
+30. Companion Quest (Aldebaran)
+
+**Coming Soon (Early 2025)**
+31. Dungeon
+32. Final Boss
 
 -----------------------------------------
 CONFIG FILE
@@ -169,8 +178,9 @@ Journal Button is a list of keybinds set to K
 Effects button is a list of keybinds set to L
 Relics Button is a list of keybinds set to I
 Herbalism Button is a list of keybinds set to O
+Warp Button is a list of keybinds set to P
 
-These OPTIONAL configuration will open the Stardew Druid journal from the game world.
+These OPTIONAL configuration will open the Stardew Druid journal from the game world. Warp will attempt to utilise any 'wayfinder' relics that the player possesses that are associated with the current map. It can be used from the very start of the mod to trigger the Whetstone Relic to warp from the farm/farmhouse directly to the grove and back.
 
 -----------------------------------------
 Sort Journal by Active "activeJournal"
@@ -181,20 +191,50 @@ Sort and reverse the order in which Stardew Druid journal entries are displayed.
 -----------------------------------------
 Mod Difficulty (modDifficulty)
 
-Determines how hard or easy the mod will be. Mod Difficulty affects stamina costs, custom monster strength and monetary rewards.
+Determines how hard or easy the mod will be. Mod Difficulty affects stamina costs, potion replenishment, custom monster strength and monetary rewards.
 
------------------------------------------
-Disable Cast Hands
+Cali:
+Stamina Costs - 66%
+Monsters - 66%
+Quest Rewards + 66%
+Potion Replenishment + 40%
+Stars: Gravity Well has extra chance for iridium crop harvest
+Stars: Gravity Well guardian serpents are disabled
 
-Stardew Druid employs a 'pause and play single frame animation' for the farmer sprite when the rite button is used to trigger Druid events. This can be disabled to improve compatibility with mods that manage or modify the farmer sprite.
+Easy:
+Stamina Costs - 33%
+Monsters - 33%
+Quest Rewards + 33%
+Potion Replenishment + 20%
+
+Medium:
+Stamina Costs ~
+Monsters ~
+Quest Rewards ~
+Potion Replenishment ~
+Stars: Gravity Well harvest disabled, serpents enabled.
+
+Hard:
+Stamina Costs +50%
+Monsters +50%
+Monster Spawnrate + 25%
+Quest Rewards -50%.
+Potion Replenishment - 30%
+
+Kiwi:
+Stamina Costs +100%
+Monster +100%
+Monster Spawnrate + 50%
+Quest Rewards -100%
+Potion Replenishment - 60%
+Weald: Clearance will not produce wild seeds.
 
 ----------------------------------------- 
 Set Milestone Progress "setMilestone"
 Set Once "setOnce"
-Convert 2.1.9 save "convert219"
 Auto Progress "autoProgress"
 
-Can be used to override the mod state on game load. 0 is the default for no effective change. See the progress list above. Set once will ensure that the value is set back to 0 to prevent any overridden states for other saves. Convert 2.1.9 will attempt to match legacy progress with the new progression. Auto progress will load the next lesson/quest at the start of each in game day, without the need to approach any of the quest NPCs.
+Can be used to override the mod state on game load. 0 is the default for no effective change. See the progress list above. Set once will ensure that the value is set back to 0 to prevent any overridden states for other saves. Auto progress will load the next lesson/quest at the start of each in game day, without the need to approach any of the quest NPCs.
 
 -----------------------------------------
 Slot Attune "slotAttune"
@@ -210,8 +250,9 @@ Cultivate Behaviour
 Adjusts the speed vs quality setting for RotW: Cultivate behaviour. 
 
 1. Prioritises speed, with enhanced growth rate and speed fertiliser, and chance for extra harvest with RotF: Gravity Well
-2. Balanced between the two
+2. Balanced between speed and quality
 3. Prioritises quality, with quality fertiliser and better chance for quality harvest when harvested with RotF: Gravity Well
+4. 'Ridiculous' boosts to speed and quality
 
 -----------------------------------------
 Meteor Behaviour "meteorBehaviour"

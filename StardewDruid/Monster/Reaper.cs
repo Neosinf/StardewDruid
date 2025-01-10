@@ -10,11 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using xTile.Dimensions;
-using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Monster
 {
-    public class Reaper : DarkRogue
+    public class Reaper : Dark
     {
 
         public Reaper()
@@ -46,7 +45,43 @@ namespace StardewDruid.Monster
 
             DarkCast();
 
-            DarkBarrage();
+            flightDefault = flightTypes.close;
+
+            channelSet = true;
+
+            channelFrames = new Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>>()
+            {
+
+                [0] = new()
+                {
+
+                    new(32, 64, 32, 32),
+                    new(32, 64, 32, 32),
+
+                },
+                [1] = new()
+                {
+
+                    new(32, 32, 32, 32),
+                    new(32, 32, 32, 32),
+
+                },
+                [2] = new()
+                {
+
+                    new(32, 0, 32, 32),
+                    new(32, 0, 32, 32),
+
+                },
+                [3] = new()
+                {
+
+                    new(32, 96, 32, 32),
+                    new(32, 96, 32, 32),
+
+                },
+
+            };
 
             DarkSmash();
 
@@ -67,7 +102,7 @@ namespace StardewDruid.Monster
             return 4f + 0.25f * netMode.Value;
         }
 
-        public override void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, IconData.schemes scheme = schemes.Void)
+        public override void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, IconData.schemes scheme = IconData.schemes.white)
         {
 
             base.DrawShield(b, spritePosition, spriteScale, drawLayer, IconData.schemes.death);
@@ -78,6 +113,29 @@ namespace StardewDruid.Monster
         {
 
             specialTimer = (specialCeiling + 1) * specialInterval;
+
+            if (!Mod.instance.eventRegister.ContainsKey(Rite.eventDeathwinds))
+            {
+
+                netChannelActive.Set(true);
+
+                SetCooldown(2);
+
+                SpellHandle deathwind = new(currentLocation, Position, Position, 256, GetThreat());
+
+                deathwind.type = SpellHandle.spells.deathwind;
+
+                deathwind.boss = this;
+
+                Mod.instance.spellRegister.Add(deathwind);
+
+                SpellHandle capture = new(Position, 8 * 64, IconData.impacts.none, new() { SpellHandle.effects.capture, }) { instant = true, };
+
+                Mod.instance.spellRegister.Add(capture);
+
+                return true;
+
+            }
 
             netSpecialActive.Set(true);
 
@@ -90,7 +148,7 @@ namespace StardewDruid.Monster
 
                 shieldTimer = 600;
 
-                SpellHandle capture = new(Position, 8*64, IconData.impacts.deathwhirl, new() { SpellHandle.effects.capture, }) { instant = true, scheme = IconData.schemes.death };
+                SpellHandle capture = new(Position, 8*64, IconData.impacts.none, new() { SpellHandle.effects.capture, }) { instant = true, };
 
                 Mod.instance.spellRegister.Add(capture);
 
@@ -98,21 +156,19 @@ namespace StardewDruid.Monster
 
             }
 
-            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 256, GetThreat());
+            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 192, GetThreat());
 
             fireball.type = SpellHandle.spells.missile;
 
-            fireball.projectile = 4;
+            fireball.factor = 3;
 
-            fireball.missile = IconData.missiles.death;
+            fireball.missile = MissileHandle.missiles.death;
 
             fireball.display = IconData.impacts.skull;
 
-            fireball.indicator = IconData.cursors.death;
+            fireball.scheme = IconData.schemes.death;
 
             fireball.boss = this;
-
-            fireball.added = new() { SpellHandle.effects.capture,};
 
             Mod.instance.spellRegister.Add(fireball);
 
@@ -134,7 +190,7 @@ namespace StardewDruid.Monster
             for (int i = 0; i < 4; i++)
             {
                 
-                List<Vector2> castSelection = ModUtility.GetTilesWithinRadius(currentLocation, ModUtility.PositionToTile(Position), Mod.instance.randomIndex.Next(4,6), true, (i*2) + offset % 8);
+                List<Vector2> castSelection = ModUtility.GetTilesWithinRadius(currentLocation, ModUtility.PositionToTile(Position), Mod.instance.randomIndex.Next(6,9), true, (i*2) + offset % 8);
                 
                 if (castSelection.Count > 0)
                 {
@@ -143,15 +199,17 @@ namespace StardewDruid.Monster
 
                     SpellHandle fireball = new(currentLocation, tryVector*64, GetBoundingBox().Center.ToVector2(), 256, GetThreat());
 
-                    fireball.type = SpellHandle.spells.ballistic;
+                    fireball.type = SpellHandle.spells.missile;
 
-                    fireball.projectile = 4;
+                    fireball.factor = 4;
 
-                    fireball.missile = IconData.missiles.death;
+                    fireball.missile = MissileHandle.missiles.deathfall;
 
                     fireball.display = IconData.impacts.skull;
 
                     fireball.indicator = IconData.cursors.death;
+
+                    fireball.scheme = IconData.schemes.death;
 
                     fireball.boss = this;
 

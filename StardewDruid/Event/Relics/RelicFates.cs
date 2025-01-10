@@ -45,7 +45,7 @@ namespace StardewDruid.Event.Relics
             if ((Game1.getLocationFromName("CommunityCenter") as CommunityCenter).numberOfCompleteBundles() < 3)
             {
 
-                Mod.instance.CastDisplay(DialogueData.Strings(DialogueData.stringkeys.noInstructions));
+                Mod.instance.CastDisplay(StringData.Strings(StringData.stringkeys.noInstructions));
 
                 return false;
 
@@ -60,7 +60,7 @@ namespace StardewDruid.Event.Relics
 
             base.EventActivate();
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
 
         }
 

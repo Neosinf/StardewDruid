@@ -1,10 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
+using StardewDruid.Cast.Effect;
 using StardewDruid.Data;
 using StardewDruid.Event;
 using StardewDruid.Journal;
 using StardewDruid.Location;
+using StardewDruid.Location.Druid;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
@@ -84,7 +86,7 @@ namespace StardewDruid.Cast.Weald
 
                     SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new());
 
-                    circleHandle.scheme = IconData.schemes.grannysmith;
+                    circleHandle.scheme = IconData.schemes.herbal_ligna;
 
                     circleHandle.sound = SpellHandle.sounds.discoverMineral;
 
@@ -110,12 +112,14 @@ namespace StardewDruid.Cast.Weald
 
                 eventComplete = true;
 
-                int maxRestoration = LocationData.RestoreLocation(location.Name);
+                int maxRestoration = LocationHandle.MaxRestoration(location.Name);
+
+                // Message failure
 
                 if (Mod.instance.save.restoration[location.Name] >= maxRestoration)
                 {
 
-                    Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.restoreFully));
+                    Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.restoreFully));
 
                     return;
                 
@@ -124,7 +128,7 @@ namespace StardewDruid.Cast.Weald
                 if (Mod.instance.rite.specialCasts[location.Name].Contains("restoration"))
                 {
 
-                    Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.restoreTomorrow));
+                    Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.restoreTomorrow));
 
                     location.playSound(SpellHandle.sounds.ghost.ToString());
 
@@ -132,31 +136,31 @@ namespace StardewDruid.Cast.Weald
 
                 }
 
+                // Enact restoration
+
                 Mod.instance.rite.specialCasts[location.Name].Add("restoration");
 
                 Mod.instance.save.restoration[location.Name] += 1;
 
+                (location as DruidLocation).RestoreTo(Mod.instance.save.restoration[location.Name]);
+
+                // Message restoration
+
                 if (Mod.instance.save.restoration[location.Name] == 1)
                 {
 
-                    Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.restoreStart));
+                    Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.restoreStart));
 
                 }
                 else if (Mod.instance.save.restoration[location.Name] >= maxRestoration)
                 {
 
-                    Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.restoreFully));
+                    Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.restoreFully));
 
-                    if (Game1.player.currentLocation is Clearing)
+                    if (Game1.player.currentLocation is Clearing clearing)
                     {
 
-                        Bounty bounty = new();
-
-                        bounty.creatureProspects.Add(origin, Bounty.bounties.orchard);
-
-                        bounty.location = location;
-
-                        bounty.SpawnCreature();
+                        ReturnOwls(clearing);
 
                     }
 
@@ -164,11 +168,11 @@ namespace StardewDruid.Cast.Weald
                 else
                 {
 
-                    Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.restorePartial));
+                    Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.restorePartial));
 
                 }
 
-                Mod.instance.SyncMultiplayer();
+                Mod.instance.SyncProgress();
 
                 location.playSound(SpellHandle.sounds.secret1.ToString());
 
@@ -200,10 +204,8 @@ namespace StardewDruid.Cast.Weald
                     Game1.player.currentLocation,
                     origin + sparkle,
                     IconData.impacts.glare,
-                    0.8f + (Mod.instance.randomIndex.Next(5) * 0.2f),
-                    new() { alpha = 0.35f }
-                );
-
+                    4f,
+                    new() { alpha = 0.5f, rotation = Mod.instance.randomIndex.Next(4) * 0.5f, });
 
             }
 
@@ -221,6 +223,67 @@ namespace StardewDruid.Cast.Weald
             Mod.instance.rite.ApplyCost();
 
         }
+
+        public void ReturnOwls(Clearing clearing)
+        {
+
+            Creature creature;
+
+            string id = "creature" + location.Name;
+
+            if (!Mod.instance.eventRegister.ContainsKey(id))
+            {
+
+                creature = new();
+
+                creature.eventId = id;
+
+                creature.EventActivate();
+
+            }
+            else
+            {
+
+                creature = Mod.instance.eventRegister[id] as Creature;
+
+            }
+
+            int direction = Mod.instance.randomIndex.Next(8);
+
+            List<Character.CharacterHandle.characters> owls = new()
+            {
+
+                Character.CharacterHandle.characters.BrownOwl,
+                Character.CharacterHandle.characters.GreyOwl,
+
+            };
+
+            int owlCount = 0;
+
+            Vector2 exit = new Vector2(27, -8) * 64;
+
+            ThrowHandle throwRelic = new(Game1.player, exit, IconData.relics.restore_cloth);
+
+            throwRelic.register();
+
+            foreach (TerrainField terrainTile in clearing.terrainFields)
+            {
+
+                if (terrainTile.tilesheet == IconData.tilesheets.clearing)
+                {
+
+                    Vector2 roost = terrainTile.position + new Vector2(96, 96);
+
+                    owlCount++;
+
+                    creature.AddCreature(location, owls[Mod.instance.randomIndex.Next(owls.Count)], exit + new Vector2(16 * owlCount, 0), roost, 2.5f + (0.25f * Mod.instance.randomIndex.Next(3)), true);
+
+                }
+
+            }
+
+        }
+
 
     }
 

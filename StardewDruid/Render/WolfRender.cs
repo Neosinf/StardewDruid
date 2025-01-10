@@ -1,15 +1,29 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using StardewDruid.Monster;
+using StardewValley.Network;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace StardewDruid.Render
 {
     public class WolfRender
     {
 
+        Texture2D wolfTexture;
+
         public enum wolfFrames
         {
+
+            downTorso,
+            rightTorso,
+            upTorso,
+            downTorsoSpecial,
+            rightTorsoSpecial,
+            upTorsoSpecial,
+            blankTorso,
 
             downIdle,
             downWalkR1,
@@ -59,53 +73,44 @@ namespace StardewDruid.Render
             upRunDown3,
             blank3,
 
-            downIdleSpecial,
-            downWalkR1Special,
-            downWalkR2Special,
-            downWalkR3Special,
-            downWalkL1Special,
-            downWalkL2Special,
-            downWalkL3Special,
+            downShadow,
+            rightShadow,
+            upShadow,
 
-            rightIdleSpecial,
-            rightWalkR1Special,
-            rightWalkR2Special,
-            rightWalkR3Special,
-            rightWalkL1Special,
-            rightWalkL2Special,
-            rightWalkL3Special,
+        }
 
-            upIdleSpecial,
-            upWalkR1Special,
-            upWalkR2Special,
-            upWalkR3Special,
-            upWalkL1Special,
-            upWalkL2Special,
-            upWalkL3Special,
+        public Dictionary<int, Microsoft.Xna.Framework.Rectangle> torsoFrames = new();
 
-            downRunUp1Special,
-            downRunUp2Special,
-            downRunGlide1Special,
-            downRunGlide2Special,
-            downRunDown2Special,
-            downRunDown3Special,
-            blank1Special,
+        public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> idleFrames = new();
 
-            rightRunUp1Special,
-            rightRunUp2Special,
-            rightRunGlide1Special,
-            rightRunGlide2Special,
-            rightRunDown2Special,
-            rightRunDown3Special,
-            blank2Special,
+        public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> walkFrames = new();
 
-            upRunUp1Special,
-            upRunUp2Special,
-            upRunGlide1Special,
-            upRunGlide2Special,
-            upRunDown2Special,
-            upRunDown3Special,
-            blank3Special,
+        public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> sweepFrames = new();
+
+        public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> specialFrames = new();
+
+        public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> dashFrames = new();
+
+        public Dictionary<int, Microsoft.Xna.Framework.Rectangle> shadowFrames = new();
+
+        public WolfRender(string name)
+        {
+
+            wolfTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", name + ".png"));
+
+            //wolfTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "GreyWolf.png"));
+
+            TorsoFrames();
+
+            IdleFrames();
+
+            WalkFrames();
+
+            SweepFrames();
+
+            DashFrames();
+
+            ShadowFrames();
 
         }
 
@@ -117,9 +122,6 @@ namespace StardewDruid.Render
                 case wolfFrames.upRunGlide1:
                 case wolfFrames.rightRunGlide1:
                 case wolfFrames.downRunGlide1:
-                case wolfFrames.upRunGlide1Special:
-                case wolfFrames.rightRunGlide1Special:
-                case wolfFrames.downRunGlide1Special:
 
                     return new((int)frame % 7 * 64, (int)frame / 7 * 64, 128, 64);
 
@@ -129,10 +131,51 @@ namespace StardewDruid.Render
 
         }
 
-        public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> WalkFrames()
+        public void TorsoFrames()
         {
 
-            Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> sweepFrames = new()
+            torsoFrames = new()
+            {
+
+                [0] = WolfRectangle(wolfFrames.upTorso),
+                [1] = WolfRectangle(wolfFrames.rightTorso),
+                [2] = WolfRectangle(wolfFrames.downTorso),
+                [3] = WolfRectangle(wolfFrames.rightTorso),
+
+            };
+
+        }
+
+        public void IdleFrames()
+        {
+
+            idleFrames = new()
+            {
+                [0] = new()
+                    {
+                        WolfRectangle(wolfFrames.upIdle),
+                    },
+                [1] = new()
+                    {
+                        WolfRectangle(wolfFrames.rightIdle),
+                    },
+                [2] = new()
+                    {
+                        WolfRectangle(wolfFrames.downIdle),
+                    },
+                [3] = new()
+                    {
+                        WolfRectangle(wolfFrames.rightIdle),
+                    },
+
+            };
+
+        }
+
+        public void WalkFrames()
+        {
+
+            walkFrames = new()
             {
                 [0] = new()
                     {
@@ -178,14 +221,12 @@ namespace StardewDruid.Render
 
             };
 
-            return sweepFrames;
-
         }
 
-        public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> SweepFrames()
+        public void SweepFrames()
         {
 
-            Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> sweepFrames = new()
+            sweepFrames = new()
             {
                 [0] = new()
                     {
@@ -222,47 +263,12 @@ namespace StardewDruid.Render
 
             };
 
-            return sweepFrames;
-
         }
 
-        public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> SpecialFrames()
+        public void DashFrames()
         {
 
-
-            Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> specFrames = new()
-            {
-                [0] = new()
-                    {
-                        WolfRectangle(wolfFrames.upIdleSpecial),
-
-                    },
-                [1] = new()
-                    {
-                        WolfRectangle(wolfFrames.rightIdleSpecial),
-
-                    },
-                [2] = new()
-                    {
-                        WolfRectangle(wolfFrames.downIdleSpecial),
-
-                    },
-                [3] = new()
-                    {
-                        WolfRectangle(wolfFrames.rightIdleSpecial),
-
-                    },
-
-            };
-
-            return specFrames;
-
-        }
-
-        public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> DashFrames()
-        {
-
-            Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> sweepFrames = new()
+            dashFrames = new()
             {
                 [0] = new()
                     {
@@ -275,7 +281,7 @@ namespace StardewDruid.Render
                     {
                         WolfRectangle(wolfFrames.rightRunUp1),
                         WolfRectangle(wolfFrames.rightRunUp2),
- 
+
 
                     },
                 [2] = new()
@@ -352,9 +358,152 @@ namespace StardewDruid.Render
 
             };
 
-            return sweepFrames;
+        }
+
+        public void ShadowFrames()
+        {
+
+            shadowFrames = new()
+            {
+
+                [0] = WolfRectangle(wolfFrames.upShadow),
+                [1] = WolfRectangle(wolfFrames.rightShadow),
+                [2] = WolfRectangle(wolfFrames.downShadow),
+                [3] = WolfRectangle(wolfFrames.rightShadow),
+            
+            };
 
         }
+
+        public void DrawNormal(SpriteBatch b, WolfRenderAdditional use)
+        {
+
+            Microsoft.Xna.Framework.Rectangle source;
+
+            switch (use.series)
+            {
+
+                case WolfRenderAdditional.wolfseries.sweep:
+
+                    source = sweepFrames[use.direction][use.frame];
+
+                    break;
+
+                case WolfRenderAdditional.wolfseries.special:
+
+                    source = specialFrames[use.direction][use.frame];
+
+                    break;
+
+                case WolfRenderAdditional.wolfseries.dash:
+
+                    source = dashFrames[use.direction][use.frame];
+
+                    break;
+
+                default:
+
+                    source = walkFrames[use.direction][use.frame];
+
+                    break;
+
+            }
+
+            b.Draw(
+                wolfTexture,
+                use.position,
+                source,
+                Microsoft.Xna.Framework.Color.White * use.fade,
+                0f,
+                new Vector2(source.Width / 2, source.Height / 2),
+                use.scale,
+                use.flip ? (SpriteEffects)1 : 0,
+                use.layer + 0.0001f
+            );
+
+            int useDirection = use.direction % 4;
+
+            Microsoft.Xna.Framework.Rectangle torso = torsoFrames[useDirection];
+
+            if (use.mode == WolfRenderAdditional.wolfmode.growl)
+            {
+
+                torso.X += 192;
+            }
+
+            b.Draw(
+                wolfTexture,
+                use.position,
+                torso,
+                Microsoft.Xna.Framework.Color.White * use.fade,
+                0f,
+                new Vector2(torso.Width / 2, torso.Height / 2),
+                use.scale,
+                use.flip ? (SpriteEffects)1 : 0,
+                use.layer
+            );
+
+            Microsoft.Xna.Framework.Rectangle shadow = shadowFrames[useDirection];
+
+            Vector2 shadowPosition = use.position;
+
+            if(useDirection % 2 == 1)
+            {
+
+                shadowPosition.Y += 8;
+
+            }
+
+            b.Draw(
+                wolfTexture,
+                shadowPosition,
+                shadow,
+                Color.White * 0.15f,
+                0.0f,
+                new Vector2(shadow.Width / 2, shadow.Height / 2),
+                use.scale + (Math.Abs(0 - (walkFrames[0].Count() / 2) + use.scale) * 0.05f),
+                use.flip ? (SpriteEffects)1 : 0,
+                use.layer - 0.0001f
+            );
+
+        }
+
+    }
+
+    public class WolfRenderAdditional
+    {
+
+        public int direction = 2;
+
+        public int frame = 0;
+
+        public Vector2 position;
+
+        public float scale = 4f;
+
+        public bool flip = false;
+
+        public float layer = 0.0001f;
+
+        public enum wolfmode
+        {
+            none,
+            growl,
+        }
+
+        public wolfmode mode;
+
+        public enum wolfseries
+        {
+            none,
+            sweep,
+            dash,
+            special,
+        }
+
+        public wolfseries series;
+
+        public float fade = 1f;
 
     }
 

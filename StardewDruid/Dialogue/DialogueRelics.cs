@@ -1,5 +1,4 @@
-﻿using StardewDruid.Journal;
-using StardewValley;
+﻿using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +10,7 @@ using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewValley.Locations;
 using Microsoft.Xna.Framework;
+using StardewDruid.Event;
 
 namespace StardewDruid.Dialogue
 {

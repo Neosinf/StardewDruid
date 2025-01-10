@@ -48,28 +48,6 @@ namespace StardewDruid.Character
 
             LoadNuance(Mod.instance.randomIndex.Next(3));
 
-            /*
-            int hatTile = 337;
-
-            switch (netScheme.Value)
-            {
-                case 0:
-                    hatTile = 0;
-                    break;
-                case 1:
-                    hatTile = 155;
-                    break;
-                case 2:
-                    hatTile = 242;
-                    break;
-                case 3:
-                    hatTile = 292;
-                    break;
-                case 4:
-                    hatTile = 3;
-                    break;
-            }*/
-
         }
 
         public void LoadNuance(int nuance)
@@ -82,16 +60,16 @@ namespace StardewDruid.Character
                 
                 case 0:
                     hatsIndex = 292;
-                    weaponRender.LoadWeapon(Render.WeaponRender.weapons.cutlass);
+                    weaponRender.LoadWeapon(Render.WeaponRender.weapons.estoc);
                     break;
                 case 1:
                     hatsIndex = 155;
-                    weaponRender.LoadWeapon(Render.WeaponRender.weapons.cutlass);
+                    weaponRender.LoadWeapon(Render.WeaponRender.weapons.estoc);
                     break;
 
                 case 2:
                     hatsIndex = 242;
-                    weaponRender.LoadWeapon(Render.WeaponRender.weapons.cutlass);
+                    weaponRender.LoadWeapon(Render.WeaponRender.weapons.estoc);
                     break;
 
             }

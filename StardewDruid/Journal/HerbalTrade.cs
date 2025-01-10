@@ -42,7 +42,7 @@ namespace StardewDruid.Journal
 
             type = journalTypes.herbalTrade;
 
-            title = DialogueData.Strings(DialogueData.stringkeys.herbalTrade);
+            title = StringData.Strings(StringData.stringkeys.herbalTrade);
 
             pagination = 6;
 
@@ -77,27 +77,16 @@ namespace StardewDruid.Journal
 
             int total = order * price;
 
-            if (!Mod.instance.save.herbalism.ContainsKey(herbal))
+            if (HerbalData.UpdateHerbalism(herbal) < order)
             {
-
+                
                 Game1.player.currentLocation.playSound(SpellHandle.sounds.ghost.ToString());
 
                 return;
 
             }
-            else
-            {
-                if (Mod.instance.save.herbalism[herbal] < order)
-                {
-                    Game1.player.currentLocation.playSound(SpellHandle.sounds.ghost.ToString());
 
-                    return;
-
-                }
-
-            }
-
-            Mod.instance.save.herbalism[herbal] -= order;
+            HerbalData.UpdateHerbalism(herbal, 0 - order);
 
             Mod.instance.herbalData.orders.Remove(herbal);
 

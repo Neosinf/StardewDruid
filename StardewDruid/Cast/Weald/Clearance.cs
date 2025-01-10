@@ -5,7 +5,7 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using StardewDruid.Data;
-using StardewDruid.Journal;
+using StardewDruid.Event;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -45,7 +45,7 @@ namespace StardewDruid.Cast.Weald
 
             explode.indicator = IconData.cursors.weald;
 
-            explode.projectile = 3;
+            explode.factor =3;
 
             explode.power = 2;
 

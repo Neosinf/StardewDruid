@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Data;
+using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewValley;
 using System;
@@ -91,6 +92,17 @@ namespace StardewDruid.Character
 
         }
 
+        public CharacterMover(Character Entity, moveType Type = moveType.limbo)
+        {
+
+            character = Entity;
+
+            characterisation = Entity.characterType;
+
+            type = Type;
+
+        }
+
         public CharacterMover(CharacterHandle.characters Characterisation, GameLocation Location, moveType Type = moveType.remove)
         {
 
@@ -145,7 +157,7 @@ namespace StardewDruid.Character
 
                 case moveType.limbo:
 
-                    TryPurge();
+                    TryLimbo();
 
                     break;
 
@@ -191,7 +203,12 @@ namespace StardewDruid.Character
                     return Mod.instance.characters[characterisation];
 
                 }
+                if (Mod.instance.dopplegangers.ContainsKey(characterisation))
+                {
 
+                    return Mod.instance.dopplegangers[characterisation];
+
+                }
             }
 
             return null;
@@ -423,14 +440,16 @@ namespace StardewDruid.Character
 
                 Mod.instance.characters.Remove(characterisation);
 
-                if (Mod.instance.trackers.ContainsKey(characterisation))
-                {
+            }
+            else
+            {
 
-                    Mod.instance.trackers.Remove(characterisation);
-
-                }
+                Mod.instance.dopplegangers.Remove(characterisation);
 
             }
+
+            Mod.instance.trackers.Remove(characterisation);
+
 
         }
 
@@ -473,6 +492,36 @@ namespace StardewDruid.Character
                 }
 
             }
+
+        }
+
+        public void TryLimbo()
+        {
+
+            if (character is null)
+            {
+
+                character = ReferenceCharacter();
+
+            }
+
+            if (character is null)
+            {
+
+                return;
+
+            }
+
+            if(character.currentLocation is null)
+            {
+
+                return;
+
+            }
+
+            character.currentLocation.characters.Remove(character);
+
+            character.currentLocation = null;
 
         }
 

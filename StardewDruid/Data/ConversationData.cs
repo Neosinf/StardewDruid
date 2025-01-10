@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Dialogue;
-using StardewDruid.Journal;
+using StardewDruid.Event;
 using StardewValley;
 using StardewValley.Companions;
 using System.Collections.Generic;
@@ -1619,6 +1619,138 @@ namespace StardewDruid.Data
                     };
 
                     break;
+
+                case QuestHandle.swordHeirs:
+
+                    conversations = new()
+                    {
+
+                        [1] = new()
+                        {
+
+                            intro = Mod.instance.Helper.Translation.Get("ConversationData.361.6"),
+
+                            responses = new()
+                            {
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.9"),
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.10"),
+                            },
+
+                            answers = new()
+                            {
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.14"),
+                            },
+
+                            questContext = 100,
+
+                        },
+
+                        [2] = new()
+                        {
+
+                            intro = Mod.instance.Helper.Translation.Get("ConversationData.361.20"),
+
+                            responses = new()
+                            {
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.23"),
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.24"),
+                            },
+
+                            answers = new()
+                            {
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.28") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.29") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.30"),
+
+                            },
+
+                            questContext = 200,
+
+                        },
+
+
+                    };
+
+                    break;
+
+
+                case QuestHandle.challengeMoors:
+
+                    conversations = new()
+                    {
+
+                        [1] = new()
+                        {
+
+                            intro = Mod.instance.Helper.Translation.Get("ConversationData.361.41"),
+
+                            responses = new()
+                            {
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.44"),
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.45"),
+                            },
+
+                            answers = new()
+                            {
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.49"),
+                            },
+
+                            questContext = 100,
+
+                        },
+
+                        [2] = new()
+                        {
+
+                            intro = Mod.instance.Helper.Translation.Get("ConversationData.361.55"),
+
+                            responses = new()
+                            {
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.58"),
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.59"),
+                            },
+
+                            answers = new()
+                            {
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.63") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.64") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.65") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.66") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.67"),
+
+                            },
+
+                            questContext = 200,
+
+                        },
+
+                        [3] = new()
+                        {
+
+                            intro = Mod.instance.Helper.Translation.Get("ConversationData.361.73"),
+
+                            responses = new()
+                            {
+
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.76")
+
+                            },
+
+                            answers = new()
+                            {
+
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.80"),
+
+                            },
+
+                            questContext = 300,
+
+                        },
+
+                    };
+
+                    break;
+
 
             }
 

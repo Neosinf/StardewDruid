@@ -325,11 +325,11 @@ namespace StardewDruid.Monster
 
                 missile.display = IconData.impacts.impact;
 
-                missile.missile = IconData.missiles.fireball;
+                missile.missile = MissileHandle.missiles.fireball;
 
                 missile.projectileSpeed = 1f;
 
-                missile.projectile = (int)radius;
+                missile.factor =(int)radius;
 
                 missile.added = new() { SpellHandle.effects.burn, };
 

@@ -6,7 +6,6 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
 using StardewDruid.Event;
-using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.FruitTrees;
@@ -23,7 +22,7 @@ using System.Linq;
 
 namespace StardewDruid.Character
 {
-    public class Revenant : Effigy
+    public class Revenant : Character
     {
 
         public Revenant()
@@ -41,6 +40,7 @@ namespace StardewDruid.Character
 
         public override void LoadOut()
         {
+
             base.LoadOut();
 
             WeaponLoadout();
@@ -66,116 +66,42 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawLaunch(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
-        {
-            Rectangle useFrame = specialFrames[specials.launch][netDirection.Value][specialFrame];
-
-            b.Draw(
-                characterTexture,
-                spritePosition,
-                useFrame,
-                Color.White * fade,
-                0.0f,
-                new Vector2(useFrame.Width / 2, useFrame.Height / 2),
-                setScale,
-                SpriteFlip() ? (SpriteEffects)1 : 0,
-                drawLayer
-            );
-
-            DrawShadow(b, spritePosition, drawLayer);
-
-        }
-
-        public override void DrawDash(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
+        public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
         {
 
-            if (netDash.Value != (int)dashes.smash)
-            {
+            ResetActives();
 
-                base.DrawDash(b, spritePosition, drawLayer, fade);
+            netSpecial.Set((int)specials.invoke);
 
-                return;
+            specialTimer = 90;
 
-            }
+            cooldownTimer = cooldownInterval;
 
-            int dashSeries = netDirection.Value + (netDashProgress.Value * 4);
+            LookAtTarget(monster.Position, true);
 
-            int dashSetto = Math.Min(dashFrame, (dashFrames[(dashes)netDash.Value][dashSeries].Count - 1));
+            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 2);
 
-            Vector2 dashVector = spritePosition - new Vector2(0, dashHeight);
+            special.type = SpellHandle.spells.missile;
 
-            Rectangle dashTangle = dashFrames[(dashes)netDash.Value][dashSeries][dashSetto];
+            special.missile = MissileHandle.missiles.firefall;
 
-            b.Draw(
-                characterTexture,
-                dashVector,
-                dashTangle,
-                Color.White * fade,
-                0f,
-                new Vector2(16),
-                setScale,
-                SpriteFlip() ? (SpriteEffects)1 : 0,
-                drawLayer
-            );
+            special.counter = -30;
 
-            DrawShadow(b, spritePosition, drawLayer);
+            special.scheme = IconData.schemes.stars;
 
-            weaponRender.DrawWeapon(b, dashVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = dashTangle, flipped = SpriteFlip() });
+            special.factor = 2;
 
-            if (netDashProgress.Value >= 2)
-            {
+            special.power = 4;
 
-                weaponRender.DrawSwipe(b, dashVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = dashTangle, flipped = SpriteFlip() });
+            special.explosion = 4;
 
-            }
+            special.terrain = 4;
 
-        }
+            special.display = IconData.impacts.bomb;
 
-        public override void DrawSweep(SpriteBatch b, Vector2 sweepVector, float drawLayer, float fade)
-        {
+            Mod.instance.spellRegister.Add(special);
 
-            Rectangle sweepFrame = specialFrames[(specials)netSpecial.Value][netDirection.Value][specialFrame];
-
-            b.Draw(
-                characterTexture,
-                sweepVector,
-                sweepFrame,
-                Color.White * fade,
-                0.0f,
-                new Vector2(16),
-                setScale,
-                0,
-                drawLayer
-            );
-
-            DrawShadow(b, sweepVector, drawLayer);
-
-            weaponRender.DrawWeapon(b, sweepVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = sweepFrame, });
-
-            weaponRender.DrawSwipe(b, sweepVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = sweepFrame, });
-
-        }
-
-        public override void DrawAlert(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
-        {
-
-            Rectangle alertFrame = idleFrames[idles.alert][netDirection.Value][0];
-
-            b.Draw(
-                 characterTexture,
-                 spritePosition,
-                 alertFrame,
-                 Color.White * fade,
-                 0f,
-                 new Vector2(16),
-                 setScale,
-                 SpriteAngle() ? (SpriteEffects)1 : 0,
-                 drawLayer
-             );
-
-            DrawShadow(b, spritePosition, drawLayer);
-
-            weaponRender.DrawWeapon(b, spritePosition - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = alertFrame, flipped = SpriteAngle() });
+            return true;
 
         }
 

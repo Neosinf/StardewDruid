@@ -11,7 +11,7 @@ using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Monster
 {
-    public class DarkWizard : DarkRogue
+    public class DarkWizard : Dark
     {
 
         public DarkWizard()
@@ -54,7 +54,7 @@ namespace StardewDruid.Monster
 
             weaponRender.LoadWeapon(WeaponRender.weapons.sword);
 
-            weaponRender.swordScheme = IconData.schemes.snazzle;
+            weaponRender.swordScheme = WeaponRender.swordSchemes.sword_lightsaber;
 
             overHead = new(16, -144);
 
@@ -100,7 +100,7 @@ namespace StardewDruid.Monster
                 hatFrames[netDirection.Value][0],
                 Color.White,
                 0f,
-                Vector2.Zero,
+                new Vector2(16),
                 4f,
                 netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 drawLayer + 0.0001f
@@ -108,7 +108,7 @@ namespace StardewDruid.Monster
 
         }
 
-        public override void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, IconData.schemes scheme = schemes.Void)
+        public override void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, IconData.schemes scheme)
         {
 
             base.DrawShield(b, spritePosition, spriteScale, drawLayer, IconData.schemes.snazzle);
@@ -164,9 +164,9 @@ namespace StardewDruid.Monster
 
                     fireball.type = SpellHandle.spells.missile;
 
-                    fireball.projectile = 3;
+                    fireball.factor = 3;
 
-                    fireball.missile = IconData.missiles.warpball;
+                    fireball.missile = MissileHandle.missiles.warpball;
 
                     fireball.display = IconData.impacts.puff;
 

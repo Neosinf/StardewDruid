@@ -6,7 +6,7 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Journal;
-using StardewDruid.Location;
+using StardewDruid.Location.Druid;
 using StardewDruid.Monster;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
@@ -19,8 +19,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using xTile;
-using static StardewDruid.Cast.SpellHandle;
-using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Event.Challenge
 {
@@ -70,30 +68,9 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle = new(origin, location);
 
-            /*monsterHandle.spawnSchedule = new();
-
-            for (int i = 1; i <= 12; i++)
-            {
-
-                monsterHandle.spawnSchedule.Add(
-                    i,
-                    new() {
-                    new(MonsterHandle.bosses.phantom, Boss.temperment.random, Boss.difficulty.medium),
-                    new(MonsterHandle.bosses.phantom, Boss.temperment.random, Boss.difficulty.medium),
-                    }
-                );
-
-            }
-
-            monsterHandle.spawnWithin = ModUtility.PositionToTile(origin) - new Vector2(8, 4);
-
-            monsterHandle.spawnRange = new(16, 7);
-
-            monsterHandle.spawnGroup = true;*/
-
             EventBar(Mod.instance.questHandle.quests[eventId].title,0);
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.nature, new()) { scheme = IconData.schemes.mists, sound = SpellHandle.sounds.getNewSpecialItem, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { scheme = IconData.schemes.mists, sound = SpellHandle.sounds.getNewSpecialItem, });
 
             Mod.instance.spellRegister.Add(new(origin, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
 
@@ -122,10 +99,6 @@ namespace StardewDruid.Event.Challenge
 
             (location as Atoll).ambientDarkness = true;
 
-           // EventRender ritePortal = new(eventId, location.Name, origin, IconData.circles.summoning, Microsoft.Xna.Framework.Color.White);
-
-            //eventRenders.Add(ritePortal);
-        
         }
 
         public override void EventInterval()
@@ -337,13 +310,11 @@ namespace StardewDruid.Event.Challenge
 
                 SpellHandle missile = new(location, impact, eventVectors[100 + k] * 64, 256, bosses[0].GetThreat(), Mod.instance.CombatDamage());
 
-                missile.type = SpellHandle.spells.ballistic;
+                missile.type = SpellHandle.spells.missile;
 
-                missile.impactLayer = 999f;
+                missile.factor =3;
 
-                missile.projectile = 3;
-
-                missile.missile = missiles.cannonball;
+                missile.missile = MissileHandle.missiles.cannonball;
 
                 missile.display = IconData.impacts.bomb;
 
@@ -354,17 +325,17 @@ namespace StardewDruid.Event.Challenge
                 if (k % 2 == 0)
                 {
 
-                    missile.sound = sounds.explosion;
+                    missile.sound = SpellHandle.sounds.explosion;
 
                 }
 
                 Mod.instance.spellRegister.Add(missile);
 
-                SpellHandle effect = new(eventVectors[100 + k]*64, 256, impacts.flashbang, new()) { impactLayer = 999f };
+                SpellHandle effect = new(eventVectors[100 + k]*64, 256, IconData.impacts.flashbang, new());
 
                 Mod.instance.spellRegister.Add(effect);
 
-                SpellHandle effect2 = new(eventVectors[100 + k] * 64, 256, impacts.plume, new()) { counter = -15, impactLayer = 999f };
+                SpellHandle effect2 = new(eventVectors[100 + k] * 64, 256, IconData.impacts.plume, new()) { counter = -15,};
 
                 Mod.instance.spellRegister.Add(effect2);
             }

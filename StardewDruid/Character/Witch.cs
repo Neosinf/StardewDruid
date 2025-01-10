@@ -4,7 +4,9 @@ using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
+using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.FruitTrees;
@@ -15,29 +17,59 @@ using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Reflection.Metadata.Ecma335;
 
 namespace StardewDruid.Character
 {
-    public class Witch : StardewDruid.Character.Character
+    public class Witch : StardewDruid.Character.Recruit
     {
 
         public Witch()
         {
         }
 
-        public Witch(CharacterHandle.characters type)
-          : base(type)
+        public Witch(CharacterHandle.characters type, NPC villager)
+          : base(type, villager)
         {
 
-            
+
         }
 
         public override void LoadOut()
         {
-            base.LoadOut();
+
+            if (characterType == CharacterHandle.characters.none)
+            {
+
+                characterType = CharacterHandle.characters.recruit_one;
+
+            }
+
+            if (villager == null)
+            {
+
+                villager = CharacterHandle.FindVillager("Wizard");
+
+            }
+
+            LoadIntervals();
+
+            characterTexture = CharacterHandle.CharacterTexture(CharacterHandle.characters.Witch);
+
+            walkFrames = CharacterRender.HumanoidWalk();
+
+            idleFrames = CharacterRender.HumanoidIdle();
+
+            dashFrames = CharacterRender.HumanoidDash();
+
+            specialFrames = CharacterRender.WitchSpecial();
+
+            specialIntervals = CharacterRender.WitchIntervals();
+
+            specialCeilings = CharacterRender.WitchCeilings();
+
+            specialFloors = CharacterRender.WitchFloors();
+
+            loadedOut = true;
 
             setScale = 3.75f;
 
@@ -68,37 +100,144 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawHat(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
+        public override void DrawHat(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
+
+            bool fliphat = SpriteFlip();
+
+            Vector2 hatPosition = spritePosition - new Vector2(0, 14 * setScale);
+
+            Rectangle hatFrame = hatFrames[netDirection.Value][0];
+
+            if (netIdle.Value == (int)Character.idles.kneel)
+            {
+
+                hatPosition = spritePosition - new Vector2(0, 8f * setScale);
+
+                hatFrame = hatFrames[1][0];
+
+            }
+            else if (netSpecial.Value == (int)Character.specials.gesture)
+            {
+
+
+                hatPosition = spritePosition - new Vector2(0, 14f * setScale);
+
+                hatFrame = hatFrames[1][0];
+
+            }
 
             b.Draw(
                 characterTexture,
-                SpritePosition(localPosition) - new Vector2(0, 14f * setScale),
-                hatFrames[netDirection.Value][0],
+                hatPosition,
+                hatFrame,
                 Color.White * fade,
-                0.0f,
+                0f,
                 new Vector2(16),
                 setScale,
-                SpriteFlip() ? (SpriteEffects)1 : 0,
+                fliphat ? (SpriteEffects)1 : 0,
                 drawLayer + 0.0001f
             );
 
         }
 
-        public override void behaviorOnFarmerPushing()
+        public override bool MonsterFear()
         {
 
-            return;
+            return false;
 
         }
 
-        public override bool checkAction(Farmer who, GameLocation l)
+        public override bool SmashAttack(StardewValley.Monsters.Monster monster)
         {
 
-            if (netSceneActive.Value)
+            return SpecialAttack(monster);
+
+        }
+
+        public override bool SweepAttack(StardewValley.Monsters.Monster monster)
+        {
+
+            return SpecialAttack(monster);
+
+        }
+
+        public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
+        {
+
+            ResetActives();
+
+            netSpecial.Set((int)specials.launch);
+
+            specialTimer = 48;
+
+            cooldownTimer = cooldownInterval;
+
+            cooldownTimer = cooldownInterval;
+
+            LookAtTarget(monster.Position, true);
+
+            SpellHandle glare = new(GetBoundingBox().Center.ToVector2(), 256, IconData.impacts.glare, new()) { scheme = IconData.schemes.fates };
+
+            Mod.instance.spellRegister.Add(glare);
+
+            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 2);
+
+            special.type = SpellHandle.spells.missile;
+
+            special.missile = MissileHandle.missiles.frostball;
+
+            special.counter = -24;
+
+            special.scheme = IconData.schemes.ether;
+
+            special.factor = 3;
+
+            special.added = new() { SpellHandle.effects.freeze, };
+
+            special.display = IconData.impacts.puff;
+
+            Mod.instance.spellRegister.Add(special);
+
+            return true;
+
+        }
+
+        public override bool TrackNotReady()
+        {
+
+            if (villager.Name == Game1.player.spouse)
             {
 
-                return EngageDialogue(who);
+                return false;
+
+            }
+
+            if (Game1.timeOfDay < 800)
+            {
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+        public override bool TrackOutOfTime()
+        {
+
+            if (villager.Name == Game1.player.spouse)
+            {
+
+                return false;
+
+            }
+
+            if (Game1.timeOfDay > 2200)
+            {
+
+                return true;
 
             }
 

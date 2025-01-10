@@ -10,14 +10,14 @@ using StardewDruid.Data;
 
 using StardewDruid.Cast.Effect;
 using StardewModdingAPI;
-using static StardewValley.Minigames.TargetGame;
+
 using StardewValley.Locations;
 using StardewDruid.Location;
 using System.ComponentModel.Design;
 using StardewDruid.Character;
 using StardewValley.BellsAndWhistles;
-using StardewDruid.Journal;
-using static StardewDruid.Data.IconData;
+using StardewDruid.Location.Druid;
+using StardewDruid.Location.Terrain;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -29,10 +29,12 @@ namespace StardewDruid.Cast.Weald
             bush,
             tree,
             fruit,
-            grass,
+            water,
             flyby,
-            orchard,
+            owlbox,
+            orchardtree,
             tunnel,
+            beach,
             alchemistry
         }
 
@@ -58,12 +60,31 @@ namespace StardewDruid.Cast.Weald
 
             Dictionary<Vector2, int> targets = new();
 
+            Dictionary<Vector2, int> waterTargets = new();
+
+            int waterCheck = 33 + Mod.instance.randomIndex.Next(15);
+
+            int water = waterCheck;
+
             for (int i = 0; i < 16; i++)
             {
                 for (int j = 0; j < 16; j++)
                 {
 
-                    targets.Add(Target + new Vector2(i, j), 0);
+                    Vector2 newTarget = Target + new Vector2(i, j);
+
+                    targets.Add(newTarget, 0);
+
+                    water--;
+
+                    if(water < 0)
+                    {
+
+                        water = waterCheck;
+
+                        waterTargets.Add(newTarget, 0);
+
+                    }
 
                 }
 
@@ -102,6 +123,10 @@ namespace StardewDruid.Cast.Weald
                 }
 
             }
+
+            // ---------------------------------------------
+            // Small Feature iteration
+            // ---------------------------------------------
 
             foreach (KeyValuePair<Vector2, int> check in targets)
             {
@@ -178,7 +203,41 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if(location is FarmCave)
+            // ---------------------------------------------
+            // Water iteration
+            // ---------------------------------------------
+
+            int waterLimit = 0;
+
+            foreach (KeyValuePair<Vector2, int> check in waterTargets)
+            {
+                
+                if(ModUtility.GroundCheck(Location, check.Key) != "water")
+                {
+
+                    continue;
+
+                }
+
+                if(ModUtility.WaterCheck(Location, check.Key, 2))
+                {
+
+                    creatureProspects[check.Key] = bounties.water;
+
+                    waterLimit++;
+
+                    if(waterLimit >= 3)
+                    {
+
+                        break;
+
+                    }
+
+                }
+            
+            }
+
+            if (location is FarmCave)
             {
 
                 if (!Mod.instance.rite.specialCasts[location.Name].Contains("FarmCaveBats"))
@@ -214,17 +273,45 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if (location is Clearing && Game1.currentSeason != "winter")
+            if (location is Clearing clearing && Game1.currentSeason != "winter")
             {
 
-                if (!Mod.instance.rite.specialCasts[location.Name].Contains("OrchardCrows"))
+                foreach (TerrainField terrainTile in clearing.terrainFields)
                 {
 
-                    creatureProspects.Clear();
+                    if (!targets.ContainsKey(ModUtility.PositionToTile(terrainTile.position)))
+                    {
 
-                    creatureProspects[new Vector2(1, 1)] = bounties.orchard;
+                        continue;
 
-                    Mod.instance.rite.specialCasts[location.Name].Add("OrchardCrows");
+                    }
+
+                    if (terrainTile is Magnolia || terrainTile is DarkOak || terrainTile is Hawthorn || terrainTile is Holly)
+                    {
+
+                        if (terrainTile.ruined)
+                        {
+
+                            continue;
+
+                        }
+
+                        creatureProspects[terrainTile.bounds.Center.ToVector2() - new Vector2(0,128)] = bounties.orchardtree;
+
+                    }
+                    else if (terrainTile is Owlbox owlbox)
+                    {
+
+                        if(owlbox.ruined)
+                        {
+
+                            continue;
+
+                        }
+
+                        creatureProspects[terrainTile.position + new Vector2(96, 96)] = bounties.owlbox;
+
+                    }
 
                 }
 
@@ -260,6 +347,22 @@ namespace StardewDruid.Cast.Weald
                     creatureProspects.Clear();
 
                     creatureProspects[new Vector2(1, 1)] = bounties.alchemistry;
+
+                }
+
+            }
+
+            if (location is Beach)
+            {
+
+                if (!Mod.instance.rite.specialCasts[location.Name].Contains("BeachGulls"))
+                {
+
+                    creatureProspects.Clear();
+
+                    creatureProspects[new Vector2(1, 1)] = bounties.beach;
+
+                    Mod.instance.rite.specialCasts[location.Name].Add("BeachGulls");
 
                 }
 
@@ -322,6 +425,13 @@ namespace StardewDruid.Cast.Weald
                     foreach (KeyValuePair<Vector2, bounties> possible in creatureProspects)
                     {
 
+                        if (possible.Value != bounties.bush && possible.Value != bounties.tree)
+                        {
+
+                            continue;
+
+                        }
+
                         if (possible.Key != prospect.Key && Vector2.Distance(prospect.Key, possible.Key) >= 6)
                         {
 
@@ -341,7 +451,7 @@ namespace StardewDruid.Cast.Weald
                     if (target != Vector2.Zero)
                     {
 
-                        if(location is Town || location is Mountain || location is Beach || location is Farm)
+                        if (location is Town || location is Mountain || location is Beach || location is Farm)
                         {
 
                             List<Character.CharacterHandle.characters> creatureTypes = new()
@@ -393,7 +503,7 @@ namespace StardewDruid.Cast.Weald
                                 case Character.CharacterHandle.characters.GreyWolf:
                                 case Character.CharacterHandle.characters.BlackWolf:
 
-                                    creature.AddCreature(location, creatureSelect, prospect.Key * 64 - new Vector2(0, 64), target * 64 - new Vector2(0, 64), 2.5f + Mod.instance.randomIndex.Next(2)*0.5f);
+                                    creature.AddCreature(location, creatureSelect, prospect.Key * 64 - new Vector2(0, 64), target * 64 - new Vector2(0, 64), 2.5f + Mod.instance.randomIndex.Next(2) * 0.5f);
 
 
                                     break;
@@ -426,7 +536,7 @@ namespace StardewDruid.Cast.Weald
                     if (dropRelic != IconData.relics.none)
                     {
 
-                        if (!Journal.RelicData.HasRelic(dropRelic))
+                        if (!RelicData.HasRelic(dropRelic))
                         {
 
                             batRelic = true;
@@ -437,7 +547,7 @@ namespace StardewDruid.Cast.Weald
 
                     List<Character.CharacterHandle.characters> flyers = new()
                     {
-                        Character.CharacterHandle.characters.ShadowBat,
+                        Character.CharacterHandle.characters.Bat,
 
                     };
 
@@ -446,16 +556,16 @@ namespace StardewDruid.Cast.Weald
 
                         flyers = new()
                         {
-                            Character.CharacterHandle.characters.ShadowBat,
-                            Character.CharacterHandle.characters.ShadowBat,
-                            Character.CharacterHandle.characters.ShadowBat,
-                            Character.CharacterHandle.characters.ShadowBat,
+                            Character.CharacterHandle.characters.Bat,
+                            Character.CharacterHandle.characters.Bat,
+                            Character.CharacterHandle.characters.Bat,
+                            Character.CharacterHandle.characters.Bat,
 
                         };
 
                     }
 
-                    if(Game1.timeOfDay > 1900 || Game1.timeOfDay < 800)
+                    if (Game1.timeOfDay > 1900 || Game1.timeOfDay < 800)
                     {
 
                         flyers.AddRange(new List<Character.CharacterHandle.characters>()
@@ -472,20 +582,19 @@ namespace StardewDruid.Cast.Weald
 
                         flyers.AddRange(new List<Character.CharacterHandle.characters>()
                         {
-                            Character.CharacterHandle.characters.ShadowRaven,
-                            Character.CharacterHandle.characters.ShadowRook,
-                            Character.CharacterHandle.characters.ShadowCrow,
-                            Character.CharacterHandle.characters.ShadowMagpie,
+                            Character.CharacterHandle.characters.CorvidRaven,
+                            Character.CharacterHandle.characters.CorvidRook,
+                            Character.CharacterHandle.characters.CorvidCrow,
+                            Character.CharacterHandle.characters.CorvidMagpie,
 
                         });
 
 
                     }
 
-
                     CharacterHandle.characters treeCharacter = flyers[Mod.instance.randomIndex.Next(flyers.Count)];
 
-                    if(treeCharacter is CharacterHandle.characters.ShadowBat && batRelic)
+                    if (treeCharacter is CharacterHandle.characters.Bat && batRelic)
                     {
 
                         throwRelic = new(Game1.player, treeTop, dropRelic);
@@ -504,14 +613,14 @@ namespace StardewDruid.Cast.Weald
 
                     target = fruitTop + (ModUtility.DirectionAsVector(direction) * 6400);
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.ShadowBat, fruitTop, target, 3f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Bat, fruitTop, target, 3f);
 
                     dropRelic = Mod.instance.relicsData.RelicTacticalLocations();
 
                     if (dropRelic != IconData.relics.none)
                     {
 
-                        if (!Journal.RelicData.HasRelic(dropRelic))
+                        if (!RelicData.HasRelic(dropRelic))
                         {
 
                             throwRelic = new(Game1.player, fruitTop, dropRelic);
@@ -524,26 +633,71 @@ namespace StardewDruid.Cast.Weald
 
                     break;
 
+                case bounties.water:
+
+                    Vector2 serpentStart = prospect.Key * 64;
+
+                    target = serpentStart + (ModUtility.DirectionAsVector(direction) * 6400);
+
+                    int forest = SpawnData.ForestWaterCheck(location);
+
+                    if (location is Caldera || location.Name == "UndergroundMine100")
+                    {
+
+                        creature.AddCreature(location, Character.CharacterHandle.characters.LavaSerpent, serpentStart, target, 2.5f + Mod.instance.randomIndex.Next(2) * 0.5f);
+
+                        break;
+
+                    }
+                    else if (location is Beach || location.Name.Contains("Beach") || location is IslandLocation || location is Atoll || forest == 3)
+                    {    
+                        if (Mod.instance.randomIndex.Next(3) == 0)
+                        {
+
+                            creature.AddCreature(location, Character.CharacterHandle.characters.NightSerpent, serpentStart, target, 2.5f + Mod.instance.randomIndex.Next(2) * 0.5f);
+
+                            break;
+
+                        }
+
+                        creature.AddCreature(location, Character.CharacterHandle.characters.Serpent, serpentStart, target, 2.5f + Mod.instance.randomIndex.Next(2) * 0.5f);
+
+                        break;
+                    }
+
+                    if (Mod.instance.randomIndex.Next(3) == 0)
+                    {
+
+                        creature.AddCreature(location, Character.CharacterHandle.characters.NightSerpent, serpentStart, target, 2.5f + Mod.instance.randomIndex.Next(2) * 0.5f);
+
+                        break;
+
+                    }
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.RiverSerpent, serpentStart, target, 2.5f + Mod.instance.randomIndex.Next(2) * 0.5f);
+
+                    break;
+
                 case bounties.flyby:
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.ShadowBat, new Vector2(3, 0) *64, new Vector2(4, 31) * 64, 3f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Bat, new Vector2(3, 0) *64, new Vector2(4, 31) * 64, 3f);
                             
-                    creature.AddCreature(location, Character.CharacterHandle.characters.ShadowBat, new Vector2(4, 1) * 64, new Vector2(5, 31) * 64, 3f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Bat, new Vector2(4, 1) * 64, new Vector2(5, 31) * 64, 3f);
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.ShadowBat, new Vector2(6, 0) * 64, new Vector2(7, 30) * 64, 3f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Bat, new Vector2(6, 0) * 64, new Vector2(7, 30) * 64, 3f);
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.ShadowBat, new Vector2(7, 1) * 64, new Vector2(9, 31) * 64, 3f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Bat, new Vector2(7, 1) * 64, new Vector2(9, 31) * 64, 3f);
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.ShadowBat, new Vector2(8, 1) * 64, new Vector2(10, 30) * 64, 3f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Bat, new Vector2(8, 1) * 64, new Vector2(10, 30) * 64, 3f);
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.ShadowBat, new Vector2(10, 0) * 64, new Vector2(12, 30) * 64, 3f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Bat, new Vector2(10, 0) * 64, new Vector2(12, 30) * 64, 3f);
 
                     dropRelic = Mod.instance.relicsData.RelicTacticalLocations();
 
                     if (dropRelic != IconData.relics.none)
                     {
 
-                        if (!Journal.RelicData.HasRelic(dropRelic))
+                        if (!RelicData.HasRelic(dropRelic))
                         {
 
                             throwRelic = new(Game1.player, new Vector2(6, 0) * 64, dropRelic);
@@ -556,171 +710,91 @@ namespace StardewDruid.Cast.Weald
 
                     break;
 
-                case bounties.orchard:
+                case bounties.owlbox:
 
-                    if(location is Clearing clearing)
+                    Vector2 owlexit = new Vector2(27, -8) * 64;
+
+                    List<Character.CharacterHandle.characters> owls = new()
                     {
 
-                        Vector2 exit = new Vector2(27, -8) * 64;
+                        Character.CharacterHandle.characters.BrownOwl,
+                        Character.CharacterHandle.characters.GreyOwl,
 
-                        if (Mod.instance.save.restoration[LocationData.druid_clearing_name] >= 3)
-                        {
+                    };
 
-                            List<Character.CharacterHandle.characters> owls = new()
-                            {
+                    Vector2 roost = prospect.Key + new Vector2(96,96);
 
-                                Character.CharacterHandle.characters.BrownOwl,
-                                Character.CharacterHandle.characters.GreyOwl,
+                    Character.CharacterHandle.characters owl = owls[Mod.instance.randomIndex.Next(owls.Count)];
 
-                            };
+                    for (int i = 0; i < 2 + Mod.instance.randomIndex.Next(2); i++)
+                    {
 
-                            int owlCount = 0;
+                        Vector2 exitAt = owlexit + new Vector2(Mod.instance.randomIndex.Next(5) * 96, Mod.instance.randomIndex.Next(5) * 48);
 
-                            foreach (TerrainTile terrainTile in clearing.terrainTiles)
-                            {
+                        creature.AddCreature(location, owl, roost + new Vector2(0,i), exitAt, 2.5f + (0.25f * Mod.instance.randomIndex.Next(3)));
 
-                                if (terrainTile.tilesheet == IconData.tilesheets.clearing)
-                                {
+                    }
 
-                                    Vector2 roost = terrainTile.position + new Vector2(96,96);
+                    if (!RelicData.HasRelic(IconData.relics.restore_cloth))
+                    {
 
-                                    owlCount++;
+                        throwRelic = new(Game1.player, roost, IconData.relics.restore_cloth);
 
-                                    creature.AddCreature(location, owls[Mod.instance.randomIndex.Next(owls.Count)], exit+new Vector2(16*owlCount,0), roost, 2.5f + (0.25f * Mod.instance.randomIndex.Next(3)), true);
-
-                                    if (!Journal.RelicData.HasRelic(IconData.relics.restore_cloth))
-                                    {
-
-                                        throwRelic = new(Game1.player, exit, IconData.relics.restore_cloth);
-
-                                        throwRelic.register();
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-                        else
-                        {
-
-                            List<Character.CharacterHandle.characters> corvids = new()
-                            {
-
-                                Character.CharacterHandle.characters.ShadowRaven,
-                                Character.CharacterHandle.characters.ShadowRook,
-                                Character.CharacterHandle.characters.ShadowCrow,
-                                Character.CharacterHandle.characters.ShadowMagpie,
-
-                            };
-
-                            foreach (TerrainTile terrainTile in clearing.terrainTiles)
-                            {
-
-                                Vector2 orchardTree = terrainTile.position;
-
-                                if (terrainTile.tilesheet == IconData.tilesheets.magnolia)
-                                {
-
-                                    if (terrainTile.index != 2)
-                                    {
-
-                                        continue;
-
-                                    }
-
-                                    if (Context.IsMainPlayer && Mod.instance.save.restoration[LocationData.druid_clearing_name] < 3)
-                                    {
-
-                                        continue;
-
-                                    }
-
-                                    orchardTree.X += 256;
-
-                                    orchardTree.Y -= 256;
-
-                                    if (!Journal.RelicData.HasRelic(IconData.relics.restore_cloth))
-                                    {
-
-                                        throwRelic = new(Game1.player, orchardTree, IconData.relics.restore_cloth);
-
-                                        throwRelic.register();
-
-                                    }
-
-                                }
-                                else if (terrainTile.tilesheet == IconData.tilesheets.outdoors)
-                                {
-
-                                    if (terrainTile.index != 11)
-                                    {
-
-                                        continue;
-
-                                    }
-
-                                }
-                                else if (terrainTile.tilesheet == IconData.tilesheets.outdoorsTwo)
-                                {
-
-                                    if (terrainTile.index != 1)
-                                    {
-
-                                        continue;
-
-                                    }
-
-                                }
-                                else
-                                {
-
-                                    continue;
-
-                                }
-
-                                for (int i = 0; i < 2 + Mod.instance.randomIndex.Next(1); i++)
-                                {
-
-                                    Vector2 startAt = orchardTree + new Vector2(Mod.instance.randomIndex.Next(5) * 96, Mod.instance.randomIndex.Next(5) * 48);
-
-                                    creature.AddCreature(location, corvids[Mod.instance.randomIndex.Next(corvids.Count)], startAt, exit, 1.5f + (0.25f * Mod.instance.randomIndex.Next(6)));
-
-                                }
-
-                                location.playSound(SpellHandle.sounds.leafrustle.ToString());
-
-                                terrainTile.shake = 16;
-
-                            }
-
-                        }
+                        throwRelic.register();
 
                     }
 
                     break;
 
+                case bounties.orchardtree:
+
+                    Vector2 orchardTree = prospect.Key;
+
+                    Vector2 treeexit = new Vector2(27, -8) * 64;
+
+                    List<Character.CharacterHandle.characters> corvids = new()
+                    {
+
+                        Character.CharacterHandle.characters.CorvidRaven,
+                        Character.CharacterHandle.characters.CorvidRook,
+                        Character.CharacterHandle.characters.CorvidCrow,
+                        Character.CharacterHandle.characters.CorvidMagpie,
+
+                    };
+
+                    for (int i = 0; i < 2 + Mod.instance.randomIndex.Next(2); i++)
+                    {
+
+                        Vector2 startAt = orchardTree + new Vector2(Mod.instance.randomIndex.Next(5) * 96, Mod.instance.randomIndex.Next(5) * 48);
+
+                        creature.AddCreature(location, corvids[Mod.instance.randomIndex.Next(corvids.Count)], startAt, treeexit, 2.5f + (0.25f * Mod.instance.randomIndex.Next(6)));
+
+                    }
+
+                    location.playSound(SpellHandle.sounds.leafrustle.ToString());
+
+                    break;
+
                 case bounties.tunnel:
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.ShadowBat,  new Vector2(40, 6) * 64, new Vector2(0, 6) * 64, 3f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Bat,  new Vector2(40, 6) * 64, new Vector2(0, 6) * 64, 3f);
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.ShadowBat, new Vector2(41, 7) * 64, new Vector2(1, 7) * 64,  2.75f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Bat, new Vector2(41, 7) * 64, new Vector2(1, 7) * 64,  2.75f);
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.ShadowBat,  new Vector2(39, 8) * 64, new Vector2(2, 8) * 64, 3f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Bat,  new Vector2(39, 8) * 64, new Vector2(2, 8) * 64, 3f);
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.ShadowBat, new Vector2(40, 9) * 64, new Vector2(1, 9) * 64, 3.25f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Bat, new Vector2(40, 9) * 64, new Vector2(1, 9) * 64, 3.25f);
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.ShadowBat,  new Vector2(41, 10) * 64, new Vector2(0, 10) * 64, 2.5f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Bat,  new Vector2(41, 10) * 64, new Vector2(0, 10) * 64, 2.5f);
 
-                    creature.AddCreature(location, Character.CharacterHandle.characters.ShadowBat,  new Vector2(39, 11) * 64, new Vector2(1, 11) * 64, 3f);
+                    creature.AddCreature(location, Character.CharacterHandle.characters.Bat,  new Vector2(39, 11) * 64, new Vector2(1, 11) * 64, 3f);
 
                     dropRelic = Mod.instance.relicsData.RelicTacticalLocations();
 
                     if (dropRelic != IconData.relics.none)
                     {
 
-                        if (!Journal.RelicData.HasRelic(dropRelic))
+                        if (!RelicData.HasRelic(dropRelic))
                         {
 
                             throwRelic = new(Game1.player, new Vector2(39, 8) * 64, dropRelic);
@@ -730,6 +804,28 @@ namespace StardewDruid.Cast.Weald
                         }
 
                     }
+
+                    break;
+
+                case bounties.beach:
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.SeaGull, new Vector2(location.map.Layers[0].LayerWidth + 12, 18) * 64, new Vector2(0, 2) * 64, 3f,true);
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.SeaGull, new Vector2(location.map.Layers[0].LayerWidth + 9, 18) * 64, new Vector2(0, 3) * 64, 3.75f, true);
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.SeaGull, new Vector2(location.map.Layers[0].LayerWidth + 6, 18) * 64, new Vector2(0, 4) * 64, 3f, true);
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.SeaGull, new Vector2(location.map.Layers[0].LayerWidth + 3, 18) * 64, new Vector2(0, 5) * 64, 3.25f, true);
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.SeaGull, new Vector2(location.map.Layers[0].LayerWidth, 18) * 64, new Vector2(0, 6) * 64, 3.5f, true);
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.SeaGull, new Vector2(location.map.Layers[0].LayerWidth + 1, 20) * 64, new Vector2(0, 7) * 64, 3.75f, true);
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.SeaGull, new Vector2(location.map.Layers[0].LayerWidth + 2, 22) * 64, new Vector2(0, 8) * 64, 3.25f, true);
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.SeaGull, new Vector2(location.map.Layers[0].LayerWidth + 3, 24) * 64, new Vector2(0, 9) * 64, 3.5f, true);
+
+                    creature.AddCreature(location, Character.CharacterHandle.characters.SeaGull, new Vector2(location.map.Layers[0].LayerWidth + 4, 26) * 64, new Vector2(0, 10) * 64, 3.25f, true);
 
                     break;
 

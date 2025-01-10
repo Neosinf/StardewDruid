@@ -97,7 +97,8 @@ namespace StardewDruid.Event.Challenge
 
             activeCounter++;
 
-            SetTrack("LavaMine");
+            //SetTrack("LavaMine");
+            SetTrack("tribal");
 
             switch (activeSection)
             {
@@ -177,7 +178,7 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, IconData.impacts.puff, 2f, new() { scheme = IconData.schemes.Void, });
+            Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, IconData.impacts.puff, 2f, new() { scheme = IconData.schemes.herbal_celeri, });
 
             // ========================== Shooter
 
@@ -199,7 +200,7 @@ namespace StardewDruid.Event.Challenge
 
             voices[4] = darkShooter;
 
-            Mod.instance.iconData.ImpactIndicator(location, bosses[1].Position, IconData.impacts.puff, 2f, new() { scheme = IconData.schemes.Void, });
+            Mod.instance.iconData.ImpactIndicator(location, bosses[1].Position, IconData.impacts.puff, 2f, new() { scheme = IconData.schemes.herbal_celeri, });
 
             // ========================== Goblin
 
@@ -221,11 +222,11 @@ namespace StardewDruid.Event.Challenge
 
             voices[5] = darkGoblin;
 
-            Mod.instance.iconData.ImpactIndicator(location, bosses[2].Position, IconData.impacts.puff, 2f, new() { scheme = IconData.schemes.Void, });
+            Mod.instance.iconData.ImpactIndicator(location, bosses[2].Position, IconData.impacts.puff, 2f, new() { scheme = IconData.schemes.herbal_celeri, });
 
             // ========================== Rogue
 
-            DarkRogue darkRogue = new(spawnPoints[3], Mod.instance.CombatDifficulty());
+            Dark darkRogue = new(spawnPoints[3], Mod.instance.CombatDifficulty());
 
             bosses[3] = darkRogue;
 
@@ -243,7 +244,7 @@ namespace StardewDruid.Event.Challenge
 
             voices[6] = darkRogue;
 
-            Mod.instance.iconData.ImpactIndicator(location, bosses[3].Position, IconData.impacts.puff, 2f, new() { scheme = IconData.schemes.Void, });
+            Mod.instance.iconData.ImpactIndicator(location, bosses[3].Position, IconData.impacts.puff, 2f, new() { scheme = IconData.schemes.herbal_celeri, });
 
             // =========================== MonsterHandle
 
@@ -355,7 +356,7 @@ namespace StardewDruid.Event.Challenge
 
                 companions[3].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-                CharacterMover.Warp(location, companions[3], Game1.player.Position - new Vector2(64, 128));
+                CharacterMover.Warp(location, companions[3], Game1.player.Position + new Vector2(-64, 128));
 
                 companions[3].LookAtTarget(bosses[0].Position);
 
@@ -457,7 +458,7 @@ namespace StardewDruid.Event.Challenge
 
                     boss.netWoundedActive.Set(true);
 
-                    boss.SetDirection(retreatPoints[0]*64);
+                    boss.LookAtTarget(retreatPoints[0]*64);
 
                     Mod.instance.iconData.AnimateQuickWarp(location, boss.Position);
 
@@ -503,7 +504,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 122:
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[2].Position, IconData.impacts.puff, 2f, new() { scheme = IconData.schemes.Void, });
+                    Mod.instance.iconData.ImpactIndicator(location, bosses[2].Position, IconData.impacts.puff, 2f, new() { scheme = IconData.schemes.herbal_celeri, });
 
                     bosses[1].currentLocation.characters.Remove(bosses[1]);
 
@@ -514,7 +515,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 123:
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[2].Position, IconData.impacts.puff, 2f, new() { scheme = IconData.schemes.Void, });
+                    Mod.instance.iconData.ImpactIndicator(location, bosses[2].Position, IconData.impacts.puff, 2f, new() { scheme = IconData.schemes.herbal_celeri, });
 
                     bosses[3].currentLocation.characters.Remove(bosses[3]);
 
@@ -526,7 +527,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 124:
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[2].Position, IconData.impacts.puff, 2f, new() { scheme = IconData.schemes.Void,});
+                    Mod.instance.iconData.ImpactIndicator(location, bosses[2].Position, IconData.impacts.puff, 2f, new() { scheme = IconData.schemes.herbal_celeri, });
 
                     bosses[2].currentLocation.characters.Remove(bosses[2]);
 

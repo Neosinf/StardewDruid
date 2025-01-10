@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewDruid.Location;
 using StardewDruid.Render;
 using StardewValley;
 using System;
@@ -16,6 +17,8 @@ namespace StardewDruid.Monster
         public CueWrapper growlCue;
 
         public int growlTimer;
+
+        public WolfRender wolfRender;
 
         public ShadowWolf()
         {
@@ -42,7 +45,7 @@ namespace StardewDruid.Monster
         public override float GetScale()
         {
 
-            float spriteScale = 2f + (0.5f * netMode.Value);
+            float spriteScale = 3f + (0.5f * netMode.Value);
 
             return spriteScale;
 
@@ -65,13 +68,7 @@ namespace StardewDruid.Monster
         public override void LoadOut()
         {
 
-            WolfWalk();
-
-            WolfFlight();
-
-            WolfSmash();
-
-            WolfSweep();
+            wolfRender = new(realName.Value);
 
             growlCue = Game1.soundBank.GetCue("WolfGrowl") as CueWrapper;
 
@@ -79,29 +76,11 @@ namespace StardewDruid.Monster
 
             growlCue.Pitch /= 2;
 
-            loadedOut = true;
-
-        }
-
-        public virtual void WolfWalk()
-        {
-
-            characterTexture = MonsterHandle.MonsterTexture(realName.Value);
-
             walkInterval = 12;
 
             gait = 2.4f;
 
-            idleFrames = WolfRender.WalkFrames();
-
-            walkFrames = WolfRender.WalkFrames();
-
             overHead = new(0, -128);
-
-        }
-
-        public virtual void WolfFlight()
-        {
 
             flightSet = true;
 
@@ -111,27 +90,29 @@ namespace StardewDruid.Monster
 
             flightPeak = 128;
 
-            flightFrames = WolfRender.DashFrames();
-
-        }
-
-        public virtual void WolfSmash()
-        {
+            flightDefault = flightTypes.target;
 
             smashSet = true;
-
-            smashFrames = WolfRender.DashFrames();
-
-        }
-
-        public virtual void WolfSweep()
-        {
 
             sweepSet = true;
 
             sweepInterval = 12;
 
-            sweepFrames = WolfRender.SweepFrames();
+            idleFrames = wolfRender.idleFrames;
+
+            walkFrames = wolfRender.walkFrames;
+
+            flightFrames = wolfRender.dashFrames;
+
+            smashFrames = wolfRender.dashFrames;
+
+            specialFrames = walkFrames;
+
+            channelFrames = walkFrames;
+
+            sweepFrames = wolfRender.sweepFrames;
+
+            loadedOut = true;
 
         }
 
@@ -192,22 +173,22 @@ namespace StardewDruid.Monster
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            float drawLayer = StandingPixel.Y / 10000f;
+            WolfRenderAdditional additional = new();
 
-            DrawEmote(b, localPosition, drawLayer);
+            additional.layer = Position.Y / 10000f + 0.0032f;
 
-            float spriteScale = GetScale();
+            additional.scale = GetScale();
 
-            Vector2 spritePosition = GetPosition(localPosition, spriteScale);
+            additional.position = GetPosition(localPosition, additional.scale);
 
-            bool flippity = netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3;
+            DrawEmote(b, localPosition, additional.layer);
 
-            bool growl = false;
+            additional.flip = netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3;
 
             if (growlCue.IsPlaying)
             {
 
-                growl = true;
+                additional.mode = WolfRenderAdditional.wolfmode.growl;
 
             }
 
@@ -218,95 +199,37 @@ namespace StardewDruid.Monster
 
                 int setFlightFrame = Math.Min(flightFrame, (flightFrames[setFlightSeries].Count - 1));
 
-                Rectangle flightSource = flightFrames[setFlightSeries][setFlightFrame];
+                additional.series = WolfRenderAdditional.wolfseries.dash;
 
-                if (growl)
-                {
+                additional.direction = setFlightSeries;
 
-                    flightSource.Y += 384;
-                }
+                additional.frame = setFlightFrame;
 
-                b.Draw(
-                    characterTexture,
-                    spritePosition,
-                    flightSource,
-                    Color.White,
-                    0f,
-                    new Vector2(flightSource.Width / 2, flightSource.Height / 2),
-                    spriteScale,
-                    flippity ? (SpriteEffects)1 : 0,
-                    drawLayer
-                );
+                wolfRender.DrawNormal(b, additional);
 
+                return;
 
             }
             else if (netSweepActive.Value)
             {
 
-                Rectangle sweepSource = sweepFrames[netDirection.Value][sweepFrame];
+                additional.series = WolfRenderAdditional.wolfseries.sweep;
 
-                if (growl)
-                {
+                additional.direction = netDirection.Value;
 
-                    sweepSource.Y += 384;
-                }
+                additional.frame = sweepFrame;
 
-                b.Draw(
-                    characterTexture,
-                    spritePosition,
-                    sweepSource,
-                    Color.White,
-                    0f,
-                    new Vector2(sweepSource.Width / 2, sweepSource.Height / 2),
-                    spriteScale,
-                    flippity ? (SpriteEffects)1 : 0,
-                    drawLayer
-                );
+                wolfRender.DrawNormal(b, additional);
 
-
-            }
-            else
-            {
-                Rectangle walkSource = walkFrames[netDirection.Value][walkFrame];
-
-                if (growl)
-                {
-
-                    walkSource.Y += 384;
-                }
-
-                b.Draw(
-                    characterTexture,
-                    spritePosition,
-                    walkSource,
-                    Color.White,
-                    0,
-                    new Vector2(walkSource.Width / 2, walkSource.Height / 2),
-                    spriteScale,
-                    flippity ? (SpriteEffects)1 : 0,
-                    drawLayer);
-
+                return;
             }
 
+            additional.direction = netDirection.Value;
 
-            Vector2 shadowPosition = spritePosition + new Vector2(0, spriteScale * 24);
+            additional.frame = walkFrame;
 
-            if (netDirection.Value % 2 == 1)
-            {
-                shadowPosition.Y += 4;
-            }
+            wolfRender.DrawNormal(b, additional);
 
-            b.Draw(
-                Mod.instance.iconData.cursorTexture,
-                shadowPosition,
-                Mod.instance.iconData.shadowRectangle,
-                Color.White * 0.35f,
-                0.0f,
-                new Vector2(24),
-                (spriteScale * 0.9f) + (Math.Abs(0 - (walkFrames[0].Count() / 2) + spriteScale) * 0.05f),
-                0,
-                drawLayer - 0.0001f
-            );
         }
 
         public override bool ChangeBehaviour()
@@ -330,20 +253,6 @@ namespace StardewDruid.Monster
 
             return false;
 
-        }
-
-        public override bool PerformFlight(Vector2 target, int flightType = -1)
-        {
-
-            if(Vector2.Distance(target,Position) > 384)
-            {
-
-                return false;
-
-            }
-
-            return base.PerformFlight(target, flightType);
-        
         }
 
         public override void UpdateMultiplayer()
@@ -404,6 +313,14 @@ namespace StardewDruid.Monster
                     break;
 
             }
+
+        }
+        public override Vector2 PerformRedirect(Vector2 target)
+        {
+
+            Vector2 actual = Position + (ModUtility.PathFactor(Position, target) * 96);
+
+            return LocationHandle.TerrainRedirect(currentLocation, actual, Position);
 
         }
 

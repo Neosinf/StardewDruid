@@ -10,6 +10,7 @@ using StardewDruid.Data;
 using StardewDruid.Dialogue;
 using StardewDruid.Journal;
 using StardewDruid.Location;
+using StardewDruid.Location.Druid;
 using StardewDruid.Monster;
 using StardewDruid.Render;
 using StardewModdingAPI;
@@ -143,8 +144,8 @@ namespace StardewDruid.Event.Scene
             locales = new()
             {
                 "Forest",
-                LocationData.druid_clearing_name,
-                LocationData.druid_engineum_name,
+                LocationHandle.druid_clearing_name,
+                LocationHandle.druid_engineum_name,
 
             };
 
@@ -166,7 +167,7 @@ namespace StardewDruid.Event.Scene
         public override bool AttemptReset()
         {
 
-            Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.abortTomorrow), 3, true);
+            Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
 
             return false;
 
@@ -281,7 +282,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(2);
 
-                    companions[1] = new EventActor(CharacterHandle.characters.Dwarf) as EventActor;
+                    companions[1] = new Recruit(CharacterHandle.characters.Dwarf,CharacterHandle.FindVillager("Dwarf")) as Recruit;
 
                     companions[1].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -395,13 +396,9 @@ namespace StardewDruid.Event.Scene
 
                     //Game1.warpFarmer(location.Name, (int)eventVectors[10].X, (int)eventVectors[10].Y, 3);
 
-                    Game1.warpFarmer(LocationData.druid_clearing_name, (int)eventVectors[10].X, (int)eventVectors[10].Y, 1);
+                    Mod.instance.WarpAllFarmers(LocationHandle.druid_clearing_name, (int)eventVectors[10].X, (int)eventVectors[10].Y, 1);
 
-                    Game1.xLocationAfterWarp = (int)eventVectors[10].X;
-
-                    Game1.yLocationAfterWarp = (int)eventVectors[10].Y;
-
-                    location = Mod.instance.locations[LocationData.druid_clearing_name];
+                    location = Mod.instance.locations[LocationHandle.druid_clearing_name];
 
                     CharacterMover.Warp(location, companions[0], eventVectors[11] * 64, false);
 
@@ -425,7 +422,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].specialTimer = 60;
 
-                    (location as Location.Clearing).OpenAccess();
+                    (location as Clearing).OpenAccess();
 
                     break;
 
@@ -439,9 +436,9 @@ namespace StardewDruid.Event.Scene
 
                 case 111:
 
-                    location = Mod.instance.locations[LocationData.druid_engineum_name];
+                    location = Mod.instance.locations[LocationHandle.druid_engineum_name];
 
-                    Game1.warpFarmer(location.Name, (int)eventVectors[14].X, (int)eventVectors[14].Y, 0);
+                    Mod.instance.WarpAllFarmers(location.Name, (int)eventVectors[14].X, (int)eventVectors[14].Y, 0);
 
                     CharacterMover.Warp(location, companions[0], eventVectors[15] * 64, false);
 
@@ -649,13 +646,13 @@ namespace StardewDruid.Event.Scene
                     if (Mod.instance.Helper.ModRegistry.IsLoaded("Nom0ri.RomRas"))
                     {
 
-                        companions[3] = new Witch(CharacterHandle.characters.Witch);
+                        companions[3] = new Witch(CharacterHandle.characters.Witch, CharacterHandle.FindVillager("Wizard"));
 
                     }
                     else
                     {
 
-                        companions[3] = new Wizard(CharacterHandle.characters.Wizard);
+                        companions[3] = new Wizard(CharacterHandle.characters.Wizard, CharacterHandle.FindVillager("Wizard"));
 
                     }
 
@@ -1106,9 +1103,9 @@ namespace StardewDruid.Event.Scene
 
                     //location = Game1.getLocationFromName("Forest");
 
-                    location = Mod.instance.locations[LocationData.druid_clearing_name];
+                    location = Mod.instance.locations[LocationHandle.druid_clearing_name];
 
-                    Game1.warpFarmer(location.Name, (int)eventVectors[30].X, (int)eventVectors[30].Y, 1);
+                    Mod.instance.WarpAllFarmers(location.Name, (int)eventVectors[30].X, (int)eventVectors[30].Y, 1);
 
                     CharacterMover.Warp(location, companions[0], eventVectors[31] * 64, false);
 
@@ -1440,17 +1437,27 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].LookAtTarget(companions[0].Position, true);
 
-                    DialogueCueWithFeeling(617);
+                    DialogueCue(617);
 
                     break;
 
                 case 655:
 
-                    DialogueCueWithFeeling(618);
+                    ThrowHandle throwBazooka = new(companions[1].Position, companions[0].Position, IconData.relics.dwarven_bazooka);
+
+                    throwBazooka.register();
+
+                    DialogueCue(618);
 
                     break;
 
-                case 656:
+                case 658:
+
+                    DialogueCue(619);
+
+                    break;
+
+                case 659:
 
                     companions[1].ResetActives();
 
@@ -1458,14 +1465,15 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 658:
+                case 661:
 
                     companions[0].ResetActives();
 
                     companions[0].TargetEvent(0, eventVectors[38] * 64);
+
                     break;
 
-                case 663:
+                case 666:
 
                     companions[0].ResetActives();
 
@@ -1473,7 +1481,7 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 675:
+                case 678:
 
                     activeCounter = 699;
 

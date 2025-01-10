@@ -11,6 +11,7 @@ using StardewDruid.Data;
 using StardewDruid.Dialogue;
 using StardewDruid.Journal;
 using StardewDruid.Location;
+using StardewDruid.Location.Druid;
 using StardewDruid.Monster;
 using StardewDruid.Render;
 using StardewModdingAPI;
@@ -287,9 +288,9 @@ namespace StardewDruid.Event.Scene
 
             locales = new()
             {
-                LocationData.druid_graveyard_name,
-                LocationData.druid_chapel_name,
-                LocationData.druid_tomb_name,
+                LocationHandle.druid_graveyard_name,
+                LocationHandle.druid_chapel_name,
+                LocationHandle.druid_tomb_name,
 
             };
 
@@ -306,7 +307,7 @@ namespace StardewDruid.Event.Scene
         public override bool AttemptReset()
         {
 
-            Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.abortTomorrow), 3, true);
+            Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
 
             return false;
 
@@ -744,11 +745,11 @@ namespace StardewDruid.Event.Scene
 
                     location.updateWarps();
 
-                    location = Mod.instance.locations[LocationData.druid_chapel_name];
+                    location = Mod.instance.locations[LocationHandle.druid_chapel_name];
 
                     (location as Chapel).activeCircle = true;
 
-                    Game1.warpFarmer(location.Name, (int)eventVectors[109].X, (int)eventVectors[109].Y, 0);
+                    Mod.instance.WarpAllFarmers(location.Name, (int)eventVectors[109].X, (int)eventVectors[109].Y, 0);
 
                     // Revenant
 
@@ -774,7 +775,7 @@ namespace StardewDruid.Event.Scene
 
                     // Rogue
 
-                    LoadBoss(new DarkRogue(eventVectors[112], Mod.instance.CombatDifficulty()), 1, 2, 5);
+                    LoadBoss(new Dark(eventVectors[112], Mod.instance.CombatDifficulty()), 1, 2, 5);
 
                     bosses[1].setWounded = true;
 
@@ -786,11 +787,11 @@ namespace StardewDruid.Event.Scene
 
                     // stances
 
-                    bosses[0].SetDirection(companions[3].Position);
+                    bosses[0].LookAtTarget(companions[3].Position);
 
                     companions[3].LookAtTarget(bosses[0].Position, true);
 
-                    bosses[1].SetDirection(companions[3].Position);
+                    bosses[1].LookAtTarget(companions[3].Position);
 
                     bosses[1].netAlert.Set(true);
 
@@ -798,7 +799,7 @@ namespace StardewDruid.Event.Scene
 
                     bosses[1].groupMode = true;
 
-                    bosses[2].SetDirection(companions[3].Position);
+                    bosses[2].LookAtTarget(companions[3].Position);
 
                     bosses[2].netAlert.Set(true);
 
@@ -812,7 +813,7 @@ namespace StardewDruid.Event.Scene
 
                 case 109:
 
-                    bosses[0].SetDirection(Game1.player.Position);
+                    bosses[0].LookAtTarget(Game1.player.Position);
 
                     break;
 
@@ -871,7 +872,7 @@ namespace StardewDruid.Event.Scene
 
                     // Doja character switch
 
-                    companions[4] = new Wizard(CharacterHandle.characters.Doja);
+                    companions[4] = new Doja(CharacterHandle.characters.Doja);
 
                     voices[4] = companions[4];
 
@@ -1324,7 +1325,7 @@ namespace StardewDruid.Event.Scene
                     //location.playSound(SpellHandle.sounds.batScreech.ToString());
                     break;
                 case 355:
-                    companions[9] = new Hoverer(CharacterHandle.characters.ShadowBat);
+                    companions[9] = new Hoverer(CharacterHandle.characters.Bat);
 
                     voices[9] = companions[9];
 
@@ -1390,7 +1391,7 @@ namespace StardewDruid.Event.Scene
                     foreach (KeyValuePair<int, Vector2> batStart in batStarts)
                     {
 
-                        batSummons[batStart.Key] = new Hoverer(CharacterHandle.characters.ShadowBat);
+                        batSummons[batStart.Key] = new Hoverer(CharacterHandle.characters.Bat);
 
                         batSummons[batStart.Key].gait *= 1.5f;
 
@@ -1605,11 +1606,11 @@ namespace StardewDruid.Event.Scene
 
                     location.updateWarps();
 
-                    location = Mod.instance.locations[LocationData.druid_tomb_name];
+                    location = Mod.instance.locations[LocationHandle.druid_tomb_name];
 
                     (location as Tomb).activeCircle = true;
 
-                    Game1.warpFarmer(location.Name, (int)eventVectors[404].X, (int)eventVectors[404].Y, 0);
+                    Mod.instance.WarpAllFarmers(location.Name, (int)eventVectors[404].X, (int)eventVectors[404].Y, 0);
 
                     break;
 
@@ -1783,7 +1784,7 @@ namespace StardewDruid.Event.Scene
 
                         sweep.scheme = IconData.schemes.death;
 
-                        sweep.projectile = d;
+                        sweep.factor =d;
 
                         Mod.instance.spellRegister.Add(sweep);
 
@@ -2040,7 +2041,7 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.iconData.AnimateQuickWarp(location, companions[4].Position, true);
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_tomb_name], companions[4], eventVectors[157] * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_tomb_name], companions[4], eventVectors[157] * 64, false);
 
                     break;
 
@@ -2154,7 +2155,7 @@ namespace StardewDruid.Event.Scene
 
                     int ghostIndex = index - 800;
 
-                    SpellHandle ghostDeath = new(ghostSummons[ghostIndex].Position, 256, IconData.impacts.deathbomb, new());
+                    SpellHandle ghostDeath = new(ghostSummons[ghostIndex].Position, 256, IconData.impacts.skull, new());
 
                     ghostDeath.sound = SpellHandle.sounds.shadowDie;
 
@@ -2194,7 +2195,7 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.iconData.AnimateQuickWarp(location, companions[1].Position, true);
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_tomb_name], companions[1], eventVectors[405] * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_tomb_name], companions[1], eventVectors[405] * 64, false);
 
                     companions[1].LookAtTarget(companions[4].Position, true);
 
@@ -2204,7 +2205,7 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.iconData.AnimateQuickWarp(location, companions[0].Position, true);
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_tomb_name], companions[0], eventVectors[406] * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_tomb_name], companions[0], eventVectors[406] * 64, false);
 
                     companions[0].LookAtTarget(companions[4].Position, true);
 
@@ -2214,7 +2215,7 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.iconData.AnimateQuickWarp(location, companions[3].Position, true);
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_tomb_name], companions[3], eventVectors[407] * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_tomb_name], companions[3], eventVectors[407] * 64, false);
 
                     companions[3].LookAtTarget(companions[4].Position, true);
 
@@ -2324,7 +2325,7 @@ namespace StardewDruid.Event.Scene
 
                     }
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_chapel_name], companions[3], eventVectors[110] * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_chapel_name], companions[3], eventVectors[110] * 64, false);
 
                     companions.Remove(3);
 

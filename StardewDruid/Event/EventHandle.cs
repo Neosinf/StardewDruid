@@ -5,7 +5,6 @@ using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
-using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewDruid.Monster;
 using StardewModdingAPI;
@@ -13,15 +12,13 @@ using StardewValley;
 using StardewValley.Companions;
 using StardewValley.GameData;
 using StardewValley.Menus;
+using StardewValley.Projectiles;
 using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using xTile.Layers;
-using xTile.Tiles;
-using static StardewDruid.Character.CharacterHandle;
+
 
 namespace StardewDruid.Event
 {
@@ -166,7 +163,7 @@ namespace StardewDruid.Event
         public virtual void SetupNarration(string Id)
         {
 
-            narrators = DialogueData.DialogueNarrators(Id);
+            narrators = NarratorData.DialogueNarrators(Id);
 
             cues = DialogueData.DialogueScene(Id);
 
@@ -287,7 +284,7 @@ namespace StardewDruid.Event
                 if (Game1.timeOfDay < Mod.instance.questHandle.quests[eventId].triggerTime)
                 {
 
-                    Mod.instance.CastDisplay(DialogueData.Strings(DialogueData.stringkeys.returnLater));
+                    Mod.instance.CastDisplay(StringData.Strings(StringData.stringkeys.returnLater));
 
                     return false;
 
@@ -625,8 +622,7 @@ namespace StardewDruid.Event
 
         }
 
-        // ------------------------------------
-        // entities
+        // ------------------------------------ entities
         
         public void CastVoice(int id, string message, int duration = 2000)
         {
@@ -786,8 +782,7 @@ namespace StardewDruid.Event
 
         }
 
-        // ------------------------------------
-        // dialogue
+        // ------------------------------------ dialogue
 
         public virtual float DisplayProgress(int displayId = 0)
         {
@@ -1223,9 +1218,7 @@ namespace StardewDruid.Event
 
         }
 
-
-        // ----------------------------------
-        // clean up
+        // ---------------------------------- clean up
 
         public virtual void EventCompleted()
         {
@@ -1233,7 +1226,7 @@ namespace StardewDruid.Event
             if (Mod.instance.questHandle.quests.ContainsKey(eventId))
             {
 
-                if (Mod.instance.questHandle.quests[eventId].type != Journal.Quest.questTypes.lesson)
+                if (Mod.instance.questHandle.quests[eventId].type != Data.Quest.questTypes.lesson)
                 {
 
                     Mod.instance.questHandle.CompleteQuest(eventId,eventRating);
@@ -1360,10 +1353,10 @@ namespace StardewDruid.Event
 
                 foreach (TemporaryAnimatedSprite animation in animations)
                 {
-                    if (animation.lightID != 0)
+                    if (animation.lightId != null)
                     {
 
-                        Utility.removeLightSource(animation.lightID);
+                        Utility.removeLightSource(animation.lightId);
 
                     }
                     location.temporarySprites.Remove(animation);

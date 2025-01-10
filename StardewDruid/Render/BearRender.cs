@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -8,8 +11,20 @@ namespace StardewDruid.Render
     public class BearRender
     {
 
+        public Texture2D bearTexture;
+
         public enum bearFrames
         {
+
+            downTorso,
+            rightTorso,
+            upTorso,
+            downHead,
+            rightHead,
+            upHead,
+            downHeadSpecial,
+            rightHeadSpecial,
+            upHeadSpecial,
 
             downIdle,
             downWalkR1,
@@ -41,35 +56,46 @@ namespace StardewDruid.Render
             upSwipeR,
             upSwipeL,
 
-            downIdleSpecial,
-            downWalkR1Special,
-            downWalkR2Special,
-            downWalkR3Special,
-            downWalkL1Special,
-            downWalkL2Special,
-            downWalkL3Special,
-            downSwipeRSpecial,
-            downSwipeLSpecial,
+            downShadow,
+            rightShadow,
+            upShadow,
 
-            rightIdleSpecial,
-            rightWalkR1Special,
-            rightWalkR2Special,
-            rightWalkR3Special,
-            rightWalkL1Special,
-            rightWalkL2Special,
-            rightWalkL3Special,
-            rightSwipeRSpecial,
-            rightSwipeLSpecial,
+        }
 
-            upIdleSpecial,
-            upWalkR1Special,
-            upWalkR2Special,
-            upWalkR3Special,
-            upWalkL1Special,
-            upWalkL2Special,
-            upWalkL3Special,
-            upSwipeRSpecial,
-            upSwipeLSpecial,
+        public Dictionary<int, Microsoft.Xna.Framework.Rectangle> torsoFrames = new();
+
+        public Dictionary<int, Microsoft.Xna.Framework.Rectangle> headFrames = new();
+
+        public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> idleFrames = new();
+
+        public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> walkFrames = new();
+
+        public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> sweepFrames = new();
+
+        public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> specialFrames = new();
+
+        public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> dashFrames = new();
+
+        public Dictionary<int, Microsoft.Xna.Framework.Rectangle> shadowFrames = new();
+
+        public BearRender(string name)
+        {
+
+            bearTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", name+".png"));
+
+            TorsoFrames();
+
+            HeadFrames();
+
+            IdleFrames();
+
+            WalkFrames();
+
+            SweepFrames();
+
+            DashFrames();
+
+            ShadowFrames();
 
         }
 
@@ -78,10 +104,82 @@ namespace StardewDruid.Render
             return new((int)frame % 9 * 64, (int)frame / 9 * 64, 64, 64);
         }
 
-        public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> WalkFrames()
+        public void TorsoFrames()
         {
 
-            Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> sweepFrames = new()
+            torsoFrames = new()
+            {
+
+                [0] = BearRectangle(bearFrames.upTorso),
+                [1] = BearRectangle(bearFrames.rightTorso),
+                [2] = BearRectangle(bearFrames.downTorso),
+                [3] = BearRectangle(bearFrames.rightTorso),
+
+            };
+
+        }
+
+        public void HeadFrames()
+        {
+
+            headFrames = new()
+            {
+
+                [0] = BearRectangle(bearFrames.upHead),
+                [1] = BearRectangle(bearFrames.rightHead),
+                [2] = BearRectangle(bearFrames.downHead),
+                [3] = BearRectangle(bearFrames.rightHead),
+
+            };
+
+        }
+
+
+        public void ShadowFrames()
+        {
+
+            shadowFrames = new()
+            {
+
+                [0] = BearRectangle(bearFrames.upShadow),
+                [1] = BearRectangle(bearFrames.rightShadow),
+                [2] = BearRectangle(bearFrames.downShadow),
+                [3] = BearRectangle(bearFrames.rightShadow),
+
+            };
+
+        }
+
+        public void IdleFrames()
+        {
+
+            idleFrames = new()
+            {
+                [0] = new()
+                    {
+                        BearRectangle(bearFrames.upIdle),
+                    },
+                [1] = new()
+                    {
+                        BearRectangle(bearFrames.rightIdle),
+                    },
+                [2] = new()
+                    {
+                        BearRectangle(bearFrames.downIdle),
+                    },
+                [3] = new()
+                    {
+                        BearRectangle(bearFrames.rightIdle),
+                    },
+
+            };
+
+        }
+
+        public void WalkFrames()
+        {
+
+            walkFrames = new()
             {
                 [0] = new()
                     {
@@ -127,14 +225,12 @@ namespace StardewDruid.Render
 
             };
 
-            return sweepFrames;
-
         }
 
-        public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> SweepFrames()
+        public void SweepFrames()
         {
 
-            Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> sweepFrames = new()
+            sweepFrames = new()
             {
                 [0] = new()
                     {
@@ -179,14 +275,12 @@ namespace StardewDruid.Render
 
             };
 
-            return sweepFrames;
-
         }
 
-        public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> DashFrames()
+        public void DashFrames()
         {
 
-            Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> sweepFrames = new()
+            dashFrames = new()
             {
                 [0] = new()
                     {
@@ -258,9 +352,167 @@ namespace StardewDruid.Render
 
             };
 
-            return sweepFrames;
+        }
+        
+        public void DrawNormal(SpriteBatch b, BearRenderAdditional use)
+        {
+
+            Microsoft.Xna.Framework.Rectangle source;
+
+            switch (use.series)
+            {
+
+                case BearRenderAdditional.bearseries.sweep:
+
+                    source = sweepFrames[use.direction][use.frame];
+
+                    break;
+
+                case BearRenderAdditional.bearseries.special:
+
+                    source = specialFrames[use.direction][use.frame];
+
+                    break;
+
+                case BearRenderAdditional.bearseries.dash:
+
+                    source = dashFrames[use.direction][use.frame];
+
+                    break;
+
+                default:
+
+                    source = walkFrames[use.direction][use.frame];
+
+                    break;
+
+            }
+
+            b.Draw(
+                bearTexture,
+                use.position,
+                source,
+                Microsoft.Xna.Framework.Color.White * use.fade,
+                0f,
+                new Vector2(source.Width / 2, source.Height / 2),
+                use.scale,
+                use.flip ? (SpriteEffects)1 : 0,
+                use.layer + 0.0002f
+            );
+
+            int useDirection = use.direction % 4;
+
+            Microsoft.Xna.Framework.Rectangle torso = torsoFrames[useDirection];
+
+            b.Draw(
+                bearTexture,
+                use.position,
+                torso,
+                Microsoft.Xna.Framework.Color.White * use.fade,
+                0f,
+                new Vector2(torso.Width / 2, torso.Height / 2),
+                use.scale,
+                use.flip ? (SpriteEffects)1 : 0,
+                use.layer
+            );
+
+            Microsoft.Xna.Framework.Rectangle head = headFrames[useDirection];
+
+            float headOffset = 0.0001f;
+
+            switch (useDirection)
+            {
+                case 0:
+
+                    headOffset = -0.0001f;
+
+                    break;
+
+                case 2:
+
+                    headOffset = 0.0003f;
+
+                    break;
+            }
+
+            if (use.mode == BearRenderAdditional.bearmode.growl)
+            {
+                head.X += 192;
+            }
+
+            b.Draw(
+                bearTexture,
+                use.position,
+                head,
+                Microsoft.Xna.Framework.Color.White * use.fade,
+                0f,
+                new Vector2(head.Width / 2, head.Height / 2),
+                use.scale,
+                use.flip ? (SpriteEffects)1 : 0,
+                use.layer + headOffset
+            );
+
+            Microsoft.Xna.Framework.Rectangle shadow = shadowFrames[useDirection];
+
+            Vector2 shadowPosition = use.position;
+
+            if (useDirection % 2 == 1)
+            {
+
+                shadowPosition.Y += 8;
+
+            }
+
+            b.Draw(
+                bearTexture,
+                shadowPosition,
+                shadow,
+                Color.White * 0.15f,
+                0.0f,
+                new Vector2(shadow.Width / 2, shadow.Height / 2),
+                use.scale + (Math.Abs(0 - (walkFrames[0].Count() / 2) + use.scale) * 0.05f),
+                use.flip ? (SpriteEffects)1 : 0,
+                use.layer - 0.0002f
+            );
 
         }
+
+    }
+
+    public class BearRenderAdditional
+    {
+
+        public int direction = 2;
+
+        public int frame = 0;
+
+        public Vector2 position;
+
+        public float scale = 4f;
+
+        public bool flip = false;
+
+        public float layer = 0.0001f;
+
+        public enum bearmode
+        {
+            none,
+            growl,
+        }
+
+        public bearmode mode;
+
+        public enum bearseries
+        {
+            none,
+            sweep,
+            dash,
+            special,
+        }
+
+        public bearseries series;
+
+        public float fade = 1f;
 
     }
 

@@ -8,10 +8,6 @@ using StardewValley.Network;
 using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static StardewDruid.Character.CharacterHandle;
 
 namespace StardewDruid.Journal
 {
@@ -69,7 +65,7 @@ namespace StardewDruid.Journal
                 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "description");
 
-                contentComponents[start].text[0] = DialogueData.Strings(DialogueData.stringkeys.questTranscript);
+                contentComponents[start].text[0] = StringData.Strings(StringData.stringkeys.questTranscript);
 
                 contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
 
@@ -77,7 +73,7 @@ namespace StardewDruid.Journal
 
                 Dictionary<int, Dictionary<int, string>> dialogueScene = DialogueData.DialogueScene(Mod.instance.questHandle.loresets[set].quest);
 
-                Dictionary<int, string> narrators = DialogueData.DialogueNarrators(Mod.instance.questHandle.loresets[set].quest);
+                Dictionary<int, string> narrators = NarratorData.DialogueNarrators(Mod.instance.questHandle.loresets[set].quest);
 
                 if (dialogueScene.Count > 0)
                 {

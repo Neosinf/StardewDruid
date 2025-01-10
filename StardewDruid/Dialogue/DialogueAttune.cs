@@ -1,5 +1,4 @@
-﻿using StardewDruid.Journal;
-using StardewValley;
+﻿using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +12,7 @@ using StardewValley.Locations;
 using Microsoft.Xna.Framework;
 using StardewValley.Tools;
 using System.Reflection;
+using StardewDruid.Event;
 
 namespace StardewDruid.Dialogue
 {
@@ -320,19 +320,19 @@ namespace StardewDruid.Dialogue
 
                         case 1:
 
-                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.315.4").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.315.4").Tokens(new { tool = Game1.player.CurrentTool.Name, }) + Mod.instance.Helper.Translation.Get("CharacterHandle.315.5");
 
                             break;
 
                         case 2:
 
-                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.315.5").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.315.6").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                             break;
 
                         case 3:
 
-                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.315.6").Tokens(new { tool = Game1.player.CurrentTool.Name, });
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.315.7").Tokens(new { tool = Game1.player.CurrentTool.Name, });
 
                             break;
 
@@ -391,7 +391,7 @@ namespace StardewDruid.Dialogue
 
             }
 
-            return Mod.instance.Helper.Translation.Get("CharacterHandle.1584").Tokens(new { tool = Game1.player.CurrentTool.Name, rite = DialogueData.RiteNames(compare), });
+            return Mod.instance.Helper.Translation.Get("CharacterHandle.1584").Tokens(new { tool = Game1.player.CurrentTool.Name, rite = StringData.RiteNames(compare), });
 
         }
 
@@ -433,7 +433,7 @@ namespace StardewDruid.Dialogue
                 if (Mod.instance.save.attunement[toolIndex] == compare)
                 {
 
-                    Mod.instance.iconData.ImpactIndicator(Game1.player.currentLocation, Game1.player.Position, IconData.impacts.nature, 6f, new());
+                    Mod.instance.iconData.ImpactIndicator(Game1.player.currentLocation, Game1.player.Position, IconData.impacts.supree, 6f, new());
 
                     Game1.player.currentLocation.playSound(SpellHandle.sounds.yoba.ToString());
 
@@ -447,7 +447,7 @@ namespace StardewDruid.Dialogue
 
             }
 
-            Mod.instance.iconData.ImpactIndicator(Game1.player.currentLocation, Game1.player.Position, IconData.impacts.nature, 6f, new());
+            Mod.instance.iconData.ImpactIndicator(Game1.player.currentLocation, Game1.player.Position, IconData.impacts.supree, 6f, new());
 
             Game1.player.currentLocation.playSound(SpellHandle.sounds.yoba.ToString());
 

@@ -382,7 +382,7 @@ namespace StardewDruid.Monster
                 default:
                 case bosses.batwing:
 
-                    theMonster = new Batwing(spawnVector, combatModifier);
+                    theMonster = new ShadowBat(spawnVector, combatModifier);
 
                     break;
 
@@ -427,7 +427,6 @@ namespace StardewDruid.Monster
                     theMonster = new Phantom(spawnVector, combatModifier);
 
                     break;
-
 
                 case bosses.shadowbear:
 

@@ -4,6 +4,7 @@ using StardewValley.Network;
 using StardewValley;
 using System;
 using System.Collections.Generic;
+using StardewDruid.Render;
 
 namespace StardewDruid.Character
 {
@@ -20,11 +21,13 @@ namespace StardewDruid.Character
 
         public int hoverFrame;
 
+        public HoverRender hoverRender;
+
         public Hoverer()
         {
         }
 
-        public Hoverer(CharacterHandle.characters type = CharacterHandle.characters.ShadowBat)
+        public Hoverer(CharacterHandle.characters type = CharacterHandle.characters.Bat)
           : base(type)
         {
 
@@ -42,6 +45,8 @@ namespace StardewDruid.Character
 
             characterTexture = CharacterHandle.CharacterTexture(characterType);
 
+            hoverRender = new(characterType.ToString());
+
             LoadIntervals();
 
             setScale = 4f;
@@ -58,163 +63,36 @@ namespace StardewDruid.Character
 
             modeActive = mode.random;
 
-            walkFrames = new()
-            {
-                [0] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 64, 32, 32),
-                    new Rectangle(32, 64, 32, 32),
-                    new Rectangle(64, 64, 32, 32),
-                    new Rectangle(32, 64, 32, 32),
-                },
+            idleFrames[idles.idle] = hoverRender.walkFrames;
 
-                [1] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
-                    new Rectangle(64, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
-                },
-                [2] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 0, 32, 32),
-                    new Rectangle(32, 0, 32, 32),
-                    new Rectangle(64, 0, 32, 32),
-                    new Rectangle(32, 0, 32, 32),
+            walkFrames = hoverRender.walkFrames;
 
-                },
-                [3] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
-                    new Rectangle(64, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
+            specialFrames[specials.special] = hoverRender.specialFrames[specials.special];
 
-                }
-            };
+            specialFrames[specials.sweep] = hoverRender.specialFrames[specials.special];
 
-            specialFrames[specials.special] = new()
-            {
+            dashFrames[dashes.dash] = hoverRender.dashFrames[dashes.dash];
 
-                [8] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 160, 32, 32),
-                    new Rectangle(32, 160, 32, 32),
-                    new Rectangle(64, 160, 32, 32),
-                    new Rectangle(32, 160, 32, 32),
-                },
-                [9] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-
-                },
-                [10] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 96, 32, 32),
-                    new Rectangle(32, 96, 32, 32),
-                    new Rectangle(64, 96, 32, 32),
-                    new Rectangle(32, 96, 32, 32),
-
-                },
-                [11] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-
-                }
-
-            };
-
-            specialFrames[specials.sweep] = new(specialFrames[specials.special]);
-
-            dashFrames[dashes.dash] = new Dictionary<int, List<Rectangle>>()
-            {
-                [0] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 160, 32, 32),
-                    new Rectangle(32, 160, 32, 32),
-                    new Rectangle(64, 160, 32, 32),
-
-                },
-
-                [1] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-
-                },
-                [2] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 96, 32, 32),
-                    new Rectangle(32, 96, 32, 32),
-                    new Rectangle(64, 96, 32, 32),
-
-                },
-                [3] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-
-                },
-                [4] = new List<Rectangle>()
-                {
-                    new Rectangle(32, 160, 32, 32),
-                },
-                [5] = new List<Rectangle>()
-                {
-                    new Rectangle(32, 128, 32, 32),
-                },
-                [6] = new List<Rectangle>()
-                {
-                    new Rectangle(32, 96, 32, 32),
-                },
-                [7] = new List<Rectangle>()
-                {
-                    new Rectangle(32, 128, 32, 32),
-                },
-                [8] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 160, 32, 32),
-                    new Rectangle(32, 160, 32, 32),
-                    new Rectangle(64, 160, 32, 32),
-                    new Rectangle(32, 160, 32, 32),
-                },
-                [9] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-
-                },
-                [10] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 96, 32, 32),
-                    new Rectangle(32, 96, 32, 32),
-                    new Rectangle(64, 96, 32, 32),
-                    new Rectangle(32, 96, 32, 32),
-
-                },
-                [11] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-
-                }
-            };
-
-            dashFrames[dashes.smash] = new(dashFrames[dashes.dash]);
+            dashFrames[dashes.smash] = hoverRender.dashFrames[dashes.dash];
 
             loadedOut = true;
+
+        }
+
+        public override Vector2 SpritePosition(Vector2 localPosition)
+        {
+
+            Vector2 spritePosition = base.SpritePosition(localPosition);
+
+            if (hoverInterval > 0)
+            {
+
+                spritePosition.Y -= (float)Math.Abs(hoverHeight) * hoverElevate;
+
+            }
+
+            return spritePosition;
+
 
         }
 
@@ -235,139 +113,47 @@ namespace StardewDruid.Character
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            Vector2 spritePosition = SpritePosition(localPosition);
+            HoverRenderAdditional hoverAdditional = new();
 
-            float drawLayer = (float)StandingPixel.Y / 10000f + 0.001f;
+            hoverAdditional.scale = setScale;
 
-            bool flippity = SpriteFlip();
+            hoverAdditional.position = SpritePosition(localPosition) - new Vector2(0, (float)Math.Abs(hoverHeight) * hoverElevate);
 
-            float fade = fadeOut == 0 ? 1f : fadeOut;
+            hoverAdditional.layer = (float)StandingPixel.Y / 10000f + 0.001f;
+
+            hoverAdditional.flip = SpriteFlip();
+
+            hoverAdditional.fade = fadeOut == 0 ? 1f : fadeOut;
+
+            hoverAdditional.direction = netDirection.Value;
+
+            hoverAdditional.frame = hoverFrame;
+
+            hoverAdditional.series = HoverRenderAdditional.hoverseries.hover;
 
             DrawEmote(b);
 
             if (netDash.Value != 0)
             {
 
-                int setFlightSeries = netDirection.Value + (netDashProgress.Value * 4);
+                hoverAdditional.direction = netDirection.Value + (netDashProgress.Value * 4);
 
-                int setFlightFrame = Math.Min(dashFrame, (dashFrames[(dashes)netDash.Value][setFlightSeries].Count - 1));
+                hoverAdditional.frame = Math.Min(dashFrame, (dashFrames[(dashes)netDash.Value][hoverAdditional.direction].Count - 1));
 
-                b.Draw(
-                    characterTexture,
-                    spritePosition - new Vector2(0,dashHeight),
-                    dashFrames[(dashes)netDash.Value][setFlightSeries][setFlightFrame],
-                    Color.White * fade,
-                    0,
-                    new Vector2(16),
-                    setScale,
-                    flippity ? (SpriteEffects)1 : 0,
-                    drawLayer
-                );
+                hoverAdditional.series = HoverRenderAdditional.hoverseries.dash;
 
             }
             else if (netSpecial.Value != 0)
             {
 
-                b.Draw(
-                    characterTexture,
-                    spritePosition - new Vector2(0,(float)Math.Abs(hoverHeight) * hoverElevate),
-                    specialFrames[(specials)netSpecial.Value][netDirection.Value][specialFrame],
-                    Color.White * fade,
-                    0,
-                    new Vector2(16),
-                    setScale,
-                    flippity ? (SpriteEffects)1 : 0,
-                    drawLayer);
+                hoverAdditional.frame = specialFrame;
 
-            }
-            else
-            {
-
-                b.Draw(
-                    characterTexture,
-                    spritePosition - new Vector2(0, (float)Math.Abs(hoverHeight) * hoverElevate),
-                    walkFrames[netDirection.Value][hoverFrame],
-                    Color.White * fade,
-                    0,
-                    new Vector2(16),
-                    setScale,
-                    flippity ? (SpriteEffects)1 : 0,
-                    drawLayer);
+                hoverAdditional.series = HoverRenderAdditional.hoverseries.special;
 
             }
 
-            DrawShadow(b, spritePosition + new Vector2(0,8f*setScale), drawLayer);
+            hoverRender.DrawNormal(b,hoverAdditional);
 
-        }
-
-        public virtual int GetHeight()
-        {
-
-            return 32;
-
-        }
-
-        public virtual int GetWidth()
-        {
-
-            return 32;
-
-        }
-
-
-        public virtual Vector2 GetPosition(Vector2 localPosition, float spriteScale = -1f, bool shadow = false)
-        {
-            
-            if (spriteScale == -1f)
-            {
-                spriteScale = setScale;
-
-            }
-
-            int width = GetWidth();
-
-            int height = GetHeight();
-
-            Vector2 spritePosition = localPosition + new Vector2(width, width * 2) - new Vector2(width / 2 * spriteScale, height * spriteScale);
-
-            if (netDash.Value != 0)
-            {
-
-                spritePosition.Y -= dashHeight;
-
-            }
-            else
-            if (hoverInterval > 0)
-            {
-
-                spritePosition.Y -= (float)Math.Abs(hoverHeight) * hoverElevate;
-
-            }
-
-            return spritePosition;
-
-
-        }
-
-        public override Rectangle GetBoundingBox()
-        {
-
-            Vector2 spritePosition = GetPosition(Position);
-
-            float spriteScale = setScale;
-
-            int width = GetWidth();
-
-            int height = GetHeight();
-
-            Rectangle box = new(
-                (int)(spritePosition.X + (spriteScale * 2)),
-                (int)(spritePosition.Y + (spriteScale * 4)),
-                (int)(spriteScale * (width - 4)),
-                (int)(spriteScale * (height - 4))
-            );
-
-            return box;
 
         }
 
@@ -398,6 +184,13 @@ namespace StardewDruid.Character
                 }
 
             }
+
+        }
+
+        public override bool SweepAttack(StardewValley.Monsters.Monster monster)
+        {
+
+            return SmashAttack(monster);
 
         }
 

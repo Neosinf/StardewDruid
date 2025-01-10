@@ -32,7 +32,7 @@ namespace StardewDruid.Event.Sword
 
             companions[0].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-            CharacterMover.Warp(Mod.instance.locations[LocationData.druid_chapel_name], companions[0], new Vector2(26, 19) * 64);
+            CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_chapel_name], companions[0], new Vector2(26, 19) * 64);
 
             companions[0].ResetActives();
 

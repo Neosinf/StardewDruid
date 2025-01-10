@@ -117,29 +117,6 @@ namespace StardewDruid.Cast.Effect
 
                 }
 
-                if (!gravityWell.Value.comet)
-                {
-
-                    if (Mod.instance.rite.castActive && Mod.instance.rite.castType == Rite.rites.stars)
-                    {
-
-                        gravityWell.Value.comet = true;
-
-                        continue;
-
-                    }
-
-                    if (Mod.instance.rite.chargeActive && Mod.instance.rite.chargeType == Rite.charges.starsCharge)
-                    {
-
-                        gravityWell.Value.comet = true;
-
-                        continue;
-
-                    }
-
-                }
-
             }
 
         }
@@ -158,8 +135,6 @@ namespace StardewDruid.Cast.Effect
         public int limit;
 
         public float radius;
-
-        public bool comet;
 
         public GravityTarget(GameLocation Location, Vector2 Tile, int timer, float Radius = 256)
         {

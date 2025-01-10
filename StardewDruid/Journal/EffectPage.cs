@@ -59,7 +59,7 @@ namespace StardewDruid.Journal
 
             effectIndex = Convert.ToInt32(effectParts[1]);
 
-            StardewDruid.Journal.Effect journalEffect = Mod.instance.questHandle.effects[effectQuest][effectIndex];
+            Data.Effect journalEffect = Mod.instance.questHandle.effects[effectQuest][effectIndex];
 
             // ----------------------------- title
 

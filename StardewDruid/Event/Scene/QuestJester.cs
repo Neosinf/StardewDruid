@@ -1,9 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
+using StardewDruid.Cast.Fates;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Location;
+using StardewDruid.Monster;
 using StardewValley;
+using StardewValley.Constants;
 using System;
 using System.Collections.Generic;
 
@@ -43,7 +46,7 @@ namespace StardewDruid.Event.Scene
             locales = new()
             {
                 "Town",
-                LocationData.druid_archaeum_name,
+                LocationHandle.druid_archaeum_name,
 
             };
 
@@ -59,7 +62,7 @@ namespace StardewDruid.Event.Scene
 
             companions[0].netDirection.Set(1);
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
 
 
         }
@@ -67,7 +70,7 @@ namespace StardewDruid.Event.Scene
         public override bool AttemptReset()
         {
 
-            Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.abortTomorrow), 3, true);
+            Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
 
             return false;
 
@@ -848,7 +851,7 @@ namespace StardewDruid.Event.Scene
 
                     beam.type = SpellHandle.spells.beam;
 
-                    beam.scheme = IconData.schemes.Solar;
+                    beam.scheme = IconData.schemes.golden;
 
                     Mod.instance.spellRegister.Add(beam);
 
@@ -886,17 +889,22 @@ namespace StardewDruid.Event.Scene
 
                             Vector2 burnVector = cornerVector + new Vector2((i * 64), (j * 64)) - new Vector2(16 * Mod.instance.randomIndex.Next(0, 4), 16 * Mod.instance.randomIndex.Next(0, 4));
 
-                            List<TemporaryAnimatedSprite> embers = Mod.instance.iconData.EmberConstruct(location, IconData.schemes.stars, burnVector, 2f + (0.5f * Mod.instance.randomIndex.Next(5)), 60, 999f);
+
+                            Cast.Effect.EmberTarget ember = new(location, burnVector, 2, 0, 0, IconData.schemes.stars);
+
+                            List<TemporaryAnimatedSprite> embers = ember.EmberConstruct(location, IconData.schemes.stars, burnVector, 2f + (0.5f * Mod.instance.randomIndex.Next(5)), 60, 999f);
 
                             animations.AddRange(embers);
 
                             if(i % 3 == 0 && j % 3 == 0)
                             {
 
+                                string lightid = "18465_" + (burnVector.X * 10000 + burnVector.Y).ToString();
+
                                 TemporaryAnimatedSprite lightCircle = new(23, 200f, 6, 60, burnVector, false, Game1.random.NextDouble() < 0.5)
                                 {
                                     texture = Game1.mouseCursors,
-                                    light = true,
+                                    lightId = lightid,
                                     lightRadius = 3f,
                                     lightcolor = Color.Black,
                                     Parent = location,
@@ -1140,7 +1148,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].SwitchToMode(Character.Character.mode.random,Game1.player);
 
-                    companions[0].TargetIdle(10000);
+                    companions[0].TargetIdle(1440);
 
                     eventComplete = true;
 
@@ -1179,7 +1187,7 @@ namespace StardewDruid.Event.Scene
 
                 MuseumAccess = new();
 
-                MuseumAccess.AccessSetup("Town", LocationData.druid_archaeum_name, ModUtility.PositionToTile(archaeum), new Vector2(24, 15));
+                MuseumAccess.AccessSetup("Town", LocationHandle.druid_archaeum_name, ModUtility.PositionToTile(archaeum), new Vector2(24, 15));
 
                 MuseumAccess.location = location;
 
@@ -1203,21 +1211,17 @@ namespace StardewDruid.Event.Scene
 
                 case 810:
 
-                    Game1.warpFarmer(LocationData.druid_archaeum_name, 27, 18, 1);
+                    Mod.instance.WarpAllFarmers(LocationHandle.druid_archaeum_name, 27, 18, 1);
 
-                    Game1.xLocationAfterWarp = 27;
-
-                    Game1.yLocationAfterWarp = 18;
-
-                    location = Mod.instance.locations[LocationData.druid_archaeum_name];
+                    location = Mod.instance.locations[LocationHandle.druid_archaeum_name];
 
                     location.warps.Clear();
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_archaeum_name], companions[0], new Vector2(24, 15) * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_archaeum_name], companions[0], new Vector2(24, 15) * 64, false);
 
                     companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_archaeum_name], companions[1], new Vector2(31, 15) * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_archaeum_name], companions[1], new Vector2(31, 15) * 64, false);
 
                     companions[1].netIdle.Set((int)Character.Character.idles.standby);
 
@@ -1246,7 +1250,7 @@ namespace StardewDruid.Event.Scene
                 case 813:
                 case 814:
 
-                    if (Game1.player.currentLocation.Name == LocationData.druid_archaeum_name)
+                    if (Game1.player.currentLocation.Name == LocationHandle.druid_archaeum_name)
                     {
 
                         activeCounter = 899;
@@ -1271,8 +1275,17 @@ namespace StardewDruid.Event.Scene
                     eventRenders.Add(new("skull_saurus", location.Name, new Vector2(27, 15) * 64 + new Vector2(32), IconData.relics.skull_saurus));
 
                     break;
-
                 case 916:
+
+                    Winds windsNew = new();
+
+                    windsNew.EventSetup(new Vector2(27, 15) * 64 + new Vector2(32), Rite.eventWinds);
+
+                    windsNew.EventActivate();
+
+                    windsNew.eventLocked = true;
+
+                    windsNew.WindArray(new(), WispHandle.wisptypes.winds, 50);
 
                     companions[0].ResetActives(true);
 
@@ -1282,13 +1295,13 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].netDirection.Set(3);
 
-                    Mod.instance.spellRegister.Add(new(new Vector2(27, 15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, projectile = 1 });
+                    Mod.instance.spellRegister.Add(new(new Vector2(27, 15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, factor = 1 });
 
                     break;
 
                 case 918:
 
-                    Mod.instance.spellRegister.Add(new(new Vector2(27, 15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, projectile = 1 });
+                    Mod.instance.spellRegister.Add(new(new Vector2(27, 15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, factor = 1 });
 
                     break;
 
@@ -1387,7 +1400,7 @@ namespace StardewDruid.Event.Scene
 
                 case 965:
 
-                    Mod.instance.spellRegister.Add(new(bosses[0].Position, 320, IconData.impacts.deathbomb, new()));
+                    Mod.instance.spellRegister.Add(new(bosses[0].Position, 320, IconData.impacts.deathbomb, new()) { sound = SpellHandle.sounds.shadowDie});
 
                     ThrowHandle newThrowRelic = new(Game1.player, companions[1].Position, IconData.relics.skull_saurus);
 
@@ -1431,11 +1444,7 @@ namespace StardewDruid.Event.Scene
 
                     Vector2 outsideTile = ModUtility.PositionToTile(companionVector);
 
-                    Game1.warpFarmer("Town", (int)outsideTile.X + 1, (int)outsideTile.Y + 2, 1);
-
-                    Game1.xLocationAfterWarp = (int)outsideTile.X + 1;
-
-                    Game1.yLocationAfterWarp = (int)outsideTile.Y + 2;
+                    Mod.instance.WarpAllFarmers("Town", (int)outsideTile.X + 1, (int)outsideTile.Y + 2, 1);
 
                     location = Game1.getLocationFromName("Town");
 

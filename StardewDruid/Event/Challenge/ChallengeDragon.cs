@@ -91,10 +91,10 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            if (location.Name == LocationData.druid_lair_name)
+            if (location.Name == LocationHandle.druid_lair_name)
             {
 
-                Game1.player.warpFarmer(location.warps[0], 2);
+                Mod.instance.WarpAllFarmers(location.warps[0].TargetName, location.warps[0].X, location.warps[0].Y, 2);
 
                 DialogueCue(900);
 

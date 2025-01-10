@@ -8,7 +8,7 @@ using System;
 
 namespace StardewDruid.Monster
 {
-    public class DarkLeader : DarkRogue
+    public class DarkLeader : Dark
     {
 
         public DarkLeader()

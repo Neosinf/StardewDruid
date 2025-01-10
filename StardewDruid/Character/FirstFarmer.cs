@@ -6,6 +6,7 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.FruitTrees;
@@ -51,12 +52,9 @@ namespace StardewDruid.Character
 
             WeaponLoadout();
 
-            weaponRender.LoadWeapon(Render.WeaponRender.weapons.sword);
-
-            weaponRender.swordScheme = IconData.schemes.sword_warp;
+            weaponRender.swordScheme = WeaponRender.swordSchemes.sword_warp;
 
         }
-
 
         public override void DrawHat(SpriteBatch b, Vector2 spritePosition,  float drawLayer, float fade)
         {
@@ -124,64 +122,7 @@ namespace StardewDruid.Character
             }
 
         }
-        public override void DrawDash(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
-        {
 
-
-            if (netDash.Value != (int)dashes.smash)
-            {
-
-                base.DrawDash(b, spritePosition, drawLayer, fade);
-
-                return;
-
-            }
-
-            int dashSeries = netDirection.Value + (netDashProgress.Value * 4);
-
-            int dashSetto = Math.Min(dashFrame, (dashFrames[(dashes)netDash.Value][dashSeries].Count - 1));
-
-            Vector2 dashVector = spritePosition - new Vector2(0, dashHeight);
-
-            Rectangle dashTangle = dashFrames[(dashes)netDash.Value][dashSeries][dashSetto];
-
-            b.Draw(
-                characterTexture,
-                dashVector,
-                dashTangle,
-                Color.White * fade,
-                0f,
-                new Vector2(16),
-                setScale,
-                SpriteFlip() ? (SpriteEffects)1 : 0,
-                drawLayer
-            );
-
-            DrawShadow(b, spritePosition, drawLayer);
-
-            weaponRender.DrawWeapon(b, dashVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = dashTangle, flipped = SpriteFlip() });
-
-            if (netDashProgress.Value >= 2)
-            {
-
-                weaponRender.DrawSwipe(b, dashVector - new Vector2(16) * setScale, drawLayer, new() { scale = setScale, source = dashTangle, flipped = SpriteFlip() });
-
-            }
-
-        }
-        public override void behaviorOnFarmerPushing()
-        {
-
-            return;
-
-        }
-
-        public override bool checkAction(Farmer who, GameLocation l)
-        {
-
-            return false;
-
-        }
     }
 
 }

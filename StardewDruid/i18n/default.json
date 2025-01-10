@@ -1,6 +1,59 @@
 ﻿{
 
     // ===========================================================================
+    // EVENT SPEAKERS
+    // ===========================================================================
+
+    "NarratorData.361.1": "Unknown Voice",
+    "NarratorData.361.2": "The Effigy",
+    "NarratorData.361.3": "Rustling of the Woodland",
+    "NarratorData.361.4": "Whispers on the Wind",
+    "NarratorData.361.5": "Sighs of the Earth",
+    "NarratorData.361.6": "Cleric Bat",
+    "NarratorData.361.7": "Murmurs of the Waves",
+    "NarratorData.361.8": "Jellyking",
+    "NarratorData.361.9": "First Farmer",
+    "NarratorData.361.10": "Lady Beyond",
+    "NarratorData.361.11": "Shadow Sergeant",
+    "NarratorData.361.12": "Shadow Thug",
+    "NarratorData.361.13": "Shadow Leader",
+    "NarratorData.361.14": "The Revenant",
+    "NarratorData.361.15": "Captain of the Drowned",
+    "NarratorData.361.16": "Lesser Dragon",
+    "NarratorData.361.17": "Jester",
+    "NarratorData.361.18": "Buffin",
+    "NarratorData.361.19": "Marlon",
+    "NarratorData.361.20": "Gunther",
+    "NarratorData.361.21": "Saurus",
+    "NarratorData.361.22": "Shadow Goblin",
+    "NarratorData.361.23": "Shadow Bandit",
+    "NarratorData.361.24": "Thanatoshi",
+    "NarratorData.361.25": "Shadowtin",
+    "NarratorData.361.26": "Dwarf",
+    "NarratorData.361.27": "Shadowcat",
+    "NarratorData.361.28": "Wizard",
+    "NarratorData.361.29": "Witch",
+    "NarratorData.361.30": "Dustchef",
+    "NarratorData.361.31": "Thief",
+    "NarratorData.361.32": "Blackfeather",
+    "NarratorData.361.33": "Crowmother",
+    "NarratorData.361.34": "Knight Wyrven",
+    "NarratorData.361.35": "Masayoshi",
+    "NarratorData.361.36": "Argyle",
+    "NarratorData.361.37": "Macarbi",
+    "NarratorData.361.38": "Carnivellion",
+    "NarratorData.361.39": "Wild Bear",
+    "NarratorData.361.40": "Linus",
+    "NarratorData.361.41": "Doja",
+    "NarratorData.361.42": "Shrine Attendant",
+    "NarratorData.361.43": "Vessel of Grief",
+    "NarratorData.361.44": "Vessel of Rage",
+    "NarratorData.361.45": "Aldebaran",
+    "NarratorData.361.46": "Cultist of Chaos",
+    "NarratorData.361.47": "Honour Guard",
+    "NarratorData.366.1": "Guardian",
+
+    // ===========================================================================
     // GENERAL MOD TEXT / LABELS
     // ===========================================================================
 
@@ -25,7 +78,7 @@
     "DialogueData.318.2": "Open Dragonomicon",
     "DialogueData.213": "Sort quests by completion",
     "DialogueData.217": "Reverse order of entries",
-    "DialogueData.221": "Refresh all potions",
+    "DialogueData.221": "Refresh all",
     "DialogueData.225": "Skip Quest",
     "DialogueData.229": "Replay Quest",
     "DialogueData.233": "Replay Available Tomorrow",
@@ -69,6 +122,8 @@
     "DialogueData.359": "Apothecary",
     "DialogueData.318.3": "Chronicle",
 
+    "DialogueData.352.1": "Magic By Neosinf",
+
     // Menu strings
     "DialogueData.399": "(Please note only the farm host can activate quests.)",
     "DialogueData.403": "(Quest currently being replayed)",
@@ -98,6 +153,9 @@
     "DialogueData.343.5": "Congratulations, you've reached the end of the current version of Stardew Druid!",
     "DialogueData.343.6": "(Hint)",
     "DialogueData.343.7": "(Previously)",
+
+    "DialogueData.356.1": "Druid Level: ",
+    "DialogueData.356.2": "Average Damage: ",
 
     // Dragon Menu
     "DialogueData.455": "Primary Colour",
@@ -130,67 +188,11 @@
     "DialogueData.574": "Return later today",
     "DialogueData.578": "Run to the end!",
     "DialogueData.582": "Treasure Chase",
+    "DialogueData.366.3": "Guardian Fight",
     "DialogueData.582.1": " has returned home",
     "DialogueData.582.2": " has joined you",
     "DialogueData.582.3": "Unable to find a valid warp point",
     "DialogueData.586": "(nevermind)",
-
-    // ===========================================================================
-    // EVENT SPEAKERS
-    // ===========================================================================
-
-    "DialogueData.601": "Unknown Voice",
-    "DialogueData.602": "The Forgotten Effigy",
-    "DialogueData.610": "Rustling in the woodland",
-    "DialogueData.611": "Whispers on the wind",
-    "DialogueData.612": "Sighs of the earth",
-    "DialogueData.619": "Clericbat",
-    "DialogueData.628": "Murmurs on the waves",
-    "DialogueData.629": "Voice Beyond the Shore",
-    "DialogueData.638": "The Effigy",
-    "DialogueData.639": "The Jellyking",
-    "DialogueData.640": "First Farmer",
-    "DialogueData.641": "Lady Beyond",
-    "DialogueData.649": "Shadow Sergeant",
-    "DialogueData.650": "Shadow Thug",
-    "DialogueData.651": "Shadow Leader",
-    "DialogueData.652": "The Effigy",
-    "DialogueData.311.13": "Mysterious Mage",
-    "DialogueData.661": "The Last Guardian",
-    "DialogueData.670": "The Jellyking",
-    "DialogueData.671": "The Effigy",
-    "DialogueData.680": "Captain of the Drowned",
-    "DialogueData.681": "The Effigy",
-    "DialogueData.690": "Lesser Dragon",
-    "DialogueData.699": "The Jester of Fates",
-    "DialogueData.708": "Jester",
-    "DialogueData.709": "Buffin",
-    "DialogueData.710": "Marlon",
-    "DialogueData.711": "Gunther",
-    "DialogueData.712": "Summoned Saurus",
-    "DialogueData.721": "The Effigy",
-    "DialogueData.722": "Jester",
-    "DialogueData.723": "Buffin",
-    "DialogueData.724": "Shadow Leader",
-    "DialogueData.725": "Shadow Sergeant",
-    "DialogueData.726": "Shadow Goblin",
-    "DialogueData.727": "Shadow Rogue",
-    "DialogueData.728": "Confused Bear",
-    "DialogueData.737": "The Jester of Fates",
-    "DialogueData.738": "Thanatoshi, Twilight Reaper",
-    "DialogueData.747": "Shadowtin Bear",
-    "DialogueData.748": "Dwarf",
-    "DialogueData.749": "Intriguing Voice",
-    "DialogueData.750": "Enamoured Voice",
-    "DialogueData.751": "Shadowtin Cat",
-    "DialogueData.752": "The Wizard",
-    "DialogueData.753": "Wizard Duellist",
-    "DialogueData.339.5": "The Witch",
-    "DialogueData.339.6": "Witch Elementalist",
-    "DialogueData.754": "Shadow Rogue",
-    "DialogueData.755": "Shadow Goblin",
-    "DialogueData.765": "Dust Chef",
-    "DialogueData.774": "Treasure Thief",
 
     // ===========================================================================
     // EVENT DIALOGUE (OVERHEAD)
@@ -466,8 +468,8 @@
     "DialogueData.312.1": "Jester helped you escape. Try exploring the tunnel again tomorrow.",
 
     // Jester companion quest
-    "DialogueData.1157": "So much human stuff happens here",
-    "DialogueData.1158": "I smell something familiar",
+    "DialogueData.1157": "I've been looking forward to this, farmer!",
+    "DialogueData.1158": "Now where are all the humans at.",
     "DialogueData.1159": "Heh. Folks just like the sound of Pelican Town, is all",
     "DialogueData.1160": "Hello adventure man",
     "DialogueData.1161": "So, Cat'o'Fates, how was the mountain?",
@@ -490,7 +492,7 @@
     "DialogueData.1178": "Gunther's waiting for it at the museum",
     "DialogueData.1179": "Goodbye Cat'o'Fates, goodbye farmer",
     "DialogueData.1180": "Farewell friend",
-    "DialogueData.1182": "Time to get this lumbering thing to the blue man",
+    "DialogueData.1182": "Time to go see the blue man",
     "DialogueData.1183": "Guess tricks will have to wait",
     "DialogueData.1184": "!",
     "DialogueData.1185": "!",
@@ -584,7 +586,7 @@
     // Fates Challenge - Court of Shadows
     "DialogueData.1296": "Hmm. The druids got a step ahead of us",
     "DialogueData.1297": "Caution, interloper. You trespass here", //We will not tolerate any more trespasses",
-    "DialogueData.1298": "You have developed some courage", //since our first encounter",
+    "DialogueData.1298": "This golem has developed some courage", //since our first encounter",
     "DialogueData.1299": "An Archdruid has ascended within the circle", //" of the circle",
     "DialogueData.1300": "Yea, so who's hiding in caves now?", //"Yea, tell them woodface! Who's hiding in caves now?",
     "DialogueData.1301": "Strange thing to say, but no matter",
@@ -593,16 +595,16 @@
     "DialogueData.1304": "Buffin, wait! Why is she always so feisty",
     "DialogueData.1306": "Sir they're fielding... animals",
     "DialogueData.1307": "Unexpected, but we're still better prepared",
-    "DialogueData.1308": "My pride has not recovered from my humiliation", // at your mutiny",
+    //"DialogueData.1308": "My pride has not recovered from my humiliation", // at your mutiny",
     "DialogueData.1310": "Fear not Buffy, I will protect thee",
     "DialogueData.1311": "They aren't in the mood for tricks, Jester", //"I don't think they are in the mood for tricks, Jester",
-    "DialogueData.1312": "I do not resent my situation though",
+    //"DialogueData.1312": "I do not resent my situation though",
     "DialogueData.1314": "Shadows take thee, twinkle fingers",
-    "DialogueData.1315": "By decree of the Kings and the Lady Beyond",
+    "DialogueData.1315": "By decree of the sleeping kings",
     "DialogueData.1316": "The sacred spaces shall not bear those of ill intent",
-    "DialogueData.1318": "Sergeant, command your brutes to suppress the golem",
+    "DialogueData.1318": "Sergeant, suppress the golem",
     "DialogueData.1319": "I will engage the Druid",
-    "DialogueData.1320": "I have found a better way, a more just cause",
+    //"DialogueData.1320": "I have found a better way, a more just cause",
     "DialogueData.1322": "Grrrr....Bark bark!",
     "DialogueData.1323": "Purrrrrr... (hack) I mean, WOOF!",
     "DialogueData.1324": "Stay back beasts!",
@@ -614,14 +616,14 @@
     "DialogueData.1332": "You're still concerned with compensation?",
     "DialogueData.1333": "We put our trust in coin... and dragon magic",
     "DialogueData.1334": "This is it for me. Too many set backs", //" Too many wounded.",
-    "DialogueData.1335": "Yea I'm done with Bear",
+    "DialogueData.1335": "I'm done following Shadowtin",
     "DialogueData.1336": "You're a great scholar, sir, but...",
     "DialogueData.1337": "We need a better point man",
     "DialogueData.1338": "This is the will of the Deep One",
     "DialogueData.1339": "You're making a mistake!",
     "DialogueData.1340": "Pfft. We cannot defy Lord Deep",
     "DialogueData.1341": "See ya Bear",
-    "DialogueData.1343": "I feel bad for Burgundy Bear. He's professional",
+    "DialogueData.1343": "I feel bad for Burgundy Bear.", //He's Professional
     "DialogueData.1344": "His humiliation is almost complete.", //Now for the coup de grace",
     "DialogueData.343.8": "Now for the coup de grace",
     "DialogueData.1345": "Archdruid, you may determine his fate", //"Well Successor... you may determine the vanquished's fate",
@@ -730,6 +732,7 @@
     "DialogueData.1475": "Haha. Deep was right about you Shadowtin",
     "DialogueData.1476": "You're just a tool, and you've lost your edge",
     "DialogueData.1477": "(PsSht) I didn't expect you to help... thank you",
+    "DialogueData.363.1": "(PsSht) Your sergeant wanted you to have this",
     "DialogueData.1478": "(PsSht) Farewell friend",
 
     // Ether challenge - Gate
@@ -760,6 +763,9 @@
     "DialogueData.1526": "Chase the thief to recover the treasure!",
     "DialogueData.1527": "A way down has appeared",
 
+    // Ether treasure hunt
+    "DialogueData.366.1": "Defeat the guardian to recover the bounty!",
+    "DialogueData.366.2": "A way down has appeared",
 
     // ===========================================================================
     // EVENT DIALOGUE (BOXED)
@@ -1035,16 +1041,6 @@
     "DialogueData.315.14": "If that leader is you, you have my gratitude, and my allegiance too. ",
     "DialogueData.315.15": "(Blackfeather looks around) I should probably try to remember what I was doing before I was consumed by that spirit-eating monstrosity. ",
     "DialogueData.315.16": "Please visit me here again soon. I think we have much to discuss. ",
-
-    // Blackfeather, Rite of Bones, event
-    "DialogueData.324.1": "Blackfeather",
-    "DialogueData.324.2": "Mother of Crows",
-    "DialogueData.324.3": "Lady of Mists",
-    "DialogueData.324.4": "Knight Wyrven",
-    "DialogueData.324.5": "First Farmer",
-    "DialogueData.324.6": "Masayoshi, The Justiciar",
-    "DialogueData.324.7": "Thanatoshi, The Reaper",
-    "DialogueData.324.8": "Seafarer Captain",
 
     // Transcript
     "DialogueData.324.9": "This was once a nursery of trees and spirits",
@@ -1348,32 +1344,6 @@
     "DialogueData.339.1.177": "not to personal glory, and we often toil in secrecy and without recognition. ",
     "DialogueData.339.1.178": "(Buffin scrunches her face). Ok ok. I'll stay with you, farmer, and make your lives a little less mundane. Maybe I'll get the chance to make my ancestor proud. ",
 
-    "DialogueData.339.1.185": "Buffin",
-    "DialogueData.339.1.186": "Argyle",
-    "DialogueData.339.1.187": "Jester",
-    "DialogueData.339.1.188": "Macarbi",
-    "DialogueData.339.1.189": "Blackfeather",
-    "DialogueData.339.1.190": "The Effigy",
-    "DialogueData.339.1.191": "Shadowtin Bear",
-    "DialogueData.339.1.192": "Carnivellion",
-    "DialogueData.339.1.193": "Wild Successor",
-    "DialogueData.339.1.194": "Linus",
-
-    // Revenant Companion Quest
-
-    "DialogueData.342.1.46": "Shadowtin",
-    "DialogueData.342.1.47": "Jester",
-    "DialogueData.342.1.48": "Shadow Sergeant",
-    "DialogueData.342.1.49": "The Revenant",
-    "DialogueData.342.1.50": "Mage Doja",
-    "DialogueData.342.1.51": "Shadow Bandit",
-    "DialogueData.342.1.52": "Shadow Goblin",
-    "DialogueData.342.1.53": "Marlon",
-    "DialogueData.342.1.54": "Macarbi",
-    "DialogueData.342.1.55": "Shrine Attendant",
-    "DialogueData.342.1.56": "Vessel Of Tyrannus",
-    "DialogueData.342.1.57": "Thanatoshi",
-
     "DialogueData.342.1.60": "Please excuse my tardiness",
     "DialogueData.342.1.61": "The cat insisted on accompanying us",
     "DialogueData.342.1.62": "Here I am, your qualified envoy",
@@ -1545,20 +1515,6 @@
     "DialogueData.345.1": "Do not fret",
     "DialogueData.345.2": "He is gone, but his memory endures",
 
-    "DialogueData.343.1.69": "Effigy",
-    "DialogueData.343.1.70": "Blackfeather",
-    "DialogueData.343.1.71": "Friendly Mage",
-    "DialogueData.343.1.72": "Linus",
-    "DialogueData.343.1.73": "Jester",
-    "DialogueData.343.1.74": "Buffin",
-    "DialogueData.343.1.75": "Shadowtin",
-    "DialogueData.343.1.76": "Sighs of the Earth",
-    "DialogueData.343.1.77": "Rustling of the Woodland",
-    "DialogueData.343.1.78": "Whispers of the Wind",
-    "DialogueData.343.1.79": "Vessel of Rage",
-    "DialogueData.346.1": "Aldebaran",
-
-
     "ConversationData.342.1.164": "Shadowtin Bear: Doja's position is clear. He has decided to oppose us. He must be eliminated.",
     "ConversationData.342.1.167": "We can't just eliminate a Successor. You're familiar with the tactics and objectives of our opposition, Shadowtin. Is there a way to end this peacefully?",
     "ConversationData.342.1.168": "Honestly, it's been a long time since I saw your troupe here, Shadowtin. Was Doja the one with white pants or black?",
@@ -1647,6 +1603,118 @@
     "DialogueData.351.12": "Medium",
     "DialogueData.351.13": "Large",
     "DialogueData.351.14": "Legendary",
+
+    "EventHandle.352.1": "Remaining Threats",
+
+    "DialogueData.361.1": "No Rite Available",
+    "DialogueData.361.2": "Bomb Alchemy",
+    "DialogueData.361.3": "Powderbox",
+    "DialogueData.361.4": "Open Powderbox",
+    "DialogueData.361.5": "Clear Current Buffs",
+    "DialogueData.361.6": "Open Ledger",
+    "DialogueData.361.7": "Ledger",
+    "DialogueData.361.8": "Clear Slot",
+
+
+
+    "ConversationData.361.6": "Aldebaran: There's something strange about the enchantment on this gate. Though Merra was a powerful enchantress, I can not sense her powers at work here.",
+    "ConversationData.361.9": "The seal doesn't respond to the presence of the Crowmother's familiars either. What are we missing?",
+    "ConversationData.361.10": "Perhaps a message of familial intent would suffice. What's the celestial word for 'Yo Merra it's ya bro'?",
+    "ConversationData.361.14": "This is the realm of the Elderfolk. I suppose only the Two Kings, or someone invested with their power, has authority over this gate.",
+    "ConversationData.361.20": "Aldebaran: So they sold me to Chaos... and bought themselves a little time. Now that time is up.",
+    "ConversationData.361.23": "The Brothers, Masayoshi and Thanatoshi, wanted to bring you to justice. The crowmother prevented that by arranging the deal with Chaos. It's up to you to prove her right.",
+    "ConversationData.361.24": "The Lady looked real mad. The Prince must have done you all dirty.",
+    "ConversationData.361.28": "It hurts, a little. To be regarded as such a monster by the servants of Yoba, and my own sister, that they condemned me to centuries of purgatory. ",
+    "ConversationData.361.29": "I can't say for sure that anyone involved wasn't acting in their own twisted self interest, conspiring against me with that foolish Prince. ",
+    "ConversationData.361.30": "Neverless, I will take up the cause of the heiress, and we shall see in the end who can stand tall before Yoba and give a true account of themselves.",
+    "ConversationData.361.41": "Aldebaran: This is a special place. My warriors stacked these stones, and made that cairn. I watched, and failed to understand.",
+    "ConversationData.361.44": "Nothing of our lives is permanent. Friends, places, special moments. We experience them for what can seem like a moment when they are gone. That is why we commemorate them.",
+    "ConversationData.361.45": "Stacking rocks is fun. The wonkier the stack the better.",
+    "ConversationData.361.49": "(Aldebaran surveys the cairn) It's not too late for me to add to the pile. ",
+    "ConversationData.361.55": "Aldebaran: Those were the golden bones, the remains of my honour guards. They were at my side when the Prince's mages ambushed me. They were swept up in the rite of binding.",
+    "ConversationData.361.58": "You've done well to honour them. I'm sure they're still with you in spirit.",
+    "ConversationData.361.59": "How long were you carrying that massive pot of gold around?",
+    "ConversationData.361.63": "When I joined the war effort, I gave the Two Kings clear terms, that I would defend their kingdom for the safe return of my sister Merra. I ran an offensive campaign, and the war ended after we invaded Calicopoli. ",
+    "ConversationData.361.64": "Not only did I bring the Tyrant King low before the walls of his city, I razed it to cinders, made his subjects into ashes, and his kingdom into an arid waste. ",
+    "ConversationData.361.65": "I torched the world with such malice, that the light of my rage blinded me to the contempt of my allies and the schemes of those who sought to humble me. ",
+    "ConversationData.361.66": "When the Kings fell to battle-sickness, the Prince assumed their command, but he didn't honour the pact made by his betters. His followers stole forbidden knowledge from the ancient ones and wielded it against me. They used old magic... ",
+    "ConversationData.361.67": "...of Chaos and the Void. (Aldebaran's eyes narrow) And it lingers here...",
+    "ConversationData.361.73": "Aldebaran: That was... unexpected. My former guards continue to help me... even after all the horrors I led them through.",
+    "ConversationData.361.76": "They were your brothers in arms. Perhaps it took a hundred lifetimes as an Effigy, learning ones place and purpose in this world, to realise you were always a part of it.",
+    "ConversationData.361.80": "Yes. My time on this plane is a gift, and I am grateful for a new chance. I suspect that further challenges await us on the path ahead, but the Prince will not find me so unprepared. I am not the reckless, ignorant Bull of the Heavens anymore. ",
+
+    "DialogueData.362.4": "This gate used to be beautiful",
+    "DialogueData.362.5": "It had a warmth that would draw you through it",
+    "DialogueData.362.6": "The gilded leaves and coloured roses are gone",
+    "DialogueData.362.7": "Replaced with omens of magic and ruin",
+
+    "DialogueData.362.8": "Ahh... something stirs",
+    "DialogueData.362.9": "Heiress",
+    "DialogueData.362.10": "Thank you for coming",
+    "DialogueData.362.11": "I am the Mother of Crows, Artisan of Fate",
+    "DialogueData.362.12": "Salut, Crowmother",
+    "DialogueData.362.13": "Has Yoba heard my case?",
+    "DialogueData.362.14": "Will the Fae Court favour me",
+    "DialogueData.362.15": "The High Priest condemns the celestials",
+    "DialogueData.362.16": "but the Prince has bargained with Chaos",
+    "DialogueData.362.17": "So I have brokered a peace",
+    "DialogueData.362.18": "in return for the heart of a star",
+    "DialogueData.362.19": "Oh, he will pay for his treachery",
+    "DialogueData.362.20": "My retribution will be swift and terrible",
+    "DialogueData.362.21": "Nay, delay, for his power eclipses yours",
+    "DialogueData.362.22": "and what about your duties?",
+    "DialogueData.362.23": "who will attend to the needs of your kin",
+    "DialogueData.362.24": "What about my needs, my justice?",
+    "DialogueData.362.25": "In time, others will take up your cause",
+    "DialogueData.362.26": "The general will guide them, and redeem himself",
+    "DialogueData.362.27": "(sigh) I... I want to believe you",
+    "DialogueData.362.28": "I will remain with you",
+    "DialogueData.362.29": "But only you can seal this gate.",
+    "DialogueData.362.30": "...very well ",
+    "DialogueData.362.31": "Promise me he will come back",
+    "DialogueData.362.32": "He will, heiress",
+
+    "DialogueData.362.33": "Hear me, heiress",
+    "DialogueData.362.34": "I, Aldebaran, stand before the gate",
+    "DialogueData.362.35": "ready to fulfil the promise",
+
+    "DialogueData.362.41": "So it still stands",
+    "DialogueData.362.42": "The Castle of Two Kings",
+    "DialogueData.362.43": "Seated above their secret domain",
+    "DialogueData.362.44": "The Undervalley",
+
+    "DialogueData.362.45": "To the tranquil halls of the dead",
+    "DialogueData.362.46": "I commend the souls of the brave",
+    "DialogueData.362.47": "...",
+    "DialogueData.362.48": "Well... that's done",
+    "DialogueData.362.49": "(sigh)",
+
+    "DialogueData.362.50": "heh heh heh",
+    "DialogueData.362.51": "You are not welcome here, fallen one",
+    "DialogueData.362.52": "(disgust) Cult Witch",
+    "DialogueData.362.53": "Save your wicked words for the Fates",
+    "DialogueData.362.54": "Your destruction nears",
+    "DialogueData.362.55": "Nay, you, terrible one...",
+    "DialogueData.362.56": "were unwise to return",
+    "DialogueData.362.57": "...your bones sing to us...",
+    "DialogueData.362.58": "We claimed them once",
+    "DialogueData.362.59": "and we will do so again",
+    "DialogueData.362.60": "Invader",
+    "DialogueData.362.61": "DESTROYER",
+    "DialogueData.362.62": "Manslayer",
+    "DialogueData.362.63": "...sieze their bones...",
+    "DialogueData.362.64": "Knights!",
+    "DialogueData.362.65": "Rally to our General",
+    "DialogueData.362.66": "My soldiers?",
+    "DialogueData.362.67": "Strike to kill!",
+    "DialogueData.362.68": "No... NO!",
+    "DialogueData.362.69": "Victory",
+
+    "DialogueData.362.70": "Thank you, brothers",
+    "DialogueData.362.71": "I will honour our bond",
+    "DialogueData.362.72": "and the promise of reckoning",
+
+
 
     // ===========================================================================
     // NPC DIALOGUE
@@ -1849,7 +1917,7 @@
     "CharacterHandle.329.19": "(restoration) The Circle of Druids was tasked with custodianship of the Old Graves. What work needs to be done?",
     "CharacterHandle.329.20": "(restoration) The grounds have begun to reflect the majesty of the elderfolk.",
     "CharacterHandle.329.21": "Keeper of Memories: Grime and rough stone have settled on the hallowed graves of the Elders. Clear them away, and you will have begun the good work of the caretakers of the Weald.",
-    "CharacterHandle.329.22": "Keeper of Memories: Wealdbroom is a perennial flower favoured by the folk of the past. The calming scent of wealdbroom blooms and waxed candles will complete the restoration of the Elder Graves.",
+    "CharacterHandle.329.22": "Keeper of Memories: Wealdbloom is a perennial flower favoured by the folk of the past. The calming scent of wealdbloom blooms and waxed candles will complete the restoration of the Elder Graves.",
     "CharacterHandle.329.23": "Keeper of Memories: Thank you for honouring the wishes of the gentlefolk who first put their heroes to rest on these hallowed grounds. ",
     "CharacterHandle.329.24": "Take a coin from the offering. Such tokens were left by pilgrims in gratitude for the good work of the first caretakers.",
 
@@ -2074,6 +2142,36 @@
     "DialogueOffering.347.5": "Despite your best efforts, the strange details of the specification you chose has defeated you.",
 
     "DialogueAdventure.348.1": "The Sacred Spring",
+
+    "DialogueIntroduction.352.1": "The way back to the crow gate",
+    "DialogueAdventure.352.1": "(exit) Time to leave this place ",
+    "DialogueAdventure.352.2": "Leaving will reset your progression in this current location",
+    "DialogueAdventure.352.3": "Let's go",
+
+    "DialogueIntroduction.361.1": "{{villager}}: Yes, {{name}}?",
+
+    "DialogueLore.361.1": "Let's talk",
+
+    "DialogueAdventure.361.1": "It's time to part ways. Thank you for your help!",
+    "DialogueAdventure.361.2": "I enjoyed myself. Until next time, {{name}}",
+
+    "CharacterHandle.361.1": "{{name}} has been added to the Ledger of Recruits.",
+    "CharacterHandle.361.2": "Unable to find a space for {{name}} in the ledger.",
+    "CharacterHandle.361.3": "{{name}} joins you in your adventures.",
+    "CharacterHandle.361.4": "{{name}} is busy right now.",
+
+    "DialogueAdventure.363.1": "The Castle Overlook",
+
+    "DialogueOffering.363.1": "(warp) I would like to travel further afield",
+    "DialogueOffering.363.2": "Sighs of the Earth: The domain of the Two Kings once reached far beyond borders of this valley",
+
+    // recruit returned home
+    "CharacterHandle.363.1": "{{name}} is not yet ready to join you",
+    "CharacterHandle.363.2": "{{name}} has finished for the day",
+    "CharacterHandle.363.3": "{{name}}, Successor of Elements",
+    "CharacterHandle.363.4": "{{name}}, Successor of Wilds",
+    "CharacterHandle.363.5": "{{name}}, Frost Witch",
+    "CharacterHandle.363.6": "{{name}}, Hammer Lord",
 
     // ===========================================================================
     // VILLAGER REACTIONS
@@ -2595,7 +2693,7 @@
     "RelicData.521": "The completed construction is to be submitted to an ancient one for appraisal as a suitable house of the soulcore. ",
     "RelicData.522": "(The First of the Benevolent might be amenable to providing this service for you in light of their penance). ",
     "RelicData.524": "Third Passage, Step 5",
-    "RelicData.525": "If the rite is successful, the shell will begin to recomposite and reshape itself from the influence of the soulcore, forming natural defences against blights and decay. ",
+    "RelicData.525": "If the rite is successful, the shell will begin to recompose itself from the influence of the soulcore, forming natural defences against blights and decay. ",
     "RelicData.526": "A suitable dwelling and appropriate fashions will need to be provided for whatever form results from the recomposition process.",
     "RelicData.528": "Fourth Passage, Step 1",
     "RelicData.529": "From the human candidates, two must be selected for their dichotomy of spirit, one to the hope for prosperity, ",
@@ -2627,7 +2725,7 @@
     "RelicData.591": "Cutter's Box",
     "RelicData.594": "An empty box, left amongst the monuments of the disused low court of the Fates, a sign the Morticians were in attendance.",
     "RelicData.595": "Buffin suggests holding a prehistoric fossil or bone in the presence of the owl monument.",
-    "RelicData.598": "Masayoshi, Justiciar of the Fates, exchanged boxes with his brother Thanatoshi before the latter left on the trial of the fugitive Celestial.",
+    "RelicData.598": "Masayoshi, Justiciar of the Fates, exchanged boxes with his brother Thanatoshi before the latter left on the trail of the fugitive Celestial.",
     "RelicData.600": "You received the Cutter's Box! This might have belonged to a member of the Fae Court. Buffin should know more about it.",
 
     "RelicData.605": "Spinner's Box",
@@ -2775,6 +2873,15 @@
     "RelicData.351.4": "You've recieved the Runestone of the Arcane Moon! This relic provides warp access to Mage's Rest. View more details in the runestones section of the relics menu.",
     "RelicData.351.5": "Could there be more runestones of the old circle scattered around the valley?",
 
+    "RelicData.361.1": "Gift of the Heiress",
+    "RelicData.361.2": "A shortsword invested with the power of the Heir to the Isle of Mists. ",
+    "RelicData.361.3": "Used by the Lady Beyond the Shore to seal the Gate of Crows.",
+    "RelicData.361.4": "You've recieved the Gift of the Heiress! This relic provides the ability to recruit friendly villagers to become Members of the Circle. View more details in the Ledger in the Druid menu.",
+    "RelicData.361.5": "Click to open the Ledger of the Circle",
+
+    "RelicData.361.6": "Achievements",
+    "RelicData.361.7": "Badges of Honour",
+
     // ===========================================================================
     // QUEST DATA
     // ===========================================================================
@@ -2824,24 +2931,25 @@
     "QuestData.246": "Those creatures that are caught in the midst of your work should be delighted by the gentle caress of power. ",
     "QuestData.247": "(New lesson received)",
 
-    "QuestData.269": "Lesson Three: Wild Growth",
+    "QuestData.269": "Lesson Four: Wild Growth",
     "QuestData.271": "Years of stagnation have starved the valley of its wilderness. I now have the means and power to recolour the barren spaces with new plant-life.",
     "QuestData.273": "Perform Rite of the Weald: Wild Growth five times on open outdoor maps (excluding the farm) or within mineshafts to spawn a variety of different forageables and features. ",
-    "QuestData.275": "Channelling the Weald requires you to stand still, then cast, and hold for 1-2 seconds until you see the channeling indicator appear and fully expand. ",
+    "QuestData.275": "Channelling the Weald requires you to stand still, then cast, and hold for 1-2 seconds until you see the channeling indicator appear and fully expand.",
     "QuestData.277": "Mastery unlocks garden flower spawns.",
     "QuestData.279": "wild growth rites completed",
-    "QuestData.291": "This is your task today. Perform the rite as you have been taught, only this time, stand still, and concentrate your energies, ",
+    "QuestData.291": "This is your task today. As before, you must remain still, and concentrate your power, ",
     "QuestData.292": "so you may convince the wild to sprout new shoots and buds. Now go, fill the barren spaces with life. ",
     "QuestData.293": "(New lesson received. Note: does not work on farm maps)",
 
-    "QuestData.315": "Lesson Four: Cultivation",
+    "QuestData.315": "Lesson Three: Cultivation",
     "QuestData.317": "My connection to the otherworld deepens. I may channel the power of the Two Kings to enhance the quality and growth of my crops.",
-    "QuestData.319": "While on the farm, hold the rite button for 2-3 seconds while standing still to channel this effect. Complete 2 times. ",
-    "QuestData.320": "Converts planted seasonal wild seeds into domestic crops. Updates growth cycle of all planted seeds. Unlocks quality conversions.",
+    "QuestData.319": "Perform Rite of the Weald: Cultivate two times while on the farm map. Mastery unlocks quality conversions.",
+    "QuestData.320": "Channelling the Weald requires you to stand still, then cast, and hold for 1-2 seconds until you see the channeling indicator appear and fully expand.",
+    "QuestData.367.1": "Cultivate converts planted seasonal wild seeds into domestic crops and updates the growth cycle of all planted seeds. ",
     "QuestData.322": "cultivation rites completed",
     "QuestData.334": "For those who plan for a life of toil in the fields and meadows, they should know that farmer and druid share many of the same ideals. ",
     "QuestData.335": "You'll need to remain still to channel the energies required to bring the seeds to sprout. May the blessings of the two kings assist you in your farmwork. ",
-    "QuestData.336": "(New lesson received. Note: only works on farm maps)",
+    "QuestData.336": "(New lesson received. Note: consult the grimoire to learn more about channelled effects. This effect only works on farm maps)",
 
     "QuestData.358": "Lesson Five: Rockfall",
     "QuestData.360": "The power of the two Kings resonates through the deep earth, and in the mines, the earth responds in kind.",
@@ -2875,7 +2983,9 @@
     "QuestData.501": "I have gathered all the runestones crafted by the founding members of the circle of druids. ",
     "QuestData.502": "Ironically, during the course of the recovery of the runestones, I gained enough experience to master the powers my forebearers sought to acquire, and so the runestones themselves offer little use to me now. ",
     "QuestData.503": "Perhaps they might attain some status, and inspire some new art, if I put them on display in the craftsroom of the local community center.",
-    "QuestData.505": "This is an optional quest. Perform a Rite of the Weald in the craftroom in the community center to repair it.",
+    "QuestData.505": "This is an optional quest. Perform a Rite of the Weald in the craftroom in the community center to repair it. ",
+    "QuestData.368.1": "The plaque with bundle instructions for this part of the community center must be unlocked.",
+    "QuestData.368.2": "Bundle rewards can be redeemed from a bag that appears next to the forest spirit's hut.",
     "QuestData.507": "I placed the runestones in organised positions around the craftsroom, and incidentally created a happy zone of harmonised energies. ",
     "QuestData.508": "Then the forest spirits took the runestones off the wall and decorated the craftroom with pictures of happy apples.",
 
@@ -3080,7 +3190,7 @@
     "QuestData.1470": "Apparently that place has been mined down to the bare bones of the mountain, when the valleyfolk had a keen eye for star-touched ores. ",
     "QuestData.1471": "Anyhow, remember to speak well of me when you do find the representative of our Lady of Fortune. ",
     "QuestData.1472": "(New Quest Received)",
-    "QuestData.1479": "I witnessed the predatory motions of a Molossus Gigantus in the farmcave earlier today. Then I realised it was a messenger, for you. It is time to brave the hallowed mountain passages to the Star Chapel again, as the Revenant wishes to discuss a matter of importance.",
+    "QuestData.1479": "I witnessed the predatory motions of a Molossus Gigantus in the farmcave earlier today. Then I realised it was a messenger, for you. It is time to brave the hallowed mountain passages to the Star Chapel again, as the Revenant wishes to discuss a matter of importance. (The Revenant has a new quest)",
     "QuestData.1489": "Now that I've heard from you what this Jester chap is like, the description given to me by the wing mother makes a lot more sense. ",
     "QuestData.1490": "The way she said it you would think a ferocious tiger was teleporting around, sniffing at every nook a bat might seek shelter in, whining like a kitten whenever such a bat soiled itself and flew away.",
     "QuestData.1495": "The Fae Court sent a mere low-ranking courtier to entreat with you, and not even of their nobility, but one of their anthropomorphic entertainers. It seems almost farcical. I'm unsure what to make of this occurrence.",
@@ -3131,8 +3241,8 @@
     "QuestData.1740": "Once the monster was dealt with, Buffin and Jester argued over whether he should return to his prior position at the court of the Fates, and the drama escalated to the point of arson. ",
     "QuestData.1741": "Jester has the conviction to prove himself, and after finding strength in the bonds formed between us members of the circle of druids, and that's enough for him to continue.",
     "QuestData.1753": "You know what Farmer, I think it's best to practice your tricks on live subjects, and the town is a lively place! Lets go get up to some mischief and forget about our troubles for a while.",
-    "QuestData.1763": "Did we even get to trick anyone? I guess I wasn't really in the mood for pranks.",
-    "QuestData.1768": "I'll always remember the joy of seeing an ancient reptile smash through that funnily dressed man's palace of books.",
+    "QuestData.1763": "Did we even get to trick anyone? I guess I wasn't really in the mood for pranks. The coolest part of tonight was that swirling vortex of death you summoned. That was you, right? (Consult the grimoire to view new channel effect for Rite of the Fates)",
+    "QuestData.1768": "I'll always remember the joy of seeing an ancient reptile smash through that funnily dressed man's palace of books. What a glorious battle. I almost let myself get swept up in the Winds of Fate. (Consult the grimoire to view new channel effect for Rite of the Fates)",
 
     "QuestData.1791": "Lesson Fifteen: Enchant",
     "QuestData.1793": "Even a machine can answer to a higher purpose.",
@@ -3279,7 +3389,7 @@
     "QuestData.2399": "The temple was dedicated to the fates to perform various rituals, though the nature or techniques of those rites remains a mystery to the Effigy and myself.", //"the venerable Artisan of the Fates, the first patron of the Circle.",
     "QuestData.2401": "Cast any rite at the questmarker in the Ruined Temple, accessible from the path in the northern part of the Druid's Grove.",
     "QuestData.2404": "I placed the soul vessels within the temple brazier, and entreated the heirs of the Crowmother for their blessings, but it was not a Fate that answered, but the fiendish Dustking and his frienzied mob of dust and char. ",
-    "QuestData.315.1": "I would have been overcome if not for my draconic power. Whilst ahe ashen remains of the fiend blew away, the anchors remained intact. When I went to retrieve them, the corporealised form of a Dryad appeared before me. ",
+    "QuestData.315.1": "I would have been overcome if not for my draconic power. Whilst the ashen remains of the fiend blew away, the anchors remained intact. When I went to retrieve them, the corporealised form of a Dryad appeared before me. ",
     "QuestData.315.2": "She introduced herself as Blackfeather, acolyte to the Mother of Crows, and first Gardener of the Circle. She had been imprisoned in one of the soul vessels all this time.",
     "QuestData.2409": "Rare Seed x2",
     "QuestData.2418": "Archdruid. You've done well to gather so many texts and relics from the Circle's past. ",
@@ -3320,7 +3430,7 @@
     "QuestData.315.6": "Cannoli and Gelatin, before she could see the realisation of the crowmother's plan. ",
     "QuestData.315.7": "I have been asked by Blackfeather to investigate the forgotten orchard for clues as to what transpired after she was banished by the traitor's forbidden magic. ",
     // Instruction 
-    "QuestData.315.8": "Use the gardener's glove to access the forgotten orchard, and cast a rite at the quest marker.",
+    "QuestData.315.8": "With 5-6 hours to spare, use the gardener's glove to access the forgotten orchard, and cast a rite at the quest marker.",
     // Explanation
     "QuestData.315.9": "I met Blackfeather at the forgotten orchard, once a nursery that hosted forest spirits. It wasn't long before we were joined by the Wisps of the Mists. A spectral scene from the past played out before my eyes, and I saw glimpses of Crowmother's grief at the discovery of the nursery's destruction and the undoing of her plans for the Weald.",
     "QuestData.315.10": "Inside the warp shrine engine room, another scene showed Crowmother devise a new plan in concert with a powerful ally, the elderfolk princess who would become the Voice Beyond the Shore. ",
@@ -3338,7 +3448,7 @@
     // Bones Lesson One
     "QuestData.324.1": "Lesson 20: Familiars",
     "QuestData.324.2": "Spirits of the otherworld became familiars to those mortals they discern to possess special gifts.",
-    "QuestData.324.3": "Channel Rite of Bones to summon four corvid familiars. The familiars can be directed by casting rite of bones using the cursor. ",
+    "QuestData.324.3": "Channel Rite of Bones (stand still, and hold the rite button for 3-4 seconds) to summon four corvid familiars. The familiars can then be directed by casting rite of bones using the cursor. ",
     "QuestData.324.4": "Send the familiars into attack mode against enemies twenty times. Mastery unlocks higher frequency of attacks and tasks.",
     "QuestData.324.5": "enemies pecked",
     "QuestData.324.6": "Thank you for confronting the past with me. The promises made by my mother of crows feel like a heavy burden on my shoulders. The rite of bones will require a lot of effort, from all of us. ",
@@ -3433,7 +3543,7 @@
     "QuestData.343.1.7": "She then revealed that one of the pieces of the golden bones, long protected by the Revenant at the Chapel of the Stars, was absent from the set. ",
     "QuestData.343.1.8": "The Effigy interrupted us to announce that the missing piece is in his possession, and bid me to assist him with it's retrieval. ",
     "QuestData.343.1.9": "We spent time in the grove reminiscing about the journey of the Circle from it's dormancy to revitalisation, and when we returned to the temple, Blackfeather had finished preparations for the rite. ",
-    "QuestData.343.1.10": "When she requested the missing piece from the Effigy, he placed himself within the temple brazier. Blackfeather was hesitant to continue, but the EFfigy was resolute in his decision. ",
+    "QuestData.343.1.10": "When she requested the missing piece from the Effigy, he placed himself within the temple brazier. Blackfeather was hesitant to continue, but the Effigy was resolute in his decision. ",
     "QuestData.343.1.11": "Our golem friend burst into flames, and a host of fiery fiends spewed forth, followed by a monstrous manifestation of the rage the golem had suppressed for centuries. ",
     "QuestData.343.1.12": "The power of the Mists was enough to dispell the rage and reveal a golden touched soul anchor. Blackfeather realised that the Successor of the First Farmer also needed to play a role, and when I summoned the familiars, they offered me the crowhammer. ",
     "QuestData.343.1.13": "The tool, once used to make the Effigy, was then used to destroy the anchor. A radiant figure jumped from the dias. He introduced himself as Aldebaran, the fallen star, General of the Order of the Guardians, and Bull of the Heavens.",
@@ -3443,10 +3553,29 @@
     "QuestData.343.1.35": "The Bull of the Heavens was severe in his campaigns against those that threatened his sister celestial. He devastated this world. ",
     "QuestData.343.1.36": "I imagine that his incarnation as a wooden Effigy was intended to foster conscientiousness.",
 
+    // Sword of the Heiress
+
+    "QuestData.361.1": "The Crow Gate",
+    "QuestData.361.2": "Aldebaran has returned to the material plane. It is time to embark beyond the Gate of Crows and fulfill the destiny of the Circle of Druids.",
+    "QuestData.361.3": "Cast the Rite of Bones at the questmarker before the Crow Gate.",
+    "QuestData.361.4": "Aldebaran's' presence triggered something within the elderfolk enchantment that had sealed the Gate of Crows. The Wisps enacted another memory of the Lady Beyond the Shore, when she was the heiress of the Isle of Mists, and had a vendetta against her former betrothed. ",
+    "QuestData.361.5": "It was the Mother of Crows who convinced the Lady to delay her retribution until Aldebaran's return from the realms of chaos, and so the Lady sealed the gate with the heiress' gift. Now it is open.",
+    "QuestData.361.6": "I'm ready to test the enchantment on that gate. (New quest received)",
+    //I came to your world with a single purpose, to retrieve my sister. I never expected to be waylaid by so many diversions. I fought dragons and rode giant foxes across the silver bridges of the Great Stream. I lived as a scarecrow. It will be a relief to finally get the job done.
+
+    // Challenge Moors
+    "QuestData.361.7": "The Moors",
+    "QuestData.361.8": "The path beyond the gate traverses through the forlorn moors, once an ancient battlefield, where the elderfolk resisted the legions of the Dragons. It was on the moors that Aldebaran was betrayed.",
+    "QuestData.361.9": "Travel through the Moors to the overlook and cast the Rite of Bones at the questmarker.",
+    "QuestData.361.10": "A dreariness lingers over the moors, where the wildlife has grown ghastly and feral. We found the overlook once used by the commanders of the Two Kings armies, and Aldebaran explained how he was ambushed by the Prince's cultists, who bound him and delivered him unto Chaos. ",
+    "QuestData.361.11": "By a wicked ritual, his soul and those of his loyal guards were bound to the golden bones, which Aldebaran gently laid in a cairn for the fallen. Drawn by the celestial's presence, the spectres of cultists, led by a deranged witch, attempted to reclaim Aldebaran's soul. ",
+    "QuestData.361.12": "By virtue of his new found honour, the spirits of Aldebaran's former honour guard were briefly roused to fight with us, and the cultists were vanquished. Next we will venture further afield, to the Undervalley, and the Castle of the Two Kings.",
+    "QuestData.361.13": "Be warned, successor, we travel into lands controlled by the fallen Prince of the Isles. It used to be a land blessed by the Two Kings, but they were overwhelmed with the weariness of their fight against the dragons, and when they failed to wake, the Prince took over. (New quest received)",
 
     // ===========================================================================
     // NPC LORE DIALOGUE
     // ===========================================================================
+
 
     // NPC lore options
     "LoreData.10": "(lore) Tell me more about the Circle of Druids.",
@@ -3864,6 +3993,7 @@
     "LoreData.343.10": "This golden core was used to animate an Effigy crafted by the First Farmer of the circle of Druids, and through this limited vessel Aldebaran experienced the changes of seasons and the beauty of the natural world, until he was released by the Rite of Bones.",
     "LoreData.343.11": "Aldebaran can be found at the Gate of Crows north of the Druid's Grove.",
     "LoreData.343.12": "Aldebaran can be invited to adventure with the player, and possesses many of the abilities of the Effigy, in addition to boosted attack power.",
+    "LoreData.356.1": "Aldebaran is fond of scarecrows, as the Effigy was, and for every scarecrow he passes by he has a 1/4 chance to decide to cast his own version of Enchant to update growth phase and regenerate any crops surrounding that scarecrow. Giant Crop logic also applies.",
 
     // later bones quest lore
     "LoreData.343.1.11": "Were you aware that Linus was the Successor of the Wilds?",
@@ -3908,9 +4038,9 @@
     "LoreData.343.1.103": "Two unhappy childhoods? (Aldebaran laughs) Perhaps they weren't so bad.",
 
     "LoreData.343.1.112": "You mentioned betrayal",
-    "LoreData.343.1.113": "Yes, a moment of shock and humiliation at the very same Gate of Crows. I was brought low before the doors, and before I collapsed, my last glimpses of light were of Merra's radiant face as she turned from me towards the land beyond. ",
+    "LoreData.343.1.113": "Yes, a moment of shock and humiliation in the lands beyond the Gate of Crows. I was brought low amongst the captains of my legion, and before I collapsed, my last glimpses of light were of Merra's radiant face as she turned from me. ",
     "LoreData.343.1.114": "I suppose I was banished to limbo shortly afterwards, as I awoke as a golem, oblivious, but as angry as I ever was. I tormented the Lady of the Isles and my friend the First Farmer with my outbursts. She practiced the ways of the Mists to better pacify me. ",
-    "LoreData.343.1.115": "(Aldebaran smiles) I think she referred to me as an irascible infant.",
+    "LoreData.343.1.115": "(Aldebaran smiles) I think she referred to my outbursts as tantrums.",
 
     "LoreData.343.1.124": "You've found the fallen star, the one the Reaper hunted",
     "LoreData.343.1.125": "Yea. We did it. Ok, hear me out. Would it be right to try to drag our new friend before the Fae court, even if we could overpower him, for crimes that happened AGES ago, when there's another celestial out there who could speak in his defense? ",
@@ -4031,6 +4161,53 @@
     "HerbalData.1318": "Druid Herbalism",
     "HerbalData.327.1": "Restores: {{health}} Health, {{stamina}} Stamina",
 
+    // Bomb update
+    "HerbalData.361.1": "Voil",
+    "HerbalData.361.2": "The gruelled essence of an ancient race of lizards",
+    "HerbalData.361.3": "Enhances bombs",
+    "HerbalData.361.4": "Requires: 1x Prehistoric Item",
+
+    "HerbalData.361.5": "Imbus",
+    "HerbalData.361.6": "It's certified organic and tastes like spirulina",
+    "HerbalData.361.7": "Imbuement: Applies the players current charge effect to thrown bombs, 10 hours",
+    "HerbalData.361.8": "Requires: 1x Melius Ligna, 1x Hardwood",
+
+    "HerbalData.361.9": "Amori",
+    "HerbalData.361.10": "Crafted with love and irony",
+    "HerbalData.361.11": "Amorous: Thrown bombs will charm villagers (+100 friendship) and monsters, 10 hours",
+    "HerbalData.361.12": "Requires: 1x Melius Vigores, 1x Coffee",
+
+    "HerbalData.361.13": "Donis",
+    "HerbalData.361.14": "Made with a bit of sleight of hand and a wink",
+    "HerbalData.361.15": "Donor: Chance to throw a free bomb that doesnt consume inventory stock, 10 hours",
+    "HerbalData.361.16": "Requires: 1x Melius Celeri, 1x Refined Quartz",
+
+    "HerbalData.361.17": "Concutere",
+    "HerbalData.361.18": "Keep in a cool, dry, airtight container away from open flames",
+    "HerbalData.361.19": "Concussion: Thrown bombs shatter resource clumps. Chance to spawn holes and ladders, 10 hours",
+    "HerbalData.361.20": "Requires: 1x Voil, 1x Staircase",
+
+    "HerbalData.361.21": "Jumere",
+    "HerbalData.361.22": "Sprinkle a little over breakfast to give it an extra kick",
+    "HerbalData.361.23": "Jumper: Thrown bombs will bounce in the direction cast, 10 hours",
+    "HerbalData.361.24": "Requires: 1x Voil, 1x Mayonnaise",
+
+    "HerbalData.361.25": "Felis",
+    "HerbalData.361.26": "What you get when you crush your old cat's medication",
+    "HerbalData.361.27": "Feline: Thrown bombs smell like cat, 10 hours",
+    "HerbalData.361.28": "Requires: 1x Voil, 1x Milk",
+
+    "HerbalData.361.29": "Imbuement",
+    "HerbalData.361.30": "Amorous",
+    "HerbalData.361.31": "Doner",
+    "HerbalData.361.32": "Concussion",
+    "HerbalData.361.33": "Jumper",
+    "HerbalData.361.34": "Feline",
+
+    "HerbalData.361.35": "Learned how to cook ",
+
+
+
     // ===========================================================================
     // MOD CONFIGURATION
     // ===========================================================================
@@ -4098,7 +4275,7 @@
     "ModConfig.269": "Slot 12",
     "ModConfig.270": "Select slot behaviour for inventory slot twelve",
     "ModConfig.278": "Cultivate Behaviour",
-    "ModConfig.279": "Adjust settings for Weald: Cultivate in regards to crop handling. See readme for specifics. 1 Highest growth rate. 2 Average growth, average quality. 3 Highest quality.",
+    "ModConfig.279": "Adjust settings for Weald: Cultivate in regards to crop handling. See readme for specifics. 1 Highest growth rate. 2 Average growth, average quality. 3 Highest quality. 4. Ridiculous.",
     "ModConfig.289": "Meteor Behaviour",
     "ModConfig.290": "Adjust risk/reward setting for Stars: Meteor. See readme for specifics. 1 Intelligent targetting, lowest damage. 5 Completely random targets, highest damage.",
     "ModConfig.300": "Maximum Damage",
@@ -4109,7 +4286,7 @@
     "ModConfig.317": "Disables the Map-based cast restrictions so that any rite effect can be cast anywhere. Use at own discretion.",
 
     "ModConfig.313.1": "Mod Version",
-    "ModConfig.313.2": "Choose between the full version of Stardew Druid or the Magic only version. Default will load the magic-only version if Magic by Neosinf mod is enabled.",
+    "ModConfig.313.2": "(Changes require restarting the game). Choose between the full version of Stardew Druid or the Magic only version. Default will load the magic-only version if Magic by Neosinf mod is enabled.",
 
     "ModConfig.326.1": "Decorate Grove",
     "ModConfig.326.2": "Enables placement of furniture and craftables in the Druid Grove. The mod will attempt to save these objects. Use at own discretion.",
@@ -4141,16 +4318,28 @@
 
     "EffectsData.23": "The offerings of the valley sustain me.",
     "EffectsData.24": "There are three lines of potion to brew, each with their own ingredients and special effects.",
-    "EffectsData.27": "Learn how to brew potions and tonics at the herbalism bench in the secluded farm grove. Along your journey you will attain relics that will unlock higher levels of potency, up to level 5.",
+    "EffectsData.27": "Learn how to brew potions and grind powders at the herbalism bench in the secluded farm grove. Along your journey you will attain relics that will unlock higher levels of potency, up to level 5.",
     "EffectsData.311.1": "Each potion requires only 1 of the ingredients listed in the tooltip to brew.",
     "EffectsData.311.2": "Start by crafting a base tier potion, then enhance that potion by adding an ingredient from the next tier.",
     "EffectsData.28": "Ligna: special ingredients include roots, seeds and roughage, and higher potency will increase magnetic radius and strengthen rite effects.",
     "EffectsData.29": "Vigores: special ingredients include tubers, fungi and spices, and higher potency will strengthen charge effects and critical hits.",
     "EffectsData.30": "Celeri: special ingredients include fish oil and seaweeds, and higher potency will raise movement speed, cast speed and lower charge effect cooldowns.",
 
-    "EffectsData.313.10": "Magic",
+    "EffectsData.361.1": "Bomb Enhancements",
 
-    "EffectsData.313.11": "For as long as you remember, you've felt a special connection to the magic of Stardew Valley",
+    "EffectsData.361.2": "Every alchemist possesses a curiosity for pyrotechnics",
+    "EffectsData.361.3": "Bombs that are selected and held in the inventory can be thrown with the rite button. Rate of fire and damage can be enhanced with druid potion effects. ",
+    "EffectsData.361.4": "The powderbox menu is accessed from the apothecary menu. There are six types of powder to grind to augment the effects of thrown bombs.",
+    "EffectsData.361.5": "Imbus: Applies the players current charge effect to thrown bombs.",
+    "EffectsData.361.6": "Amori: Thrown bombs will charm villagers (+100 friendship) and monsters.",
+    "EffectsData.361.7": "Donis: Chance to throw a free bomb that doesnt consume inventory stock.",
+    "EffectsData.361.8": "Concutere: Thrown bombs shatter resource clumps. Chance to spawn holes and ladders.",
+    "EffectsData.361.9": "Jumere: Thrown bombs will bounce in the direction cast.",
+    "EffectsData.361.10": "Felis: Thrown bombs smell like cat.",
+
+    "EffectsData.313.10": "Magic-only mode enabled",
+
+    "EffectsData.313.11": "For as long as you remember, you've felt a special connection to the magic of Stardew Valley. You have the mod in magic-only mode! If you want to enjoy the full content of Stardew Druid, set the mode to 'Druid' in the configuration, or disable Magic By Neosinf.",
     "EffectsData.313.12": "Selection: Rites are assigned to slots 1-6 (default configuration) in your inventory, and require a melee weapon or tool to cast, unless 'slot freedom' is set to true in the configuration.",
     "EffectsData.313.13": "Targetting: Some rites use special cursor targetting. For controllers, this target will be a specified distance in the direction the farmer is facing.",
     "EffectsData.313.14": "Indicator: The decorative rite circle, cursor and HUD-buff icon should indicate the currently selected rite",
@@ -4215,7 +4404,7 @@
     "EffectsData.117": "Limit: Farm/Greenhouse only.",
     "EffectsData.118": "Effect: Seasonal wild seeds sewn into tilled dirt are converted into domestic crops.",
     "EffectsData.119": "Effect: Fertilise and update the growth cycle of all crop seeds and tree seeds",
-    "EffectsData.120": "Effect: Progress the growth rate of maturing fruit trees and tea bushes by one day (once per day)",
+    "EffectsData.120": "Effect: Progress the growth rate of maturing fruit trees by one day (once per day)",
     "EffectsData.121": "Note: Also triggers Rite of the Weald: Community effect",
     "EffectsData.122": "Cost: 2 stamina, halved at Farming Level 6",
     "EffectsData.123": "Crop effect can be further adjusted in the configuration options",
@@ -4302,7 +4491,7 @@
 
     "EffectsData.271": "The Lady is fascinated by the industriousness of humanity, and incorporating common farm constructs into the Rite of Mists produces interesting results",
     "EffectsData.272": "Strike scarecrows to produce a radial crop watering effect. Radius increases after certain quest milestones. Strike lightning rods and mushroom logs once a day to charge it.",
-    "EffectsData.275": "Radius (scarecrow): 2 tiles + Druid Power Level",
+    "EffectsData.275": "Radius (scarecrow): Druid Power Level x 2",
     "EffectsData.276": "Cooldown: Each target can be charged once a day",
     "EffectsData.277": "Limit: 5 each of rods and logs, and unlimited for scarecrows.",
     "EffectsData.278": "Cost (scarecrow): 32 stamina - (Player Farming level x 3)",
@@ -4335,10 +4524,17 @@
 
     "EffectsData.335": "The Effigy continued to practice and modify the techniques taught to him by his creators. ",
     "EffectsData.336": "One technique that developed from his independent scholarship of the otherworld is the summoning of the valley wisps into a temporary material form.",
-    "EffectsData.337": "Channel (press and hold) Rite of the Mists to summon wisps. Wisps cast a smaller version of Smite that stuns nearby enemies.",
+    "EffectsData.337": "Channel (press and hold) Rite of the Mists to summon wisps.",
     "EffectsData.340": "Targetting Cycle: Once every 5 seconds.",
-    "EffectsData.341": "Effect: One monster in the range of any of the wisps will be selected for a massive Smite bolt that triggers veil of mist.",
-    "EffectsData.342": "Number: One wisp per 12x12 tile square on valid ground around the player, going clockwise, for every 1 second held once triggered.",
+    "EffectsData.341": "Lightning Trap: Wisps will periodically blast monsters within close range.",
+    "EffectsData.342": "Heal: Wisps will periodically generate healing mists when the player is within close range.",
+
+    "EffectsData.363.1": "Wrath of the Isles",
+
+    "EffectsData.363.2": "I am the master of the storm.",
+    "EffectsData.363.3": "After raising Wisps with Rite of the Mists, continue to channel or channel again to activate the Wrath version of Smite.",
+    "EffectsData.363.4": "Wrath uses realtime cursor or diretional targetting and has an accelerated rate of hits and stamina consumption.",
+    "EffectsData.363.5": "Wisps are required to activate and sustain Wrath.",
 
     "EffectsData.349": "Gardener of the Circle",
 
@@ -4449,13 +4645,15 @@
     "EffectsData.516": "Enchant",
 
     "EffectsData.518": "The otherworld has its own devices of faye design, powered by Faeth, an essence distilled from light and void. Now I can experiment with using Faeth to power my own artifice.",
-    "EffectsData.519": "Enchant one of various types of farm machine to produce a randomised product without standard inputs. Each enchantment consumes one Faeth.",
+    "EffectsData.519": "Enchant one of various types of farm machine to produce a randomised product without standard inputs. Sprinkle faeth on crops to update their growth phase. Each enchantment consumes one Faeth.",
     "EffectsData.522": "Requires: 1 Faeth, brewable in the herbalism journal (page 2)",
     "EffectsData.523": "Mastery: Extracts existing products from machines.",
     "EffectsData.524": "Channel: Cast and hold Rite of the Fates for 2-3 seconds while standing still, until the essence fills the rite indicator. When released, the enchantment effect will radiate in increasing magnitude.",
-    "EffectsData.525": "Works on Deconstructors, Dehydrators, Bone Mills, Kegs, Preserves Jars, Cheese Presses, Mayonnaise Machines, Looms, Oil Makers, Furnaces and Geode Crushers.",
+    "EffectsData.525": "Machines: Works on Deconstructors, Dehydrators, Bone Mills, Kegs, Preserves Jars, Cheese Presses, Mayonnaise Machines, Looms, Oil Makers, Furnaces and Geode Crushers.",
     "EffectsData.526": "Gathers outputs from surrounding machines.",
-    "EffectsData.527": "Cost: 24 stamina",
+    "EffectsData.356.1": "Crops: Updates crop growth by one phase. The effect will attempt to convert viable 3x3 plotted crops directly in front of the player (in the direction player is facing) into a giant crop.",
+    "EffectsData.356.2": "Regenerates produce on fully grown regrowable crops. (Note: stand slightly right and down from center of the tile under the farmer sprite to get consistent tile coordinates)",
+    "EffectsData.527": "Cost: 12 stamina per affected tile",
 
     "EffectsData.535": "The Shadow Scholar",
 
@@ -4552,6 +4750,22 @@
     "EffectsData.326.3": "Approach Blackfeather and select (adventure) from the dialogue menu to give her instructions.",
     "EffectsData.326.4": "'Blackfeather's Other Glove' can be used in the relics menu to summon Blackfeather for an adventure.",
     "EffectsData.326.5": "Now that she has received an aspect of The Lady Beyond's power, Blackfeather can do many of the same tasks that the Effigy does, and can wield her own lightning attack.",
-    "EffectsData.326.6": "Seeds placed in Blackfeather's inventory will be sewn in tilled, empty soil within range of targetted scarecrows."
+    "EffectsData.326.6": "Seeds placed in Blackfeather's inventory will be sewn in tilled, empty soil within range of targetted scarecrows.",
+
+    "EffectsData.362.1": "The Circle Ledger",
+
+    "EffectsData.362.2": "The Lady Beyond the Shore established the first Circle of Druids within Stardew Valley. I have received the vestige of her office, and with it, I will recruit other worthy souls for the fateful expedition to the Undervalley.",
+    "EffectsData.362.3": "Strike villagers with the Rite of the Mists to recruit them.",
+    "EffectsData.362.4": "Recruits can be managed from the Ledger menu. Four slots are available for recruits.",
+    "EffectsData.362.5": "Left click (Action) a recruit's entry in the menu to summon them, and right click (Special) to dismiss them.",
+    "EffectsData.362.6": "Recruits will attend to their normal duties when following a player to a location they would otherwise occupy according to their schedule.",
+
+    "EffectsData.367.1": "Winds of Fate",
+
+    "EffectsData.367.2": "The domain of the Morticians is occupied by souls eager to serve their penance. I may summon them to witness and judge the acts of the living.",
+    "EffectsData.367.3": "Channel (stand still and hold the rite button) the Rite of the Fates to generate whirling streams of spirits.",
+    "EffectsData.367.4": "The Winds of Fate will periodically damage monsters caught in the stream.",
+    "EffectsData.367.5": "Curse debuffs will be applied to monsters affected by the Winds."
+
 
 }

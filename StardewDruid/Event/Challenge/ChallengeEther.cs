@@ -2,8 +2,8 @@
 using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Data;
-using StardewDruid.Journal;
 using StardewDruid.Location;
+using StardewDruid.Location.Druid;
 using StardewDruid.Monster;
 using StardewValley;
 using StardewValley.Locations;
@@ -11,10 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using static StardewDruid.Cast.SpellHandle;
-using static StardewDruid.Data.IconData;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace StardewDruid.Event.Challenge
 {
@@ -55,6 +51,8 @@ namespace StardewDruid.Event.Challenge
                 List<SpawnHandle> dustSpawns = new()
                 {
                     new(MonsterHandle.bosses.dustfiend, Boss.temperment.random, (Boss.difficulty)Mod.instance.randomIndex.Next(1,3))
+                    //,
+                    //new(MonsterHandle.bosses.firefiend, Boss.temperment.random, (Boss.difficulty)Mod.instance.randomIndex.Next(1,3))
                 };
 
                 monsterHandle.spawnSchedule.Add(i, dustSpawns);
@@ -67,9 +65,9 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.spawnGroup = true;
 
-            EventBar(DialogueData.Strings(DialogueData.stringkeys.theDusting),0);
+            EventBar(StringData.Strings(StringData.stringkeys.theDusting),0);
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
 
             if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Blackfeather))
             {
@@ -83,7 +81,7 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            (Mod.instance.locations[LocationData.druid_gate_name] as Gate).alightBrazier = true;
+            (Mod.instance.locations[LocationHandle.druid_gate_name] as Gate).alightBrazier = true;
 
             EventRender cannoliBone = new("cannoliBone", location.Name, eventVectors[1] * 64 + new Vector2(32,18), IconData.relics.skull_cannoli) { layer = 1f };
 
@@ -107,7 +105,7 @@ namespace StardewDruid.Event.Challenge
             if (eventActive)
             {
                 
-                (Mod.instance.locations[LocationData.druid_gate_name] as Gate).alightBrazier = false;
+                (Mod.instance.locations[LocationHandle.druid_gate_name] as Gate).alightBrazier = false;
 
                 eventRenders.Clear();
 
@@ -304,7 +302,7 @@ namespace StardewDruid.Event.Challenge
 
                     SetTrack("fall3");
 
-                    corvid = new Flyer(CharacterHandle.characters.ShadowCrow);
+                    corvid = new Flyer(CharacterHandle.characters.CorvidCrow);
 
                     corvid.SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -326,7 +324,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 93:
 
-                    corvid = new Flyer(CharacterHandle.characters.ShadowCrow);
+                    corvid = new Flyer(CharacterHandle.characters.CorvidCrow);
 
                     corvid.SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -342,7 +340,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 94:
 
-                    corvid = new Flyer(CharacterHandle.characters.ShadowCrow);
+                    corvid = new Flyer(CharacterHandle.characters.CorvidCrow);
 
                     corvid.SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -360,7 +358,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 95:
 
-                    corvid = new Flyer(CharacterHandle.characters.ShadowCrow);
+                    corvid = new Flyer(CharacterHandle.characters.CorvidCrow);
 
                     corvid.SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -382,7 +380,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 97:
 
-                    corvid = new Flyer(CharacterHandle.characters.ShadowCrow);
+                    corvid = new Flyer(CharacterHandle.characters.CorvidCrow);
 
                     corvid.SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -400,7 +398,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 98:
 
-                    corvid = new Flyer(CharacterHandle.characters.ShadowCrow);
+                    corvid = new Flyer(CharacterHandle.characters.CorvidCrow);
 
                     corvid.SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -440,7 +438,16 @@ namespace StardewDruid.Event.Challenge
 
                     CharacterMover.Warp(location, companions[0], blackfeather, false);
 
-                    Mod.instance.iconData.CreateImpact(location, Mod.instance.characters[CharacterHandle.characters.Blackfeather].Position, impacts.plume, 4f, new() { color = Mod.instance.iconData.schemeColours[schemes.npc_blackfeather], alpha = 1f, });
+                    Mod.instance.iconData.CreateImpact(
+                        location, 
+                        Mod.instance.characters[CharacterHandle.characters.Blackfeather].Position, 
+                        IconData.impacts.plume,
+                        4f, 
+                        new() { 
+                            color = Mod.instance.iconData.schemeColours[IconData.schemes.bones], 
+                            alpha = 1f, 
+                        }
+                        );
 
                     break;
 

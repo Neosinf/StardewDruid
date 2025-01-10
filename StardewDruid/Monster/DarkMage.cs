@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace StardewDruid.Monster
 {
-    public class DarkMage : DarkRogue
+    public class DarkMage : Dark
     {
 
         public DarkMage()
@@ -52,7 +52,7 @@ namespace StardewDruid.Monster
 
             weaponRender.LoadWeapon(WeaponRender.weapons.sword);
 
-            weaponRender.swordScheme = IconData.schemes.sword_warp;
+            weaponRender.swordScheme = WeaponRender.swordSchemes.sword_warp;
 
             overHead = new(16, -144);
 
@@ -82,28 +82,30 @@ namespace StardewDruid.Monster
 
         public override void DrawHat(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer)
         {
+
+            Vector2 hatPosition = spritePosition - new Vector2(0, 64);
+
             if (netWoundedActive.Value)
             {
 
-                spritePosition.Y += 20;
-
+                hatPosition.Y += 20;
 
             }
 
             b.Draw(
                 characterTexture,
-                spritePosition - new Vector2(0,64),
+                hatPosition,
                 hatFrames[netDirection.Value][0],
                 Color.White,
                 0f,
-                Vector2.Zero,
+                new Vector2(16),
                 4f,
                 netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 drawLayer + 0.0001f
             );
         }
 
-        public override void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, IconData.schemes scheme = IconData.schemes.Void)
+        public override void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, IconData.schemes scheme)
         {
 
             base.DrawShield(b, spritePosition, spriteScale, drawLayer, IconData.schemes.none);
@@ -147,9 +149,9 @@ namespace StardewDruid.Monster
 
             fireball.type = SpellHandle.spells.missile;
 
-            fireball.projectile = 3;
+            fireball.factor = 3;
 
-            fireball.missile = IconData.missiles.warpball;
+            fireball.missile = MissileHandle.missiles.warpball;
 
             fireball.scheme = IconData.schemes.fates;
 

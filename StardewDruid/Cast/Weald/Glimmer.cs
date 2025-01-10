@@ -58,7 +58,7 @@ namespace StardewDruid.Cast.Weald
 
                 ReactionData.ReactTo(witness, ReactionData.reactions.weald, 25);
 
-                SpellHandle sparklesparkle = new(witness.Position, 256, IconData.impacts.nature, new()) { instant = true };
+                SpellHandle sparklesparkle = new(witness.Position, 256, IconData.impacts.supree, new()) { instant = true };
 
                 Mod.instance.spellRegister.Add(sparklesparkle);
 
@@ -206,7 +206,7 @@ namespace StardewDruid.Cast.Weald
                 foreach (StardewValley.Monsters.Monster monster in monsters)
                 {
 
-                    SpellHandle glimmer = new(monster.Position, 256, IconData.impacts.nature, new() { SpellHandle.effects.glare, }) { instant = true, scheme = IconData.schemes.golden };
+                    SpellHandle glimmer = new(monster.Position, 256, IconData.impacts.supree, new() { SpellHandle.effects.glare, }) { instant = true, scheme = IconData.schemes.golden };
 
                     Mod.instance.spellRegister.Add(glimmer);
 

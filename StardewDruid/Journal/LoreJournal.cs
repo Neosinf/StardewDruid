@@ -22,7 +22,7 @@ namespace StardewDruid.Journal
 
             type = journalTypes.lore;
 
-            title = DialogueData.Strings(DialogueData.stringkeys.chronicle);
+            title = StringData.Strings(StringData.stringkeys.chronicle);
 
             pagination = 6;
 

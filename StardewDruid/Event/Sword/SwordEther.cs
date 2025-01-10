@@ -107,16 +107,12 @@ namespace StardewDruid.Event.Sword
 
             }
 
-            if(Game1.player.currentLocation.Name == LocationData.druid_tomb_name)
+            if(Game1.player.currentLocation.Name == LocationHandle.druid_tomb_name)
             {
                 
                 DialogueCue(991);
 
-                Game1.warpFarmer("SkullCave", 5, 5, 1);
-
-                Game1.xLocationAfterWarp = 5;
-
-                Game1.yLocationAfterWarp = 5;
+                Mod.instance.WarpAllFarmers("SkullCave", 5, 5, 1);
 
             }
 
@@ -166,9 +162,11 @@ namespace StardewDruid.Event.Sword
                     if (woundedCounter <= 1)
                     {
 
-                        //Mod.instance.iconData.ImpactIndicator(location, reaper.Position, IconData.impacts.deathbomb, 5f, new());
+                        SpellHandle reaperDeath = new(reaper.Position, 320, IconData.impacts.deathbomb, new());
 
-                        Mod.instance.iconData.ImpactIndicator(location, reaper.Position, IconData.impacts.deathbomb, 5f, new() { });
+                        reaperDeath.sound = SpellHandle.sounds.shadowDie;
+
+                        Mod.instance.spellRegister.Add(reaperDeath);
 
                         reaper.currentLocation.characters.Remove(reaper);
 

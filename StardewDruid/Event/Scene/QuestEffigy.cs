@@ -6,20 +6,23 @@ using StardewDruid.Cast;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Character;
 using StardewDruid.Data;
-using StardewDruid.Journal;
 using StardewDruid.Location;
+using StardewDruid.Location.Druid;
 using StardewDruid.Monster;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData;
 using StardewValley.Locations;
 using StardewValley.Monsters;
+using StardewValley.Projectiles;
 using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Timers;
+using static StardewDruid.Data.IconData;
 
 
 namespace StardewDruid.Event.Scene
@@ -72,7 +75,7 @@ namespace StardewDruid.Event.Scene
             locales = new()
             {
                 "Beach",
-                LocationData.druid_atoll_name,
+                LocationHandle.druid_atoll_name,
 
             };
 
@@ -85,14 +88,14 @@ namespace StardewDruid.Event.Scene
             atollVector = new Vector2(92, 7);
 
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
 
         }
 
         public override bool AttemptReset()
         {
 
-            Mod.instance.CastMessage(DialogueData.Strings(DialogueData.stringkeys.abortTomorrow), 3, true);
+            Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
 
             return false;
 
@@ -142,7 +145,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(1);
 
-                    RelicData.RelicFunction(IconData.relics.wayfinder_censer.ToString());
+                    RelicHandle.RelicFunction(IconData.relics.wayfinder_censer.ToString());
 
                     //activeCounter = 300;
 
@@ -206,7 +209,7 @@ namespace StardewDruid.Event.Scene
 
                 case 113:
 
-                    Mod.instance.spellRegister.Add(new(companions[0].Position, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.discoverMineral, scheme = IconData.schemes.weald, });
+                    Mod.instance.spellRegister.Add(new(companions[0].Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.discoverMineral, scheme = IconData.schemes.weald, });
 
                     break;
 
@@ -236,12 +239,12 @@ namespace StardewDruid.Event.Scene
                         new(9,-2),
                     };
 
-                    Mod.instance.spellRegister.Add(new(companions[0].Position, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.discoverMineral, scheme = IconData.schemes.weald, });
+                    Mod.instance.spellRegister.Add(new(companions[0].Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.discoverMineral, scheme = IconData.schemes.weald, });
 
                     for (int i = 0; i < vectors25.Count; i++)
                     {
 
-                        Mod.instance.spellRegister.Add(new((beachWarp - vectors25[i]) * 64, 384, IconData.impacts.nature, new()) {scheme = IconData.schemes.weald, });
+                        Mod.instance.spellRegister.Add(new((beachWarp - vectors25[i]) * 64, 384, IconData.impacts.supree, new()) {scheme = IconData.schemes.weald, });
 
                     }
 
@@ -538,17 +541,13 @@ namespace StardewDruid.Event.Scene
                 case 301:
 
 
-                    location = Mod.instance.locations[LocationData.druid_atoll_name];
+                    location = Mod.instance.locations[LocationHandle.druid_atoll_name];
 
                     location.warps.Clear();
 
-                    Game1.warpFarmer(LocationData.druid_atoll_name, 13, 11, 1);
+                    Mod.instance.WarpAllFarmers(LocationHandle.druid_atoll_name, 13, 11, 1);
 
-                    Game1.xLocationAfterWarp = 15;
-
-                    Game1.yLocationAfterWarp = 11;
-
-                    CharacterMover.Warp(Mod.instance.locations[LocationData.druid_atoll_name], companions[0], eventVectors[100] * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_atoll_name], companions[0], eventVectors[100] * 64, false);
 
                     companions[0].TargetEvent(301, eventVectors[101]*64);
 
@@ -592,7 +591,7 @@ namespace StardewDruid.Event.Scene
 
                     bosses[0].ResetActives();
 
-                    bosses[0].PerformFlight(eventVectors[103] * 64, 5);
+                    bosses[0].PerformFlight(eventVectors[103] * 64, Boss.flightTypes.target);
 
                     break;
 
@@ -720,11 +719,11 @@ namespace StardewDruid.Event.Scene
 
                     SpellHandle meteor = new(location, bosses[0].Position, Game1.player.Position);
 
-                    meteor.type = SpellHandle.spells.orbital;
+                    meteor.type = SpellHandle.spells.missile;
 
-                    meteor.missile = IconData.missiles.meteor;
+                    meteor.missile = MissileHandle.missiles.meteor;
 
-                    meteor.projectile = 4;
+                    meteor.factor =4;
 
                     Mod.instance.spellRegister.Add(meteor);
 
@@ -734,7 +733,7 @@ namespace StardewDruid.Event.Scene
 
                     bosses[0].netAlternative.Set(1);
 
-                    bosses[0].PerformFlight(new Vector2(-2,-2)*64, 5);
+                    bosses[0].PerformFlight(new Vector2(-2,-2)*64, Boss.flightTypes.target);
 
                     break;
 
@@ -877,14 +876,13 @@ namespace StardewDruid.Event.Scene
 
                     }
 
-                    TemporaryAnimatedSprite cloudAnimation = Mod.instance.iconData.CreateImpact(
+                    TemporaryAnimatedSprite cloudAnimation = Mod.instance.iconData.CreateSwirl(
                         
                         location, 
                         (eventVectors[106] + new Vector2(1,-3)) * 64, 
-                        IconData.impacts.spiral, 
-                        9f, 
+                        5f, 
                         new() { interval = 125f, loops = 13*5, flip = true, alpha = 0.1f, layer = mistCorner.Y / 10000 }
-                     );
+                    );
 
                     companions[2] = new FirstFarmer(CharacterHandle.characters.FirstFarmer);
 
@@ -904,7 +902,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[2].Position = (eventVectors[106] + new Vector2(-2, -3)) * 64;
 
-                    companions[3] = new LadyBeyond(CharacterHandle.characters.LadyBeyond);
+                    companions[3] = new Lady(CharacterHandle.characters.LadyBeyond);
 
                     voices[3] = companions[3];
 

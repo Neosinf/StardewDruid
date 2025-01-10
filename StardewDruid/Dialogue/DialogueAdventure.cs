@@ -1,5 +1,4 @@
-﻿using StardewDruid.Journal;
-using StardewValley;
+﻿using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +13,7 @@ using StardewValley.Locations;
 using Microsoft.Xna.Framework;
 using StardewValley.Tools;
 using System.Reflection;
+using StardewDruid.Event;
 
 namespace StardewDruid.Dialogue
 {
@@ -45,8 +45,6 @@ namespace StardewDruid.Dialogue
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.415");
 
-                //case CharacterHandle.characters.Revenant:
-                //case CharacterHandle.characters.Marlon:
                 case CharacterHandle.characters.star_altar:
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.419") +
@@ -54,7 +52,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.herbalism:
 
-                    if (Journal.RelicData.HasRelic(IconData.relics.crow_hammer))
+                    if (RelicData.HasRelic(IconData.relics.crow_hammer))
                     {
 
                         return Mod.instance.Helper.Translation.Get("CharacterHandle.427");
@@ -71,6 +69,10 @@ namespace StardewDruid.Dialogue
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.323.17");
 
+                case CharacterHandle.characters.exit_moors:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueAdventure.351.2");
+                    
             }
 
             if (!Context.IsMainPlayer)
@@ -116,6 +118,14 @@ namespace StardewDruid.Dialogue
                 case CharacterHandle.characters.Aldebaran:
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.343.8");
+
+                case CharacterHandle.characters.recruit_one:
+                case CharacterHandle.characters.recruit_two:
+                case CharacterHandle.characters.recruit_three:
+                case CharacterHandle.characters.recruit_four:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueAdventure.361.1");
+
 
 
             }
@@ -347,6 +357,17 @@ namespace StardewDruid.Dialogue
                             return generate;
 
 
+                        case CharacterHandle.characters.recruit_one:
+                        case CharacterHandle.characters.recruit_two:
+                        case CharacterHandle.characters.recruit_three:
+                        case CharacterHandle.characters.recruit_four:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("DialogueAdventure.361.2").Tokens(new { name = Game1.player.Name, });
+
+                            Mod.instance.characters[character].SwitchToMode(Character.Character.mode.limbo, Game1.player);
+
+                            return generate;
+
                         case CharacterHandle.characters.energies:
 
                             generate.intro = Mod.instance.Helper.Translation.Get("DialogueAdventure.343.5");
@@ -396,24 +417,6 @@ namespace StardewDruid.Dialogue
 
                             }
 
-                            if (Mod.instance.questHandle.IsComplete(QuestHandle.swordEther))
-                            {
-
-                                generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.343.10"));
-
-                                generate.answers.Add(16.ToString());
-
-                            }
-
-                            if (Mod.instance.questHandle.IsComplete(QuestHandle.questShadowtin))
-                            {
-
-                                generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.343.11"));
-
-                                generate.answers.Add(17.ToString());
-
-                            }
-
                             generate.lead = true;
 
                             return generate;
@@ -455,19 +458,6 @@ namespace StardewDruid.Dialogue
 
                             return generate;
 
-                        /*case CharacterHandle.characters.star_altar:
-
-                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.343.16") +
-                                Mod.instance.Helper.Translation.Get("CharacterHandle.343.17");
-
-                            generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.343.18"));
-
-                            generate.answers.Add(10.ToString());
-
-                            generate.lead = true;
-
-                            return generate;*/
-
                         case CharacterHandle.characters.dragon_statue:
 
                             generate.intro = Mod.instance.Helper.Translation.Get("DialogueAdventure.343.2");
@@ -497,6 +487,18 @@ namespace StardewDruid.Dialogue
                             Mod.instance.herbalData.ConvertGeodes();
 
                             return null;
+
+                        case CharacterHandle.characters.exit_moors:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("DialogueAdventure.352.2");
+
+                            generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.352.3"));
+
+                            generate.answers.Add(18.ToString());
+
+                            generate.lead = true;
+
+                            return generate;
 
                     }
 
@@ -640,7 +642,7 @@ namespace StardewDruid.Dialogue
                         // Sacred Spring
                         case 11:
 
-                            SpellHandle springWarp = new(Mod.instance.locations[LocationData.druid_spring_name], new(27,18), new Vector2(1312, 960)) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, projectile = 1 };
+                            SpellHandle springWarp = new(Mod.instance.locations[LocationHandle.druid_spring_name], new(27,18), new Vector2(1312, 960)) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, factor = 1 };
 
                             Mod.instance.spellRegister.Add(springWarp);
 
@@ -649,7 +651,7 @@ namespace StardewDruid.Dialogue
                         // Secluded Atoll
                         case 12:
 
-                            SpellHandle atollWarp = new(Mod.instance.locations[LocationData.druid_atoll_name], new(30, 21), new Vector2(1312,960)) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, projectile = 1 };
+                            SpellHandle atollWarp = new(Mod.instance.locations[LocationHandle.druid_atoll_name], new(30, 21), new Vector2(1312,960)) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, factor = 1 };
 
                             Mod.instance.spellRegister.Add(atollWarp);
 
@@ -658,7 +660,7 @@ namespace StardewDruid.Dialogue
                         // Elder Graves
                         case 13:
 
-                            SpellHandle gravesWarp = new(Mod.instance.locations[LocationData.druid_graveyard_name], new Vector2(27, 17), new Vector2(1312, 960)) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, projectile = 0 };
+                            SpellHandle gravesWarp = new(Mod.instance.locations[LocationHandle.druid_graveyard_name], new Vector2(27, 17), new Vector2(1312, 960)) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, factor = 0 };
 
                             Mod.instance.spellRegister.Add(gravesWarp);
 
@@ -667,7 +669,7 @@ namespace StardewDruid.Dialogue
                         // Chapel of the Stars
                         case 14:
 
-                            SpellHandle chapelWarp = new(Mod.instance.locations[LocationData.druid_chapel_name], new(26, 23), new Vector2(1312, 960)) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, projectile = 0 };
+                            SpellHandle chapelWarp = new(Mod.instance.locations[LocationHandle.druid_chapel_name], new(26, 23), new Vector2(1312, 960)) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, factor = 0 };
 
                             Mod.instance.spellRegister.Add(chapelWarp);
 
@@ -676,30 +678,11 @@ namespace StardewDruid.Dialogue
                         // Court of Fates and Chaos
                         case 15:
 
-                            SpellHandle courtWarp = new(Mod.instance.locations[LocationData.druid_court_name], new Vector2(34, 18), new Vector2(1312, 960)) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, projectile = 0};
+                            SpellHandle courtWarp = new(Mod.instance.locations[LocationHandle.druid_court_name], new Vector2(34, 18), new Vector2(1312, 960)) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, factor = 0};
 
                             Mod.instance.spellRegister.Add(courtWarp);
 
                             return generate;
-
-                        // Tomb of Tyrannus
-                        case 16:
-
-                            SpellHandle tombWarp = new(Mod.instance.locations[LocationData.druid_tomb_name], new Vector2(26, 17), new Vector2(1312, 960)) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, projectile = 0 }; ;
-
-                            Mod.instance.spellRegister.Add(tombWarp);
-
-                            return generate;
-
-                        // Shrine Engine Room
-                        case 17:
-
-                            SpellHandle shrineWarp = new(Mod.instance.locations[LocationData.druid_engineum_name], new Vector2(27,19), new Vector2(1312, 960)) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, projectile = 0 }; ;
-
-                            Mod.instance.spellRegister.Add(shrineWarp);
-
-                            return generate;
-
 
                     }
 

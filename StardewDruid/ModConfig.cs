@@ -1,11 +1,11 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using StardewDruid.Journal;
 using StardewModdingAPI.Utilities;
 using StardewModdingAPI;
 using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using StardewDruid.Event;
 
 namespace StardewDruid
 {
@@ -324,7 +324,7 @@ namespace StardewDruid
                 name: () => Mod.instance.Helper.Translation.Get("ModConfig.278"),
                 tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.279"),
                 min: 1,
-                max: 3,
+                max: 4,
                 interval: 1,
                 getValue: () => Config.cultivateBehaviour,
                 setValue: value => Config.cultivateBehaviour = value

@@ -5,6 +5,7 @@ using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
@@ -23,6 +24,8 @@ namespace StardewDruid.Monster
     public class Spectre : Monster.Boss
     {
 
+        public HoverRender hoverRender;
+
         public Spectre()
         {
         }
@@ -39,6 +42,9 @@ namespace StardewDruid.Monster
 
         public override void LoadOut()
         {
+            characterTexture = MonsterHandle.MonsterTexture(realName.Value);
+
+            hoverRender = new(realName.Value);
 
             cooldownInterval = 240;
 
@@ -61,9 +67,7 @@ namespace StardewDruid.Monster
 
             basePulp = 20;
 
-            characterTexture = MonsterHandle.MonsterTexture(realName.Value);
-
-            hoverInterval = 12;
+            hoverInterval = 24;
 
             hoverIncrements = 2;
 
@@ -73,42 +77,9 @@ namespace StardewDruid.Monster
 
             gait = 2;
 
-            idleFrames = new()
-            {
-                [0] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 64, 32, 32),
-                    new Rectangle(32, 64, 32, 32),
-                    new Rectangle(64, 64, 32, 32),
-                    new Rectangle(32, 64, 32, 32),
-                },
+            idleFrames = hoverRender.walkFrames;
 
-                [1] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
-                    new Rectangle(64, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
-                },
-                [2] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 0, 32, 32),
-                    new Rectangle(32, 0, 32, 32),
-                    new Rectangle(64, 0, 32, 32),
-                    new Rectangle(32, 0, 32, 32),
-
-                },
-                [3] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
-                    new Rectangle(64, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
-
-                }
-            };
-
-            walkFrames = idleFrames;
+            walkFrames = hoverRender.walkFrames;
 
         }
 
@@ -121,93 +92,15 @@ namespace StardewDruid.Monster
 
             flightHeight = 2;
 
-            flightDefault = 2;
+            flightDefault = flightTypes.past;
 
             flightInterval = 9;
 
-            flightFrames = new Dictionary<int, List<Rectangle>>()
-            {
-                [0] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 160, 32, 32),
-                    new Rectangle(32, 160, 32, 32),
-                    new Rectangle(64, 160, 32, 32),
-
-                },
-
-                [1] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-
-                },
-                [2] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 96, 32, 32),
-                    new Rectangle(32, 96, 32, 32),
-                    new Rectangle(64, 96, 32, 32),
-
-                },
-                [3] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-
-                },
-                [4] = new List<Rectangle>()
-                {
-                    new Rectangle(32, 160, 32, 32),
-                },
-                [5] = new List<Rectangle>()
-                {
-                    new Rectangle(32, 128, 32, 32),
-                },
-                [6] = new List<Rectangle>()
-                {
-                    new Rectangle(32, 96, 32, 32),
-                },
-                [7] = new List<Rectangle>()
-                {
-                    new Rectangle(32, 128, 32, 32),
-                },
-                [8] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 160, 32, 32),
-                    new Rectangle(32, 160, 32, 32),
-                    new Rectangle(64, 160, 32, 32),
-                    new Rectangle(32, 160, 32, 32),
-                },
-                [9] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-
-                },
-                [10] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 96, 32, 32),
-                    new Rectangle(32, 96, 32, 32),
-                    new Rectangle(64, 96, 32, 32),
-                    new Rectangle(32, 96, 32, 32),
-
-                },
-                [11] = new List<Rectangle>()
-                {
-                    new Rectangle(0, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-                    new Rectangle(64, 128, 32, 32),
-                    new Rectangle(32, 128, 32, 32),
-
-                }
-            };
+            flightFrames = hoverRender.dashFrames[Character.Character.dashes.dash];
 
             smashSet = true;
 
-            smashFrames = flightFrames;
+            smashFrames = hoverRender.dashFrames[Character.Character.dashes.dash];
 
         }
 
@@ -224,7 +117,7 @@ namespace StardewDruid.Monster
 
             cooldownTimer = cooldownInterval;
 
-            specialFrames = idleFrames;
+            specialFrames = hoverRender.specialFrames[Character.Character.specials.special];
 
             sweepSet = true;
 
@@ -259,69 +152,65 @@ namespace StardewDruid.Monster
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            float drawLayer = StandingPixel.Y / 10000f;
+            HoverRenderAdditional hoverAdditional = new();
 
-            DrawEmote(b, localPosition, drawLayer);
+            hoverAdditional.scale = GetScale();
 
-            Color fadeout = Color.White * 0.75f;
+            hoverAdditional.position = GetPosition(localPosition, hoverAdditional.scale);
 
-            float spriteScale = GetScale();
+            hoverAdditional.layer = (float)StandingPixel.Y / 10000f + 0.001f;
 
-            Vector2 spritePosition = GetPosition(localPosition, spriteScale);
+            hoverAdditional.flip = netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3;
 
-            bool flippity = netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3;
+            hoverAdditional.fade = 0.75f;
 
-            if (netFlightActive.Value)
+            hoverAdditional.direction = netDirection.Value;
+
+            hoverAdditional.frame = hoverFrame;
+
+            hoverAdditional.series = HoverRenderAdditional.hoverseries.hover;
+
+            DrawEmote(b, localPosition, hoverAdditional.layer);
+
+            if (netFlightActive.Value || netSmashActive.Value)
             {
 
-                int setFlightSeries = netDirection.Value + (netFlightProgress.Value * 4);
+                hoverAdditional.direction = netDirection.Value + (netFlightProgress.Value * 4);
 
-                int setFlightFrame = Math.Min(flightFrame, (flightFrames[setFlightSeries].Count - 1));
+                hoverAdditional.frame = Math.Min(flightFrame, (flightFrames[hoverAdditional.direction].Count - 1));
 
-                b.Draw(
-                    characterTexture,
-                    spritePosition,
-                    flightFrames[setFlightSeries][setFlightFrame],
-                    fadeout,
-                    0,
-                    Vector2.Zero,
-                    spriteScale,
-                    flippity ? (SpriteEffects)1 : 0,
-                    drawLayer);
+                hoverAdditional.series = HoverRenderAdditional.hoverseries.dash;
 
             }
             else if (netSpecialActive.Value)
             {
 
-                b.Draw(
-                    characterTexture,
-                    spritePosition,
-                    flightFrames[netDirection.Value + 8][specialFrame],
-                    fadeout,
-                    0,
-                    Vector2.Zero,
-                    spriteScale,
-                    flippity ? (SpriteEffects)1 : 0,
-                    drawLayer);
+                hoverAdditional.frame = specialFrame;
+
+                hoverAdditional.series = HoverRenderAdditional.hoverseries.special;
 
             }
-            else
+
+            hoverRender.DrawNormal(b, hoverAdditional);
+
+        }
+
+        public override bool PerformSweep()
+        {
+            if (!sweepSet) { return false; }
+
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 96f + (GetWidth() * 3));
+
+            if (targets.Count > 0)
             {
 
-                b.Draw(
-                    characterTexture,
-                    spritePosition,
-                    idleFrames[netDirection.Value][hoverFrame],
-                    fadeout,
-                    0,
-                    Vector2.Zero,
-                    spriteScale,
-                    flippity ? (SpriteEffects)1 : 0,
-                    drawLayer);
+                Vector2 targetFarmer = targets.First().Position;
+
+                return PerformFlight(targetFarmer);
 
             }
 
-            b.Draw(Game1.shadowTexture, new(localPosition.X, localPosition.Y + 64f), Game1.shadowTexture.Bounds, Color.White, 0.0f, Vector2.Zero, 4f, 0, drawLayer - 1E-06f);
+            return false;
 
         }
 
@@ -334,19 +223,15 @@ namespace StardewDruid.Monster
 
             SetCooldown(1);
 
-            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 192, GetThreat());
+            SpellHandle beam = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 192 + (netScheme.Value * 64), GetThreat());
 
-            fireball.type = SpellHandle.spells.missile;
+            beam.type = SpellHandle.spells.deathecho;
 
-            fireball.projectile = 3;
+            beam.factor = 2 + netScheme.Value;
 
-            fireball.missile = IconData.missiles.death;
+            beam.boss = this;
 
-            fireball.display = IconData.impacts.skull;
-
-            fireball.boss = this;
-
-            Mod.instance.spellRegister.Add(fireball);
+            Mod.instance.spellRegister.Add(beam);
 
             return true;
 
@@ -365,8 +250,6 @@ namespace StardewDruid.Monster
                 bang.type = SpellHandle.spells.explode;
 
                 bang.display = IconData.impacts.flashbang;
-
-                bang.scheme = IconData.schemes.death;
 
                 bang.instant = true;
 

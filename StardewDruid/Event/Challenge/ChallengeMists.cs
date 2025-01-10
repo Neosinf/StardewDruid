@@ -143,9 +143,9 @@ namespace StardewDruid.Event.Challenge
 
             voices[4] = bosses[4];
 
-            bosses[4].SetDirection(bosses[0].Position);
+            bosses[4].LookAtTarget(bosses[0].Position);
 
-            bosses[0].SetDirection(bosses[4].Position);
+            bosses[0].LookAtTarget(bosses[4].Position);
 
             Mod.instance.iconData.AnimateQuickWarp(location, bosses[0].Position);
 
@@ -277,7 +277,7 @@ namespace StardewDruid.Event.Challenge
             if ((activeCounter >= 109 && activeCounter <= 112))
             {
                 
-                bosses[4].PerformFlight(origin + new Vector2(320, -2400),5);
+                bosses[4].PerformFlight(origin + new Vector2(320, -2400),Boss.flightTypes.target);
 
             }
 
@@ -307,7 +307,7 @@ namespace StardewDruid.Event.Challenge
                 
                 EventBar(Mod.instance.questHandle.quests[eventId].title, 1);
 
-                EventDisplay bomberbar = EventBar(DialogueData.Strings(DialogueData.stringkeys.bomberInterruptions), 2);
+                EventDisplay bomberbar = EventBar(StringData.Strings(StringData.stringkeys.bomberInterruptions), 2);
 
                 bomberbar.colour = Microsoft.Xna.Framework.Color.LightGreen;
 
@@ -394,7 +394,7 @@ namespace StardewDruid.Event.Challenge
                     if (Mod.instance.questHandle.IsComplete(eventId))
                     {
 
-                        bosses[2] = new DarkRogue(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+                        bosses[2] = new Dark(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
 
                     }
                     else
@@ -419,7 +419,7 @@ namespace StardewDruid.Event.Challenge
 
                     voices[2] = bosses[2];
 
-                    bosses[0].SetDirection(origin + new Vector2(-128, -64));
+                    bosses[0].LookAtTarget(origin + new Vector2(-128, -64));
 
                     bosses[0].PerformFlight(origin + new Vector2(-128, -64));
 
@@ -427,7 +427,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 307:
 
-                    bosses[2].SetDirection(Game1.player.Position);
+                    bosses[2].LookAtTarget(Game1.player.Position);
 
                     bosses[2].netSpecialActive.Set(true);
 
@@ -443,7 +443,7 @@ namespace StardewDruid.Event.Challenge
                 case 309:
                 case 310:
 
-                    bosses[2].SetDirection(Game1.player.Position);
+                    bosses[2].LookAtTarget(Game1.player.Position);
 
                     StandbyShooter();
 
@@ -459,7 +459,7 @@ namespace StardewDruid.Event.Challenge
 
                     bosses[0].ResetActives();
 
-                    bosses[0].PerformFlight(origin + new Vector2(120, -240), 5);
+                    bosses[0].PerformFlight(origin + new Vector2(120, -240), Boss.flightTypes.target);
 
                     break;
 
@@ -467,7 +467,7 @@ namespace StardewDruid.Event.Challenge
 
                     bosses[2].ResetActives();
 
-                    bosses[2].PerformFlight(origin + new Vector2(180, -320), 5);
+                    bosses[2].PerformFlight(origin + new Vector2(180, -320), Boss.flightTypes.target);
 
                     break;
 
@@ -475,7 +475,7 @@ namespace StardewDruid.Event.Challenge
 
                     bosses[0].ResetActives();
 
-                    bosses[0].PerformFlight(origin + new Vector2(180, -2400),5);
+                    bosses[0].PerformFlight(origin + new Vector2(180, -2400),Boss.flightTypes.target);
 
                     break;
 
@@ -483,7 +483,7 @@ namespace StardewDruid.Event.Challenge
 
                     bosses[2].ResetActives();
 
-                    bosses[2].PerformFlight(origin + new Vector2(180, -2400), 5);
+                    bosses[2].PerformFlight(origin + new Vector2(180, -2400), Boss.flightTypes.target);
 
                     break;
 
@@ -504,7 +504,7 @@ namespace StardewDruid.Event.Challenge
 
             Vector2 reposition = points[Mod.instance.randomIndex.Next(points.Count)] * 64;
 
-            bosses[0].SetDirection(reposition);
+            bosses[0].LookAtTarget(reposition);
 
             bosses[0].PerformFlight(reposition, 0);
 
@@ -513,7 +513,7 @@ namespace StardewDruid.Event.Challenge
         public void PrepareShooter()
         {
 
-            bosses[0].SetDirection(Game1.player.Position);
+            bosses[0].LookAtTarget(Game1.player.Position);
 
             bosses[0].netChannelActive.Set(true);
 
@@ -533,7 +533,7 @@ namespace StardewDruid.Event.Challenge
             if (bosses[0].netChannelActive.Value)
             {
 
-                bosses[0].SetDirection(Game1.player.Position);
+                bosses[0].LookAtTarget(Game1.player.Position);
 
                 bosses[0].specialTimer = 90;
 
@@ -548,18 +548,30 @@ namespace StardewDruid.Event.Challenge
         public void EngageShooter()
         {
 
+            int tryDialogue = Mod.instance.randomIndex.Next(6);
+
             if (bosses[0].netChannelActive.Value && Vector2.Distance(bosses[0].Position,Game1.player.Position) > 128 )
             {
 
                 bosses[0].PerformChannel(Game1.player.Position);
 
-                DialogueCue(907 + Mod.instance.randomIndex.Next(3));
+                if(tryDialogue < 3)
+                {
+
+                    DialogueCue(907 + tryDialogue);
+
+                }
 
             }
             else
             {
 
-                DialogueCue(904 + Mod.instance.randomIndex.Next(3));
+                if (tryDialogue < 3)
+                {
+
+                    DialogueCue(904 + tryDialogue);
+
+                }
 
                 eventRating++;
 

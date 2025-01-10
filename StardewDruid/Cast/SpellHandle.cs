@@ -8,9 +8,20 @@ using System.Linq;
 using StardewModdingAPI;
 using StardewDruid.Data;
 using StardewDruid.Cast.Effect;
-using StardewDruid.Journal;
 using StardewDruid.Cast.Fates;
-using StardewDruid.Location;
+using System.Security.Claims;
+using static StardewDruid.Character.Character;
+using StardewValley.Locations;
+using xTile.Layers;
+using xTile.Tiles;
+using StardewDruid.Event;
+using StardewValley.Projectiles;
+using StardewDruid.Render;
+using StardewValley.Monsters;
+using StardewValley.Objects.Trinkets;
+using System.Threading;
+using StardewValley.Constants;
+using StardewDruid.Location.Druid;
 
 
 namespace StardewDruid.Cast
@@ -18,35 +29,27 @@ namespace StardewDruid.Cast
     public class SpellHandle
     {
 
+        // specified
+
         public GameLocation location;
 
         public Vector2 destination;
 
         public Vector2 origin;
 
-        public bool queried;
-
         public int counter;
 
         public int radius;
 
-        public int projectile;
-
-        public int projectileIncrements;
-
-        public int projectileTrack;
-
-        public float projectileSpeed;
-
-        public int projectileOffset;
-
-        public bool projectileDirect;
-
-        public Vector2 projectilePosition;
+        public int factor;
 
         public float damageFarmers;
 
         public float damageMonsters;
+
+        public float critical;
+
+        public float criticalModifier;
 
         public int power;
 
@@ -54,33 +57,21 @@ namespace StardewDruid.Cast
 
         public int terrain;
 
+        // derived
+
         public List<TemporaryAnimatedSprite> animations = new();
 
         public TemporaryAnimatedSprite cursor;
 
-        public TemporaryAnimatedSprite shadow;
-
-        public List<TemporaryAnimatedSprite> construct = new();
-
-        //public TemporaryAnimatedSprite missileAnimation;
-
-        //public TemporaryAnimatedSprite coreAnimation;
-
-        public int projectileTotal;
-
-        public int projectilePeak;
+        public MissileHandle missileHandle;
 
         public Vector2 impact;
-
-        public float impactLayer;
 
         public Monster.Boss boss;
 
         public List<StardewValley.Monsters.Monster> monsters = new();
 
-        public float critical;
-
-        public float criticalModifier;
+        public bool queried;
 
         public bool external;
 
@@ -90,28 +81,33 @@ namespace StardewDruid.Cast
 
         public bool shutdown;
 
+        public bool invisibility;
+
         public enum spells
         {
             effect,
             swipe,
             explode,
-            orbital,
-            ballistic,
             beam,
+            lightning,
             missile,
             bolt,
             blackhole,
+            deathwind,
             echo,
+            deathecho,
+            bubbleecho,
+            fireecho,
             crate,
             teleport,
             warpstrike,
+            honourstrike,
             levitate,
             trick,
-            zap,
             warp,
             warpout,
             warpin,
-            shockwave,
+
         }
 
         public spells type;
@@ -120,7 +116,7 @@ namespace StardewDruid.Cast
 
         public IconData.schemes scheme = IconData.schemes.none;
 
-        public IconData.missiles missile = IconData.missiles.none;
+        public MissileHandle.missiles missile = MissileHandle.missiles.none;
 
         public enum effects
         {
@@ -142,12 +138,16 @@ namespace StardewDruid.Cast
             doom,
             immolate,
             capture,
-            shock,
+            //shock,
             glare,
-            backstab,
             crate,
             teleport,
             stomping,
+            charm,
+            bore,
+            jump,
+            blackhole,
+            freeze,
 
         }
 
@@ -187,20 +187,12 @@ namespace StardewDruid.Cast
             cat,
             dog_bark,
             getNewSpecialItem,
+            warrior,
+            pullItemFromWater,
+            openChest,
         }
 
         public sounds sound = sounds.none;
-
-        public enum lightEffects
-        {
-            none,
-            shadow,
-            blaze,
-
-        }
-
-        public lightEffects lighting = lightEffects.none;
-
 
         public SpellHandle(Farmer farmer, List<StardewValley.Monsters.Monster> Monsters, float damage)
         {
@@ -213,7 +205,7 @@ namespace StardewDruid.Cast
 
             radius = 128;
 
-            projectile = 2;
+            factor = 2;
 
             damageFarmers = -1f;
 
@@ -238,7 +230,7 @@ namespace StardewDruid.Cast
 
             radius = Radius;
 
-            projectile = 2;
+            factor = 2;
 
             damageFarmers = -1f;
 
@@ -262,7 +254,7 @@ namespace StardewDruid.Cast
 
             radius = Radius;
 
-            projectile = 2;
+            factor = 2;
 
             damageFarmers = vsFarmers;
 
@@ -285,7 +277,7 @@ namespace StardewDruid.Cast
 
             radius = Radius;
 
-            projectile = 2;
+            factor = 2;
 
             damageFarmers = -1f;
 
@@ -317,8 +309,9 @@ namespace StardewDruid.Cast
                 Convert.ToInt32(scheme),
                 Convert.ToInt32(indicator),
                 Convert.ToInt32(display),
-                projectile,
+                factor,
                 Convert.ToInt32(missile),
+                instant ? 1 : 0,
             };
 
             QueryData query = new()
@@ -364,9 +357,11 @@ namespace StardewDruid.Cast
 
             sound = sounds.none;
 
-            projectile = spellData[9];
+            factor = spellData[9];
 
-            missile = (IconData.missiles)spellData[10];
+            missile = (MissileHandle.missiles)spellData[10];
+
+            instant = (spellData[11] == 1);
 
         }
 
@@ -407,6 +402,13 @@ namespace StardewDruid.Cast
                 }
 
                 queried = true;
+
+            }
+
+            if (shutdown)
+            {
+
+                return false;
 
             }
 
@@ -508,7 +510,7 @@ namespace StardewDruid.Cast
                         else
                         {
 
-                            TargetCircle(0.35f);
+                            TargetCursor();
 
                         }
 
@@ -524,6 +526,8 @@ namespace StardewDruid.Cast
                         RadialDisplay();
 
                         ApplyEffects(impact);
+
+                        ClearCursor();
 
                     }
 
@@ -542,161 +546,68 @@ namespace StardewDruid.Cast
 
                     if (counter == 1)
                     {
+                        BoltHandle bolt = new();
 
-                        LaunchBolt();
+                        bolt.Setup(location, origin, destination, MissileHandle.missiles.bolt, scheme, factor);
 
-                    }
+                        missileHandle = bolt;
 
-                    AdjustBolt();
+                        if (sound == sounds.none)
+                        {
 
-                    if(counter == 5)
-                    {
+                            sound = sounds.flameSpellHit;
+
+                        }
 
                         RadialDisplay();
 
-                        ApplyDamage(impact, radius, -1, damageMonsters, monsters);
+                        ApplyDamage(impact, radius, damageFarmers, damageMonsters, monsters);
 
                         ApplyEffects(impact);
 
                     }
 
-                    if (counter == 60)
+                    missileHandle.Update();
+
+                    if (missileHandle.shutdown)
                     {
 
                         Shutdown();
 
-                        return false;
-
                     }
 
                     return true;
-
-                case spells.orbital:
-
-
-                    if (counter == 1)
-                    {
-
-                        Orbitals();
-
-                        float duration = projectileIncrements * 0.25f;
-
-                        projectileTotal = (projectileIncrements * 15);
-
-                        TargetCircle(duration);
-
-                        TargetLighting(duration);
-
-                        LaunchMissile();
-
-                    }
-
-                    if (counter < projectileTotal)
-                    {
-
-                        AdjustTrajectory(projectileTotal - counter);
-
-                    }
-
-                    if (counter == projectileTotal)
-                    {
-
-                        ApplyDamage(impact, radius, damageFarmers, damageMonsters, new());
-
-                        RadialExplode();
-
-                        RadialDisplay();
-
-                        ApplyEffects(impact);
-
-                    }
-
-                    if (counter == projectileTotal + 60)
-                    {
-
-                        Shutdown();
-
-                        return false;
-
-                    }
-
-                    return true;
-
 
                 case spells.missile:
-                case spells.ballistic:
 
                     if (counter == 1)
                     {
-                        MissileScheme();
 
-                        Projectiles();
-
-                        float duration = projectileIncrements * 0.25f;
-
-                        TargetCircle(duration);
-
-                        TargetLighting(duration);
-
-                        AdjustTarget();
-
-                        if (instant)
+                        if (added.Contains(effects.aiming))
                         {
 
-                            counter = 30;
+                            if(monsters.Count > 0)
+                            {
+
+                                destination = monsters.First().Position;
+
+                            }
 
                         }
 
-                    }
+                        missileHandle = new();
 
-                    if (counter < 30)
-                    {
+                        missileHandle.Setup(location, origin, destination, missile, scheme, factor);
 
-                        AdjustTarget();
-
-                        return true;
+                        TargetCursor();
 
                     }
 
-                    if (counter == 30)
-                    {
+                    missileHandle.Update();
 
-                        projectileTrack = 1;
+                    impact = missileHandle.projectilePosition;
 
-                        projectileTotal = (projectileIncrements * 15);
-
-                        if(missile == IconData.missiles.fireball)
-                        {
-
-                            Game1.currentLocation.playSound(sounds.fireball.ToString());
-                            
-                        }
-
-                        LaunchMissile();
-
-                        AdjustTrajectory();
-
-                        return true;
-
-                    }
-
-                    if (counter < (30 + projectileTotal))
-                    {
-
-                        AdjustTrajectory(projectileTotal - (counter - 30));
-
-                        if (counter % 30 == 0)
-                        {
-
-                            GrazeDamage(projectileTrack, projectileIncrements);
-
-                            projectileTrack++;
-
-                        }
-
-                    }
-
-                    if (counter == (30 + projectileTotal))
+                    if (missileHandle.shutdown)
                     {
 
                         ApplyDamage(impact, radius, damageFarmers, damageMonsters, new());
@@ -707,19 +618,19 @@ namespace StardewDruid.Cast
 
                         ApplyEffects(impact);
 
-                    }
-
-                    if (counter == (90 + projectileTotal))
-                    {
+                        ClearCursor();
 
                         Shutdown();
 
                         return false;
+
                     }
 
                     return true;
 
+
                 case spells.beam:
+                case spells.lightning:
 
                     if (counter == 1)
                     {
@@ -730,7 +641,7 @@ namespace StardewDruid.Cast
 
                     }
 
-                    if (counter == 15)
+                    if (counter == 24)
                     {
 
                         GrazeDamage(1, 3, 3, true);
@@ -744,7 +655,7 @@ namespace StardewDruid.Cast
 
                     }
 
-                    if (counter == 45)
+                    if (counter == 48)
                     {
 
                         ApplyDamage(impact, radius, damageFarmers, damageMonsters, new());
@@ -766,9 +677,13 @@ namespace StardewDruid.Cast
 
                     return true;
 
-                case spells.echo:
 
-                    if(counter == 30)
+                case spells.echo:
+                case spells.deathecho:
+                case spells.bubbleecho:
+                case spells.fireecho:
+
+                    if (counter == 30)
                     {
 
                         LaunchEcho();
@@ -777,7 +692,14 @@ namespace StardewDruid.Cast
 
                     }
 
-                    if (counter == 90)
+                    if (counter == 40)
+                    {
+
+                        GrazeDamage(1, 2, 4, true);
+
+                    }
+
+                    if (counter == 80)
                     {
 
                         ApplyDamage(impact, radius, damageFarmers, damageMonsters, new());
@@ -811,6 +733,28 @@ namespace StardewDruid.Cast
                     }
 
                     if (counter == 240)
+                    {
+
+                        Shutdown();
+
+                        return false;
+
+                    }
+
+                    return true;
+
+                case spells.deathwind:
+
+                    if (counter == 1)
+                    {
+
+                        LaunchDeathWind();
+
+                        ApplyEffects(impact);
+
+                    }
+
+                    if (counter == 15)
                     {
 
                         Shutdown();
@@ -871,26 +815,31 @@ namespace StardewDruid.Cast
 
                         TeleportStart();
 
-                        if (instant)
-                        { 
-                            
-                            counter = 30; 
-                        
+                        if (!instant && factor > 1)
+                        {
+
+                            InvisibilityHide();
+
                         }
 
                     }
 
-                    if(counter == 30)
+                    if(factor > 1)
                     {
+
+                        TeleportCloser();
+
+                    }
+
+                    if (counter >= factor)
+                    {
+
+                        TeleportEffect();
 
                         TeleportEnd();
 
                         ApplyEffects(destination);
 
-                    }
-
-                    if(counter == 60)
-                    {
                         Shutdown();
 
                         return false;
@@ -899,47 +848,78 @@ namespace StardewDruid.Cast
 
                     return true;
 
-
                 case spells.warpstrike:
+                case spells.honourstrike:
 
                     if (counter == 1)
                     {
-                        
-                        if (external)
+
+                        if(monsters.Count > 0)
                         {
 
-                            monsters = ModUtility.MonsterProximity(location, new() { origin }, 64, true);
+                            if (ModUtility.MonsterVitals(monsters.First(), location))
+                            {
+
+                                impact = monsters.First().Position + new Vector2(32);
+
+                            }
+                            else
+                            {
+
+                                Shutdown();
+
+                                return false;
+
+                            }
 
                         }
 
-                        if (monsters.Count == 0)
+                        WeaponRender warpstrike = new();
+
+                        Character.CharacterHandle.characters warphero = Character.CharacterHandle.characters.Thanatoshi;
+
+                        if (type == spells.honourstrike)
                         {
 
-                            return false;
+                            switch (factor)
+                            {
+                                default:
+                                    warphero = Character.CharacterHandle.characters.HonourCaptain;
+                                    break;
+
+                                case 2:
+                                case 3:
+                                    warphero = Character.CharacterHandle.characters.HonourGuard;
+                                    break;
+
+                                case 4:
+                                case 5:
+                                    warphero = Character.CharacterHandle.characters.HonourKnight;
+                                    break;
+
+                            }
+
+                            warpstrike.swordScheme = WeaponRender.swordSchemes.sword_stars;
 
                         }
 
-                        impact = monsters.First().Position;
-
-                        LaunchWarpstrike(impact);
-
-                        return true;
+                        animations = warpstrike.AnimateWarpStrike(location, warphero, impact, factor);
 
                     }
 
-                    if (counter == 24)
+                    if (counter == 18)
                     {
+
+                        RadialDisplay();
 
                         ApplyDamage(impact, radius, damageFarmers, damageMonsters, monsters);
 
                     }
 
-                    if (counter == 36)
+                    if(counter == 30)
                     {
 
                         Shutdown();
-
-                        return false;
 
                     }
 
@@ -953,41 +933,8 @@ namespace StardewDruid.Cast
 
                     return false;
 
-                case spells.zap:
-
-                    if (counter == 1)
-                    {
-
-                        LaunchZap();
-
-                    }
-
-                    AdjustBolt();
-
-                    if (counter == 5)
-                    {
-
-                        RadialDisplay();
-
-                        ApplyDamage(impact, radius, damageFarmers, damageMonsters, monsters);
-
-                        ApplyEffects(impact);
-
-                    }
-
-                    if (counter == 20)
-                    {
-
-                        Shutdown();
-
-                        return false;
-
-                    }
-
-                    return true;
-
                 case spells.warp:
-
+                    
                     if (external)
                     {
 
@@ -1091,10 +1038,10 @@ namespace StardewDruid.Cast
 
                 foreach (TemporaryAnimatedSprite animatedSprite in animations)
                 {
-                    if (animatedSprite.lightID != 0)
+                    if (animatedSprite.lightId != null)
                     {
 
-                        Utility.removeLightSource(animatedSprite.lightID);
+                        Utility.removeLightSource(animatedSprite.lightId);
 
                     }
 
@@ -1106,554 +1053,33 @@ namespace StardewDruid.Cast
 
             }
 
-            if(construct.Count > 0)
+            if(cursor != null)
             {
 
-                foreach (TemporaryAnimatedSprite animatedSprite in construct)
-                {
-                    if (animatedSprite.lightID != 0)
-                    {
+                location.temporarySprites.Remove(cursor);
 
-                        Utility.removeLightSource(animatedSprite.lightID);
-
-                    }
-
-                    location.temporarySprites.Remove(animatedSprite);
-
-                }
-
-                construct.Clear();
+                cursor = null;
 
             }
+
+            if (missileHandle != null)
+            {
+
+                missileHandle.Shutdown();
+
+            }
+
+            if(invisibility)
+            {
+
+                InvisibilityReveal();
+
+            }
+
 
         }
-
-        // ========================================= missile effects
-
-        public void MissileScheme()
-        {
-
-            switch (missile)
-            {
-
-                case IconData.missiles.death:
-
-
-                    indicator = IconData.cursors.death;
-
-                    display = IconData.impacts.skull;
-
-                    scheme = IconData.schemes.death;
-
-                    break;
-
-            }
-
-        }
-
-        public void Orbitals()
-        {
-
-            //indicator = IconData.cursors.scope;
-
-            switch (missile)
-            {
-
-                case IconData.missiles.meteor:
-
-                    projectileIncrements = 4;
-
-                    projectileSpeed = 1.5f;
-
-                    projectileOffset = -60 + (30*Mod.instance.randomIndex.Next(6));
-
-                    indicator = IconData.cursors.stars;
-
-                    if(display == IconData.impacts.none)
-                    {
-
-                        display = IconData.impacts.bomb;
-
-                    }
-
-                    lighting = lightEffects.shadow;
-
-                    break;
-
-                case IconData.missiles.rockfall:
-
-                    if (projectileSpeed == 0)
-                    {
-
-                        projectileSpeed = 1;
-
-                    }
-
-                    projectileIncrements = 10;
-
-                    projectileIncrements = Mod.instance.randomIndex.Next(3, 6);
-
-                    indicator = IconData.cursors.none;
-
-                    lighting = lightEffects.shadow;
-
-                    break;
-
-                case IconData.missiles.death:
-
-                    if (projectileSpeed == 0)
-                    {
-
-                        projectileSpeed = 1;
-
-                    }
-
-                    projectileIncrements = 10;
-
-                    indicator = IconData.cursors.death;
-
-                    display = IconData.impacts.deathbomb;
-
-                    scheme = IconData.schemes.death;
-
-                    break;
-
-                case IconData.missiles.fireball:
-
-                    projectileIncrements = 4;
-
-                    if(projectileSpeed == 0)
-                    {
-
-                        projectileSpeed = 1.5f;
-
-                    }
-
-                    projectileOffset = -60 + (30 * Mod.instance.randomIndex.Next(6));
-
-                    break;
-
-                default:
-
-
-                    if (projectileSpeed == 0)
-                    {
-
-                        projectileSpeed = 1;
-
-                    }
-
-                    projectileIncrements = 10;
-
-                    break;
-
-            }
-
-        }
-
-        public void Projectiles()
-        {
-
-            if (projectileSpeed == 0)
-            {
-
-                projectileSpeed = 1;
-
-            }
-
-            if (type == spells.ballistic)
-            {
-
-                projectilePeak = 512;
-
-                projectileIncrements = 8;
-
-                return;
-
-            }
-
-            float range = Vector2.Distance(origin, impact);
-
-            float netSpeed = 160 * projectileSpeed;
-
-            if (range < (netSpeed * 2))
-            {
-
-                Vector2 diff = (impact - origin) / Vector2.Distance(origin, impact) * (netSpeed * 2);
-
-                impact = origin + diff;
-
-                projectileIncrements = 2;
-
-            }
-            else if (range > (netSpeed * 6))
-            {
-
-                Vector2 diff = (impact - origin) / Vector2.Distance(origin, impact) * (netSpeed * 6);
-
-                impact = origin + diff;
-
-                projectileIncrements = 6;
-
-            }
-            else
-            {
-
-                projectileIncrements = (int)(range / netSpeed);
-
-            }
-
-            if(projectilePeak == 0)
-            {
-                
-                projectilePeak = 60;
-
-            }
-
-        }
-
-        public void TargetCircle(float duration = 1)
-        {
-
-            if (indicator == IconData.cursors.none)
-            {
-
-                return;
-
-            }
-
-            CursorAdditional addEffects = new() { interval = duration * 1000, scale = projectile, scheme = scheme, alpha = 0.4f, };
-
-            cursor = Mod.instance.iconData.CursorIndicator(location, impact, indicator, addEffects);
-
-            animations.Add(cursor);
-
-        }
-
-        public void TargetLighting(float duration = 1)
-        {
-
-
-            if (lighting == lightEffects.none)
-            {
-
-                return;
-
-            }
-
-            CursorAdditional addEffects = new() { interval = duration * 1000, scale = projectile, alpha = 0.35f, rotation = 0f,};
-
-            shadow = Mod.instance.iconData.CursorIndicator(location, impact, IconData.cursors.shadow, addEffects);
-
-            shadow.rotationChange = 0f;
-
-            if (type == spells.orbital)
-            {
-
-                shadow.scale = projectile - (duration * 0.5f);
-
-                shadow.position += (new Vector2(8, 8) * duration);
-
-                shadow.motion = new Vector2(-0.008f, -0.008f);
-
-                shadow.scaleChange = 0.0005f;
-
-            }
-
-            animations.Add(shadow);
-
-        }
-
-        public void AdjustTarget()
-        {
-
-            if (added.Contains(effects.aiming) && !external)
-            {
-
-                if (damageMonsters > 0 && monsters.Count > 0)
-                {
-
-                    if (ModUtility.MonsterVitals(monsters.First(), location))
-                    {
-
-                        impact = monsters.First().Position;
-
-                        Projectiles();
-
-                    }
-
-                }
-
-            }
-
-        }
-
-        public void LaunchMissile()
-        {
-
-            float targetDepth = impactLayer;
-
-            if (impactLayer < 0.001f)
-            {
-
-                targetDepth = location.IsOutdoors ? destination.Y / 10000 + 0.001f : 999f;
-
-
-            }
-
-            if (projectileIncrements == 0)
-            {
-
-                projectileIncrements = 1;
-
-            }
-
-            if (projectileIncrements > 10)
-            {
-
-                projectileIncrements = 10;
-
-            }
-
-            construct = Mod.instance.iconData.MissileConstruct(location, missile, origin, projectile, projectileIncrements, targetDepth, scheme);
-
-        }
-
-        public void AdjustTrajectory(int projectileProgress = 0)
-        {
-
-            if(construct.Count == 0)
-            {
-
-                return;
-
-            }
-
-            Vector2 from = origin;
-
-            switch(type)
-            {
-
-                case spells.orbital:
-
-                    float netSpeed = 160 * projectileSpeed;
-
-                    from = impact - new Vector2(projectileOffset * projectileIncrements, netSpeed * projectileIncrements);
-
-                    break;
-
-            }
-
-            Vector2 appear = from;
-
-            if(projectileProgress != projectileTotal)
-            {
-
-                Vector2 shift = (impact - from) * (projectileTotal - projectileProgress) / projectileTotal;
-
-                appear = from + shift;
-
-                if (projectilePeak > 0)
-                {
-
-                    float distance = Vector2.Distance(from, impact);
-
-                    float length = distance / 2;
-
-                    float lengthSq = (length * length);
-
-                    float heightFr = 4 * projectilePeak;
-
-                    float coefficient = lengthSq / heightFr;
-
-                    int midpoint = (projectileTotal / 2);
-
-                    float newHeight = 0;
-
-                    if (projectileProgress != midpoint)
-                    {
-
-                        float newLength;
-
-                        if (projectileProgress < midpoint)
-                        {
-
-                            newLength = length * (midpoint - projectileProgress) / midpoint;
-
-                        }
-                        else
-                        {
-
-                            newLength = (length * (projectileProgress - midpoint) / midpoint);
-
-                        }
-
-                        float newLengthSq = newLength * newLength;
-
-                        float coefficientFr = (4 * coefficient);
-
-                        newHeight = newLengthSq / coefficientFr;
-
-                    }
-
-                    appear -= new Vector2(0, projectilePeak - newHeight);
-
-                }
-
-            }
-
-            float targetDepth = location.IsOutdoors ? appear.Y / 10000 + 0.001f : 999f;
-
-            projectilePosition = appear;
-
-            Vector2 newPosition = projectilePosition + new Vector2(32, 32) - (new Vector2(48, 48) * construct.First().scale);
-
-            Vector2 diff = newPosition - construct.First().position;
-
-            float rotate = (float)Math.Atan2(diff.Y, diff.X);
-
-            for(int i = construct.Count - 1; i >= 0; i--)
-            {
-
-                newPosition = appear - (new Vector2(48, 48) * construct[i].scale) + new Vector2(32, 32);
-
-                construct[i].position = newPosition;
-
-                if (construct[i].rotationChange == 0f)
-                {
-
-                    construct[i].rotation = rotate;
-
-                }
-                else
-                {
-
-                    if(origin.X > impact.X)
-                    {
-
-                        construct[i].flipped = true;
-
-                    }
-
-                }
-
-                if(type != spells.orbital)
-                {
-
-                    if (impactLayer < 0.001f)
-                    {
-
-                        construct[i].layerDepth = targetDepth + (i * 0.0001f);
-
-                    }
-
-                }
-
-            }
-
-            if(lighting != lightEffects.none)
-            {
-
-                if(shadow != null)
-                {
-                    Vector2 shadowing = new Vector2(projectileOffset * projectileIncrements, 0) * projectileProgress / projectileTotal;
-
-                    shadow.Position = impact - shadowing + new Vector2(32,32) - new Vector2(16 * shadow.scale, 16 * shadow.scale);
-   
-                }
-
-            }
-
-            /*if (missile != IconData.missiles.none)
-            {
-
-                Vector2 newPosition = appear - (new Vector2(48, 48) * projectile) + new Vector2(32, 32);
-
-                Vector2 diff = newPosition - missileAnimation.position;
-
-                float rotate = (float)Math.Atan2(diff.Y, diff.X);
-
-                missileAnimation.position = newPosition;
-
-                missileAnimation.rotation = rotate;
-
-                missileAnimation.layerDepth = targetDepth;
-
-            }
-
-            if (coreCursor != IconData.cursors.none)
-            {
-
-                coreAnimation.position = appear - (new Vector2(16f, 16f) * projectile) + new Vector2(32, 32);
-
-                coreAnimation.layerDepth = targetDepth + 0.0001f;
-
-                if (coreBehaviour == cursorBehaviours.shrink)
-                {
-
-                    coreAnimation.position += new Vector2(8, 8);
-
-                }
-
-            }*/
-
-        }
-
 
         // ========================================= other combat effects
-
-        public void LaunchBolt()
-        {
-
-            if(scheme == IconData.schemes.none)
-            {
-
-                scheme = IconData.schemes.mists;
-
-            }
-
-            if(sound == sounds.none)
-            {
-
-                sound = sounds.flameSpellHit;
-
-            }
-
-            construct = Mod.instance.iconData.BoltAnimation(location, new Vector2(destination.X, destination.Y - 64), scheme, projectile);
-
-            animations.AddRange(construct);
-
-        }
-
-        public void LaunchZap()
-        {
-
-            if (scheme == IconData.schemes.none)
-            {
-
-                scheme = IconData.schemes.mists;
-
-            }
-
-            construct = Mod.instance.iconData.ZapAnimation(location, origin, destination, scheme, projectile);
-
-            animations.AddRange(construct);
-
-        }
-
-        public void AdjustBolt()
-        {
-
-            for (int i = 0; i < Math.Min(4,construct.Count); i++)
-            {
-
-                int factor = (5 - counter);
-
-                construct[i].alpha = 1 - Math.Abs(factor) * 0.03f;
-
-            }
-
-        }
 
         public void LaunchBeam()
         {
@@ -1662,32 +1088,51 @@ namespace StardewDruid.Cast
 
             //Vector2 diff = ModUtility.PathFactor(origin, destination);
 
-            Vector2 middle = diff * 320f;
+            Vector2 middle = diff * 384f;
 
-            impact = origin + diff * 560f;
+            impact = origin + diff * 688f;
 
             float rotate = (float)Math.Atan2(diff.Y, diff.X);
 
-            Vector2 setPosition = origin + middle - new Vector2(320f, 64f);
+            Vector2 setPosition = origin + middle - new Vector2(384f, 96f);
+
+            Texture2D texture;
+
+            switch (type)
+            {
+                case spells.lightning:
+
+                    texture = Mod.instance.iconData.lightningTexture;
+
+                    break;
+
+                default:
+                case spells.beam:
+
+                    texture = Mod.instance.iconData.laserTexture;
+
+                    break;
+
+            }
 
             TemporaryAnimatedSprite beam = new(0, 100f, 12, 1, setPosition, false, false)
             {
-                sourceRect = new(0, 0, 160, 32),
+                sourceRect = new(0, 0, 256, 64),
                 sourceRectStartingPos = new Vector2(0.0f, 0.0f),
-                texture = Mod.instance.iconData.laserTexture,
-                scale = 4f,
+                texture = texture,
+                scale = 3f,
                 timeBasedMotion = true,
                 layerDepth = 999f,
                 rotation = rotate,
                 alpha = 0.9f,
-                color = Mod.instance.iconData.SchemeColour(scheme),
+                //color = Mod.instance.iconData.SchemeColour(scheme),
             };
 
             location.temporarySprites.Add(beam);
 
             animations.Add(beam);
 
-            TemporaryAnimatedSprite beamInner = new(0, 100f, 12, 1, setPosition, false, false)
+            /*TemporaryAnimatedSprite beamInner = new(0, 100f, 12, 1, setPosition, false, false)
             {
                 sourceRect = new(0, 384, 160, 32),
                 sourceRectStartingPos = new Vector2(0.0f, 384.0f),
@@ -1701,7 +1146,7 @@ namespace StardewDruid.Cast
 
             location.temporarySprites.Add(beamInner);
 
-            animations.Add(beam);
+            animations.Add(beam);*/
 
         }
 
@@ -1712,31 +1157,79 @@ namespace StardewDruid.Cast
 
             Vector2 point = diff / Vector2.Distance(origin, destination);
 
-            Vector2 middle = point * 264f;
-
-            impact = origin + point * 450f;
-
             float rotate = (float)Math.Atan2(diff.Y, diff.X);
 
-            Vector2 setPosition = origin + middle - new Vector2(256f, 64f);
+            float source = 0f;
 
-            TemporaryAnimatedSprite beam = new(0, 125f, 9, 1, setPosition, false, false)
+            float interval = 125f;
+
+            int loops = 2;
+
+            switch (type)
             {
-                sourceRect = new(0, 0, 128, 32),
-                sourceRectStartingPos = new Vector2(0.0f, 0.0f),
-                texture = Mod.instance.iconData.echoTexture,
-                scale = 4f,
-                timeBasedMotion = true,
-                layerDepth = 999f,
-                rotation = rotate,
-                alpha = 0.65f,
-                color = Mod.instance.iconData.SchemeColour(scheme),
 
+                case spells.deathecho:
+
+                    source = 64f;
+
+                    break;
+
+                case spells.bubbleecho:
+
+                    source = 128f;
+
+                    interval = 175f;
+
+                    loops = 1;
+
+                    break;
+
+                case spells.fireecho:
+
+                    source = 192f;
+
+                    break;
+
+            }
+
+            List<Vector2> points = new()
+            {
+                origin + (point * factor * 48),
+                origin + (point * factor * 96),
+                origin + (point * factor * 144),
+                origin + (point * factor * 192),
+                origin + (point * factor * 240),
             };
 
-            location.temporarySprites.Add(beam);
+            impact = origin + (point * factor * 216);
 
-            animations.Add(beam);
+            for (int i = 0; i < points.Count; i++)
+            {
+
+                float echoScale = 1.5f + (0.5f * i);
+
+                TemporaryAnimatedSprite part = new(0, interval, 5, loops, points[i] - new Vector2(32* echoScale, 32f*echoScale), false, false)
+                {
+                    sourceRect = new(0, (int)source, 64, 64),
+                    sourceRectStartingPos = new Vector2(0.0f, source),
+                    texture = Mod.instance.iconData.echoTexture,
+                    scale = echoScale,
+                    timeBasedMotion = true,
+                    layerDepth = 999f,
+                    rotation = rotate,
+                    alpha = 0.75f,
+                    alphaFade = 0.0005f,
+                    scaleChange = 0.0005f,
+                    motion = new Vector2(-0.032f,-0.032f),
+                    delayBeforeAnimationStart = 250 * i,
+
+                };
+
+                location.temporarySprites.Add(part);
+
+                animations.Add(part);
+
+            }
 
         }
 
@@ -1791,88 +1284,65 @@ namespace StardewDruid.Cast
 
             animations.Add(bandAnimation);
 
-            if (added.Contains(effects.tornado))
-            {
-
-                TemporaryAnimatedSprite innerAnimation = Mod.instance.iconData.CreateImpact(
-                    location,
-                    impact,
-                    IconData.impacts.spiral,
-                    4f,
-                    new()
-                    {
-                        color = Mod.instance.iconData.gradientColours[IconData.schemes.mists][2],
-                        loops = 10,
-                        flip = true,
-                        alpha = 0.2f,
-                        layer = location.IsOutdoors ? impact.Y / 10000 : 990f
-                    }
-                );
-
-                animations.Add(innerAnimation);
-
-                TemporaryAnimatedSprite waterAnimation = Mod.instance.iconData.CreateImpact(
-                    location, 
-                    impact, 
-                    IconData.impacts.spiral, 
-                    6f, 
-                    new() { 
-                        color = Mod.instance.iconData.gradientColours[IconData.schemes.mists][1], 
-                        loops = 10, 
-                        flip = true, 
-                        alpha = 0.2f, 
-                        layer = location.IsOutdoors ? impact.Y / 10000 : 990f 
-                    }
-                );
-                
-                animations.Add(waterAnimation);
-
-            }
-
-            TemporaryAnimatedSprite cloudAnimation = Mod.instance.iconData.CreateImpact(location, impact, IconData.impacts.spiral, 8f, new() { loops = 10, flip = true, alpha = 0.05f, layer = location.IsOutdoors ? impact.Y / 10000 : 990f });
+            TemporaryAnimatedSprite cloudAnimation = Mod.instance.iconData.CreateSwirl(location, impact, 5f, new() { interval = 150, frame = 1, frames = 5, loops = 10, flip = true, alpha = 0.05f, layer = location.IsOutdoors ? impact.Y / 10000 : 990f });
 
             animations.Add(cloudAnimation);
 
         }
-        
-        public void LaunchWarpstrike(Vector2 position)
+       
+        public void LaunchDeathWind()
         {
-
-            impact = position;
-
-            construct = Mod.instance.iconData.AnimateWarpStrike(location, position, projectile, scheme);
-
-        }
-
-        public void AdjustWarpstrike()
-        {
-
-            if(external) 
-            { 
-                
-                return; 
             
-            }
+            Winds windsNew = new();
 
-            if (monsters.Count == 0)
+            windsNew.EventSetup(origin,Rite.eventDeathwinds);
+
+            windsNew.EventActivate();
+
+            windsNew.eventLocked = true;
+
+            if (external)
             {
 
-                return;
+                windsNew.WindArray(new(), WispHandle.wisptypes.death, 9);
 
             }
-
-            if (!ModUtility.MonsterVitals(monsters.First(), location))
+            else
             {
 
-                return;
+                windsNew.damageFarmers = damageFarmers;
+
+                windsNew.damageMonsters = damageMonsters;
+
+                windsNew.WindArray(new() { boss, }, WispHandle.wisptypes.death, 9);
 
             }
-
-            Mod.instance.iconData.AdjustWarpStrke(construct, monsters.First().Position, projectile);
 
         }
 
         // ========================================= cosmetic
+        public void TargetCursor()
+        {
+
+            if (indicator == IconData.cursors.none)
+            {
+                return;
+            }
+
+            CursorAdditional addEffects = new() { interval = 10000, scale = factor, scheme = scheme, alpha = 0.4f, };
+
+            cursor = Mod.instance.iconData.CursorIndicator(location, impact, indicator, addEffects);
+        
+        }
+
+        public void ClearCursor()
+        {
+
+            location.temporarySprites.Remove(cursor);
+
+            cursor = null;
+
+        }
 
         public void RadialDisplay()
         {
@@ -1882,18 +1352,11 @@ namespace StardewDruid.Cast
             if (display != IconData.impacts.none)
             {
 
-                float layer = impactLayer;
+                float size = (radius - 32f) / 64f;
 
-                if (impactLayer < 0.001f)
-                {
+                size = Math.Min(4f, size);
 
-                    layer = -1f;
-
-                }
-
-                float radial = Math.Min(6, (int)(radius / 64)) - 0.5f;
-
-                Mod.instance.iconData.ImpactIndicator(location, impact, display, radial, new() { scheme = scheme, layer = layer });
+                Mod.instance.iconData.ImpactIndicator(location, impact, display, size, new() { scheme = scheme,});
 
             }
 
@@ -1909,10 +1372,12 @@ namespace StardewDruid.Cast
         public void LightRadius(Vector2 source)
         {
 
+            string lightid = "18465_" + (source.X * 10000 + source.Y).ToString();
+
             TemporaryAnimatedSprite lightCircle = new(23, 200f, 6, 1, source, false, Game1.random.NextDouble() < 0.5)
             {
                 texture = Game1.mouseCursors,
-                light = true,
+                lightId = lightid,
                 lightRadius = 3f,
                 lightcolor = Color.Black,
                 alphaFade = 0.03f,
@@ -1928,7 +1393,7 @@ namespace StardewDruid.Cast
         public void TrickDisplay()
         {
 
-            switch (projectile)
+            switch (factor)
             {
 
                 case 0:
@@ -1979,7 +1444,7 @@ namespace StardewDruid.Cast
 
                 }
 
-                switch (projectile)
+                switch (factor)
                 {
 
                     default:
@@ -2069,6 +1534,27 @@ namespace StardewDruid.Cast
 
             animations.Add(crateOpen);
 
+            location.playSound(SpellHandle.sounds.openChest.ToString());
+
+            List<Vector2> sparkles = new()
+            {
+                new Vector2(64,-128),
+                new Vector2(-64,0),
+                new Vector2(48,-16),
+                new Vector2(-48,-112),
+
+            };
+
+            for (int i = 0; i < sparkles.Count; i++)
+            {
+
+                Vector2 sparkleVector = origin + sparkles[i];
+
+                Mod.instance.iconData.ImpactIndicator(location, sparkleVector, IconData.impacts.glare, 4, new() { scheme = scheme, });
+
+            }
+
+
         }
 
         public void CrateRelease()
@@ -2111,10 +1597,91 @@ namespace StardewDruid.Cast
 
         }
 
+        public void TeleportCloser()
+        {
+
+            float distance = Vector2.Distance(origin, destination);
+
+            if(distance <= 32)
+            {
+
+                return;
+
+            }
+
+            if(factor <= 0)
+            {
+
+                return;
+
+            }
+
+            Game1.player.Position = origin + ((destination - origin) * (counter / factor));
+
+        }
+
         public void TeleportEnd()
         {
 
             Mod.instance.iconData.AnimateQuickWarp(Game1.player.currentLocation, destination);
+
+        }
+
+        public void InvisibilityHide()
+        {
+
+            if (external)
+            {
+
+                return;
+
+            }
+
+            if (Mod.instance.eventRegister.ContainsKey(Rite.eventTransform))
+            {
+                return;
+
+            }
+
+            invisibility = true;
+
+            Game1.displayFarmer = false;
+
+            Game1.player.temporarilyInvincible = true;
+
+            Game1.player.temporaryInvincibilityTimer = 1;
+
+            Game1.player.currentTemporaryInvincibilityDuration = factor * 1000;
+
+        }
+
+        public void InvisibilityReveal()
+        {
+
+            if (external)
+            {
+
+                return;
+
+            }
+
+            if (Mod.instance.eventRegister.ContainsKey(Rite.eventTransform))
+            {
+                return;
+
+            }
+
+            invisibility = false;
+
+            Game1.displayFarmer = true;
+
+            Game1.player.temporarilyInvincible = false;
+
+            Game1.player.temporaryInvincibilityTimer = 0;
+
+            Game1.player.currentTemporaryInvincibilityDuration = 0;
+
+            Game1.player.stopGlowing();
 
         }
 
@@ -2133,7 +1700,7 @@ namespace StardewDruid.Cast
             if (reach == -1)
             {
 
-                reach = projectile;
+                reach = factor;
 
             }
 
@@ -2317,12 +1884,6 @@ namespace StardewDruid.Cast
 
                         break;
 
-                    case effects.backstab:
-
-                        BackstabEffect();
-
-                        break;
-
                     case effects.embers:
 
                         EmberEffect(zone);
@@ -2353,11 +1914,11 @@ namespace StardewDruid.Cast
 
                         break;
 
-                    case effects.shock:
+                    /*case effects.shock:
 
                         ShockEffect();
 
-                        break;
+                        break;*/
 
                     case effects.teleport:
 
@@ -2376,6 +1937,38 @@ namespace StardewDruid.Cast
                         StompEffect();
 
                         break;
+
+                    case effects.charm:
+
+                        CharmEffect();
+
+                        break;
+
+                    case effects.bore:
+
+                        BoreEffect();
+
+                        break;
+
+                    case effects.jump:
+
+                        JumpEffect();
+
+                        break;
+
+                    case effects.blackhole:
+
+                        BlackHoleEffect();
+
+                        break;
+
+                    case effects.freeze:
+
+                        FreezeEffect();
+
+                        break;
+
+
                 }
 
             }
@@ -2398,10 +1991,10 @@ namespace StardewDruid.Cast
 
             int generateAmt = Math.Max(1, randomIndex.Next(Mod.instance.PowerLevel));
 
-            if (!Mod.instance.questHandle.IsComplete(StardewDruid.Journal.QuestHandle.wealdFive))
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdFive))
             {
 
-                Mod.instance.questHandle.UpdateTask(StardewDruid.Journal.QuestHandle.wealdFive, generateAmt);
+                Mod.instance.questHandle.UpdateTask(QuestHandle.wealdFive, generateAmt);
 
             }
 
@@ -2458,10 +2051,10 @@ namespace StardewDruid.Cast
 
             float impes = 0.05f;
 
-            if (Mod.instance.herbalData.applied.ContainsKey(HerbalData.herbals.impes))
+            if (Mod.instance.herbalData.applied.ContainsKey(HerbalData.herbalbuffs.vigor))
             {
 
-                impes = 0.05f * Mod.instance.herbalData.applied[HerbalData.herbals.impes].level;
+                impes = 0.05f * Mod.instance.herbalData.applied[HerbalData.herbalbuffs.vigor].level;
 
             }
 
@@ -2486,7 +2079,7 @@ namespace StardewDruid.Cast
 
                 Color color = Color.DarkGreen;
 
-                //Mod.instance.iconData.ImpactIndicator(location, monster.Position, IconData.impacts.glare, 1f, new() { color = Color.Teal, });
+                Mod.instance.iconData.ImpactIndicator(location, monster.Position, IconData.impacts.sparkle, 3f, new() { color = Color.Teal, });
 
                 location.debris.Add(new Debris(drain, new Vector2(boundingBox.Center.X + 16, boundingBox.Center.Y), color, 1f, monster));
 
@@ -2529,14 +2122,14 @@ namespace StardewDruid.Cast
 
             float impes = 0.1f;
 
-            if (Mod.instance.herbalData.applied.ContainsKey(HerbalData.herbals.impes))
+            if (Mod.instance.herbalData.applied.ContainsKey(HerbalData.herbalbuffs.vigor))
             {
 
-                impes = 0.1f * Mod.instance.herbalData.applied[HerbalData.herbals.impes].level;
+                impes = 0.1f * Mod.instance.herbalData.applied[HerbalData.herbalbuffs.vigor].level;
 
             }
 
-            int drain = Math.Max(10, (int)(damageMonsters * impes));
+            int drain = Math.Max(Mod.instance.PowerLevel*5, (int)(damageMonsters * impes));
 
             int num = Math.Min(drain, Game1.player.maxHealth - Game1.player.health);
 
@@ -2558,8 +2151,6 @@ namespace StardewDruid.Cast
                 );
 
             }
-
-            Mod.instance.iconData.ImpactIndicator(location, Game1.player.Position, IconData.impacts.mists, 3f, new());
 
         }
 
@@ -2617,47 +2208,6 @@ namespace StardewDruid.Cast
 
         }
 
-        public void BackstabEffect()
-        {
-
-            if (Mod.instance.eventRegister.ContainsKey("curse"))
-            {
-
-                if (Mod.instance.eventRegister["curse"] is Cast.Effect.Curse curseEffect)
-                {
-                    
-                    List<StardewValley.Monsters.Monster> monsterTargets = new(monsters);
-
-                    if (monsterTargets.Count == 0)
-                    {
-
-                        monsterTargets = ModUtility.MonsterProximity(location, new() { impact }, radius + 32, true);
-
-                    }
-
-                    foreach (var monster in monsterTargets)
-                    {
-
-                        if (curseEffect.victims.ContainsKey(monster))
-                        {
-
-                            if(curseEffect.victims[monster].type == effects.glare)
-                            {
-
-                                curseEffect.victims[monster].PerformCritical();
-
-                            }
-                            
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-
         public void EmberEffect(Vector2 zone)
         {
             
@@ -2710,7 +2260,8 @@ namespace StardewDruid.Cast
                 ModUtility.PositionToTile(zone),
                 vsFarmers,
                 vsMonsters,
-                scheme
+                scheme,
+                (int)(radius/64)
             );
 
         }
@@ -2752,7 +2303,7 @@ namespace StardewDruid.Cast
 
         }
 
-        public void ShockEffect()
+        /*public void ShockEffect()
         {
             
             if (external)
@@ -2762,11 +2313,13 @@ namespace StardewDruid.Cast
 
             }
 
-            Vector2 shockOrigin = impact - new Vector2(0, 32);
+            Vector2 shockOrigin = impact;
 
             int shockSize = 6;
 
             int shockDirection = -1;
+
+            int shockCounter = 1;
 
             List<StardewValley.Monsters.Monster> victims = ModUtility.MonsterProximity(location, new() { shockOrigin }, 640, true);
 
@@ -2796,7 +2349,7 @@ namespace StardewDruid.Cast
 
                 float shockDistance = Vector2.Distance(shockOrigin, victimPosition);
 
-                if(shockDistance > (112f * shockSize))
+                if(shockDistance > (56f * shockSize))
                 { 
                 
                     continue;
@@ -2829,13 +2382,17 @@ namespace StardewDruid.Cast
 
                 SpellHandle bolt = new(location, victimPosition, shockOrigin, 56, -1, shockDamage);
 
-                bolt.projectile = shockSize;
+                bolt.factor = shockSize;
+
+                bolt.display = IconData.impacts.sparkbang;
+
+                bolt.counter = -10 * shockCounter;
 
                 bolt.monsters = new() { victim, };
 
                 bolt.scheme = scheme;
 
-                bolt.type = SpellHandle.spells.zap;
+                //bolt.type = SpellHandle.spells.zap;
 
                 bolt.critical = critical;
 
@@ -2849,11 +2406,26 @@ namespace StardewDruid.Cast
 
                 shockDirection = thisDirection;
 
+                shockCounter++;
+
             }
 
-        }
+        }*/
 
         // ========================================= gravity well
+
+        public void BlackHoleEffect()
+        {
+
+            SpellHandle hole = new(Game1.player, impact, 5 * 64, 0);
+
+            hole.type = SpellHandle.spells.blackhole;
+
+            hole.added = new() { SpellHandle.effects.gravity, };
+
+            Mod.instance.spellRegister.Add(hole);
+
+        }
 
         public void GravityEffect()
         {
@@ -2962,7 +2534,9 @@ namespace StardewDruid.Cast
 
             }
 
-            SpawnData.CrateTreasure(location, origin, impact);
+            StardewValley.Object treasure = SpawnData.RandomTreasure();
+
+            new ThrowHandle(Game1.player, origin, treasure).register();
 
         }
 
@@ -2976,13 +2550,13 @@ namespace StardewDruid.Cast
             }
 
             Game1.player.Position = destination;
-
+        
         }
 
         public void WarpEffect()
         {
 
-            int direction = (int)projectile;
+            int direction = (int)factor;
 
             if (direction < 0 || direction > 3)
             {
@@ -3016,6 +2590,184 @@ namespace StardewDruid.Cast
             stompEvent.EventActivate();
 
         }
+
+        // ========================================= bomb effect
+
+        public void CharmEffect()
+        {
+
+            List<NPC> villagers = ModUtility.GetFriendsInLocation(location, true);
+
+            foreach (NPC witness in villagers)
+            {
+
+                if (Mod.instance.Witnessed(ReactionData.reactions.lovebomb, witness))
+                {
+
+                    continue;
+
+                }
+
+                if (Vector2.Distance(witness.Position, destination) >= radius)
+                {
+
+                    continue;
+
+                }
+
+                witness.faceTowardFarmerForPeriod(3000, 4, false, Game1.player);
+
+                Game1.player.friendshipData[witness.Name].TalkedToToday = true;
+
+                ModUtility.ChangeFriendship(Game1.player, witness, 100);
+
+                ReactionData.ReactTo(witness, ReactionData.reactions.lovebomb, 100);
+
+            }
+
+        }
+
+        public void BoreEffect()
+        {
+
+            if (
+                location is MineShaft mineShaft
+                && mineShaft.mineLevel != MineShaft.bottomOfMineLevel
+                && mineShaft.mineLevel != MineShaft.quarryMineShaft)
+            {
+
+            }
+            else
+            {
+
+                return;
+
+            }
+
+            Layer layer = location.map.GetLayer("Buildings");
+
+            Vector2 boreVectorZero = ModUtility.PositionToTile(destination);
+
+            List<Vector2> bores = new();
+
+            for (int i = 0; i < 4; i++)
+            { 
+            
+                if(i == 0) { 
+                    
+                    bores = new() { boreVectorZero, };
+
+                }
+                else
+                {
+
+                    bores = ModUtility.GetTilesWithinRadius(location, boreVectorZero, i);
+
+                }
+
+                foreach(Vector2 boreVector in bores)
+                {
+
+                    if(ModUtility.GroundCheck(location,boreVector) == "ground")
+                    {
+                        
+                        layer.Tiles[(int)boreVector.X, (int)boreVector.Y] = new StaticTile(layer, location.map.TileSheets[0], 0, mineShaft.mineLevel > 120 ? 174 : 173);
+
+                        Game1.player.TemporaryPassableTiles.Add(new Microsoft.Xna.Framework.Rectangle((int)boreVector.X * 64, (int)boreVector.Y * 64, 64, 64));
+
+                        return;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        public void JumpEffect()
+        {
+
+            if(factor <= 1)
+            {
+
+                return;
+
+            }
+
+            Vector2 bounce = destination + ((destination - origin) * 0.5f);
+
+            SpellHandle clone = new(location, bounce, destination, radius - 64, damageFarmers, damageMonsters);
+
+            clone.type = type;
+
+            clone.missile = missile;
+
+            clone.display = display;
+
+            clone.factor = factor - 1;
+
+            clone.power = Math.Max(1, power -1);
+
+            clone.explosion = Math.Max(1, explosion -1);
+
+            clone.terrain = Math.Max(1, terrain -1);
+
+            clone.sound = sound;
+
+            clone.added = added;
+
+            Mod.instance.spellRegister.Add(clone);
+
+        }
+
+        public void FreezeEffect()
+        {
+            if (external)
+            {
+
+                return;
+
+            }
+
+            if (monsters.Count == 0)
+            {
+
+                monsters = ModUtility.MonsterProximity(location, new() { impact }, radius + 32, true);
+            }
+
+            Vector2 velocityTowardPoint = Utility.getVelocityTowardPoint(origin,destination, 5f);
+
+            DebuffingProjectile debuffingProjectile = new DebuffingProjectile("frozen", 17, 0, 0, 0f, velocityTowardPoint.X, velocityTowardPoint.Y, impact, location, Game1.player, hitsMonsters: true, playDefaultSoundOnFire: false);
+            debuffingProjectile.wavyMotion.Value = false;
+            debuffingProjectile.piercesLeft.Value = 99999;
+            debuffingProjectile.maxTravelDistance.Value = 3000;
+            debuffingProjectile.IgnoreLocationCollision = true;
+            debuffingProjectile.ignoreObjectCollisions.Value = true;
+            debuffingProjectile.maxVelocity.Value = 12f;
+            debuffingProjectile.projectileID.Value = 15;
+            debuffingProjectile.alpha.Value = 0.001f;
+            debuffingProjectile.alphaChange.Value = 0.05f;
+            debuffingProjectile.light.Value = true;
+            debuffingProjectile.debuffIntensity.Value = 4;
+            debuffingProjectile.boundingBoxWidth.Value = 32;
+
+            foreach (var monster in monsters)
+            {
+
+                if (!ModUtility.MonsterVitals(monster, monster.currentLocation))
+                {
+
+                    continue;
+
+                }
+
+                debuffingProjectile.behaviorOnCollisionWithMonster(monster, monster.currentLocation);
+
+            }
+
+        }
+
     }
 
 }

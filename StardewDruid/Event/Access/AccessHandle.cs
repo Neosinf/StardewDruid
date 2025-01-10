@@ -224,7 +224,7 @@ namespace StardewDruid.Event.Access
             if (Utility.isOnScreen(start * 64, 64))
             {
 
-                Mod.instance.spellRegister.Add(new(start * 64 + new Vector2(64, 0), 384, IconData.impacts.impact, new()) { sound = SpellHandle.sounds.boulderBreak, impactLayer = 999f, });
+                Mod.instance.spellRegister.Add(new(start * 64 + new Vector2(64, 0), 384, IconData.impacts.impact, new()) { sound = SpellHandle.sounds.boulderBreak, });
 
             }
 
@@ -328,7 +328,7 @@ namespace StardewDruid.Event.Access
             if (Utility.isOnScreen(start * 64, 64) && animate)
             {
 
-                Mod.instance.spellRegister.Add(new(start * 64 + new Vector2(64, 0), 384, IconData.impacts.impact, new()) { sound = SpellHandle.sounds.boulderBreak, impactLayer = 999f, });
+                Mod.instance.spellRegister.Add(new(start * 64 + new Vector2(64, 0), 384, IconData.impacts.impact, new()) { sound = SpellHandle.sounds.boulderBreak, });
 
                 location.playSound(SpellHandle.sounds.secret1.ToString());
 

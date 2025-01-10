@@ -17,6 +17,7 @@ using StardewValley.BellsAndWhistles;
 using StardewValley.Buffs;
 using StardewValley.Buildings;
 using StardewValley.Characters;
+using StardewValley.Companions;
 using StardewValley.Enchantments;
 using StardewValley.GameData;
 using StardewValley.GameData.Crops;
@@ -27,6 +28,7 @@ using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Monsters;
 using StardewValley.Objects;
+using StardewValley.Objects.Trinkets;
 using StardewValley.SpecialOrders;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
@@ -44,6 +46,7 @@ using xTile.Dimensions;
 using xTile.Layers;
 using xTile.ObjectModel;
 using xTile.Tiles;
+using static StardewValley.Minigames.TargetGame;
 
 
 namespace StardewDruid
@@ -51,7 +54,7 @@ namespace StardewDruid
     static class ModUtility
     {
 
-        // ======================== Animations
+        // ======================== ANIMATIONS
 
         public static void AnimateRandomFish(GameLocation location, Vector2 vector)
         {
@@ -237,8 +240,7 @@ namespace StardewDruid
 
         }
 
-
-        // ======================== Gameworld Interactions
+        // ======================== GAMEWORLD INTERACTIONS
 
         public static void ChangeFriendship(Farmer player, NPC friend, int friendship)
         {
@@ -405,12 +407,12 @@ namespace StardewDruid
 
             }
 
-            if(Mod.instance.Config.cultivateBehaviour == 1 && Mod.instance.ModDifficulty() <= 6)
+            /*if(Mod.instance.Config.cultivateBehaviour == 1 && Mod.instance.ModDifficulty() <= 6)
             {
 
                 quantityMax++;
 
-            }
+            }*/
 
             if(Game1.player.FarmingLevel > 5 && Mod.instance.ModDifficulty() <= 6)
             {
@@ -582,7 +584,58 @@ namespace StardewDruid
 
         }
 
-        // ======================== Tile Interactions
+        public static List<string> SplitStringByLength(string text, float length)
+        {
+
+            if(text == string.Empty || length <= 0)
+            {
+
+                return new();
+
+            }
+
+            List<string> strings = new();
+
+            List<string> build = new();
+
+            int count = 0;
+
+            string[] chunks = text.Split(" ");
+
+            foreach(string chunk in chunks)
+            {
+
+                build.Add(new(chunk));
+
+                count += chunk.Length;
+
+                count += 1;
+
+                if(count > length)
+                {
+
+                    strings.Add(string.Join(" ",build));
+
+                    count = 0;
+
+                    build.Clear();
+
+                }
+
+            }
+
+            if(build.Count > 0)
+            {
+
+                strings.Add(string.Join(" ", build));
+
+            }
+
+            return strings;
+
+        }
+
+        // ======================== TILE INTERACTIONS
 
         public static Vector2 PositionToTile(Vector2 position)
         {
@@ -1739,6 +1792,123 @@ namespace StardewDruid
 
         }
 
+        static List<Vector2> TilesWithinNine(Vector2 center)
+        {
+            List<Vector2> result = new() {
+
+                center + new Vector2(0,-9),
+                center + new Vector2(1,-8), 
+                center + new Vector2(2,-8),
+                center + new Vector2(3,-7), 
+                center + new Vector2(4,-7),
+                center + new Vector2(5,-6),
+                center + new Vector2(6,-5),
+                center + new Vector2(7,-4),
+                center + new Vector2(7,-3),
+                center + new Vector2(8,-2),
+                center + new Vector2(8,-1),
+
+                center + new Vector2(8,1),
+                center + new Vector2(8,2),
+                center + new Vector2(7,3),
+                center + new Vector2(7,4),
+                center + new Vector2(6,5),
+                center + new Vector2(5,6),
+                center + new Vector2(4,7),
+                center + new Vector2(3,7),
+                center + new Vector2(2,8),
+                center + new Vector2(1,8),  
+
+                center + new Vector2(0,9),
+                center + new Vector2(-1,8),
+                center + new Vector2(-2,8),
+                center + new Vector2(-3,7),
+                center + new Vector2(-4,7), 
+                center + new Vector2(-5,6),
+                center + new Vector2(-6,5),
+                center + new Vector2(-7,4),
+                center + new Vector2(-7,3),
+                center + new Vector2(-8,2),
+                center + new Vector2(-8,1),
+
+                center + new Vector2(-9,0),
+                center + new Vector2(-8,-1),
+                center + new Vector2(-8,-2),
+                center + new Vector2(-7,-3),
+                center + new Vector2(-7,-4),
+                center + new Vector2(-6,-5),
+                center + new Vector2(-5,-6),
+                center + new Vector2(-4,-7),    
+                center + new Vector2(-3,-7),
+                center + new Vector2(-2,-8),    
+                center + new Vector2(-1,-8),
+
+            };
+
+            return result;
+
+        }        
+        
+        static List<Vector2> TilesWithinTen(Vector2 center)
+        {
+            List<Vector2> result = new() {
+
+                center + new Vector2(0,-10),
+                center + new Vector2(1,-9),
+                center + new Vector2(2,-9),
+                center + new Vector2(3,-8),
+                center + new Vector2(5,-7),
+                center + new Vector2(6,-6),
+                center + new Vector2(7,-5),
+                center + new Vector2(8,-4),
+                center + new Vector2(8,-3),
+                center + new Vector2(9,-2),
+                center + new Vector2(9,-1),
+
+                center + new Vector2(9,1),
+                center + new Vector2(9,2),
+                center + new Vector2(8,3),
+                center + new Vector2(8,4),
+                center + new Vector2(7,5),
+                center + new Vector2(6,6),
+                center + new Vector2(5,7),
+                center + new Vector2(4,8),
+                center + new Vector2(3,8),
+                center + new Vector2(2,9),
+                center + new Vector2(1,9),
+
+                center + new Vector2(0,10),
+                center + new Vector2(-1,9),
+                center + new Vector2(-2,9),
+                center + new Vector2(-3,8),
+                center + new Vector2(-4,8),
+                center + new Vector2(-5,7),
+                center + new Vector2(-6,6),
+                center + new Vector2(-7,5),
+                center + new Vector2(-8,4),
+                center + new Vector2(-8,3),
+                center + new Vector2(-9,2),
+                center + new Vector2(-9,1),
+
+                center + new Vector2(-10,0),
+                center + new Vector2(-9,-1),
+                center + new Vector2(-9,-2),
+                center + new Vector2(-8,-3),
+                center + new Vector2(-8,-4),
+                center + new Vector2(-7,-5),
+                center + new Vector2(-6,-6),
+                center + new Vector2(-5,-7),
+                center + new Vector2(-4,-8),
+                center + new Vector2(-3,-8),
+                center + new Vector2(-2,-9),
+                center + new Vector2(-1,-9),
+
+            };
+
+            return result;
+
+        }
+
         public static List<Vector2> GetTilesWithinRadius(GameLocation location, Vector2 center, int level, bool onmap = true, int segment = -1)
         {
 
@@ -1769,6 +1939,12 @@ namespace StardewDruid
                     break;
                 case 8:
                     templateList = TilesWithinEight(center);
+                    break;
+                case 9:
+                    templateList = TilesWithinNine(center);
+                    break;
+                case 10:
+                    templateList = TilesWithinTen(center);
                     break;
                 default: // 0
                     templateList = new() { center, };
@@ -1874,7 +2050,9 @@ namespace StardewDruid
 
                 if (!vectorList.Contains(tile) && tile != near && tile != distant)
                 {
+                    
                     vectorList.Add(tile);
+
                 }
 
             }
@@ -1937,6 +2115,38 @@ namespace StardewDruid
             }
 
             return occupied;
+
+        }
+
+        public static List<Vector2> GetObstaclesBetweenTargets(GameLocation location,Vector2 distant, Vector2 near)
+        {
+
+            List<Vector2> obstacles = new();
+
+            List<Vector2> betweens = GetTilesBetweenPositions(location, distant, near);
+
+            foreach(Vector2 between in betweens)
+            {
+
+                if (GroundCheck(location,between, true) != "ground")
+                {
+
+                    obstacles.Add(between);
+
+                }
+
+            }
+
+            Vector2 destination = PositionToTile(distant);
+
+            if (GroundCheck(location, destination, true) != "ground")
+            {
+
+                obstacles.Add(destination);
+
+            }
+
+            return obstacles;
 
         }
 
@@ -2606,6 +2816,13 @@ namespace StardewDruid
 
                 }
 
+                if(farmer.Position == Vector2.Zero || farmer.Position.X <= 0 || farmer.Position.Y <= 0)
+                {
+
+                    continue;
+
+                }
+
                 float distance = Proximation(farmer.Position, targetPosition, threshold);
 
                 if (distance != -1)
@@ -2633,33 +2850,22 @@ namespace StardewDruid
         public static List<Character.Character> CompanionProximity(GameLocation targetLocation, List<Vector2> targetPosition, float threshold, bool checkInvincible = false)
         {
 
-            if (targetLocation == null || Mod.instance.trackers.Count == 0)
-            {
-
-                return new();
-
-            }
-
             Dictionary<Character.Character, float> companionList = new();
 
-            threshold = Math.Max(64, threshold);
-
-            foreach (KeyValuePair<CharacterHandle.characters, TrackHandle> tracker in Mod.instance.trackers)
+            foreach(NPC character in targetLocation.characters)
             {
 
-                if(Mod.instance.characters[tracker.Key].currentLocation.Name != targetLocation.Name)
+                if (character is Character.Character companion)
                 {
 
-                    continue;
+                    float distance = Proximation(character.Position, targetPosition, threshold);
 
-                }
+                    if (distance != -1)
+                    {
 
-                float distance = Proximation(Mod.instance.characters[tracker.Key].Position, targetPosition, threshold);
+                        companionList.Add(companion, distance);
 
-                if (distance != -1)
-                {
-
-                    companionList.Add(Mod.instance.characters[tracker.Key], distance);
+                    }
 
                 }
 
@@ -2831,7 +3037,7 @@ namespace StardewDruid
 
                 buffEffects.Speed.Value = 1f;
 
-                Game1.player.applyBuff(new Buff("iridiumspur", null, Game1.content.LoadString("Strings\\1_6_Strings:IridiumSpur_Name"), Game1.player.getFirstTrinketWithID("IridiumSpur").GetEffect().general_stat_1 * 1000, Game1.objectSpriteSheet_2, 76, buffEffects, false));
+                Game1.player.applyBuff(new Buff("iridiumspur", null, Game1.content.LoadString("Strings\\1_6_Strings:IridiumSpur_Name"), Game1.player.getFirstTrinketWithID("IridiumSpur").GetEffect().GeneralStat * 1000, Game1.objectSpriteSheet_2, 76, buffEffects, false));
 
             }
 
@@ -2981,7 +3187,7 @@ namespace StardewDruid
 
                 float difference = Proximation(monster.Position, targetPositions, monsterThreshold);
 
-                if (difference > 0)
+                if (difference >= 0)
                 {
 
                     monsterList.Add(monster, difference);
@@ -3134,29 +3340,15 @@ namespace StardewDruid
 
             if (targetMonster is RockCrab crabby)
             {
-                Type reflectType = typeof(RockCrab);
 
-                FieldInfo reflectField = reflectType.GetField("shellGone", BindingFlags.NonPublic | BindingFlags.Instance);
-
-                var shellGone = reflectField.GetValue(crabby);
-                ;
-                if (shellGone != null)
+                if (!crabby.shellGone.Value)
                 {
 
-                    if (!(shellGone as NetBool).Value)
-                    {
-                        FieldInfo shellField = reflectType.GetField("shellHealth", BindingFlags.NonPublic | BindingFlags.Instance);
+                    crabby.shellGone.Set(true);
 
-                        var shellHealth = shellField.GetValue(crabby);
+                    crabby.shellHealth.Set(0);
 
-                        for (int i = 0; i < (shellHealth as NetInt).Value; i++)
-                        {
-
-                            crabby.hitWithTool(Mod.instance.virtualPick);
-
-                        }
-
-                    }
+                    crabby.moveTowardPlayer(-1);
 
                 }
 
@@ -3171,7 +3363,7 @@ namespace StardewDruid
 
             foreach (BaseEnchantment enchantment in targetPlayer.enchantments)
             {
-                enchantment.OnCalculateDamage(targetMonster, targetLocation, targetPlayer, ref damageDealt);
+                enchantment.OnCalculateDamage(targetMonster, targetLocation, targetPlayer, false, ref damageDealt);
             }
 
             //targetLocation.removeDamageDebris(targetMonster);
@@ -3195,12 +3387,13 @@ namespace StardewDruid
 
             foreach (BaseEnchantment enchantment2 in targetPlayer.enchantments)
             {
-                enchantment2.OnDealDamage(targetMonster, targetLocation, targetPlayer, ref damageDealt);
+                //enchantment2.OnDealDamage(targetMonster, targetLocation, targetPlayer, ref damageDealt);
+                enchantment2.OnDealtDamage(targetMonster, targetLocation, targetPlayer, false, damageDealt);
             }
 
-            foreach (Trinket trinketItem in targetPlayer.trinketItems)
+            foreach (StardewValley.Objects.Trinkets.Trinket trinketItem in targetPlayer.trinketItems)
             {
-                trinketItem?.OnDamageMonster(targetPlayer, targetMonster, damageDealt);
+                trinketItem?.OnDamageMonster(targetPlayer, targetMonster, damageDealt, false, critApplied);
             }
 
             if (targetMonster.Health <= 0)
@@ -3214,7 +3407,10 @@ namespace StardewDruid
 
                 if (!targetLocation.IsFarm)
                 {
-                    who.checkForQuestComplete(null, 1, 1, null, monster.Name, 4);
+                    //who.checkForQuestComplete(null, 1, 1, null, monster.Name, 4);
+
+                    Game1.player.NotifyQuests(quest => quest.OnMonsterSlain(targetLocation, monster, false, false));
+
                     if (new List<SpecialOrder>(Game1.player.team.specialOrders) != null)
                     {
                         foreach (SpecialOrder specialOrder in Game1.player.team.specialOrders)
@@ -3228,7 +3424,7 @@ namespace StardewDruid
                 {
                     foreach (BaseEnchantment enchantment in who.enchantments)
                     {
-                        enchantment.OnMonsterSlay(monster, targetLocation, who);
+                        enchantment.OnMonsterSlay(monster, targetLocation, who, false);
                     }
                 }
 
@@ -3240,17 +3436,8 @@ namespace StardewDruid
                 {
                     if (who.IsLocalPlayer)
                     {
-                        //if(monster is StardewDruid.Monster.Boss bossMonster)
-                        //{
-
-                        //    Game1.stats.monsterKilled(SpawnData.MonsterSlayer(bossMonster));
-                        //}
-                        //else
-                        //{
-
-                            Game1.stats.monsterKilled(monster.Name);
-
-                        //}
+                        
+                        Game1.stats.monsterKilled(monster.Name);
 
                     }
                     else if (Game1.IsMasterGame)
@@ -3419,7 +3606,7 @@ namespace StardewDruid
 
             List<Vector2> tileVectors;
 
-            int impactRadius = tileRadius + 1;
+            int impactRadius = Math.Min(8,tileRadius + 1);
 
             for (int i = 0; i < impactRadius; i++)
             {
@@ -3622,7 +3809,7 @@ namespace StardewDruid
                                     if (data != null && data.SeedItemId != null)
                                     {
                                         
-                                        targetLocation.debris.Add(new Debris(ItemQueryResolver.TryResolveRandomItem(data.SeedItemId, new ItemQueryContext(targetLocation, Game1.player, null)), tileVector * 64f));
+                                        targetLocation.debris.Add(new Debris(ItemQueryResolver.TryResolveRandomItem(data.SeedItemId, new ItemQueryContext(targetLocation, Game1.player, null, null)), tileVector * 64f));
                                     
                                     }
 

@@ -14,7 +14,6 @@ namespace StardewDruid.Journal
     public class QuestPage : DruidJournal
     {
 
-
         public QuestPage(string QuestId, int Record) : base(QuestId, Record) 
         {
 
@@ -32,9 +31,9 @@ namespace StardewDruid.Journal
                 
                 [101] = addButton(journalButtons.viewEffect),
 
-                [102] = addButton(journalButtons.replayQuest),
-
                 [201] = addButton(journalButtons.back),
+
+                [202] = addButton(journalButtons.replayQuest),
 
                 [301] = addButton(journalButtons.exit),
 
@@ -61,7 +60,7 @@ namespace StardewDruid.Journal
 
             bool isReplayed = Mod.instance.save.progress[questId].status == 4;
 
-            Quest questRecord = Mod.instance.questHandle.quests[questId];
+            Data.Quest questRecord = Mod.instance.questHandle.quests[questId];
 
             int questReward = questRecord.reward;
 
@@ -92,12 +91,12 @@ namespace StardewDruid.Journal
 
             // ------------------------------ conditional description
 
-            if (isActive && !Context.IsMainPlayer && questRecord.type != Quest.questTypes.lesson)
+            if (isActive && !Context.IsMainPlayer && questRecord.type != Data.Quest.questTypes.lesson)
             {
 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "hostonly");
 
-                contentComponents[start].text[0] = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.hostOnly);
+                contentComponents[start].text[0] = StringData.Strings(StardewDruid.Data.StringData.stringkeys.hostOnly);
 
                 contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkRed;
 
@@ -112,7 +111,7 @@ namespace StardewDruid.Journal
                 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "questReplay");
 
-                contentComponents[start].text[0] = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.questReplay);
+                contentComponents[start].text[0] = StringData.Strings(StardewDruid.Data.StringData.stringkeys.questReplay);
 
                 contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkRed;
 
@@ -127,7 +126,7 @@ namespace StardewDruid.Journal
             if(isComplete && !isReplayed && questRecord.explanation != null)
             {
 
-                contentComponents[start] = new(ContentComponent.contentTypes.text, "instruction");
+                contentComponents[start] = new(ContentComponent.contentTypes.text, "explanation");
 
                 contentComponents[start].text[0] = questRecord.explanation;
 
@@ -143,15 +142,37 @@ namespace StardewDruid.Journal
 
                 contentComponents[start].text[0] = questRecord.instruction;
 
+                contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkBlue;
+
                 contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
 
                 textHeight += contentComponents[start++].bounds.Height;
 
             }
 
+            if (questRecord.notes.Count > 0)
+            {
+
+                foreach(string note in questRecord.notes)
+                {
+
+                    contentComponents[start] = new(ContentComponent.contentTypes.text, "note");
+
+                    contentComponents[start].text[0] = note;
+
+                    contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkGreen;
+
+                    contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
+
+                    textHeight += contentComponents[start++].bounds.Height;
+
+                }
+
+            }
+
             // ------------------------------ conditional instructions
 
-            if (questRecord.type == Quest.questTypes.lesson)
+            if (questRecord.type == Data.Quest.questTypes.lesson)
             {
 
                 string completeString = "";
@@ -159,19 +180,19 @@ namespace StardewDruid.Journal
                 string lessonProgress =
                             completeString +
                             Mod.instance.save.progress[questId].progress.ToString() + " " +
-                            DialogueData.Strings(DialogueData.stringkeys.outOf) + " " +
+                            StringData.Strings(StringData.stringkeys.outOf) + " " +
                             questRecord.requirement.ToString() + " " +
                             questRecord.progression;
 
                 if (isComplete)
                 {
                     
-                    completeString = DialogueData.Strings(DialogueData.stringkeys.mastered);
+                    completeString = StringData.Strings(StringData.stringkeys.mastered);
 
                     if(Mod.instance.save.progress[questId].progress < questRecord.requirement)
                     {
 
-                        lessonProgress = DialogueData.Strings(DialogueData.stringkeys.lessonSkipped);
+                        lessonProgress = StringData.Strings(StringData.stringkeys.lessonSkipped);
 
                     }
 
@@ -198,7 +219,7 @@ namespace StardewDruid.Journal
 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "lesson");
 
-                contentComponents[start].text[0] = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.reward) + ": " + questReward.ToString() + "g";
+                contentComponents[start].text[0] = StringData.Strings(StardewDruid.Data.StringData.stringkeys.reward) + ": " + questReward.ToString() + "g";
 
                 contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkGreen;
 
@@ -213,7 +234,7 @@ namespace StardewDruid.Journal
 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, "replay");
 
-                contentComponents[start].text[0] = DialogueData.Strings(StardewDruid.Data.DialogueData.stringkeys.replayReward) + ": " + questRecord.replay;
+                contentComponents[start].text[0] = StringData.Strings(StardewDruid.Data.StringData.stringkeys.replayReward) + ": " + questRecord.replay;
 
                 contentComponents[start].textColours[0] = Microsoft.Xna.Framework.Color.DarkGreen;
 
@@ -236,7 +257,7 @@ namespace StardewDruid.Journal
             if (Mod.instance.save.progress[journalId].status <= 1)
             {
 
-                interfaceComponents[102] = addButton(journalButtons.skipQuest);
+                interfaceComponents[202] = addButton(journalButtons.skipQuest);
 
             }
             else if (Mod.instance.questHandle.IsReplayable(journalId))
@@ -247,17 +268,17 @@ namespace StardewDruid.Journal
 
                     case 2:
 
-                        interfaceComponents[102] = addButton(journalButtons.replayQuest);
+                        interfaceComponents[202] = addButton(journalButtons.replayQuest);
 
                         break;
                     case 3:
 
-                        interfaceComponents[102] = addButton(journalButtons.replayTomorrow);
+                        interfaceComponents[202] = addButton(journalButtons.replayTomorrow);
 
                         break;
                     case 4:
 
-                        interfaceComponents[102] = addButton(journalButtons.cancelReplay);
+                        interfaceComponents[202] = addButton(journalButtons.cancelReplay);
 
                         break;
 
@@ -289,17 +310,17 @@ namespace StardewDruid.Journal
             if (!Context.IsMainPlayer)
             {
 
-                interfaceComponents[102].active = false;
+                interfaceComponents[202].active = false;
 
             }
             else if (Mod.instance.save.progress[journalId].status > 1 && !Mod.instance.questHandle.IsReplayable(journalId))
             {
 
-                interfaceComponents[102].active = false;
+                interfaceComponents[202].active = false;
 
             }
 
-            if (Mod.instance.questHandle.quests[journalId].type != Quest.questTypes.lesson)
+            if (Mod.instance.questHandle.quests[journalId].type != Data.Quest.questTypes.lesson)
             {
 
                 interfaceComponents[101].active = false;
@@ -365,7 +386,7 @@ namespace StardewDruid.Journal
 
                     Mod.instance.questHandle.OnCancel(journalId);
 
-                    Mod.instance.SyncMultiplayer();
+                    Mod.instance.SyncProgress();
 
                     DruidJournal.openJournal(journalTypes.questPage, journalId, record);
 

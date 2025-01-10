@@ -7,7 +7,7 @@ using StardewValley;
 
 namespace StardewDruid.Monster
 {
-    public class DarkGoblin : DarkRogue
+    public class DarkGoblin : Dark
     {
 
         public DarkGoblin()
@@ -66,9 +66,9 @@ namespace StardewDruid.Monster
 
             fireball.type = SpellHandle.spells.missile;
 
-            fireball.projectile = 2;
+            fireball.factor =2;
 
-            fireball.missile = IconData.missiles.axe;
+            fireball.missile = MissileHandle.missiles.axe;
 
             fireball.display = IconData.impacts.none;
 

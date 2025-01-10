@@ -1,11 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
+using StardewDruid.Cast.Ether;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Monster;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Characters;
+using StardewValley.Extensions;
 using StardewValley.GameData.Crops;
 using StardewValley.ItemTypeDefinitions;
 using StardewValley.Locations;
@@ -16,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 using System.Timers;
 
@@ -53,7 +57,7 @@ namespace StardewDruid.Cast.Effect
         {
 
             // -------------------------------------------------
-            // Crops
+            // Fish
             // -------------------------------------------------
 
             for(int h = tornadoes.Count - 1; h >= 0; h--)
@@ -95,21 +99,10 @@ namespace StardewDruid.Cast.Effect
                 foreach (Vector2 tileVector in tileVectors)
                 {
 
-                    if(Mod.instance.randomIndex.Next(15 - Mod.instance.PowerLevel) == 0)
+                    if(Mod.instance.randomIndex.Next(20 - Mod.instance.PowerLevel) == 0)
                     {
                         
                         string randomFish = SpawnData.RandomLowFish(location, tileVector);
-
-                        /*switch (Mod.instance.randomIndex.Next(5))
-                        {
-                            case 0:
-                                randomFish = SpawnData.RandomHighFish(location, false);
-                                break;
-                            case 1:
-                                randomFish = SpawnData.RandomTrash(location).ToString();
-                                break;
-
-                        }*/
 
                         tornado.Value.AddCatch(randomFish, tileVector);
 
@@ -134,18 +127,25 @@ namespace StardewDruid.Cast.Effect
 
         public int limit;
 
-        public List<string> fishes = new();
+        public Dictionary<string,int> fishes = new();
 
         public TemporaryAnimatedSprite animation;
+
+        public enum tornadoType
+        {
+            none,
+            beach,
+            lava,
+        }
 
         public TornadoTarget(GameLocation Location, Vector2 Tile)
         {
 
             tile = Tile;
 
-            counter = 24;
+            counter = 21;
 
-            limit = 24;
+            limit = 21;
 
             location = Location;
 
@@ -154,19 +154,44 @@ namespace StardewDruid.Cast.Effect
         public void AddCatch(string fish, Vector2 fishTile)
         {
 
-            fishes.Add(fish);
-
-            Vector2 tilePosition = tile * 64;
-
-            Vector2 fishPosition = fishTile * 64f;
-
-            StardewValley.Object item = new(fish.ToString(), 1, false, -1, 0);
+            StardewValley.Object item = new(fish, 1, false, -1, 0);
 
             ParsedItemData dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(item.QualifiedItemId);
+
+            if (dataOrErrorItem.IsErrorItem)
+            {
+
+                return;
+
+            }
+
+            if (fishes.ContainsKey(fish))
+            {
+
+                if (fishes[fish] >= 3)
+                {
+
+                    return;
+
+                }
+
+                fishes[fish]++;
+
+            }
+            else
+            {
+
+                fishes[fish] = 1;
+
+            }
 
             Microsoft.Xna.Framework.Rectangle itemRect = dataOrErrorItem.GetSourceRect(0, item.ParentSheetIndex);
 
             float interval = counter * 100f;
+
+            Vector2 tilePosition = tile * 64;
+
+            Vector2 fishPosition = fishTile * 64f;
 
             int direction = ModUtility.DirectionToTarget(tilePosition, fishPosition)[2];
 
@@ -199,63 +224,144 @@ namespace StardewDruid.Cast.Effect
         public void ReleaseCatch()
         {
 
-            foreach(string fish in fishes)
+            Dictionary<int, List<StardewValley.Object>> treasureObjects = new();
+
+            int bounty = 0;
+
+            treasureObjects[0] = new();
+
+            foreach (KeyValuePair<string,int> fish in fishes)
+            {
+                int quality = 0;
+
+                StardewValley.Object candidate = new(fish.Key, 1);
+
+                if (candidate.Category == StardewValley.Object.FishCategory)
+                {
+
+                    if (candidate.BaseName.Contains("Jelly"))
+                    {
+
+                        quality = 0;
+
+                    }
+                    else if (Game1.player.FishingLevel >= 9)
+                    {
+
+                        quality = 4;
+
+                    }
+                    else if (Mod.instance.randomIndex.Next(11 - Game1.player.FishingLevel) <= 0)
+                    {
+
+                        quality = 2;
+
+                    }
+
+                }
+
+                candidate.Quality = quality;
+
+                if(location is not Town && Mod.instance.ModDifficulty() > 5)
+                {
+
+                    if (candidate.sellToStorePrice() > 200)
+                    {
+
+                        for (int i = 0; i < fish.Value; i++)
+                        {
+
+                            StardewValley.Object toss = new(fish.Key, 1);
+
+                            toss.Quality = quality;
+
+                            treasureObjects[bounty].Add(toss);
+
+                            if (treasureObjects[bounty].Count >= 4)
+                            {
+
+                                bounty++;
+
+                                treasureObjects[bounty] = new();
+
+                            }
+
+                        }
+
+                        continue;
+
+                    }
+
+                }
+
+                for (int i = 0; i < fish.Value; i++)
+                {
+
+                    StardewValley.Object toss = new(fish.Key, 1);
+
+                    toss.Quality = quality;
+
+                    Vector2 offset = tile * 64 + new Vector2(-64 + Mod.instance.randomIndex.Next(10) * 16, -64 + Mod.instance.randomIndex.Next(10) * 16);
+
+                    ThrowHandle throwObject = new(Game1.player, offset, toss);
+
+                    throwObject.delay = Mod.instance.randomIndex.Next(5) * 10;
+
+                    throwObject.register();
+
+                    Game1.player.gainExperience(1, quality * 12); // gain fishing experience
+
+                    Game1.player.caughtFish(candidate.ItemId, 1, false, 1);
+
+                }
+
+                SpellHandle splash = new(tile * 64, 192, IconData.impacts.fish, new());
+
+                splash.sound = SpellHandle.sounds.pullItemFromWater;
+
+                Mod.instance.spellRegister.Add(splash);
+
+            }
+
+            foreach (KeyValuePair<int, List<StardewValley.Object>> treasureHorde in treasureObjects)
             {
 
-                if(Mod.instance.randomIndex.Next(2) != 0)
+                if(treasureHorde.Value.Count == 0)
                 {
 
                     continue;
 
                 }
 
-                int experienceGain = 12;
+                string treasureId = "treasure_chase_" + treasureHorde.Key + "_" + Game1.player.currentLocation.Name;
 
-                StardewValley.Object candidate = new(fish, 1);
-
-                if(candidate.Category == StardewValley.Object.FishCategory)
+                if (Mod.instance.eventRegister.ContainsKey(treasureId))
                 {
 
-                    if (Game1.player.FishingLevel >= 9)
-                    {
-
-                        candidate.Quality = 4;
-
-                        experienceGain = 48;
-
-                    }
-                    else if (Mod.instance.randomIndex.Next(11 - Game1.player.FishingLevel) <= 0)
-                    {
-
-                        candidate.Quality = 2;
-
-                        experienceGain = 36;
-
-                    }
-
-                    experienceGain = 24;
+                    continue;
 
                 }
 
-                Vector2 offset = tile * 64 + new Vector2(-64 + Mod.instance.randomIndex.Next(10) * 16, -64 + Mod.instance.randomIndex.Next(10) * 16);
+                Crate treasure = new();
 
-                ThrowHandle throwObject = new(Game1.player, offset, candidate);
+                treasure.EventSetup(tile * 64, treasureId, false);
 
-                throwObject.delay = Mod.instance.randomIndex.Next(5) * 10;
+                treasure.crateThief = true;
 
-                throwObject.register();
+                treasure.heldTreasure = true;
 
-                Game1.player.gainExperience(1, experienceGain); // gain fishing experience
+                treasure.crateTerrain = 2;
 
-                Game1.player.checkForQuestComplete(null, -1, 1, null, fish, 7);
+                treasure.treasures = treasureHorde.Value;
+
+                treasure.location = Game1.player.currentLocation;
+
+                treasure.EventActivate();
 
             }
 
-            Game1.player.currentLocation.playSound("pullItemFromWater");
-            Game1.player.currentLocation.playSound("pullItemFromWater");
-            Game1.player.currentLocation.playSound("pullItemFromWater");
-
         }
+
 
     }
 

@@ -96,18 +96,18 @@ namespace StardewDruid.Cast.Ether
 
             Game1.player.currentLocation.characters.Add(avatar);
 
-            Game1.player.currentLocation.playSound("warrior");
+            Game1.player.currentLocation.playSound(SpellHandle.sounds.warrior.ToString());
 
             BuffEffects buffEffect = new();
 
             buffEffect.Defense.Set(5);
 
             Buff dragonBuff = new(Rite.buffIdDragon, 
-                source: DialogueData.RiteNames(Rite.rites.ether),
-                displaySource: DialogueData.RiteNames(Rite.rites.ether),
+                source: StringData.RiteNames(Rite.rites.ether),
+                displaySource: StringData.RiteNames(Rite.rites.ether),
                 duration: Buff.ENDLESS, 
-                displayName: DialogueData.Strings(DialogueData.stringkeys.dragonBuff),
-                description: DialogueData.Strings(DialogueData.stringkeys.dragonBuffDescription),
+                displayName: StringData.Strings(StringData.stringkeys.dragonBuff),
+                description: StringData.Strings(StringData.stringkeys.dragonBuffDescription),
                 effects: buffEffect);
 
             Game1.player.buffs.Apply(dragonBuff);

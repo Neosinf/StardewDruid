@@ -16,7 +16,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Xml.Schema;
-using static StardewDruid.Journal.HerbalData;
+using static StardewDruid.Data.IconData;
+using static StardewDruid.Data.HerbalData;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace StardewDruid.Journal
@@ -41,6 +42,8 @@ namespace StardewDruid.Journal
 
             questionPage,
             herbalTrade,
+            bombs,
+            recruits,
 
         }
 
@@ -48,7 +51,7 @@ namespace StardewDruid.Journal
 
         public journalTypes parentJournal = journalTypes.quests;
 
-        public string title = DialogueData.Strings(DialogueData.stringkeys.stardewDruid);
+        public string title = StringData.Strings(StringData.stringkeys.stardewDruid);
 
         public enum journalButtons
         {
@@ -59,6 +62,8 @@ namespace StardewDruid.Journal
             herbalism,
             lore,
             transform,
+            bombs,
+            recruits,
 
             active,
             reverse,
@@ -71,6 +76,12 @@ namespace StardewDruid.Journal
             replayTomorrow,
             replayQuest,
             cancelReplay,
+            clearBuffs,
+
+            clearOne,
+            clearTwo,
+            clearThree,
+            clearFour,
 
             exit,
 
@@ -83,10 +94,6 @@ namespace StardewDruid.Journal
             scrollDown,
             forward,
             end,
-
-            headerOne, 
-            headerTwo, 
-            headerThree,
 
             dragonReset,
             dragonSave,
@@ -304,6 +311,18 @@ namespace StardewDruid.Journal
 
                     break;
 
+                case journalTypes.bombs:
+
+                    Game1.activeClickableMenu = new BombJournal(Id, Record);
+
+                    break;
+
+                case journalTypes.recruits:
+
+                    Game1.activeClickableMenu = new RecruitJournal(Id, Record);
+
+                    break;
+
             }
 
 
@@ -356,13 +375,13 @@ namespace StardewDruid.Journal
                 [104] = addButton(journalButtons.herbalism),
                 [105] = addButton(journalButtons.lore),
                 [106] = addButton(journalButtons.transform),
-
-                [108] = addButton(journalButtons.active),
-                [109] = addButton(journalButtons.reverse),
+                [107] = addButton(journalButtons.recruits),
 
                 [201] = addButton(journalButtons.back),
                 [202] = addButton(journalButtons.start),
                 [203] = addButton(journalButtons.question),
+                [204] = addButton(journalButtons.active),
+                [205] = addButton(journalButtons.reverse),
 
                 [301] = addButton(journalButtons.exit),
 
@@ -454,7 +473,7 @@ namespace StardewDruid.Journal
 
             }
 
-            if (!Mod.instance.questHandle.IsGiven(QuestHandle.etherOne))
+            if (!RelicData.HasRelic(relics.dragon_form))
             {
 
                 interfaceComponents[106].active = false;
@@ -467,6 +486,19 @@ namespace StardewDruid.Journal
 
             }
 
+            if (!RelicData.HasRelic(relics.heiress_gift))
+            {
+
+                interfaceComponents[107].active = false;
+
+            }
+            else if (type != journalTypes.recruits)
+            {
+
+                interfaceComponents[107].fade = 0.8f;
+
+            }
+
             if (Mod.instance.magic)
             {
 
@@ -475,6 +507,8 @@ namespace StardewDruid.Journal
                 interfaceComponents[103].active = false;
 
                 interfaceComponents[105].active = false;
+
+                interfaceComponents[107].active = false;
 
             }
 
@@ -490,20 +524,20 @@ namespace StardewDruid.Journal
             if (type != journalTypes.quests)
             {
 
-                interfaceComponents[108].active = false;
+                interfaceComponents[204].active = false;
 
             }else
             if (!Mod.instance.Config.activeJournal)
             {
 
-                interfaceComponents[108].fade = 0.8f;
+                interfaceComponents[204].fade = 0.8f;
 
             }
 
             if (!Mod.instance.Config.reverseJournal)
             {
 
-                interfaceComponents[109].fade = 0.8f;
+                interfaceComponents[205].fade = 0.8f;
 
             }
 
@@ -569,18 +603,64 @@ namespace StardewDruid.Journal
 
                     return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 36), IconData.displays.end, new() { flip = true, });
 
-                case journalButtons.headerOne:
+                case journalButtons.bombs:
 
-                    return new JournalComponent(Button, new Vector2(xP + 48, yP + 17 + 28), IconData.displays.flag, new() { scale = 3f });
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 36), IconData.displays.powderbox, new());
 
-                case journalButtons.headerTwo:
+                case journalButtons.active:
 
-                    return new JournalComponent(Button, new Vector2(xP + 48, yP + 17 + 202 + 28), IconData.displays.flag, new() { scale = 3f });
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 36), IconData.displays.active, new());
 
-                case journalButtons.headerThree:
+                case journalButtons.reverse:
 
-                    return new JournalComponent(Button, new Vector2(xP + 48, yP + 17 + 404 + 28), IconData.displays.flag, new() { scale = 3f });
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 68 + 36), IconData.displays.reverse, new());
 
+                case journalButtons.question:
+
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.question, new());
+
+                case journalButtons.refresh:
+
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.knock, new());
+
+                case journalButtons.clearBuffs:
+
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 68 + 36), IconData.displays.active, new());
+
+                case journalButtons.clearOne:
+
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 16 + ((height - 32) / 8)), IconData.displays.exit, new());
+
+                case journalButtons.clearTwo:
+
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 16 + 3 * ((height - 32) / 8)), IconData.displays.exit, new());
+
+                case journalButtons.clearThree:
+
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 16 + 5 * ((height - 32) / 8)), IconData.displays.exit, new());
+
+                case journalButtons.clearFour:
+
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 16 + 7 * ((height - 32) / 8)), IconData.displays.exit, new());
+
+
+                // ====================================== replay buttons
+
+                case journalButtons.skipQuest:
+
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.skip, new());
+
+                case journalButtons.replayQuest:
+
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.replay, new());
+
+                case journalButtons.replayTomorrow:
+
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.flag, new());
+
+                case journalButtons.cancelReplay:
+
+                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.active, new());
 
                 // ====================================== top bar
 
@@ -609,19 +689,12 @@ namespace StardewDruid.Journal
 
                     return new JournalComponent(Button, new Vector2(xR - 68 - 68 - 36, yT), IconData.displays.transform, new());
 
+                case journalButtons.recruits:
+
+                    return new JournalComponent(Button, new Vector2(xR - 68 - 36, yT), IconData.displays.heroes, new());
+
+
                 // ====================================== variant top buttons
-
-                case journalButtons.active:
-
-                    return new JournalComponent(Button, new Vector2(xR - 68 - 36, yT), IconData.displays.active, new());
-
-                case journalButtons.reverse:
-
-                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.reverse, new());
-
-                case journalButtons.refresh:
-
-                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.knock, new());
 
                 case journalButtons.viewQuest:
 
@@ -631,39 +704,15 @@ namespace StardewDruid.Journal
 
                     return new JournalComponent(Button, new Vector2(xR - 68 - 36, yT), IconData.displays.effect, new());
 
-                case journalButtons.question:
-
-                    return new JournalComponent(Button, new Vector2(xP - 36, yP + 68 + 68 + 36), IconData.displays.question, new());
-
-                case journalButtons.skipQuest:
-
-                    return new JournalComponent(Button, new Vector2(xP + 68 + 36, yT), IconData.displays.skip, new());
-
-                case journalButtons.replayQuest:
-
-                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.replay, new());
-
-                case journalButtons.replayTomorrow:
-
-                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.flag, new());
-
-                case journalButtons.cancelReplay:
-
-                    return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.active, new());
-
                 // dragon menu
 
                 case journalButtons.dragonReset:
 
                     return new JournalComponent(Button, new Vector2(xR - 400, yB - 96), IconData.displays.replay, new());
 
-                //return new JournalComponent(Button, new Vector2(xR - 68 - 36, yT), IconData.displays.replay, new());
-
                 case journalButtons.dragonSave:
 
                     return new JournalComponent(Button, new Vector2(xR - 320, yB - 96), IconData.displays.save, new());
-
-                //return new JournalComponent(Button, new Vector2(xR - 36, yT), IconData.displays.save, new());
 
                 // ======================================  right side
 
@@ -741,6 +790,12 @@ namespace StardewDruid.Journal
                 case journalButtons.transform:
 
                     DruidJournal.openJournal(journalTypes.dragonPage);
+
+                    break;
+
+                case journalButtons.recruits:
+
+                    DruidJournal.openJournal(journalTypes.recruits);
 
                     break;
 
@@ -844,6 +899,11 @@ namespace StardewDruid.Journal
 
                     break;
 
+                case journalButtons.bombs:
+
+                    DruidJournal.openJournal(journalTypes.bombs);
+
+                    break;
 
             }
 
@@ -1571,8 +1631,6 @@ namespace StardewDruid.Journal
 
             }
 
-            //int upper = contentComponents.Count % pagination;
-
             for (int i = 0; i < total; i++)
             {
 
@@ -1596,8 +1654,6 @@ namespace StardewDruid.Journal
 
                 if (component.bounds.Contains(x, y))
                 {
-                    
-                    //Game1.playSound("smallSelect");
 
                     browsing = true;
 
@@ -1793,20 +1849,6 @@ namespace StardewDruid.Journal
             Vector2 corner = new(cornerX, cornerY);
 
             Microsoft.Xna.Framework.Rectangle bounds = new((int)corner.X, (int)corner.Y, bWidth, bHeight);
-
-            /*IClickableMenu.drawTextureBox(
-                b, 
-                Game1.menuTexture, 
-                new Rectangle(0, 256, 60, 60), 
-                bounds.X, 
-                bounds.Y, 
-                bounds.Width, 
-                bounds.Height, 
-                Color.White, 
-                1f, 
-                true, 
-                -1f
-            );*/
 
             IClickableMenu.drawTextureBox(
                 b,

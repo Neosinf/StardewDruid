@@ -11,30 +11,27 @@ using StardewDruid.Cast;
 using StardewModdingAPI;
 using StardewDruid.Event.Sword;
 using StardewDruid.Journal;
-using static StardewValley.Minigames.MineCart;
 
 namespace StardewDruid.Location
 {
     public class DruidLocation : GameLocation
     {
 
-        public List<Location.WarpTile> warpSets = new();
+        public List<Location.TerrainField> terrainFields = new();
 
-        public List<Location.TerrainTile> terrainTiles = new();
-
-        public List<Location.TerrainTile> frontTiles = new();
-
-        public Dictionary<Vector2, CharacterHandle.characters> dialogueTiles = new();
+        public List<Location.TerrainField> frontFields = new();
 
         public List<Location.LightField> lightFields = new();
 
-        public Dictionary<Vector2, Location.CrateTile> crateTiles = new();
+        public Dictionary<Vector2, CharacterHandle.characters> dialogueTiles = new();
 
         public bool internalDarkness;
 
         public bool ambientDarkness;
 
         public bool summonActive;
+
+        public int restoration;
 
         public DruidLocation()
         {
@@ -53,6 +50,11 @@ namespace StardewDruid.Location
         {
 
 
+
+        }
+
+        public virtual void RestoreTo(int restore)
+        {
 
         }
 
@@ -97,7 +99,7 @@ namespace StardewDruid.Location
             
             base.draw(b);
 
-            foreach (TerrainTile tile in terrainTiles)
+            foreach (TerrainField tile in terrainFields)
             {
 
                 tile.draw(b, this);
@@ -111,22 +113,15 @@ namespace StardewDruid.Location
 
             }
 
-            foreach (KeyValuePair<Vector2,Location.CrateTile> crate in crateTiles)
-            {
-
-                crate.Value.draw(b);
-
-            }
-
         }
 
         public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
         {
 
-            foreach (TerrainTile tile in frontTiles)
+            foreach (TerrainField tile in frontFields)
             {
 
-                tile.draw(b, this);
+                tile.drawFront(b, this);
 
             }
 
@@ -139,7 +134,7 @@ namespace StardewDruid.Location
         public override bool CanItemBePlacedHere(Vector2 tile, bool itemIsPassable = false, CollisionMask collisionMask = CollisionMask.All, CollisionMask ignorePassables = ~CollisionMask.Objects, bool useFarmerTile = false, bool ignorePassablesExactly = false)
         {
 
-            if(Name == LocationData.druid_grove_name)
+            if(Name == LocationHandle.druid_grove_name)
             {
                 
                 if (Mod.instance.Config.decorateGrove)
@@ -167,18 +162,6 @@ namespace StardewDruid.Location
 
             }
 
-            if (crateTiles.ContainsKey(actionTile))
-            {
-
-                if (!crateTiles[actionTile].empty)
-                {
-
-                    return true;
-
-                }
-
-            }
-
             return base.isActionableTile(xTile, yTile, who);
 
         }
@@ -191,6 +174,12 @@ namespace StardewDruid.Location
         }
 
         public virtual void addDialogue()
+        {
+
+
+        }
+
+        public override void tryToAddCritters(bool onlyIfOnScreen = false)
         {
 
 
@@ -219,26 +208,9 @@ namespace StardewDruid.Location
 
             }
 
-            if (crateTiles.ContainsKey(actionTile))
-            {
-                
-                if (crateTiles[actionTile].empty)
-                {
-
-                    return false;
-
-                }
-
-                crateTiles[actionTile].open(this);
-
-                return true;
-
-            }
-
             return base.checkAction(tileLocation, viewport, who);
 
         }
-
 
         public override bool isTileFishable(int tileX, int tileY)
         {

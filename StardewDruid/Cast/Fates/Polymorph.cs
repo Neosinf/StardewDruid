@@ -52,7 +52,7 @@ namespace StardewDruid.Cast.Fates
 
                 case 0:
 
-                    companions[0] = new StardewDruid.Character.Growler(Character.CharacterHandle.characters.BrownBear);
+                    companions[0] = new StardewDruid.Character.Bear(Character.CharacterHandle.characters.BrownBear);
 
                     location.playSound("BearGrowl");
 
@@ -60,7 +60,7 @@ namespace StardewDruid.Cast.Fates
                 
                 case 1:
 
-                    companions[0] = new StardewDruid.Character.Growler(Character.CharacterHandle.characters.BlackBear);
+                    companions[0] = new StardewDruid.Character.Bear(Character.CharacterHandle.characters.BlackBear);
 
                     location.playSound("BearGrowlTwo");
 
@@ -92,7 +92,7 @@ namespace StardewDruid.Cast.Fates
 
                 case 5:
 
-                    companions[0] = new StardewDruid.Character.Barker(Character.CharacterHandle.characters.GreyWolf);
+                    companions[0] = new StardewDruid.Character.Wolf(Character.CharacterHandle.characters.GreyWolf);
 
                     location.playSound(SpellHandle.sounds.dog_bark.ToString());
 

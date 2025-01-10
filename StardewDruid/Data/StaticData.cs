@@ -1,7 +1,7 @@
 ﻿using Force.DeepCloner;
 using StardewDruid.Cast;
 using StardewDruid.Character;
-using StardewDruid.Journal;
+using StardewDruid.Event;
 using StardewDruid.Location;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
@@ -23,6 +23,8 @@ namespace StardewDruid.Data
 
         public Dictionary<CharacterHandle.characters, Character.Character.mode> characters;
 
+        public Dictionary<CharacterHandle.characters, RecruitData> recruits;
+
         public Dictionary<CharacterHandle.characters, List<ItemData>> chests;
 
         public Dictionary<int,Rite.rites> attunement;
@@ -36,6 +38,8 @@ namespace StardewDruid.Data
         public Dictionary<string, int> reliquary;
 
         public QuestHandle.milestones milestone;
+
+        public Dictionary<long, MultiplayerData> multiplayer;
 
         public int set;
 
@@ -70,6 +74,8 @@ namespace StardewDruid.Data
 
             characters = new();
 
+            recruits = new();
+
             chests = new();
 
             restoration = new();
@@ -77,6 +83,8 @@ namespace StardewDruid.Data
             set = 0;
 
             serialise = string.Empty;
+
+            multiplayer = new();
 
         }
 
@@ -92,6 +100,40 @@ namespace StardewDruid.Data
         public int stack;
 
         public ItemData()
+        {
+
+        }
+
+    }
+
+    class MultiplayerData
+    {
+
+        public Dictionary<int, Rite.rites> attunement;
+
+        public Dictionary<HerbalData.herbals, int> herbalism;
+
+        public Dictionary<HerbalData.herbals, int> potions;
+
+        public MultiplayerData()
+        {
+
+        }
+
+    }
+
+    public class RecruitData
+    {
+
+        public string name;
+
+        public string display;
+
+        public int level;
+
+        public Rite.rites rite;
+
+        public RecruitData()
         {
 
         }

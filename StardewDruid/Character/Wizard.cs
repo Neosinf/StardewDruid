@@ -2,19 +2,23 @@
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
+using StardewDruid.Data;
+using StardewDruid.Render;
 using StardewValley;
+using StardewValley.Tools;
+using System;
 using System.Collections.Generic;
 
 namespace StardewDruid.Character
 {
-    public class Wizard : StardewDruid.Character.Character
+    public class Wizard : StardewDruid.Character.Recruit
     {
         public Wizard()
         {
         }
 
-        public Wizard(CharacterHandle.characters type)
-          : base(type)
+        public Wizard(CharacterHandle.characters type, NPC villager)
+          : base(type, villager)
         {
 
             
@@ -23,15 +27,45 @@ namespace StardewDruid.Character
         public override void LoadOut()
         {
 
-            base.LoadOut();
-
-            idleFrames[idles.standby] = new()
+            if (characterType == CharacterHandle.characters.none)
             {
-                [0] = new List<Rectangle> { new Rectangle(160, 32, 32, 32), },
-            };
+
+                characterType = CharacterHandle.characters.recruit_one;
+
+            }
+
+            if (villager == null)
+            {
+
+                villager = CharacterHandle.FindVillager("Wizard");
+
+            }
+
+            characterTexture = CharacterHandle.CharacterTexture(CharacterHandle.characters.Wizard);
+
+            LoadIntervals();
+
+            walkFrames = CharacterRender.HumanoidWalk();
+
+            idleFrames = CharacterRender.HumanoidIdle();
+
+            dashFrames = CharacterRender.HumanoidDash();
+
+            specialFrames = CharacterRender.HumanoidSpecial();
+
+            specialIntervals = CharacterRender.HumanoidIntervals();
+
+            specialCeilings = CharacterRender.HumanoidCeilings();
+
+            specialFloors = CharacterRender.HumanoidFloors();
+
+            WeaponLoadout();
+
+            weaponRender.swordScheme = WeaponRender.swordSchemes.sword_lightsaber;
 
             hatFrames = new()
             {
+
                 [0] = new()
                 {
                     new(192, 64, 32, 32),
@@ -48,7 +82,10 @@ namespace StardewDruid.Character
                 {
                     new(192, 32, 32, 32),
                 },
+
             };
+
+            loadedOut = true;
 
         }
 
@@ -59,28 +96,30 @@ namespace StardewDruid.Character
 
             Vector2 hatPosition = spritePosition - new Vector2(0, 16 * setScale);
 
-            if (netDirection.Value == 2)
+            Rectangle hatFrame = hatFrames[netDirection.Value][0];
+
+            if (netIdle.Value == (int)Character.idles.kneel)
             {
 
-                if (fliphat)
-                {
+                hatPosition = spritePosition - new Vector2(0, 10f * setScale);
 
-                    hatPosition.X += 2;
+                hatFrame = hatFrames[1][0];
 
-                } 
-                else
-                {
-                    
-                    hatPosition.X -= 2;
+            }
+            else if (netSpecial.Value == (int)Character.specials.gesture)
+            {
 
-                }
+
+                hatPosition = spritePosition - new Vector2(0, 16f * setScale);
+
+                hatFrame = hatFrames[1][0];
 
             }
 
             b.Draw(
                 characterTexture,
                 hatPosition,
-                hatFrames[netDirection.Value][0],
+                hatFrame,
                 Color.White * fade,
                 0f,
                 new Vector2(16),
@@ -91,16 +130,105 @@ namespace StardewDruid.Character
 
         }
 
-        public override bool checkAction(Farmer who, GameLocation l)
+        public override bool MonsterFear()
         {
-            
-            if (netSceneActive.Value)
-            {
 
-                return EngageDialogue(who);
+            return false;
+
+        }
+
+        public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
+        {
+
+            ResetActives();
+
+            netSpecial.Set((int)specials.invoke);
+
+            specialTimer = 90;
+
+            cooldownTimer = cooldownInterval;
+
+            LookAtTarget(monster.Position, true);
+
+            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 2);
+
+            special.type = SpellHandle.spells.missile;
+
+            special.missile = MissileHandle.missiles.warpball;
+
+            special.counter = -30;
+
+            special.scheme = IconData.schemes.fates;
+
+            special.factor = 2;
+
+            switch (Mod.instance.randomIndex.Next(3))
+            {
+                case 0:
+
+                    special.display = IconData.impacts.puff;
+                    break;
+
+                case 1:
+
+                    special.added = new() { SpellHandle.effects.blackhole, };
+
+                    break;
+
+                default:
+
+                    special.display = IconData.impacts.flasher;
+
+                    special.added = new() { SpellHandle.effects.doom, };
+
+                    break;
 
             }
-                
+
+            Mod.instance.spellRegister.Add(special);
+
+            return true;
+
+        }
+
+        public override bool TrackNotReady()
+        {
+
+            if(villager.Name == Game1.player.spouse)
+            {
+
+                return false;
+
+            }
+
+            if (Game1.timeOfDay < 800)
+            {
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+        public override bool TrackOutOfTime()
+        {
+
+            if (villager.Name == Game1.player.spouse)
+            {
+
+                return false;
+
+            }
+
+            if (Game1.timeOfDay > 2200)
+            {
+
+                return true;
+
+            }
+
             return false;
 
         }

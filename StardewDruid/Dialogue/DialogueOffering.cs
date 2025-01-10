@@ -14,9 +14,7 @@ using StardewValley.Locations;
 using Microsoft.Xna.Framework;
 using StardewValley.Tools;
 using System.Reflection;
-using static StardewDruid.Journal.DruidJournal;
-using static StardewValley.Menus.CharacterCustomization;
-using static StardewDruid.Journal.HerbalData;
+using StardewDruid.Event;
 
 namespace StardewDruid.Dialogue
 {
@@ -28,6 +26,17 @@ namespace StardewDruid.Dialogue
 
             switch (character)
             {
+
+                case CharacterHandle.characters.energies:
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.swordEther))
+                    {
+
+                        return Mod.instance.Helper.Translation.Get("DialogueOffering.363.1");
+
+                    }
+
+                    return null;
 
                 case CharacterHandle.characters.herbalism:
 
@@ -48,10 +57,10 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.monument_priesthood:
 
-                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_court_name))
+                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationHandle.druid_court_name))
                     {
 
-                        if (Mod.instance.rite.specialCasts[LocationData.druid_court_name].Contains("FaethBlessing"))
+                        if (Mod.instance.rite.specialCasts[LocationHandle.druid_court_name].Contains("FaethBlessing"))
                         {
 
                             return null;
@@ -64,10 +73,10 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.star_desk:
 
-                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_chapel_name))
+                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationHandle.druid_chapel_name))
                     {
 
-                        if (Mod.instance.rite.specialCasts[LocationData.druid_chapel_name].Contains("DeskBlessing"))
+                        if (Mod.instance.rite.specialCasts[LocationHandle.druid_chapel_name].Contains("DeskBlessing"))
                         {
 
                             return null;
@@ -78,7 +87,7 @@ namespace StardewDruid.Dialogue
                     else
                     {
 
-                        Mod.instance.rite.specialCasts[LocationData.druid_chapel_name] = new();
+                        Mod.instance.rite.specialCasts[LocationHandle.druid_chapel_name] = new();
 
                     }
 
@@ -90,10 +99,10 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.shrine_engine:
 
-                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_engineum_name))
+                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationHandle.druid_engineum_name))
                     {
 
-                        if (Mod.instance.rite.specialCasts[LocationData.druid_engineum_name].Contains("AetherBlessing"))
+                        if (Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name].Contains("AetherBlessing"))
                         {
 
                             return null;
@@ -106,10 +115,10 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.shrine_forge:
 
-                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_engineum_name))
+                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationHandle.druid_engineum_name))
                     {
 
-                        if (Mod.instance.rite.specialCasts[LocationData.druid_engineum_name].Contains("ForgeBlessing"))
+                        if (Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name].Contains("ForgeBlessing"))
                         {
 
                             return null;
@@ -120,7 +129,7 @@ namespace StardewDruid.Dialogue
                     else
                     {
 
-                        Mod.instance.rite.specialCasts[LocationData.druid_engineum_name] = new();
+                        Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name] = new();
 
                     }
 
@@ -139,14 +148,7 @@ namespace StardewDruid.Dialogue
 
                     int upgradeRequirement = HerbalData.ForgeRequirement(upgradeOption);
 
-                    if (!Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.aether))
-                    {
-
-                        return Mod.instance.Helper.Translation.Get("CharacterHandle.328.3").Tokens(new { tool = Game1.player.CurrentTool.Name, upgrade = upgradeName, aether = upgradeRequirement, });
-
-                    }
-
-                    if (Mod.instance.save.herbalism[HerbalData.herbals.aether] < upgradeRequirement)
+                    if (HerbalData.UpdateHerbalism(HerbalData.herbals.aether) < upgradeRequirement)
                     {
 
                         return Mod.instance.Helper.Translation.Get("CharacterHandle.328.3").Tokens(new { tool = Game1.player.CurrentTool.Name, upgrade = upgradeName, aether = upgradeRequirement, });
@@ -157,10 +159,10 @@ namespace StardewDruid.Dialogue
                 
                 case CharacterHandle.characters.shrine_desk:
 
-                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_engineum_name))
+                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationHandle.druid_engineum_name))
                     {
 
-                        if (Mod.instance.rite.specialCasts[LocationData.druid_engineum_name].Contains("DeskBlessing"))
+                        if (Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name].Contains("DeskBlessing"))
                         {
 
                             return null;
@@ -171,7 +173,7 @@ namespace StardewDruid.Dialogue
                     else
                     {
 
-                        Mod.instance.rite.specialCasts[LocationData.druid_engineum_name] = new();
+                        Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name] = new();
 
                     }
 
@@ -185,7 +187,7 @@ namespace StardewDruid.Dialogue
                         return null;
                     }
 
-                    if (Mod.instance.save.restoration[LocationData.druid_graveyard_name] >= 4)
+                    if (LocationHandle.GetRestoration(LocationHandle.druid_graveyard_name) >= 4)
                     {
 
                         return Mod.instance.Helper.Translation.Get("CharacterHandle.329.20");
@@ -196,7 +198,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.attendant:
 
-                    if (Mod.instance.save.restoration[LocationData.druid_spring_name] >= 5)
+                    if (LocationHandle.GetRestoration(LocationHandle.druid_spring_name) >= 5)
                     {
 
                         return Mod.instance.Helper.Translation.Get("CharacterHandle.329.2");
@@ -218,6 +220,90 @@ namespace StardewDruid.Dialogue
 
             switch (character)
             {
+
+                case CharacterHandle.characters.energies:
+
+                    switch (index)
+                    {
+
+                        case 0:
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("DialogueOffering.363.2");
+
+                            // Tomb of Tyrannus
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.swordEther))
+                            {
+
+                                generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.343.10"));
+
+                                generate.answers.Add(16.ToString());
+
+                            }
+
+                            // Shrine Engine Room
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.questShadowtin))
+                            {
+
+                                generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.343.11"));
+
+                                generate.answers.Add(17.ToString());
+
+                            }
+
+                            // Moors
+                            if (Mod.instance.questHandle.IsComplete(QuestHandle.challengeMoors))
+                            {
+
+                                generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.363.1"));
+
+                                generate.answers.Add(18.ToString());
+
+                            }
+
+                            generate.lead = true;
+
+                            return generate;
+
+                        case 1:
+
+                            switch (answer)
+                            {
+                                // Tomb of Tyrannus
+                                case 16:
+
+                                    SpellHandle tombWarp = new(Mod.instance.locations[LocationHandle.druid_tomb_name], new Vector2(26, 17), new Vector2(1312, 960)) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, factor = 0 }; ;
+
+                                    Mod.instance.spellRegister.Add(tombWarp);
+
+                                    return generate;
+
+                                // Shrine Engine Room
+                                case 17:
+
+                                    SpellHandle shrineWarp = new(Mod.instance.locations[LocationHandle.druid_engineum_name], new Vector2(27, 19), new Vector2(1312, 960)) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, factor = 0 }; ;
+
+                                    Mod.instance.spellRegister.Add(shrineWarp);
+
+                                    return generate;
+
+                                // Moors
+                                case 18:
+
+                                    SpellHandle moorsWarp = new(Mod.instance.locations[LocationHandle.druid_moors_name], new Vector2(27, 27), new Vector2(1760, 1760)) { type = SpellHandle.spells.warp, scheme = IconData.schemes.white, factor = 2 }; ;
+
+                                    Mod.instance.spellRegister.Add(moorsWarp);
+
+                                    return generate;
+                                    
+
+                            }
+
+                            break;
+
+                    }
+
+                    break;
+
 
                 case CharacterHandle.characters.herbalism:
 
@@ -283,6 +369,8 @@ namespace StardewDruid.Dialogue
 
                     bool noPaper = true;
 
+                    bool noInk = true;
+
                     foreach (string paper in paperList)
                     {
 
@@ -297,18 +385,32 @@ namespace StardewDruid.Dialogue
 
                     }
 
-                    if (noPaper || Game1.player.Items.CountId("814") == 0)
+                    if (Mod.instance.save.herbalism[HerbalData.herbals.voil] > 0)
                     {
+
+                        noInk = false;
+
+                    }
+                    else if (Game1.player.Items.CountId("814") > 0)
+                    {
+
+                        noInk = false;
+
+                    }
+
+                    if (noPaper || noInk)
+                    {
+
                         Game1.player.currentLocation.playSound(SpellHandle.sounds.ghost.ToString());
 
                         return null;
 
                     }
 
-                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_chapel_name))
+                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationHandle.druid_chapel_name))
                     {
 
-                        if (Mod.instance.rite.specialCasts[LocationData.druid_chapel_name].Contains("DeskBlessing"))
+                        if (Mod.instance.rite.specialCasts[LocationHandle.druid_chapel_name].Contains("DeskBlessing"))
                         {
 
                             Game1.player.currentLocation.playSound(SpellHandle.sounds.batScreech.ToString());
@@ -321,14 +423,14 @@ namespace StardewDruid.Dialogue
                     else
                     {
 
-                        Mod.instance.rite.specialCasts[LocationData.druid_chapel_name] = new();
+                        Mod.instance.rite.specialCasts[LocationHandle.druid_chapel_name] = new();
 
                     }
 
                     if (HerbalData.RandomStudy())
                     {
 
-                        Mod.instance.rite.specialCasts[LocationData.druid_chapel_name].Add("DeskBlessing");
+                        Mod.instance.rite.specialCasts[LocationHandle.druid_chapel_name].Add("DeskBlessing");
 
                         foreach (string paper in paperList)
                         {
@@ -343,7 +445,18 @@ namespace StardewDruid.Dialogue
 
                         }
 
-                        Game1.player.Items.ReduceId("814", 1);
+                        if (Mod.instance.save.herbalism[HerbalData.herbals.voil] > 0)
+                        {
+
+                            Mod.instance.save.herbalism[HerbalData.herbals.voil] -= 1;
+
+                        }
+                        else
+                        {
+
+                            Game1.player.Items.ReduceId("814", 1);
+
+                        }
 
                         return null;
 
@@ -355,29 +468,22 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.star_bench:
 
-                    DruidJournal.openJournal(journalTypes.herbalTrade);
+                    DruidJournal.openJournal(DruidJournal.journalTypes.herbalTrade);
 
                     return null;
 
                 case CharacterHandle.characters.monument_priesthood:
 
-                    if (!Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.faeth))
+                    if (!Mod.instance.rite.specialCasts.ContainsKey(LocationHandle.druid_court_name))
                     {
 
-                        Mod.instance.save.herbalism[HerbalData.herbals.faeth] = 0;
-
-                    }
-
-                    if (!Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_court_name))
-                    {
-
-                        Mod.instance.rite.specialCasts[LocationData.druid_court_name] = new() { "FaethBlessing", };
+                        Mod.instance.rite.specialCasts[LocationHandle.druid_court_name] = new() { "FaethBlessing", };
 
                         int faethBlessing = Mod.instance.randomIndex.Next(3, 6);
 
                         Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.780").Tokens(new { faeth = faethBlessing.ToString(), }));
 
-                        Mod.instance.save.herbalism[HerbalData.herbals.faeth] += faethBlessing;
+                        HerbalData.UpdateHerbalism(HerbalData.herbals.faeth, faethBlessing);
 
                         generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.785");
 
@@ -391,17 +497,10 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.shrine_engine:
 
-                    if (!Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.aether))
+                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationHandle.druid_engineum_name))
                     {
 
-                        Mod.instance.save.herbalism[HerbalData.herbals.aether] = 0;
-
-                    }
-
-                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_engineum_name))
-                    {
-
-                        if (Mod.instance.rite.specialCasts[LocationData.druid_engineum_name].Contains("AetherBlessing"))
+                        if (Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name].Contains("AetherBlessing"))
                         {
 
                             generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.323.16");
@@ -414,17 +513,17 @@ namespace StardewDruid.Dialogue
                     else
                     {
 
-                        Mod.instance.rite.specialCasts[LocationData.druid_engineum_name] = new();
+                        Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name] = new();
 
                     }
 
-                    Mod.instance.rite.specialCasts[LocationData.druid_engineum_name].Add("AetherBlessing");
+                    Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name].Add("AetherBlessing");
 
-                    int aetherBlessing = Mod.instance.randomIndex.Next(4, 6);
+                    int aetherBlessing = Mod.instance.randomIndex.Next(2, 5);
 
                     Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.323.14").Tokens(new { aether = aetherBlessing.ToString(), }));
 
-                    Mod.instance.save.herbalism[HerbalData.herbals.aether] += aetherBlessing;
+                    HerbalData.UpdateHerbalism(HerbalData.herbals.aether, aetherBlessing);
 
                     generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.323.15");
 
@@ -432,10 +531,10 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.shrine_forge:
 
-                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_engineum_name))
+                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationHandle.druid_engineum_name))
                     {
 
-                        if (Mod.instance.rite.specialCasts[LocationData.druid_engineum_name].Contains("ForgeBlessing"))
+                        if (Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name].Contains("ForgeBlessing"))
                         {
 
                             Game1.player.currentLocation.playSound(SpellHandle.sounds.ghost.ToString());
@@ -448,7 +547,7 @@ namespace StardewDruid.Dialogue
                     else
                     {
 
-                        Mod.instance.rite.specialCasts[LocationData.druid_engineum_name] = new();
+                        Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name] = new();
 
                     }
 
@@ -465,7 +564,7 @@ namespace StardewDruid.Dialogue
 
                     int upgradeRequirement = HerbalData.ForgeRequirement(upgradeOption);
 
-                    if (!Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.aether))
+                    if (HerbalData.UpdateHerbalism(HerbalData.herbals.aether) < upgradeRequirement)
                     {
 
                         Game1.player.currentLocation.playSound(SpellHandle.sounds.ghost.ToString());
@@ -474,23 +573,14 @@ namespace StardewDruid.Dialogue
 
                     }
 
-                    if (Mod.instance.save.herbalism[HerbalData.herbals.aether] < upgradeRequirement)
-                    {
+                    Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name].Add("ForgeBlessing");
 
-                        Game1.player.currentLocation.playSound(SpellHandle.sounds.ghost.ToString());
-
-                        return null;
-
-                    }
-
-                    Mod.instance.rite.specialCasts[LocationData.druid_engineum_name].Add("ForgeBlessing");
-
-                    Mod.instance.save.herbalism[HerbalData.herbals.aether] -= upgradeRequirement;
+                    HerbalData.UpdateHerbalism(HerbalData.herbals.aether,0 - upgradeRequirement);
 
                     DisplayPotion shrineForgeMessage = new(
-                        Mod.instance.Helper.Translation.Get("HerbalData.1116").Tokens(new { potion = Mod.instance.herbalData.herbalism[herbals.aether.ToString()].title, }) 
-                        + " " + DialogueData.Strings(DialogueData.stringkeys.multiplier) + upgradeRequirement.ToString(),
-                        Mod.instance.herbalData.herbalism[herbals.aether.ToString()]
+                        Mod.instance.Helper.Translation.Get("HerbalData.1116").Tokens(new { potion = Mod.instance.herbalData.herbalism[HerbalData.herbals.aether.ToString()].title, }) 
+                        + " " + StringData.Strings(StringData.stringkeys.multiplier) + upgradeRequirement.ToString(),
+                        Mod.instance.herbalData.herbalism[HerbalData.herbals.aether.ToString()]
                     );
 
                     Game1.addHUDMessage(shrineForgeMessage);
@@ -503,13 +593,7 @@ namespace StardewDruid.Dialogue
 
                     bool lowAether = false;
 
-                    if (!Mod.instance.save.herbalism.ContainsKey(HerbalData.herbals.aether))
-                    {
-
-                        lowAether = true;
-
-                    }
-                    else if(Mod.instance.save.herbalism[HerbalData.herbals.aether] < 3)
+                    if(HerbalData.UpdateHerbalism(HerbalData.herbals.aether) < 3)
                     {
 
                         lowAether = true;
@@ -525,10 +609,10 @@ namespace StardewDruid.Dialogue
 
                     }
 
-                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationData.druid_engineum_name))
+                    if (Mod.instance.rite.specialCasts.ContainsKey(LocationHandle.druid_engineum_name))
                     {
 
-                        if (Mod.instance.rite.specialCasts[LocationData.druid_engineum_name].Contains("DeskBlessing"))
+                        if (Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name].Contains("DeskBlessing"))
                         {
 
                             Game1.player.currentLocation.playSound(SpellHandle.sounds.ghost.ToString());
@@ -541,21 +625,21 @@ namespace StardewDruid.Dialogue
                     else
                     {
 
-                        Mod.instance.rite.specialCasts[LocationData.druid_engineum_name] = new();
+                        Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name] = new();
 
                     }
 
                     if (HerbalData.RandomTinker())
                     {
 
-                        Mod.instance.rite.specialCasts[LocationData.druid_engineum_name].Add("DeskBlessing");
+                        Mod.instance.rite.specialCasts[LocationHandle.druid_engineum_name].Add("DeskBlessing");
 
                         Game1.player.Items.ReduceId("388", 25);
                         Game1.player.Items.ReduceId("390", 25);
 
                         DisplayPotion shrineDeskMessage = new(
-                            Mod.instance.Helper.Translation.Get("HerbalData.1116").Tokens(new { potion = Mod.instance.herbalData.herbalism[herbals.aether.ToString()].title, }) + " " + DialogueData.Strings(DialogueData.stringkeys.multiplier) + "3", 
-                            Mod.instance.herbalData.herbalism[herbals.aether.ToString()]
+                            Mod.instance.Helper.Translation.Get("HerbalData.1116").Tokens(new { potion = Mod.instance.herbalData.herbalism[HerbalData.herbals.aether.ToString()].title, }) + " " + StringData.Strings(StringData.stringkeys.multiplier) + "3", 
+                            Mod.instance.herbalData.herbalism[HerbalData.herbals.aether.ToString()]
                         );
 
                         Game1.addHUDMessage(shrineDeskMessage);
@@ -577,13 +661,13 @@ namespace StardewDruid.Dialogue
 
                     generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.22");
 
-                    if (Mod.instance.save.restoration[LocationData.druid_graveyard_name] < 2)
+                    if (LocationHandle.GetRestoration(LocationHandle.druid_graveyard_name) < 2)
                     {
 
                         generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.21");
 
                     }
-                    else if (Mod.instance.save.restoration[LocationData.druid_graveyard_name] >= 4)
+                    else if (LocationHandle.GetRestoration(LocationHandle.druid_graveyard_name) >= 4)
                     {
 
                         generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.23");
@@ -608,13 +692,13 @@ namespace StardewDruid.Dialogue
 
                     generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.4");
 
-                    if (Mod.instance.save.restoration[LocationData.druid_spring_name] < 2)
+                    if (LocationHandle.GetRestoration(LocationHandle.druid_spring_name) < 2)
                     {
 
                         generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.3");
 
                     }
-                    else if (Mod.instance.save.restoration[LocationData.druid_spring_name] >= 3)
+                    else if (LocationHandle.GetRestoration(LocationHandle.druid_spring_name) >= 3)
                     {
 
                         generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.5");

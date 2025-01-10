@@ -85,7 +85,7 @@ namespace StardewDruid.Event.Scene
 
             eventActive = true;
 
-            locales = new() { Location.LocationData.druid_grove_name, Game1.player.currentLocation.Name, };
+            locales = new() { Location.LocationHandle.druid_grove_name, Game1.player.currentLocation.Name, };
 
             location = Game1.player.currentLocation;
 
@@ -93,7 +93,7 @@ namespace StardewDruid.Event.Scene
 
             activeLimit = eventCounter + 302;
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.nature, new()) { sound = SpellHandle.sounds.discoverMineral, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.discoverMineral, });
 
             Mod.instance.rite.CastRockfall(true);
             Mod.instance.rite.CastRockfall(true);

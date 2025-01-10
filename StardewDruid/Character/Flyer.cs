@@ -9,17 +9,15 @@ using StardewValley.Minigames;
 using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewValley.Objects;
-using StardewDruid.Journal;
 using System.Linq;
 using StardewDruid.Render;
-using static StardewDruid.Cast.Rite;
-using StardewValley.Monsters;
-using static StardewDruid.Data.SpawnData;
+using StardewDruid.Event;
 
 
 
 namespace StardewDruid.Character
 {
+
     public class Flyer : StardewDruid.Character.Character
     {
 
@@ -35,7 +33,7 @@ namespace StardewDruid.Character
         {
         }
 
-        public Flyer(CharacterHandle.characters type = CharacterHandle.characters.ShadowCrow)
+        public Flyer(CharacterHandle.characters type = CharacterHandle.characters.CorvidCrow)
           : base(type)
         {
 
@@ -152,7 +150,7 @@ namespace StardewDruid.Character
                 drawLayer
             );
 
-            DrawShadow(b, spritePosition, drawLayer);
+            DrawShadow(b, spritePosition, drawLayer, fade);
 
         }
 
@@ -163,7 +161,7 @@ namespace StardewDruid.Character
 
         }
 
-        public override void DrawShadow(SpriteBatch b, Vector2 spritePosition, float drawLayer)
+        public override void DrawShadow(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
 
             float shadowRatio = 0.6f;
@@ -197,7 +195,7 @@ namespace StardewDruid.Character
                 Mod.instance.iconData.cursorTexture, 
                 shadowPosition, 
                 Mod.instance.iconData.shadowRectangle, 
-                Color.White * 0.35f, 
+                Color.White * 0.15f * fade, 
                 0.0f, 
                 new Vector2(24), 
                 setScale * shadowRatio, 
@@ -223,6 +221,13 @@ namespace StardewDruid.Character
 
         public override bool checkAction(Farmer who, GameLocation l)
         {
+
+            if(modeActive != mode.track)
+            {
+
+                return false;
+
+            }
 
             if (!Mod.instance.rite.specialCasts.ContainsKey("corvid" + characterType.ToString()) && who.CurrentItem != null)
             {
@@ -428,6 +433,10 @@ namespace StardewDruid.Character
             swipeEffect.added = new() { SpellHandle.effects.mug, };
 
             swipeEffect.sound = SpellHandle.sounds.crow;
+
+            swipeEffect.display = IconData.impacts.flashbang;
+
+            swipeEffect.scheme = IconData.schemes.bones;
 
             Mod.instance.spellRegister.Add(swipeEffect);
 

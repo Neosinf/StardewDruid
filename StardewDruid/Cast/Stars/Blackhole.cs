@@ -4,21 +4,12 @@ using StardewDruid.Cast;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Data;
 using StardewDruid.Event;
-using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Minecarts;
 using StardewValley.Locations;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using xTile.Tiles;
-using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Cast.Stars
 {

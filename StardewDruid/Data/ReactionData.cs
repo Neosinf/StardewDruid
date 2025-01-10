@@ -12,10 +12,12 @@ using System.Data.Common;
 using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.Intrinsics.X86;
-using static StardewDruid.Data.IconData;
 using xTile.Dimensions;
 using Microsoft.Xna.Framework.Media;
 using StardewValley.Minigames;
+using StardewDruid.Cast;
+using StardewModdingAPI;
+using StardewDruid.Character;
 
 namespace StardewDruid.Data
 {
@@ -59,6 +61,7 @@ namespace StardewDruid.Data
             dragon,
             jester,
             corvid,
+            lovebomb,
 
         }
 
@@ -81,11 +84,111 @@ namespace StardewDruid.Data
 
         public const string leftParenthesis = "(";
 
+
+        public static bool RecruitWitness(NPC witness)
+        {
+
+            if (!Context.IsMainPlayer)
+            {
+
+                return false;
+
+            }
+
+            if (Mod.instance.magic)
+            {
+
+                return false;
+
+            }
+
+            if (!RelicData.HasRelic(IconData.relics.heiress_gift))
+            {
+
+                return false;
+
+            }
+
+            if (!CharacterHandle.RecruitValid(witness))
+            {
+
+                return false;
+            
+            }
+
+            if (!Game1.player.friendshipData.TryGetValue(witness.Name, out var value))
+            {
+
+                return false;
+
+            }
+
+            if(value.Points < 0)
+            {
+
+                return false;
+
+            }
+
+            if (Mod.instance.save.recruits.Count >= 4)
+            {
+
+                Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.2").Tokens(new { name = witness.Name, }), 0, true);
+
+                return false;
+
+            }
+
+            Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles(IconData.relics.heiress_gift);
+
+            TemporaryAnimatedSprite animation = new(0, 2000, 1, 1, witness.Position + new Microsoft.Xna.Framework.Vector2(2, -124f), false, false)
+            {
+                sourceRect = relicRect,
+                sourceRectStartingPos = new(relicRect.X, relicRect.Y),
+                texture = Mod.instance.iconData.relicsTexture,
+                layerDepth = 900f,
+                delayBeforeAnimationStart = 175,
+                scale = 3f,
+
+            };
+
+            Game1.player.currentLocation.TemporarySprites.Add(animation);
+
+            Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.1").Tokens(new { name = witness.Name, }), 0, true);
+
+            List<CharacterHandle.characters> slots = new()
+            {
+                CharacterHandle.characters.recruit_one,
+                CharacterHandle.characters.recruit_two,
+                CharacterHandle.characters.recruit_three,
+                CharacterHandle.characters.recruit_four,
+
+            };
+
+            foreach(CharacterHandle.characters c in slots)
+            {
+
+                if (Mod.instance.save.recruits.ContainsKey(c))
+                {
+
+                    continue;
+
+                }
+
+                Mod.instance.save.recruits[c] = new() { name = witness.Name, level = 1, rite = Rite.rites.none, display = witness.displayName,};
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
         public static void ReactTo(NPC entity, reactions reaction, int friendship = 0, List<int> context = null)
         {
 
             Mod.instance.AddWitness(reaction, entity.Name);
-
 
             // Custom Reactions
 
@@ -1480,6 +1583,12 @@ namespace StardewDruid.Data
                         };
 
                     }
+
+                    break;
+
+                case reactions.lovebomb:
+
+                    entity.doEmote(20, true);
 
                     break;
 

@@ -160,6 +160,13 @@ namespace StardewDruid.Event
         public virtual void draw(SpriteBatch b)
         {
 
+            if(Game1.activeClickableMenu != null || !Game1.displayHUD)
+            {
+
+                return;
+
+            }
+
             Rectangle titleSafeArea = Game1.graphics.GraphicsDevice.Viewport.GetTitleSafeArea();
 
             Rectangle container;
@@ -223,7 +230,7 @@ namespace StardewDruid.Event
                         container.Width, 
                         container.Height,
                         Color.White,
-                        4f * displayScale,
+                        3f * displayScale,
                         false,
                         990f
                     );

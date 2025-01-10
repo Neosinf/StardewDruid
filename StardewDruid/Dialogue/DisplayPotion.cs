@@ -10,7 +10,6 @@ using System.Text;
 using System.Threading.Tasks;
 using StardewValley.Extensions;
 using System.Reflection;
-using StardewDruid.Journal;
 using static StardewDruid.Data.IconData;
 using StardewDruid.Data;
 using Microsoft.Xna.Framework.Input;
@@ -20,7 +19,7 @@ namespace StardewDruid.Dialogue
     public class DisplayPotion : StardewValley.HUDMessage
     {
 
-        public StardewDruid.Journal.Herbal herbal;
+        public Herbal herbal;
 
         public DisplayPotion(string message, Herbal Herbal)
           : base(message)
@@ -62,9 +61,9 @@ namespace StardewDruid.Dialogue
             vector.X += 16f;
             vector.Y += 16f;
 
-            b.Draw(Mod.instance.iconData.relicsTexture, vector + new Vector2( 2f, 4f), IconData.RelicRectangles(herbal.display), Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 3f, 0, 0.900f);
+            b.Draw(Mod.instance.iconData.potionsTexture, vector + new Vector2( 2f, 4f), IconData.PotionRectangles(herbal.display), Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 3f, 0, 0.900f);
             
-            b.Draw(Mod.instance.iconData.relicsTexture, vector, IconData.RelicRectangles(herbal.display), Color.White, 0f, Vector2.Zero, 3f, 0, 0.901f);
+            b.Draw(Mod.instance.iconData.potionsTexture, vector, IconData.PotionRectangles(herbal.display), Color.White, 0f, Vector2.Zero, 3f, 0, 0.901f);
 
             float timeThink = timeLeft - 3000f;
 

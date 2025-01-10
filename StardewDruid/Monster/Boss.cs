@@ -8,6 +8,7 @@ using StardewDruid.Data;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
+using StardewValley.Companions;
 using StardewValley.Events;
 using StardewValley.Locations;
 using StardewValley.Menus;
@@ -15,6 +16,7 @@ using StardewValley.Monsters;
 using StardewValley.Network;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
@@ -143,7 +145,7 @@ namespace StardewDruid.Monster
         public int flightTimer; // current tick of flight
         public int flightInterval; // flight timer intervals to adjust frame speed
         public int flightTotal; // amount of ticks of full flight
-        public int flightDefault; // determines whether to fly at, over or near target
+        
         public Vector2 flightFrom; // origin of flight path
         public Vector2 flightTo; // destination of flight path
         public Vector2 flightIncrement; // how much to shift position toward destination
@@ -154,6 +156,18 @@ namespace StardewDruid.Monster
         public NetInt netFlightProgress = new NetInt(0);
         public int flightSegment;
         public int trackFlightProgress;
+
+        public enum flightTypes
+        {
+            none,
+            close,
+            past,
+            away,
+            circle,
+            target,
+
+        }
+        public flightTypes flightDefault; // determines whether to fly at, over or near target
 
         // ============================= Special attack
 
@@ -209,6 +223,7 @@ namespace StardewDruid.Monster
             SetMode(baseMode);
 
             Halt();
+
             idleTimer = 30;
 
         }
@@ -297,7 +312,7 @@ namespace StardewDruid.Monster
 
             int height = GetHeight();
 
-            Vector2 spritePosition = localPosition + new Vector2(32,64) - new Vector2((width / 2f) * spriteScale, height * spriteScale);
+            Vector2 spritePosition = localPosition + new Vector2(32,64) - new Vector2(0, height / 2 * spriteScale);//new Vector2((width / 2f) * spriteScale, height / 2 * spriteScale);
 
             if (shadow)
             {
@@ -333,15 +348,19 @@ namespace StardewDruid.Monster
 
             float spriteScale = GetScale();
 
-            int width = GetWidth();
+            int width = GetWidth() - 4;
 
-            int height = GetHeight();
+            int height = GetHeight() - 4;
+
+            float scaleWidth = spriteScale * width;
+
+            float scaleHeight = spriteScale * height;
 
             Rectangle box =  new(
-                (int)(spritePosition.X + (spriteScale * 2)), 
-                (int)(spritePosition.Y + (spriteScale * 4)), 
-                (int)(spriteScale * (width - 4)), 
-                (int)(spriteScale * (height - 4))
+                (int)(spritePosition.X - (scaleWidth / 2)), 
+                (int)(spritePosition.Y - (scaleHeight / 2)), 
+                (int)scaleWidth, 
+                (int)scaleHeight
             );
 
             return box;
@@ -562,7 +581,7 @@ namespace StardewDruid.Monster
 
             flightFrames = walkFrames;
 
-            flightDefault = 2;
+            flightDefault = flightTypes.past;
 
             smashFrames = flightFrames;
 
@@ -622,9 +641,24 @@ namespace StardewDruid.Monster
 
         public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
         {
-            Vector2 localPosition = Game1.GlobalToLocal(Position);
+            Vector2 localPosition = GetPosition(Game1.GlobalToLocal(Position));
 
             DrawTextAboveHead(b,localPosition);
+
+        }
+
+        public virtual void DrawBoundingBox(SpriteBatch b)
+        {
+
+            Microsoft.Xna.Framework.Rectangle container = GetBoundingBox();
+
+            Vector2 localPosition = Game1.GlobalToLocal(new Vector2(container.X, container.Y));
+
+            b.Draw(Game1.staminaRect, localPosition, new Rectangle(0, 0, container.Width, container.Height), Color.Blue, 0f, Vector2.Zero, 1f, 0, 0.0001f);
+
+            Vector2 actualPosition = Game1.GlobalToLocal(Position);
+
+            b.Draw(Game1.staminaRect, actualPosition, new Rectangle(0, 0, 64, 64), Color.Red, 0f, Vector2.Zero, 1f, 0, 0.0002f);
 
         }
 
@@ -1016,7 +1050,7 @@ namespace StardewDruid.Monster
 
         }
 
-        public void SetDirection(Vector2 target)
+        public void LookAtTarget(Vector2 target)
         {
 
             int moveDirection;
@@ -1079,7 +1113,7 @@ namespace StardewDruid.Monster
 
                 //}
 
-                SetDirection(targets.First().Position);
+                LookAtTarget(targets.First().Position);
 
             }
             //else
@@ -2094,74 +2128,61 @@ namespace StardewDruid.Monster
 
             ResetActives();
 
-            SetDirection(target);
+            LookAtTarget(target);
 
             if (!cooldownActive)
             {
 
-                if (threshold > 256)
+                if(ChooseSpecial(threshold, target))
                 {
 
-                    if (channelSet)
-                    {
-                        
-                        if(threshold <= 576 + (96 * GetScale()) && (tempermentActive == temperment.ranged || Mod.instance.randomIndex.Next(2) == 0))
-                        {
-                            
-                            if (PerformChannel(target))
-                            {
-
-                                return;
-
-                            };
-
-                        }
-
-                    }
-
-                    if(specialSet)
-                    {
-                        
-                        if (threshold <= 384 + (64 * GetScale()) && (tempermentActive == temperment.ranged || Mod.instance.randomIndex.Next(2) == 0))
-                        {
-
-                            if (PerformSpecial(target))
-                            {
-
-                                return;
-
-                            }
-
-                        }
-
-                    }
-
-                    if (flightSet)
-                    {
-
-                        if (Mod.instance.randomIndex.Next(2) == 0 || tempermentActive == temperment.aggressive)
-                        {
-
-                            if (PerformFlight(target))
-                            {
-
-                                return;
-
-                            }
-
-                        }
-
-                    }
+                    return;
 
                 }
 
-                if (threshold <= 128 + (32 * GetScale()) && sweepSet)
+            }
+
+            ChooseMovement(threshold, target);
+
+        }
+
+        public virtual bool ChooseSpecial(float threshold, Vector2 target)
+        {
+
+
+            float specialFactor = GetScale();
+
+            if (threshold > 576f + (96f * specialFactor))
+            {
+
+                return false;
+
+            }
+
+            if(threshold <= 128 + (32 * specialFactor))
+            {
+
+                if (smashSet)
                 {
 
-                    if (PerformSweep())
+                    return PerformSweep();
+
+                }
+
+                return false;
+
+            }
+
+            if (channelSet)
+            {
+
+                if (tempermentActive == temperment.ranged || Mod.instance.randomIndex.Next(2) == 0)
+                {
+
+                    if (PerformChannel(target))
                     {
 
-                        return;
+                        return true;
 
                     }
 
@@ -2169,7 +2190,48 @@ namespace StardewDruid.Monster
 
             }
 
-            ChooseMovement(threshold, target);
+            if (threshold >= 384 + (64 * GetScale()))
+            {
+
+                return false;
+
+            }
+
+            if (specialSet)
+            {
+
+                if(tempermentActive == temperment.ranged || Mod.instance.randomIndex.Next(2) == 0)
+                {
+
+                    if (PerformSpecial(target))
+                    {
+
+                        return true;
+
+                    }
+
+                }
+
+            }
+
+            if (flightSet)
+            {
+
+                if (tempermentActive == temperment.aggressive || Mod.instance.randomIndex.Next(2) == 0)
+                {
+
+                    if (PerformFlight(target))
+                    {
+
+                        return true;
+
+                    }
+
+                }
+
+            }
+
+            return false;
 
         }
 
@@ -2303,7 +2365,7 @@ namespace StardewDruid.Monster
                             
                             if(threshold <= 192)
                             {
-                                PerformRetreat(target);
+                                PerformFollow(target);
 
                                 return;
 
@@ -2334,7 +2396,7 @@ namespace StardewDruid.Monster
 
                 Vector2 targetFarmer = targets.First().Position;
 
-                SetDirection(targetFarmer);
+                LookAtTarget(targetFarmer);
 
                 sweepTimer = sweepInterval * SweepCount();
 
@@ -2407,12 +2469,12 @@ namespace StardewDruid.Monster
 
         }
 
-        public virtual bool PerformFlight(Vector2 target, int flightType = -1)
+        public virtual bool PerformFlight(Vector2 target, flightTypes flightType = flightTypes.none)
         {
 
             bool smash = false;
 
-            if (flightType == -1)
+            if (flightType == flightTypes.none)
             {
 
                 switch (tempermentActive)
@@ -2421,13 +2483,13 @@ namespace StardewDruid.Monster
                     case temperment.coward:
 
 
-                        flightType = 3;
+                        flightType = flightTypes.away;
 
                         break;
 
                     case temperment.ranged:
 
-                        flightType = 4;
+                        flightType = flightTypes.circle;
 
                         break;
 
@@ -2442,7 +2504,7 @@ namespace StardewDruid.Monster
 
             switch (flightType)
             {
-                case 1: // dash close to target
+                case flightTypes.close: // dash close to target
 
                     List<Vector2> closeTargets = ModUtility.GetOccupiableTilesNearby(currentLocation, ModUtility.PositionToTile(target), (ModUtility.DirectionToTarget(Position, target)[2] + 4) % 8, 1, 2);
 
@@ -2462,7 +2524,7 @@ namespace StardewDruid.Monster
 
                     break;
 
-                case 2: // dash past target
+                case flightTypes.past: // dash past target
 
                     List<Vector2> farTargets = ModUtility.GetOccupiableTilesNearby(currentLocation, ModUtility.PositionToTile(target), ModUtility.DirectionToTarget(Position, target)[2], 2, 3);
 
@@ -2482,7 +2544,7 @@ namespace StardewDruid.Monster
 
                     break;
 
-                case 3: // get away from target
+                case flightTypes.away: // get away from target
 
                     List<Vector2> retreatTargets = ModUtility.GetOccupiableTilesNearby(currentLocation, ModUtility.PositionToTile(Position), (ModUtility.DirectionToTarget(Position, target)[2] + 4) % 8, 5, 3);
 
@@ -2501,7 +2563,7 @@ namespace StardewDruid.Monster
 
                     break;
 
-                case 4: // circle target
+                case flightTypes.circle: // circle target
 
                     int direction = ModUtility.DirectionToTarget(Position, target)[2];
 
@@ -2541,7 +2603,7 @@ namespace StardewDruid.Monster
 
                     break;
 
-                case 5:
+                case flightTypes.target:
 
                     flightTo = target;
 
@@ -2701,10 +2763,19 @@ namespace StardewDruid.Monster
 
         }
 
+        public virtual Vector2 PerformRedirect(Vector2 target)
+        {
+
+            return target;
+
+        }
+
         public void PerformFollow(Vector2 target)
         {
 
-            SetDirection(target);
+            target = PerformRedirect(target);
+
+            LookAtTarget(target);
 
             followIncrement = ModUtility.PathFactor(Position, target);
 

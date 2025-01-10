@@ -9,15 +9,14 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
-using static StardewValley.Minigames.TargetGame;
-
 
 namespace StardewDruid.Character
 {
     public class TrackHandle
     {
+
         public CharacterHandle.characters trackFor;
-        
+
         public string trackLocation;
 
         public Farmer followPlayer;
@@ -39,6 +38,8 @@ namespace StardewDruid.Character
         public Vector2 lingerSpot;
 
         public bool eventLock;
+
+        public bool suspended;
 
         public TrackHandle(CharacterHandle.characters For, Farmer follow = null, int quadrant = 0)
         {
@@ -62,6 +63,19 @@ namespace StardewDruid.Character
 
         }
 
+        public StardewDruid.Character.Character TrackSubject()
+        {
+
+            if (!Context.IsMainPlayer)
+            {
+
+                return Mod.instance.dopplegangers[trackFor];
+
+            }
+
+            return Mod.instance.characters[trackFor];
+
+        }
 
         public Vector2 TrackPosition()
         {
@@ -80,6 +94,103 @@ namespace StardewDruid.Character
         public void TrackPlayer(int Offset)
         {
 
+            StardewDruid.Character.Character subject = TrackSubject();
+
+            if (subject == null)
+            {
+
+                return;
+
+            }
+
+            if (subject is Recruit villager)
+            {
+
+
+                if (villager.currentLocation == null)
+                {
+
+                    villager.currentLocation = Game1.player.currentLocation;
+
+                    suspended = true;
+
+                }
+
+                if (villager.TrackNotReady())
+                {
+
+                    if (!suspended)
+                    {
+
+                        subject.currentLocation.characters.Remove(subject);
+
+                        suspended = true;
+
+                        string notReadyMessage = Mod.instance.Helper.Translation.Get("CharacterHandle.363.1").Tokens(new { name = subject.displayName });
+
+                        Mod.instance.CastMessage(notReadyMessage);
+
+                    }
+
+                    return;
+
+                }
+
+                if (villager.TrackOutOfTime())
+                {
+
+                    if (!suspended)
+                    {
+
+                        subject.currentLocation.characters.Remove(subject);
+
+                        suspended = true;
+
+                        string outOfTimeMessage = Mod.instance.Helper.Translation.Get("CharacterHandle.363.2").Tokens(new { name = subject.displayName });
+
+                        Mod.instance.CastMessage(outOfTimeMessage);
+
+                    }
+
+                    return;
+
+                }
+
+                if (villager.villager.currentLocation.Name == followPlayer.currentLocation.Name)
+                {
+
+                    if (!suspended)
+                    {
+
+                        subject.currentLocation.characters.Remove(subject);
+
+                        suspended = true;
+
+                        Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.4").Tokens(new { name = subject.displayName, }), 0, true);
+                    }
+
+                    return;
+
+                }
+
+                if (suspended)
+                {
+
+                    suspended = false;
+
+                    Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.3").Tokens(new { name = subject.displayName, }), 0, true);
+
+                    if (subject.currentLocation != null)
+                    {
+
+                        subject.currentLocation.characters.Add(subject);
+
+                    }
+
+                }
+
+            }
+
             trackOffset = Offset;
 
             if (trackLocation != followPlayer.currentLocation.Name)
@@ -90,7 +201,7 @@ namespace StardewDruid.Character
                 nodes.Clear();
 
             }
-
+            
             if (followPlayer.currentLocation is FarmHouse || followPlayer.currentLocation is IslandFarmHouse)
             {
 
@@ -105,10 +216,23 @@ namespace StardewDruid.Character
 
             }
 
-            if (Mod.instance.characters[trackFor].currentLocation.Name != followPlayer.currentLocation.Name)
+            if (subject.currentLocation == null)
+            {
+                
+                WarpToPlayer();
+
+                nodes.Clear();
+
+                warpDelay = 8 + (4 * trackOffset);
+
+                return;
+
+            }
+
+            if (subject.currentLocation.Name != followPlayer.currentLocation.Name)
             {
 
-                if (Mod.instance.characters[trackFor].netSceneActive.Value)
+                if (subject.netSceneActive.Value)
                 {
 
                     return;
@@ -260,7 +384,16 @@ namespace StardewDruid.Character
         public bool WarpToPlayer(int direction = -1)
         {
 
-            if(warpDelay > 0)
+            StardewDruid.Character.Character subject = TrackSubject();
+
+            if (subject == null)
+            {
+
+                return false;
+
+            }
+
+            if (warpDelay > 0)
             {
 
                 return false;
@@ -316,6 +449,21 @@ namespace StardewDruid.Character
 
             }
 
+            foreach (KeyValuePair<CharacterHandle.characters, StardewDruid.Character.Character> friends in Mod.instance.dopplegangers)
+            {
+
+                if (friends.Key == trackFor) { continue; }
+
+                if (friends.Value is Actor) { continue; }
+
+                if (friends.Value.currentLocation == null) { continue; }
+
+                if (friends.Value.currentLocation.Name != followPlayer.currentLocation.Name) { continue; }
+
+                occupied.Add(friends.Value.occupied);
+
+            }
+
             // if options available
 
             if (options.Count > 0)
@@ -328,9 +476,9 @@ namespace StardewDruid.Character
 
                     if (occupied.Contains(warppoint)) { continue; }
 
-                    CharacterMover mover = new(Mod.instance.characters[trackFor], followPlayer.currentLocation, warppoint * 64, true);
+                    CharacterMover mover = new(subject, followPlayer.currentLocation, warppoint * 64, true);
 
-                    mover.warp = Mod.instance.characters[trackFor].warpDisplay;
+                    mover.warp = subject.warpDisplay;
 
                     Mod.instance.movers[trackFor] = mover;
 
@@ -351,6 +499,14 @@ namespace StardewDruid.Character
         public Dictionary<Vector2,int> NodesToTraversal()
         {
 
+            StardewDruid.Character.Character subject = TrackSubject();
+
+            if (subject == null)
+            {
+
+                return new();
+
+            }
             // first get the closest vector on path from termination
 
             Dictionary<Vector2,int> valids = new();
@@ -373,7 +529,7 @@ namespace StardewDruid.Character
 
             List<Vector2> paths = new() { valids.Keys.Last(), };
 
-            Vector2 origin = Mod.instance.characters[trackFor].occupied;
+            Vector2 origin = subject.occupied;
             
             int direct = ModUtility.DirectionToTarget(origin, valids.Keys.Last())[2];
 
@@ -418,7 +574,7 @@ namespace StardewDruid.Character
 
             }
 
-            return ModUtility.PathsToTraversal(Mod.instance.characters[trackFor].currentLocation, paths, valids, 2);
+            return ModUtility.PathsToTraversal(subject.currentLocation, paths, valids, 2);
 
         }
 

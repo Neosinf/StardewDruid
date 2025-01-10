@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using StardewValley.Network;
+using StardewDruid.Character;
 
 namespace StardewDruid.Journal
 {
@@ -57,7 +58,7 @@ namespace StardewDruid.Journal
 
             bounds = new((int)position.X - (int)(8f * spec.scale), (int)position.Y - (int)(8f * spec.scale), (int)(16f * spec.scale), (int)(16f * spec.scale));
 
-            text = DialogueData.ButtonStrings(button);
+            text = StringData.ButtonStrings(button);
 
         }
 
@@ -105,7 +106,8 @@ namespace StardewDruid.Journal
             text,
             custom,
             potionlist,
-
+            herolist,
+            //herobutton,
         }
 
         public contentTypes type;
@@ -140,7 +142,13 @@ namespace StardewDruid.Journal
 
         public Dictionary<int, Microsoft.Xna.Framework.Color> relicColours = new();
 
+        public Dictionary<int, IconData.potions> potions = new();
+
+        public Dictionary<int, Microsoft.Xna.Framework.Rectangle> potionSources = new();
+
         public Microsoft.Xna.Framework.Color defaultColour = new Color(86, 22, 12);
+
+        public Dictionary<int, Texture2D> textures = new();
 
         public ContentComponent(contentTypes Type, string ID, bool Active = true)
         {
@@ -173,6 +181,13 @@ namespace StardewDruid.Journal
             {
 
                 relicSources.Add(relic.Key, IconData.RelicRectangles(relic.Value));
+
+            }
+
+            foreach (KeyValuePair<int, IconData.potions> potion in potions)
+            {
+
+                potionSources.Add(potion.Key, IconData.PotionRectangles(potion.Value));
 
             }
 
@@ -255,6 +270,18 @@ namespace StardewDruid.Journal
                     bounds = new Rectangle(xP + 16 + 4 + (index % 6) * ((width - 32) / 6), yP + 16 + 56 + (int)(index / 6) * (146 + 56), (width - 32) / 6 - 8, 146);
 
                     return;
+
+                case contentTypes.herolist:
+
+                    bounds = new Rectangle(xP + 16, yP + 16 + index * ((height - 32) / 4), width - 32, (height - 32) / 4 + 4);
+
+                    return;
+
+                /*case contentTypes.herobutton:
+
+                    bounds = new Rectangle(xP + width - 16, yP + 16 + index * ((height - 32) / 4), 32, (height - 32) / 4 + 4);
+
+                    return;*/
 
             }
 
@@ -348,7 +375,7 @@ namespace StardewDruid.Journal
                     b.DrawString(
                         Game1.dialogueFont,
                         textParse[0],
-                        new Vector2(bounds.Left + 20f + 64 + 16f - 1.5f, bounds.Center.Y - (textMeasures[0].Y / 2) + 1.5f),
+                        new Vector2(bounds.Left + 20f + 64 + 16f - 1f, bounds.Center.Y - (textMeasures[0].Y / 2) + 1.5f),
                         Microsoft.Xna.Framework.Color.Brown * 0.35f,
                         0f,
                         Vector2.Zero,
@@ -372,9 +399,9 @@ namespace StardewDruid.Journal
                     if(type == contentTypes.potionlist)
                     {
 
-                        b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Left + 20f + 32f - 1.5f, bounds.Center.Y + 3f), relicSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(10), 2.5f, 0, 0.900f);
+                        b.Draw(Mod.instance.iconData.potionsTexture, new Vector2(bounds.Left + 20f + 32f - 1.5f, bounds.Center.Y + 3f), potionSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(10), 2.5f, 0, 0.900f);
 
-                        b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Left + 20f + 32f, bounds.Center.Y), relicSources[0], Color.White, 0f, new Vector2(10), 2.5f, 0, 0.901f);
+                        b.Draw(Mod.instance.iconData.potionsTexture, new Vector2(bounds.Left + 20f + 32f, bounds.Center.Y), potionSources[0], Color.White, 0f, new Vector2(10), 2.5f, 0, 0.901f);
 
                         b.DrawString(
                             Game1.dialogueFont,
@@ -493,9 +520,9 @@ namespace StardewDruid.Journal
 
                     b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Center.X + 6 - (textMeasures[0].X * 0.9f / 2), bounds.Center.Y + 24), textColours[0], 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.901f);
 
-                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Center.X - 40f + 2f, bounds.Center.Y - 60f + 4f), relicSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 4f, 0, 0.900f);
+                    b.Draw(Mod.instance.iconData.potionsTexture, new Vector2(bounds.Center.X - 40f + 2f, bounds.Center.Y - 60f + 4f), potionSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 4f, 0, 0.900f);
 
-                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Center.X - 40f, bounds.Center.Y - 60f), relicSources[0], Color.White, 0f, Vector2.Zero, 4f, 0, 0.901f);
+                    b.Draw(Mod.instance.iconData.potionsTexture, new Vector2(bounds.Center.X - 40f, bounds.Center.Y - 60f), potionSources[0], Color.White, 0f, Vector2.Zero, 4f, 0, 0.901f);
 
                     return;
 
@@ -548,6 +575,121 @@ namespace StardewDruid.Journal
                     b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Center.X - 40f, bounds.Center.Y - 40f), relicSources[0], relicColours[0], 0f, Vector2.Zero, 4f, 0, 0.901f);
 
                     return;
+
+                case contentTypes.herolist:
+
+                    IClickableMenu.drawTextureBox(
+                        b,
+                        Game1.mouseCursors,
+                        new Rectangle(384, 396, 15, 15),
+                        bounds.X,
+                        bounds.Y,
+                        bounds.Width,
+                        bounds.Height,
+                        focus ? Color.Wheat : Color.White,
+                        4f,
+                        false,
+                        -1f
+                    );
+
+                    if (icons.Count > 0)
+                    {
+
+                        b.Draw(
+                            Mod.instance.iconData.displayTexture,
+                            new Vector2(bounds.Right - 96 + 1f, bounds.Center.Y + 3f),
+                            iconSources[0],
+                            Microsoft.Xna.Framework.Color.Black * 0.35f,
+                            0f,
+                            new Vector2(8),
+                            3f,
+                            0,
+                            0.900f
+                        );
+
+                        b.Draw(
+                            Mod.instance.iconData.displayTexture,
+                            new Vector2(bounds.Right - 96, bounds.Center.Y),
+                            iconSources[0],
+                            Microsoft.Xna.Framework.Color.White,
+                            0f,
+                            new Vector2(8),
+                            3f,
+                            0,
+                            0.901f
+                        );
+
+                    }
+
+                    // title
+
+                    b.DrawString(
+                        Game1.dialogueFont,
+                        textParse[0],
+                        new Vector2(bounds.Left + 192f + 1f, bounds.Center.Y - (textMeasures[0].Y / 2) + 1.5f),
+                        Microsoft.Xna.Framework.Color.Brown * 0.35f,
+                        0f,
+                        Vector2.Zero,
+                        1f,
+                        SpriteEffects.None,
+                        0.900f
+                    );
+
+                    b.DrawString(
+                        Game1.dialogueFont,
+                        textParse[0],
+                        new Vector2(bounds.Left + 192f, bounds.Center.Y - (textMeasures[0].Y / 2)),
+                        defaultColour,
+                        0f,
+                        Vector2.Zero,
+                        1f,
+                        SpriteEffects.None,
+                        0.901f
+                    );
+
+                    // image
+
+                    b.Draw(
+                        textures[0],
+                        new Vector2(bounds.Left + 96f, bounds.Center.Y - 4f),
+                        new Rectangle(0, 0, 16, 24),
+                        Microsoft.Xna.Framework.Color.White,
+                        0f,
+                        new Vector2(8,12),
+                        5f,
+                        0,
+                        0.900f
+                    );
+
+                    return;
+
+                /*case contentTypes.herobutton:
+
+                    b.Draw(
+                        Mod.instance.iconData.displayTexture,
+                        bounds.Center.ToVector2() + new Vector2(-1f, 2f),
+                        iconSources[0],
+                        Microsoft.Xna.Framework.Color.Black * 0.35f,
+                        0f,
+                        new Vector2(8),
+                        3f,
+                        0,
+                        0.900f
+                    );
+
+                    b.Draw(
+                        Mod.instance.iconData.displayTexture,
+                        bounds.Center.ToVector2(),
+                        iconSources[0],
+                        Microsoft.Xna.Framework.Color.White,
+                        0f,
+                        new Vector2(8),
+                        3f,
+                        0,
+                        0.901f
+                    );
+
+                    return;*/
 
             }
 
