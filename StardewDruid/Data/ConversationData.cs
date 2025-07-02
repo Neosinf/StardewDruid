@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Dialogue;
-using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewValley;
 using StardewValley.Companions;
 using System.Collections.Generic;
@@ -34,7 +34,6 @@ namespace StardewDruid.Data
                             {
                                 Mod.instance.Helper.Translation.Get("DialogueData.1617"),
                                 Mod.instance.Helper.Translation.Get("DialogueData.1618"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1619"),
                             },
 
                             answers = new()
@@ -61,7 +60,6 @@ namespace StardewDruid.Data
                             {
                                 Mod.instance.Helper.Translation.Get("DialogueData.1644"),
                                 Mod.instance.Helper.Translation.Get("DialogueData.1645"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1646"),
                             },
 
                             answers = new()
@@ -92,7 +90,6 @@ namespace StardewDruid.Data
                             {
                                 Mod.instance.Helper.Translation.Get("DialogueData.1675"),
                                 Mod.instance.Helper.Translation.Get("DialogueData.1676"),
-
                             },
 
                             questContext = 100,
@@ -207,7 +204,8 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1792")
+                                Mod.instance.Helper.Translation.Get("DialogueData.1792"),
+                                Mod.instance.Helper.Translation.Get("ConversationData.377.1"),
                             },
 
                             answers = new()
@@ -229,7 +227,7 @@ namespace StardewDruid.Data
                             responses = new()
                             {
                                 Mod.instance.Helper.Translation.Get("DialogueData.1813"),
-
+                                Mod.instance.Helper.Translation.Get("ConversationData.377.2"),
                             },
 
                             answers = new()
@@ -276,7 +274,8 @@ namespace StardewDruid.Data
                             responses = new()
                             {
                                 Mod.instance.Helper.Translation.Get("DialogueData.1860"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1861"),
+                                Mod.instance.Helper.Translation.Get("ConversationData.377.3"),
+                                //Mod.instance.Helper.Translation.Get("DialogueData.1861"),
                             },
 
                             answers = new()
@@ -747,7 +746,6 @@ namespace StardewDruid.Data
                             {
                                 Mod.instance.Helper.Translation.Get("DialogueData.2330"),
                                 Mod.instance.Helper.Translation.Get("DialogueData.2331"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2332"),
                             },
 
                             answers = new()
@@ -774,7 +772,6 @@ namespace StardewDruid.Data
                             {
                                 Mod.instance.Helper.Translation.Get("DialogueData.2357"),
                                 Mod.instance.Helper.Translation.Get("DialogueData.2358"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2359"),
                             },
 
                             answers = new()
@@ -1692,7 +1689,9 @@ namespace StardewDruid.Data
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.49"),
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.49") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.385.1") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.385.2"),
                             },
 
                             questContext = 100,
@@ -1732,14 +1731,15 @@ namespace StardewDruid.Data
                             responses = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.76")
-
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.76"),
+                                Mod.instance.Helper.Translation.Get("ConversationData.385.3"),
                             },
 
                             answers = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.80"),
+                                Mod.instance.Helper.Translation.Get("ConversationData.361.80") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.385.4"),
 
                             },
 

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.ItemTypeDefinitions;
@@ -23,6 +24,10 @@ namespace StardewDruid.Journal
         public override void populateInterface()
         {
 
+            type = journalTypes.herbalism;
+
+            title = StringData.Strings(StringData.stringkeys.apothecary);
+
             interfaceComponents = new()
             {
 
@@ -34,25 +39,44 @@ namespace StardewDruid.Journal
                 [106] = addButton(journalButtons.transform),
                 [107] = addButton(journalButtons.recruits),
 
-                [201] = addButton(journalButtons.bombs),
-                [202] = addButton(journalButtons.refresh),
+                [201] = addButton(journalButtons.refresh),
+                [202] = addButton(journalButtons.bombs),
+                [203] = addButton(journalButtons.omens),
+                [204] = addButton(journalButtons.goods),
 
                 [301] = addButton(journalButtons.exit),
+                [302] = addButton(journalButtons.forward),
+                [303] = addButton(journalButtons.end),
 
             };
+
+            /*if (!RelicData.HasRelic(StardewDruid.Data.IconData.relics.heiress_gift))
+            {
+
+                interfaceComponents[107] = addButton(journalButtons.pals);
+
+            }*/
+
+            if (Mod.instance.magic)
+            {
+
+                interfaceComponents.Remove(204);
+
+                interfaceComponents.Remove(303);
+
+            }
 
         }
         
         public override void populateContent()
         {
 
-            type = journalTypes.herbalism;
+            contentColumns = 12;
 
-            title = StringData.Strings(StringData.stringkeys.apothecary);
-
-            pagination = 36;
+            pagination = 0;
 
             contentComponents = Mod.instance.herbalData.JournalHerbals();
+
             if (record >= contentComponents.Count)
             {
 
@@ -63,18 +87,7 @@ namespace StardewDruid.Journal
             foreach (KeyValuePair<int, ContentComponent> component in contentComponents)
             {
 
-                if(component.Value.type == ContentComponent.contentTypes.potion)
-                {
-
-                    component.Value.setBounds((int)(component.Key / 2), xPositionOnScreen, yPositionOnScreen, width, height);
-
-                }
-                else
-                {
-
-                    component.Value.setBounds((int)(component.Key / 2), xPositionOnScreen, yPositionOnScreen, width, height);
-
-                }
+                component.Value.setBounds(component.Key/3, xPositionOnScreen, yPositionOnScreen, width, height, 0, 56);
 
             }
 
@@ -105,10 +118,15 @@ namespace StardewDruid.Journal
 
                     return;
 
-                case journalButtons.back:
                 case journalButtons.forward:
 
                     DruidJournal.openJournal(journalTypes.bombs);
+
+                    return;
+
+                case journalButtons.end:
+
+                    DruidJournal.openJournal(journalTypes.goods);
 
                     return;
 
@@ -124,8 +142,27 @@ namespace StardewDruid.Journal
 
         public override void pressContent()
         {
-            
-            if (contentComponents[focus].type == ContentComponent.contentTypes.toggle)
+
+            int amount = 1;
+
+            if (Mod.instance.Helper.Input.GetState(SButton.LeftShift) == SButtonState.Held)
+            {
+                amount = 10;
+            }
+            else if (Mod.instance.Helper.Input.GetState(SButton.RightShift) == SButtonState.Held)
+            {
+                amount = 10;
+            }
+            else if (Mod.instance.Helper.Input.GetState(SButton.LeftControl) == SButtonState.Held)
+            {
+                amount = 50;
+            }
+            else if (Mod.instance.Helper.Input.GetState(SButton.RightControl) == SButtonState.Held)
+            {
+                amount = 50;
+            }
+
+            if (contentComponents[focus].type == ContentComponent.contentTypes.toggleleft)
             {
 
                 Mod.instance.herbalData.PotionBehaviour(contentComponents[focus].id);
@@ -136,37 +173,24 @@ namespace StardewDruid.Journal
 
             }
 
-            string herbalId = contentComponents[focus].id;
-
-            if (Mod.instance.herbalData.herbalism[herbalId].status == 1)
+            if (contentComponents[focus].type == ContentComponent.contentTypes.toggleright)
             {
 
-                int amount = 1;
-
-                if (Mod.instance.Helper.Input.GetState(SButton.LeftShift) == SButtonState.Held)
-                {
-                    amount = 10;
-                }
-                else if (Mod.instance.Helper.Input.GetState(SButton.RightShift) == SButtonState.Held)
-                {
-                    amount = 10;
-                }
-                else if (Mod.instance.Helper.Input.GetState(SButton.LeftControl) == SButtonState.Held)
-                {
-                    amount = 50;
-                }
-                else if (Mod.instance.Helper.Input.GetState(SButton.RightControl) == SButtonState.Held)
-                {
-                    amount = 50;
-                }
-
-                Mod.instance.herbalData.BrewHerbal(herbalId, amount, false, true);
+                Mod.instance.herbalData.ConvertToGoods(contentComponents[focus].id, amount);
 
                 populateContent();
 
                 return;
 
             }
+
+            string herbalId = contentComponents[focus].id;
+
+            Mod.instance.herbalData.BrewHerbal(herbalId, amount, false, true);
+
+            populateContent();
+
+            return;
 
         }
 
@@ -184,19 +208,19 @@ namespace StardewDruid.Journal
 
             Herbal herbal = Mod.instance.herbalData.herbalism[herbalId];
 
-            if (herbal.resource)
+            if (herbal.type == Herbal.herbalType.resource)
             {
 
                 return;
 
             }
 
-            if (HerbalData.UpdateHerbalism(herbal.herbal) > 0)
+            if (HerbalHandle.GetHerbalism(herbal.herbal) > 0)
             {
 
                 Game1.playSound("smallSelect");
 
-                Mod.instance.herbalData.ConsumeHerbal(herbalId);
+                Mod.instance.herbalData.ConsumeHerbal(herbalId, true);
 
                 populateContent();
 
@@ -217,9 +241,18 @@ namespace StardewDruid.Journal
 
             b.DrawString(Game1.smallFont, (int)Game1.player.Stamina + " /" + Game1.player.MaxStamina, new Vector2(xPositionOnScreen + width + 16, yPositionOnScreen + 208), Color.Wheat, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.88f);
 
-            int top = record - (record % pagination);
+            int contentCount = contentComponents.Count;
 
-            for (int i = 0; i < pagination; i++)
+            if(contentCount == 0)
+            {
+
+                return;
+
+            }
+
+            int top = record - (record % contentCount);
+
+            for (int i = 0; i < contentCount; i++)
             {
 
                 int index = top + i;
@@ -258,8 +291,10 @@ namespace StardewDruid.Journal
 
             }
 
-            if (contentComponents[focus].type == ContentComponent.contentTypes.toggle)
+            if (contentComponents[focus].type != ContentComponent.contentTypes.potion)
             {
+
+                drawHoverText(b, contentComponents[focus].text[0]);
 
                 return;
 
@@ -267,17 +302,11 @@ namespace StardewDruid.Journal
 
             string herbalId = contentComponents[focus].id;
 
-            List<string> details = new();
-
-            Dictionary<string, int> items = new();
-
-            Dictionary<HerbalData.herbals, int> potions = new();
-
             Herbal herbal = Mod.instance.herbalData.herbalism[herbalId];
 
             string herbalTitle = herbal.title;
 
-            int amount = HerbalData.UpdateHerbalism(herbal.herbal);
+            int amount = HerbalHandle.GetHerbalism(herbal.herbal);
 
             if (amount > 0)
             {
@@ -286,90 +315,54 @@ namespace StardewDruid.Journal
 
             }
 
-            int baseAmount = 0;
+            string herbalDescription = herbal.description;
 
-            if (herbal.bases.Count > 0)
+            List<string> details = new(herbal.details);
+
+            if(herbal.stamina > 0)
             {
 
-                foreach (HerbalData.herbals basePotion in herbal.bases)
-                {
-
-                    int potionAmount = HerbalData.UpdateHerbalism(basePotion);
-
-                    potions.Add(basePotion, potionAmount);
-
-                }
-
-                if (potions.Count > 0)
-                {
-
-                    baseAmount = potions.Values.Min();
-                
-                }
+                details.Add(herbal.staminaReadout);
 
             }
 
-            if (herbal.status == 3)
+            switch (Mod.instance.herbalData.BuffStatus(herbal))
+            {
+                
+                case 1:
+
+                    details.Add(StringData.Strings(StringData.stringkeys.applyBuff));
+
+                    break;
+
+                case 2:
+
+                    details.Add(StringData.Strings(StringData.stringkeys.activeBuff));
+
+                    break;
+
+            }
+
+            List<string> potionreqs = new(herbal.potionrequirements);
+
+            List<string> itemreqs = new(herbal.itemrequirements);
+
+            Dictionary<HerbalHandle.herbals, int> potions = HerbalHandle.GetPotions(herbal);
+
+            Dictionary<string, int> items = HerbalHandle.GetItems(herbal);
+
+            int craftable = HerbalHandle.GetCraftable(herbal);
+
+            if (craftable == 1000)
             {
 
                 herbalTitle += " " + StringData.Strings(StringData.stringkeys.MAX);
 
             }
-            else if (herbal.status == 1)
+            else if (craftable > 0)
             {
 
-                int craftable = 0;
-
-                foreach (KeyValuePair<string, int> ingredient in herbal.amounts)
-                {
-
-                    craftable += ingredient.Value;
-
-                }
-
-                craftable = Math.Min(999 - amount, craftable);
-
-                if (herbal.bases.Count > 0)
-                {
-
-                    craftable = Math.Min(craftable, baseAmount);
-
-                }
-
-                herbalTitle += " (" + craftable.ToString() + ")";
-
-            }
-
-            string herbalDescription = herbal.description;
-
-            details = new(herbal.details);
-
-            if (herbal.stamina > 0)
-            {
-
-                float difficulty = 1.6f - (Mod.instance.ModDifficulty() * 0.1f);
-
-                int staminaGain = (int)(herbal.stamina * difficulty);
-
-                int healthGain = (int)(herbal.health * difficulty);
-
-                details.Add(Mod.instance.Helper.Translation.Get("HerbalData.327.1").Tokens(new { stamina = staminaGain.ToString(), health = healthGain.ToString() }));
-
-            }
-
-            foreach (string ingredient in herbal.ingredients)
-            {
-
-                int herbalAmount = 0;
-
-                if (herbal.amounts.ContainsKey(ingredient))
-                {
-
-                    herbalAmount = herbal.amounts[ingredient];
-
-                }
-
-                items.Add(ingredient, herbalAmount);
+                herbalTitle += " (" + craftable + ")";
 
             }
 
@@ -382,19 +375,31 @@ namespace StardewDruid.Journal
 
             Vector2 titleSize = Game1.dialogueFont.MeasureString(titleText);
 
-            contentHeight += 24 + titleSize.Y;
+            contentHeight += titleSize.Y;
+
+            contentHeight += 8;
 
             // -------------------------------------------------------
             // description
+
+            contentHeight += 12;
 
             string descriptionText = Game1.parseText(herbalDescription, Game1.smallFont, 476);
 
             Vector2 descriptionSize = Game1.smallFont.MeasureString(descriptionText);
 
-            contentHeight += 24 + descriptionSize.Y;
+            contentHeight += descriptionSize.Y;
+
+            contentHeight += 12;
+
+            // -------------------------------------------------------
+            // details
+
 
             if (details.Count > 0)
             {
+
+                contentHeight += 12;
 
                 foreach (string detail in details)
                 {
@@ -407,20 +412,73 @@ namespace StardewDruid.Journal
 
                 }
 
-                contentHeight += 24;
+                contentHeight += 12;
 
             }
 
-            if (potions.Count > 0 || items.Count > 0)
+            // -------------------------------------------------------
+            // potions
+
+            bool potionSection = false;
+
+            if (potionreqs.Count > 0)
+            {
+
+                contentHeight += (32 * potionreqs.Count);
+
+                potionSection = true;
+
+            }
+
+            if (potions.Count > 0)
             {
 
                 contentHeight += (32 * potions.Count);
 
-                contentHeight += (32 * items.Count);
+                potionSection = true;
+
+            }
+
+            if (potionSection)
+            {
 
                 contentHeight += 24;
 
             }
+
+            // -------------------------------------------------------
+            // items
+
+            bool itemSection = false;
+
+            if (itemreqs.Count > 0)
+            {
+
+                contentHeight += (32 * itemreqs.Count);
+
+                itemSection = true;
+
+            }
+
+            if (items.Count > 0)
+            {
+
+                contentHeight += (32 * items.Count);
+
+                itemSection = true;
+
+            }
+
+            if (itemSection)
+            {
+
+                contentHeight += 24;
+
+            }
+
+
+            contentHeight += 8; // bottom
+
 
             // -------------------------------------------------------
             // texturebox
@@ -470,8 +528,8 @@ namespace StardewDruid.Journal
 
             Color inner = new(246, 146, 30);
 
-            // --------------------------------
-            // top
+            // -------------------------------------------------------
+            // description
 
             b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition, 488, 2), outerTop);
             
@@ -479,14 +537,13 @@ namespace StardewDruid.Journal
 
             textPosition += 12;
 
-            // -------------------------------------------------------
-            // description
-
             b.DrawString(Game1.smallFont, descriptionText, new Vector2(textMargin, textPosition), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
 
             b.DrawString(Game1.smallFont, descriptionText, new Vector2(textMargin - 1.5f, textPosition + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
 
-            textPosition += 12 + descriptionSize.Y;
+            textPosition += descriptionSize.Y;
+
+            textPosition += 12;
 
             // -------------------------------------------------------
             // details
@@ -520,18 +577,39 @@ namespace StardewDruid.Journal
             }
 
             // ---------------------------------------------------------
-            // items
+            // potions
 
-            if (potions.Count > 0 || items.Count > 0)
+            if (potionSection)
             {
-                
+
                 b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition, 488, 2), outerTop);
-                
+
                 b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition + 2, 488, 3), inner);
 
                 textPosition += 12;
 
-                foreach (KeyValuePair<HerbalData.herbals, int> potion in potions)
+            }
+
+            if (potionreqs.Count > 0)
+            {
+
+                foreach (string requirement in potionreqs)
+                {
+
+                    b.DrawString(Game1.smallFont, requirement, new Vector2(textMargin, textPosition), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
+
+                    b.DrawString(Game1.smallFont, requirement, new Vector2(textMargin - 1.5f, textPosition + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
+
+                    textPosition += 32;
+
+                }
+
+            }
+
+            if (potions.Count > 0)
+            {
+
+                foreach (KeyValuePair<HerbalHandle.herbals, int> potion in potions)
                 {
 
                     Herbal basePotion = Mod.instance.herbalData.herbalism[potion.Key.ToString()];
@@ -552,12 +630,63 @@ namespace StardewDruid.Journal
 
                 }
 
+            }
+
+            if (potionSection)
+            {
+
+                textPosition += 12;
+
+            }
+
+            // ---------------------------------------------------------
+            // items
+
+            if (itemSection)
+            {
+
+                b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition, 488, 2), outerTop);
+
+                b.Draw(Game1.staminaRect, new Rectangle((int)textMargin - 4, (int)textPosition + 2, 488, 3), inner);
+
+                textPosition += 12;
+
+            }
+
+            if (itemreqs.Count > 0)
+            {
+
+                foreach(string requirement in itemreqs)
+                {
+
+                    b.DrawString(Game1.smallFont, requirement, new Vector2(textMargin, textPosition), Game1.textColor, 0f, Vector2.Zero, 1, SpriteEffects.None, -1f);
+
+                    b.DrawString(Game1.smallFont, requirement, new Vector2(textMargin - 1.5f, textPosition + 1.5f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1, SpriteEffects.None, -1.1f);
+
+                    textPosition += 32;
+
+                }
+
+            }
+
+            if (items.Count > 0)
+            {
+
                 foreach (KeyValuePair<string, int> item in items)
                 {
 
                     ParsedItemData dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(item.Key);
 
-                    b.Draw(dataOrErrorItem.GetTexture(), new Vector2(textMargin, textPosition), dataOrErrorItem.GetSourceRect(), Color.White, 0f, Vector2.Zero, 2f, 0, 1f);
+                    Rectangle itemSource = dataOrErrorItem.GetSourceRect();
+
+                    if(itemSource.Height > 16)
+                    {
+
+                        itemSource.Height = 16; itemSource.Y += 16;
+
+                    }
+
+                    b.Draw(dataOrErrorItem.GetTexture(), new Vector2(textMargin, textPosition), itemSource, Color.White, 0f, Vector2.Zero, 2f, 0, 1f);
 
                     b.DrawString(Game1.smallFont, dataOrErrorItem.DisplayName, new Vector2(textMargin + 40, textPosition + 2), Game1.textColor * 0.9f, 0f, Vector2.Zero, 1f, SpriteEffects.None, -1f);
 
@@ -575,6 +704,12 @@ namespace StardewDruid.Journal
 
             }
 
+            if (itemSection)
+            {
+
+                textPosition += 12;
+
+            }
         }
 
     }

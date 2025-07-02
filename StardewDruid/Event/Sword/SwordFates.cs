@@ -1,8 +1,8 @@
 ﻿
 using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
-using StardewDruid.Character;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewDruid.Monster;
@@ -65,9 +65,10 @@ namespace StardewDruid.Event.Sword
 
             locales = new() { location.Name, LocationHandle.druid_tunnel_name, LocationHandle.druid_court_name, };
 
-            monsterHandle = new(origin, location);
-
-            monsterHandle.spawnSchedule = new();
+            monsterHandle = new(origin, location)
+            {
+                spawnSchedule = new()
+            };
 
             for (int i = 1; i <= 90; i += 2)
             {
@@ -83,6 +84,8 @@ namespace StardewDruid.Event.Sword
             monsterHandle.spawnWater = true;
 
             monsterHandle.spawnVoid = true;
+
+            monsterHandle.spawnLimit = 99;
 
             activeLimit = 155;
 
@@ -245,13 +248,15 @@ namespace StardewDruid.Event.Sword
 
                 case 91:
 
+                    companions[0].SwitchToMode(Character.Character.mode.scene,Game1.player);
+
+                    companions[0].eventName = eventId;
+
                     companions[0].Position = new Vector2(27, 6) * 64;
 
-                    companions[0].Halt();
+                    Mod.instance.iconData.AnimateQuickWarp(location, companions[0].Position, false, companions[0].warpDisplay);
 
-                    companions[0].idleTimer = 600;
-
-                    companions[0].netDirection.Set(1);
+                    companions[0].LookAtTarget(new Vector2(9999,0),true);
 
                     break;
 
@@ -260,7 +265,7 @@ namespace StardewDruid.Event.Sword
                     if (!Game1.player.mailReceived.Contains("gotGoldenScythe"))
                     {
                         
-                        ThrowHandle swordThrow = new(Game1.player, companions[0].Position, SpawnData.swords.scythe);
+                        ThrowHandle swordThrow = new(Game1.player, companions[0].Position, SpawnData.Swords.scythe);
 
                         swordThrow.register();
 
@@ -287,6 +292,8 @@ namespace StardewDruid.Event.Sword
                     CourtAccess.location = location;
 
                     CourtAccess.AccessStart(false);
+
+                    companions[0].TargetEvent(0, new Vector2(29, 8) * 64, true);
 
                     break;
 
@@ -337,7 +344,7 @@ namespace StardewDruid.Event.Sword
 
                 case 124:
 
-                    companions[0].LookAtTarget(Game1.player.Position);
+                    companions[0].LookAtTarget(Game1.player.Position, true);
 
                     DialogueLoad(0, 1);
 
@@ -357,7 +364,7 @@ namespace StardewDruid.Event.Sword
 
                 case 134:
 
-                    companions[0].LookAtTarget(new Vector2(1280,0));
+                    companions[0].LookAtTarget(new Vector2(1280,0), true);
 
                     DialogueLoad(0, 2);
 
@@ -365,13 +372,13 @@ namespace StardewDruid.Event.Sword
 
                 case 135:
 
-                    companions[0].LookAtTarget(new Vector2(6400, 1280));
+                    companions[0].LookAtTarget(new Vector2(6400, 1280), true);
 
                     break;
 
                 case 136:
 
-                    companions[0].LookAtTarget(Game1.player.Position);
+                    companions[0].LookAtTarget(Game1.player.Position, true);
 
                     break;
 
@@ -389,14 +396,15 @@ namespace StardewDruid.Event.Sword
 
                 case 144:
 
-                    companions[0].LookAtTarget(Game1.player.Position);
+                    companions[0].ResetActives();
+
+                    companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
                     DialogueLoad(0, 3);
 
                     break;
 
                 case 147:
-                    companions[0].LookAtTarget(Game1.player.Position);
 
                     DialogueNext(companions[0]);
 

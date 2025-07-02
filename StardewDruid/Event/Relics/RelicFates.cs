@@ -60,7 +60,7 @@ namespace StardewDruid.Event.Relics
 
             base.EventActivate();
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { sound = SpellHandle.Sounds.getNewSpecialItem, });
 
         }
 

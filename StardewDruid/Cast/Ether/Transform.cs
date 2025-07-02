@@ -23,10 +23,13 @@ namespace StardewDruid.Cast.Ether
         public bool leftActive;
         public SButton rightButton;
         public bool rightActive;
+        public bool abilityActive;
 
         public bool warpTrigger;
         public int warpTimeout;
         public string warpLocation;
+
+        public static int toolPlaceholder = 1846501;
 
         public Transform()
         {
@@ -90,21 +93,22 @@ namespace StardewDruid.Cast.Ether
 
             Game1.displayFarmer = false;
 
-            avatar = new Dragon(Game1.player, Game1.player.Position, Game1.player.currentLocation.Name, "RedDragon");
-
-            avatar.currentLocation = Game1.player.currentLocation;
+            avatar = new Dragon(Game1.player, Game1.player.Position, Game1.player.currentLocation.Name, "RedDragon")
+            {
+                currentLocation = Game1.player.currentLocation
+            };
 
             Game1.player.currentLocation.characters.Add(avatar);
 
-            Game1.player.currentLocation.playSound(SpellHandle.sounds.warrior.ToString());
+            Game1.player.currentLocation.playSound(SpellHandle.Sounds.warrior.ToString());
 
             BuffEffects buffEffect = new();
 
             buffEffect.Defense.Set(5);
 
             Buff dragonBuff = new(Rite.buffIdDragon, 
-                source: StringData.RiteNames(Rite.rites.ether),
-                displaySource: StringData.RiteNames(Rite.rites.ether),
+                source: StringData.RiteNames(Rite.Rites.ether),
+                displaySource: StringData.RiteNames(Rite.Rites.ether),
                 duration: Buff.ENDLESS, 
                 displayName: StringData.Strings(StringData.stringkeys.dragonBuff),
                 description: StringData.Strings(StringData.stringkeys.dragonBuffDescription),
@@ -200,10 +204,12 @@ namespace StardewDruid.Cast.Ether
         public override void EventRemove()
         {
 
-            if (Game1.player.CurrentToolIndex == 999)
+            if (Game1.player.CurrentToolIndex == Transform.toolPlaceholder)
             {
 
                 Game1.player.CurrentToolIndex = toolIndex;
+
+                abilityActive = false;
 
             }
 
@@ -248,7 +254,7 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            if (Game1.player.CurrentToolIndex != 999)
+            if (Game1.player.CurrentToolIndex != toolPlaceholder)
             {
 
                 int num = Mod.instance.AttuneableWeapon();
@@ -264,13 +270,17 @@ namespace StardewDruid.Cast.Ether
 
                 attuneableIndex = num;
 
-                Game1.player.CurrentToolIndex = 999;
+                Game1.player.CurrentToolIndex = toolPlaceholder;
+
+                abilityActive = true;
 
             }
 
-            if (!Game1.shouldTimePass(false))
+            if (!Game1.shouldTimePass(true))
             {
+
                 return false;
+            
             }
 
             if (Action == actionButtons.special && rightActive)
@@ -313,8 +323,14 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            if (
-                Game1.player.CurrentToolIndex != 999 || 
+            if (!abilityActive)
+            {
+
+                return;
+
+            }
+
+            if( 
                 Mod.instance.Helper.Input.IsDown(rightButton) || 
                 Mod.instance.Helper.Input.IsDown(leftButton)
             )
@@ -322,7 +338,14 @@ namespace StardewDruid.Cast.Ether
                 return;
             }
 
-            Game1.player.CurrentToolIndex = toolIndex;
+            if(Game1.player.CurrentToolIndex == toolPlaceholder)
+            {
+
+                Game1.player.CurrentToolIndex = toolIndex;
+
+            }
+
+            abilityActive = false;
 
         }
 
@@ -367,9 +390,9 @@ namespace StardewDruid.Cast.Ether
 
                     character.faceTowardFarmerForPeriod(3000, 4, false, Game1.player);
 
-                    ModUtility.ChangeFriendship(Game1.player, character, 15);
+                    ModUtility.ChangeFriendship(character, 15);
 
-                    ReactionData.ReactTo(character, ReactionData.reactions.dragon, 15);
+                    ReactionData.ReactTo(character, ReactionData.reactions.dragon, 15, new());
 
                 }
 

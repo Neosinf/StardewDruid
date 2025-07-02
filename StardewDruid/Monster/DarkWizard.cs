@@ -52,66 +52,17 @@ namespace StardewDruid.Monster
 
             weaponRender = new();
 
-            weaponRender.LoadWeapon(WeaponRender.weapons.sword);
+            weaponRender.LoadWeapon(WeaponRender.weapons.lightsaber);
 
-            weaponRender.swordScheme = WeaponRender.swordSchemes.sword_lightsaber;
+            meleeSet = true;
 
-            overHead = new(16, -144);
+            hatVectors = CharacterRender.HumanoidHats();
 
-            hatFrames = new()
-            {
-                [0] = new()
-                {
-                    new(192, 64, 32, 32),
-                },
-                [1] = new()
-                {
-                    new(192, 32, 32, 32),
-                },
-                [2] = new()
-                {
-                    new(192, 0, 32, 32),
-                },
-                [3] = new()
-                {
-                    new(192, 32, 32, 32),
-                },
-            };
+            hatSelect = 5;
+
+            shieldScheme = IconData.schemes.snazzle;
 
             loadedOut = true;
-
-        }
-
-        public override void DrawHat(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer)
-        {
-
-            Vector2 hatPosition = spritePosition - new Vector2(0, 64);
-
-            if (netWoundedActive.Value)
-            {
-
-                hatPosition.Y += 20;
-
-            }
-
-            b.Draw(
-                characterTexture,
-                hatPosition,
-                hatFrames[netDirection.Value][0],
-                Color.White,
-                0f,
-                new Vector2(16),
-                4f,
-                netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                drawLayer + 0.0001f
-            );
-
-        }
-
-        public override void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, IconData.schemes scheme)
-        {
-
-            base.DrawShield(b, spritePosition, spriteScale, drawLayer, IconData.schemes.snazzle);
 
         }
 
@@ -132,6 +83,12 @@ namespace StardewDruid.Monster
                 shieldTimer = 600;
 
                 return true;
+
+            }
+            else
+            {
+
+                PerformChannel(target);
 
             }
 
@@ -160,19 +117,22 @@ namespace StardewDruid.Monster
 
                     Vector2 tryVector = castSelection[Mod.instance.randomIndex.Next(castSelection.Count)];
 
-                    SpellHandle fireball = new(currentLocation, tryVector * 64, GetBoundingBox().Center.ToVector2(), 128, GetThreat());
+                    SpellHandle fireball = new(currentLocation, tryVector * 64, GetBoundingBox().Center.ToVector2(), 128, GetThreat())
+                    {
+                        type = SpellHandle.Spells.missile,
 
-                    fireball.type = SpellHandle.spells.missile;
+                        factor = 3,
 
-                    fireball.factor = 3;
+                        missile = MissileHandle.missiles.warpball,
 
-                    fireball.missile = MissileHandle.missiles.warpball;
+                        display = IconData.impacts.puff,
 
-                    fireball.display = IconData.impacts.puff;
+                        scheme = IconData.schemes.snazzle,
 
-                    fireball.scheme = IconData.schemes.snazzle;
+                        boss = this,
 
-                    fireball.boss = this;
+                        added = new() { SpellHandle.Effects.binds, }
+                    };
 
                     Mod.instance.spellRegister.Add(fireball);
 

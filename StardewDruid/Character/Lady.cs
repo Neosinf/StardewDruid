@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using StardewDruid.Handle;
 using StardewDruid.Render;
 using StardewValley;
 using xTile.Dimensions;
@@ -20,18 +21,19 @@ namespace StardewDruid.Character
         }
         public override void LoadOut()
         {
-            
-            base.LoadOut();
 
-            setScale = 3.75f;
+            if (characterType == CharacterHandle.characters.none)
+            {
 
-            specialFrames = CharacterRender.WitchSpecial();
+                characterType = CharacterHandle.characters.LadyBeyond;
 
-            specialIntervals = CharacterRender.WitchIntervals();
+            }
 
-            specialCeilings = CharacterRender.WitchCeilings();
+            LoadOutLady();
 
-            specialFloors = CharacterRender.WitchFloors();
+            cooldownInterval = 90;
+
+            restSet = true;
 
         }
 

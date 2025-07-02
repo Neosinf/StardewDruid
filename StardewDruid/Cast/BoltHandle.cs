@@ -19,8 +19,6 @@ namespace StardewDruid.Cast
     public class BoltHandle : MissileHandle
     {
 
-        public Texture2D boltTexture;
-
         public BoltHandle() 
         { 
         
@@ -49,23 +47,33 @@ namespace StardewDruid.Cast
 
             factor = Factor;
 
-            boltTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Bolt.png"));
-
             switch (Missile)
             {
 
+                default:
                 case missiles.bolt:
 
                     ConstructBolt();
 
                     break;
 
-                /*case missiles.zap:
+                case missiles.quickbolt:
 
-                    ConstructZap();
+                    ConstructQuickBolt();
 
-                    break;*/
+                    break;
 
+                case missiles.greatbolt:
+
+                    ConstructLightning();
+
+                    break;
+
+                case missiles.judgement:
+
+                    ConstructJudgement();
+
+                    break;
             }
 
         }
@@ -75,36 +83,47 @@ namespace StardewDruid.Cast
 
             counter++;
 
-            if(counter == 60)
+            switch (missile)
             {
 
-                Shutdown();
+                case missiles.bolt:
 
-                return;
+                    if (counter == 60)
+                    {
+
+                        Shutdown();
+
+                    }
+                    break;
+
+                case missiles.quickbolt:
+
+                    if (counter == 30)
+                    {
+
+                        Shutdown();
+
+                    }
+                    break;
+
+                case missiles.greatbolt:
+                case missiles.judgement:
+
+                    if (counter == 70)
+                    {
+
+                        Shutdown();
+
+                    }
+
+                    break;
 
             }
-            
-            for (int i = 0; i < Math.Min(4, construct.Count); i++)
-            {
-
-                int factor = (10 - counter);
-
-                construct[i].alpha = 1 - Math.Abs(factor) * 0.025f;
-
-            }
-
 
         }
 
         public void ConstructBolt()
         {
-
-            if (scheme == IconData.schemes.none)
-            {
-
-                scheme = IconData.schemes.mists;
-
-            }
 
             List<TemporaryAnimatedSprite> animations = new();
 
@@ -112,52 +131,20 @@ namespace StardewDruid.Cast
 
             int viewY = Game1.viewport.Y;
 
-            int offset = 0;
+            Vector2 originOffset = new((int)destination.X + 32 - (int)(32 * boltScale), (int)destination.Y + 48 - (int)(192 * boltScale));
 
-            Vector2 originOffset = new((int)destination.X + 32 - (int)(24 * boltScale), (int)destination.Y + 48 - (int)(400 * boltScale));
-
-            if ((int)originOffset.Y < viewY && (int)destination.Y - viewY >= 200)
-            {
-
-                offset = (int)((viewY - (int)originOffset.Y) / boltScale);
-
-                originOffset.Y = viewY;
-
-            }
-
-            int randSet1 = 48 * Mod.instance.randomIndex.Next(2);
+            Vector2 cloudOffset = originOffset - new Vector2(0,(int)(32 * boltScale));
 
             bool flippit = Mod.instance.randomIndex.NextBool();
 
-            TemporaryAnimatedSprite bolt1 = new(0, 500, 1, 1, originOffset, false, flippit)
+            TemporaryAnimatedSprite cloud = new(0, 60, 10, 1, cloudOffset, false, flippit)
             {
 
-                sourceRect = new(randSet1, offset, 48, 400 - offset),
+                sourceRect = new(0, 0, 64, 64),
 
-                sourceRectStartingPos = new Vector2(randSet1, offset),
+                sourceRectStartingPos = new Vector2(0),
 
-                texture = boltTexture,
-
-                layerDepth = 801f,
-
-                scale = boltScale,
-
-            };
-
-            location.temporarySprites.Add(bolt1);
-
-            animations.Add(bolt1);
-
-            // ------------------------- flash
-
-            TemporaryAnimatedSprite bolt2 = new(0, 50, 1, 1, originOffset, false, flippit)
-            {
-
-                sourceRect = new(randSet1+96, offset, 48, 400 - offset),
-
-                sourceRectStartingPos = new Vector2(randSet1 + 96, offset),
-
-                texture = boltTexture,
+                texture = Mod.instance.iconData.boltTexture,
 
                 layerDepth = 802f,
 
@@ -165,110 +152,60 @@ namespace StardewDruid.Cast
 
             };
 
-            location.temporarySprites.Add(bolt2);
+            location.temporarySprites.Add(cloud);
 
-            //animations.Add(bolt2);
+            animations.Add(cloud);
 
-            // ---------------------- clouds
-
-            if (factor <= 1)
+            TemporaryAnimatedSprite bolt = new(0, 60, 10, 1, originOffset, false, flippit)
             {
 
-                construct = animations;
+                sourceRect = new(0, 64, 64, 192),
 
-                return;
+                sourceRectStartingPos = new Vector2(0,64),
 
-            }
+                texture = Mod.instance.iconData.boltTexture,
 
-            int frame = Mod.instance.randomIndex.Next(4) * 2;
+                layerDepth = 801f,
 
-            Mod.instance.iconData.CreateImpact(
-            location,
-            originOffset - new Vector2(0, 64),
-            IconData.impacts.clouds,
-            4f,
-            new()
-            {
-                girth = 2,
-                layer = 802f,
-                interval = 500,
-                frame = frame,
-                flip = Mod.instance.randomIndex.NextBool(),
-                frames = 1,
-                alpha = 1f,
-            });
+                scale = boltScale,
 
-            for (int i = 0; i < ((400 - offset) * boltScale); i += 192)
-            {
+            };
 
-                Vector2 lightSource = new(destination.X, originOffset.Y + 128 + i);
+            location.temporarySprites.Add(bolt);
 
-                string lightid = "18465_" + (lightSource.X * 10000 + lightSource.Y).ToString();
-
-                TemporaryAnimatedSprite lightCircle = new(23, 200f, 6, 1, lightSource, false, Game1.random.NextDouble() < 0.5)
-                {
-                    texture = Game1.mouseCursors,
-                    lightId = lightid,
-                    lightRadius = 2f,
-                    lightcolor = Microsoft.Xna.Framework.Color.Black,
-                    alphaFade = 0.03f,
-                    Parent = location,
-                };
-
-                location.temporarySprites.Add(lightCircle);
-
-                animations.Add(lightCircle);
-
-            }
+            animations.Add(bolt);
 
             construct = animations;
+
+            origin = new((int)destination.X + 32, (int)destination.Y + 48 - (int)(192 * boltScale));
 
         }
 
-        /*public void ConstructZap()
+        public void ConstructQuickBolt()
         {
-
-            if (scheme == IconData.schemes.none)
-            {
-
-                scheme = IconData.schemes.mists;
-
-            }
 
             List<TemporaryAnimatedSprite> animations = new();
 
-            float distance = Math.Min(800f,Vector2.Distance(origin, destination));
+            float boltScale = 1.5f + 0.5f * factor;
 
-            Vector2 diff = destination - origin;
+            int viewY = Game1.viewport.Y;
 
-            Vector2 point = diff / distance;
-
-            Vector2 middle = origin + (diff / 2);
-
-            //Vector2 end = origin + (point * 144 * boltScale);
-
-            float rotate = (float)Math.Atan2(diff.Y, diff.X) - (float)(Math.PI / 2);
-
-            Vector2 originOffset = new(middle.X - (48f), middle.Y - (distance / 2));
-
-            Microsoft.Xna.Framework.Rectangle sourceRect2 = new(0 + Mod.instance.randomIndex.Next(2)*48, 400 - ((int)distance / 2), 48, (int)distance / 2);
+            Vector2 originOffset = new((int)destination.X + 32 - (int)(32 * boltScale), (int)destination.Y + 64 - (int)(192 * boltScale));
 
             bool flippit = Mod.instance.randomIndex.NextBool();
 
-            TemporaryAnimatedSprite bolt1 = new(0, 500, 1, 1, originOffset, false, flippit)
+            TemporaryAnimatedSprite bolt1 = new(0, 40, 8, 1, originOffset, false, flippit)
             {
 
-                sourceRect = sourceRect2,
+                sourceRect = new(128, 64, 64, 192),
 
-                sourceRectStartingPos = new Vector2(sourceRect2.X, sourceRect2.Y),
+                sourceRectStartingPos = new Vector2(128,64),
 
-                texture = boltTexture,
+                texture = Mod.instance.iconData.boltTexture,
 
                 layerDepth = 801f,
 
-                scale = 2f,
-
-                rotation = rotate,
+                scale = boltScale,
 
             };
 
@@ -276,52 +213,94 @@ namespace StardewDruid.Cast
 
             animations.Add(bolt1);
 
-            sourceRect2.X += 96;
+            construct = animations;
 
-            TemporaryAnimatedSprite bolt2 = new(0, 50, 1, 1, originOffset, false, flippit)
+            origin = new((int)destination.X + 32, (int)destination.Y + 64 - (int)(192 * boltScale));
+
+        }
+
+        public void ConstructLightning()
+        {
+
+            List<TemporaryAnimatedSprite> animations = new();
+
+            float boltScale = 2.5f + 0.5f * factor;
+
+            int viewY = Game1.viewport.Y;
+
+            Vector2 originAdjust = new(destination.X + 32, destination.Y + 64 - (112 * boltScale));
+
+            Vector2 originOffset = originAdjust + new Vector2(-128 * boltScale, -32 * boltScale);
+
+            bool flippit = false;// Mod.instance.randomIndex.NextBool();
+
+            TemporaryAnimatedSprite bolt1 = new(0, 75, 12, 1, originOffset, false, flippit)
             {
 
-                sourceRect = sourceRect2,
+                sourceRect = new(0, 0, 256, 64),
 
-                sourceRectStartingPos = new Vector2(sourceRect2.X, sourceRect2.Y),
+                sourceRectStartingPos = new Vector2(0),
 
-                texture = boltTexture,
+                texture = Mod.instance.iconData.lightningTexture,
 
-                layerDepth = 802f,
+                layerDepth = 801f,
 
-                scale = 2f,
+                rotation = (float)(Math.PI/2),
 
-                rotation = rotate,
+                scale = boltScale,
 
             };
 
-            location.temporarySprites.Add(bolt2);
+            location.temporarySprites.Add(bolt1);
 
-            animations.Add(bolt2);
-
-            // Light
-            string lightid = "18465_" + (destination.X * 10000 + destination.Y).ToString();
-
-            TemporaryAnimatedSprite lightCircle = new(23, 200f, 6, 1, destination, false, Game1.random.NextDouble() < 0.5)
-            {
-                texture = Game1.mouseCursors,
-                lightId = lightid,
-                lightRadius = 3f,
-                lightcolor = Microsoft.Xna.Framework.Color.Black,
-                alphaFade = 0.03f,
-                Parent = location,
-            };
-
-            location.temporarySprites.Add(lightCircle);
-
-            animations.Add(lightCircle);
+            animations.Add(bolt1);
 
             construct = animations;
 
-        }*/
+            origin = new((int)destination.X + 32, (int)destination.Y + 64 - (int)(192 * boltScale));
+        }
 
+        public void ConstructJudgement()
+        {
+
+            List<TemporaryAnimatedSprite> animations = new();
+
+            float boltScale = 3f;
+
+            int viewY = Game1.viewport.Y;
+
+            Vector2 originAdjust = new(destination.X + 32, destination.Y + 64 - (112 * boltScale));
+
+            Vector2 originOffset = originAdjust + new Vector2(-128 * boltScale, -32 * boltScale);
+
+            bool flippit = false;// Mod.instance.randomIndex.NextBool();
+
+            TemporaryAnimatedSprite bolt1 = new(0, 75, 12, 1, originOffset, false, flippit)
+            {
+
+                sourceRect = new(0, 0, 256, 64),
+
+                sourceRectStartingPos = new Vector2(0),
+
+                texture = Mod.instance.iconData.judgementTexture,
+
+                layerDepth = 801f,
+
+                rotation = (float)(Math.PI / 2),
+
+                scale = boltScale,
+
+            };
+
+            location.temporarySprites.Add(bolt1);
+
+            animations.Add(bolt1);
+
+            construct = animations;
+
+            origin = new((int)destination.X + 32, (int)destination.Y + 64 - (int)(192 * boltScale));
+        }
 
     }
-
 
 }

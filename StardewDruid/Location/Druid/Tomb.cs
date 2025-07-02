@@ -7,8 +7,8 @@ using xTile.Tiles;
 using Microsoft.Xna.Framework;
 
 using StardewDruid.Data;
-using StardewDruid.Character;
 using Microsoft.Xna.Framework.Graphics;
+using StardewDruid.Handle;
 
 
 namespace StardewDruid.Location.Druid
@@ -16,33 +16,12 @@ namespace StardewDruid.Location.Druid
     public class Tomb : DruidLocation
     {
 
-        public bool activeCircle;
-
-        public List<Location.TerrainField> circleTiles = new();
-
         public Tomb() { }
 
         public Tomb(string Name)
             : base(Name)
         {
 
-        }
-        public override void draw(SpriteBatch b)
-        {
-
-            base.draw(b);
-
-            if (activeCircle)
-            {
-
-                foreach (TerrainField tile in circleTiles)
-                {
-
-                    tile.draw(b, this);
-
-                }
-
-            }
         }
 
         protected override void _updateAmbientLighting()
@@ -113,7 +92,7 @@ namespace StardewDruid.Location.Druid
 
             ignoreOutdoorLighting.Set(true);
 
-            terrainFields = new();
+            mapReset();
 
             Dictionary<int, List<List<int>>> codes = new()
             {
@@ -476,7 +455,48 @@ namespace StardewDruid.Location.Druid
                 foreach (List<int> array in code.Value)
                 {
 
-                    TerrainField tField = new(IconData.tilesheets.tomb, array[1], new Vector2(array[0], code.Key) * 64);
+                    TerrainField tField;
+
+                    switch (array[1])
+                    {
+
+                        default:
+
+                            tField = new(IconData.tilesheets.tomb, array[1], new Vector2(array[0], code.Key) * 64);
+
+                            if (array[0] > 26)
+                            {
+
+                                tField.flip = true;
+
+                            }
+
+                            break;
+
+                        case 1:
+
+                            tField = new Terrain.Brazier(IconData.tilesheets.tomb, array[1], new Vector2(array[0], code.Key) * 64);
+
+                            break;
+
+                        case 5:
+                        case 4:
+
+                            if (array[0] > 26)
+                            {
+
+                                tField = new Terrain.Brazier(IconData.tilesheets.tomb, array[1], new Vector2(array[0], code.Key) * 64) { flip = true };
+
+                            }
+                            else
+                            {
+                                tField = new Terrain.Brazier(IconData.tilesheets.tomb, array[1], new Vector2(array[0], code.Key) * 64) { lightPosition = new Vector2(128, -16) };
+
+                            }
+
+                            break;
+
+                    }
 
                     foreach (Vector2 bottom in tField.baseTiles)
                     {
@@ -494,71 +514,7 @@ namespace StardewDruid.Location.Druid
 
                     tField.shadeOffset = new Vector2(0, 6);
 
-                    if (array[0] > 26)
-                    {
-
-                        tField.flip = true;
-
-                    }
-
                     terrainFields.Add(tField);
-
-                }
-
-            }
-
-            codes = new()
-            {
-
-                [3] = new() { new() { 21, 1 }, new() { 33, 1 }, },
-                [4] = new() { },
-                [5] = new() { },
-                [6] = new() { new() { 14, 1 }, new() { 40, 1 }, },
-                [7] = new() { },
-                [8] = new() { },
-                [9] = new() { },
-                [10] = new() { new() { 21, 1 }, new() { 33, 1 }, },
-                [11] = new() { },
-                [12] = new() { },
-                [13] = new() { },
-                [14] = new() { new() { 12, 1 }, new() { 42, 1 }, },
-                [15] = new() { },
-                [16] = new() { },
-                [17] = new() { },
-                [18] = new() { },
-                [19] = new() { },
-                [20] = new() { new() { 21, 1 }, new() { 33, 1 }, },
-                [21] = new() { },
-                [22] = new() { new() { 14, 1 }, new() { 40, 1 }, },
-                [23] = new() { },
-                [24] = new() { },
-                [25] = new() { },
-                [26] = new() { new() { 21, 1 }, new() { 33, 1 }, },
-                [27] = new() { },
-
-
-
-            };
-
-            lightFields = new();
-
-            foreach (KeyValuePair<int, List<List<int>>> code in codes)
-            {
-
-                foreach (List<int> array in code.Value)
-                {
-
-                    LightField light = new(new Vector2(array[0], code.Key) * 64);
-
-                    light.lightType = LightField.lightTypes.brazier;
-
-                    light.lightFrame = Mod.instance.randomIndex.Next(5);
-
-                    light.luminosity = 3;
-
-                    light.lightLayer = 1;
-
-                    lightFields.Add(light);
 
                 }
 
@@ -566,16 +522,16 @@ namespace StardewDruid.Location.Druid
 
             // CIRCLE
 
-            TerrainField circleTile = new(IconData.tilesheets.ritual, 1, new Vector2(1504, 864), TerrainField.shadows.none);
+            Terrain.RitualCircle circleTile = new(new Vector2(1504, 864))
+            {
+                color = Color.DarkRed,
 
-            circleTile.color = Color.DarkRed * 0.3f;
+                fadeout = 0.3f,
 
-            circleTile.fadeout = 1f;
+                disabled = true
+            };
 
-            circleTile.layer = 0.00064f;
-
-            circleTiles.Add(circleTile);
-
+            terrainFields.Add(circleTile);
 
             addDialogue();
 

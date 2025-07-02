@@ -3,6 +3,7 @@ using StardewDruid.Cast;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Location;
 using StardewModdingAPI;
 using StardewValley;
@@ -29,6 +30,8 @@ namespace StardewDruid.Cast.Fates
 
         public int warpTimer;
 
+        public int warpStrikes;
+
         public Whisk()
         {
 
@@ -45,17 +48,18 @@ namespace StardewDruid.Cast.Fates
 
             EventClicks(actionButtons.rite);
 
-            whiskSpell = new(location, origin, Game1.player.Position, 64);
+            whiskSpell = new(location, origin, Game1.player.Position, 64)
+            {
+                type = SpellHandle.Spells.missile,
 
-            whiskSpell.type = SpellHandle.spells.missile;
+                missile = MissileHandle.missiles.whisk,
 
-            whiskSpell.missile = MissileHandle.missiles.whisk;
+                factor = 3,
 
-            whiskSpell.factor = 3;
+                indicator = IconData.cursors.fatesCharge,
 
-            whiskSpell.indicator = IconData.cursors.fatesCharge;
-
-            whiskSpell.instant = true;
+                instant = true
+            };
 
             whiskSpell.Update();
 
@@ -88,17 +92,17 @@ namespace StardewDruid.Cast.Fates
         public override bool EventPerformAction(SButton Button, actionButtons Action = actionButtons.action)
         {
 
-            if (Action == actionButtons.special)
-            {
-
-                return true;
-
-            }
-
             if (!EventActive())
             {
 
                 return false;
+
+            }
+
+            if (Action == actionButtons.rite)
+            {
+
+                Mod.instance.RiteButtonSuppress();
 
             }
 
@@ -129,6 +133,10 @@ namespace StardewDruid.Cast.Fates
 
             PerformWarp();
 
+            costCounter = 12 + (warpStrikes * 6);
+
+            Rite.ApplyCost(costCounter);
+
             return false;
 
         }
@@ -157,21 +165,21 @@ namespace StardewDruid.Cast.Fates
 
             }
 
-            if (!Mod.instance.eventRegister.ContainsKey("curse"))
+            if (!Mod.instance.eventRegister.ContainsKey(Rite.eventCurse))
             {
 
                 return;
 
             }
 
-            if (Mod.instance.eventRegister["curse"] is not Curse)
+            if (Mod.instance.eventRegister[Rite.eventCurse] is not Curse)
             {
 
                 return;
 
             }
 
-            Curse curseEffect = Mod.instance.eventRegister["curse"] as Curse;
+            Curse curseEffect = Mod.instance.eventRegister[Rite.eventCurse] as Curse;
 
             if (curseEffect.victims.Count == 0)
             {
@@ -207,16 +215,12 @@ namespace StardewDruid.Cast.Fates
 
             int delay = 0;
 
-            int newStrikes = 0;
-
             int manyStrikes = Math.Min(8, orderedTargets.Count);
+
+            float baseDamage = Mod.instance.CombatDamage();
 
             for (int g = 0; g < manyStrikes; g++)
             {
-
-                float strikeCritical = 0;
-
-                float strikeDamage = 0;
 
                 StardewValley.Monsters.Monster warpTarget = orderedTargets.ElementAt(g);
 
@@ -234,24 +238,40 @@ namespace StardewDruid.Cast.Fates
 
                     }
 
-                    strikeCritical = critical[0];
-
-                    strikeDamage = critical[1];
-
                 }
 
                 List<int> directions = new() { 0, 1, 2, 3, 4, 5, 6, 7, };
 
                 int s = Mod.instance.randomIndex.Next(3);
 
-                for (int i = 0; i < strikes; i++)
+                for (int i = strikes -1; i >= 0; i--)
                 {
 
-                    SpellHandle sweep = new(Game1.player, new() { warpTarget }, Mod.instance.CombatDamage()*1.5f);
+                    SpellHandle sweep = new(Game1.player, new() { warpTarget }, -1f)
+                    {
+                        type = SpellHandle.Spells.warpstrike,
 
-                    sweep.type = SpellHandle.spells.warpstrike;
+                        counter = 0 - delay
+                    };
 
-                    sweep.counter = 0 - delay;
+                    if (i == 0)
+                    {
+
+                        sweep.damageMonsters = strikes * baseDamage;
+
+                        if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
+                        {
+
+                            if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
+                            {
+
+                                sweep.added.Add(SpellHandle.Effects.capture);
+
+                            }
+
+                        }
+
+                    }
 
                     int d = directions[Mod.instance.randomIndex.Next(directions.Count)];
 
@@ -263,11 +283,13 @@ namespace StardewDruid.Cast.Fates
 
                     sweep.display = IconData.impacts.flashbang;
 
+                    sweep.sound = SpellHandle.Sounds.swordswipe;
+
                     Mod.instance.spellRegister.Add(sweep);
 
                     warpSpells.Add(sweep);
 
-                    newStrikes++;
+                    warpStrikes++;
 
                     delay += 18;
 
@@ -276,10 +298,6 @@ namespace StardewDruid.Cast.Fates
             }
 
             warpTimer = delay;
-
-            Mod.instance.rite.castCost += (newStrikes * 12);
-
-            Mod.instance.rite.ApplyCost();
 
         }
 
@@ -293,11 +311,12 @@ namespace StardewDruid.Cast.Fates
 
             }
 
-            SpellHandle teleport = new(Game1.player.currentLocation, destination, Game1.player.Position);
+            SpellHandle teleport = new(Game1.player.currentLocation, destination, Game1.player.Position)
+            {
+                type = SpellHandle.Spells.teleport,
 
-            teleport.type = SpellHandle.spells.teleport;
-
-            teleport.factor = warpTimer;
+                factor = warpTimer
+            };
 
             teleport.Update();
 

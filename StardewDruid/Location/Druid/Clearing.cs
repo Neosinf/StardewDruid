@@ -18,14 +18,12 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewValley.TerrainFeatures;
 using System.Threading;
 using System.Xml.Serialization;
-using StardewDruid.Character;
 using StardewDruid.Data;
 using xTile.Dimensions;
 using StardewValley.Extensions;
 using StardewDruid.Monster;
 using StardewDruid.Location.Terrain;
-using static StardewDruid.Character.Character;
-using System.Reflection.Emit;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Location.Druid
 {
@@ -63,7 +61,7 @@ namespace StardewDruid.Location.Druid
 
                     case 1:
 
-                        foreach (TerrainField terrain in frontFields)
+                        foreach (TerrainField terrain in terrainFields)
                         {
 
                             if (terrain is Magnolia magnolia)
@@ -114,6 +112,20 @@ namespace StardewDruid.Location.Druid
 
                         break;
 
+                    case 3:
+
+                        foreach (TerrainField terrain in grassFields)
+                        {
+
+                            if (terrain is Flower flower)
+                            {
+                                flower.disabled = false;
+
+                            }
+
+                        }
+
+                        break;
                 }
 
             }
@@ -157,7 +169,7 @@ namespace StardewDruid.Location.Druid
 
             TileSheet outdoor = new(
                 newMap,
-                "StardewDruid.Tilesheets.ground",
+                "StardewDruid.Tilesheets.groundspring",
                 new(
                     Mod.instance.iconData.sheetTextures[IconData.tilesheets.groundspring].Width / 16,
                     Mod.instance.iconData.sheetTextures[IconData.tilesheets.groundspring].Height / 16
@@ -169,11 +181,13 @@ namespace StardewDruid.Location.Druid
 
             newMap.LoadTileSheets(Game1.mapDisplayDevice);
 
+            seasonalGround = true;
+
             IsOutdoors = true;
 
             ignoreOutdoorLighting.Set(false);
 
-            terrainFields = new();
+            mapReset();
 
             Dictionary<int, List<List<int>>> codes = new();
 
@@ -182,8 +196,6 @@ namespace StardewDruid.Location.Druid
 
             Dictionary<int, List<List<int>>> groundCodes = new()
             {
-                [0] = new() { },
-                [1] = new() { },
                 [2] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
                 [3] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
                 [4] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
@@ -193,11 +205,11 @@ namespace StardewDruid.Location.Druid
                 [8] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
                 [9] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
                 [10] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
-                [11] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
-                [12] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
-                [13] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
-                [14] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
-                [15] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
+                [11] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 260 }, new() { 5, 240 }, new() { 6, 241 }, new() { 7, 240 }, new() { 8, 241 }, new() { 9, 263 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 260 }, new() { 46, 240 }, new() { 47, 241 }, new() { 48, 240 }, new() { 49, 263 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
+                [12] = new() { new() { 2, 1 }, new() { 3, 260 }, new() { 4, 261 }, new() { 5, 252 }, new() { 6, 253 }, new() { 7, 245 }, new() { 8, 254 }, new() { 9, 262 }, new() { 10, 263 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 248 }, new() { 46, 246 }, new() { 47, 250 }, new() { 48, 246 }, new() { 49, 251 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
+                [13] = new() { new() { 2, 1 }, new() { 3, 248 }, new() { 4, 255 }, new() { 5, 246 }, new() { 6, 250 }, new() { 7, 246 }, new() { 8, 252 }, new() { 9, 246 }, new() { 10, 251 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 264 }, new() { 46, 268 }, new() { 47, 269 }, new() { 48, 268 }, new() { 49, 267 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
+                [14] = new() { new() { 2, 1 }, new() { 3, 264 }, new() { 4, 265 }, new() { 5, 249 }, new() { 6, 246 }, new() { 7, 250 }, new() { 8, 255 }, new() { 9, 266 }, new() { 10, 267 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
+                [15] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 264 }, new() { 5, 268 }, new() { 6, 269 }, new() { 7, 268 }, new() { 8, 269 }, new() { 9, 267 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
                 [16] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
                 [17] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
                 [18] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
@@ -216,21 +228,30 @@ namespace StardewDruid.Location.Druid
                 [31] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
                 [32] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
                 [33] = new() { new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 1 }, new() { 27, 1 }, new() { 28, 1 }, new() { 29, 1 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, },
-                [34] = new() { },
-                [35] = new() { },
-
 
             };
 
             foreach (KeyValuePair<int, List<List<int>>> groundCode in groundCodes)
             {
 
-                foreach (List<int> groundArray in groundCode.Value)
+                foreach (List<int> array in groundCode.Value)
                 {
 
-                    back.Tiles[groundArray[0], groundCode.Key] = new StaticTile(back, outdoor, BlendMode.Alpha, Mod.instance.randomIndex.Next(80));
 
-                    back.Tiles[groundArray[0], groundCode.Key].TileIndexProperties.Add("Type", "Grass");
+                    if (array[1] == 1)
+                    {
+
+                        back.Tiles[array[0], groundCode.Key] = new StaticTile(back, outdoor, BlendMode.Alpha, Mod.instance.randomIndex.Next(80));
+
+                        back.Tiles[array[0], groundCode.Key].TileIndexProperties.Add("Type", "Grass");
+
+                    }
+                    else
+                    {
+
+                        back.Tiles[array[0], groundCode.Key] = new StaticTile(back, outdoor, BlendMode.Alpha, array[1]);
+
+                    }
 
                 }
 
@@ -283,10 +304,20 @@ namespace StardewDruid.Location.Druid
             foreach (KeyValuePair<int, List<List<int>>> borderCode in borderCodes)
             {
 
-                foreach (List<int> borderArray in borderCode.Value)
+                foreach (List<int> array in borderCode.Value)
                 {
+                    if (array[1] == 1)
+                    {
 
-                    buildings.Tiles[borderArray[0], borderCode.Key] = new StaticTile(back, outdoor, BlendMode.Alpha, Mod.instance.randomIndex.Next(80));
+                        buildings.Tiles[array[0], borderCode.Key] = new StaticTile(back, outdoor, BlendMode.Alpha, Mod.instance.randomIndex.Next(80));
+
+                    }
+                    else
+                    {
+
+                        buildings.Tiles[array[0], borderCode.Key] = new StaticTile(back, outdoor, BlendMode.Alpha, array[1]);
+
+                    }
 
                 }
 
@@ -296,16 +327,18 @@ namespace StardewDruid.Location.Druid
             // trees and miscellaneous
             codes = new()
             {
-                [-3] = new() { new() { 13, 8 }, new() { 31, 7 }, },
-                [-2] = new() { new() { 19, 7 }, new() { 44, 3 }, },
-                [-1] = new() { new() { 0, 2 }, new() { 37, 5 }, new() { 50, 4 }, },
+
+
+                [-3] = new() { },
+                [-2] = new() { new() { 12, 8 }, new() { 30, 7 }, new() { 44, 3 }, },
+                [-1] = new() { new() { 0, 2 }, new() { 19, 7 }, new() { 37, 5 }, new() { 50, 4 }, },
                 [0] = new() { },
                 [1] = new() { new() { 43, 10 }, },
                 [2] = new() { new() { 11, 1 }, },
                 [3] = new() { new() { 33, 2 }, },
                 [4] = new() { },
-                [5] = new() { new() { 6, 11 }, },
-                [6] = new() { },
+                [5] = new() { },
+                [6] = new() { new() { 5, 13 }, },
                 [7] = new() { },
                 [8] = new() { new() { 0, 6 }, },
                 [9] = new() { new() { 46, 9 }, },
@@ -337,7 +370,6 @@ namespace StardewDruid.Location.Druid
                 [35] = new() { },
 
 
-
             };
 
             List<Vector2> reserved = new();
@@ -356,17 +388,16 @@ namespace StardewDruid.Location.Druid
                         case 1:
                         case 5:
 
-                            Magnolia magnolia = new(new Vector2(array[0], code.Key) * 64, array[1] > 4 ? 2 : 1);
-
-                            magnolia.ruined = true;
+                            Magnolia magnolia = new(new Vector2(array[0], code.Key) * 64, array[1] > 4 ? 2 : 1)
+                            {
+                                ruined = true
+                            };
 
                             magnolia.AddLitter();
 
                             baseTiles = magnolia.baseTiles;
 
                             terrainFields.Add(magnolia);
-
-                            frontFields.Add(magnolia);
 
                             foreach (Vector2 bottom in baseTiles)
                             {
@@ -380,17 +411,16 @@ namespace StardewDruid.Location.Druid
                         case 2:
                         case 6:
 
-                            DarkOak darkoak = new(new Vector2(array[0], code.Key) * 64, array[1] > 4 ? 2 : 1);
-
-                            darkoak.ruined = true;
+                            DarkOak darkoak = new(new Vector2(array[0], code.Key) * 64, array[1] > 4 ? 2 : 1)
+                            {
+                                ruined = true
+                            };
 
                             darkoak.AddLitter();
 
                             baseTiles = darkoak.baseTiles;
 
                             terrainFields.Add(darkoak);
-
-                            frontFields.Add(darkoak);
 
                             foreach (Vector2 bottom in baseTiles)
                             {
@@ -404,17 +434,16 @@ namespace StardewDruid.Location.Druid
                         case 3:
                         case 7:
 
-                            Hawthorn hawthorn = new(new Vector2(array[0], code.Key) * 64, array[1] > 4 ? 2 : 1);
-
-                            hawthorn.ruined = true;
+                            Hawthorn hawthorn = new(new Vector2(array[0], code.Key) * 64, array[1] > 4 ? 2 : 1)
+                            {
+                                ruined = true
+                            };
 
                             hawthorn.AddLitter();
 
                             baseTiles = hawthorn.baseTiles;
 
                             terrainFields.Add(hawthorn);
-
-                            frontFields.Add(hawthorn);
 
                             foreach (Vector2 bottom in baseTiles)
                             {
@@ -428,17 +457,16 @@ namespace StardewDruid.Location.Druid
                         case 4:
                         case 8:
 
-                            Holly holly = new(new Vector2(array[0], code.Key) * 64, array[1] > 4 ? 2 : 1);
-
-                            holly.ruined = true;
+                            Holly holly = new(new Vector2(array[0], code.Key) * 64, array[1] > 4 ? 2 : 1)
+                            {
+                                ruined = true
+                            };
 
                             holly.AddLitter();
 
                             baseTiles = holly.baseTiles;
 
                             terrainFields.Add(holly);
-
-                            frontFields.Add(holly);
 
                             foreach (Vector2 bottom in baseTiles)
                             {
@@ -461,26 +489,56 @@ namespace StardewDruid.Location.Druid
                         case 11:
                         case 12:
 
-                            Owlbox owlbox = new(IconData.tilesheets.clearing, array[1] - 9, new Vector2(array[0], code.Key) * 64, TerrainField.shadows.smallleafy, array[0] > 27) { ruined = true };
+                            Owlbox owlbox = new(IconData.tilesheets.clearing, array[1] - 9, new Vector2(array[0], code.Key) * 64, TerrainField.shadows.circle, array[0] > 27) { ruined = true };
 
                             baseTiles = new()
                             {
                                 new Vector2(array[0] + 1, code.Key + 7),
                             };
 
+                            back.Tiles[array[0], code.Key + 7] = new StaticTile(back, outdoor, BlendMode.Alpha, 260);
+                            back.Tiles[array[0] + 1, code.Key + 7] = new StaticTile(back, outdoor, BlendMode.Alpha, 241);
+                            back.Tiles[array[0] + 2, code.Key + 7] = new StaticTile(back, outdoor, BlendMode.Alpha, 263);
+                            back.Tiles[array[0], code.Key + 8] = new StaticTile(back, outdoor, BlendMode.Alpha, 264);
+                            back.Tiles[array[0] + 1, code.Key + 8] = new StaticTile(back, outdoor, BlendMode.Alpha, 268);
+                            back.Tiles[array[0] + 2, code.Key + 8] = new StaticTile(back, outdoor, BlendMode.Alpha, 267);
+
                             terrainFields.Add(owlbox);
 
-                            frontFields.Add(owlbox);
+                            LightField light = new(new Vector2(array[0], code.Key) * 64 + new Vector2(128, 128))
+                            {
+                                luminosity = 6,
 
-                            LightField light = new(new Vector2(array[0], code.Key) * 64 + new Vector2(128, 128));
+                                colour = Microsoft.Xna.Framework.Color.LightBlue,
 
-                            light.luminosity = 6;
-
-                            light.colour = Microsoft.Xna.Framework.Color.LightBlue;
-
-                            light.lightTimer = 1900;
+                                lightTimer = 1900
+                            };
 
                             lightFields.Add(light);
+
+                            break;
+
+                        case 13:
+
+                            TerrainField bearrock = new(IconData.tilesheets.clearing, 4, new Vector2(array[0], code.Key) * 64);
+
+                            terrainFields.Add(bearrock);
+
+                            dialogueTiles.Add(new(array[0] + 1, code.Key + 6), CharacterHandle.characters.bearrock);
+
+                            dialogueTiles.Add(new(array[0] + 2, code.Key + 6), CharacterHandle.characters.bearrock);
+
+                            dialogueTiles.Add(new(array[0] + 1, code.Key + 7), CharacterHandle.characters.bearrock);
+
+                            dialogueTiles.Add(new(array[0] + 2, code.Key + 7), CharacterHandle.characters.bearrock);
+
+                            baseTiles = new()
+                            {
+                                new Vector2(array[0], code.Key + 7),
+                                new Vector2(array[0] + 1, code.Key + 7),
+                                new Vector2(array[0] + 2, code.Key + 7),
+                                new Vector2(array[0] + 3, code.Key + 7),
+                            };
 
                             break;
 
@@ -552,20 +610,35 @@ namespace StardewDruid.Location.Druid
                 foreach (List<int> array in code.Value)
                 {
 
-                    if (!reserved.Contains(new Vector2(array[0], code.Key)))
+                    if (reserved.Contains(new Vector2(array[0], code.Key)))
                     {
-
-                        if (Mod.instance.randomIndex.Next(8) == 0)
-                        {
-
-                            Flower flower = new(new Vector2(array[0], code.Key) * 64, Flower.grasstypes.flower);
-
-                            terrainFields.Add(flower);
-
-                        }
-
+                        continue;
                     }
 
+                    switch(Mod.instance.randomIndex.Next(10))
+                    {
+
+                        case 0:
+                            Flower flower = new(new Vector2(array[0], code.Key) * 64, Flower.grasstypes.flower)
+                            {
+                                disabled = true
+                            };
+
+                            grassFields.Add(flower);
+
+                            break;
+
+                        case 1:
+
+                            Flower flowertwo = new(new Vector2(array[0], code.Key) * 64, Flower.grasstypes.flowertwo)
+                            {
+                                disabled = true
+                            };
+
+                            grassFields.Add(flowertwo);
+                            break;
+
+                    }
 
                 }
 
@@ -588,13 +661,13 @@ namespace StardewDruid.Location.Druid
 
             warps.Add(new Warp(29, 2, "Forest", 87, 60, flipFarmer: false));
 
-            warps.Add(new Warp(26, 32, "Forest", 87, 60, flipFarmer: false));
+            warps.Add(new Warp(26, 35, "Forest", 87, 60, flipFarmer: false));
 
-            warps.Add(new Warp(27, 32, "Forest", 87, 60, flipFarmer: false));
+            warps.Add(new Warp(27, 35, "Forest", 87, 60, flipFarmer: false));
 
-            warps.Add(new Warp(28, 32, "Forest", 87, 60, flipFarmer: false));
+            warps.Add(new Warp(28, 35, "Forest", 87, 60, flipFarmer: false));
 
-            warps.Add(new Warp(29, 32, "Forest", 87, 60, flipFarmer: false));
+            warps.Add(new Warp(29, 35, "Forest", 87, 60, flipFarmer: false));
 
             if (accessOpen)
             {

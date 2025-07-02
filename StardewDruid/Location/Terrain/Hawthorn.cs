@@ -21,15 +21,11 @@ namespace StardewDruid.Location.Terrain
 
         public Dictionary<Vector2, CommonLeaf> litter = new();
 
-        public float fade;
-
         public int size;
 
         public bool littered;
 
         public int season;
-
-        public int where;
 
         public Hawthorn(Vector2 Position, int Size = 1)
            : base()
@@ -41,13 +37,13 @@ namespace StardewDruid.Location.Terrain
 
             position = Position;
 
-            fade = 1f;
-
             flip = Mod.instance.randomIndex.Next(2) != 0;
 
             size = Size;
 
-            season = 2;
+            season = -1;
+
+            fadeout = 0.5f;
 
             reset();
 
@@ -347,34 +343,88 @@ namespace StardewDruid.Location.Terrain
 
         }
 
-        public void Fade(GameLocation location)
+        public override void update(GameLocation location)
         {
 
-            fade = 1f;
+            base.update(location);
 
-            foreach (Farmer character in location.farmers)
+            wind = 0f;
+
+            windout = 0f;
+
+            if (shake > 0)
             {
 
-                if (bounds.Contains(character.Position.X, character.Position.Y))
+                shake--;
+
+                wind = Mod.instance.environment.retrieve(shake, EnvironmentHandle.environmentEffect.trunkShake);
+
+                switch (size)
                 {
 
-                    fade = 0.35f;
+                    default:
+                    case 1:
 
-                    return;
+                        windout = wind * 400;
+
+                        break;
+
+                    case 2:
+
+                        windout = wind * 200;
+
+                        break;
+
+                }
+
+                foreach (KeyValuePair<Vector2, CommonLeaf> leaf in leaves)
+                {
+
+                    leaf.Value.wind = 0f;
+
+                    leaf.Value.windout = 0f;
+
+                    leaf.Value.wind = Mod.instance.environment.retrieve(where + leaf.Value.where, EnvironmentHandle.environmentEffect.leafShake);
+
+                    leaf.Value.windout = windout + leaf.Value.wind * 80f;
 
                 }
 
             }
-
-            foreach (NPC character in location.characters)
+            else
+            if (!ruined)
             {
 
-                if (bounds.Contains(character.Position.X, character.Position.Y))
+                wind = Mod.instance.environment.retrieve(where, EnvironmentHandle.environmentEffect.trunkRotate);
+
+                switch (size)
                 {
 
-                    fade = 0.35f;
+                    default:
+                    case 1:
 
-                    return;
+                        windout = wind * 400;
+
+                        break;
+
+                    case 2:
+
+                        windout = wind * 200;
+
+                        break;
+
+                }
+
+                foreach (KeyValuePair<Vector2, CommonLeaf> leaf in leaves)
+                {
+
+                    leaf.Value.wind = 0f;
+
+                    leaf.Value.windout = 0f;
+
+                    leaf.Value.wind = Mod.instance.environment.retrieve(where + leaf.Value.where, EnvironmentHandle.environmentEffect.leafRotate);
+
+                    leaf.Value.windout = leaf.Value.wind * 80f;
 
                 }
 
@@ -422,23 +472,19 @@ namespace StardewDruid.Location.Terrain
 
             }
 
-            Fade(location);
-
             Vector2 span = new Vector2(16);
 
             foreach (KeyValuePair<Vector2, CommonLeaf> leaf in leaves)
             {
 
-                float rotate = Mod.instance.environment.retrieve(where + leaf.Value.where, EnvironmentHandle.environmentEffect.leafRotate);
-
-                Vector2 place = new(Mod.instance.environment.retrieve(where + leaf.Value.where, EnvironmentHandle.environmentEffect.leafOffset), 0);
+                Vector2 place = new(leaf.Value.windout, 0);
 
                 b.Draw(
                     Mod.instance.iconData.sheetTextures[IconData.tilesheets.hawthornleaf],
                     origin + leaf.Key + place,
                     new Rectangle(leaf.Value.source.X + offset, leaf.Value.source.Y, 32, 32),
                     leaf.Value.colour * fade,
-                    0 - rotate,
+                    0 - leaf.Value.wind,
                     span,
                     4f,
                     leaf.Value.flip ? (SpriteEffects)1 : 0,
@@ -469,18 +515,12 @@ namespace StardewDruid.Location.Terrain
 
             Vector2 origin = new(position.X - Game1.viewport.X, position.Y - Game1.viewport.Y);
 
-            Fade(location);
-
-            float rotate = 0f;
-
-            Vector2 place = new Vector2(0);
+            Vector2 place = new Vector2(windout,0);
 
             Microsoft.Xna.Framework.Color trunkcolour = new(192, 192, 256);
 
             if (!ruined)
             {
-
-                rotate = Mod.instance.environment.retrieve(where, EnvironmentHandle.environmentEffect.trunkRotate);
 
                 Vector2 span = new Vector2(16);
 
@@ -490,16 +530,14 @@ namespace StardewDruid.Location.Terrain
                 {
                     default:
                     case 1:
-                        lay = new Vector2(origin.X + 320, origin.Y + 448);
 
-                        place = new(Mod.instance.environment.retrieve(where, EnvironmentHandle.environmentEffect.trunkOffset), 0);
+                        lay = new Vector2(origin.X + 320, origin.Y + 448);
 
                         break;
 
                     case 2:
-                        lay = new Vector2(origin.X + 160, origin.Y + 288);
 
-                        place = new(Mod.instance.environment.retrieve(where, EnvironmentHandle.environmentEffect.smallTrunkOffset), 0);
+                        lay = new Vector2(origin.X + 160, origin.Y + 288);
 
                         break;
 
@@ -529,7 +567,7 @@ namespace StardewDruid.Location.Terrain
                             lay + leaf.Key,
                             new Rectangle(leaf.Value.source.X + leafoffset, leaf.Value.source.Y, 32, 32),
                             Color.White,
-                            rotate * 2,
+                            wind * 2,
                             span,
                             4,
                             leaf.Value.flip ? (SpriteEffects)1 : 0,
@@ -541,7 +579,7 @@ namespace StardewDruid.Location.Terrain
                             lay + leaf.Key + new Vector2(2, 8),
                             new Rectangle(leaf.Value.source.X + leafoffset, leaf.Value.source.Y, 32, 32),
                             Color.Black * 0.3f,
-                            rotate * 2,
+                            wind * 2,
                             span,
                             4,
                             leaf.Value.flip ? (SpriteEffects)1 : 0,
@@ -596,7 +634,7 @@ namespace StardewDruid.Location.Terrain
                         origin + new Vector2(320, 256) + place,
                         new Rectangle(offset, 0, 160, 128),
                         trunkcolour * fade,
-                        rotate,
+                        wind,
                         new Vector2(80, 64),
                         4,
                         flip ? (SpriteEffects)1 : 0,
@@ -604,39 +642,40 @@ namespace StardewDruid.Location.Terrain
                         );
 
 
+
+                    if (Game1.timeOfDay > 2100)
+                    {
+
+                        break;
+
+                    }
+
                     if (!ruined)
                     {
 
-                        if (Game1.timeOfDay < 2100)
-                        {
+                        b.Draw(
+                            Mod.instance.iconData.sheetTextures[IconData.tilesheets.hawthornshade],
+                            origin + new Vector2(320, 416) + place,
+                            new Rectangle(192, 0, 192, 160),
+                            gladeShade,
+                            0,
+                            new Vector2(96, 80),
+                            4f,
+                            flip ? (SpriteEffects)1 : 0,
+                            layer + 0.0384f
+                            );
 
-
-                            b.Draw(
-                                Mod.instance.iconData.sheetTextures[IconData.tilesheets.hawthornshade],
-                                origin + new Vector2(320, 416) + place,
-                                new Rectangle(192, 0, 192, 160),
-                                gladeShade,
-                                0,
-                                new Vector2(96, 80),
-                                4f,
-                                flip ? (SpriteEffects)1 : 0,
-                                layer + 0.0384f
-                                );
-
-                            b.Draw(
-                                Mod.instance.iconData.sheetTextures[IconData.tilesheets.hawthornshade],
-                                origin + new Vector2(320, 416) + place,
-                                new Rectangle(0, 0, 192, 160),
-                                leafShade,
-                                0,
-                                new Vector2(96, 80),
-                                4f,
-                                flip ? (SpriteEffects)1 : 0,
-                                0.001f
-                                );
-
-
-                        }
+                        b.Draw(
+                            Mod.instance.iconData.sheetTextures[IconData.tilesheets.hawthornshade],
+                            origin + new Vector2(320, 416) + place,
+                            new Rectangle(0, 0, 192, 160),
+                            leafShade,
+                            0,
+                            new Vector2(96, 80),
+                            4f,
+                            flip ? (SpriteEffects)1 : 0,
+                            0.001f
+                            );
 
                     }
                     else
@@ -647,7 +686,7 @@ namespace StardewDruid.Location.Terrain
                             origin + new Vector2(320, 448) + place,
                             new Rectangle(384, 0, 192, 160),
                             trunkShadow,
-                            rotate,
+                            wind,
                             new Vector2(96, 80),
                             4f,
                             flip ? (SpriteEffects)1 : 0,
@@ -664,59 +703,60 @@ namespace StardewDruid.Location.Terrain
                     switch (useSeason)
                     {
 
-                        case Season.Summer: offset = 80; break;
+                        case Season.Summer: offset = 112; break;
 
-                        case Season.Fall: offset = 160; break;
+                        case Season.Fall: offset = 224; break;
 
-                        case Season.Winter: offset = 240; break;
+                        case Season.Winter: offset = 336; break;
 
                     }
 
                     b.Draw(
                         Mod.instance.iconData.sheetTextures[IconData.tilesheets.hawthorn],
-                        origin + new Vector2(160, 160) + place,
-                        new Rectangle(offset, 128, 80, 80),
+                        origin + new Vector2(160, 160) + place, // +64 inwards than normal due to size revision
+                        new Rectangle(offset, 128, 112, 80),
                         trunkcolour * fade,
-                        rotate,
-                        new Vector2(40, 40),
+                        wind,
+                        new Vector2(56, 40),
                         4,
                         flip ? (SpriteEffects)1 : 0,
                         layer - 0.001f
                         );
 
 
+                    if (Game1.timeOfDay > 2100)
+                    {
+
+                        break;
+
+                    }
+
                     if (!ruined)
                     {
 
-                        if (Game1.timeOfDay < 2100)
-                        {
+                        b.Draw(
+                            Mod.instance.iconData.sheetTextures[IconData.tilesheets.hawthornshade],
+                            origin + new Vector2(160, 308) + place,
+                            new Rectangle(192, 0, 192, 160),
+                            gladeShade,
+                            0,
+                            new Vector2(96, 80),
+                            2.4f,
+                            flip ? (SpriteEffects)1 : 0,
+                            layer + 0.0224f
+                            );
 
-
-                            b.Draw(
-                                Mod.instance.iconData.sheetTextures[IconData.tilesheets.hawthornshade],
-                                origin + new Vector2(160, 308) + place,
-                                new Rectangle(192, 0, 192, 160),
-                                gladeShade,
-                                0,
-                                new Vector2(96, 80),
-                                2.4f,
-                                flip ? (SpriteEffects)1 : 0,
-                                layer + 0.0448f
-                                );
-
-                            b.Draw(
-                                Mod.instance.iconData.sheetTextures[IconData.tilesheets.hawthornshade],
-                                origin + new Vector2(160, 308) + place,
-                                new Rectangle(0, 0, 192, 160),
-                                leafShade,
-                                0,
-                                new Vector2(96, 80),
-                                2.4f,
-                                flip ? (SpriteEffects)1 : 0,
-                                0.001f
-                                );
-
-                        }
+                        b.Draw(
+                            Mod.instance.iconData.sheetTextures[IconData.tilesheets.hawthornshade],
+                            origin + new Vector2(160, 308) + place,
+                            new Rectangle(0, 0, 192, 160),
+                            leafShade,
+                            0,
+                            new Vector2(96, 80),
+                            2.4f,
+                            flip ? (SpriteEffects)1 : 0,
+                            0.001f
+                            );
 
                     }
                     else
@@ -727,13 +767,12 @@ namespace StardewDruid.Location.Terrain
                             origin + new Vector2(160, 300) + place,
                             new Rectangle(384, 0, 192, 160),
                             trunkShadow,
-                            rotate,
+                            wind,
                             new Vector2(96, 80),
-                            2f,
+                            2.4f,
                             flip ? (SpriteEffects)1 : 0,
                             0.001f
                             );
-
 
                     }
 

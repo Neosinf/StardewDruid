@@ -29,11 +29,7 @@ namespace StardewDruid.Render
 
         public Texture2D dinosaurTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Dinosaur.png"));
 
-
         // ============================================================
-        // 190,30,45
-        // 191,142,93
-        // 39,170,225
 
         public Color primary = new(190, 30, 45);
 
@@ -831,6 +827,8 @@ namespace StardewDruid.Render
 
         }
 
+        public dragonSchemes configScheme = dragonSchemes.dragon_custom;
+
         public Dictionary<dragonSchemes, List<Microsoft.Xna.Framework.Color>> gradientColours = new()
         {
 
@@ -850,6 +848,8 @@ namespace StardewDruid.Render
             breath_ether,
 
         }
+
+        public breathSchemes configBreath = breathSchemes.breath_stars;
 
         public Dictionary<breathSchemes, List<Microsoft.Xna.Framework.Color>> breathGradientColours = new()
         {
@@ -1133,17 +1133,15 @@ namespace StardewDruid.Render
 
         }
 
-        public virtual void drawWalk(SpriteBatch b, Vector2 localPosition, DragonAdditional additional)
+        public virtual void drawWalk(SpriteBatch b, Vector2 spritePosition, DragonAdditional additional)
         {
 
-            Vector2 spritePosition = new Vector2(localPosition.X + 32 - (32 * additional.scale), localPosition.Y + 64 - (64 * additional.scale));
-
-            Vector2 spriteShadow = new Vector2(localPosition.X + 32 - 32 * additional.scale, localPosition.Y + 64 - 56 * additional.scale);
+            Vector2 spriteShadow = spritePosition + new Vector2(0,8 * additional.scale);
 
             if (additional.layer == -1f)
             {
 
-                additional.layer = localPosition.Y / 10000f;
+                additional.layer = spritePosition.Y / 10000f;
 
             }
 
@@ -1185,10 +1183,8 @@ namespace StardewDruid.Render
 
         }
 
-        public virtual void drawWalkDinosaur(SpriteBatch b, Vector2 localPosition, DragonAdditional additional)
+        public virtual void drawWalkDinosaur(SpriteBatch b, Vector2 spritePosition, DragonAdditional additional)
         {
-
-            Vector2 spritePosition = new Vector2(localPosition.X + 32 - 32 * additional.scale, localPosition.Y + 64 - 64 * additional.scale);
 
             Vector2 dinoPosition = spritePosition - new Vector2(16) * additional.scale;
 
@@ -1197,7 +1193,7 @@ namespace StardewDruid.Render
             if (additional.layer == -1f)
             {
 
-                additional.layer = localPosition.Y / 10000f;
+                additional.layer = spritePosition.Y / 10000f;
 
             }
 
@@ -1219,15 +1215,13 @@ namespace StardewDruid.Render
 
         }
 
-        public virtual void drawSwim(SpriteBatch b, Vector2 localPosition, DragonAdditional additional)
+        public virtual void drawSwim(SpriteBatch b, Vector2 spritePosition, DragonAdditional additional)
         {
-
-            Vector2 spritePosition = new Vector2(localPosition.X + 32 - 32 * additional.scale, localPosition.Y + 64 - 64 * additional.scale);
 
             if (additional.layer == -1f)
             {
 
-                additional.layer = localPosition.Y / 10000f;
+                additional.layer = spritePosition.Y / 10000f;
 
             }
 
@@ -1251,31 +1245,32 @@ namespace StardewDruid.Render
 
         }
 
-        public virtual void drawDive(SpriteBatch b, Vector2 localPosition, DragonAdditional additional)
+        public virtual void drawDive(SpriteBatch b, Vector2 spritePosition, DragonAdditional additional)
         {
 
-            Vector2 spritePosition = new Vector2(localPosition.X + 32 - 32 * additional.scale, localPosition.Y + 64 - 64 * additional.scale - 2f * (additional.frame % 3));
+            Vector2 divePosition = spritePosition + new Vector2(0,-2f * (additional.frame % 3));
 
             if (additional.layer == -1f)
             {
 
-                additional.layer = localPosition.Y / 10000f;
+                additional.layer = divePosition.Y / 10000f;
 
             }
 
-            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(diveFrames[additional.frame]), primary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
+            b.Draw(characterTexture, divePosition, RectangleDragonIndex(diveFrames[additional.frame]), primary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
 
-            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(diveFrames[additional.frame], 1, 320), secondary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
+            b.Draw(characterTexture, divePosition, RectangleDragonIndex(diveFrames[additional.frame], 1, 320), secondary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
 
-            b.Draw(characterTexture, spritePosition, RectangleDragonIndex(diveFrames[additional.frame], 1, 576), tertiary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
+            b.Draw(characterTexture, divePosition, RectangleDragonIndex(diveFrames[additional.frame], 1, 576), tertiary, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0001f);
 
-            b.Draw(characterTexture, spritePosition, RectangleShadowIndex(diveShadowFrames[additional.frame]), Color.White * 0.35f, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0002f);
+            b.Draw(characterTexture, divePosition, RectangleShadowIndex(diveShadowFrames[additional.frame]), Color.White * 0.35f, 0.0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer + 0.0002f);
 
         }
 
         public virtual void drawFlight(SpriteBatch b, Vector2 localPosition, DragonAdditional additional)
         {
-            Vector2 spritePosition = new Vector2(localPosition.X + 32 - 64 * additional.scale, localPosition.Y + 64 - 64 * additional.scale - additional.flight);
+
+            Vector2 spritePosition = localPosition - new Vector2(32*additional.scale,additional.flight);
 
             b.Draw(dashTexture, spritePosition + new Vector2(0, additional.flight), RectangleDashIndex(dashShadowFrames[additional.direction][0]), Color.White * 0.2f, 0f, Vector2.Zero, additional.scale, additional.flip ? (SpriteEffects)1 : 0, additional.layer - 0.0001f);
 
@@ -1328,9 +1323,16 @@ namespace StardewDruid.Render
         public virtual void drawDig(SpriteBatch b, Vector2 localPosition, DragonAdditional additional)
         {
 
-            Vector2 spritePosition = new Vector2(localPosition.X + 32 - 64 * additional.scale, localPosition.Y + 64 - 64 * additional.scale);
+            Vector2 spritePosition = localPosition - new Vector2(64 * additional.scale, 0);
 
-            Vector2 spriteShadow = new Vector2(localPosition.X + 32 - 64 * additional.scale, localPosition.Y + 64 - 56 * additional.scale);
+            if (additional.flip)
+            {
+
+                spritePosition = localPosition - new Vector2(16 * additional.scale, 0);
+
+            }
+
+            Vector2 spriteShadow = spritePosition + new Vector2(0, 8 * additional.scale);
 
             Rectangle wingFrame = RectangleDashIndex(dashWingFrames[1][0]);
 
@@ -1365,9 +1367,9 @@ namespace StardewDruid.Render
         public virtual void drawSweep(SpriteBatch b, Vector2 localPosition, DragonAdditional additional)
         {
 
-            Vector2 spritePosition = new Vector2(localPosition.X + 32 - 64 * additional.scale, localPosition.Y + 64 - 64 * additional.scale);
+            Vector2 spritePosition = localPosition - new Vector2(32 * additional.scale, 0);
 
-            Vector2 spriteShadow = new Vector2(localPosition.X + 32 - 64 * additional.scale, localPosition.Y + 64 - 56 * additional.scale);
+            Vector2 spriteShadow = spritePosition + new Vector2(0, 8 * additional.scale);
 
             int sequence = additional.direction;
 

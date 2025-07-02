@@ -6,6 +6,7 @@ using StardewDruid.Cast.Effect;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Location.Druid;
 using StardewValley;
 using StardewValley.Locations;
@@ -32,10 +33,20 @@ namespace StardewDruid.Cast.Ether
 
         public bool heldTreasure;
 
+        public bool skipBattle;
+
+        public bool challengeEvent;
+
+        public bool contestEvent;
+
         public List<StardewValley.Object> treasures = new();
 
         public Crate()
         {
+
+            activeLimit = -1;
+
+            mainEvent = true;
 
         }
 
@@ -55,50 +66,46 @@ namespace StardewDruid.Cast.Ether
 
         public override void EventActivate()
         {
-            
-            base.EventActivate();
 
-            if(!crateThief)
+            if(Mod.instance.activeEvent.Count > 0)
             {
-
-                eventComplete = true;
-
-            }
-
-        }
-
-        public override void EventInterval()
-        {
-
-            activeCounter++;
-
-            StardewDruid.Monster.Boss thief;
-
-            if (bosses.Count > 0)
-            {
-
-                thief = bosses.First().Value;
-
-                origin = thief.Position;
-
-                if (!ModUtility.MonsterVitals(thief, location) || thief.netWoundedActive.Value)
-                {
-
-                    thief.deathIsNoEscape();
-
-                    eventComplete = true;
-
-                    return;
-
-                }
 
                 return;
 
             }
 
-            activeLimit = 60;
+            if (!crateThief)
+            {
 
-            EventBar(StringData.Strings(StringData.stringkeys.treasureGuardian), 0);
+                if (triggerActive)
+                {
+
+                    TriggerRemove();
+
+                }
+
+                triggerAbort = true;
+
+                location = Game1.player.currentLocation;
+
+                ReleaseReward();
+
+                return;
+
+            }
+
+            base.EventActivate();
+
+            LoadBoss();
+
+        }
+
+        public void LoadBoss()
+        {
+            
+            StardewDruid.Monster.Boss thief;
+
+            activeLimit = 60;
 
             switch (crateTerrain)
             {
@@ -109,13 +116,27 @@ namespace StardewDruid.Cast.Ether
                     {
                         default:
                         case 0:
+
                             thief = new StardewDruid.Monster.Dark(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+                            
+                            thief.displayName = Mod.instance.Helper.Translation.Get("NarratorData.361.23");
+
                             break;
+
                         case 1:
+
                             thief = new StardewDruid.Monster.DarkShooter(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+
+                            thief.displayName = Mod.instance.Helper.Translation.Get("NarratorData.361.11");
+
                             break;
+
                         case 2:
+
                             thief = new StardewDruid.Monster.DarkGoblin(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+
+                            thief.displayName = Mod.instance.Helper.Translation.Get("NarratorData.361.22");
+
                             break;
 
                     }
@@ -128,7 +149,10 @@ namespace StardewDruid.Cast.Ether
 
                     if (location is Caldera || location.Name == "UndergroundMine100")
                     {
+                        
                         thief = new StardewDruid.Monster.ShadowSerpent(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty(),"LavaSerpent");
+
+                        thief.displayName = Mod.instance.Helper.Translation.Get("NarratorData.391.1");
 
                         thief.netScheme.Set(2);
 
@@ -143,6 +167,8 @@ namespace StardewDruid.Cast.Ether
 
                             thief = new StardewDruid.Monster.ShadowSerpent(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty(), "NightSerpent");
 
+                            thief.displayName = Mod.instance.Helper.Translation.Get("NarratorData.391.2");
+
                             thief.netScheme.Set(4);
 
                             break;
@@ -150,6 +176,8 @@ namespace StardewDruid.Cast.Ether
                         }
 
                         thief = new StardewDruid.Monster.ShadowSerpent(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty());
+
+                        thief.displayName = Mod.instance.Helper.Translation.Get("NarratorData.391.3");
 
                         break;
 
@@ -160,6 +188,8 @@ namespace StardewDruid.Cast.Ether
 
                         thief = new StardewDruid.Monster.ShadowSerpent(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty(), "NightSerpent");
 
+                        thief.displayName = Mod.instance.Helper.Translation.Get("NarratorData.391.2");
+
                         thief.netScheme.Set(4);
 
                         break;
@@ -167,6 +197,8 @@ namespace StardewDruid.Cast.Ether
                     }
 
                     thief = new StardewDruid.Monster.ShadowSerpent(ModUtility.PositionToTile(origin), Mod.instance.CombatDifficulty(), "RiverSerpent");
+
+                    thief.displayName = Mod.instance.Helper.Translation.Get("NarratorData.391.4");
 
                     thief.netScheme.Set(1);
 
@@ -176,16 +208,20 @@ namespace StardewDruid.Cast.Ether
 
             thief.currentLocation = location;
 
+            thief.tether = origin;
+
+            thief.tetherLimit = 1920;
+
             location.characters.Add(thief);
 
             if (crateTreasure)
             {
 
-                thief.tempermentActive = Monster.Boss.temperment.coward;
-
                 thief.basePulp = 15;
 
                 thief.SetMode(2);
+
+                thief.tempermentActive = Monster.Boss.temperment.coward;
 
                 narrators = NarratorData.DialogueNarrators(QuestHandle.treasureChase);
 
@@ -196,9 +232,7 @@ namespace StardewDruid.Cast.Ether
             if (heldTreasure)
             {
 
-                thief.tempermentActive = Monster.Boss.temperment.aggressive;
-
-                thief.SetMode(treasures.Count);
+                thief.SetMode(Math.Max(2,treasures.Count));
 
                 narrators = NarratorData.DialogueNarrators(QuestHandle.treasureGuardian);
 
@@ -224,10 +258,151 @@ namespace StardewDruid.Cast.Ether
 
             Mod.instance.iconData.AnimateQuickWarp(location, origin);
 
+            if (skipBattle)
+            {
+
+                InitiateContest();
+
+                return;
+
+
+            }
+
+            bosses[0].netPosturing.Set(true);
+
+            challengeEvent = true;
+
         }
 
-        public override void EventCompleted()
+        public void InitiateContest()
         {
+
+            challengeEvent = false;
+
+            if (!ContestInterval())
+            {
+
+                return;
+
+            }
+
+            activeLimit = 60;
+
+            switch (crateTerrain)
+            {
+
+                default:
+
+                    EventBar(StringData.Strings(StringData.stringkeys.treasureHunt), 0);
+
+                    break;
+
+                case 2:
+
+                    EventBar(StringData.Strings(StringData.stringkeys.treasureGuardian), 0);
+
+                    break;
+
+            }
+
+            bosses[0].netPosturing.Set(false);
+
+            contestEvent = true;
+
+        }
+
+        public override void EventInterval()
+        {
+
+            activeCounter++;
+
+            if (challengeEvent)
+            {
+
+                ChallengeInterval();
+
+            }
+
+            if (contestEvent)
+            {
+
+                ContestInterval();
+
+                return;
+
+            }
+
+        }
+
+        public void ChallengeInterval()
+        {
+
+            if (activeCounter == 1)
+            {
+
+                bosses[0].LookAtTarget(Game1.player.Position);
+
+                bosses[0].doEmote(16);
+
+                return;
+
+            }
+
+            if (activeCounter == 2)
+            {
+
+                BattleHandle battleHandle = new();
+
+                battleHandle.opposition = bosses[0];
+
+                battleHandle.ThiefEngage(eventId);
+
+                return;
+
+            }
+
+            if (Mod.instance.battleRegister.Count == 0)
+            {
+
+                InitiateContest();
+
+            }
+
+        }
+
+        public bool ContestInterval()
+        {
+
+            if (bosses.Count == 0)
+            {
+
+                eventComplete = true;
+
+                return false;
+
+            }
+
+            origin = bosses[0].Position;
+
+            if (!ModUtility.MonsterVitals(bosses[0], location) || bosses[0].netWoundedActive.Value)
+            {
+
+                bosses[0].deathIsNoEscape();
+
+                eventComplete = true;
+
+                ReleaseReward();
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        public void ReleaseReward() 
+        { 
             
             if (
                 crateTerrain != 2
@@ -293,11 +468,22 @@ namespace StardewDruid.Cast.Ether
 
             Vector2 treasureVector = ModUtility.PositionToTile(origin);
 
-            layer.Tiles[(int)treasureVector.X, (int)treasureVector.Y] = new StaticTile(layer, location.map.TileSheets[0], 0, (location as MineShaft).mineLevel > 120 ? 174 : 173);
+            List<Vector2> tryGround = ModUtility.GetOccupiableTilesNearby(location, treasureVector, -1, 0, 2);
 
-            Game1.player.TemporaryPassableTiles.Add(new Microsoft.Xna.Framework.Rectangle((int)treasureVector.X * 64, (int)treasureVector.Y * 64, 64, 64));
+            if(tryGround.Count > 0)
+            {
 
-            DialogueCue(991);
+                Mod.instance.rite.specialCasts[location.Name].Add("crate");
+
+                Vector2 tryBore = tryGround.First();
+
+                layer.Tiles[(int)tryBore.X, (int)tryBore.Y] = new StaticTile(layer, location.map.TileSheets[0], 0, (location as MineShaft).mineLevel > 120 ? 174 : 173);
+
+                Game1.player.TemporaryPassableTiles.Add(new Microsoft.Xna.Framework.Rectangle((int)treasureVector.X * 64, (int)treasureVector.Y * 64, 64, 64));
+
+                DialogueCue(991);
+
+            }
 
         }
 
@@ -320,27 +506,30 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            int aether = Mod.instance.randomIndex.Next(1, 4);
+            // crate display
 
-            Herbal Aether = Mod.instance.herbalData.herbalism[HerbalData.herbals.aether.ToString()];
+            SpellHandle crate = new(location, new(1), origin)
+            {
+                type = SpellHandle.Spells.crate,
 
-            DisplayPotion hudmessage = new("+" + aether.ToString() + " " + Aether.title, Aether);
+                counter = 60
+            };
 
-            Game1.addHUDMessage(hudmessage);
-
-            HerbalData.UpdateHerbalism(HerbalData.herbals.aether, aether);
-
-            SpellHandle crate = new(location, new(1), origin);
-
-            crate.type = SpellHandle.spells.crate;
-
-            crate.counter = 60;
-
-            crate.added.Add(SpellHandle.effects.crate);
+            crate.added.Add(SpellHandle.Effects.crate);
 
             crate.Update();
 
             Mod.instance.spellRegister.Add(crate);
+
+            // aether
+
+            int aether = Mod.instance.randomIndex.Next(1, 4);
+
+            ThrowHandle throwAether = new(Game1.player, origin, HerbalHandle.herbals.aether, aether);
+
+            throwAether.register();
+
+            // relics
 
             IconData.relics bookRelic = Mod.instance.relicsData.RelicBooksLocations();
 
@@ -368,15 +557,21 @@ namespace StardewDruid.Cast.Ether
 
                 Vector2 offset = origin + new Vector2(Mod.instance.randomIndex.Next(4) * 16, Mod.instance.randomIndex.Next(4) * 16);
 
-                ThrowHandle throwObject = new(Game1.player, offset, treasure);
-
-                throwObject.delay = Mod.instance.randomIndex.Next(5) * 10;
+                ThrowHandle throwObject = new(Game1.player, offset, treasure)
+                {
+                    delay = Mod.instance.randomIndex.Next(5) * 10
+                };
 
                 throwObject.register();
 
-                Game1.player.gainExperience(1, treasure.Quality * 12); // gain fishing experience
+                if(treasure.Category == StardewValley.Object.FishCategory)
+                {
 
-                Game1.player.caughtFish(treasure.ItemId, 1, false, 1);
+                    Mod.instance.GiveExperience(1, treasure.Quality * 12); // gain fishing experience
+
+                    Game1.player.caughtFish(treasure.ItemId, 1, false, 1);
+
+                }
 
             }
 

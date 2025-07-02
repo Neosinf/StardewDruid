@@ -18,56 +18,19 @@ using StardewDruid.Data;
 using StardewValley.TerrainFeatures;
 using System.Threading;
 using xTile;
-using StardewDruid.Character;
+using Microsoft.Xna.Framework.Input;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Location.Druid
 {
     public class Chapel : DruidLocation
     {
 
-        public List<Location.TerrainField> altarTiles = new();
-
-        public List<Location.TerrainField> circleTiles = new();
-
-        public bool activeCircle;
-
-
         public Chapel() { }
 
         public Chapel(string Name)
             : base(Name)
         {
-
-        }
-
-        public override void draw(SpriteBatch b)
-        {
-
-            base.draw(b);
-
-            if (activeCircle)
-            {
-
-                foreach (TerrainField tile in circleTiles)
-                {
-
-                    tile.draw(b, this);
-
-                }
-
-            }
-            else
-            {
-
-                foreach (TerrainField tile in altarTiles)
-                {
-
-                    tile.draw(b, this);
-
-                }
-
-            }
-
 
         }
 
@@ -153,7 +116,7 @@ namespace StardewDruid.Location.Druid
 
             ignoreOutdoorLighting.Set(false);
 
-            terrainFields = new();
+            mapReset();
 
             Dictionary<int, List<List<int>>> codes = new()
             {
@@ -309,7 +272,7 @@ namespace StardewDruid.Location.Druid
                 [11] = new() { },
                 [12] = new() { new() { 16, 9 }, new() { 36, 9 }, },
                 [13] = new() { new() { 12, 8 }, new() { 38, 8 }, },
-                [14] = new() { },
+                [14] = new() { new() { 24, 3 }, },
                 [15] = new() { },
                 [16] = new() { new() { 8, 2 }, new() { 11, 1 }, new() { 40, 2 }, new() { 43, 1 }, },
                 [17] = new() { },
@@ -340,19 +303,72 @@ namespace StardewDruid.Location.Druid
                 foreach (List<int> array in code.Value)
                 {
 
-                    TerrainField tField = new(IconData.tilesheets.chapel, array[1], new Vector2(array[0], code.Key) * 64);
+                    TerrainField tField;
 
-                    if (array[1] == 2 || array[1] == 11)
+
+                    switch (array[1])
                     {
 
-                        tField.flip = true;
+                        default:
+                            
+                            tField = new(IconData.tilesheets.chapel, array[1], new Vector2(array[0], code.Key) * 64);
+                            
+                            break;
+
+                        case 2:
+
+                            tField = new(IconData.tilesheets.chapel, array[1], new Vector2(array[0], code.Key) * 64)
+                            {
+                                flip = true
+                            };
+
+                            break;
+
+                        case 3:
+
+                            tField = new Terrain.ChapelAltar(IconData.tilesheets.chapel, array[1], new Vector2(array[0], code.Key) * 64);
+
+                            Terrain.RitualCircle circleTile = new(new Vector2(1504, 832))
+                            {
+                                fadeout = 0.25f,
+
+                                disabled = true
+                            };
+
+                            terrainFields.Add(circleTile);
+
+                            break;
+
+                        case 8:
+                            
+                            tField = new(IconData.tilesheets.chapel, array[1], new Vector2(array[0], code.Key) * 64);
+                            
+                            tField.layer += 0.0384f;
+
+                            break;
+
+                        case 10:
+                            tField = new(IconData.tilesheets.chapel, array[1], new Vector2(array[0], code.Key) * 64)
+                            {
+                                fadeout = 1f
+                            };
+
+                            break;
+
+                        case 11:
+
+                            tField = new(IconData.tilesheets.chapel, array[1], new Vector2(array[0], code.Key) * 64)
+                            {
+                                fadeout = 1f,
+
+                                flip = true
+                            };
+
+                            break;
+
 
                     }
-                    if (array[1] == 8)
-                    {
-                        tField.layer += 0.0384f;
 
-                    }
                     foreach (Vector2 bottom in tField.baseTiles)
                     {
 
@@ -369,51 +385,6 @@ namespace StardewDruid.Location.Druid
                 }
 
             }
-
-            // ALTAR
-
-            codes = new()
-            {
-                [14] = new() { new() { 24, 3 }, },
-
-            };
-
-            foreach (KeyValuePair<int, List<List<int>>> code in codes)
-            {
-
-                foreach (List<int> array in code.Value)
-                {
-
-                    TerrainField tField = new(IconData.tilesheets.chapel, array[1], new Vector2(array[0], code.Key) * 64);
-
-                    foreach (Vector2 bottom in tField.baseTiles)
-                    {
-
-                        if (buildings.Tiles[(int)bottom.X, (int)bottom.Y] == null && back.Tiles[(int)bottom.X, (int)bottom.Y] != null)
-                        {
-
-                            buildings.Tiles[(int)bottom.X, (int)bottom.Y] = new StaticTile(buildings, chapelsheet, BlendMode.Alpha, back.Tiles[(int)bottom.X, (int)bottom.Y].TileIndex);
-                        }
-
-                    }
-
-                    altarTiles.Add(tField);
-
-                }
-
-            }
-
-            // CIRCLE
-
-            TerrainField circleTile = new(IconData.tilesheets.ritual, 1, new Vector2(1504, 832), TerrainField.shadows.none);
-
-            circleTile.color = Color.White * 0.1f;
-
-            circleTile.fadeout = 1f;
-
-            circleTile.layer = 0.00064f;
-
-            circleTiles.Add(circleTile);
 
 
             // OVERHEAD
@@ -432,9 +403,9 @@ namespace StardewDruid.Location.Druid
                 foreach (List<int> array in code.Value)
                 {
 
-                    TerrainField tField = new(IconData.tilesheets.chapel, array[1], new Vector2(array[0], code.Key) * 64);
+                    Location.Terrain.ChapelBeam tField = new(IconData.tilesheets.chapel, array[1], new Vector2(array[0], code.Key) * 64);
 
-                    frontFields.Add(tField);
+                    terrainFields.Add(tField);
 
                 }
 
@@ -487,11 +458,12 @@ namespace StardewDruid.Location.Druid
                 foreach (List<int> array in code.Value)
                 {
 
-                    LightField light = new(new Vector2(array[0], code.Key) * 64 + new Vector2(64, 32));
+                    LightField light = new(new Vector2(array[0], code.Key) * 64 + new Vector2(64, 32))
+                    {
+                        luminosity = 4,
 
-                    light.luminosity = 4;
-
-                    light.lightAmbience = 0.7f;
+                        lightAmbience = 0.7f
+                    };
 
                     lightFields.Add(light);
 

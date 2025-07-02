@@ -2,12 +2,15 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Character;
 using StardewDruid.Data;
+using StardewDruid.Dialogue;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Minecarts;
 using StardewValley.Inventories;
 using StardewValley.ItemTypeDefinitions;
+using System.Diagnostics.Metrics;
 
 namespace StardewDruid.Cast
 {
@@ -49,6 +52,7 @@ namespace StardewDruid.Cast
             item,
             sword,
             relic,
+            potion,
         }
 
         public throwing thrown;
@@ -180,7 +184,7 @@ namespace StardewDruid.Cast
 
         }
 
-        public ThrowHandle(Farmer Player, Vector2 Origin, SpawnData.swords sword)
+        public ThrowHandle(Farmer Player, Vector2 Origin, SpawnData.Swords sword)
         {
 
             localisation = Player.currentLocation.Name;
@@ -201,7 +205,6 @@ namespace StardewDruid.Cast
 
         }
 
-
         public ThrowHandle(Farmer Player, Vector2 Origin, StardewValley.Tool implement)
         {
 
@@ -212,6 +215,29 @@ namespace StardewDruid.Cast
             tooling = implement;
 
             thrown = throwing.sword;
+
+            destination = Game1.player.Position + new Vector2(32, 0);
+
+            origin = Origin;
+
+            pocket = true;
+
+            track = true;
+
+            queried = true;
+
+        }
+
+        public ThrowHandle(Farmer Player, Vector2 Origin, HerbalHandle.herbals Potion, int Amount)
+        {
+
+            localisation = Player.currentLocation.Name;
+
+            index = (int)Potion;
+
+            quality = Amount;
+
+            thrown = throwing.potion;
 
             destination = Game1.player.Position + new Vector2(32, 0);
 
@@ -433,7 +459,7 @@ namespace StardewDruid.Cast
                     
                     pocket = false;
 
-                    inventorise();
+                    Inventorise();
 
                 }
 
@@ -443,87 +469,13 @@ namespace StardewDruid.Cast
 
             }
 
-            ParsedItemData dataOrErrorItem;
-
             if (counter == 0)
             {
 
-                switch (thrown)
+                if (!ThrowAnimation())
                 {
 
-                    case throwing.item:
-
-
-                        if(item == null)
-                        {
-                            
-                            complete = true;
-
-                            return false;
-
-                        }
-
-                        dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(item.QualifiedItemId);
-
-                        Microsoft.Xna.Framework.Rectangle itemRect = dataOrErrorItem.GetSourceRect(0, item.ParentSheetIndex);
-
-                        animation = new(0, timeframe * 16.66f, 1, 1, origin+new Vector2(8,8), false, false)
-                        {
-                            sourceRect = itemRect,
-                            sourceRectStartingPos = new(itemRect.X, itemRect.Y),
-                            texture = dataOrErrorItem.GetTexture(),
-                            layerDepth = 900f,
-                            alphaFade = fade,
-                            rotationChange = rotation,
-                            scale = 3.5f,
-
-                        };
-
-                        Game1.player.currentLocation.TemporarySprites.Add(animation);
-
-                        break;
-
-                    case throwing.relic:
-
-                        Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles((IconData.relics)index);
-
-                        animation = new(0, timeframe * 16.66f, 1, 1, origin + new Vector2(2,2), false, false)
-                        {
-                            sourceRect = relicRect,
-                            sourceRectStartingPos = new(relicRect.X,relicRect.Y),
-                            texture = Mod.instance.iconData.relicsTexture,
-                            layerDepth = 900f,
-                            rotationChange = rotation,
-                            scale = 3f,
-
-                        };
-
-                        Game1.player.currentLocation.TemporarySprites.Add(animation);
-
-                        break;
-
-                    case throwing.sword:
-
-                        dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(tooling.QualifiedItemId);
-    
-                        itemRect = dataOrErrorItem.GetSourceRect();
-
-                        animation = new(0, timeframe * 16.66f, 1, 1, origin + new Vector2(8, 8), false, false)
-                        {
-                            sourceRect = itemRect,
-                            sourceRectStartingPos = new(itemRect.X, itemRect.Y),
-                            texture = dataOrErrorItem.GetTexture(),
-                            layerDepth = 900f,
-                            alphaFade = fade,
-                            rotationChange = 0.2f,
-                            scale = 4f,
-
-                        };
-
-                        Game1.player.currentLocation.TemporarySprites.Add(animation);
-
-                        break;
-
+                    return false;
 
                 }
 
@@ -546,14 +498,14 @@ namespace StardewDruid.Cast
                 if (pocket)
                 {
 
-                    inventorise();
+                    Inventorise();
 
                 }
 
                 if(impact != IconData.impacts.none)
                 {
 
-                    Mod.instance.iconData.ImpactIndicator(Game1.player.currentLocation, destination, impact, 0.5f * scale, new());
+                    Mod.instance.iconData.ImpactIndicator(Game1.player.currentLocation, destination, impact, 1f * scale, new());
 
                 }
 
@@ -566,7 +518,115 @@ namespace StardewDruid.Cast
         }
 
 
-        public void inventorise()
+        public bool ThrowAnimation()
+        {
+
+            ParsedItemData dataOrErrorItem;
+
+            switch (thrown)
+            {
+
+                case throwing.item:
+
+
+                    if (item == null)
+                    {
+
+                        complete = true;
+
+                        return false;
+
+                    }
+
+                    dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(item.QualifiedItemId);
+
+                    Microsoft.Xna.Framework.Rectangle itemRect = dataOrErrorItem.GetSourceRect(0, item.ParentSheetIndex);
+
+                    animation = new(0, timeframe * 16.66f, 1, 1, origin + new Vector2(8, 8), false, false)
+                    {
+                        sourceRect = itemRect,
+                        sourceRectStartingPos = new(itemRect.X, itemRect.Y),
+                        texture = dataOrErrorItem.GetTexture(),
+                        layerDepth = 900f,
+                        alphaFade = fade,
+                        rotationChange = rotation,
+                        scale = 3.5f,
+
+                    };
+
+                    Game1.player.currentLocation.TemporarySprites.Add(animation);
+
+                    break;
+
+                case throwing.relic:
+
+                    Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles((IconData.relics)index);
+
+                    animation = new(0, timeframe * 16.66f, 1, 1, origin + new Vector2(2, 2), false, false)
+                    {
+                        sourceRect = relicRect,
+                        sourceRectStartingPos = new(relicRect.X, relicRect.Y),
+                        texture = Mod.instance.iconData.relicsTexture,
+                        layerDepth = 900f,
+                        rotationChange = rotation,
+                        scale = 3f,
+
+                    };
+
+                    Game1.player.currentLocation.TemporarySprites.Add(animation);
+
+                    break;
+
+                case throwing.sword:
+
+                    dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(tooling.QualifiedItemId);
+
+                    itemRect = dataOrErrorItem.GetSourceRect();
+
+                    animation = new(0, timeframe * 16.66f, 1, 1, origin + new Vector2(8, 8), false, false)
+                    {
+                        sourceRect = itemRect,
+                        sourceRectStartingPos = new(itemRect.X, itemRect.Y),
+                        texture = dataOrErrorItem.GetTexture(),
+                        layerDepth = 900f,
+                        alphaFade = fade,
+                        rotationChange = 0.2f,
+                        scale = 4f,
+
+                    };
+
+                    Game1.player.currentLocation.TemporarySprites.Add(animation);
+
+                    break;
+
+                case throwing.potion:
+
+                    Herbal herbal = Mod.instance.herbalData.herbalism[((HerbalHandle.herbals)index).ToString()];
+
+                    Microsoft.Xna.Framework.Rectangle potionRect = IconData.PotionRectangles(herbal.display);
+
+                    animation = new(0, timeframe * 16.66f, 1, 1, origin + new Vector2(2, 2), false, false)
+                    {
+                        sourceRect = potionRect,
+                        sourceRectStartingPos = new(potionRect.X, potionRect.Y),
+                        texture = Mod.instance.iconData.potionsTexture,
+                        layerDepth = 900f,
+                        rotationChange = rotation,
+                        scale = 3f,
+
+                    };
+
+                    Game1.player.currentLocation.TemporarySprites.Add(animation);
+
+                    break;
+
+            }
+
+            return true;
+
+        }
+
+        public void Inventorise()
         {
 
             switch (thrown)
@@ -655,6 +715,18 @@ namespace StardewDruid.Cast
 
                     break;
 
+                case throwing.potion:
+
+                    Herbal herbal = Mod.instance.herbalData.herbalism[((HerbalHandle.herbals)index).ToString()];
+
+                    DisplayPotion hudmessage = new("+" + quality.ToString() + " " + herbal.title, herbal);
+
+                    Game1.addHUDMessage(hudmessage);
+
+                    HerbalHandle.UpdateHerbalism((HerbalHandle.herbals)index, quality);
+
+                    break;
+
 
             }
 
@@ -682,7 +754,6 @@ namespace StardewDruid.Cast
             );
 
         }
-
 
     }
 

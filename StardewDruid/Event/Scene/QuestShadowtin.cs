@@ -8,6 +8,7 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewDruid.Location.Druid;
@@ -15,6 +16,7 @@ using StardewDruid.Monster;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Companions;
 using StardewValley.GameData;
 using StardewValley.Locations;
 using StardewValley.Monsters;
@@ -27,7 +29,6 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Timers;
-using static System.Net.Mime.MediaTypeNames;
 
 
 namespace StardewDruid.Event.Scene
@@ -87,7 +88,7 @@ namespace StardewDruid.Event.Scene
             // panic 4
             [24] = new Vector2(32, 18),
             // wizard enter shrine
-            [25] = new Vector2(28, 25),
+            [25] = new Vector2(29, 25),
             // wizard move into shrine
             [26] = new Vector2(28, 14),
             // wizard battle position
@@ -110,11 +111,11 @@ namespace StardewDruid.Event.Scene
             // forest cache enter dwarf
             [35] = new Vector2(27, 16),
             // rogue exit
-            [36] = new Vector2(9, 9),
+            [36] = new Vector2(26, 7),
             // dwarf exit
             [37] = new Vector2(29, 10),
             // shadowtin contemplation
-            [38] = new Vector2(29, 24),
+            [38] = new Vector2(27, 29),
 
         };
 
@@ -282,7 +283,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(2);
 
-                    companions[1] = new Recruit(CharacterHandle.characters.Dwarf,CharacterHandle.FindVillager("Dwarf")) as Recruit;
+                    companions[1] = new Dwarf(CharacterHandle.characters.Dwarf);
 
                     companions[1].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -646,13 +647,13 @@ namespace StardewDruid.Event.Scene
                     if (Mod.instance.Helper.ModRegistry.IsLoaded("Nom0ri.RomRas"))
                     {
 
-                        companions[3] = new Witch(CharacterHandle.characters.Witch, CharacterHandle.FindVillager("Wizard"));
+                        companions[3] = new Witch(CharacterHandle.characters.Witch);
 
                     }
                     else
                     {
 
-                        companions[3] = new Wizard(CharacterHandle.characters.Wizard, CharacterHandle.FindVillager("Wizard"));
+                        companions[3] = new Wizard(CharacterHandle.characters.Wizard);
 
                     }
 
@@ -750,6 +751,15 @@ namespace StardewDruid.Event.Scene
 
                     bosses[0].Health = bosses[0].MaxHealth;
 
+                    //bosses[0].currentLocation = location;
+
+                    //if (!location.characters.Contains(bosses[0]))
+                    //{
+
+                    //    location.characters.Add(bosses[0]);
+
+                    //}
+
                     activeCounter = 357;
 
                     DialogueCue(310);
@@ -767,25 +777,29 @@ namespace StardewDruid.Event.Scene
 
                     DialogueClear(0);
 
-                    location.characters.Remove(companions[3]);
+                    companions[3].TargetEvent(300, eventVectors[27] * 64, true);
 
-                    Mod.instance.iconData.AnimateQuickWarp(location, companions[3].Position, true);
+                    companions[2].TargetEvent(0, eventVectors[20] * 64, true);
+
+                    break;
+
+                case 303:
+
+                    location.characters.Remove(companions[3]);
 
                     if (Mod.instance.Helper.ModRegistry.IsLoaded("Nom0ri.RomRas"))
                     {
 
-                        bosses[0] = new DarkWitch(ModUtility.PositionToTile(eventVectors[27] * 64), Mod.instance.CombatDifficulty(),"Witch");
+                        bosses[0] = new DarkWitch(ModUtility.PositionToTile(companions[3].Position), Mod.instance.CombatDifficulty(),"Witch");
 
 
                     }
                     else
                     {
 
-                        bosses[0] = new DarkWizard(ModUtility.PositionToTile(eventVectors[27] * 64), Mod.instance.CombatDifficulty());
+                        bosses[0] = new DarkWizard(ModUtility.PositionToTile(companions[3].Position), Mod.instance.CombatDifficulty());
 
                     }
-
-                    Mod.instance.iconData.AnimateQuickWarp(location, bosses[0].Position);
 
                     bosses[0].netScheme.Set(2);
 
@@ -801,19 +815,17 @@ namespace StardewDruid.Event.Scene
 
                     bosses[0].setWounded = true;
 
+                    bosses[0].tether = eventVectors[27] *64;
+
+                    bosses[0].tetherLimit = 768;
+
                     voices[6] = bosses[0];
 
                     EventDisplay bossBar = BossBar(0, 6);
 
                     bossBar.colour = Microsoft.Xna.Framework.Color.Purple;
 
-                    companions[2].TargetEvent(0, eventVectors[20] * 64, true);
-
                     SetTrack("cowboy_boss");
-
-                    break;
-
-                case 303:
 
                     companions[2].ResetActives();
 
@@ -902,6 +914,8 @@ namespace StardewDruid.Event.Scene
                     break;
 
                 case 357:
+
+                    bosses[0].PerformWarp(bosses[0].tether);
 
                     bosses[0].netWoundedActive.Set(true);
 
@@ -1113,21 +1127,25 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].TargetEvent(0, eventVectors[32] * 64 - new Vector2(0,64), true);
 
-                    break;
+                //    break;
 
-                case 504:
+                //case 504:
 
                     DialogueCue(500);
 
                     break;
 
-                case 507:
+                //case 507:
+                case 506:
+
+                    Mod.instance.iconData.DecorativeIndicator(location, eventVectors[32] * 64, IconData.decorations.ether, 3f, new() { interval = 10000, });
 
                     DialogueCueWithFeeling(501);
 
                     break;
 
-                case 510:
+                //case 510:
+                case 509:
 
                     DialogueCue(502);
 
@@ -1143,7 +1161,7 @@ namespace StardewDruid.Event.Scene
 
                 case 513:
 
-                    Mod.instance.rite.CastTransform();
+                    Rite.CastTransform();
 
                     StardewDruid.Cast.Ether.Dragon dragon = (Mod.instance.eventRegister[Rite.eventTransform] as Transform).avatar;
 
@@ -1165,43 +1183,45 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.eventRegister.Remove(Rite.eventTransform);
 
-                    SpellHandle burn = new(Game1.player, eventVectors[32] * 64, 320, Mod.instance.CombatDamage());
+                    SpellHandle burn = new(Game1.player, eventVectors[32] * 64, 320, Mod.instance.CombatDamage())
+                    {
+                        type = SpellHandle.Spells.explode,
 
-                    burn.type = SpellHandle.spells.explode;
+                        scheme = IconData.schemes.stars,
 
-                    burn.scheme = IconData.schemes.stars;
+                        instant = true,
 
-                    burn.instant = true;
+                        power = 4,
 
-                    burn.power = 4;
+                        terrain = 8,
 
-                    burn.terrain = 8;
+                        explosion = 8,
 
-                    burn.explosion = 8;
+                        display = IconData.impacts.dustimpact,
 
-                    burn.display = IconData.impacts.bomb;
-
-                    burn.sound = SpellHandle.sounds.flameSpellHit;
+                        sound = SpellHandle.Sounds.flameSpellHit
+                    };
 
                     Mod.instance.spellRegister.Add(burn);
 
-                    SpellHandle burnTwo = new(Game1.player, eventVectors[32] * 64, 384, Mod.instance.CombatDamage());
+                    SpellHandle burnTwo = new(Game1.player, eventVectors[32] * 64, 384, Mod.instance.CombatDamage())
+                    {
+                        type = SpellHandle.Spells.explode,
 
-                    burnTwo.type = SpellHandle.spells.explode;
+                        scheme = IconData.schemes.ether,
 
-                    burnTwo.scheme = IconData.schemes.ether;
+                        power = 4,
 
-                    burnTwo.power = 4;
+                        terrain = 8,
 
-                    burnTwo.terrain = 8;
+                        explosion = 8,
 
-                    burnTwo.explosion = 8;
+                        display = IconData.impacts.shockwave,
 
-                    burnTwo.display = IconData.impacts.bomb;
+                        sound = SpellHandle.Sounds.explosion,
 
-                    burnTwo.sound = SpellHandle.sounds.explosion;
-
-                    burnTwo.added = new() { SpellHandle.effects.embers, };
+                        added = new() { SpellHandle.Effects.embers, }
+                    };
 
                     Mod.instance.spellRegister.Add(burnTwo);
 
@@ -1211,6 +1231,8 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCueWithFeeling(504);
 
+                    companions[0].LookAtTarget(eventVectors[32] * 64 + new Vector2(32), true);
+
                     EventRender gelatinBone = new("gelatinBone", location.Name, eventVectors[32] * 64 + new Vector2(32), IconData.relics.skull_gelatin) { layer = 1f };
 
                     eventRenders.Add(gelatinBone);
@@ -1218,6 +1240,17 @@ namespace StardewDruid.Event.Scene
                     EventRender cannoliBone = new("cannoliBone", location.Name, eventVectors[32] * 64 + new Vector2(96,32), IconData.relics.skull_cannoli) { layer = 1f };
 
                     eventRenders.Add(cannoliBone);
+                    break;
+
+                case 517:
+
+                    companions[0].ResetActives();
+
+                    companions[0].LookAtTarget(eventVectors[32] * 64 + new Vector2(32), true);
+
+                    companions[0].netIdle.Set((int)Character.Character.idles.kneel);
+
+                    companions[0].idleTimer = 180;
 
                     break;
 
@@ -1265,35 +1298,41 @@ namespace StardewDruid.Event.Scene
 
                     // Rogue character switch
 
-                    companions[7] = new Shadowtin(CharacterHandle.characters.DarkRogue);
+                    companions[7] = new Shadowfolk(CharacterHandle.characters.DarkRogue);
 
                     voices[7] = companions[7];
 
                     companions[7].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-                    CharacterMover.Warp(location, companions[7], eventVectors[33]*64, false);
+                    CharacterMover.Warp(location, companions[7], (eventVectors[33]*64) - new Vector2(0,640), false);
 
                     companions[7].eventName = eventId;
 
                     companions[7].LookAtTarget(companions[0].Position, true);
 
+                    companions[7].TargetEvent(0, (eventVectors[33] * 64));
+
                     // Rogue 2 character switch
 
-                    companions[8] = new Shadowtin(CharacterHandle.characters.DarkGoblin);
+                    companions[8] = new Shadowfolk(CharacterHandle.characters.DarkGoblin);
 
                     voices[8] = companions[8];
 
                     companions[8].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-                    CharacterMover.Warp(location, companions[8], eventVectors[34] * 64, false);
+                    CharacterMover.Warp(location, companions[8], (eventVectors[34]) * 64 - new Vector2(0, 640), false);
 
                     companions[8].eventName = eventId;
 
                     companions[8].LookAtTarget(companions[0].Position, true);
 
+                    companions[8].TargetEvent(0, (eventVectors[34] * 64));
+
                     // Dwarf
 
-                    CharacterMover.Warp(location, companions[1], eventVectors[35] * 64);
+                    CharacterMover.Warp(location, companions[1], (eventVectors[35] * 64) - new Vector2(0, 640));
+
+                    companions[1].TargetEvent(0, (eventVectors[35] * 64));
 
                     companions[1].LookAtTarget(companions[0].Position, true);
 
@@ -1301,9 +1340,11 @@ namespace StardewDruid.Event.Scene
 
                 case 601:
 
+                    companions[0].ResetActives();
+
                     companions[0].LookAtTarget(companions[7].Position, true);
 
-                    DialogueCueWithFeeling(600);
+                    DialogueCue(600);
 
                     break;
 
@@ -1409,7 +1450,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[8].ResetActives();
 
-                    companions[7].TargetEvent(650,eventVectors[36] * 64);
+                    companions[7].TargetEvent(650, (eventVectors[33]) * 64 - new Vector2(0, 640));
 
                     break;
 
@@ -1429,7 +1470,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].netDirection.Set(1);
 
-                    companions[8].TargetEvent(651, eventVectors[36] * 64);
+                    companions[8].TargetEvent(651, (eventVectors[34]) * 64 - new Vector2(0, 640));
 
                     break;
 
@@ -1496,12 +1537,19 @@ namespace StardewDruid.Event.Scene
 
             switch (index)
             {
+                case 300:
+
+                    companions[3].LookAtTarget(Game1.player.Position);
+
+                    break;
 
                 case 650:
 
                     Mod.instance.iconData.AnimateQuickWarp(location, companions[7].Position, true);
 
                     companions[7].currentLocation.characters.Remove(companions[7]);
+
+                    companions[7].ClearLight();
 
                     companions.Remove(7);
 
@@ -1515,6 +1563,8 @@ namespace StardewDruid.Event.Scene
 
                     companions[8].currentLocation.characters.Remove(companions[8]);
 
+                    companions[8].ClearLight();
+
                     companions.Remove(8);
 
                     voices.Remove(8);
@@ -1526,6 +1576,8 @@ namespace StardewDruid.Event.Scene
                     Mod.instance.iconData.AnimateQuickWarp(location, companions[1].Position, true);
 
                     companions[1].currentLocation.characters.Remove(companions[1]);
+
+                    companions[1].ClearLight();
 
                     companions.Remove(1);
 

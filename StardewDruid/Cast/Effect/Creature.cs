@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Location.Druid;
 using StardewModdingAPI;
 using StardewValley;
@@ -15,7 +16,6 @@ using StardewValley.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using xTile.Tiles;
 
 
 namespace StardewDruid.Cast.Effect
@@ -67,7 +67,7 @@ namespace StardewDruid.Cast.Effect
 
         }
 
-        public void AddCreature(GameLocation Location, Character.CharacterHandle.characters CharacterType, Vector2 Origin, Vector2 Target, float Scale, bool forceDrop = false)
+        public void AddCreature(GameLocation Location, CharacterHandle.characters CharacterType, Vector2 Origin, Vector2 Target, float Scale, int Drop = 0)
         {
 
             if (creatures.ContainsKey(Origin))
@@ -77,7 +77,7 @@ namespace StardewDruid.Cast.Effect
 
             }
 
-            creatures[Origin] =  new(Location,CharacterType,Origin,Target,eventId, Scale, forceDrop);
+            creatures[Origin] =  new(Location,CharacterType,Origin,Target,eventId, Scale, Drop);
 
         }
 
@@ -89,7 +89,7 @@ namespace StardewDruid.Cast.Effect
 
         public GameLocation location;
 
-        public Character.CharacterHandle.characters characterType;
+        public CharacterHandle.characters characterType;
 
         public Vector2 origin;
 
@@ -111,7 +111,9 @@ namespace StardewDruid.Cast.Effect
 
         public bool run;
 
-        public CreatureHandle(GameLocation Location, Character.CharacterHandle.characters CharacterType, Vector2 Origin, Vector2 Target, string EventId, float Scale, bool forceDrop = false)
+        public HerbalHandle.herbals herbal = HerbalHandle.herbals.omen_feather;
+
+        public CreatureHandle(GameLocation Location, CharacterHandle.characters CharacterType, Vector2 Origin, Vector2 Target, string EventId, float Scale, int DropRate)
         {
 
             origin = Origin;
@@ -128,11 +130,25 @@ namespace StardewDruid.Cast.Effect
 
             scale = Scale;
 
-            if(Mod.instance.randomIndex.Next(3) != 0 && !forceDrop)
+            switch (DropRate)
             {
 
-                drop = true;
+                case 0:
 
+                    if (Mod.instance.randomIndex.Next(3) != 0)
+                    {
+
+                        drop = true;
+
+                    }
+                    
+                    break;
+
+                case 2:
+
+                    drop = true;
+
+                    break;
             }
 
             load();
@@ -145,37 +161,66 @@ namespace StardewDruid.Cast.Effect
             switch (characterType)
             {
 
-                case Character.CharacterHandle.characters.GreyWolf:
-                case Character.CharacterHandle.characters.BlackWolf:
+                case CharacterHandle.characters.BrownWolf:
+                case CharacterHandle.characters.BlackWolf:
 
                     creature = new StardewDruid.Character.Wolf(characterType);
 
-                    run = Mod.instance.randomIndex.NextBool();
+                    if(Vector2.Distance(origin,target) > 512)
+                    {
+
+                        run = true;
+
+                    }
+
+                    herbal = HerbalHandle.herbals.omen_tusk;
 
                     break;
 
-                case Character.CharacterHandle.characters.BrownBear:
-                case Character.CharacterHandle.characters.BlackBear:
+                case CharacterHandle.characters.BrownBear:
+                case CharacterHandle.characters.BlackBear:
 
                     creature = new StardewDruid.Character.Bear(characterType);
 
+                    if (Vector2.Distance(origin, target) > 512)
+                    {
+
+                        run = true;
+
+                    }
+
+                    herbal = HerbalHandle.herbals.omen_tusk;
+
+                    if(Mod.instance.randomIndex.Next(2) == 0)
+                    {
+
+                        herbal = HerbalHandle.herbals.omen_bloom;
+
+                    }
+
                     break;
-                case Character.CharacterHandle.characters.RedFox:
-                case Character.CharacterHandle.characters.YellowFox:
-                case Character.CharacterHandle.characters.BlackCat:
-                case Character.CharacterHandle.characters.GingerCat:
-                case Character.CharacterHandle.characters.TabbyCat:
+
+                case CharacterHandle.characters.RedFox:
+                case CharacterHandle.characters.YellowFox:
+                case CharacterHandle.characters.BlackCat:
+                case CharacterHandle.characters.GingerCat:
+                case CharacterHandle.characters.TabbyCat:
 
                     creature = new StardewDruid.Character.Critter(characterType);
 
-                    run = Mod.instance.randomIndex.NextBool();
+                    if (Vector2.Distance(origin, target) > 512)
+                    {
 
+                        run = true;
+
+                    }
+                    herbal = HerbalHandle.herbals.omen_tuft;
                     break;
 
-                case Character.CharacterHandle.characters.CorvidCrow:
-                case Character.CharacterHandle.characters.CorvidRaven:
-                case Character.CharacterHandle.characters.CorvidRook:
-                case Character.CharacterHandle.characters.CorvidMagpie:
+                case CharacterHandle.characters.CorvidCrow:
+                case CharacterHandle.characters.CorvidRaven:
+                case CharacterHandle.characters.CorvidRook:
+                case CharacterHandle.characters.CorvidMagpie:
 
                     creature = new StardewDruid.Character.Flyer(characterType);
 
@@ -186,11 +231,17 @@ namespace StardewDruid.Cast.Effect
 
                     }
 
-                    location.playSound(SpellHandle.sounds.batFlap.ToString());
+                    location.playSound(SpellHandle.Sounds.batFlap.ToString());
+                    herbal = HerbalHandle.herbals.omen_nest;
+                    if (Mod.instance.randomIndex.Next(2) == 0)
+                    {
 
+                        herbal = HerbalHandle.herbals.omen_down;
+
+                    }
                     break;
 
-                case Character.CharacterHandle.characters.SeaGull:
+                case CharacterHandle.characters.SeaGull:
 
                     creature = new StardewDruid.Character.Flyer(characterType);
 
@@ -201,14 +252,23 @@ namespace StardewDruid.Cast.Effect
 
                     }
 
-                    location.playSound(SpellHandle.sounds.batFlap.ToString());
+                    location.playSound(SpellHandle.Sounds.batFlap.ToString());
 
                     dropFish = true;
 
+                    herbal = HerbalHandle.herbals.omen_shell;
+
+                    if (Mod.instance.randomIndex.Next(2) == 0)
+                    {
+
+                        herbal = HerbalHandle.herbals.omen_coral;
+
+                    }
+
                     break;
 
-                case Character.CharacterHandle.characters.BrownOwl:
-                case Character.CharacterHandle.characters.GreyOwl:
+                case CharacterHandle.characters.BrownOwl:
+                case CharacterHandle.characters.GreyOwl:
 
                     creature = new StardewDruid.Character.Flyer(characterType);
 
@@ -219,38 +279,64 @@ namespace StardewDruid.Cast.Effect
 
                     }
 
-                    location.playSound(SpellHandle.sounds.batFlap.ToString());
+                    location.playSound(SpellHandle.Sounds.batFlap.ToString());
 
+                    if (Mod.instance.randomIndex.Next(2) == 0)
+                    {
+
+                        herbal = HerbalHandle.herbals.omen_down;
+
+                    }
                     break;
 
-                case Character.CharacterHandle.characters.LavaSerpent:
-                case Character.CharacterHandle.characters.RiverSerpent:
-                case Character.CharacterHandle.characters.Serpent:
+                case CharacterHandle.characters.LavaSerpent:
+                case CharacterHandle.characters.RiverSerpent:
+                case CharacterHandle.characters.NightSerpent:
+                case CharacterHandle.characters.Serpent:
 
                     creature = new StardewDruid.Character.Serpent(characterType);
 
                     run = true;//Mod.instance.randomIndex.NextBool();
 
-                    SpellHandle splash = new(origin, 320, IconData.impacts.fish, new());
-
-                    splash.sound = SpellHandle.sounds.pullItemFromWater;
+                    SpellHandle splash = new(origin, 160, IconData.impacts.fish, new())
+                    {
+                        sound = SpellHandle.Sounds.pullItemFromWater
+                    };
 
                     Mod.instance.spellRegister.Add(splash);
 
                     dropFish = true;
+                    herbal = HerbalHandle.herbals.omen_glass;
+
+                    if (Mod.instance.randomIndex.Next(2) == 0)
+                    {
+
+                        herbal = HerbalHandle.herbals.omen_coral;
+
+                    }
+
+                    break;
+
+                case CharacterHandle.characters.Bat:
+                case CharacterHandle.characters.BrownBat:
+
+                    creature = new StardewDruid.Character.Bat(characterType);
+
+                    run = Mod.instance.randomIndex.NextBool();
+
+                    location.playSound(SpellHandle.Sounds.batFlap.ToString());
 
                     break;
 
                 default:
 
-                    creature = new StardewDruid.Character.Hoverer(Character.CharacterHandle.characters.Bat);
+                    creature = new StardewDruid.Character.Bat(CharacterHandle.characters.Bat);
 
                     run = Mod.instance.randomIndex.NextBool();
 
-                    location.playSound(SpellHandle.sounds.batFlap.ToString());
+                    location.playSound(SpellHandle.Sounds.batFlap.ToString());
 
                     break;
-
             }
 
             creature.setScale = scale;
@@ -259,6 +345,8 @@ namespace StardewDruid.Cast.Effect
 
             creature.currentLocation = location;
 
+            creature.fadeSet = 1f;
+            
             creature.fadeOut = 1f;
 
             creature.Position = origin;
@@ -288,6 +376,13 @@ namespace StardewDruid.Cast.Effect
                 return waterUpdate();
 
             }*/
+
+            if(creature is null)
+            {
+
+                return false;
+
+            }
 
             if(Vector2.Distance(creature.Position, target) <= 32)
             {
@@ -328,6 +423,11 @@ namespace StardewDruid.Cast.Effect
 
                         }
 
+                        if (Mod.instance.randomIndex.Next(4) == 0)
+                        {
+                            new ThrowHandle(Game1.player, creature.Position, herbal, 1).register();
+                        }
+
                         drop = true;
 
                         playCall();
@@ -356,10 +456,15 @@ namespace StardewDruid.Cast.Effect
 
                             location.debris.Add(new Debris(fishDrop, creature.Position));
 
-                            Game1.player.gainExperience(1, 24); // gain fishing experience
+                            Mod.instance.GiveExperience(1, 24); // gain fishing experience
 
                             Game1.player.NotifyQuests(quest => quest.OnFishCaught(fishDrop.ItemId, 1, 1));//checkForQuestComplete(null, -1, 1, null, randomFish, 7);
 
+                        }
+
+                        if (Mod.instance.randomIndex.Next(4) == 0)
+                        {
+                            new ThrowHandle(Game1.player, creature.Position, herbal, 1).register();
                         }
 
                         drop = true;
@@ -373,13 +478,28 @@ namespace StardewDruid.Cast.Effect
                 }
                 else if (Vector2.Distance(creature.Position, origin) >= 240)
                 {
- 
-                    Item bushDrop = ItemRegistry.Create(SpawnData.RandomBushForage());
-
-                    if (bushDrop != null)
+                    switch(Mod.instance.randomIndex.Next(2))
                     {
 
-                        location.debris.Add(new Debris(bushDrop, creature.Position));
+                        case 0:
+
+                            Item bushDrop = ItemRegistry.Create(SpawnData.RandomBushForage());
+
+                            if (bushDrop != null)
+                            {
+
+                                location.debris.Add(new Debris(bushDrop, creature.Position));
+
+                            }
+
+                            break;
+
+                        case 1:
+
+                            new ThrowHandle(Game1.player, creature.Position, herbal, 1).register();
+
+                            break;
+
 
                     }
 
@@ -406,7 +526,7 @@ namespace StardewDruid.Cast.Effect
                 {
 
 
-                    location.playSound(SpellHandle.sounds.owl.ToString());
+                    location.playSound(SpellHandle.Sounds.owl.ToString());
 
                 }
                 else if (creature.characterType == CharacterHandle.characters.SeaGull)
@@ -417,17 +537,17 @@ namespace StardewDruid.Cast.Effect
                 else
                 {
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
 
                 }
             }
             else
-            if (creature is Hoverer)
+            if (creature is StardewDruid.Character.Bat)
             {
 
-                location.playSound(SpellHandle.sounds.batScreech.ToString());
-
+                //location.playSound(SpellHandle.Sounds.batScreech.ToString());
+                Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BatScreech);
             }
             else
             if (creature is Critter)
@@ -435,13 +555,13 @@ namespace StardewDruid.Cast.Effect
                 if (creature.characterType == CharacterHandle.characters.YellowFox || creature.characterType == CharacterHandle.characters.RedFox)
                 {
 
-                    location.playSound(SpellHandle.sounds.dog_bark.ToString());
+                    location.playSound(SpellHandle.Sounds.dog_bark.ToString());
 
                 }
                 else
                 {
 
-                    location.playSound(SpellHandle.sounds.cat.ToString());
+                    location.playSound(SpellHandle.Sounds.cat.ToString());
 
                 }
 
@@ -450,7 +570,7 @@ namespace StardewDruid.Cast.Effect
             if (creature is Wolf)
             {
 
-                location.playSound(SpellHandle.sounds.dog_bark.ToString());
+                location.playSound(SpellHandle.Sounds.dog_bark.ToString());
 
             }
             else
@@ -460,21 +580,15 @@ namespace StardewDruid.Cast.Effect
                 switch (Mod.instance.randomIndex.Next(3))
                 {
 
-                    case 0:
+                    default:
 
-                        location.playSound("BearGrowl");
-
-                        break;
-
-                    case 1:
-
-                        location.playSound("BearGrowlTwo");
+                        Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BearGrowl);
 
                         break;
 
                     case 2:
 
-                        location.playSound("BearGrowlThree");
+                        Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BearRoar);
 
                         break;
 
@@ -485,8 +599,8 @@ namespace StardewDruid.Cast.Effect
             if (creature is StardewDruid.Character.Serpent)
             {
 
-                location.playSound("serpentHit");
-
+                //location.playSound("serpentHit");
+                Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.SerpentCall);
             }
 
         }

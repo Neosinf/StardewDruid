@@ -8,6 +8,7 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewDruid.Location.Druid;
@@ -331,7 +332,7 @@ namespace StardewDruid.Event.Scene
 
                     Game1.flashAlpha = 1f;
 
-                    location.playSound(SpellHandle.sounds.thunder.ToString());
+                    location.playSound(SpellHandle.Sounds.thunder.ToString());
 
                     (Mod.instance.locations[LocationHandle.druid_clearing_name] as Clearing).ambientDarkness = true;
 
@@ -421,22 +422,6 @@ namespace StardewDruid.Event.Scene
 
                         animations.AddRange(embers);
 
-                        string lightid = "18465_" + (burnVector.X * 10000 + burnVector.Y).ToString();
-
-                        TemporaryAnimatedSprite lightCircle = new(23, 200f, 5, 9, burnVector, false, Game1.random.NextDouble() < 0.5)
-                        {
-                            texture = Game1.mouseCursors,
-                            lightId = lightid,
-                            lightRadius = 3f,
-                            lightcolor = Color.Black,
-                            Parent = location,
-                        };
-
-                        location.temporarySprites.Add(lightCircle);
-
-                        animations.Add(lightCircle);
-
-
                     }
 
                     companions[0].LookAtTarget(eventVectors[1] * 64,true);
@@ -451,9 +436,12 @@ namespace StardewDruid.Event.Scene
 
                 case 105:
 
-                    companions[1] = new Crowmother(CharacterHandle.characters.Crowmother);
+                    companions[1] = new Crowmother(CharacterHandle.characters.Crowmother)
+                    {
+                        fadeOut = 0.4f,
 
-                    companions[1].fadeOut = 0.8f;
+                        fadeSet = 0.8f,
+                    };
 
                     voices[1] = companions[1];
 
@@ -476,11 +464,14 @@ namespace StardewDruid.Event.Scene
                     Mod.instance.iconData.ImpactIndicator(location, companions[1].Position - new Vector2(0, 64), IconData.impacts.plume, 4f, new() { });
 
                     // Raven Familiar
-                    companions[4] = new Flyer(CharacterHandle.characters.Raven);
+                    companions[4] = new Flyer(CharacterHandle.characters.Raven)
+                    {
+                        setScale = 3f,
 
-                    companions[4].setScale = 3f;
+                        fadeOut = 0.3f,
 
-                    companions[4].fadeOut = 0.7f;
+                        fadeSet = 0.7f,
+                    };
 
                     companions[4].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -498,7 +489,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[4].LookAtTarget(companions[1].Position, true);
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     Mod.instance.iconData.ImpactIndicator(location, companions[4].Position - new Vector2(0, 64), IconData.impacts.plume, 2f, new() {  });
 
@@ -530,9 +521,12 @@ namespace StardewDruid.Event.Scene
 
                 case 110:
 
-                    companions[2] = new Lady(CharacterHandle.characters.LadyBeyond);
+                    companions[2] = new Lady(CharacterHandle.characters.LadyBeyond)
+                    {
+                        fadeOut = 0.4f,
 
-                    companions[2].fadeOut = 0.8f;
+                        fadeSet = 0.8f,
+                    };
 
                     voices[2] = companions[2];
 
@@ -627,9 +621,12 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(108);
 
-                    companions[3] = new HonourGuard(CharacterHandle.characters.HonourGuard);
+                    companions[3] = new HonourGuard(CharacterHandle.characters.HonourCaptain)
+                    {
+                        fadeOut = 0.4f,
 
-                    companions[3].fadeOut = 0.8f;
+                        fadeSet = 0.8f,
+                    };
 
                     voices[3] = companions[3];
 
@@ -816,9 +813,12 @@ namespace StardewDruid.Event.Scene
 
                     SetTrack("spirits_eve");
 
-                    companions[1] = new Crowmother(CharacterHandle.characters.Crowmother);
+                    companions[1] = new Crowmother(CharacterHandle.characters.Crowmother)
+                    {
+                        fadeOut = 0.4f,
 
-                    companions[1].fadeOut = 0.8f;
+                        fadeSet = 0.8f,
+                    };
 
                     voices[1] = companions[1];
 
@@ -843,11 +843,14 @@ namespace StardewDruid.Event.Scene
                     companions[0].LookAtTarget(companions[1].Position, true);
 
                     // Raven Familiar
-                    companions[3] = new Flyer(CharacterHandle.characters.Raven);
+                    companions[3] = new Flyer(CharacterHandle.characters.Raven)
+                    {
+                        setScale = 3f,
 
-                    companions[3].setScale = 3f;
+                        fadeOut = 0.4f,
 
-                    companions[3].fadeOut = 0.8f;
+                        fadeSet = 0.8f,
+                    };
 
                     companions[3].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -865,7 +868,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[3].LookAtTarget(companions[1].Position, true);
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     Mod.instance.iconData.ImpactIndicator(location, companions[3].Position - new Vector2(0, 64), IconData.impacts.plume, 2f, new() {  });
 
@@ -889,9 +892,12 @@ namespace StardewDruid.Event.Scene
 
                 case 218:
 
-                    companions[2] = new Lady(CharacterHandle.characters.LadyBeyond);
+                    companions[2] = new Lady(CharacterHandle.characters.LadyBeyond)
+                    {
+                        fadeOut = 0.4f,
 
-                    companions[2].fadeOut = 0.8f;
+                        fadeSet = 0.8f,
+                    };
 
                     voices[2] = companions[2];
 
@@ -1164,7 +1170,7 @@ namespace StardewDruid.Event.Scene
 
                     Game1.flashAlpha = 1f;
 
-                    location.playSound(SpellHandle.sounds.thunder.ToString());
+                    location.playSound(SpellHandle.Sounds.thunder.ToString());
 
                     (Mod.instance.locations[LocationHandle.druid_atoll_name] as Atoll).ambientDarkness = true;
 
@@ -1177,9 +1183,12 @@ namespace StardewDruid.Event.Scene
                     SetTrack("night_market");
 
                     // First Farmer
-                    companions[4] = new FirstFarmer(CharacterHandle.characters.FirstFarmer);
+                    companions[4] = new FirstFarmer(CharacterHandle.characters.FirstFarmer)
+                    {
+                        fadeOut = 0.4f,
 
-                    companions[4].fadeOut = 0.8f;
+                        fadeSet = 0.8f,
+                    };
 
                     voices[4] = companions[4];
 
@@ -1197,13 +1206,16 @@ namespace StardewDruid.Event.Scene
 
                     companions[4].Position = eventVectors[308] * 64;
 
-                    Mod.instance.iconData.ImpactIndicator(location, companions[4].Position - new Vector2(0, 64), IconData.impacts.plume, 4f, new() { color = Microsoft.Xna.Framework.Color.Green, });
+                    Mod.instance.iconData.ImpactIndicator(location, companions[4].Position - new Vector2(0, 64), IconData.impacts.plume, 4f, new());
 
 
                     // Justiciar
-                    companions[5] = new Justiciar(CharacterHandle.characters.Justiciar);
+                    companions[5] = new Justiciar(CharacterHandle.characters.Justiciar)
+                    {
+                        fadeOut = 0.4f,
 
-                    companions[5].fadeOut = 0.8f;
+                        fadeSet = 0.8f,
+                    };
 
                     voices[5] = companions[5];
 
@@ -1221,13 +1233,16 @@ namespace StardewDruid.Event.Scene
 
                     companions[5].Position = eventVectors[309] * 64;
 
-                    Mod.instance.iconData.ImpactIndicator(location, companions[5].Position - new Vector2(0, 64), IconData.impacts.plume, 4f, new() { color = Microsoft.Xna.Framework.Color.Orange,  });
+                    Mod.instance.iconData.ImpactIndicator(location, companions[5].Position - new Vector2(0, 64), IconData.impacts.plume, 4f, new());
 
 
                     // Reaper
-                    companions[6] = new Thanatoshi(CharacterHandle.characters.Thanatoshi);
+                    companions[6] = new Thanatoshi(CharacterHandle.characters.Thanatoshi)
+                    {
+                        fadeOut = 0.4f,
 
-                    companions[6].fadeOut = 0.8f;
+                        fadeSet = 0.8f,
+                    };
 
                     voices[6] = companions[6];
 
@@ -1245,13 +1260,16 @@ namespace StardewDruid.Event.Scene
 
                     companions[6].Position = eventVectors[310] * 64;
 
-                    Mod.instance.iconData.ImpactIndicator(location, companions[6].Position - new Vector2(0, 64), IconData.impacts.plume, 4f, new() { color = Microsoft.Xna.Framework.Color.Gray, });
+                    Mod.instance.iconData.ImpactIndicator(location, companions[6].Position - new Vector2(0, 64), IconData.impacts.plume, 4f, new());
 
 
                     // Seafarers
-                    companions[7] = new Seafarer(CharacterHandle.characters.Seafarer);
+                    companions[7] = new Seafarer(CharacterHandle.characters.SeafarerCaptain)
+                    {
+                        fadeOut = 0.4f,
 
-                    companions[7].fadeOut = 0.8f;
+                        fadeSet = 0.8f,
+                    };
 
                     voices[7] = companions[7];
 
@@ -1271,10 +1289,13 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.iconData.ImpactIndicator(location, companions[7].Position - new Vector2(0, 64), IconData.impacts.plume, 4f, new());
 
-                    // Seafarers
-                    companions[8] = new Seafarer(CharacterHandle.characters.Seafarer);
+                    // Seafarers 2
+                    companions[8] = new Seafarer(CharacterHandle.characters.Seafarer)
+                    {
+                        fadeOut = 0.4f,
 
-                    companions[8].fadeOut = 0.8f;
+                        fadeSet = 0.8f,
+                    };
 
                     voices[8] = companions[8];
 
@@ -1294,10 +1315,13 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.iconData.ImpactIndicator(location, companions[8].Position - new Vector2(0, 64), IconData.impacts.plume, 4f, new());
 
-                    // Seafarers
-                    companions[9] = new Seafarer(CharacterHandle.characters.Seafarer);
+                    // Seafarers 3
+                    companions[9] = new Seafarer(CharacterHandle.characters.SeafarerMate)
+                    {
+                        fadeOut = 0.4f,
 
-                    companions[9].fadeOut = 0.8f;
+                        fadeSet = 0.8f,
+                    };
 
                     voices[9] = companions[9];
 
@@ -1753,7 +1777,7 @@ namespace StardewDruid.Event.Scene
 
                     Game1.flashAlpha = 1f;
 
-                    location.playSound(SpellHandle.sounds.thunder.ToString());
+                    location.playSound(SpellHandle.Sounds.thunder.ToString());
 
                     break;
 
@@ -1777,7 +1801,7 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.trackers[CharacterHandle.characters.Raven].eventLock = true;
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
@@ -1797,7 +1821,7 @@ namespace StardewDruid.Event.Scene
 
                     Cast.Bones.Corvids.SummonCrow();
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
@@ -1817,7 +1841,7 @@ namespace StardewDruid.Event.Scene
 
                     Cast.Bones.Corvids.SummonRook();
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
@@ -1837,7 +1861,7 @@ namespace StardewDruid.Event.Scene
 
                     Cast.Bones.Corvids.SummonMagpie();
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
@@ -1853,19 +1877,19 @@ namespace StardewDruid.Event.Scene
 
                 case 530:
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
                 case 531:
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
                 case 532:
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     DialogueCue(511);
 
@@ -1873,13 +1897,13 @@ namespace StardewDruid.Event.Scene
 
                 case 533:
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
                 case 534:
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 

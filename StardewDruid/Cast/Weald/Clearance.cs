@@ -5,7 +5,8 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using StardewDruid.Data;
-using StardewDruid.Event;
+using System.Diagnostics.Metrics;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -30,22 +31,25 @@ namespace StardewDruid.Cast.Weald
 
             int radius = 2 + powerLevel;
 
-            SpellHandle explode = new(Game1.player, target * 64, radius * 64, damageLevel);
-
-            explode.type = SpellHandle.spells.explode;
+            SpellHandle explode = new(Game1.player, target * 64, radius * 64, damageLevel)
+            {
+                type = SpellHandle.Spells.explode
+            };
 
             if (sound)
             {
                 
-                explode.sound = SpellHandle.sounds.flameSpellHit;
+                explode.sound = SpellHandle.Sounds.flameSpellHit;
             
             }
 
             explode.display = IconData.impacts.puff;
 
+            explode.displayRadius = 2;
+
             explode.indicator = IconData.cursors.weald;
 
-            explode.factor =3;
+            explode.factor = 3;
 
             explode.power = 2;
 
@@ -59,8 +63,6 @@ namespace StardewDruid.Cast.Weald
             }
 
             Mod.instance.spellRegister.Add(explode);
-
-            Mod.instance.rite.castCost += 1;
 
         }
 

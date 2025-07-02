@@ -2,6 +2,7 @@
 using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewValley;
 using StardewValley.Minigames;
 using StardewValley.Tools;
@@ -17,6 +18,8 @@ namespace StardewDruid.Cast.Mists
 
         public bool fishingRelic;
 
+        public StardewValley.Object currentFish;
+
         public Fishspot()
         {
 
@@ -30,7 +33,7 @@ namespace StardewDruid.Cast.Mists
             base.EventActivate();
 
             //Mod.instance.iconData.AnimateBolt(location, origin + new Vector2(32));
-            Mod.instance.spellRegister.Add(new(origin + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+            Mod.instance.spellRegister.Add(new(origin + new Vector2(32), 128, IconData.impacts.splash, new()) { type = SpellHandle.Spells.bolt });
 
             IconData.relics fishRelic = Mod.instance.relicsData.RelicMistsLocations();
 
@@ -43,6 +46,10 @@ namespace StardewDruid.Cast.Mists
                 }
 
             }
+
+            fishCounter = 10;
+
+            currentFish = new StardewValley.Object(SpawnData.RandomHighFish(Game1.player.currentLocation, ModUtility.PositionToTile(origin), Mod.instance.questHandle.IsComplete(QuestHandle.mistsThree)), 1);
 
         }
 
@@ -61,11 +68,11 @@ namespace StardewDruid.Cast.Mists
             if (fishCounter <= 0)
             {
 
-                int fishIndex = SpawnData.RandomJumpFish(location);
+                currentFish = new StardewValley.Object(SpawnData.RandomHighFish(Game1.player.currentLocation, ModUtility.PositionToTile(origin), Mod.instance.questHandle.IsComplete(QuestHandle.mistsThree)),1);
 
-                ModUtility.AnimateFishJump(location, origin, fishIndex, true);
+                ModUtility.AnimateFishJump(location, origin, currentFish, true);
 
-                ModUtility.AnimateFishJump(location, origin, fishIndex, false);
+                ModUtility.AnimateFishJump(location, origin, currentFish, false);
 
                 fishCounter = 20;
 
@@ -158,22 +165,12 @@ namespace StardewDruid.Cast.Mists
                 fishingRod.timeUntilFishingNibbleDone = FishingRod.maxTimeToNibble;
                 fishingRod.hit = true;
 
-                bool enableRare = false;
-
                 if (!Mod.instance.questHandle.IsComplete(QuestHandle.mistsThree))
                 {
 
                     Mod.instance.questHandle.UpdateTask(QuestHandle.mistsThree, 1);
 
                 }
-                else
-                {
-
-                    enableRare = true;
-
-                }
-
-                string objectIndex = SpawnData.RandomHighFish(Game1.player.currentLocation, enableRare, ModUtility.PositionToTile(bobberPosition));
 
                 int animationRow = 10;
 
@@ -207,7 +204,7 @@ namespace StardewDruid.Cast.Mists
                     0f
                 );
 
-                fishingRod.startMinigameEndFunction(new StardewValley.Object(objectIndex,1));
+                fishingRod.startMinigameEndFunction(currentFish);
 
                 Game1.player.currentLocation.temporarySprites.Add(newAnimation);
 

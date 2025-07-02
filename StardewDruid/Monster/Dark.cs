@@ -6,7 +6,7 @@ using StardewDruid.Render;
 using StardewValley;
 using System;
 using System.Collections.Generic;
-using static StardewDruid.Data.IconData;
+using static StardewDruid.Character.Character;
 
 namespace StardewDruid.Monster
 {
@@ -19,9 +19,11 @@ namespace StardewDruid.Monster
 
         public bool meleeSet;
 
-        public Dictionary<int, List<Rectangle>> hatFrames = new();
-
         public float fadeOut = 1f;
+
+        public Dictionary<StardewDruid.Character.Character.hats, Dictionary<int, Vector2>> hatVectors = new();
+
+        public int hatSelect = -1;
 
         public Dark()
         {
@@ -33,7 +35,7 @@ namespace StardewDruid.Monster
           : base(vector, CombatModifier, name)
         {
             
-            SpawnData.MonsterDrops(this, SpawnData.drops.shadow);
+            SpawnData.MonsterDrops(this, SpawnData.Drops.shadow);
 
         }
 
@@ -44,7 +46,7 @@ namespace StardewDruid.Monster
 
             baseJuice = 3;
             
-            basePulp = 30;
+            basePulp = 25;
 
             fadeOut = 1f;
 
@@ -60,16 +62,15 @@ namespace StardewDruid.Monster
 
             DarkSword();
 
+            hatVectors = CharacterRender.HumanoidHats();
+
             weaponRender = new();
 
             weaponRender.LoadWeapon(WeaponRender.weapons.estoc);
 
-            overHead = new(16, -144);
-
             loadedOut = true;
 
         }
-
 
         public virtual void DarkWalk()
         {
@@ -79,8 +80,6 @@ namespace StardewDruid.Monster
             walkInterval = 12;
 
             gait = 2;
-
-            overHead = new(0, -128);
 
             idleFrames = FrameSeries(32, 32, 0, 0, 1);
 
@@ -316,9 +315,9 @@ namespace StardewDruid.Monster
                 },
                 [3] = new()
                 {
-                    new Rectangle(96, 224, 32, 32),
-                    new Rectangle(192, 224, 32, 32),
-                    new Rectangle(224, 224, 32, 32),
+                    new Rectangle(96, 160, 32, 32),
+                    new Rectangle(192, 160, 32, 32),
+                    new Rectangle(224, 160, 32, 32),
                 },
             };
 
@@ -409,8 +408,6 @@ namespace StardewDruid.Monster
 
         public void DarkCast()
         {
-
-            flightDefault = flightTypes.circle;
 
             specialSet = true;
 
@@ -560,15 +557,16 @@ namespace StardewDruid.Monster
         public override float GetScale()
         {
 
-            float spriteScale = 3.25f + (0.25f * netMode.Value);
+            //float spriteScale = 3.25f + (0.25f * netMode.Value);
 
-            return spriteScale;
+            return 4f;
 
         }
 
         public override void draw(SpriteBatch b, float alpha = 1f)
         {
-            if (IsInvisible || !Utility.isOnScreen(Position, 128))
+            
+            if (!loadedOut || IsInvisible || !Utility.isOnScreen(Position, 128))
             {
                 return;
             }
@@ -591,13 +589,19 @@ namespace StardewDruid.Monster
 
             Microsoft.Xna.Framework.Color colour = Color.White * fadeOut;
 
+            int hatOverride = -1;
+
+            Character.Character.hats hatType = hats.stand;
+
             if (netSweepActive.Value)
             {
+
+                Rectangle useSweepFrame = sweepFrames[netDirection.Value][sweepFrame];
 
                 b.Draw(
                      characterTexture,
                      spritePosition,
-                     sweepFrames[netDirection.Value][sweepFrame],
+                     useSweepFrame,
                      colour,
                      0f,
                      new Vector2(16),
@@ -609,9 +613,42 @@ namespace StardewDruid.Monster
                 if (meleeSet)
                 {
 
-                    weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { scale = spriteScale, source = sweepFrames[netDirection.Value][sweepFrame], flipped = flippity });
+                    weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { scale = spriteScale, source = useSweepFrame, flipped = flippity, fade = fadeOut, });
 
-                    weaponRender.DrawSwipe(b, spritePosition, drawLayer, new() { scale = spriteScale, source = sweepFrames[netDirection.Value][sweepFrame], flipped = flippity });
+                    weaponRender.DrawSwipe(b, spritePosition, drawLayer, new() { scale = spriteScale, source = useSweepFrame, flipped = flippity });
+
+                }
+
+                if (useSweepFrame.Y == 288)
+                {
+                    switch (useSweepFrame.X)
+                    {
+
+                        case 128:
+
+                            hatOverride = 2;
+
+                            break;
+
+                        case 160:
+
+                            hatOverride = 1;
+
+                            break;
+
+                        case 192:
+
+                            hatOverride = 0;
+
+                            break;
+
+                        case 224:
+
+                            hatOverride = 3;
+
+                            break;
+
+                    }
 
                 }
 
@@ -630,11 +667,13 @@ namespace StardewDruid.Monster
                     flippant ? (SpriteEffects)1 : 0,
                     drawLayer
                 );
-                if (firearmSet)
+
+                /*if (firearmSet)
                 {
 
-                    weaponRender.DrawFirearm(b, spritePosition, drawLayer, new() { scale = spriteScale, source = specialFrames[netDirection.Value][specialFrame], flipped = flippant });
-                }
+                    weaponRender.DrawFirearm(b, spritePosition, drawLayer, new() { scale = spriteScale, source = specialFrames[netDirection.Value][specialFrame], flipped = flippant, fade = fadeOut, });
+                }*/
+            
             }
             else if (netChannelActive.Value)
             {
@@ -650,11 +689,15 @@ namespace StardewDruid.Monster
                     flippity ? (SpriteEffects)1 : 0, 
                     drawLayer
                     );
+
                 if (firearmSet)
                 {
 
-                    weaponRender.DrawFirearm(b, spritePosition, drawLayer, new() { scale = spriteScale, source = channelFrames[netDirection.Value][specialFrame], flipped = flippity, });
+                    weaponRender.DrawFirearm(b, spritePosition, drawLayer, new() { scale = spriteScale, source = channelFrames[netDirection.Value][specialFrame], flipped = flippity, fade = fadeOut,});
                 }
+
+                hatType = hats.launch;
+
             }
             else if (netFlightActive.Value)
             {
@@ -698,7 +741,7 @@ namespace StardewDruid.Monster
                 if (meleeSet)
                 {
 
-                    weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { scale = spriteScale, source = smashFrames[setFlightSeries][setFlightFrame], flipped = flippity });
+                    weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { scale = spriteScale, source = smashFrames[setFlightSeries][setFlightFrame], flipped = flippity, fade = fadeOut, });
 
                     if (netFlightProgress.Value >= 2)
                     {
@@ -725,6 +768,8 @@ namespace StardewDruid.Monster
                     drawLayer
                 );
 
+                hatType = hats.kneel;
+
             }
             else if (netHaltActive.Value)
             {
@@ -747,7 +792,7 @@ namespace StardewDruid.Monster
                     if (meleeSet)
                     {
                         
-                        weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { scale = spriteScale, source = alertFrames[netDirection.Value][0], flipped = flippant });
+                        weaponRender.DrawWeapon(b, spritePosition, drawLayer, new() { scale = spriteScale, source = alertFrames[netDirection.Value][0], flipped = flippant, fade = fadeOut, });
                     
                     }
 
@@ -790,13 +835,13 @@ namespace StardewDruid.Monster
             if (netShieldActive.Value)
             {
 
-                DrawShield(b, spritePosition, spriteScale, drawLayer, IconData.schemes.white);
+                DrawShield(b, spritePosition, spriteScale, drawLayer);
 
             }
 
             DrawShadow(b, spritePosition, spriteScale, drawLayer);
 
-            DrawHat(b, spritePosition, spriteScale, drawLayer);
+            DrawHat(b, spritePosition, spriteScale, drawLayer, hatType, hatOverride);
 
         }
 
@@ -805,23 +850,113 @@ namespace StardewDruid.Monster
 
             Vector2 shadowPosition = spritePosition + new Vector2(0, spriteScale * 14);
 
-            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * 0.35f, 0.0f, new Vector2(24), spriteScale / 2, 0, drawLayer - 1E-06f);
+            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * 0.35f * fadeOut, 0.0f, new Vector2(24), spriteScale / 2, 0, drawLayer - 1E-06f);
 
         }
 
-        public virtual void DrawHat(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer)
+        public virtual void DrawHat(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, hats hat, int hatDirection = -1)
         {
 
+            if (hatSelect == -1)
+            {
+
+                return;
+
+            }
+
+            bool flip = false;
+
+            if (hatDirection == -1)
+            {
+
+                hatDirection = netDirection.Value;
+
+                flip = (netDirection.Value % 2 == 0 && netAlternative.Value == 3);
+
+            }
+
+            int hatFrame = 40;
+
+            if (hat == hats.kneel)
+            {
+
+                if (netDirection.Value == 3)
+                {
+                    hatFrame = 60;
+                }
+                else
+                {
+                    hatFrame = 20;
+                }
+
+            }
+            else
+            {
+                switch (netDirection.Value)
+                {
+                    case 1:
+                        hatFrame = 20;
+                        break;
+
+                    case 2:
+                        hatFrame = 0;
+                        break;
+
+                    case 3:
+                        hatFrame = 60;
+                        break;
+                }
+
+
+            }
+
+            switch (flip)
+            {
+                case true:
+
+                    Vector2 hatVector = hatVectors[hat][hatDirection + 4];
+
+                    b.Draw(
+                        Mod.instance.iconData.hatTexture,
+                        spritePosition - (new Vector2(0 - hatVector.X, hatVector.Y) * spriteScale),
+                        new Rectangle(hatFrame, 20 * hatSelect, 20, 20),
+                        Color.White * fadeOut,
+                        0.0f,
+                        new Vector2(10),
+                        spriteScale,
+                        SpriteEffects.FlipHorizontally,
+                        drawLayer + 0.0001f
+                    );
+
+                    break;
+
+                case false:
+                    b.Draw(
+                        Mod.instance.iconData.hatTexture,
+                        spritePosition - (hatVectors[hat][hatDirection] * spriteScale),
+                        new Rectangle(hatFrame, 20 * hatSelect, 20, 20),
+                        Color.White * fadeOut,
+                        0.0f,
+                        new Vector2(10),
+                        spriteScale,
+                        0,
+                        drawLayer + 0.0001f
+                    );
+
+                    break;
+
+            }
+
         }
 
-        public virtual void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, IconData.schemes scheme)
+        public virtual void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer)
         {
 
             b.Draw(
                 Mod.instance.iconData.shieldTexture,
                 spritePosition,
                 new Microsoft.Xna.Framework.Rectangle(0, 0, 48, 48),
-                Mod.instance.iconData.schemeColours[scheme] * 0.2f,
+                Mod.instance.iconData.schemeColours[shieldScheme] * 0.2f,
                 0f,
                 new Vector2(24),
                 spriteScale,
@@ -845,6 +980,20 @@ namespace StardewDruid.Monster
 
         }
 
+        public override Texture2D OverheadTexture()
+        {
+
+            return characterTexture;
+
+        }
+
+        public override Microsoft.Xna.Framework.Rectangle OverheadPortrait()
+        {
+
+            return new Rectangle(8, 0, 16, 16);
+
+        }
+
         public override bool PerformSpecial(Vector2 target)
         {
 
@@ -854,19 +1003,20 @@ namespace StardewDruid.Monster
 
             SetCooldown(1);
 
-            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 128, GetThreat()*2/3);
+            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 128, GetThreat() * 2 / 3)
+            {
+                type = SpellHandle.Spells.missile,
 
-            fireball.type = SpellHandle.spells.missile;
+                factor = 2,
 
-            fireball.factor =2;
+                missile = MissileHandle.missiles.shuriken,
 
-            fireball.missile = MissileHandle.missiles.shuriken;
+                display = IconData.impacts.none,
 
-            fireball.display = IconData.impacts.none;
+                boss = this,
 
-            fireball.boss = this;
-
-            fireball.scheme = IconData.schemes.ether;
+                scheme = IconData.schemes.ether
+            };
 
             Mod.instance.spellRegister.Add(fireball);
 

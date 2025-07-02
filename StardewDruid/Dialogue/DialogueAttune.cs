@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StardewDruid.Character;
 using StardewModdingAPI;
 using StardewDruid.Cast;
 using StardewDruid.Data;
@@ -12,7 +11,8 @@ using StardewValley.Locations;
 using Microsoft.Xna.Framework;
 using StardewValley.Tools;
 using System.Reflection;
-using StardewDruid.Event;
+using StardewDruid.Handle;
+using StardewDruid.Cast.Ether;
 
 namespace StardewDruid.Dialogue
 {
@@ -37,7 +37,7 @@ namespace StardewDruid.Dialogue
                     if (Mod.instance.questHandle.IsComplete(QuestHandle.swordWeald))
                     {
 
-                        return AttunementIntro(Rite.rites.weald);
+                        return AttunementIntro(Rite.Rites.weald);
 
 
 
@@ -48,7 +48,7 @@ namespace StardewDruid.Dialogue
 
                     if (Mod.instance.questHandle.IsComplete(QuestHandle.swordMists))
                     {
-                        return AttunementIntro(Rite.rites.mists);
+                        return AttunementIntro(Rite.Rites.mists);
 
 
                     }
@@ -60,7 +60,7 @@ namespace StardewDruid.Dialogue
                     if (Mod.instance.questHandle.IsComplete(QuestHandle.swordStars))
                     {
 
-                        return AttunementIntro(Rite.rites.stars);
+                        return AttunementIntro(Rite.Rites.stars);
 
                     }
 
@@ -71,7 +71,7 @@ namespace StardewDruid.Dialogue
                     if (Mod.instance.questHandle.IsComplete(QuestHandle.swordFates))
                     {
 
-                        return AttunementIntro(Rite.rites.fates);
+                        return AttunementIntro(Rite.Rites.fates);
 
                     }
 
@@ -82,7 +82,7 @@ namespace StardewDruid.Dialogue
                     if (Mod.instance.questHandle.IsComplete(QuestHandle.swordEther))
                     {
 
-                        return AttunementIntro(Rite.rites.ether);
+                        return AttunementIntro(Rite.Rites.ether);
 
                     }
 
@@ -93,7 +93,7 @@ namespace StardewDruid.Dialogue
                     if (Mod.instance.questHandle.IsComplete(QuestHandle.questBlackfeather))
                     {
 
-                        return AttunementIntro(Rite.rites.bones);
+                        return AttunementIntro(Rite.Rites.bones);
 
                     }
 
@@ -126,7 +126,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.energies:
 
-                    attuneUpdate = AttunementUpdate(Rite.rites.weald);
+                    attuneUpdate = AttunementUpdate(Rite.Rites.weald);
 
                     switch (attuneUpdate)
                     {
@@ -162,7 +162,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.waves:
 
-                    attuneUpdate = AttunementUpdate(Rite.rites.mists);
+                    attuneUpdate = AttunementUpdate(Rite.Rites.mists);
 
                     switch (attuneUpdate)
                     {
@@ -199,7 +199,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.star_altar:
 
-                    attuneUpdate = AttunementUpdate(Rite.rites.stars);
+                    attuneUpdate = AttunementUpdate(Rite.Rites.stars);
 
                     switch (attuneUpdate)
                     {
@@ -234,7 +234,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.monument_priesthood:
 
-                    attuneUpdate = AttunementUpdate(Rite.rites.fates);
+                    attuneUpdate = AttunementUpdate(Rite.Rites.fates);
 
                     switch (attuneUpdate)
                     {
@@ -271,7 +271,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.dragon_statue:
 
-                    attuneUpdate = AttunementUpdate(Rite.rites.ether);
+                    attuneUpdate = AttunementUpdate(Rite.Rites.ether);
 
                     switch (attuneUpdate)
                     {
@@ -307,7 +307,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.crow_brazier:
 
-                    attuneUpdate = AttunementUpdate(Rite.rites.bones);
+                    attuneUpdate = AttunementUpdate(Rite.Rites.bones);
 
                     switch (attuneUpdate)
                     {
@@ -340,12 +340,14 @@ namespace StardewDruid.Dialogue
 
                     return generate;
 
+
+
             }
             return generate;
 
         }
 
-        public static string AttunementIntro(Rite.rites compare)
+        public static string AttunementIntro(Rite.Rites compare)
         {
 
             int toolIndex = Mod.instance.AttuneableWeapon();
@@ -357,7 +359,7 @@ namespace StardewDruid.Dialogue
 
             }
 
-            Dictionary<int, Rite.rites> comparison = SpawnData.WeaponAttunement(true);
+            Dictionary<int, Rite.Rites> comparison = SpawnData.WeaponAttunement(true);
 
             if (comparison.ContainsKey(toolIndex))
             {
@@ -395,7 +397,7 @@ namespace StardewDruid.Dialogue
 
         }
 
-        public static int AttunementUpdate(Rite.rites compare)
+        public static int AttunementUpdate(Rite.Rites compare)
         {
 
             int toolIndex = Mod.instance.AttuneableWeapon();
@@ -407,7 +409,7 @@ namespace StardewDruid.Dialogue
 
             }
 
-            Dictionary<int, Rite.rites> comparison = SpawnData.WeaponAttunement(true);
+            Dictionary<int, Rite.Rites> comparison = SpawnData.WeaponAttunement(true);
 
             if (comparison.ContainsKey(toolIndex))
             {
@@ -435,7 +437,7 @@ namespace StardewDruid.Dialogue
 
                     Mod.instance.iconData.ImpactIndicator(Game1.player.currentLocation, Game1.player.Position, IconData.impacts.supree, 6f, new());
 
-                    Game1.player.currentLocation.playSound(SpellHandle.sounds.yoba.ToString());
+                    Game1.player.currentLocation.playSound(SpellHandle.Sounds.yoba.ToString());
 
                     Mod.instance.DetuneWeapon();
 
@@ -449,7 +451,7 @@ namespace StardewDruid.Dialogue
 
             Mod.instance.iconData.ImpactIndicator(Game1.player.currentLocation, Game1.player.Position, IconData.impacts.supree, 6f, new());
 
-            Game1.player.currentLocation.playSound(SpellHandle.sounds.yoba.ToString());
+            Game1.player.currentLocation.playSound(SpellHandle.Sounds.yoba.ToString());
 
             Mod.instance.AttuneWeapon(compare);
 

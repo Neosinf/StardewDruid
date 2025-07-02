@@ -42,13 +42,12 @@ namespace StardewDruid.Monster
 
             DarkBrawl();
 
-            weaponRender = new();
-
-            weaponRender.melee = false;
+            weaponRender = new()
+            {
+                melee = false
+            };
 
             weaponRender.LoadWeapon(WeaponRender.weapons.bazooka);
-
-            overHead = new(16, -144);
 
             loadedOut = true;
 
@@ -66,9 +65,11 @@ namespace StardewDruid.Monster
         public override bool PerformSpecial(Vector2 target)
         {
 
-            specialTimer = (specialCeiling + 1) * specialInterval * 2;
+            PerformChannel(target);
 
-            netSpecialActive.Set(true);
+            /*specialTimer = (specialCeiling + 1) * specialInterval * 2;
+
+            netChannelActive.Set(true);
 
             SetCooldown(1);
 
@@ -90,7 +91,7 @@ namespace StardewDruid.Monster
 
             fireball.added = new() { SpellHandle.effects.embers, };
 
-            Mod.instance.spellRegister.Add(fireball);
+            Mod.instance.spellRegister.Add(fireball);*/
 
             return true;
 
@@ -105,23 +106,24 @@ namespace StardewDruid.Monster
 
             SetCooldown(2);
 
-            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 256, GetThreat());
+            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 256, GetThreat())
+            {
+                type = SpellHandle.Spells.missile,
 
-            fireball.type = SpellHandle.spells.missile;
+                factor = 3,
 
-            fireball.factor =3;
+                missile = MissileHandle.missiles.rocket,
 
-            fireball.missile = MissileHandle.missiles.rocket;
+                display = IconData.impacts.impact,
 
-            fireball.display = IconData.impacts.impact;
+                boss = this,
 
-            fireball.boss = this;
+                indicator = IconData.cursors.scope,
 
-            fireball.indicator = IconData.cursors.scope;
+                scheme = IconData.schemes.stars,
 
-            fireball.scheme = IconData.schemes.stars;
-
-            fireball.added = new() { SpellHandle.effects.embers, };
+                added = new() { SpellHandle.Effects.embers, }
+            };
 
             Mod.instance.spellRegister.Add(fireball);
 

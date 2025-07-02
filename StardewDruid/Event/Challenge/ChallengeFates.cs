@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
-using StardewDruid.Character;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewDruid.Monster;
@@ -248,11 +248,12 @@ namespace StardewDruid.Event.Challenge
 
             // =========================== MonsterHandle
 
-            monsterHandle = new(origin, location);
+            monsterHandle = new(origin, location)
+            {
+                spawnSchedule = new(),
 
-            monsterHandle.spawnSchedule = new();
-
-            monsterHandle.spawnGroup = true;
+                spawnGroup = true
+            };
 
             for (int i = 1; i <= 12; i++)
             {

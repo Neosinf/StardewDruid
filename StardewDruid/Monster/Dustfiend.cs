@@ -3,7 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
+using StardewDruid.Render;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Extensions;
@@ -15,25 +17,27 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Diagnostics.Metrics;
 using System.IO;
-using static StardewDruid.Data.IconData;
-
 
 namespace StardewDruid.Monster
 {
-    public class Dustfiend : Blobfiend
+    public class Dustfiend : Boss
     {
+        
+        public FiendRender fiendRender;
+
 
         public Dustfiend()
         {
         }
 
-        public Dustfiend(Vector2 vector, int CombatModifier)
-          : base(vector, CombatModifier, "Dustfiend")
+        public Dustfiend(Vector2 vector, int CombatModifier, string useSprite = "Dustfiend")
+          : base(vector, CombatModifier, useSprite)
         {
 
-            SpawnData.MonsterDrops(this, SpawnData.drops.dust);
+            SpawnData.MonsterDrops(this, SpawnData.Drops.dust);
 
         }
+
         public override void SetBase()
         {
 
@@ -41,231 +45,333 @@ namespace StardewDruid.Monster
 
             baseMode = 2;
 
-            baseJuice = 2;
+            baseJuice = 3;
 
-            basePulp = 20;
+            basePulp = 15;
 
             cooldownInterval = 180;
+
+            warp = IconData.warps.smoke;
 
         }
 
         public override void LoadOut()
         {
 
-            base.LoadOut();
+            fiendRender = new(CharacterHandle.CharacterType(realName.Value));
 
-            specialSet = false;
+            characterTexture = fiendRender.fiendTexture;
+
+            BlobWalk();
+
+            BlobFlight();
+
+            BlobSpecial();
+
+            loadedOut = true;
 
         }
+
+        public virtual void BlobWalk()
+        {
+
+            walkInterval = 14;
+
+            gait = 1.5f;
+
+            idleFrames = fiendRender.idleFrames;
+
+            walkFrames = idleFrames;
+
+        }
+
+        public virtual void BlobFlight()
+        {
+
+            flightSet = true;
+
+            flightInterval = 6;
+
+            flightSpeed = 9;
+
+            flightPeak = 192;
+
+            flightDefault = flightTypes.close;
+
+            flightFrames = fiendRender.dashFrames;
+
+            smashSet = true;
+
+            smashFrames = flightFrames;
+
+        }
+
+        public virtual void BlobSpecial()
+        {
+            
+            specialCeiling = 8;
+
+            specialFloor = 0;
+
+            channelCeiling = 8;
+
+            channelFloor = 0;
+
+            specialSet = true;
+
+            channelSet = true;
+
+            sweepSet = true;
+
+            specialInterval = 12;
+
+            sweepInterval = 12;
+
+            specialFrames = fiendRender.specialFrames[Character.Character.specials.special];
+
+            channelFrames = specialFrames;
+
+            sweepFrames = fiendRender.specialFrames[Character.Character.specials.sweep];
+
+        }
+
 
         public override float GetScale()
         {
 
-            return 1.5f + (0.75f * netMode.Value);
+            return 2f + netMode.Value * 1f;
 
         }
 
-        public override void RandomScheme()
+        public override int GetHeight()
         {
 
-            int newScheme = Mod.instance.randomIndex.Next(0, 3);
+            if(fiendRender == null)
+            {
 
-            netScheme.Set(newScheme);
+                return 32;
+
+            }
+
+            return fiendRender.frameHeight;
 
         }
-        public override int LayerOffset()
+
+        public override int GetWidth()
+        {
+            if (fiendRender == null)
+            {
+
+                return 32;
+
+            }
+
+            return fiendRender.frameWidth;
+
+        }
+
+        public override Rectangle GetBoundingBox()
         {
 
-            return 32 + netLayer.Value;
+            Rectangle box = base.GetBoundingBox();
+
+            if (netFlightActive.Value || netSmashActive.Value)
+            {
+
+                box.Width = 1;
+
+                box.Height = 1;
+
+            }
+
+            return box;
 
         }
 
         public override void draw(SpriteBatch b)
         {
 
-            if (IsInvisible || !Utility.isOnScreen(Position, 128))
+            if (!loadedOut || IsInvisible || !Utility.isOnScreen(Position, 128))
             {
+
                 return;
+
             }
 
             //DrawBoundingBox(b);
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            float drawLayer = (Position.Y + (float)LayerOffset()) / 10000f;
+            FiendRenderAdditional renderAdditional = new();
 
-            DrawEmote(b, localPosition, drawLayer);
+            renderAdditional.layer = (Position.Y + (float)LayerOffset()) / 10000f;
 
-            Color schemeColor = GetSchemeColour();
+            DrawEmote(b, localPosition, renderAdditional.layer);
 
-            float spriteSize = GetScale();
+            renderAdditional.scale = GetScale();
 
-            Vector2 spritePosition = GetPosition(localPosition, spriteSize);
+            renderAdditional.position = GetPosition(localPosition, renderAdditional.scale);
 
-            Vector2 shadowPosition = GetPosition(localPosition, spriteSize, true);
+            renderAdditional.direction = netDirection.Value;
 
-            // Outer fire
+            renderAdditional.shadow = renderAdditional.position + new Vector2(0, 8 * renderAdditional.scale);
 
-            Rectangle bubbleRect;
+            renderAdditional.flip = ((netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3);
 
-            int shadowOffset = 48;
-
-            int faceOffset = 0;
-
-            if (netFlightActive.Value || netSmashActive.Value)
+            if (netPosturing.Value)
             {
 
-                int setFlightSeries = netDirection.Value + (netFlightProgress.Value * 4);
+                renderAdditional.series = FiendRenderAdditional.fiendseries.fluff;
 
-                int setFlightFrame = Math.Min(flightFrame, (flightFrames[setFlightSeries].Count - 1));
-
-                bubbleRect = flightFrames[setFlightSeries][setFlightFrame].Clone();
-
-                b.Draw(characterTexture, spritePosition, bubbleRect, schemeColor * 0.75f, 0.0f, new Vector2(24), spriteSize, 0, drawLayer - 0.003f);
-
-                if (netSmashActive.Value)
+                if (netSpecialActive.Value)
                 {
 
-                    faceOffset = 48;
+                    renderAdditional.frame = (specialFrame % 2) + 1;
+
+                }
+                else
+                {
+
+                    renderAdditional.frame = 0;
 
                 }
 
             }
             else
+            if (netFlightActive.Value || netSmashActive.Value)
             {
 
+                renderAdditional.series = FiendRenderAdditional.fiendseries.dash;
 
-                bubbleRect = idleFrames[netDirection.Value][hoverFrame].Clone();
+                renderAdditional.direction = netDirection.Value + (netFlightProgress.Value * 4);
 
-                b.Draw(characterTexture, spritePosition, bubbleRect, schemeColor * 0.75f, 0.0f, new Vector2(24), spriteSize, 0, drawLayer - 0.003f);
+                renderAdditional.frame = flightFrame;
 
-                if (netSpecialActive.Value)
-                {
+            }
+            else if (netSweepActive.Value)
+            {
 
-                    faceOffset = 48;
+                renderAdditional.series = FiendRenderAdditional.fiendseries.sweep;
 
-                }
+                renderAdditional.frame = sweepFrame;
+
+            }
+            else if (netSpecialActive.Value)
+            {
+
+                renderAdditional.series = FiendRenderAdditional.fiendseries.special;
+
+                renderAdditional.frame = specialFrame;
+            }
+
+            fiendRender.DrawNormal(b, renderAdditional);
+
+        }
+
+        public override void update(GameTime time, GameLocation location)
+        {
+
+            base.update(time, location);
+
+            //fiendRender.Update(inMotion == false);
+            fiendRender.Update(true);
+
+        }
+
+        public override bool PerformChannel(Vector2 target)
+        {
+
+            PerformFlight(target, 0);
+
+            flightPeak = 512;
+
+            flightSpeed = 6;
+
+            return true;
+
+        }
+
+        public override bool PerformSpecial(Vector2 target)
+        {
+
+            if(Health > (MaxHealth / 3))
+            {
+
+                return false;
 
             }
 
-            // Shadow
+            specialTimer = (specialCeiling + 1) * specialInterval;
 
-            bubbleRect.Y += shadowOffset;
+            netSpecialActive.Set(true);
 
-            b.Draw(characterTexture, shadowPosition, bubbleRect, schemeColor * 0.15f, 0.0f, new Vector2(24), spriteSize, 0, drawLayer - 0.004f);
+            SetCooldown(1);
 
-            // Inner fire
+            float spriteScale = GetScale();
 
-            int timelapse = ((int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 3000) * 6 / 3000);
+            float useThreat = GetThreat();
 
-            Rectangle dust = new(timelapse * 48, 336, 48, 48);
+            Vector2 selfTarget = GetBoundingBox().Center.ToVector2();
 
-            b.Draw(characterTexture, spritePosition, dust, Color.White * 0.2f, 0.0f, new Vector2(24), spriteSize, 0, drawLayer - 0.002f);
-
-            // Face
-
-            List<Microsoft.Xna.Framework.Color> colors = new()
+            SpellHandle fireball = new(currentLocation, selfTarget, selfTarget, 96 + (int)(32 * spriteScale), useThreat, useThreat)
             {
-                new(34,160,156),
-                new(253,194,129),
-                Color.LightPink,
-                new(34,160,156),
-                new(253,194,129),
-                Color.LightPink,
+
+                display = IconData.impacts.none,
+
+                displayRadius = (int)spriteScale,
+
+                type = SpellHandle.Spells.explode,
+
+                sound = SpellHandle.Sounds.fireball,
+
+                instant = true,
+
+                counter = 4 - (specialCeiling * specialInterval),
+
+                boss = this,
+
+                added = new() { SpellHandle.Effects.detonate }
+            
             };
 
+            Mod.instance.spellRegister.Add(fireball);
 
-            if (netMode.Value >= 3)
-            {
-
-                faceOffset += 96;
-
-            }
-
-            switch (netDirection.Value)
-            {
-
-                case 0:
-
-                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48, 96, 48, 48), schemeColor * 0.75f, 0.0f, new Vector2(24), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 0.001f);
-
-                    break;
-
-                case 1:
-
-                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48, 48, 48, 48), schemeColor * 0.75f, 0.0f, new Vector2(24), spriteSize, 0, drawLayer - 0.001f);
-
-                    b.Draw(characterTexture, spritePosition, new(0 + faceOffset, 192, 48, 48), colors[netMode.Value], 0.0f, new Vector2(24), spriteSize, 0, drawLayer);
-
-                    break;
-
-                case 2:
-
-                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48, 0, 48, 48), schemeColor * 0.75f, 0.0f, new Vector2(24), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer - 0.001f);
-
-                    b.Draw(characterTexture, spritePosition, new(0 + faceOffset, 144, 48, 48), colors[netMode.Value], 0.0f, new Vector2(24), spriteSize, netAlternative.Value == 3 ? (SpriteEffects)1 : 0, drawLayer);
-
-                    break;
-
-                case 3:
-
-                    b.Draw(characterTexture, spritePosition, new(netScheme.Value * 48, 48, 48, 48), schemeColor * 0.75f, 0.0f, new Vector2(24), spriteSize, (SpriteEffects)1, drawLayer - 0.001f);
-
-                    b.Draw(characterTexture, spritePosition, new(0 + faceOffset, 192, 48, 48), colors[netMode.Value], 0.0f, new Vector2(24), spriteSize, (SpriteEffects)1, drawLayer);
-
-                    break;
-
-            }
+            return true;
 
         }
 
-        public override IconData.schemes GetSpellScheme()
+        public override void ClearMove()
         {
 
-            switch (netScheme.Value)
-            {
+            base.ClearMove();
 
-                default: //
+            flightPeak = 192;
 
-                    return IconData.schemes.rock;
-
-                case 1: //
-
-                    return IconData.schemes.rockTwo;
-
-                case 2: //
-
-                    return IconData.schemes.rockThree;
-
-            }
-
-        }
-
-        public override Microsoft.Xna.Framework.Color GetSchemeColour()
-        {
-
-            return Mod.instance.iconData.SchemeColour(GetSpellScheme());
+            flightSpeed = 9;
 
         }
 
         public override void ConnectSweep()
         {
 
-            Microsoft.Xna.Framework.Rectangle box = GetBoundingBox();
+            float useThreat = GetThreat();
 
-            SpellHandle dustbomb = new(currentLocation, box.Center.ToVector2(), box.Center.ToVector2(), 96 + (int)(24 * GetScale()), GetThreat());
+            Vector2 selfTarget = GetBoundingBox().Center.ToVector2();
 
-            dustbomb.type = SpellHandle.spells.explode;
+            SpellHandle dustbomb = new(currentLocation, selfTarget, selfTarget, 96 + (int)(24 * GetScale()), useThreat)
+            {
+                type = SpellHandle.Spells.explode,
 
-            dustbomb.scheme = GetSpellScheme();
+                instant = true,
 
-            dustbomb.instant = true;
+                display = IconData.impacts.puff,
 
-            dustbomb.display = IconData.impacts.puff;
+                scheme = IconData.schemes.gray,
 
-            dustbomb.sound = SpellHandle.sounds.dustMeep;
+                sound = SpellHandle.Sounds.fireball,
 
-            dustbomb.boss = this;
+                boss = this
+            };
 
             Mod.instance.spellRegister.Add(dustbomb);
 
@@ -276,9 +382,10 @@ namespace StardewDruid.Monster
 
             Microsoft.Xna.Framework.Rectangle box = GetBoundingBox();
 
-            SpellHandle death = new(new(box.Center.X, box.Top), 64 + (int)(GetScale() * 32f), IconData.impacts.deathbomb, new());
-
-            death.scheme = GetSpellScheme();
+            SpellHandle death = new(new(box.Center.X, box.Top), 64 + (int)(GetScale() * 32f), IconData.impacts.deathbomb, new())
+            {
+                displayRadius = 3,
+            };
 
             Mod.instance.spellRegister.Add(death);
 
@@ -287,7 +394,7 @@ namespace StardewDruid.Monster
         public override void shedChunks(int number, float scale)
         {
 
-            Mod.instance.iconData.ImpactIndicator(currentLocation, Position, IconData.impacts.puff, 1f + (0.25f * netMode.Value), new() { frame = 4, interval = 50, color = GetSchemeColour() });
+            Mod.instance.iconData.ImpactIndicator(currentLocation, Position, IconData.impacts.puff, 1f + (0.25f * netMode.Value), new() { frame = 4, interval = 50, scheme = IconData.schemes.darkgray});
 
         }
 

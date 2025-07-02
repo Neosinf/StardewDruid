@@ -22,8 +22,6 @@ namespace StardewDruid.Event
 
         public string eventId;
 
-        public NPC npc;
-
         public float scale;
 
         public Microsoft.Xna.Framework.Color colour = Microsoft.Xna.Framework.Color.White;

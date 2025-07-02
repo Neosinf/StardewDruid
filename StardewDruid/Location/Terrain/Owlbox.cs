@@ -14,10 +14,11 @@ namespace StardewDruid.Location.Terrain
     {
 
         public Owlbox(IconData.tilesheets Tilesheet, int Index, Vector2 Position, shadows Shadow = shadows.offset, bool Flip = false)
-            : base(Tilesheet, Index,Position,Shadow,Flip)
+            : base(Tilesheet, Index, Position,Shadow,Flip)
         {
 
         }
+
         public override void drawFront(SpriteBatch b, GameLocation location)
         {
 
@@ -37,9 +38,7 @@ namespace StardewDruid.Location.Terrain
 
             Microsoft.Xna.Framework.Rectangle useSource = new(source.X + 144, source.Y, source.Width, source.Height - 48);
 
-            float opacity = Fadeout(location, useSource);
-
-            b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin, useSource, color * opacity, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer);
+            b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin, useSource, color * fade, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer);
 
         }
 
@@ -68,11 +67,9 @@ namespace StardewDruid.Location.Terrain
 
             }
 
-            float opacity = Fadeout(location, useSource);
-
             b.Draw(Game1.mouseCursors, origin + new Vector2(useSource.Width * 2 - 2, useSource.Height * 4 - 12), new Rectangle(663, 1011, 41, 30), Color.White, 0f, new Vector2(20, 15), shadowScale, flip ? (SpriteEffects)1 : 0, 1E-06f);
 
-            b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin, useSource, color * opacity, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer);
+            b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin, useSource, color * fade, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer);
 
         }
 

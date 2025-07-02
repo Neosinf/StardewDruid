@@ -56,6 +56,38 @@ namespace StardewDruid.Location.Terrain
 
         }
 
+        public override void update(GameLocation location)
+        {
+
+            base.update(location);
+
+            if (Game1.timeOfDay >= 1900)
+            {
+
+                source = new(224, 48, 16, 64);
+
+                string id = "18465_lamp_" + (position.X * 10000 + position.Y).ToString();
+
+                if (!Game1.currentLightSources.ContainsKey(id))
+                {
+
+                    LightSource light = new LightSource(id, 4, position, 3f, Color.Black * 0.75f);
+
+                    Game1.currentLightSources.Add(id, light);
+
+                }
+
+            }
+            else
+            {
+
+                source = new(208, 48, 16, 64);
+
+            }
+
+        }
+
+
         public override void draw(SpriteBatch b, GameLocation location)
         {
 
@@ -68,31 +100,11 @@ namespace StardewDruid.Location.Terrain
 
             Microsoft.Xna.Framework.Rectangle useSource = new(source.X, source.Y, source.Width, source.Height);
 
-            float opacity = Fadeout(location, useSource);
-
-            if (Game1.timeOfDay >= 1900)
-            {
-
-                useSource = new(224, 48, 16, 64);
-
-                string id = "18465_lamp_" + (position.X * 10000 + position.Y).ToString();
-
-                if (!Game1.currentLightSources.ContainsKey(id))
-                {
-
-                    LightSource light = new LightSource(id, 4, position, 1f, Color.Black * 0.75f);
-
-                    Game1.currentLightSources.Add(id, light);
-
-                }
-
-            }
-
             b.Draw(
                 Mod.instance.iconData.sheetTextures[IconData.tilesheets.graveyard], 
                 origin, 
                 useSource, 
-                Color.White * opacity, 
+                Color.White * fade, 
                 0f, 
                 Vector2.Zero, 
                 4, 
@@ -104,7 +116,7 @@ namespace StardewDruid.Location.Terrain
                 Mod.instance.iconData.sheetTextures[IconData.tilesheets.graveyard],
                 origin + new Vector2(1, 6),
                 useSource,
-                Color.Black * shade,
+                Color.Black * shade * fade,
                 0f,
                 Vector2.Zero,
                 4,

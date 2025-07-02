@@ -7,7 +7,7 @@ using StardewDruid.Cast.Ether;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
-using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buffs;
@@ -28,6 +28,8 @@ namespace StardewDruid.Character
     public class Jester : Critter
     {
 
+        public int laserCooldown = 0;
+
         public Jester()
         {
         }
@@ -43,75 +45,6 @@ namespace StardewDruid.Character
             
             base.LoadOut();
 
-            idleFrames[idles.standby] = new()
-            {
-                [0] = new(){
-                    new(0, 256, 32, 32),
-                    new(32, 256, 32, 32),
-                    new(64, 256, 32, 32),
-                    new(96, 256, 32, 32),
-                },
-
-            };
-
-            idleFrames[idles.rest] = new()
-            {
-                [0] = new(){
-                    new(96, 288, 32, 32),
-                },
-
-            };
-
-            specialFrames[specials.special] = new()
-            {
-
-                [0] = new() { new(192, 192, 32, 32), },
-
-                [1] = new() { new(192, 160, 32, 32), },
-
-                [2] = new() { new(192, 128, 32, 32), },
-
-                [3] = new() { new(192, 224, 32, 32), },
-
-            };
-
-            specialIntervals[specials.special] = 90;
-            specialCeilings[specials.special] = 0;
-            specialFloors[specials.special] = 0;
-
-            specialFrames[specials.greet] = new()
-            {
-
-                [0] = new() {new(0, 288, 32, 32),
-                    new(32, 288, 32, 32),
-                    new(64, 288, 32, 32),
-                    new(32, 288, 32, 32),
-                },
-
-                [1] = new() {new(0, 288, 32, 32),
-                    new(32, 288, 32, 32),
-                    new(64, 288, 32, 32),
-                    new(32, 288, 32, 32),
-                },
-
-                [2] = new() {new(0, 288, 32, 32),
-                    new(32, 288, 32, 32),
-                    new(64, 288, 32, 32),
-                    new(32, 288, 32, 32),
-                },
-
-                [3] = new() {new(0, 288, 32, 32),
-                    new(32, 288, 32, 32),
-                    new(64, 288, 32, 32),
-                    new(32, 288, 32, 32),
-                },
-
-            };
-
-            specialIntervals[specials.greet] = 30;
-            specialCeilings[specials.greet] = 3;
-            specialFloors[specials.greet] = 1;
-
             restSet = true;
 
         }
@@ -126,35 +59,53 @@ namespace StardewDruid.Character
 
             }
 
+            if(laserCooldown > 0)
+            {
+
+                return false;
+
+            }
+
             ResetActives();
 
             netSpecial.Set((int)specials.special);
 
-            specialIntervals[specials.special] = 90;
-            specialCeilings[specials.special] = 0;
-            specialFloors[specials.special] = 0;
-
             specialTimer = 90;
 
-            cooldownTimer = cooldownInterval;
+            SetCooldown(specialTimer, 1.5f);
+
+            laserCooldown = 600;
 
             LookAtTarget(monster.Position, true);
 
-            SpellHandle beam = new(Game1.player,monster.Position,320, Mod.instance.CombatDamage());
+            SpellHandle beam = new(Game1.player, monster.Position, 320, Mod.instance.CombatDamage())
+            {
+                origin = Position,
 
-            beam.origin = Position;
+                type = SpellHandle.Spells.beam,
 
-            beam.type = SpellHandle.spells.beam;
+                display = IconData.impacts.flasher,
 
-            beam.scheme = IconData.schemes.fates;
-
-            beam.display = IconData.impacts.flasher;
-
-            beam.sound = SpellHandle.sounds.explosion;
+                sound = SpellHandle.Sounds.explosion
+            };
 
             Mod.instance.spellRegister.Add(beam);
 
             return true;
+
+        }
+
+        public override void normalUpdate(GameTime time, GameLocation location)
+        {
+
+            base.normalUpdate(time, location);
+
+            if (laserCooldown > 0)
+            {
+
+                laserCooldown--;
+
+            }
 
         }
 
@@ -199,44 +150,44 @@ namespace StardewDruid.Character
 
         public override void ConnectSweep()
         {
-                
-            SpellHandle swipeEffect = new(Game1.player, Position, 192, Mod.instance.CombatDamage() / 2);
 
-            swipeEffect.instant = true;
+            SpellHandle swipeEffect = new(Game1.player, Position, 192, Mod.instance.CombatDamage() / 2)
+            {
+                instant = true,
 
-            swipeEffect.sound = SpellHandle.sounds.swordswipe;
+                sound = SpellHandle.Sounds.swordswipe,
 
-            swipeEffect.display = IconData.impacts.flashbang;
+                display = IconData.impacts.flashbang
+            };
 
             if (Mod.instance.questHandle.IsGiven(QuestHandle.fatesTwo))
             {
-                switch (Mod.instance.randomIndex.Next(4))
+                switch (Mod.instance.randomIndex.Next(6))
                 {
                     case 0:
 
-                        swipeEffect.added.Add(SpellHandle.effects.daze);
+                        swipeEffect.added.Add(SpellHandle.Effects.daze);
                         break;
 
-                    //case 1:
+                    case 1:
 
-                    //    swipeEffect.added.Add(SpellHandle.effects.mug);
-                    //    break;
+                        swipeEffect.added.Add(SpellHandle.Effects.glare);
+                        break;
 
                     case 2:
 
-                        swipeEffect.added.Add(SpellHandle.effects.morph);
+                        swipeEffect.added.Add(SpellHandle.Effects.morph);
                         break;
 
-                    default:
-                    //case 3:
+                    case 3:
 
-                        swipeEffect.added.Add(SpellHandle.effects.doom);
+                        swipeEffect.added.Add(SpellHandle.Effects.doom);
                         break;
                 }
             }
             else
             {
-                swipeEffect.added.Add(SpellHandle.effects.push);
+                swipeEffect.added.Add(SpellHandle.Effects.push);
 
             }
 
@@ -295,7 +246,7 @@ namespace StardewDruid.Character
 
             CharacterHandle.RetrieveInventory(CharacterHandle.characters.Jester);
 
-            if (currentLocation.characters.Count > 0 && !Mod.instance.eventRegister.ContainsKey("active"))
+            if (currentLocation.characters.Count > 0 && Mod.instance.activeEvent.Count == 0)
             {
 
                 foreach (NPC rubVictim in currentLocation.characters)
@@ -334,15 +285,6 @@ namespace StardewDruid.Character
                     if (Vector2.Distance(rubVictim.Position, Position) < 480)
                     {
 
-                        /*bool alreadyRubbed = Game1.player.hasPlayerTalkedToNPC(rubVictim.Name);
-
-                        if (alreadyRubbed)
-                        {
-
-                            continue;
-
-                        }*/
-
                         if (ModUtility.GroundCheck(currentLocation, rubVictim.Tile - new Vector2(1, 0), true) != "ground")
                         {
 
@@ -355,7 +297,7 @@ namespace StardewDruid.Character
 
                             Game1.player.friendshipData[rubVictim.Name].TalkedToToday = true;
 
-                            ModUtility.ChangeFriendship(Game1.player, rubVictim,25);
+                            ModUtility.ChangeFriendship(rubVictim,25);
 
                         }
 
@@ -369,11 +311,9 @@ namespace StardewDruid.Character
 
                             }
 
-                            //rubVictim.faceDirection(2);
-
                         }
 
-                        ReactionData.ReactTo(rubVictim, ReactionData.reactions.jester);
+                        ReactionData.ReactTo(rubVictim, ReactionData.reactions.jester, 0, new());
 
                         ResetActives();
 
@@ -536,6 +476,7 @@ namespace StardewDruid.Character
 
         public void MilkRub(FarmAnimal cow, bool milk = true)
         {
+
             ParsedItemData dataOrErrorItem;
 
             if (milk)
@@ -594,7 +535,7 @@ namespace StardewDruid.Character
 
             cow.ReloadTextureIfNeeded();
 
-            Game1.player.gainExperience(0, 5);
+            Mod.instance.GiveExperience(0, 5);
 
             Rectangle bottleRectangle = dataOrErrorItem.GetSourceRect();
 
@@ -624,7 +565,7 @@ namespace StardewDruid.Character
 
             victim.faceDirection(2);
 
-            ModUtility.PetAnimal(Game1.player, victim);
+            ModUtility.PetAnimal(victim);
 
             if (victim.Sprite.SpriteWidth > 16)
             {
@@ -639,6 +580,7 @@ namespace StardewDruid.Character
 
             }
 
+            ResetActives();
 
             SettleOccupied();
 

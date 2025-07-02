@@ -57,18 +57,6 @@ namespace StardewDruid.Cast.Fates
             if(tickCounter % 6 == 0)
             {
 
-                if (tickCounter % 24 == 0)
-                {
-
-                    foreach (KeyValuePair<Vector2, WispHandle> wisp in wisps)
-                    {
-
-                        wisp.Value.Behaviour();
-
-                    }
-
-                }
-
                 foreach (KeyValuePair<Vector2,WispHandle> wisp in wisps)
                 {
 
@@ -102,7 +90,7 @@ namespace StardewDruid.Cast.Fates
 
                 }
 
-                if (Vector2.Distance(origin, Game1.player.Position) > 32)
+                if (Vector2.Distance(origin, Game1.player.Position) > 32 && !Mod.instance.ShiftButtonHeld())
                 {
 
                     return false;
@@ -141,13 +129,6 @@ namespace StardewDruid.Cast.Fates
         public override void EventDecimal()
         {
 
-            if (eventLocked)
-            {
-
-                return;
-
-            }
-
             if (!EventActive())
             {
 
@@ -159,10 +140,29 @@ namespace StardewDruid.Cast.Fates
 
             decimalCounter++;
 
+            if (eventLocked)
+            {
+
+                if (decimalCounter % 3 == 0)
+                {
+
+                    foreach (KeyValuePair<Vector2, WispHandle> wisp in wisps)
+                    {
+
+                        wisp.Value.Behaviour();
+
+                    }
+
+                }
+
+                return;
+
+            }
+
             if (decimalCounter == 5)
             {
 
-                Mod.instance.rite.channel(IconData.skies.hellscape, 75);
+                Mod.instance.rite.Channel(IconData.skies.hellscape, 75);
 
                 channel = IconData.skies.hellscape;
 
@@ -188,6 +188,8 @@ namespace StardewDruid.Cast.Fates
 
                 Mod.instance.rite.castLevel = 0;
 
+                Mod.instance.rite.ChargeSet(IconData.cursors.fatesCharge);
+
             }
 
         }
@@ -205,7 +207,7 @@ namespace StardewDruid.Cast.Fates
 
                 Vector2 wind = origin + (new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * 640);
 
-                wisps[wind] = new(location, Tile, wispType, wind, 0.2f);
+                wisps[wind] = new(location, Tile, wispType, wind, 0.1f);
 
             }
 
@@ -216,13 +218,14 @@ namespace StardewDruid.Cast.Fates
 
                 Vector2 wind = origin + (new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * 560);
 
-                wisps[wind] = new(location, Tile, wispType, wind, 0.5f);
+                wisps[wind] = new(location, Tile, wispType, wind, 0.4f)
+                {
+                    damageFarmers = damageFarmers,
 
-                wisps[wind].damageFarmers = damageFarmers;
+                    damageMonsters = damageMonsters
+                };
 
-                wisps[wind].damageMonsters = damageMonsters;
-
-                if(bossMonsters.Count > 0)
+                if (bossMonsters.Count > 0)
                 {
 
                     wisps[wind].bossMonster = bossMonsters.First();
@@ -237,7 +240,7 @@ namespace StardewDruid.Cast.Fates
 
                 Vector2 wind = origin + (new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * 480);
 
-                wisps[wind] = new(location, Tile, wispType, wind, 0.2f);
+                wisps[wind] = new(location, Tile, wispType, wind, 0.1f);
 
             }
 
@@ -247,11 +250,12 @@ namespace StardewDruid.Cast.Fates
 
                 Vector2 wind = origin + (new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * 400);
 
-                wisps[wind] = new(location, Tile, wispType, wind, 0.4f);
+                wisps[wind] = new(location, Tile, wispType, wind, 0.3f)
+                {
+                    damageFarmers = damageFarmers,
 
-                wisps[wind].damageFarmers = damageFarmers;
-
-                wisps[wind].damageMonsters = damageMonsters;
+                    damageMonsters = damageMonsters
+                };
 
                 if (bossMonsters.Count > 0)
                 {
@@ -268,7 +272,7 @@ namespace StardewDruid.Cast.Fates
 
                 Vector2 wind = origin + (new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * 320);
 
-                wisps[wind] = new(location, Tile, wispType, wind, 0.3f);
+                wisps[wind] = new(location, Tile, wispType, wind, 0.2f);
 
             }
 

@@ -2,6 +2,7 @@
 using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewDruid.Monster;
@@ -75,9 +76,9 @@ namespace StardewDruid.Event.Challenge
 
             BossBar(0, 0);
 
-            location.playSound("DragonRoar");
-
             HoldCompanions();
+
+            Mod.instance.sounds.PlayCue(SoundHandle.SoundCue.DragonGrowl);
 
         }
 
@@ -94,8 +95,8 @@ namespace StardewDruid.Event.Challenge
             if (location.Name == LocationHandle.druid_lair_name)
             {
 
-                Mod.instance.WarpAllFarmers(location.warps[0].TargetName, location.warps[0].X, location.warps[0].Y, 2);
-
+                Mod.instance.WarpAllFarmers("Mine", 17, 6, 2);
+                
                 DialogueCue(900);
 
             }
@@ -143,17 +144,10 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            if (activeCounter == 2)
+            if (activeCounter == 3)
             {
 
-                location.playSound("DragonRoar");
-
-            }
-
-            if (activeCounter == 4)
-            {
-
-                location.playSound("DragonRoar");
+                Mod.instance.sounds.PlayCue(SoundHandle.SoundCue.DragonRoar);
 
             }
 

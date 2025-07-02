@@ -3,10 +3,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Media;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Effect;
-using StardewDruid.Character;
 using StardewDruid.Dialogue;
-using StardewDruid.Event;
 using StardewDruid.Event.Relics;
+using StardewDruid.Handle;
 using StardewDruid.Location;
 using StardewValley;
 using StardewValley.Buildings;
@@ -16,7 +15,6 @@ using StardewValley.GameData.Movies;
 using StardewValley.Locations;
 using StardewValley.Tools;
 using System.Collections.Generic;
-using static StardewDruid.Cast.Rite;
 
 namespace StardewDruid.Data
 {
@@ -25,14 +23,11 @@ namespace StardewDruid.Data
 
         public enum triggerLocales
         {
-            FarmCave,
             Beach,
             CommunityCenter,
-            UndergroundMine20,
             Town,
             Forest,
             Mountain,
-            UndergroundMine77377,
             Mine,
         }
 
@@ -59,11 +54,11 @@ namespace StardewDruid.Data
 
                 trigger = true,
 
-                triggerLocation = triggerLocales.FarmCave.ToString(),
+                triggerLocation = LocationHandle.druid_cavern_name,
 
-                triggerRite = Rite.rites.none,
+                triggerRite = Rite.Rites.none,
 
-                origin = new Vector2(7, 7) * 64,
+                origin = new Vector2(7.5f, 9) * 64,
 
                 // -----------------------------------------------
 
@@ -109,9 +104,9 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.none,
+                triggerRite = Rite.Rites.none,
 
-                origin = new Vector2(21, 10) * 64,
+                origin = new Vector2(19, 10) * 64,
 
                 // -----------------------------------------------
 
@@ -170,42 +165,6 @@ namespace StardewDruid.Data
             quests.Add(swordWeald.name, swordWeald);
 
             // =====================================================
-            // HERBALISM
-
-            Quest herbalism = new()
-            {
-
-                name = QuestHandle.herbalism,
-
-                icon = IconData.displays.chaos,
-
-                type = Quest.questTypes.miscellaneous,
-
-                give = Quest.questGivers.none,
-
-                title = Mod.instance.Helper.Translation.Get("QuestData.149"),
-
-                description = Mod.instance.Helper.Translation.Get("QuestData.151"),
-
-                instruction = Mod.instance.Helper.Translation.Get("QuestData.153"),
-
-                before = new()
-                {
-
-                    [CharacterHandle.characters.Effigy] = new()
-                    {
-                        prompt = true,
-                        intro = Mod.instance.Helper.Translation.Get("QuestData.161") +
-                        Mod.instance.Helper.Translation.Get("QuestData.162"),
-
-                    }
-                },
-
-            };
-
-            quests.Add(herbalism.name, herbalism);
-
-            // =====================================================
             // WEALD LESSONS
 
             Quest wealdOne = new()
@@ -243,9 +202,47 @@ namespace StardewDruid.Data
                     }
                 },
 
+                effect = EffectsData.EffectPage.clearance,
+
             };
 
             quests.Add(wealdOne.name, wealdOne);
+
+            // =====================================================
+            // HERBALISM
+
+            Quest herbalism = new()
+            {
+
+                name = QuestHandle.herbalism,
+
+                icon = IconData.displays.chaos,
+
+                type = Quest.questTypes.miscellaneous,
+
+                give = Quest.questGivers.none,
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.149"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.151"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.153"),
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Effigy] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.161") +
+                        Mod.instance.Helper.Translation.Get("QuestData.162"),
+
+                    }
+                },
+
+            };
+
+            quests.Add(herbalism.name, herbalism);
 
             // -----------------------------------------------------
 
@@ -284,6 +281,8 @@ namespace StardewDruid.Data
 
                     }
                 },
+
+                effect = EffectsData.EffectPage.gentleTouch,
 
             };
 
@@ -333,6 +332,8 @@ namespace StardewDruid.Data
                     }
                 },
 
+                effect = EffectsData.EffectPage.cultivate,
+
             };
 
             quests.Add(wealdThree.name, wealdThree);
@@ -381,6 +382,8 @@ namespace StardewDruid.Data
                     }
                 },
 
+                effect = EffectsData.EffectPage.wildgrowth,
+
             };
 
             quests.Add(wealdFour.name, wealdFour);
@@ -424,9 +427,105 @@ namespace StardewDruid.Data
                     }
                 },
 
+                effect = EffectsData.EffectPage.rockfall,
+
             };
 
             quests.Add(wealdFive.name, wealdFive);
+
+            // -----------------------------------------------------
+
+            Quest bombs = new()
+            {
+
+                name = QuestHandle.bombs,
+
+                icon = IconData.displays.bombs,
+
+                type = Quest.questTypes.lesson,
+
+                give = Quest.questGivers.dialogue,
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.403.1"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.403.2"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.403.3"),
+
+                progression = Mod.instance.Helper.Translation.Get("QuestData.403.4"),
+
+                notes = new() {
+                    Mod.instance.Helper.Translation.Get("QuestData.403.5"),
+                    Mod.instance.Helper.Translation.Get("QuestData.403.6"),
+                },
+
+                requirement = 10,
+
+                reward = 500,
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Effigy] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.403.7"),
+
+                    }
+                },
+
+                effect = EffectsData.EffectPage.bomblobbing,
+
+            };
+
+            quests.Add(bombs.name, bombs);
+
+            // -----------------------------------------------------
+
+            Quest chargeUps = new()
+            {
+
+                name = QuestHandle.chargeUps,
+
+                icon = IconData.displays.chaos,
+
+                type = Quest.questTypes.lesson,
+
+                give = Quest.questGivers.dialogue,
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.393.4"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.393.5"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.393.6"),
+
+                progression = Mod.instance.Helper.Translation.Get("QuestData.393.7"),
+
+                notes = new() {
+                    Mod.instance.Helper.Translation.Get("QuestData.393.8"),
+                    Mod.instance.Helper.Translation.Get("QuestData.393.9"),
+                },
+
+                requirement = 10,
+
+                reward = 500,
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Effigy] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.393.10"),
+
+                    }
+                },
+
+                effect = EffectsData.EffectPage.sap,
+
+            };
+
+            quests.Add(chargeUps.name, chargeUps);
 
             // =====================================================
             // WEALD CHALLENGE
@@ -450,7 +549,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.weald,
+                triggerRite = Rite.Rites.weald,
 
                 origin = new Vector2(27f, 18f) * 64,
 
@@ -532,7 +631,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.weald,
+                triggerRite = Rite.Rites.weald,
 
                 origin = new Vector2(63, 16) * 64,
 
@@ -584,7 +683,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.none,
+                triggerRite = Rite.Rites.none,
 
                 origin = new Vector2(30, 23) * 64,
 
@@ -690,6 +789,8 @@ namespace StardewDruid.Data
                     }
                 },
 
+                effect = EffectsData.EffectPage.sunder,
+
             };
 
             quests.Add(mistsOne.name, mistsOne);
@@ -736,6 +837,8 @@ namespace StardewDruid.Data
 
                     }
                 },
+
+                effect = EffectsData.EffectPage.artifice,
 
             };
 
@@ -784,6 +887,8 @@ namespace StardewDruid.Data
                     }
                 },
 
+                effect = EffectsData.EffectPage.rodMaster,
+
             };
 
             quests.Add(mistsThree.name, mistsThree);
@@ -825,6 +930,8 @@ namespace StardewDruid.Data
                     }
                 },
 
+                effect = EffectsData.EffectPage.smite,
+
             };
 
             quests.Add(mistsFour.name, mistsFour);
@@ -851,7 +958,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.mists,
+                triggerRite = Rite.Rites.mists,
 
                 origin = new Vector2(40, 9) * 64,
 
@@ -899,7 +1006,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.none,
+                triggerRite = Rite.Rites.none,
 
                 origin = new Vector2(12f, 13f) * 64,
 
@@ -1064,7 +1171,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.weald,
+                triggerRite = Rite.Rites.weald,
 
                 origin = new Vector2(14, 22) * 64,
 
@@ -1113,7 +1220,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.stars,
+                triggerRite = Rite.Rites.stars,
 
                 origin = new Vector2(26, 19) * 64,
 
@@ -1176,6 +1283,43 @@ namespace StardewDruid.Data
             quests.Add(swordStars.name, swordStars);
 
             // =====================================================
+            // Workshop
+
+            Quest workshop = new()
+            {
+
+                name = QuestHandle.orders,
+
+                icon = IconData.displays.chaos,
+
+                type = Quest.questTypes.miscellaneous,
+
+                give = Quest.questGivers.none,
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.386.1"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.386.2"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.386.3"),
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Revenant] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.386.4"),
+
+                    }
+                },
+
+                effect = EffectsData.EffectPage.goods,
+
+            };
+
+            quests.Add(workshop.name, workshop);
+
+            // =====================================================
             // STARS LESSONS
 
             Quest starsOne = new()
@@ -1214,6 +1358,8 @@ namespace StardewDruid.Data
 
                     }
                 },
+
+                effect = EffectsData.EffectPage.meteorRain,
 
             };
 
@@ -1273,10 +1419,65 @@ namespace StardewDruid.Data
 
                 },
 
+                effect = EffectsData.EffectPage.gravityWell,
+
             };
 
             quests.Add(starsTwo.name, starsTwo);
 
+            // =====================================================
+            // Captures
+
+            Quest captures = new()
+            {
+
+                name = QuestHandle.captures,
+
+                icon = IconData.displays.pals,
+
+                type = Quest.questTypes.lesson,
+
+                give = Quest.questGivers.dialogue,
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.391.92"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.391.93"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.391.94"),
+
+                notes = new()
+                {
+                    Mod.instance.Helper.Translation.Get("QuestData.391.97"),
+                    Mod.instance.Helper.Translation.Get("QuestData.391.98"),
+                    Mod.instance.Helper.Translation.Get("QuestData.391.99"),
+                    Mod.instance.Helper.Translation.Get("QuestData.391.100"),
+                    Mod.instance.Helper.Translation.Get("QuestData.391.101"),
+                },
+
+                progression = Mod.instance.Helper.Translation.Get("QuestData.391.103"),
+
+                requirement = 1,
+
+                reward = 1000,
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Revenant] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.391.111") +
+                        Mod.instance.Helper.Translation.Get("QuestData.391.112"),
+
+                    },
+
+                },
+
+                effect = EffectsData.EffectPage.monsters,
+
+            };
+
+            quests.Add(captures.name, captures);
 
             // =====================================================
             // STARS CHALLENGE
@@ -1300,7 +1501,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.stars,
+                triggerRite = Rite.Rites.stars,
 
                 origin = new Vector2(29, 17) * 64,
 
@@ -1387,7 +1588,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.mists,
+                triggerRite = Rite.Rites.mists,
 
                 origin = new Vector2(45, 16) * 64,
 
@@ -1618,6 +1819,51 @@ namespace StardewDruid.Data
             quests.Add(approachJester.name, approachJester);
 
             // =====================================================
+            // Distillery
+
+            Quest distillery = new()
+            {
+
+                name = QuestHandle.distillery,
+
+                icon = IconData.displays.chaos,
+
+                type = Quest.questTypes.miscellaneous,
+
+                give = Quest.questGivers.none,
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.386.5"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.386.6"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.386.7"),
+
+                notes = new()
+                {
+                    Mod.instance.Helper.Translation.Get("QuestData.393.1"),
+                    Mod.instance.Helper.Translation.Get("QuestData.393.2"),
+                    Mod.instance.Helper.Translation.Get("QuestData.393.3"),
+                    Mod.instance.Helper.Translation.Get("QuestData.393.4"),
+                },
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Revenant] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.386.8"),
+
+                    }
+                },
+
+                effect = EffectsData.EffectPage.distillery,
+
+            };
+
+            quests.Add(distillery.name, distillery);
+
+            // =====================================================
             // SWORD (SCYTHE) FATES
 
             Quest swordFates = new()
@@ -1639,7 +1885,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.none,
+                triggerRite = Rite.Rites.none,
 
                 origin = new Vector2(67, 12) * 64,
 
@@ -1730,6 +1976,8 @@ namespace StardewDruid.Data
                     }
                 },
 
+                effect = EffectsData.EffectPage.whisk,
+
             };
 
             quests.Add(fatesOne.name, fatesOne);
@@ -1776,6 +2024,8 @@ namespace StardewDruid.Data
                     }
                 },
 
+                effect = EffectsData.EffectPage.curses,
+
             };
 
             quests.Add(fatesTwo.name, fatesTwo);
@@ -1815,6 +2065,8 @@ namespace StardewDruid.Data
                     }
                 },
 
+                effect = EffectsData.EffectPage.tricks,
+
             };
 
             quests.Add(fatesThree.name, fatesThree);
@@ -1841,7 +2093,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 1200,
 
-                triggerRite = Rite.rites.none,
+                triggerRite = Rite.Rites.none,
 
                 origin = new Vector2(29f, 56f) * 64,
 
@@ -1962,6 +2214,8 @@ namespace StardewDruid.Data
 
                 },
 
+                effect = EffectsData.EffectPage.enchant,
+
             };
 
             quests.Add(fatesFour.name, fatesFour);
@@ -1986,7 +2240,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 1700,
 
-                triggerRite = Rite.rites.none,
+                triggerRite = Rite.Rites.none,
 
                 origin = new Vector2(30, 20) * 64,
 
@@ -2071,7 +2325,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.none,
+                triggerRite = Rite.Rites.none,
 
                 origin = new Vector2(27, 15) * 64,
 
@@ -2176,7 +2430,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.fates,
+                triggerRite = Rite.Rites.fates,
 
                 origin = new Vector2(45, 12) * 64,
 
@@ -2222,7 +2476,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.weald,
+                triggerRite = Rite.Rites.weald,
 
                 origin = new Vector2(51, 8) * 64,
 
@@ -2289,6 +2543,8 @@ namespace StardewDruid.Data
 
                 },
 
+                effect = EffectsData.EffectPage.dragonFlight,
+
             };
 
             quests.Add(etherOne.name, etherOne);
@@ -2328,6 +2584,8 @@ namespace StardewDruid.Data
 
                     }
                 },
+
+                effect = EffectsData.EffectPage.dragonBreath,
 
             };
 
@@ -2369,6 +2627,8 @@ namespace StardewDruid.Data
                     }
                 },
 
+                effect = EffectsData.EffectPage.dragonDive,
+
             };
 
             quests.Add(etherThree.name, etherThree);
@@ -2396,7 +2656,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.none,
+                triggerRite = Rite.Rites.none,
 
                 origin = new Vector2(60f, 20f) * 64,
 
@@ -2518,6 +2778,8 @@ namespace StardewDruid.Data
 
                 },
 
+                effect = EffectsData.EffectPage.dragonTreasure,
+
             };
 
             quests.Add(etherFour.name, etherFour);
@@ -2544,7 +2806,7 @@ namespace StardewDruid.Data
 
                 triggerTime = 0,
 
-                triggerRite = Rite.rites.ether,
+                triggerRite = Rite.Rites.ether,
 
                 origin = new Vector2(16, 7) * 64,
 
@@ -2586,11 +2848,11 @@ namespace StardewDruid.Data
 
                 trigger = true,
 
-                triggerLocation = LocationHandle.druid_gate_name,
+                triggerLocation = LocationHandle.druid_temple_name,
 
-                triggerRite = Rite.rites.none,
+                triggerRite = Rite.Rites.none,
 
-                origin = new Vector2(28, 23) * 64,
+                origin = new Vector2(27, 23) * 64,
 
                 title = Mod.instance.Helper.Translation.Get("QuestData.2395"),
 
@@ -2672,7 +2934,7 @@ namespace StardewDruid.Data
 
                 triggerLocation = LocationHandle.druid_clearing_name,
 
-                triggerRite = Rite.rites.none,
+                triggerRite = Rite.Rites.none,
 
                 origin = new Vector2(28, 15) * 64,
 
@@ -2765,6 +3027,8 @@ namespace StardewDruid.Data
 
                 },
 
+                effect = EffectsData.EffectPage.corvidsSummon,
+
             };
 
             quests.Add(bonesOne.name, bonesOne);
@@ -2806,6 +3070,8 @@ namespace StardewDruid.Data
                     },
 
                 },
+
+                effect = EffectsData.EffectPage.corvidsRetrieve,
 
             };
 
@@ -2856,6 +3122,8 @@ namespace StardewDruid.Data
 
                 },
 
+                effect = EffectsData.EffectPage.corvidsOpportunist,
+
             };
 
             quests.Add(bonesThree.name, bonesThree);
@@ -2878,7 +3146,7 @@ namespace StardewDruid.Data
 
                 triggerLocation = LocationHandle.druid_lair_name,
 
-                triggerRite = Rite.rites.bones,
+                triggerRite = Rite.Rites.bones,
 
                 origin = new Vector2(27, 18) * 64,
 
@@ -3042,9 +3310,9 @@ namespace StardewDruid.Data
 
                 triggerTime = 1700,
 
-                triggerLocation = LocationHandle.druid_gate_name,
+                triggerLocation = LocationHandle.druid_temple_name,
 
-                origin = new Vector2(27, 28) * 64,
+                origin = new Vector2(26, 28) * 64,
 
                 title = Mod.instance.Helper.Translation.Get("QuestData.343.1.2"),
 
@@ -3117,9 +3385,9 @@ namespace StardewDruid.Data
 
                 trigger = true,
 
-                triggerLocation = LocationHandle.druid_gate_name,
+                triggerLocation = LocationHandle.druid_sanctuary_name,
 
-                origin = new Vector2(27, 12) * 64,
+                origin = new Vector2(26, 12) * 64,
 
                 title = Mod.instance.Helper.Translation.Get("QuestData.361.1"),
 
@@ -3166,7 +3434,7 @@ namespace StardewDruid.Data
 
                 triggerLocation = LocationHandle.druid_moors_name,
 
-                origin = new Vector2(27, 25) * 64,
+                origin = new Vector2(27, 27) * 64,
 
                 title = Mod.instance.Helper.Translation.Get("QuestData.361.7"),
 
@@ -3194,6 +3462,118 @@ namespace StardewDruid.Data
             };
 
             quests.Add(challengeMoors.name, challengeMoors);
+
+            // =====================================================
+            // Heirs One
+
+            Quest heirsOne = new()
+            {
+
+                name = QuestHandle.heirsOne,
+
+                icon = IconData.displays.heroes,
+
+                type = Quest.questTypes.lesson,
+
+                give = Quest.questGivers.dialogue,
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.391.59"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.391.60") +
+                Mod.instance.Helper.Translation.Get("QuestData.391.61"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.391.62"),
+
+                notes = new()
+                {
+                    Mod.instance.Helper.Translation.Get("QuestData.391.65"),
+                    Mod.instance.Helper.Translation.Get("QuestData.391.66"),
+                    Mod.instance.Helper.Translation.Get("QuestData.391.67"),
+
+                },
+
+                progression = Mod.instance.Helper.Translation.Get("QuestData.391.69"),
+
+                requirement = 1,
+
+                reward = 1000,
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Aldebaran] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.391.77") +
+                        Mod.instance.Helper.Translation.Get("QuestData.391.78") +
+                        Mod.instance.Helper.Translation.Get("QuestData.391.79"),
+
+                    },
+
+                },
+
+                effect = EffectsData.EffectPage.ledgerOfTheCircle,
+
+            };
+
+            quests.Add(heirsOne.name, heirsOne);
+
+            // =====================================================
+            // Heirs Two
+
+            Quest heirsTwo = new()
+            {
+
+                name = QuestHandle.heirsTwo,
+
+                icon = IconData.displays.chaos,
+
+                type = Quest.questTypes.lesson,
+
+                give = Quest.questGivers.dialogue,
+
+                title = Mod.instance.Helper.Translation.Get("QuestData.391.125"),
+
+                description = Mod.instance.Helper.Translation.Get("QuestData.391.126") +
+                Mod.instance.Helper.Translation.Get("QuestData.391.127"),
+
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.391.128"),
+
+                notes = new()
+                {
+                    Mod.instance.Helper.Translation.Get("QuestData.391.131"),
+                    Mod.instance.Helper.Translation.Get("QuestData.391.132"),
+                    Mod.instance.Helper.Translation.Get("QuestData.391.133"),
+                    Mod.instance.Helper.Translation.Get("QuestData.391.134")
+
+                },
+
+                progression = Mod.instance.Helper.Translation.Get("QuestData.391.136"),
+
+                requirement = 1,
+
+                reward = 1000,
+
+                before = new()
+                {
+
+                    [CharacterHandle.characters.Shadowtin] = new()
+                    {
+                        prompt = true,
+                        intro = Mod.instance.Helper.Translation.Get("QuestData.391.144") +
+                        Mod.instance.Helper.Translation.Get("QuestData.391.145") +
+                        Mod.instance.Helper.Translation.Get("QuestData.391.146") +
+                        Mod.instance.Helper.Translation.Get("QuestData.391.147"),
+
+                    },
+
+                },
+
+                effect = EffectsData.EffectPage.goods,
+
+            };
+
+            quests.Add(heirsTwo.name, heirsTwo);
 
             // RETURN
 
@@ -3234,6 +3614,8 @@ namespace StardewDruid.Data
 
         public Vector2 origin = Vector2.Zero;
 
+        public EffectsData.EffectPage effect = EffectsData.EffectPage.none;
+
         // -----------------------------------------------
         // trigger
 
@@ -3243,7 +3625,7 @@ namespace StardewDruid.Data
 
         public int triggerTime;
 
-        public Rite.rites triggerRite = Rite.rites.none;
+        public Rite.Rites triggerRite = Rite.Rites.none;
 
         // -----------------------------------------------
         // journal

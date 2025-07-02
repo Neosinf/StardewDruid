@@ -1,11 +1,14 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Force.DeepCloner;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Dialogue;
 using StardewDruid.Render;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Companions;
 using StardewValley.Extensions;
 using StardewValley.Minigames;
 using StardewValley.Monsters;
@@ -16,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using xTile.Dimensions;
 
 namespace StardewDruid.Data
 {
@@ -43,6 +47,7 @@ namespace StardewDruid.Data
 
             divineCharge,
             feathers,
+            bonesCharge,
 
         }
 
@@ -103,6 +108,30 @@ namespace StardewDruid.Data
 
             powderbox,
             heroes,
+            holy,
+            pals,
+            goods,
+            shield,
+
+            vitality,
+            strength,
+            speed,
+            omens,
+            axe,
+            pickaxe,
+            
+            hoe,
+            watercan,
+            fatigue,
+            fullheart,
+            halfheart,
+            chargeweald,
+
+            chargemists,
+            chargestars,
+            chargefates,
+            chargebones,
+            tree,
 
         }
 
@@ -120,39 +149,39 @@ namespace StardewDruid.Data
 
         }
 
-        public Dictionary<Rite.rites, decorations> riteDecorations = new()
+        public Dictionary<Rite.Rites, decorations> riteDecorations = new()
         {
 
-            [Rite.rites.weald] = decorations.weald,
+            [Rite.Rites.weald] = decorations.weald,
 
-            [Rite.rites.mists] = decorations.mists,
+            [Rite.Rites.mists] = decorations.mists,
 
-            [Rite.rites.stars] = decorations.stars,
+            [Rite.Rites.stars] = decorations.stars,
 
-            [Rite.rites.fates] = decorations.fates,
+            [Rite.Rites.fates] = decorations.fates,
 
-            [Rite.rites.ether] = decorations.ether,
+            [Rite.Rites.ether] = decorations.ether,
 
-            [Rite.rites.bones] = decorations.bones,
+            [Rite.Rites.bones] = decorations.bones,
 
         };
 
-        public Dictionary<Rite.rites, displays> riteDisplays = new()
+        public Dictionary<Rite.Rites, displays> riteDisplays = new()
         {
 
-            [Rite.rites.none] = displays.chaos,
+            [Rite.Rites.none] = displays.chaos,
 
-            [Rite.rites.weald] = displays.weald,
+            [Rite.Rites.weald] = displays.weald,
 
-            [Rite.rites.mists] = displays.mists,
+            [Rite.Rites.mists] = displays.mists,
 
-            [Rite.rites.stars] = displays.stars,
+            [Rite.Rites.stars] = displays.stars,
 
-            [Rite.rites.fates] = displays.fates,
+            [Rite.Rites.fates] = displays.fates,
 
-            [Rite.rites.ether] = displays.ether,
+            [Rite.Rites.ether] = displays.ether,
 
-            [Rite.rites.bones] = displays.bones,
+            [Rite.Rites.bones] = displays.bones,
 
         };
 
@@ -165,15 +194,15 @@ namespace StardewDruid.Data
             impact,
             flashbang,
             glare,
-            splash,
             sparkle,
+            splash,
             fish,
 
             boltnode,
             sparknode,
             clouds,
             puff,
-            splatter,
+            empty1,
             skull,
 
             plume,
@@ -181,10 +210,19 @@ namespace StardewDruid.Data
             smoke,
             love,
             sparkbang,
-            empty2,
+            crit,
+
+            splat,
+            splatter,
+            splattwo,
+            splattertwo,
+            bomb,
+            holy,
 
             supree,
-            bomb,
+            dustimpact,
+            bigimpact,
+            holyimpact,
             mists,
             summoning,
             shockwave,
@@ -192,6 +230,14 @@ namespace StardewDruid.Data
             flasher,
             spiral,
             deathbomb,
+            grasp,
+            roots,
+
+            aard,
+            igni,
+            axii,
+            quen,
+            yrden,
 
         }
 
@@ -200,6 +246,8 @@ namespace StardewDruid.Data
         public Texture2D impactsTextureTwo;
 
         public Texture2D impactsTextureThree;
+
+        public Texture2D impactsTextureFour;
 
         public Texture2D swirlsTexture;
 
@@ -225,12 +273,11 @@ namespace StardewDruid.Data
 
         public Texture2D circleTexture;
 
-        
+        public Texture2D witchersignsTexture;
+
         public enum tilesheets
         {
             none,
-            outdoors,
-            outdoorsTwo,
             grove,
             spring,
             graveyard,
@@ -241,18 +288,22 @@ namespace StardewDruid.Data
             court,
             tomb,
             engineum,
-            gate,
             pavement,
             ritual,
             access,
-            
-            ground,
+            sanctuary,
+            temple,
+
             groundspring,
             groundsummer,
             groundautumn,
             groundwinter,
+            
+            cavern,
+            cavernwater,
+            cavernground,
 
-            mounds,
+            moors,
             skyblue,
             skynight,
             overlook,
@@ -268,7 +319,15 @@ namespace StardewDruid.Data
             hawthornshade,
             holly,
             hollyleaf,
+
             flowers,
+            vessels,
+            candles,
+            mushrooms,
+            waterflowers,
+
+            ray
+
         }
 
         public Dictionary<tilesheets, Texture2D> sheetTextures = new();
@@ -331,7 +390,7 @@ namespace StardewDruid.Data
             book_manual, 
             book_druid, 
             book_chart,
-            book_knight,
+            book_annal,
 
             box_measurer,
             box_mortician,
@@ -349,7 +408,31 @@ namespace StardewDruid.Data
 
             restore_goshuin,
             restore_offering,
-            restore_cloth
+            restore_cloth,
+            restore_3,
+            restore_4,
+            restore_5,
+
+            book_knight,
+            testament_1,
+            testament_2,
+            testament_3,
+            testament_4,
+            testament_5,
+
+            monsterbadge,
+            monster_bat,
+            monster_slime,
+            monster_spirit,
+            monster_ghost,
+            monster_serpent,
+
+            crest_church,
+            crest_dwarf,
+            crest_associate,
+            crest_smuggler,
+            crest_4,
+            crest_5,
 
         }
 
@@ -379,7 +462,7 @@ namespace StardewDruid.Data
             celeri2,
             celeri3,
             celeri4,
-            voil,
+            blank1,
             
             lignaGray,
             lignaGray1,
@@ -400,42 +483,153 @@ namespace StardewDruid.Data
             celeriGray2,
             celeriGray3,
             celeriGray4,
-            voilGray,
+            blank1Gray,
 
             // powders
             imbus,
             amori,
             donis,
+            rapidus,
+            blank2,
+            coruscant,
+
             concutere,
             jumere,
             felis,
+            sanctus,
+            blank3,
+            voil,
+
+            captis,
+            ferrum_captis,
+            aurum_captis,
+            diamas_captis,
+            capesso,
+            blank5,
 
             imbusGray,
             amoriGray,
             donisGray,
+            rapidusGray,
+            blank2Gray,
+            coruscantGray,
+
             concutereGray,
             jumereGray,
             felisGray,
+            sanctusGray,
+            blank3Gray,
+            voilGray,
+
+            captisGray,
+            ferrum_captisGray,
+            aurum_captisGray,
+            diamas_captisGray,
+            capessoGray,
+            blank5Gray,
+
+            omenFeather,
+            omenTuft,
+            omenShell,
+            omenTusk,
+            omenNest,
+            omenGlass,
+
+            omenDown,
+            omenCoral,
+            omenBloom,
+            trophyShroom,
+            trophyEye,
+            trophyPumpkin,
+
+            trophyPearl,
+            trophyTooth,
+            trophyShell,
+            trophySpike,
+            trophySeed,
+            trophyDragon,
+
+            omenFeatherGray,
+            omenTuftGray,
+            omenShellGray,
+            omenTuskGray,
+            omenNestGray,
+            omenGlassGray,
+
+            omenDownGray,
+            omenCoralGray,
+            omenBloomGray,
+            trophyShroomGray,
+            trophyEyeGray,
+            trophyPumpkinGray,
+
+            trophyPearlGray,
+            trophyToothGray,
+            trophyShellGray,
+            trophySpikeGray,
+            trophySeedGray,
+            trophyDragonGray,
 
         }
 
         public Texture2D potionsTexture;
 
+        public enum workshops
+        {
+            none,
+
+            potions,
+            powders,
+            whiskey,
+            brandy,
+            
+            weapons,
+            supplies,
+            trophies,
+            omens,
+            
+            crushers,
+            press,
+            kiln,
+            mashtun,
+
+            fermentation,
+            distillery,
+            barrel,
+            packer,
+
+        }
+
+        public Texture2D workshopTexture;
+
         public enum warps
         {
 
             portal,
+            death,
+            capture,
             smoke,
             corvids,
             circle,
+            mist,
 
         }
+
+        public Texture2D missileTexture;
+
+        public Texture2D missileTextureTwo;
 
         public Texture2D boltTexture;
 
         public Texture2D laserTexture;
 
         public Texture2D lightningTexture;
+
+        public Texture2D judgementTexture;
+
+        public Texture2D artemisTexture;
+
+        public Texture2D graspTexture;
 
         public Texture2D warpTexture;
 
@@ -455,7 +649,15 @@ namespace StardewDruid.Data
 
         public Texture2D shieldTexture;
 
+        public Texture2D blobTexture;
+
+        public Texture2D hatTexture;
+
         public Microsoft.Xna.Framework.Rectangle shadowRectangle;
+
+        public double glyphTime;
+
+        public string glyphSpot;
 
         public enum schemes
         {
@@ -474,6 +676,8 @@ namespace StardewDruid.Data
             stardew,
             wisps,
             white,
+            gray,
+            darkgray,
 
             rock,
             rockTwo,
@@ -512,6 +716,8 @@ namespace StardewDruid.Data
             [schemes.snazzle] = new(214, 0, 175),
             [schemes.stardew] = new(210,164,89),
             [schemes.white] = Microsoft.Xna.Framework.Color.White,
+            [schemes.gray] = Microsoft.Xna.Framework.Color.Gray,
+            [schemes.darkgray] = Microsoft.Xna.Framework.Color.DarkGray,
 
             [schemes.rock] = new(120, 154, 160),
             [schemes.rockTwo] = new(196, 164, 122),
@@ -543,6 +749,8 @@ namespace StardewDruid.Data
             [schemes.stars] = new() { new(255, 230, 166), new(255, 173, 84), new(231, 102, 84), },
             [schemes.fates] = new() { new(119, 75, 131), new(59, 55, 100), new(37, 34, 74), new(236, 118, 124), },
             [schemes.ether] = new() { new(111, 203, 220), new(84, 163, 218), new(13, 114, 185), },
+            [schemes.bones] = new() { new(81, 115, 131), new(51, 85, 101), new(21, 55, 71), },
+            
 
             [schemes.death] = new() { new(109, 175, 156), new(119, 201, 177),  new(162, 216, 202), },
             [schemes.golden] = new() { new(255, 250, 194), new(255, 232, 155), new(251, 201, 38), },
@@ -568,11 +776,15 @@ namespace StardewDruid.Data
 
             impactsTextureThree = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ImpactsThree.png"));
 
+            impactsTextureFour = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ImpactsFour.png"));
+
             swirlsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Swirl.png"));
 
             skyTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Skies.png"));
 
             circleTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Circle.png"));
+
+            witchersignsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WitcherSigns.png"));
 
 
             sheetTextures[tilesheets.grove] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Grove.png"));
@@ -596,7 +808,9 @@ namespace StardewDruid.Data
             sheetTextures[tilesheets.engineum] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Engineum.png"));
 
             
-            sheetTextures[tilesheets.gate] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Gate.png"));
+            sheetTextures[tilesheets.temple] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Temple.png"));
+
+            sheetTextures[tilesheets.sanctuary] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Sanctuary.png"));
 
             sheetTextures[tilesheets.pavement] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Pavement.png"));
 
@@ -604,8 +818,6 @@ namespace StardewDruid.Data
 
             sheetTextures[tilesheets.access] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Access.png"));
 
-
-            sheetTextures[tilesheets.ground] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "GroundSpring.png"));
 
             sheetTextures[tilesheets.groundspring] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "GroundSpring.png"));
 
@@ -616,7 +828,14 @@ namespace StardewDruid.Data
             sheetTextures[tilesheets.groundwinter] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "GroundWinter.png"));
 
 
-            sheetTextures[tilesheets.mounds] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Mounds.png"));
+            sheetTextures[tilesheets.cavern] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Cavern.png"));
+
+            sheetTextures[tilesheets.cavernwater] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "CavernWater.png"));
+
+            sheetTextures[tilesheets.cavernground] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "CavernGround.png"));
+
+
+            sheetTextures[tilesheets.moors] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Moors.png"));
 
             sheetTextures[tilesheets.skyblue] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Skyblue.png"));
 
@@ -649,10 +868,27 @@ namespace StardewDruid.Data
 
             sheetTextures[tilesheets.flowers] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Flowers.png"));
 
+            sheetTextures[tilesheets.vessels] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Vessels.png"));
+
+            sheetTextures[tilesheets.candles] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Candles.png"));
+
+            sheetTextures[tilesheets.mushrooms] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Mushrooms.png"));
+
+            sheetTextures[tilesheets.waterflowers] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Waterflower.png"));
+            
+            sheetTextures[tilesheets.ray] = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Ray.png"));
+
 
             relicsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Relics.png"));
 
             potionsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Potions.png"));
+
+            workshopTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Workshop.png"));
+
+
+            missileTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Missiles.png"));
+
+            missileTextureTwo = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "MissilesTwo.png"));
 
             boltTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Bolt.png"));
 
@@ -660,9 +896,15 @@ namespace StardewDruid.Data
 
             lightningTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Lightning.png"));
 
+            artemisTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Artemis.png"));
+
+            judgementTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Judgement.png"));
+
             warpTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Warp.png"));
 
             gravityTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Gravity.png"));
+
+            graspTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Grasp.png"));
 
             crateTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "DragonCrate.png"));
 
@@ -676,20 +918,12 @@ namespace StardewDruid.Data
 
             shieldTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Shield.png"));
 
+            blobTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Blob.png"));
+
+            hatTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Hats.png"));
 
             shadowRectangle = CursorRectangle(cursors.shadow);
 
-            LoadNuances();
-
-
-        }
-
-        public void LoadNuances()
-        {
-
-            sheetTextures[tilesheets.outdoors] = Mod.instance.Helper.GameContent.Load<Texture2D>(Path.Combine("Maps", Game1.currentSeason + "_outdoorsTileSheet"));
-
-            sheetTextures[tilesheets.outdoorsTwo] = Mod.instance.Helper.GameContent.Load<Texture2D>(Path.Combine("Maps", Game1.currentSeason + "_outdoorsTileSheet2"));
 
         }
 
@@ -720,37 +954,12 @@ namespace StardewDruid.Data
                 case tilesheets.engineum: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Engineum.png"));
 
                 
-                case tilesheets.gate: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Gate.png"));
-
-                case tilesheets.pavement: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Pavement.png"));
+                case tilesheets.temple: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Temple.png"));
 
                 case tilesheets.ritual: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Ritual.png"));
 
                 case tilesheets.access: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Access.png"));
 
-
-                case tilesheets.ground:
-
-                    switch (Game1.season)
-                    {
-
-                        default:
-
-                            return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "GroundAutumn.png"));
-
-                        case Season.Summer:
-
-                            return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "GroundSummer.png"));
-
-                        case Season.Fall:
-
-                            return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "GroundAutumn.png"));
-
-                        case Season.Winter:
-
-                            return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "GroundWinter.png"));
-
-                    }
 
                 case tilesheets.groundspring: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "GroundSpring.png"));
 
@@ -761,7 +970,14 @@ namespace StardewDruid.Data
                 case tilesheets.groundwinter: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "GroundWinter.png"));
 
 
-                case tilesheets.mounds: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Mounds.png"));
+                case tilesheets.cavern: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Cavern.png"));
+
+                case tilesheets.cavernwater: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "CavernWater.png"));
+
+                case tilesheets.cavernground: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "CavernGround.png"));
+
+
+                case tilesheets.moors: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Moors.png"));
 
                 case tilesheets.skyblue: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Skyblue.png"));
 
@@ -792,12 +1008,18 @@ namespace StardewDruid.Data
 
                 case tilesheets.hollyleaf: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "HollyLeaf.png"));
 
+
                 case tilesheets.flowers: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Flowers.png"));
+
+                case tilesheets.vessels: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Vessels.png"));
+
+                case tilesheets.candles: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Candles.png"));
+
+                case tilesheets.mushrooms: return Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Sheets", "Mushrooms.png"));
 
             }
 
         }
-
 
         public Microsoft.Xna.Framework.Color SchemeColour(schemes scheme)
         {
@@ -926,6 +1148,17 @@ namespace StardewDruid.Data
 
         }
 
+        public static Microsoft.Xna.Framework.Rectangle WorkshopRectangles(workshops workshop)
+        {
+
+            if (workshop == workshops.none) { return new(); }
+
+            int slot = Convert.ToInt32(workshop) - 1;
+
+            return new(slot % 4 * 32, slot == 0 ? 0 : slot / 4 * 32, 32, 32);
+
+        }
+
         public Microsoft.Xna.Framework.Rectangle QuestDisplay(Quest.questTypes questType)
         {
             switch (questType)
@@ -1030,6 +1263,7 @@ namespace StardewDruid.Data
                     return;
 
                 case impacts.impact:
+                case impacts.bomb:
 
                     additional.alpha = 0.85f;
 
@@ -1041,13 +1275,12 @@ namespace StardewDruid.Data
 
                     break;
 
+                case impacts.splat:
                 case impacts.splatter:
 
-                    size += 0.5f;
+                    additional.alpha = 0.8f;
 
-                    additional.color = SchemeColour(additional.scheme);
-
-                    additional.alpha = 0.7f;
+                    additional.layer -= 0.0128f;
 
                     break;
 
@@ -1063,7 +1296,7 @@ namespace StardewDruid.Data
 
                     additional.flip = Mod.instance.randomIndex.NextBool();
 
-                    additional.rotation = (float)Mod.instance.randomIndex.Next(2);
+                    additional.rotation = Mod.instance.randomIndex.NextBool() ? (float)(Math.PI/2) : 0;
 
                     additional.alpha = 0.75f;
 
@@ -1071,13 +1304,17 @@ namespace StardewDruid.Data
 
                 case impacts.sparknode:
 
+                    impact = impacts.boltnode;
+
                     additional.flip = Mod.instance.randomIndex.NextBool();
+
+                    additional.interval = 50;
 
                     additional.alpha = 1f;
 
                     additional.frames = 4;
 
-                    additional.frame = Mod.instance.randomIndex.Next(2) * 4;
+                    additional.frame = 4;//Mod.instance.randomIndex.Next(2) * 4;
 
                     size = 4;
 
@@ -1101,25 +1338,21 @@ namespace StardewDruid.Data
 
                 case impacts.skull:
 
-                    additional.alpha = 0.8f;
+                    ImpactAdditional skullAdditional = additional.Copy();
 
-                    additional.color = schemeColours[schemes.death];
+                    skullAdditional.alpha = 0.8f;
 
-                    additional.alphaFade = 0.001f;
+                    skullAdditional.color = schemeColours[schemes.death];
 
-                    CreateImpact(location, origin, IconData.impacts.skull, size + 1, additional);
+                    skullAdditional.alphaFade = 0.001f;
 
-                    additional.alphaFade = 0f;
+                    CreateImpact(location, origin, IconData.impacts.skull, size + 1, skullAdditional);
 
-                    additional.alpha = 0.25f;
+                    //-------------------------------------
 
-                    additional.light = 0f;
+                    CreateDustup(location, origin, size, additional);
 
-                    additional.layerOffset = -0.001f;
-
-                    additional.color = Microsoft.Xna.Framework.Color.White;
-
-                    CreateImpact(location, origin, IconData.impacts.puff, size, additional);
+                    CreateSmoke(location, origin, size, additional);
 
                     return;
 
@@ -1133,29 +1366,29 @@ namespace StardewDruid.Data
 
                     CreateImpact(location, origin, IconData.impacts.skull, size + 1, additional);
 
-                    additional.alphaFade = 0f;
+                    //-------------------------------------
 
-                    additional.alpha = 0.25f;
+                    CreateDustup(location, origin, size, additional);
+
+                    CreateSmoke(location, origin, size, additional);
+
+                    return;
+
+                case impacts.crit:
+
+                    additional.interval = 70;
+
+                    additional.alpha = 0.5f;
+
+                    CreateImpact(location, origin, IconData.impacts.crit, 3f, additional);
 
                     additional.light = 0f;
 
-                    additional.layerOffset = -0.001f;
+                    additional.color = schemeColours[additional.scheme];
 
-                    additional.color = Microsoft.Xna.Framework.Color.White;
+                    additional.alpha = 0.4f;
 
-                    CreateImpact(location, origin, IconData.impacts.puff, size, additional);
-
-                    additional.layerOffset = -0.002f;
-
-                    CreateImpact(location, origin + new Vector2(0, -192), IconData.impacts.smoke, 3f, additional);
-
-                    CreateImpact(location, origin + new Vector2(-160, -48), IconData.impacts.steam, 3f, additional);
-
-                    additional.flip = true;
-
-                    CreateImpact(location, origin + new Vector2(160, -48), IconData.impacts.steam, 3f, additional);
-
-                    CreateImpact(location, origin + new Vector2(0, 48), IconData.impacts.smoke, 3f, additional);
+                    CreateImpact(location, origin, IconData.impacts.sparkbang, 2.5f, additional);
 
                     return;
 
@@ -1172,53 +1405,77 @@ namespace StardewDruid.Data
 
                     break;
 
-                case impacts.bomb:
-
-                    additional.alpha = 0.5f;
-
-                    additional.light = 0f;
-
-                    additional.layerOffset = 0.001f;
-
-                    CreateImpact(location, origin, IconData.impacts.puff, size + 1, additional);
+                case impacts.dustimpact:
 
                     additional.light = 0.005f;
 
                     additional.layerOffset = 0f;
 
-                    additional.alpha = 0.7f;
+                    additional.alpha = 0.8f;
 
                     CreateImpact(location, origin, IconData.impacts.impact, size, additional);
+
+                    //-------------------------------------
+
+                    CreateDustup(location, origin, size, additional);
+
+                    return;
+
+                case impacts.bigimpact:
+
+                    //--------------------------------
+
+                    additional.light = 0.005f;
+
+                    additional.layerOffset = 0f;
+
+                    additional.alpha = 0.8f;
+
+                    additional.delay = 0;
+
+                    CreateImpact(location, origin, IconData.impacts.bomb, size, additional);
+
+                    //-------------------------------------
+
+                    CreateDustup(location, origin, size, additional);
+
+                    CreateSmoke(location, origin, size, additional);
+
+                    return;
+
+                case impacts.holyimpact:
+
+                    additional.light = 0.005f;
+
+                    additional.layerOffset = 0f;
+
+                    additional.alpha = 0.8f;
+
+                    additional.delay = 0;
+
+                    CreateImpact(location, origin, IconData.impacts.holy, size, additional);
+
+                    //-------------------------------------
+
+                    CreateDustup(location, origin, size, additional);
+
+                    CreateSparkles(location, origin, size, additional);
 
                     return;
 
                 case impacts.supree:
 
-                    if(additional.alpha == 0.35f)
-                    {
+                    //-------------------------------------
 
-                        additional.alpha = 0.45f;
+                    CreateSupree(location, origin, size, additional);
 
-                    }
-
-                    additional.layer = 700f;
-
-                    additional.color = gradientColours[additional.scheme][0];
-
-                    additional.light = 0f;
-
-                    CreateImpact(location, origin, IconData.impacts.sparkle, size, additional);
-
-                    additional.color = gradientColours[additional.scheme][1];
-
-                    additional.light = 0.005f;
-
-                    CreateImpact(location, origin, IconData.impacts.sparkle, size+2, additional);
-
+                    CreateSparklesTwo(location, origin, size, additional);
 
                     return;
 
                 case impacts.spiral:
+
+                    additional.interval = 115;
 
                     CreateSwirl(location, origin, Math.Max(4f,size), additional);
 
@@ -1226,7 +1483,42 @@ namespace StardewDruid.Data
 
                 case impacts.mists:
 
-                    AnimateMistic(origin,(int)size);
+                    additional.light = -1f;
+
+                    additional.girth = 2;
+
+                    if(additional.interval == 100f)
+                    {
+
+                        additional.interval = 4000f;
+
+                        additional.alpha = 0.2f;
+
+                    }
+
+                    additional.alphaFade = additional.alpha / additional.interval;
+
+                    additional.frames = 1;
+
+                    additional.layer = -1f;
+
+                    additional.frame = Mod.instance.randomIndex.Next(4) * 2;
+
+                    additional.motion = new Vector2(-0.016f, 0);
+
+                    additional.flip = false;
+
+                    CreateImpact(location, origin, IconData.impacts.clouds, size, additional);
+
+                    ImpactAdditional cloudAdditional = additional.Copy();
+
+                    cloudAdditional.frame = Mod.instance.randomIndex.Next(4) * 2;
+
+                    cloudAdditional.motion = new Vector2(0.016f, 0);
+
+                    cloudAdditional.flip = true;
+
+                    CreateImpact(location, origin + new Vector2(0,16), IconData.impacts.clouds, size, cloudAdditional);
 
                     return;
 
@@ -1252,17 +1544,6 @@ namespace StardewDruid.Data
 
                 case impacts.lovebomb:
 
-                    additional.alpha = 0.5f;
-
-                    additional.light = 0f;
-
-                    CreateImpact(location, origin, IconData.impacts.puff, size + 1, additional);
-
-                    additional.layerOffset = 0.001f;
-
-                    additional.alpha = 0.7f;
-
-                    CreateImpact(location, origin, IconData.impacts.plume, size, additional);
 
                     additional.light = 0.005f;
 
@@ -1274,6 +1555,18 @@ namespace StardewDruid.Data
 
                     CreateImpact(location, origin, IconData.impacts.love, size, additional);
 
+                    //-------------------------------------
+
+                    CreateDustup(location, origin, size, additional);
+
+                    ImpactAdditional loveAdditional = additional.Copy();
+
+                    loveAdditional.layerOffset = 0.001f;
+
+                    loveAdditional.alpha = 0.7f;
+
+                    CreateImpact(location, origin, IconData.impacts.plume, size, loveAdditional);
+
                     return;
 
                 case impacts.flasher:
@@ -1282,42 +1575,163 @@ namespace StardewDruid.Data
 
                     CreateImpact(location, origin, IconData.impacts.flashbang, size, additional);
 
-                    additional.light = 0f;
-
-                    additional.layerOffset = 0.001f;
-
-                    additional.frames = 6;
-
-                    additional.frame = 2;
-
-                    additional.color = SchemeColour(additional.scheme);
-
-                    additional.delay = 150;
-
-                    CreateImpact(location, origin - new Vector2(8 * size), IconData.impacts.sparkbang, size-1, additional);
-
-                    additional.color = Microsoft.Xna.Framework.Color.White;
-
-                    additional.delay = 300;
-
-                    CreateImpact(location, origin + new Vector2(8*size), IconData.impacts.sparkbang, size-1, additional);
-
-                    additional.color = SchemeColour(additional.scheme);
-
-                    additional.delay = 450;
-
-                    CreateImpact(location, origin + new Vector2(12 * size, -12 * size), IconData.impacts.sparkbang, size-1, additional);
-
-                    additional.color = Microsoft.Xna.Framework.Color.White;
-
-                    additional.delay = 600;
-
-                    CreateImpact(location, origin + new Vector2(-12 * size, 12 * size), IconData.impacts.sparkbang, size-1, additional);
+                    CreateBangs(location, origin, size, additional);
 
                     return;
 
+                case impacts.grasp:
 
+                    additional.rotation = (float)(Math.PI) * 0.25f * Mod.instance.randomIndex.Next(8);
 
+                    CreateGrasp(location, origin, Mod.instance.randomIndex.Next(3),4f, additional);
+
+                    return;
+
+                case impacts.roots:
+
+                    additional.alpha = 1f;
+
+                    additional.layer = 700f;
+
+                    additional.color = gradientColours[additional.scheme][0];
+
+                    additional.light = 0.005f;
+
+                    List<int> graspIndex = new()
+                    {
+                        Mod.instance.randomIndex.Next(3),
+                        Mod.instance.randomIndex.Next(3),
+                        Mod.instance.randomIndex.Next(3),
+                        Mod.instance.randomIndex.Next(3),
+                        Mod.instance.randomIndex.Next(3),
+                        Mod.instance.randomIndex.Next(3),
+                        Mod.instance.randomIndex.Next(3),
+                        Mod.instance.randomIndex.Next(3),
+                    };
+
+                    // ============================= First Wave
+
+                    // up
+
+                    additional.rotation = (float)(Math.PI);
+
+                    CreateGrasp(location, origin + new Vector2(0, -208), graspIndex[0],4f, additional);
+
+                    // right
+
+                    additional.rotation = (float)(Math.PI * 1.50);
+
+                    CreateGrasp(location, origin + new Vector2(208, 0), graspIndex[1], 4f, additional);
+
+                    // down
+
+                    additional.rotation = 0f;
+
+                    CreateGrasp(location, origin + new Vector2(0, 208), graspIndex[2], 4f, additional);
+
+                    // left
+
+                    additional.rotation = (float)(Math.PI * 0.50);
+
+                    CreateGrasp(location, origin + new Vector2(-208, 0), graspIndex[3], 4f, additional);
+
+                    // up-right
+
+                    additional.delay = 250;
+
+                    additional.rotation = (float)(Math.PI * 1.25);
+
+                    CreateGrasp(location, origin + new Vector2(160, -160), graspIndex[4], 4f, additional);
+
+                    // down-right
+
+                    additional.rotation = (float)(Math.PI * 1.75);
+
+                    CreateGrasp(location, origin + new Vector2(160, 160), graspIndex[5], 4f, additional);
+
+                    // down-left
+
+                    additional.rotation = (float)(Math.PI * 0.25);
+
+                    CreateGrasp(location, origin + new Vector2(-160, 160), graspIndex[6], 4f, additional);
+
+                    // up-left
+
+                    additional.rotation = (float)(Math.PI * 0.75);
+
+                    CreateGrasp(location, origin + new Vector2(-160, -160), graspIndex[7], 4f, additional);
+
+                    // ============================= Second Wave
+
+                    // up
+
+                    additional.delay = 500;
+
+                    additional.rotation = (float)(Math.PI);
+
+                    CreateGrasp(location, origin + new Vector2(0, -416), graspIndex[0], 3f, additional);
+
+                    // right
+
+                    additional.rotation = (float)(Math.PI * 1.50);
+
+                    CreateGrasp(location, origin + new Vector2(416, 0), graspIndex[1], 3f, additional);
+
+                    // down
+
+                    additional.rotation = 0f;
+
+                    CreateGrasp(location, origin + new Vector2(0, 416), graspIndex[2], 3f, additional);
+
+                    // left
+
+                    additional.rotation = (float)(Math.PI * 0.50);
+
+                    CreateGrasp(location, origin + new Vector2(-416, 0), graspIndex[3], 3f, additional);
+
+                    // up-right
+
+                    additional.delay = 750;
+
+                    additional.rotation = (float)(Math.PI * 1.25);
+
+                    CreateGrasp(location, origin + new Vector2(320, -320), graspIndex[4], 3f, additional);
+
+                    // down-right
+
+                    additional.rotation = (float)(Math.PI * 1.75);
+
+                    CreateGrasp(location, origin + new Vector2(320), graspIndex[5], 3f, additional);
+
+                    // down-left
+
+                    additional.rotation = (float)(Math.PI * 0.25);
+
+                    CreateGrasp(location, origin + new Vector2(-320, 320), graspIndex[6], 3f, additional);
+
+                    // up-left
+
+                    additional.rotation = (float)(Math.PI * 0.75);
+
+                    CreateGrasp(location, origin + new Vector2(-320), graspIndex[7], 3f, additional);
+
+                    return;
+
+                case impacts.aard:
+                    CreateWitcherSign(location, origin, impact, size, additional);
+                    return;
+                case impacts.igni:
+                    CreateWitcherSign(location, origin, impact, size, additional);
+                    return;
+                case impacts.axii:
+                    CreateWitcherSign(location, origin, impact, size, additional);
+                    return;
+                case impacts.quen:
+                    CreateWitcherSign(location, origin, impact, size, additional);
+                    return;
+                case impacts.yrden:
+                    CreateWitcherSign(location, origin, impact, size, additional);
+                    return;
             }
 
             CreateImpact(location, origin, impact, size, additional);
@@ -1353,6 +1767,12 @@ namespace StardewDruid.Data
                 sheet = impactsTextureThree;
 
             }
+            else if (Y >= 18 && Y < 24)
+            {
+
+                sheet = impactsTextureFour;
+
+            }
 
             return sheet;
 
@@ -1367,18 +1787,9 @@ namespace StardewDruid.Data
 
             Microsoft.Xna.Framework.Color color = additional.color;
 
-            float rotation = 0;
-
-            if (additional.rotation > 0)
-            {
-
-                rotation = (float)(Math.PI / additional.rotation);
-
-            }
-
             float layer = additional.layer;
 
-            if (additional.layer == -1)
+            if (additional.layer <= 0f)
             {
 
                 layer = originOffset.Y / 10000 + (scale * 0.0064f);
@@ -1402,9 +1813,10 @@ namespace StardewDruid.Data
                 timeBasedMotion = true,
                 layerDepth = layer,
                 color = color,
-                rotation = rotation,
+                rotation = additional.rotation,
                 alpha = additional.alpha,
                 alphaFade = additional.alphaFade,
+                motion = additional.motion,
                 flipped = additional.flip,
                 delayBeforeAnimationStart = additional.delay,
             };
@@ -1470,6 +1882,287 @@ namespace StardewDruid.Data
             location.temporarySprites.Add(bomb);
 
             return bomb;
+
+        }
+
+        public TemporaryAnimatedSprite CreateGrasp(GameLocation location, Vector2 origin, int type, float scale, ImpactAdditional additional)
+        {
+
+            Vector2 originOffset = origin + new Vector2(32f, 32f) - (new Vector2(32, 32) * scale);
+
+            float layer = additional.layer;
+
+            if (additional.layer == -1)
+            {
+
+                layer = originOffset.Y / 10000;
+
+            }
+
+            layer += additional.layerOffset;
+
+            if (additional.frames == 8)
+            {
+
+                additional.frames = 10;
+
+            }
+
+            Microsoft.Xna.Framework.Rectangle source = new(64 * additional.frame, 64 * type, 64, 64);
+
+            TemporaryAnimatedSprite bomb = new(0, 125f, additional.frames, additional.loops, originOffset, false, false)
+            {
+                sourceRect = source,
+                sourceRectStartingPos = new Vector2(source.X, source.Y),
+                texture = graspTexture,
+                scale = scale,
+                timeBasedMotion = true,
+                layerDepth = layer,
+                rotation = additional.rotation,
+                flipped = additional.flip,
+                delayBeforeAnimationStart = additional.delay,
+
+            };
+
+            location.temporarySprites.Add(bomb);
+
+            TemporaryAnimatedSprite bombshadow = new(0, 125f, additional.frames, additional.loops, originOffset + new Vector2(0,6), false, false)
+            {
+                sourceRect = source,
+                sourceRectStartingPos = new Vector2(source.X, source.Y),
+                texture = graspTexture,
+                scale = scale,
+                timeBasedMotion = true,
+                layerDepth = layer - 0.0002f,
+                rotation = additional.rotation,
+                flipped = additional.flip,
+                delayBeforeAnimationStart = additional.delay,
+
+                color = Microsoft.Xna.Framework.Color.Black,
+                alpha = 0.25f,
+
+            };
+
+            location.temporarySprites.Add(bombshadow);
+
+            return bomb;
+
+        }
+
+        public void CreateDustup(GameLocation location, Vector2 origin, float size, ImpactAdditional additional)
+        {
+
+            ImpactAdditional bigImpactAdditional = additional.Copy();
+
+            bigImpactAdditional.alpha = 0.2f;
+
+            bigImpactAdditional.interval = 80f;
+
+            bigImpactAdditional.layerOffset = -0.001f;
+
+            CreateImpact(location, origin, IconData.impacts.puff, size + 0.5f, bigImpactAdditional);
+        }
+
+        public void CreateSmoke(GameLocation location, Vector2 origin, float size, ImpactAdditional additional)
+        {
+
+            ImpactAdditional bigImpactAdditionalTwo = additional.Copy();
+
+            bigImpactAdditionalTwo.alpha = 0.3f;
+
+            bigImpactAdditionalTwo.layerOffset = -0.002f;
+
+            bigImpactAdditionalTwo.delay = 15;
+
+            CreateImpact(location, origin + new Vector2(0, -224), IconData.impacts.smoke, size, bigImpactAdditionalTwo);
+
+            CreateImpact(location, origin + new Vector2(-160, -48), IconData.impacts.steam, size - 1, bigImpactAdditionalTwo);
+
+            bigImpactAdditionalTwo.flip = true;
+
+            CreateImpact(location, origin + new Vector2(160, -48), IconData.impacts.steam, size - 1, bigImpactAdditionalTwo);
+
+            CreateImpact(location, origin + new Vector2(0, 80), IconData.impacts.smoke, size, bigImpactAdditionalTwo);
+
+        }
+
+        public void CreateSupree(GameLocation location, Vector2 origin, float size, ImpactAdditional additional)
+        {
+
+            ImpactAdditional sparkles = additional.Copy();
+
+            sparkles.alpha = 0.75f;
+
+            sparkles.layer = 700f;
+
+            sparkles.color = gradientColours[additional.scheme][0];
+
+            sparkles.light = 0.005f;
+
+            CreateImpact(location, origin + new Vector2(128, -128), IconData.impacts.sparkle, 4f, sparkles);
+
+            sparkles.rotation = (float)(Math.PI * 0.50);
+
+            CreateImpact(location, origin + new Vector2(128, 128), IconData.impacts.sparkle, 4f, sparkles);
+
+            sparkles.rotation = (float)(Math.PI);
+
+            CreateImpact(location, origin + new Vector2(-128, 128), IconData.impacts.sparkle, 4f, sparkles);
+
+            sparkles.rotation = (float)(Math.PI * 1.50);
+
+            CreateImpact(location, origin + new Vector2(-128, -128), IconData.impacts.sparkle, 4f, sparkles);
+
+        }
+
+        public void CreateSparkles(GameLocation location, Vector2 origin, float size, ImpactAdditional additional)
+        {
+
+            ImpactAdditional sparkles = additional.Copy();
+
+            sparkles.alpha = 0.4f;
+
+            sparkles.layerOffset = -0.002f;
+
+            sparkles.delay = 15;
+
+            CreateImpact(location, origin + new Vector2(160, -160), IconData.impacts.glare, size - 1, sparkles);
+
+            additional.rotation = (float)(Math.PI * 0.50);
+
+            CreateImpact(location, origin + new Vector2(160, 160), IconData.impacts.glare, size - 1, sparkles);
+
+            sparkles.rotation = (float)(Math.PI);
+
+            CreateImpact(location, origin + new Vector2(-160, 160), IconData.impacts.glare, size - 1, sparkles);
+
+            sparkles.rotation = (float)(Math.PI * 1.50);
+
+            CreateImpact(location, origin + new Vector2(-160, -160), IconData.impacts.glare, size - 1, sparkles);
+
+        }
+
+        public void CreateSparklesTwo(GameLocation location, Vector2 origin, float size, ImpactAdditional additional)
+        {
+
+            ImpactAdditional supreeGlare = new()
+            {
+                color = gradientColours[additional.scheme][1],
+
+                light = 0f,
+
+                alpha = 0.75f,
+
+                rotation = (float)(Math.PI * 0.25)
+            };
+
+            CreateImpact(location, origin + new Vector2(0, -128), IconData.impacts.glare, 4f, supreeGlare);
+
+            supreeGlare.rotation = (float)(Math.PI * 0.75);
+
+            CreateImpact(location, origin + new Vector2(128, 0), IconData.impacts.glare, 4f, supreeGlare);
+
+            supreeGlare.rotation = (float)(Math.PI * 1.25);
+
+            CreateImpact(location, origin + new Vector2(0, 128), IconData.impacts.glare, 4f, supreeGlare);
+
+            supreeGlare.rotation = (float)(Math.PI * 1.75);
+
+            CreateImpact(location, origin + new Vector2(-128, 0), IconData.impacts.glare, 4f, supreeGlare);
+
+        }
+
+        public void CreateBangs(GameLocation location, Vector2 origin, float size, ImpactAdditional OldAdditional)
+        {
+
+            ImpactAdditional additional = OldAdditional.Copy();
+
+            additional.light = 0f;
+
+            additional.layerOffset = 0.001f;
+
+            additional.frames = 6;
+
+            additional.frame = 2;
+
+            additional.color = SchemeColour(additional.scheme);
+
+            additional.delay = 150;
+
+            CreateImpact(location, origin - new Vector2(8 * size), IconData.impacts.sparkbang, size - 1, additional);
+
+            additional.color = Microsoft.Xna.Framework.Color.White;
+
+            additional.delay = 300;
+
+            CreateImpact(location, origin + new Vector2(8 * size), IconData.impacts.sparkbang, size - 1, additional);
+
+            additional.color = SchemeColour(additional.scheme);
+
+            additional.delay = 450;
+
+            CreateImpact(location, origin + new Vector2(12 * size, -12 * size), IconData.impacts.sparkbang, size - 1, additional);
+
+            additional.color = Microsoft.Xna.Framework.Color.White;
+
+            additional.delay = 600;
+
+            CreateImpact(location, origin + new Vector2(-12 * size, 12 * size), IconData.impacts.sparkbang, size - 1, additional);
+
+        }
+
+        public TemporaryAnimatedSprite CreateWitcherSign(GameLocation location, Vector2 origin, impacts impact, float scale, ImpactAdditional additional)
+        {
+
+            Vector2 originOffset = origin + new Vector2(32f) - new Vector2(8f * scale);
+
+            int signrow = 0;
+
+            switch (impact)
+            {
+                case impacts.igni:
+                    signrow = 16; break;
+                case impacts.axii:
+                    signrow = 32; break;
+                case impacts.quen:
+                    signrow = 48; break;
+                case impacts.yrden:
+                    signrow = 64; break;
+            }
+
+            Microsoft.Xna.Framework.Rectangle source = new(0, signrow, 16, 16);
+
+            TemporaryAnimatedSprite sign = new(0, 125, 6, 1, originOffset, false, false)
+            {
+
+                sourceRect = source,
+                sourceRectStartingPos = new Vector2(source.X, source.Y),
+                texture = witchersignsTexture,
+                scale = scale,
+                layerDepth = 990f,
+
+            };
+
+            location.temporarySprites.Add(sign);
+
+            Microsoft.Xna.Framework.Rectangle sourceTwo = new(80, signrow, 16, 16);
+
+            TemporaryAnimatedSprite signtwo = new(0, 1000, 1, 1, originOffset, false, false)
+            {
+
+                sourceRect = sourceTwo,
+                sourceRectStartingPos = new Vector2(80, sourceTwo.Y),
+                texture = witchersignsTexture,
+                scale = scale,
+                alphaFade = 0.001f,
+                layerDepth = 990f,
+                delayBeforeAnimationStart = 750,
+                timeBasedMotion = true
+            };
+
+            location.temporarySprites.Add(signtwo);
+
+            return sign;
 
         }
 
@@ -1586,6 +2279,21 @@ namespace StardewDruid.Data
         public void AnimateQuickWarp(GameLocation location, Vector2 origin, bool reverse = false, warps warp = warps.portal, schemes scheme = schemes.none)
         {
 
+            SpellHandle warpSpell = new(location, origin, origin);
+
+            warpSpell.factor = (int)warp;
+
+            warpSpell.type = reverse ? SpellHandle.Spells.warpout : SpellHandle.Spells.warpin;
+
+            warpSpell.scheme = scheme;
+
+            Mod.instance.spellRegister.Add(warpSpell);
+
+        }
+
+        public void WarpIndicator(GameLocation location, Vector2 origin, bool reverse = false, warps warp = warps.portal, schemes scheme = schemes.none)
+        {
+
             TemporaryAnimatedSprite animation;
 
             Microsoft.Xna.Framework.Rectangle rect;
@@ -1601,7 +2309,61 @@ namespace StardewDruid.Data
 
                     rect = reverse ? new(0, 32, 32, 32) : new(0, 0, 32, 32);
 
-                    animation = new(0, 75, 8, 1, originOffset, false, false)
+                    animation = new(0, 75, 10, 1, originOffset, false, false)
+                    {
+
+                        sourceRect = rect,
+
+                        sourceRectStartingPos = new Vector2(0, rect.Y),
+
+                        texture = warpTexture,
+
+                        scale = 4f,
+
+                        layerDepth = 0.001f,
+
+                        alpha = 0.65f,
+
+                    };
+
+                    location.temporarySprites.Add(animation);
+
+                    break;
+
+                case warps.death:
+
+                    originOffset = origin - new Vector2(32, 32);
+
+                    rect = reverse ? new(0, 96, 32, 32) : new(0, 64, 32, 32);
+
+                    animation = new(0, 75, 10, 1, originOffset, false, false)
+                    {
+
+                        sourceRect = rect,
+
+                        sourceRectStartingPos = new Vector2(0, rect.Y),
+
+                        texture = warpTexture,
+
+                        scale = 4f,
+
+                        layerDepth = 0.001f,
+
+                        alpha = 0.65f,
+
+                    };
+
+                    location.temporarySprites.Add(animation);
+
+                    break;
+
+                case warps.capture:
+
+                    originOffset = origin - new Vector2(32, 32);
+
+                    rect = new(0, 160, 32, 32);
+
+                    animation = new(0, 75, 10, 1, originOffset, false, false)
                     {
 
                         sourceRect = rect,
@@ -1623,6 +2385,17 @@ namespace StardewDruid.Data
                     break;
 
                 case warps.circle:
+
+                    if(glyphTime + 5.00 > Game1.currentGameTime.TotalGameTime.TotalSeconds && glyphSpot == Game1.player.currentLocation.Name)
+                    {
+
+                        break;
+
+                    }
+
+                    glyphSpot = Game1.player.currentLocation.Name;
+
+                    glyphTime = Game1.currentGameTime.TotalGameTime.TotalSeconds;
 
                     rect = CircleRectangle((circles)1);
 
@@ -1655,9 +2428,9 @@ namespace StardewDruid.Data
 
                 case warps.smoke:
 
-                    CreateImpact(location, origin, impacts.plume, 3f, new() { alpha = 1f, });
+                    CreateImpact(location, origin, impacts.plume, 4f, new() { alpha = 0.7f, color = schemeColours[schemes.gray] });
 
-                    CreateImpact(location, origin, impacts.smoke, 2f, new() { alpha = 1f, });
+                    CreateImpact(location, origin, impacts.smoke, 4f, new() { alpha = 0.5f, layerOffset = -0.001f, color = schemeColours[schemes.darkgray] });
 
                     break;
 
@@ -1666,53 +2439,12 @@ namespace StardewDruid.Data
                     CreateImpact(location, origin, impacts.plume, 2f, new() { color = schemeColours[schemes.bones], alpha = 1f, });
 
                     break;
-            }
 
-        }
+                case warps.mist:
 
-        public void AnimateMistic()
-        {
+                    ImpactIndicator(location, origin, impacts.mists, 3f, new());
 
-            AnimateMistic(Game1.player.Position - new Vector2(96, 128));
-
-        }
-
-        public void AnimateMistic(Vector2 position, int amount = 4)
-        {
-            
-            Vector2 mistCorner = position;
-
-            for (int i = 0; i < amount; i++)
-            {
-
-                for (int j = 0; j < amount; j++)
-                {
-
-                    if ((i == 0 || i == 5) && (j == 0 || j == 5))
-                    {
-                        continue;
-                    }
-
-                    Vector2 glowVector = mistCorner + new Vector2(i * 32, j * 32);
-
-                    TemporaryAnimatedSprite glowSprite = new TemporaryAnimatedSprite(0, 3000f, 1, 1, glowVector, false, false)
-                    {
-                        sourceRect = new Microsoft.Xna.Framework.Rectangle(88, 1779, 30, 30),
-                        sourceRectStartingPos = new Vector2(88, 1779),
-                        texture = Game1.mouseCursors,
-                        motion = new(0.016f * (Mod.instance.randomIndex.Next(2) == 0 ? 1 : -1) * Mod.instance.randomIndex.Next(1, 4), 0.016f * (Mod.instance.randomIndex.Next(2) == 0 ? 1 : -1) * Mod.instance.randomIndex.Next(1, 4)),
-                        scale = 4f,
-                        layerDepth = 999f,
-                        timeBasedMotion = true,
-                        alpha = 0.7f,
-                        alphaFade = 0.0005f,
-                        color = new Microsoft.Xna.Framework.Color(0.75f, 0.75f, 1f, 1f),
-                    };
-
-                    Game1.player.currentLocation.temporarySprites.Add(glowSprite);
-
-                }
-
+                    break;
             }
 
         }
@@ -1774,7 +2506,7 @@ namespace StardewDruid.Data
 
         public float alphaFade = 0f;
 
-        public float rotation = 0;
+        public float rotation = 0f;
 
         public Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
 
@@ -1790,7 +2522,57 @@ namespace StardewDruid.Data
 
         public float layerOffset = 0f;
 
+        public Vector2 motion = Vector2.Zero;
+
         public IconData.schemes scheme = IconData.schemes.none;
+
+        public ImpactAdditional()
+        {
+
+        }
+
+        public ImpactAdditional Copy()
+        {
+
+            ImpactAdditional copy = new();
+
+            copy.frame = frame;
+
+            copy.frames = frames;
+
+            copy.interval = interval;
+
+            copy.girth = girth;
+
+            copy.loops = loops;
+
+            copy.alpha = alpha;
+
+            copy.alphaFade = alphaFade;
+
+            copy.rotation = rotation;
+
+            copy.color = color;
+
+            copy.colours = colours;
+
+            copy.delay = delay;
+
+            copy.light = 0f;
+
+            copy.flip = flip;
+
+            copy.layer = layer;
+
+            copy.layerOffset = layerOffset;
+
+            copy.motion = motion;
+
+            copy.scheme = scheme;
+
+            return copy;
+
+        }
 
     }
 

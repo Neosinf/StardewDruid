@@ -13,8 +13,6 @@ namespace StardewDruid.Location.Terrain
     public class GraveChapel : TerrainField
     {
 
-        public float fade;
-        
         public float fadetop;
 
         public float fadeback;
@@ -83,7 +81,7 @@ namespace StardewDruid.Location.Terrain
             clearance = (int)Math.Ceiling(girth / 64);
         }
 
-        public void Fade(GameLocation location)
+        public override void Fadeout(GameLocation location)
         {
 
             fade = 1f;
@@ -154,8 +152,6 @@ namespace StardewDruid.Location.Terrain
             }
 
             Microsoft.Xna.Framework.Vector2 origin = new(position.X - Game1.viewport.X, position.Y - Game1.viewport.Y);
-
-            Fade(location);
 
             b.Draw(
                 Mod.instance.iconData.sheetTextures[IconData.tilesheets.graveyard],

@@ -26,6 +26,8 @@ namespace StardewDruid.Location.Druid
     public class Archaeum : DruidLocation
     {
 
+        public Vector2 ritualTile = new Vector2(24, 15f);
+
         public Archaeum() { }
 
         public Archaeum(string Name)
@@ -77,7 +79,7 @@ namespace StardewDruid.Location.Druid
 
             IsOutdoors = false;
 
-            terrainFields = new();
+            mapReset();
 
             Dictionary<int, List<List<int>>> codes = new()
             {
@@ -224,6 +226,21 @@ namespace StardewDruid.Location.Druid
                 }
 
             }
+
+            // CIRCLE
+
+            Terrain.RitualCircle circleTile = new(ritualTile * 64)
+            {
+
+                color = Mod.instance.iconData.schemeColours[IconData.schemes.fates],
+
+                fadeout = 0.5f,
+
+                disabled = true
+
+            };
+
+            terrainFields.Add(circleTile);
 
             this.map = newMap;
 

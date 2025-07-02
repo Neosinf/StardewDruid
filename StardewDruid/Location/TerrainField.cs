@@ -2,11 +2,13 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Data;
 using StardewValley;
+using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace StardewDruid.Location
 {
@@ -14,15 +16,17 @@ namespace StardewDruid.Location
     public class TerrainField
     {
 
-        public Vector2 position = Vector2.Zero;
+        public Microsoft.Xna.Framework.Vector2 position = Vector2.Zero;
 
-        public List<Vector2> baseTiles = new();
+        public List<Microsoft.Xna.Framework.Vector2> baseTiles = new();
 
-        public Vector2 center;
+        public Microsoft.Xna.Framework.Vector2 center;
 
         public float girth;
 
         public int clearance;
+
+        public int backing;
 
         public Microsoft.Xna.Framework.Rectangle source = Microsoft.Xna.Framework.Rectangle.Empty;
 
@@ -38,15 +42,25 @@ namespace StardewDruid.Location
 
         public IconData.tilesheets tilesheet;
 
+        public int where;
+
         public int shake;
 
-        public float fadeout;
+        public bool shaked;
 
-        public float shade;
+        public float wind;
 
-        public Vector2 shadeOffset;
+        public float windout;
 
-        public Color color;
+        public float fade = 1f;
+
+        public float fadeout = 0.75f;
+
+        public float shade = 0.3f;
+
+        public Microsoft.Xna.Framework.Vector2 shadeOffset;
+
+        public Microsoft.Xna.Framework.Color color;
 
         public bool disabled;
 
@@ -57,13 +71,7 @@ namespace StardewDruid.Location
             none,
             offset,
             deepset,
-            smallleafy,
-            leafy,
-            moreleafy,
-            bigleafy,
-            treeleafy,
-            bush,
-            reflection,
+            circle,
         }
 
         public shadows shadow;
@@ -87,8 +95,6 @@ namespace StardewDruid.Location
             shadow = Shadow;
 
             flip = Flip;
-
-            shade = 0.3f;
 
             reset();
 
@@ -114,90 +120,82 @@ namespace StardewDruid.Location
 
                 clearance = (int)Math.Ceiling(girth / 64);
 
+                backing = 72;
+
             }
 
+            bounds = new((int)position.X + 8, (int)position.Y, source.Width * 4 - 16, source.Height * 4 - backing);
+
             layer = LocationHandle.TerrainLayers(tilesheet, index, position, source);
-
-            special = LocationHandle.TerrainRules(tilesheet, index);
-
-            shadow = LocationHandle.TerrainShadows(tilesheet, index, shadow);
-
-            fadeout = LocationHandle.TerrainFadeout(tilesheet, index);
 
         }
 
         public virtual void drawFront(SpriteBatch b, GameLocation location)
         {
 
-            draw(b, location);
-
         }
 
-        public virtual float Fadeout(GameLocation location, Microsoft.Xna.Framework.Rectangle useSource)
+        public virtual void update(GameLocation location)
         {
 
-            float opacity = 1f;
-
-            int backing = 0;
-
-            if (baseTiles.Count > 0)
+            if (disabled)
             {
 
-                backing = 72;
+                return;
 
             }
 
-            Microsoft.Xna.Framework.Rectangle bounds = new((int)position.X + 8, (int)position.Y, useSource.Width * 4 - 16, useSource.Height * 4 - backing);
+            Fadeout(location);
+
+        }
+
+        public virtual void Fadeout(GameLocation location)
+        {
+
+            fade = 1f;
+
+            if (fadeout == 1f)
+            {
+
+                return;
+
+            }
 
             foreach (Farmer character in location.farmers)
             {
 
-                if (bounds.Contains(character.Position.X, character.Position.Y))
+                if (bounds.Contains(character.Position.X + 32, character.Position.Y + 32))
                 {
 
-                    opacity = fadeout;
+                    fade = fadeout;
 
                 }
 
             }
 
-            if (opacity == 1f)
+            if (fade == 1f)
             {
 
                 foreach (NPC character in location.characters)
                 {
 
-                    if (bounds.Contains(character.Position.X, character.Position.Y))
+                    if (bounds.Contains(character.Position.X + 32, character.Position.Y + 32))
                     {
 
-                        opacity = fadeout;
+                        fade = fadeout;
                     }
 
                 }
 
             }
-            return opacity;
 
         }
+
 
         public virtual bool DrawCheck()
         {
 
-            if (!Utility.isOnScreen(position + (source.Center.ToVector2()*2), source.Height * 8 + 128))
-            {
-
-                return false;
-
-            }
-
-            if (!Mod.instance.iconData.sheetTextures.ContainsKey(tilesheet))
-            {
-
-                return false;
-
-            }
-
-            if (Mod.instance.iconData.sheetTextures[tilesheet].IsDisposed)
+            if (!Utility.isOnScreen(bounds.Center.ToVector2(), source.Height * 8 + 128))
             {
 
                 return false;
@@ -226,38 +224,25 @@ namespace StardewDruid.Location
 
             }
 
-            Microsoft.Xna.Framework.Rectangle useSource = new(source.X, source.Y, source.Width, source.Height);
-
-            if (special)
-            {
-
-                useSource = LocationHandle.TerrainSpecials(tilesheet, index, useSource);
-
-                if(useSource == Rectangle.Empty)
-                {
-
-                    return;
-
-                }
-
-            }
-
             Vector2 origin = new(position.X - Game1.viewport.X, position.Y - Game1.viewport.Y);
 
-            float opacity = Fadeout(location, useSource);
+            DrawShadow(b, origin, source, fade, shadow);
 
-            DrawShadow(b, origin, useSource, opacity);
-
-            b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin, useSource, color * opacity, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer);
+            b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin, source, color * fade, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer);
 
         }
 
-        public virtual void DrawShadow(SpriteBatch b, Vector2 origin, Rectangle useSource, float opacity)
+        public virtual void DrawShadow(SpriteBatch b, Vector2 origin, Rectangle useSource, float opacity, shadows useShadow)
         {
 
-            switch (shadow)
+            switch (useShadow)
             {
 
+                case shadows.none:
+
+                    return;
+
+                default:
                 case shadows.offset:
 
                     b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(1, 6), useSource, Color.Black * shade, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
@@ -270,113 +255,163 @@ namespace StardewDruid.Location
 
                     break;
 
-                case shadows.smallleafy:
+                case shadows.circle:
 
-                    b.Draw(Game1.mouseCursors, origin + new Vector2(useSource.Width * 2, useSource.Height * 4 - 18), new Rectangle(663, 1011, 41, 30), Color.White, 0f, new Vector2(20, 15), 3f, flip ? (SpriteEffects)1 : 0, 1E-06f);
-
-                    break;
-
-                case shadows.leafy:
-
-                    b.Draw(Game1.mouseCursors, origin + new Vector2(useSource.Width * 2, useSource.Height * 4 - 24), new Rectangle(663, 1011, 41, 30), Color.White, 0f, new Vector2(20, 15), 4f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+                    b.Draw(Mod.instance.iconData.cursorTexture, origin + new Vector2(useSource.Width * 2, useSource.Height * 4 - 24), Mod.instance.iconData.shadowRectangle, Color.White * shade, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
 
                     break;
 
-                case shadows.moreleafy:
+            }
 
-                    b.Draw(Game1.mouseCursors, origin + new Vector2(useSource.Width * 2, useSource.Height * 4 - 36), new Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 7f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+        }
 
-                    break;
+        public virtual void DrawReflection(SpriteBatch b, Vector2 origin, Rectangle useSource, float opacity)
+        {
 
-                case shadows.bigleafy:
+            int heightDivide = 32;
 
-                    if (flip)
+            int heightMiddle = 16;
+
+            float fadeIncrement = 0.5f;
+
+            if(useSource.Height < 32)
+            {
+
+                heightDivide = 16;
+
+                heightMiddle = 8;
+                
+                fadeIncrement = 1f;
+
+            }
+
+            int widthDivide = 32;
+
+            int widthMiddle = 16;
+
+            if (useSource.Width < 32)
+            {
+
+                widthDivide = 16;
+
+                widthMiddle = 8;
+
+                fadeIncrement = 1f;
+
+            }
+
+            int heightIncrement = useSource.Height / heightDivide;
+
+            int widthIncrement = useSource.Width / widthDivide;
+
+            Vector2 reflectOut = new(widthIncrement / 2, heightIncrement / 2);
+
+            Vector2 reflectOrigin = new Vector2(origin.X, origin.Y);
+
+            if (flip)
+            {
+
+                reflectOrigin.X += (useSource.Width * 4);
+
+                reflectOrigin.X -= widthIncrement * 2;
+
+            }
+            else
+            {
+
+                reflectOrigin.X += widthIncrement * 2;
+
+            }
+
+            Rectangle reflectSource = new(useSource.X, useSource.Y + useSource.Height, widthIncrement, heightIncrement);
+
+            Rectangle reflectUse = new(useSource.X, useSource.Y + useSource.Height, widthIncrement, heightIncrement);
+
+            float widthFade = 0f;
+            
+            float heightFade = 0f;
+
+            int widthUp = widthIncrement * 4;
+
+            int heightUp = heightIncrement * 4;
+            
+            for (int w = 0; w < widthDivide; w++)
+            {
+
+                if (w < widthMiddle)
+                {
+
+                    widthFade += fadeIncrement;
+
+                }
+                else
+                {
+
+                    widthFade -= fadeIncrement;
+
+                }
+
+                reflectOrigin.Y = origin.Y;
+
+                reflectUse.Y = reflectSource.Y;
+
+                for (int h = 0; h < heightDivide; h++)
+                {
+
+                    reflectOrigin.Y += heightUp;
+
+                    reflectUse.Y -= heightIncrement;
+
+                    if (h < heightMiddle)
                     {
 
-                        b.Draw(Game1.mouseCursors, origin + new Vector2(useSource.Width * 2 - 32, useSource.Height * 4 - 64), new Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 9f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+                        heightFade += fadeIncrement;
 
                     }
                     else
                     {
 
-                        b.Draw(Game1.mouseCursors, origin + new Vector2(useSource.Width * 2 + 32, useSource.Height * 4 - 64), new Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 9f, flip ? (SpriteEffects)1 : 0, 1E-06f);
+                        heightFade -= fadeIncrement;
 
                     }
 
-                    break;
+                    float reflectFade = (widthFade * heightFade) / 100f;
 
-
-                case shadows.treeleafy:
-
-                    b.Draw(Game1.mouseCursors, origin + new Vector2(useSource.Width * 2, useSource.Height * 4 - 36) + shadeOffset, new Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 6f, flip ? (SpriteEffects)1 : 0, 1E-06f);
-
-                    b.Draw(Game1.mouseCursors, origin + new Vector2(useSource.Width * 2, useSource.Height * 4 - 36) + shadeOffset, new Rectangle(663, 1011, 41, 30), Color.White * 0.7f, 0f, new Vector2(20, 15), 10f, flip ? (SpriteEffects)1 : 0, 1E-06f);
-
-                    break;
-
-                case shadows.bush:
-
-                    b.Draw(Game1.mouseCursors_1_6, origin + new Vector2(useSource.Width * 2, useSource.Height * 4 - 18), new Rectangle(469, 298, 42, 31), Color.White, 0f, new Vector2(20, 15), 3f, flip ? (SpriteEffects)1 : 0, 1E-06f);
-
-                    break;
-
-                case shadows.reflection:
-
-                    Rectangle shadowSource = new(useSource.X, useSource.Y + (useSource.Height - 24), useSource.Width, 24);
-
-                    //shadow
-                    b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], origin + new Vector2(0, 8 + (useSource.Height * 4 - 96)), shadowSource, Color.Black * 0.3f, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
-
-                    Rectangle reflectuseSource = new(useSource.X, useSource.Y + useSource.Height, useSource.Width, 2);
-
-                    Vector2 reflectOrigin = new(origin.X + useSource.Width * 2, origin.Y + useSource.Height * 4 - 28);
-
-                    Vector2 reflectOut = new(useSource.Width / 2, 1);
-
-                    float reflectFade = 0f;
-
-                    for (int i = 0; i < 32; i++)
+                    if (flip)
                     {
-                        reflectuseSource.Y -= 2;
 
-                        reflectOrigin.Y += 8;
-
-                        if (i >= 16)
-                        {
+                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], reflectOrigin, reflectUse, Color.White * reflectFade, (float)Math.PI, reflectOut, 4, 0, layer + 0.002f);
 
 
-                            reflectFade -= 0.03f;
+                    }
+                    else
+                    {
 
+                        b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], reflectOrigin, reflectUse, Color.White * reflectFade, 0, reflectOut, 4, (SpriteEffects)2, layer + 0.002f);
 
-                        }
-                        else
-                        {
-
-                            reflectFade += 0.03f;
-
-
-                        }
-
-                        if (flip)
-                        {
-
-                            b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], reflectOrigin, reflectuseSource, Color.White * reflectFade, (float)Math.PI, reflectOut, 4, 0, 1E-06f);
-
-                        }
-                        else
-                        {
-
-                            b.Draw(Mod.instance.iconData.sheetTextures[tilesheet], reflectOrigin, reflectuseSource, Color.White * reflectFade, 0, reflectOut, 4, (SpriteEffects)2, 1E-06f);
-
-                        }
 
                     }
 
-                    break;
+                }
+
+                reflectUse.X += widthIncrement;
+
+                if (flip)
+                {
+
+                    reflectOrigin.X -= widthUp;
+
+                }
+                else
+                {
+
+                    reflectOrigin.X += widthUp;
+
+                }
 
             }
-        }
 
+        }
 
     }
 

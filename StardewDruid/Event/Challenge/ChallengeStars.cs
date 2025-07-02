@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
-using StardewDruid.Character;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewDruid.Monster;
 using StardewValley;
@@ -28,48 +28,22 @@ namespace StardewDruid.Event.Challenge
 
             base.EventActivate();
 
-            monsterHandle = new(origin, location);
+            monsterHandle = new(origin, location)
+            {
+                spawnSchedule = new()
+            };
 
-            monsterHandle.spawnSchedule = new();
-
-            if (Mod.instance.questHandle.IsComplete(eventId))
+            for (int i = 1; i <= 10; i++)
             {
 
-                for (int i = 1; i <= 15; i++)
+                List<SpawnHandle> blobSpawns = new()
                 {
 
-                    List<SpawnHandle> blobSpawns = new()
-                    {
+                    new(MonsterHandle.bosses.jellyfiend, Boss.temperment.random, Boss.difficulty.medium),
 
-                        new(MonsterHandle.bosses.blobfiend, Boss.temperment.random, Boss.difficulty.medium),
+                };
 
-                        new(MonsterHandle.bosses.blobfiend, Boss.temperment.random, Boss.difficulty.basic),
-
-                    };
-
-                    monsterHandle.spawnSchedule.Add(i, blobSpawns);
-
-                }
-
-            }
-            else
-            {
-
-                for (int i = 1; i <= 15; i++)
-                {
-
-                    List<SpawnHandle> blobSpawns = new()
-                    {
-
-                        new(MonsterHandle.bosses.blobfiend, Boss.temperment.random, Boss.difficulty.medium),
-
-                        new(MonsterHandle.bosses.blobfiend, Boss.temperment.coward, Boss.difficulty.basic),
-
-                    };
-
-                    monsterHandle.spawnSchedule.Add(i, blobSpawns);
-
-                }
+                monsterHandle.spawnSchedule.Add(i, blobSpawns);
 
             }
 
@@ -85,9 +59,7 @@ namespace StardewDruid.Event.Challenge
 
             slimebar.colour = Microsoft.Xna.Framework.Color.LightGreen;
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) {sound = SpellHandle.sounds.getNewSpecialItem, });
-
-            Mod.instance.rite.CastMeteors();
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { displayRadius = 4, sound = SpellHandle.Sounds.getNewSpecialItem, });
 
             if (Mod.instance.trackers.ContainsKey(CharacterHandle.characters.Effigy))
             {
@@ -98,16 +70,12 @@ namespace StardewDruid.Event.Challenge
 
             HoldCompanions();
 
-            //EventRender ritePortal = new(eventId, location.Name, origin, IconData.circles.summoning, Microsoft.Xna.Framework.Color.White);
-
-           // eventRenders.Add(ritePortal);
-
         }
 
         public override float SpecialProgress(int displayId)
         {
 
-            return (float)eventRating / 30f;
+            return (float)eventRating / 10f;
 
         }
 
@@ -120,7 +88,7 @@ namespace StardewDruid.Event.Challenge
 
             eventRating = monsterHandle.spawnTotal - monsterHandle.monsterSpawns.Count;
 
-            if (activeCounter > 5 && activeCounter % 5 == 1)
+            if (activeCounter > 5 && activeCounter % 7 == 1)
             {
 
                 monsterHandle.SpawnInterval();
@@ -146,7 +114,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 1:
 
-                    bosses[0] = new StardewDruid.Monster.Blobfiend(ModUtility.PositionToTile(origin) + new Vector2(3,-3), Mod.instance.CombatDifficulty());
+                    bosses[0] = new StardewDruid.Monster.Jellyking(ModUtility.PositionToTile(origin) + new Vector2(3,-3), Mod.instance.CombatDifficulty(),"Jellyking");
 
                     bosses[0].netScheme.Set(2);
 
@@ -171,19 +139,19 @@ namespace StardewDruid.Event.Challenge
 
                     voices[0] = bosses[0];
 
-                    Mod.instance.spellRegister.Add(new(bosses[0].Position, 288, IconData.impacts.splatter, new()) { scheme = IconData.schemes.herbal_impes,});
+                    Mod.instance.spellRegister.Add(new(bosses[0].Position, 288, IconData.impacts.splatter, new()) { displayRadius = 4, scheme = IconData.schemes.herbal_impes,});
 
-                    location.playSound(SpellHandle.sounds.slime.ToString());
+                    location.playSound(SpellHandle.Sounds.slime.ToString());
 
                     break;
                 case 2:
-                    location.playSound(SpellHandle.sounds.slime.ToString());
+                    location.playSound(SpellHandle.Sounds.slime.ToString());
                     break;
                 case 3:
-                    location.playSound(SpellHandle.sounds.slime.ToString());
+                    location.playSound(SpellHandle.Sounds.slime.ToString());
                     break;
                 case 4:
-                    location.playSound(SpellHandle.sounds.slime.ToString());
+                    location.playSound(SpellHandle.Sounds.slime.ToString());
                     break;
 
                 case 5:
@@ -204,19 +172,20 @@ namespace StardewDruid.Event.Challenge
                     if(bosses.Count > 0)
                     {
 
-                        SpellHandle meteor = new(Game1.player, bosses[0].Position, 8 * 64, 9999);
+                        SpellHandle meteor = new(Game1.player, bosses[0].Position, 8 * 64, 9999)
+                        {
+                            type = SpellHandle.Spells.missile,
 
-                        meteor.type = SpellHandle.spells.missile;
+                            missile = MissileHandle.missiles.meteor,
 
-                        meteor.missile = MissileHandle.missiles.meteor;
+                            factor = 5,
 
-                        meteor.factor =5;
+                            sound = SpellHandle.Sounds.explosion,
 
-                        meteor.sound = SpellHandle.sounds.explosion;
+                            explosion = 8,
 
-                        meteor.explosion = 8;
-
-                        meteor.power = 3;
+                            power = 3
+                        };
 
                         Mod.instance.spellRegister.Add(meteor);
 

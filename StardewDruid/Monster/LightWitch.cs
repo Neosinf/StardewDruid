@@ -8,8 +8,6 @@ using StardewValley.Monsters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static StardewValley.Minigames.BoatJourney;
-using static StardewValley.Minigames.TargetGame;
 
 namespace StardewDruid.Monster
 {
@@ -30,14 +28,16 @@ namespace StardewDruid.Monster
 
         public override void LoadOut()
         {
+            
+            tempermentActive = temperment.cautious;
 
             baseMode = 3;
 
             baseJuice = 4;
 
-            basePulp = 50;
+            basePulp = 45;
 
-            cooldownInterval = 180;
+            cooldownInterval = 60;
 
             DarkWalk();
 
@@ -120,14 +120,9 @@ namespace StardewDruid.Monster
 
             };
 
+            shieldScheme = IconData.schemes.mists;
+
             loadedOut = true;
-
-        }
-
-        public override void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, IconData.schemes scheme)
-        {
-
-            base.DrawShield(b, spritePosition, spriteScale, drawLayer, IconData.schemes.mists);
 
         }
 
@@ -142,15 +137,16 @@ namespace StardewDruid.Monster
 
             SetCooldown(1);
 
-            SpellHandle special = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 3);
+            SpellHandle special = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 3)
+            {
+                type = SpellHandle.Spells.lightning,
 
-            special.type = SpellHandle.spells.lightning;
+                factor = 2,
 
-            special.factor = 2;
+                counter = -45,
 
-            special.counter = -45;
-
-            special.indicator = IconData.cursors.mists;
+                indicator = IconData.cursors.mists
+            };
 
             special.TargetCursor();
 
@@ -160,7 +156,7 @@ namespace StardewDruid.Monster
 
         }
 
-        public override bool PerformSweep()
+        public override bool PerformSweep(Vector2 target)
         {
 
             if (Mod.instance.randomIndex.Next(2) == 0 && !netShieldActive.Value && shieldTimer <= 0)
@@ -180,32 +176,30 @@ namespace StardewDruid.Monster
 
             }
 
-            if (Mod.instance.randomIndex.Next(2) == 0)
-            {
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 96f + (GetWidth() * 3));
 
+            if (targets.Count > 0)
+            {
                 specialTimer = (specialCeiling + 1) * specialInterval;
 
                 netSpecialActive.Set(true);
 
                 SetCooldown(1);
 
-                SpellHandle swipeEffect = new(currentLocation, GetBoundingBox().Center.ToVector2(), GetBoundingBox().Center.ToVector2(), 256, GetThreat());
+                SpellHandle swipeEffect = new(currentLocation, targets.First().GetBoundingBox().Center.ToVector2(), GetBoundingBox().Center.ToVector2(), 256, GetThreat())
+                {
+                    type = SpellHandle.Spells.explode,
 
-                swipeEffect.type = SpellHandle.spells.explode;
+                    display = IconData.impacts.boltnode,
 
-                swipeEffect.display = IconData.impacts.boltnode;
+                    boss = this,
 
-                swipeEffect.boss = this;
-
-                swipeEffect.instant = true;
+                    instant = true
+                };
 
                 Mod.instance.spellRegister.Add(swipeEffect);
 
-                return true;
-
             }
-
-            PerformRetreat(Position + (ModUtility.DirectionAsVector(netDirection.Value) * 64));
 
             return true;
 
@@ -214,23 +208,24 @@ namespace StardewDruid.Monster
         public override bool PerformChannel(Vector2 target)
         {
 
-            SpellHandle bolt = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 256, GetThreat());
+            SpellHandle bolt = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 256, GetThreat())
+            {
+                type = SpellHandle.Spells.bolt,
 
-            bolt.type = SpellHandle.spells.bolt;
+                display = IconData.impacts.boltnode,
 
-            bolt.display = IconData.impacts.bomb;
+                sound = SpellHandle.Sounds.thunder,
 
-            bolt.sound = SpellHandle.sounds.thunder;
+                boss = this,
 
-            bolt.boss = this;
+                counter = -45,
 
-            bolt.counter = -45;
-
-            bolt.indicator = IconData.cursors.mists;
+                indicator = IconData.cursors.mists
+            };
 
             bolt.TargetCursor();
 
-            bolt.factor = 6;
+            bolt.factor = 4;
 
             Mod.instance.spellRegister.Add(bolt);
 

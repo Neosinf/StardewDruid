@@ -4,6 +4,7 @@ using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Locations;
@@ -66,7 +67,7 @@ namespace StardewDruid.Event.Relics
 
                     Game1.player.faceDirection(3);
 
-                    location.playSound(SpellHandle.sounds.owl.ToString());
+                    location.playSound(SpellHandle.Sounds.owl.ToString());
 
                     companions[0].ResetActives();
 
@@ -78,9 +79,10 @@ namespace StardewDruid.Event.Relics
 
                 case 102:
 
-                    EventRender runestone = new("runestones_alchemistry", location.Name, companions[0].Position + new Vector2(64,-32), IconData.relics.runestones_alchemistry);
-
-                    runestone.scale = 3f;
+                    EventRender runestone = new("runestones_alchemistry", location.Name, companions[0].Position + new Vector2(64, -32), IconData.relics.runestones_alchemistry)
+                    {
+                        scale = 3f
+                    };
 
                     runestone.layer += 0.0064f;
 
@@ -96,7 +98,7 @@ namespace StardewDruid.Event.Relics
 
                     ThrowHandle giveRune = new(Game1.player, companions[0].Position, IconData.relics.runestones_alchemistry);
 
-                    giveRune.inventorise();
+                    giveRune.Inventorise();
 
                     break;
 

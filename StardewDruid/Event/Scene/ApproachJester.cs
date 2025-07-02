@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
-using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
@@ -12,14 +12,10 @@ using StardewValley.Locations;
 using StardewValley.Minigames;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.IO;
-using System.Reflection;
-using System.Security.Cryptography;
-
 
 namespace StardewDruid.Event.Scene
 {
+
     public class ApproachJester : EventHandle
     {
 
@@ -75,28 +71,17 @@ namespace StardewDruid.Event.Scene
             switch (activeCounter)
             {
 
-                // ------------------------------------------
-                // 1 Beginning
-                // ------------------------------------------
-
                 case 101:
 
                     Mod.instance.characters[CharacterHandle.characters.Jester].netIdle.Set((int)Character.Character.idles.standby);
 
                     Mod.instance.characters[CharacterHandle.characters.Jester].LookAtTarget(Game1.player.Position, true);
-                    
-                    //DialogueLoad(0, 2);
+
                     DialogueSetups(companions[0], 2);
 
                     break;
 
                 case 105:
-
-                    //DialogueNext(companions[0]);
-
-                    //break;
-
-                //case 110:
 
                     activeCounter = 200;
 
@@ -104,18 +89,11 @@ namespace StardewDruid.Event.Scene
 
                 case 201:
 
-                    //DialogueLoad(0, 3);
                     DialogueSetups(companions[0], 3);
 
                     break;
 
                 case 205:
-
-                    //DialogueNext(companions[0]);
-
-                    //break;
-
-                //case 210:
 
                     activeCounter = 300;
 
@@ -125,9 +103,9 @@ namespace StardewDruid.Event.Scene
 
                     eventComplete = true;
 
-                    Mod.instance.characters[CharacterHandle.characters.Jester].SwitchToMode(Character.Character.mode.track, Game1.player);
+                    companionModes[0] = Character.Character.mode.track;
 
-                    companions.Clear();
+                    Mod.instance.characters[CharacterHandle.characters.Jester].SwitchToMode(Character.Character.mode.track, Game1.player);
 
                     break;
 

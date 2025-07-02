@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewValley;
 using StardewValley.Monsters;
 using System;
@@ -41,7 +42,7 @@ namespace StardewDruid.Monster
     public class MonsterHandle
     {
 
-        public List<StardewValley.Monsters.Monster> monsterSpawns = new();
+        public List<StardewDruid.Monster.Boss> monsterSpawns = new();
 
         public int monstersLeft;
 
@@ -49,9 +50,9 @@ namespace StardewDruid.Monster
         {
 
             batwing,
-            blobfiend,
             dustfiend,
             firefiend,
+            jellyfiend,
             darkbrute,
             darkshooter,
             spectre,
@@ -94,8 +95,6 @@ namespace StardewDruid.Monster
 
         public bool spawnGroup;
 
-        public IconData.warps warpout;
-
         public MonsterHandle(Vector2 target, GameLocation location)
         {
 
@@ -108,8 +107,6 @@ namespace StardewDruid.Monster
             spawnWater = false;
 
             spawnLimit = 5 + (Mod.instance.ModDifficulty() / 2);
-
-            warpout = IconData.warps.portal;
 
         }
 
@@ -152,7 +149,7 @@ namespace StardewDruid.Monster
             for (int i = monsterSpawns.Count - 1; i >= 0; i--)
             {
 
-                Mod.instance.iconData.AnimateQuickWarp(spawnLocation, monsterSpawns[i].Position, true, warpout);
+                Mod.instance.iconData.AnimateQuickWarp(spawnLocation, monsterSpawns[i].Position, true, monsterSpawns[i].warp);
 
                 monsterSpawns[i].Health = 0;
 
@@ -313,7 +310,7 @@ namespace StardewDruid.Monster
 
         }
 
-        public StardewValley.Monsters.Monster SpawnGround(Vector2 spawnVector, SpawnHandle spawnProfile)
+        public StardewDruid.Monster.Boss SpawnGround(Vector2 spawnVector, SpawnHandle spawnProfile)
         {
 
             StardewDruid.Monster.Boss theMonster = CreateMonster(spawnProfile.boss, spawnVector, spawnCombat, spawnProfile.difficulty, spawnProfile.temperment);
@@ -330,13 +327,13 @@ namespace StardewDruid.Monster
 
             spawnTotal++;
 
-            Mod.instance.iconData.AnimateQuickWarp(spawnLocation, spawnVector * 64 - new Vector2(0, 32));
+            Mod.instance.iconData.AnimateQuickWarp(spawnLocation, spawnVector * 64 - new Vector2(0, 32), true, theMonster.warp);
 
             return theMonster;
 
         }
 
-        public void SpawnImport(StardewValley.Monsters.Monster theMonster, bool warpIn = true)
+        public void SpawnImport(StardewDruid.Monster.Boss theMonster, bool warpIn = true)
         {
 
             monsterSpawns.Add(theMonster);
@@ -352,7 +349,7 @@ namespace StardewDruid.Monster
             if (warpIn)
             {
 
-                Mod.instance.iconData.AnimateQuickWarp(spawnLocation, theMonster.Position - new Vector2(0, 32));
+                Mod.instance.iconData.AnimateQuickWarp(spawnLocation, theMonster.Position - new Vector2(0, 32), true, theMonster.warp);
 
             }
 
@@ -382,13 +379,26 @@ namespace StardewDruid.Monster
                 default:
                 case bosses.batwing:
 
-                    theMonster = new ShadowBat(spawnVector, combatModifier);
+                    switch (Mod.instance.randomIndex.Next(4))
+                    {
+                        default:
 
-                    break;
+                            theMonster = new ShadowBat(spawnVector, combatModifier);
 
-                case bosses.blobfiend:
+                            break;
 
-                    theMonster = new Blobfiend(spawnVector, combatModifier);
+                        case 1:
+
+                            theMonster = new ShadowBat(spawnVector, combatModifier, CharacterHandle.characters.BrownBat.ToString());
+
+                            break;
+
+                        case 2:
+
+                            theMonster = new ShadowBat(spawnVector, combatModifier, CharacterHandle.characters.RedBat.ToString());
+
+                            break;
+                    }
 
                     break;
 
@@ -400,13 +410,55 @@ namespace StardewDruid.Monster
 
                 case bosses.firefiend:
 
-                    theMonster = new Firefiend(spawnVector, combatModifier);
+                    theMonster = new Dustfiend(spawnVector, combatModifier, CharacterHandle.characters.Firefiend.ToString());
+
+                    break;
+
+                case bosses.jellyfiend:
+
+                    switch (Mod.instance.randomIndex.Next(4))
+                    {
+                        default:
+
+                            theMonster = new Jellyfiend(spawnVector, combatModifier);
+
+                            break;
+
+                        case 1:
+
+                            theMonster = new Jellyfiend(spawnVector, combatModifier, CharacterHandle.characters.BlueJellyfiend.ToString());
+
+                            break;
+
+
+                        case 2:
+
+                            theMonster = new Jellyfiend(spawnVector, combatModifier, CharacterHandle.characters.PinkJellyfiend.ToString());
+
+                            break;
+
+                    }
 
                     break;
 
                 case bosses.darkbrute:
 
-                    theMonster = new DarkBrute(spawnVector, combatModifier);
+                    switch (Mod.instance.randomIndex.Next(2))
+                    {
+                        default:
+
+                            theMonster = new DarkBrute(spawnVector, combatModifier);
+
+                            break;
+
+                        case 1:
+
+                            theMonster = new DarkBrute(spawnVector, combatModifier,"DarkBruteTwo");
+
+                            break;
+
+                    }
+
 
                     break;
 
@@ -418,13 +470,27 @@ namespace StardewDruid.Monster
 
                 case bosses.spectre:
 
-                    theMonster = new Spectre(spawnVector, combatModifier);
+                    switch (Mod.instance.randomIndex.Next(2))
+                    {
+                        default:
+
+                            theMonster = new Spectre(spawnVector, combatModifier);
+
+                            break;
+
+                        case 1:
+
+                            theMonster = new Spectre(spawnVector, combatModifier, CharacterHandle.characters.WhiteSpectre.ToString());
+
+                            break;
+
+                    }
 
                     break;
 
                 case bosses.phantom:
 
-                    theMonster = new Phantom(spawnVector, combatModifier);
+                    theMonster = new DarkPhantom(spawnVector, combatModifier);
 
                     break;
 
@@ -440,7 +506,7 @@ namespace StardewDruid.Monster
 
                         case 1:
 
-                            theMonster = new ShadowBear(spawnVector, combatModifier, "BlackBear");
+                            theMonster = new ShadowBear(spawnVector, combatModifier, CharacterHandle.characters.BlackBear.ToString());
 
                             break;
 
@@ -460,7 +526,7 @@ namespace StardewDruid.Monster
 
                         case 1:
 
-                            theMonster = new ShadowWolf(spawnVector, combatModifier, "BlackWolf");
+                            theMonster = new ShadowWolf(spawnVector, combatModifier, CharacterHandle.characters.BlackWolf.ToString());
 
                             break;
 

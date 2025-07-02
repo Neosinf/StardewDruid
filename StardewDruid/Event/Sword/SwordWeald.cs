@@ -3,12 +3,26 @@ using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewValley;
+using System.Collections.Generic;
 
 
 namespace StardewDruid.Event.Sword
 {
     internal class SwordWeald : EventHandle
     {
+        public Dictionary<int, Vector2> eventVectors = new()
+        {
+
+            // ENTER
+            // Sighs location
+            [1] = new Vector2(19, 7),
+            // Rustling location
+            [2] = new Vector2(14, 8),
+            // Whistling location
+            [3] = new Vector2(24, 8),
+
+
+        };
 
         public SwordWeald()
         {
@@ -20,15 +34,16 @@ namespace StardewDruid.Event.Sword
 
             base.EventActivate();
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, scheme = IconData.schemes.weald, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 256, IconData.impacts.supree, new()) { sound = SpellHandle.Sounds.getNewSpecialItem, scheme = IconData.schemes.weald, });
 
             Mod.instance.iconData.DecorativeIndicator(location, Game1.player.Position, IconData.decorations.weald, 4f, new());
 
-            //location.playSound("discoverMineral");
+            AddActor(0, eventVectors[1] * 64);
+            
+            AddActor(1, eventVectors[2] * 64);
+            
+            AddActor(2, eventVectors[3] * 64);
 
-            AddActor(0, origin + new Vector2(-192, -32));
-            AddActor(1, origin + new Vector2(128, -96));
-            AddActor(2, origin + new Vector2(-64, -180));
         }
 
         public override void EventInterval()
@@ -83,7 +98,7 @@ namespace StardewDruid.Event.Sword
 
                     //---------------------- throw Forest Sword
 
-                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.discoverMineral, scheme = IconData.schemes.weald, });
+                    Mod.instance.spellRegister.Add(new(origin, 256, IconData.impacts.supree, new()) { sound = SpellHandle.Sounds.discoverMineral, scheme = IconData.schemes.weald, });
 
                     break;
 

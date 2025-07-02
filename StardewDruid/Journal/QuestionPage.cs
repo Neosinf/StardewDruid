@@ -1,9 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
-using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Quests;

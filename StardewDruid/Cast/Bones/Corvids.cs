@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
-using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Tools;
@@ -32,7 +32,7 @@ namespace StardewDruid.Cast.Bones
 
                 }
 
-                if (Vector2.Distance(origin, Game1.player.Position) > 32)
+                if (Vector2.Distance(origin, Game1.player.Position) > 32 && !Mod.instance.ShiftButtonHeld())
                 {
 
                     return false;
@@ -65,7 +65,7 @@ namespace StardewDruid.Cast.Bones
                 if (decimalCounter == 5)
                 {
 
-                    Mod.instance.rite.channel(IconData.skies.sunset, 75);
+                    Mod.instance.rite.Channel(IconData.skies.sunset, 75);
 
                     channel = IconData.skies.sunset;
 
@@ -76,7 +76,7 @@ namespace StardewDruid.Cast.Bones
 
                     eventLocked = true;
 
-                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.supree, new()) {  sound = SpellHandle.sounds.getNewSpecialItem, });
+                    Mod.instance.spellRegister.Add(new(origin, 128, IconData.impacts.smoke, new()) {  sound = SpellHandle.Sounds.getNewSpecialItem, });
 
                     if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour))
                     {
@@ -84,6 +84,8 @@ namespace StardewDruid.Cast.Bones
                         Mod.instance.questHandle.UpdateTask(QuestHandle.wealdFour, 1);
 
                     }
+
+                    Mod.instance.rite.ChargeSet(IconData.cursors.bonesCharge);
 
                 }
 
@@ -181,11 +183,12 @@ namespace StardewDruid.Cast.Bones
             foreach (CharacterHandle.characters corvid in corvids)
             {
 
-                Character.Flyer flyer = new(corvid);
+                Character.Flyer flyer = new(corvid)
+                {
+                    setScale = corvidScales[corvid],
 
-                flyer.setScale = corvidScales[corvid];
-
-                flyer.trackQuadrant = corvidQuadrants[corvid];
+                    trackQuadrant = corvidQuadrants[corvid]
+                };
 
                 if (Context.IsMainPlayer)
                 {

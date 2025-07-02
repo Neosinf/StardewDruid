@@ -10,9 +10,9 @@ using xTile.Tiles;
 using Microsoft.Xna.Framework;
 
 using Microsoft.Xna.Framework.Graphics;
-using StardewDruid.Character;
 using StardewDruid.Cast;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Location.Druid
 {
@@ -100,7 +100,7 @@ namespace StardewDruid.Location.Druid
 
             ignoreOutdoorLighting.Set(true);
 
-            terrainFields = new();
+            mapReset();
 
             Dictionary<int, List<List<int>>> codes = new()
             {
@@ -331,7 +331,27 @@ namespace StardewDruid.Location.Druid
                 foreach (List<int> array in code.Value)
                 {
 
-                    TerrainField tField = new(IconData.tilesheets.lair, array[1], new Vector2(array[0], code.Key) * 64);
+                    TerrainField tField;
+
+                    switch (array[1])
+                    {
+
+                        default:
+                        case 1:
+
+                            tField = new Terrain.Brazier(IconData.tilesheets.lair, array[1], new Vector2(array[0], code.Key) * 64);
+
+                            break;
+
+                        case 2:
+
+                            tField = new(IconData.tilesheets.lair, array[1], new Vector2(array[0], code.Key) * 64);
+
+                            //tField.layer += 0.0128f;
+
+                            break;
+
+                    }
 
                     foreach (Vector2 bottom in tField.baseTiles)
                     {
@@ -355,8 +375,6 @@ namespace StardewDruid.Location.Druid
                         tField.flip = true;
 
                     }
-
-                    tField.layer += 0.0001f;
 
                     terrainFields.Add(tField);
 
@@ -394,33 +412,16 @@ namespace StardewDruid.Location.Druid
 
                         case 1:
 
-                            light = new(new Vector2(array[0], code.Key) * 64, 6, Color.Coral);
-
-                            light.lightFrame = Mod.instance.randomIndex.Next(4);
-
-                            lightFields.Add(light);
-
-                            break;
-
-                        case 2:
-
-                            light = new(new Vector2(array[0], code.Key) * 64);
-
-                            light.lightType = LightField.lightTypes.brazierDark;
-
-                            light.lightFrame = Mod.instance.randomIndex.Next(5);
-
-                            light.luminosity = 3;
-
-                            light.lightLayer = 1;
+                            light = new(new Vector2(array[0], code.Key) * 64, 6, Color.Coral)
+                            {
+                                lightFrame = Mod.instance.randomIndex.Next(4)
+                            };
 
                             lightFields.Add(light);
 
                             break;
 
                     }
-
-
 
                 }
 
@@ -521,11 +522,12 @@ namespace StardewDruid.Location.Druid
         public void AddCrateField(Vector2 tile, StardewValley.Object obj)
         {
 
-            CrateField crate = new(tile * 64);
+            CrateField crate = new(tile * 64)
+            {
+                type = CrateField.crateType.content,
 
-            crate.type = CrateField.crateType.content;
-
-            crate.content = obj;
+                content = obj
+            };
 
             crateFields[tile] = crate;
 
@@ -533,14 +535,15 @@ namespace StardewDruid.Location.Druid
 
         }
 
-        public void AddCrateField(Vector2 tile, SpawnData.swords sword)
+        public void AddCrateField(Vector2 tile, SpawnData.Swords sword)
         {
 
-            CrateField crate = new(tile * 64);
+            CrateField crate = new(tile * 64)
+            {
+                type = CrateField.crateType.sword,
 
-            crate.type = CrateField.crateType.sword;
-
-            crate.sword = sword;
+                sword = sword
+            };
 
             crateFields[tile] = crate;
 

@@ -8,7 +8,6 @@ using StardewDruid.Data;
 using System.Linq;
 using StardewValley.TerrainFeatures;
 using Netcode;
-using StardewDruid.Event;
 using StardewDruid.Monster;
 using StardewValley.Minigames;
 using StardewDruid.Location;
@@ -19,6 +18,7 @@ using System.Threading;
 using StardewValley.Objects;
 using StardewValley.Monsters;
 using System.Xml.Linq;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Cast.Mists
 {
@@ -103,7 +103,7 @@ namespace StardewDruid.Cast.Mists
 
                             Vector2 boltVector = new(warpVector.X, warpVector.Y - 2);
 
-                            Mod.instance.spellRegister.Add(new(boltVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                            Mod.instance.spellRegister.Add(new(boltVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.Spells.bolt });
 
                             Mod.instance.rite.specialCasts[locationName].Add("warp");
 
@@ -136,7 +136,7 @@ namespace StardewDruid.Cast.Mists
 
                             Game1.playSound("fireball");
 
-                            Mod.instance.spellRegister.Add(new(fireVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                            Mod.instance.spellRegister.Add(new(fireVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.Spells.bolt });
 
                             Mod.instance.rite.specialCasts[locationName].Add("fire");
 
@@ -165,7 +165,16 @@ namespace StardewDruid.Cast.Mists
 
                                 }
 
-                                for (int j = 0; j <= Mod.instance.PowerLevel; j++)
+                                int limit = 1;
+
+                                if (Mod.instance.ModDifficulty() <= 10)
+                                {
+
+                                    limit = Mod.instance.PowerLevel;
+
+                                }
+
+                                for (int j = 0; j <= limit; j++)
                                 {
 
                                     if (Mod.instance.rite.specialCasts[locationName].Contains("rod" + j.ToString()))
@@ -184,7 +193,7 @@ namespace StardewDruid.Cast.Mists
                                     if (!zaprod)
                                     {
                                         
-                                        Mod.instance.spellRegister.Add(new(tileVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                                        Mod.instance.spellRegister.Add(new(tileVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.Spells.bolt });
                                         
                                         zaprod = true;
 
@@ -219,7 +228,7 @@ namespace StardewDruid.Cast.Mists
 
                                     Game1.playSound("fireball");
 
-                                    Mod.instance.spellRegister.Add(new(tileVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                                    Mod.instance.spellRegister.Add(new(tileVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.Spells.bolt });
 
                                     Mod.instance.rite.specialCasts[locationName].Add("campfire");
 
@@ -235,11 +244,9 @@ namespace StardewDruid.Cast.Mists
                                 if (!Game1.isRaining && !Mod.instance.rite.specialCasts[locationName].Contains(scid))
                                 {
 
+                                    Mod.instance.rite.specialCasts[locationName].Add(scid);
+
                                     ArtificeScarecrow(location,tileVector);
-
-                                    int tryCost = 32 - Game1.player.FarmingLevel * 3;
-
-                                    Mod.instance.rite.castCost += tryCost < 8 ? 8 : tryCost;
 
                                     casts++;
 
@@ -249,7 +256,16 @@ namespace StardewDruid.Cast.Mists
                             else if(targetObject.QualifiedItemId == "(BC)MushroomLog")
                             {
 
-                                for (int j = 0; j <= Mod.instance.PowerLevel; j++)
+                                int limit = 1;
+
+                                if (Mod.instance.ModDifficulty() <= 10)
+                                {
+
+                                    limit = Mod.instance.PowerLevel;
+
+                                }
+
+                                for (int j = 0; j <= limit; j++)
                                 {
 
                                     if (Mod.instance.rite.specialCasts[locationName].Contains("mushroomlog" + j.ToString()))
@@ -272,7 +288,7 @@ namespace StardewDruid.Cast.Mists
 
                                     DelayedAction.functionAfterDelay(delegate { targetObject.minutesElapsed(10); }, 50);
 
-                                    Mod.instance.spellRegister.Add(new(tileVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                                    Mod.instance.spellRegister.Add(new(tileVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.Spells.bolt });
 
                                     Mod.instance.rite.specialCasts[locationName].Add("mushroomlog" + j.ToString());
 
@@ -326,7 +342,7 @@ namespace StardewDruid.Cast.Mists
                                         Game1.player.caughtFish(harvest.QualifiedItemId, Game1.random.Next(minValue, num + 1), from_fish_pond: false, numberCaught);
                                     }
 
-                                    Game1.player.gainExperience(1, 5);
+                                    Mod.instance.GiveExperience(1, 5);
 
                                 }
 
@@ -335,7 +351,7 @@ namespace StardewDruid.Cast.Mists
 
                                     if (!zappot)
                                     {
-                                        Mod.instance.spellRegister.Add(new(tileVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+                                        Mod.instance.spellRegister.Add(new(tileVector * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.Spells.bolt });
                                         zappot = true;
 
                                     }
@@ -344,9 +360,7 @@ namespace StardewDruid.Cast.Mists
 
                                     location.playSound("Ship");
 
-                                    Crabpot.lidFlapping = true;
-
-                                    Crabpot.lidFlapTimer = 60f;
+                                    Crabpot.addWorkingAnimation();
 
                                     casts++;
 
@@ -378,10 +392,8 @@ namespace StardewDruid.Cast.Mists
 
         }
 
-        public void ArtificeScarecrow(GameLocation location, Vector2 targetVector, bool companion = false)
+        public void ArtificeScarecrow(GameLocation location, Vector2 targetVector, bool animate = true)
         {
-
-            bool animate = true;
 
             if (Game1.player.currentLocation.Name != location.Name || !Utility.isOnScreen(targetVector * 64, 0))
             {
@@ -394,76 +406,27 @@ namespace StardewDruid.Cast.Mists
 
             radius = Math.Min(11, radius);
 
-            for (int i = 0; i < radius; i++)
-            {
-
-                List<Vector2> hoeVectors = ModUtility.GetTilesWithinRadius(location, targetVector, i);
-
-                foreach (Vector2 hoeVector in hoeVectors)
-                {
-
-                    if (location.terrainFeatures.ContainsKey(hoeVector))
-                    {
-
-                        var terrainFeature = location.terrainFeatures[hoeVector];
-
-                        if (terrainFeature is HoeDirt)
-                        {
-
-                            HoeDirt hoeDirt = terrainFeature as HoeDirt;
-
-                            if (hoeDirt.state.Value == 0)
-                            {
-
-                                hoeDirt.state.Value = 1;
-
-                                if (animate)
-                                {
-
-                                    TemporaryAnimatedSprite newAnimation = new(
-                                        "TileSheets\\animations",
-                                        new(0, 51 * 64, 64, 64), 
-                                        75f, 
-                                        8, 
-                                        1,
-                                        new(hoeVector.X * 64 + 10, hoeVector.Y * 64 + 10), 
-                                        false, 
-                                        false,
-                                        hoeVector.X * 1000 + hoeVector.Y, 
-                                        0f,
-                                        new(0.8f, 0.8f, 1f, 1f), 
-                                        0.7f, 
-                                        0f, 
-                                        0f, 
-                                        0f)
-                                    {
-
-                                        delayBeforeAnimationStart = (i * 200) + 200,
-
-                                    };
-
-                                    location.temporarySprites.Add(newAnimation);
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                    continue;
-
-                }
-
-            }
+            ModUtility.WaterRadius(location, targetVector, radius, animate);
 
             if (animate)
             {
 
-                Mod.instance.spellRegister.Add(new(targetVector * 64 - new Vector2(0, 32), 128, IconData.impacts.spiral, new()) { type = SpellHandle.spells.bolt });
+                SpellHandle bolt = new(targetVector * 64 - new Vector2(0, 32), 160, IconData.impacts.spiral, new())
+                {
+                    type = SpellHandle.Spells.bolt,
+
+                    explosion = radius
+                };
+
+                Mod.instance.spellRegister.Add(bolt);
 
             }
+
+            int tryCost = 32 - Game1.player.FarmingLevel * 3;
+
+            tryCost = tryCost < 8 ? 8 : tryCost;
+
+            Rite.ApplyCost(tryCost);
 
             return;
 

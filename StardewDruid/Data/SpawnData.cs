@@ -18,16 +18,21 @@ using System.Linq;
 using StardewValley.GameData.Shops;
 using StardewValley.Monsters;
 using StardewValley.GameData.Crops;
-using StardewDruid.Event;
 using StardewValley.ItemTypeDefinitions;
 using StardewDruid.Location.Druid;
+using StardewValley.Menus;
+using System.Reflection.Metadata.Ecma335;
+using StardewValley.GameData;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Data
 {
     public static class SpawnData
     {
 
-        public enum drops
+        public enum Drops
         {
             none,
             bat,
@@ -41,7 +46,7 @@ namespace StardewDruid.Data
             serpent,
         }
 
-        public enum swords
+        public enum Swords
         {
             none,
             forest,
@@ -53,14 +58,14 @@ namespace StardewDruid.Data
             knife,
         }
 
-        public static MeleeWeapon SpawnSword(swords sword)
+        public static MeleeWeapon SpawnSword(Swords sword)
         {
 
             switch (sword)
             {
 
                 default:
-                case swords.forest:
+                case Swords.forest:
 
                     if (Mod.instance.Helper.ModRegistry.IsLoaded("DaLion.Overhaul"))
                     {
@@ -69,7 +74,7 @@ namespace StardewDruid.Data
 
                     return new MeleeWeapon("15");
 
-                case swords.neptune:
+                case Swords.neptune:
 
                     if (Mod.instance.Helper.ModRegistry.IsLoaded("DaLion.Overhaul"))
                     {
@@ -78,7 +83,7 @@ namespace StardewDruid.Data
 
                     return new MeleeWeapon("14");
 
-                case swords.holy:
+                case Swords.holy:
 
                     StardewValley.Tools.MeleeWeapon holyBlade = new("3");
 
@@ -94,29 +99,29 @@ namespace StardewDruid.Data
 
                     return holyBlade;
 
-                case swords.lava:
+                case Swords.lava:
 
                     return new MeleeWeapon("9");
 
-                case swords.scythe:
+                case Swords.scythe:
 
                     return new MeleeWeapon("53");
 
-                case swords.cutlass:
+                case Swords.cutlass:
 
                     return new MeleeWeapon("57");
 
-                case swords.knife:
+                case Swords.knife:
 
                     return new MeleeWeapon("16");
             }
 
         }
 
-        public static Dictionary<int, Rite.rites> WeaponAttunement(bool reserved = false)
+        public static Dictionary<int, Rite.Rites> WeaponAttunement(bool reserved = false)
         {
 
-            Dictionary<int, Rite.rites> weapons = new();
+            Dictionary<int, Rite.Rites> weapons = new();
 
             if (!reserved)
             {
@@ -124,17 +129,17 @@ namespace StardewDruid.Data
 
             }
 
-            weapons[15] = Rite.rites.weald;
-            weapons[14] = Rite.rites.mists;
-            weapons[3] = Rite.rites.stars;
-            weapons[53] = Rite.rites.fates;
-            weapons[57] = Rite.rites.ether;
-            weapons[16] = Rite.rites.bones;
+            weapons[15] = Rite.Rites.weald;
+            weapons[14] = Rite.Rites.mists;
+            weapons[3] = Rite.Rites.stars;
+            weapons[53] = Rite.Rites.fates;
+            weapons[57] = Rite.Rites.ether;
+            weapons[16] = Rite.Rites.bones;
 
             if (Mod.instance.Helper.ModRegistry.IsLoaded("DaLion.Overhaul"))
             {
-                weapons[44] = Rite.rites.weald;
-                weapons[7] = Rite.rites.mists;
+                weapons[44] = Rite.Rites.weald;
+                weapons[7] = Rite.Rites.mists;
 
             }
 
@@ -142,13 +147,13 @@ namespace StardewDruid.Data
 
         }
 
-        public static void MonsterDrops(StardewValley.Monsters.Monster monster, drops drop)
+        public static void MonsterDrops(StardewValley.Monsters.Monster monster, Drops drop)
         {
 
             switch (drop)
             {
 
-                case drops.bat:
+                case Drops.bat:
 
                     monster.objectsToDrop.Clear();
 
@@ -175,7 +180,7 @@ namespace StardewDruid.Data
 
                     break;
 
-                case drops.shadow:
+                case Drops.shadow:
 
                     monster.objectsToDrop.Clear();
 
@@ -207,7 +212,7 @@ namespace StardewDruid.Data
 
                     break;
 
-                case drops.slime:
+                case Drops.slime:
 
 
                     monster.objectsToDrop.Add("766");
@@ -233,7 +238,7 @@ namespace StardewDruid.Data
 
                     break;
 
-                case drops.phantom:
+                case Drops.phantom:
 
                     monster.objectsToDrop.Clear();
 
@@ -256,8 +261,8 @@ namespace StardewDruid.Data
 
                     break;
 
-                case drops.seafarer:
-                case drops.dragon:
+                case Drops.seafarer:
+                case Drops.dragon:
 
                     monster.objectsToDrop.Clear();
 
@@ -265,7 +270,7 @@ namespace StardewDruid.Data
 
                     break;
 
-                case drops.dust:
+                case Drops.dust:
 
                     monster.objectsToDrop.Clear();
 
@@ -286,7 +291,7 @@ namespace StardewDruid.Data
 
                     break;
 
-                case drops.rex:
+                case Drops.rex:
 
                     monster.objectsToDrop.Clear();
 
@@ -312,7 +317,7 @@ namespace StardewDruid.Data
 
                     break;
 
-                case drops.serpent:
+                case Drops.serpent:
 
                     monster.objectsToDrop.Clear();
 
@@ -440,7 +445,7 @@ namespace StardewDruid.Data
 
         }
 
-        public static List<int> RockFall(GameLocation location, Farmer player, int specialChance = 10)
+        public static List<int> RockFall(GameLocation location, int specialChance = 10)
         {
 
             List<int> rockList = new();
@@ -656,7 +661,7 @@ namespace StardewDruid.Data
             {
                 debrisIndex = specialIndexes[Game1.random.Next(specialIndexes.Count)];
 
-                player.gainExperience(3, 4); // gain mining experience for special drops
+                Mod.instance.GiveExperience(3, 4); // gain mining experience for special drops
 
             }
 
@@ -670,98 +675,353 @@ namespace StardewDruid.Data
 
         }
 
-        public static List<string> CropList(GameLocation location)
+        #nullable enable
+        public static bool CropCheck()
         {
 
-            List<string> objectIndexes = new();
 
-            if(Game1.content != null && !Mod.instance.Config.disableShopdata)
+
+            return false;
+
+        }
+
+        public static List<string> CropList(GameLocation location, int quality = 0)
+        {
+
+            Season season = Game1.season;
+
+            List<string> setList = new();
+
+            if (location is IslandLocation)
             {
 
-                Dictionary<string, ShopData> shopData = DataLoader.Shops(Game1.content);
-
-
-                if (shopData != null && shopData.Count > 0)
+                setList = new()
                 {
 
-                    List<string> shopSearch = new()
-                    {
-                        "SeedShop",
+                    "479", // melon
+                    "833", // pineapple
+                    "831", // taro
+                    "829", // ginger
 
-                    };
+                };
 
-                    if (Mod.instance.questHandle.IsComplete(QuestHandle.swordEther))
-                    {
+                for (int i = 0; i < quality; i++)
+                {
+                    setList.Add("486"); // starfruit
 
-                        shopSearch.Add("Sandy");
+                }
 
-                    }
+            }
+            else
+            {
+                switch (season)
+                {
+                    default:
+                    case Season.Spring:
 
-                    foreach (string shop in shopSearch)
-                    {
+                        setList = new()
+                        {
+                            "472", // parsnip
+                            "475", // potato
+                            "476", // garlic
+                            "CarrotSeeds",
+                        };
 
-                        if (shopData.ContainsKey(shop))
+                        for (int i = 0; i < quality; i++)
                         {
 
-                            List<string> shopCrops = new();
+                            setList.Add("478"); // rhubarb
+                            setList.Add("745"); // strawberry
+                        }
 
-                            if (shopData[shop].Items != null)
+                        if (Mod.instance.Config.cultivateTallCrops)
+                        {
+                            setList.Add("477"); // kale
+                            setList.Add("473"); // bean
+                        }
+
+                        if (Mod.instance.randomIndex.Next(3) == 0)
+                        {
+
+                            setList.Add("433"); // coffee
+
+                        }
+
+                        break;
+
+                    case Season.Summer:
+
+                        setList = new()
+                        {
+                            "487", // corn
+                            "482", // pepper
+                            "484", // radish
+                            "SummerSquashSeeds",
+                        };
+
+                        for (int i = 0; i < quality; i++)
+                        {
+
+                            setList.Add("479"); // melon
+                            setList.Add("485"); // red cabbage
+                            setList.Add("481"); // blueberry
+                        }
+
+                        if (Mod.instance.Config.cultivateTallCrops)
+                        {
+
+                            setList.Add("302"); // hops
+                            setList.Add("483"); // wheat
+
+                        }
+
+                        if (Mod.instance.randomIndex.Next(3) == 0)
+                        {
+
+                            setList.Add("433"); // coffee
+
+                        }
+
+                        break;
+
+                    case Season.Fall:
+
+                        setList = new()
+                        {
+                            "487", // corn
+                            "488", // eggplant
+                            "489", // artichoke
+                            "491", // bok choy
+                            "492", // yam
+                            "494", // beet
+                            "BroccoliSeeds",
+                        };
+
+                        for (int i = 0; i < quality; i++)
+                        {
+
+                            setList.Add("490"); // pumpkin
+                            setList.Add("493"); // cranberry
+
+                        }
+
+                        if (Mod.instance.Config.cultivateTallCrops)
+                        {
+
+                            setList.Add("299"); // amaranth
+                            setList.Add("301"); // grape
+
+                        }
+
+                        break;
+
+                    case Season.Winter:
+
+                        setList = new()
+                        {
+                            "PowdermelonSeeds",
+                        };
+
+                        break;
+
+                }
+
+            }
+
+            return setList;
+
+        }
+
+        public static List<string> ShopList(GameLocation location, int quality = 0)
+        {
+
+            List<string> shopIndexes = new();
+
+            if(Game1.content == null)
+            {
+
+                return new();
+
+            }
+
+            if (Mod.instance.Config.disableShopdata)
+            {
+
+                return new();
+
+            }
+
+            if (Mod.instance.Helper.ModRegistry.IsLoaded("JohnMarley2018.MRSSI"))
+            {
+
+                return new();
+
+            }
+            
+            Dictionary<string, ShopData> shopData = DataLoader.Shops(Game1.content) ?? new();
+
+            if (shopData == null)
+            {
+
+                return new();
+
+            }
+
+            if(shopData.Count == 0)
+            {
+
+                return new();
+
+            }
+
+            List<string> shopSearch = new()
+            {
+                "SeedShop",
+
+            };
+
+            if (Mod.instance.questHandle.IsComplete(QuestHandle.swordEther))
+            {
+
+                shopSearch.Add("Sandy");
+
+            }
+
+            foreach (string shop in shopSearch)
+            {
+
+                if (shopData.ContainsKey(shop))
+                {
+
+                    List<string> shopCrops = new();
+
+                    List<ShopItemData> shopItems = shopData[shop].Items ?? new();
+
+                    if (shopItems != null && shopItems.Count > 0)
+                    {
+
+                        for (int i = shopItems.Count - 1; i >= 0; i--)
+                        {
+
+                            ShopItemData shopThing = shopItems[i] ?? new ShopItemData() { ItemId = String.Empty };
+
+                            if (shopThing == null)
                             {
 
-                                foreach (var shopThing in shopData[shop].Items)
+                                continue;
+
+                            }
+
+                            if(shopThing.ItemId == String.Empty)
+                            {
+
+                                continue;
+
+                            }
+
+                            if(shopThing.Price == 0)
+                            {
+
+                                continue;
+
+                            }
+
+                            if (!GameStateQuery.CheckConditions(shopThing.Condition, location, Game1.player, null, null, Mod.instance.randomIndex))
+                            {
+
+                                continue;
+
+                            }
+
+                            if(shopThing == null || shopThing.ItemId == null)
+                            {
+
+                                continue;
+
+                            }
+
+                            if (quality == 0 && shopThing.Price >= 80)
+                            {
+
+                                continue;
+
+                            }
+
+                            if (Crop.TryGetData(shopThing.ItemId.Replace("(O)", ""), out CropData cropData))
+                            {
+
+                                if (cropData == null)
                                 {
 
-                                    if (shopThing is ShopItemData shopItem)
+                                    continue;
+
+                                }
+
+                                if(cropData.PlantableLocationRules != null)
+                                {
+
+                                    bool plantable = true;
+
+                                    foreach (PlantableRule rule in cropData.PlantableLocationRules)
                                     {
 
-                                        /*if (object.ReferenceEquals(shopItem, null))
+                                        if (rule.Result == PlantableResult.Deny)
                                         {
 
-                                            continue;
+                                            plantable = false;
 
-                                        }*/
-
-                                        if (shopItem.Condition != null)
-                                        {
-
-                                            if (!GameStateQuery.CheckConditions(shopItem.Condition, location, Game1.player, null, null, Mod.instance.randomIndex))
-                                            {
-
-                                                continue;
-
-                                            }
-
-                                        }
-
-                                        if (Crop.TryGetData(shopItem.ItemId.Replace("(O)", ""), out CropData cropData))
-                                        {
-
-                                            if (cropData == null)
-                                            {
-
-                                                continue;
-
-                                            }
-
-                                            if (cropData.Seasons.Contains(Game1.season) && ItemRegistry.Create(cropData.HarvestItemId).Category != StardewValley.Object.flowersCategory)
-                                            {
-
-                                                shopCrops.Add(shopItem.ItemId.Replace("(O)", ""));
-
-                                            }
+                                            break;
 
                                         }
 
                                     }
 
+                                    if (!plantable)
+                                    {
+
+                                        continue;
+
+                                    }
+
                                 }
 
-                            }
+                                if (!Mod.instance.Config.cultivateTallCrops)
+                                {
 
-                            if (shopCrops.Count > 0)
-                            {
+                                    if (cropData.IsRaised)
+                                    {
 
-                                objectIndexes.AddRange(shopCrops);
+                                        continue;
+
+                                    }
+
+                                    if (cropData.HarvestMethod == HarvestMethod.Scythe)
+                                    {
+
+                                        continue;
+
+                                    }
+
+                                }
+
+                                if (location is IslandLocation)
+                                {
+
+                                    if (cropData.Seasons.Contains(Season.Summer) && ItemRegistry.Create(cropData.HarvestItemId).Category == StardewValley.Object.FruitsCategory)
+                                    {
+
+                                        shopCrops.Add(shopThing.ItemId.Replace("(O)", ""));
+
+                                    }
+
+                                }
+                                else
+                                if (cropData.Seasons.Contains(Game1.season) && ItemRegistry.Create(cropData.HarvestItemId).Category != StardewValley.Object.flowersCategory)
+                                {
+
+                                    shopCrops.Add(shopThing.ItemId.Replace("(O)", ""));
+
+                                }
 
                             }
 
@@ -769,115 +1029,28 @@ namespace StardewDruid.Data
 
                     }
 
+                    if (shopCrops.Count > 0)
+                    {
+
+                        shopIndexes.AddRange(shopCrops);
+
+                    }
+
                 }
 
             }
 
-            string season = Game1.currentSeason;
-
-            if (location.isGreenhouse.Value)
-            {
-
-                season = "greenhouse";
-
-            }
-
-            if (location is IslandLocation)
-            {
-
-                season = "island";
-
-            }
-
-            switch (season)
-            {
-                default:
-                case "spring":
-
-                    objectIndexes = new()
-                    {
-                        "478", // rhubarb
-                        "476", // garlic
-                        "745", // strawberry
-                        "473", // bean
-                        //"477", // kale
-                        "CarrotSeeds",
-                    };
-
-                    if(Mod.instance.randomIndex.Next(3) == 0)
-                    {
-
-                        objectIndexes.Add("433"); // coffee
-                    }
-
-                    break;
-
-                case "summer":
-                case "greenhouse":
-
-                    objectIndexes = new()
-                    {
-                        "479", // melon
-                        "485", // red cabbage
-                        "433", // coffee
-                        "481", // blueberry
-                        "302", // hops
-                        "483", // wheat
-                        "SummerSquashSeeds",
-                    };
-
-                    break;
-
-                case "fall":
-
-                    objectIndexes = new()
-                    {
-                        "490", // pumpkin
-                        "492", // yam
-                        "299", // amaranth
-                        "493", // cranberry
-                        "301", // grape
-                        "BroccoliSeeds",
-                    };
-
-                    break;
-
-                case "island":
-
-                    objectIndexes = new()
-                    {
-                        "833", // pineapple
-                        "831", // taro
-                        "486", // starfruit
-                        "829", // ginger
-
-                    };
-
-                    break;
-
-
-                case "winter":
-                    objectIndexes = new()
-                    {
-                        "PowdermelonSeeds",
-
-                    };
-
-                    break;
-
-            }
-
-            return objectIndexes;
+            return shopIndexes;
 
         }
 
-        public static string SeasonalSeed(GameLocation location)
+        public static string SeasonalSeed()
         {
 
             if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdOne) || Mod.instance.ModDifficulty() > 10)
             {
 
-                return null;
+                return string.Empty;
 
             }
 
@@ -920,7 +1093,7 @@ namespace StardewDruid.Data
 
             }
 
-            return null;
+            return string.Empty;
 
         }
 
@@ -952,7 +1125,7 @@ namespace StardewDruid.Data
             if (data != null)
             {
 
-                List<SpawnForageData> forageList = new List<SpawnForageData>();
+                List<SpawnForageData> forageList = new();
 
                 foreach (SpawnForageData forageItem in data.Forage)
                 {
@@ -987,7 +1160,7 @@ namespace StardewDruid.Data
 
             }
 
-            return null;
+            return string.Empty;
 
         }
 
@@ -996,7 +1169,7 @@ namespace StardewDruid.Data
 
             string tryForage = RandomForageFrom(location);
 
-            if (tryForage != null)
+            if (tryForage != string.Empty)
             {
 
                 return tryForage;
@@ -1244,7 +1417,7 @@ namespace StardewDruid.Data
 
         }
 
-        public static string RandomRock(GameLocation location)
+        public static string RandomRock()
         {
 
             if (Mod.instance.randomIndex.Next(100) == 0 && Mod.instance.PowerLevel >= 3)
@@ -1276,12 +1449,17 @@ namespace StardewDruid.Data
         public static string RandomBeach(GameLocation beach)
         {
 
-            string tryForage = RandomForageFrom(beach);
-
-            if(tryForage != null)
+            if(Mod.instance.randomIndex.Next(2) == 0)
             {
 
-                return tryForage;
+                string tryForage = RandomForageFrom(beach);
+
+                if (tryForage != null)
+                {
+
+                    return tryForage;
+
+                }
 
             }
 
@@ -1313,7 +1491,7 @@ namespace StardewDruid.Data
 
         }
 
-        public static string RandomTwig(GameLocation location)
+        public static string RandomTwig()
         {
 
             return "(O)" + (294 + Mod.instance.randomIndex.Next(2)).ToString();
@@ -1351,10 +1529,38 @@ namespace StardewDruid.Data
         public static string RandomLowFish(GameLocation location, Vector2 vector)
         {
 
-            Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
-
-            if (!fish.HasContextTag("fish_legendary") && fish.Name != StardewValley.Object.ErrorItemName && fish.Category != StardewValley.Object.furnitureCategory)
+            for(int f = 0; f < 3; f++)
             {
+
+                Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
+
+                if(fish.Name == StardewValley.Object.ErrorItemName)
+                {
+
+                    continue;
+
+                }
+
+                if (fish.Category == StardewValley.Object.furnitureCategory)
+                {
+
+                    continue;
+
+                }
+
+                if (fish.HasContextTag("fish_legendary"))
+                {
+
+                    continue;
+
+                }
+
+                if(fish.sellToStorePrice() > 100)
+                {
+
+                    continue;
+
+                }
 
                 return fish.QualifiedItemId.Replace("(O)", "");
 
@@ -1499,8 +1705,52 @@ namespace StardewDruid.Data
 
         }
 
-        public static string RandomHighFish(GameLocation location, bool enableRare, Vector2 vector, int set = 0)
+        public static string RandomHighFish(GameLocation location,  Vector2 vector, bool enableRare = true, int set = 0)
         {
+
+            for (int f = 0; f < 3; f++)
+            {
+
+                Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
+
+                if (fish.Name == StardewValley.Object.ErrorItemName)
+                {
+
+                    continue;
+
+                }
+
+                if (fish.Category != StardewValley.Object.FishCategory)
+                {
+
+                    continue;
+
+                }
+
+                if (fish.sellToStorePrice() <= 100)
+                {
+
+                    continue;
+
+                }
+
+                if (!enableRare && fish.sellToStorePrice() > 200)
+                {
+
+                    continue;
+
+                }
+
+                if (fish.HasContextTag("fish_legendary"))
+                {
+
+                    continue;
+
+                }
+
+                return fish.QualifiedItemId.Replace("(O)", "");
+
+            }
 
             Dictionary<int, int> objectIndexes;
 
@@ -1511,70 +1761,29 @@ namespace StardewDruid.Data
             if (location is Woods)
             {
 
-                Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
-
-                if (!fish.HasContextTag("fish_legendary") && fish.Category == StardewValley.Object.FishCategory)
-                {
-
-                    return fish.QualifiedItemId.Replace("(O)", "");
-
-                }
-
                 objectIndexes = new() { [0] = 734, };
 
             }
             else if (location is Desert)
             {
-                Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
-
-                if (!fish.HasContextTag("fish_legendary") && fish.Category == StardewValley.Object.FishCategory)
-                {
-
-                    return fish.QualifiedItemId.Replace("(O)", "");
-
-                }
 
                 objectIndexes = new() { [0] = 164, [1] = 165, };
 
             }
             else if (location is Caldera || location.Name == "UndergroundMine100")
             {
-                Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
-
-                if (!fish.HasContextTag("fish_legendary") && fish.Category == StardewValley.Object.FishCategory)
-                {
-
-                    return fish.QualifiedItemId.Replace("(O)", "");
-
-                }
 
                 objectIndexes = new() { [0] = 162, };
 
             }
             else if (location.Name == "UndergroundMine20")
             {
-                Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
-
-                if (!fish.HasContextTag("fish_legendary") && fish.Category == StardewValley.Object.FishCategory)
-                {
-
-                    return fish.QualifiedItemId.Replace("(O)", "");
-
-                }
 
                 objectIndexes = new() { [0] = 158, [1] = 156, };
 
             }
             else if (location.Name == "UndergroundMine60")
             {
-                Item fish = location.getFish(5000, "(O)DeluxeBait", 5, Game1.player, 1.0, vector);
-
-                if (!fish.HasContextTag("fish_legendary") && fish.Category == StardewValley.Object.FishCategory)
-                {
-
-                    return fish.QualifiedItemId.Replace("(O)", "");
-
-                }
 
                 objectIndexes = new() { [0] = 161, [1] = 156, };
 
@@ -1697,7 +1906,7 @@ namespace StardewDruid.Data
 
         }
 
-        public static int RandomTrash(GameLocation location)
+        public static int RandomTrash()
         {
 
             Dictionary<int, int> artifactIndexes = new()
@@ -1899,7 +2108,7 @@ namespace StardewDruid.Data
 
                 case "winter":
 
-                    return null;
+                    return string.Empty;
 
             }
 
@@ -1909,7 +2118,7 @@ namespace StardewDruid.Data
 
         }
 
-        public static StardewValley.Object RandomTreasure(GameLocation location, Vector2 vector, bool rareTreasure = false)
+        public static StardewValley.Object DiveTreasure(GameLocation location, Vector2 vector, bool rareTreasure = false)
         {
 
             int options = 3;
@@ -1923,7 +2132,7 @@ namespace StardewDruid.Data
 
                     string low =  RandomLowFish(location, vector);
 
-                    StardewValley.Object lowfish = new StardewValley.Object(low, Mod.instance.randomIndex.Next(1, 3));
+                    StardewValley.Object lowfish = new(low, Mod.instance.randomIndex.Next(1, 3));
 
                     if(lowfish.Category == StardewValley.Object.FishCategory)
                     {
@@ -1948,9 +2157,9 @@ namespace StardewDruid.Data
 
                 case 3:
 
-                    string fish = RandomHighFish(location,true,vector);
+                    string fish = RandomHighFish(location,vector);
 
-                    StardewValley.Object highfish = new StardewValley.Object(fish, 1);
+                    StardewValley.Object highfish = new(fish, 1);
 
                     if (highfish.Category == StardewValley.Object.FishCategory)
                     {
@@ -1964,7 +2173,6 @@ namespace StardewDruid.Data
             }
 
         }
-
 
         public static StardewValley.Object RandomTreasure()
         {
@@ -2179,7 +2387,7 @@ namespace StardewDruid.Data
     public class SpawnIndex
     {
         public bool anywhere;
-        public string locale;
+        public string locale = string.Empty;
 
         public bool cast;
         public bool weeds;
@@ -2225,7 +2433,7 @@ namespace StardewDruid.Data
 
                 }
 
-                if (Game1.player.currentLocation is IslandWest islandWest)
+                if (Game1.player.currentLocation is IslandWest)
                 {
 
                     if (Vector2.Distance(Game1.player.Position, new Vector2(90, 55) * 64) <= 1600)
@@ -2293,7 +2501,7 @@ namespace StardewDruid.Data
                 weeds = true;
                 wilderness = true;
 
-                if (location is IslandWest islandWest)
+                if (location is IslandWest)
                 {
 
                     if (Vector2.Distance(Game1.player.Position,new Vector2(90,55)*64) <= 1280)

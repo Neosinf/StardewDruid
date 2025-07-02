@@ -5,7 +5,7 @@ using StardewDruid.Cast;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
-using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
@@ -42,9 +42,7 @@ namespace StardewDruid.Character
 
             base.LoadOut();
 
-            WeaponLoadout();
-
-            weaponRender.swordScheme = WeaponRender.swordSchemes.sword_stars;
+            WeaponLoadout(WeaponRender.weapons.starsword);
 
             specialFrames[specials.launch] = new()
             {
@@ -264,9 +262,7 @@ namespace StardewDruid.Character
 
                     Cultivate cultivateEvent = new();
 
-                    cultivateEvent.EventSetup(workVector * 64, "effigy_cultivate_" + workVector.ToString());
-
-                    cultivateEvent.inabsentia = true;
+                    cultivateEvent.EventSetup(currentLocation, workVector * 64, "effigy_cultivate_" + workVector.ToString());
 
                     cultivateEvent.inventory = Mod.instance.chests[CharacterHandle.characters.Effigy].Items;
 
@@ -305,29 +301,30 @@ namespace StardewDruid.Character
 
             specialTimer = 90;
 
-            cooldownTimer = cooldownInterval;
+            SetCooldown(specialTimer, 1f);
 
             LookAtTarget(monster.Position, true);
 
-            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 2);
+            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 2)
+            {
+                type = SpellHandle.Spells.missile,
 
-            special.type = SpellHandle.spells.missile;
+                missile = MissileHandle.missiles.fireball,
 
-            special.missile = MissileHandle.missiles.fireball;
+                counter = -30,
 
-            special.counter = -30;
+                scheme = IconData.schemes.stars,
 
-            special.scheme = IconData.schemes.stars;
+                factor = 2,
 
-            special.factor = 2;
+                power = 4,
 
-            special.power = 4;
+                explosion = 4,
 
-            special.explosion = 4;
+                terrain = 4,
 
-            special.terrain = 4;
-
-            special.display = IconData.impacts.bomb;
+                display = IconData.impacts.bomb
+            };
 
             Mod.instance.spellRegister.Add(special);
 

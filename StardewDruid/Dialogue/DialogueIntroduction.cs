@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StardewDruid.Character;
-using StardewDruid.Event;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Dialogue
 {
@@ -115,7 +114,15 @@ namespace StardewDruid.Dialogue
                 case CharacterHandle.characters.recruit_three:
                 case CharacterHandle.characters.recruit_four:
 
-                    return Mod.instance.Helper.Translation.Get("DialogueIntroduction.361.1").Tokens(new { villager = (Mod.instance.characters[character] as Recruit).villager.Name, name = Game1.player.Name, });
+                    return Mod.instance.Helper.Translation.Get("DialogueIntroduction.361.1").Tokens(new { villager = Mod.instance.save.recruits[character].display, title = RecruitHandle.RecruitTitle(Mod.instance.save.recruits[character].name), name = Game1.player.Name, });
+
+                case CharacterHandle.characters.PalBat:
+                case CharacterHandle.characters.PalSlime:
+                case CharacterHandle.characters.PalSpirit:
+                case CharacterHandle.characters.PalGhost:
+                case CharacterHandle.characters.PalSerpent:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueIntroduction.386.1").Tokens(new { name = PalHandle.PalName(character), title = PalHandle.PalScheme(character) });
 
                 // other characters
 
@@ -130,9 +137,71 @@ namespace StardewDruid.Dialogue
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.107");
 
+                // ---------------------------------------------------
+
                 case CharacterHandle.characters.attendant:
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.310.1");
+
+                case CharacterHandle.characters.spring_bench:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueIntroduction.386.2");
+
+                case CharacterHandle.characters.spring_steephouse:
+
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.distillery))
+                    {
+
+                        CharacterHandle.OpenInventory(CharacterHandle.characters.spring_bench);
+
+                    }
+                    else
+                    {
+
+                        return Mod.instance.Helper.Translation.Get("DialogueInventory.386.3");
+
+                    }
+
+                    break;
+
+                case CharacterHandle.characters.spring_batchhouse:
+
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.distillery))
+                    {
+
+                        CharacterHandle.OpenInventory(CharacterHandle.characters.spring_vintner);
+
+                    }
+                    else
+                    {
+
+                        return Mod.instance.Helper.Translation.Get("DialogueInventory.386.4");
+
+                    }
+
+                    break;
+
+                case CharacterHandle.characters.spring_packhouse:
+
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.distillery))
+                    {
+
+                        CharacterHandle.OpenInventory(CharacterHandle.characters.spring_packer);
+
+                    }
+                    else
+                    {
+
+                        return Mod.instance.Helper.Translation.Get("DialogueInventory.386.5");
+
+                    }
+
+                    break;
+
+                // ---------------------------------------------------
 
                 case CharacterHandle.characters.waves:
 
@@ -141,6 +210,10 @@ namespace StardewDruid.Dialogue
                 case CharacterHandle.characters.herbalism:
 
                     return Mod.instance.Helper.Translation.Get("CharacterHandle.115");
+
+                case CharacterHandle.characters.anvil:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueIntroduction.373.1");
 
                 case CharacterHandle.characters.keeper:
 
@@ -215,8 +288,13 @@ namespace StardewDruid.Dialogue
 
                     return Mod.instance.Helper.Translation.Get("DialogueIntroduction.347.2");
 
-                // court of fates and chaos
+                // clearing
 
+                case CharacterHandle.characters.bearrock:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueIntroduction.372.1");
+
+                // court of fates and chaos
 
                 case CharacterHandle.characters.monument_artisans:
 
@@ -276,9 +354,18 @@ namespace StardewDruid.Dialogue
 
                 // the moors
 
-                case CharacterHandle.characters.exit_moors:
+                case CharacterHandle.characters.cairn_dragon:
 
-                    return Mod.instance.Helper.Translation.Get("DialogueIntroduction.352.1");
+                    return Mod.instance.Helper.Translation.Get("DialogueIntroduction.385.1");
+
+                case CharacterHandle.characters.cairn_warrior:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueIntroduction.385.2");
+
+                case CharacterHandle.characters.cairn_witches:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueIntroduction.385.3") + Mod.instance.Helper.Translation.Get("DialogueIntroduction.385.4");
+
 
             }
 
@@ -327,6 +414,16 @@ namespace StardewDruid.Dialogue
                 case CharacterHandle.characters.shrine_shelf:
 
                 case CharacterHandle.characters.crow_gate:
+
+                case CharacterHandle.characters.crow_brazier:
+
+                case CharacterHandle.characters.bearrock:
+
+                case CharacterHandle.characters.cairn_dragon:
+
+                case CharacterHandle.characters.cairn_warrior:
+
+                case CharacterHandle.characters.cairn_witches:
 
                     return Mod.instance.Helper.Translation.Get("DialogueIntroduction.347.7");
 

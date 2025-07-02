@@ -5,7 +5,7 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using StardewDruid.Event;
+using StardewDruid.Handle;
 
 namespace StardewDruid
 {
@@ -107,6 +107,22 @@ namespace StardewDruid
                 setValue: value => Config.warpButtons = value
             );
 
+            configMenu.AddKeybindList(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.376.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.376.2"),
+                getValue: () => Config.channelButtons,
+                setValue: value => Config.channelButtons = value
+            );
+
+            configMenu.AddKeybindList(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.388.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.388.2"),
+                getValue: () => Config.favouriteButtons,
+                setValue: value => Config.favouriteButtons = value
+            );
+
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => Mod.instance.Helper.Translation.Get("ModConfig.65"),
@@ -134,6 +150,28 @@ namespace StardewDruid
                 setValue: value => Config.modDifficulty = value
             );
 
+            string[] dialogueOption = Enum.GetNames<ModData.dialogueOptions>();
+
+            configMenu.AddTextOption(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.379.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.379.2"),
+                allowedValues: dialogueOption,
+                getValue: () => Config.dialogueOption,
+                setValue: value => Config.dialogueOption = value
+            );
+
+            string[] captionOption = Enum.GetNames<ModData.captionOptions>();
+
+            configMenu.AddTextOption(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.379.3"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.379.4"),
+                allowedValues: captionOption,
+                getValue: () => Config.captionOption,
+                setValue: value => Config.captionOption = value
+            );
+
             /*configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => Mod.instance.Helper.Translation.Get("ModConfig.92"),
@@ -148,6 +186,17 @@ namespace StardewDruid
                 tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.101"),
                 getValue: () => Config.autoProgress,
                 setValue: value => Config.autoProgress = value
+            );
+
+            configMenu.AddNumberOption(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.382.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.382.2"),
+                min: 1,
+                max: 7,
+                interval: 1,
+                getValue: () => Config.paceProgress,
+                setValue: value => Config.paceProgress = value
             );
 
             configMenu.AddNumberOption(
@@ -207,6 +256,17 @@ namespace StardewDruid
                 tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.161"),
                 getValue: () => Config.slotReverse,
                 setValue: value => Config.slotReverse = value
+            );
+
+            string[] potionOption = Enum.GetNames<ModData.potionDefaults>();
+
+            configMenu.AddTextOption(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.396.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.396.2"),
+                allowedValues: potionOption,
+                getValue: () => Config.potionDefault,
+                setValue: value => Config.potionDefault = value
             );
 
             string[] slotOption = Enum.GetNames<ModData.slotOptions>();
@@ -330,6 +390,25 @@ namespace StardewDruid
                 setValue: value => Config.cultivateBehaviour = value
             );
 
+            configMenu.AddNumberOption(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.380.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.380.2"),
+                min: 1,
+                max: 5,
+                interval: 1,
+                getValue: () => Config.cultivatePlot,
+                setValue: value => Config.cultivatePlot = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.380.3"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.380.4"),
+                getValue: () => Config.cultivateTallCrops,
+                setValue: value => Config.cultivateTallCrops = value
+            );
+
             configMenu.AddBoolOption(
                 mod: mod.ModManifest,
                 name: () => Mod.instance.Helper.Translation.Get("ModConfig.335.1"),
@@ -387,6 +466,22 @@ namespace StardewDruid
                 tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.340.2"),
                 getValue: () => Config.plantGrove,
                 setValue: value => Config.plantGrove = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.401.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.401.2"),
+                getValue: () => Config.enableGothic,
+                setValue: value => Config.enableGothic = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: mod.ModManifest,
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.401.3"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.401.4"),
+                getValue: () => Config.enableCrossover,
+                setValue: value => Config.enableCrossover = value
             );
 
             return configMenu;

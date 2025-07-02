@@ -91,7 +91,7 @@ namespace StardewDruid.Monster
 
             weaponRender.LoadWeapon(WeaponRender.weapons.scythe);
 
-            overHead = new(16, -144);
+            shieldScheme = IconData.schemes.death;
 
             loadedOut = true;
 
@@ -100,13 +100,6 @@ namespace StardewDruid.Monster
         public override float GetScale()
         {
             return 4f + 0.25f * netMode.Value;
-        }
-
-        public override void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, IconData.schemes scheme = IconData.schemes.white)
-        {
-
-            base.DrawShield(b, spritePosition, spriteScale, drawLayer, IconData.schemes.death);
-
         }
 
         public override bool PerformSpecial(Vector2 target)
@@ -121,15 +114,16 @@ namespace StardewDruid.Monster
 
                 SetCooldown(2);
 
-                SpellHandle deathwind = new(currentLocation, Position, Position, 256, GetThreat());
+                SpellHandle deathwind = new(currentLocation, Position, Position, 256, GetThreat())
+                {
+                    type = SpellHandle.Spells.deathwind,
 
-                deathwind.type = SpellHandle.spells.deathwind;
-
-                deathwind.boss = this;
+                    boss = this
+                };
 
                 Mod.instance.spellRegister.Add(deathwind);
 
-                SpellHandle capture = new(Position, 8 * 64, IconData.impacts.none, new() { SpellHandle.effects.capture, }) { instant = true, };
+                SpellHandle capture = new(Position, 8 * 64, IconData.impacts.none, new() ) { instant = true, };
 
                 Mod.instance.spellRegister.Add(capture);
 
@@ -148,27 +142,26 @@ namespace StardewDruid.Monster
 
                 shieldTimer = 600;
 
-                SpellHandle capture = new(Position, 8*64, IconData.impacts.none, new() { SpellHandle.effects.capture, }) { instant = true, };
-
-                Mod.instance.spellRegister.Add(capture);
-
                 return true;
 
             }
 
-            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 192, GetThreat());
+            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 192, GetThreat())
+            {
+                type = SpellHandle.Spells.missile,
 
-            fireball.type = SpellHandle.spells.missile;
+                factor = 3,
 
-            fireball.factor = 3;
+                missile = MissileHandle.missiles.death,
 
-            fireball.missile = MissileHandle.missiles.death;
+                display = IconData.impacts.skull,
 
-            fireball.display = IconData.impacts.skull;
+                scheme = IconData.schemes.death,
 
-            fireball.scheme = IconData.schemes.death;
+                added = new() { SpellHandle.Effects.chain, },
 
-            fireball.boss = this;
+                boss = this
+            };
 
             Mod.instance.spellRegister.Add(fireball);
 
@@ -197,23 +190,24 @@ namespace StardewDruid.Monster
 
                     Vector2 tryVector = castSelection[Mod.instance.randomIndex.Next(castSelection.Count)];
 
-                    SpellHandle fireball = new(currentLocation, tryVector*64, GetBoundingBox().Center.ToVector2(), 256, GetThreat());
+                    SpellHandle fireball = new(currentLocation, tryVector * 64, GetBoundingBox().Center.ToVector2(), 256, GetThreat())
+                    {
+                        type = SpellHandle.Spells.missile,
 
-                    fireball.type = SpellHandle.spells.missile;
+                        factor = 4,
 
-                    fireball.factor = 4;
+                        missile = MissileHandle.missiles.deathfall,
 
-                    fireball.missile = MissileHandle.missiles.deathfall;
+                        display = IconData.impacts.skull,
 
-                    fireball.display = IconData.impacts.skull;
+                        indicator = IconData.cursors.death,
 
-                    fireball.indicator = IconData.cursors.death;
+                        scheme = IconData.schemes.death,
 
-                    fireball.scheme = IconData.schemes.death;
+                        boss = this,
 
-                    fireball.boss = this;
-
-                    fireball.added = new() { SpellHandle.effects.capture, };
+                        added = new() { SpellHandle.Effects.chain, }
+                    };
 
                     Mod.instance.spellRegister.Add(fireball);
 

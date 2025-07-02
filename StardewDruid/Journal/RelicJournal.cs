@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.ItemTypeDefinitions;
@@ -44,6 +45,13 @@ namespace StardewDruid.Journal
 
             };
 
+            /*if (!RelicData.HasRelic(StardewDruid.Data.IconData.relics.heiress_gift))
+            {
+
+                interfaceComponents[107] = addButton(journalButtons.pals);
+
+            }*/
+
         }
 
         public override void populateContent()
@@ -52,6 +60,8 @@ namespace StardewDruid.Journal
             type = journalTypes.relics;
 
             title = StringData.Strings(StringData.stringkeys.reliquary);
+
+            contentColumns = 6;
 
             pagination = 18;
 
@@ -69,14 +79,14 @@ namespace StardewDruid.Journal
             foreach (KeyValuePair<int, ContentComponent> component in contentComponents)
             {
 
-                component.Value.setBounds(component.Key % pagination, xPositionOnScreen, yPositionOnScreen, width, height);
+                component.Value.setBounds(component.Key % pagination, xPositionOnScreen, yPositionOnScreen + 56, width, height, 0, 56);
 
             }
 
             foreach (KeyValuePair<int, ContentComponent> component in otherComponents)
             {
 
-                component.Value.setBounds(component.Key % 3, xPositionOnScreen, yPositionOnScreen, width, height);
+                component.Value.setBounds(component.Key % 3, xPositionOnScreen, yPositionOnScreen, width, height, 0, 146);
 
             }
 
@@ -141,7 +151,7 @@ namespace StardewDruid.Journal
 
             }
 
-            int function = RelicHandle.RelicFunction(relicId);
+            int function = RelicHandle.RelicFunction(relicId, focus);
 
             switch (function)
             {
@@ -152,21 +162,7 @@ namespace StardewDruid.Journal
 
                     return;
 
-                case 2:
-
-                    openJournal(journalTypes.relicPage, relicId, focus);
-
-                    return;
-
-                case 3:
-
-                    openJournal(journalTypes.dragonPage, relicId, focus);
-
-                    return;
-
-                case 4:
-
-                    openJournal(journalTypes.recruits, relicId, focus);
+                case 5:
 
                     return;
 
@@ -199,7 +195,7 @@ namespace StardewDruid.Journal
 
             }
 
-            int function = RelicHandle.RelicCancel(relicId);
+            int function = RelicHandle.RelicCancel(relicId, focus);
 
             switch (function)
             {
@@ -207,6 +203,10 @@ namespace StardewDruid.Journal
                 case 1:
 
                     exitThisMenu();
+
+                    return;
+
+                case 5:
 
                     return;
 

@@ -48,8 +48,6 @@ namespace StardewDruid.Monster
 
             weaponRender.LoadWeapon(WeaponRender.weapons.axe);
 
-            overHead = new(16, -144);
-
             loadedOut = true;
 
         }
@@ -62,19 +60,20 @@ namespace StardewDruid.Monster
 
             SetCooldown(1);
 
-            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 128, GetThreat() * 2 / 3);
+            SpellHandle fireball = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 128, GetThreat() * 2 / 3)
+            {
+                type = SpellHandle.Spells.missile,
 
-            fireball.type = SpellHandle.spells.missile;
+                factor = 2,
 
-            fireball.factor =2;
+                missile = MissileHandle.missiles.axe,
 
-            fireball.missile = MissileHandle.missiles.axe;
+                display = IconData.impacts.none,
 
-            fireball.display = IconData.impacts.none;
+                boss = this,
 
-            fireball.boss = this;
-
-            fireball.scheme = IconData.schemes.ether;
+                scheme = IconData.schemes.ether
+            };
 
             Mod.instance.spellRegister.Add(fireball);
 

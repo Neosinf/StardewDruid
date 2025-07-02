@@ -21,6 +21,7 @@ namespace StardewDruid.Event
             title,
             plain,
             bar,
+            quick,
 
         }
 
@@ -46,6 +47,14 @@ namespace StardewDruid.Event
 
         public int level;
 
+        public float textHeight;
+
+        public float textWidth;
+
+        public Texture2D portrait;
+
+        public Rectangle portraitSource;
+
         public EventDisplay(string Title, string Text, int Time, displayTypes Type = displayTypes.title, int UniqueId = 0)
         {
 
@@ -64,7 +73,27 @@ namespace StardewDruid.Event
             boss = -1;
 
             uniqueId = UniqueId;
-        
+
+            switch (type)
+            {
+
+                case displayTypes.bar:
+
+                    break;
+
+                case displayTypes.title:
+                case displayTypes.plain:
+
+                    Vector2 plainTextMeasure = Game1.smallFont.MeasureString(text) * 1.35f;
+
+                    textWidth = plainTextMeasure.X;
+
+                    textHeight = plainTextMeasure.Y;
+                    
+                    break;
+
+            }
+
         }
 
         public virtual bool update()
@@ -139,6 +168,7 @@ namespace StardewDruid.Event
 
                 case displayTypes.title:
                 case displayTypes.plain:
+                case displayTypes.quick:
 
                     count++;
 
@@ -171,8 +201,6 @@ namespace StardewDruid.Event
 
             Rectangle container;
 
-            Vector2 textOffset;
-
             float containerOffset;
 
             float containerHeight;
@@ -188,12 +216,30 @@ namespace StardewDruid.Event
 
                 case displayTypes.title:
                 case displayTypes.plain:
+                case displayTypes.quick:
 
-                    textOffset = Game1.smallFont.MeasureString(text) * 1.35f;
 
-                    containerOffset = Math.Max(textOffset.X + 48, 800);
+                    int portraitOffset = 0;
 
-                    containerHeight = (int)(textOffset.Y + 24);
+                    containerHeight = Math.Max((int)(textHeight + 24),64);
+
+                    if (portrait != null)
+                    {
+
+                        portraitOffset = (int)((textHeight + 24) / 2);
+
+                    }
+
+                    int containerWidth = 800;
+
+                    if(type == displayTypes.quick)
+                    {
+
+                        containerWidth = 400;
+
+                    }
+
+                    containerOffset = Math.Max(textWidth + 48, containerWidth - (portraitOffset * 2));
 
                     if (count < 4)
                     {
@@ -219,7 +265,7 @@ namespace StardewDruid.Event
                     
                     }
 
-                    container = new(titleSafeArea.Center.X - (int)(containerOffset / 2), titleSafeArea.Bottom - Mod.instance.displayOffset - (int)containerHeight, (int)containerOffset, (int)containerHeight);
+                    container = new(titleSafeArea.Center.X - (int)(containerOffset / 2) - portraitOffset, titleSafeArea.Bottom - Mod.instance.displayOffset - (int)containerHeight, (int)containerOffset + (portraitOffset * 2), (int)containerHeight);
 
                     IClickableMenu.drawTextureBox(
                         b,
@@ -232,7 +278,7 @@ namespace StardewDruid.Event
                         Color.White,
                         3f * displayScale,
                         false,
-                        990f
+                        0.0001f
                     );
 
                     Mod.instance.displayOffset += (int)containerHeight + 8;
@@ -244,9 +290,40 @@ namespace StardewDruid.Event
                     
                     }
 
-                    b.DrawString(Game1.smallFont, text, new Vector2(container.Center.X - (textOffset.X / 2) - 1, container.Center.Y - (textOffset.Y / 2) + 5), Game1.textShadowColor, 0f, Vector2.Zero, 1.35f, SpriteEffects.None, 998f);
+                    b.DrawString(Game1.smallFont, text, new Vector2(container.Center.X - (textWidth / 2) + portraitOffset - 1, container.Center.Y - (textHeight / 2) + 5), Game1.textShadowColor, 0f, Vector2.Zero, 1.35f, SpriteEffects.None, 0.0006f);
 
-                    b.DrawString(Game1.smallFont, text, new Vector2(container.Center.X - (textOffset.X / 2), container.Center.Y - (textOffset.Y / 2) + 3), Game1.textColor * 0.75f, 0f, Vector2.Zero, 1.35f, SpriteEffects.None, 999f);
+                    b.DrawString(Game1.smallFont, text, new Vector2(container.Center.X - (textWidth / 2) + portraitOffset, container.Center.Y - (textHeight / 2) + 3), Game1.textColor * 0.75f, 0f, Vector2.Zero, 1.35f, SpriteEffects.None, 0.0007f);
+
+                    if(portrait != null)
+                    {
+
+                        IClickableMenu.drawTextureBox(
+                            b,
+                            Game1.mouseCursors,
+                            new Rectangle(384, 396, 15, 15),
+                            container.Left - 2, 
+                            container.Center.Y- portraitOffset - 2,
+                            (int)(containerHeight)+4,
+                            (int)(containerHeight)+4,
+                            Color.White,
+                            3f,
+                            false,
+                            0.0008f
+                        );
+                            
+                        b.Draw(
+                            portrait,
+                            new Vector2(container.Left + portraitOffset, container.Center.Y),
+                            portraitSource,
+                            Microsoft.Xna.Framework.Color.White,
+                            0f,
+                            new Vector2(8),
+                            (containerHeight-8) / 16,
+                            0,
+                            0.0009f
+                        );
+
+                    }
 
                     break;
 
@@ -267,16 +344,16 @@ namespace StardewDruid.Event
                         Color.White,
                         2f,
                         false,
-                        990f
+                        0.0001f
                     );
 
-                    b.Draw(Game1.staminaRect, new Vector2(container.X + 5, container.Y + 5), new Rectangle(container.X + 5, container.Y + 5, container.Width - 10, container.Height - 10), new(254, 240, 192), 0f, Vector2.Zero, 1f, 0, 990f);
+                    b.Draw(Game1.staminaRect, new Vector2(container.X + 5, container.Y + 5), new Rectangle(container.X + 5, container.Y + 5, container.Width - 10, container.Height - 10), new(254, 240, 192), 0f, Vector2.Zero, 1f, 0, 0.0001f);
 
-                    b.Draw(Game1.staminaRect, new Vector2(container.X + 5, container.Y + 5), new Rectangle(container.X + 5, container.Y + 5, (int)((container.Width - 10) * progress), container.Height-10), colour * 0.25f, 0f, Vector2.Zero, 1f, 0, 997f);
+                    b.Draw(Game1.staminaRect, new Vector2(container.X + 5, container.Y + 5), new Rectangle(container.X + 5, container.Y + 5, (int)((container.Width - 10) * progress), container.Height-10), colour * 0.25f, 0f, Vector2.Zero, 1f, 0, 0.0007f);
 
-                    b.DrawString(Game1.smallFont, text, new Vector2(container.X + 7, container.Y + 9), Game1.textShadowColor, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 998f);
+                    b.DrawString(Game1.smallFont, text, new Vector2(container.X + 7, container.Y + 9), Game1.textShadowColor, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0.0008f);
 
-                    b.DrawString(Game1.smallFont, text, new Vector2(container.X + 8, container.Y + 8), Game1.textColor, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 999f);
+                    b.DrawString(Game1.smallFont, text, new Vector2(container.X + 8, container.Y + 8), Game1.textColor, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0.0009f);
 
                     break;
 

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
@@ -29,6 +30,10 @@ namespace StardewDruid.Cast.Mists
         {
 
             activeLimit = -1;
+
+            int tryCost = 18 - Game1.player.CombatLevel;
+
+            costCounter = tryCost < 8 ? 8 : tryCost;
 
         }
 
@@ -78,22 +83,32 @@ namespace StardewDruid.Cast.Mists
 
             }
 
+            if(Game1.player.Stamina <= (costCounter * 2))
+            {
+
+                eventComplete = true;
+
+                return;
+
+            }
+
             if(decimalCounter % 2 == 0)
             {
 
                 Vector2 origin = Rite.GetTargetCursor(Game1.player.FacingDirection, 1280, -1);
 
-                SpellHandle bolt = new(origin, 64 * Mod.instance.randomIndex.Next(2,5), IconData.impacts.none, new());
+                SpellHandle bolt = new(origin, 64 * Mod.instance.randomIndex.Next(2, 5), IconData.impacts.none, new())
+                {
+                    type = SpellHandle.Spells.quickbolt,
 
-                bolt.type = SpellHandle.spells.bolt;
+                    factor = 3,
 
-                bolt.factor =3;
+                    sound = SpellHandle.Sounds.silent,
 
-                bolt.sound = SpellHandle.sounds.silent;
+                    display = IconData.impacts.sparknode,
 
-                bolt.display = IconData.impacts.sparknode;
-
-                bolt.damageMonsters = Mod.instance.CombatDamage() /2;
+                    damageMonsters = Mod.instance.CombatDamage() / 2
+                };
 
                 List<float> crits = Mod.instance.CombatCritical();
 
@@ -106,7 +121,7 @@ namespace StardewDruid.Cast.Mists
 
                     bolt.factor =4;
 
-                    bolt.sound = SpellHandle.sounds.flameSpellHit;
+                    bolt.sound = SpellHandle.Sounds.flameSpellHit;
 
                     bolt.damageMonsters *= 3;
 
@@ -115,17 +130,26 @@ namespace StardewDruid.Cast.Mists
                 if (decimalCounter % 12 == 0)
                 {
 
-                    bolt.sound = SpellHandle.sounds.flameSpellHit;
+                    bolt.sound = SpellHandle.Sounds.flameSpellHit;
+
+                }
+
+
+                if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
+                {
+
+                    if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
+                    {
+
+                        bolt.added.Add(SpellHandle.Effects.capture);
+
+                    }
 
                 }
 
                 Mod.instance.spellRegister.Add(bolt);
 
-                int tryCost = 18 - Game1.player.CombatLevel;
-
-                Mod.instance.rite.castCost += tryCost < 8 ? 8 : tryCost;
-
-                Mod.instance.rite.ApplyCost();
+                Rite.ApplyCost(costCounter);
 
             }
 

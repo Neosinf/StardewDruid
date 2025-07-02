@@ -7,22 +7,14 @@ using StardewDruid.Cast.Fates;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
-using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
-using StardewValley.GameData.FruitTrees;
-using StardewValley.Internal;
-using StardewValley.Monsters;
-using StardewValley.Network;
-using StardewValley.Objects;
-using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
+
 
 namespace StardewDruid.Character
 {
@@ -45,9 +37,7 @@ namespace StardewDruid.Character
 
             base.LoadOut();
 
-            WeaponLoadout();
-
-            weaponRender.swordScheme = WeaponRender.swordSchemes.sword_stars;
+            WeaponLoadout(WeaponRender.weapons.starsword);
 
             idleFrames[idles.standby] = new()
             {
@@ -99,39 +89,79 @@ namespace StardewDruid.Character
                 {
                     new Rectangle(192, 32, 32, 32),
                     new Rectangle(192, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
                 },
                 [1] = new()
                 {
                     new Rectangle(192, 32, 32, 32),
                     new Rectangle(192, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
                 },
                 [2] = new()
                 {
                     new Rectangle(192, 32, 32, 32),
                     new Rectangle(192, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
                 },
                 [3] = new()
                 {
                     new Rectangle(192, 32, 32, 32),
                     new Rectangle(192, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
-                    new Rectangle(224, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
+                    new Rectangle(225, 32, 32, 32),
                 },
             };
+
+        }
+
+        public override void DrawHat(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade, hats hat, int hatDirection = -1)
+        {
+
+            if(netSpecial.Value != (int)Character.specials.invoke)
+            {
+
+                return;
+
+            }
+
+            int rate = Math.Abs((int)(Game1.currentGameTime.TotalGameTime.TotalSeconds % 12) - 6);
+
+            Color circleColour = new Color(256 - rate, 256 - (rate * 9), 256 - (rate * 21));
+
+            b.Draw(
+                 Mod.instance.iconData.sheetTextures[IconData.tilesheets.ritual],
+                 spritePosition + new Vector2(0, 14 * setScale),
+                 new Rectangle(0, 96, 64, 48),
+                 Color.White * fade,
+                 0f,
+                 new Vector2(32, 24),
+                 setScale,
+                 0,
+                 drawLayer - 0.0005f
+             );
+
+            b.Draw(
+                 Mod.instance.iconData.sheetTextures[IconData.tilesheets.ritual],
+                 spritePosition + new Vector2(0, 14 * setScale),
+                 new Rectangle(64, 96, 64, 48),
+                 circleColour * fade,
+                 0f,
+                 new Vector2(32, 24),
+                 setScale,
+                 0,
+                 drawLayer - 0.0006f
+             );
 
         }
 
@@ -152,45 +182,108 @@ namespace StardewDruid.Character
         public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
         {
 
+            int specialFactor = 3;
+
             if (!Mod.instance.questHandle.IsComplete(QuestHandle.challengeMoors))
             {
 
-                return false;
+                specialFactor = 2;
 
             }
 
             ResetActives();
 
-            netSpecial.Set((int)specials.hadouken);
-
             specialTimer = 90;
 
-            cooldownTimer = cooldownInterval*2;
+            SetCooldown(90, 1f);
 
             LookAtTarget(monster.Position, true);
 
-            int s = Mod.instance.randomIndex.Next(3);
-
-            for (int i = 0; i < 3; i++)
+            switch (Mod.instance.randomIndex.Next(specialFactor))
             {
 
-                SpellHandle sweep = new(Game1.player, new() { monster }, Mod.instance.CombatDamage());
+                default:
+                case 0:
 
-                sweep.type = SpellHandle.spells.honourstrike;
+                    netSpecial.Set((int)specials.hadouken);
 
-                sweep.counter = 0 - (30 + (i * 10));
+                    SpellHandle beam = new(Game1.player, monster.Position, 256, CombatDamage())
+                    {
 
-                int d = s + (i * 2);
+                        origin = Position,
 
-                sweep.factor = d;
+                        counter = -30,
 
-                sweep.display = IconData.impacts.sparkbang;
+                        indicator = IconData.cursors.divineCharge,
 
-                Mod.instance.spellRegister.Add(sweep);
+                        type = SpellHandle.Spells.lightbeam,
+
+                        display = IconData.impacts.flasher,
+
+                        sound = SpellHandle.Sounds.flameSpellHit
+
+                    };
+
+                    Mod.instance.spellRegister.Add(beam);
+
+                    return true;
+
+                case 1:
+
+                    netSpecial.Set((int)specials.invoke);
+
+                    List<StardewValley.Monsters.Monster> monsters = FindMonsters();
+
+                    foreach (StardewValley.Monsters.Monster targetMonster in monsters)
+                    {
+
+                        SpellHandle special = new(currentLocation, targetMonster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, CombatDamage() / 2)
+                        {
+                            type = SpellHandle.Spells.judgement,
+
+                            indicator = IconData.cursors.divineCharge,
+
+                            factor = 4
+                        };
+
+                        special.TargetCursor();
+
+                        special.counter = -60;
+
+                        Mod.instance.spellRegister.Add(special);
+
+                    }
+
+                    return true;
+
+                case 2:
+
+                    netSpecial.Set((int)specials.invoke);
+
+                    int s = Mod.instance.randomIndex.Next(3);
+
+                    for (int i = 0; i < 3; i++)
+                    {
+
+                        SpellHandle sweep = new(Game1.player, new() { monster }, Mod.instance.CombatDamage())
+                        {
+                            type = SpellHandle.Spells.honourstrike,
+
+                            counter = 0 - (30 + (i * 10))
+                        };
+
+                        int d = s + (i * 2);
+
+                        sweep.factor = d;
+
+                        sweep.display = IconData.impacts.sparkbang;
+
+                        Mod.instance.spellRegister.Add(sweep);
+
+                    }
+                    return true;
 
             }
-            
-            return true;
 
         }
 
@@ -272,30 +365,43 @@ namespace StardewDruid.Character
         public override void PerformWork()
         {
 
-            if (specialTimer == 80)
+            /*if (specialTimer == 80)
             {
 
                 if (currentLocation.Name == Game1.player.currentLocation.Name && Utility.isOnScreen(Position, 128))
                 {
 
-                    Mod.instance.iconData.DecorativeIndicator(currentLocation, Position, IconData.decorations.weald, 3f, new());
+                    //Mod.instance.iconData.DecorativeIndicator(currentLocation, Position, IconData.decorations.stars, 3f, new());
 
-                    TemporaryAnimatedSprite skyAnimation = Mod.instance.iconData.SkyIndicator(currentLocation, Position, IconData.skies.night, 1f, new() { interval = 1000, });
+                    //TemporaryAnimatedSprite skyAnimation = Mod.instance.iconData.SkyIndicator(currentLocation, Position, IconData.skies.night, 1f, new() { interval = 1000, });
 
-                    skyAnimation.scaleChange = 0.002f;
+                    //skyAnimation.scaleChange = 0.002f;
 
-                    skyAnimation.motion = new(-0.064f, -0.064f);
+                    //skyAnimation.motion = new(-0.064f, -0.064f);
 
-                    skyAnimation.timeBasedMotion = true;
+                    //skyAnimation.timeBasedMotion = true;
 
                     Game1.player.currentLocation.playSound("discoverMineral", null, 1000);
 
                 }
 
-            }
+            }*/
 
             if (specialTimer == 50)
             {
+
+                SpellHandle special = new(currentLocation, workVector * 64, GetBoundingBox().Center.ToVector2(), 256, -1, -1)
+                {
+
+                    type = SpellHandle.Spells.judgement,
+
+                    indicator = IconData.cursors.divineCharge,
+
+                    factor = 4
+
+                };
+
+                Mod.instance.spellRegister.Add(special);
 
                 Enchant enchantEvent = new();
 

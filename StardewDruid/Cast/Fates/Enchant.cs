@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
-using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
@@ -46,7 +46,7 @@ namespace StardewDruid.Cast.Fates
 
                 }
 
-                if (Vector2.Distance(origin, Game1.player.Position) > 32)
+                if (Vector2.Distance(origin, Game1.player.Position) > 32 && !Mod.instance.ShiftButtonHeld())
                 {
 
                     return false;
@@ -79,7 +79,7 @@ namespace StardewDruid.Cast.Fates
                 if (decimalCounter == 5)
                 {
 
-                    Mod.instance.rite.channel(IconData.skies.temple, 75);
+                    Mod.instance.rite.Channel(IconData.skies.temple, 75);
 
                     channel = IconData.skies.temple;
 
@@ -90,11 +90,12 @@ namespace StardewDruid.Cast.Fates
 
                     eventLocked = true;
 
-                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
+                    Mod.instance.spellRegister.Add(new(origin, 160, IconData.impacts.supree, new()) { sound = SpellHandle.Sounds.getNewSpecialItem, });
 
-                    SpellHandle spellHandle = new(origin, 256, IconData.impacts.summoning, new());
-
-                    spellHandle.scheme = IconData.schemes.fates;
+                    SpellHandle spellHandle = new(origin, 128, IconData.impacts.summoning, new())
+                    {
+                        scheme = IconData.schemes.fates
+                    };
 
                     Mod.instance.spellRegister.Add(spellHandle);
 
@@ -141,7 +142,7 @@ namespace StardewDruid.Cast.Fates
             if (faeth > 0)
             {
 
-                Herbal resource = Mod.instance.herbalData.herbalism[HerbalData.herbals.faeth.ToString()];
+                Herbal resource = Mod.instance.herbalData.herbalism[HerbalHandle.herbals.faeth.ToString()];
 
                 string message = "-" + faeth + " " + resource.title;
 
@@ -149,9 +150,9 @@ namespace StardewDruid.Cast.Fates
 
                 Game1.addHUDMessage(hudmessage);
 
-                Mod.instance.rite.castCost *= faeth * 12;
+                costCounter = faeth * 12;
 
-                Mod.instance.rite.ApplyCost();
+                Rite.ApplyCost(costCounter);
 
                 if (!Mod.instance.questHandle.IsComplete(QuestHandle.fatesFour))
                 {
@@ -179,7 +180,7 @@ namespace StardewDruid.Cast.Fates
             foreach (Vector2 tile in affected)
             {
                 
-                if (HerbalData.UpdateHerbalism(HerbalData.herbals.faeth) == 0)
+                if (HerbalHandle.GetHerbalism(HerbalHandle.herbals.faeth) == 0)
                 {
 
                     break;
@@ -202,7 +203,7 @@ namespace StardewDruid.Cast.Fates
                         if (FairyDustCrop(hoeDirt))
                         {
 
-                            HerbalData.UpdateHerbalism(HerbalData.herbals.faeth,-1);
+                            HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.faeth,-1);
 
                             faeth += 1;
 
@@ -216,7 +217,7 @@ namespace StardewDruid.Cast.Fates
 
                             GiantDustCrop(hoeDirt);
 
-                            HerbalData.UpdateHerbalism(HerbalData.herbals.faeth, -1);
+                            HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.faeth, -1);
 
                             faeth += 1;
 
@@ -283,7 +284,7 @@ namespace StardewDruid.Cast.Fates
 
                         Mod.instance.rite.targetCasts[location.Name + "_enchant"][tile] = target.name;
 
-                        HerbalData.UpdateHerbalism(HerbalData.herbals.faeth, -1);
+                        HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.faeth, -1);
 
                         Vector2 fairyVector = tile * 64 + new Vector2(32, 32);
 
@@ -326,23 +327,59 @@ namespace StardewDruid.Cast.Fates
                 switch (target.name)
                 {
 
-                    case "Deconstructor": FillDeconstructor(target); break;
+                    case "Deconstructor": 
+                        
+                        FillDeconstructor(target); 
+                        
+                        break;
 
-                    case "Dehydrator": FillDehydrator(target); break;
+                    case "Dehydrator": 
+                        
+                        FillDehydrator(target); 
+                        
+                        break;
 
-                    case "Bone Mill": FillBoneMill(target); break;
+                    case "Bone Mill": 
+                        
+                        FillBoneMill(target); 
+                        
+                        break;
 
-                    case "Keg": FillKeg(target); break;
+                    case "Keg": 
+                        
+                        FillKeg(target); 
+                        
+                        break;
 
-                    case "Preserves Jar": FillPreservesJar(target); break;
+                    case "Preserves Jar": 
+                        
+                        FillPreservesJar(target); 
+                        
+                        break;
 
-                    case "Cheese Press": FillCheesePress(target); break;
+                    case "Cheese Press": 
+                        
+                        FillCheesePress(target); 
+                        
+                        break;
 
-                    case "Mayonnaise Machine": FillMayonnaiseMachine(target); break;
+                    case "Mayonnaise Machine": 
+                        
+                        FillMayonnaiseMachine(target); 
+                        
+                        break;
 
-                    case "Loom": FillLoom(target); break;
+                    case "Loom": 
+                        
+                        FillLoom(target); 
+                        
+                        break;
 
-                    case "Oil Maker": FillOilMaker(target); break;
+                    case "Oil Maker": 
+                        
+                        FillOilMaker(target); 
+                        
+                        break;
 
                     case "Furnace":
 
@@ -352,7 +389,7 @@ namespace StardewDruid.Cast.Fates
 
                     case "Heavy Furnace":
 
-                        if (HerbalData.UpdateHerbalism(HerbalData.herbals.faeth) < 3)
+                        if (HerbalHandle.GetHerbalism(HerbalHandle.herbals.faeth) < 3)
                         {
 
                             continue;
@@ -371,7 +408,11 @@ namespace StardewDruid.Cast.Fates
 
                         break;
 
-                    case "Geode Crusher": FillGeodeCrusher(target); break;
+                    case "Geode Crusher": 
+                        
+                        FillGeodeCrusher(target); 
+                        
+                        break;
 
                     default:
 
@@ -390,7 +431,7 @@ namespace StardewDruid.Cast.Fates
 
                 }
 
-                HerbalData.UpdateHerbalism(HerbalData.herbals.faeth, 0 - cost);
+                HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.faeth, 0 - cost);
 
                 Vector2 cursorVector = tile * 64 + new Vector2(32, 32);
 
@@ -816,7 +857,7 @@ namespace StardewDruid.Cast.Fates
 
             MachineData machineData = targetObject.GetMachineData();
 
-            StardewValley.Item input = ItemRegistry.Create("(O)" + SpawnData.RandomHighFish(location, true, Game1.player.Tile, Mod.instance.randomIndex.Next(2)));
+            StardewValley.Item input = ItemRegistry.Create("(O)" + SpawnData.RandomHighFish(location, Game1.player.Tile, true, Mod.instance.randomIndex.Next(2)));
 
             if (input == null) { location.playSound("ghost"); return; }
 
@@ -1004,7 +1045,7 @@ namespace StardewDruid.Cast.Fates
 
                 location.resourceClumps.Add(new GiantCrop(key, hoeDirt.Tile - new Vector2(1)));
 
-                location.playSound(SpellHandle.sounds.yoba.ToString());
+                location.playSound(SpellHandle.Sounds.yoba.ToString());
 
                 return true;
 

@@ -7,8 +7,8 @@ using StardewDruid.Cast.Effect;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Character;
 using StardewDruid.Dialogue;
-using StardewDruid.Event;
 using StardewDruid.Event.Challenge;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewDruid.Location.Druid;
 using StardewModdingAPI;
@@ -37,6 +37,8 @@ namespace StardewDruid.Data
             companion,
             wayfinder,
             other,
+            monsterstones,
+            crests,
             herbalism,
             tactical,
             runestones,
@@ -45,7 +47,9 @@ namespace StardewDruid.Data
             boxes,
             restore,
             skulls,
+            testaments,
             druid,
+        
         }
 
         public Dictionary<relicsets, List<IconData.relics>> lines = new()
@@ -72,6 +76,20 @@ namespace StardewDruid.Data
                 IconData.relics.wayfinder_key,
                 IconData.relics.wayfinder_glove,
                 IconData.relics.wayfinder_eye,
+            },
+            [relicsets.monsterstones] = new() {
+                IconData.relics.monsterbadge,
+                IconData.relics.monster_bat,
+                IconData.relics.monster_slime,
+                IconData.relics.monster_spirit,
+                IconData.relics.monster_ghost,
+                IconData.relics.monster_serpent,
+            },
+            [relicsets.crests] = new() {
+                IconData.relics.crest_church,
+                IconData.relics.crest_dwarf,
+                IconData.relics.crest_associate,
+                IconData.relics.crest_smuggler,
             },
             [relicsets.herbalism] = new() {
                 IconData.relics.herbalism_mortar,
@@ -107,7 +125,7 @@ namespace StardewDruid.Data
                 IconData.relics.book_letters,
                 IconData.relics.book_manual,
                 IconData.relics.book_druid,
-                IconData.relics.book_knight,
+                IconData.relics.book_annal,
             },
             [relicsets.boxes] = new() {
                 IconData.relics.box_measurer,
@@ -127,9 +145,13 @@ namespace StardewDruid.Data
                 IconData.relics.skull_fox,
                 IconData.relics.golden_core,
             },
+            [relicsets.testaments] = new() {
+                IconData.relics.book_knight,
+            },
             [relicsets.druid] = new() {
                 IconData.relics.stardew_druid,
             },
+
         };
 
         public Dictionary<relicsets, string> quests = new()
@@ -156,6 +178,12 @@ namespace StardewDruid.Data
             [relicsets.other] = new() {
                 Mod.instance.Helper.Translation.Get("RelicData.27"),
                 Mod.instance.Helper.Translation.Get("RelicData.28"), },
+            [relicsets.monsterstones] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.386.8"),
+                Mod.instance.Helper.Translation.Get("RelicData.386.9"), },
+            [relicsets.crests] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.386.30"),
+                Mod.instance.Helper.Translation.Get("RelicData.386.31"), },
             [relicsets.herbalism] = new() {
                 Mod.instance.Helper.Translation.Get("RelicData.12"),
                 Mod.instance.Helper.Translation.Get("RelicData.13"), },
@@ -180,10 +208,16 @@ namespace StardewDruid.Data
             [relicsets.skulls] = new() {
                 Mod.instance.Helper.Translation.Get("RelicData.339.1"),
                 Mod.instance.Helper.Translation.Get("RelicData.339.2"), },
+            [relicsets.testaments] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.386.6"),
+                Mod.instance.Helper.Translation.Get("RelicData.386.7"), },
             [relicsets.druid] = new() {
                 Mod.instance.Helper.Translation.Get("RelicData.361.6"),
                 Mod.instance.Helper.Translation.Get("RelicData.361.7"), },
         };
+
+
+        public IconData.relics favourite = IconData.relics.none;
 
         public RelicData()
         {
@@ -201,32 +235,6 @@ namespace StardewDruid.Data
             }
 
             reliquary = RelicsList();
-
-        }
-
-        public void Ready()
-        {
-
-            if (Mod.instance.magic)
-            {
-
-                return;
-
-            }
-
-            for (int i = Mod.instance.save.reliquary.Count - 1; i >= 0; i--)
-            {
-
-                string relic = Mod.instance.save.reliquary.ElementAt(i).Key;
-
-                if (!reliquary.ContainsKey(relic))
-                {
-
-                    Mod.instance.save.reliquary.Remove(relic);
-
-                }
-
-            }
 
         }
 
@@ -305,9 +313,9 @@ namespace StardewDruid.Data
 
                     ContentComponent content = new(ContentComponent.contentTypes.relic, relicName.ToString());
 
-                    content.relics[0] = relicName;
+                    content.textureSources[0] = IconData.RelicRectangles(relicName);
 
-                    content.relicColours[0] = Color.White;
+                    content.textureColours[0] = Color.White;
 
                     if (!HasRelic(relicName))
                     {
@@ -324,7 +332,7 @@ namespace StardewDruid.Data
 
                                 }
 
-                                content.relicColours[0] = Color.Black * 0.01f;
+                                content.textureColours[0] = Color.Black * 0.01f;
 
                                 break;
 
@@ -333,7 +341,7 @@ namespace StardewDruid.Data
                             case relicsets.boxes:
                             case relicsets.restore:
 
-                                content.relicColours[0] = Color.Black * 0.01f;
+                                content.textureColours[0] = Color.Black * 0.01f;
 
                                 break;
 
@@ -347,7 +355,7 @@ namespace StardewDruid.Data
                                     break;
                                 }
 
-                                content.relicColours[0] = Color.Black * 0.01f;
+                                content.textureColours[0] = Color.Black * 0.01f;
 
                                 break;
 
@@ -368,9 +376,10 @@ namespace StardewDruid.Data
                 for (int i = 0; i < 6 - lines[set].Count; i++)
                 {
 
-                    ContentComponent content = new(ContentComponent.contentTypes.relic, set.ToString() + i.ToString());
-
-                    content.active = false;
+                    ContentComponent content = new(ContentComponent.contentTypes.relic, set.ToString() + i.ToString())
+                    {
+                        active = false
+                    };
 
                     journal[start++] = content;
 
@@ -389,14 +398,15 @@ namespace StardewDruid.Data
 
             int start = 0;
 
-            foreach (KeyValuePair<relicsets, List<string>> section in titles)
+            foreach (relicsets set in lines.Keys)
             {
-                switch (section.Key)
+
+                switch (set)
                 {
 
                     case relicsets.runestones:
 
-                        if (!HasRelic(lines[section.Key][0]) && !HasRelic(lines[section.Key][4]))
+                        if (!HasRelic(lines[set][0]) && !HasRelic(lines[set][4]))
                         {
 
                             continue;
@@ -409,7 +419,7 @@ namespace StardewDruid.Data
                     case relicsets.restore:
 
 
-                        if (ProgressRelicQuest(section.Key) == 0)
+                        if (ProgressRelicQuest(set) == 0)
                         {
 
                             continue;
@@ -419,7 +429,7 @@ namespace StardewDruid.Data
 
                     default:
 
-                        if (!HasRelic(lines[section.Key][0]))
+                        if (!HasRelic(lines[set][0]))
                         {
 
                             continue;
@@ -430,11 +440,11 @@ namespace StardewDruid.Data
 
                 }
 
-                ContentComponent content = new(ContentComponent.contentTypes.header, section.Key.ToString());
+                ContentComponent content = new(ContentComponent.contentTypes.header, set.ToString());
 
-                content.text[0] = section.Value[0];
+                content.text[0] = titles[set][0];
 
-                content.text[1] = section.Value[1];
+                content.text[1] = titles[set][1];
 
                 journal[start++] = content;
 
@@ -444,21 +454,10 @@ namespace StardewDruid.Data
 
         }
 
-        public void ReliquaryUpdate(string id, int update = 0)
+        public void ReliquaryUpdate(string id)
         {
 
-            if (!Mod.instance.save.reliquary.ContainsKey(id))
-            {
-
-                Mod.instance.save.reliquary[id] = update;
-
-            }
-            else if (Mod.instance.save.reliquary[id] < update)
-            {
-
-                Mod.instance.save.reliquary[id] = update;
-
-            }
+            Mod.instance.save.reliquary[id] = 1;
 
         }
 
@@ -580,7 +579,12 @@ namespace StardewDruid.Data
                 return IconData.relics.book_druid;
 
             }
+            else if (Game1.player.currentLocation is Desert)
+            {
 
+                return IconData.relics.book_annal;
+
+            }
             return IconData.relics.none;
 
         }
@@ -630,6 +634,7 @@ namespace StardewDruid.Data
 
         public int MorticianRelicQuest()
         {
+
             if (!Context.IsMainPlayer)
             {
 
@@ -644,7 +649,24 @@ namespace StardewDruid.Data
 
             }
 
-            List<string> boneItems = new()
+            for(int i = 0; i < 18; i++)
+            {
+
+                HerbalHandle.herbals herbal = (HerbalHandle.herbals)((int)HerbalHandle.herbals.omen_feather + i);
+
+                if (HerbalHandle.GetHerbalism(herbal) <= 0)
+                {
+
+                    return 0;
+
+                }
+
+
+            }
+
+            return 1;
+
+            /*List<string> boneItems = new()
             {
                 "(O)579", //"Prehistoric Scapula
                 "(O)580", //"Prehistoric Tibia/100/-300/Arch/Prehistoric Tibia/A thick and sturdy leg bone./Forest .01//",
@@ -685,7 +707,7 @@ namespace StardewDruid.Data
 
             }
 
-            return 0;
+            return 0;*/
         }
 
         public int ChaosRelicQuest()
@@ -704,15 +726,23 @@ namespace StardewDruid.Data
 
             }
 
-            Farm farm = Game1.getFarm();
-
-            foreach (Building building in farm.buildings)
+            foreach(GameLocation location in Game1.locations)
             {
 
-                if (building.buildingType.Contains("Deluxe Coop") || building.buildingType.Contains("Deluxe Barn"))
+                if(location.buildings.Count > 0)
                 {
 
-                    return 1;
+                    foreach (Building building in location.buildings)
+                    {
+
+                        if (building.buildingType.Contains("Deluxe Coop") || building.buildingType.Contains("Deluxe Barn"))
+                        {
+
+                            return 1;
+
+                        }
+
+                    }
 
                 }
 
@@ -744,12 +774,12 @@ namespace StardewDruid.Data
             foreach (IconData.relics relic in lines[relicset])
             {
 
-                if (relic == IconData.relics.book_knight)
-                {
+                //if (relic == IconData.relics.book_knight)
+                //{
 
-                    continue;
+                //    continue;
 
-                }
+                //}
 
                 if (relic == IconData.relics.runestones_alchemistry)
                 {
@@ -952,7 +982,7 @@ namespace StardewDruid.Data
             };
 
             // ======================================================================
-            // Other relics
+            // Other wayfinder relics
 
             relics[IconData.relics.wayfinder_stone.ToString()] = new()
             {
@@ -1026,6 +1056,158 @@ namespace StardewDruid.Data
                     Mod.instance.Helper.Translation.Get("RelicData.346.1"),
                 },
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.156"),
+            };
+
+            // ====================================================================
+            // Monsterball Relics
+
+            relics[IconData.relics.monsterbadge.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.386.26"),
+                relic = IconData.relics.monsterbadge,
+                line = relicsets.monsterstones,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.386.27"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.386.28"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.386.29"),
+            };
+
+            relics[IconData.relics.monster_bat.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.386.10"),
+                relic = IconData.relics.monster_bat,
+                line = relicsets.monsterstones,
+                function = true,
+                cancel = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.386.11"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.386.12"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.386.13"),
+            };
+
+            relics[IconData.relics.monster_slime.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.386.14"),
+                relic = IconData.relics.monster_slime,
+                line = relicsets.monsterstones,
+                function = true,
+                cancel = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.386.15"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.386.16"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.386.17"),
+            };
+
+            relics[IconData.relics.monster_spirit.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.386.18"),
+                relic = IconData.relics.monster_spirit,
+                line = relicsets.monsterstones,
+                function = true,
+                cancel = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.386.19"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.386.20"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.386.21"),
+            };
+
+            relics[IconData.relics.monster_ghost.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.390.1"),
+                relic = IconData.relics.monster_ghost,
+                line = relicsets.monsterstones,
+                function = true,
+                cancel = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.390.2"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.390.3"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.390.4"),
+            };
+
+            relics[IconData.relics.monster_serpent.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.386.22"),
+                relic = IconData.relics.monster_serpent,
+                line = relicsets.monsterstones,
+                function = true,
+                cancel = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.386.23"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.386.24"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.386.25"),
+            };
+
+
+            // ====================================================================
+            // Crest Relics
+
+            relics[IconData.relics.crest_church.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.386.32"),
+                relic = IconData.relics.crest_church,
+                line = relicsets.crests,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.386.33"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.386.34"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.386.35"),
+            };
+
+            relics[IconData.relics.crest_dwarf.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.386.36"),
+                relic = IconData.relics.crest_dwarf,
+                line = relicsets.crests,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.386.37"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.386.34"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.386.38"),
+            };
+
+            relics[IconData.relics.crest_associate.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.386.39"),
+                relic = IconData.relics.crest_associate,
+                line = relicsets.crests,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.386.40"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.386.34"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.386.41"),
+            };
+
+            relics[IconData.relics.crest_smuggler.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.386.42"),
+                relic = IconData.relics.crest_smuggler,
+                line = relicsets.crests,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.386.43"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.386.34"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.386.44"),
             };
 
             // ====================================================================
@@ -1343,22 +1525,6 @@ namespace StardewDruid.Data
                     Mod.instance.Helper.Translation.Get("RelicData.422") +
                     Mod.instance.Helper.Translation.Get("RelicData.423"),
 
-                    Mod.instance.Helper.Translation.Get("RelicData.425"),
-                    Mod.instance.Helper.Translation.Get("RelicData.426") +
-                    Mod.instance.Helper.Translation.Get("RelicData.427") +
-                    Mod.instance.Helper.Translation.Get("RelicData.428") +
-                    Mod.instance.Helper.Translation.Get("RelicData.429") +
-                    Mod.instance.Helper.Translation.Get("RelicData.430"),
-
-                    Mod.instance.Helper.Translation.Get("RelicData.432"),
-                    Mod.instance.Helper.Translation.Get("RelicData.433") +
-                    Mod.instance.Helper.Translation.Get("RelicData.434") +
-                    Mod.instance.Helper.Translation.Get("RelicData.435") +
-                    Mod.instance.Helper.Translation.Get("RelicData.436") +
-                    Mod.instance.Helper.Translation.Get("RelicData.437") +
-                    Mod.instance.Helper.Translation.Get("RelicData.438") +
-                    Mod.instance.Helper.Translation.Get("RelicData.439"),
-
                 }
 
             };
@@ -1490,27 +1656,39 @@ namespace StardewDruid.Data
 
             };
 
-            relics[IconData.relics.book_knight.ToString()] = new()
+            relics[IconData.relics.book_annal.ToString()] = new()
             {
-                title = Mod.instance.Helper.Translation.Get("RelicData.343.4"),
-                relic = IconData.relics.book_knight,
+                title = Mod.instance.Helper.Translation.Get("RelicData.386.1"),
+                relic = IconData.relics.book_annal,
                 line = relicsets.books,
                 function = true,
-                description = Mod.instance.Helper.Translation.Get("RelicData.343.5"),
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.343.6"),
+                description = Mod.instance.Helper.Translation.Get("RelicData.386.2"),
+                hint = Mod.instance.Helper.Translation.Get("RelicData.386.4"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.722"),
+                    Mod.instance.Helper.Translation.Get("RelicData.386.3"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.386.5"),
 
                 narrative = new()
                 {
 
-                    Mod.instance.Helper.Translation.Get("RelicData.343.7"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.8"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.9"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.10"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.11"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.12"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.13"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.14"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.15"),
+                    Mod.instance.Helper.Translation.Get("RelicData.425"),
+                    Mod.instance.Helper.Translation.Get("RelicData.426") +
+                    Mod.instance.Helper.Translation.Get("RelicData.427") +
+                    Mod.instance.Helper.Translation.Get("RelicData.428") +
+                    Mod.instance.Helper.Translation.Get("RelicData.429") +
+                    Mod.instance.Helper.Translation.Get("RelicData.430"),
+
+                    Mod.instance.Helper.Translation.Get("RelicData.432"),
+                    Mod.instance.Helper.Translation.Get("RelicData.433") +
+                    Mod.instance.Helper.Translation.Get("RelicData.434") +
+                    Mod.instance.Helper.Translation.Get("RelicData.435") +
+                    Mod.instance.Helper.Translation.Get("RelicData.436") +
+                    Mod.instance.Helper.Translation.Get("RelicData.437") +
+                    Mod.instance.Helper.Translation.Get("RelicData.438") +
+                    Mod.instance.Helper.Translation.Get("RelicData.439"),
 
                 }
 
@@ -1655,6 +1833,34 @@ namespace StardewDruid.Data
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.343.3"),
             };
 
+            // ====================================================================
+            // Testaments
+
+            relics[IconData.relics.book_knight.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.343.4"),
+                relic = IconData.relics.book_knight,
+                line = relicsets.testaments,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.343.5"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.343.6"),
+
+                narrative = new()
+                {
+
+                    Mod.instance.Helper.Translation.Get("RelicData.343.7"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.8"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.9"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.10"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.11"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.12"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.13"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.14"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.15"),
+
+                }
+
+            };
 
             // ====================================================================
             // Stardew Druid
@@ -1663,7 +1869,7 @@ namespace StardewDruid.Data
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.96"),
                 relic = IconData.relics.stardew_druid,
-                line = relicsets.companion,
+                line = relicsets.druid,
                 description = Mod.instance.Helper.Translation.Get("RelicData.99"),
                 details = new()
                 {

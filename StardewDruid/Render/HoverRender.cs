@@ -1,5 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewDruid.Handle;
+using StardewModdingAPI;
+using StardewValley;
 using StardewValley.Network;
 using System;
 using System.Collections.Generic;
@@ -72,27 +75,68 @@ namespace StardewDruid.Render
         }
 
         public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> walkFrames = new();
-        
-        public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> hatFrames = new();
 
         public Dictionary<Character.Character.specials, Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>>> specialFrames = new();
 
         public Dictionary<Character.Character.dashes, Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>>> dashFrames = new();
 
-        //public Dictionary<int, Microsoft.Xna.Framework.Rectangle> shadowFrames = new();
+        public float hoverFloat;
+        public int hoverMoment;
+        public int hoverLapse;
+        public int hoverLapseTwo;
+        public int hoverLapseThree;
+        public int hoverOffset;
+        public float hoverAdjust;
 
-        public HoverRender(string name)
+        public HoverRender()
         {
 
-            hoverTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", name+".png"));
+        }
 
-            WalkFrames();
+        public HoverRender(CharacterHandle.characters characterType)
+        {
 
-            SpecialFrames();
+            hoverTexture = CharacterHandle.CharacterTexture(characterType);
 
-            DashFrames();
+            switch (characterType)
+            {
+                default:
 
-            HatFrames();
+                    WalkFrames();
+
+                    SpecialFrames();
+
+                    DashFrames();
+
+                    hoverFloat = 0.15f;
+
+                    hoverLapse = 24;
+
+                    break;
+
+                case CharacterHandle.characters.BoneWitch:
+                case CharacterHandle.characters.PeatWitch:
+                case CharacterHandle.characters.MoorWitch:
+
+                    WitchWalkFrames();
+
+                    WitchSpecialFrames();
+
+                    WitchDashFrames();
+
+                    hoverFloat = 0.15f;
+
+                    hoverLapse = 24;
+
+                    break;
+
+            }
+
+            hoverLapseTwo = 0 - (hoverLapse * walkFrames[0].Count);
+
+            hoverLapseThree = hoverLapse * walkFrames[0].Count * 2;
+
+            hoverOffset = Mod.instance.randomIndex.Next(12);
 
         }
 
@@ -117,33 +161,33 @@ namespace StardewDruid.Render
             {
                 [0] = new List<Rectangle>()
                 {
-                    new Rectangle(0, 64, 32, 32),
-                    new Rectangle(32, 64, 32, 32),
-                    new Rectangle(64, 64, 32, 32),
-                    new Rectangle(32, 64, 32, 32),
+                    HoverRectangle(hoverFrames.upThree),
+                    HoverRectangle(hoverFrames.upTwo),
+                    HoverRectangle(hoverFrames.upTwo),
+                    HoverRectangle(hoverFrames.upOne),
                 },
-
                 [1] = new List<Rectangle>()
                 {
-                    new Rectangle(0, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
-                    new Rectangle(64, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
+                    HoverRectangle(hoverFrames.rightThree),
+                    HoverRectangle(hoverFrames.rightTwo),
+                    HoverRectangle(hoverFrames.rightTwo),
+                    HoverRectangle(hoverFrames.rightOne),
+
                 },
                 [2] = new List<Rectangle>()
                 {
-                    new Rectangle(0, 0, 32, 32),
-                    new Rectangle(32, 0, 32, 32),
-                    new Rectangle(64, 0, 32, 32),
-                    new Rectangle(32, 0, 32, 32),
+                    HoverRectangle(hoverFrames.downThree),
+                    HoverRectangle(hoverFrames.downTwo),
+                    HoverRectangle(hoverFrames.downTwo),
+                    HoverRectangle(hoverFrames.downOne),
 
                 },
                 [3] = new List<Rectangle>()
                 {
-                    new Rectangle(0, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
-                    new Rectangle(64, 32, 32, 32),
-                    new Rectangle(32, 32, 32, 32),
+                    HoverRectangle(hoverFrames.rightThree),
+                    HoverRectangle(hoverFrames.rightTwo),
+                    HoverRectangle(hoverFrames.rightTwo),
+                    HoverRectangle(hoverFrames.rightOne),
 
                 }
             };
@@ -160,34 +204,113 @@ namespace StardewDruid.Render
                 {
                     HoverRectangle(hoverFrames.upOneSpecial),
                     HoverRectangle(hoverFrames.upTwoSpecial),
-                    HoverRectangle(hoverFrames.upThreeSpecial),
                     HoverRectangle(hoverFrames.upTwoSpecial),
+                    HoverRectangle(hoverFrames.upThreeSpecial),
                 },
                 [1] = new List<Rectangle>()
                 {
                     HoverRectangle(hoverFrames.rightOneSpecial),
                     HoverRectangle(hoverFrames.rightTwoSpecial),
-                    HoverRectangle(hoverFrames.rightThreeSpecial),
                     HoverRectangle(hoverFrames.rightTwoSpecial),
+                    HoverRectangle(hoverFrames.rightThreeSpecial),
 
                 },
                 [2] = new List<Rectangle>()
                 {
                     HoverRectangle(hoverFrames.downOneSpecial),
                     HoverRectangle(hoverFrames.downTwoSpecial),
-                    HoverRectangle(hoverFrames.downThreeSpecial),
                     HoverRectangle(hoverFrames.downTwoSpecial),
+                    HoverRectangle(hoverFrames.downThreeSpecial),
 
                 },
                 [3] = new List<Rectangle>()
                 {
                     HoverRectangle(hoverFrames.rightOneSpecial),
                     HoverRectangle(hoverFrames.rightTwoSpecial),
-                    HoverRectangle(hoverFrames.rightThreeSpecial),
                     HoverRectangle(hoverFrames.rightTwoSpecial),
+                    HoverRectangle(hoverFrames.rightThreeSpecial),
 
-                }
+                },
+            };
 
+            specialFrames[Character.Character.specials.sweep] = new()
+            {
+
+                [0] = new List<Rectangle>()
+                {
+                    HoverRectangle(hoverFrames.upDashOne),
+                    HoverRectangle(hoverFrames.upDashTwo),
+                    HoverRectangle(hoverFrames.upDashThree),
+                    HoverRectangle(hoverFrames.upDashTwo),
+                },
+                [1] = new List<Rectangle>()
+                {
+                    HoverRectangle(hoverFrames.rightDashOne),
+                    HoverRectangle(hoverFrames.rightDashTwo),
+                    HoverRectangle(hoverFrames.rightDashThree),
+                    HoverRectangle(hoverFrames.rightDashTwo),
+
+                },
+                [2] = new List<Rectangle>()
+                {
+                    HoverRectangle(hoverFrames.downDashOne),
+                    HoverRectangle(hoverFrames.downDashTwo),
+                    HoverRectangle(hoverFrames.downDashThree),
+                    HoverRectangle(hoverFrames.downDashTwo),
+
+                },
+                [3] = new List<Rectangle>()
+                {
+                    HoverRectangle(hoverFrames.rightDashOne),
+                    HoverRectangle(hoverFrames.rightDashTwo),
+                    HoverRectangle(hoverFrames.rightDashThree),
+                    HoverRectangle(hoverFrames.rightDashTwo),
+
+                },
+            };
+
+            specialFrames[Character.Character.specials.tackle] = new()
+            {
+
+                [0] = new List<Rectangle>()
+                {
+                    HoverRectangle(hoverFrames.upDashOne),
+                    HoverRectangle(hoverFrames.upDashTwo),
+                    HoverRectangle(hoverFrames.upDashThree),
+                    HoverRectangle(hoverFrames.upDashTwo),
+                    HoverRectangle(hoverFrames.upDashOne),
+                    HoverRectangle(hoverFrames.upDashTwo),
+                },
+                [1] = new List<Rectangle>()
+                {
+                    HoverRectangle(hoverFrames.rightDashOne),
+                    HoverRectangle(hoverFrames.rightDashTwo),
+                    HoverRectangle(hoverFrames.rightDashThree),
+                    HoverRectangle(hoverFrames.rightDashTwo),
+                    HoverRectangle(hoverFrames.rightDashOne),
+                    HoverRectangle(hoverFrames.rightDashTwo),
+
+                },
+                [2] = new List<Rectangle>()
+                {
+                    HoverRectangle(hoverFrames.downDashOne),
+                    HoverRectangle(hoverFrames.downDashTwo),
+                    HoverRectangle(hoverFrames.downDashThree),
+                    HoverRectangle(hoverFrames.downDashTwo),
+                    HoverRectangle(hoverFrames.downDashOne),
+                    HoverRectangle(hoverFrames.downDashTwo),
+
+                },
+                [3] = new List<Rectangle>()
+                {
+                    HoverRectangle(hoverFrames.rightDashOne),
+                    HoverRectangle(hoverFrames.rightDashTwo),
+                    HoverRectangle(hoverFrames.rightDashThree),
+                    HoverRectangle(hoverFrames.rightDashTwo),
+                    HoverRectangle(hoverFrames.rightDashOne),
+                    HoverRectangle(hoverFrames.rightDashTwo),
+
+                },
             };
 
         }
@@ -282,29 +405,254 @@ namespace StardewDruid.Render
             };
 
         }
-        
-        public void HatFrames()
+
+        public enum witchFrames
         {
 
-            hatFrames = new()
+            downOne,
+            downTwo,
+            downThree,
+
+            rightOne,
+            rightTwo,
+            rightThree,
+
+            upOne,
+            upTwo,
+            upThree,
+
+            downDashOne,
+            downDashTwo,
+            downDashThree,
+
+            rightDashOne,
+            rightDashTwo,
+            rightDashThree,
+
+            upDashOne,
+            upDashTwo,
+            upDashThree,
+
+        }
+
+        public static Microsoft.Xna.Framework.Rectangle WitchRectangle(witchFrames frame)
+        {
+
+            return new((int)frame % 3 * 64, (int)frame / 3 * 64, 64, 64);
+
+        }
+
+        public void WitchWalkFrames()
+        {
+
+            walkFrames = new()
             {
-                [0] = new()
+                [0] = new List<Rectangle>()
                 {
-                    HoverRectangle(hoverFrames.upHat),
+                    WitchRectangle(witchFrames.upOne),
+                    WitchRectangle(witchFrames.upTwo),
+       
+                    WitchRectangle(witchFrames.upTwo),
+                    WitchRectangle(witchFrames.upThree),
                 },
-                [1] = new()
+
+                [1] = new List<Rectangle>()
                 {
-                    HoverRectangle(hoverFrames.rightHat),
+                    WitchRectangle(witchFrames.rightOne),
+                    WitchRectangle(witchFrames.rightTwo),
+
+                    WitchRectangle(witchFrames.rightTwo),
+                    WitchRectangle(witchFrames.rightThree),
                 },
-                [2] = new()
+                [2] = new List<Rectangle>()
                 {
-                    HoverRectangle(hoverFrames.downHat),
+                    WitchRectangle(witchFrames.downOne),
+                    WitchRectangle(witchFrames.downTwo),
+
+                    WitchRectangle(witchFrames.downTwo), 
+                    WitchRectangle(witchFrames.downThree),
                 },
-                [3] = new()
+                [3] = new List<Rectangle>()
                 {
-                    HoverRectangle(hoverFrames.rightHat),
-                },
+                    WitchRectangle(witchFrames.rightOne),
+                    WitchRectangle(witchFrames.rightTwo),
+
+                    WitchRectangle(witchFrames.rightTwo),
+                    WitchRectangle(witchFrames.rightThree),
+                }
             };
+
+        }
+
+        public void WitchSpecialFrames()
+        {
+
+            specialFrames[Character.Character.specials.special] = new()
+            {
+                [0] = new List<Rectangle>()
+                {
+                    WitchRectangle(witchFrames.upOne),
+                    WitchRectangle(witchFrames.upTwo),
+
+                    WitchRectangle(witchFrames.upTwo),
+                    WitchRectangle(witchFrames.upThree),
+                },
+
+                [1] = new List<Rectangle>()
+                {
+                    WitchRectangle(witchFrames.rightOne),
+                    WitchRectangle(witchFrames.rightTwo),
+
+                    WitchRectangle(witchFrames.rightTwo),
+                    WitchRectangle(witchFrames.rightThree),
+                },
+                [2] = new List<Rectangle>()
+                {
+                    WitchRectangle(witchFrames.downOne),
+                    WitchRectangle(witchFrames.downTwo),
+
+                    WitchRectangle(witchFrames.downTwo),
+                    WitchRectangle(witchFrames.downThree),
+                },
+                [3] = new List<Rectangle>()
+                {
+                    WitchRectangle(witchFrames.rightOne),
+                    WitchRectangle(witchFrames.rightTwo),
+
+                    WitchRectangle(witchFrames.rightTwo),
+                    WitchRectangle(witchFrames.rightThree),
+                }
+
+            };
+
+        }
+
+        public void WitchDashFrames()
+        {
+
+            dashFrames[Character.Character.dashes.dash] = new()
+            {
+                [0] = new List<Rectangle>()
+                {
+                    WitchRectangle(witchFrames.upDashOne),
+                    WitchRectangle(witchFrames.upDashTwo),
+
+                },
+                [1] = new List<Rectangle>()
+                {
+                    WitchRectangle(witchFrames.rightDashOne),
+                    WitchRectangle(witchFrames.rightDashTwo),
+
+
+                },
+                [2] = new List<Rectangle>()
+                {
+                    WitchRectangle(witchFrames.downDashOne),
+                    WitchRectangle(witchFrames.downDashTwo),
+
+
+                },
+                [3] = new List<Rectangle>()
+                {
+                    WitchRectangle(witchFrames.rightDashOne),
+                    WitchRectangle(witchFrames.rightDashTwo),
+
+
+                },
+                [4] = new List<Rectangle>()
+                {
+
+                    WitchRectangle(witchFrames.upDashThree),
+                    WitchRectangle(witchFrames.upDashTwo),
+                },
+                [5] = new List<Rectangle>()
+                {
+
+                    WitchRectangle(witchFrames.rightDashThree),
+                    WitchRectangle(witchFrames.rightDashTwo),
+
+                },
+                [6] = new List<Rectangle>()
+                {
+
+                    WitchRectangle(witchFrames.downDashThree),
+                    WitchRectangle(witchFrames.downDashTwo),
+
+                },
+                [7] = new List<Rectangle>()
+                {
+
+                    WitchRectangle(witchFrames.rightDashThree),
+                    WitchRectangle(witchFrames.rightDashTwo),
+
+                },
+                [8] = new List<Rectangle>()
+                {
+                    WitchRectangle(witchFrames.upDashOne),
+                    WitchRectangle(witchFrames.upDashTwo),
+
+                },
+                [9] = new List<Rectangle>()
+                {
+                    WitchRectangle(witchFrames.rightDashOne),
+                    WitchRectangle(witchFrames.rightDashTwo),
+
+
+                },
+                [10] = new List<Rectangle>()
+                {
+                    WitchRectangle(witchFrames.downDashOne),
+                    WitchRectangle(witchFrames.downDashTwo),
+
+
+                },
+                [11] = new List<Rectangle>()
+                {
+                    WitchRectangle(witchFrames.rightDashOne),
+                    WitchRectangle(witchFrames.rightDashTwo),
+
+
+                }
+
+            };
+
+        }
+
+        public int HoverFrame()
+        {
+
+            return Math.Min((int)(hoverMoment / hoverLapse), 3);
+
+        }
+
+        public void Update(bool adjust = false)
+        {
+
+            hoverOffset++;
+
+            //hoverOffset++;
+
+            hoverMoment = Math.Abs(hoverLapseTwo + hoverOffset);
+
+            if (hoverOffset >= hoverLapseThree)
+            {
+
+                hoverOffset = 0;
+
+            }
+
+            if (adjust)
+            {
+
+                hoverAdjust = (hoverLapseTwo + hoverMoment) * hoverFloat;
+
+            }
+            else if (hoverAdjust > 0)
+            {
+
+                hoverAdjust -= hoverFloat;
+
+            }
 
         }
 
@@ -313,11 +661,17 @@ namespace StardewDruid.Render
 
             Microsoft.Xna.Framework.Rectangle source;
 
+            Vector2 shadowPosition = use.position + new Vector2(0, use.scale * 18);
+
+            use.position = use.position + new Vector2(0, hoverAdjust*use.scale);
+
             switch (use.series)
             {
 
                 default:
-                case HoverRenderAdditional.hoverseries.hover:
+                case HoverRenderAdditional.hoverseries.none:
+
+                    use.frame = HoverFrame();
 
                     source = walkFrames[use.direction][use.frame];
 
@@ -325,16 +679,49 @@ namespace StardewDruid.Render
 
                 case HoverRenderAdditional.hoverseries.special:
 
+
                     source = specialFrames[Character.Character.specials.special][use.direction][use.frame];
+
+                    break;
+
+                case HoverRenderAdditional.hoverseries.sweep:
+
+                    source = specialFrames[Character.Character.specials.sweep][use.direction][use.frame];
+
+                    break;
+
+                case HoverRenderAdditional.hoverseries.tackle:
+
+                    source = specialFrames[Character.Character.specials.tackle][use.direction][use.frame];
 
                     break;
 
                 case HoverRenderAdditional.hoverseries.dash:
 
                     source = dashFrames[Character.Character.dashes.dash][use.direction][use.frame];
+
                     break;
 
             }
+
+            if (use.direction % 2 == 1)
+            {
+                shadowPosition.Y += 4;
+            }
+
+            float shadowScale = 0.5f + Math.Abs(0 - 0.1f + (((float)hoverOffset / (float)hoverLapseThree) * 0.2f));
+
+            b.Draw(
+                Mod.instance.iconData.cursorTexture,
+                shadowPosition,
+                Mod.instance.iconData.shadowRectangle,
+                Color.White * 0.25f * use.fade,
+                0.0f,
+                new Vector2(24),
+                use.scale * shadowScale,
+                0,
+                use.layer - 0.0001f
+            );
 
             b.Draw(
                 hoverTexture,
@@ -347,46 +734,6 @@ namespace StardewDruid.Render
                 use.flip ? (SpriteEffects)1 : 0,
                 use.layer + 0.0002f
             );
-
-            Vector2 shadowPosition = use.position + new Vector2(0, use.scale * 18);
-
-            float offset = 2f + (Math.Abs(0 - (walkFrames[0].Count() / 2) + use.frame) * 0.1f);
-
-            if (use.direction % 2 == 1)
-            {
-                shadowPosition.Y += 4;
-            }
-
-            b.Draw(
-                Mod.instance.iconData.cursorTexture,
-                shadowPosition,
-                Mod.instance.iconData.shadowRectangle,
-                Color.White * 0.35f,
-                0.0f,
-                new Vector2(24),
-                use.scale / offset,
-                0,
-                use.layer - 0.0001f
-            );
-
-            if (use.hat)
-            {
-
-                int hatFrame = use.direction % 4;
-
-                b.Draw(
-                    hoverTexture,
-                    use.position,
-                    hatFrames[hatFrame][0],
-                    Microsoft.Xna.Framework.Color.White * use.fade,
-                    0f,
-                    new Vector2(source.Width / 2, source.Height / 2),
-                    use.scale,
-                    use.flip ? (SpriteEffects)1 : 0,
-                    use.layer + 0.0002f
-                );
-
-            }
 
         }
 
@@ -410,14 +757,13 @@ namespace StardewDruid.Render
         public enum hoverseries
         {
             none,
-            hover,
             dash,
             special,
+            sweep,
+            tackle,
         }
 
         public hoverseries series;
-
-        public bool hat = false;
 
         public float fade = 1f;
 

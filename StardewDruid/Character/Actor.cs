@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
@@ -35,13 +37,6 @@ namespace StardewDruid.Character
         public override void draw(SpriteBatch b, float alpha = 1f)
         {
             
-            if (Utility.isOnScreen(Position, 128))
-            {
-
-                DrawEmote(b);
-
-            }
-
             if (Context.IsMainPlayer && drawSlave)
             {
                 
@@ -56,26 +51,17 @@ namespace StardewDruid.Character
 
         }
 
-        public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
+        public override Texture2D OverheadTexture()
         {
-            
-            if (textAboveHeadTimer > 0 && textAboveHead != null)
-            {
-                
-                Point standingPixel = base.StandingPixel;
-                
-                Vector2 vector = Game1.GlobalToLocal(new Vector2(standingPixel.X, standingPixel.Y - 144f));
-                
-                if (textAboveHeadStyle == 0)
-                {
-                    vector += new Vector2(Game1.random.Next(-1, 2), Game1.random.Next(-1, 2));
-                }
-                
-                Point tilePoint = base.TilePoint;
 
-                SpriteText.drawStringWithScrollCenteredAt(b, textAboveHead, (int)vector.X, (int)vector.Y, "", textAboveHeadAlpha, textAboveHeadColor, 1, (float)(tilePoint.Y * 64) / 10000f + 0.001f + (float)tilePoint.X / 10000f);
+            return Mod.instance.iconData.displayTexture;
 
-            }
+        }
+
+        public override Microsoft.Xna.Framework.Rectangle OverheadPortrait()
+        {
+
+            return IconData.DisplayRectangle(Data.IconData.displays.chaos);
 
         }
 
@@ -96,39 +82,14 @@ namespace StardewDruid.Character
         public override void update(GameTime time, GameLocation location)
         {
             
-            if (Context.IsMainPlayer)
+            if (!checkUpdate())
             {
 
-                if (shakeTimer > 0)
-                {
-                    shakeTimer = 0;
-                }
-
-                if (textAboveHeadTimer > 0)
-                {
-                    if (textAboveHeadPreTimer > 0)
-                    {
-                        textAboveHeadPreTimer -= time.ElapsedGameTime.Milliseconds;
-                    }
-                    else
-                    {
-                        textAboveHeadTimer -= time.ElapsedGameTime.Milliseconds;
-                        if (textAboveHeadTimer > 500)
-                        {
-                            textAboveHeadAlpha = Math.Min(1f, textAboveHeadAlpha + 0.1f);
-                        }
-                        else
-                        {
-                            float newAlpha = textAboveHeadAlpha - 0.04f;
-
-                            textAboveHeadAlpha = newAlpha < 0f ? 0f : newAlpha;
-                        }
-                    }
-                }
-
-                updateEmote(time);
+                return;
 
             }
+
+            normalUpdate(time, location);
 
             return;
 

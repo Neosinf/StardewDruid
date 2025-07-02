@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using StardewValley.Network;
 using StardewDruid.Character;
+using StardewDruid.Cast.Mists;
 
 namespace StardewDruid.Journal
 {
@@ -101,13 +102,28 @@ namespace StardewDruid.Journal
             header,
             potion,
             toggle,
+            toggleleft,
+            toggleright,
             relic,
+            portrait,
             title,
             text,
+            textsmall,
             custom,
-            potionlist,
             herolist,
-            //herobutton,
+            
+            goods,
+            machine,
+            estimate,
+            order,
+
+            battle,
+            battlereadout,
+            battlereturn,
+            battleportrait,
+
+            lovebar,
+        
         }
 
         public contentTypes type;
@@ -134,21 +150,21 @@ namespace StardewDruid.Journal
 
         public Dictionary<int, Microsoft.Xna.Framework.Rectangle> iconSources = new();
 
-        public Dictionary<int, Microsoft.Xna.Framework.Color> iconColours = new();
-
-        public Dictionary<int, IconData.relics> relics = new();
-
-        public Dictionary<int, Microsoft.Xna.Framework.Rectangle> relicSources = new();
-
-        public Dictionary<int, Microsoft.Xna.Framework.Color> relicColours = new();
-
-        public Dictionary<int, IconData.potions> potions = new();
-
-        public Dictionary<int, Microsoft.Xna.Framework.Rectangle> potionSources = new();
-
         public Microsoft.Xna.Framework.Color defaultColour = new Color(86, 22, 12);
 
         public Dictionary<int, Texture2D> textures = new();
+
+        public Dictionary<int, Microsoft.Xna.Framework.Rectangle> textureSources = new();
+
+        public Dictionary<int, Microsoft.Xna.Framework.Color> textureColours = new();
+
+        public int readout;
+
+        public int readoutTick;
+
+        public int readoutPace;
+
+        public int readoutLength;
 
         public ContentComponent(contentTypes Type, string ID, bool Active = true)
         {
@@ -161,35 +177,8 @@ namespace StardewDruid.Journal
 
         }
 
-        public void setBounds(int index, int xP, int yP, int width, int height)
+        public void SetText(int width)
         {
-
-            iconSources = new();
-
-            relicSources = new();
-
-            textMeasures = new();
-
-            foreach (KeyValuePair<int, IconData.displays> icon in icons)
-            {
-
-                iconSources.Add(icon.Key, IconData.DisplayRectangle(icon.Value));
-
-            }
-
-            foreach (KeyValuePair<int, IconData.relics> relic in relics)
-            {
-
-                relicSources.Add(relic.Key, IconData.RelicRectangles(relic.Value));
-
-            }
-
-            foreach (KeyValuePair<int, IconData.potions> potion in potions)
-            {
-
-                potionSources.Add(potion.Key, IconData.PotionRectangles(potion.Value));
-
-            }
 
             if (text.Count == 0)
             {
@@ -198,27 +187,72 @@ namespace StardewDruid.Journal
 
             }
 
-            foreach (KeyValuePair<int, string> texties in text)
+            textMeasures = new();
+
+            readoutLength = 0;
+
+            foreach (KeyValuePair<int, string> textIndex in text)
             {
 
-                textParse[texties.Key] = Game1.parseText(texties.Value, Game1.dialogueFont, width);
+                textParse[textIndex.Key] = Game1.parseText(textIndex.Value, Game1.dialogueFont, width);
 
-                textMeasures[texties.Key] = Game1.dialogueFont.MeasureString(textParse[texties.Key]);
-
-                if (!textColours.ContainsKey(texties.Key))
+                if(type == contentTypes.textsmall)
                 {
 
-                    textColours[texties.Key] = defaultColour;
+                    textMeasures[textIndex.Key] = Game1.dialogueFont.MeasureString(textParse[textIndex.Key]) * 0.8f;
+
+                }
+                else
+                {
+
+                    textMeasures[textIndex.Key] = Game1.dialogueFont.MeasureString(textParse[textIndex.Key]);
+
+                }
+
+                if (!textColours.ContainsKey(textIndex.Key))
+                {
+
+                    textColours[textIndex.Key] = defaultColour;
+
+                }
+
+                if(readoutPace > 0)
+                {
+
+                    readoutLength += textParse[textIndex.Key].Length;
 
                 }
 
             }
 
+        }
+
+
+        public void SetIcon()
+        {
+
+            iconSources = new();
+
+            foreach (KeyValuePair<int, IconData.displays> icon in icons)
+            {
+
+                iconSources.Add(icon.Key, IconData.DisplayRectangle(icon.Value));
+
+            }
+
+        }
+
+        public void setBounds(int index, int xP, int yP, int width, int height, int column = 0, int row = 0)
+        {
+
+            SetText(width);
+
+            SetIcon();
+
             switch (type)
             {
 
                 case contentTypes.list:
-                case contentTypes.potionlist:
 
                     bounds = new Rectangle(xP + 16, yP + 16 + index * ((height - 32) / 6), width - 32, (height - 32) / 6 + 4);
 
@@ -249,13 +283,27 @@ namespace StardewDruid.Journal
 
                     }
 
-                    bounds = new Rectangle(xP + 16, yP + 16 + (index * (146 + 56)), width, 56);
+                    bounds = new Rectangle(xP + 16, yP + 16 + (index * (56 + row)), width, 56);
 
                     return;
 
                 case contentTypes.potion:
 
-                    bounds = new Rectangle(xP + 16 + 4 + (index % 6) * ((width - 32) / 6), yP + 16 + (int)(index / 6) * (146 + 56), (width - 32) / 6 - 8, 146);
+                    bounds = new Rectangle(xP + 16 + 4 + (index % 6) * ((width - 32) / 6), yP + 16 + (int)(index / 6) * (146 + row), (width - 32) / 6 - 8, 146);
+
+                    if (!textureColours.ContainsKey(0))
+                    {
+
+                        textureColours[0] = Color.Wheat;
+
+                    }
+
+                    if (!textureColours.ContainsKey(1))
+                    {
+
+                        textureColours[1] = Color.White;
+
+                    }
 
                     return;
 
@@ -265,9 +313,21 @@ namespace StardewDruid.Journal
 
                     return;
 
+                case contentTypes.toggleleft:
+
+                    bounds = new Rectangle(xP + 16 + 4 + (index % 6) * ((width - 32) / 6), yP + 16 + 146 + (int)(index / 6) * (146 + 56), (width - 32) / 12 - 8, 56);
+
+                    return;
+
+                case contentTypes.toggleright:
+
+                    bounds = new Rectangle(xP + 16 + 4 + (int)(((index % 6)+ 0.5f) * ((width - 32) / 6)), yP + 16 + 146 + (int)(index / 6) * (146 + 56), (width - 32) / 12 - 8, 56);
+
+                    return;
+
                 case contentTypes.relic:
 
-                    bounds = new Rectangle(xP + 16 + 4 + (index % 6) * ((width - 32) / 6), yP + 16 + 56 + (int)(index / 6) * (146 + 56), (width - 32) / 6 - 8, 146);
+                    bounds = new Rectangle(xP + 16 + 4 + (index % 6) * ((width - 32) / 6), yP + 16 + (int)(index / 6) * (146 + row), (width - 32) / 6 - 8, 146);
 
                     return;
 
@@ -277,11 +337,53 @@ namespace StardewDruid.Journal
 
                     return;
 
-                /*case contentTypes.herobutton:
+                case contentTypes.goods:
 
-                    bounds = new Rectangle(xP + width - 16, yP + 16 + index * ((height - 32) / 4), 32, (height - 32) / 4 + 4);
+                    bounds = new Rectangle(xP + 16 + 4 + (index % 4) * ((width - 32) / 4), yP + 24 + (int)(index / 4) * (224 + 56), ((width - 32) / 4) - 8, 224);
 
-                    return;*/
+                    return;
+
+                case contentTypes.machine:
+
+                    bounds = new Rectangle(xP + 16 + 4 + (index % 4) * ((width - 32) / 4), yP + 24 + (int)(index / 4) * (224 + 4), ((width - 32) / 4) - 8, 224);
+
+                    return;
+
+                case contentTypes.estimate:
+
+                    bounds = new Rectangle(xP + 16 + 4 + (index % 4) * ((width - 32) / 4), yP + 24 + (int)(index / 4) * (224 + 4), ((width - 32) / 4) - 8, 112);
+
+                    return;
+
+                case contentTypes.order:
+
+                    bounds = new Rectangle(xP + 16, yP + 16 + index * ((height - 32) / 4), width - 32, (height - 32) / 4 + 4);
+
+                    textParse[1] = Game1.parseText(text[1], Game1.smallFont, width-384);
+
+                    textMeasures[1] = Game1.dialogueFont.MeasureString(textParse[1]);
+
+                    return;
+
+                case contentTypes.battle:
+
+                    bounds = new Rectangle(xP + 20 + (index % 3) * ((width - 36) / 3), yP + 16 + ((int)(index / 3) * 88), ((width - 36) / 3) - 8, 80);
+
+                    return;
+
+                case contentTypes.battlereadout:
+
+                    bounds = new Rectangle(xP + 20, yP, width - 40, 172);
+
+                    SetText(width - 64);
+
+                    return;
+
+                case contentTypes.battlereturn:
+
+                    bounds = new Rectangle(xP + width - 20 - ((width - 36) / 3), yP - 144, ((width - 36) / 3) - 8, 80);
+
+                    return;
 
             }
 
@@ -294,7 +396,6 @@ namespace StardewDruid.Journal
             {
 
                 case contentTypes.list:
-                case contentTypes.potionlist:
 
                     IClickableMenu.drawTextureBox(
                         b,
@@ -396,38 +497,49 @@ namespace StardewDruid.Journal
                         0.901f
                     );
 
-                    if(type == contentTypes.potionlist)
+                    return;
+
+                case contentTypes.portrait:
+
+                    IClickableMenu.drawTextureBox(
+                        b,
+                        Game1.mouseCursors,
+                        new Rectangle(384, 396, 15, 15),
+                        bounds.X,
+                        bounds.Y,
+                        bounds.Width,
+                        bounds.Height,
+                        Color.Wheat,
+                        4f,
+                        false,
+                        -1.2f
+                    );
+                    float portraitScale;
+
+                    switch (textureSources[0].Width)
                     {
+                        
+                        case 64:
+                            portraitScale = 4f;
+                            break;
 
-                        b.Draw(Mod.instance.iconData.potionsTexture, new Vector2(bounds.Left + 20f + 32f - 1.5f, bounds.Center.Y + 3f), potionSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(10), 2.5f, 0, 0.900f);
+                        default:
+                            portraitScale = 256f / textureSources[0].Width;
+                            break;
 
-                        b.Draw(Mod.instance.iconData.potionsTexture, new Vector2(bounds.Left + 20f + 32f, bounds.Center.Y), potionSources[0], Color.White, 0f, new Vector2(10), 2.5f, 0, 0.901f);
+                    };
 
-                        b.DrawString(
-                            Game1.dialogueFont,
-                            textParse[1],
-                            new Vector2(bounds.Right - 144f - 1.5f, bounds.Center.Y - (textMeasures[0].Y / 2) + 1.5f),
-                            Microsoft.Xna.Framework.Color.Brown * 0.35f,
-                            0f,
-                            Vector2.Zero,
-                            1f,
-                            SpriteEffects.None,
-                            0.900f
-                        );
-
-                        b.DrawString(
-                            Game1.dialogueFont,
-                            textParse[1],
-                            new Vector2(bounds.Right - 144f, bounds.Center.Y - (textMeasures[0].Y / 2)),
-                            defaultColour,
-                            0f,
-                            Vector2.Zero,
-                            1f,
-                            SpriteEffects.None,
-                            0.901f
-                        );
-
-                    }
+                    b.Draw(
+                        textures[0], 
+                        new Vector2(bounds.Center.X, bounds.Center.Y), 
+                        textureSources[0], 
+                        Color.White, 
+                        0f, 
+                        new Vector2(textureSources[0].Width/2, textureSources[0].Height/2), 
+                        portraitScale, 
+                        0, 
+                        0.901f
+                    );
 
                     return;
 
@@ -486,6 +598,33 @@ namespace StardewDruid.Journal
                     );
                     return;
 
+                case contentTypes.textsmall:
+
+                    b.DrawString(
+                        Game1.dialogueFont,
+                        textParse[0],
+                        new Vector2(bounds.Left - 1f, offset.Y + bounds.Top + 1f),
+                        Microsoft.Xna.Framework.Color.Brown * 0.35f,
+                        0f,
+                        Vector2.Zero,
+                        0.8f,
+                        SpriteEffects.None,
+                        0.900f
+                    );
+
+                    b.DrawString(
+                        Game1.dialogueFont,
+                        textParse[0],
+                        new Vector2(bounds.Left, offset.Y + bounds.Top),
+                        textColours[0],
+                        0f,
+                        Vector2.Zero,
+                        0.8f,
+                        SpriteEffects.None,
+                        0.901f
+                    );
+                    return;
+
                 case contentTypes.header:
 
                     b.DrawString(Game1.smallFont, textParse[0], new Vector2(bounds.Left + 10 - 1f, bounds.Center.Y - textMeasures[0].Y / 2 + 2f + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1.1f, SpriteEffects.None, 0.900f);
@@ -520,13 +659,29 @@ namespace StardewDruid.Journal
 
                     b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Center.X + 6 - (textMeasures[0].X * 0.9f / 2), bounds.Center.Y + 24), textColours[0], 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.901f);
 
-                    b.Draw(Mod.instance.iconData.potionsTexture, new Vector2(bounds.Center.X - 40f + 2f, bounds.Center.Y - 60f + 4f), potionSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 4f, 0, 0.900f);
+                    b.Draw(Mod.instance.iconData.potionsTexture, new Vector2(bounds.Center.X + 2f, bounds.Center.Y - 20f + 4f), textureSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(10), 4f, 0, 0.900f);
 
-                    b.Draw(Mod.instance.iconData.potionsTexture, new Vector2(bounds.Center.X - 40f, bounds.Center.Y - 60f), potionSources[0], Color.White, 0f, Vector2.Zero, 4f, 0, 0.901f);
+                    b.Draw(Mod.instance.iconData.potionsTexture, new Vector2(bounds.Center.X, bounds.Center.Y - 20f), textureSources[0], Color.White, 0f, new Vector2(10), 4f, 0, 0.901f);
+
+                    if(textureSources.Count > 1)
+                    {
+
+                        int glitterTime = (int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 2000) / 100;
+
+                        if(glitterTime <= 7)
+                        {
+
+                            b.Draw(Mod.instance.iconData.impactsTexture, new Vector2(bounds.Center.X, bounds.Center.Y), new Rectangle(0 + (glitterTime * 64), 128, 64, 64), Color.White * 0.5f, (float)(Math.PI/2), new Vector2(32), 4f, 0, 0.901f);
+
+                        }
+
+                    }
 
                     return;
 
                 case contentTypes.toggle:
+                case contentTypes.toggleleft:
+                case contentTypes.toggleright:
 
                     b.Draw(
                         Mod.instance.iconData.displayTexture,
@@ -570,9 +725,9 @@ namespace StardewDruid.Journal
                         -1f
                     );
 
-                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Center.X - 40f + 2f, bounds.Center.Y - 40f + 4f), relicSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 4f, 0, 0.900f);
+                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Center.X - 40f + 2f, bounds.Center.Y - 40f + 4f), textureSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, Vector2.Zero, 4f, 0, 0.900f);
 
-                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Center.X - 40f, bounds.Center.Y - 40f), relicSources[0], relicColours[0], 0f, Vector2.Zero, 4f, 0, 0.901f);
+                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Center.X - 40f, bounds.Center.Y - 40f), textureSources[0], textureColours[0], 0f, Vector2.Zero, 4f, 0, 0.901f);
 
                     return;
 
@@ -597,7 +752,7 @@ namespace StardewDruid.Journal
 
                         b.Draw(
                             Mod.instance.iconData.displayTexture,
-                            new Vector2(bounds.Right - 96 + 1f, bounds.Center.Y + 3f),
+                            new Vector2(bounds.Right - 200 + 1f, bounds.Center.Y - 1f),
                             iconSources[0],
                             Microsoft.Xna.Framework.Color.Black * 0.35f,
                             0f,
@@ -609,7 +764,7 @@ namespace StardewDruid.Journal
 
                         b.Draw(
                             Mod.instance.iconData.displayTexture,
-                            new Vector2(bounds.Right - 96, bounds.Center.Y),
+                            new Vector2(bounds.Right - 200, bounds.Center.Y - 4f),
                             iconSources[0],
                             Microsoft.Xna.Framework.Color.White,
                             0f,
@@ -623,73 +778,460 @@ namespace StardewDruid.Journal
 
                     // title
 
-                    b.DrawString(
-                        Game1.dialogueFont,
-                        textParse[0],
-                        new Vector2(bounds.Left + 192f + 1f, bounds.Center.Y - (textMeasures[0].Y / 2) + 1.5f),
-                        Microsoft.Xna.Framework.Color.Brown * 0.35f,
-                        0f,
-                        Vector2.Zero,
-                        1f,
-                        SpriteEffects.None,
-                        0.900f
-                    );
+                    if (textParse.Count > 1)
+                    {
 
-                    b.DrawString(
-                        Game1.dialogueFont,
-                        textParse[0],
-                        new Vector2(bounds.Left + 192f, bounds.Center.Y - (textMeasures[0].Y / 2)),
-                        defaultColour,
-                        0f,
-                        Vector2.Zero,
-                        1f,
-                        SpriteEffects.None,
-                        0.901f
-                    );
+                        b.DrawString(
+                            Game1.dialogueFont,
+                            textParse[0],
+                            new Vector2(bounds.Left + 192f + 1f, bounds.Center.Y - textMeasures[0].Y - 4f + 1.5f),
+                            Microsoft.Xna.Framework.Color.Brown * 0.35f,
+                            0f,
+                            Vector2.Zero,
+                            1f,
+                            SpriteEffects.None,
+                            0.900f
+                        );
+
+                        b.DrawString(
+                            Game1.dialogueFont,
+                            textParse[0],
+                            new Vector2(bounds.Left + 192f, bounds.Center.Y - textMeasures[0].Y - 4f),
+                            defaultColour,
+                            0f,
+                            Vector2.Zero,
+                            1f,
+                            SpriteEffects.None,
+                            0.901f
+                        );
+
+                        b.DrawString(
+                            Game1.dialogueFont,
+                            textParse[1],
+                            new Vector2(bounds.Left + 192f + 1f, bounds.Center.Y + 4f + 1.5f),
+                            Microsoft.Xna.Framework.Color.Brown * 0.35f,
+                            0f,
+                            Vector2.Zero,
+                            1f,
+                            SpriteEffects.None,
+                            0.900f
+                        );
+
+                        b.DrawString(
+                            Game1.dialogueFont,
+                            textParse[1],
+                            new Vector2(bounds.Left + 192f, bounds.Center.Y + 4f),
+                            defaultColour,
+                            0f,
+                            Vector2.Zero,
+                            1f,
+                            SpriteEffects.None,
+                            0.901f
+                        );
+
+                        b.DrawString(
+                            Game1.dialogueFont,
+                            textParse[2],
+                            new Vector2(bounds.Right - 160 + 1f, bounds.Center.Y - (textMeasures[1].Y / 2) + 1.5f),
+                            Microsoft.Xna.Framework.Color.Brown * 0.35f,
+                            0f,
+                            Vector2.Zero,
+                            1f,
+                            SpriteEffects.None,
+                            0.900f
+                        );
+
+                        b.DrawString(
+                            Game1.dialogueFont,
+                            textParse[2],
+                            new Vector2(bounds.Right - 160, bounds.Center.Y - (textMeasures[1].Y / 2)),
+                            defaultColour,
+                            0f,
+                            Vector2.Zero,
+                            1f,
+                            SpriteEffects.None,
+                            0.901f
+                        );
+
+                    }
+                    else
+                    {
+
+
+                        b.DrawString(
+                            Game1.dialogueFont,
+                            textParse[0],
+                            new Vector2(bounds.Left + 192f + 1f, bounds.Center.Y - (textMeasures[0].Y / 2) + 1.5f),
+                            Microsoft.Xna.Framework.Color.Brown * 0.35f,
+                            0f,
+                            Vector2.Zero,
+                            1f,
+                            SpriteEffects.None,
+                            0.900f
+                        );
+
+                        b.DrawString(
+                            Game1.dialogueFont,
+                            textParse[0],
+                            new Vector2(bounds.Left + 192f, bounds.Center.Y - (textMeasures[0].Y / 2)),
+                            defaultColour,
+                            0f,
+                            Vector2.Zero,
+                            1f,
+                            SpriteEffects.None,
+                            0.901f
+                        );
+
+
+                    }
+
 
                     // image
 
+                    if (textures.Count > 0)
+                    {
+
+                        b.Draw(
+                            textures[0],
+                            new Vector2(bounds.Left + 96f, bounds.Center.Y - 4f),
+                            textureSources[0],
+                            Microsoft.Xna.Framework.Color.White,
+                            0f,
+                            new Vector2(textureSources[0].Width / 2, textureSources[0].Height / 2),
+                            5f,
+                            0,
+                            0.900f
+                        );
+
+                    }
+                    else
+                    {
+
+                        b.Draw(
+                            Mod.instance.iconData.displayTexture,
+                            new Vector2(bounds.Left + 96f, bounds.Center.Y - 4f),
+                            IconData.DisplayRectangle(IconData.displays.question),
+                            Microsoft.Xna.Framework.Color.White,
+                            0f,
+                            new Vector2(8),
+                            5f,
+                            0,
+                            0.900f
+                        );
+
+                    }
+
+                    return;
+
+                case contentTypes.goods:
+
+                    IClickableMenu.drawTextureBox(
+                        b,
+                        Game1.mouseCursors,
+                        new Rectangle(384, 396, 15, 15),
+                        bounds.X,
+                        bounds.Y,
+                        bounds.Width,
+                        bounds.Height,
+                        focus ? Color.Wheat : Color.White,
+                        4f,
+                        false,
+                        -1f
+                    );
+
+                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Center.X + 6 - (textMeasures[0].X * 0.9f / 2) - 1f, bounds.Center.Y + 60 + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.900f);
+
+                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Center.X + 6 - (textMeasures[0].X * 0.9f / 2), bounds.Center.Y + 60), textColours[0], 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.901f);
+
+                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Center.X + 2f, bounds.Center.Y - 16f + 4f), textureSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(16), 4f, 0, 0.900f);
+
+                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Center.X, bounds.Center.Y - 16f), textureSources[0], Color.White, 0f, new Vector2(16), 4f, 0, 0.901f);
+
+                    if(text.Count > 1)
+                    {
+
+                        b.DrawString(Game1.dialogueFont, textParse[1], new Vector2(bounds.Left + 12f, bounds.Bottom + 8f + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.900f);
+
+                        b.DrawString(Game1.dialogueFont, textParse[1], new Vector2(bounds.Left + 12f, bounds.Bottom + 8f), textColours[1], 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.901f);
+
+                        b.DrawString(Game1.dialogueFont, textParse[2], new Vector2(bounds.Right + 8f - textMeasures[2].X - 1f, bounds.Bottom + 9f + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0.900f);
+
+                        b.DrawString(Game1.dialogueFont, textParse[2], new Vector2(bounds.Right + 8f - textMeasures[2].X, bounds.Bottom + 9f), textColours[2], 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0.901f);
+
+                    }
+
+                    return;
+
+                case contentTypes.machine:
+
+                    IClickableMenu.drawTextureBox(
+                        b,
+                        Game1.mouseCursors,
+                        new Rectangle(384, 396, 15, 15),
+                        bounds.X,
+                        bounds.Y,
+                        bounds.Width,
+                        bounds.Height,
+                        focus ? Color.Wheat : Color.White,
+                        4f,
+                        false,
+                        -1f
+                    );
+
+                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Center.X + 6 - (textMeasures[0].X * 0.9f / 2) - 1f, bounds.Center.Y + 60 + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.900f);
+
+                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Center.X + 6 - (textMeasures[0].X * 0.9f / 2), bounds.Center.Y + 60), textColours[0], 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.901f);
+
+                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Center.X + 2f, bounds.Center.Y - 16f + 4f), textureSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(16), 4f, 0, 0.900f);
+
+                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Center.X, bounds.Center.Y - 16f), textureSources[0], Color.White, 0f, new Vector2(16), 4f, 0, 0.901f);
+
+                    return;
+
+                case contentTypes.estimate:
+
+                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Left + 64f + 2f, bounds.Center.Y + 4f), textureSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(16), 3f, 0, 0.900f);
+
+                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Left + 64f, bounds.Center.Y), textureSources[0], Color.White, 0f, new Vector2(16), 3f, 0, 0.901f);
+
+                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Right - 16f - (textMeasures[0].X * 0.9f) - 1f, bounds.Center.Y + 4 - textMeasures[0].Y + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.900f);
+
+                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Right - 16f - (textMeasures[0].X * 0.9f), bounds.Center.Y + 4 - textMeasures[0].Y), textColours[0], 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.901f);
+
+                    b.DrawString(Game1.dialogueFont, textParse[1], new Vector2(bounds.Right - 16f - (textMeasures[1].X * 0.9f) - 1f, bounds.Center.Y + 8 + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.900f);
+
+                    b.DrawString(Game1.dialogueFont, textParse[1], new Vector2(bounds.Right - 16f - (textMeasures[1].X * 0.9f), bounds.Center.Y + 8), textColours[1], 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.901f);
+
+                    return;
+
+                case contentTypes.order:
+
+                    IClickableMenu.drawTextureBox(
+                        b,
+                        Game1.mouseCursors,
+                        new Rectangle(384, 396, 15, 15),
+                        bounds.X,
+                        bounds.Y,
+                        bounds.Width,
+                        bounds.Height,
+                        focus ? Color.Wheat : Color.White,
+                        4f,
+                        false,
+                        -1f
+                    );
+
+                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Left + 64f + 1f, bounds.Center.Y + 4f), textureSources[0], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(16), 2.8f, 0, 0.900f);
+
+                    b.Draw(Mod.instance.iconData.workshopTexture, new Vector2(bounds.Left + 64f, bounds.Center.Y), textureSources[0], Color.White, 0f, new Vector2(16), 2.8f, 0, 0.901f);
+
+                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Left + 148f + 2f, bounds.Top + 40 + 1f), textureSources[1], Microsoft.Xna.Framework.Color.Black * 0.35f, 0f, new Vector2(10), 1.8f, 0, 0.900f);
+
+                    b.Draw(Mod.instance.iconData.relicsTexture, new Vector2(bounds.Left + 148f, bounds.Top + 40), textureSources[1], Color.White, 0f, new Vector2(10), 1.8f, 0, 0.901f);
+
+                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Left + 176f - 1f, bounds.Top + 24 + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.900f);
+
+                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Left + 176f, bounds.Top + 24), textColours[0], 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.901f);
+
+                    b.DrawString(Game1.smallFont, textParse[1], new Vector2(bounds.Left + 132f - 1f, bounds.Top + 68 + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.900f);
+
+                    b.DrawString(Game1.smallFont, textParse[1], new Vector2(bounds.Left + 132f, bounds.Top + 68), textColours[1], 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.901f);
+
+                    b.DrawString(Game1.smallFont, textParse[4], new Vector2(bounds.Right - 208f - 1f, bounds.Top + 20 + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.900f);
+
+                    b.DrawString(Game1.smallFont, textParse[4], new Vector2(bounds.Right - 208f, bounds.Top + 20), textColours[4], 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.901f);
+
+                    b.DrawString(Game1.dialogueFont, textParse[2], new Vector2(bounds.Right - 208f - 1f, bounds.Top + 60 + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.900f);
+
+                    b.DrawString(Game1.dialogueFont, textParse[2], new Vector2(bounds.Right - 208f, bounds.Top + 60), textColours[2], 0f, Vector2.Zero, 0.9f, SpriteEffects.None, 0.901f);
+
+                    b.DrawString(Game1.smallFont, textParse[3], new Vector2(bounds.Right - 208f - 1f, bounds.Top + 108 + 1f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.900f);
+
+                    b.DrawString(Game1.smallFont, textParse[3], new Vector2(bounds.Right - 208f, bounds.Top + 108), textColours[3], 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.901f);
+
+                    return;
+
+                case contentTypes.battlereturn:
+                case contentTypes.battle:
+
+                    IClickableMenu.drawTextureBox(
+                        b,
+                        Game1.mouseCursors,
+                        new Rectangle(384, 396, 15, 15),
+                        bounds.X,
+                        bounds.Y,
+                        bounds.Width,
+                        bounds.Height,
+                        focus ? Color.Wheat : Color.White,
+                        3f,
+                        false,
+                        -1f
+                    );
+
+                    if (icons.Count > 0)
+                    {
+
+                        b.Draw(
+                            Mod.instance.iconData.displayTexture,
+                            new Vector2(bounds.Left + 49, bounds.Center.Y + 2f),
+                            iconSources[0],
+                            Microsoft.Xna.Framework.Color.Black * 0.35f,
+                            0f,
+                            new Vector2(8),
+                            3f,
+                            0,
+                            0.900f
+                        );
+
+                        b.Draw(
+                            Mod.instance.iconData.displayTexture,
+                            new Vector2(bounds.Left +48, bounds.Center.Y),
+                            iconSources[0],
+                            Microsoft.Xna.Framework.Color.White,
+                            0f,
+                            new Vector2(8),
+                            3f,
+                            0,
+                            0.901f
+                        );
+
+                    }
+
+                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Left + 95, bounds.Center.Y - (textMeasures[0].Y / 2) + 2f), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.900f);
+
+                    b.DrawString(Game1.dialogueFont, textParse[0], new Vector2(bounds.Left + 96, bounds.Center.Y - (textMeasures[0].Y / 2)), textColours[0], 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.901f);
+
+                    return;
+
+                case contentTypes.battlereadout:
+
+                    IClickableMenu.drawTextureBox(
+                        b,
+                        Game1.mouseCursors,
+                        new Rectangle(384, 396, 15, 15),
+                        bounds.X,
+                        bounds.Y,
+                        bounds.Width,
+                        bounds.Height,
+                        Color.White,
+                        4f,
+                        false,
+                        -1f
+                    );
+
+                    if(text.Count == 0)
+                    {
+
+                        return;
+
+                    }
+
+                    string readoutTruncate = textParse[0];
+
+                    if (readoutPace > 0 && readout < readoutLength)
+                    {
+
+                        //readoutTick++;
+
+                        //if(readoutTick >= readoutPace)
+                        //{
+
+                            readout++;
+
+                        //    readoutTick = 0;
+
+                        //}
+
+                        readoutTruncate = textParse[0].Substring(0, readout);
+
+                    }
+
+                    Vector2 readoutVector1 = new(textMeasures[0].X * 0.5f, textMeasures[0].Y * 0.5f);
+
+                    b.DrawString(Game1.dialogueFont, readoutTruncate, bounds.Center.ToVector2() - readoutVector1 + new Vector2(-1,2), Microsoft.Xna.Framework.Color.Brown * 0.35f, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.900f);
+
+                    b.DrawString(Game1.dialogueFont, readoutTruncate, bounds.Center.ToVector2() - readoutVector1, textColours[0], 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.901f);
+
+                    return;
+
+
+                case contentTypes.battleportrait:
+
+                    IClickableMenu.drawTextureBox(
+                        b,
+                        Game1.mouseCursors,
+                        new Rectangle(384, 396, 15, 15),
+                        bounds.X,
+                        bounds.Y,
+                        bounds.Width,
+                        bounds.Height,
+                        Color.Wheat,
+                        4f,
+                        false,
+                        -1.2f
+                    );
+
                     b.Draw(
                         textures[0],
-                        new Vector2(bounds.Left + 96f, bounds.Center.Y - 4f),
-                        new Rectangle(0, 0, 16, 24),
-                        Microsoft.Xna.Framework.Color.White,
+                        new Vector2(bounds.Center.X, bounds.Center.Y),
+                        textureSources[0],
+                        Color.White,
                         0f,
-                        new Vector2(8,12),
-                        5f,
+                        new Vector2(textureSources[0].Width / 2, textureSources[0].Height / 2),
+                        4f,
                         0,
-                        0.900f
+                        0.901f
                     );
 
                     return;
 
-                /*case contentTypes.herobutton:
 
-                    b.Draw(
-                        Mod.instance.iconData.displayTexture,
-                        bounds.Center.ToVector2() + new Vector2(-1f, 2f),
-                        iconSources[0],
-                        Microsoft.Xna.Framework.Color.Black * 0.35f,
-                        0f,
-                        new Vector2(8),
-                        3f,
-                        0,
-                        0.900f
-                    );
+                case contentTypes.lovebar:
 
-                    b.Draw(
-                        Mod.instance.iconData.displayTexture,
-                        bounds.Center.ToVector2(),
-                        iconSources[0],
-                        Microsoft.Xna.Framework.Color.White,
-                        0f,
-                        new Vector2(8),
-                        3f,
-                        0,
-                        0.901f
-                    );
+                    int loveAmount = Convert.ToInt32(text[0]);
 
-                    return;*/
+                    Rectangle loveFull = IconData.DisplayRectangle(IconData.displays.fullheart);
+
+                    int loveSet = 0;
+
+                    for(int i = 0; i < (loveAmount / 2); i++)
+                    {
+
+                        b.Draw(
+                             Mod.instance.iconData.displayTexture,
+                             new Vector2(bounds.Center.X, bounds.Center.Y + loveSet),
+                             loveFull,
+                             Color.White,
+                             0f,
+                             new Vector2(10,10),
+                             3f,
+                             0,
+                             0.901f
+                         );
+
+                        loveSet += 70;
+
+                    }
+
+                    if (loveAmount % 2 == 1)
+                    {
+
+                        Rectangle loveHalf = IconData.DisplayRectangle(IconData.displays.halfheart);
+
+                        b.Draw(
+                             Mod.instance.iconData.displayTexture,
+                             new Vector2(bounds.Center.X, bounds.Center.Y + loveSet),
+                             loveHalf,
+                             Color.White,
+                             0f,
+                             new Vector2(10, 10),
+                             3f,
+                             0,
+                             0.901f
+                         );
+
+                    }
+
+                    return;
 
             }
 

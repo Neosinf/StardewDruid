@@ -1,7 +1,6 @@
 ﻿using Force.DeepCloner;
 using StardewDruid.Cast;
-using StardewDruid.Character;
-using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Location;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
@@ -13,37 +12,45 @@ namespace StardewDruid.Data
     class StaticData
     {
 
-        public static int version;
+        public int version = 0;
 
-        public long id;
+        public long id = 0;
 
-        public Rite.rites rite;
+        public Rite.Rites rite = Rite.Rites.none;
 
-        public Dictionary<string, QuestProgress> progress;
+        public Dictionary<string, QuestProgress> progress = new();
 
-        public Dictionary<CharacterHandle.characters, Character.Character.mode> characters;
+        public Dictionary<CharacterHandle.characters, Character.Character.mode> characters = new();
 
-        public Dictionary<CharacterHandle.characters, RecruitData> recruits;
+        public Dictionary<CharacterHandle.characters, RecruitHandle> recruits = new();
 
-        public Dictionary<CharacterHandle.characters, List<ItemData>> chests;
+        public Dictionary<CharacterHandle.characters, PalData> pals = new();
 
-        public Dictionary<int,Rite.rites> attunement;
+        public Dictionary<CharacterHandle.characters, List<ItemData>> chests = new();
 
-        public Dictionary<HerbalData.herbals, int> herbalism;
+        public Dictionary<CharacterHandle.characters, string> serialchests = new();
 
-        public Dictionary<HerbalData.herbals, int> potions;
+        public Dictionary<int,Rite.Rites> attunement = new();
 
-        public Dictionary<string, int> restoration;
+        public Dictionary<HerbalHandle.herbals, int> herbalism = new();
 
-        public Dictionary<string, int> reliquary;
+        public Dictionary<HerbalHandle.herbals, int> potions = new();
 
-        public QuestHandle.milestones milestone;
+        public Dictionary<ExportHandle.exports, int> exports = new();
 
-        public Dictionary<long, MultiplayerData> multiplayer;
+        public Dictionary<int, ExportOrder> orders = new();
 
-        public int set;
+        public Dictionary<string, int> restoration = new();
 
-        public string serialise;
+        public Dictionary<string, int> reliquary = new();
+
+        public QuestHandle.milestones milestone = QuestHandle.milestones.none;
+
+        public Dictionary<long, MultiplayerData> multiplayer = new();
+
+        public int set = 0;
+
+        public string serialise = string.Empty;
 
         public StaticData()
         {
@@ -53,38 +60,6 @@ namespace StardewDruid.Data
             version = Mod.instance.version;
 
             id = Game1.player.UniqueMultiplayerID;
-
-            rite = Rite.rites.none;
-
-            attunement = new();
-
-            herbalism = new();
-
-            potions = new();
-
-            // Overwrittenn
-
-            progress = new();
-
-            reliquary = new();
-
-            milestone = QuestHandle.milestones.none;
-
-            // Host only
-
-            characters = new();
-
-            recruits = new();
-
-            chests = new();
-
-            restoration = new();
-
-            set = 0;
-
-            serialise = string.Empty;
-
-            multiplayer = new();
 
         }
 
@@ -109,31 +84,15 @@ namespace StardewDruid.Data
     class MultiplayerData
     {
 
-        public Dictionary<int, Rite.rites> attunement;
+        public Dictionary<int, Rite.Rites> attunement = new();
 
-        public Dictionary<HerbalData.herbals, int> herbalism;
+        public Dictionary<HerbalHandle.herbals, int> herbalism = new();
 
-        public Dictionary<HerbalData.herbals, int> potions;
+        public Dictionary<HerbalHandle.herbals, int> potions = new();
+
+        public Dictionary<CharacterHandle.characters, PalData> pals = new();
 
         public MultiplayerData()
-        {
-
-        }
-
-    }
-
-    public class RecruitData
-    {
-
-        public string name;
-
-        public string display;
-
-        public int level;
-
-        public Rite.rites rite;
-
-        public RecruitData()
         {
 
         }

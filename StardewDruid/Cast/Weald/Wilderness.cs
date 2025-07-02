@@ -1,8 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.VisualBasic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Location.Druid;
 using StardewModdingAPI;
 using StardewValley;
@@ -21,8 +23,6 @@ namespace StardewDruid.Cast.Weald
     {
 
         public int radialCounter = 0;
-
-        public int castCost = 0;
 
         public int costing = 0;
 
@@ -67,7 +67,7 @@ namespace StardewDruid.Cast.Weald
 
                 }
 
-                if (Vector2.Distance(origin, Game1.player.Position) > 32)
+                if (Vector2.Distance(origin, Game1.player.Position) > 32 && !Mod.instance.ShiftButtonHeld())
                 {
 
                     return false;
@@ -100,7 +100,7 @@ namespace StardewDruid.Cast.Weald
                 if (decimalCounter == 5)
                 {
 
-                    Mod.instance.rite.channel(IconData.skies.mountain, 75);
+                    Mod.instance.rite.Channel(IconData.skies.mountain, 75);
 
                     channel = IconData.skies.mountain;
 
@@ -111,13 +111,16 @@ namespace StardewDruid.Cast.Weald
 
                     eventLocked = true;
 
-                    SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new());
+                    SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new())
+                    {
+                        scheme = IconData.schemes.herbal_ligna,
 
-                    circleHandle.scheme = IconData.schemes.herbal_ligna;
-
-                    circleHandle.sound = SpellHandle.sounds.discoverMineral;
+                        sound = SpellHandle.Sounds.discoverMineral
+                    };
 
                     Mod.instance.spellRegister.Add(circleHandle);
+
+                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.roots, new() { SpellHandle.Effects.snare}) { sound = SpellHandle.Sounds.treethud, displayRadius = 4,});
 
                     Mod.instance.rite.specialCasts[location.Name].Add(Rite.eventWilderness + costing.ToString());
 
@@ -125,8 +128,9 @@ namespace StardewDruid.Cast.Weald
                     {
 
                         Mod.instance.questHandle.UpdateTask(QuestHandle.wealdFour, 1);
-
                     }
+
+                    Mod.instance.rite.ChargeSet(IconData.cursors.wealdCharge);
 
                 }
 
@@ -144,16 +148,6 @@ namespace StardewDruid.Cast.Weald
                 eventComplete = true;
             
             }
-
-        }
-
-        public override void EventRemove()
-        {
-            base.EventRemove();
-
-            Mod.instance.rite.castCost = castCost;
-
-            Mod.instance.rite.ApplyCost();
 
         }
 
@@ -414,7 +408,9 @@ namespace StardewDruid.Cast.Weald
             if (spawnCount > 0)
             {
 
-                castCost = spawnCount * costing;
+                costCounter = spawnCount * costing;
+
+                Rite.ApplyCost(costCounter);
 
             }
 
@@ -542,22 +538,32 @@ namespace StardewDruid.Cast.Weald
         public void SpawnTwigs(Vector2 prospect)
         {
 
-            StardewValley.Object @object = ItemRegistry.Create<StardewValley.Object>(SpawnData.RandomTwig(location));
+            StardewValley.Object @object = ItemRegistry.Create<StardewValley.Object>(SpawnData.RandomTwig());
 
             @object.MinutesUntilReady = 1;
 
-            location.objects.TryAdd(prospect, @object);
+            if (location.objects.TryAdd(prospect, @object))
+            {
+
+                Mod.instance.iconData.CursorIndicator(location, prospect * 64 + new Vector2(0, 8), IconData.cursors.weald, new());
+
+            }
 
         }
 
         public void SpawnRock(Vector2 prospect)
         {
 
-            StardewValley.Object @object = ItemRegistry.Create<StardewValley.Object>(SpawnData.RandomRock(location));
+            StardewValley.Object @object = ItemRegistry.Create<StardewValley.Object>(SpawnData.RandomRock());
 
             @object.MinutesUntilReady = 1;
 
-            location.objects.TryAdd(prospect, @object);
+            if (location.objects.TryAdd(prospect, @object))
+            {
+
+                Mod.instance.iconData.CursorIndicator(location, prospect * 64 + new Vector2(0, 8), IconData.cursors.weald, new());
+
+            }
 
         }
 

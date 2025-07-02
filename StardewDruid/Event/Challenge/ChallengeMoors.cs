@@ -1,8 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
-using StardewDruid.Character;
+using StardewDruid.Cast.Effect;
 using StardewDruid.Data;
+using StardewDruid.Handle;
+using StardewDruid.Location;
 using StardewDruid.Location.Druid;
+using StardewDruid.Location.Terrain;
 using StardewDruid.Monster;
 using StardewValley;
 using StardewValley.GameData;
@@ -34,10 +37,16 @@ namespace StardewDruid.Event.Challenge
 
             // Spawn grid
             [201] = new Vector2(27, 32),
-            // Cultist spawn
+            // Bonewitch spawn
             [202] = new Vector2(27, 20),
             // Aldebaran back to center
             [203] = new Vector2(27, 24),
+            // Bonewitch spawn 2
+            [204] = new Vector2(21, 32),
+            // Bonewitch spawn 3
+            [205] = new Vector2(33, 34),
+            // Ritual center
+            [206] = new Vector2(27, 28),
 
             // Back to cairn
             [301] = new Vector2(31, 26),
@@ -60,6 +69,8 @@ namespace StardewDruid.Event.Challenge
 
             base.EventActivate();
 
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { displayRadius = 4, sound = SpellHandle.Sounds.getNewSpecialItem, });
+
             HoldCompanions();
 
             if (Mod.instance.eventRegister.ContainsKey(QuestHandle.threatMoors))
@@ -75,12 +86,12 @@ namespace StardewDruid.Event.Challenge
         {
 
             List<CharacterHandle.characters> honourList = new()
-                    {
-                        CharacterHandle.characters.HonourCaptain,
-                        CharacterHandle.characters.HonourKnight,
-                        CharacterHandle.characters.HonourGuard,
+            {
+                CharacterHandle.characters.HonourCaptain,
+                CharacterHandle.characters.HonourKnight,
+                CharacterHandle.characters.HonourGuard,
 
-                    };
+            };
 
             for (int i = 0; i < 3; i++)
             {
@@ -100,7 +111,12 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            (location as Moors).ambientDarkness = false;
+            if(location != null)
+            {
+
+                (location as Moors).ambientDarkness = false;
+
+            }
 
             base.EventRemove();
 
@@ -332,6 +348,35 @@ namespace StardewDruid.Event.Challenge
         public void EventPartThree()
         {
 
+            if (activeCounter > 205 && activeCounter < 285)
+            {
+
+                bool challengeOver = true;
+
+                for (int i = 0; i < 3; i++)
+                {
+
+                    if (ModUtility.MonsterVitals(bosses[i],location))
+                    {
+
+                        challengeOver = false;
+
+                        break;
+
+                    }
+
+                }
+
+                if (challengeOver)
+                {
+
+                    activeCounter = 285;
+
+                }
+
+            }
+
+
             switch (activeCounter)
             {
 
@@ -339,53 +384,25 @@ namespace StardewDruid.Event.Challenge
 
                     DialogueClear(companions[0]);
 
-                    // Monster Setup
+                    LoadBoss(new BoneWitch(eventVectors[202], Mod.instance.CombatDifficulty(), "BoneWitch"), 0, 3, 1);
 
-                    monsterHandle = new(eventVectors[201] * 64, location);
+                    LoadBoss(new BoneWitch(eventVectors[204], Mod.instance.CombatDifficulty(), "PeatWitch"), 1, 3, 3);
 
-                    monsterHandle.warpout = IconData.warps.smoke;
+                    LoadBoss(new BoneWitch(eventVectors[205], Mod.instance.CombatDifficulty(), "MoorWitch"), 2, 3, 4);
 
-                    monsterHandle.spawnSchedule = new();
+                    bosses[0].LookAtTarget(companions[0].Position);
 
-                    for (int i = 1; i <= 15; i++)
-                    {
+                    bosses[1].LookAtTarget(companions[0].Position);
 
-                        List<SpawnHandle> monsterSpawns = new()
-                        {
+                    bosses[2].LookAtTarget(companions[0].Position);
 
-                            new(MonsterHandle.bosses.spectre, Boss.temperment.random, Boss.difficulty.medium),
+                    Mod.instance.iconData.AnimateQuickWarp(location, bosses[0].Position, false, IconData.warps.death);
+                    
+                    Mod.instance.iconData.AnimateQuickWarp(location, bosses[1].Position, false, IconData.warps.death);
+                    
+                    Mod.instance.iconData.AnimateQuickWarp(location, bosses[2].Position, false, IconData.warps.death);
 
-                        };
-
-                        monsterHandle.spawnSchedule.Add(i, monsterSpawns);
-
-                    }
-
-                    monsterHandle.spawnCombat = Mod.instance.CombatDifficulty() * 3 / 2;
-
-                    monsterHandle.spawnWithin = ModUtility.PositionToTile(origin) - new Vector2(7, 6);
-
-                    monsterHandle.spawnRange = new(14, 13);
-
-                    monsterHandle.spawnGroup = true;
-
-                    // Load Boss
-
-                    (location as Moors).ambientDarkness = true;
-
-                    companions[1] = new Lady(CharacterHandle.characters.CultWitch);
-
-                    CharacterMover.Warp(location, companions[1], eventVectors[202] * 64, false);
-
-                    Mod.instance.iconData.AnimateQuickWarp(location, companions[1].Position, false, IconData.warps.smoke, IconData.schemes.herbal_impes);
-
-                    companions[1].SwitchToMode(Character.Character.mode.scene, Game1.player);
-
-                    companions[1].eventName = eventId;
-
-                    companions[1].fadeOut = 0.75f;
-
-                    voices[1] = companions[1];
+                    companions[0].TargetEvent(0, eventVectors[206] * 64, true);
 
                     break;
 
@@ -399,15 +416,46 @@ namespace StardewDruid.Event.Challenge
 
                 case 205:
 
-                    companions[0].LookAtTarget(companions[1].Position, true);
+                    companions[0].LookAtTarget(bosses[0].Position, true);
 
                     DialogueCueWithFeeling(202); //[202] = new() { [1] = "You are not welcome, fallen one", },
 
                     break;
 
+                case 206:
+
+                    if (location is Moors moor)
+                    {
+
+                        moor.ambientDarkness = true;
+
+                        foreach (TerrainField terrainField in moor.terrainFields)
+                        {
+
+                            if (terrainField is RitualCircle circle)
+                            {
+
+                                circle.ritualStatus = 1;
+
+                                circle.SetCandles(1);
+
+                            }
+
+                        }
+
+                    }
+
+                    location.playSound(SpellHandle.Sounds.thunder.ToString());
+
+                    Game1.flashAlpha = 1f;
+                    
+                    break;
+
                 case 208:
 
                     DialogueCue(203); //[203] = new() { [0] = "(disgust) Cult Witch", },
+                    
+                    companions[0].netIdle.Set((int)StardewDruid.Character.Character.idles.alert);
 
                     break;
 
@@ -427,35 +475,71 @@ namespace StardewDruid.Event.Challenge
 
                     DialogueCueWithFeeling(206); //[206] = new() { [1] = "We cast you to the abyss once", },
 
+                    companions[0].SwitchToMode(Character.Character.mode.track, Game1.player);
+
+                    // -------------------------------------------- Chains
+
+                    Snare snareEffect;
+
+                    if (!Mod.instance.eventRegister.ContainsKey(Rite.eventSnare))
+                    {
+
+                        snareEffect = new()
+                        {
+                            eventId = Rite.eventSnare
+                        };
+
+                        snareEffect.EventActivate();
+
+                    }
+                    else
+                    {
+
+                        snareEffect = Mod.instance.eventRegister[Rite.eventSnare] as Snare;
+
+                    }
+
+                    snareEffect.AddVictim(companions[0], 300, SpellHandle.Effects.chain);
+
+                    location.playSound(SpellHandle.Sounds.thunder.ToString());
+
+                    Game1.flashAlpha = 1f;
+
                     break;
 
                 case 220:
 
                     DialogueCueWithFeeling(207); //[207] = new() { [1] = "and now again", },
 
-                    monsterHandle.SpawnInterval();
+                    bosses[0].netPosturing.Set(false);
+
+                    bosses[0].groupMode = true;
+
+                    bosses[0].tempermentActive = Boss.temperment.cautious;
+
+                    bosses[1].netPosturing.Set(false);
+
+                    bosses[1].groupMode = true;
+
+                    bosses[1].tempermentActive = Boss.temperment.ranged;
+
+                    bosses[2].netPosturing.Set(false);
+
+                    bosses[2].groupMode = true;
+
+                    bosses[2].tempermentActive = Boss.temperment.aggressive;
+
+                    EventBar(Mod.instance.questHandle.quests[eventId].title, 1);
 
                     break;
 
                 case 223:
 
-                    companions[1].netSpecial.Set((int)Character.Character.specials.liftup);
-
-                    companions[1].specialTimer = 360;
-
                     DialogueCue(208); //[208] = new() { [1] = "...your bones sing to us...", },
-
-                    EventBar(Mod.instance.questHandle.quests[eventId].title, 1);
-
-                    monsterHandle.SpawnInterval();
-
-                    companions[0].SwitchToMode(Character.Character.mode.track, Game1.player);
 
                     break;
 
                 case 226:
-
-                    monsterHandle.SpawnInterval();
 
                     DialogueCue(209); //[209] = new() { [1] = "We claimed them once", },
 
@@ -463,27 +547,11 @@ namespace StardewDruid.Event.Challenge
                 
                 case 229:
 
-                    companions[1].netSpecial.Set((int)Character.Character.specials.liftdown);
-
-                    companions[1].specialTimer = 180;
-
-                    //monsterHandle.SpawnInterval();
-
                     DialogueCue(210); //[210] = new() { [1] = "and we will do so again", },
 
                     break;
                 
                 case 232:
-
-                    LoadBoss(new CultWitch(eventVectors[202], Mod.instance.CombatDifficulty()*3/2, "CultWitch"), 0, 4, 1);
-
-                    bosses[0].netPosturing.Set(false);
-
-                    companions[1].currentLocation.characters.Remove(companions[1]);
-
-                    companions.Remove(1);
-
-                    //monsterHandle.SpawnInterval();
 
                     DialogueCue(211); //[211] = new() { [1] = "Invader", },
 
@@ -491,23 +559,18 @@ namespace StardewDruid.Event.Challenge
 
                 case 235:
 
-                    monsterHandle.SpawnInterval();
-
                     DialogueCue(212); //[212] = new() { [1] = "DESTROYER", },
 
                     break;
 
                 case 238:
 
-                    monsterHandle.SpawnInterval();
-
                     DialogueCue(213); //[209] = new() { [1] = "Manslayer", },
 
                     break;
 
-                case 241:
-
-                    monsterHandle.SpawnInterval();
+                //case 241:
+                case 245:
 
                     Mod.instance.characters[CharacterHandle.characters.HonourCaptain] = new Character.HonourGuard(CharacterHandle.characters.HonourCaptain);
 
@@ -519,10 +582,8 @@ namespace StardewDruid.Event.Challenge
 
                     break;
 
-                case 244:
-
-                    //monsterHandle.SpawnInterval();
-
+                //case 244:
+                case 250:
                     Mod.instance.characters[CharacterHandle.characters.HonourKnight] = new Character.HonourGuard(CharacterHandle.characters.HonourKnight);
 
                     Mod.instance.characters[CharacterHandle.characters.HonourKnight].SwitchToMode(Character.Character.mode.track, Game1.player);
@@ -531,9 +592,8 @@ namespace StardewDruid.Event.Challenge
 
                     break;
 
-                case 247:
-
-                    //monsterHandle.SpawnInterval();
+                //case 247:
+                case 255:
 
                     Mod.instance.characters[CharacterHandle.characters.HonourGuard] = new Character.HonourGuard(CharacterHandle.characters.HonourGuard);
 
@@ -543,31 +603,27 @@ namespace StardewDruid.Event.Challenge
 
                     break;
 
-                case 250:
-
-                    monsterHandle.SpawnInterval();
-
+                //case 250:
+                case 260:
                     DialogueCue(217); //[213] = new() { [0] = "The honor guard", },
 
                     break;
 
-                case 253:
-
-                    monsterHandle.SpawnInterval();
-
+                //case 253:
+                case 265:
                     DialogueCue(218); //[214] = new() { [2] = "Hold the rear!", },
 
                     break;
 
-                case 256:
-
-                    monsterHandle.SpawnInterval();
+                //case 256:
+                case 270:
 
                     DialogueCue(219); //[215] = new() { [2] = "...terror!...", },
 
                     break;
 
-                case 265:
+                //case 265:
+                case 285:
 
                     RemoveMonsters();
 
@@ -583,7 +639,8 @@ namespace StardewDruid.Event.Challenge
 
                     break;
 
-                case 268:
+                //case 268:
+                case 288:
 
                     List<CharacterHandle.characters> honourList = new()
                     {
@@ -603,7 +660,7 @@ namespace StardewDruid.Event.Challenge
 
                         }
 
-                        Mod.instance.iconData.AnimateQuickWarp(location, Mod.instance.characters[honourList[i]].Position, false, IconData.warps.smoke);
+                        Mod.instance.iconData.AnimateQuickWarp(location, Mod.instance.characters[honourList[i]].Position, false, Mod.instance.characters[honourList[i]].warpDisplay);
 
                         Mod.instance.characters[honourList[i]].SwitchToMode(Character.Character.mode.random, Game1.player);
 
@@ -617,7 +674,8 @@ namespace StardewDruid.Event.Challenge
 
                     break;
 
-                case 271:
+                //case 271:
+                case 291:
 
                     StopTrack();
 
@@ -631,11 +689,11 @@ namespace StardewDruid.Event.Challenge
 
                     break;
 
-                case 280:
+                //case 280:
 
-                    activeCounter = 300;
+                //    activeCounter = 300;
 
-                    break;
+                //   break;
 
             }
 
@@ -700,6 +758,7 @@ namespace StardewDruid.Event.Challenge
             }
 
         }
+
         public override float SpecialProgress(int displayId)
         {
 
@@ -707,18 +766,18 @@ namespace StardewDruid.Event.Challenge
             {
                 case 1:
 
-                    if(activeCounter > 245)
+                    if(activeCounter > 285)
                     {
 
-                        return -1;
+                        return -1f;
 
                     }
 
-                    return (float)(activeCounter - 200) / 40f;
+                    return (float)(activeCounter - 220) / 65f;
 
             }
 
-             return -1;
+             return -1f;
 
         }
 

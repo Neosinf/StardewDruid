@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static StardewValley.Minigames.BoatJourney;
 
 namespace StardewDruid
 {
@@ -38,15 +37,25 @@ namespace StardewDruid
         private static void QuickSavingEvent(object sender, ISavingEventArgs e)
         {
 
-            Mod.instance.SerialiseGrove();
+            if (!Mod.instance.magic)
+            {
 
-            Mod.instance.SaveCharacters();
+                Mod.instance.SerialiseGrove();
+
+                Mod.instance.SaveCharacters();
+
+            }
 
             Mod.instance.Helper.Data.WriteSaveData("saveData_" + Mod.instance.version.ToString(), Mod.instance.save);
 
-            Mod.instance.RemoveCharacters();
+            Mod.RemoveCharacters();
 
-            Mod.instance.RemoveLocations();
+            if (!Mod.instance.magic)
+            {
+
+                Mod.instance.RemoveLocations();
+
+            }
 
         }
 
@@ -55,7 +64,12 @@ namespace StardewDruid
 
             Mod.instance.ReinstateCharacters();
 
-            Mod.instance.ReinstateLocations();
+            if (!Mod.instance.magic)
+            {
+
+                Mod.instance.ReinstateLocations();
+
+            }
 
         }
 
@@ -64,7 +78,7 @@ namespace StardewDruid
 
             Mod.instance.RemoveEvents();
 
-            Mod.instance.RemoveCharacters();
+            Mod.RemoveCharacters();
 
             Mod.instance.RemoveLocations();
 

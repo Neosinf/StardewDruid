@@ -60,7 +60,7 @@ namespace StardewDruid.Event.Relics
 
             base.EventActivate();
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { sound = SpellHandle.Sounds.getNewSpecialItem, });
 
         }
 
@@ -72,9 +72,10 @@ namespace StardewDruid.Event.Relics
             if(activeCounter == 1)
             {
 
-                ThrowHandle throwRelic = new(Game1.player.Position, (new Vector2(14, 4) * 64), IconData.relics.book_druid);
-
-                throwRelic.impact = IconData.impacts.puff;
+                ThrowHandle throwRelic = new(Game1.player.Position, (new Vector2(14, 4) * 64), IconData.relics.book_druid)
+                {
+                    impact = IconData.impacts.puff
+                };
 
                 throwRelic.register();
 

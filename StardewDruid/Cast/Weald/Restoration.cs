@@ -4,6 +4,7 @@ using StardewDruid.Cast;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewDruid.Location.Druid;
@@ -19,9 +20,6 @@ namespace StardewDruid.Cast.Weald
 {
     public class Restoration : EventHandle
     {
-
-        public int castCost;
-
         public Restoration()
         {
 
@@ -40,7 +38,7 @@ namespace StardewDruid.Cast.Weald
 
                 }
 
-                if (Vector2.Distance(origin, Game1.player.Position) > 32)
+                if (Vector2.Distance(origin, Game1.player.Position) > 32 && !Mod.instance.ShiftButtonHeld())
                 {
 
                     return false;
@@ -73,7 +71,7 @@ namespace StardewDruid.Cast.Weald
                 if (decimalCounter == 5)
                 {
 
-                    Mod.instance.rite.channel(IconData.skies.mountain, 75);
+                    Mod.instance.rite.Channel(IconData.skies.mountain, 75);
 
                     channel = IconData.skies.mountain;
 
@@ -84,11 +82,14 @@ namespace StardewDruid.Cast.Weald
 
                     eventLocked = true;
 
-                    SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new());
+                    SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new())
+                    {
+                        displayRadius = 3,
 
-                    circleHandle.scheme = IconData.schemes.herbal_ligna;
+                        scheme = IconData.schemes.herbal_ligna,
 
-                    circleHandle.sound = SpellHandle.sounds.discoverMineral;
+                        sound = SpellHandle.Sounds.discoverMineral
+                    };
 
                     Mod.instance.spellRegister.Add(circleHandle);
 
@@ -130,7 +131,7 @@ namespace StardewDruid.Cast.Weald
 
                     Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.restoreTomorrow));
 
-                    location.playSound(SpellHandle.sounds.ghost.ToString());
+                    location.playSound(SpellHandle.Sounds.ghost.ToString());
 
                     return;
 
@@ -174,9 +175,9 @@ namespace StardewDruid.Cast.Weald
 
                 Mod.instance.SyncProgress();
 
-                location.playSound(SpellHandle.sounds.secret1.ToString());
+                location.playSound(SpellHandle.Sounds.secret1.ToString());
 
-                castCost = 24;
+                Rite.ApplyCost(24);
 
                 return;
 
@@ -213,17 +214,6 @@ namespace StardewDruid.Cast.Weald
 
         }
 
-        public override void EventRemove()
-        {
-            
-            base.EventRemove();
-
-            Mod.instance.rite.castCost = castCost;
-
-            Mod.instance.rite.ApplyCost();
-
-        }
-
         public void ReturnOwls(Clearing clearing)
         {
 
@@ -234,9 +224,10 @@ namespace StardewDruid.Cast.Weald
             if (!Mod.instance.eventRegister.ContainsKey(id))
             {
 
-                creature = new();
-
-                creature.eventId = id;
+                creature = new()
+                {
+                    eventId = id
+                };
 
                 creature.EventActivate();
 
@@ -250,21 +241,17 @@ namespace StardewDruid.Cast.Weald
 
             int direction = Mod.instance.randomIndex.Next(8);
 
-            List<Character.CharacterHandle.characters> owls = new()
+            List<CharacterHandle.characters> owls = new()
             {
 
-                Character.CharacterHandle.characters.BrownOwl,
-                Character.CharacterHandle.characters.GreyOwl,
+                CharacterHandle.characters.BrownOwl,
+                CharacterHandle.characters.GreyOwl,
 
             };
 
             int owlCount = 0;
 
             Vector2 exit = new Vector2(27, -8) * 64;
-
-            ThrowHandle throwRelic = new(Game1.player, exit, IconData.relics.restore_cloth);
-
-            throwRelic.register();
 
             foreach (TerrainField terrainTile in clearing.terrainFields)
             {
@@ -276,7 +263,7 @@ namespace StardewDruid.Cast.Weald
 
                     owlCount++;
 
-                    creature.AddCreature(location, owls[Mod.instance.randomIndex.Next(owls.Count)], exit + new Vector2(16 * owlCount, 0), roost, 2.5f + (0.25f * Mod.instance.randomIndex.Next(3)), true);
+                    creature.AddCreature(location, owls[Mod.instance.randomIndex.Next(owls.Count)], exit + new Vector2(16 * owlCount, 0), roost, 2.5f + (0.25f * Mod.instance.randomIndex.Next(3)), 1);
 
                 }
 

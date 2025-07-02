@@ -10,14 +10,17 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewDruid.Location.Druid;
+using StardewDruid.Location.Terrain;
 using StardewDruid.Monster;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Companions;
+using StardewValley.Extensions;
 using StardewValley.GameData;
 using StardewValley.Locations;
 using StardewValley.Monsters;
@@ -132,6 +135,8 @@ namespace StardewDruid.Event.Scene
             [601] = new Vector2(45, 11),
 
         };
+
+        public RitualCircle courtCircle;
 
         public QuestBuffin()
         {
@@ -352,7 +357,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].eventName = eventId;
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
@@ -384,7 +389,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[2].eventName = eventId;
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
@@ -416,7 +421,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[3].eventName = eventId;
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
@@ -454,7 +459,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[4].eventName = eventId;
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
@@ -576,9 +581,10 @@ namespace StardewDruid.Event.Scene
 
             // add Argyle
 
-            companions[1] = new Character.Flyer(CharacterHandle.characters.Raven);
-
-            companions[1].setScale = 3.5f;
+            companions[1] = new Character.Flyer(CharacterHandle.characters.Raven)
+            {
+                setScale = 3.5f
+            };
 
             companions[1].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -698,7 +704,26 @@ namespace StardewDruid.Event.Scene
 
                     location = Mod.instance.locations[LocationHandle.druid_court_name];
 
-                    (location as Court).circleActive = true;
+                    if(location is Court court)
+                    {
+
+                        foreach(TerrainField terrainField in court.terrainFields)
+                        {
+
+                            if(terrainField is RitualCircle circle)
+                            {
+
+                                courtCircle = circle;
+
+                                circle.ritualStatus = 1;
+
+                                circle.ClearCandles();
+
+                            }
+
+                        }
+
+                    }
 
                     Mod.instance.WarpAllFarmers(location.Name, (int)eventVectors[208].X, (int)eventVectors[208].Y, 1);
 
@@ -750,7 +775,7 @@ namespace StardewDruid.Event.Scene
                 case 207:
 
                     // kneel candles
-                    StardewValley.Object candleOne = new Torch();
+                    /*StardewValley.Object candleOne = new Torch();
 
                     location.objects.TryAdd(eventVectors[211], candleOne);
 
@@ -766,7 +791,13 @@ namespace StardewDruid.Event.Scene
 
                     location.objects.TryAdd(eventVectors[215], candleThree);
 
-                    candleThree.performDropDownAction(Game1.player);
+                    candleThree.performDropDownAction(Game1.player);*/
+
+                    courtCircle.candles.Add(0, new((Candle.candleFrames)Mod.instance.randomIndex.Next(7), courtCircle.position + courtCircle.candleSpots[0], Mod.instance.randomIndex.NextBool()));
+                    courtCircle.candles.Add(2, new((Candle.candleFrames)Mod.instance.randomIndex.Next(7), courtCircle.position + courtCircle.candleSpots[2], Mod.instance.randomIndex.NextBool()));
+                    courtCircle.candles.Add(5, new((Candle.candleFrames)Mod.instance.randomIndex.Next(7), courtCircle.position + courtCircle.candleSpots[5], Mod.instance.randomIndex.NextBool()));
+
+                    courtCircle.SetCandles(0);
 
                     break;
 
@@ -824,7 +855,7 @@ namespace StardewDruid.Event.Scene
                 case 213:
 
                     // kneel candles
-                    StardewValley.Object candleFour = new Torch();
+                    /*StardewValley.Object candleFour = new Torch();
 
                     location.objects.TryAdd(eventVectors[212],candleFour);
 
@@ -840,7 +871,13 @@ namespace StardewDruid.Event.Scene
 
                     location.objects.TryAdd(eventVectors[216], candleSix);
 
-                    candleSix.performDropDownAction(Game1.player);
+                    candleSix.performDropDownAction(Game1.player);*/
+
+                    courtCircle.candles.Add(1, new((Candle.candleFrames)Mod.instance.randomIndex.Next(7), courtCircle.position + courtCircle.candleSpots[1], Mod.instance.randomIndex.NextBool()));
+                    courtCircle.candles.Add(3, new((Candle.candleFrames)Mod.instance.randomIndex.Next(7), courtCircle.position + courtCircle.candleSpots[3], Mod.instance.randomIndex.NextBool()));
+                    courtCircle.candles.Add(4, new((Candle.candleFrames)Mod.instance.randomIndex.Next(7), courtCircle.position + courtCircle.candleSpots[4], Mod.instance.randomIndex.NextBool()));
+
+                    courtCircle.SetCandles(0);
 
                     break;
 
@@ -979,17 +1016,20 @@ namespace StardewDruid.Event.Scene
 
                 case 302:
 
+                    courtCircle.SetCandles(1);
+
                     companions[0].LookAtTarget(eventVectors[220] * 64);
 
                     companions[0].netAlternative.Set(3);
 
                     DialogueCue(302);
 
-                    SpellHandle circleHandle = new(eventVectors[220] * 64 + new Vector2(32, 0), 256, IconData.impacts.summoning, new());
+                    SpellHandle circleHandle = new(eventVectors[220] * 64 + new Vector2(32, 0), 256, IconData.impacts.summoning, new())
+                    {
+                        scheme = IconData.schemes.fates,
 
-                    circleHandle.scheme = IconData.schemes.fates;
-
-                    circleHandle.sound = SpellHandle.sounds.shadowDie;
+                        sound = SpellHandle.Sounds.shadowDie
+                    };
 
                     Mod.instance.spellRegister.Add(circleHandle);
 
@@ -999,11 +1039,12 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(305);
 
-                    SpellHandle circleHandleTwo = new(eventVectors[220] * 64 + new Vector2(32,0), 256, IconData.impacts.summoning, new());
+                    SpellHandle circleHandleTwo = new(eventVectors[220] * 64 + new Vector2(32, 0), 256, IconData.impacts.summoning, new())
+                    {
+                        scheme = IconData.schemes.fates,
 
-                    circleHandleTwo.scheme = IconData.schemes.fates;
-
-                    circleHandleTwo.sound = SpellHandle.sounds.shadowDie;
+                        sound = SpellHandle.Sounds.shadowDie
+                    };
 
                     Mod.instance.spellRegister.Add(circleHandleTwo);
 
@@ -1013,7 +1054,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(308);
 
-                    location.playSound(SpellHandle.sounds.ghost.ToString());
+                    location.playSound(SpellHandle.Sounds.ghost.ToString());
 
                     break;
 
@@ -1021,11 +1062,12 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(311);
 
-                    SpellHandle circleHandleThree = new(eventVectors[220] * 64 + new Vector2(32, 0), 256, IconData.impacts.summoning, new());
+                    SpellHandle circleHandleThree = new(eventVectors[220] * 64 + new Vector2(32, 0), 256, IconData.impacts.summoning, new())
+                    {
+                        scheme = IconData.schemes.fates,
 
-                    circleHandleThree.scheme = IconData.schemes.fates;
-
-                    circleHandleThree.sound = SpellHandle.sounds.shadowDie;
+                        sound = SpellHandle.Sounds.shadowDie
+                    };
 
                     Mod.instance.spellRegister.Add(circleHandleThree);
 
@@ -1085,9 +1127,7 @@ namespace StardewDruid.Event.Scene
 
                     eventRenders.Remove(eventRenders.First());
 
-                    SpellHandle smokeOne = new(eventVectors[220] * 64 + new Vector2(32, 0), 256, IconData.impacts.smoke, new());
-
-                    smokeOne.sound = SpellHandle.sounds.flameSpellHit;
+                    SpellHandle smokeOne = new(eventVectors[220] * 64 + new Vector2(32, 0), 256, IconData.impacts.smoke, new()) { displayRadius = 3, sound = SpellHandle.Sounds.flameSpellHit };
 
                     Mod.instance.spellRegister.Add(smokeOne);
 
@@ -1097,7 +1137,7 @@ namespace StardewDruid.Event.Scene
 
                     //Game1.flashAlpha = 1;
 
-                    Blobfiend blobking = new Blobfiend(eventVectors[212], Mod.instance.CombatDifficulty());
+                    Jellyking blobking = new Jellyking(eventVectors[212], Mod.instance.CombatDifficulty(), "Jellyking");
 
                     blobking.netScheme.Set(2);
 
@@ -1117,9 +1157,7 @@ namespace StardewDruid.Event.Scene
 
                     eventRenders.Remove(eventRenders.First());
 
-                    SpellHandle smokeTwo = new(eventVectors[221] * 64 + new Vector2(32, 0), 256, IconData.impacts.smoke, new());
-
-                    smokeTwo.sound = SpellHandle.sounds.flameSpellHit;
+                    SpellHandle smokeTwo = new(eventVectors[221] * 64 + new Vector2(32, 0), 256, IconData.impacts.smoke, new()) { displayRadius = 3, sound = SpellHandle.Sounds.flameSpellHit };
 
                     Mod.instance.spellRegister.Add(smokeTwo);
 
@@ -1147,9 +1185,7 @@ namespace StardewDruid.Event.Scene
 
                     eventRenders.Remove(eventRenders.First());
 
-                    SpellHandle smokeThree = new(eventVectors[221] * 64 + new Vector2(32, 0), 256, IconData.impacts.smoke, new());
-
-                    smokeThree.sound = SpellHandle.sounds.flameSpellHit;
+                    SpellHandle smokeThree = new(eventVectors[221] * 64 + new Vector2(32, 0), 256, IconData.impacts.smoke, new()) { displayRadius = 3, sound = SpellHandle.Sounds.flameSpellHit };
 
                     Mod.instance.spellRegister.Add(smokeThree);
                     break;
@@ -1178,9 +1214,7 @@ namespace StardewDruid.Event.Scene
 
                     eventRenders.Remove(eventRenders.First());
 
-                    SpellHandle smokeFour = new(eventVectors[220] * 64 + new Vector2(32, 0), 256, IconData.impacts.smoke, new());
-
-                    smokeFour.sound = SpellHandle.sounds.flameSpellHit;
+                    SpellHandle smokeFour = new(eventVectors[220] * 64 + new Vector2(32, 0), 256, IconData.impacts.smoke, new()) { displayRadius = 3, sound = SpellHandle.Sounds.flameSpellHit };
 
                     Mod.instance.spellRegister.Add(smokeFour);
 
@@ -1197,27 +1231,32 @@ namespace StardewDruid.Event.Scene
                     for(int i = 211; i < 222; i++)
                     {
 
-                        SpellHandle deathPlume = new(eventVectors[i] * 64, 192, IconData.impacts.plume, new());
+                        SpellHandle deathPlume = new(eventVectors[i] * 64, 192, IconData.impacts.plume, new())
+                        {
+                            displayRadius = 2,
 
-                        deathPlume.scheme = IconData.schemes.fates;
+                            scheme = IconData.schemes.fates
+                        };
 
                         Mod.instance.spellRegister.Add(deathPlume);
 
                     }
 
-                    location.playSound(SpellHandle.sounds.shadowDie.ToString());
+                    location.playSound(SpellHandle.Sounds.shadowDie.ToString());
 
                     break;
 
                 case 319:
 
-                    companions[7] = new Wolf(CharacterHandle.characters.Carnivellion);
+                    companions[7] = new Wolf(CharacterHandle.characters.RedWolf);
 
                     companions[7].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
                     companions[7].setScale = 4.5f;
 
-                    companions[7].fadeOut = 0.7f;
+                    companions[7].fadeOut = 0.3f;
+
+                    companions[7].fadeSet = 0.7f;
 
                     companions[7].Position = eventVectors[319] * 64;
 
@@ -1436,7 +1475,7 @@ namespace StardewDruid.Event.Scene
 
                 case 403:
 
-                    location.playSound("BearGrowl");
+                    Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BearGrowl);
 
                     break;
 
@@ -1448,7 +1487,7 @@ namespace StardewDruid.Event.Scene
 
                 case 406:
 
-                    location.playSound("BearGrowlTwo");
+                    Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BearGrowl);
 
                     break;
 
@@ -1470,7 +1509,7 @@ namespace StardewDruid.Event.Scene
 
                 case 409:
 
-                    location.playSound("BearGrowlThree");
+                    Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BearRoar);
 
                     bosses[0] = new ShadowBear(ModUtility.PositionToTile(eventVectors[409] * 64), Mod.instance.CombatDifficulty());
 
@@ -1500,7 +1539,7 @@ namespace StardewDruid.Event.Scene
 
                 case 417:
 
-                    location.playSound("WolfGrowl");
+                    Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.WolfGrowl);
 
                     bosses[1] = new ShadowWolf(ModUtility.PositionToTile(eventVectors[409] * 64), Mod.instance.CombatDifficulty());
 
@@ -1520,7 +1559,7 @@ namespace StardewDruid.Event.Scene
 
                 case 425:
 
-                    location.playSound("WolfGrowl");
+                    Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.WolfGrowl);
 
                     bosses[2] = new ShadowWolf(ModUtility.PositionToTile(eventVectors[409] * 64), Mod.instance.CombatDifficulty(),"BlackWolf");
 
@@ -1537,26 +1576,6 @@ namespace StardewDruid.Event.Scene
                     bosses[2].PerformFollow(Game1.player.Position);
 
                     break;
-
-                /*case 433:
-
-                    location.playSound("WolfGrowl");
-
-                    bosses[3] = new ShadowWolf(ModUtility.PositionToTile(eventVectors[409] * 64), Mod.instance.CombatDifficulty());
-
-                    bosses[3].netScheme.Set(2);
-
-                    bosses[3].SetMode(2);
-
-                    location.characters.Add(bosses[3]);
-
-                    bosses[3].update(Game1.currentGameTime, location);
-
-                    bosses[3].ResetActives();
-
-                    bosses[3].PerformFollow(Game1.player.Position);
-
-                    break;*/
 
                 case 450:
 
@@ -1616,7 +1635,7 @@ namespace StardewDruid.Event.Scene
 
                     // Linus
 
-                    companions[9] = new Linus(CharacterHandle.characters.Linus,CharacterHandle.FindVillager("Linus"));
+                    companions[9] = new Linus(CharacterHandle.characters.Linus);
 
                     voices[9] = companions[9];
 

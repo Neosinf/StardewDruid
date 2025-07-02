@@ -18,8 +18,9 @@ using StardewDruid.Data;
 using StardewValley.TerrainFeatures;
 using System.Threading;
 using xTile;
-using StardewDruid.Character;
-using StardewDruid.Event;
+using StardewDruid.Location.Terrain;
+using static StardewDruid.Data.IconData;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Location.Druid
 {
@@ -29,10 +30,6 @@ namespace StardewDruid.Location.Druid
         public Texture2D dungeonTexture;
 
         public Texture2D waterfallTexture;
-
-        public List<Location.TerrainField> circleTiles = new();
-
-        public bool circleActive;
 
         public Court() { }
 
@@ -96,18 +93,6 @@ namespace StardewDruid.Location.Druid
                 SpriteEffects.None,
                 999f
             );
-
-            if (circleActive)
-            {
-
-                foreach (TerrainField tile in circleTiles)
-                {
-
-                    tile.draw(b, this);
-
-                }
-
-            }
 
         }
 
@@ -195,7 +180,7 @@ namespace StardewDruid.Location.Druid
 
             newMap.AddTileSheet(dangerous); //map.TileSheets[1].ImageSource
 
-            terrainFields = new();
+            mapReset();
 
             waterTiles = new(56, 34);
 
@@ -528,7 +513,7 @@ namespace StardewDruid.Location.Druid
                 foreach (List<int> array in code.Value)
                 {
 
-                    TerrainField tField = new(IconData.tilesheets.court, array[1], new Vector2(array[0], code.Key) * 64);
+                    CourtMonument tField = new(new Vector2(array[0], code.Key) * 64, array[1] );
 
                     foreach (Vector2 bottom in tField.baseTiles)
                     {
@@ -619,37 +604,42 @@ namespace StardewDruid.Location.Druid
             }
 
 
-            // CIRCLE
+            // CIRCLE -------------------------------------------------------
 
-            TerrainField circleTile = new(IconData.tilesheets.ritual, 1, new Vector2(2016, 1120), TerrainField.shadows.none);
+            Terrain.RitualCircle circle = new(new Vector2(2016, 1120));
 
             switch (Game1.season)
             {
                 case Season.Spring:
-                    circleTile.color = Color.White * 0.6f;
+
+                    circle.fadeout = 0.6f;
 
                     break;
                 case Season.Summer:
-                    circleTile.color = Color.White * 0.75f;
+
+                    circle.fadeout = 0.75f;
 
                     break;
                 case Season.Fall:
-                    circleTile.color = Color.White * 0.5f;
+
+                    circle.fadeout = 0.5f;
 
                     break;
                 case Season.Winter:
-                    circleTile.color = Color.LightBlue * 0.75f;
+
+                    circle.color = Microsoft.Xna.Framework.Color.LightBlue;
+
+                    circle.fadeout = 0.75f;
 
                     break;
+
             }
 
+            circle.disabled = true;
 
-            circleTile.fadeout = 1f;
+            terrainFields.Add(circle);
 
-            circleTile.layer = 0.00064f;
-
-            circleTiles.Add(circleTile);
-
+            // -------------------------------------------------------
 
             addDialogue();
 
@@ -660,7 +650,7 @@ namespace StardewDruid.Location.Druid
         public override bool readyDialogue()
         {
 
-            return Mod.instance.questHandle.IsComplete(QuestHandle.swordEther);
+            return Mod.instance.questHandle.IsGiven(QuestHandle.fatesOne);
 
         }
 

@@ -10,11 +10,8 @@ using System;
 using System.IO;
 using System.Diagnostics.Contracts;
 using xTile.Dimensions;
-using static StardewDruid.Data.IconData;
-using static StardewDruid.Cast.SpellHandle;
 using System.Reflection.Metadata;
 using System.Linq;
-using static StardewDruid.Character.Character;
 
 
 namespace StardewDruid.Cast
@@ -33,10 +30,6 @@ namespace StardewDruid.Cast
         public missiles missile;
 
         public int factor;
-
-        public Texture2D missileTexture;
-
-        public Texture2D missileTextureTwo;
 
         public int projectile;
 
@@ -58,6 +51,8 @@ namespace StardewDruid.Cast
 
         public float projectileDepth;
 
+        public bool projectileStatic;
+
         public int counter;
 
         public bool impacted;
@@ -66,12 +61,14 @@ namespace StardewDruid.Cast
 
         public enum missiles
         {
+
             none,
             fireball,
             cannonball,
             meteor,
             death,
             slimeball,
+            slimeballtwo,
             rockfall,
             whisk,
             warpball,
@@ -81,12 +78,29 @@ namespace StardewDruid.Cast
             hammer,
             bomb,
             cat,
-            bolt,
-            zap,
             rocket,
             firefall,
             frostball,
             deathfall,
+            bats,
+            boulder,
+            holygrenade,
+            holycat,
+
+            // bolt handle
+            bolt,
+            quickbolt,
+            greatbolt,
+            judgement,
+
+            // echo
+            echo,
+            deathecho,
+            bubbleecho,
+            fireecho,
+            curseecho,
+            //murderecho,
+            windecho,
         }
 
         public enum missiletrajectories
@@ -122,9 +136,9 @@ namespace StardewDruid.Cast
             blazeOutline4,
 
             scatter1,
-            slimetrail1,
-            slimetrail2,
-            slimetrial3,
+            slimeball,
+            slimeball2,
+            slimeball3,
 
             fireball,
             warpball,
@@ -132,9 +146,9 @@ namespace StardewDruid.Cast
             frostball,
 
             rocket,
-            slimeball,
-            slimeball2,
-            slimeball3,
+            slimeball4,
+            slimeball5,
+            slimeball6,
 
             meteor1,
             meteor2,
@@ -172,7 +186,24 @@ namespace StardewDruid.Cast
             cat4,
 
             hammer,
-            hammer2
+            hammer2,
+            holygrenade,
+            blank2,
+
+            batdown1,
+            batdown2,
+            batdown3,
+            batdown4,
+
+            batup1,
+            batup2,
+            batup3,
+            batup4,
+
+            batright1,
+            batright2,
+            batright3,
+            batright4,
 
         }
 
@@ -196,10 +227,6 @@ namespace StardewDruid.Cast
         public MissileHandle()
         {
 
-            missileTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Missiles.png"));
-
-            missileTextureTwo = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "MissilesTwo.png"));
-        
         }
 
 
@@ -253,7 +280,18 @@ namespace StardewDruid.Cast
 
                     projectileSpeed = 0.75f;
 
-                    Game1.player.currentLocation.playSound(sounds.fireball.ToString());
+                    Game1.player.currentLocation.playSound(SpellHandle.Sounds.fireball.ToString());
+
+                    break;
+
+                case missiles.slimeball:
+                case missiles.slimeballtwo:
+
+                    projectileTrajectory = missiletrajectories.ballistic;
+
+                    projectileSpeed = 0.5f;
+
+                    projectilePeak = 320;
 
                     break;
 
@@ -279,7 +317,7 @@ namespace StardewDruid.Cast
 
                     projectileTrajectory = missiletrajectories.orbital;
 
-                    projectileSpeed = 1.5f;
+                    projectileSpeed = 1.2f;
 
                     projectileIncrements = 4;
 
@@ -297,17 +335,74 @@ namespace StardewDruid.Cast
                 
                 case missiles.bomb:
                 case missiles.cat:
+                case missiles.holygrenade:
+                case missiles.holycat:
+                case missiles.boulder:
 
                     projectileTrajectory = missiletrajectories.ballistic;
 
-                    factor = 2;
-                    
-                    projectilePeak = 150;
-                    
-                    projectileIncrements = 3;
+                    //factor = 2;
 
-                    projectileSpeed = 1.5f;
-                    
+                    float bombDistance = Vector2.Distance(origin, destination);
+
+                    if(bombDistance > 640)
+                    {
+
+                        projectilePeak = 150;
+
+                        projectileIncrements = 4;
+
+                        projectileSpeed = 1.25f;
+
+                    }
+                    else if(bombDistance > 320)
+                    {
+                        projectilePeak = 250;
+
+                        projectileIncrements = 3;
+
+                        projectileSpeed = 0.75f;
+
+                    }
+                    else
+                    {
+                        projectilePeak = 350;
+
+                        projectileIncrements = 2;
+
+                        projectileSpeed = 0.25f;
+
+                    }
+
+                    break;
+
+                case missiles.cannonball:
+
+                    projectileTrajectory = missiletrajectories.ballistic;
+
+                    projectilePeak = 350;
+
+                    projectileIncrements = 4;
+
+                    projectileSpeed = 0.5f;
+
+                    break;
+
+                case missiles.knife:
+                case missiles.shuriken:
+                case missiles.hammer:
+                case missiles.axe:
+
+                    projectileSpeed = 0.75f;
+
+                    break;
+
+                case missiles.bats:
+
+                    projectileStatic = true;
+
+                    projectileSpeed = 0.75f;
+
                     break;
 
             }
@@ -567,6 +662,18 @@ namespace StardewDruid.Cast
 
                 construct[i].position = newPosition;
 
+                if (projectileStatic)
+                {
+
+                    if (origin.X > destination.X)
+                    {
+
+                        construct[i].flipped = true;
+
+                    }
+
+                }
+                else
                 if (construct[i].rotationChange == 0f)
                 {
 
@@ -614,18 +721,24 @@ namespace StardewDruid.Cast
 
                         float offset = (destination.Y - newPosition.Y);
 
+                        if (offset < 0f)
+                        {
+                            break;
+
+                        }
+
                         float offsetRatio = offset / 256;
 
-                        shadow.scale = Math.Max(1f, 4f - offset);
+                        shadow.scale = Math.Max(1f, factor- offsetRatio);
 
-                        shadow.Position = destination - shadowing + new Vector2(32, 32) - new Vector2(16 * shadow.scale, 16 * shadow.scale);
+                        shadow.Position = destination - shadowing + new Vector2(32, 32) - new Vector2(24 * shadow.scale, 24* shadow.scale);
 
                         break;
 
                     default:
                     case missiletrajectories.sustained:
 
-                        shadow.Position = destination - shadowing + new Vector2(32, 32) - new Vector2(16 * shadow.scale, 16 * shadow.scale) + new Vector2(0,96);
+                        shadow.Position = destination - shadowing + new Vector2(32, 32) - new Vector2(24 * shadow.scale, 24 * shadow.scale) + new Vector2(0,96);
 
                         break;
 
@@ -670,11 +783,11 @@ namespace StardewDruid.Cast
 
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, coreColour, 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.stars][0], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][0], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.stars][1], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][1], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.stars][2], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][2], 0.75f));
 
                     Vector2 fireCoreSet = origin - (new Vector2(48, 48) * (scale * 0.75f)) + new Vector2(32, 32);
 
@@ -686,15 +799,17 @@ namespace StardewDruid.Cast
 
                 case missiles.rocket:
 
+                    Mod.instance.iconData.CreateImpact(location, origin - new Vector2(0, scale * 32), IconData.impacts.smoke, scale, new() { layer = depth - 0.0001f, });
+
                     Vector2 etherCoreSet = origin - (new Vector2(48, 48) * (scale * 0.75f)) + new Vector2(32, 32);
 
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, etherCoreSet, scale * 0.75f, interval, frames, loops, depth, coreColour, 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, etherCoreSet, scale * 0.75f, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.stars][0], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, etherCoreSet, scale * 0.75f, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][0], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, etherCoreSet, scale * 0.75f, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.stars][1], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, etherCoreSet, scale * 0.75f, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][1], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, etherCoreSet, scale * 0.75f, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.stars][2], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, etherCoreSet, scale * 0.75f, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][2], 0.75f));
 
                     TemporaryAnimatedSprite rocket = MissileAnimation(location, missileIndexes.rocket, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, coreColour, 1f);
 
@@ -727,17 +842,17 @@ namespace StardewDruid.Cast
                     break;
                 case missiles.meteor:
 
-                    schemes meteorScheme = schemes.rock;
+                    IconData.schemes meteorScheme = IconData.schemes.rock;
 
-                    meteorScheme = (schemes)((int)meteorScheme + Mod.instance.randomIndex.Next(3));
+                    meteorScheme = (IconData.schemes)((int)meteorScheme + Mod.instance.randomIndex.Next(3));
 
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, coreColour, 1f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.stars][0], 1f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][0], 1f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.stars][1], 1f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][1], 1f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.stars][2], 1f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][2], 1f));
 
                     missileIndexes meteorite = missileIndexes.meteor1;
 
@@ -757,9 +872,9 @@ namespace StardewDruid.Cast
 
                 case missiles.rockfall:
 
-                    schemes rockScheme = schemes.rock;
+                    IconData.schemes rockScheme = IconData.schemes.rock;
 
-                    rockScheme = (schemes)((int)rockScheme + Mod.instance.randomIndex.Next(3));
+                    rockScheme = (IconData.schemes)((int)rockScheme + Mod.instance.randomIndex.Next(3));
 
                     missileIndexes rockfalling = missileIndexes.rock1;
 
@@ -786,33 +901,36 @@ namespace StardewDruid.Cast
 
                 case missiles.slimeball:
 
-                    schemes slimeScheme = schemes.slime_one;
-
-                    slimeScheme = (schemes)((int)slimeScheme + Mod.instance.randomIndex.Next(3));
-
-                    Microsoft.Xna.Framework.Color slimeColour = Mod.instance.iconData.SchemeColour(slimeScheme);
-
-                    missileIndexes slimetrail = (missileIndexes)((int)missileIndexes.slimetrail1 + Mod.instance.randomIndex.Next(3));
-
-                    missileAnimations.Add(MissileAnimation(location, slimetrail, setat, scale, interval, frames, loops, depth, coreColour, 0.75f));
-
                     missileIndexes slimeball = (missileIndexes)((int)missileIndexes.slimeball + Mod.instance.randomIndex.Next(3));
 
-                    missileAnimations.Add(MissileAnimation(location, slimeball, setat, (int)(scale * 0.75f), interval * frames * loops, 1, 1, depth + 0.0001f, slimeColour, 0.75f));
+                    TemporaryAnimatedSprite slimeAnimation = MissileAnimation(location, slimeball, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, coreColour, 0.75f);
+
+                    missileAnimations.Add(slimeAnimation);
 
                     break;
 
+                case missiles.slimeballtwo:
+
+                    missileIndexes slimeballtwo = (missileIndexes)((int)missileIndexes.slimeball4 + Mod.instance.randomIndex.Next(3));
+
+                    TemporaryAnimatedSprite slimeAnimationtwo = MissileAnimation(location, slimeballtwo, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, coreColour, 0.75f);
+
+                    missileAnimations.Add(slimeAnimationtwo);
+
+                    break;
                 case missiles.cannonball:
+
+                    Mod.instance.iconData.CreateImpact(location, origin - new Vector2(0,scale*32), IconData.impacts.smoke, scale, new() { layer = depth - 0.0001f,});
 
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, coreColour, 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.stars][0], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][0], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.stars][1], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][1], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.stars][2], 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][2], 0.75f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.cannonball, setat, (int)(scale * 0.75f), interval * frames * loops, 1, 1, depth + 0.0001f, Mod.instance.iconData.SchemeColour(schemes.death), 0.75f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.cannonball, setat, (int)(scale * 0.75f), interval * frames * loops, 1, 1, depth + 0.0001f, Mod.instance.iconData.SchemeColour(IconData.schemes.bomb_two), 0.75f));
 
                     break;
 
@@ -822,11 +940,11 @@ namespace StardewDruid.Cast
 
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, coreColour, 1f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.stars][0], 1f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][0], 1f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.stars][1], 1f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][1], 1f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.stars][2], 1f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][2], 1f));
 
                     TemporaryAnimatedSprite bombAnimation = MissileAnimation(location, missileIndexes.bomb, setat, (int)(scale * 0.75f), interval * frames * loops, 1, 1, depth + 0.0001f, Microsoft.Xna.Framework.Color.BurlyWood, 1f);
 
@@ -859,19 +977,34 @@ namespace StardewDruid.Cast
                     catAnimation2.rotationChange = 0.0001f;
 
                     missileAnimations.Add(catAnimation2);
+                    
+                    TemporaryAnimatedSprite catAnimation3 = MissileAnimationTwo(location, missileIndexesTwo.cat1, setat, scale, interval, frames, loops, depth + 0.0003f, coreColour, 1f);
 
-                    missileAnimations.Add(MissileAnimationTwo(location, missileIndexesTwo.cat1, setat, scale, interval, frames, loops, depth + 0.0003f, coreColour, 1f));
+                    switch (ModUtility.DirectionToTarget(origin, destination)[2])
+                    {
+
+                        case 5:
+                        case 6:
+                        case 7:
+
+                            catAnimation3.verticalFlipped = true;
+
+                            break;
+
+                    }
+
+                    missileAnimations.Add(catAnimation3);
 
                     break;
 
                 case missiles.death:
                 case missiles.deathfall:
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.death][2], 0.9f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.death][2], 0.9f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.death][1], 0.9f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.death][1], 0.9f));
 
-                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[schemes.death][0], 0.9f));
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.death][0], 0.9f));
 
                     missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, coreColour, 0.9f));
 
@@ -920,45 +1053,23 @@ namespace StardewDruid.Cast
 
                             thrownWeapon = MissileAnimation(location, missileIndexes.shuriken, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, Microsoft.Xna.Framework.Color.LightSteelBlue, 1f);
 
-                            thrownWeapon.rotationChange = 0f - (float)Math.PI / 30;
-
-                            missileAnimations.Add(thrownWeapon);
-
                             thrownWeapon2 = MissileAnimation(location, missileIndexes.shuriken2, setat, scale, interval * frames * loops, 1, 1, depth + 0.0002f, Mod.instance.iconData.SchemeColour(scheme), 1f);
-
-                            thrownWeapon2.rotationChange = 0f - (float)Math.PI / 30;
-
-                            missileAnimations.Add(thrownWeapon2);
 
                             break;
 
                         case missiles.knife:
+
                             thrownWeapon = MissileAnimation(location, missileIndexes.knife, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, Microsoft.Xna.Framework.Color.SteelBlue, 1f);
 
-                            thrownWeapon.rotationChange = 0f - (float)Math.PI / 30;
-
-                            missileAnimations.Add(thrownWeapon);
-
                             thrownWeapon2 = MissileAnimation(location, missileIndexes.knife2, setat, scale, interval * frames * loops, 1, 1, depth + 0.0002f, Mod.instance.iconData.SchemeColour(scheme), 1f);
-
-                            thrownWeapon2.rotationChange = 0f - (float)Math.PI / 30;
-
-                            missileAnimations.Add(thrownWeapon2);
 
                             break;
 
                         case missiles.axe:
+
                             thrownWeapon = MissileAnimation(location, missileIndexes.axe, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, Microsoft.Xna.Framework.Color.BurlyWood, 1f);
 
-                            thrownWeapon.rotationChange = 0f - (float)Math.PI / 30;
-
-                            missileAnimations.Add(thrownWeapon);
-
                             thrownWeapon2 = MissileAnimation(location, missileIndexes.axe2, setat, scale, interval * frames * loops, 1, 1, depth + 0.0002f, Mod.instance.iconData.SchemeColour(scheme), 1f);
-
-                            thrownWeapon2.rotationChange = 0f - (float)Math.PI / 30;
-
-                            missileAnimations.Add(thrownWeapon2);
 
                             break;
 
@@ -966,21 +1077,166 @@ namespace StardewDruid.Cast
 
                             thrownWeapon = MissileAnimationTwo(location, missileIndexesTwo.hammer, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, Microsoft.Xna.Framework.Color.BurlyWood, 1f);
 
-                            thrownWeapon.rotationChange = 0f - (float)Math.PI / 30;
-
-                            missileAnimations.Add(thrownWeapon);
-
                             thrownWeapon2 = MissileAnimationTwo(location, missileIndexesTwo.hammer2, setat, scale, interval * frames * loops, 1, 1, depth + 0.0002f, Mod.instance.iconData.SchemeColour(scheme), 1f);
-
-                            thrownWeapon2.rotationChange = 0f - (float)Math.PI / 30;
-
-                            missileAnimations.Add(thrownWeapon2);
 
                             break;
 
 
                     }
 
+                    switch (ModUtility.DirectionToTarget(origin, destination)[2])
+                    {
+                        case 0:
+                        case 4:
+ 
+                            break;
+
+                        case 1:
+                        case 2:
+                        case 3:
+
+                            thrownWeapon.rotationChange = (float)Math.PI / 30;
+
+                            thrownWeapon2.rotationChange = (float)Math.PI / 30;
+
+                            break;
+
+                        case 5:
+                        case 6:
+                        case 7:
+
+                            thrownWeapon.rotationChange = 0f - (float)Math.PI / 30;
+
+                            thrownWeapon2.rotationChange = 0f - (float)Math.PI / 30;
+
+                            break;
+
+                    }
+
+                    missileAnimations.Add(thrownWeapon);
+
+                    missileAnimations.Add(thrownWeapon2);
+
+                    break;
+
+                case missiles.bats:
+
+                    TemporaryAnimatedSprite missileAnimation;
+
+                    switch (ModUtility.DirectionToTarget(origin, destination)[2])
+                    {
+                        case 0:
+                        case 1:
+                        case 7:
+
+                            missileAnimation = MissileAnimationTwo(location, missileIndexesTwo.batup1, setat, 2f, interval, frames, loops, depth, coreColour, 1f);
+
+                            missileAnimation.timeBasedMotion = true;
+
+                            missileAnimation.scaleChange = scale / 4000f;
+
+                            missileAnimations.Add(missileAnimation);
+
+                            break;
+
+                        case 2:
+                        case 6:
+
+                            missileAnimation = MissileAnimationTwo(location, missileIndexesTwo.batright1, setat, 2f, interval, frames, loops, depth, coreColour, 1f);
+
+                            missileAnimation.timeBasedMotion = true;
+
+                            missileAnimation.scaleChange = scale / 4000f;
+
+                            missileAnimations.Add(missileAnimation);
+
+                            break;
+
+                        case 3:
+                        case 4:
+                        case 5:
+
+                            missileAnimation = MissileAnimationTwo(location, missileIndexesTwo.batdown1, setat, 2f, interval, frames, loops, depth, coreColour, 1f);
+
+                            missileAnimation.timeBasedMotion = true;
+
+                            missileAnimation.scaleChange = scale / 4000f;
+
+                            missileAnimations.Add(missileAnimation);
+
+                            break;
+
+                    }
+
+                    break;
+
+                case missiles.boulder:
+
+                    IconData.schemes boulderScheme = IconData.schemes.rock;
+
+                    boulderScheme = (IconData.schemes)((int)boulderScheme + Mod.instance.randomIndex.Next(3));
+
+                    missileIndexes boulderfalling = missileIndexes.rock1;
+
+                    boulderfalling = (missileIndexes)((int)boulderfalling + Mod.instance.randomIndex.Next(3));
+
+                    TemporaryAnimatedSprite boulderCore = MissileAnimation(location, boulderfalling, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, Mod.instance.iconData.SchemeColour(boulderScheme), 1f);
+
+                    boulderCore.rotation = 0.0001f;
+
+                    missileAnimations.Add(boulderCore);
+
+                    break;
+
+                case missiles.holygrenade:
+
+                    depth = 999f;
+
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeCore1, setat, scale, interval, frames, loops, depth, coreColour, 1f));
+
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeInner1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][0], 1f));
+
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOuter1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][1], 1f));
+
+                    missileAnimations.Add(MissileAnimation(location, missileIndexes.blazeOutline1, setat, scale, interval, frames, loops, depth, Mod.instance.iconData.gradientColours[IconData.schemes.stars][2], 1f));
+
+                    TemporaryAnimatedSprite holyGrenade = MissileAnimationTwo(location, missileIndexesTwo.holygrenade, setat, (int)(scale * 0.75f), interval * frames * loops, 1, 1, depth + 0.0001f, Color.White, 1f);
+
+                    holyGrenade.rotationChange = 0.0001f;
+
+                    missileAnimations.Add(holyGrenade);
+
+                    break;
+
+                case missiles.holycat:
+
+                    depth = 999f;
+
+                    missileAnimations.Add(MissileAnimationTwo(location, missileIndexesTwo.rainbow1, setat, scale, interval, frames, loops, depth, coreColour, 1f));
+
+                    TemporaryAnimatedSprite holycat = MissileAnimationTwo(location, missileIndexesTwo.holygrenade, setat, scale, interval * frames * loops, 1, 1, depth + 0.0001f, Color.White, 1f);
+
+                    holycat.rotationChange = 0.0001f;
+
+                    missileAnimations.Add(holycat);
+
+
+                    TemporaryAnimatedSprite holycat3 = MissileAnimationTwo(location, missileIndexesTwo.cat1, setat, scale, interval, frames, loops, depth + 0.0003f, coreColour, 1f);
+
+                    switch (ModUtility.DirectionToTarget(origin, destination)[2])
+                    {
+
+                        case 5:
+                        case 6:
+                        case 7:
+
+                            holycat3.verticalFlipped = true;
+
+                            break;
+
+                    }
+
+                    missileAnimations.Add(holycat3);
                     break;
 
             }
@@ -1001,7 +1257,7 @@ namespace StardewDruid.Cast
 
                 sourceRectStartingPos = new Vector2(rect.X, rect.Y),
 
-                texture = missileTexture,
+                texture = Mod.instance.iconData.missileTexture,
 
                 scale = scale,
 
@@ -1031,7 +1287,7 @@ namespace StardewDruid.Cast
 
                 sourceRectStartingPos = new Vector2(rect.X, rect.Y),
 
-                texture = missileTextureTwo,
+                texture = Mod.instance.iconData.missileTextureTwo,
 
                 scale = scale,
 

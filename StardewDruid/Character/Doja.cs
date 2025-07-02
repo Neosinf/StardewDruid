@@ -5,6 +5,7 @@ using StardewDruid.Cast;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.FruitTrees;
@@ -46,88 +47,8 @@ namespace StardewDruid.Character
                 [0] = new List<Rectangle> { new Rectangle(160, 32, 32, 32), },
             };
 
-            hatFrames = new()
-            {
-                [0] = new()
-                {
-                    new(192, 64, 32, 32),
-                },
-                [1] = new()
-                {
-                    new(192, 32, 32, 32),
-                },
-                [2] = new()
-                {
-                    new(192, 0, 32, 32),
-                },
-                [3] = new()
-                {
-                    new(192, 32, 32, 32),
-                },
-            };
+            hatSelect = 1;
 
-        }
-
-        public override void DrawHat(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
-        {
-
-            bool fliphat = SpriteFlip();
-
-            Vector2 hatPosition = spritePosition - new Vector2(0, 16 * setScale);
-
-            Rectangle hatFrame = hatFrames[netDirection.Value][0];
-
-            if (netIdle.Value == (int)Character.idles.kneel)
-            {
-
-                hatPosition = spritePosition - new Vector2(0, 10f * setScale);
-
-                hatFrame = hatFrames[1][0];
-
-            }
-            else if (netSpecial.Value == (int)Character.specials.gesture)
-            {
-
-
-                hatPosition = spritePosition - new Vector2(0, 16f * setScale);
-
-                hatFrame = hatFrames[1][0];
-
-            }
-            else
-            {
-
-                if (netDirection.Value == 2)
-                {
-
-                    if (fliphat)
-                    {
-
-                        hatPosition.X += 2;
-
-                    }
-                    else
-                    {
-
-                        hatPosition.X -= 2;
-
-                    }
-
-                }
-
-            }
-
-            b.Draw(
-                characterTexture,
-                hatPosition,
-                hatFrame,
-                Color.White * fade,
-                0f,
-                new Vector2(16),
-                setScale,
-                fliphat ? (SpriteEffects)1 : 0,
-                drawLayer + 0.0001f
-            );
         }
 
         public override void behaviorOnFarmerPushing()

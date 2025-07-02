@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Character;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using System;
@@ -59,7 +60,9 @@ namespace StardewDruid.Journal
 
             effectIndex = Convert.ToInt32(effectParts[1]);
 
-            Data.Effect journalEffect = Mod.instance.questHandle.effects[effectQuest][effectIndex];
+            EffectsData.EffectPage effectPage = Enum.Parse<EffectsData.EffectPage>(effectQuest);
+
+            StardewDruid.Data.Effect journalEffect = EffectsData.RetrieveEffect(effectPage);
 
             // ----------------------------- title
 
@@ -141,16 +144,11 @@ namespace StardewDruid.Journal
 
             }
 
-            if (Mod.instance.magic)
+            KeyValuePair<string, int> viewIndices = Mod.instance.questHandle.effectQuests(effectQuest);
+
+            if(viewIndices.Key == null)
             {
-
-                interfaceComponents[101].active = false;
-
-            }
-            else
-            if (Mod.instance.questHandle.quests[effectQuest].type != Quest.questTypes.lesson)
-            {
-
+                
                 interfaceComponents[101].active = false;
 
             }

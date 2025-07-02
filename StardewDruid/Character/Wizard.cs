@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewDruid.Render;
 using StardewValley;
 using StardewValley.Tools;
@@ -11,14 +12,14 @@ using System.Collections.Generic;
 
 namespace StardewDruid.Character
 {
-    public class Wizard : StardewDruid.Character.Recruit
+    public class Wizard : StardewDruid.Character.Character
     {
         public Wizard()
         {
         }
 
-        public Wizard(CharacterHandle.characters type, NPC villager)
-          : base(type, villager)
+        public Wizard(CharacterHandle.characters type)
+          : base(type)
         {
 
             
@@ -30,18 +31,18 @@ namespace StardewDruid.Character
             if (characterType == CharacterHandle.characters.none)
             {
 
-                characterType = CharacterHandle.characters.recruit_one;
-
-            }
-
-            if (villager == null)
-            {
-
-                villager = CharacterHandle.FindVillager("Wizard");
+                characterType = CharacterHandle.characters.Wizard;
 
             }
 
             characterTexture = CharacterHandle.CharacterTexture(CharacterHandle.characters.Wizard);
+
+            if (Portrait == null)
+            {
+
+                Portrait = CharacterHandle.CharacterPortrait(CharacterHandle.characters.Wizard);
+
+            }
 
             LoadIntervals();
 
@@ -59,81 +60,13 @@ namespace StardewDruid.Character
 
             specialFloors = CharacterRender.HumanoidFloors();
 
-            WeaponLoadout();
+            hatVectors = CharacterRender.HumanoidHats();
 
-            weaponRender.swordScheme = WeaponRender.swordSchemes.sword_lightsaber;
+            WeaponLoadout(WeaponRender.weapons.starsword);
 
-            hatFrames = new()
-            {
-
-                [0] = new()
-                {
-                    new(192, 64, 32, 32),
-                },
-                [1] = new()
-                {
-                    new(192, 32, 32, 32),
-                },
-                [2] = new()
-                {
-                    new(192, 0, 32, 32),
-                },
-                [3] = new()
-                {
-                    new(192, 32, 32, 32),
-                },
-
-            };
+            hatSelect = 5;
 
             loadedOut = true;
-
-        }
-
-        public override void DrawHat(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
-        {
-
-            bool fliphat = SpriteFlip();
-
-            Vector2 hatPosition = spritePosition - new Vector2(0, 16 * setScale);
-
-            Rectangle hatFrame = hatFrames[netDirection.Value][0];
-
-            if (netIdle.Value == (int)Character.idles.kneel)
-            {
-
-                hatPosition = spritePosition - new Vector2(0, 10f * setScale);
-
-                hatFrame = hatFrames[1][0];
-
-            }
-            else if (netSpecial.Value == (int)Character.specials.gesture)
-            {
-
-
-                hatPosition = spritePosition - new Vector2(0, 16f * setScale);
-
-                hatFrame = hatFrames[1][0];
-
-            }
-
-            b.Draw(
-                characterTexture,
-                hatPosition,
-                hatFrame,
-                Color.White * fade,
-                0f,
-                new Vector2(16),
-                setScale,
-                fliphat ? (SpriteEffects)1 : 0,
-                drawLayer + 0.0001f
-            );
-
-        }
-
-        public override bool MonsterFear()
-        {
-
-            return false;
 
         }
 
@@ -146,21 +79,22 @@ namespace StardewDruid.Character
 
             specialTimer = 90;
 
-            cooldownTimer = cooldownInterval;
+            SetCooldown(specialTimer, 1f);
 
             LookAtTarget(monster.Position, true);
 
-            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 2);
+            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, CombatDamage() / 2)
+            {
+                type = SpellHandle.Spells.missile,
 
-            special.type = SpellHandle.spells.missile;
+                missile = MissileHandle.missiles.warpball,
 
-            special.missile = MissileHandle.missiles.warpball;
+                counter = -30,
 
-            special.counter = -30;
+                scheme = IconData.schemes.fates,
 
-            special.scheme = IconData.schemes.fates;
-
-            special.factor = 2;
+                factor = 2
+            };
 
             switch (Mod.instance.randomIndex.Next(3))
             {
@@ -171,7 +105,7 @@ namespace StardewDruid.Character
 
                 case 1:
 
-                    special.added = new() { SpellHandle.effects.blackhole, };
+                    special.added = new() { SpellHandle.Effects.blackhole, };
 
                     break;
 
@@ -179,7 +113,7 @@ namespace StardewDruid.Character
 
                     special.display = IconData.impacts.flasher;
 
-                    special.added = new() { SpellHandle.effects.doom, };
+                    special.added = new() { SpellHandle.Effects.doom, };
 
                     break;
 
@@ -191,47 +125,6 @@ namespace StardewDruid.Character
 
         }
 
-        public override bool TrackNotReady()
-        {
-
-            if(villager.Name == Game1.player.spouse)
-            {
-
-                return false;
-
-            }
-
-            if (Game1.timeOfDay < 800)
-            {
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-        public override bool TrackOutOfTime()
-        {
-
-            if (villager.Name == Game1.player.spouse)
-            {
-
-                return false;
-
-            }
-
-            if (Game1.timeOfDay > 2200)
-            {
-
-                return true;
-
-            }
-
-            return false;
-
-        }
 
     }
 

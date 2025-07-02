@@ -8,18 +8,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Monster
 {
     public class ShadowBear : Boss
     {
-
-        public CueWrapper growlCue;
-        public CueWrapper growlCueTwo;
-        public CueWrapper growlCueThree;
-
-        public int growlTimer;
 
         public BearRender bearRender;
 
@@ -42,7 +35,6 @@ namespace StardewDruid.Monster
             baseJuice = 5;
             basePulp = 40;
             cooldownInterval = 180;
-            
 
         }
 
@@ -51,33 +43,9 @@ namespace StardewDruid.Monster
 
             bearRender = new(realName.Value);
 
-            growlCue = Game1.soundBank.GetCue("BearGrowl") as CueWrapper;
-
-            growlCue.Volume *= 2;
-
-            growlCue.Pitch /= 2;
-
-            growlCueTwo = Game1.soundBank.GetCue("BearGrowlTwo") as CueWrapper;
-
-            growlCueTwo.Volume *= 2;
-
-            growlCueTwo.Pitch /= 2;
-
-            growlCueThree = Game1.soundBank.GetCue("BearGrowlThree") as CueWrapper;
-
-            growlCueThree.Volume *= 2;
-
-            growlCueThree.Pitch /= 2;
-
             walkInterval = 12;
 
             gait = GetGait();
-
-            overHead = new(0, -128);
-
-            sweepInterval = 9;
-
-            sweepSet = true;
 
             idleFrames = bearRender.idleFrames;
 
@@ -87,11 +55,31 @@ namespace StardewDruid.Monster
 
             smashFrames = bearRender.dashFrames;
 
-            specialFrames = walkFrames;
+            smashSet = true;
 
-            channelFrames = walkFrames;
+            specialFrames = bearRender.specialFrames;
+
+            specialInterval = 12;
+
+            specialCeiling = 8;
+
+            specialFloor = 0;
+
+            specialSet = true;
+
+            channelFrames = bearRender.specialFrames;
+
+            channelCeiling = 8;
+
+            channelFloor = 0;
+
+            channelSet = true;
 
             sweepFrames = bearRender.sweepFrames;
+
+            sweepInterval = 9;
+
+            sweepSet = true;
 
             loadedOut = true;
 
@@ -148,7 +136,7 @@ namespace StardewDruid.Monster
 
         }
 
-        public override Vector2 GetPosition(Vector2 localPosition, float spriteScale = -1f, bool shadow = false)
+        public override Vector2 GetPosition(Vector2 localPosition, float spriteScale = -1f)
         {
 
             if (spriteScale == -1f)
@@ -183,24 +171,18 @@ namespace StardewDruid.Monster
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            BearRenderAdditional additional = new();
+            BearRenderAdditional additional = new()
+            {
+                layer = Position.Y / 10000f + 0.0032f,
 
-            additional.layer = Position.Y / 10000f + 0.0032f;
-
-            additional.scale = GetScale();
+                scale = GetScale()
+            };
 
             additional.position = GetPosition(localPosition, additional.scale);
 
             DrawEmote(b, localPosition, additional.layer);
 
-            additional.flip = netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3;
-
-            if (growlCue.IsPlaying)
-            {
-
-                additional.mode = BearRenderAdditional.bearmode.growl;
-
-            }
+            additional.flip = netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3);
 
             if (netSweepActive.Value)
             {
@@ -214,6 +196,21 @@ namespace StardewDruid.Monster
                 bearRender.DrawNormal(b, additional);
 
                 return;
+
+            }
+            else if (netSpecialActive.Value)
+            {
+
+                additional.series = BearRenderAdditional.bearseries.special;
+
+                additional.direction = netDirection.Value;
+
+                additional.frame = specialFrame;
+
+                bearRender.DrawNormal(b, additional);
+
+                return;
+
             }
 
             additional.direction = netDirection.Value;
@@ -224,90 +221,57 @@ namespace StardewDruid.Monster
 
         }
 
-        public override bool ChangeBehaviour()
+        public override void UpdateSpecial()
         {
 
-            if (growlTimer > 0)
+            base.UpdateSpecial();
+
+            switch (specialTimer)
             {
 
-                growlTimer--;
+                case 96:
 
-            }
+                    if (netSpecialActive.Value || netChannelActive.Value)
+                    {
 
-            if (base.ChangeBehaviour())
-            {
+                        Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BearRoar);
 
-                BearGrowl();
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-        public override void UpdateMultiplayer()
-        {
-
-            base.UpdateMultiplayer();
-
-            if (growlTimer > 0)
-            {
-
-                growlTimer--;
-
-                return;
-
-            }
-
-            if (netSweepActive.Value)
-            {
-
-                BearGrowl();
-
-            }
-
-        }
-
-        public void BearGrowl()
-        {
-            if (growlTimer > 0)
-            {
-
-                return;
-
-            }
-
-            if (growlCue.IsPlaying || growlCueTwo.IsPlaying || growlCueThree.IsPlaying)
-            {
-
-                return;
-
-            }
-
-            growlTimer = 300;
-
-            switch (Mod.instance.randomIndex.Next(6))
-            {
-
-                case 0:
-
-                    growlCue.Play();
+                    }
 
                     break;
 
-                case 1:
+                case 36:
 
-                    growlCueTwo.Play();
+                    if (netSweepActive.Value)
+                    {
+
+                        if (Mod.instance.randomIndex.Next(2) == 0)
+                        {
+
+                            return;
+
+                        }
+
+                        if (Mod.instance.sounds.ActiveCue(Handle.SoundHandle.SoundCue.BearGrowl))
+                        {
+
+                            return;
+
+                        }
+
+                        if (Mod.instance.sounds.ActiveCue(Handle.SoundHandle.SoundCue.BearRoar))
+                        {
+
+                            return;
+
+                        }
+
+                        Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BearGrowl);
+
+                    }
 
                     break;
 
-                case 2:
-
-                    growlCueThree.Play();
-
-                    break;
 
             }
 

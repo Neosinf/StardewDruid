@@ -41,7 +41,7 @@ namespace StardewDruid.Monster
           : base(vector, CombatModifier, name)
         {
 
-            SpawnData.MonsterDrops(this, SpawnData.drops.dragon);
+            SpawnData.MonsterDrops(this, SpawnData.Drops.dragon);
 
         }
 
@@ -55,8 +55,6 @@ namespace StardewDruid.Monster
             basePulp = 50;
 
             gait = 2;
-
-            overHead = new(0, -224);
 
             walkInterval = 9;
 
@@ -147,6 +145,8 @@ namespace StardewDruid.Monster
 
             float netScale = GetScale();
 
+            Vector2 spritePosition = new Vector2(localPosition.X + 32 - (32 * netScale), localPosition.Y + 64 - (64 * netScale));
+
             bool flippant = ((netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3);
 
             if (netSweepActive.Value)
@@ -160,7 +160,7 @@ namespace StardewDruid.Monster
                     layer = drawLayer,
                 };
 
-                dragonRender.drawSweepDinosaur(b, localPosition, additional);
+                dragonRender.drawSweepDinosaur(b, spritePosition, additional);
 
             }
             else
@@ -177,7 +177,7 @@ namespace StardewDruid.Monster
                     layer = drawLayer,
                 };
 
-                dragonRender.drawWalkDinosaur(b, localPosition, additional);
+                dragonRender.drawWalkDinosaur(b, spritePosition, additional);
 
             }
             else
@@ -191,19 +191,19 @@ namespace StardewDruid.Monster
                     layer = drawLayer,
                 };
 
-                dragonRender.drawWalkDinosaur(b, localPosition, additional);
+                dragonRender.drawWalkDinosaur(b, spritePosition, additional);
 
             }
 
         }
 
 
-        public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
+        /*public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
         {
             
             Vector2 localPosition = Position - new Vector2((float)Game1.viewport.X, (float)Game1.viewport.Y);
 
-            /*if (netFlightActive.Value || netSmashActive.Value)
+            if (netFlightActive.Value || netSmashActive.Value)
             {
 
                 float netScale = GetScale();
@@ -234,11 +234,11 @@ namespace StardewDruid.Monster
 
                 }
 
-            }*/
+            }
 
             DrawTextAboveHead(b, localPosition);
 
-        }
+        }*/
 
         public override float GetScale()
         {
@@ -260,17 +260,18 @@ namespace StardewDruid.Monster
 
             currentLocation.playSound("furnace");
 
-            SpellHandle beam = new(currentLocation, farmerPosition, CastPosition(), (int)GetScale() * 32 + 96, GetThreat());
+            SpellHandle beam = new(currentLocation, farmerPosition, CastPosition(), (int)GetScale() * 32 + 96, GetThreat())
+            {
+                type = SpellHandle.Spells.beam,
 
-            beam.type = SpellHandle.spells.beam;
+                scheme = IconData.schemes.stars,
 
-            beam.scheme = IconData.schemes.stars;
+                display = IconData.impacts.impact,
 
-            beam.display = IconData.impacts.impact;
+                added = new() { SpellHandle.Effects.embers, },
 
-            beam.added = new() { SpellHandle.effects.embers, };
-
-            beam.boss = this;
+                boss = this
+            };
 
             Mod.instance.spellRegister.Add(beam);
 
@@ -415,13 +416,13 @@ namespace StardewDruid.Monster
 
         }*/
 
-        public override SpellHandle.effects IsCursable(SpellHandle.effects effect = SpellHandle.effects.knock)
+        public override SpellHandle.Effects IsCursable(SpellHandle.Effects effect = SpellHandle.Effects.knock)
         {
 
-            if(effect == SpellHandle.effects.immolate)
+            if(effect == SpellHandle.Effects.immolate)
             {
 
-                return SpellHandle.effects.none;
+                return SpellHandle.Effects.none;
 
             }
 

@@ -6,6 +6,7 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
@@ -40,7 +41,7 @@ namespace StardewDruid.Character
             if (characterType == CharacterHandle.characters.none)
             {
 
-                characterType = CharacterHandle.characters.recruit_one;
+                characterType = CharacterHandle.characters.Caroline;
 
             }
 
@@ -48,6 +49,8 @@ namespace StardewDruid.Character
             {
 
                 villager = CharacterHandle.FindVillager("Caroline");
+
+                Portrait = villager.Portrait;
 
             }
 
@@ -79,6 +82,74 @@ namespace StardewDruid.Character
             };
 
         }
+        public override void DrawLaunch(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
+        {
+
+            Rectangle useFrame = specialFrames[specials.launch][netDirection.Value][specialFrame];
+
+            int specialHover = 0;
+
+            switch (specialFrame)
+            {
+                case 0:
+                case 3:
+
+                    specialHover = 16;
+
+                    break;
+
+                case 1:
+                case 2:
+
+                    specialHover = 32;
+
+                    break;
+
+            }
+
+            b.Draw(
+                characterTexture,
+                spritePosition - new Vector2(0, specialHover),
+                useFrame,
+                Color.White * fade,
+                0.0f,
+                new Vector2(useFrame.Width / 2, useFrame.Height / 2),
+                setScale,
+                SpriteAngle() ? (SpriteEffects)1 : 0,
+                drawLayer
+            );
+
+            DrawShadow(b, spritePosition, drawLayer, fade);
+
+            int rate = Math.Abs((int)(Game1.currentGameTime.TotalGameTime.TotalSeconds % 12) - 6);
+
+            Color circleColour = new Color(256 - (rate * 21), 256 - (rate * 9), 256 - rate);
+
+            b.Draw(
+                 Mod.instance.iconData.sheetTextures[IconData.tilesheets.ritual],
+                 spritePosition + new Vector2(0, 14 * setScale),
+                 new Rectangle(0, 96, 64, 48),
+                 Color.White * fade,
+                 0f,
+                 new Vector2(32, 24),
+                 setScale,
+                 0,
+                 drawLayer - 0.0005f
+             );
+
+            b.Draw(
+                 Mod.instance.iconData.sheetTextures[IconData.tilesheets.ritual],
+                 spritePosition + new Vector2(0, 14 * setScale),
+                 new Rectangle(64, 96, 64, 48),
+                 circleColour * fade,
+                 0f,
+                 new Vector2(32, 24),
+                 setScale,
+                 0,
+                 drawLayer - 0.0006f
+             );
+
+        }
 
         public override bool MonsterFear()
         {
@@ -108,33 +179,28 @@ namespace StardewDruid.Character
 
             netSpecial.Set((int)specials.launch);
 
-            specialTimer = 48;
+            specialTimer = 60;
 
-            cooldownTimer = cooldownInterval;
-
-            cooldownTimer = cooldownInterval;
+            SetCooldown(40, 1f);
 
             LookAtTarget(monster.Position, true);
 
-            SpellHandle glare = new(GetBoundingBox().Center.ToVector2(), 256, IconData.impacts.glare, new()) { scheme = IconData.schemes.mists };
+            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, CombatDamage() / 2)
+            {
+                type = SpellHandle.Spells.missile,
 
-            Mod.instance.spellRegister.Add(glare);
+                missile = MissileHandle.missiles.frostball,
 
-            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 2);
+                counter = -24,
 
-            special.type = SpellHandle.spells.missile;
+                scheme = IconData.schemes.ether,
 
-            special.missile = MissileHandle.missiles.frostball;
+                factor = 2,
 
-            special.counter = -24;
+                added = new() { SpellHandle.Effects.freeze, },
 
-            special.scheme = IconData.schemes.ether;
-
-            special.factor = 2;
-
-            special.added = new() { SpellHandle.effects.freeze, };
-
-            special.display = IconData.impacts.puff;
+                display = IconData.impacts.puff
+            };
 
             Mod.instance.spellRegister.Add(special);
 

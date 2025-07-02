@@ -5,6 +5,7 @@ using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
+using StardewDruid.Handle;
 using StardewDruid.Location;
 using StardewDruid.Monster;
 using StardewModdingAPI;
@@ -35,6 +36,8 @@ namespace StardewDruid.Event
 
         public List<string> locales = new();
 
+        public int costCounter = 0;
+
         // ----------------- trigger management
 
         public bool triggerEvent;
@@ -53,6 +56,9 @@ namespace StardewDruid.Event
             action,
             special,
             rite,
+            shift,
+            warp,
+            favourite,
         }
 
         public int eventCounter;
@@ -90,6 +96,8 @@ namespace StardewDruid.Event
         public Dictionary<int, StardewDruid.Character.Actor> actors = new();
 
         public Dictionary<int, StardewDruid.Character.Character> companions = new();
+
+        public Dictionary<int, Character.Character.mode> companionModes = new();
 
         public List<TemporaryAnimatedSprite> animations = new();
 
@@ -148,6 +156,27 @@ namespace StardewDruid.Event
                 locales = new() { Game1.player.currentLocation.Name, };
 
             }
+
+            Mod.instance.RegisterEvent(this, eventId);
+
+            SetupNarration(eventId);
+
+            SetupCompanion();
+
+        }
+
+        public virtual void EventSetup(GameLocation Location, Vector2 target, string id)
+        {
+
+            origin = target;
+
+            eventId = id;
+
+            inabsentia = true;
+
+            locales = new() { Location.Name, };
+
+            location = Location;
 
             Mod.instance.RegisterEvent(this, eventId);
 
@@ -266,7 +295,7 @@ namespace StardewDruid.Event
 
             }
 
-            if (Mod.instance.questHandle.quests[eventId].triggerRite != Rite.rites.none)
+            if (Mod.instance.questHandle.quests[eventId].triggerRite != Rite.Rites.none)
             {
 
                 if (Mod.instance.rite.castType != Mod.instance.questHandle.quests[eventId].triggerRite)
@@ -369,7 +398,19 @@ namespace StardewDruid.Event
 
                 TrackHandle tracker = Mod.instance.trackers.ElementAt(t).Value;
 
-                Mod.instance.characters[tracker.trackFor].SwitchToMode(Character.Character.mode.home, Game1.player);
+                if (Mod.instance.characters[tracker.trackFor].modeActive == Character.Character.mode.recruit)
+                {
+
+                    RecruitHandle.RecruitRemove(tracker.trackFor);
+
+                }
+                else
+                {
+
+                    Mod.instance.characters[tracker.trackFor].SwitchToMode(Character.Character.mode.home, Game1.player);
+
+
+                }
 
             }
 
@@ -411,14 +452,14 @@ namespace StardewDruid.Event
         public virtual void EventClicks(actionButtons button)
         {
 
-            if (Mod.instance.clickRegister.ContainsKey(button))
+            if (!Mod.instance.clickRegister.ContainsKey(button))
             {
 
-                return;
+                Mod.instance.clickRegister[button] = new();
 
             }
 
-            Mod.instance.clickRegister[button] = eventId;
+            Mod.instance.clickRegister[button].Add(eventId);
             
             clicks.Add(button);
 
@@ -629,6 +670,11 @@ namespace StardewDruid.Event
 
             NPC speaker;
 
+            if(Mod.instance.Config.dialogueOption == ModData.dialogueOptions.none.ToString())
+            {
+                return;
+            }
+            
             if (voices.ContainsKey(id))
             {
 
@@ -686,6 +732,15 @@ namespace StardewDruid.Event
                 return;
             }
 
+            if(Mod.instance.Config.dialogueOption == ModData.dialogueOptions.emotes.ToString())
+            {
+
+                speaker.doEmote(40);
+
+                return;
+
+            }
+
             speaker.showTextAboveHead(message, duration: duration);
 
         }
@@ -696,7 +751,9 @@ namespace StardewDruid.Event
             foreach (KeyValuePair<CharacterHandle.characters, TrackHandle> tracker in Mod.instance.trackers)
             {
 
-                Mod.instance.characters[tracker.Key].Halt();
+                Mod.instance.characters[tracker.Key].ResetActives();
+
+                Mod.instance.characters[tracker.Key].netIdle.Set((int)Character.Character.idles.alert);
 
                 Mod.instance.characters[tracker.Key].idleTimer = idle;
 
@@ -876,7 +933,7 @@ namespace StardewDruid.Event
                     }
                     else
                     {
-                        if(cue.Value.Length > 4)
+                        if(cue.Value.Length > 4 && Mod.instance.Config.dialogueOption != ModData.dialogueOptions.fulltext.ToString())
                         {
 
                             CastVoice(cue.Key, "...", 2000);
@@ -894,6 +951,12 @@ namespace StardewDruid.Event
                     if (voices.ContainsKey(cue.Key) && cue.Value.Length > 4)
                     {
 
+                        Texture2D cuePortrait = null;
+
+                        Rectangle cueSource = Rectangle.Empty;
+
+                        string speakerName = string.Empty;
+
                         if (voices[cue.Key] is StardewDruid.Monster.Boss bossMonster)
                         {
 
@@ -906,6 +969,22 @@ namespace StardewDruid.Event
 
                             }
 
+                            cuePortrait = bossMonster.OverheadTexture();
+
+                            cueSource = bossMonster.OverheadPortrait();
+
+                            speakerName = bossMonster.Name;
+
+                        }
+                        else if(voices[cue.Key] is StardewDruid.Character.Character charSpeaker)
+                        {
+
+                            cuePortrait = charSpeaker.OverheadTexture();
+
+                            cueSource = charSpeaker.OverheadPortrait();
+
+                            speakerName = charSpeaker.Name;
+
                         }
 
                         string cueTitle = voices[cue.Key].Name;  
@@ -917,7 +996,21 @@ namespace StardewDruid.Event
 
                         }
 
-                        Mod.instance.CastDisplay(cueTitle, cue.Value);
+                        if (Mod.instance.Config.captionOption != ModData.captionOptions.none.ToString())
+                        {
+
+                            EventDisplay cueDisplay = Mod.instance.CastDisplay(cueTitle, cue.Value);
+
+                            if (Mod.instance.Config.captionOption == ModData.captionOptions.auto.ToString() && cuePortrait != null)
+                            {
+
+                                cueDisplay.portrait = cuePortrait;
+
+                                cueDisplay.portraitSource = cueSource;
+
+                            }
+
+                        }
 
                         if (Context.IsMultiplayer)
                         {
@@ -925,11 +1018,13 @@ namespace StardewDruid.Event
                             QueryData queryData = new()
                             {
                                 
-                                name = cueTitle,
+                                name = speakerName != string.Empty ? speakerName : null,
 
                                 value = cue.Value,
 
                                 location = location.Name,
+
+                                description = cueTitle,
 
                             };
 
@@ -1132,15 +1227,39 @@ namespace StardewDruid.Event
 
             responseList.First().SetHotKey(Microsoft.Xna.Framework.Input.Keys.Enter);
 
-            if(responseList.Count > 1)
+            if(conversations[dialogueId].responses.Count < 3)
             {
-                responseList.Last().SetHotKey(Microsoft.Xna.Framework.Input.Keys.Escape);
+
+                responseList.Add(new Response(eventId + "." + dialogueId.ToString() + ".999", Mod.instance.Helper.Translation.Get("DialogueData.Nothing")));
 
             }
+
+            responseList.Last().SetHotKey(Microsoft.Xna.Framework.Input.Keys.Escape);
 
             GameLocation.afterQuestionBehavior questionBehavior = new(DialogueResponses);
 
             Game1.player.currentLocation.createQuestionDialogue(intro, responseList.ToArray(), questionBehavior, npc);
+
+
+            if (Context.IsMultiplayer)
+            {
+
+                QueryData queryData = new()
+                {
+
+                    name = npc != null ? npc.Name : null,
+
+                    value = intro,
+
+                    location = location.Name,
+
+                    description = string.Join("|", conversations[dialogueId].responses) 
+
+                };
+
+                Mod.instance.EventQuery(queryData, QueryData.queries.EventQuestion);
+
+            }
 
             return;
 
@@ -1184,12 +1303,6 @@ namespace StardewDruid.Event
 
         }
 
-        public virtual void DialogueAfter(CharacterHandle.characters character, int dialogueId)
-        {
-
-
-        }
-
         public virtual void DialogueDraw(NPC npc, string text)
         {
 
@@ -1203,18 +1316,23 @@ namespace StardewDruid.Event
 
             Game1.player.CanMove = false;
 
-            QueryData queryData = new()
+            if (Context.IsMultiplayer)
             {
 
-                name = npc.Name,
+                QueryData queryData = new()
+                {
 
-                value = text,
+                    name = npc != null ? npc.Name : null,
 
-                location = npc.currentLocation.Name,
+                    value = text,
 
-            };
+                    location = npc.currentLocation.Name,
 
-            Mod.instance.EventQuery(queryData, QueryData.queries.EventDialogue);
+                };
+
+                Mod.instance.EventQuery(queryData, QueryData.queries.EventDialogue);
+
+            }
 
         }
 
@@ -1245,7 +1363,7 @@ namespace StardewDruid.Event
 
                 Boss boss = bosses.ElementAt(b).Value;
 
-                Mod.instance.iconData.AnimateQuickWarp(location, boss.Position);
+                Mod.instance.iconData.AnimateQuickWarp(location, boss.Position, true, boss.warp);
 
                 location.characters.Remove(boss);
 
@@ -1311,37 +1429,69 @@ namespace StardewDruid.Event
                 foreach (KeyValuePair<int,StardewDruid.Character.Character> companion in companions)
                 {
 
-                    if(companion.Value == null)
-                    {
-
-                        continue;
-
-                    }
-
-                    if (Mod.instance.characters.ContainsKey(companion.Value.characterType))
-                    {
-
-                        companion.Value.SwitchToMode(Character.Character.mode.random, Game1.player);
-
-                        companion.Value.eventName = null;
-
-                    }
-                    else
-                    {
-                        
-                        Mod.instance.iconData.AnimateQuickWarp(companion.Value.currentLocation, companion.Value.Position, true);
-
-                        companion.Value.currentLocation.characters.Remove(companion.Value);
-
-                    }
+                    RemoveCompanion(companion.Key);
 
                 }
 
                 companions.Clear();
 
+                companionModes.Clear();
+
             }
 
             voices.Clear();
+
+        }
+
+        public virtual void RemoveCompanion(int companionIndex)
+        {
+
+            if (!companions.ContainsKey(companionIndex))
+            {
+
+                return;
+
+            }
+
+            StardewDruid.Character.Character companion = companions[companionIndex];
+
+            if (Mod.instance.characters.ContainsKey(companion.characterType))
+            {
+
+                companion.eventName = null;
+
+                if (companionModes.ContainsKey(companionIndex))
+                {
+
+                    companion.SwitchToMode(companionModes[companionIndex], Game1.player);
+
+                    return;
+
+                }
+                else if(CharacterHandle.CharacterSave(companion.characterType))
+                {
+
+                    companion.SwitchToMode(Character.Character.mode.random, Game1.player);
+
+                    return;
+
+                }
+
+            }
+
+            if(companion.currentLocation != null)
+            {
+
+                if(companion.currentLocation == Game1.player.currentLocation)
+                {
+
+                    Mod.instance.iconData.AnimateQuickWarp(companion.currentLocation, companion.Position, true);
+
+                }
+
+                companion.currentLocation.characters.Remove(companion);
+
+            }
 
         }
 
@@ -1375,10 +1525,17 @@ namespace StardewDruid.Event
             foreach(actionButtons button in clicks)
             {
 
-                if (Mod.instance.clickRegister[button] == eventId)
+                if (Mod.instance.clickRegister[button].Contains(eventId))
                 {
 
-                    Mod.instance.clickRegister.Remove(button);
+                    Mod.instance.clickRegister[button].Remove(eventId);
+
+                    if(Mod.instance.clickRegister[button].Count == 0)
+                    {
+
+                        Mod.instance.clickRegister.Remove(button);
+
+                    }
 
                 }
 

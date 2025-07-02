@@ -6,6 +6,7 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
@@ -20,15 +21,16 @@ using System.Collections.Generic;
 
 namespace StardewDruid.Character
 {
-    public class Witch : StardewDruid.Character.Recruit
+    public class Witch : StardewDruid.Character.Character
     {
 
         public Witch()
         {
+
         }
 
-        public Witch(CharacterHandle.characters type, NPC villager)
-          : base(type, villager)
+        public Witch(CharacterHandle.characters type)
+          : base(type)
         {
 
 
@@ -40,111 +42,82 @@ namespace StardewDruid.Character
             if (characterType == CharacterHandle.characters.none)
             {
 
-                characterType = CharacterHandle.characters.recruit_one;
+                characterType = CharacterHandle.characters.Witch;
 
             }
 
-            if (villager == null)
-            {
+            LoadOutLady();
 
-                villager = CharacterHandle.FindVillager("Wizard");
-
-            }
-
-            LoadIntervals();
-
-            characterTexture = CharacterHandle.CharacterTexture(CharacterHandle.characters.Witch);
-
-            walkFrames = CharacterRender.HumanoidWalk();
-
-            idleFrames = CharacterRender.HumanoidIdle();
-
-            dashFrames = CharacterRender.HumanoidDash();
-
-            specialFrames = CharacterRender.WitchSpecial();
-
-            specialIntervals = CharacterRender.WitchIntervals();
-
-            specialCeilings = CharacterRender.WitchCeilings();
-
-            specialFloors = CharacterRender.WitchFloors();
-
-            loadedOut = true;
-
-            setScale = 3.75f;
-
-            idleFrames[idles.standby] = new()
-            {
-                [0] = new List<Rectangle> { new Rectangle(160, 32, 32, 32), },
-            };
-
-            hatFrames = new()
-            {
-                [0] = new()
-                {
-                    new(128, 64, 32, 32),
-                },
-                [1] = new()
-                {
-                    new(128, 32, 32, 32),
-                },
-                [2] = new()
-                {
-                    new(128, 0, 32, 32),
-                },
-                [3] = new()
-                {
-                    new(128, 32, 32, 32),
-                },
-            };
+            hatSelect = 4;
 
         }
 
-        public override void DrawHat(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
+        public override void DrawLaunch(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
 
-            bool fliphat = SpriteFlip();
+            Rectangle useFrame = specialFrames[specials.launch][netDirection.Value][specialFrame];
 
-            Vector2 hatPosition = spritePosition - new Vector2(0, 14 * setScale);
+            int specialHover = 0;
 
-            Rectangle hatFrame = hatFrames[netDirection.Value][0];
-
-            if (netIdle.Value == (int)Character.idles.kneel)
+            switch (specialFrame)
             {
+                case 0:
+                case 3:
 
-                hatPosition = spritePosition - new Vector2(0, 8f * setScale);
+                    specialHover = 16;
 
-                hatFrame = hatFrames[1][0];
+                    break;
 
-            }
-            else if (netSpecial.Value == (int)Character.specials.gesture)
-            {
+                case 1:
+                case 2:
 
+                    specialHover = 32;
 
-                hatPosition = spritePosition - new Vector2(0, 14f * setScale);
-
-                hatFrame = hatFrames[1][0];
+                    break;
 
             }
 
             b.Draw(
                 characterTexture,
-                hatPosition,
-                hatFrame,
+                spritePosition - new Vector2(0, specialHover),
+                useFrame,
                 Color.White * fade,
-                0f,
-                new Vector2(16),
+                0.0f,
+                new Vector2(useFrame.Width / 2, useFrame.Height / 2),
                 setScale,
-                fliphat ? (SpriteEffects)1 : 0,
-                drawLayer + 0.0001f
+                SpriteAngle() ? (SpriteEffects)1 : 0,
+                drawLayer
             );
 
-        }
+            DrawShadow(b, spritePosition, drawLayer, fade);
 
-        public override bool MonsterFear()
-        {
+            int rate = Math.Abs((int)(Game1.currentGameTime.TotalGameTime.TotalSeconds % 12) - 6);
 
-            return false;
+            Color circleColour = new Color(256 - rate, 256 - (rate * 21), 256 - rate);
+
+            b.Draw(
+                 Mod.instance.iconData.sheetTextures[IconData.tilesheets.ritual],
+                 spritePosition + new Vector2(0, 14 * setScale),
+                 new Rectangle(0, 96, 64, 48),
+                 Color.White * fade,
+                 0f,
+                 new Vector2(32, 24),
+                 setScale,
+                 0,
+                 drawLayer - 0.0005f
+             );
+
+            b.Draw(
+                 Mod.instance.iconData.sheetTextures[IconData.tilesheets.ritual],
+                 spritePosition + new Vector2(0, 14 * setScale),
+                 new Rectangle(64, 96, 64, 48),
+                 circleColour * fade,
+                 0f,
+                 new Vector2(32, 24),
+                 setScale,
+                 0,
+                 drawLayer - 0.0006f
+             );
 
         }
 
@@ -169,79 +142,36 @@ namespace StardewDruid.Character
 
             netSpecial.Set((int)specials.launch);
 
-            specialTimer = 48;
+            specialTimer = 60;
 
-            cooldownTimer = cooldownInterval;
-
-            cooldownTimer = cooldownInterval;
+            SetCooldown(specialTimer, 1f);
 
             LookAtTarget(monster.Position, true);
 
-            SpellHandle glare = new(GetBoundingBox().Center.ToVector2(), 256, IconData.impacts.glare, new()) { scheme = IconData.schemes.fates };
+            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, CombatDamage() / 2)
+            {
 
-            Mod.instance.spellRegister.Add(glare);
+                counter = -24,
 
-            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 2);
+                type = SpellHandle.Spells.missile,
 
-            special.type = SpellHandle.spells.missile;
+                factor = 4,
 
-            special.missile = MissileHandle.missiles.frostball;
+                missile = MissileHandle.missiles.bats,
 
-            special.counter = -24;
+                display = IconData.impacts.flashbang,
 
-            special.scheme = IconData.schemes.ether;
+                displayRadius = 3,
 
-            special.factor = 3;
+                sound = SpellHandle.Sounds.batFlap,
 
-            special.added = new() { SpellHandle.effects.freeze, };
+                added = new() { Mod.instance.rite.ChargeEffect(IconData.cursors.fatesCharge, true), }
 
-            special.display = IconData.impacts.puff;
+            };
 
             Mod.instance.spellRegister.Add(special);
 
             return true;
-
-        }
-
-        public override bool TrackNotReady()
-        {
-
-            if (villager.Name == Game1.player.spouse)
-            {
-
-                return false;
-
-            }
-
-            if (Game1.timeOfDay < 800)
-            {
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-        public override bool TrackOutOfTime()
-        {
-
-            if (villager.Name == Game1.player.spouse)
-            {
-
-                return false;
-
-            }
-
-            if (Game1.timeOfDay > 2200)
-            {
-
-                return true;
-
-            }
-
-            return false;
 
         }
 

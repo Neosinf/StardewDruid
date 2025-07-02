@@ -98,11 +98,11 @@ namespace StardewDruid.Cast
 
             origin = position;
 
-            scale = 4f;
+            scale = 3.2f;
 
-            fade = 0.75f;
+            fade = 0.3f;
 
-            fadeTo = 0.75f;
+            fadeTo = 0.6f;
 
             body = Mod.instance.randomIndex.Next(3);
 
@@ -112,7 +112,7 @@ namespace StardewDruid.Cast
 
             cooldown = Mod.instance.randomIndex.Next(12);
 
-            damageMonsters = Mod.instance.CombatDamage() * 2;
+            damageMonsters = Mod.instance.CombatDamage();
 
             Behaviour();
 
@@ -272,7 +272,7 @@ namespace StardewDruid.Cast
                 wispTexture,
                 localPosition,
                 eyeSource,
-                Microsoft.Xna.Framework.Color.White * fade,
+                Microsoft.Xna.Framework.Color.White * fade * 0.5f,
                 rotate,
                 new Vector2(16,32),
                 scale,
@@ -284,7 +284,7 @@ namespace StardewDruid.Cast
                 Mod.instance.iconData.cursorTexture,
                 localPosition + new Vector2(0,32*scale),
                 Mod.instance.iconData.shadowRectangle,
-                Microsoft.Xna.Framework.Color.White * (fade /5f),
+                Microsoft.Xna.Framework.Color.White * fade,
                 0f,
                 new Vector2(24),
                 scale/2,
@@ -307,7 +307,7 @@ namespace StardewDruid.Cast
             if (damageMonsters > 0)
             {
 
-                Mod.instance.iconData.CreateImpact(location, position + new Vector2(-32, 64), IconData.impacts.smoke, 3f, new());
+                Mod.instance.iconData.AnimateQuickWarp(location, position, false, IconData.warps.mist);
 
             }
 
@@ -435,29 +435,30 @@ namespace StardewDruid.Cast
 
                     cooldown++;
 
-                    if (cooldown > 15)
+                    if (cooldown > 18) // ~9-10 seconds
                     {
 
-                        cooldown = 7;
+                        cooldown = 10;
 
-                        List<StardewValley.Monsters.Monster> mistVictims = ModUtility.MonsterProximity(Game1.player.currentLocation, new() { position, }, 256, true);
+                        List<StardewValley.Monsters.Monster> mistVictims = ModUtility.MonsterProximity(Game1.player.currentLocation, new() { position, }, 192, true);
 
                         if (mistVictims.Count > 0)
                         {
 
                             cooldown = 0;
 
-                            SpellHandle bolt = new(Game1.player, position - new Vector2(32), 256, damageMonsters);
+                            SpellHandle bolt = new(Game1.player, position - new Vector2(32), 192, damageMonsters)
+                            {
+                                type = SpellHandle.Spells.explode,
 
-                            bolt.type = SpellHandle.spells.explode;
+                                instant = true,
 
-                            bolt.instant = true;
+                                sound = SpellHandle.Sounds.thunder_small,
 
-                            bolt.sound = SpellHandle.sounds.thunder_small;
+                                display = IconData.impacts.boltnode
+                            };
 
-                            bolt.display = IconData.impacts.boltnode;
-
-                            bolt.added = new() { SpellHandle.effects.push, };
+                            //bolt.added = new() { SpellHandle.effects.push, };
 
                             Mod.instance.spellRegister.Add(bolt);
 
@@ -468,7 +469,7 @@ namespace StardewDruid.Cast
 
                             cooldown = 0;
 
-                            SpellHandle mists = new(position - new Vector2(32), 320, IconData.impacts.mists, new() { SpellHandle.effects.drain, });
+                            SpellHandle mists = new(position - new Vector2(32), 192, IconData.impacts.mists, new() { SpellHandle.Effects.drain, }) { displayRadius = 3, };
 
                             Mod.instance.spellRegister.Add(mists);
 
@@ -489,7 +490,7 @@ namespace StardewDruid.Cast
 
                     cooldown++;
 
-                    if (cooldown > 3)
+                    if (cooldown > 5)
                     {
 
                         cooldown = 0;
@@ -499,17 +500,20 @@ namespace StardewDruid.Cast
                         if (windVictims.Count > 0)
                         {
 
-                            SpellHandle spell = new(Game1.player, windVictims.First().Position, 256, damageMonsters);
+                            SpellHandle spell = new(Game1.player, windVictims.First().Position, 256, damageMonsters)
+                            {
+                                type = SpellHandle.Spells.explode,
 
-                            spell.type = SpellHandle.spells.explode;
+                                instant = true,
 
-                            spell.instant = true;
+                                scheme = IconData.schemes.fates,
 
-                            spell.scheme = IconData.schemes.fates;
+                                display = IconData.impacts.glare,
 
-                            spell.display = IconData.impacts.glare;
+                                displayRadius = 3
+                            };
 
-                            spell.added.Add(Mod.instance.rite.ChargeEffect(Rite.charges.fatesCharge));
+                            spell.added.Add(Mod.instance.rite.ChargeEffect(IconData.cursors.fatesCharge, true));
 
                             Mod.instance.spellRegister.Add(spell);
 
@@ -537,27 +541,28 @@ namespace StardewDruid.Cast
 
                     cooldown++;
 
-                    if (cooldown > 4)
+                    if (cooldown > 9)
                     {
 
-                        cooldown = 2;
+                        cooldown = 5;
 
-                        if (Vector2.Distance(position, Game1.player.Position) <= 320)
+                        if (Vector2.Distance(position, Game1.player.Position) <= 256)
                         {
 
                             cooldown = 0;
 
-                            SpellHandle spell = new(Game1.player.currentLocation,Game1.player.Position,position,256, damageFarmers, damageMonsters);
+                            SpellHandle spell = new(Game1.player.currentLocation, Game1.player.Position, position, 192, damageFarmers, damageMonsters)
+                            {
+                                type = SpellHandle.Spells.explode,
 
-                            spell.type = SpellHandle.spells.explode;
+                                instant = true,
 
-                            spell.instant = true;
+                                scheme = IconData.schemes.death,
 
-                            spell.scheme = IconData.schemes.death;
+                                display = IconData.impacts.skull,
 
-                            spell.display = IconData.impacts.skull;
-
-                            spell.boss = bossMonster;
+                                boss = bossMonster
+                            };
 
                             Mod.instance.spellRegister.Add(spell);
 

@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
-using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
@@ -16,6 +16,13 @@ namespace StardewDruid.Event.Scene
 {
     public class ApproachEffigy : EventHandle
     {
+
+        public Dictionary<int,Vector2> eventVectors = new()
+        {
+
+            [0] = new Vector2(6f,6f),
+
+        };
 
         public ApproachEffigy()
         {
@@ -32,7 +39,7 @@ namespace StardewDruid.Event.Scene
             if (actors.Count == 0)
             {
 
-                AddActor(0, origin - new Vector2(48, 48));
+                AddActor(0, origin - new Vector2(0, 48));
 
             }
 
@@ -93,7 +100,7 @@ namespace StardewDruid.Event.Scene
 
             activeLimit = eventCounter + 302;
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.discoverMineral, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.Sounds.discoverMineral, });
 
             Mod.instance.rite.CastRockfall(true);
             Mod.instance.rite.CastRockfall(true);
@@ -144,6 +151,8 @@ namespace StardewDruid.Event.Scene
 
                         timeBasedMotion = true,
 
+                        layerDepth = 999f
+
                     };
 
                     location.temporarySprites.Add(EffigyAnimation);
@@ -174,7 +183,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(6);
 
-                    Mod.instance.iconData.ImpactIndicator(location, origin + new Vector2(64, 0), IconData.impacts.impact, 6f, new());
+                    Mod.instance.iconData.ImpactIndicator(location, origin + new Vector2(64, 0), IconData.impacts.impact, 5f, new());
 
                     location.playSound("explosion");
 
@@ -218,7 +227,7 @@ namespace StardewDruid.Event.Scene
 
                 case 201:
 
-                    companions[0].TargetEvent(0, companions[0].Position + new Vector2(0, 192));
+                    companions[0].TargetEvent(0, eventVectors[0]*64);
 
                     break;
 

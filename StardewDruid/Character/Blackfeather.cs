@@ -6,6 +6,7 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
@@ -20,7 +21,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using static StardewDruid.Character.Character;
 
 namespace StardewDruid.Character
 {
@@ -41,20 +41,19 @@ namespace StardewDruid.Character
         public override void LoadOut()
         {
 
-            base.LoadOut();
+            if (characterType == CharacterHandle.characters.none)
+            {
 
-            setScale = 3.75f;
+                characterType = CharacterHandle.characters.Blackfeather;
+
+            }
+
+            LoadOutLady();
+
+            LoadOutKick();
 
             cooldownInterval = 90;
 
-            specialFrames = CharacterRender.WitchSpecial();
-
-            specialIntervals = CharacterRender.WitchIntervals();
-
-            specialCeilings = CharacterRender.WitchCeilings();
-
-            specialFloors = CharacterRender.WitchFloors();
-            
             restSet = true;
 
         }
@@ -98,6 +97,33 @@ namespace StardewDruid.Character
 
             DrawShadow(b, spritePosition, drawLayer, fade);
 
+            int rate = Math.Abs((int)(Game1.currentGameTime.TotalGameTime.TotalSeconds % 12) - 6);
+
+            Color circleColour = new Color(256 - (rate * 21), 256 - (rate * 21), 256 - rate);
+
+            b.Draw(
+                 Mod.instance.iconData.sheetTextures[IconData.tilesheets.ritual],
+                 spritePosition + new Vector2(0, 14 * setScale),
+                 new Rectangle(0, 96, 64, 48),
+                 Color.White * fade,
+                 0f,
+                 new Vector2(32, 24),
+                 setScale,
+                 0,
+                 drawLayer - 0.0005f
+             );
+
+            b.Draw(
+                 Mod.instance.iconData.sheetTextures[IconData.tilesheets.ritual],
+                 spritePosition + new Vector2(0, 14 * setScale),
+                 new Rectangle(64, 96, 64, 48),
+                 circleColour * fade,
+                 0f,
+                 new Vector2(32, 24),
+                 setScale,
+                 0,
+                 drawLayer - 0.0006f
+             );
         }
 
         public override List<Vector2> RoamAnalysis()
@@ -260,9 +286,7 @@ namespace StardewDruid.Character
 
                     Cultivate cultivateEvent = new();
 
-                    cultivateEvent.EventSetup(workVector * 64, "blackfeather_cultivate_" + workVector.ToString());
-
-                    cultivateEvent.inabsentia = true;
+                    cultivateEvent.EventSetup(currentLocation, workVector * 64, "blackfeather_cultivate_" + workVector.ToString());
 
                     cultivateEvent.inventory = Mod.instance.chests[CharacterHandle.characters.Blackfeather].Items;
 
@@ -292,30 +316,31 @@ namespace StardewDruid.Character
 
         }
 
-        public override bool SmashAttack(StardewValley.Monsters.Monster monster)
+        /*public override bool SmashAttack(StardewValley.Monsters.Monster monster)
         {
             
             return SpecialAttack(monster);
 
-        }
+        }*/
 
         public override void ConnectSweep()
         {
 
-            SpellHandle swipeEffect = new(Game1.player, Position, 256, Mod.instance.CombatDamage() / 2);
+            SpellHandle swipeEffect = new(Game1.player, Position, 256, Mod.instance.CombatDamage() / 2)
+            {
+                type = SpellHandle.Spells.explode,
 
-            swipeEffect.type = SpellHandle.spells.explode;
+                display = IconData.impacts.boltnode,
 
-            swipeEffect.display = IconData.impacts.boltnode;
+                instant = true,
 
-            swipeEffect.instant = true;
-
-            swipeEffect.added = new() { SpellHandle.effects.push, };
+                added = new() { SpellHandle.Effects.push, }
+            };
 
             if (Mod.instance.activeEvent.Count == 0)
             {
 
-                swipeEffect.sound = SpellHandle.sounds.thunder_small;
+                swipeEffect.sound = SpellHandle.Sounds.thunder_small;
 
             }
 
@@ -330,28 +355,25 @@ namespace StardewDruid.Character
 
             netSpecial.Set((int)specials.launch);
 
-            specialTimer = 48;
+            specialTimer = 60;
 
-            cooldownTimer = cooldownInterval;
+            SetCooldown(40, 0.5f);
 
-            LookAtTarget(monster.Position, true);
+            LookAtTarget(monster.GetBoundingBox().Center.ToVector2(), true);
 
-            //SpellHandle glare = new(GetBoundingBox().Center.ToVector2(), 256, IconData.impacts.glare, new()) { scheme = IconData.schemes.mists };
+            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage())
+            {
+                type = SpellHandle.Spells.lightning,
 
-            //Mod.instance.spellRegister.Add(glare);
+                factor = 6,
 
-            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage());
+                counter = -12
+            };
 
-            special.type = SpellHandle.spells.lightning;
-
-            special.factor =6;
-
-            special.counter = -24;
-
-            if(Mod.instance.activeEvent.Count == 0)
+            if (Mod.instance.activeEvent.Count == 0)
             {
                 
-                special.sound = SpellHandle.sounds.thunder_small;
+                special.sound = SpellHandle.Sounds.thunder_small;
 
             }
 

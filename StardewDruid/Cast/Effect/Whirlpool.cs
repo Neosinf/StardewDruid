@@ -12,6 +12,7 @@ using StardewValley.Extensions;
 using StardewValley.GameData.Crops;
 using StardewValley.ItemTypeDefinitions;
 using StardewValley.Locations;
+using StardewValley.Minigames;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using System;
@@ -94,14 +95,25 @@ namespace StardewDruid.Cast.Effect
 
                 }
 
-                List<HoeDirt> hoeDirts = new();
+                int difficulty = Mod.instance.ModDifficulty();
 
                 foreach (Vector2 tileVector in tileVectors)
                 {
 
-                    if(Mod.instance.randomIndex.Next(20 - Mod.instance.PowerLevel) == 0)
+                    if(Mod.instance.randomIndex.Next(16 + difficulty) == 0)
                     {
-                        
+
+                        if (Mod.instance.randomIndex.Next(10-Mod.instance.PowerLevel) == 0)
+                        {
+
+                            string highFish = SpawnData.RandomHighFish(location, tileVector);
+
+                            tornado.Value.AddCatch(highFish, tileVector);
+
+                            continue;
+
+                        }
+
                         string randomFish = SpawnData.RandomLowFish(location, tileVector);
 
                         tornado.Value.AddCatch(randomFish, tileVector);
@@ -130,13 +142,6 @@ namespace StardewDruid.Cast.Effect
         public Dictionary<string,int> fishes = new();
 
         public TemporaryAnimatedSprite animation;
-
-        public enum tornadoType
-        {
-            none,
-            beach,
-            lava,
-        }
 
         public TornadoTarget(GameLocation Location, Vector2 Tile)
         {
@@ -271,9 +276,10 @@ namespace StardewDruid.Cast.Effect
                         for (int i = 0; i < fish.Value; i++)
                         {
 
-                            StardewValley.Object toss = new(fish.Key, 1);
-
-                            toss.Quality = quality;
+                            StardewValley.Object toss = new(fish.Key, 1)
+                            {
+                                Quality = quality
+                            };
 
                             treasureObjects[bounty].Add(toss);
 
@@ -297,27 +303,30 @@ namespace StardewDruid.Cast.Effect
                 for (int i = 0; i < fish.Value; i++)
                 {
 
-                    StardewValley.Object toss = new(fish.Key, 1);
-
-                    toss.Quality = quality;
+                    StardewValley.Object toss = new(fish.Key, 1)
+                    {
+                        Quality = quality
+                    };
 
                     Vector2 offset = tile * 64 + new Vector2(-64 + Mod.instance.randomIndex.Next(10) * 16, -64 + Mod.instance.randomIndex.Next(10) * 16);
 
-                    ThrowHandle throwObject = new(Game1.player, offset, toss);
-
-                    throwObject.delay = Mod.instance.randomIndex.Next(5) * 10;
+                    ThrowHandle throwObject = new(Game1.player, offset, toss)
+                    {
+                        delay = Mod.instance.randomIndex.Next(5) * 10
+                    };
 
                     throwObject.register();
 
-                    Game1.player.gainExperience(1, quality * 12); // gain fishing experience
+                    Mod.instance.GiveExperience(1, quality * 12); // gain fishing experience
 
                     Game1.player.caughtFish(candidate.ItemId, 1, false, 1);
 
                 }
 
-                SpellHandle splash = new(tile * 64, 192, IconData.impacts.fish, new());
-
-                splash.sound = SpellHandle.sounds.pullItemFromWater;
+                SpellHandle splash = new(tile * 64, 160, IconData.impacts.fish, new())
+                {
+                    sound = SpellHandle.Sounds.pullItemFromWater
+                };
 
                 Mod.instance.spellRegister.Add(splash);
 
@@ -347,6 +356,13 @@ namespace StardewDruid.Cast.Effect
                 treasure.EventSetup(tile * 64, treasureId, false);
 
                 treasure.crateThief = true;
+
+                if(treasureObjects.Count > 1)
+                {
+
+                    treasure.skipBattle = true;
+
+                }
 
                 treasure.heldTreasure = true;
 

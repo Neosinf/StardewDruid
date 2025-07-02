@@ -17,13 +17,14 @@ namespace StardewDruid.Data
 
             /*DragonRoar: Dinosaur Roar by Mike Koenig Attribute 3.0 SoundBank.com */
 
-            CueDefinition myCueDefinition = new CueDefinition();
+            /*CueDefinition myCueDefinition = new CueDefinition
+            {
+                name = "DragonRoar",
 
-            myCueDefinition.name = "DragonRoar";
+                instanceLimit = 1,
 
-            myCueDefinition.instanceLimit = 1;
-
-            myCueDefinition.limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest;
+                limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest
+            };
 
             FileStream soundstream = new(Path.Combine(Mod.instance.Helper.DirectoryPath, "Sounds", "Roar.wav"), FileMode.Open);
 
@@ -31,18 +32,18 @@ namespace StardewDruid.Data
 
             myCueDefinition.SetSound(roarSound, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
-            Game1.soundBank.AddCue(myCueDefinition);
-
+            Game1.soundBank.AddCue(myCueDefinition);*/
 
             /*DragonFlight: Fire (7s) by Matt Script Personal Use License SoundSnap.com */
 
-            CueDefinition dragonFlight = new CueDefinition();
+            /*CueDefinition dragonFlight = new CueDefinition
+            {
+                name = "DragonFlight",
 
-            dragonFlight.name = "DragonFlight";
+                instanceLimit = 1,
 
-            dragonFlight.instanceLimit = 1;
-
-            dragonFlight.limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest;
+                limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest
+            };
 
             FileStream dragonFlightStream = new(Path.Combine(Mod.instance.Helper.DirectoryPath, "Sounds", "DragonFlight.wav"), FileMode.Open);
 
@@ -50,18 +51,19 @@ namespace StardewDruid.Data
 
             dragonFlight.SetSound(dragonFlightSound, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
-            Game1.soundBank.AddCue(dragonFlight);
+            Game1.soundBank.AddCue(dragonFlight);*/
 
 
             /*DragonBreath: Fire (2s) by Lynne Publishing Personal Use License SoundSnap.com */
 
-            CueDefinition dragonFire = new CueDefinition();
+            /*CueDefinition dragonFire = new CueDefinition
+            {
+                name = "DragonFire",
 
-            dragonFire.name = "DragonFire";
+                instanceLimit = 1,
 
-            dragonFire.instanceLimit = 1;
-
-            dragonFire.limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest;
+                limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest
+            };
 
             FileStream dragonFireStream = new(Path.Combine(Mod.instance.Helper.DirectoryPath, "Sounds", "DragonFire.wav"), FileMode.Open);
 
@@ -69,18 +71,19 @@ namespace StardewDruid.Data
 
             dragonFire.SetSound(dragonFireSound, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
-            Game1.soundBank.AddCue(dragonFire);
+            Game1.soundBank.AddCue(dragonFire);*/
 
 
             /*DragonBreath: Fire (1s) by Matt Script Personal Use License SoundSnap.com */
 
-            CueDefinition dragonFireTwo = new CueDefinition();
+            /*CueDefinition dragonFireTwo = new CueDefinition
+            {
+                name = "DragonFireTwo",
 
-            dragonFireTwo.name = "DragonFireTwo";
+                instanceLimit = 1,
 
-            dragonFireTwo.instanceLimit = 1;
-
-            dragonFireTwo.limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest;
+                limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest
+            };
 
             FileStream dragonFireTwoStream = new(Path.Combine(Mod.instance.Helper.DirectoryPath, "Sounds", "DragonFireTwo.wav"), FileMode.Open);
 
@@ -88,18 +91,19 @@ namespace StardewDruid.Data
 
             dragonFireTwo.SetSound(dragonFireTwoSound, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
-            Game1.soundBank.AddCue(dragonFireTwo);
+            Game1.soundBank.AddCue(dragonFireTwo);*/
 
 
             /*WolfGrowl: 410920-Monster_Within_-Werewolf_-Bark-03-04 by Sound Morph, Personal Use License SoundSnap.com */
 
-            CueDefinition wolfGrowl = new CueDefinition();
+            /*CueDefinition wolfGrowl = new CueDefinition
+            {
+                name = "WolfGrowl",
 
-            wolfGrowl.name = "WolfGrowl";
+                instanceLimit = 1,
 
-            wolfGrowl.instanceLimit = 1;
-
-            wolfGrowl.limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest;
+                limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest
+            };
 
             FileStream wolfGrowlStream = new(Path.Combine(Mod.instance.Helper.DirectoryPath, "Sounds", "WolfGrowl.wav"), FileMode.Open);
 
@@ -107,18 +111,19 @@ namespace StardewDruid.Data
 
             wolfGrowl.SetSound(wolfGrowlSound, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
-            Game1.soundBank.AddCue(wolfGrowl);
-            
+            Game1.soundBank.AddCue(wolfGrowl);*/
+
 
             /*BearGrowl: 83105-Monster_snarl_slow_growl_creature-BLASTWAVEFX-20519 Personal Use License SoundSnap.com */
 
-            CueDefinition bearGrowl = new CueDefinition();
+            /*CueDefinition bearGrowl = new CueDefinition
+            {
+                name = "BearGrowl",
 
-            bearGrowl.name = "BearGrowl";
+                instanceLimit = 1,
 
-            bearGrowl.instanceLimit = 1;
-
-            bearGrowl.limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest;
+                limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest
+            };
 
             FileStream bearGrowlStream = new(Path.Combine(Mod.instance.Helper.DirectoryPath, "Sounds", "BearGrowl.wav"), FileMode.Open);
 
@@ -126,18 +131,19 @@ namespace StardewDruid.Data
 
             bearGrowl.SetSound(bearGrowlSound, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
-            Game1.soundBank.AddCue(bearGrowl);
+            Game1.soundBank.AddCue(bearGrowl);*/
 
 
             /*BearGrowlTwo: 83056-Monster_snarl_growl_creature-BLASTWAVEFX-20517 Personal Use License SoundSnap.com */
 
-            CueDefinition bearGrowlTwo = new CueDefinition();
+            /*CueDefinition bearGrowlTwo = new CueDefinition
+            {
+                name = "BearGrowlTwo",
 
-            bearGrowlTwo.name = "BearGrowlTwo";
+                instanceLimit = 1,
 
-            bearGrowlTwo.instanceLimit = 1;
-
-            bearGrowlTwo.limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest;
+                limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest
+            };
 
             FileStream bearGrowlTwoStream = new(Path.Combine(Mod.instance.Helper.DirectoryPath, "Sounds", "BearGrowlTwo.wav"), FileMode.Open);
 
@@ -145,18 +151,19 @@ namespace StardewDruid.Data
 
             bearGrowlTwo.SetSound(bearGrowlTwoSound, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
-            Game1.soundBank.AddCue(bearGrowlTwo);
+            Game1.soundBank.AddCue(bearGrowlTwo);*/
 
 
             /*BearGrowlThree: 74733-Monster_snarl_growl_creature-BLASTWAVEFX-10267 Personal Use License SoundSnap.com */
 
-            CueDefinition bearGrowlThree = new CueDefinition();
+            /*CueDefinition bearGrowlThree = new CueDefinition
+            {
+                name = "BearGrowlThree",
 
-            bearGrowlThree.name = "BearGrowlThree";
+                instanceLimit = 1,
 
-            bearGrowlThree.instanceLimit = 1;
-
-            bearGrowlThree.limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest;
+                limitBehavior = CueDefinition.LimitBehavior.ReplaceOldest
+            };
 
             FileStream bearGrowlThreeStream = new(Path.Combine(Mod.instance.Helper.DirectoryPath, "Sounds", "BearGrowlThree.wav"), FileMode.Open);
 
@@ -164,9 +171,7 @@ namespace StardewDruid.Data
 
             bearGrowlThree.SetSound(bearGrowlThreeSound, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
-            Game1.soundBank.AddCue(bearGrowlThree);
-
-
+            Game1.soundBank.AddCue(bearGrowlThree);*/
 
         }
 

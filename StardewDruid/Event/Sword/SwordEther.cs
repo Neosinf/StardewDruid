@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewDruid.Cast;
-using StardewDruid.Character;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewDruid.Monster;
@@ -49,7 +49,7 @@ namespace StardewDruid.Event.Sword
 
             base.EventActivate();
 
-            EventBar("The Tomb of Tyrannus",0);
+            EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
             activeLimit = 120;
 
@@ -162,9 +162,9 @@ namespace StardewDruid.Event.Sword
                     if (woundedCounter <= 1)
                     {
 
-                        SpellHandle reaperDeath = new(reaper.Position, 320, IconData.impacts.deathbomb, new());
+                        SpellHandle reaperDeath = new(reaper.Position, 320, IconData.impacts.deathbomb, new()) { displayRadius = 4, sound = SpellHandle.Sounds.shadowDie };
 
-                        reaperDeath.sound = SpellHandle.sounds.shadowDie;
+                        reaperDeath.sound = SpellHandle.Sounds.shadowDie;
 
                         Mod.instance.spellRegister.Add(reaperDeath);
 

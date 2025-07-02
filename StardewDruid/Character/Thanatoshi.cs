@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
+using StardewDruid.Handle;
+using StardewDruid.Render;
 using StardewValley;
 using System;
 using System.Collections.Generic;
@@ -26,9 +28,7 @@ namespace StardewDruid.Character
         {
             base.LoadOut();
 
-            WeaponLoadout();
-
-            weaponRender.LoadWeapon(Render.WeaponRender.weapons.scythetwo);
+            WeaponLoadout(WeaponRender.weapons.scythetwo);
 
         }
 

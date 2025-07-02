@@ -5,21 +5,12 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using StardewDruid.Render;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Character
 {
     public class Hoverer : StardewDruid.Character.Character
     {
-
-        public int hoverHeight;
-
-        public int hoverInterval;
-
-        public int hoverIncrements;
-
-        public float hoverElevate;
-
-        public int hoverFrame;
 
         public HoverRender hoverRender;
 
@@ -45,21 +36,13 @@ namespace StardewDruid.Character
 
             characterTexture = CharacterHandle.CharacterTexture(characterType);
 
-            hoverRender = new(characterType.ToString());
+            hoverRender = new(characterType);
 
             LoadIntervals();
 
             setScale = 4f;
 
-            overhead = 112;
-
             gait = 1.8f;
-
-            hoverInterval = 12;
-
-            hoverIncrements = 2;
-
-            hoverElevate = 1f;
 
             modeActive = mode.random;
 
@@ -79,23 +62,6 @@ namespace StardewDruid.Character
 
         }
 
-        public override Vector2 SpritePosition(Vector2 localPosition)
-        {
-
-            Vector2 spritePosition = base.SpritePosition(localPosition);
-
-            if (hoverInterval > 0)
-            {
-
-                spritePosition.Y -= (float)Math.Abs(hoverHeight) * hoverElevate;
-
-            }
-
-            return spritePosition;
-
-
-        }
-
         public override void draw(SpriteBatch b, float alpha = -1f)
         {
             
@@ -104,34 +70,40 @@ namespace StardewDruid.Character
         public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
         {
 
-            base.drawAboveAlwaysFrontLayer(b);
-
             if (IsInvisible || !Utility.isOnScreen(Position, 128) || characterTexture == null)
             {
                 return;
             }
 
+            DrawEmote(b);
+
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            HoverRenderAdditional hoverAdditional = new();
+            Vector2 usePosition = SpritePosition(localPosition);
 
-            hoverAdditional.scale = setScale;
+            DrawCharacter(b, usePosition);
 
-            hoverAdditional.position = SpritePosition(localPosition) - new Vector2(0, (float)Math.Abs(hoverHeight) * hoverElevate);
+        }
 
-            hoverAdditional.layer = (float)StandingPixel.Y / 10000f + 0.001f;
+        public override void DrawCharacter(SpriteBatch b, Vector2 spritePosition)
+        {
+            HoverRenderAdditional hoverAdditional = new()
+            {
+                scale = setScale,
 
-            hoverAdditional.flip = SpriteFlip();
+                layer = (float)StandingPixel.Y / 10000f + 0.001f,
 
-            hoverAdditional.fade = fadeOut == 0 ? 1f : fadeOut;
+                flip = SpriteFlip(),
 
-            hoverAdditional.direction = netDirection.Value;
+                fade = fadeOut,
 
-            hoverAdditional.frame = hoverFrame;
+                direction = netDirection.Value,
 
-            hoverAdditional.series = HoverRenderAdditional.hoverseries.hover;
+                series = HoverRenderAdditional.hoverseries.none,
 
-            DrawEmote(b);
+                position = spritePosition,
+
+            };
 
             if (netDash.Value != 0)
             {
@@ -146,44 +118,21 @@ namespace StardewDruid.Character
             else if (netSpecial.Value != 0)
             {
 
-                hoverAdditional.frame = specialFrame;
-
                 hoverAdditional.series = HoverRenderAdditional.hoverseries.special;
 
             }
 
             hoverRender.DrawNormal(b,hoverAdditional);
 
-
         }
 
-        public override void update(GameTime time, GameLocation location)
+
+        public override void normalUpdate(GameTime time, GameLocation location)
         {
-            
-            base.update(time, location);
 
-            hoverHeight++;
+            base.normalUpdate(time, location);
 
-            int heightLimit = (hoverIncrements * hoverInterval);
-
-            if (hoverHeight > heightLimit)
-            {
-                hoverHeight -= (heightLimit * 2);
-            }
-
-            if (Math.Abs(hoverHeight) % hoverInterval == 0)
-            {
-
-                hoverFrame++;
-
-                if (hoverFrame >= walkFrames[0].Count)
-                {
-
-                    hoverFrame = 0;
-
-                }
-
-            }
+            hoverRender.Update(pathActive == pathing.none);
 
         }
 
@@ -191,6 +140,12 @@ namespace StardewDruid.Character
         {
 
             return SmashAttack(monster);
+
+        }
+        public override Microsoft.Xna.Framework.Rectangle OverheadPortrait()
+        {
+
+            return new Rectangle(14, 5, 16, 16);
 
         }
 

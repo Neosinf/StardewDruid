@@ -6,6 +6,7 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.FruitTrees;
@@ -43,7 +44,11 @@ namespace StardewDruid.Character
 
             base.LoadOut();
 
-            fadeOut = 0.75f;
+            fadeSet = 0.8f;
+
+            fadeOut = 0.4f;
+
+            warpDisplay = IconData.warps.mist;
 
             WeaponLoadout();
 
@@ -72,21 +77,22 @@ namespace StardewDruid.Character
 
             specialTimer = 90;
 
-            cooldownTimer = cooldownInterval;
+            SetCooldown(specialTimer, 1f);
 
             LookAtTarget(monster.Position, true);
 
-            SpellHandle fireball = new(Game1.player, new() { monster, }, Mod.instance.CombatDamage() / 2);
+            SpellHandle fireball = new(Game1.player, new() { monster, }, Mod.instance.CombatDamage() / 2)
+            {
+                origin = GetBoundingBox().Center.ToVector2(),
 
-            fireball.origin = GetBoundingBox().Center.ToVector2();
+                type = SpellHandle.Spells.missile,
 
-            fireball.type = SpellHandle.spells.missile;
+                factor = 3,
 
-            fireball.factor =3;
+                missile = MissileHandle.missiles.knife,
 
-            fireball.missile = MissileHandle.missiles.knife;
-
-            fireball.display = IconData.impacts.impact;
+                display = IconData.impacts.impact
+            };
 
             Mod.instance.spellRegister.Add(fireball);
 

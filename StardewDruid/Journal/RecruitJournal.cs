@@ -9,9 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using StardewValley.Menus;
 using System.Diagnostics.Metrics;
-using StardewDruid.Character;
 using StardewDruid.Cast;
 using StardewValley.Minigames;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Journal
 {
@@ -30,7 +30,7 @@ namespace StardewDruid.Journal
 
             type = journalTypes.recruits;
 
-            title = StringData.Strings(StringData.stringkeys.recruits);
+            title = StringData.Strings(StringData.stringkeys.ledger);
 
             pagination = 4;
 
@@ -56,18 +56,32 @@ namespace StardewDruid.Journal
                 if (Mod.instance.save.recruits.ContainsKey(hero))
                 {
 
+                    NPC original = CharacterHandle.FindVillager(Mod.instance.save.recruits[hero].name);
+
                     Journal.ContentComponent content = new(ContentComponent.contentTypes.herolist, hero.ToString());
 
                     content.text[0] = Mod.instance.save.recruits[hero].display;
 
-                    content.textures[0] = CharacterHandle.FindVillager(Mod.instance.save.recruits[hero].name).Sprite.Texture;
-
-                    if (CharacterHandle.RecruitHero(Mod.instance.save.recruits[hero].name))
+                    if (original != null)
                     {
 
-                        content.text[0] = CharacterHandle.RecruitTitle(Mod.instance.save.recruits[hero].name, Mod.instance.save.recruits[hero].display);
+                        content.textures[0] = original.Sprite.Texture;
+
+                        content.textureSources[0] = new Rectangle(0, 0, 16, 24);
+
+                    }
+
+                    if (RecruitHandle.RecruitHero(Mod.instance.save.recruits[hero].name))
+                    {
+                        string name = Mod.instance.save.recruits[hero].name;
+
+                        content.text[0] = Mod.instance.save.recruits[hero].display;
+
+                        content.text[1] = RecruitHandle.RecruitTitle(name);
 
                         content.icons[0] = IconData.displays.heroes;
+
+                        content.text[2] = RecruitHandle.RecruitLevel(Mod.instance.save.recruits[hero].level);
 
                     }
 
@@ -77,9 +91,10 @@ namespace StardewDruid.Journal
 
                 }
 
-                Journal.ContentComponent blank = new(ContentComponent.contentTypes.herolist, hero.ToString());
-
-                blank.active = false;
+                Journal.ContentComponent blank = new(ContentComponent.contentTypes.herolist, hero.ToString())
+                {
+                    active = false
+                };
 
                 contentComponents[start++] = blank;
 
@@ -113,12 +128,6 @@ namespace StardewDruid.Journal
                 [104] = addButton(journalButtons.herbalism),
                 [105] = addButton(journalButtons.lore),
                 [106] = addButton(journalButtons.transform),
-                [107] = addButton(journalButtons.recruits),
-
-                [201] = addButton(journalButtons.clearOne),
-                [202] = addButton(journalButtons.clearTwo),
-                [203] = addButton(journalButtons.clearThree),
-                [204] = addButton(journalButtons.clearFour),
 
                 [301] = addButton(journalButtons.exit),
 
@@ -142,126 +151,12 @@ namespace StardewDruid.Journal
 
             };
 
-            for (int i = 0; i < slots.Count; i++)
-            {
-
-                CharacterHandle.characters hero = slots[i];
-
-                if (!Mod.instance.save.recruits.ContainsKey(hero))
-                {
-
-                    interfaceComponents[201 + i].active = false;
-
-                }
-
-            }
-
         }
-
-        public override void pressButton(journalButtons button)
-        {
-
-            switch (button)
-            {
-
-                case journalButtons.clearOne:
-
-                    ClearHero(CharacterHandle.characters.recruit_one);
-
-                    return;
-
-                case journalButtons.clearTwo:
-
-                    ClearHero(CharacterHandle.characters.recruit_two);
-
-                    return;
-
-                case journalButtons.clearThree:
-
-                    ClearHero(CharacterHandle.characters.recruit_three);
-
-                    return;
-
-                case journalButtons.clearFour:
-
-                    ClearHero(CharacterHandle.characters.recruit_four);
-
-                    return;
-
-                default:
-
-                    base.pressButton(button);
-
-                    break;
-
-            }
-
-        }
-
 
         public override void pressContent()
         {
 
-            CharacterHandle.characters type = Enum.Parse<CharacterHandle.characters>(contentComponents[focus].id);
-
-            if (Mod.instance.trackers.ContainsKey(type))
-            {
-
-                Game1.playSound(SpellHandle.sounds.ghost.ToString());
-
-                return;
-
-            }
-
-            CharacterHandle.RecruitLoad(type);
-
-            Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.3").Tokens(new { name = (Mod.instance.characters[type] as Recruit).villager.Name, }), 0, true);
-
-            exitThisMenu();
-
-        }
-
-        public override void pressCancel()
-        {
-
-            CharacterHandle.characters type = Enum.Parse<CharacterHandle.characters>(contentComponents[focus].id);
-
-            if (!Mod.instance.characters.ContainsKey(type))
-            {
-
-                Game1.playSound(SpellHandle.sounds.ghost.ToString());
-
-                return;
-
-            }
-
-            if (Mod.instance.characters[type].currentLocation == null)
-            {
-
-                Game1.playSound(SpellHandle.sounds.ghost.ToString());
-
-                return;
-
-            }
-
-            RecruitData hero = Mod.instance.save.recruits[type];
-
-            Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.4").Tokens(new { name = (Mod.instance.characters[type] as Recruit).villager.Name, }), 0, true);
-
-            CharacterHandle.RecruitRemove(type);
-
-            exitThisMenu();
-
-        }
-
-        public virtual void ClearHero(CharacterHandle.characters type)
-        {
-
-            CharacterHandle.RecruitRemove(type);
-
-            populateContent();
-
-            activateInterface();
+            openJournal(journalTypes.recruitPage, contentComponents[focus].id, focus);
 
         }
 

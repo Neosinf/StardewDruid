@@ -30,7 +30,7 @@ namespace StardewDruid.Monster
 
             baseJuice = 3;
             
-            basePulp = 25;
+            basePulp = 20;
 
             cooldownInterval = 180;
 
@@ -44,11 +44,10 @@ namespace StardewDruid.Monster
 
             DarkBrawl();
 
-            weaponRender = new();
-
-            weaponRender.melee = false;
-
-            overHead = new(16, -144);
+            weaponRender = new()
+            {
+                melee = false
+            };
 
             loadedOut = true;
 

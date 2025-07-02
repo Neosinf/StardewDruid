@@ -4,25 +4,48 @@ using StardewDruid.Dialogue;
 using StardewDruid.Journal;
 using StardewValley;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 
 namespace StardewDruid.Data
 {
     public static class StringData
     {
 
-        public static string RiteNames(Rite.rites rite = Rite.rites.weald)
+        public static string colon = Mod.instance.Helper.Translation.Get("Punctuation.1");
+
+        public static string comma = Mod.instance.Helper.Translation.Get("Punctuation.2");
+
+        public static string slash = Mod.instance.Helper.Translation.Get("Punctuation.3");
+
+        public static string currency = Mod.instance.Helper.Translation.Get("Punctuation.4");
+
+        public static string plus = Mod.instance.Helper.Translation.Get("Punctuation.5");
+
+        public static string normal = Mod.instance.Helper.Translation.Get("DialogueData.386.31");
+
+        public static string silver = Mod.instance.Helper.Translation.Get("DialogueData.386.32");
+
+        public static string gold = Mod.instance.Helper.Translation.Get("DialogueData.386.33");
+
+        public static string iridium = Mod.instance.Helper.Translation.Get("DialogueData.386.34");
+
+        public static string longbreak = Mod.instance.Helper.Translation.Get("DialogueData.388.5");
+
+        public static string pluralism = Mod.instance.Helper.Translation.Get("DialogueData.388.6");
+
+        public static string RiteNames(Rite.Rites rite = Rite.Rites.weald)
         {
             switch (rite)
             {
                 default:
-                case Rite.rites.none: return Mod.instance.Helper.Translation.Get("DialogueData.361.1");
-                case Rite.rites.weald: return Mod.instance.Helper.Translation.Get("DialogueData.38");
-                case Rite.rites.mists: return Mod.instance.Helper.Translation.Get("DialogueData.39");
-                case Rite.rites.stars: return Mod.instance.Helper.Translation.Get("DialogueData.40");
-                case Rite.rites.fates: return Mod.instance.Helper.Translation.Get("DialogueData.41");
-                case Rite.rites.ether: return Mod.instance.Helper.Translation.Get("DialogueData.42");
-                case Rite.rites.bones: return Mod.instance.Helper.Translation.Get("DialogueData.312.2");
-                case Rite.rites.bombs: return Mod.instance.Helper.Translation.Get("DialogueData.361.2");
+                case Rite.Rites.none: return Mod.instance.Helper.Translation.Get("DialogueData.361.1");
+                case Rite.Rites.weald: return Mod.instance.Helper.Translation.Get("DialogueData.38");
+                case Rite.Rites.mists: return Mod.instance.Helper.Translation.Get("DialogueData.39");
+                case Rite.Rites.stars: return Mod.instance.Helper.Translation.Get("DialogueData.40");
+                case Rite.Rites.fates: return Mod.instance.Helper.Translation.Get("DialogueData.41");
+                case Rite.Rites.ether: return Mod.instance.Helper.Translation.Get("DialogueData.42");
+                case Rite.Rites.bones: return Mod.instance.Helper.Translation.Get("DialogueData.312.2");
+                case Rite.Rites.bombs: return Mod.instance.Helper.Translation.Get("DialogueData.361.2");
             }
 
         }
@@ -63,6 +86,8 @@ namespace StardewDruid.Data
             jesterBuffTitle,
             jesterBuffDescription,
 
+            herbalBuffDescription,
+
             // Journal
 
             grimoire,
@@ -72,7 +97,14 @@ namespace StardewDruid.Data
             chronicle,
             herbalTrade,
             powderbox,
-            recruits,
+            ledger,
+            menagerie,
+            orders,
+            satchel,
+            goods,
+            distillery,
+            distilleryEstimated,
+            distilleryRecent,
 
             hostOnly,
             questReplay,
@@ -124,6 +156,24 @@ namespace StardewDruid.Data
             druidPower,
             damageLevel,
 
+            experience,
+            maxLevel,
+            friendship,
+            healthLevel,
+            attackLevel,
+            speedLevel,
+            resistLevel,
+            dragonStats,
+            numberHired,
+            winsAmount,
+            relationship,
+
+            sendToGoods,
+            sellnow,
+
+            applyBuff,
+            activeBuff,
+
             // Miscellaneous
             trashCollected,
             bomberInterruptions,
@@ -172,8 +222,48 @@ namespace StardewDruid.Data
 
             returnedHome,
             joinedPlayer,
-            noWarpPoint
+            noWarpPoint,
+            wandering,
 
+            chained,
+
+            rapidfire,
+            overheated,
+
+            level1,
+            level2,
+            level3,
+            level4,
+            level5,
+
+            shortfall,
+            currentPrice,
+
+            battle,
+            damage,
+            health,
+            your,
+
+            axeBuffName,
+            axeBuffDescription,
+            pickBuffName,
+            pickBuffDescription,
+            hoeBuffName,
+            hoeBuffDescription,
+            canBuffName,
+            canBuffDescription,
+            criticalHit,
+
+            chargeWealdName,
+            chargeWealdDescription,
+            chargeMistsName,
+            chargeMistsDescription, 
+            chargeStarsName,
+            chargeStarsDescription, 
+            chargeFatesName,
+            chargeFatesDescription, 
+            chargeBonesName,
+            chargeBonesDescription,
 
         }
 
@@ -282,6 +372,7 @@ namespace StardewDruid.Data
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.361.6");
 
+
                 case DruidJournal.journalButtons.clearBuffs:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.361.5");
@@ -296,6 +387,55 @@ namespace StardewDruid.Data
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.361.8");
 
+
+                case DruidJournal.journalButtons.summonRecruit:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.5");
+
+                case DruidJournal.journalButtons.dismissRecruit:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.6");
+
+                case DruidJournal.journalButtons.clearRecruit:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.12");
+
+
+                case DruidJournal.journalButtons.summonPal:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.7");
+
+                case DruidJournal.journalButtons.dismissPal:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.8");
+
+                case DruidJournal.journalButtons.schemePal:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.9");
+
+                case DruidJournal.journalButtons.renamePal:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.18");
+
+                case DruidJournal.journalButtons.removePal:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.29");
+
+                case DruidJournal.journalButtons.goods:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.22");
+
+                case DruidJournal.journalButtons.distilleryEstimated:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.25");
+
+                case DruidJournal.journalButtons.distilleryRecent:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.26");
+
+                case DruidJournal.journalButtons.omens:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.390.1");
 
                 default:
 
@@ -416,11 +556,14 @@ namespace StardewDruid.Data
                 case stringkeys.jesterBuffDescription:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.338.2");
-
+                    
                 case stringkeys.jesterBuffTitle:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.338.3");
 
+                case stringkeys.herbalBuffDescription:
+
+                    return Mod.instance.Helper.Translation.Get("HerbalData.1318");
 
                 // ============================================ JOURNAL
 
@@ -460,9 +603,33 @@ namespace StardewDruid.Data
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.361.3");
 
-                case stringkeys.recruits:
+                case stringkeys.ledger:
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.361.7");
+
+                case stringkeys.menagerie:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.4");
+
+                case stringkeys.orders:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.19");
+
+                case stringkeys.goods:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.20");
+
+                case stringkeys.distillery:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.21");
+
+                case stringkeys.distilleryEstimated:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.23");
+
+                case stringkeys.distilleryRecent:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.24");
 
                 // ============================================ JOURNAL MOMENTS
 
@@ -638,6 +805,65 @@ namespace StardewDruid.Data
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.356.2");
 
+                case stringkeys.experience:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.10");
+
+                case stringkeys.maxLevel:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.11");
+
+                case stringkeys.friendship:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.13");
+
+                case stringkeys.healthLevel:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.14");
+
+                case stringkeys.attackLevel:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.15");
+
+                case stringkeys.speedLevel:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.16");
+
+                case stringkeys.resistLevel:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.390.4");
+
+                case stringkeys.dragonStats:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.390.5");
+
+                case stringkeys.numberHired:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.17");
+
+                case stringkeys.winsAmount:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.390.6");
+
+                case stringkeys.sendToGoods:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.27");
+
+                case stringkeys.sellnow:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.390.3");
+
+                case stringkeys.relationship:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.399.1");
+
+                case stringkeys.applyBuff:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.401.1");
+
+                case stringkeys.activeBuff:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.401.2");
 
                 // ============================ Miscellaneous
 
@@ -734,10 +960,178 @@ namespace StardewDruid.Data
 
                     return Mod.instance.Helper.Translation.Get("DialogueData.582.3");
 
+                case stringkeys.wandering:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.29");
+
+                case stringkeys.chained:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.380.1");
+
+                case stringkeys.rapidfire:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.1");
+
+                case stringkeys.overheated:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.2");
+
+
+                case stringkeys.level1:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.377.6");
+
+                case stringkeys.level2:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.377.7");
+
+                case stringkeys.level3:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.377.8");
+
+                case stringkeys.level4:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.377.9");
+
+                case stringkeys.level5:
+
+                    return Mod.instance.Helper.Translation.Get("CharacterHandle.377.10");
+
+                case stringkeys.shortfall:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.30");
+
+                case stringkeys.currentPrice:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.386.36");
+
+                case stringkeys.battle:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.388.1");
+                
+                case stringkeys.damage:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.388.2");
+                
+                case stringkeys.health:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.388.3");   
+                    
+                case stringkeys.your:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.388.4");
+
+                case stringkeys.satchel:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.390.2");
+
+                // 3.9.3 buffs
+
+                case stringkeys.axeBuffName:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.393.1");
+
+                case stringkeys.axeBuffDescription:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.393.2");
+
+                case stringkeys.pickBuffName:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.393.3");
+
+                case stringkeys.pickBuffDescription:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.393.4");
+
+                case stringkeys.hoeBuffName:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.393.5");
+
+                case stringkeys.hoeBuffDescription:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.393.6");
+
+                case stringkeys.canBuffName:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.393.7");
+
+                case stringkeys.canBuffDescription:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.393.8");
+
+                case stringkeys.criticalHit:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.393.9");
+
+
+                // 3.9.9 buffs
+
+                case stringkeys.chargeWealdName:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.399.11");
+
+                case stringkeys.chargeWealdDescription:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.399.2");
+
+                case stringkeys.chargeMistsName:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.399.3");
+
+                case stringkeys.chargeMistsDescription:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.399.4");
+
+                case stringkeys.chargeStarsName:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.399.5");
+
+                case stringkeys.chargeStarsDescription:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.399.6");
+
+                case stringkeys.chargeFatesName:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.399.7");
+
+                case stringkeys.chargeFatesDescription:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.399.8");
+
+                case stringkeys.chargeBonesName:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.399.9");
+
+                case stringkeys.chargeBonesDescription:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueData.399.10");
+
 
             }
 
             return Mod.instance.Helper.Translation.Get("DialogueData.586");
+
+        }
+
+        public static string LevelStrings(int level)
+        {
+
+            switch (level)
+            {
+                default:
+                case 1:
+                    return StringData.Strings(StringData.stringkeys.level1);
+                case 2:
+                    return StringData.Strings(StringData.stringkeys.level2);
+                case 3:
+                    return StringData.Strings(StringData.stringkeys.level3);
+                case 4:
+                    return StringData.Strings(StringData.stringkeys.level4);
+                case 5:
+                    return StringData.Strings(StringData.stringkeys.level5);
+
+            }
+            
 
         }
 

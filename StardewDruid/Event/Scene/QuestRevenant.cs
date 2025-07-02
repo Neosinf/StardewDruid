@@ -5,21 +5,26 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Cast.Ether;
+using StardewDruid.Cast.Fates;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewDruid.Location.Druid;
+using StardewDruid.Location.Terrain;
 using StardewDruid.Monster;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Companions;
 using StardewValley.GameData;
+using StardewValley.GameData.Characters;
 using StardewValley.Locations;
 using StardewValley.Monsters;
+using StardewValley.Objects;
 using StardewValley.SpecialOrders;
 using StardewValley.TerrainFeatures;
 using System;
@@ -302,6 +307,15 @@ namespace StardewDruid.Event.Scene
 
             SendFriendsHome();
 
+            if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Marlon))
+            {
+
+                companions[7] = Mod.instance.characters[CharacterHandle.characters.Marlon];
+
+                companions[7].SwitchToMode(Character.Character.mode.limbo,Game1.player);
+
+            }
+
         }
 
         public override bool AttemptReset()
@@ -497,7 +511,7 @@ namespace StardewDruid.Event.Scene
 
                     // sergeant enter
 
-                    companions[2] = new Shadowtin(CharacterHandle.characters.DarkShooter);
+                    companions[2] = new Shadowfolk(CharacterHandle.characters.DarkShooter);
 
                     voices[2] = companions[2];
 
@@ -747,8 +761,31 @@ namespace StardewDruid.Event.Scene
 
                     location = Mod.instance.locations[LocationHandle.druid_chapel_name];
 
-                    (location as Chapel).activeCircle = true;
+                    if (location is Chapel chapelCheck)
+                    {
 
+                        foreach (TerrainField terrainField in chapelCheck.terrainFields)
+                        {
+
+                            if (terrainField is ChapelAltar altar)
+                            {
+
+                                altar.altarStatus = 1;
+
+                            }
+
+                            if (terrainField is RitualCircle circle)
+                            {
+
+                                circle.ritualStatus = 1;
+
+                                circle.LoadCandles(1);
+
+                            }
+
+                        }
+
+                    }
                     Mod.instance.WarpAllFarmers(location.Name, (int)eventVectors[109].X, (int)eventVectors[109].Y, 0);
 
                     // Revenant
@@ -769,7 +806,7 @@ namespace StardewDruid.Event.Scene
 
                     // Doja
 
-                    LoadBoss(new DarkMage(eventVectors[111], Mod.instance.CombatDifficulty()) { basePulp = 40, }, 0, 3, 4);
+                    LoadBoss(new DarkDoja(eventVectors[111], Mod.instance.CombatDifficulty()) { basePulp = 40, }, 0, 3, 4);
 
                     bosses[0].setWounded = true;
 
@@ -818,8 +855,6 @@ namespace StardewDruid.Event.Scene
                     break;
 
                 case 113:
-
-                    (location as Chapel).activeCircle = true;
 
                     bosses[0].netPosturing.Set(false);
 
@@ -888,7 +923,7 @@ namespace StardewDruid.Event.Scene
 
                     // Rogue character switch
 
-                    companions[5] = new Shadowtin(CharacterHandle.characters.DarkRogue);
+                    companions[5] = new Shadowfolk(CharacterHandle.characters.DarkRogue);
 
                     voices[5] = companions[5];
 
@@ -902,7 +937,7 @@ namespace StardewDruid.Event.Scene
 
                     // Rogue 2 character switch
 
-                    companions[6] = new Shadowtin(CharacterHandle.characters.DarkGoblin);
+                    companions[6] = new Shadowfolk(CharacterHandle.characters.DarkGoblin);
 
                     voices[6] = companions[6];
 
@@ -1024,8 +1059,14 @@ namespace StardewDruid.Event.Scene
                     companions[6].doEmote(32);
 
                     // Marlon
-
-                    companions[7] = new Marlon(CharacterHandle.characters.Marlon);
+                    if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Marlon))
+                    {
+                        companions[7] = Mod.instance.characters[CharacterHandle.characters.Marlon];
+                    }
+                    else
+                    {
+                        companions[7] = new Marlon(CharacterHandle.characters.Marlon);
+                    }
 
                     companions[7].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -1190,7 +1231,7 @@ namespace StardewDruid.Event.Scene
 
                 case 317:
 
-                    location.playSound(SpellHandle.sounds.ghost.ToString());
+                    location.playSound(SpellHandle.Sounds.ghost.ToString());
 
                     break;
 
@@ -1199,13 +1240,19 @@ namespace StardewDruid.Event.Scene
                     foreach (KeyValuePair<int, Vector2> ghostStart in ghostStarts)
                     {
 
-                        ghostSummons[ghostStart.Key] = new Hoverer(CharacterHandle.characters.Spectre);
+                        Hoverer ghost = new(CharacterHandle.characters.Spectre);
 
-                        ghostSummons[ghostStart.Key].setScale -= Mod.instance.randomIndex.Next(4) * 0.2f;
+                        ghost.setScale -= Mod.instance.randomIndex.Next(4) * 0.2f;
 
-                        ghostSummons[ghostStart.Key].SwitchToMode(Character.Character.mode.scene, Game1.player);
+                        ghost.SwitchToMode(Character.Character.mode.scene, Game1.player);
 
-                        ghostSummons[ghostStart.Key].fadeOut = 0.7f;
+                        ghost.fadeOut = 0.2f;
+
+                        ghost.fadeSet = 0.7f;
+
+                        ghost.lightId = String.Empty;
+
+                        ghostSummons[ghostStart.Key] = ghost;
 
                         CharacterMover.Warp(location, ghostSummons[ghostStart.Key], ghostStart.Value * 64);
 
@@ -1224,7 +1271,7 @@ namespace StardewDruid.Event.Scene
 
                     }
 
-                    location.playSound(SpellHandle.sounds.ghost.ToString());
+                    location.playSound(SpellHandle.Sounds.ghost.ToString());
 
                     DialogueCue(319); 
                     break; // ] = new() { [3] = "Meaning?", },
@@ -1315,17 +1362,16 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(352);
 
-                    location.playSound(SpellHandle.sounds.batScreech.ToString());
-                    break; // ] = new() { [1] = "cheep?", },
-                case 353:
-                    location.playSound(SpellHandle.sounds.batFlap.ToString());
-                    break;
-                case 354:
+                    Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BatScreech);
 
-                    //location.playSound(SpellHandle.sounds.batScreech.ToString());
+                    break; // ] = new() { [1] = "cheep?", },
+
+                case 353:
+                    location.playSound(SpellHandle.Sounds.batFlap.ToString());
                     break;
+
                 case 355:
-                    companions[9] = new Hoverer(CharacterHandle.characters.Bat);
+                    companions[9] = new StardewDruid.Character.Bat(CharacterHandle.characters.Bat);
 
                     voices[9] = companions[9];
 
@@ -1335,16 +1381,16 @@ namespace StardewDruid.Event.Scene
 
                     companions[9].TargetEvent(0, eventVectors[310] * 64, true);
 
-                    location.playSound(SpellHandle.sounds.batScreech.ToString());
-
+                    Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BatScreech);
 
                     break;
+
                 case 356:
 
-                    location.playSound(SpellHandle.sounds.batFlap.ToString());
+                    location.playSound(SpellHandle.Sounds.batFlap.ToString());
                     break;
                 case 357:
-                    //location.playSound(SpellHandle.sounds.batScreech.ToString());
+
                     break;
                 case 358:
 
@@ -1375,13 +1421,13 @@ namespace StardewDruid.Event.Scene
                     companions[8].LookAtTarget(companions[9].Position, true);
 
                     DialogueCue(358);
-                    location.playSound(SpellHandle.sounds.batFlap.ToString());
+                    location.playSound(SpellHandle.Sounds.batFlap.ToString());
                     break; // ] = new() { [9] = "CHEEP!", },
                 case 359:
-                    //location.playSound(SpellHandle.sounds.batFlap.ToString());
+
                     break;
                 case 360:
-                    //location.playSound(SpellHandle.sounds.batScreech.ToString());
+
                     foreach (KeyValuePair<int, StardewDruid.Character.Character> ghost in ghostSummons)
                     {
                         ghost.Value.LookAtTarget(companions[9].Position, true);
@@ -1390,8 +1436,16 @@ namespace StardewDruid.Event.Scene
 
                     foreach (KeyValuePair<int, Vector2> batStart in batStarts)
                     {
+                        switch(Mod.instance.randomIndex.Next(2))
+                        {
 
-                        batSummons[batStart.Key] = new Hoverer(CharacterHandle.characters.Bat);
+                            default:
+                                batSummons[batStart.Key] = new StardewDruid.Character.Bat(CharacterHandle.characters.Bat);
+                                break;
+                            case 1:
+                                batSummons[batStart.Key] = new StardewDruid.Character.Bat(CharacterHandle.characters.BrownBat);
+                                break;
+                        }
 
                         batSummons[batStart.Key].gait *= 1.5f;
 
@@ -1402,6 +1456,8 @@ namespace StardewDruid.Event.Scene
                         CharacterMover.Warp(location, batSummons[batStart.Key], batStart.Value * 64);
 
                         batSummons[batStart.Key].LookAtTarget(ghostSettles[batStart.Key] * 64, true);
+
+                        batSummons[batStart.Key].lightId = String.Empty;
 
                     }
 
@@ -1419,13 +1475,11 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(361);
 
-                    location.playSound(SpellHandle.sounds.batFlap.ToString());
+                    location.playSound(SpellHandle.Sounds.batFlap.ToString());
 
                     break; // ] = new() { [9] = "Protect skull friends and lady friends!", },
                 case 362:
 
-                    //location.playSound(SpellHandle.sounds.batScreech.ToString());
-                   
                     DialogueCue(362);
 
                     companions[8].TargetEvent(303, eventVectors[311] * 64, true);
@@ -1452,8 +1506,8 @@ namespace StardewDruid.Event.Scene
 
                 case 363:
 
-                    location.playSound(SpellHandle.sounds.batScreech.ToString());
-
+                    //location.playSound(SpellHandle.Sounds.batScreech.ToString());
+                    Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BatScreech);
                     break;
 
                 case 366:
@@ -1514,42 +1568,30 @@ namespace StardewDruid.Event.Scene
 
             // =======================  Dragon Fight
 
-            if (bosses.ContainsKey(0))
+            if (bosses.ContainsKey(0) && activeCounter < 475)
             {
-
-                dragonPosition = bosses[0].Position;
 
                 DialogueCue(activeCounter);
 
-                if (bosses[0].netWoundedActive.Value)
+                if (bosses[0].netWoundedActive.Value || !ModUtility.MonsterVitals(bosses[0], location))
                 {
+
+
+                    foreach (KeyValuePair<int, StardewDruid.Monster.Boss> boss in bosses)
+                    {
+
+                        location.characters.Remove(boss.Value);
+
+                    }
+
+                    bosses.Clear();
 
                     if (activeCounter < 475)
                     {
 
                         activeCounter = 475;
 
-                        return;
-
                     }
-
-                }
-                else if (!ModUtility.MonsterVitals(bosses[0], location))
-                {
-
-                    location.characters.Remove(bosses[0]);
-
-                    location.characters.Add(bosses[0]);
-
-                    bosses[0].currentLocation = location;
-
-                    bosses[0].netWoundedActive.Set(true);
-
-                    bosses[0].Health = bosses[0].MaxHealth;
-
-                    activeCounter = 475;
-
-                    return;
 
                 }
 
@@ -1608,8 +1650,24 @@ namespace StardewDruid.Event.Scene
 
                     location = Mod.instance.locations[LocationHandle.druid_tomb_name];
 
-                    (location as Tomb).activeCircle = true;
+                    if (location is Tomb tomb)
+                    {
 
+                        foreach (TerrainField terrainField in tomb.terrainFields)
+                        {
+
+                            if (terrainField is RitualCircle circle)
+                            {
+
+                                circle.ritualStatus = 1;
+
+                                circle.LoadCandles(1);
+
+                            }
+
+                        }
+
+                    }
                     Mod.instance.WarpAllFarmers(location.Name, (int)eventVectors[404].X, (int)eventVectors[404].Y, 0);
 
                     break;
@@ -1647,7 +1705,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCueWithFeeling(425);
 
-                    location.playSound("DragonRoar");
+                    Mod.instance.sounds.PlayCue(SoundHandle.SoundCue.DragonGrowl);
 
                     break;//] = new() { [4] = "DoJaH?", },
                 case 428:
@@ -1660,13 +1718,13 @@ namespace StardewDruid.Event.Scene
 
                     companions[3].netIdle.Set((int)Character.Character.idles.alert);
 
-                    location.playSound("DragonRoar");
+                    Mod.instance.sounds.PlayCue(SoundHandle.SoundCue.DragonGrowl);
 
                     break; //] = new() { [4] = "A UsEleSs nAmE fOr a pEtTy VeSsel", },
 
                 case 430:
 
-                    location.characters.Remove(companions[4]);
+                    Mod.instance.sounds.PlayCue(SoundHandle.SoundCue.DragonRoar);
 
                     StardewDruid.Monster.Dragon dragon = new StardewDruid.Monster.Dragon(ModUtility.PositionToTile(companions[4].Position), Mod.instance.CombatDifficulty());
 
@@ -1684,11 +1742,11 @@ namespace StardewDruid.Event.Scene
 
                     SetTrack("cowboy_boss");
 
-                    SpellHandle dragonPuff = new(companions[4].Position, 256, IconData.impacts.deathbomb, new());
-
-                    dragonPuff.sound = SpellHandle.sounds.shadowDie;
+                    SpellHandle dragonPuff = new(companions[4].Position, 256, IconData.impacts.deathbomb, new()) { displayRadius = 3, sound = SpellHandle.Sounds.shadowDie };
 
                     Mod.instance.spellRegister.Add(dragonPuff);
+
+                    location.characters.Remove(companions[4]);
 
                     break;
 
@@ -1712,31 +1770,23 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                    /*[431] = new() { [10] = "SUBJECTS", },
-                    [434] = new() { [10] = "You witness the return of your rightful king", },
-                    [437] = new() { [10] = "I am grateful for your sacrifice", },
-                    [440] = new() { [3] = "Great Jin, you are mistaken", },
-                    [443] = new() { [3] = "Your life is past, and you cannot reclaim it", },
-                    [446] = new() { [3] = "Let go of this world", },
-                    [449] = new() { [10] = "SILENCE", },
-                    [452] = new() { [10] = "I will consume the essence of your souls", },
-                    [455] = new() { [10] = "You will continue to serve in my undead legion", },
-                    [458] = new() { [1] = "This lizard refuses to quit", },
-                    [461] = new() { [0] = "I'm... breathing is difficult... ", },
-                    [464] = new() { [3] = "Aye. Starting to heat up in here.", },
-                    [467] = new() { [10] = "I am diminished, but resolute", },
-                    [470] = new() { [10] = "Mysterus will answer for his treachery", },
-                    [473] = new() { [1] = "Keep going, almost there", },*/
+                /*[431] = new() { [10] = "SUBJECTS", },
+                [434] = new() { [10] = "You witness the return of your rightful king", },
+                [437] = new() { [10] = "I am grateful for your sacrifice", },
+                [440] = new() { [3] = "Great Jin, you are mistaken", },
+                [443] = new() { [3] = "Your life is past, and you cannot reclaim it", },
+                [446] = new() { [3] = "Let go of this world", },
+                [449] = new() { [10] = "SILENCE", },
+                [452] = new() { [10] = "I will consume the essence of your souls", },
+                [455] = new() { [10] = "You will continue to serve in my undead legion", },
+                [458] = new() { [1] = "This lizard refuses to quit", },
+                [461] = new() { [0] = "I'm... breathing is difficult... ", },
+                [464] = new() { [3] = "Aye. Starting to heat up in here.", },
+                [467] = new() { [10] = "I am diminished, but resolute", },
+                [470] = new() { [10] = "Mysterus will answer for his treachery", },
+                [473] = new() { [1] = "Keep going, almost there", },*/
 
-                case 476:
-
-                    bosses[0].ResetActives();
-
-                    bosses[0].netPosturing.Set(true);
-
-                    bosses[0].netWoundedActive.Set(true);
-
-                    DialogueCue(476);
+                case 469:
 
                     companions[0].SwitchToMode(Character.Character.mode.scene, Game1.player);
 
@@ -1750,45 +1800,91 @@ namespace StardewDruid.Event.Scene
 
                     companions[3].netIdle.Set((int)Character.Character.idles.kneel);
 
+                    if (!Mod.instance.eventRegister.ContainsKey(Rite.eventDeathwinds))
+                    {
+
+                        Winds windsNew = new();
+
+                        windsNew.EventSetup(eventVectors[157] * 64, Rite.eventDeathwinds);
+
+                        windsNew.EventActivate();
+
+                        windsNew.eventLocked = true;
+
+                        windsNew.WindArray(new(), WispHandle.wisptypes.death, 16);
+
+                    }
+
+                    break;
+
+                // ------------------------------------------ End of fight
+                case 475:
+
+                    // -------------------------------------------- Remove Dragon
+
+                    foreach (KeyValuePair<int,StardewDruid.Monster.Boss> boss in bosses)
+                    {
+                        
+                        location.characters.Remove(boss.Value);
+
+                    }
+
+                    bosses.Clear();
+
+                    voices.Remove(10);
+
+                    // -------------------------------------------- Doja
+
+                    LoadBoss(new DarkDoja(eventVectors[157], Mod.instance.CombatDifficulty()) { basePulp = 40, }, 1, 1, 4);
+
+                    bosses[1].ResetActives();
+
+                    bosses[1].netPosturing.Set(true);
+
+                    bosses[1].netWoundedActive.Set(true);
+
+                    // -------------------------------------------- Puff
+
+                    SpellHandle dragonDeath = new(eventVectors[157]*64, 256, IconData.impacts.deathbomb, new()) { displayRadius = 3, sound = SpellHandle.Sounds.shadowDie };
+
+                    Mod.instance.spellRegister.Add(dragonDeath);
+
+                    // -------------------------------------------- Chains
+
+                    Snare snareEffect;
+
+                    if (!Mod.instance.eventRegister.ContainsKey(Rite.eventSnare))
+                    {
+
+                        snareEffect = new()
+                        {
+                            eventId = Rite.eventSnare
+                        };
+
+                        snareEffect.EventActivate();
+
+                    }
+                    else
+                    {
+
+                        snareEffect = Mod.instance.eventRegister[Rite.eventSnare] as Snare;
+                    }
+
+                    snareEffect.AddMonster(bosses[1], 100, SpellHandle.Effects.chain);
+
+                    break;
+
+                case 476:
+
+                    DialogueCue(476);
+
                     break;//] = new() { [0] = "Exhausted... retreat is our only option", },
 
                 case 478:
                 case 479:
                 case 480:
 
-                    if(bosses.Count > 0)
-                    {
-
-                        bosses[0].netDirection.Set(Mod.instance.randomIndex.Next(4));
-
-                    }
-
-                    List<int> directions = new() { 0, 1, 2, 3, 4, 5, 6, 7, };
-
-                    int delay = 0;
-
-                    for (int i = 0; i < 4; i++)
-                    {
-
-                        SpellHandle sweep = new(Game1.player, new() { bosses[0] }, Mod.instance.CombatDamage());
-
-                        sweep.type = SpellHandle.spells.warpstrike;
-
-                        int d = directions[Mod.instance.randomIndex.Next(directions.Count)];
-
-                        directions.Remove(d);
-
-                        sweep.counter = 0 - delay;
-
-                        delay += 15;
-
-                        sweep.scheme = IconData.schemes.death;
-
-                        sweep.factor =d;
-
-                        Mod.instance.spellRegister.Add(sweep);
-
-                    }
+                    WarpStrikes();
 
                     break;
 
@@ -1799,26 +1895,6 @@ namespace StardewDruid.Event.Scene
                     companions[1].doEmote(16);
 
                     companions[3].doEmote(16);
-
-                    SpellHandle dragonDeath = new(companions[4].Position, 256, IconData.impacts.deathbomb, new());
-
-                    dragonDeath.sound = SpellHandle.sounds.shadowDie;
-
-                    Mod.instance.spellRegister.Add(dragonDeath);
-
-                    CharacterMover.Warp(location, companions[4], dragonPosition);
-
-                    companions[4].ResetActives();
-
-                    companions[4].netSpecial.Set((int)Character.Character.specials.pickup);
-
-                    companions[4].specialTimer = 180;
-
-                    location.characters.Remove(bosses[0]);
-
-                    bosses.Remove(0);
-
-                    voices.Remove(10);
 
                     DialogueCue(481);
 
@@ -1846,17 +1922,32 @@ namespace StardewDruid.Event.Scene
 
                 case 484:
 
-                    SpellHandle dojaDeath = new(companions[4].Position, 256, IconData.impacts.deathbomb, new());
+                    SpellHandle dojadeath = new(bosses[1].Position, 256, IconData.impacts.deathbomb, new()) { displayRadius = 3, sound = SpellHandle.Sounds.shadowDie };
 
-                    dojaDeath.sound = SpellHandle.sounds.shadowDie;
+                    Mod.instance.spellRegister.Add(dojadeath);
 
-                    Mod.instance.spellRegister.Add(dojaDeath);
+                    location.characters.Remove(bosses[1]);
 
-                    location.characters.Remove(companions[4]);
-
-                    companions.Remove(4);
+                    bosses.Clear();
 
                     voices.Remove(4);
+
+                    if (location is Tomb tomb1)
+                    {
+
+                        foreach (TerrainField terrainField in tomb1.terrainFields)
+                        {
+
+                            if (terrainField is RitualCircle circle)
+                            {
+
+                                circle.SetCandles(0);
+
+                            }
+
+                        }
+
+                    }
 
                     break;
 
@@ -1926,6 +2017,8 @@ namespace StardewDruid.Event.Scene
                     break;//] = new() { [3] = "I'll take you", },
                 case 510:
 
+                    companions[11].LookAtTarget(companions[3].Position, true);
+
                     DialogueCue(510);
 
                     break;//] = new() { [11] = "Unexpected. Do you not despise me?", },
@@ -1976,45 +2069,17 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].LookAtTarget(companions[3].Position, true);
 
-                    companions[3].TargetEvent(501, companions[3].Position - new Vector2(0, 64));
+                    companions[3].fadeSet = 0.001f;
 
-                    companions[3].TargetEvent(502, companions[3].Position - new Vector2(0, 128), false);
+                    companions[11].fadeSet = 0.001f;
 
-                    companions[3].TargetEvent(503, companions[3].Position - new Vector2(0, 192), false);
+                    companions[3].TargetEvent(0, companions[3].Position - new Vector2(0, 768), false);
 
-                    companions[3].TargetEvent(504, companions[3].Position - new Vector2(0, 256), false);
-
-                    companions[3].TargetEvent(505, companions[3].Position - new Vector2(0, 320), false);
-
-                    companions[3].TargetEvent(506, companions[3].Position - new Vector2(0, 384), false);
-
-                    companions[3].TargetEvent(507, companions[3].Position - new Vector2(0, 448), false);
-
-                    companions[3].TargetEvent(508, companions[3].Position - new Vector2(0, 512), false);
-
-                    companions[3].TargetEvent(509, companions[3].Position - new Vector2(0, 576), false);
-
-                    companions[11].TargetEvent(510, companions[11].Position - new Vector2(0, 64));
-
-                    companions[11].TargetEvent(511, companions[11].Position - new Vector2(0, 128), false);
-
-                    companions[11].TargetEvent(512, companions[11].Position - new Vector2(0, 192), false);
-
-                    companions[11].TargetEvent(513, companions[11].Position - new Vector2(0, 256), false);
-
-                    companions[11].TargetEvent(514, companions[11].Position - new Vector2(0, 320), false);
-
-                    companions[11].TargetEvent(515, companions[11].Position - new Vector2(0, 384), false);
-
-                    companions[11].TargetEvent(516, companions[11].Position - new Vector2(0, 448), false);
-
-                    companions[11].TargetEvent(517, companions[11].Position - new Vector2(0, 512), false);
-
-                    companions[11].TargetEvent(518, companions[11].Position - new Vector2(0, 576), false);
+                    companions[11].TargetEvent(520, companions[11].Position - new Vector2(0, 768), false);
 
                     break;
 
-                case 530:
+                case 533:
 
                     eventComplete = true;
 
@@ -2155,9 +2220,7 @@ namespace StardewDruid.Event.Scene
 
                     int ghostIndex = index - 800;
 
-                    SpellHandle ghostDeath = new(ghostSummons[ghostIndex].Position, 256, IconData.impacts.skull, new());
-
-                    ghostDeath.sound = SpellHandle.sounds.shadowDie;
+                    SpellHandle ghostDeath = new(ghostSummons[ghostIndex].Position, 256, IconData.impacts.skull, new()) { displayRadius = 3, sound = SpellHandle.Sounds.shadowDie };
 
                     Mod.instance.spellRegister.Add(ghostDeath);
 
@@ -2259,71 +2322,10 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 501:
-                case 502:
-                case 503:
-                case 504:
-                case 505:
-                case 506:
-                case 507:
-                case 508:
 
-                    if (companions[3].fadeOut > 0)
-                    {
+                case 520:
 
-                        companions[3].fadeOut -= 0.124f;
-
-                        if (companions[3].fadeOut <= 0.1f)
-                        {
-
-                            companions[3].fadeOut = 0.01f;
-
-                        }
-
-                    }
-
-                    break;
-
-                case 510:
-                case 511:
-                case 512:
-                case 513:
-                case 514:
-                case 515:
-                case 516:
-                case 517:
-
-                    if (companions[11].fadeOut > 0)
-                    {
-
-                        companions[11].fadeOut -= 0.124f;
-
-                        if (companions[11].fadeOut <= 0.1f)
-                        {
-
-                            companions[11].fadeOut = 0.01f;
-
-                        }
-
-                    }
-
-                    break;
-
-                case 509:
-
-                    if (companions[3].fadeOut > 0)
-                    {
-
-                        companions[3].fadeOut -= 0.124f;
-
-                        if (companions[3].fadeOut <= 0.1f)
-                        {
-
-                            companions[3].fadeOut = 0.01f;
-
-                        }
-
-                    }
+                    companions[3].fadeSet = 1f;
 
                     CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_chapel_name], companions[3], eventVectors[110] * 64, false);
 
@@ -2331,16 +2333,8 @@ namespace StardewDruid.Event.Scene
 
                     voices.Remove(3);
 
-                    break;
+                    // ------------------------
 
-                case 518:
-                    if (companions[11].fadeOut > 0)
-                    {
-
-                        companions[11].fadeOut -= 0.125f;
-
-
-                    }
                     location.characters.Remove(companions[11]);
 
                     companions.Remove(11);
@@ -2348,6 +2342,42 @@ namespace StardewDruid.Event.Scene
                     voices.Remove(11);
 
                     break;
+
+            }
+
+        }
+
+        public virtual void WarpStrikes()
+        {
+
+
+            List<int> directions = new() { 0, 1, 2, 3, 4, 5, 6, 7, };
+
+            int delay = 0;
+
+            for (int i = 0; i < 4; i++)
+            {
+
+                SpellHandle sweep = new(Game1.player, new() { bosses[1] }, -1)
+                {
+                    type = SpellHandle.Spells.warpstrike
+                };
+
+                int d = directions[Mod.instance.randomIndex.Next(directions.Count)];
+
+                directions.Remove(d);
+
+                sweep.counter = 0 - delay;
+
+                delay += 15;
+
+                sweep.scheme = IconData.schemes.death;
+
+                sweep.factor = d;
+
+                sweep.added = new() { SpellHandle.Effects.bigcrits, };
+
+                Mod.instance.spellRegister.Add(sweep);
 
             }
 

@@ -320,7 +320,7 @@ namespace StardewDruid.Journal
 
             }
 
-            if (Mod.instance.questHandle.quests[journalId].type != Data.Quest.questTypes.lesson)
+            if (Mod.instance.questHandle.quests[journalId].effect == EffectsData.EffectPage.none)
             {
 
                 interfaceComponents[101].active = false;

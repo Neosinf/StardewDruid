@@ -8,11 +8,11 @@ using StardewValley.Projectiles;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using static StardewDruid.Data.IconData;
-using StardewDruid.Character;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Render
 {
+
     public class WeaponRender
     {
 
@@ -21,18 +21,26 @@ namespace StardewDruid.Render
 
             none,
             sword,
+            starsword,
+            lightsaber,
+            warpsword,
+            cutlass,
             axe,
             hammer,
             estoc,
             carnyx,
             scythe,
             scythetwo,
+            gungnir,
 
             bazooka,
+            symbol,
+            cannon,
 
         }
 
         public weapons weaponSelection;
+        public weapons firearmSelection;
 
         public Texture2D weaponTexture;
         public Dictionary<int, List<Rectangle>> weaponFrames;
@@ -44,24 +52,7 @@ namespace StardewDruid.Render
 
         public Texture2D firearmTexture;
         public Dictionary<int, List<Rectangle>> firearmFrames;
-
-        public enum swordSchemes
-        {
-            sword_steel,
-            sword_stars,
-            sword_lightsaber,
-            sword_warp,
-        }
-
-        public swordSchemes swordScheme;
-
-        public Dictionary<swordSchemes, List<Microsoft.Xna.Framework.Color>> swordColours = new()
-        {
-            [swordSchemes.sword_steel] = new() { new(200, 212, 212), new(68, 80, 80), new(48, 60, 60) },
-            [swordSchemes.sword_stars] = new() { new(255, 230, 166), new(255, 173, 84), new(231, 102, 84), },//new() { new(255, 192, 128),  new(192, 140, 60), new(64, 48, 16), },
-            [swordSchemes.sword_lightsaber] = new() { new(214, 0, 175), new(16, 16, 16), new(37, 34, 74), },
-            [swordSchemes.sword_warp] = new() { new(16, 16, 16), new(159, 80, 191), new(37, 34, 74), },
-        };
+        public Dictionary<int, List<float>> firearmOffsets;
 
         public bool melee;
         public bool firearm;
@@ -102,7 +93,6 @@ namespace StardewDruid.Render
                 [320] = new()
                 {
                     // 2
-
                     new Rectangle(0, 128, 64, 64),
                     new Rectangle(64, 128, 64, 64),
                     new Rectangle(128, 128, 64, 64),
@@ -286,18 +276,94 @@ namespace StardewDruid.Render
             };
 
         }
+        public static Dictionary<int, List<float>> GetFirearmOffsets(weapons weapon)
+        {
 
+            switch (weapon)
+            {
+                default:
+
+                    return new()
+                    {
+                        [0] = new()
+                        {
+                            0f,
+                            0f,
+                            0f,
+                            0f,
+                            0.0005f,
+                            0.0005f,
+                        },
+                        [32] = new()
+                        {
+                            0f,
+                            0f,
+                            0f,
+                            0f,
+                            0.0005f,
+                            0.0005f,
+
+                        },
+                        [64] = new()
+                        {
+                          0f,
+                            0f,
+                            0f,
+                            0f,
+                            0.0005f,
+                            0.0005f,
+
+                        },
+                    };
+
+                case weapons.symbol:
+
+                    return new()
+                    {
+                        [0] = new()
+                        {
+                            0f,
+                            0f,
+                            0f,
+                            0f,
+                            0.0005f,
+                            0.0005f,
+                        },
+                        [32] = new()
+                        {
+                            0f,
+                            0f,
+                            0f,
+                            0f,
+                            0.0005f,
+                            0.0005f,
+
+                        },
+                        [64] = new()
+                        {
+                          0f,
+                            0f,
+                            0f,
+                            0f,
+                            -0.0005f,
+                            -0.0005f,
+
+                        },
+                    };
+
+            }
+
+
+        }
 
         public WeaponRender()
         {
 
             melee = true;
 
-            swordScheme = swordSchemes.sword_steel;
-
             weaponSelection = weapons.sword;
 
-            weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponSword.png"));
+            weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponSteelSword.png"));
 
             weaponFrames = GetWeaponFrames();
 
@@ -325,9 +391,33 @@ namespace StardewDruid.Render
 
                 case weapons.sword:
 
-                    weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponSword.png"));
+                    weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponSteelSword.png"));
 
-                    swordScheme = swordSchemes.sword_steel;
+                    //swordScheme = swordSchemes.sword_steel;
+
+                    melee = true;
+
+                    break;
+
+                case weapons.starsword:
+
+                    weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponStarSword.png"));
+
+                    melee = true;
+
+                    break;
+
+                case weapons.lightsaber:
+
+                    weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponLightSaber.png"));
+
+                    melee = true;
+
+                    break;
+
+                case weapons.warpsword:
+
+                    weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponWarpSword.png"));
 
                     melee = true;
 
@@ -357,6 +447,14 @@ namespace StardewDruid.Render
 
                     break;
 
+                case weapons.cutlass:
+
+                    weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponCutlass.png"));
+
+                    melee = true;
+
+                    break;
+
                 case weapons.carnyx:
 
                     weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponCarnyx.png"));
@@ -381,6 +479,14 @@ namespace StardewDruid.Render
 
                     break;
 
+                case weapons.gungnir:
+
+                    weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponGungnir.png"));
+
+                    melee = true;
+
+                    break;
+
                 case weapons.bazooka:
 
                     firearmTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "FirearmBazooka.png"));
@@ -388,6 +494,40 @@ namespace StardewDruid.Render
                     firearm = true;
 
                     firearmFrames = GetFirearmFrames();
+
+                    firearmSelection = weapon;
+
+                    firearmOffsets = GetFirearmOffsets(weapon);
+
+                    break;
+
+                case weapons.symbol:
+
+                    weaponTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "WeaponSymbol.png"));
+
+                    melee = true;
+
+                    firearmTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "FirearmSymbol.png"));
+
+                    firearm = true;
+
+                    firearmFrames = GetFirearmFrames();
+                    
+                    firearmSelection = weapon;
+
+                    firearmOffsets = GetFirearmOffsets(weapon);
+
+                    break;
+
+                case weapons.cannon:
+
+                    firearmTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "FirearmCannon.png"));
+
+                    firearm = true;
+
+                    firearmFrames = GetFirearmFrames();
+
+                    firearmOffsets = GetFirearmOffsets(weapon);
 
                     break;
 
@@ -402,77 +542,17 @@ namespace StardewDruid.Render
 
             if (!melee) { return; }
 
-            if(weaponSelection == weapons.sword)
-            {
-
-                DrawWeaponScheme(b, spriteVector, drawLayer, additional);
-
-                return;
-
-            }
-
             b.Draw(
                  weaponTexture,
                  spriteVector,
                  weaponFrames[additional.source.Y][additional.source.X == 0 ? 0 : additional.source.X / 32],
-                 Color.White,
+                 Color.White * additional.fade,
                  0f,
                  new Vector2(32),
                  additional.scale,
                  additional.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                  drawLayer + weaponOffsets[additional.source.Y][additional.source.X == 0 ? 0 : additional.source.X / 32]
             );
-
-        }
-
-        public virtual void DrawWeaponScheme(SpriteBatch b, Vector2 spriteVector, float drawLayer, WeaponAdditional additional)
-        {
-
-
-            Rectangle weaponRectangle = weaponFrames[additional.source.Y][additional.source.X == 0 ? 0 : additional.source.X / 32];
-
-            float weaponLayer = drawLayer + weaponOffsets[additional.source.Y][additional.source.X == 0 ? 0 : additional.source.X / 32];
-
-            b.Draw(
-                 weaponTexture,
-                 spriteVector,
-                 weaponRectangle,
-                 swordColours[swordScheme][0],
-                 0f,
-                 new Vector2(32),
-                additional.scale,
-                additional.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                weaponLayer
-            );
-
-            weaponRectangle.X += 256;
-
-            b.Draw(
-                 weaponTexture,
-                 spriteVector,
-                 weaponRectangle,
-                 swordColours[swordScheme][1],
-                 0f,
-                 new Vector2(32),
-                additional.scale,
-                additional.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                weaponLayer
-            );
-
-            weaponRectangle.X += 256;
-
-            b.Draw(
-                 weaponTexture,
-                 spriteVector,
-                 weaponRectangle,
-                 swordColours[swordScheme][2],
-                 0f,
-                 new Vector2(32),
-                additional.scale,
-                additional.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                weaponLayer
-            );
-
 
         }
 
@@ -490,13 +570,11 @@ namespace StardewDruid.Render
 
             }
 
-            Microsoft.Xna.Framework.Color colour = Color.White;
-
             b.Draw(
                  swipeTexture,
                  spriteVector,
                  swipeFrames[additional.source.Y][swipeIndex],
-                 colour * 0.65f,
+                 Color.White * 0.65f,
                  0f,
                  new Vector2(32),
                 additional.scale,
@@ -511,16 +589,25 @@ namespace StardewDruid.Render
 
             if (!firearm) { return; }
 
+            int swipeIndex = additional.source.X == 0 ? 0 : additional.source.X / 32;
+
+            if (firearmFrames[additional.source.Y].Count <= swipeIndex)
+            {
+
+                return;
+
+            }
+
             b.Draw(
                  firearmTexture,
                  spriteVector,
-                 firearmFrames[additional.source.Y][additional.source.X == 0 ? 0 : additional.source.X / 32],
-                 Color.White,
+                 firearmFrames[additional.source.Y][swipeIndex],
+                 Color.White * additional.fade,
                  0f,
                  new Vector2(32),
                 additional.scale,
                 additional.flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                drawLayer + 0.002f
+                drawLayer + firearmOffsets[additional.source.Y][swipeIndex]
             );
 
         }
@@ -729,7 +816,7 @@ namespace StardewDruid.Render
 
             float layer = center.Y / 10000;
 
-            int interval = 100;
+            int interval = 125;
 
             // strike
 
@@ -762,7 +849,6 @@ namespace StardewDruid.Render
                 sourceRect = weaponSource,
                 sourceRectStartingPos = new Vector2(weaponSource.X, weaponSource.Y),
                 texture = weaponTexture,
-                color = swordColours[swordScheme][0],
                 scale = 4f,
                 layerDepth = layer + 0.001f + layerOffset,
                 alpha = 0.75f,
@@ -771,44 +857,6 @@ namespace StardewDruid.Render
             location.temporarySprites.Add(weapon);
 
             animations.Add(weapon);
-
-            // weapon 2
-
-            weaponSource.X += 256;
-
-            TemporaryAnimatedSprite weaponTwo = new(0, interval, 4, 1, center, false, flip)
-            {
-                sourceRect = weaponSource,
-                sourceRectStartingPos = new Vector2(weaponSource.X, weaponSource.Y),
-                texture = weaponTexture,
-                color = swordColours[swordScheme][1],
-                scale = 4f,
-                layerDepth = layer + 0.001f + layerOffset,
-                alpha = 0.75f,
-            };
-
-            location.temporarySprites.Add(weaponTwo);
-
-            animations.Add(weaponTwo);
-
-            // weapon 3
-
-            weaponSource.X += 256;
-
-            TemporaryAnimatedSprite weaponThree = new(0, interval, 4, 1, center, false, flip)
-            {
-                sourceRect = weaponSource,
-                sourceRectStartingPos = new Vector2(weaponSource.X, weaponSource.Y),
-                texture = weaponTexture,
-                color = swordColours[swordScheme][2],
-                scale = 4f,
-                layerDepth = layer + 0.001f + layerOffset,
-                alpha = 0.75f,
-            };
-
-            location.temporarySprites.Add(weaponThree);
-
-            animations.Add(weaponThree);
 
             // swipe
 
@@ -821,7 +869,6 @@ namespace StardewDruid.Render
                 sourceRect = swipeSource,
                 sourceRectStartingPos = new Vector2(swipeSource.X, swipeSource.Y),
                 texture = swipeTexture,
-                color = swordColours[swordScheme][0],
                 scale = 4f,
                 layerDepth = layer + 0.001f + layerOffset,
                 alpha = 0.5f,
@@ -850,6 +897,8 @@ namespace StardewDruid.Render
         public int direction;
 
         public int frame;
+
+        public float fade = 1f;
 
     }
 

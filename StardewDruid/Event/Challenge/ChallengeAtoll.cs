@@ -3,8 +3,8 @@ using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Cast.Mists;
-using StardewDruid.Character;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewDruid.Location.Druid;
 using StardewDruid.Monster;
@@ -15,10 +15,12 @@ using StardewValley.Projectiles;
 using StardewValley.TerrainFeatures;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using xTile;
+using static StardewDruid.Monster.Boss;
 
 namespace StardewDruid.Event.Challenge
 {
@@ -27,6 +29,8 @@ namespace StardewDruid.Event.Challenge
 
         public Dictionary<int,Vector2> eventVectors = new()  
         {
+
+            [0] = new Vector2(48, 11),
 
             [1] = new Vector2(51, 8),
             [2] = new Vector2(46, 13),
@@ -43,14 +47,25 @@ namespace StardewDruid.Event.Challenge
             [9] = new Vector2(54, 14),
             [10] = new Vector2(49, 16),
 
-            [101] = new Vector2(47, 3),
-            [102] = new Vector2(48, 5),
-            [103] = new Vector2(54, 9),
 
-            [201] = new Vector2(47, 19),
-            [202] = new Vector2(43, 12),
-            [203] = new Vector2(36, 10),
+            [11] = new Vector2(39, 5),
+            [21] = new Vector2(44, 19),
+
+            [12] = new Vector2(46, 8),
+            [22] = new Vector2(37, 17),
+
+            [13] = new Vector2(44, 25),
+            [23] = new Vector2(43, 11),
+
+            [14] = new Vector2(51, 18),
+            [24] = new Vector2(36, 14),
+
+
+
         };
+
+        public Dictionary<int,StardewDruid.Monster.DarkPhantom> cannoneers = new();
+
 
         public ChallengeAtoll()
         {
@@ -70,9 +85,9 @@ namespace StardewDruid.Event.Challenge
 
             EventBar(Mod.instance.questHandle.quests[eventId].title,0);
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { scheme = IconData.schemes.mists, sound = SpellHandle.sounds.getNewSpecialItem, });
+            //Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { displayRadius = 4, scheme = IconData.schemes.mists, sound = SpellHandle.sounds.getNewSpecialItem, });
 
-            Mod.instance.spellRegister.Add(new(origin, 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt });
+            //Mod.instance.spellRegister.Add(new(origin, 128, IconData.impacts.puff, new()) { displayRadius = 2, type = SpellHandle.spells.bolt });
 
             if (Mod.instance.trackers.ContainsKey(CharacterHandle.characters.Effigy))
             {
@@ -83,7 +98,7 @@ namespace StardewDruid.Event.Challenge
 
             HoldCompanions();
 
-            location.playSound("thunder_small");
+            location.playSound(SpellHandle.Sounds.thunder.ToString());
 
             Wisps wispNew = new();
 
@@ -111,63 +126,24 @@ namespace StardewDruid.Event.Challenge
             if(activeCounter > 5)
             {
 
-                int spawn1 = -1;
-
-                int spawn2 = 2;
-
-                switch (activeCounter % 25)
+                if(activeCounter % 5 == 1 && monsterHandle.monsterSpawns.Count < 8)
                 {
 
-                    case 1:
+                    int path = Mod.instance.randomIndex.Next(1, 6) * 2;
 
-                        spawn1 = 1;
-                        spawn2 = 2;
-                        break;
-
-                    case 6:
-
-                        spawn1 = 3;
-                        spawn2 = 4;
-                        break;
-
-                    case 11:
-
-                        spawn1 = 5;
-                        spawn2 = 6;
-                        break;
-
-                    case 16:
-
-                        spawn1 = 7;
-                        spawn2 = 8;
-                        break;
-
-                    case 21:
-
-                        spawn1 = 9;
-                        spawn2 = 10;
-
-                        break;
-                }
-
-                if(spawn1 != -1)
-                {
-
-                    Phantom phantom1 = new(eventVectors[spawn1], Mod.instance.CombatDifficulty());
-
-                    phantom1.RandomTemperment();
+                    DarkPhantom phantom1 = new(eventVectors[path-1], Mod.instance.CombatDifficulty());
 
                     monsterHandle.SpawnImport(phantom1, false);
 
-                    phantom1.SetMode(3);
+                    phantom1.SetMode(1);
 
                     phantom1.ResetActives();
 
-                    phantom1.PerformFollow(eventVectors[spawn2] * 64);
+                    phantom1.PerformFollow(eventVectors[path] * 64);
 
                     phantom1.followTimer = 72;
 
-                    phantom1.fadeFactor = 0.005f;
+                    phantom1.fadeOut = 0.005f;
 
 
                 }
@@ -198,7 +174,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 1:
 
-                    bosses[0] = new Phantom(eventVectors[1], Mod.instance.CombatDifficulty());
+                    bosses[0] = new DarkPhantom(eventVectors[1], Mod.instance.CombatDifficulty(),"PhantomCaptain");
 
                     bosses[0].SetMode(3);
 
@@ -210,21 +186,21 @@ namespace StardewDruid.Event.Challenge
 
                     bosses[0].ResetActives();
 
-                    bosses[0].PerformFollow(eventVectors[2] * 64);
+                    bosses[0].PerformFollow(eventVectors[0] * 64);
 
                     bosses[0].followTimer = 132;
 
-                    (bosses[0] as Phantom).fadeFactor = 0.005f;
+                    (bosses[0] as DarkPhantom).fadeOut = 0.005f;
 
                     voices[0] = bosses[0];
 
-                    SpawnData.MonsterDrops(bosses[0], SpawnData.drops.seafarer);
+                    SpawnData.MonsterDrops(bosses[0], SpawnData.Drops.seafarer);
 
                     break;
 
                 case 2:
 
-                    location.playSound(SpellHandle.sounds.thunder_small.ToString());
+                    location.playSound(SpellHandle.Sounds.thunder_small.ToString());
                     break;
 
                 case 3:
@@ -235,15 +211,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 5:
                     
-                    location.playSound(SpellHandle.sounds.thunder_small.ToString());
-
-                    bosses[0].ResetActives();
-
-                    bosses[0].netSpecialActive.Set(true);
-
-                    bosses[0].specialTimer = 300;
-
-                    bosses[0].specialInterval = 180;
+                    location.playSound(SpellHandle.Sounds.thunder_small.ToString());
 
                     SetTrack("PIRATE_THEME");
 
@@ -268,77 +236,177 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            if (activeCounter % 5 == 0 && activeCounter <= 75)
-            {
-
-                monsterHandle.SpawnInterval();
-
-            }
-
             switch (activeCounter)
             {
 
-                case 10: CannonsAtTheReady(); break;
-                case 13: CannonsToFire(); break;
+                case 10: CannonsAtTheReady(11); break;
+                case 13: CannonsToFire(11); break;
 
-                case 28: CannonsAtTheReady(); break;
-                case 31: CannonsToFire(); break;
+                case 28: CannonsAtTheReady(13); break;
+                case 31: CannonsToFire(13); break;
 
-                case 43: CannonsAtTheReady(); break;
-                case 46: CannonsToFire(); break;
+                case 43: CannonsAtTheReady(11); break;
+                case 46: CannonsToFire(11); break;
 
-                case 58: CannonsAtTheReady(); break;
-                case 61: CannonsToFire(); break;
+                case 58: CannonsAtTheReady(13); break;
+                case 61: CannonsToFire(13); break;
 
                 default: break;
 
             }
 
-            DialogueCue(activeCounter);
+            if(activeCounter > 3 && activeCounter < 49)
+            {
+
+                DialogueCueWithFeeling(activeCounter);
+
+            }
+            else
+            {
+
+                DialogueCue(activeCounter);
+
+            }
 
         }
 
-        public void CannonsToFire()
+        public void CannonsAtTheReady(int barrage)
+        {
+
+            DialogueCueWithFeeling(994);
+
+            for (int j = 0; j < 2; j++)
+            {
+
+                int k = barrage + j;
+
+                if (cannoneers.ContainsKey(k))
+                {
+
+                    if (ModUtility.MonsterVitals(cannoneers[k], location))
+                    {
+
+                        continue;
+
+                    }
+
+                }
+
+                DarkPhantom phantom1 = new(eventVectors[k], Mod.instance.CombatDifficulty(), "PhantomMate");
+
+                monsterHandle.SpawnImport(phantom1, false);
+
+                phantom1.SetMode(2);
+
+                phantom1.fadeOut = 0.25f;
+
+                phantom1.tether = eventVectors[k] * 64;
+
+                phantom1.tetherLimit = 320;
+
+                phantom1.tempermentActive = temperment.ranged;
+
+                cannoneers[k] = phantom1;
+
+            }
+
+            for (int j = 0; j < 2; j++)
+            {
+
+                int k = barrage + j;
+
+                if (!cannoneers.ContainsKey(k))
+                {
+
+                    continue;
+
+                }
+
+                cannoneers[k].ResetActives();
+
+                cannoneers[k].LookAtTarget(eventVectors[k + 10] * 64);
+
+                cannoneers[k].netChannelActive.Set(true);
+
+                cannoneers[k].specialTimer = 300;
+
+                Mod.instance.iconData.CursorIndicator(location, eventVectors[k + 10] * 64, IconData.cursors.death, new() { interval = 4000, scale = 4f, scheme = IconData.schemes.bomb_two, alpha = 0.5f, });
+
+            }
+
+
+            List<string> textList = new()
+            {
+                 cues[990][0],
+                 cues[991][0],
+                 cues[992][0],
+                 cues[993][0],
+
+            };
+
+            foreach (StardewValley.Monsters.Monster monsterSpawn in monsterHandle.monsterSpawns)
+            {
+
+                if (monsterSpawn is DarkPhantom phantom)
+                {
+
+                    if (Mod.instance.randomIndex.Next(2) == 0)
+                    {
+
+                        phantom.showTextAboveHead(textList[Mod.instance.randomIndex.Next(textList.Count)], duration: 2000);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        public void CannonsToFire(int barrage)
         {
 
             DialogueCue(995);
 
-            for (int k = 1; k < 4; k++)
+            for (int j = 0; j < 2; j++)
             {
 
-                Vector2 impact = eventVectors[200+k] * 64;
+                int k = barrage + j;
 
-                SpellHandle missile = new(location, impact, eventVectors[100 + k] * 64, 256, bosses[0].GetThreat(), Mod.instance.CombatDamage());
-
-                missile.type = SpellHandle.spells.missile;
-
-                missile.factor =3;
-
-                missile.missile = MissileHandle.missiles.cannonball;
-
-                missile.display = IconData.impacts.bomb;
-
-                missile.scheme = IconData.schemes.stars;
-
-                missile.indicator = IconData.cursors.death;
-
-                if (k % 2 == 0)
+                if (cannoneers.ContainsKey(k))
                 {
 
-                    missile.sound = SpellHandle.sounds.explosion;
+                    if (!ModUtility.MonsterVitals(cannoneers[k], location))
+                    {
+
+                        continue;
+
+                    }
+
+                    SpellHandle missile = new(location, eventVectors[k + 10] * 64, cannoneers[k].GetBoundingBox().Center.ToVector2(), 320, bosses[0].GetThreat() * 2, Mod.instance.CombatDamage() * 2)
+                    {
+                        type = SpellHandle.Spells.missile,
+
+                        factor = 3,
+
+                        instant = true,
+
+                        missile = MissileHandle.missiles.cannonball,
+
+                        display = IconData.impacts.bigimpact,
+
+                        displayRadius = 5,
+
+                        scheme = IconData.schemes.stars
+                    };
+
+                    Mod.instance.spellRegister.Add(missile);
 
                 }
 
-                Mod.instance.spellRegister.Add(missile);
-
-                SpellHandle effect = new(eventVectors[100 + k]*64, 256, IconData.impacts.flashbang, new());
-
-                Mod.instance.spellRegister.Add(effect);
-
-                SpellHandle effect2 = new(eventVectors[100 + k] * 64, 256, IconData.impacts.plume, new()) { counter = -15,};
-
-                Mod.instance.spellRegister.Add(effect2);
             }
+
+            //cannoneers.Clear();
 
             List<string> textList = new()
             {
@@ -352,59 +420,18 @@ namespace StardewDruid.Event.Challenge
             foreach (StardewValley.Monsters.Monster monsterSpawn in monsterHandle.monsterSpawns)
             {
 
-                if (monsterSpawn is Phantom phantom)
+                if (monsterSpawn is DarkPhantom phantom)
                 {
 
-                    phantom.showTextAboveHead(textList[Mod.instance.randomIndex.Next(textList.Count)], duration: 2000);
+                    if (Mod.instance.randomIndex.Next(2) == 0)
+                    {
+
+                        phantom.showTextAboveHead(textList[Mod.instance.randomIndex.Next(textList.Count)], duration: 2000);
+
+                    }
+                    
                 }
             
-            }
-
-        }
-
-        public void CannonsAtTheReady()
-        {
-
-            DialogueCue(994);
-
-            bosses[0].ResetActives();
-
-            bosses[0].netSpecialActive.Set(true);
-
-            bosses[0].specialTimer = 300;
-
-            bosses[0].specialInterval = 180;
-
-            for (int k = 1; k < 4; k++)
-            {
-
-                Vector2 impact = eventVectors[200 + k] * 64;
-
-                CursorAdditional addEffects = new() { interval = 3000, scale = 3, scheme = IconData.schemes.death, alpha = 0.4f, };
-
-                animations.Add(Mod.instance.iconData.CursorIndicator(location, impact, IconData.cursors.death, addEffects));
-
-            }
-            
-            List<string> textList = new()
-            {                 
-                 cues[990][0],
-                 cues[991][0],
-                 cues[992][0],
-                 cues[993][0],
-
-            };
-
-            foreach (StardewValley.Monsters.Monster monsterSpawn in monsterHandle.monsterSpawns)
-            {
-
-                if (monsterSpawn is Phantom phantom)
-                {
-
-                    phantom.showTextAboveHead(textList[Mod.instance.randomIndex.Next(textList.Count)], duration: 2000);
-                
-                }
-
             }
 
         }

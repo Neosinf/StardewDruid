@@ -6,6 +6,7 @@ using StardewDruid.Cast;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Character;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewDruid.Location;
 using StardewDruid.Location.Druid;
 using StardewDruid.Monster;
@@ -22,8 +23,6 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Timers;
-using static StardewDruid.Data.IconData;
-
 
 namespace StardewDruid.Event.Scene
 {
@@ -88,7 +87,7 @@ namespace StardewDruid.Event.Scene
             atollVector = new Vector2(92, 7);
 
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.Sounds.getNewSpecialItem, });
 
         }
 
@@ -209,7 +208,7 @@ namespace StardewDruid.Event.Scene
 
                 case 113:
 
-                    Mod.instance.spellRegister.Add(new(companions[0].Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.discoverMineral, scheme = IconData.schemes.weald, });
+                    Mod.instance.spellRegister.Add(new(companions[0].Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.Sounds.discoverMineral, scheme = IconData.schemes.weald, });
 
                     break;
 
@@ -239,7 +238,7 @@ namespace StardewDruid.Event.Scene
                         new(9,-2),
                     };
 
-                    Mod.instance.spellRegister.Add(new(companions[0].Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.discoverMineral, scheme = IconData.schemes.weald, });
+                    Mod.instance.spellRegister.Add(new(companions[0].Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.Sounds.discoverMineral, scheme = IconData.schemes.weald, });
 
                     for (int i = 0; i < vectors25.Count; i++)
                     {
@@ -378,7 +377,7 @@ namespace StardewDruid.Event.Scene
                     Mod.instance.iconData.CursorIndicator(location, cursor57, IconData.cursors.mists, new());
 
                     //Mod.instance.iconData.AnimateBolt(location, cursor57);
-                    Mod.instance.spellRegister.Add(new(cursor57, 128, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt });
+                    Mod.instance.spellRegister.Add(new(cursor57, 128, IconData.impacts.none, new()) { type = SpellHandle.Spells.bolt });
 
                     break;
 
@@ -409,7 +408,7 @@ namespace StardewDruid.Event.Scene
                     Mod.instance.iconData.CursorIndicator(location, cursor60, IconData.cursors.mists, new());
 
                     //Mod.instance.iconData.AnimateBolt(location, campFire * 64);
-                    Mod.instance.spellRegister.Add(new(campFire * 64, 128, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt });
+                    Mod.instance.spellRegister.Add(new(campFire * 64, 128, IconData.impacts.none, new()) { type = SpellHandle.Spells.bolt });
 
                     break;
 
@@ -444,7 +443,7 @@ namespace StardewDruid.Event.Scene
                     Mod.instance.iconData.CursorIndicator(location, cursor64, IconData.cursors.mists, new());
 
                     //Mod.instance.iconData.AnimateBolt(location, cursor64);
-                    Mod.instance.spellRegister.Add(new(cursor64, 128, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt });
+                    Mod.instance.spellRegister.Add(new(cursor64, 128, IconData.impacts.none, new()) { type = SpellHandle.Spells.bolt });
 
                     break;
 
@@ -569,7 +568,7 @@ namespace StardewDruid.Event.Scene
                     
                     DialogueCue(15); 
  
-                    Blobfiend blobking = new Blobfiend(eventVectors[102], Mod.instance.CombatDifficulty());
+                    Jellyking blobking = new Jellyking(eventVectors[102], Mod.instance.CombatDifficulty(),"Jellyking");
 
                     blobking.netScheme.Set(2);
 
@@ -592,6 +591,8 @@ namespace StardewDruid.Event.Scene
                     bosses[0].ResetActives();
 
                     bosses[0].PerformFlight(eventVectors[103] * 64, Boss.flightTypes.target);
+
+                    SetTrack("Cowboy_undead");
 
                     break;
 
@@ -717,13 +718,14 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.iconData.DecorativeIndicator(location, companions[0].Position, IconData.decorations.stars, 3f, new() { interval = 1200, });
 
-                    SpellHandle meteor = new(location, bosses[0].Position, Game1.player.Position);
+                    SpellHandle meteor = new(location, bosses[0].Position, Game1.player.Position)
+                    {
+                        type = SpellHandle.Spells.missile,
 
-                    meteor.type = SpellHandle.spells.missile;
+                        missile = MissileHandle.missiles.meteor,
 
-                    meteor.missile = MissileHandle.missiles.meteor;
-
-                    meteor.factor =4;
+                        factor = 4
+                    };
 
                     Mod.instance.spellRegister.Add(meteor);
 
@@ -782,7 +784,7 @@ namespace StardewDruid.Event.Scene
 
                     Game1.flashAlpha = 1f;
 
-                    location.playSound(SpellHandle.sounds.thunder.ToString());
+                    location.playSound(SpellHandle.Sounds.thunder.ToString());
 
                     Wisps wispNew = new();
 
@@ -838,51 +840,19 @@ namespace StardewDruid.Event.Scene
 
                 case 506:
 
-                    Vector2 mistCorner = eventVectors[106] * 64 - new Vector2(72*3,72*5);
+                    // Cloud Animation
 
-                    List<int> cornersX = new() { 0, 6,};
-
-                    List<int> cornersY = new() { 0, 4, };
-
-                    for (int i = 0; i < 7; i++)
-                    {
-
-                        for (int j = 0; j < 5; j++)
-                        {
-
-                            if (cornersX.Contains(i) && cornersY.Contains(j))
-                            {
-                                continue;
-                            }
-
-                            Vector2 glowVector = mistCorner + new Vector2(i * 72, j * 72);
-
-                            TemporaryAnimatedSprite glowSprite = new TemporaryAnimatedSprite(0, 5000f, 1, 13, glowVector, false, false)
-                            {
-                                sourceRect = new Microsoft.Xna.Framework.Rectangle(88, 1779, 30, 30),
-                                sourceRectStartingPos = new Vector2(88, 1779),
-                                texture = Game1.mouseCursors,
-                                motion = new Vector2(-0.0004f + Mod.instance.randomIndex.Next(5) * 0.0002f, -0.0004f + Mod.instance.randomIndex.Next(5) * 0.0002f),
-                                scale = 5f,
-                                layerDepth = 991f,
-                                timeBasedMotion = true,
-                                alpha = 0.5f,
-                                color = new Microsoft.Xna.Framework.Color(0.75f, 0.75f, 1f, 1f),
-                            };
-
-                            location.temporarySprites.Add(glowSprite);
-
-                        }
-
-                    }
+                    Vector2 cloudCorner = (eventVectors[106] + new Vector2(1, -3)) * 64;
 
                     TemporaryAnimatedSprite cloudAnimation = Mod.instance.iconData.CreateSwirl(
                         
-                        location, 
-                        (eventVectors[106] + new Vector2(1,-3)) * 64, 
+                        location,
+                        cloudCorner, 
                         5f, 
-                        new() { interval = 125f, loops = 13*5, flip = true, alpha = 0.1f, layer = mistCorner.Y / 10000 }
+                        new() { interval = 125f, loops = 2, flip = true, alpha = 0.3f, layer = cloudCorner.Y / 10000 }
                     );
+
+                    // First Farmer
 
                     companions[2] = new FirstFarmer(CharacterHandle.characters.FirstFarmer);
 
@@ -902,6 +872,14 @@ namespace StardewDruid.Event.Scene
 
                     companions[2].Position = (eventVectors[106] + new Vector2(-2, -3)) * 64;
 
+                    companions[2].fadeOut = 0.7f;
+
+                    companions[2].fadeSet = 0.7f;
+
+                    Mod.instance.iconData.AnimateQuickWarp(location, companions[2].Position, false, IconData.warps.mist);
+
+                    // Lady Beyond
+
                     companions[3] = new Lady(CharacterHandle.characters.LadyBeyond);
 
                     voices[3] = companions[3];
@@ -920,6 +898,12 @@ namespace StardewDruid.Event.Scene
                     }
 
                     companions[3].Position = (eventVectors[106] + new Vector2(2, -2)) * 64;
+
+                    companions[3].fadeOut = 0.7f;
+
+                    companions[3].fadeSet = 0.7f;
+
+                    Mod.instance.iconData.AnimateQuickWarp(location, companions[3].Position, true, IconData.warps.mist);
 
                     companions[2].LookAtTarget(companions[3].Position, true);
 
@@ -986,10 +970,17 @@ namespace StardewDruid.Event.Scene
                     companions[2].ResetActives();
                     companions[2].netIdle.Set((int)Character.Character.idles.kneel);
                     companions[3].currentLocation.characters.Remove(companions[3]);
+
+                    Mod.instance.iconData.AnimateQuickWarp(location, companions[3].Position, true, IconData.warps.mist);
+
                     companions.Remove(3);
+
                     break;
                 case 564: 
                     companions[2].currentLocation.characters.Remove(companions[2]);
+
+                    Mod.instance.iconData.AnimateQuickWarp(location, companions[2].Position, true, IconData.warps.mist);
+
                     companions.Remove(2);
                     break;
                 case 570:

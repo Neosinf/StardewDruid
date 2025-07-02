@@ -4,6 +4,7 @@ using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewModdingAPI;
 using StardewValley;
@@ -35,7 +36,6 @@ namespace StardewDruid.Cast.Effect
         {
 
         }
-
 
         public virtual void AddTarget(GameLocation location, Vector2 tile)
         {
@@ -127,6 +127,8 @@ namespace StardewDruid.Cast.Effect
                             {
 
                                 StardewValley.Item objectInstance = targetObject.heldObject.Value.getOne();
+
+                                objectInstance.Stack = targetObject.heldObject.Value.Stack;
 
                                 if (targetObject.QualifiedItemId == "(BC)MushroomLog")
                                 {
@@ -386,6 +388,8 @@ namespace StardewDruid.Cast.Effect
 
                             }
 
+                            HerbalHandle.RandomOmen(tileVector * 64 + new Vector2(32,-128), 16);
+
                             Mod.instance.rite.targetCasts[location.Name + "_harvest"][tileVector] = "Tree";
 
                         }
@@ -500,9 +504,10 @@ namespace StardewDruid.Cast.Effect
 
                             StardewValley.Item extract = ModUtility.ExtractForage(toHarvest.Value.location,tileVector);
 
-                            ThrowHandle throwObject = new(tileVector * 64, toHarvest.Value.tile * 64, extract);
-
-                            throwObject.pocket = true;
+                            ThrowHandle throwObject = new(tileVector * 64, toHarvest.Value.tile * 64, extract)
+                            {
+                                pocket = true
+                            };
 
                             throwObject.register();
 
@@ -532,9 +537,10 @@ namespace StardewDruid.Cast.Effect
                             foreach (StardewValley.Object extract in extracts)
                             {
 
-                                ThrowHandle throwObject = new(hoeDirt.Tile * 64, toHarvest.Value.tile * 64, extract);
-
-                                throwObject.pocket = true;
+                                ThrowHandle throwObject = new(hoeDirt.Tile * 64, toHarvest.Value.tile * 64, extract)
+                                {
+                                    pocket = true
+                                };
 
                                 throwObject.register();
 

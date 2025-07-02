@@ -8,6 +8,7 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewDruid.Location.Druid;
@@ -36,27 +37,27 @@ namespace StardewDruid.Event.Scene
         {
 
             // Aldebaran Enter
-            [1] = new Vector2(29, 15),
+            [1] = new Vector2(28, 15),
             // Aldebaran look at Gate
-            [2] = new Vector2(29, 10),
+            [2] = new Vector2(28, 10),
             // Shift Blackfeather
-            [3] = new Vector2(27, 31),
+            [3] = new Vector2(26, 31),
 
             // mist vector
-            [101] = new Vector2(27, 10),
+            [101] = new Vector2(26, 10),
             // lady enter
-            [102] = new Vector2(26, 11),
+            [102] = new Vector2(25, 11),
             // lady position
-            [103] = new Vector2(26, 7),
+            [103] = new Vector2(25, 7),
             // crowmother enter
-            [104] = new Vector2(29, 1),
+            [104] = new Vector2(28, 1),
             // crowmother position
-            [105] = new Vector2(28, 7),
+            [105] = new Vector2(27, 7),
 
             // Aldebaran present himself
-            [201] = new Vector2(28, 8),
+            [201] = new Vector2(27, 8),
             // Gate lightning
-            [202] = new Vector2(27, 4),
+            [202] = new Vector2(26, 4),
 
 
         };
@@ -261,9 +262,9 @@ namespace StardewDruid.Event.Scene
 
                     Game1.flashAlpha = 1f;
 
-                    location.playSound(SpellHandle.sounds.thunder.ToString());
+                    location.playSound(SpellHandle.Sounds.thunder.ToString());
 
-                    (Mod.instance.locations[LocationHandle.druid_gate_name] as Gate).ambientDarkness = true;
+                    (Mod.instance.locations[LocationHandle.druid_sanctuary_name] as Sanctuary).ambientDarkness = true;
 
                     companions[0].LookAtTarget(eventVectors[1] * 64, true);
 
@@ -277,13 +278,15 @@ namespace StardewDruid.Event.Scene
 
                 case 105:
 
-                    (Mod.instance.locations[LocationHandle.druid_gate_name] as Gate).gateOpen = true;
+                    (Mod.instance.locations[LocationHandle.druid_sanctuary_name] as Sanctuary).GateOverride(1);
 
                     // Lady Beyond
 
-                    companions[1] = new Lady(CharacterHandle.characters.LadyBeyond);
-
-                    companions[1].fadeOut = 0.8f;
+                    companions[1] = new Lady(CharacterHandle.characters.LadyBeyond)
+                    {
+                        fadeOut = 0.4f, 
+                        fadeSet = 0.8f,
+                    };
 
                     voices[1] = companions[1];
 
@@ -308,9 +311,11 @@ namespace StardewDruid.Event.Scene
 
                     // Crowmother
 
-                    companions[2] = new Crowmother(CharacterHandle.characters.Crowmother);
-
-                    companions[2].fadeOut = 0.8f;
+                    companions[2] = new Crowmother(CharacterHandle.characters.Crowmother)
+                    {
+                        fadeOut = 0.4f,
+                        fadeSet = 0.8f,
+                    };
 
                     voices[2] = companions[2];
 
@@ -535,20 +540,17 @@ namespace StardewDruid.Event.Scene
 
                 case 171:
 
-                    Vector2 strikeVector = companions[1].Position + new Vector2(80, -156);
+                    Vector2 strikeVector = companions[1].Position + new Vector2(80, -172);
 
-                    Mod.instance.spellRegister.Add(new(strikeVector, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, factor = 3, counter = -60, sound = SpellHandle.sounds.secret1 });
-                    Mod.instance.spellRegister.Add(new(strikeVector, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, factor = 3, counter = -40, sound = SpellHandle.sounds.silent, });
-                    Mod.instance.spellRegister.Add(new(strikeVector, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, factor = 3, counter = -20, sound = SpellHandle.sounds.silent, });
-                    Mod.instance.spellRegister.Add(new(strikeVector, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, factor = 3, sound = SpellHandle.sounds.thunder, });
+                    Mod.instance.spellRegister.Add(new(strikeVector, 192, IconData.impacts.none, new()) { type = SpellHandle.Spells.greatbolt, factor = 3, sound = SpellHandle.Sounds.thunder, });
 
                     break;
 
                 case 172:
 
-                    (Mod.instance.locations[LocationHandle.druid_gate_name] as Gate).gateOpen = false;
+                    (Mod.instance.locations[LocationHandle.druid_sanctuary_name] as Sanctuary).GateOverride(2);
 
-                    Game1.playSound(SpellHandle.sounds.boulderBreak.ToString());
+                    Game1.playSound(SpellHandle.Sounds.boulderBreak.ToString());
 
                     DialogueCue(124); // [124] = new() { [1] = "Promise me he will come back", },
 
@@ -588,7 +590,7 @@ namespace StardewDruid.Event.Scene
 
                     voices.Remove(2);
 
-                    (Mod.instance.locations[LocationHandle.druid_gate_name] as Gate).ambientDarkness =false;
+                    (Mod.instance.locations[LocationHandle.druid_sanctuary_name] as Sanctuary).ambientDarkness =false;
 
                     Mod.instance.eventRegister[Rite.eventWisps].eventComplete = true;
 
@@ -642,11 +644,13 @@ namespace StardewDruid.Event.Scene
 
                 case 209:
 
-                    (Mod.instance.locations[LocationHandle.druid_gate_name] as Gate).OpenGate();
+                    (Mod.instance.locations[LocationHandle.druid_sanctuary_name] as Sanctuary).GateOverride(0);
 
-                    Game1.playSound(SpellHandle.sounds.boulderBreak.ToString());
+                    (Mod.instance.locations[LocationHandle.druid_sanctuary_name] as Sanctuary).OpenGate();
 
-                    Game1.playSound(SpellHandle.sounds.thunder.ToString());
+                    Game1.playSound(SpellHandle.Sounds.boulderBreak.ToString());
+
+                    Game1.playSound(SpellHandle.Sounds.thunder.ToString());
 
                     eventComplete = true;
 

@@ -5,6 +5,8 @@ using StardewDruid.Cast;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Event;
+using StardewDruid.Handle;
+using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.FruitTrees;
@@ -23,10 +25,6 @@ namespace StardewDruid.Character
 {
     public class Seafarer : StardewDruid.Character.Character
     {
-        
-        public Texture2D hatsTexture;
-
-        public int hatsIndex;
 
         public Seafarer()
         {
@@ -44,101 +42,35 @@ namespace StardewDruid.Character
             
             base.LoadOut();
 
-            hatsTexture = Game1.content.Load<Texture2D>("Characters\\Farmer\\hats");
-
-            LoadNuance(Mod.instance.randomIndex.Next(3));
+            LoadNuance();
 
         }
 
-        public void LoadNuance(int nuance)
+        public void LoadNuance()
         {
-            
-            WeaponLoadout();
 
-            switch (nuance)
+            WeaponLoadout(WeaponRender.weapons.cutlass);
+
+            switch (characterType)
             {
                 
-                case 0:
-                    hatsIndex = 292;
-                    weaponRender.LoadWeapon(Render.WeaponRender.weapons.estoc);
-                    break;
-                case 1:
-                    hatsIndex = 155;
-                    weaponRender.LoadWeapon(Render.WeaponRender.weapons.estoc);
-                    break;
+                default:
 
-                case 2:
-                    hatsIndex = 242;
-                    weaponRender.LoadWeapon(Render.WeaponRender.weapons.estoc);
-                    break;
-
-            }
-
-        }
-
-        public override void DrawHat(SpriteBatch b, Vector2 spritePosition,  float drawLayer, float fade)
-        {
-            
-            //Vector2 spritePosition = SpritePosition(localPosition);
-
-            int UseIndex = hatsIndex + 0;
-
-            int hatOffset = 0;
-
-            switch (netDirection.Value)
-            {
-                case 0:
-
-                    UseIndex += 36;
+                    hatSelect = 9;
 
                     break;
 
-                case 1:
+                case CharacterHandle.characters.SeafarerCaptain:
 
-                    UseIndex += 12;
-
-                    break;
-
-                case 3:
-
-                    UseIndex += 24;
-
-                    hatOffset -= (int)(1 * setScale);
+                    hatSelect = 8;
 
                     break;
 
-            }
+                case CharacterHandle.characters.SeafarerMate:
 
-            if (netIdle.Value == (int)Character.idles.kneel)
-            {
+                    hatSelect = 7;
 
-                b.Draw(
-                    hatsTexture,
-                    spritePosition - new Vector2(hatOffset, 6*setScale),
-                    Game1.getSourceRectForStandardTileSheet(hatsTexture, UseIndex, 20, 20),
-                    Color.White * fade,
-                    0.0f,
-                    new Vector2(10),
-                    setScale,
-                    SpriteAngle() ? (SpriteEffects)1 : 0,
-                    drawLayer + 0.0001f
-                );
-
-            }
-            else
-            {
-
-                b.Draw(
-                    hatsTexture,
-                    spritePosition - new Vector2(hatOffset, 13 * setScale),
-                    Game1.getSourceRectForStandardTileSheet(hatsTexture, UseIndex, 20, 20),
-                    Color.White * fade,
-                    0.0f,
-                    new Vector2(10),
-                    setScale,
-                    SpriteAngle() ? (SpriteEffects)1 : 0,
-                    drawLayer + 0.0001f
-                );
+                    break;
 
             }
 

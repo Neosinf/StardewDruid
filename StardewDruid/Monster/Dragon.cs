@@ -6,6 +6,7 @@ using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
@@ -40,7 +41,7 @@ namespace StardewDruid.Monster
           : base(vector, CombatModifier, name)
         {
 
-            SpawnData.MonsterDrops(this, SpawnData.drops.dragon);
+            SpawnData.MonsterDrops(this, SpawnData.Drops.dragon);
 
         }
 
@@ -51,11 +52,9 @@ namespace StardewDruid.Monster
 
             baseJuice = 5;
 
-            basePulp = 50;
+            basePulp = 40;
 
             gait = 2;
-
-            overHead = new(0, -224);
 
             walkInterval = 9;
 
@@ -137,6 +136,8 @@ namespace StardewDruid.Monster
 
             float netScale = GetScale();
 
+            Vector2 spritePosition = new Vector2(localPosition.X + 32 - (32 * netScale), localPosition.Y + 64 - (64 * netScale));
+
             bool flippant = ((netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3);
 
             if (netSweepActive.Value)
@@ -145,13 +146,13 @@ namespace StardewDruid.Monster
                 if (netSpecialActive.Value)
                 {
 
-                    dragonRender.drawSweep(b, localPosition, new() { direction = netDirection.Value, scale = netScale, version = 1, frame = sweepFrame, flip = flippant, layer = drawLayer, });
+                    dragonRender.drawSweep(b, spritePosition, new() { direction = netDirection.Value, scale = netScale, version = 1, frame = sweepFrame, flip = flippant, layer = drawLayer, });
 
                 }
                 else
                 {
 
-                    dragonRender.drawSweep(b, localPosition, new() { direction = netDirection.Value, scale = netScale, frame = sweepFrame, flip = flippant, layer = drawLayer, });
+                    dragonRender.drawSweep(b, spritePosition, new() { direction = netDirection.Value, scale = netScale, frame = sweepFrame, flip = flippant, layer = drawLayer, });
 
                 }
 
@@ -162,13 +163,13 @@ namespace StardewDruid.Monster
             if (netSpecialActive.Value || netChannelActive.Value)
             {
 
-                dragonRender.drawWalk(b, localPosition, new() { direction = netDirection.Value, scale = netScale, version = 1, breath = netBreathActive.Value, frame = walkFrame, flip = flippant, layer = drawLayer, });
+                dragonRender.drawWalk(b, spritePosition, new() { direction = netDirection.Value, scale = netScale, version = 1, breath = netBreathActive.Value, frame = walkFrame, flip = flippant, layer = drawLayer, });
 
             }
             else
             {
 
-                dragonRender.drawWalk(b, localPosition, new() { direction = netDirection.Value, scale = netScale, frame = netHaltActive.Value ? 0 : walkFrame, flip = flippant, layer = drawLayer, });
+                dragonRender.drawWalk(b, spritePosition, new() { direction = netDirection.Value, scale = netScale, frame = netHaltActive.Value ? 0 : walkFrame, flip = flippant, layer = drawLayer, });
 
             }
 
@@ -184,6 +185,8 @@ namespace StardewDruid.Monster
             {
 
                 float netScale = GetScale();
+
+                Vector2 spritePosition = new Vector2(localPosition.X + 32 - (32 * netScale), localPosition.Y + 64 - (64 * netScale));
 
                 bool flippant = ((netDirection.Value % 2 == 0 && netAlternative.Value == 3) || netDirection.Value == 3);
 
@@ -201,19 +204,19 @@ namespace StardewDruid.Monster
                 if (netSpecialActive.Value)
                 {
 
-                    dragonRender.drawFlight(b, localPosition, new() { direction = netDirection.Value, flight = flightHeight, scale = netScale, frame = useFrame, flip = flippant, layer = drawLayer, version = 1, breath = netBreathActive.Value, });
+                    dragonRender.drawFlight(b, spritePosition, new() { direction = netDirection.Value, flight = flightHeight, scale = netScale, frame = useFrame, flip = flippant, layer = drawLayer, version = 1, breath = netBreathActive.Value, });
 
                 }
                 else
                 {
 
-                    dragonRender.drawFlight(b, localPosition, new() { direction = netDirection.Value, flight = flightHeight, scale = netScale, frame = useFrame, flip = flippant, layer = drawLayer, });
+                    dragonRender.drawFlight(b, spritePosition, new() { direction = netDirection.Value, flight = flightHeight, scale = netScale, frame = useFrame, flip = flippant, layer = drawLayer, });
 
                 }
 
             }
 
-            DrawTextAboveHead(b, localPosition);
+            DrawTextAboveHead(b);
 
         }
 
@@ -224,13 +227,20 @@ namespace StardewDruid.Monster
 
         }
 
-        public override SpellHandle.effects IsCursable(SpellHandle.effects effect = SpellHandle.effects.knock)
+        public override Microsoft.Xna.Framework.Rectangle OverheadPortrait()
         {
 
-            if (effect == SpellHandle.effects.immolate)
+            return IconData.DisplayRectangle(Data.IconData.displays.ether);
+
+        }
+
+        public override SpellHandle.Effects IsCursable(SpellHandle.Effects effect = SpellHandle.Effects.knock)
+        {
+
+            if (effect == SpellHandle.Effects.immolate)
             {
 
-                return SpellHandle.effects.none;
+                return SpellHandle.Effects.none;
 
             }
 
@@ -249,21 +259,24 @@ namespace StardewDruid.Monster
 
             netBreathActive.Set(true);
 
-            currentLocation.playSound("DragonFire");
+            //currentLocation.playSound("DragonFire");
 
             List<Vector2> zero = BlastZero();
 
-            SpellHandle burn = new(currentLocation, zero[0] * 64, Position, (int)GetScale() * 32 + 96, GetThreat());
+            SpellHandle burn = new(currentLocation, zero[0] * 64, Position, (int)GetScale() * 32 + 96, GetThreat())
+            {
+                type = SpellHandle.Spells.explode,
 
-            burn.type = SpellHandle.spells.explode;
+                scheme = IconData.schemes.stars,
 
-            burn.scheme = IconData.schemes.stars;
+                display = IconData.impacts.impact,
 
-            burn.display = IconData.impacts.impact;
+                soundTrigger = SoundHandle.SoundCue.DragonFire,
 
-            burn.instant = true;
+                instant = true,
 
-            burn.added = new() { SpellHandle.effects.embers, };
+                added = new() { SpellHandle.Effects.embers, }
+            };
 
             Mod.instance.spellRegister.Add(burn);
 

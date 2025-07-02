@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Location.Druid;
 using StardewValley;
@@ -23,15 +24,11 @@ namespace StardewDruid.Location.Terrain
 
         public Dictionary<Vector2, MagnoliaLeaf> litter = new();
 
-        public float fade;
-
         public int size;
 
         public bool littered;
 
         public int season;
-
-        public int where;
 
         public Magnolia(Vector2 Position, int Size = 1)
            : base()
@@ -43,11 +40,11 @@ namespace StardewDruid.Location.Terrain
 
             position = Position;
 
-            fade = 1f;
-
             size = Size;
 
-            season = 2;
+            season = -1;
+
+            fadeout = 0.5f;
 
             reset();
 
@@ -82,7 +79,7 @@ namespace StardewDruid.Location.Terrain
 
                     layer = (position.Y / 10000) + (0.0064f * 11.5f);
 
-                    bounds = new((int)position.X + 128, (int)position.Y, 512, 512);
+                    bounds = new((int)position.X, (int)position.Y, 768, 512);
 
                     Leaves();
 
@@ -96,7 +93,7 @@ namespace StardewDruid.Location.Terrain
 
                     layer = (position.Y / 10000) + (0.0064f * 5.5f);
 
-                    bounds = new((int)position.X + 64, (int)position.Y, 3 * 64, 4 * 64);
+                    bounds = new((int)position.X, (int)position.Y, 5 * 64, 4 * 64);
 
                     LeavesMedium();
 
@@ -277,43 +274,54 @@ namespace StardewDruid.Location.Terrain
             {
                 // ----------------------
 
-                [new Vector2(64, 24)] = new(MagnoliaLeaf.magnoliatiers.topleft, 8,0),
-                [new Vector2(320, 24)] = new(MagnoliaLeaf.magnoliatiers.topright, 8,1),
+                [new Vector2(64, -40)] = new(MagnoliaLeaf.magnoliatiers.topleft, 8,0),
+                [new Vector2(320, -40)] = new(MagnoliaLeaf.magnoliatiers.topright, 8,1),
 
-                [new Vector2(144, 8)] = new(MagnoliaLeaf.magnoliatiers.top, 0,2),
-                [new Vector2(240, 8)] = new(MagnoliaLeaf.magnoliatiers.top, 0,3),
-
-                // ----------------------
-
-                [new Vector2(16, 80)] = new(MagnoliaLeaf.magnoliatiers.topleft, 8,0),
-                [new Vector2(368, 80)] = new(MagnoliaLeaf.magnoliatiers.topright, 8,1),
-
-                [new Vector2(114, 72)] = new(MagnoliaLeaf.magnoliatiers.mid, 0, 2),
-                [new Vector2(280, 72)] = new(MagnoliaLeaf.magnoliatiers.mid, 0, 3),
-
-                [new Vector2(192, 64)] = new(MagnoliaLeaf.magnoliatiers.mid, 0, 4),
+                [new Vector2(144, -56)] = new(MagnoliaLeaf.magnoliatiers.top, 0,2),
+                [new Vector2(240, -56)] = new(MagnoliaLeaf.magnoliatiers.top, 0,3),
 
                 // ----------------------
 
-                [new Vector2(-20, 148)] = new(MagnoliaLeaf.magnoliatiers.bottomleft, 16, 0),
-                [new Vector2(408, 148)] = new(MagnoliaLeaf.magnoliatiers.bottomright, 16, 1),
+                [new Vector2(16, 16)] = new(MagnoliaLeaf.magnoliatiers.topleft, 8,0),
+                [new Vector2(368, 16)] = new(MagnoliaLeaf.magnoliatiers.topright, 8,1),
 
-                [new Vector2(56, 144)] = new(MagnoliaLeaf.magnoliatiers.mid, 8, 2),
-                [new Vector2(328, 144)] = new(MagnoliaLeaf.magnoliatiers.mid, 8, 3),
+                [new Vector2(114, 8)] = new(MagnoliaLeaf.magnoliatiers.mid, 0, 2),
+                [new Vector2(280, 8)] = new(MagnoliaLeaf.magnoliatiers.mid, 0, 3),
 
-                [new Vector2(144, 140)] = new(MagnoliaLeaf.magnoliatiers.mid, 8, 4),
-                [new Vector2(240, 140)] = new(MagnoliaLeaf.magnoliatiers.mid, 8, 5),
-
-                // ----------------------
-                [new Vector2(16, 208)] = new(MagnoliaLeaf.magnoliatiers.bottomleft, 24, 0),
-                [new Vector2(368, 208)] = new(MagnoliaLeaf.magnoliatiers.bottomright, 24, 1),
-
-                [new Vector2(104, 216)] = new(MagnoliaLeaf.magnoliatiers.bottom, 16, 2),
-                [new Vector2(280, 216)] = new(MagnoliaLeaf.magnoliatiers.bottom, 16, 3),
-
-                [new Vector2(192, 224)] = new(MagnoliaLeaf.magnoliatiers.bottom, 16, 4),
+                [new Vector2(192, 0)] = new(MagnoliaLeaf.magnoliatiers.mid, 0, 4),
 
                 // ----------------------
+
+                [new Vector2(-20, 68)] = new(MagnoliaLeaf.magnoliatiers.bottomleft, 16, 0),
+                [new Vector2(408, 68)] = new(MagnoliaLeaf.magnoliatiers.bottomright, 16, 1),
+
+                [new Vector2(56, 72)] = new(MagnoliaLeaf.magnoliatiers.mid, 8, 2),
+                [new Vector2(328, 72)] = new(MagnoliaLeaf.magnoliatiers.mid, 8, 3),
+
+                [new Vector2(144, 76)] = new(MagnoliaLeaf.magnoliatiers.mid, 8, 4),
+                [new Vector2(240, 76)] = new(MagnoliaLeaf.magnoliatiers.mid, 8, 5),
+
+                // ----------------------
+                [new Vector2(-64, 132)] = new(MagnoliaLeaf.magnoliatiers.bottomleft, 24, 0),
+                [new Vector2(448, 132)] = new(MagnoliaLeaf.magnoliatiers.bottomright, 24, 1),
+
+                [new Vector2(16, 144)] = new(MagnoliaLeaf.magnoliatiers.bottomleft, 24, 0),
+                [new Vector2(368, 144)] = new(MagnoliaLeaf.magnoliatiers.bottomright, 24, 1),
+
+                [new Vector2(104, 152)] = new(MagnoliaLeaf.magnoliatiers.mid, 16, 2),
+                [new Vector2(280, 152)] = new(MagnoliaLeaf.magnoliatiers.mid, 16, 3),
+
+                [new Vector2(192, 160)] = new(MagnoliaLeaf.magnoliatiers.mid, 16, 4),
+
+                // ----------------------
+                [new Vector2(-20, 204)] = new(MagnoliaLeaf.magnoliatiers.bottomleft, 16, 0),
+                [new Vector2(408, 204)] = new(MagnoliaLeaf.magnoliatiers.bottomright, 16, 1),
+
+                [new Vector2(56, 216)] = new(MagnoliaLeaf.magnoliatiers.bottom, 8, 2),
+                [new Vector2(328, 216)] = new(MagnoliaLeaf.magnoliatiers.bottom, 8, 3),
+
+                [new Vector2(144, 224)] = new(MagnoliaLeaf.magnoliatiers.bottom, 8, 4),
+                [new Vector2(240, 224)] = new(MagnoliaLeaf.magnoliatiers.bottom, 8, 5),
 
             };
 
@@ -368,7 +376,7 @@ namespace StardewDruid.Location.Terrain
 
                 case 2:
 
-                    /*double radian2 = Math.PI / 5;
+                    double radian2 = Math.PI / 5;
 
                     for (int x = 1; x < 6; x++)
                     {
@@ -377,7 +385,7 @@ namespace StardewDruid.Location.Terrain
 
                         Vector2 position = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * Mod.instance.randomIndex.Next(4, 12) * 16;
 
-                        litter.Add(position, new(MagnoliaLeaf.magnoliatiers.litter, 0));
+                        litter.Add(position, new(MagnoliaLeaf.magnoliatiers.litter, 0, 0));
 
 
                     }
@@ -389,9 +397,9 @@ namespace StardewDruid.Location.Terrain
 
                         Vector2 position = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * Mod.instance.randomIndex.Next(4, 12) * 16;
 
-                        litter.Add(position, new(MagnoliaLeaf.magnoliatiers.litter, 0));
+                        litter.Add(position, new(MagnoliaLeaf.magnoliatiers.litter, 0, 0));
 
-                    }*/
+                    }
 
                     break;
 
@@ -401,41 +409,94 @@ namespace StardewDruid.Location.Terrain
 
         }
 
-        public void Fade(GameLocation location)
+        public override void update(GameLocation location)
         {
 
-            fade = 1f;
+            base.update(location);
 
-            foreach (Farmer character in location.farmers)
+            wind = 0f;
+
+            windout = 0f;
+
+            if (shake > 0)
             {
 
-                if (bounds.Contains(character.Position.X, character.Position.Y))
+                shake--;
+
+                wind = Mod.instance.environment.retrieve(shake, EnvironmentHandle.environmentEffect.trunkShake);
+
+                switch (size)
                 {
 
-                    fade = 0.35f;
+                    default:
+                    case 1:
 
-                    return;
+                        windout = wind * 400;
+
+                        break;
+
+                    case 2:
+
+                        windout = wind * 200;
+
+                        break;
+
+                }
+
+                foreach (KeyValuePair<Vector2, MagnoliaLeaf> leaf in leaves)
+                {
+
+                    leaf.Value.wind = 0f;
+
+                    leaf.Value.windout = 0f;
+
+                    leaf.Value.wind = Mod.instance.environment.retrieve(shake, EnvironmentHandle.environmentEffect.leafShake);
+
+                    leaf.Value.windout = windout + leaf.Value.wind * 80f;
 
                 }
 
             }
-
-            foreach (NPC character in location.characters)
+            else
+            if (!ruined)
             {
 
-                if (bounds.Contains(character.Position.X, character.Position.Y))
+                wind = Mod.instance.environment.retrieve(where, EnvironmentHandle.environmentEffect.trunkRotate);
+                
+                switch (size)
                 {
 
-                    fade = 0.35f;
+                    default:
+                    case 1:
 
-                    return;
+                        windout = wind * 400;
+
+                        break;
+
+                    case 2:
+
+                        windout = wind * 200;
+
+                        break;
+
+                }
+
+                foreach (KeyValuePair<Vector2, MagnoliaLeaf> leaf in leaves)
+                {
+
+                    leaf.Value.wind = 0f;
+
+                    leaf.Value.windout = 0f;
+
+                    leaf.Value.wind = Mod.instance.environment.retrieve(where + leaf.Value.where, EnvironmentHandle.environmentEffect.leafRotate);
+
+                    leaf.Value.windout = leaf.Value.wind * 80f;
 
                 }
 
             }
 
         }
-
 
         public override void drawFront(SpriteBatch b, GameLocation location)
         {
@@ -479,23 +540,19 @@ namespace StardewDruid.Location.Terrain
 
             }
 
-            Fade(location);
-
             Vector2 span = new Vector2(16);
 
             foreach (KeyValuePair<Vector2, MagnoliaLeaf> leaf in leaves)
             {
 
-                float rotate = Mod.instance.environment.retrieve(where + leaf.Value.where, EnvironmentHandle.environmentEffect.leafRotate);
-
-                Vector2 place = new(Mod.instance.environment.retrieve(where + leaf.Value.where, EnvironmentHandle.environmentEffect.leafOffset), 0);
+                Vector2 place = new(leaf.Value.windout, 0);
 
                 b.Draw(
                     Mod.instance.iconData.sheetTextures[leafsheet], 
                     origin + leaf.Key + place, 
                     new Rectangle(leaf.Value.source.X + offset,leaf.Value.source.Y, 32, 32), 
                     leaf.Value.colour * fade, 
-                    rotate, 
+                    leaf.Value.wind, 
                     span,
                     4f, 
                     leaf.Value.flip ? (SpriteEffects)1 : 0, 
@@ -509,8 +566,9 @@ namespace StardewDruid.Location.Terrain
         public override void draw(SpriteBatch b, GameLocation location)
         {
 
-            if (!Utility.isOnScreen(bounds.Center.ToVector2(), 512))
+            if (!Utility.isOnScreen(bounds.Center.ToVector2(), 576))
             {
+                
                 return;
 
             }
@@ -526,18 +584,12 @@ namespace StardewDruid.Location.Terrain
 
             Vector2 origin = new(position.X - Game1.viewport.X, position.Y - Game1.viewport.Y);
 
-            Fade(location);
-
-            float rotate = 0f;
-
-            Vector2 place = new Vector2(0);
+            Vector2 place = new Vector2(windout,0);
 
             Microsoft.Xna.Framework.Color trunkcolour = new(224, 224, 224);
 
             if (!ruined)
             {
-
-                rotate = Mod.instance.environment.retrieve(where, EnvironmentHandle.environmentEffect.trunkRotate);
 
                 Vector2 span = new Vector2(16);
 
@@ -545,18 +597,17 @@ namespace StardewDruid.Location.Terrain
 
                 switch (size)
                 {
+
                     default:
                     case 1:
-                        lay = new Vector2(origin.X + 384, origin.Y + 704);
 
-                        place = new(Mod.instance.environment.retrieve(where, EnvironmentHandle.environmentEffect.trunkOffset), 0);
+                        lay = new Vector2(origin.X + 384, origin.Y + 704);
 
                         break;
 
                     case 2:
-                        lay = new Vector2(origin.X + 192, origin.Y + 352);
 
-                        place = new(Mod.instance.environment.retrieve(where, EnvironmentHandle.environmentEffect.smallTrunkOffset), 0);
+                        lay = new Vector2(origin.X + 192, origin.Y + 352);
 
                         break;
 
@@ -570,23 +621,12 @@ namespace StardewDruid.Location.Terrain
 
                         int leafoffset = 0;
 
-                        switch (useSeason)
-                        {
-
-                            //case Season.Summer: leafoffset = 192; break;
-
-                            //case Season.Fall: leafoffset = 384; break;
-
-                            //case Season.Winter: leafoffset = 576; break;
-
-                        }
-
                         b.Draw(
                             Mod.instance.iconData.sheetTextures[IconData.tilesheets.magnolialeaftwo],
                             lay + leaf.Key,
                             new Rectangle(leaf.Value.source.X + leafoffset, leaf.Value.source.Y, 32, 32),
                             Color.White,
-                            rotate * 2,
+                            wind * 2,
                             span,
                             3.6f,
                             leaf.Value.flip ? (SpriteEffects)1 : 0,
@@ -598,7 +638,7 @@ namespace StardewDruid.Location.Terrain
                             lay + leaf.Key + new Vector2(2, 8),
                             new Rectangle(leaf.Value.source.X + leafoffset, leaf.Value.source.Y, 32, 32),
                             Color.Black * 0.3f,
-                            rotate * 2,
+                            wind * 2,
                             span,
                             3.6f,
                             leaf.Value.flip ? (SpriteEffects)1 : 0,
@@ -653,45 +693,48 @@ namespace StardewDruid.Location.Terrain
                         origin + new Vector2(384) + place,
                         new Rectangle(offset, 0, 192, 192),
                         trunkcolour * fade,
-                        rotate,
+                        wind,
                         new Vector2(96),
                         4,
                         flip ? (SpriteEffects)1 : 0,
                         layer - 0.001f
                         );
 
+
+                    if (Game1.timeOfDay > 2100)
+                    {
+
+                        break;
+
+                    }
+
                     if (!ruined)
                     {
 
-                        if (Game1.timeOfDay < 2100)
-                        {
+                        b.Draw(
+                            Mod.instance.iconData.sheetTextures[IconData.tilesheets.magnoliashade],
+                            origin + new Vector2(384, 716) + place,
+                            new Rectangle(192, 0, 192, 160),
+                            gladeShade,
+                            wind,
+                            new Vector2(96, 80),
+                            4,
+                            flip ? (SpriteEffects)1 : 0,
+                            layer + 0.0384f
+                            );
 
-                            b.Draw(
-                                Mod.instance.iconData.sheetTextures[IconData.tilesheets.magnoliashade],
-                                origin + new Vector2(384, 716) + place,
-                                new Rectangle(192, 0, 192, 160),
-                                gladeShade,
-                                rotate,
-                                new Vector2(96, 80),
-                                4,
-                                flip ? (SpriteEffects)1 : 0,
-                                layer + 0.0384f
-                                );
+                        b.Draw(
+                            Mod.instance.iconData.sheetTextures[IconData.tilesheets.magnoliashade],
+                            origin + new Vector2(384, 716) + place,
+                            new Rectangle(0, 0, 192, 160),
+                            leafShade,
+                            0,
+                            new Vector2(96, 80),
+                            4f,
+                            flip ? (SpriteEffects)1 : 0,
+                            0.001f
+                            );
 
-                            b.Draw(
-                                Mod.instance.iconData.sheetTextures[IconData.tilesheets.magnoliashade],
-                                origin + new Vector2(384, 716) + place,
-                                new Rectangle(0, 0, 192, 160),
-                                leafShade,
-                                0,
-                                new Vector2(96, 80),
-                                4f,
-                                flip ? (SpriteEffects)1 : 0,
-                                0.001f
-                                );
-
-
-                        }
 
                     }
                     else
@@ -703,7 +746,7 @@ namespace StardewDruid.Location.Terrain
                             origin + new Vector2(384, 716) + place,
                             new Rectangle(384, 0, 192, 160),
                             trunkShadow,
-                            rotate,
+                            wind,
                             new Vector2(96, 80),
                             4f,
                             flip ? (SpriteEffects)1 : 0,
@@ -732,44 +775,47 @@ namespace StardewDruid.Location.Terrain
                         origin + new Vector2(192, 192) + place,
                         new Rectangle(offset, 192, 96, 96),
                         trunkcolour * fade,
-                        rotate,
+                        wind,
                         new Vector2(48, 48),
                         4,
                         flip ? (SpriteEffects)1 : 0,
                         layer - 0.001f
                         );
 
+
+                    if (Game1.timeOfDay > 2100)
+                    {
+
+                        break;
+
+                    }
+
                     if (!ruined)
                     {
 
-                        if (Game1.timeOfDay < 2100)
-                        {
+                        b.Draw(
+                            Mod.instance.iconData.sheetTextures[IconData.tilesheets.magnoliashade],
+                            origin + new Vector2(192, 368) + place,
+                            new Rectangle(192, 0, 192, 160),
+                            gladeShade,
+                            wind,
+                            new Vector2(96, 80),
+                            2.4f,
+                            flip ? (SpriteEffects)1 : 0,
+                            layer + 0.0320f
+                            );
 
-                            b.Draw(
-                                Mod.instance.iconData.sheetTextures[IconData.tilesheets.magnoliashade],
-                                origin + new Vector2(192, 368) + place,
-                                new Rectangle(192, 0, 192, 160),
-                                gladeShade,
-                                rotate,
-                                new Vector2(96, 80),
-                                2.4f,
-                                flip ? (SpriteEffects)1 : 0,
-                                layer + 0.0448f
-                                );
-
-                            b.Draw(
-                                Mod.instance.iconData.sheetTextures[IconData.tilesheets.magnoliashade],
-                                origin + new Vector2(192, 368) + place,
-                                new Rectangle(0, 0, 192, 160),
-                                leafShade,
-                                0,
-                                new Vector2(96, 80),
-                                2.4f,
-                                flip ? (SpriteEffects)1 : 0,
-                                0.001f
-                                );
-
-                        }
+                        b.Draw(
+                            Mod.instance.iconData.sheetTextures[IconData.tilesheets.magnoliashade],
+                            origin + new Vector2(192, 368) + place,
+                            new Rectangle(0, 0, 192, 160),
+                            leafShade,
+                            0,
+                            new Vector2(96, 80),
+                            2.4f,
+                            flip ? (SpriteEffects)1 : 0,
+                            0.001f
+                            );
 
                     }
                     else
@@ -780,7 +826,7 @@ namespace StardewDruid.Location.Terrain
                             origin + new Vector2(192, 360) + place,
                             new Rectangle(384, 0, 192, 160),
                             trunkShadow,
-                            rotate,
+                            wind,
                             new Vector2(96, 80),
                             2.4f,
                             flip ? (SpriteEffects)1 : 0,
@@ -830,6 +876,10 @@ namespace StardewDruid.Location.Terrain
 
         public int where;
 
+        public float wind;
+
+        public float windout;
+
         public MagnoliaLeaf(magnoliatiers Tier, int Off, int Where)
         {
 
@@ -842,17 +892,17 @@ namespace StardewDruid.Location.Terrain
                 case magnoliatiers.top:
                 case magnoliatiers.mid:
 
-                    /*switch (Mod.instance.randomIndex.Next(5))
+                    switch (Mod.instance.randomIndex.Next(3))
                     {
                         default:
-                            index = Mod.instance.randomIndex.Next(12);
-                            break;
-                        case 4:
                             index = Mod.instance.randomIndex.Next(18, 30);
                             break;
+                        case 2:
+                            index = Mod.instance.randomIndex.Next(12);
+                            break;
 
-                    }*/
-                    index = Mod.instance.randomIndex.Next(12);
+                    }
+
                     flip = Mod.instance.randomIndex.NextBool();
 
                     break;
@@ -886,13 +936,33 @@ namespace StardewDruid.Location.Terrain
 
                 case magnoliatiers.topright:
 
+                    switch (Mod.instance.randomIndex.Next(3))
+                    {
+                        default:
+                            index = Mod.instance.randomIndex.Next(30, 36);
+                            break;
+                        case 2:
+                            index = Mod.instance.randomIndex.Next(12, 18);
+                            break;
+
+                    }
                     index = Mod.instance.randomIndex.Next(12, 18);
 
                     break;
 
                 case magnoliatiers.topleft:
 
-                    index = Mod.instance.randomIndex.Next(12, 18);
+                    switch (Mod.instance.randomIndex.Next(3))
+                    {
+                        default:
+                            index = Mod.instance.randomIndex.Next(30, 36);
+                            break;
+                        case 2:
+                            index = Mod.instance.randomIndex.Next(12, 18);
+                            break;
+
+                    }
+                    
 
                     flip = true;
 

@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static StardewDruid.Data.IconData;
 
 namespace StardewDruid.Cast.Effect
 {
@@ -33,7 +32,7 @@ namespace StardewDruid.Cast.Effect
             Buff shieldBuff = new(
                 Rite.buffIdShield,
                 source: StringData.Strings(StringData.stringkeys.druidShield),
-                displaySource: StringData.RiteNames(Rite.rites.stars),
+                displaySource: StringData.RiteNames(Rite.Rites.stars),
                 duration: 3000,
                 displayName: StringData.Strings(StringData.stringkeys.druidShield),
                 description: StringData.Strings(StringData.stringkeys.defenseIncrease),

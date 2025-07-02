@@ -22,7 +22,7 @@ namespace StardewDruid.Event.Sword
 
             base.EventActivate();
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.thunder_small, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.Sounds.thunder_small, });
 
             AddActor(0, origin + new Vector2(-64, 256));
             AddActor(1, origin + new Vector2(192, 320));
@@ -69,9 +69,9 @@ namespace StardewDruid.Event.Sword
 
                 case 201:
 
-                    location.playSound(SpellHandle.sounds.thunder_small.ToString());
+                    location.playSound(SpellHandle.Sounds.thunder_small.ToString());
 
-                    Mod.instance.spellRegister.Add(new(origin + new Vector2(64, 320), 192, IconData.impacts.splash, new()) { type = SpellHandle.spells.bolt, factor = 3, });
+                    Mod.instance.spellRegister.Add(new(origin + new Vector2(64, 320), 192, IconData.impacts.splash, new()) { type = SpellHandle.Spells.bolt, factor = 3, displayRadius = 2, });
 
                     DialogueSetups(null, 3);
 
@@ -81,9 +81,9 @@ namespace StardewDruid.Event.Sword
 
                     //---------------------- throw Neptune Glaive
 
-                    location.playSound(SpellHandle.sounds.thunder.ToString());
+                    location.playSound(SpellHandle.Sounds.thunder.ToString());
 
-                    Mod.instance.spellRegister.Add(new(origin + new Vector2(64, 320), 256, IconData.impacts.splash, new()) { type = SpellHandle.spells.bolt, factor = 5, });
+                    Mod.instance.spellRegister.Add(new(origin + new Vector2(64, 320), 256, IconData.impacts.splash, new()) { type = SpellHandle.Spells.bolt, factor = 5, displayRadius = 3, });
 
                     DialogueCue(4);
 

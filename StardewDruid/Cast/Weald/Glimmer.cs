@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using StardewValley.Locations;
 using StardewValley.Buildings;
+using System.Reflection.Metadata;
 
 namespace StardewDruid.Cast.Weald
 {
@@ -54,11 +55,11 @@ namespace StardewDruid.Cast.Weald
 
                 Game1.player.friendshipData[witness.Name].TalkedToToday = true;
 
-                ModUtility.ChangeFriendship(Game1.player, witness, 25);
+                ModUtility.ChangeFriendship(witness, 25);
 
-                ReactionData.ReactTo(witness, ReactionData.reactions.weald, 25);
+                ReactionData.ReactTo(witness, ReactionData.reactions.weald, 25, new());
 
-                SpellHandle sparklesparkle = new(witness.Position, 256, IconData.impacts.supree, new()) { instant = true };
+                SpellHandle sparklesparkle = new(witness.Position, 256, IconData.impacts.sparkle, new()) { instant = true, displayRadius = 3, };
 
                 Mod.instance.spellRegister.Add(sparklesparkle);
 
@@ -139,9 +140,40 @@ namespace StardewDruid.Cast.Weald
 
                     }
 
-                    ModUtility.PetAnimal(Game1.player, pair.Value);
+                    ModUtility.PetAnimal(pair.Value);
 
                     Mod.instance.AddWitness(ReactionData.reactions.weald, pair.Value.myID.ToString());
+
+                }
+
+            }
+
+            if(location is FarmHouse farmhouse)
+            {
+
+                foreach (NPC witness in location.characters)
+                {
+
+                    if (witness is Pet petPet)
+                    {
+
+                        if (Mod.instance.Witnessed(ReactionData.reactions.weald, witness))
+                        {
+
+                            continue;
+
+                        }
+
+                        if (Vector2.Distance(petPet.Position, origin) >= threshold)
+                        {
+                            continue;
+                        }
+
+                        petPet.checkAction(Game1.player, location);
+
+                        continue;
+
+                    }
 
                 }
 
@@ -168,7 +200,7 @@ namespace StardewDruid.Cast.Weald
                     }
 
 
-                    ModUtility.PetAnimal(Game1.player, pair.Value);
+                    ModUtility.PetAnimal(pair.Value);
 
                     Mod.instance.AddWitness(ReactionData.reactions.weald, pair.Value.myID.ToString());
 
@@ -198,21 +230,6 @@ namespace StardewDruid.Cast.Weald
 
             }
 
-            if (Mod.instance.activeEvent.Count > 0 || location is Woods)
-            {
-
-                List<StardewValley.Monsters.Monster> monsters = ModUtility.MonsterProximity(location, new() { Game1.player.Position, }, 640);
-
-                foreach (StardewValley.Monsters.Monster monster in monsters)
-                {
-
-                    SpellHandle glimmer = new(monster.Position, 256, IconData.impacts.supree, new() { SpellHandle.effects.glare, }) { instant = true, scheme = IconData.schemes.golden };
-
-                    Mod.instance.spellRegister.Add(glimmer);
-
-                }
-
-            }
 
         }
 

@@ -5,7 +5,7 @@ using StardewDruid.Cast;
 using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
-using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.FruitTrees;
@@ -66,40 +66,85 @@ namespace StardewDruid.Character
 
         }
 
+        public override void DrawLaunch(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
+        {
+            
+            DrawStandby(b, spritePosition, drawLayer, fade);
+
+        }
+
+        public override void DrawStandby(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
+        {
+
+            base.DrawStandby(b, spritePosition, drawLayer, fade);
+
+            int rate = Math.Abs((int)(Game1.currentGameTime.TotalGameTime.TotalSeconds % 12) - 6);
+
+            Color circleColour = new Color(256 - rate, 256 - (rate * 9), 256 - (rate * 21));
+
+            b.Draw(
+                 Mod.instance.iconData.sheetTextures[IconData.tilesheets.ritual],
+                 spritePosition + new Vector2(0, 14 * setScale),
+                 new Rectangle(0, 96, 64, 48),
+                 Color.White * fade,
+                 0f,
+                 new Vector2(32, 24),
+                 setScale,
+                 0,
+                 drawLayer - 0.0005f
+             );
+
+            b.Draw(
+                 Mod.instance.iconData.sheetTextures[IconData.tilesheets.ritual],
+                 spritePosition + new Vector2(0, 14 * setScale),
+                 new Rectangle(64, 96, 64, 48),
+                 circleColour * fade,
+                 0f,
+                 new Vector2(32, 24),
+                 setScale,
+                 0,
+                 drawLayer - 0.0006f
+             );
+
+        }
+
         public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
         {
 
             ResetActives();
 
-            netSpecial.Set((int)specials.invoke);
+            netSpecial.Set((int)specials.launch);
 
-            specialTimer = 90;
+            specialTimer = 120;
 
-            cooldownTimer = cooldownInterval;
+            SetCooldown(specialTimer, 3f);
 
-            LookAtTarget(monster.Position, true);
+            List<StardewValley.Monsters.Monster> monsters = FindMonsters();
 
-            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 2);
+            if (monsters.Count > 0)
+            {
 
-            special.type = SpellHandle.spells.missile;
+                foreach (StardewValley.Monsters.Monster targetMonster in monsters)
+                {
 
-            special.missile = MissileHandle.missiles.firefall;
+                    SpellHandle special = new(currentLocation, targetMonster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage())
+                    {
+                        type = SpellHandle.Spells.judgement,
 
-            special.counter = -30;
+                        indicator = IconData.cursors.divineCharge,
 
-            special.scheme = IconData.schemes.stars;
+                        factor = 4
+                    };
 
-            special.factor = 2;
+                    special.TargetCursor();
 
-            special.power = 4;
+                    special.counter = -60;
 
-            special.explosion = 4;
+                    Mod.instance.spellRegister.Add(special);
 
-            special.terrain = 4;
+                }
 
-            special.display = IconData.impacts.bomb;
-
-            Mod.instance.spellRegister.Add(special);
+            }
 
             return true;
 

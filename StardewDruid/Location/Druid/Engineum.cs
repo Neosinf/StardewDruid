@@ -18,10 +18,10 @@ using StardewDruid.Data;
 using StardewValley.TerrainFeatures;
 using System.Threading;
 using xTile;
-using StardewDruid.Character;
-using static StardewDruid.Cast.Rite;
 using StardewDruid.Cast;
 using System.Reflection.Emit;
+using StardewDruid.Location.Terrain;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Location.Druid
 {
@@ -126,7 +126,7 @@ namespace StardewDruid.Location.Druid
 
             internalDarkness = true;
 
-            terrainFields = new();
+            mapReset();
 
             Dictionary<int, List<List<int>>> codes = new()
             {
@@ -299,7 +299,7 @@ namespace StardewDruid.Location.Druid
             {
                 [6] = new() { new() { 23, 1 }, },
 
-                [10] = new() { new() { 19, 5 }, new() { 26, 4 }, new() { 34, 6 }, },
+                [10] = new() { new() { 19, 5 }, new() { 34, 6 }, },
 
                 [15] = new() { new() { 19, 8 }, new() { 35, 7 }, },
 
@@ -311,7 +311,20 @@ namespace StardewDruid.Location.Druid
                 foreach (List<int> array in code.Value)
                 {
 
-                    TerrainField tField = new(IconData.tilesheets.engineum, array[1], new Vector2(array[0], code.Key) * 64);
+                    TerrainField tField;
+
+                    if (array[1] == 1)
+                    {
+
+                        tField = new EngineShrine(IconData.tilesheets.engineum, 1, new Vector2(array[0], code.Key) * 64);
+                        
+                    }
+                    else
+                    {
+
+                        tField = new(IconData.tilesheets.engineum, array[1], new Vector2(array[0], code.Key) * 64);
+
+                    }
 
                     foreach (Vector2 bottom in tField.baseTiles)
                     {
@@ -378,11 +391,12 @@ namespace StardewDruid.Location.Druid
                     if (array[1] == 1)
                     {
 
-                        LightField light = new(new Vector2(array[0], code.Key) * 64 + new Vector2(0, 32));
+                        LightField light = new(new Vector2(array[0], code.Key) * 64 + new Vector2(0, 32))
+                        {
+                            colour = Color.LightBlue,
 
-                        light.colour = Color.LightBlue;
-
-                        light.luminosity = 4 + Mod.instance.randomIndex.Next(3);
+                            luminosity = 4 + Mod.instance.randomIndex.Next(3)
+                        };
 
                         lightFields.Add(light);
 

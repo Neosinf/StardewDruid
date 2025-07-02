@@ -62,7 +62,7 @@ namespace StardewDruid.Data
                         villagers.Robin.ToString(), villagers.Demetrius.ToString(), villagers.Linus.ToString(),
                     };
 
-                    ModUtility.UpdateFriendship(Game1.player, NPCIndex, friendship);
+                    ModUtility.UpdateFriendship(NPCIndex, friendship);
 
                     break;
 
@@ -79,7 +79,7 @@ namespace StardewDruid.Data
                         villagers.Pierre.ToString(), villagers.Vincent.ToString(),
                     };
 
-                    ModUtility.UpdateFriendship(Game1.player, NPCIndex, friendship);
+                    ModUtility.UpdateFriendship(NPCIndex, friendship);
 
                     break;
 
@@ -94,7 +94,7 @@ namespace StardewDruid.Data
                         villagers.Wizard.ToString(), villagers.Willy.ToString(),
                     };
 
-                    ModUtility.UpdateFriendship(Game1.player, NPCIndex, friendship);
+                    ModUtility.UpdateFriendship(NPCIndex, friendship);
 
                     break;
 
@@ -482,6 +482,20 @@ namespace StardewDruid.Data
                         [ReactionData.portraits.unique] = "$h",
                         [ReactionData.portraits.love] = "$0",
                         [ReactionData.portraits.angry] = "$h",
+                    };
+
+                    break;
+
+                case "Marnie":
+
+                    shots = new()
+                    {
+                        [ReactionData.portraits.neutral] = "$0",
+                        [ReactionData.portraits.happy] = "$1",
+                        [ReactionData.portraits.sad] = "$3",
+                        [ReactionData.portraits.unique] = "$2",
+                        [ReactionData.portraits.love] = "$1",
+                        [ReactionData.portraits.angry] = "$4",
                     };
 
                     break;

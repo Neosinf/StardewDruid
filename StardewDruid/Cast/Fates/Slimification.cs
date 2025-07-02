@@ -63,13 +63,13 @@ namespace StardewDruid.Cast.Fates
 
             TemporaryAnimatedSprite slime = new(0, 250, 6, 4, npc.Position, false, false)
             {
-                texture = MonsterHandle.MonsterTexture("Blobfiend"),
+                texture = Mod.instance.iconData.blobTexture,
                 sourceRect = slimeSource,
                 sourceRectStartingPos = new Vector2(slimeSource.X, slimeSource.Y),
                 layerDepth = npc.Position.Y / 10000 + 0.0006f,
                 alpha = 0.35f,
                 scale = 5f,
-                color = Mod.instance.iconData.schemeColours[(IconData.schemes)scheme] * 0.75f,
+                color = Mod.instance.iconData.schemeColours[(IconData.schemes)scheme],
 
             };
 
@@ -78,6 +78,50 @@ namespace StardewDruid.Cast.Fates
             npc.currentLocation.temporarySprites.Add(slime);
 
             animations.Add(slime);
+
+            // shadow
+
+            slimeSource.Y += 48;
+
+            TemporaryAnimatedSprite slimeshadow = new(0, 250, 6, 4, npc.Position, false, false)
+            {
+                texture = Mod.instance.iconData.blobTexture,
+                sourceRect = slimeSource,
+                sourceRectStartingPos = new Vector2(slimeSource.X, slimeSource.Y + 48),
+                layerDepth = npc.Position.Y / 10000 + 0.0005f,
+                alpha = 0.15f,
+                scale = 5f,
+                color = Color.White,
+
+            };
+
+            slimeshadow.position -= new Vector2(80, 112);
+
+            npc.currentLocation.temporarySprites.Add(slimeshadow);
+
+            animations.Add(slimeshadow);
+
+            // gleam
+
+            slimeSource.Y += 48;
+
+            TemporaryAnimatedSprite slimegleam = new(0, 250, 6, 4, npc.Position, false, false)
+            {
+                texture = Mod.instance.iconData.blobTexture,
+                sourceRect = slimeSource,
+                sourceRectStartingPos = new Vector2(slimeSource.X, slimeSource.Y + 96),
+                layerDepth = npc.Position.Y / 10000 + 0.0007f,
+                alpha = 0.75f,
+                scale = 5f,
+                color = Color.White,
+
+            };
+
+            slimegleam.position -= new Vector2(80, 112);
+
+            npc.currentLocation.temporarySprites.Add(slimegleam);
+
+            animations.Add(slimegleam);
 
         }
 
@@ -116,6 +160,14 @@ namespace StardewDruid.Cast.Fates
             animations[1].position = npc.Position;
 
             animations[1].position -= new Vector2(80, 112);
+
+            animations[2].position = npc.Position;
+
+            animations[2].position -= new Vector2(80, 112);
+
+            animations[3].position = npc.Position;
+
+            animations[3].position -= new Vector2(80, 112);
 
             if (decimalCounter >= 30)
             {

@@ -385,7 +385,6 @@ namespace StardewDruid.Render
 
             };
 
-
             custom[specials.hadouken] = new()
             {
                 [0] = RectangleHumanoidList(new() { humanoidFrames.sweepRight1, humanoidFrames.sweepRight2, humanoidFrames.sweepRight3, humanoidFrames.sweepRight4, }),
@@ -460,6 +459,7 @@ namespace StardewDruid.Render
                         CharacterRender.humanoidFrames.jumpUp,
                         CharacterRender.humanoidFrames.boxUp1,
                         CharacterRender.humanoidFrames.boxUp2,
+                        CharacterRender.humanoidFrames.boxUp2,
                         CharacterRender.humanoidFrames.jumpUp,
                                 }),
                 [1] = RectangleHumanoidList(
@@ -467,6 +467,7 @@ namespace StardewDruid.Render
                                 {
                         CharacterRender.humanoidFrames.jumpRight,
                         CharacterRender.humanoidFrames.boxRight1,
+                        CharacterRender.humanoidFrames.boxRight2,
                         CharacterRender.humanoidFrames.boxRight2,
                         CharacterRender.humanoidFrames.jumpRight,
                                 }),
@@ -476,6 +477,7 @@ namespace StardewDruid.Render
                         CharacterRender.humanoidFrames.jumpDown,
                         CharacterRender.humanoidFrames.boxDown1,
                         CharacterRender.humanoidFrames.boxDown2,
+                        CharacterRender.humanoidFrames.boxDown2,
                         CharacterRender.humanoidFrames.jumpDown,
                                 }),
                 [3] = RectangleHumanoidList(
@@ -483,6 +485,7 @@ namespace StardewDruid.Render
                                 {
                         CharacterRender.humanoidFrames.jumpLeft,
                         CharacterRender.humanoidFrames.boxLeft1,
+                        CharacterRender.humanoidFrames.boxLeft2,
                         CharacterRender.humanoidFrames.boxLeft2,
                         CharacterRender.humanoidFrames.jumpLeft,
                                 }),
@@ -565,7 +568,7 @@ namespace StardewDruid.Render
                 [StardewDruid.Character.Character.specials.special] = 30,
                 [StardewDruid.Character.Character.specials.launch] = 12,
                 [StardewDruid.Character.Character.specials.point] = 60,
-                [StardewDruid.Character.Character.specials.sweep] = 15,
+                [StardewDruid.Character.Character.specials.sweep] = 150,
                 [StardewDruid.Character.Character.specials.pickup] = 30,
                 [StardewDruid.Character.Character.specials.gesture] = 60,
                 [StardewDruid.Character.Character.specials.liftup] = 15,
@@ -580,9 +583,9 @@ namespace StardewDruid.Render
             {
                 [StardewDruid.Character.Character.specials.invoke] = 1,
                 [StardewDruid.Character.Character.specials.special] = 1,
-                [StardewDruid.Character.Character.specials.launch] = 3,
+                [StardewDruid.Character.Character.specials.launch] = 4,
                 [StardewDruid.Character.Character.specials.point] = 0,
-                [StardewDruid.Character.Character.specials.sweep] = 3,
+                [StardewDruid.Character.Character.specials.sweep] = 1,
                 [StardewDruid.Character.Character.specials.pickup] = 1,
                 [StardewDruid.Character.Character.specials.gesture] = 0,
                 [StardewDruid.Character.Character.specials.liftup] = 1,
@@ -603,7 +606,7 @@ namespace StardewDruid.Render
                 [StardewDruid.Character.Character.specials.pickup] = 1,
                 [StardewDruid.Character.Character.specials.gesture] = 0,
                 [StardewDruid.Character.Character.specials.liftup] = 1,
-                [StardewDruid.Character.Character.specials.liftdown] = 0,
+                [StardewDruid.Character.Character.specials.liftdown] = 1,
             };
         }
 
@@ -734,7 +737,173 @@ namespace StardewDruid.Render
             return dashes;
 
         }
-        
+
+        public static Dictionary<Character.Character.hats, Dictionary<int,Microsoft.Xna.Framework.Vector2>> HumanoidHats()
+        {
+
+            Dictionary<Character.Character.hats, Dictionary<int, Microsoft.Xna.Framework.Vector2>> hats = new()
+            {
+
+                [Character.Character.hats.stand] = new()
+                {
+                    [0] = new(0, 12),
+                    [1] = new(0, 12),
+                    [2] = new(0, 12),
+                    [3] = new(0, 12),
+                    [4] = new(0, 12),
+                    [6] = new(0, 12),
+                },
+                [Character.Character.hats.jump] = new()
+                {
+                    [0] = new(0, 12),
+                    [1] = new(0, 12),
+                    [2] = new(0, 12),
+                    [3] = new(0, 12),
+                    [4] = new(0, 12),
+                    [6] = new(0, 12),
+                },
+                [Character.Character.hats.kneel] = new()
+                {
+                    [0] = new(0, 6),
+                    [1] = new(0, 6),
+                    [2] = new(0, 6),
+                    [3] = new(0, 6),
+                    [4] = new(0, 6),
+                    [6] = new(0, 6),
+                },
+                [Character.Character.hats.launch] = new()
+                {
+                    [0] = new(0, 6),
+                    [1] = new(0, 6),
+                    [2] = new(0, 9),
+                    [3] = new(0, 6),
+                    [4] = new(0, 6),
+                    [6] = new(0, 9),
+                },
+
+            };
+
+            return hats;
+
+        }
+
+        public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> WitchLongKick()
+        {
+
+
+            return new()
+            {
+                [0] = new()
+                {
+                    RectangleHumanoid(humanoidFrames.walkUpL1),
+                    RectangleHumanoid(humanoidFrames.jumpUp)
+                },
+                [1] = new()
+                {
+                    RectangleHumanoid(humanoidFrames.walkRightL1),
+                    RectangleHumanoid(humanoidFrames.jumpRight)
+                },
+                [2] = new()
+                {
+                    RectangleHumanoid(humanoidFrames.walkDownL1),
+                    RectangleHumanoid(humanoidFrames.jumpDown)
+                },
+                [3] = new()
+                {
+                    RectangleHumanoid(humanoidFrames.walkRightL1),
+                    RectangleHumanoid(humanoidFrames.jumpRight)
+                },
+                [4] = new()
+                {
+                    RectangleHumanoid(humanoidFrames.smashUp1),
+                },
+                [5] = new()
+                {
+                    RectangleHumanoid(humanoidFrames.smashRight1),
+                },
+                [6] = new()
+                {
+                    RectangleHumanoid(humanoidFrames.smashDown1),
+                },
+                [7] = new()
+                {
+                    RectangleHumanoid(humanoidFrames.smashRight1),
+                },
+                [8] = new()
+                {
+                    RectangleHumanoid(humanoidFrames.smashUp1),
+                    RectangleHumanoid(humanoidFrames.smashUp1),
+                    RectangleHumanoid(humanoidFrames.smashUp1),
+                    RectangleHumanoid(humanoidFrames.jumpUp)
+                },
+                [9] = new()
+                {
+                    RectangleHumanoid(humanoidFrames.smashRight1),
+                    RectangleHumanoid(humanoidFrames.smashRight1),
+                    RectangleHumanoid(humanoidFrames.smashRight1),
+                    RectangleHumanoid(humanoidFrames.jumpRight)
+                },
+                [10] = new()
+                {
+                    RectangleHumanoid(humanoidFrames.smashDown1),
+                    RectangleHumanoid(humanoidFrames.smashDown1),
+                    RectangleHumanoid(humanoidFrames.smashDown1),
+                    RectangleHumanoid(humanoidFrames.jumpDown)
+                },
+                [11] = new()
+                {
+                    RectangleHumanoid(humanoidFrames.smashRight1),
+                    RectangleHumanoid(humanoidFrames.smashRight1),
+                    RectangleHumanoid(humanoidFrames.smashRight1),
+                    RectangleHumanoid(humanoidFrames.jumpRight)
+                },
+            };
+        }
+
+        public static Dictionary<int,List<Microsoft.Xna.Framework.Rectangle>> WitchKick()
+        {
+
+            return new()
+            {
+
+                [0] = RectangleHumanoidList(new(){
+
+                    humanoidFrames.jumpUp,
+                    humanoidFrames.smashUp1,
+                    humanoidFrames.smashUp1,
+                    humanoidFrames.jumpUp,
+                }),
+
+                [1] = RectangleHumanoidList(new(){
+
+                    humanoidFrames.jumpRight,
+                    humanoidFrames.smashRight1,
+                    humanoidFrames.smashRight1,
+                    humanoidFrames.jumpRight,
+                }),
+
+                [2] = RectangleHumanoidList(new(){
+
+                    humanoidFrames.jumpDown,
+                    humanoidFrames.smashDown1,
+                    humanoidFrames.smashDown1,
+                    humanoidFrames.jumpDown,
+                }),
+
+                [3] = RectangleHumanoidList(new(){
+
+
+                    humanoidFrames.jumpRight,
+                    humanoidFrames.smashRight1,
+                    humanoidFrames.smashRight1,
+                    humanoidFrames.jumpRight,
+                }),
+
+            };
+
+        }
+
+
         public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> WeaponSmash()
         {
 
@@ -796,76 +965,279 @@ namespace StardewDruid.Render
             };
         }
         
-        public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> WeaponSweep()
+        public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> WeaponSweep(WeaponRender.weapons weapon = WeaponRender.weapons.sword)
         {
 
-
-            return new()
+            switch (weapon)
             {
-                [0] = RectangleHumanoidList(new(){
+                default:
 
-                    humanoidFrames.twirlUp,
-                    humanoidFrames.twirlLeft,
-                    humanoidFrames.twirlDown,
-                    humanoidFrames.twirlRight,
 
-                }),
+                    return new()
+                    {
+                        [0] = RectangleHumanoidList(new(){
 
-                [1] = RectangleHumanoidList(new(){
+                            humanoidFrames.twirlUp,
+                            humanoidFrames.twirlLeft,
+                            humanoidFrames.twirlDown,
+                            humanoidFrames.twirlRight,
+                            humanoidFrames.twirlUp,
+                        }),
 
-                    humanoidFrames.twirlLeft,
-                    humanoidFrames.twirlDown,
-                    humanoidFrames.twirlRight,
-                    humanoidFrames.twirlUp,
+                        [1] = RectangleHumanoidList(new(){
 
-                }),
+                            humanoidFrames.alertRight,
+                            humanoidFrames.sweepRight1,
+                            humanoidFrames.sweepRight2,
+                            humanoidFrames.sweepRight3,
+                            humanoidFrames.sweepRight4,
+                        }),
 
-                [2] = RectangleHumanoidList(new(){
+                        [2] = RectangleHumanoidList(new(){
 
-                    humanoidFrames.twirlDown,
-                    humanoidFrames.twirlRight,
-                    humanoidFrames.twirlUp,
-                    humanoidFrames.twirlLeft,
+                            humanoidFrames.twirlDown,
+                            humanoidFrames.twirlRight,
+                            humanoidFrames.twirlUp,
+                            humanoidFrames.twirlLeft,
+                            humanoidFrames.twirlDown,
+                        }),
 
-                }),
+                        [3] = RectangleHumanoidList(new(){
 
-                [3] = RectangleHumanoidList(new(){
+                            humanoidFrames.alertRight,
+                            humanoidFrames.sweepRight1,
+                            humanoidFrames.sweepRight2,
+                            humanoidFrames.sweepRight3,
+                            humanoidFrames.sweepRight4,
+                        }),
 
-                    humanoidFrames.twirlRight,
-                    humanoidFrames.twirlUp,
-                    humanoidFrames.twirlLeft,
-                    humanoidFrames.twirlDown,
+                    };
 
-                }),
+                case WeaponRender.weapons.axe:
+                case WeaponRender.weapons.carnyx:
+                case WeaponRender.weapons.hammer:
+                case WeaponRender.weapons.scythe:
+                case WeaponRender.weapons.scythetwo:
 
-            };
+
+                    return new()
+                    {
+
+                        [0] = RectangleHumanoidList(new(){
+
+                            humanoidFrames.twirlUp,
+                            humanoidFrames.twirlLeft,
+                            humanoidFrames.twirlDown,
+                            humanoidFrames.twirlRight,
+                        }),
+
+                        [1] = RectangleHumanoidList(new(){
+
+                            humanoidFrames.twirlLeft,
+                            humanoidFrames.twirlDown,
+                            humanoidFrames.twirlRight,
+                            humanoidFrames.twirlUp,
+                        }),
+
+                        [2] = RectangleHumanoidList(new(){
+
+                            humanoidFrames.twirlDown,
+                            humanoidFrames.twirlRight,
+                            humanoidFrames.twirlUp,
+                            humanoidFrames.twirlLeft,
+                        }),
+
+                        [3] = RectangleHumanoidList(new(){
+
+                            humanoidFrames.twirlRight,
+                            humanoidFrames.twirlUp,
+                            humanoidFrames.twirlLeft,
+                            humanoidFrames.twirlDown,
+
+                        }),
+
+                    };
+
+
+            }
 
         }
 
-        public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> WeaponAlert()
+        public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> WeaponLaunch(WeaponRender.weapons weapon = WeaponRender.weapons.sword)
         {
 
-
-            return new()
+            switch (weapon)
             {
-                [0] = new()
-                {
-                    RectangleHumanoid(humanoidFrames.alertUp)
-                },
-                [1] = new()
-                {
-                    RectangleHumanoid(humanoidFrames.alertRight)
-                },
-                [2] = new()
-                {
-                    RectangleHumanoid(humanoidFrames.alertDown)
-                },
-                [3] = new()
-                {
-                    RectangleHumanoid(humanoidFrames.alertLeft)
-                },
+                default:
 
-            };
+                    return new()
+                    {
+
+                        [0] = RectangleHumanoidList(new(){
+
+                            humanoidFrames.crouchUp,
+                            humanoidFrames.crouchUp,
+                            humanoidFrames.crouchUpTwo,
+
+                        }),
+
+                        [1] = RectangleHumanoidList(new(){
+
+
+                            humanoidFrames.crouchRight,
+                            humanoidFrames.crouchRight,
+                            humanoidFrames.crouchRightTwo,
+
+                        }),
+
+                        [2] = RectangleHumanoidList(new(){
+
+
+                            humanoidFrames.crouchDown,
+                            humanoidFrames.crouchDown,
+                            humanoidFrames.crouchDownTwo,
+
+                        }),
+
+                        [3] = RectangleHumanoidList(new(){
+
+
+                            humanoidFrames.crouchRight,
+                            humanoidFrames.crouchRight,
+                            humanoidFrames.crouchRightTwo,
+
+                        }),
+
+                    };
+
+                case WeaponRender.weapons.cannon:
+
+
+                    return new()
+                    {
+
+                        [0] = RectangleHumanoidList(new(){
+
+                            humanoidFrames.crouchUpTwo,
+                            humanoidFrames.crouchUpTwo,
+                            humanoidFrames.crouchUpTwo,
+                            humanoidFrames.crouchUpTwo,
+                            humanoidFrames.crouchUpTwo,
+                            humanoidFrames.crouchUpTwo,
+                            humanoidFrames.crouchUp,
+                            humanoidFrames.crouchUp,
+                            humanoidFrames.crouchUp,
+                            humanoidFrames.crouchUp,
+                        }),
+
+                        [1] = RectangleHumanoidList(new(){
+
+                            humanoidFrames.crouchRightTwo,
+                            humanoidFrames.crouchRightTwo,
+                            humanoidFrames.crouchRightTwo,
+                            humanoidFrames.crouchRightTwo,
+                            humanoidFrames.crouchRightTwo,
+                            humanoidFrames.crouchRightTwo,
+                            humanoidFrames.crouchRight,
+                            humanoidFrames.crouchRight,
+                            humanoidFrames.crouchRight,
+                            humanoidFrames.crouchRight,
+
+                        }),
+
+                        [2] = RectangleHumanoidList(new(){
+
+                            humanoidFrames.crouchDownTwo,
+                            humanoidFrames.crouchDownTwo,
+                            humanoidFrames.crouchDownTwo,
+                            humanoidFrames.crouchDownTwo,
+                            humanoidFrames.crouchDownTwo,
+                            humanoidFrames.crouchDownTwo,
+                            humanoidFrames.crouchDown,
+                            humanoidFrames.crouchDown,
+                            humanoidFrames.crouchDown,
+                            humanoidFrames.crouchDown,
+
+                        }),
+
+                        [3] = RectangleHumanoidList(new(){
+
+                            humanoidFrames.crouchRightTwo,
+                            humanoidFrames.crouchRightTwo,
+                            humanoidFrames.crouchRightTwo,
+                            humanoidFrames.crouchRightTwo,
+                            humanoidFrames.crouchRightTwo,
+                            humanoidFrames.crouchRightTwo,
+                            humanoidFrames.crouchRight,
+                            humanoidFrames.crouchRight,
+                            humanoidFrames.crouchRight,
+                            humanoidFrames.crouchRight,
+
+                        }),
+
+                    };
+
+
+            }
+
+
+        }
+
+        public static Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> WeaponAlert(WeaponRender.weapons weapon = WeaponRender.weapons.sword)
+        {
+
+            switch (weapon)
+            {
+                default:
+
+                    return new()
+                    {
+                        [0] = new()
+                        {
+                            RectangleHumanoid(humanoidFrames.alertUp)
+                        },
+                        [1] = new()
+                        {
+                            RectangleHumanoid(humanoidFrames.alertRight)
+                        },
+                        [2] = new()
+                        {
+                            RectangleHumanoid(humanoidFrames.alertDown)
+                        },
+                        [3] = new()
+                        {
+                            RectangleHumanoid(humanoidFrames.alertLeft)
+                        },
+
+                    };
+
+                case WeaponRender.weapons.carnyx:
+
+                    return new()
+                    {
+
+                        [0] = new()
+                        {
+                            RectangleHumanoid(humanoidFrames.twirlDown)
+                        },
+                        [1] = new()
+                        {
+                            RectangleHumanoid(humanoidFrames.twirlRight)
+                        },
+                        [2] = new()
+                        {
+                            RectangleHumanoid(humanoidFrames.twirlUp)
+                        },
+                        [3] = new()
+                        {
+                            RectangleHumanoid(humanoidFrames.twirlLeft)
+                        },
+
+                    };
+
+
+            }
+
         }
 
     }

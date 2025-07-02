@@ -69,11 +69,12 @@ namespace StardewDruid.Cast.Effect
                 if (ember.Value.grade == 0)
                 {
 
-                    SpellHandle burning = new(ember.Value.location,ember.Value.tile*64,ember.Value.tile*64,192,ember.Value.damageFarmer,ember.Value.damageMonster);
+                    SpellHandle burning = new(ember.Value.location, ember.Value.tile * 64, ember.Value.tile * 64, 192, ember.Value.damageFarmer, ember.Value.damageMonster)
+                    {
+                        instant = true,
 
-                    burning.instant = true;
-
-                    burning.added = new() { SpellHandle.effects.immolate, };
+                        added = new() { SpellHandle.Effects.immolate, }
+                    };
 
                     Mod.instance.spellRegister.Add(burning);
 

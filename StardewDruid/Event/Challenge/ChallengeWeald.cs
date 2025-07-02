@@ -21,12 +21,12 @@ namespace StardewDruid.Event.Challenge
 
         public List<Vector2> trashVectors = new()
         {
-            new Vector2(16,19)*64,
+            new Vector2(16,16)*64,
             new Vector2(17,13)*64,
             new Vector2(21,10)*64,
             new Vector2(34,11)*64,
-            new Vector2(37,15)*64,
-            new Vector2(37,20)*64,
+            new Vector2(36,14)*64,
+            new Vector2(37,16)*64,
 
         };
 
@@ -127,9 +127,10 @@ namespace StardewDruid.Event.Challenge
 
             base.EventActivate();
 
-            monsterHandle = new(origin, location);
-
-            monsterHandle.spawnSchedule = new();
+            monsterHandle = new(origin, location)
+            {
+                spawnSchedule = new()
+            };
 
             int monsterRange = 2;
 
@@ -155,7 +156,7 @@ namespace StardewDruid.Event.Challenge
 
             EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
-            EventDisplay trashbar = EventBar(StringData.Strings(StringData.stringkeys.trashCollected), 0);
+            EventDisplay trashbar = EventBar(StringData.Strings(StringData.stringkeys.trashCollected), 1);
 
             trashbar.colour = Color.LightGreen;
 
@@ -167,7 +168,7 @@ namespace StardewDruid.Event.Challenge
 
             eventRenders.Add(ritePortal);
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { displayRadius = 4, sound = SpellHandle.Sounds.getNewSpecialItem, });
 
         }
 
@@ -236,7 +237,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 1:
 
-                    bosses[0] = new ShadowBat(new Vector2(27, 11), Mod.instance.CombatDifficulty());
+                    bosses[0] = new ShadowBat(new Vector2(27, 11), Mod.instance.CombatDifficulty(),"Batking");
 
                     bosses[0].SetMode(3);
 
@@ -274,23 +275,24 @@ namespace StardewDruid.Event.Challenge
                     {
                         bosses[0].Halt();
 
-                        SpellHandle rockSpell = new(Game1.player, bosses[0].Position, 384, 9999);
+                        SpellHandle rockSpell = new(Game1.player, bosses[0].Position, 384, 9999)
+                        {
+                            display = IconData.impacts.impact,
 
-                        rockSpell.display = IconData.impacts.impact;
+                            type = SpellHandle.Spells.missile,
 
-                        rockSpell.type = SpellHandle.spells.missile;
+                            factor = 5,
 
-                        rockSpell.factor =5;
+                            scheme = IconData.schemes.rock,
 
-                        rockSpell.scheme = IconData.schemes.rock;
+                            sound = SpellHandle.Sounds.explosion,
 
-                        rockSpell.sound = SpellHandle.sounds.explosion;
+                            missile = MissileHandle.missiles.rockfall,
 
-                        rockSpell.missile = MissileHandle.missiles.rockfall;
+                            terrain = 3,
 
-                        rockSpell.terrain = 3;
-
-                        rockSpell.added = new() { SpellHandle.effects.stone, };
+                            added = new() { SpellHandle.Effects.stone, }
+                        };
 
                         Mod.instance.spellRegister.Add(rockSpell);
                     }
@@ -330,7 +332,7 @@ namespace StardewDruid.Event.Challenge
             else
             {
 
-                int objectIndex = SpawnData.RandomTrash(location);
+                int objectIndex = SpawnData.RandomTrash();
 
                 throwObject = new(splash, origin, objectIndex, 0) { pocket = true };
 

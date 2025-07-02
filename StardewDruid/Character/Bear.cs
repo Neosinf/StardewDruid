@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using StardewDruid.Render;
 using StardewDruid.Data;
+using StardewDruid.Handle;
+using StardewDruid.Cast;
 
 namespace StardewDruid.Character
 {
@@ -42,11 +44,9 @@ namespace StardewDruid.Character
 
             LoadIntervals();
 
-            overhead = 112;
-
             setScale = 3.75f;
 
-            gait = 2.5f;
+            gait = 1.25f;
 
             modeActive = mode.random;
 
@@ -65,7 +65,7 @@ namespace StardewDruid.Character
 
             specialFrames = new()
             {
-                [specials.special] = bearRender.sweepFrames,
+                [specials.special] = bearRender.specialFrames,
                 [specials.sweep] = bearRender.sweepFrames,
             };
 
@@ -83,7 +83,7 @@ namespace StardewDruid.Character
 
             specialCeilings = new()
             {
-                [specials.special] = 0,
+                [specials.special] = 8,
                 [specials.sweep] = 5,
             };
 
@@ -108,17 +108,27 @@ namespace StardewDruid.Character
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            BearRenderAdditional additional = new();
+            Vector2 usePosition = SpritePosition(localPosition);
 
-            additional.layer = ((float)StandingPixel.Y + (float)LayerOffset()) / 10000f;
+            DrawCharacter(b, usePosition);
 
-            additional.scale = setScale;
+        }
 
-            additional.position = SpritePosition(localPosition);
+        public override void DrawCharacter(SpriteBatch b, Vector2 usePosition)
+        {
 
-            additional.flip = netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3;
+            BearRenderAdditional additional = new()
+            {
+                layer = ((float)StandingPixel.Y + (float)LayerOffset()) / 10000f,
 
-            additional.fade = fadeOut == 0 ? 1f : fadeOut;
+                scale = setScale,
+
+                position = usePosition,
+
+                flip = netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3),
+
+                fade = fadeOut
+            };
 
             DrawEmote(b);
 
@@ -137,8 +147,6 @@ namespace StardewDruid.Character
                 additional.direction = netDirection.Value;
 
                 additional.frame = specialFrame;
-
-                additional.mode = BearRenderAdditional.bearmode.growl;
 
                 switch (useSpecial)
                 {
@@ -186,27 +194,104 @@ namespace StardewDruid.Character
 
             }
 
-            if ((idles)netIdle.Value == idles.daze)
-            {
-                b.Draw(
-                    Mod.instance.iconData.displayTexture,
-                    additional.position - new Vector2(0, overhead == 0 ? 144 : overhead),
-                    IconData.DisplayRectangle(IconData.displays.glare),
-                    Color.White,
-                    0f,
-                    new Vector2(8),
-                    additional.scale,
-                    SpriteEffects.None,
-                    additional.layer
-                );
-
-            }
-
             additional.direction = netDirection.Value;
 
             additional.frame = moveFrame;
 
             bearRender.DrawNormal(b, additional);
+
+        }
+
+        public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
+        {
+
+            ResetActives();
+
+            netSpecial.Set((int)specials.special);
+
+            specialTimer = 72;
+
+            SetCooldown(specialTimer, 1f);
+
+            SpellHandle explode = new(monster.Position, 256, IconData.impacts.flashbang, new())
+            {
+
+                displayRadius = 5,
+
+                instant = true,
+
+                sound = SpellHandle.Sounds.warrior,
+
+                counter = -36,
+
+                damageMonsters = CombatDamage() / 3,
+
+            };
+
+            Mod.instance.spellRegister.Add(explode);
+
+            return true;
+
+        }
+
+        public override void UpdateSpecial()
+        {
+
+            base.UpdateSpecial();
+
+            switch (specialTimer)
+            {
+                case 48:
+
+                    if (netSpecial.Value == (int)specials.special)
+                    {
+
+                        Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BearRoar);
+
+                    }
+
+                    break;
+
+                case 36:
+
+                    if (netSpecial.Value == (int)specials.sweep)
+                    {
+
+                        if (Mod.instance.randomIndex.Next(2) == 0)
+                        {
+
+                            return;
+
+                        }
+
+                        if (Mod.instance.sounds.ActiveCue(Handle.SoundHandle.SoundCue.BearGrowl))
+                        {
+
+                            return;
+
+                        }
+
+                        if (Mod.instance.sounds.ActiveCue(Handle.SoundHandle.SoundCue.BearRoar))
+                        {
+
+                            return;
+
+                        }
+
+                        Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BearGrowl);
+
+                    }
+
+                    break;
+
+            }
+
+        }
+
+        public override Microsoft.Xna.Framework.Rectangle OverheadPortrait()
+        {
+
+            return new Rectangle(230, 33, 16, 16);
 
         }
 

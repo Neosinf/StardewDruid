@@ -5,9 +5,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Mists;
-using StardewDruid.Character;
+using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
-using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Monster;
 using StardewDruid.Render;
 using StardewModdingAPI;
@@ -21,8 +21,7 @@ using StardewValley.Network;
 using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+using xTile.Tiles;
 
 namespace StardewDruid.Cast.Ether
 {
@@ -37,7 +36,7 @@ namespace StardewDruid.Cast.Ether
         public NetColor netSecondary = new NetColor(Color.White);
         public NetColor netTertiary = new NetColor(Color.White);
         public NetInt netFire = new NetInt((int)IconData.schemes.stars);
-
+        //public NetString netColour = new NetString("");
         public DragonRender dragonRender;
         public float dragonScale;
 
@@ -108,10 +107,10 @@ namespace StardewDruid.Cast.Ether
         public Vector2 divePosition;
         public int diveMoment;
 
-        public CueWrapper flightCue;
-        public CueWrapper fireCue;
-        public CueWrapper fireCueTwo;
-        public CueWrapper roarCue;
+        //public CueWrapper flightCue;
+        //public CueWrapper fireCue;
+        //public CueWrapper fireCueTwo;
+        //public CueWrapper roarCue;
 
         public Dragon()
         {
@@ -139,8 +138,6 @@ namespace StardewDruid.Cast.Ether
 
             netAnchor.Set(Farmer.UniqueMultiplayerID);
 
-            SetSchemes();
-
             dragonScale = 2f + ((float)Mod.instance.Config.dragonScale * 0.5f);
 
             scale.Set(dragonScale);
@@ -164,14 +161,25 @@ namespace StardewDruid.Cast.Ether
 
             LoadOut();
 
-        }
-
-        public void SetSchemes()
-        {
-
-            dragonRender = new();
-
             dragonRender.LoadConfigScheme();
+
+            /*List<int> array = new()
+            {
+                dragonRender.primary.R,
+                dragonRender.primary.G,
+                dragonRender.primary.B,
+                dragonRender.secondary.R,
+                dragonRender.secondary.G,
+                dragonRender.secondary.B,
+                dragonRender.tertiary.R,
+                dragonRender.tertiary.G,
+                dragonRender.tertiary.B,
+                (int)dragonRender.fire,
+            };
+
+            string colours = System.Text.Json.JsonSerializer.Serialize(array);
+
+            netColour.Set(colours);*/
 
             netPrimary.Set(dragonRender.primary);
 
@@ -180,19 +188,6 @@ namespace StardewDruid.Cast.Ether
             netTertiary.Set(dragonRender.tertiary);
 
             netFire.Set((int)dragonRender.fire);
-
-        }
-
-        public void DragonSchemes()
-        {
-
-            dragonRender.primary = netPrimary.Value;
-
-            dragonRender.secondary = netSecondary.Value;
-
-            dragonRender.tertiary = netTertiary.Value;
-
-            dragonRender.fire = (DragonRender.breathSchemes)netFire.Value;
 
         }
 
@@ -212,12 +207,28 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            if(dragonRender == null)
+            dragonRender = new();
+
+            if (!avatar)
             {
 
-                dragonRender = new();
+                /*List<int> colours = System.Text.Json.JsonSerializer.Deserialize<List<int>>(netColour.Value);
 
-                DragonSchemes();
+                dragonRender.primary = new Microsoft.Xna.Framework.Color(colours[0],colours[1],colours[2]);
+
+                dragonRender.secondary = new Microsoft.Xna.Framework.Color(colours[3], colours[4], colours[5]);
+
+                dragonRender.tertiary = new Microsoft.Xna.Framework.Color(colours[6], colours[7], colours[8]);
+
+                dragonRender.fire = (DragonRender.breathSchemes)colours[9];*/
+
+                dragonRender.primary = netPrimary.Value;
+
+                dragonRender.secondary = netSecondary.Value;
+
+                dragonRender.tertiary = netTertiary.Value;
+
+                dragonRender.fire = (DragonRender.breathSchemes)netFire.Value;
 
             }
 
@@ -227,11 +238,11 @@ namespace StardewDruid.Cast.Ether
 
             flightInterval = Vector2.Zero;
 
-            flightCue = Game1.soundBank.GetCue("DragonFlight") as CueWrapper;
+            //flightCue = Game1.soundBank.GetCue("DragonFlight") as CueWrapper;
 
-            flightCue.Pitch *= 2;
+            //flightCue.Pitch *= 2;
 
-            fireCue = Game1.soundBank.GetCue("DragonFire") as CueWrapper;
+            /*fireCue = Game1.soundBank.GetCue("DragonFire") as CueWrapper;
 
             fireCue.Volume *= 2;
 
@@ -241,13 +252,13 @@ namespace StardewDruid.Cast.Ether
 
             fireCueTwo.Volume *= 2;
 
-            fireCueTwo.Pitch /= 2;
+            fireCueTwo.Pitch /= 2;*/
 
-            roarCue = Game1.soundBank.GetCue("DragonRoar") as CueWrapper;
+           /* roarCue = Game1.soundBank.GetCue("DragonRoar") as CueWrapper;
 
             roarCue.Volume *= 2;
 
-            roarCue.Pitch /= 2;
+            roarCue.Pitch /= 2;*/
 
         }
 
@@ -265,7 +276,10 @@ namespace StardewDruid.Cast.Ether
             NetFields.AddField(netDigActive, "netDigActive");
             NetFields.AddField(netDiveActive, "netDiveActive");
             NetFields.AddField(netSwimActive, "netSwimActive");
-
+            NetFields.AddField(netPrimary, "netPrimary");
+            NetFields.AddField(netSecondary, "netSecondary");
+            NetFields.AddField(netTertiary, "netTertiary");
+            NetFields.AddField(netFire, "netFire");
         }
 
         public override void draw(SpriteBatch b, float alpha = 1f)
@@ -308,14 +322,66 @@ namespace StardewDruid.Cast.Ether
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
+            Vector2 spritePosition = new Vector2(localPosition.X + 32 - (32 * dragonScale), localPosition.Y + 64 - (64 * dragonScale));
+
+            DrawCharacter(b, spritePosition);
+
+        }
+
+        public virtual void DrawCharacter(SpriteBatch b, Vector2 localPosition)
+        {
+
             bool flippant = netDirection.Value % 2 == 0 && netAlternative.Value == 3 || netDirection.Value == 3;
 
             float drawLayer = anchor.getDrawLayer() + 0.0001f;
 
+            DragonAdditional additional = new()
+            {
+
+                direction = netDirection.Value,
+
+                scale = dragonScale,
+
+                flip = flippant,
+
+                layer = drawLayer,
+
+            };
+
+            if (netDashActive.Value)
+            {
+
+                additional.flight = flightHeight;
+
+                additional.frame = flightFrame;
+
+                if (netSpecialActive.Value)
+                {
+
+                    additional.version = 1;
+
+                    additional.breath = netBreathActive.Value;
+
+                    dragonRender.drawFlight(b, localPosition, additional);
+
+                }
+                else
+                {
+
+                    dragonRender.drawFlight(b, localPosition, additional);
+
+                }
+
+                return;
+
+            }
+
             if (netDiveActive.Value)
             {
 
-                dragonRender.drawDive(b, localPosition, new() { direction = netDirection.Value, scale = dragonScale, frame = diveMoment, flip = flippant, layer = drawLayer, });
+                additional.frame = diveMoment;
+
+                dragonRender.drawDive(b, localPosition, additional);
 
                 return;
             }
@@ -323,7 +389,9 @@ namespace StardewDruid.Cast.Ether
             if (netSwimActive.Value)
             {
 
-                dragonRender.drawSwim(b, localPosition, new() { direction = netDirection.Value, scale = dragonScale, frame = walkFrame, flip = flippant, layer = drawLayer, });
+                additional.frame = walkFrame;
+
+                dragonRender.drawSwim(b, localPosition, additional);
 
                 return;
 
@@ -334,7 +402,9 @@ namespace StardewDruid.Cast.Ether
 
                 int digFrame = digMoment % 2;
 
-                dragonRender.drawDig(b, localPosition, new() { direction = netDirection.Value, scale = dragonScale, frame = digFrame, flip = flippant, layer = drawLayer, });
+                additional.frame = digFrame;
+
+                dragonRender.drawDig(b, localPosition, additional);
 
                 return;
 
@@ -343,16 +413,20 @@ namespace StardewDruid.Cast.Ether
             if (netSweepActive.Value)
             {
 
+                additional.frame = sweepFrame;
+
                 if (netSpecialActive.Value)
                 {
 
-                    dragonRender.drawSweep(b, localPosition, new() { direction = netDirection.Value, scale = dragonScale, version = 1, frame = sweepFrame, flip = flippant, layer = drawLayer, });
+                    additional.version = 1;
+
+                    dragonRender.drawSweep(b, localPosition, additional);
 
                 }
                 else
                 {
 
-                    dragonRender.drawSweep(b, localPosition, new() { direction = netDirection.Value, scale = dragonScale, frame = sweepFrame, flip = flippant, layer = drawLayer, });
+                    dragonRender.drawSweep(b, localPosition, additional);
 
                 }
 
@@ -363,13 +437,20 @@ namespace StardewDruid.Cast.Ether
             if (netSpecialActive.Value)
             {
 
-                dragonRender.drawWalk(b, localPosition, new() { direction = netDirection.Value, scale = dragonScale, version = 1, breath = netBreathActive.Value, frame = walkFrame, flip = flippant, layer = drawLayer, });
+                additional.version = 1;
+
+                additional.breath = netBreathActive.Value;
+
+                additional.frame = walkFrame;
+
+                dragonRender.drawWalk(b, localPosition, additional);
 
             }
             else
             {
+                additional.frame = walkFrame;
 
-                dragonRender.drawWalk(b, localPosition, new() { direction = netDirection.Value, scale = dragonScale, frame = walkFrame, flip = flippant, layer = drawLayer, });
+                dragonRender.drawWalk(b, localPosition, additional);
 
             }
 
@@ -378,36 +459,47 @@ namespace StardewDruid.Cast.Ether
         public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
         {
 
-            if (anchor == null)
-            {
-
-                return;
-
-            }
-
             if (netDashActive.Value)
             {
 
-                Vector2 localPosition = Position - new Vector2(Game1.viewport.X, Game1.viewport.Y);
 
-                bool flippant = netDirection.Value % 2 == 0 && netAlternative.Value == 3 || netDirection.Value == 3;
-
-                float drawLayer = anchor.getDrawLayer() + 0.0001f;
-
-                if (netSpecialActive.Value)
+                if (anchor == null)
                 {
 
-                    dragonRender.drawFlight(b, localPosition, new() { direction = netDirection.Value, version = 1, breath = netBreathActive.Value, flight = flightHeight, scale = dragonScale, frame = flightFrame, flip = flippant, layer = drawLayer, });
+                    return;
 
                 }
-                else
+
+                if (IsInvisible)
                 {
 
-                    dragonRender.drawFlight(b, localPosition, new() { direction = netDirection.Value, flight = flightHeight, scale = dragonScale, frame = flightFrame, flip = flippant, layer = drawLayer, });
+                    return;
 
                 }
+
+                if (!Utility.isOnScreen(Position, 128))
+                {
+
+                    return;
+
+                }
+
+                if (avatar && Game1.displayFarmer)
+                {
+
+                    return;
+
+                }
+
+                Vector2 localPosition = Game1.GlobalToLocal(Position);
+
+                Vector2 spritePosition = new Vector2(localPosition.X + 32 - (32 * dragonScale), localPosition.Y + 64 - (64 * dragonScale));
+
+                DrawCharacter(b, spritePosition);
 
             }
+
+            base.drawAboveAlwaysFrontLayer(b);
 
         }
 
@@ -460,7 +552,7 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            if (Mod.instance.CasterGone())
+            if (Mod.CasterGone())
             {
 
                 return;
@@ -880,7 +972,7 @@ namespace StardewDruid.Cast.Ether
             if (netSwimActive.Value && !netDashActive.Value)
             {
 
-                if (!diveActive && !Mod.instance.eventRegister.ContainsKey("active"))
+                if (!diveActive && Mod.instance.activeEvent.Count == 0)
                 {
                     
                     if (AccountStamina())
@@ -941,12 +1033,14 @@ namespace StardewDruid.Cast.Ether
 
             flightLift = false;
 
-            if (!flightCue.IsPlaying)
-            {
+            //if (!flightCue.IsPlaying)
+            //{
 
-                flightCue.Play();
+            //flightCue.Play();
 
-            }
+            //}
+
+            Mod.instance.sounds.PlayCue(SoundHandle.SoundCue.DragonFlight);
 
             flightInterval = new((flightTo.X - Position.X) / flightTimer, (flightTo.Y - Position.Y) / flightTimer);
 
@@ -1023,13 +1117,15 @@ namespace StardewDruid.Cast.Ether
 
                 netDashActive.Set(false);
 
-                if (flightCue.IsPlaying)
+                /*if (flightCue.IsPlaying)
                 {
 
                     flightCue.Stop(AudioStopOptions.Immediate);
 
-                }
-                
+                }*/
+
+                Mod.instance.sounds.StopCue(SoundHandle.SoundCue.DragonFlight);
+
                 if (flightTerrain == "water")
                 {
 
@@ -1042,7 +1138,7 @@ namespace StardewDruid.Cast.Ether
                         
                         currentLocation.playSound("waterSlosh");
 
-                        Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 64), IconData.impacts.splash, dragonScale + 1f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
+                        Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 24 * dragonScale), IconData.impacts.splash, dragonScale + 1f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
 
                     }
 
@@ -1106,12 +1202,14 @@ namespace StardewDruid.Cast.Ether
                     if (num != 0)
                     {
 
-                        if (!flightCue.IsPlaying)
+                        /*if (!flightCue.IsPlaying)
                         {
 
                             flightCue.Play();
 
-                        }
+                        }*/
+
+                        Mod.instance.sounds.PlayCue(SoundHandle.SoundCue.DragonFlight);
 
                         flightTimer = flightIncrement * num;
 
@@ -1150,17 +1248,20 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            SpellHandle sweep = new(Game1.player, Game1.player.Position, 256, Mod.instance.CombatDamage() * 2 / 3);
+            SpellHandle sweep = new(Game1.player, Game1.player.Position, 256, Mod.instance.CombatDamage() * 2 / 3)
+            {
+                display = IconData.impacts.shockwave,
 
-            sweep.display = IconData.impacts.shockwave;
+                displayRadius = 3,
 
-            sweep.instant = true;
+                instant = true,
 
-            sweep.added = new() { SpellHandle.effects.knock, SpellHandle.effects.stomping };
+                added = new() { SpellHandle.Effects.knock, SpellHandle.Effects.stomping }
+            };
 
             Mod.instance.spellRegister.Add(sweep);
 
-            Mod.instance.rite.dispense(160);
+            Mod.instance.rite.Dispense(160);
 
         }
 
@@ -1256,13 +1357,14 @@ namespace StardewDruid.Cast.Ether
         public void SweepStrike()
         {
 
-            SpellHandle sweep = new(Game1.player, Game1.player.Position, 160, Mod.instance.CombatDamage() * 2 / 3);
-
-            sweep.instant = true;
+            SpellHandle sweep = new(Game1.player, Game1.player.Position, 160, Mod.instance.CombatDamage() * 2 / 3)
+            {
+                instant = true
+            };
 
             Mod.instance.spellRegister.Add(sweep);
 
-            Mod.instance.rite.dispense(160);
+            Mod.instance.rite.Dispense(160);
 
         }
 
@@ -1417,6 +1519,13 @@ namespace StardewDruid.Cast.Ether
 
         public bool TreasureZone(bool activate = false)
         {
+
+            if (Mod.instance.activeEvent.Count > 0)
+            {
+
+                return false;
+
+            }
 
             if (!swimActive && currentLocation.objects.Count() > 0)
             {
@@ -1692,11 +1801,26 @@ namespace StardewDruid.Cast.Ether
                         if (roarTimer <= 0)
                         {
 
-                            showTextAboveHead("RWWWRRR", duration: 2000);
+                            switch (Mod.instance.randomIndex.Next(2))
+                            {
+                                default:
 
-                            roarCue.Play();
+                                    //showTextAboveHead("RWWWRRR", duration: 2000);
 
-                            roarTimer = 60;
+                                    Mod.instance.sounds.PlayCue(SoundHandle.SoundCue.DragonGrowl);
+
+                                    break;
+                                case 1:
+
+                                    //showTextAboveHead("RWWWRRR", duration: 2000);
+
+                                    Mod.instance.sounds.PlayCue(SoundHandle.SoundCue.DragonRoar);
+
+                                    break;
+
+                            }
+
+                        roarTimer = 60;
 
                         }
 
@@ -1783,7 +1907,7 @@ namespace StardewDruid.Cast.Ether
                 if (roarTimer <= 0)
                 {
 
-                    if (!fireCue.IsPlaying)
+                    /*if (!fireCue.IsPlaying)
                     {
 
                         fireCue.Play();
@@ -1795,7 +1919,9 @@ namespace StardewDruid.Cast.Ether
 
                         fireCueTwo.Play();
 
-                    }
+                    }*/
+
+                    Mod.instance.sounds.PlayCue(SoundHandle.SoundCue.DragonFire);
 
                     roarTimer = 75;
 
@@ -1831,28 +1957,42 @@ namespace StardewDruid.Cast.Ether
 
                     Vector2 burnVector = splash[i];
 
-                    SpellHandle burn = new(Game1.player, burnVector * 64, 320, Mod.instance.CombatDamage()/2);
+                    SpellHandle burn = new(Game1.player, burnVector * 64, 320, Mod.instance.CombatDamage() / 2)
+                    {
+                        type = SpellHandle.Spells.explode,
 
-                    burn.type = SpellHandle.spells.explode;
+                        scheme = Enum.Parse<IconData.schemes>(dragonRender.fire.ToString().Replace("breath_","")),
 
-                    burn.scheme = (IconData.schemes)netFire.Value;
+                        //burn.display = IconData.impacts.combustion;
 
-                    //burn.display = IconData.impacts.combustion;
+                        instant = true,
 
-                    burn.instant = true;
+                        power = 4,
 
-                    burn.power = 4;
+                        terrain = 2,
 
-                    burn.terrain = 2;
+                        explosion = 2,
 
-                    burn.explosion = 2;
+                        added = new() { SpellHandle.Effects.embers, }
 
-                    burn.added = new() { SpellHandle.effects.embers, };
+                    };
 
                     if (Mod.instance.questHandle.IsComplete(QuestHandle.etherTwo))
                     {
 
-                         burn.added.Add(SpellHandle.effects.immolate);
+                         burn.added.Add(SpellHandle.Effects.immolate);
+
+                    }
+
+                    if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
+                    {
+
+                        if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
+                        {
+
+                            burn.added.Add(SpellHandle.Effects.capture);
+
+                        }
 
                     }
 
@@ -1865,7 +2005,7 @@ namespace StardewDruid.Cast.Ether
                 fireTimer = 24;
 
             }
-
+            
             return true;
 
         }
@@ -2015,7 +2155,7 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 64), IconData.impacts.splash, dragonScale + 1f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
+            Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 16 * dragonScale), IconData.impacts.splash, dragonScale + 1f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
 
         }
 
@@ -2027,12 +2167,15 @@ namespace StardewDruid.Cast.Ether
             {
 
                 diveActive = false;
+
                 netDiveActive.Set(false);
+                
                 return false;
 
             }
 
             Game1.player.Position = divePosition;
+
             Position = divePosition;
 
             if (diveTimer % 30 == 0)
@@ -2047,9 +2190,9 @@ namespace StardewDruid.Cast.Ether
 
                 currentLocation.playSound("quickSlosh");
 
-                Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 64), IconData.impacts.splash, dragonScale + 1f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
+                Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 16 * dragonScale), IconData.impacts.splash, dragonScale + 1f, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
 
-                Mod.instance.iconData.ImpactIndicator(currentLocation, Position + new Vector2(64, -64), IconData.impacts.fish, dragonScale, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
+                Mod.instance.iconData.ImpactIndicator(currentLocation, Position - new Vector2(0, 16 * dragonScale), IconData.impacts.fish, dragonScale, new() { interval = 100f, alpha = 0.5f, layer = 999f, });
 
                 if (TreasureZone(true))
                 {
@@ -2060,16 +2203,46 @@ namespace StardewDruid.Cast.Ether
 
                 Vector2 treasurePosition = Position + new Vector2(64, 0);
 
-                StardewValley.Object treasureItem = SpawnData.RandomTreasure(currentLocation, ModUtility.PositionToTile(treasurePosition), Mod.instance.questHandle.IsComplete(QuestHandle.etherThree));
+                StardewValley.Object treasureItem = SpawnData.DiveTreasure(currentLocation, ModUtility.PositionToTile(treasurePosition), Mod.instance.questHandle.IsComplete(QuestHandle.etherThree));
+
+                if (currentLocation is not Town && Mod.instance.ModDifficulty() > 5)
+                {
+
+                    if (treasureItem.sellToStorePrice() > 200)
+                    {
+
+                        string treasureId = "treasure_chase_bounty_" + Game1.player.currentLocation.Name;
+
+                        Crate treasureEvent = new();
+
+                        treasureEvent.EventSetup(treasurePosition, treasureId, false);
+
+                        treasureEvent.crateThief = true;
+
+                        treasureEvent.heldTreasure = true;
+
+                        treasureEvent.crateTerrain = 2;
+
+                        treasureEvent.treasures = new() { treasureItem };
+
+                        treasureEvent.location = Game1.player.currentLocation;
+
+                        treasureEvent.EventActivate();
+
+                        return true;
+
+                    }
+
+                }
 
                 ThrowHandle treasure = new(Game1.player, treasurePosition, treasureItem);
 
                 if (treasure.item.Category == StardewValley.Object.FishCategory)
                 {
 
-                    Game1.player.NotifyQuests(quest => quest.OnFishCaught(treasureItem.QualifiedItemId, 1, 1)); //Game1.player.checkForQuestComplete(null, -1, 1, null, treasureItem.QualifiedItemId, 7);
+                    Game1.player.caughtFish(treasure.item.ItemId, 1, false, 1);
 
-                    Game1.player.gainExperience(1, 16); // gain fishing experience
+                    Mod.instance.GiveExperience(1, treasure.item.Quality * 12); // gain fishing experience
 
                 }
 
@@ -2078,8 +2251,6 @@ namespace StardewDruid.Cast.Ether
                 treasure.height = 320;
 
                 treasure.register();
-
-                //Mod.instance.CastMessage("Dove for a " + treasure.item.Name);
 
             }
 
@@ -2099,12 +2270,14 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            if (flightCue.IsPlaying)
+            /*if (flightCue.IsPlaying)
             {
 
                 flightCue.Stop(AudioStopOptions.Immediate);
 
-            }
+            }*/
+
+            Mod.instance.sounds.StopCue(SoundHandle.SoundCue.DragonFlight);
 
         }
 

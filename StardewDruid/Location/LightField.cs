@@ -25,8 +25,6 @@ namespace StardewDruid.Location
             sconceLight,
             tableLight,
             lantern,
-            brazier,
-            brazierDark,
 
         }
 
@@ -60,7 +58,7 @@ namespace StardewDruid.Location
 
         }
 
-        public void draw(SpriteBatch b)
+        public void update(GameLocation location)
         {
 
             string id = "18465_" + (origin.X * 10000 + origin.Y).ToString();
@@ -93,32 +91,6 @@ namespace StardewDruid.Location
 
                 switch (lightType)
                 {
-                    case lightTypes.brazierDark:
-                    case lightTypes.brazier:
-
-                        int brazierTime = (int)(Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 1000) / 250;
-
-                        int frame = (brazierTime + lightFrame) % 5;
-
-                        Vector2 position = new(origin.X - Game1.viewport.X, origin.Y - Game1.viewport.Y);
-
-                        IconData.tilesheets useSheet = lightType == lightTypes.brazier ? IconData.tilesheets.tomb : IconData.tilesheets.lair;
-
-                        b.Draw(
-                            Mod.instance.iconData.sheetTextures[useSheet],
-                            position,
-                            new Rectangle(32 + frame * 32, 0, 32, 32),
-                            Color.White * 0.75f,
-                            0f,
-                            new(16),
-                            lightScale,
-                            0,
-                            (origin.Y + 384 + lightLayer) / 10000
-                            );
-
-                        position += new Vector2(64);
-
-                        break;
 
                     case lightTypes.lantern:
 

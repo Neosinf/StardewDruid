@@ -3,10 +3,14 @@ using StardewDruid.Cast;
 using StardewDruid.Cast.Fates;
 using StardewDruid.Character;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewDruid.Location;
+using StardewDruid.Location.Druid;
+using StardewDruid.Location.Terrain;
 using StardewDruid.Monster;
 using StardewValley;
 using StardewValley.Constants;
+using StardewValley.GameData.Characters;
 using System;
 using System.Collections.Generic;
 
@@ -14,6 +18,13 @@ namespace StardewDruid.Event.Scene
 {
     public class QuestJester : EventHandle
     {
+
+        public Dictionary<int,Vector2> eventVectors = new()
+        {
+
+            [900] = new Vector2(24f, 14.5f),
+
+        };
 
         public Vector2 companionVector;
 
@@ -62,7 +73,7 @@ namespace StardewDruid.Event.Scene
 
             companions[0].netDirection.Set(1);
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.Sounds.getNewSpecialItem, });
 
 
         }
@@ -73,31 +84,6 @@ namespace StardewDruid.Event.Scene
             Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
 
             return false;
-
-        }
-
-        public override void EventRemove()
-        {
-            
-            base.EventRemove();
-
-            if (eventActive)
-            {
-                if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Buffin))
-                {
-
-                    if (!Mod.instance.questHandle.IsComplete(eventId))
-                    {
-
-                        CharacterMover mover = new(CharacterHandle.characters.Buffin, CharacterMover.moveType.purge);
-
-                        Mod.instance.movers[CharacterHandle.characters.Buffin] = mover;
-
-                    }
-
-                }
-
-            }
 
         }
 
@@ -245,7 +231,8 @@ namespace StardewDruid.Event.Scene
 
                     companions[2].netDirection.Set(3);
 
-                    DialogueCue(11);
+                    DialogueCueWithFeeling(11,1,Character.Character.specials.gesture);
+
                     break;
 
                 case 125:
@@ -294,11 +281,12 @@ namespace StardewDruid.Event.Scene
 
                 case 142:
 
-                    DialogueCue(19);
+                    DialogueCueWithFeeling(19, 1, Character.Character.specials.gesture);
 
-                    ThrowHandle throwRelic = new(companions[2].Position, companions[0].Position, IconData.relics.skull_saurus);
-
-                    throwRelic.impact = IconData.impacts.puff;
+                    ThrowHandle throwRelic = new(companions[2].Position, companions[0].Position, IconData.relics.skull_saurus)
+                    {
+                        impact = IconData.impacts.puff
+                    };
 
                     throwRelic.register();
 
@@ -324,6 +312,10 @@ namespace StardewDruid.Event.Scene
 
                 case 151:
 
+                    ThrowHandle throwCrest = new(Game1.player, companions[2].Position, IconData.relics.crest_associate);
+
+                    throwCrest.register();
+
                     DialogueCue(22 );
 
                     break;
@@ -342,9 +334,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(24 );
 
-                    companions[2].currentLocation.characters.Remove(companions[2]);
-
-                    companions.Remove(2);
+                    RemoveCompanion(2);
 
                     break;
 
@@ -509,10 +499,10 @@ namespace StardewDruid.Event.Scene
                 case 304:
 
                     companions[1].doEmote(20, true);
-
+                    activeCounter = 310;
                     break;
 
-                case 306:
+                /*case 306:
 
                     DialogueCue(32);
 
@@ -522,7 +512,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(33);
 
-                    break;
+                    break;*/
 
                 case 312:
 
@@ -665,6 +655,8 @@ namespace StardewDruid.Event.Scene
 
                 case 400:
 
+                    RemoveCompanion(3);
+
                     DialogueClear(0);
 
                     companions[0].netIdle.Set((int)Character.Character.idles.standby);
@@ -753,7 +745,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(57);
 
-                    companions[1].Position = companions[1].Position + new Vector2(128, 0);
+                    companions[1].Position = companions[1].Position + new Vector2(192f, -128f);
 
                     Mod.instance.iconData.AnimateQuickWarp(location, companions[1].Position - new Vector2(0.0f, 32f));
 
@@ -763,7 +755,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(58);
 
-                    companions[0].Position = companions[0].Position + new Vector2(-128, 0);
+                    companions[0].Position = companions[0].Position + new Vector2(64f, -128f);
 
                     Mod.instance.iconData.AnimateQuickWarp(location, companions[0].Position - new Vector2(0.0f, 32f));
 
@@ -773,15 +765,15 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].ResetActives(true);
 
-                    companions[0].TargetEvent(0, companions[1].Position + new Vector2(64, -32),true);
+                    companions[0].TargetEvent(0, companions[1].Position,true);
 
-                    companions[0].SetDash(companions[1].Position + new Vector2(64, -32),false);
+                    companions[0].SetDash(companions[1].Position,false);
                     
                     companions[1].ResetActives(true);
 
-                    companions[1].TargetEvent(0, companions[0].Position - new Vector2(64, 32),true);
+                    companions[1].TargetEvent(0, companions[0].Position,true);
 
-                    companions[1].SetDash(companions[0].Position - new Vector2(64, 32),false);
+                    companions[1].SetDash(companions[0].Position,false);
 
                     Mod.instance.iconData.ImpactIndicator(location, companions[0].Position + new Vector2(352,32), Data.IconData.impacts.flashbang, 3, new());
 
@@ -801,15 +793,15 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].ResetActives(true);
 
-                    companions[0].TargetEvent(0, companions[1].Position - new Vector2(64, 32), true);
+                    companions[0].TargetEvent(0, companions[1].Position, true);
 
-                    companions[0].SetDash(companions[1].Position - new Vector2(64, 32), false);
+                    companions[0].SetDash(companions[1].Position, false);
 
                     companions[1].ResetActives(true);
 
-                    companions[1].TargetEvent(0, companions[0].Position + new Vector2(64, -32), true);
+                    companions[1].TargetEvent(0, companions[0].Position, true);
 
-                    companions[1].SetDash(companions[0].Position + new Vector2(64, -32), false);
+                    companions[1].SetDash(companions[0].Position, false);
 
                     Mod.instance.iconData.ImpactIndicator(location, companions[0].Position + new Vector2(-288,32), Data.IconData.impacts.flashbang, 3, new());
 
@@ -847,11 +839,10 @@ namespace StardewDruid.Event.Scene
                     
                     companions[0].specialTimer = 120;
 
-                    SpellHandle beam = new(companions[0].currentLocation, companions[1].GetBoundingBox().Center.ToVector2(), companions[0].GetBoundingBox().Center.ToVector2());
-
-                    beam.type = SpellHandle.spells.beam;
-
-                    beam.scheme = IconData.schemes.golden;
+                    SpellHandle beam = new(companions[0].currentLocation, companions[1].GetBoundingBox().Center.ToVector2(), companions[0].GetBoundingBox().Center.ToVector2())
+                    {
+                        type = SpellHandle.Spells.beam
+                    };
 
                     Mod.instance.spellRegister.Add(beam);
 
@@ -859,21 +850,20 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].ResetActives(true);
 
-                    companions[1].doEmote(16);
-
-                    /*companions[1].netSpecial.Set((int)Character.Character.specials.special);
+                    companions[1].netSpecial.Set((int)Character.Character.specials.special);
 
                     companions[1].specialTimer = 120;
 
-                    SpellHandle beamTwo = new(companions[1].currentLocation, companions[0].GetBoundingBox().Center.ToVector2(), companions[1].GetBoundingBox().Center.ToVector2());
+                    SpellHandle profanity = new(companions[1].currentLocation, companions[0].GetBoundingBox().Center.ToVector2(), companions[1].GetBoundingBox().Center.ToVector2())
+                    {
+                        type = SpellHandle.Spells.echo,
 
-                    beamTwo.type = SpellHandle.spells.beam;
+                        missile = MissileHandle.missiles.curseecho
+                    };
 
-                    beamTwo.scheme = IconData.schemes.fates;
+                    Mod.instance.spellRegister.Add(profanity);
 
-                    Mod.instance.spellRegister.Add(beamTwo);
-
-                    Mod.instance.iconData.ImpactIndicator(location, companions[0].Position + new Vector2(416, 32), Data.IconData.impacts.flashbang, 3, new());*/
+                    companions[1].doEmote(16);
 
                     break;
 
@@ -895,25 +885,6 @@ namespace StardewDruid.Event.Scene
                             List<TemporaryAnimatedSprite> embers = ember.EmberConstruct(location, IconData.schemes.stars, burnVector, 2f + (0.5f * Mod.instance.randomIndex.Next(5)), 60, 999f);
 
                             animations.AddRange(embers);
-
-                            if(i % 3 == 0 && j % 3 == 0)
-                            {
-
-                                string lightid = "18465_" + (burnVector.X * 10000 + burnVector.Y).ToString();
-
-                                TemporaryAnimatedSprite lightCircle = new(23, 200f, 6, 60, burnVector, false, Game1.random.NextDouble() < 0.5)
-                                {
-                                    texture = Game1.mouseCursors,
-                                    lightId = lightid,
-                                    lightRadius = 3f,
-                                    lightcolor = Color.Black,
-                                    Parent = location,
-                                };
-
-                                location.temporarySprites.Add(lightCircle);
-
-                                animations.Add(lightCircle);
-                            }
 
                         }
 
@@ -1114,9 +1085,27 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
+                case 563:
+
+                    companions[1].ResetActives();
+
+                    companions[1].LookAtTarget(companions[0].Position, true);
+
+                    companions[1].netSpecial.Set((int)Character.Character.specials.greet);
+
+                    companions[1].specialTimer = 240;
+
+                    break;
+
                 case 564:
 
                     companions[0].ResetActives(true);
+
+                    companions[0].LookAtTarget(companions[1].Position, true);
+
+                    companions[0].netSpecial.Set((int)Character.Character.specials.greet);
+
+                    companions[0].specialTimer = 180;
 
                     DialogueCue(82);
 
@@ -1129,8 +1118,6 @@ namespace StardewDruid.Event.Scene
                     Mod.instance.iconData.AnimateQuickWarp(location, companions[1].Position - new Vector2(0.0f, 32f), true);
 
                     companions[1].currentLocation.characters.Remove(companions[1]);
-
-                    companions[1] = null;
 
                     DialogueLoad(0, 6);
 
@@ -1183,51 +1170,77 @@ namespace StardewDruid.Event.Scene
 
                 case 800:
 
-                Vector2 archaeum = companions[0].Position + new Vector2(320, -64);
+                    Vector2 archaeum = companions[0].Position + new Vector2(448, -64);
 
-                MuseumAccess = new();
+                    MuseumAccess = new();
 
-                MuseumAccess.AccessSetup("Town", LocationHandle.druid_archaeum_name, ModUtility.PositionToTile(archaeum), new Vector2(24, 15));
+                    MuseumAccess.AccessSetup("Town", LocationHandle.druid_archaeum_name, ModUtility.PositionToTile(archaeum), new Vector2(24, 15));
 
-                MuseumAccess.location = location;
+                    MuseumAccess.location = location;
 
-                MuseumAccess.AccessStart();
+                    MuseumAccess.AccessStart();
 
-                location.localSound("secret1");
+                    location.localSound("secret1");
 
-                DialogueClear(0);
+                    DialogueClear(0);
 
-                companions[0].ResetActives();
+                    break;
 
-                companions[0].TargetEvent(203, archaeum, true);
+                case 801:
 
-                companions[1].ResetActives();
+                    Vector2 archaeumEntrance = companions[0].Position + new Vector2(320, -64);
 
-                companions[1].TargetEvent(0, archaeum, true);
+                    companions[0].ResetActives();
 
-                DialogueCue(45);
+                    companions[0].LookAtTarget(archaeumEntrance, true);
 
-                break;
+                    companions[1].ResetActives();
+
+                    companions[1].LookAtTarget(archaeumEntrance, true);
+
+                    DialogueCue(45);
+
+                    break;
+
+                case 804:
+
+                    DialogueCue(100);
+
+                    break;
+
+                case 805:
+
+                    Vector2 archaeumTarget = companions[0].Position + new Vector2(320, -64);
+
+                    companions[0].ResetActives();
+
+                    companions[0].TargetEvent(203, archaeumTarget, true);
+
+                    companions[1].ResetActives();
+
+                    companions[1].TargetEvent(0, archaeumTarget, true);
+
+                    break;
 
                 case 810:
-
-                    Mod.instance.WarpAllFarmers(LocationHandle.druid_archaeum_name, 27, 18, 1);
 
                     location = Mod.instance.locations[LocationHandle.druid_archaeum_name];
 
                     location.warps.Clear();
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_archaeum_name], companions[0], new Vector2(24, 15) * 64, false);
+                    Mod.instance.WarpAllFarmers(LocationHandle.druid_archaeum_name, (int)eventVectors[900].X + 3, (int)(eventVectors[900].Y + 7), 1);
+
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_archaeum_name], companions[0], new Vector2((int)eventVectors[900].X -1, (int)eventVectors[900].Y + 3) * 64, false);
 
                     companions[0].netIdle.Set((int)Character.Character.idles.standby);
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_archaeum_name], companions[1], new Vector2(31, 15) * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_archaeum_name], companions[1], new Vector2((int)eventVectors[900].X + 8, (int)eventVectors[900].Y + 3) * 64, false);
 
                     companions[1].netIdle.Set((int)Character.Character.idles.standby);
 
                     companions[1].netDirection.Set(3);
 
-                    Vector2 GuntherPosition = new Vector2(27, 14) * 64;
+                    Vector2 GuntherPosition = new Vector2((int)eventVectors[900].X + 3, (int)eventVectors[900].Y ) * 64;
 
                     companions[3] = new Gunther(CharacterHandle.characters.Gunther);
 
@@ -1240,6 +1253,8 @@ namespace StardewDruid.Event.Scene
                     companions[3].netDirection.Set(2);
 
                     voices[3] = companions[3];
+
+                    eventRenders.Add(new("skull_saurus", location.Name, new Vector2(eventVectors[900].X + 3f, eventVectors[900].Y + 3f) * 64, IconData.relics.skull_saurus));
 
                     MuseumAccess.AccessWarps();
 
@@ -1272,20 +1287,9 @@ namespace StardewDruid.Event.Scene
 
                     SetTrack("libraryTheme");
 
-                    eventRenders.Add(new("skull_saurus", location.Name, new Vector2(27, 15) * 64 + new Vector2(32), IconData.relics.skull_saurus));
-
                     break;
+
                 case 916:
-
-                    Winds windsNew = new();
-
-                    windsNew.EventSetup(new Vector2(27, 15) * 64 + new Vector2(32), Rite.eventWinds);
-
-                    windsNew.EventActivate();
-
-                    windsNew.eventLocked = true;
-
-                    windsNew.WindArray(new(), WispHandle.wisptypes.winds, 50);
 
                     companions[0].ResetActives(true);
 
@@ -1295,23 +1299,73 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].netDirection.Set(3);
 
-                    Mod.instance.spellRegister.Add(new(new Vector2(27, 15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, factor = 1 });
+                    location.playSound(SpellHandle.Sounds.thunder.ToString());
 
+                    if (location is Archaeum archaeum2)
+                    {
+
+                        archaeum2.ambientDarkness = true;
+
+                        foreach (TerrainField terrainField in archaeum2.terrainFields)
+                        {
+
+                            if (terrainField is RitualCircle circle)
+                            {
+
+                                circle.disabled = false;
+
+                                circle.ritualStatus = 1;
+
+                                circle.LoadCandles(0);
+
+                            }
+
+                        }
+
+                    }
                     break;
 
                 case 918:
 
-                    Mod.instance.spellRegister.Add(new(new Vector2(27, 15) * 64 + new Vector2(32), 128, IconData.impacts.puff, new()) { type = SpellHandle.spells.bolt, scheme = IconData.schemes.fates, factor = 1 });
+                    Winds windsNew = new();
+
+                    windsNew.EventSetup(new Vector2(eventVectors[900].X+3, eventVectors[900].Y+3) * 64, Rite.eventWinds);
+
+                    windsNew.EventActivate();
+
+                    windsNew.eventLocked = true;
+
+                    windsNew.WindArray(new(), WispHandle.wisptypes.winds, 50);
+
+                    location.playSound(SpellHandle.Sounds.thunder.ToString());
+
+                    if (location is Archaeum archaeum3)
+                    {
+
+                        foreach (TerrainField terrainField in archaeum3.terrainFields)
+                        {
+
+                            if (terrainField is RitualCircle circle)
+                            {
+
+                                circle.SetCandles(1);
+
+                            }
+
+                        }
+
+                    }
 
                     break;
 
                 case 920:
 
-                    SpellHandle circleHandle = new(new Vector2(27, 15) * 64 + new Vector2(32), 256, IconData.impacts.summoning, new());
+                    SpellHandle circleHandle = new(new Vector2(eventVectors[900].X + 3, eventVectors[900].Y + 3) * 64, 256, IconData.impacts.summoning, new())
+                    {
+                        scheme = IconData.schemes.fates,
 
-                    circleHandle.scheme = IconData.schemes.fates;
-
-                    circleHandle.sound = SpellHandle.sounds.shadowDie;
+                        sound = SpellHandle.Sounds.shadowDie
+                    };
 
                     Mod.instance.spellRegister.Add(circleHandle);
 
@@ -1323,7 +1377,7 @@ namespace StardewDruid.Event.Scene
 
                     SetTrack("tribal");
 
-                    StardewDruid.Monster.Dinosaur dinosaur = new(new Vector2(27, 16), Mod.instance.CombatDifficulty());
+                    StardewDruid.Monster.Dinosaur dinosaur = new(new Vector2((int)eventVectors[900].X+3, (int)eventVectors[900].Y+4), Mod.instance.CombatDifficulty());
 
                     dinosaur.netScheme.Set(2);
 
@@ -1400,11 +1454,12 @@ namespace StardewDruid.Event.Scene
 
                 case 965:
 
-                    Mod.instance.spellRegister.Add(new(bosses[0].Position, 320, IconData.impacts.deathbomb, new()) { sound = SpellHandle.sounds.shadowDie});
+                    Mod.instance.spellRegister.Add(new(bosses[0].Position, 320, IconData.impacts.deathbomb, new()) { displayRadius = 4, sound = SpellHandle.Sounds.shadowDie});
 
-                    ThrowHandle newThrowRelic = new(Game1.player, companions[1].Position, IconData.relics.skull_saurus);
-
-                    newThrowRelic.impact = IconData.impacts.puff;
+                    ThrowHandle newThrowRelic = new(Game1.player, companions[1].Position, IconData.relics.skull_saurus)
+                    {
+                        impact = IconData.impacts.puff
+                    };
 
                     newThrowRelic.register();
 
@@ -1424,9 +1479,33 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].netIdle.Set((int)Character.Character.idles.standby);
 
+                    if (location is Archaeum archaeum4)
+                    {
+
+                        foreach (TerrainField terrainField in archaeum4.terrainFields)
+                        {
+
+                            if (terrainField is RitualCircle circle)
+                            {
+
+                                circle.SetCandles(0);
+
+                            }
+
+                        }
+
+                    }
+
+                    if (Mod.instance.eventRegister.ContainsKey(Rite.eventWinds))
+                    {
+
+                        Mod.instance.eventRegister[Rite.eventWinds].eventComplete = true;
+
+                    }
+
                     break;
 
-                case 969:
+                case 975:
 
                     companions[0].ResetActives();
 
@@ -1438,7 +1517,7 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 972:
+                case 978:
 
                     location.updateWarps();
 
@@ -1462,10 +1541,10 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 973:
-                case 974:
-                case 975:
-                case 976:
+                case 979:
+                case 980:
+                case 981:
+                case 982:
 
                     if (Game1.player.currentLocation.Name == "Town")
                     {
@@ -1476,7 +1555,7 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
-                case 977:
+                case 983:
 
                     activeCounter = 399;
 

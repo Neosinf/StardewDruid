@@ -11,7 +11,7 @@ using StardewDruid.Data;
 using StardewValley.Objects;
 using System.Linq;
 using StardewDruid.Render;
-using StardewDruid.Event;
+using StardewDruid.Handle;
 
 
 
@@ -67,8 +67,6 @@ namespace StardewDruid.Character
             dashInterval = 9;
 
             specialIntervals[specials.sweep] = 7;
-
-            overhead = 112;
 
             setScale = 3.75f;
 
@@ -131,6 +129,20 @@ namespace StardewDruid.Character
 
             base.drawAboveAlwaysFrontLayer(b);
 
+        }
+
+        public override int GetHeight()
+        {
+            
+            return 48;
+
+        }
+
+        public override int GetWidth()
+        {
+            
+            return 48;
+        
         }
 
         public override void DrawSweep(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
@@ -205,19 +217,6 @@ namespace StardewDruid.Character
 
         }
 
-        public override Rectangle GetBoundingBox()
-        {
-
-            if (netDirection.Value % 2 == 0)
-            {
-
-                return new Rectangle((int)Position.X + 8, (int)Position.Y + 8, 48, 48);
-
-            }
-
-            return new Rectangle((int)Position.X - 16, (int)Position.Y + 8, 96, 48);
-
-        }
 
         public override bool checkAction(Farmer who, GameLocation l)
         {
@@ -261,7 +260,7 @@ namespace StardewDruid.Character
             if (!pat && !IsEmoting)
             {
 
-                currentLocation.playSound(SpellHandle.sounds.crow.ToString());
+                currentLocation.playSound(SpellHandle.Sounds.crow.ToString());
 
                 doEmote(32);
 
@@ -426,17 +425,18 @@ namespace StardewDruid.Character
 
             }
 
-            SpellHandle swipeEffect = new(Game1.player, Position, 192, Mod.instance.CombatDamage() / 2);
+            SpellHandle swipeEffect = new(Game1.player, Position, 192, Mod.instance.CombatDamage() / 2)
+            {
+                type = SpellHandle.Spells.swipe,
 
-            swipeEffect.type = SpellHandle.spells.swipe;
+                added = new() { SpellHandle.Effects.mug, },
 
-            swipeEffect.added = new() { SpellHandle.effects.mug, };
+                sound = SpellHandle.Sounds.crow,
 
-            swipeEffect.sound = SpellHandle.sounds.crow;
+                display = IconData.impacts.flashbang,
 
-            swipeEffect.display = IconData.impacts.flashbang;
-
-            swipeEffect.scheme = IconData.schemes.bones;
+                scheme = IconData.schemes.bones
+            };
 
             Mod.instance.spellRegister.Add(swipeEffect);
 
@@ -460,7 +460,7 @@ namespace StardewDruid.Character
 
                     Mod.instance.trackers[characterType].linger = 0;
 
-                    cooldownTimer = cooldownInterval / 2;
+                    SetCooldown(40, 0.5f);
 
                 }
 
@@ -477,7 +477,7 @@ namespace StardewDruid.Character
 
                 return true;
 
-            };
+            }
 
             if (ValidDebrisTarget())
             {
@@ -688,6 +688,15 @@ namespace StardewDruid.Character
         public override void PerformWork()
         {
 
+            if (Game1.player.currentLocation == null || currentLocation == null)
+            {
+
+                specialTimer = 1;
+
+                return;
+
+            }
+
             if (specialTimer == 30)
             {
 
@@ -819,7 +828,36 @@ namespace StardewDruid.Character
                                 if (giftList.Count > 0)
                                 {
 
-                                    Item stealGift = ItemRegistry.Create(giftList[Mod.instance.randomIndex.Next(giftList.Count)],1,2,true);
+                                    Item stealGift = ItemRegistry.Create(giftList[Mod.instance.randomIndex.Next(giftList.Count)],1,0,true);
+
+                                    switch (stealGift.Category)
+                                    {
+
+                                        case StardewValley.Object.artisanGoodsCategory:
+
+                                        case StardewValley.Object.GreensCategory:
+
+                                        case StardewValley.Object.GemCategory:
+
+                                        case StardewValley.Object.VegetableCategory:
+
+                                        case StardewValley.Object.FishCategory:
+
+                                        case StardewValley.Object.EggCategory:
+
+                                        case StardewValley.Object.MilkCategory:
+
+                                        case StardewValley.Object.CookingCategory:
+
+                                        case StardewValley.Object.FruitsCategory:
+
+                                        case StardewValley.Object.flowersCategory:
+
+                                            stealGift.Quality = 2;
+
+                                            break;
+
+                                    }
 
                                     if (stealGift != null)
                                     {
@@ -829,7 +867,6 @@ namespace StardewDruid.Character
                                     }
 
                                 }
-
 
                             }
 
@@ -843,9 +880,9 @@ namespace StardewDruid.Character
 
                     }
 
-                    ModUtility.ChangeFriendship(Game1.player, witness, friendship);
+                    ModUtility.ChangeFriendship(witness, friendship);
 
-                    ReactionData.ReactTo(witness, ReactionData.reactions.corvid, friendship);
+                    ReactionData.ReactTo(witness, ReactionData.reactions.corvid, friendship, new());
 
                     if (!Mod.instance.questHandle.IsComplete(QuestHandle.bonesThree))
                     {
@@ -887,16 +924,17 @@ namespace StardewDruid.Character
 
             }
 
-            SpellHandle explode = new(Game1.player, workVector * 64, 128, -1);
+            SpellHandle explode = new(Game1.player, workVector * 64, 128, -1)
+            {
+                type = SpellHandle.Spells.explode,
 
-            explode.type = SpellHandle.spells.explode;
-
-            explode.indicator = IconData.cursors.none;
+                indicator = IconData.cursors.none
+            };
 
             if (currentLocation.objects[workVector].IsBreakableStone())
             {
 
-                explode.sound = SpellHandle.sounds.hammer;
+                explode.sound = SpellHandle.Sounds.hammer;
 
             }
 
@@ -936,6 +974,13 @@ namespace StardewDruid.Character
 
             base.DashAscension();
 
+
+        }
+
+        public override Microsoft.Xna.Framework.Rectangle OverheadPortrait()
+        {
+
+            return new Rectangle(20, 7, 16, 16);
 
         }
 

@@ -2,7 +2,7 @@
 using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Dialogue;
-using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewValley;
 using StardewValley.Monsters;
 using StardewValley.Objects;
@@ -65,6 +65,9 @@ namespace StardewDruid.Data
             cultists,
             honourguard,
             treasureguardian,
+            bonewitch,
+            peatwitch,
+            moorwitch,
 
         }
 
@@ -372,16 +375,17 @@ namespace StardewDruid.Data
 
                     };
 
-                    break;
-
+                    break; 
                 case QuestHandle.challengeMoors:
 
                     sceneNarrators = new()
                     {
 
                         [0] = NarratorTitle(narrators.aldebaran),
-                        [1] = NarratorTitle(narrators.cultists),
+                        [1] = NarratorTitle(narrators.bonewitch),
                         [2] = NarratorTitle(narrators.honourguard),
+                        [3] = NarratorTitle(narrators.peatwitch),
+                        [4] = NarratorTitle(narrators.moorwitch),
 
                     };
 
@@ -447,6 +451,9 @@ namespace StardewDruid.Data
                 case narrators.cultists: return Mod.instance.Helper.Translation.Get("NarratorData.361.46");
                 case narrators.honourguard: return Mod.instance.Helper.Translation.Get("NarratorData.361.47");
                 case narrators.treasureguardian: return Mod.instance.Helper.Translation.Get("NarratorData.366.1");
+                case narrators.bonewitch: return Mod.instance.Helper.Translation.Get("NarratorData.380.1");
+                case narrators.peatwitch: return Mod.instance.Helper.Translation.Get("NarratorData.380.2");
+                case narrators.moorwitch: return Mod.instance.Helper.Translation.Get("NarratorData.380.3");
             }
 
             return string.Empty;

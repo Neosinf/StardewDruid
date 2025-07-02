@@ -18,12 +18,11 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewValley.TerrainFeatures;
 using System.Threading;
 using xTile;
-using StardewDruid.Character;
 using StardewDruid.Data;
 using System.IO;
 using StardewValley.BellsAndWhistles;
-using StardewDruid.Event;
 using StardewValley.Tools;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Location.Druid
 {
@@ -84,7 +83,7 @@ namespace StardewDruid.Location.Druid
 
             waterTiles = new(60, 36);
 
-            terrainFields = new();
+            mapReset();
 
             // ======================================================
             // beach
@@ -357,22 +356,23 @@ namespace StardewDruid.Location.Druid
 
             codes = new()
             {
-                [0] = new() { new() { 46, 13 }, },
+                [-1] = new() { new() { 46, 13 }, },
+                [0] = new() { },
                 [1] = new() { new() { 28, 5 }, },
                 [2] = new() { new() { 51, 14 }, },
                 [3] = new() { },
-                [4] = new() { new() { 53, 12 }, },
-                [5] = new() { },
+                [4] = new() { },
+                [5] = new() { new() { 53, 12 }, },
                 [6] = new() { },
                 [7] = new() { },
                 [8] = new() { },
                 [9] = new() { },
                 [10] = new() { },
-                [11] = new() { new() { 25, 11 }, },
+                [11] = new() { new() { 26, 11 }, },
                 [12] = new() { new() { 34, 8 }, },
-                [13] = new() { new() { 28, 6 }, new() { 37, 10 }, },
+                [13] = new() { new() { 28, 6 }, },
                 [14] = new() { },
-                [15] = new() { new() { 25, 7 }, },
+                [15] = new() { new() { 25, 10 }, },
                 [16] = new() { new() { 35, 9 }, },
                 [17] = new() { },
                 [18] = new() { },
@@ -394,6 +394,7 @@ namespace StardewDruid.Location.Druid
                 [34] = new() { },
                 [35] = new() { },
 
+
             };
 
             foreach (KeyValuePair<int, List<List<int>>> code in codes)
@@ -402,12 +403,19 @@ namespace StardewDruid.Location.Druid
                 foreach (List<int> array in code.Value)
                 {
 
-                    TerrainField tField = new(IconData.tilesheets.atoll, array[1], new Vector2(array[0], code.Key) * 64);
+                    TerrainField tField = new(IconData.tilesheets.atoll, array[1], new Vector2(array[0], code.Key) * 64, TerrainField.shadows.offset);
 
                     if (array[1] < 5 && array[0] > 29)
                     {
 
                         tField.flip = true;
+
+                    }
+
+                    if (array[1] == 5)
+                    {
+
+                        tField.shadow = TerrainField.shadows.none;
 
                     }
 
@@ -453,6 +461,7 @@ namespace StardewDruid.Location.Druid
                 y = 15;
 
             }
+
             foreach (TileSheet tilesheet in beach.map.TileSheets)
             {
 
@@ -478,11 +487,10 @@ namespace StardewDruid.Location.Druid
 
             }
 
-
             foreach (Warp warp in beach.warps)
             {
 
-                if (warp.X == x && warp.Y == y)
+                if (warp.X == x && warp.Y == y && warp.TargetName == LocationHandle.druid_atoll_name)
                 {
 
                     return;

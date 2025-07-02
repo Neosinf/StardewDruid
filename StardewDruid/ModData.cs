@@ -27,17 +27,23 @@ namespace StardewDruid
 
         public KeybindList warpButtons { get; set; }
 
-        public string modDifficulty { get; set; }
+        public KeybindList channelButtons { get; set; }
 
-        //public bool disableHands { get; set; }
+        public KeybindList favouriteButtons { get; set; }
+
+        public string modDifficulty { get; set; }
+        
+        public string dialogueOption { get; set; }
+
+        public string captionOption { get; set; }
 
         public bool autoProgress { get; set; }
+        
+        public int paceProgress { get; set; }
 
         public int setMilestone { get; set; }
 
         public bool setOnce { get; set; }
-
-        //public bool convert219 { get; set; }
 
         public bool maxDamage { get; set; }
 
@@ -48,6 +54,8 @@ namespace StardewDruid
         public bool slotFreedom { get; set; }
 
         public bool slotReverse { get; set; }
+
+        public string potionDefault { get; set; }
 
         public string slotOne { get; set; }
 
@@ -75,13 +83,15 @@ namespace StardewDruid
 
         public int cultivateBehaviour { get; set; }
 
+        public int cultivatePlot { get; set; }
+        
+        public bool cultivateTallCrops { get; set; }
+
         public bool disableShopdata { get; set; }
 
         public int meteorBehaviour { get; set; }
 
         public bool cardinalMovement { get; set; }
-
-        //public bool castAnywhere { get; set; }
 
         public bool decorateGrove { get; set; }
 
@@ -90,6 +100,10 @@ namespace StardewDruid
         public bool reverseJournal { get; set; }
 
         public bool activeJournal { get; set; }
+        
+        public bool enableGothic { get; set; }
+
+        public bool enableCrossover { get; set; }
 
         public int dragonScale { get; set; }
 
@@ -138,11 +152,35 @@ namespace StardewDruid
 
         }
 
+        public enum dialogueOptions
+        {
+            auto,
+            fulltext,
+            emotes,
+            none,
+        }
+
+        public enum captionOptions
+        {
+            auto,
+            textonly,
+            none,
+        }
+
         public enum modOptions
         {
             Default,
             Druid,
             Magic,
+        }
+
+        public enum potionDefaults
+        {
+            automatic,
+            noconsume,
+            nobrew,
+            disabled
+
         }
 
         public ModData()
@@ -157,19 +195,23 @@ namespace StardewDruid
             relicsButtons = KeybindList.Parse("I");
             herbalismButtons = KeybindList.Parse("O");
             warpButtons = KeybindList.Parse("P");
+            channelButtons = KeybindList.Parse("LeftShift,RightShift");
+            favouriteButtons = KeybindList.Parse("Home");
             reverseJournal = false;
             activeJournal = true;
-            //disableHands = false;
+            dialogueOption = dialogueOptions.auto.ToString();
+            captionOption = captionOptions.auto.ToString();
             autoProgress = false;
+            paceProgress = 1;
             setMilestone = 0;
             setOnce = false;
-            //convert219 = false;
             maxDamage = false;
             modDifficulty = difficulties.medium.ToString();
             slotAttune = false;
             slotConsume = true;
             slotFreedom = false;
             slotReverse = false;
+            potionDefault = potionDefaults.automatic.ToString();
             slotOne = slotOptions.weald.ToString();
             slotTwo = slotOptions.mists.ToString();
             slotThree = slotOptions.stars.ToString();
@@ -183,12 +225,15 @@ namespace StardewDruid
             slotEleven = slotOptions.lunch.ToString();
             slotTwelve = slotOptions.lunch.ToString();
             cultivateBehaviour = 2;
+            cultivatePlot = 3;
+            cultivateTallCrops = false;
             disableShopdata = false;
             meteorBehaviour = 3;
             cardinalMovement = false;
-            //castAnywhere = false;
             decorateGrove = false;
             plantGrove = false;
+            enableGothic = false;
+            enableCrossover = true;
             dragonScale = 3;
             dragonScheme = 1;
             dragonBreath = 0;

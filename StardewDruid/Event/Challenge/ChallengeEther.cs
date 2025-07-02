@@ -2,6 +2,7 @@
 using StardewDruid.Cast;
 using StardewDruid.Character;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewDruid.Location;
 using StardewDruid.Location.Druid;
 using StardewDruid.Monster;
@@ -21,9 +22,17 @@ namespace StardewDruid.Event.Challenge
         {
 
             // Focus vector
-            [1] = new Vector2(27, 21),
+            [1] = new Vector2(26, 21),
             // Boss vector
-            [2] = new Vector2(28, 22),
+            [2] = new Vector2(27f, 21),
+
+            // Ruin vectors
+            [10] = new Vector2(31, 7),
+            [11] = new Vector2(41, 11),
+            [12] = new Vector2(37, 13),
+            [13] = new Vector2(41, 17),
+            [14] = new Vector2(31, 24),
+            [15] = new Vector2(37, 24),
 
         };
 
@@ -41,9 +50,12 @@ namespace StardewDruid.Event.Challenge
 
             base.EventActivate();
 
-            monsterHandle = new(origin, location);
+            origin = eventVectors[2] * 64;
 
-            monsterHandle.spawnSchedule = new();
+            monsterHandle = new(origin, location)
+            {
+                spawnSchedule = new()
+            };
 
             for (int i = 20; i <= 80; i++)
             {
@@ -67,21 +79,9 @@ namespace StardewDruid.Event.Challenge
 
             EventBar(StringData.Strings(StringData.stringkeys.theDusting),0);
 
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
+            Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { displayRadius = 4, sound = SpellHandle.Sounds.getNewSpecialItem, });
 
-            if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Blackfeather))
-            {
-                
-                if(Mod.instance.characters[CharacterHandle.characters.Blackfeather].currentLocation is Gate)
-                {
-                    
-                    Mod.instance.characters[CharacterHandle.characters.Blackfeather].SwitchToMode(Character.Character.mode.track, Game1.player);
-
-                }
-
-            }
-
-            (Mod.instance.locations[LocationHandle.druid_gate_name] as Gate).alightBrazier = true;
+            (Mod.instance.locations[LocationHandle.druid_temple_name] as Temple).BrazierOverride(1);
 
             EventRender cannoliBone = new("cannoliBone", location.Name, eventVectors[1] * 64 + new Vector2(32,18), IconData.relics.skull_cannoli) { layer = 1f };
 
@@ -104,8 +104,6 @@ namespace StardewDruid.Event.Challenge
 
             if (eventActive)
             {
-                
-                (Mod.instance.locations[LocationHandle.druid_gate_name] as Gate).alightBrazier = false;
 
                 eventRenders.Clear();
 
@@ -178,7 +176,7 @@ namespace StardewDruid.Event.Challenge
 
                         voices.Clear();
 
-                        activeCounter = 90;
+                        //activeCounter = 90;
 
                     }
 
@@ -193,15 +191,15 @@ namespace StardewDruid.Event.Challenge
 
                     SetTrack("tribal");
 
-                    bosses[0] = new Dustfiend(eventVectors[2], Mod.instance.CombatDifficulty());
+                    bosses[0] = new Dustking(eventVectors[2], Mod.instance.CombatDifficulty());
 
-                    bosses[0].SetMode(4);
+                    bosses[0].SetMode(2);
 
                     bosses[0].netScheme.Set(2);
 
                     bosses[0].netPosturing.Set(true);
 
-                    bosses[0].netLayer.Set(12000);
+                    bosses[0].netLayer.Set(320);
 
                     location.characters.Add(bosses[0]);
 
@@ -209,17 +207,31 @@ namespace StardewDruid.Event.Challenge
 
                     voices[0] = bosses[0];
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0,128), IconData.impacts.smoke, 5f, new() { interval = 150, color = Microsoft.Xna.Framework.Color.Gray,});
+                    Mod.instance.spellRegister.Add(new(bosses[0].Position - new Vector2(0, 128), 20, IconData.impacts.smoke, new()) { instant = true, displayRadius = 5, scheme = IconData.schemes.gray,  sound = SpellHandle.Sounds.explosion });
+                    Mod.instance.spellRegister.Add(new(bosses[0].Position - new Vector2(0, 128), 20, IconData.impacts.steam, new()) { instant = true, displayRadius = 5, });
+                    Mod.instance.spellRegister.Add(new(bosses[0].Position - new Vector2(0, 128), 20, IconData.impacts.steam, new()) { instant = true, displayRadius = 5, displayFlip = true});
+                    Mod.instance.spellRegister.Add(new(bosses[0].Position - new Vector2(0, 128), 20, IconData.impacts.puff, new()) { instant = true, displayRadius = 5, });
+                    Mod.instance.spellRegister.Add(new(bosses[0].Position - new Vector2(0, 128), 20, IconData.impacts.plume, new()) { displayRadius = 5, scheme = IconData.schemes.darkgray, });
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.steam, 5f, new() { interval = 150, });
+                    location.warps.Clear();
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.steam, 5f, new() { interval = 150, flip = true, });
+                    (Mod.instance.locations[LocationHandle.druid_temple_name] as Temple).BrazierOverride(5);
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.puff, 5f, new() { interval = 150, });
+                    break;
 
-                    Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position - new Vector2(0, 128), IconData.impacts.plume, 5f, new() { interval = 150, color = Microsoft.Xna.Framework.Color.DarkGray, });
+                case 5:
 
-                    location.playSound(SpellHandle.sounds.explosion.ToString());
+                    bosses[0].specialTimer = (bosses[0].specialCeiling + 1) * bosses[0].specialInterval;
+
+                    bosses[0].netSpecialActive.Set(true);
+
+                    break;
+
+                case 15:
+
+                    bosses[0].specialTimer = (bosses[0].specialCeiling + 1) * bosses[0].specialInterval;
+
+                    bosses[0].netSpecialActive.Set(true);
 
                     break;
 
@@ -232,6 +244,8 @@ namespace StardewDruid.Event.Challenge
 
                     bosses[0].netPosturing.Set(false);
 
+                    bosses[0].netLayer.Set(0);
+
                     bosses[0].MaxHealth *= 2;
 
                     bosses[0].Health = bosses[0].MaxHealth;
@@ -240,18 +254,23 @@ namespace StardewDruid.Event.Challenge
 
                     break;
 
-                case 89:
+                case 88:
 
                     if(bosses.ContainsKey(0))
                     {
 
-                        Mod.instance.iconData.ImpactIndicator(location, bosses[0].Position, IconData.impacts.bomb, 6f, new());
+                        bosses[0].ResetActives();
 
-                        bosses[0].currentLocation.characters.Remove(bosses[0]);
+                        int healthThreshold = bosses[0].MaxHealth / 3;
 
-                        bosses.Clear();
+                        if (bosses[0].Health > healthThreshold)
+                        {
 
-                        voices.Clear();
+                            bosses[0].Health = healthThreshold - 50;
+
+                        }
+
+                        bosses[0].PerformSpecial(bosses[0].Position);
 
                     }
 
@@ -281,17 +300,6 @@ namespace StardewDruid.Event.Challenge
 
             }
 
-            List<Vector2> ruins = new()
-            {
-                new Vector2(32,7),
-                new Vector2(42,11),
-                new Vector2(38,13),
-                new Vector2(42,17),
-                new Vector2(32,24),
-                new Vector2(38,24),
-
-            };
-
             Flyer corvid;
 
             switch (activeCounter)
@@ -308,7 +316,7 @@ namespace StardewDruid.Event.Challenge
 
                     CharacterMover.Warp(location, corvid, new Vector2(1,1));
 
-                    corvid.TargetEvent(0, (ruins[0] * 64) + new Vector2(32, 0), true);
+                    corvid.TargetEvent(0, (eventVectors[10] * 64) + new Vector2(32, 0), true);
 
                     corvid.netMovement.Set((int)Character.Character.movements.run);
 
@@ -318,7 +326,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 92:
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
@@ -330,7 +338,7 @@ namespace StardewDruid.Event.Challenge
 
                     CharacterMover.Warp(location, corvid, new Vector2(1, 33));
 
-                    corvid.TargetEvent(0, (ruins[1] * 64) + new Vector2(32, 0), true);
+                    corvid.TargetEvent(0, (eventVectors[11] * 64) + new Vector2(32, 0), true);
 
                     //corvid.netMovement.Set((int)Character.Character.movements.run);
 
@@ -346,13 +354,13 @@ namespace StardewDruid.Event.Challenge
 
                     CharacterMover.Warp(location, corvid, new Vector2(53, 1));
 
-                    corvid.TargetEvent(0, (ruins[2] * 64) + new Vector2(32, 0), true);
+                    corvid.TargetEvent(0, (eventVectors[12] * 64) + new Vector2(32, 0), true);
 
                     //corvid.netMovement.Set((int)Character.Character.movements.run);
 
                     companions[3] = corvid;
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
@@ -364,7 +372,7 @@ namespace StardewDruid.Event.Challenge
 
                     CharacterMover.Warp(location, corvid, new Vector2(53, 33));
 
-                    corvid.TargetEvent(0, (ruins[3] * 64) + new Vector2(32, 0), true);
+                    corvid.TargetEvent(0, (eventVectors[13] * 64) + new Vector2(32, 0), true);
 
                     //corvid.netMovement.Set((int)Character.Character.movements.run);
 
@@ -374,7 +382,7 @@ namespace StardewDruid.Event.Challenge
 
                 case 96:
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
@@ -386,13 +394,13 @@ namespace StardewDruid.Event.Challenge
 
                     CharacterMover.Warp(location, corvid, new Vector2(1, 1));
 
-                    corvid.TargetEvent(0, (ruins[4] * 64) + new Vector2(32, 0), true);
+                    corvid.TargetEvent(0, (eventVectors[14] * 64) + new Vector2(32, 0), true);
 
                     //corvid.netMovement.Set((int)Character.Character.movements.run);
 
                     companions[5] = corvid;
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
@@ -404,25 +412,25 @@ namespace StardewDruid.Event.Challenge
 
                     CharacterMover.Warp(location, corvid, new Vector2(53, 1));
 
-                    corvid.TargetEvent(0, (ruins[5] * 64) + new Vector2(32, 0), true);
+                    corvid.TargetEvent(0, (eventVectors[15] * 64) + new Vector2(32, 0), true);
 
                     //corvid.netMovement.Set((int)Character.Character.movements.run);
 
                     companions[6] = corvid;
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
                 case 99:
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 
                 case 100:
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     break;
 

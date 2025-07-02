@@ -17,14 +17,6 @@ namespace StardewDruid.Render
         public enum wolfFrames
         {
 
-            downTorso,
-            rightTorso,
-            upTorso,
-            downTorsoSpecial,
-            rightTorsoSpecial,
-            upTorsoSpecial,
-            blankTorso,
-
             downIdle,
             downWalkR1,
             downWalkR2,
@@ -52,34 +44,36 @@ namespace StardewDruid.Render
             downRunUp1,
             downRunUp2,
             downRunGlide1,
-            downRunGlide2,
             downRunDown2,
             downRunDown3,
+            downHowl,
             blank1,
 
             rightRunUp1,
             rightRunUp2,
             rightRunGlide1,
-            rightRunGlide2,
             rightRunDown2,
             rightRunDown3,
+            rightHowl,
             blank2,
 
             upRunUp1,
             upRunUp2,
             upRunGlide1,
-            upRunGlide2,
             upRunDown2,
             upRunDown3,
+            upHowl,
             blank3,
 
+            sit1,
+            sit2,
+            sleep1,
+            sleep2,
             downShadow,
             rightShadow,
             upShadow,
 
         }
-
-        public Dictionary<int, Microsoft.Xna.Framework.Rectangle> torsoFrames = new();
 
         public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> idleFrames = new();
 
@@ -91,6 +85,10 @@ namespace StardewDruid.Render
 
         public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> dashFrames = new();
 
+        public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> standbyFrames = new();
+
+        public Dictionary<int, List<Microsoft.Xna.Framework.Rectangle>> restFrames = new();
+
         public Dictionary<int, Microsoft.Xna.Framework.Rectangle> shadowFrames = new();
 
         public WolfRender(string name)
@@ -98,17 +96,19 @@ namespace StardewDruid.Render
 
             wolfTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", name + ".png"));
 
-            //wolfTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "GreyWolf.png"));
-
-            TorsoFrames();
-
             IdleFrames();
 
             WalkFrames();
 
+            SpecialFrames();
+
             SweepFrames();
 
             DashFrames();
+
+            StandbyFrames();
+
+            RestFrames();
 
             ShadowFrames();
 
@@ -116,33 +116,8 @@ namespace StardewDruid.Render
 
         public static Microsoft.Xna.Framework.Rectangle WolfRectangle(wolfFrames frame)
         {
-            switch (frame)
-            {
 
-                case wolfFrames.upRunGlide1:
-                case wolfFrames.rightRunGlide1:
-                case wolfFrames.downRunGlide1:
-
-                    return new((int)frame % 7 * 64, (int)frame / 7 * 64, 128, 64);
-
-            }
-
-            return new((int)frame % 7 * 64, (int)frame / 7 * 64, 64, 64);
-
-        }
-
-        public void TorsoFrames()
-        {
-
-            torsoFrames = new()
-            {
-
-                [0] = WolfRectangle(wolfFrames.upTorso),
-                [1] = WolfRectangle(wolfFrames.rightTorso),
-                [2] = WolfRectangle(wolfFrames.downTorso),
-                [3] = WolfRectangle(wolfFrames.rightTorso),
-
-            };
+            return new((int)frame % 7 * 96, (int)frame / 7 * 96, 96, 96);
 
         }
 
@@ -217,6 +192,108 @@ namespace StardewDruid.Render
                         WolfRectangle(wolfFrames.rightWalkL1),
                         WolfRectangle(wolfFrames.rightWalkL2),
                         WolfRectangle(wolfFrames.rightWalkL3),
+                    },
+
+            };
+
+        }
+
+        public void SpecialFrames()
+        {
+
+            specialFrames = new()
+            {
+                [0] = new()
+                    {
+                        WolfRectangle(wolfFrames.upHowl),
+                    },
+                [1] = new()
+                    {
+                        WolfRectangle(wolfFrames.rightHowl),
+                    },
+                [2] = new()
+                    {
+                        WolfRectangle(wolfFrames.downHowl),
+                    },
+                [3] = new()
+                    {
+                        WolfRectangle(wolfFrames.rightHowl),
+                    },
+
+            };
+
+        }
+
+        public void StandbyFrames()
+        {
+
+            standbyFrames = new()
+            {
+                [0] = new()
+                    {
+                        WolfRectangle(wolfFrames.sit1),
+                        WolfRectangle(wolfFrames.sit1),
+                        WolfRectangle(wolfFrames.sit1),
+                        WolfRectangle(wolfFrames.sit2),
+                    },
+                [1] = new()
+                    {
+                        WolfRectangle(wolfFrames.sit1),
+                        WolfRectangle(wolfFrames.sit1),
+                        WolfRectangle(wolfFrames.sit1),
+                        WolfRectangle(wolfFrames.sit2),
+                    },
+                [2] = new()
+                    {
+                        WolfRectangle(wolfFrames.sit1),
+                        WolfRectangle(wolfFrames.sit1),
+                        WolfRectangle(wolfFrames.sit1),
+                        WolfRectangle(wolfFrames.sit2),
+                    },
+                [3] = new()
+                    {
+                        WolfRectangle(wolfFrames.sit1),
+                        WolfRectangle(wolfFrames.sit1),
+                        WolfRectangle(wolfFrames.sit1),
+                        WolfRectangle(wolfFrames.sit2),
+                    },
+
+            };
+
+        }
+
+        public void RestFrames()
+        {
+
+            restFrames = new()
+            {
+                [0] = new()
+                    {
+                        WolfRectangle(wolfFrames.sleep1),
+                        WolfRectangle(wolfFrames.sleep2),
+                        WolfRectangle(wolfFrames.sleep2),
+                        WolfRectangle(wolfFrames.sleep2),
+                    },
+                [1] = new()
+                    {
+                        WolfRectangle(wolfFrames.sleep1),
+                        WolfRectangle(wolfFrames.sleep2),
+                        WolfRectangle(wolfFrames.sleep2),
+                        WolfRectangle(wolfFrames.sleep2),
+                    },
+                [2] = new()
+                    {
+                        WolfRectangle(wolfFrames.sleep1),
+                        WolfRectangle(wolfFrames.sleep2),
+                        WolfRectangle(wolfFrames.sleep2),
+                        WolfRectangle(wolfFrames.sleep2),
+                    },
+                [3] = new()
+                    {
+                        WolfRectangle(wolfFrames.sleep1),
+                        WolfRectangle(wolfFrames.sleep2),
+                        WolfRectangle(wolfFrames.sleep2),
+                        WolfRectangle(wolfFrames.sleep2),
                     },
 
             };
@@ -380,6 +457,8 @@ namespace StardewDruid.Render
 
             Microsoft.Xna.Framework.Rectangle source;
 
+            bool under = false;
+
             switch (use.series)
             {
 
@@ -392,6 +471,22 @@ namespace StardewDruid.Render
                 case WolfRenderAdditional.wolfseries.special:
 
                     source = specialFrames[use.direction][use.frame];
+
+                    break;
+
+                case WolfRenderAdditional.wolfseries.rest:
+
+                    source = restFrames[use.direction][use.frame];
+
+                    under = true;
+
+                    break;
+
+                case WolfRenderAdditional.wolfseries.standby:
+
+                    source = standbyFrames[use.direction][use.frame];
+
+                    under = true;
 
                     break;
 
@@ -421,27 +516,26 @@ namespace StardewDruid.Render
                 use.layer + 0.0001f
             );
 
-            int useDirection = use.direction % 4;
-
-            Microsoft.Xna.Framework.Rectangle torso = torsoFrames[useDirection];
-
-            if (use.mode == WolfRenderAdditional.wolfmode.growl)
+            if (under)
             {
 
-                torso.X += 192;
+                b.Draw(
+                    wolfTexture,
+                    use.position + new Vector2(2,4),
+                    source,
+                    Microsoft.Xna.Framework.Color.Black * 0.15f * use.fade,
+                    0f,
+                    new Vector2(source.Width / 2, source.Height / 2),
+                    use.scale,
+                    use.flip ? (SpriteEffects)1 : 0,
+                    use.layer + 0.0001f
+                );
+
+                return;
+
             }
 
-            b.Draw(
-                wolfTexture,
-                use.position,
-                torso,
-                Microsoft.Xna.Framework.Color.White * use.fade,
-                0f,
-                new Vector2(torso.Width / 2, torso.Height / 2),
-                use.scale,
-                use.flip ? (SpriteEffects)1 : 0,
-                use.layer
-            );
+            int useDirection = use.direction % 4;
 
             Microsoft.Xna.Framework.Rectangle shadow = shadowFrames[useDirection];
 
@@ -499,6 +593,8 @@ namespace StardewDruid.Render
             sweep,
             dash,
             special,
+            rest,
+            standby,
         }
 
         public wolfseries series;

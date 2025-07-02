@@ -6,6 +6,8 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
+using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.FruitTrees;
@@ -19,7 +21,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 
 namespace StardewDruid.Character
 {
@@ -34,7 +35,7 @@ namespace StardewDruid.Character
           : base(type)
         {
 
-            
+
         }
 
         public override void LoadOut()
@@ -42,74 +43,17 @@ namespace StardewDruid.Character
 
             base.LoadOut();
 
+            WeaponLoadout();
+
+            weaponRender.LoadWeapon(WeaponRender.weapons.estoc);
+
             idleFrames[idles.standby] = new()
             {
-                [0] = new List<Rectangle> { new Rectangle(160, 32, 32, 32), },
+                [0] = new List<Rectangle> { new Rectangle(192, 0, 32, 32), },
             };
 
-            hatFrames = new()
-            {
-                [0] = new()
-                {
-                    new(32, 64, 32, 32),
-                },
-                [1] = new()
-                {
-                    new(32, 32, 32, 32),
-                },
-                [2] = new()
-                {
-                    new(32, 0, 32, 32),
-                },
-                [3] = new()
-                {
-                    new(32, 32, 32, 32),
-                },
-            };
+            hatSelect = 2;
 
-        }
-
-        public override void DrawHat(SpriteBatch b, Vector2 localPosition, float drawLayer, float fade)
-        {
-            bool fliphat = SpriteFlip();
-
-            Vector2 hatPosition = localPosition - new Vector2(0, 2 * setScale);
-
-            if (netDirection.Value == 2)
-            {
-
-                if (fliphat)
-                {
-
-                    hatPosition.X += 2;
-
-                }
-                else
-                {
-
-                    hatPosition.X -= 2;
-
-                }
-
-            }
-
-            b.Draw(
-                characterTexture,
-                hatPosition,
-                hatFrames[netDirection.Value][0],
-                Color.White * fade,
-                0f,
-                new Vector2(16),
-                setScale,
-                fliphat ? (SpriteEffects)1 : 0,
-                drawLayer + 0.0001f
-            );
-
-        }
-
-        public override bool checkAction(Farmer who, GameLocation l)
-        {
-            return false;
         }
 
         public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
@@ -121,7 +65,7 @@ namespace StardewDruid.Character
 
             specialTimer = 90;
 
-            cooldownTimer = cooldownInterval;
+            SetCooldown(specialTimer, 1f);
 
             LookAtTarget(monster.Position, true);
 
@@ -171,15 +115,17 @@ namespace StardewDruid.Character
                 589
             };
 
-            ThrowHandle throwJunk = new(Position, monster.Position, intList[Mod.instance.randomIndex.Next(intList.Count)]);
-
-            throwJunk.pocket = true;
+            ThrowHandle throwJunk = new(Position, monster.Position, intList[Mod.instance.randomIndex.Next(intList.Count)])
+            {
+                pocket = true
+            };
 
             throwJunk.register();
 
             return true;
 
         }
+
 
     }
 

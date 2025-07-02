@@ -4,6 +4,7 @@ using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Render;
 using StardewValley;
 using StardewValley.Monsters;
@@ -34,7 +35,7 @@ namespace StardewDruid.Character
             if (characterType == CharacterHandle.characters.none)
             {
 
-                characterType = CharacterHandle.characters.recruit_one;
+                characterType = CharacterHandle.characters.Clint;
 
             }
 
@@ -42,6 +43,8 @@ namespace StardewDruid.Character
             {
 
                 villager = CharacterHandle.FindVillager("Clint");
+
+                Portrait = villager.Portrait;
 
             }
 
@@ -63,9 +66,7 @@ namespace StardewDruid.Character
 
             specialFloors = CharacterRender.HumanoidFloors();
 
-            WeaponLoadout();
-
-            weaponRender.LoadWeapon(WeaponRender.weapons.hammer);
+            WeaponLoadout(WeaponRender.weapons.hammer);
 
             specialFrames[specials.launch] = new()
             {
@@ -98,23 +99,24 @@ namespace StardewDruid.Character
 
             specialTimer = 90;
 
-            cooldownTimer = cooldownInterval;
+            SetCooldown(specialTimer, 1f);
 
             LookAtTarget(monster.Position, true);
 
-            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 2);
+            SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, CombatDamage() / 2)
+            {
+                type = SpellHandle.Spells.missile,
 
-            special.type = SpellHandle.spells.missile;
+                missile = MissileHandle.missiles.hammer,
 
-            special.missile = MissileHandle.missiles.hammer;
+                scheme = IconData.schemes.mists,
 
-            special.scheme = IconData.schemes.mists;
+                counter = -30,
 
-            special.counter = -30;
+                factor = 3,
 
-            special.factor = 3;
-
-            special.display = IconData.impacts.flashbang;
+                display = IconData.impacts.flashbang
+            };
 
             Mod.instance.spellRegister.Add(special);
 
@@ -154,7 +156,7 @@ namespace StardewDruid.Character
 
                                 SetDash(workVector * 64, true);
 
-                                cooldownTimer = cooldownInterval / 2;
+                                SetCooldown(40, 0.5f);
 
                                 workVector = objectVector;
 
@@ -218,16 +220,17 @@ namespace StardewDruid.Character
 
             }
 
-            SpellHandle explode = new(Game1.player, workVector * 64, 128, -1);
+            SpellHandle explode = new(Game1.player, workVector * 64, 128, -1)
+            {
+                type = SpellHandle.Spells.explode,
 
-            explode.type = SpellHandle.spells.explode;
-
-            explode.indicator = IconData.cursors.none;
+                indicator = IconData.cursors.none
+            };
 
             if (currentLocation.objects[workVector].IsBreakableStone())
             {
 
-                explode.sound = SpellHandle.sounds.hammer;
+                explode.sound = SpellHandle.Sounds.hammer;
 
             }
 

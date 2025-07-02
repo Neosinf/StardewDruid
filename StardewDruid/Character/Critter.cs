@@ -6,6 +6,7 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using StardewDruid.Render;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Character
 {
@@ -42,8 +43,6 @@ namespace StardewDruid.Character
 
             LoadIntervals();
 
-            overhead = 112;
-
             setScale = 3.75f;
 
             gait = 2.5f;
@@ -58,30 +57,61 @@ namespace StardewDruid.Character
 
             runningFrames = critterRender.runningFrames;
 
-            specialFrames[specials.special] = critterRender.specialFrames;
-
-            specialFrames[specials.invoke] = critterRender.specialFrames;
-
-            specialFrames[specials.sweep] = critterRender.sweepFrames;
-
             dashFrames[dashes.dash] = critterRender.dashFrames;
 
             dashFrames[dashes.smash] = critterRender.dashFrames;
+
+            specialFrames[specials.special] = critterRender.specialFrames;
+
+            specialIntervals[specials.special] = 90;
+            specialCeilings[specials.special] = 0;
+            specialFloors[specials.special] = 0;
+
+            specialFrames[specials.sweep] = critterRender.sweepFrames;
+
+            specialIntervals[specials.sweep] = 15;
+            specialCeilings[specials.sweep] = 3;
+            specialFloors[specials.sweep] = 0;
+
+            specialFrames[specials.invoke] = critterRender.specialFrames;
 
             specialIntervals[specials.invoke] = 90;
             specialCeilings[specials.invoke] = 0;
             specialFloors[specials.invoke] = 0;
 
-            specialIntervals[specials.special] = 30;
-            specialCeilings[specials.special] = 1;
-            specialFloors[specials.special] = 1;
+            specialFrames[specials.greet] = critterRender.greetFrames;
 
-            specialIntervals[specials.special] = 15;
-            specialCeilings[specials.special] = 2;
-            specialFloors[specials.special] = 0;
+            specialIntervals[specials.greet] = 30;
+            specialCeilings[specials.greet] = 3;
+            specialFloors[specials.greet] = 1;
+
+            idleFrames[idles.standby] = critterRender.sitFrames;
+
+            idleFrames[idles.rest] = critterRender.sleepFrames;
 
             loadedOut = true;
         
+        }
+        public override Vector2 SpritePosition(Vector2 localPosition)
+        {
+
+            float spriteScale = GetScale();
+
+            int width = GetWidth();
+
+            int height = GetHeight();
+
+            Vector2 spritePosition = localPosition + new Vector2(32, 128) - new Vector2(0, height / 2 * spriteScale);
+
+            if (netDash.Value > 0)
+            {
+
+                spritePosition.Y -= dashHeight;
+
+            }
+
+            return spritePosition;
+
         }
 
         public override void DrawWalk(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
@@ -109,7 +139,7 @@ namespace StardewDruid.Character
                 runningFrames[netDirection.Value][moveFrame],
                 Color.White * fade,
                 0f,
-                new Vector2(16),
+                new Vector2(GetWidth(),GetHeight()),
                 setScale,
                 (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
                 drawLayer
@@ -119,7 +149,6 @@ namespace StardewDruid.Character
 
         }
 
-
         public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
         {
             
@@ -127,6 +156,12 @@ namespace StardewDruid.Character
 
         }
 
+        public override Microsoft.Xna.Framework.Rectangle OverheadPortrait()
+        {
+
+            return new Rectangle(21, 13, 16, 16);
+
+        }
 
     }
 

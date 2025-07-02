@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Data;
-using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
@@ -36,71 +36,7 @@ namespace StardewDruid.Character
 
             idleFrames[idles.standby] = new(specialFrames[specials.sweep]);
 
-            WeaponLoadout();
-
-            idleFrames[idles.alert] = new()
-            {
-                [0] = new()
-                {
-                    new Rectangle(192, 288, 32, 32),
-                },
-                [1] = new()
-                {
-                    new Rectangle(224, 288, 32, 32),
-                },
-                [2] = new()
-                {
-                    new Rectangle(128, 288, 32, 32),
-                },
-                [3] = new()
-                {
-                    new Rectangle(160, 288, 32, 32),
-                },
-            };
-
-            switch (characterType)
-            {
-
-                default:
-                case CharacterHandle.characters.Shadowtin:
-
-                    weaponRender.LoadWeapon(WeaponRender.weapons.carnyx);
-
-                    break;
-
-                case CharacterHandle.characters.DarkRogue:
-
-                    weaponRender.LoadWeapon(WeaponRender.weapons.estoc);
-
-                    idleFrames[idles.kneel] = new()
-                    {
-                        [0] = new()
-                        {
-                            new Rectangle(128, 32, 32, 32),
-                        },
-
-                    };
-
-                    break;
-
-                case CharacterHandle.characters.DarkGoblin:
-
-                    weaponRender.LoadWeapon(WeaponRender.weapons.axe);
-
-                    idleFrames[idles.kneel] = new()
-                    {
-                        [0] = new()
-                        {
-                            new Rectangle(128, 32, 32, 32),
-                        },
-
-                    };
-
-                    break;
-
-
-
-            }
+            WeaponLoadout(WeaponRender.weapons.carnyx);
 
             weaponRender.LoadWeapon(WeaponRender.weapons.bazooka);
 
@@ -111,7 +47,7 @@ namespace StardewDruid.Character
         public override void DrawRest(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
 
-            base.DrawRest(b, spritePosition, drawLayer+0.064f, fade);
+            base.DrawRest(b, spritePosition, drawLayer+0.0032f, fade);
 
         }
 
@@ -137,9 +73,7 @@ namespace StardewDruid.Character
 
                 Item getItem = Mod.instance.chests[characterType].Items.ElementAt(i);
 
-                StardewValley.Object @object = ItemRegistry.Create<StardewValley.Object>(getItem.QualifiedItemId);
-
-                if (@object.Category == -79)
+                if (getItem is StardewValley.Object && getItem.Category == -79)
                 {
 
                     if (!MachineDataUtility.TryGetMachineOutputRule(preserveJar, machineData, MachineOutputTrigger.ItemPlacedInMachine, getItem, Game1.player, farm, out outputRule, out var _, out var _, out var _))
@@ -180,13 +114,14 @@ namespace StardewDruid.Character
         public override void ConnectSweep()
         {
 
-            SpellHandle swipeEffect = new(Game1.player, Position, 192, Mod.instance.CombatDamage() / 2);
+            SpellHandle swipeEffect = new(Game1.player, Position, 192, Mod.instance.CombatDamage() / 2)
+            {
+                instant = true,
 
-            swipeEffect.instant = true;
+                added = new() { SpellHandle.Effects.knock, },
 
-            swipeEffect.added = new() { SpellHandle.effects.knock, };
-
-            swipeEffect.sound = SpellHandle.sounds.swordswipe;
+                sound = SpellHandle.Sounds.swordswipe
+            };
 
             Mod.instance.spellRegister.Add(swipeEffect);
 
@@ -199,14 +134,15 @@ namespace StardewDruid.Character
 
             List<Vector2> objectVectors = new List<Vector2>();
 
-            for (int i = 0; i < 6; i++)
+            if (currentLocation.objects.Count() == 0)
             {
 
-                if (currentLocation.objects.Count() == 0)
-                {
-                    break;
+                return false; //break;
 
-                }
+            }
+
+            for (int i = 0; i < 6; i++)
+            {
 
                 objectVectors = ModUtility.GetTilesWithinRadius(currentLocation, occupied, i); ;
 
@@ -233,6 +169,8 @@ namespace StardewDruid.Character
                         {
 
                             ResetActives();
+
+                            LookAtTarget(objectVector * 64, true);
 
                             workVector = objectVector;
 
@@ -360,110 +298,113 @@ namespace StardewDruid.Character
         public override void PerformWork()
         {
 
-            if (specialTimer == 30)
+            if (specialTimer != 30)
+            {
+                return;
+
+            }
+
+            if (!currentLocation.objects.ContainsKey(workVector))
             {
 
-                if (currentLocation.objects.ContainsKey(workVector))
+                return;
+
+            }
+
+            Chest chest = Mod.instance.chests[CharacterHandle.characters.Shadowtin];
+
+            StardewValley.Object targetObject = currentLocation.objects[workVector];
+
+            if (targetObject.Name.Contains("Artifact Spot"))
+            {
+
+                currentLocation.digUpArtifactSpot((int)workVector.X, (int)workVector.Y, Game1.player);
+
+                currentLocation.objects.Remove(workVector);
+
+                return;
+
+            }
+                    
+            if (SpawnData.ForageCheck(targetObject))
+            {
+
+                StardewValley.Item objectInstance = ModUtility.ExtractForage(currentLocation, workVector, false);
+
+                if (
+                    currentLocation.Name == Game1.player.currentLocation.Name &&
+                    Vector2.Distance(Game1.player.Position,Position) <= 640
+                )
                 {
 
-                    Chest chest = Mod.instance.chests[CharacterHandle.characters.Shadowtin];
+                    ThrowHandle throwItem = new(Game1.player, Position, objectInstance);
 
-                    StardewValley.Object targetObject = currentLocation.objects[workVector];
-
-                    if (targetObject.Name.Contains("Artifact Spot"))
-                    {
-
-                        currentLocation.digUpArtifactSpot((int)workVector.X, (int)workVector.Y, Game1.player);
-
-                        currentLocation.objects.Remove(workVector);
-
-                        return;
-
-                    }
-                    
-                    if (SpawnData.ForageCheck(targetObject))
-                    {
-
-                        StardewValley.Item objectInstance = ModUtility.ExtractForage(currentLocation, workVector, false);
-
-                        if (
-                            currentLocation.Name == Game1.player.currentLocation.Name &&
-                            Vector2.Distance(Game1.player.Position,Position) <= 640
-                        )
-                        {
-
-                            ThrowHandle throwItem = new(Game1.player, Position, objectInstance);
-
-                            Mod.instance.throwRegister.Add(throwItem);
-
-                        }
-                        else
-                        if (chest.addItem(objectInstance) != null)
-                        {
-
-                            return;
-
-                        }
-
-                        currentLocation.objects.Remove(workVector);
-
-                        return;
-
-                    }
-
-                    if (
-                        targetObject.QualifiedItemId == "(BC)9" ||
-                        targetObject.QualifiedItemId == "(BC)10" ||
-                        targetObject.QualifiedItemId == "(BC)MushroomLog" ||
-                        targetObject.IsTapper()
-                        )
-                    {
-
-                        if (targetObject.heldObject.Value != null && targetObject.MinutesUntilReady == 0)
-                        {
-
-                            StardewValley.Item objectInstance = targetObject.heldObject.Value.getOne();
-
-                            if(targetObject.QualifiedItemId == "(BC)MushroomLog")
-                            {
-
-                                objectInstance.Quality = 4;
-
-                            }
-
-                            objectInstance.Stack = targetObject.heldObject.Value.Stack;
-
-                            if (
-                                currentLocation.Name == Game1.player.currentLocation.Name &&
-                                Vector2.Distance(Game1.player.Position, Position) <= 640
-                            )
-                            {
-                                ThrowHandle throwItem = new(Game1.player, Position, objectInstance);
-
-                                Mod.instance.throwRegister.Add(throwItem);
-
-                            }
-                            else
-                            if (chest.addItem(objectInstance) != null)
-                            {
-
-                                return;
-
-                            }
-
-                            targetObject.heldObject.Value = null;
-
-                            targetObject.MinutesUntilReady = 0;
-
-                            targetObject.performDropDownAction(Game1.player);
-
-                        }
-
-                        return;
-
-                    }
+                    Mod.instance.throwRegister.Add(throwItem);
 
                 }
+                else
+                if (chest.addItem(objectInstance) != null)
+                {
+
+                    return;
+
+                }
+
+                currentLocation.objects.Remove(workVector);
+
+                return;
+
+            }
+
+            if (
+                targetObject.QualifiedItemId == "(BC)9" ||
+                targetObject.QualifiedItemId == "(BC)10" ||
+                targetObject.QualifiedItemId == "(BC)MushroomLog" ||
+                targetObject.IsTapper()
+                )
+            {
+
+                if (targetObject.heldObject.Value != null && targetObject.MinutesUntilReady == 0)
+                {
+
+                    StardewValley.Item objectInstance = targetObject.heldObject.Value.getOne();
+
+                    if(targetObject.QualifiedItemId == "(BC)MushroomLog")
+                    {
+
+                        objectInstance.Quality = 4;
+
+                    }
+
+                    objectInstance.Stack = targetObject.heldObject.Value.Stack;
+
+                    if (
+                        currentLocation.Name == Game1.player.currentLocation.Name &&
+                        Vector2.Distance(Game1.player.Position, Position) <= 640
+                    )
+                    {
+                        ThrowHandle throwItem = new(Game1.player, Position, objectInstance);
+
+                        Mod.instance.throwRegister.Add(throwItem);
+
+                    }
+                    else
+                    if (chest.addItem(objectInstance) != null)
+                    {
+
+                        return;
+
+                    }
+
+                    targetObject.heldObject.Set(null);
+
+                    targetObject.MinutesUntilReady = 0;
+
+                    targetObject.performDropDownAction(Game1.player);
+
+                }
+
+                return;
 
             }
 
@@ -485,37 +426,38 @@ namespace StardewDruid.Character
 
             specialTimer = 90;
 
-            cooldownTimer = cooldownInterval*2;
+            SetCooldown(specialTimer, 2f);
 
             LookAtTarget(monster.Position, true);
 
-            SpellHandle fireball = new(Game1.player, monster.Position, 384, Mod.instance.CombatDamage() * 3);
+            SpellHandle fireball = new(Game1.player, monster.Position, 384, Mod.instance.CombatDamage() * 3)
+            {
+                origin = GetBoundingBox().Center.ToVector2(),
 
-            fireball.origin = GetBoundingBox().Center.ToVector2();
+                counter = -30,
 
-            fireball.counter = -30;
+                type = SpellHandle.Spells.missile,
 
-            fireball.type = SpellHandle.spells.missile;
+                missile = MissileHandle.missiles.rocket,
 
-            fireball.missile = MissileHandle.missiles.rocket;
+                display = IconData.impacts.impact,
 
-            fireball.display = IconData.impacts.impact;
+                indicator = IconData.cursors.scope,
 
-            fireball.indicator = IconData.cursors.scope;
+                factor = 3,
 
-            fireball.factor =3;
+                scheme = IconData.schemes.stars,
 
-            fireball.scheme = IconData.schemes.stars;
+                sound = SpellHandle.Sounds.explosion,
 
-            fireball.sound = SpellHandle.sounds.explosion;
+                added = new() { SpellHandle.Effects.embers, },
 
-            fireball.added = new() { SpellHandle.effects.embers, };
+                power = 4,
 
-            fireball.power = 4;
+                explosion = 4,
 
-            fireball.explosion = 4;
-
-            fireball.terrain = 4;
+                terrain = 4
+            };
 
             Mod.instance.spellRegister.Add(fireball);
 

@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StardewDruid.Character;
 using StardewModdingAPI;
 using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewValley.Locations;
 using Microsoft.Xna.Framework;
-using StardewDruid.Event;
+using StardewDruid.Journal;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Dialogue
 {
@@ -49,6 +49,28 @@ namespace StardewDruid.Dialogue
                     {
 
                         return Mod.instance.Helper.Translation.Get("CharacterHandle.216");
+
+                    }
+
+                    return null;
+
+                case CharacterHandle.characters.herbalism:
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.herbalism))
+                    {
+
+                        return Mod.instance.Helper.Translation.Get("DialogueAdventure.373.1").Tokens(new { keybind = Mod.instance.Config.herbalismButtons.ToString(), });
+
+                    }
+
+                    return null;
+
+                case CharacterHandle.characters.anvil:
+
+                    if (Mod.instance.questHandle.IsComplete(QuestHandle.herbalism))
+                    {
+
+                        return Mod.instance.Helper.Translation.Get("DialogueAdventure.373.2").Tokens(new { keybind = Mod.instance.Config.herbalismButtons.ToString(), });
 
                     }
 
@@ -118,7 +140,7 @@ namespace StardewDruid.Dialogue
 
                     }
 
-                    if (books == 4)
+                    if (books == 5)
                     {
 
                         return Mod.instance.Helper.Translation.Get("CharacterHandle.262");
@@ -192,19 +214,49 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.monument_artisans:
 
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.302");
+                    if (RelicData.HasRelic(IconData.relics.box_measurer))
+                    {
+
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.302");
+
+                    }
+
+                    break;
 
                 case CharacterHandle.characters.monument_priesthood:
 
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.306");
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.306");
 
                 case CharacterHandle.characters.monument_morticians:
 
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.310");
+                    if (RelicData.HasRelic(IconData.relics.box_measurer))
+                    {
+
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.310");
+
+                    }
+
+                    break;
 
                 case CharacterHandle.characters.monument_chaos:
 
-                    return Mod.instance.Helper.Translation.Get("CharacterHandle.314");
+                    if (RelicData.HasRelic(IconData.relics.box_measurer))
+                    {
+
+                        return Mod.instance.Helper.Translation.Get("CharacterHandle.314");
+
+                    }
+
+                    break;
+
+                case CharacterHandle.characters.PalBat:
+                case CharacterHandle.characters.PalSlime:
+                case CharacterHandle.characters.PalSpirit:
+                case CharacterHandle.characters.PalGhost:
+                case CharacterHandle.characters.PalSerpent:
+
+                    return Mod.instance.Helper.Translation.Get("DialogueRelics.398.1");
+
             }
 
             return null;
@@ -263,6 +315,22 @@ namespace StardewDruid.Dialogue
                     }
 
                     return generate;
+
+                case CharacterHandle.characters.herbalism:
+
+                    Game1.exitActiveMenu();
+
+                    DruidJournal.openJournal(DruidJournal.journalTypes.herbalism);
+
+                    return null;
+
+                case CharacterHandle.characters.anvil:
+
+                    Game1.exitActiveMenu();
+
+                    DruidJournal.openJournal(DruidJournal.journalTypes.bombs);
+
+                    return null;
 
                 case CharacterHandle.characters.attendant:
 
@@ -413,7 +481,7 @@ namespace StardewDruid.Dialogue
 
                     }
 
-                    if (books == 4)
+                    if (books == 5)
                     {
 
                         generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.650") + Mod.instance.Helper.Translation.Get("CharacterHandle.664") +
@@ -458,7 +526,7 @@ namespace StardewDruid.Dialogue
 
                     }
 
-                    if (booksMarlon == 4)
+                    if (booksMarlon == 5)
                     {
 
                         generate.intro = string.Empty;
@@ -585,8 +653,23 @@ namespace StardewDruid.Dialogue
                     if (priestProgress >= 0)
                     {
 
-                        generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.794") +
-                            Mod.instance.Helper.Translation.Get("CharacterHandle.795");
+                        if (Mod.instance.questHandle.IsComplete(QuestHandle.swordEther))
+                        {
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.794") +
+                                Mod.instance.Helper.Translation.Get("CharacterHandle.795") +
+                                Mod.instance.Helper.Translation.Get("DialogueRelics.375.1");
+
+
+                        }
+                        else
+                        {
+
+                            generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.794") +
+                                Mod.instance.Helper.Translation.Get("CharacterHandle.795");
+
+
+                        }
 
                     }
                     else
@@ -655,6 +738,38 @@ namespace StardewDruid.Dialogue
                     }
 
                     return generate;
+
+
+                case CharacterHandle.characters.PalBat:
+
+                    RelicHandle.RelicFunction(IconData.relics.monster_bat.ToString());
+
+                    return null;
+
+                case CharacterHandle.characters.PalSlime:
+
+                    RelicHandle.RelicFunction(IconData.relics.monster_slime.ToString());
+
+                    return null;
+
+                case CharacterHandle.characters.PalSpirit:
+
+                    RelicHandle.RelicFunction(IconData.relics.monster_spirit.ToString());
+
+                    return null;
+
+                case CharacterHandle.characters.PalGhost:
+
+                    RelicHandle.RelicFunction(IconData.relics.monster_ghost.ToString());
+
+                    return null;
+
+                case CharacterHandle.characters.PalSerpent:
+
+                    RelicHandle.RelicFunction(IconData.relics.monster_serpent.ToString());
+
+                    return null;
+
 
             }
 

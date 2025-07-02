@@ -9,6 +9,7 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
+using StardewDruid.Handle;
 using StardewDruid.Journal;
 using StardewDruid.Location;
 using StardewDruid.Location.Druid;
@@ -39,108 +40,108 @@ namespace StardewDruid.Event.Scene
 
             // ENTER
             // Blackfeather enter
-            [1] = new Vector2(26, 38),
+            [1] = new Vector2(47, 23),
             // Wizard enter
-            [2] = new Vector2(27, 38),
+            [2] = new Vector2(48, 22),
             // Linus enter
-            [3] = new Vector2(28, 38),
+            [3] = new Vector2(49, 24),
             // SETTLE
             // Blackfeather settle
-            [4] = new Vector2(25, 27),
+            [4] = new Vector2(24, 27),
             // Wizard settle
-            [5] = new Vector2(29, 28),
+            [5] = new Vector2(28, 28),
             // Linus settle
-            [6] = new Vector2(30, 27),
+            [6] = new Vector2(29, 27),
             // PACE
             // Wizard 1
-            [7] = new Vector2(26, 29),
+            [7] = new Vector2(25, 29),
             // Wizard 2
-            [8] = new Vector2(29, 29),
+            [8] = new Vector2(28, 29),
 
             // Effigy enter
-            [101] = new Vector2(28, 38),
+            [101] = new Vector2(47, 23),
             // Effigy settle
-            [102] = new Vector2(27, 29),
+            [102] = new Vector2(26, 29),
             // Effigy leave
-            [103] = new Vector2(28, 38),
+            [103] = new Vector2(27, 38),
 
             // Warp farmer grove
-            [104] = new Vector2(21, 5),
+            [104] = new Vector2(29, 5),
             // Effigy
-            [105] = new Vector2(20, 6),
+            [105] = new Vector2(30, 6),
             // Effigy walk
-            [106] = new Vector2(22, 7),
+            [106] = new Vector2(30, 11),
             // Jester
-            [107] = new Vector2(29, 12),
+            [107] = new Vector2(35, 18),
             // Jester walk
-            [108] = new Vector2(25, 7),
+            [108] = new Vector2(32, 14),
             // Buffin
-            [109] = new Vector2(30, 11),
+            [109] = new Vector2(36, 19),
             // Buffin walk
-            [110] = new Vector2(25, 6),
+            [110] = new Vector2(33, 15),
             // Shadowtin
-            [111] = new Vector2(12, 17),
+            [111] = new Vector2(19, 17),
             // Shadowtin walk
-            [112] = new Vector2(11, 13),
+            [112] = new Vector2(21, 14),
             // Shadowtin closer
-            [113] = new Vector2(18, 8),
+            [113] = new Vector2(28, 9),
             // Jester leave
-            [114] = new Vector2(21, 1),
+            [114] = new Vector2(29, 1),
             // Buffin leave
-            [115] = new Vector2(21, 1),
+            [115] = new Vector2(30, 1),
             // Shadowtin leave
-            [116] = new Vector2(21, 1),
+            [116] = new Vector2(29, 1),
             // Effigy move
-            [117] = new Vector2(26, 12),
+            [117] = new Vector2(25, 12),
             // Effigy move again
-            [118] = new Vector2(21, 15),
+            [118] = new Vector2(19, 13),
             // Sighs location
-            [119] = new Vector2(20, 7),
+            [119] = new Vector2(19, 7),
             // Rustling location
-            [120] = new Vector2(17, 9),
+            [120] = new Vector2(14, 8),
             // Whistling location
-            [121] = new Vector2(23, 9),
+            [121] = new Vector2(24, 8),
             // Effigy to tree
-            [122] = new Vector2(34, 18),
-
+            [122] = new Vector2(25, 18),
+            [123] = new Vector2(35, 17),
 
             // Effigy leave
-            [201] = new Vector2(29,18),
-            [202] = new Vector2(27,9),
+            [201] = new Vector2(30,15),
+            [202] = new Vector2(29,1),
 
             // Warp farmer gate
-            [203] = new Vector2(25, 20),
+            [203] = new Vector2(24, 20),
             // Focus vector
-            [204] = new Vector2(27, 21),
+            [204] = new Vector2(26, 21),
             // Boss vector
-            [205] = new Vector2(27, 22),
+            [205] = new Vector2(26, 22),
 
             // Effigy Place
-            [210] = new Vector2(28, 27),
+            [210] = new Vector2(27, 27),
             // Blackfeather Place
-            [211] = new Vector2(27, 19),
+            [211] = new Vector2(26, 19),
             // Wizard Place
-            [212] = new Vector2(23, 23),
+            [212] = new Vector2(22, 23),
             // Linus Place
-            [213] = new Vector2(32, 23),
+            [213] = new Vector2(31, 23),
             // Jester
-            [214] = new Vector2(32, 19),
+            [214] = new Vector2(31, 19),
             // Buffin Place
-            [215] = new Vector2(34, 20),
+            [215] = new Vector2(33, 20),
             // Shadowtin Place
-            [216] = new Vector2(21, 20),
+            [216] = new Vector2(20, 20),
 
             // Leave fight
-            [301] = new Vector2(27, 38),
+            [301] = new Vector2(47, 23),
             // Blackfeather turn back
-            [302] = new Vector2(28, 32),
+            [302] = new Vector2(40, 22),
             // Blackfeather closer
-            [303] = new Vector2(27, 27),
+            [303] = new Vector2(26, 27),
 
             // Route left
-            [304] = new Vector2(24, 24),
+            [304] = new Vector2(23, 24),
             // Route right
-            [305] = new Vector2(29, 24),
+            [305] = new Vector2(28, 24),
 
             // Wizard Grove
             [352] = new Vector2(22, 14),
@@ -154,29 +155,29 @@ namespace StardewDruid.Event.Scene
             [356] = new Vector2(23, 16),
 
             // Raven
-            [401] = new Vector2(27, 20),
+            [401] = new Vector2(26, 20),
             // Crow
-            [402] = new Vector2(28, 21),
+            [402] = new Vector2(27, 21),
             // Magpie
-            [403] = new Vector2(26, 21),
+            [403] = new Vector2(25, 21),
             // Rook
-            [404] = new Vector2(27, 22),
+            [404] = new Vector2(26, 22),
             // Aldebaran jump off
-            [405] = new Vector2(27, 18),
+            [405] = new Vector2(26, 18),
 
 
             // Wizard enter
-            [410] = new Vector2(27, 38),
+            [410] = new Vector2(26, 38),
             // Wizard reenter
-            [412] = new Vector2(23, 26),
+            [412] = new Vector2(22, 26),
             // Linus reenter
-            [413] = new Vector2(25, 27),
+            [413] = new Vector2(24, 27),
             // Jester reenter
-            [414] = new Vector2(28, 28),
+            [414] = new Vector2(27, 28),
             // Buffin reenter
-            [415] = new Vector2(29, 28),
+            [415] = new Vector2(28, 28),
             // Shadowtin reenter
-            [416] = new Vector2(31, 26),
+            [416] = new Vector2(30, 26),
  
         };
 
@@ -196,7 +197,9 @@ namespace StardewDruid.Event.Scene
 
             locales = new()
             {
-                LocationHandle.druid_gate_name,
+
+                LocationHandle.druid_temple_name,
+                LocationHandle.druid_sanctuary_name,
                 LocationHandle.druid_grove_name,
 
             };
@@ -217,28 +220,10 @@ namespace StardewDruid.Event.Scene
         public override void EventRemove()
         {
 
-            foreach (TerrainField brazierTile in (Mod.instance.locations[LocationHandle.druid_gate_name] as Gate).brazierTiles)
+            if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Linus))
             {
 
-                brazierTile.index = 11;
-
-                brazierTile.reset();
-
-            }
-
-            /*foreach (TerrainField maypoleTile in (Mod.instance.locations[LocationData.druid_gate_name] as Gate).maypoleTiles)
-            {
-
-                maypoleTile.index = 15;
-
-                maypoleTile.reset();
-
-            }*/
-
-            if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.BrownBear))
-            {
-
-                Mod.instance.characters.Remove(CharacterHandle.characters.BrownBear);
+                Mod.instance.characters.Remove(CharacterHandle.characters.Linus);
 
             }
 
@@ -393,13 +378,13 @@ namespace StardewDruid.Event.Scene
                     if (Mod.instance.Helper.ModRegistry.IsLoaded("Nom0ri.RomRas"))
                     {
 
-                        companions[2] = new Witch(CharacterHandle.characters.Witch,CharacterHandle.FindVillager("Wizard"));
+                        companions[2] = new Witch(CharacterHandle.characters.Witch);
 
                     }
                     else
                     {
 
-                        companions[2] = new Wizard(CharacterHandle.characters.Wizard, CharacterHandle.FindVillager("Wizard"));
+                        companions[2] = new Wizard(CharacterHandle.characters.Wizard);
 
                     }
 
@@ -415,7 +400,7 @@ namespace StardewDruid.Event.Scene
 
                     // Linus
 
-                    companions[3] = new Linus(CharacterHandle.characters.Linus, CharacterHandle.FindVillager("Linus"));
+                    companions[3] = new Linus(CharacterHandle.characters.Linus);
 
                     voices[3] = companions[3];
 
@@ -762,6 +747,7 @@ namespace StardewDruid.Event.Scene
                 case 153:
 
                     companions[0].TargetEvent(0, eventVectors[122] * 64, true);
+                    companions[0].TargetEvent(1, eventVectors[123] * 64);
 
                     break;
 
@@ -833,25 +819,25 @@ namespace StardewDruid.Event.Scene
 
                     // warp Farmer
 
-                    location = Mod.instance.locations[LocationHandle.druid_gate_name];
+                    location = Mod.instance.locations[LocationHandle.druid_temple_name];
 
                     Mod.instance.WarpAllFarmers(location.Name, (int)eventVectors[203].X, (int)eventVectors[203].Y, 2);
 
                     // warp Effigy
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_gate_name], companions[0], eventVectors[210] * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_temple_name], companions[0], eventVectors[210] * 64, false);
 
                     // warp Blackfeather
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_gate_name], companions[1], eventVectors[211] * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_temple_name], companions[1], eventVectors[211] * 64, false);
 
                     // warp Wizard
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_gate_name], companions[2], eventVectors[212] * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_temple_name], companions[2], eventVectors[212] * 64, false);
 
                     // warp Linus
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_gate_name], companions[3], eventVectors[213] * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_temple_name], companions[3], eventVectors[213] * 64, false);
 
                     // look at brazier
 
@@ -862,29 +848,7 @@ namespace StardewDruid.Event.Scene
 
                     }
 
-                    foreach (TerrainField brazierTile in (Mod.instance.locations[LocationHandle.druid_gate_name] as Gate).brazierTiles)
-                    {
-
-                        brazierTile.index = 13;
-
-                        brazierTile.reset();
-
-                    }
-
-                    /*foreach (TerrainField maypoleTile in (Mod.instance.locations[LocationData.druid_gate_name] as Gate).maypoleTiles)
-                    {
-
-                        maypoleTile.index = 16;
-
-                        maypoleTile.reset();
-
-                    }*/
-
-                    // relic brazier
-
-                    //EventRender goldenPot = new("goldenPot", location.Name, eventVectors[204] * 64 + new Vector2(32), IconData.relics.golden_pot) { layer = 0.6f };
-
-                    //eventRenders.Add(goldenPot);
+                    (Mod.instance.locations[LocationHandle.druid_temple_name] as Temple).BrazierOverride(2);
 
                     break;
 
@@ -916,7 +880,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].specialTimer = 180;
 
-                    DialogueCueWithFeeling(216,0,Character.Character.specials.special);
+                    DialogueCueWithFeeling(216,0,Character.Character.specials.invoke);
 
                     companions[2].specialTimer = 120;
 
@@ -924,7 +888,7 @@ namespace StardewDruid.Event.Scene
 
                 case 219:
 
-                    DialogueCueWithFeeling(219, 0, Character.Character.specials.special);
+                    DialogueCueWithFeeling(219, 0, Character.Character.specials.invoke);
 
                     companions[2].specialTimer = 120;
 
@@ -993,17 +957,17 @@ namespace StardewDruid.Event.Scene
             if(activeCounter > 320 && activeCounter <= 352)
             {
                 
-                Firefiend fiend = new(eventVectors[205], Mod.instance.CombatDifficulty());
+                Dustfiend fiend = new(eventVectors[205], Mod.instance.CombatDifficulty(), "Firefiend");
 
                 fiend.Position = fiend.Position + ModUtility.DirectionAsVector(Mod.instance.randomIndex.Next(8) * 192);
 
                 fiend.SetMode(Mod.instance.randomIndex.Next(0, 3));
 
-                fiend.RandomScheme();
-
                 fiend.RandomTemperment();
 
                 fiend.groupMode = true;
+
+                fiend.Health = fiend.MaxHealth / 3 * 2;
 
                 monsterHandle.SpawnImport(fiend);
 
@@ -1012,19 +976,26 @@ namespace StardewDruid.Event.Scene
 
                     List<Vector2> meteorTargets = ModUtility.GetTilesWithinRadius(location, eventVectors[204], Mod.instance.randomIndex.Next(4, 9));
 
-                    SpellHandle meteor = new(location, meteorTargets[Mod.instance.randomIndex.Next(meteorTargets.Count)] * 64, Game1.player.Position, 256, Mod.instance.CombatDifficulty(), -1);
+                    SpellHandle meteor = new(location, meteorTargets[Mod.instance.randomIndex.Next(meteorTargets.Count)] * 64, Game1.player.Position, 256, Mod.instance.CombatDifficulty(), -1)
+                    {
+                        
+                        type = SpellHandle.Spells.missile,
 
-                    meteor.type = SpellHandle.spells.missile;
+                        missile = MissileHandle.missiles.firefall,
 
-                    meteor.missile = MissileHandle.missiles.firefall;
+                        display = IconData.impacts.bomb,
 
-                    meteor.indicator = IconData.cursors.shadow;
+                        displayRadius = 3,
 
-                    meteor.display = IconData.impacts.bomb;
+                        scheme = IconData.schemes.stars,
 
-                    meteor.scheme = IconData.schemes.stars;
+                        factor = 3,
 
-                    meteor.factor =4;
+                        soundTrigger = SoundHandle.SoundCue.CastStars,
+
+                        //soundImpact = SoundHandle.SoundCue.ImpactStars,
+
+                    };
 
                     Mod.instance.spellRegister.Add(meteor);
 
@@ -1050,8 +1021,6 @@ namespace StardewDruid.Event.Scene
 
                     monsterHandle = new(eventVectors[204] * 64 + new Vector2(32), location);
 
-                    monsterHandle.warpout = IconData.warps.smoke;
-
                     break;//] = new() { [1] = "Accept our offering", [2] = "Accept our offering", [3] = "Accept our offering", },
 
                 case 307:
@@ -1070,16 +1039,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(310);
 
-                    (Mod.instance.locations[LocationHandle.druid_gate_name] as Gate).alightBrazier = true;
-
-                    foreach (TerrainField brazierTile in (Mod.instance.locations[LocationHandle.druid_gate_name] as Gate).brazierTiles)
-                    {
-
-                        brazierTile.index = 14;
-
-                        brazierTile.reset();
-
-                    }
+                    (Mod.instance.locations[LocationHandle.druid_temple_name] as Temple).BrazierOverride(7);
 
                     location.playSound("furnace");
 
@@ -1095,7 +1055,7 @@ namespace StardewDruid.Event.Scene
 
                 case 315:
 
-                    Mod.instance.spellRegister.Add(new(eventVectors[204] * 64 + new Vector2(32), 256, IconData.impacts.bomb, new()) { sound = SpellHandle.sounds.explosion, });
+                    Mod.instance.spellRegister.Add(new(eventVectors[204] * 64 + new Vector2(32), 256, IconData.impacts.bomb, new()) { displayRadius = 3, sound = SpellHandle.Sounds.explosion, });
 
                     //Mod.instance.iconData.ImpactIndicator(location, eventVectors[204] * 64 + new Vector2(32), IconData.impacts.bomb, 256, new() { layer = 2f, });
 
@@ -1107,9 +1067,9 @@ namespace StardewDruid.Event.Scene
 
                     Game1.flashAlpha = 1f;
 
-                    (Mod.instance.locations[LocationHandle.druid_gate_name] as Gate).alightBrazier = false;
+                    (Mod.instance.locations[LocationHandle.druid_temple_name] as Temple).BrazierOverride(3);
 
-                    LoadBoss(new Firefiend(ModUtility.PositionToTile(eventVectors[205] * 64), Mod.instance.CombatDifficulty()), 0, 4, 10);
+                    LoadBoss(new Dustfiend(ModUtility.PositionToTile(eventVectors[205] * 64), Mod.instance.CombatDifficulty(), "Firefiend"), 0, 4, 10);
 
                     bosses[0].Position = eventVectors[205] * 64 + new Vector2(32,0);
 
@@ -1142,25 +1102,9 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(319);
 
-                    //SetTrack("cowboy_boss");
-
                     break;//] = new() { [5] = "Made manifest in roaring flame", },
 
                 case 322:
-
-                    /*Bear bear = new(CharacterHandle.characters.BrownBear);
-
-                    CharacterMover.Warp(location, bear, companions[3].Position, false);
-
-                    Mod.instance.spellRegister.Add(new(companions[3].Position, 256, IconData.impacts.plume, new()));
-
-                    location.characters.Remove(companions[3]);
-
-                    companions[3] = bear;
-
-                    voices[3] = bear;
-
-                    Mod.instance.characters[CharacterHandle.characters.BrownBear] = companions[3];*/
 
                     Mod.instance.characters[CharacterHandle.characters.Wizard] = companions[2];
 
@@ -1282,15 +1226,19 @@ namespace StardewDruid.Event.Scene
 
                 case 354:
 
-                    SpellHandle bolt = new(Game1.player, new() { bosses[0], }, Mod.instance.CombatDamage() * 2);
+                    SpellHandle bolt = new(Game1.player, new() { bosses[0], }, -1)
+                    {
+                        scheme = IconData.schemes.golden,
 
-                    bolt.scheme = IconData.schemes.golden;
+                        type = SpellHandle.Spells.bolt,
 
-                    bolt.type = SpellHandle.spells.bolt;
+                        factor = 4,
 
-                    bolt.factor =4;
+                        sound = SpellHandle.Sounds.thunder,
 
-                    bolt.sound = SpellHandle.sounds.thunder;
+                        added = new() { SpellHandle.Effects.bigcrits, }
+
+                    };
 
                     Mod.instance.spellRegister.Add(bolt);
 
@@ -1308,15 +1256,20 @@ namespace StardewDruid.Event.Scene
 
                 case 357:
 
-                    SpellHandle bolt3 = new(Game1.player, new() { bosses[0], }, Mod.instance.CombatDamage() * 2);
+                    SpellHandle bolt3 = new(Game1.player, new() { bosses[0], }, -1)
+                    {
+                    
+                        scheme = IconData.schemes.golden,
 
-                    bolt3.scheme = IconData.schemes.golden;
+                        type = SpellHandle.Spells.bolt,
 
-                    bolt3.type = SpellHandle.spells.bolt;
+                        factor = 4,
 
-                    bolt3.factor =4;
+                        sound = SpellHandle.Sounds.thunder,
 
-                    bolt3.sound = SpellHandle.sounds.thunder;
+                        added = new() { SpellHandle.Effects.bigcrits, }
+
+                    };
 
                     Mod.instance.spellRegister.Add(bolt3);
 
@@ -1330,19 +1283,22 @@ namespace StardewDruid.Event.Scene
 
                 case 360:
 
-                    SpellHandle bolt2 = new(Game1.player, new() { bosses[0], }, Mod.instance.CombatDamage() * 2);
+                    SpellHandle bolt2 = new(Game1.player, new() { bosses[0], },-1)
+                    {
+                        
+                        type = SpellHandle.Spells.bolt,
 
-                    bolt2.scheme = IconData.schemes.golden;
+                        factor = 4,
 
-                    bolt2.type = SpellHandle.spells.bolt;
+                        sound = SpellHandle.Sounds.thunder,
 
-                    bolt2.factor =4;
+                        added = new() { SpellHandle.Effects.bigcrits, }
 
-                    bolt2.sound = SpellHandle.sounds.thunder;
+                    };
 
                     Mod.instance.spellRegister.Add(bolt2);
 
-                    Mod.instance.iconData.ImpactIndicator(location, eventVectors[204] * 64 + new Vector2(32), IconData.impacts.bomb, 256, new() { layer = 2f, });
+                    Mod.instance.iconData.ImpactIndicator(location, eventVectors[204] * 64 + new Vector2(32), IconData.impacts.boltnode, 256, new() { layer = 2f, });
 
                     location.characters.Remove(bosses[0]);
 
@@ -1352,7 +1308,7 @@ namespace StardewDruid.Event.Scene
 
                     RemoveMonsters();
 
-                    Mod.instance.spellRegister.Add(new(eventVectors[204] * 64, 256, IconData.impacts.smoke, new()) { sound = SpellHandle.sounds.flameSpellHit});
+                    Mod.instance.spellRegister.Add(new(eventVectors[204] * 64, 256, IconData.impacts.smoke, new()) { displayRadius = 3, sound = SpellHandle.Sounds.flameSpellHit});
 
                     EventRender goldenCore = new("goldenCore", location.Name, eventVectors[204] * 64 + new Vector2(32), IconData.relics.golden_core) { layer = 1f};
 
@@ -1388,7 +1344,7 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.trackers[CharacterHandle.characters.Raven].eventLock = true;
 
-                    Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.sounds.getNewSpecialItem, });
+                    Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { displayRadius = 4, sound = SpellHandle.Sounds.getNewSpecialItem, });
 
                     companions[1].LookAtTarget(Mod.instance.characters[CharacterHandle.characters.Raven].Position,true);
 
@@ -1398,7 +1354,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[1].doEmote(32);
 
-                    location.playSound(SpellHandle.sounds.crow.ToString());
+                    location.playSound(SpellHandle.Sounds.crow.ToString());
 
                     companions[1].LookAtTarget(Mod.instance.characters[CharacterHandle.characters.Raven].Position, true);
 
@@ -1406,9 +1362,10 @@ namespace StardewDruid.Event.Scene
 
                 case 406:
 
-                    ThrowHandle throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Raven].Position, IconData.relics.crow_hammer);
-
-                    throwRelic.pocket = false;
+                    ThrowHandle throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Raven].Position, IconData.relics.crow_hammer)
+                    {
+                        pocket = false
+                    };
 
                     throwRelic.register();
 
@@ -1467,18 +1424,15 @@ namespace StardewDruid.Event.Scene
 
                 case 410:
 
-                    Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { scheme = IconData.schemes.golden, sound = SpellHandle.sounds.getNewSpecialItem, });
+                    Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { scheme = IconData.schemes.golden, displayRadius = 4, sound = SpellHandle.Sounds.getNewSpecialItem, });
 
                     Vector2 where = eventVectors[204] * 64 + new Vector2(32, 32);
 
-                    Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, factor = 3, counter = -60, sound = SpellHandle.sounds.secret1 });
-                    Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, factor = 3, counter = -40, sound = SpellHandle.sounds.silent, });
-                    Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, factor = 3, counter = -20, sound = SpellHandle.sounds.silent, });
-                    Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.spells.bolt, factor = 3, sound = SpellHandle.sounds.thunder, });
+                    Mod.instance.spellRegister.Add(new(where, 192, IconData.impacts.none, new()) { type = SpellHandle.Spells.greatbolt, factor = 3, displayRadius = 2, sound = SpellHandle.Sounds.thunder, });
 
                     Rectangle relicRect = IconData.RelicRectangles(IconData.relics.crow_hammer);
 
-                    TemporaryAnimatedSprite animation = new(0, 1500, 1, 1, origin, false, false)
+                    TemporaryAnimatedSprite animation = new(0, 1500, 1, 1, where, false, false)
                     {
                         sourceRect = relicRect,
                         sourceRectStartingPos = new(relicRect.X, relicRect.Y),
@@ -1490,9 +1444,9 @@ namespace StardewDruid.Event.Scene
 
                     Game1.player.currentLocation.TemporarySprites.Add(animation);
 
-                    Mod.instance.spellRegister.Add(new(origin, 320, IconData.impacts.supree, new()) { type = SpellHandle.spells.effect, counter = -45, instant = true, scheme = IconData.schemes.golden, sound = SpellHandle.sounds.yoba });
+                    Mod.instance.spellRegister.Add(new(where, 320, IconData.impacts.supree, new()) { type = SpellHandle.Spells.effect, displayRadius = 4, counter = -45, instant = true, scheme = IconData.schemes.golden, sound = SpellHandle.Sounds.secret1 });
 
-                    Mod.instance.spellRegister.Add(new(origin, 256, IconData.impacts.supree, new()) { type = SpellHandle.spells.effect, instant = true, });
+                    Mod.instance.spellRegister.Add(new(where, 256, IconData.impacts.supree, new()) { type = SpellHandle.Spells.effect, displayRadius = 3, instant = true, sound = SpellHandle.Sounds.yoba });
 
                     break;
 
@@ -1517,6 +1471,8 @@ namespace StardewDruid.Event.Scene
                     companions[0].netLayer.Set(10000);
 
                     companions[1].LookAtTarget(companions[0].Position, true);
+
+                    (Mod.instance.locations[LocationHandle.druid_temple_name] as Temple).BrazierOverride(2);
 
                     break;
 
@@ -1633,21 +1589,21 @@ namespace StardewDruid.Event.Scene
                 // Jester exit grove
                 case 114:
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_gate_name], companions[4], eventVectors[214] * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_temple_name], companions[4], eventVectors[214] * 64, false);
 
                     break;
 
                 // Buffin exit grove
                 case 115:
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_gate_name], companions[5], eventVectors[215] * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_temple_name], companions[5], eventVectors[215] * 64, false);
 
                     break;
 
                 // Shadowtin exit grove
                 case 116:
 
-                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_gate_name], companions[6], eventVectors[216] * 64, false);
+                    CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_temple_name], companions[6], eventVectors[216] * 64, false);
 
                     break;
 
@@ -1674,25 +1630,6 @@ namespace StardewDruid.Event.Scene
 
                 // Linus leave
                 case 353:
-
-                    /*if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.BrownBear))
-                    {
-
-                        Mod.instance.characters.Remove(CharacterHandle.characters.BrownBear);
-
-                    }
-
-                    location.characters.Remove(companions[3]);
-
-                    companions[3] = new Linus(CharacterHandle.characters.Linus);
-
-                    voices[3] = companions[3];
-
-                    companions[3].SwitchToMode(Character.Character.mode.scene, Game1.player);
-
-                    companions[3].eventName = eventId;
-
-                    CharacterMover.Warp(location, companions[3], eventVectors[3] * 64);*/
 
                     CharacterMover.Warp(Mod.instance.locations[LocationHandle.druid_grove_name], companions[3], eventVectors[353] * 64, false);
 

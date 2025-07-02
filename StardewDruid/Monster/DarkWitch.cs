@@ -120,52 +120,22 @@ namespace StardewDruid.Monster
 
             };
 
-            hatFrames = new()
-            {
-                [0] = new()
-                {
-                    new(128, 64, 32, 32),
-                },
-                [1] = new()
-                {
-                    new(128, 32, 32, 32),
-                },
-                [2] = new()
-                {
-                    new(128, 0, 32, 32),
-                },
-                [3] = new()
-                {
-                    new(128, 32, 32, 32),
-                },
-            };
+            hatVectors = CharacterRender.HumanoidHats();
 
+            hatVectors[StardewDruid.Character.Character.hats.launch] = hatVectors[StardewDruid.Character.Character.hats.stand];
+
+            hatSelect = 4;
+
+            shieldScheme = IconData.schemes.snazzle;
 
             loadedOut = true;
 
         }
 
-        public override void DrawHat(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer)
+        public override float GetScale()
         {
 
-            b.Draw(
-                characterTexture,
-                Game1.GlobalToLocal(Position) + new Vector2(32, -14f * spriteScale),
-                hatFrames[netDirection.Value][0],
-                Color.White,
-                0f,
-                new Vector2(16),
-                spriteScale,
-                netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3) ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                drawLayer + 0.0001f
-            );
-
-        }
-
-        public override void DrawShield(SpriteBatch b, Vector2 spritePosition, float spriteScale, float drawLayer, IconData.schemes scheme)
-        {
-
-            base.DrawShield(b, spritePosition, spriteScale, drawLayer, specialScheme);
+            return 3.75f;
 
         }
 
@@ -180,17 +150,18 @@ namespace StardewDruid.Monster
 
             SetCooldown(1);
 
-            SpellHandle special = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 3);
+            SpellHandle special = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 3)
+            {
+                scheme = specialScheme,
 
-            special.scheme = specialScheme;
+                type = SpellHandle.Spells.lightning,
 
-            special.type = SpellHandle.spells.lightning;
+                factor = 2,
 
-            special.factor = 2;
+                counter = -45,
 
-            special.counter = -45;
-
-            special.indicator = IconData.cursors.mists;
+                indicator = IconData.cursors.mists
+            };
 
             special.TargetCursor();
 
@@ -200,7 +171,7 @@ namespace StardewDruid.Monster
 
         }
 
-        public override bool PerformSweep()
+        public override bool PerformSweep(Vector2 target)
         {
 
             if (Mod.instance.randomIndex.Next(2) == 0 && !netShieldActive.Value && shieldTimer <= 0)
@@ -220,7 +191,7 @@ namespace StardewDruid.Monster
 
             }
 
-            PerformRetreat(Position + (ModUtility.DirectionAsVector(netDirection.Value)*64));
+            PerformRetreat(Position + (ModUtility.DirectionAsVector(netDirection.Value*2)*64));
 
             return true;
 
@@ -247,19 +218,22 @@ namespace StardewDruid.Monster
 
                     Vector2 tryVector = castSelection[Mod.instance.randomIndex.Next(castSelection.Count)];
 
-                    SpellHandle fireball = new(currentLocation, tryVector * 64, GetBoundingBox().Center.ToVector2(), 192, GetThreat());
+                    SpellHandle fireball = new(currentLocation, tryVector * 64, GetBoundingBox().Center.ToVector2(), 192, GetThreat())
+                    {
+                        type = SpellHandle.Spells.missile,
 
-                    fireball.type = SpellHandle.spells.missile;
+                        factor = 2,
 
-                    fireball.factor = 2;
+                        missile = MissileHandle.missiles.fireball,
 
-                    fireball.missile = MissileHandle.missiles.fireball;
+                        display = IconData.impacts.puff,
 
-                    fireball.display = IconData.impacts.puff;
+                        scheme = specialScheme,
 
-                    fireball.scheme = specialScheme;
+                        boss = this,
 
-                    fireball.boss = this;
+                        added = new() { SpellHandle.Effects.binds, }
+                    };
 
                     Mod.instance.spellRegister.Add(fireball);
 

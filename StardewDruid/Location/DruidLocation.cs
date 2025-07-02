@@ -1,5 +1,4 @@
-﻿using StardewDruid.Character;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using StardewValley;
 using System;
 using System.Collections.Generic;
@@ -11,6 +10,11 @@ using StardewDruid.Cast;
 using StardewModdingAPI;
 using StardewDruid.Event.Sword;
 using StardewDruid.Journal;
+using StardewValley.Locations;
+using xTile.Tiles;
+using xTile;
+using System.IO;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Location
 {
@@ -19,7 +23,9 @@ namespace StardewDruid.Location
 
         public List<Location.TerrainField> terrainFields = new();
 
-        public List<Location.TerrainField> frontFields = new();
+        public List<Location.TerrainField> grassFields = new();
+
+        public List<Location.TerrainField> floorFields = new();
 
         public List<Location.LightField> lightFields = new();
 
@@ -29,9 +35,17 @@ namespace StardewDruid.Location
 
         public bool ambientDarkness;
 
+        public int ambientFactor;
+
         public bool summonActive;
 
         public int restoration;
+
+        public bool seasonalGround;
+
+        public const int barrierIndex = 360;
+
+        public const int cavernIndex = 120;
 
         public DruidLocation()
         {
@@ -42,14 +56,24 @@ namespace StardewDruid.Location
             : base("Maps\\Shed",name)
         {
 
-
         }
 
         public DruidLocation(string name, string baseName)
             : base(baseName, name)
         {
 
+        }
 
+        public void mapReset()
+        {
+
+            terrainFields = new();
+
+            grassFields = new();
+
+            lightFields = new();
+
+            dialogueTiles = new();
 
         }
 
@@ -78,19 +102,50 @@ namespace StardewDruid.Location
 
                     ambientDarkness = false;
 
+                    ambientFactor = 0;
+
                 }
                 else
+                if (ambientFactor < 192)
                 {
 
-                    Game1.ambientLight = new(160, 160, 128);
+                    ambientFactor++;
 
                 }
 
-                return;
+            }
+            else
+            {
+
+                if (ambientFactor > 0)
+                {
+
+                    ambientFactor--;
+
+                }
 
             }
 
             base._updateAmbientLighting();
+
+            if (ambientFactor > 0)
+            {
+
+                int factor = (int)ambientFactor / 6;
+
+                Color ambientColour = Game1.ambientLight;
+
+                int R = Math.Min(ambientColour.R, 5 * factor);
+
+                int G = Math.Min(ambientColour.G, 5 * factor);
+
+                int B = Math.Min(ambientColour.B, 4 * factor);
+
+                Game1.ambientLight = new(R, G, B);
+
+            }
+
+            return;
 
         }
 
@@ -106,19 +161,33 @@ namespace StardewDruid.Location
 
             }
 
-            foreach (Location.LightField light in lightFields)
+            foreach (TerrainField tile in grassFields)
             {
 
-                light.draw(b);
+                tile.draw(b, this);
 
             }
+
+        }
+
+        public override void drawFloorDecorations(SpriteBatch b)
+        {
+
+            foreach (TerrainField tile in floorFields)
+            {
+
+                tile.draw(b, this);
+
+            }
+
+            base.drawFloorDecorations(b);
 
         }
 
         public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
         {
 
-            foreach (TerrainField tile in frontFields)
+            foreach (TerrainField tile in terrainFields)
             {
 
                 tile.drawFront(b, this);
@@ -190,21 +259,26 @@ namespace StardewDruid.Location
 
             Vector2 actionTile = new(tileLocation.X, tileLocation.Y);
 
-            if (dialogueTiles.ContainsKey(actionTile))
+            if (readyDialogue())
             {
 
-                CharacterHandle.characters characterType = dialogueTiles[actionTile];
-
-                if (!Mod.instance.dialogue.ContainsKey(characterType))
+                if (dialogueTiles.ContainsKey(actionTile) && Mod.instance.activeEvent.Count == 0)
                 {
 
-                    Mod.instance.dialogue[characterType] = new(characterType);
+                    CharacterHandle.characters characterType = dialogueTiles[actionTile];
+
+                    if (!Mod.instance.dialogue.ContainsKey(characterType))
+                    {
+
+                        Mod.instance.dialogue[characterType] = new(characterType);
+
+                    }
+
+                    Mod.instance.dialogue[characterType].DialogueApproach();
+
+                    return true;
 
                 }
-
-                Mod.instance.dialogue[characterType].DialogueApproach();
-
-                return true;
 
             }
 
@@ -214,8 +288,20 @@ namespace StardewDruid.Location
 
         public override bool isTileFishable(int tileX, int tileY)
         {
-            
-            if (Mod.instance.Helper.ModRegistry.IsLoaded("shekurika.WaterFish") && !Mod.instance.eventRegister.ContainsKey("fishspot"))
+
+            if (Mod.instance.eventRegister.ContainsKey(Rite.eventFishspot))
+            {
+
+                if (Mod.instance.eventRegister[Rite.eventFishspot].EventActive())
+                {
+
+                    return ModUtility.WaterCheck(this, new(tileX, tileY), 1);
+
+                }
+
+            }
+
+            if (Mod.instance.Helper.ModRegistry.IsLoaded("shekurika.WaterFish"))
             {
 
                 return false;
@@ -223,6 +309,94 @@ namespace StardewDruid.Location
             }
 
             return ModUtility.WaterCheck(this, new(tileX, tileY), 1);
+
+        }
+
+        public override void updateSeasonalTileSheets(Map map = null)
+        {
+
+            if (!seasonalGround)
+            {
+
+                base.updateSeasonalTileSheets(map);
+
+                return;
+
+            }
+
+            if (map == null)
+            {
+
+                map = Map;
+
+            }
+
+            map.DisposeTileSheets(Game1.mapDisplayDevice);
+
+            foreach (TileSheet tileSheet in map.TileSheets)
+            {
+                
+                string imageSource = tileSheet.ImageSource;
+
+                switch (imageSource)
+                {
+
+                    case "StardewDruid.Tilesheets.groundspring":
+                    case "StardewDruid.Tilesheets.groundsummer":
+                    case "StardewDruid.Tilesheets.groundautumn":
+                    case "StardewDruid.Tilesheets.groundwinter":
+
+                        switch (GetSeason())
+                        {
+
+                            default:
+
+                                tileSheet.ImageSource = "StardewDruid.Tilesheets.groundspring";
+
+                                break;
+
+                            case Season.Summer:
+
+                                tileSheet.ImageSource = "StardewDruid.Tilesheets.groundsummer";
+
+                                break;
+
+                            case Season.Fall:
+
+                                tileSheet.ImageSource = "StardewDruid.Tilesheets.groundautumn";
+
+                                break;
+
+                            case Season.Winter:
+
+                                tileSheet.ImageSource = "StardewDruid.Tilesheets.groundwinter";
+
+                                break;
+
+                        }
+
+                        try
+                        {
+
+                            Game1.mapDisplayDevice.LoadTileSheet(tileSheet);
+
+                        }
+                        catch (Exception exception)
+                        {
+
+                            Mod.instance.Monitor.Log(exception.Message);
+
+                            tileSheet.ImageSource = imageSource;
+
+                        }
+
+                        break;
+
+                }
+
+            }
+
+            map.LoadTileSheets(Game1.mapDisplayDevice);
 
         }
 

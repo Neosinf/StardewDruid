@@ -39,7 +39,7 @@ namespace StardewDruid.Location
 
         public StardewValley.Object content;
 
-        public SpawnData.swords sword;
+        public SpawnData.Swords sword;
 
         public CrateField(Vector2 Origin)
         {
@@ -164,7 +164,7 @@ namespace StardewDruid.Location
         public void open()
         {
 
-            Game1.player.currentLocation.playSound(SpellHandle.sounds.openChest.ToString());
+            Game1.player.currentLocation.playSound(SpellHandle.Sounds.openChest.ToString());
 
             status = crateStatus.opening;
 
@@ -205,9 +205,12 @@ namespace StardewDruid.Location
 
                 Vector2 sparkleVector = origin + sparkles[i];
 
-                SpellHandle sparkle = new(sparkleVector, 256, IconData.impacts.glare, new());
+                SpellHandle sparkle = new(sparkleVector, 256, IconData.impacts.glare, new())
+                {
+                    displayRadius = 3,
 
-                sparkle.counter = -10 * i;
+                    counter = -10 * i
+                };
 
                 Mod.instance.spellRegister.Add(sparkle);
 

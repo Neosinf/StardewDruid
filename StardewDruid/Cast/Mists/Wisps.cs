@@ -18,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Timers;
+using xTile.Dimensions;
 
 namespace StardewDruid.Cast.Mists
 {
@@ -42,30 +43,6 @@ namespace StardewDruid.Cast.Mists
         {
 
             tickCounter++;
-
-            if(tickCounter % 6 == 0)
-            {
-
-                if (tickCounter % 24 == 0)
-                {
-
-                    foreach (KeyValuePair<Vector2, WispHandle> wisp in wisps)
-                    {
-
-                        wisp.Value.Behaviour();
-
-                    }
-
-                }
-
-                foreach (KeyValuePair<Vector2,WispHandle> wisp in wisps)
-                {
-
-                    wisp.Value.Movement();
-
-                }
-
-            }
 
             for (int w = wisps.Count - 1; w >= 0; w--)
             {
@@ -118,6 +95,8 @@ namespace StardewDruid.Cast.Mists
 
                     wisps[wispVector] = new(location, tryVector);
 
+                    Mod.instance.iconData.AnimateQuickWarp(location, tryVector * 64, false, IconData.warps.mist);
+
                     return tryVector;
 
                 }
@@ -125,6 +104,26 @@ namespace StardewDruid.Cast.Mists
             }
 
             return Vector2.Zero;
+
+        }
+
+        public void AddSingle(Vector2 single)
+        {
+
+            Vector2 tryVector = ModUtility.PositionToTile(single);
+            
+            Vector2 wispVector = WispVector(tryVector);
+
+            if (wisps.ContainsKey(wispVector))
+            {
+
+                return;
+
+            }
+
+            wisps[wispVector] = new(location, tryVector);
+
+            Mod.instance.iconData.AnimateQuickWarp(location, tryVector * 64, false, IconData.warps.mist);
 
         }
 
@@ -141,7 +140,7 @@ namespace StardewDruid.Cast.Mists
 
                 }
 
-                if (Vector2.Distance(origin, Game1.player.Position) > 32)
+                if (Vector2.Distance(origin, Game1.player.Position) > 32 && !Mod.instance.ShiftButtonHeld())
                 {
 
                     return false;
@@ -173,13 +172,6 @@ namespace StardewDruid.Cast.Mists
         public override void EventDecimal()
         {
 
-            if (eventLocked)
-            {
-
-                return;
-
-            }
-
             if (!EventActive())
             {
 
@@ -191,10 +183,36 @@ namespace StardewDruid.Cast.Mists
 
             decimalCounter++;
 
+            if (eventLocked)
+            {
+
+                foreach (KeyValuePair<Vector2, WispHandle> wisp in wisps)
+                {
+
+                    wisp.Value.Movement();
+
+                }
+
+                if (decimalCounter % 3 == 0)
+                {
+
+                    foreach (KeyValuePair<Vector2, WispHandle> wisp in wisps)
+                    {
+
+                        wisp.Value.Behaviour();
+
+                    }
+
+                }
+
+                return;
+
+            }
+
             if (decimalCounter == 5)
             {
 
-                Mod.instance.rite.channel(IconData.skies.moon, 75);
+                Mod.instance.rite.Channel(IconData.skies.moon, 75);
 
                 channel = IconData.skies.moon;
 
@@ -223,6 +241,8 @@ namespace StardewDruid.Cast.Mists
                 eventLocked = true;
 
                 Mod.instance.rite.castLevel = 0;
+
+                Mod.instance.rite.ChargeSet(IconData.cursors.mistsCharge);
 
             }
 

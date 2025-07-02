@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using StardewDruid.Render;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Character
 {
@@ -20,7 +21,7 @@ namespace StardewDruid.Character
         {
         }
 
-        public Wolf(CharacterHandle.characters type = CharacterHandle.characters.GreyWolf)
+        public Wolf(CharacterHandle.characters type = CharacterHandle.characters.BrownWolf)
           : base(type)
         {
 
@@ -41,8 +42,6 @@ namespace StardewDruid.Character
             wolfRender = new(characterType.ToString());
 
             LoadIntervals();
-
-            overhead = 112;
 
             setScale = 3.75f;
 
@@ -65,13 +64,13 @@ namespace StardewDruid.Character
 
             specialFrames = new()
             {
-                [specials.special] = wolfRender.sweepFrames,
+                [specials.special] = wolfRender.specialFrames,
                 [specials.sweep] = wolfRender.sweepFrames,
             };
 
             specialIntervals = new()
             {
-                [specials.special] = 12,
+                [specials.special] = 45,
                 [specials.sweep] = 9,
             };
 
@@ -83,7 +82,7 @@ namespace StardewDruid.Character
 
             specialCeilings = new()
             {
-                [specials.special] = 0,
+                [specials.special] = 3,
                 [specials.sweep] = 5,
             };
 
@@ -108,17 +107,27 @@ namespace StardewDruid.Character
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            WolfRenderAdditional additional = new();
+            Vector2 usePosition = SpritePosition(localPosition);
 
-            additional.layer = ((float)StandingPixel.Y + (float)LayerOffset()) / 10000f;
+            DrawCharacter(b, usePosition);
 
-            additional.scale = setScale;
+        }
 
-            additional.position = SpritePosition(localPosition);
+        public override void DrawCharacter(SpriteBatch b, Vector2 usePosition)
+        {
 
-            additional.flip = netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3;
+            WolfRenderAdditional additional = new()
+            {
+                layer = ((float)StandingPixel.Y + (float)LayerOffset()) / 10000f,
 
-            additional.fade = fadeOut == 0 ? 1f : fadeOut;
+                scale = setScale,
+
+                position = usePosition,
+
+                flip = netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3),
+
+                fade = fadeOut
+            };
 
             DrawEmote(b);
 
@@ -186,7 +195,7 @@ namespace StardewDruid.Character
 
             }
 
-            if((idles)netIdle.Value == idles.daze)
+            /*if((idles)netIdle.Value == idles.daze)
             {
                 b.Draw(
                     Mod.instance.iconData.displayTexture,
@@ -200,7 +209,7 @@ namespace StardewDruid.Character
                     additional.layer
                 );
 
-            }
+            }*/
 
             additional.direction = netDirection.Value;
 
@@ -208,6 +217,12 @@ namespace StardewDruid.Character
 
             wolfRender.DrawNormal(b, additional);
 
+
+        }
+        public override Microsoft.Xna.Framework.Rectangle OverheadPortrait()
+        {
+
+            return new Rectangle(29, 23, 16, 16);
 
         }
 

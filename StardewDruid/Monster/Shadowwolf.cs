@@ -14,7 +14,7 @@ namespace StardewDruid.Monster
     public class ShadowWolf : Boss
     {
 
-        public CueWrapper growlCue;
+        //public CueWrapper growlCue;
 
         public int growlTimer;
 
@@ -24,7 +24,7 @@ namespace StardewDruid.Monster
         {
         }
 
-        public ShadowWolf(Vector2 vector, int CombatModifier, string name = "GreyWolf")
+        public ShadowWolf(Vector2 vector, int CombatModifier, string name = "BrownWolf")
             : base(vector, CombatModifier, name)
         {
 
@@ -70,17 +70,15 @@ namespace StardewDruid.Monster
 
             wolfRender = new(realName.Value);
 
-            growlCue = Game1.soundBank.GetCue("WolfGrowl") as CueWrapper;
+            /*growlCue = Game1.soundBank.GetCue("WolfGrowl") as CueWrapper;
 
             growlCue.Volume *= 2;
 
-            growlCue.Pitch /= 2;
+            growlCue.Pitch /= 2;*/
 
             walkInterval = 12;
 
             gait = 2.4f;
-
-            overHead = new(0, -128);
 
             flightSet = true;
 
@@ -92,10 +90,6 @@ namespace StardewDruid.Monster
 
             flightDefault = flightTypes.target;
 
-            smashSet = true;
-
-            sweepSet = true;
-
             sweepInterval = 12;
 
             idleFrames = wolfRender.idleFrames;
@@ -106,11 +100,29 @@ namespace StardewDruid.Monster
 
             smashFrames = wolfRender.dashFrames;
 
-            specialFrames = walkFrames;
+            smashSet = true;
 
-            channelFrames = walkFrames;
+            specialFrames = wolfRender.specialFrames;
+
+            specialInterval = 45;
+
+            specialCeiling = 3;
+
+            specialFloor = 0;
+
+            specialSet = true;
+
+            channelFrames = wolfRender.specialFrames;
+
+            channelCeiling = 3;
+
+            channelFloor = 0;
+
+            channelSet = true;
 
             sweepFrames = wolfRender.sweepFrames;
+
+            sweepSet = true;
 
             loadedOut = true;
 
@@ -138,7 +150,7 @@ namespace StardewDruid.Monster
 
         }
 
-        public override Vector2 GetPosition(Vector2 localPosition, float spriteScale = -1f, bool shadow = false)
+        public override Vector2 GetPosition(Vector2 localPosition, float spriteScale = -1f)
         {
 
             if (spriteScale == -1f)
@@ -173,19 +185,20 @@ namespace StardewDruid.Monster
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            WolfRenderAdditional additional = new();
+            WolfRenderAdditional additional = new()
+            {
+                layer = Position.Y / 10000f + 0.0032f,
 
-            additional.layer = Position.Y / 10000f + 0.0032f;
-
-            additional.scale = GetScale();
+                scale = GetScale()
+            };
 
             additional.position = GetPosition(localPosition, additional.scale);
 
             DrawEmote(b, localPosition, additional.layer);
 
-            additional.flip = netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3;
+            additional.flip = netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3);
 
-            if (growlCue.IsPlaying)
+            if (Mod.instance.sounds.ActiveCue(Handle.SoundHandle.SoundCue.WolfGrowl))
             {
 
                 additional.mode = WolfRenderAdditional.wolfmode.growl;
@@ -232,89 +245,64 @@ namespace StardewDruid.Monster
 
         }
 
-        public override bool ChangeBehaviour()
+        public override void UpdateSpecial()
         {
 
-            if (growlTimer > 0)
+            base.UpdateSpecial();
+
+            switch (specialTimer)
             {
 
-                growlTimer--;
+                case 96:
 
-            }
+                    if (netSpecialActive.Value || netChannelActive.Value)
+                    {
 
-            if (base.ChangeBehaviour())
-            {
+                        //Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.WolfHowl);
 
-                WolfGrowl();
+                        Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.WolfGrowl);
 
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-        public override void UpdateMultiplayer()
-        {
-
-            base.UpdateMultiplayer();
-
-            if (growlTimer > 0)
-            {
-
-                growlTimer--;
-
-                return;
-
-            }
-
-            if (netSweepActive.Value)
-            {
-
-                WolfGrowl();
-
-            }
-
-        }
-
-        public void WolfGrowl()
-        {
-            if (growlTimer > 0)
-            {
-
-                return;
-
-            }
-
-            if(Vector2.Distance(Position,Game1.player.Position) > 480)
-            {
-
-                return;
-
-            }
-
-            if (growlCue.IsPlaying)
-            {
-
-                return;
-
-            }
-
-            growlTimer = 300;
-
-            switch (Mod.instance.randomIndex.Next(2))
-            {
-
-                case 0:
-
-                    growlCue.Play();
+                    }
 
                     break;
 
+                case 36:
+
+                    if (netSweepActive.Value)
+                    {
+
+                        if (Mod.instance.randomIndex.Next(2) == 0)
+                        {
+
+                            return;
+
+                        }
+
+                        if (Mod.instance.sounds.ActiveCue(Handle.SoundHandle.SoundCue.WolfGrowl))
+                        {
+
+                            return;
+
+                        }
+
+                        /*if (Mod.instance.sounds.ActiveCue(Handle.SoundHandle.SoundCue.WolfHowl))
+                        {
+
+                            return;
+
+                        }*/
+
+                        Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.WolfGrowl);
+
+                    }
+
+                    break;
+
+
             }
 
         }
+
         public override Vector2 PerformRedirect(Vector2 target)
         {
 

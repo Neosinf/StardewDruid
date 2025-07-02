@@ -50,6 +50,10 @@ namespace StardewDruid.Location.Terrain
 
         public int where;
 
+        public float wind;
+
+        public float windout;
+
         public CommonLeaf(commonleaves Tier, int Where, int Off = 0, commonrenders Render = commonrenders.darkoak)
         {
 

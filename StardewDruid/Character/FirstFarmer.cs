@@ -6,6 +6,7 @@ using StardewDruid.Cast.Mists;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
@@ -25,10 +26,6 @@ namespace StardewDruid.Character
 {
     public class FirstFarmer : StardewDruid.Character.Character
     {
-        
-        public Texture2D hatsTexture;
-
-        public int hatsIndex;
 
         public FirstFarmer()
         {
@@ -46,80 +43,9 @@ namespace StardewDruid.Character
             
             base.LoadOut();
 
-            hatsTexture = Game1.content.Load<Texture2D>("Characters\\Farmer\\hats");
+            WeaponLoadout(WeaponRender.weapons.warpsword);
 
-            hatsIndex = 55;
-
-            WeaponLoadout();
-
-            weaponRender.swordScheme = WeaponRender.swordSchemes.sword_warp;
-
-        }
-
-        public override void DrawHat(SpriteBatch b, Vector2 spritePosition,  float drawLayer, float fade)
-        {
-
-
-            int UseIndex = hatsIndex + 0;
-
-            int hatOffset = 0;
-
-            switch (netDirection.Value)
-            {
-                case 0:
-
-                    UseIndex += 36;
-
-                    break;
-
-                case 1:
-
-                    UseIndex += 12;
-
-                    break;
-
-                case 3:
-
-                    UseIndex += 24;
-
-                    hatOffset -= (int)(1 * setScale);
-
-                    break;
-
-            }
-
-            if (netIdle.Value == (int)Character.idles.kneel)
-            {
-
-                b.Draw(
-                    hatsTexture,
-                    spritePosition - new Vector2(hatOffset, 6*setScale),
-                    Game1.getSourceRectForStandardTileSheet(hatsTexture, UseIndex, 20, 20),
-                    Color.White * fade,
-                    0.0f,
-                    new Vector2(10),
-                    setScale,
-                    SpriteAngle() ? (SpriteEffects)1 : 0,
-                    drawLayer + 0.0001f
-                );
-
-            }
-            else
-            {
-
-                b.Draw(
-                    hatsTexture,
-                    spritePosition - new Vector2(hatOffset, 13 * setScale),
-                    Game1.getSourceRectForStandardTileSheet(hatsTexture, UseIndex, 20, 20),
-                    Color.White * fade,
-                    0.0f,
-                    new Vector2(10),
-                    setScale,
-                    SpriteAngle() ? (SpriteEffects)1 : 0,
-                    drawLayer + 0.0001f
-                );
-
-            }
+            hatSelect = 6;
 
         }
 

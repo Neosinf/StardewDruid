@@ -4,6 +4,7 @@ using StardewDruid.Cast;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using System;
@@ -52,49 +53,49 @@ namespace StardewDruid.Cast.Fates
 
                 case 0:
 
-                    companions[0] = new StardewDruid.Character.Bear(Character.CharacterHandle.characters.BrownBear);
+                    companions[0] = new StardewDruid.Character.Bear(CharacterHandle.characters.BrownBear);
 
-                    location.playSound("BearGrowl");
+                    Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BearGrowl);
 
                     break;               
                 
                 case 1:
 
-                    companions[0] = new StardewDruid.Character.Bear(Character.CharacterHandle.characters.BlackBear);
+                    companions[0] = new StardewDruid.Character.Bear(CharacterHandle.characters.BlackBear);
 
-                    location.playSound("BearGrowlTwo");
+                    Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BearRoar);
 
                     break;
 
                 case 2:
 
-                    companions[0] = new StardewDruid.Character.Critter(Character.CharacterHandle.characters.BlackCat);
+                    companions[0] = new StardewDruid.Character.Critter(CharacterHandle.characters.BlackCat);
 
-                    location.playSound(SpellHandle.sounds.cat.ToString());
+                    location.playSound(SpellHandle.Sounds.cat.ToString());
 
                     break;
 
                 case 3:
 
-                    companions[0] = new StardewDruid.Character.Critter(Character.CharacterHandle.characters.TabbyCat);
+                    companions[0] = new StardewDruid.Character.Critter(CharacterHandle.characters.TabbyCat);
 
-                    location.playSound(SpellHandle.sounds.cat.ToString());
+                    location.playSound(SpellHandle.Sounds.cat.ToString());
 
                     break;
 
                 case 4:
 
-                    companions[0] = new StardewDruid.Character.Critter(Character.CharacterHandle.characters.RedFox);
+                    companions[0] = new StardewDruid.Character.Critter(CharacterHandle.characters.RedFox);
 
-                    location.playSound(SpellHandle.sounds.dog_bark.ToString());
+                    location.playSound(SpellHandle.Sounds.dog_bark.ToString());
 
                     break;
 
                 case 5:
 
-                    companions[0] = new StardewDruid.Character.Wolf(Character.CharacterHandle.characters.GreyWolf);
+                    companions[0] = new StardewDruid.Character.Wolf(CharacterHandle.characters.BrownWolf);
 
-                    location.playSound(SpellHandle.sounds.dog_bark.ToString());
+                    location.playSound(SpellHandle.Sounds.dog_bark.ToString());
 
                     break;
 

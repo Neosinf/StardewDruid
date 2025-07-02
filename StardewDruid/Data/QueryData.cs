@@ -27,6 +27,7 @@ namespace StardewDruid.Data
             QuestUpdate,
             EventDisplay,
             EventDialogue,
+            EventQuestion,
             ThrowRelic,
             ThrowSword,
             SpellHandle,
@@ -38,6 +39,11 @@ namespace StardewDruid.Data
             RequestPreferences,
             PostPreferences,
             SyncPreferences,
+            AddExport,
+            AddPal,
+            RequestGoods,
+            SyncGoods,
+
         }
 
         public QueryData()

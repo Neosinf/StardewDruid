@@ -18,11 +18,9 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewValley.TerrainFeatures;
 using System.Threading;
 using System.Xml.Serialization;
-using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Location.Terrain;
-using static StardewValley.Menus.InventoryMenu;
-
+using StardewDruid.Handle;
 
 namespace StardewDruid.Location.Druid
 {
@@ -59,17 +57,32 @@ namespace StardewDruid.Location.Druid
                         foreach (TerrainField terrain in terrainFields)
                         {
 
-                            if (terrain is GraveCandle debris)
+                            if (terrain is GraveStone debris)
                             {
 
-                                debris.disabled = true;
-
-                                debris.ruined = false;
+                                debris.HideCandles();
 
                             }
 
                         }
 
+                        foreach (TerrainField terrain in grassFields)
+                        {
+
+
+                            if (terrain is Flower flower)
+                            {
+
+                                if (flower.type == Flower.grasstypes.debris)
+                                {
+
+                                    flower.disabled = true;
+
+                                }
+
+                            }
+
+                        }
                         break;
 
                     case 2:
@@ -97,13 +110,18 @@ namespace StardewDruid.Location.Druid
                     case 3:
 
 
-                        foreach (TerrainField terrain in terrainFields)
+                        foreach (TerrainField terrain in grassFields)
                         {
 
                             if(terrain is Flower flower)
                             {
 
-                                flower.ruined = false;
+                                if (flower.type != Flower.grasstypes.debris)
+                                {
+
+                                    flower.disabled = false;
+
+                                }
 
                             }
 
@@ -117,10 +135,10 @@ namespace StardewDruid.Location.Druid
                         foreach (TerrainField terrain in terrainFields)
                         {
 
-                            if (terrain is GraveCandle debris)
+                            if (terrain is GraveStone debris)
                             {
 
-                                debris.disabled = false;
+                                debris.SetCandles(2);
 
                             }
 
@@ -161,7 +179,7 @@ namespace StardewDruid.Location.Druid
 
             TileSheet outdoor = new(
                 newMap,
-                "StardewDruid.Tilesheets.ground",
+                "StardewDruid.Tilesheets.groundspring",
                 new(
                     Mod.instance.iconData.sheetTextures[IconData.tilesheets.groundspring].Width / 16,
                     Mod.instance.iconData.sheetTextures[IconData.tilesheets.groundspring].Height / 16
@@ -173,11 +191,13 @@ namespace StardewDruid.Location.Druid
 
             newMap.LoadTileSheets(Game1.mapDisplayDevice);
 
+            seasonalGround = true;
+
             IsOutdoors = true;
 
             ignoreOutdoorLighting.Set(false);
 
-            terrainFields = new();
+            mapReset();
 
             Dictionary<int, List<List<int>>> codes = new();
 
@@ -186,9 +206,7 @@ namespace StardewDruid.Location.Druid
 
             Dictionary<int, List<List<int>>> groundCodes = new()
             {
-                [0] = new() { },
-                [1] = new() { },
-                [2] = new() { },
+
                 [3] = new() { new() { 26, 2 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 2 }, },
                 [4] = new() { new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 2 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 2 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, },
                 [5] = new() { new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 2 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 2 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, },
@@ -199,16 +217,16 @@ namespace StardewDruid.Location.Druid
                 [10] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 2 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 2 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
                 [11] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 2 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 2 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
                 [12] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 3 }, new() { 15, 4 }, new() { 16, 4 }, new() { 17, 3 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 2 }, new() { 26, 2 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 2 }, new() { 30, 2 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 3 }, new() { 39, 4 }, new() { 40, 4 }, new() { 41, 3 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
-                [13] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 2 }, new() { 15, 3 }, new() { 16, 3 }, new() { 17, 2 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 2 }, new() { 25, 2 }, new() { 26, 3 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 3 }, new() { 30, 2 }, new() { 31, 2 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 2 }, new() { 39, 3 }, new() { 40, 3 }, new() { 41, 2 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
-                [14] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 2 }, new() { 24, 2 }, new() { 25, 3 }, new() { 26, 3 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 3 }, new() { 30, 3 }, new() { 31, 2 }, new() { 32, 2 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
-                [15] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 2 }, new() { 23, 2 }, new() { 24, 3 }, new() { 25, 3 }, new() { 26, 4 }, new() { 27, 4 }, new() { 28, 4 }, new() { 29, 4 }, new() { 30, 3 }, new() { 31, 3 }, new() { 32, 2 }, new() { 33, 2 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
-                [16] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 2 }, new() { 23, 3 }, new() { 24, 3 }, new() { 25, 4 }, new() { 26, 4 }, new() { 27, 4 }, new() { 28, 4 }, new() { 29, 4 }, new() { 30, 4 }, new() { 31, 3 }, new() { 32, 3 }, new() { 33, 2 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
-                [17] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 2 }, new() { 23, 3 }, new() { 24, 3 }, new() { 25, 4 }, new() { 26, 4 }, new() { 27, 4 }, new() { 28, 4 }, new() { 29, 4 }, new() { 30, 4 }, new() { 31, 3 }, new() { 32, 3 }, new() { 33, 2 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
-                [18] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 2 }, new() { 23, 3 }, new() { 24, 3 }, new() { 25, 4 }, new() { 26, 4 }, new() { 27, 4 }, new() { 28, 4 }, new() { 29, 4 }, new() { 30, 4 }, new() { 31, 3 }, new() { 32, 3 }, new() { 33, 2 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
-                [19] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 2 }, new() { 23, 3 }, new() { 24, 3 }, new() { 25, 4 }, new() { 26, 4 }, new() { 27, 4 }, new() { 28, 4 }, new() { 29, 4 }, new() { 30, 4 }, new() { 31, 3 }, new() { 32, 3 }, new() { 33, 2 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
-                [20] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 2 }, new() { 23, 2 }, new() { 24, 3 }, new() { 25, 3 }, new() { 26, 4 }, new() { 27, 4 }, new() { 28, 4 }, new() { 29, 4 }, new() { 30, 3 }, new() { 31, 3 }, new() { 32, 2 }, new() { 33, 2 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
-                [21] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 2 }, new() { 24, 2 }, new() { 25, 3 }, new() { 26, 3 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 3 }, new() { 30, 3 }, new() { 31, 2 }, new() { 32, 2 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
-                [22] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 2 }, new() { 25, 2 }, new() { 26, 3 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 3 }, new() { 30, 2 }, new() { 31, 2 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
+                [13] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 2 }, new() { 15, 3 }, new() { 16, 3 }, new() { 17, 2 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 2 }, new() { 24, 2 }, new() { 25, 3 }, new() { 26, 4 }, new() { 27, 4 }, new() { 28, 4 }, new() { 29, 4 }, new() { 30, 3 }, new() { 31, 2 }, new() { 32, 2 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 2 }, new() { 39, 3 }, new() { 40, 3 }, new() { 41, 2 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
+                [14] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 2 }, new() { 24, 3 }, new() { 25, 4 }, new() { 26, 320 }, new() { 27, 340 }, new() { 28, 340 }, new() { 29, 321 }, new() { 30, 4 }, new() { 31, 3 }, new() { 32, 2 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
+                [15] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 2 }, new() { 23, 3 }, new() { 24, 4 }, new() { 25, 320 }, new() { 26, 324 }, new() { 27, 349 }, new() { 28, 349 }, new() { 29, 345 }, new() { 30, 321 }, new() { 31, 4 }, new() { 32, 3 }, new() { 33, 2 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
+                [16] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 2 }, new() { 23, 4 }, new() { 24, 320 }, new() { 25, 344 }, new() { 26, 348 }, new() { 27, 331 }, new() { 28, 331 }, new() { 29, 351 }, new() { 30, 325 }, new() { 31, 321 }, new() { 32, 4 }, new() { 33, 2 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
+                [17] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 2 }, new() { 23, 4 }, new() { 24, 343 }, new() { 25, 348 }, new() { 26, 330 }, new() { 27, 328 }, new() { 28, 328 }, new() { 29, 330 }, new() { 30, 350 }, new() { 31, 341 }, new() { 32, 4 }, new() { 33, 2 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
+                [18] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 2 }, new() { 23, 4 }, new() { 24, 343 }, new() { 25, 348 }, new() { 26, 330 }, new() { 27, 328 }, new() { 28, 328 }, new() { 29, 330 }, new() { 30, 350 }, new() { 31, 341 }, new() { 32, 4 }, new() { 33, 2 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
+                [19] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 2 }, new() { 23, 4 }, new() { 24, 323 }, new() { 25, 327 }, new() { 26, 350 }, new() { 27, 329 }, new() { 28, 329 }, new() { 29, 349 }, new() { 30, 346 }, new() { 31, 322 }, new() { 32, 4 }, new() { 33, 2 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
+                [20] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 2 }, new() { 23, 3 }, new() { 24, 4 }, new() { 25, 343 }, new() { 26, 347 }, new() { 27, 351 }, new() { 28, 351 }, new() { 29, 326 }, new() { 30, 322 }, new() { 31, 4 }, new() { 32, 3 }, new() { 33, 2 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
+                [21] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 2 }, new() { 24, 3 }, new() { 25, 4 }, new() { 26, 323 }, new() { 27, 342 }, new() { 28, 342 }, new() { 29, 322 }, new() { 30, 4 }, new() { 31, 3 }, new() { 32, 2 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
+                [22] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 2 }, new() { 24, 2 }, new() { 25, 3 }, new() { 26, 4 }, new() { 27, 4 }, new() { 28, 4 }, new() { 29, 4 }, new() { 30, 3 }, new() { 31, 2 }, new() { 32, 2 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
                 [23] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 2 }, new() { 26, 2 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 2 }, new() { 30, 2 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
                 [24] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 2 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 2 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
                 [25] = new() { new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 2 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 2 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, },
@@ -220,9 +238,6 @@ namespace StardewDruid.Location.Druid
                 [31] = new() { new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 2 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 2 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, },
                 [32] = new() { new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 25, 1 }, new() { 26, 2 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 2 }, new() { 30, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, },
                 [33] = new() { new() { 26, 2 }, new() { 27, 3 }, new() { 28, 3 }, new() { 29, 2 }, },
-                [34] = new() { },
-                [35] = new() { },
-
 
             };
 
@@ -330,6 +345,15 @@ namespace StardewDruid.Location.Druid
                                     break;
 
                             }
+
+                            back.Tiles[array[0], groundCode.Key].TileIndexProperties.Add("Type", "Stone");
+
+                            break;
+
+
+                        default:
+
+                            back.Tiles[array[0], groundCode.Key] = new StaticTile(back, outdoor, BlendMode.Alpha, array[1]);
 
                             back.Tiles[array[0], groundCode.Key].TileIndexProperties.Add("Type", "Stone");
 
@@ -565,9 +589,10 @@ namespace StardewDruid.Location.Druid
                         case 8:
                         case 12:
 
-                            DarkOak darkoak = new(new Vector2(array[0], code.Key) * 64, array[1] > 10 ? 1 : 2);
-
-                            darkoak.ruined = true;
+                            DarkOak darkoak = new(new Vector2(array[0], code.Key) * 64, array[1] > 10 ? 1 : 2)
+                            {
+                                ruined = true
+                            };
 
                             baseTiles = darkoak.baseTiles;
 
@@ -580,16 +605,15 @@ namespace StardewDruid.Location.Druid
 
                             terrainFields.Add(darkoak);
 
-                            frontFields.Add(darkoak);
-
                             break;
 
                         case 9:
                         case 13:
 
-                            Holly holly = new(new Vector2(array[0], code.Key) * 64, array[1] > 10 ? 1 : 2);
-
-                            holly.ruined = true;
+                            Holly holly = new(new Vector2(array[0], code.Key) * 64, array[1] > 10 ? 1 : 2)
+                            {
+                                ruined = true
+                            };
 
                             baseTiles = holly.baseTiles;
 
@@ -602,8 +626,6 @@ namespace StardewDruid.Location.Druid
 
                             terrainFields.Add(holly);
 
-                            frontFields.Add(holly);
-
                             break;
 
                         case 10:
@@ -613,8 +635,6 @@ namespace StardewDruid.Location.Druid
                             baseTiles = chapel.baseTiles;
 
                             terrainFields.Add(chapel);
-
-                            frontFields.Add(chapel);
 
                             break;
 
@@ -702,7 +722,11 @@ namespace StardewDruid.Location.Druid
                 foreach (List<int> array in code.Value)
                 {
 
-                    TerrainField tField= new(IconData.tilesheets.graveyard, array[1], new Vector2(array[0], code.Key) * 64, TerrainField.shadows.offset);
+                    GraveStone tField = new(new Vector2(array[0], code.Key) * 64, array[1]);
+
+                    tField.LoadCandles();
+
+                    tField.RuinCandles();
 
                     foreach (Vector2 bottom in tField.baseTiles)
                     {
@@ -770,7 +794,13 @@ namespace StardewDruid.Location.Druid
                 foreach (List<int> array in code.Value)
                 {
 
-                    TerrainField tField = new(IconData.tilesheets.graveyard, array[1], new Vector2(array[0], code.Key) * 64, TerrainField.shadows.offset, true);
+                    GraveStone tField = new(new Vector2(array[0], code.Key) * 64, array[1]);
+
+                    tField.flip = true;
+
+                    tField.LoadCandles();
+
+                    tField.RuinCandles();
 
                     foreach (Vector2 bottom in tField.baseTiles)
                     {
@@ -789,59 +819,6 @@ namespace StardewDruid.Location.Druid
 
             }
 
-            // candles flowers
-            codes = new()
-            {
-                [6] = new() { },
-                [7] = new() { },
-                [8] = new() { },
-                [9] = new() { new() { 39, 35 }, new() { 40, 38 }, },
-                [10] = new() { new() { 9, 238 }, new() { 46, 237 }, },
-                [11] = new() { new() { 14, 37 }, new() { 38, 36 }, },
-                [12] = new() { },
-                [13] = new() { new() { 22, 38 }, },
-                [14] = new() { },
-                [15] = new() { new() { 7, 35 }, new() { 43, 35 }, new() { 47, 38 }, },
-                [16] = new() { },
-                [17] = new() { new() { 20, 238 }, new() { 35, 237 }, },
-                [18] = new() { new() { 9, 37 }, new() { 11, 38 }, new() { 15, 35 }, new() { 19, 36 }, new() { 21, 35 }, new() { 34, 36 }, new() { 42, 36 }, new() { 48, 37 }, },
-                [19] = new() { },
-                [20] = new() { },
-                [21] = new() { },
-                [22] = new() { },
-                [23] = new() { new() { 9, 35 }, new() { 17, 38 }, new() { 33, 37 }, new() { 38, 38 }, new() { 43, 36 }, new() { 46, 35 }, },
-                [24] = new() { },
-                [25] = new() { },
-                [26] = new() { new() { 13, 36 }, new() { 17, 35 }, new() { 38, 36 }, },
-                [27] = new() { },
-                [28] = new() { new() { 43, 35 }, },
-                [29] = new() { new() { 16, 36 }, },
-                [30] = new() { },
-                [31] = new() { },
-                [32] = new() { },
-
-            };
-
-            foreach (KeyValuePair<int, List<List<int>>> code in codes)
-            {
-
-                foreach (List<int> array in code.Value)
-                {
-
-                    GraveCandle tField;
-
-                    int tileKey = array[1];
-
-                    tField = new GraveCandle(IconData.tilesheets.graveyard, tileKey, new Vector2(array[0], code.Key) * 64, TerrainField.shadows.offset, array[0] > 27);
-
-                    tField.ruined = true;
-
-                    terrainFields.Add(tField);
-
-                }
-
-            }
-
             // ------------------------------------------------------
             // flowers
 
@@ -852,29 +829,29 @@ namespace StardewDruid.Location.Druid
                 [2] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [3] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [4] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 11, 2 }, new() { 12, 2 }, new() { 13, 2 }, new() { 14, 2 }, new() { 15, 2 }, new() { 16, 2 }, new() { 17, 2 }, new() { 18, 2 }, new() { 19, 2 }, new() { 20, 2 }, new() { 21, 2 }, new() { 22, 2 }, new() { 23, 2 }, new() { 24, 2 }, new() { 31, 2 }, new() { 32, 2 }, new() { 33, 2 }, new() { 34, 2 }, new() { 35, 2 }, new() { 36, 2 }, new() { 37, 2 }, new() { 38, 2 }, new() { 39, 2 }, new() { 40, 2 }, new() { 41, 2 }, new() { 42, 2 }, new() { 43, 2 }, new() { 44, 2 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
-                [5] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 11, 2 }, new() { 44, 2 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
+                [5] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 11, 2 }, new() { 24, 3 }, new() { 44, 2 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [6] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 11, 2 }, new() { 44, 2 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [7] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 11, 2 }, new() { 44, 2 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
-                [8] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 11, 2 }, new() { 20, 2 }, new() { 21, 2 }, new() { 22, 2 }, new() { 33, 2 }, new() { 34, 2 }, new() { 35, 2 }, new() { 44, 2 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
-                [9] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 20, 2 }, new() { 22, 2 }, new() { 33, 2 }, new() { 35, 2 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
+                [8] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 20, 2 }, new() { 21, 2 }, new() { 22, 2 }, new() { 33, 2 }, new() { 34, 2 }, new() { 35, 2 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
+                [9] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 6, 3 }, new() { 20, 2 }, new() { 22, 2 }, new() { 33, 2 }, new() { 35, 2 }, new() { 49, 3 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [10] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 7, 2 }, new() { 8, 2 }, new() { 9, 2 }, new() { 10, 2 }, new() { 11, 2 }, new() { 20, 2 }, new() { 21, 2 }, new() { 22, 2 }, new() { 33, 2 }, new() { 34, 2 }, new() { 35, 2 }, new() { 44, 2 }, new() { 45, 2 }, new() { 46, 2 }, new() { 47, 2 }, new() { 48, 2 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [11] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 7, 2 }, new() { 11, 2 }, new() { 44, 2 }, new() { 48, 2 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [12] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
-                [13] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
+                [13] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 32, 3 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [14] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [15] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [16] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [17] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
-                [18] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
+                [18] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 16, 3 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [19] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [20] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [21] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [22] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
-                [23] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
-                [24] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
+                [23] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 40, 3 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
+                [24] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 23, 3 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [25] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [26] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
-                [27] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
+                [27] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 14, 3 }, new() { 34, 3 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [28] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [29] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [30] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
@@ -883,6 +860,7 @@ namespace StardewDruid.Location.Druid
                 [33] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [34] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
                 [35] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
+                [36] = new() { new() { 0, 1 }, new() { 1, 1 }, new() { 2, 1 }, new() { 3, 1 }, new() { 4, 1 }, new() { 5, 1 }, new() { 6, 1 }, new() { 7, 1 }, new() { 8, 1 }, new() { 9, 1 }, new() { 10, 1 }, new() { 11, 1 }, new() { 12, 1 }, new() { 13, 1 }, new() { 14, 1 }, new() { 15, 1 }, new() { 16, 1 }, new() { 17, 1 }, new() { 18, 1 }, new() { 19, 1 }, new() { 20, 1 }, new() { 21, 1 }, new() { 22, 1 }, new() { 23, 1 }, new() { 24, 1 }, new() { 31, 1 }, new() { 32, 1 }, new() { 33, 1 }, new() { 34, 1 }, new() { 35, 1 }, new() { 36, 1 }, new() { 37, 1 }, new() { 38, 1 }, new() { 39, 1 }, new() { 40, 1 }, new() { 41, 1 }, new() { 42, 1 }, new() { 43, 1 }, new() { 44, 1 }, new() { 45, 1 }, new() { 46, 1 }, new() { 47, 1 }, new() { 48, 1 }, new() { 49, 1 }, new() { 50, 1 }, new() { 51, 1 }, new() { 52, 1 }, new() { 53, 1 }, new() { 54, 1 }, new() { 55, 1 }, },
 
             };
 
@@ -899,12 +877,45 @@ namespace StardewDruid.Location.Druid
                         {
                             case 1:
 
-                                if(Mod.instance.randomIndex.Next(8) == 0)
+                                switch (Mod.instance.randomIndex.Next(9))
                                 {
-                                    
-                                    Flower flower = new(new Vector2(array[0], code.Key) * 64, Flower.grasstypes.flower);
+                                    case 0:
 
-                                    terrainFields.Add(flower);
+                                        Flower flower = new(new Vector2(array[0], code.Key) * 64, Flower.grasstypes.flower)
+                                        {
+                                            disabled = true
+                                        };
+
+                                        grassFields.Add(flower);
+
+                                        break;
+                                    case 1:
+
+                                        Flower flowertwo = new(new Vector2(array[0], code.Key) * 64, Flower.grasstypes.flowertwo)
+                                        {
+                                            disabled = true
+                                        };
+
+                                        grassFields.Add(flowertwo);
+
+                                        break;
+                                    case 2:
+                                    case 3:
+                                    case 4:
+
+                                        Flower flowergrass = new(new Vector2(array[0], code.Key) * 64, Flower.grasstypes.grasstwo);
+
+                                        grassFields.Add(flowergrass);
+
+                                        break;
+
+                                    default:
+
+                                        Flower grass = new(new Vector2(array[0], code.Key) * 64, Flower.grasstypes.grass);
+
+                                        grassFields.Add(grass);
+
+                                        break;
 
                                 }
 
@@ -912,13 +923,22 @@ namespace StardewDruid.Location.Druid
 
                             case 2:
 
-                                Flower rose = new(new Vector2(array[0], code.Key) * 64, Flower.grasstypes.rose);
+                                Flower rose = new(new Vector2(array[0], code.Key) * 64, Flower.grasstypes.rose)
+                                {
+                                    disabled = true
+                                };
 
-                                terrainFields.Add(rose);
+                                grassFields.Add(rose);
 
                                 break;
 
+                            case 3:
 
+                                Flower debris = new(new Vector2(array[0], code.Key) * 64, Flower.grasstypes.debris);
+
+                                grassFields.Add(debris);
+
+                                break;
                         }
 
                     }

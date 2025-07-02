@@ -5,6 +5,7 @@ using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
@@ -35,9 +36,7 @@ namespace StardewDruid.Monster
           : base(vector, CombatModifier, name)
         {
 
-            overHead = new(16, -128);
-
-            SpawnData.MonsterDrops(this,SpawnData.drops.serpent);
+            SpawnData.MonsterDrops(this,SpawnData.Drops.serpent);
 
         }
 
@@ -46,7 +45,7 @@ namespace StardewDruid.Monster
 
             characterTexture = MonsterHandle.MonsterTexture(realName.Value);
 
-            serpentRender = new(realName.Value);
+            serpentRender = new(CharacterHandle.CharacterType(realName.Value));
 
             cooldownInterval = 120;
 
@@ -57,12 +56,6 @@ namespace StardewDruid.Monster
             basePulp = 35;
 
             // Hover
-
-            hoverInterval = 24;
-
-            hoverIncrements = 2;
-
-            hoverElevate = 0.75f;
 
             walkInterval = 9;
 
@@ -139,23 +132,29 @@ namespace StardewDruid.Monster
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            SerpentRenderAdditional serpentAdditional = new();
-
-            serpentAdditional.scale = GetScale();
+            SerpentRenderAdditional serpentAdditional = new()
+            {
+                scale = GetScale()
+            };
 
             serpentAdditional.position = GetPosition(localPosition, serpentAdditional.scale);
 
             serpentAdditional.layer = (float)StandingPixel.Y / 10000f + 0.001f;
 
-            serpentAdditional.flip = netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3;
+            serpentAdditional.flip = netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3);
 
             serpentAdditional.direction = netDirection.Value;
 
-            serpentAdditional.frame = hoverFrame;
+            //serpentAdditional.series = SerpentRenderAdditional.serpentseries.none;
 
-            serpentAdditional.series = SerpentRenderAdditional.serpentseries.hover;
+            //if (followIncrement == Vector2.Zero)
+            //{
 
-            DrawTextAboveHead(b, serpentAdditional.position);
+                serpentAdditional.series = SerpentRenderAdditional.serpentseries.hover;
+
+            //}
+
+            DrawTextAboveHead(b);
 
             DrawEmote(b, serpentAdditional.position, serpentAdditional.layer);
 
@@ -172,8 +171,6 @@ namespace StardewDruid.Monster
             else if (netSpecialActive.Value)
             {
 
-                serpentAdditional.frame = specialFrame;
-
                 serpentAdditional.series = SerpentRenderAdditional.serpentseries.special;
 
             }
@@ -182,11 +179,19 @@ namespace StardewDruid.Monster
 
         }
 
+        public override void update(GameTime time, GameLocation location)
+        {
+
+            base.update(time, location);
+
+            serpentRender.Update(inMotion == false);
+
+        }
+
         public override bool PerformSpecial(Vector2 farmerPosition)
         {
 
-
-            currentLocation.playSound("serpentHit");
+            //currentLocation.playSound("serpentHit");
 
             specialTimer = 180;
 
@@ -194,14 +199,20 @@ namespace StardewDruid.Monster
 
             SetCooldown(1);
 
-            SpellHandle beam = new(currentLocation, farmerPosition, GetBoundingBox().Center.ToVector2(), 192+(netMode.Value * 64), GetThreat());
+            SpellHandle beam = new(currentLocation, farmerPosition, GetBoundingBox().Center.ToVector2(), 192 + (netMode.Value * 64), GetThreat())
+            {
+                type = SpellHandle.Spells.echo,
 
-            beam.type = SpellHandle.spells.bubbleecho;
+                missile = MissileHandle.missiles.bubbleecho,
 
-            if(netScheme.Value == 2)
+                soundTrigger = SoundHandle.SoundCue.SerpentCall,
+
+            };
+
+            if (netScheme.Value == 2)
             {
 
-                beam.type = SpellHandle.spells.fireecho;
+                beam.missile = MissileHandle.missiles.fireecho;
 
             }
 
@@ -215,7 +226,7 @@ namespace StardewDruid.Monster
 
         }
 
-        public override bool PerformSweep()
+        public override bool PerformSweep(Vector2 target)
         {
             if (!sweepSet) { return false; }
 
@@ -251,15 +262,16 @@ namespace StardewDruid.Monster
             if (targets.Count > 0)
             {
 
-                SpellHandle bang = new(currentLocation, targets.First().Position, GetBoundingBox().Center.ToVector2(), 192, GetThreat());
+                SpellHandle bang = new(currentLocation, targets.First().Position, GetBoundingBox().Center.ToVector2(), 192, GetThreat())
+                {
+                    type = SpellHandle.Spells.explode,
 
-                bang.type = SpellHandle.spells.explode;
+                    display = IconData.impacts.flashbang,
 
-                bang.display = IconData.impacts.flashbang;
+                    instant = true,
 
-                bang.instant = true;
-
-                bang.boss = this;
+                    boss = this
+                };
 
                 Mod.instance.spellRegister.Add(bang);
 

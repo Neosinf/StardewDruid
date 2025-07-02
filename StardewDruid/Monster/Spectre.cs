@@ -5,6 +5,7 @@ using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewDruid.Render;
 using StardewModdingAPI;
 using StardewValley;
@@ -26,6 +27,8 @@ namespace StardewDruid.Monster
 
         public HoverRender hoverRender;
 
+        public float fadeOut;
+
         public Spectre()
         {
         }
@@ -34,9 +37,7 @@ namespace StardewDruid.Monster
           : base(vector, CombatModifier, name)
         {
 
-            overHead = new(16, -128);
-
-            SpawnData.MonsterDrops(this, SpawnData.drops.bat);
+            SpawnData.MonsterDrops(this, SpawnData.Drops.shadow);
 
         }
 
@@ -44,7 +45,7 @@ namespace StardewDruid.Monster
         {
             characterTexture = MonsterHandle.MonsterTexture(realName.Value);
 
-            hoverRender = new(realName.Value);
+            hoverRender = new(CharacterHandle.CharacterType(realName.Value));
 
             cooldownInterval = 240;
 
@@ -65,15 +66,11 @@ namespace StardewDruid.Monster
 
             baseJuice = 2;
 
-            basePulp = 20;
-
-            hoverInterval = 24;
-
-            hoverIncrements = 2;
-
-            hoverElevate = 1f;
+            basePulp = 12;
 
             walkInterval = 9;
+
+            fadeOut = 0.005f;
 
             gait = 2;
 
@@ -113,7 +110,7 @@ namespace StardewDruid.Monster
 
             specialFloor = 0;
 
-            specialInterval = 9;
+            specialInterval = 30;
 
             cooldownTimer = cooldownInterval;
 
@@ -152,25 +149,20 @@ namespace StardewDruid.Monster
 
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            HoverRenderAdditional hoverAdditional = new();
-
-            hoverAdditional.scale = GetScale();
+            HoverRenderAdditional hoverAdditional = new()
+            {
+                scale = GetScale()
+            };
 
             hoverAdditional.position = GetPosition(localPosition, hoverAdditional.scale);
 
             hoverAdditional.layer = (float)StandingPixel.Y / 10000f + 0.001f;
 
-            hoverAdditional.flip = netDirection.Value == 3 || netDirection.Value % 2 == 0 && netAlternative.Value == 3;
+            hoverAdditional.flip = netDirection.Value == 3 || (netDirection.Value % 2 == 0 && netAlternative.Value == 3);
 
-            hoverAdditional.fade = 0.75f;
+            hoverAdditional.fade = fadeOut;
 
             hoverAdditional.direction = netDirection.Value;
-
-            hoverAdditional.frame = hoverFrame;
-
-            hoverAdditional.series = HoverRenderAdditional.hoverseries.hover;
-
-            DrawEmote(b, localPosition, hoverAdditional.layer);
 
             if (netFlightActive.Value || netSmashActive.Value)
             {
@@ -182,10 +174,16 @@ namespace StardewDruid.Monster
                 hoverAdditional.series = HoverRenderAdditional.hoverseries.dash;
 
             }
-            else if (netSpecialActive.Value)
+            else if (netSweepActive.Value)
             {
 
+                hoverAdditional.series = HoverRenderAdditional.hoverseries.sweep;
+
                 hoverAdditional.frame = specialFrame;
+
+            }
+            else if (netSpecialActive.Value)
+            {
 
                 hoverAdditional.series = HoverRenderAdditional.hoverseries.special;
 
@@ -193,9 +191,27 @@ namespace StardewDruid.Monster
 
             hoverRender.DrawNormal(b, hoverAdditional);
 
+            DrawEmote(b, localPosition, hoverAdditional.layer);
+
         }
 
-        public override bool PerformSweep()
+        public override void update(GameTime time, GameLocation location)
+        {
+
+            base.update(time, location);
+
+            if (fadeOut < 0.75f)
+            {
+
+                fadeOut += 0.0025f;
+
+            }
+
+            hoverRender.Update(inMotion == false);
+
+        }
+
+        public override bool PerformSweep(Vector2 target)
         {
             if (!sweepSet) { return false; }
 
@@ -223,13 +239,16 @@ namespace StardewDruid.Monster
 
             SetCooldown(1);
 
-            SpellHandle beam = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 192 + (netScheme.Value * 64), GetThreat());
+            SpellHandle beam = new(currentLocation, target, GetBoundingBox().Center.ToVector2(), 192 + (netScheme.Value * 64), GetThreat())
+            {
+                type = SpellHandle.Spells.echo,
 
-            beam.type = SpellHandle.spells.deathecho;
+                missile = MissileHandle.missiles.deathecho,
 
-            beam.factor = 2 + netScheme.Value;
+                factor = 2 + netScheme.Value,
 
-            beam.boss = this;
+                boss = this
+            };
 
             Mod.instance.spellRegister.Add(beam);
 
@@ -245,15 +264,16 @@ namespace StardewDruid.Monster
             if (targets.Count > 0)
             {
 
-                SpellHandle bang = new(currentLocation, targets.First().Position, GetBoundingBox().Center.ToVector2(), 160, GetThreat());
+                SpellHandle bang = new(currentLocation, targets.First().Position, GetBoundingBox().Center.ToVector2(), 160, GetThreat())
+                {
+                    type = SpellHandle.Spells.explode,
 
-                bang.type = SpellHandle.spells.explode;
+                    display = IconData.impacts.flashbang,
 
-                bang.display = IconData.impacts.flashbang;
+                    instant = true,
 
-                bang.instant = true;
-
-                bang.boss = this;
+                    boss = this
+                };
 
                 Mod.instance.spellRegister.Add(bang);
 

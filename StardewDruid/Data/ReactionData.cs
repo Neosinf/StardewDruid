@@ -62,7 +62,7 @@ namespace StardewDruid.Data
             jester,
             corvid,
             lovebomb,
-
+            battle,
         }
 
         public enum portraits
@@ -76,116 +76,11 @@ namespace StardewDruid.Data
 
         }
 
-        public const string fullStop = ".";
-
         public const string questionMark = "?";
 
         public const string quotationMark = "\"";
 
-        public const string leftParenthesis = "(";
-
-
-        public static bool RecruitWitness(NPC witness)
-        {
-
-            if (!Context.IsMainPlayer)
-            {
-
-                return false;
-
-            }
-
-            if (Mod.instance.magic)
-            {
-
-                return false;
-
-            }
-
-            if (!RelicData.HasRelic(IconData.relics.heiress_gift))
-            {
-
-                return false;
-
-            }
-
-            if (!CharacterHandle.RecruitValid(witness))
-            {
-
-                return false;
-            
-            }
-
-            if (!Game1.player.friendshipData.TryGetValue(witness.Name, out var value))
-            {
-
-                return false;
-
-            }
-
-            if(value.Points < 0)
-            {
-
-                return false;
-
-            }
-
-            if (Mod.instance.save.recruits.Count >= 4)
-            {
-
-                Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.2").Tokens(new { name = witness.Name, }), 0, true);
-
-                return false;
-
-            }
-
-            Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles(IconData.relics.heiress_gift);
-
-            TemporaryAnimatedSprite animation = new(0, 2000, 1, 1, witness.Position + new Microsoft.Xna.Framework.Vector2(2, -124f), false, false)
-            {
-                sourceRect = relicRect,
-                sourceRectStartingPos = new(relicRect.X, relicRect.Y),
-                texture = Mod.instance.iconData.relicsTexture,
-                layerDepth = 900f,
-                delayBeforeAnimationStart = 175,
-                scale = 3f,
-
-            };
-
-            Game1.player.currentLocation.TemporarySprites.Add(animation);
-
-            Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.1").Tokens(new { name = witness.Name, }), 0, true);
-
-            List<CharacterHandle.characters> slots = new()
-            {
-                CharacterHandle.characters.recruit_one,
-                CharacterHandle.characters.recruit_two,
-                CharacterHandle.characters.recruit_three,
-                CharacterHandle.characters.recruit_four,
-
-            };
-
-            foreach(CharacterHandle.characters c in slots)
-            {
-
-                if (Mod.instance.save.recruits.ContainsKey(c))
-                {
-
-                    continue;
-
-                }
-
-                Mod.instance.save.recruits[c] = new() { name = witness.Name, level = 1, rite = Rite.rites.none, display = witness.displayName,};
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-        public static void ReactTo(NPC entity, reactions reaction, int friendship = 0, List<int> context = null)
+        public static void ReactTo(NPC entity, reactions reaction, int friendship, List<string> context)
         {
 
             Mod.instance.AddWitness(reaction, entity.Name);
@@ -211,6 +106,8 @@ namespace StardewDruid.Data
             }
 
             int affinity = VillagerData.Affinity(entity);
+
+            int reactionLimit = 4;
 
             if(affinity == -1)
             {
@@ -278,10 +175,8 @@ namespace StardewDruid.Data
 
                                     stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.50"));
 
-                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.52")
-                                        + place +
-                                        Mod.instance.Helper.Translation.Get("ReactionData.54") + shots[portraits.happy]);
-
+                                    stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.52").Tokens(new { place = place }) + shots[portraits.happy]);
+  
                                     break;
 
                                 case 6:
@@ -405,7 +300,7 @@ namespace StardewDruid.Data
 
                             entity.showTextAboveHead(alertListTwo[new Random().Next(3)]);
 
-                            stringList.Add(leftParenthesis + entity.Name + Mod.instance.Helper.Translation.Get("ReactionData.165") + shots[portraits.sad]);
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.165").Tokens(new { name = entity.Name }) + shots[portraits.sad]);
 
                             break;
 
@@ -457,8 +352,7 @@ namespace StardewDruid.Data
 
                             entity.doEmote(16, true);
 
-                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.209") +
-                                place + Mod.instance.Helper.Translation.Get("ReactionData.210"));
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.209").Tokens(new { place = place, }));
 
                             stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.212") + shots[portraits.sad]);
 
@@ -471,21 +365,13 @@ namespace StardewDruid.Data
 
                     string trick = Mod.instance.Helper.Translation.Get("ReactionData.220");
 
-                    switch (context.First())
+                    reactionLimit = -1;
+
+                    if(context.Count > 0)
                     {
 
-                        case 1:
-                            trick = Mod.instance.Helper.Translation.Get("ReactionData.226");
-                            break;
-                        case 2:
-                            trick = Mod.instance.Helper.Translation.Get("ReactionData.229");
-                            break;
-                        case 3:
-                            trick = Mod.instance.Helper.Translation.Get("ReactionData.232");
-                            break;
-                        case 4:
-                            trick = Mod.instance.Helper.Translation.Get("ReactionData.346.1");
-                            break;
+                        trick = context.First();
+
                     }
 
                     if (friendship >= 75)
@@ -504,9 +390,7 @@ namespace StardewDruid.Data
                             case 1:
                                 entity.doEmote(20, true);
 
-                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.253") +
-                                    trick +
-                                    Mod.instance.Helper.Translation.Get("ReactionData.255") + shots[portraits.love]);
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.253").Tokens(new { trick = trick })+ shots[portraits.love]);
 
 
                                 break;
@@ -587,7 +471,7 @@ namespace StardewDruid.Data
 
                                 entity.doEmote(32, true);
 
-                                stringList.Add(trick.ToUpper() + Mod.instance.Helper.Translation.Get("ReactionData.329") + shots[portraits.happy]);
+                                stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.329").Tokens(new { trick = trick.ToUpper() }) + shots[portraits.happy]);
 
                                 break;
 
@@ -770,7 +654,7 @@ namespace StardewDruid.Data
 
                             entity.doEmote(28, true);
 
-                            stringList.Add(leftParenthesis + entity.Name + Mod.instance.Helper.Translation.Get("ReactionData.490") + shots[portraits.angry]);
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.490").Tokens(new { name = entity.Name }) + shots[portraits.angry]);
 
                             break;
 
@@ -779,6 +663,8 @@ namespace StardewDruid.Data
                     break;
 
                 case reactions.stars:
+
+                    reactionLimit = 3;
 
                     entity.doEmote(8, true);
 
@@ -838,6 +724,8 @@ namespace StardewDruid.Data
                     break;
 
                 case reactions.mists:
+
+                    reactionLimit = 3;
 
                     entity.doEmote(16, true);
 
@@ -1419,15 +1307,16 @@ namespace StardewDruid.Data
 
                             break;
 
-                    };
+                    }
 
                     break;
 
 
                 case reactions.corvid:
 
-                    
-                    if(friendship > 15)
+                    reactionLimit = 5;
+
+                    if (friendship > 15)
                     {
 
                         entity.doEmote(20, true);
@@ -1476,7 +1365,7 @@ namespace StardewDruid.Data
 
                                 break;
 
-                        };
+                        }
 
                     }
                     else if (friendship > 0)
@@ -1528,7 +1417,7 @@ namespace StardewDruid.Data
 
                                 break;
 
-                        };
+                        }
 
                     }
                     else
@@ -1580,7 +1469,7 @@ namespace StardewDruid.Data
 
                                 break;
 
-                        };
+                        }
 
                     }
 
@@ -1588,10 +1477,80 @@ namespace StardewDruid.Data
 
                 case reactions.lovebomb:
 
+                    reactionLimit = -1;
+
                     entity.doEmote(20, true);
+
+                    int loveChoice = Mod.instance.randomIndex.Next(3);
+
+                    switch (affinity)
+                    {
+
+                        case 0:
+
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.398.1." + loveChoice.ToString()) + shots[portraits.love]);
+
+                            break;
+
+                        case 1:
+
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.398.2." + loveChoice.ToString()) + shots[portraits.love]);
+
+                            break;
+
+                        case 2:
+
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.398.3." + loveChoice.ToString()) + shots[portraits.love]);
+
+                            break;
+
+                        case 3:
+
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.398.4." + loveChoice.ToString()) + shots[portraits.love]);
+
+                            break;
+
+                        case 4:
+
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.398.5." + loveChoice.ToString()) + shots[portraits.love]);
+
+                            break;
+
+                        case 6:
+
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.398.6." + loveChoice.ToString()) + shots[portraits.love]);
+
+                            break;
+
+                        default:
+
+                            stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.398.7." + loveChoice.ToString()) + shots[portraits.love]);
+
+                            break;
+
+                    }
 
                     break;
 
+                case reactions.battle:
+
+                    reactionLimit = -1;
+
+                    int battleChoice = Mod.instance.randomIndex.Next(7);
+
+                    if(friendship > 0)
+                    {
+
+                        stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.398.8." + battleChoice.ToString()).Tokens(new { champion = context[0], opponent = context[1] }));
+
+                    }
+                    else
+                    {
+                        stringList.Add(Mod.instance.Helper.Translation.Get("ReactionData.398.9." + battleChoice.ToString()).Tokens(new { champion = context[0], opponent = context[1] }));
+
+                    }
+
+                    break;
             }
 
             // Limit Reactions
@@ -1599,10 +1558,16 @@ namespace StardewDruid.Data
             if (Mod.instance.reactionLimits.ContainsKey(reaction))
             {
 
-                if (Mod.instance.reactionLimits[reaction] > 4)
+                if(reactionLimit > 0)
                 {
 
-                    return;
+                    if (Mod.instance.reactionLimits[reaction] > reactionLimit)
+                    {
+
+                        return;
+
+                    }
+
 
                 }
 

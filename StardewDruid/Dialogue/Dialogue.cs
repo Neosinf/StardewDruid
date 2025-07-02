@@ -1,6 +1,6 @@
-﻿using StardewDruid.Character;
-using StardewDruid.Data;
+﻿using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Constants;
@@ -10,8 +10,8 @@ using StardewValley.Monsters;
 using StardewValley.Quests;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
-using static StardewDruid.Character.CharacterHandle;
 
 namespace StardewDruid.Dialogue
 {
@@ -35,6 +35,7 @@ namespace StardewDruid.Dialogue
         public enum subjects
         {
             quests,
+            talk,
             lore,
             relics,
             inventory,
@@ -101,11 +102,19 @@ namespace StardewDruid.Dialogue
 
             }
 
+            if(str == null)
+            {
+
+                return;
+
+            }
+
             List<Response> responseList = new List<Response>();
 
             List<subjects> trySubjects = new()
             {
                 subjects.quests,
+                subjects.talk,
                 subjects.lore,
                 subjects.relics,
                 subjects.inventory,
@@ -164,64 +173,30 @@ namespace StardewDruid.Dialogue
 
                     return null;
 
-                case subjects.lore:
+                case subjects.talk:
 
-                    return LoreData.LoreOption(character);
 
-                case subjects.inventory:
-
-                    if (!Context.IsMainPlayer)
-                    {
-                        return null;
-
-                    }
                     switch (character)
                     {
 
-                        case CharacterHandle.characters.Effigy:
+                        case CharacterHandle.characters.recruit_one:
+                        case CharacterHandle.characters.recruit_two:
+                        case CharacterHandle.characters.recruit_three:
+                        case CharacterHandle.characters.recruit_four:
 
-                            if (Mod.instance.questHandle.IsComplete(QuestHandle.questEffigy))
-                            {
-
-                                return Mod.instance.Helper.Translation.Get("CharacterHandle.329");
-
-                            }
-
-                            break;
-
-                        case CharacterHandle.characters.Jester:
-
-                            return Mod.instance.Helper.Translation.Get("CharacterHandle.340");
-
-                        case CharacterHandle.characters.Shadowtin:
-
-                            return Mod.instance.Helper.Translation.Get("CharacterHandle.351");
-
-
-                        case CharacterHandle.characters.Blackfeather:
-
-                            if (Mod.instance.questHandle.IsGiven(QuestHandle.questBlackfeather))
-                            {
-
-                                return Mod.instance.Helper.Translation.Get("CharacterHandle.323.2");
-
-                            }
-
-                            break;
-
-                        case CharacterHandle.characters.herbalism:
-
-                            return Mod.instance.Helper.Translation.Get("CharacterHandle.362");
-
-
-                        case CharacterHandle.characters.Aldebaran:
-
-                            return Mod.instance.Helper.Translation.Get("CharacterHandle.343.7");
-
+                            return DialogueTalk.DialogueOption(character);
 
                     }
 
-                    break;
+                    return null;
+
+                case subjects.lore:
+
+                    return DialogueLore.DialogueOption(character);
+
+                case subjects.inventory:
+
+                    return DialogueInventory.DialogueOption(character);
 
                 case subjects.relics:
 
@@ -259,63 +234,19 @@ namespace StardewDruid.Dialogue
 
                     return null;
 
+                case subjects.talk:
+
+                    DialogueTalk.DialogueGenerate(character);
+
+                    return null;
+
                 case subjects.lore:
 
-                    switch (character)
-                    {
-
-                        case CharacterHandle.characters.recruit_one:
-                        case CharacterHandle.characters.recruit_two:
-                        case CharacterHandle.characters.recruit_three:
-                        case CharacterHandle.characters.recruit_four:
-
-                            NPC villager = (Mod.instance.characters[character] as Recruit).villager;
-
-                            if (villager.canTalk() && villager.CurrentDialogue.Count > 0)
-                            {
-
-                                Game1.drawDialogue(villager);
-
-                            }
-
-                            return null;
-
-                    }
-
-                    List<LoreStory> stories = LoreData.RetrieveLore(character);
-
-                    foreach (LoreStory story in stories)
-                    {
-                        generate.intro = LoreData.LoreIntro(character);
-
-                        generate.responses.Add(story.question);
-
-                        generate.answers.Add(story.answer);
-
-                    }
-
-                    break;
+                    return DialogueLore.DialogueGenerate(character, index, answer);
 
                 case subjects.inventory:
 
-                    switch (character)
-                    {
-
-                        case CharacterHandle.characters.Aldebaran:
-
-                            CharacterHandle.OpenInventory(CharacterHandle.characters.Effigy);
-
-                            break;
-
-                        default:
-
-                            CharacterHandle.OpenInventory(character);
-
-                            break;
-
-                    };
-
-                    return null;
+                    return DialogueInventory.DialogueGenerate(character, index, answer);
 
                 case subjects.relics:
 
@@ -466,28 +397,7 @@ namespace StardewDruid.Dialogue
 
             Game1.player.CanMove = false;
 
-            if (Context.IsMultiplayer && Context.IsMainPlayer)
-            {
-
-                string queryName = npc == null ? "none" : npc.Name;
-
-                Data.QueryData queryData = new()
-                {
-
-                    name = queryName,
-
-                    value = answer,
-
-                    location = Game1.player.currentLocation.Name,
-
-                };
-
-                Mod.instance.EventQuery(queryData, Data.QueryData.queries.EventDialogue);
-
-            }
-
         }
-
 
         public virtual void RespondSpecialDialogue(Farmer visitor, string dialogueId)
         {
@@ -514,7 +424,13 @@ namespace StardewDruid.Dialogue
 
                 DialogueSpecial nextEntry = DialogueGenerator(characterType, currentSubject, currentIndex, answer);
 
-                if (nextEntry.intro == null)
+                if (nextEntry == null)
+                {
+
+                    return;
+
+                }
+                else if(nextEntry.intro == null)
                 {
 
                     return;
@@ -596,6 +512,7 @@ namespace StardewDruid.Dialogue
 
                     switch (Mod.instance.questHandle.quests[eventId].type)
                     {
+
                         case Data.Quest.questTypes.challenge:
 
                             dial = Data.Quest.questTypes.challenge;
@@ -613,6 +530,7 @@ namespace StardewDruid.Dialogue
                             dial = Data.Quest.questTypes.miscellaneous;
 
                             break;
+                    
                     }
 
                 }

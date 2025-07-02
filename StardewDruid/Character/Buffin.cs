@@ -5,11 +5,12 @@ using Netcode;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Fates;
 using StardewDruid.Cast.Weald;
+using StardewDruid.Data;
 using StardewDruid.Dialogue;
-using StardewDruid.Event;
-
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Buffs;
 using StardewValley.Characters;
 using StardewValley.Monsters;
 using StardewValley.Network;
@@ -41,20 +42,93 @@ namespace StardewDruid.Character
 
             setScale = 3.5f;
 
-            idleFrames[idles.standby] = new()
-            {
-                [0] = new() { new(0, 256, 32, 32), new(32, 256, 32, 32), },
-            };
-
             restSet = true;
 
-            idleFrames[idles.rest] = new()
-            {
-                [0] = new() { new(64, 256, 32, 32), },
+        }
 
-            };
+        public override List<StardewValley.Monsters.Monster> FindMonsters()
+        {
+
+            return ModUtility.MonsterProximity(currentLocation, new() { Position, }, 640f, true);
 
         }
+
+        public override void ConnectSweep()
+        {
+
+            SpellHandle swipeEffect = new(Game1.player, Position, 192, Mod.instance.CombatDamage() / 2)
+            {
+                instant = true,
+
+                sound = SpellHandle.Sounds.swordswipe,
+
+                display = IconData.impacts.flashbang
+            };
+
+            swipeEffect.added.Add(SpellHandle.Effects.push);
+
+            Mod.instance.spellRegister.Add(swipeEffect);
+
+        }
+
+        public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
+        {
+
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.questJester))
+            {
+
+                return false;
+
+            }
+
+            ResetActives();
+
+            netSpecial.Set((int)specials.special);
+
+            specialTimer = 90;
+
+            SetCooldown(specialTimer, 1f);
+
+            LookAtTarget(monster.Position, true);
+
+            SpellHandle beam = new(Game1.player, monster.Position, 320, Mod.instance.CombatDamage() / 2)
+            {
+                origin = Position,
+
+                type = SpellHandle.Spells.echo,
+
+                missile = MissileHandle.missiles.curseecho
+            };
+
+            switch (Mod.instance.randomIndex.Next(6))
+            {
+                case 0:
+
+                    beam.added.Add(SpellHandle.Effects.daze);
+                    break;
+
+                case 1:
+
+                    beam.added.Add(SpellHandle.Effects.glare);
+                    break;
+
+                case 2:
+
+                    beam.added.Add(SpellHandle.Effects.morph);
+                    break;
+
+                case 3:
+
+                    beam.added.Add(SpellHandle.Effects.doom);
+                    break;
+            }
+
+            Mod.instance.spellRegister.Add(beam);
+
+            return true;
+
+        }
+
 
     }
 

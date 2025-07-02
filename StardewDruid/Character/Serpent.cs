@@ -5,21 +5,12 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using StardewDruid.Render;
+using StardewDruid.Handle;
 
 namespace StardewDruid.Character
 {
     public class Serpent: StardewDruid.Character.Character
     {
-
-        public int hoverHeight;
-
-        public int hoverInterval;
-
-        public int hoverIncrements;
-
-        public float hoverElevate;
-
-        public int hoverFrame;
 
         public SerpentRender serpentRender;
 
@@ -45,21 +36,13 @@ namespace StardewDruid.Character
 
             characterTexture = CharacterHandle.CharacterTexture(characterType);
 
-            serpentRender = new(characterType.ToString());
+            serpentRender = new(characterType);
 
             LoadIntervals();
 
             setScale = 4f;
 
-            overhead = 112;
-
             gait = 1.8f;
-
-            hoverInterval = 24;
-
-            hoverIncrements = 2;
-
-            hoverElevate = 0.75f;
 
             modeActive = mode.random;
 
@@ -87,34 +70,40 @@ namespace StardewDruid.Character
         public override void drawAboveAlwaysFrontLayer(SpriteBatch b)
         {
 
-            base.drawAboveAlwaysFrontLayer(b);
-
             if (IsInvisible || !Utility.isOnScreen(Position, 128) || characterTexture == null)
             {
                 return;
             }
 
+            DrawEmote(b);
+
             Vector2 localPosition = Game1.GlobalToLocal(Position);
 
-            SerpentRenderAdditional hoverAdditional = new();
+            Vector2 usePosition = SpritePosition(localPosition);
 
-            hoverAdditional.scale = setScale;
+            DrawCharacter(b, usePosition);
 
-            hoverAdditional.position = SpritePosition(localPosition);
+        }
 
-            hoverAdditional.layer = (float)StandingPixel.Y / 10000f + 0.001f;
+        public override void DrawCharacter(SpriteBatch b, Vector2 usePosition)
+        {
 
-            hoverAdditional.flip = SpriteFlip();
+            SerpentRenderAdditional hoverAdditional = new()
+            {
+                scale = setScale,
 
-            hoverAdditional.fade = fadeOut == 0 ? 1f : fadeOut;
+                position = usePosition,
 
-            hoverAdditional.direction = netDirection.Value;
+                layer = (float)StandingPixel.Y / 10000f + 0.001f,
 
-            hoverAdditional.frame = hoverFrame;
+                flip = SpriteFlip(),
 
-            hoverAdditional.series = SerpentRenderAdditional.serpentseries.hover;
+                fade = fadeOut,
 
-            DrawEmote(b);
+                direction = netDirection.Value,
+
+                series = SerpentRenderAdditional.serpentseries.none,
+            };
 
             if (netDash.Value != 0)
             {
@@ -134,23 +123,17 @@ namespace StardewDruid.Character
                 hoverAdditional.series = SerpentRenderAdditional.serpentseries.special;
 
             }
-
-            if((movements)netMovement.Value == movements.run)
+            else
+            if ((movements)netMovement.Value == movements.run)
             {
 
-                hoverAdditional.series = SerpentRenderAdditional.serpentseries.dash;
+                hoverAdditional.series = SerpentRenderAdditional.serpentseries.tackle;
 
-                if(hoverAdditional.frame == 3)
-                {
-
-                    hoverAdditional.frame = 1;
-
-                }
+                hoverAdditional.frame = (int)((Game1.currentGameTime.TotalGameTime.TotalMilliseconds % 2000) / 500);
 
             }
 
             serpentRender.DrawNormal(b,hoverAdditional);
-
 
         }
 
@@ -161,51 +144,12 @@ namespace StardewDruid.Character
 
         }
 
-
-        public override Vector2 SpritePosition(Vector2 localPosition)
+        public override void normalUpdate(GameTime time, GameLocation location)
         {
-            
-            Vector2 spritePosition = base.SpritePosition(localPosition);
 
-            if (hoverInterval > 0)
-            {
+            base.normalUpdate(time, location);
 
-                spritePosition.Y -= (float)Math.Abs(hoverHeight) * hoverElevate;
-
-            }
-
-            return spritePosition;
-
-
-        }
-
-        public override void update(GameTime time, GameLocation location)
-        {
-            
-            base.update(time, location);
-
-            hoverHeight++;
-
-            int heightLimit = (hoverIncrements * hoverInterval);
-
-            if (hoverHeight > heightLimit)
-            {
-                hoverHeight -= (heightLimit * 2);
-            }
-
-            if (Math.Abs(hoverHeight) % hoverInterval == 0)
-            {
-
-                hoverFrame++;
-
-                if (hoverFrame >= walkFrames[0].Count)
-                {
-
-                    hoverFrame = 0;
-
-                }
-
-            }
+            serpentRender.Update(pathActive == pathing.none);
 
         }
 
@@ -213,6 +157,13 @@ namespace StardewDruid.Character
         {
 
             return SmashAttack(monster);
+
+        }
+
+        public override Microsoft.Xna.Framework.Rectangle OverheadPortrait()
+        {
+
+            return new Rectangle(48, 16, 16, 16);
 
         }
 

@@ -4,6 +4,7 @@ using StardewDruid.Cast;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Data;
 using StardewDruid.Event;
+using StardewDruid.Handle;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.GameData.Minecarts;
@@ -42,7 +43,7 @@ namespace StardewDruid.Cast.Stars
 
                 }
 
-                if (Vector2.Distance(origin, Game1.player.Position) > 32)
+                if (Vector2.Distance(origin, Game1.player.Position) > 32 && !Mod.instance.ShiftButtonHeld())
                 {
 
                     return false;
@@ -75,7 +76,7 @@ namespace StardewDruid.Cast.Stars
                 if (decimalCounter == 3)
                 {
 
-                    Mod.instance.rite.channel(IconData.skies.night,60);
+                    Mod.instance.rite.Channel(IconData.skies.night,60);
 
                     channel = IconData.skies.night;
 
@@ -99,6 +100,8 @@ namespace StardewDruid.Cast.Stars
                         water = true;
                         meteor = true;
                     }
+
+                    Mod.instance.rite.ChargeSet(IconData.cursors.starsCharge);
 
                 }
 
@@ -131,30 +134,31 @@ namespace StardewDruid.Cast.Stars
                 Mod.instance.questHandle.UpdateTask(QuestHandle.starsTwo, 1);
             }
 
-            SpellHandle hole = new(Game1.player, target, 5 * 64, Mod.instance.CombatDamage() * 4);
+            SpellHandle hole = new(Game1.player, target, 5 * 64, Mod.instance.CombatDamage() * 4)
+            {
+                type = SpellHandle.Spells.blackhole
+            };
 
-            hole.type = SpellHandle.spells.blackhole;
-
-            int castCost = 48;
+            costCounter = 48;
 
             if (water)
             {
 
-                hole.added = new() { SpellHandle.effects.tornado, };
+                hole.added = new() { SpellHandle.Effects.tornado, };
 
-                castCost = 96;
+                costCounter = 96;
 
             }
             else if (Game1.player.CurrentTool is not MeleeWeapon || Game1.player.CurrentTool.isScythe())
             {
 
-                hole.added = new() { SpellHandle.effects.harvest, };
+                hole.added = new() { SpellHandle.Effects.harvest, };
 
             }
             else
             {
 
-                hole.added = new() { SpellHandle.effects.gravity, };
+                hole.added = new() { SpellHandle.Effects.gravity, };
 
             }
 
@@ -162,9 +166,7 @@ namespace StardewDruid.Cast.Stars
 
             blackhole = true;
 
-            Mod.instance.rite.castCost = castCost;
-
-            Mod.instance.rite.ApplyCost();
+            Rite.ApplyCost(costCounter);
 
         }
 

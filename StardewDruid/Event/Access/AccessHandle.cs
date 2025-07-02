@@ -159,7 +159,7 @@ namespace StardewDruid.Event.Access
 
                 case types.stair:
 
-                    buildings.Tiles[tilex, tiley] = null;
+                   /* buildings.Tiles[tilex, tiley] = null;
 
                     buildings.Tiles[tilex + 1, tiley] = null;
 
@@ -169,7 +169,7 @@ namespace StardewDruid.Event.Access
 
                     buildings.Tiles[tilex + 1, tiley + 1] = null;
 
-                    buildings.Tiles[tilex + 2, tiley + 1] = null;
+                    buildings.Tiles[tilex + 2, tiley + 1] = null;*/
 
                     break;
 
@@ -224,7 +224,7 @@ namespace StardewDruid.Event.Access
             if (Utility.isOnScreen(start * 64, 64))
             {
 
-                Mod.instance.spellRegister.Add(new(start * 64 + new Vector2(64, 0), 384, IconData.impacts.impact, new()) { sound = SpellHandle.sounds.boulderBreak, });
+                Mod.instance.spellRegister.Add(new(start * 64 + new Vector2(64, 0), 384, IconData.impacts.impact, new()) { displayRadius = 5, sound = SpellHandle.Sounds.boulderBreak, });
 
             }
 
@@ -260,7 +260,7 @@ namespace StardewDruid.Event.Access
 
                 case types.stair:
 
-                    buildings.Tiles[tilex, tiley] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 0);
+                    /*buildings.Tiles[tilex, tiley] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 0);
 
                     buildings.Tiles[tilex, tiley].TileIndexProperties.Add("Passable", new(true));
 
@@ -274,7 +274,7 @@ namespace StardewDruid.Event.Access
 
                     buildings.Tiles[tilex + 1, tiley + 1] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 13);
 
-                    buildings.Tiles[tilex + 2, tiley + 1] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 14);
+                    buildings.Tiles[tilex + 2, tiley + 1] = new StaticTile(buildings, tileSheet, BlendMode.Alpha, 14);*/
 
                     break;
 
@@ -328,9 +328,9 @@ namespace StardewDruid.Event.Access
             if (Utility.isOnScreen(start * 64, 64) && animate)
             {
 
-                Mod.instance.spellRegister.Add(new(start * 64 + new Vector2(64, 0), 384, IconData.impacts.impact, new()) { sound = SpellHandle.sounds.boulderBreak, });
+                Mod.instance.spellRegister.Add(new(start * 64 + new Vector2(64, 0), 384, IconData.impacts.impact, new()) { displayRadius = 5, sound = SpellHandle.Sounds.boulderBreak, });
 
-                location.playSound(SpellHandle.sounds.secret1.ToString());
+                location.playSound(SpellHandle.Sounds.secret1.ToString());
 
             }
 

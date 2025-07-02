@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Data;
+using StardewDruid.Handle;
 using StardewDruid.Render;
 using StardewValley;
 using System;
@@ -9,20 +10,18 @@ using System;
 
 namespace StardewDruid.Character
 {
-    public class Linus : StardewDruid.Character.Recruit
+    public class Linus : StardewDruid.Character.Character
     {
 
         public BearRender bearRender;
-        public CueWrapper growlCue;
-        public CueWrapper growlCueTwo;
-        public CueWrapper growlCueThree;
 
         public Linus()
         {
+
         }
 
-        public Linus(CharacterHandle.characters type, NPC villager)
-          : base(type, villager)
+        public Linus(CharacterHandle.characters type)
+          : base(type)
         {
 
 
@@ -38,14 +37,14 @@ namespace StardewDruid.Character
 
             }
 
-            if (villager == null)
+            characterTexture = CharacterHandle.CharacterTexture(CharacterHandle.characters.Linus);
+
+            if (Portrait == null)
             {
 
-                villager = CharacterHandle.FindVillager("Linus");
+                Portrait = CharacterHandle.CharacterPortrait(CharacterHandle.characters.Linus);
 
             }
-
-            characterTexture = CharacterHandle.CharacterTexture(CharacterHandle.characters.Linus);
 
             LoadIntervals();
 
@@ -59,11 +58,11 @@ namespace StardewDruid.Character
 
             specialFrames = CharacterRender.HumanoidSpecial();
 
-            bearRender = new("YellowBear");
+            bearRender = new("GreyBear");
 
             dashFrames[dashes.smash] = bearRender.dashFrames;
 
-            specialFrames[specials.special] = bearRender.sweepFrames;
+            specialFrames[specials.special] = bearRender.specialFrames;
 
             specialFrames[specials.sweep] = bearRender.sweepFrames;
 
@@ -75,28 +74,9 @@ namespace StardewDruid.Character
 
             specialFloors[specials.sweep] = 0;
 
-            specialCeilings[specials.special] = 0;
+            specialCeilings[specials.special] = 8;
 
             specialCeilings[specials.sweep] = 5;
-
-            growlCue = Game1.soundBank.GetCue("BearGrowl") as CueWrapper;
-
-            growlCue.Volume *= 2;
-
-            growlCue.Pitch /= 2;
-
-            growlCueTwo = Game1.soundBank.GetCue("BearGrowlTwo") as CueWrapper;
-
-            growlCueTwo.Volume *= 2;
-
-            growlCueTwo.Pitch /= 2;
-
-            growlCueThree = Game1.soundBank.GetCue("BearGrowlThree") as CueWrapper;
-
-            growlCueThree.Volume *= 2;
-
-            growlCueThree.Pitch /= 2;
-
 
             loadedOut = true;
 
@@ -109,23 +89,50 @@ namespace StardewDruid.Character
 
             int dashSetto = Math.Min(dashFrame, (dashFrames[(dashes)netDash.Value][dashSeries].Count - 1));
 
-            BearRenderAdditional additional = new();
+            BearRenderAdditional additional = new()
+            {
+                layer = drawLayer,
 
-            additional.layer = drawLayer;
+                scale = setScale,
 
-            additional.scale = setScale;
+                position = spritePosition,
 
-            additional.position = spritePosition;
+                flip = SpriteFlip(),
 
-            additional.flip = SpriteFlip();
+                fade = fade,
 
-            additional.fade = fade;
+                series = BearRenderAdditional.bearseries.dash,
 
-            additional.series = BearRenderAdditional.bearseries.dash;
+                direction = dashSeries,
 
-            additional.direction = dashSeries;
+                frame = dashSetto
+            };
 
-            additional.frame = dashSetto;
+            bearRender.DrawNormal(b, additional);
+
+        }
+
+        public override void DrawLaunch(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
+        {
+
+            BearRenderAdditional additional = new()
+            {
+                layer = drawLayer,
+
+                scale = setScale,
+
+                position = spritePosition,
+
+                flip = SpriteFlip(),
+
+                fade = fade,
+
+                direction = netDirection.Value,
+
+                frame = specialFrame,
+
+                series = BearRenderAdditional.bearseries.special,
+            };
 
             bearRender.DrawNormal(b, additional);
 
@@ -134,41 +141,122 @@ namespace StardewDruid.Character
         public override void DrawSweep(SpriteBatch b, Vector2 spritePosition, float drawLayer, float fade)
         {
 
-            BearRenderAdditional additional = new();
+            BearRenderAdditional additional = new()
+            {
+                layer = drawLayer,
 
-            additional.layer = drawLayer;
+                scale = setScale,
 
-            additional.scale = setScale;
+                position = spritePosition,
 
-            additional.position = spritePosition;
+                flip = SpriteFlip(),
 
-            additional.flip = SpriteFlip();
+                fade = fade,
 
-            additional.fade = fade;
+                direction = netDirection.Value,
 
-            additional.direction = netDirection.Value;
+                frame = specialFrame,
 
-            additional.frame = specialFrame;
+                series = BearRenderAdditional.bearseries.sweep
 
-            additional.mode = BearRenderAdditional.bearmode.growl;
-
-            additional.series = BearRenderAdditional.bearseries.sweep;
+            };
 
             bearRender.DrawNormal(b, additional);
 
         }
 
-        public override bool MonsterFear()
+        public override void UpdateSpecial()
         {
 
-            return false;
+            base.UpdateSpecial();
+
+            switch (specialTimer)
+            {
+                case 48:
+
+                    if (netSpecial.Value == (int)specials.special)
+                    {
+
+                        Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BearRoar);
+
+                    }
+
+                    break;
+
+                case 36:
+
+                    if (netSpecial.Value == (int)specials.sweep)
+                    {
+
+                        if (Mod.instance.randomIndex.Next(2) == 0)
+                        {
+
+                            return;
+
+                        }
+
+                        if (Mod.instance.sounds.ActiveCue(Handle.SoundHandle.SoundCue.BearGrowl))
+                        {
+
+                            return;
+
+                        }
+
+                        if (Mod.instance.sounds.ActiveCue(Handle.SoundHandle.SoundCue.BearRoar))
+                        {
+
+                            return;
+
+                        }
+
+                        Mod.instance.sounds.PlayCue(Handle.SoundHandle.SoundCue.BearGrowl);
+
+                    }
+
+                    break;
+
+            }
 
         }
 
         public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
         {
 
-            SmashAttack(monster);
+            ResetActives();
+
+            netSpecial.Set((int)specials.launch);
+
+            specialTimer = 72;
+
+            SetCooldown(specialTimer, 1f);
+
+            SpellHandle shapeshift = new(Position, 256, IconData.impacts.smoke, new())
+            {
+
+                displayRadius = 3,
+
+                instant = true,
+
+            };
+
+            Mod.instance.spellRegister.Add(shapeshift);
+
+            SpellHandle explode = new(monster.Position, 256, IconData.impacts.flashbang, new())
+            {
+
+                displayRadius = 5,
+
+                instant = true,
+
+                sound = SpellHandle.Sounds.warrior,
+
+                counter = -36,
+
+                damageMonsters = CombatDamage() / 3,
+
+            };
+
+            Mod.instance.spellRegister.Add(explode);
 
             return true;
 
@@ -180,20 +268,23 @@ namespace StardewDruid.Character
             if (base.SweepAttack(monster))
             {
 
-                SpellHandle explode = new(Position, 256, IconData.impacts.smoke, new());
+                SpellHandle shapeshift = new(Position, 256, IconData.impacts.smoke, new())
+                {
 
-                explode.instant = true;
+                    displayRadius = 3,
 
-                explode.sound = SpellHandle.sounds.warrior;
+                    instant = true,
 
-                Mod.instance.spellRegister.Add(explode);
+                };
+
+                Mod.instance.spellRegister.Add(shapeshift);
 
                 return true;
 
             }
 
             return false;
-        
+
         }
 
         public override bool SmashAttack(StardewValley.Monsters.Monster monster)
@@ -202,13 +293,14 @@ namespace StardewDruid.Character
             if (base.SmashAttack(monster))
             {
 
-                SpellHandle explode = new(Position, 256, IconData.impacts.smoke, new());
+                SpellHandle explode = new(Position, 256, IconData.impacts.smoke, new())
+                {
+                    displayRadius = 3,
 
-                explode.instant = true;
+                    instant = true
+                };
 
                 Mod.instance.spellRegister.Add(explode);
-
-                BearGrowl();
 
                 return true;
 
@@ -221,93 +313,20 @@ namespace StardewDruid.Character
         public override void ConnectSweep()
         {
 
-            SpellHandle swipeEffect = new(Game1.player, Position, 256, Mod.instance.CombatDamage() / 2);
+            SpellHandle swipeEffect = new(Game1.player, Position, 256, CombatDamage() / 2)
+            {
 
-            swipeEffect.type = SpellHandle.spells.swipe;
+                type = SpellHandle.Spells.swipe,
 
-            swipeEffect.added = new() { SpellHandle.effects.push, };
+                added = new() { SpellHandle.Effects.push, },
 
-            swipeEffect.sound = SpellHandle.sounds.swordswipe;
+                sound = SpellHandle.Sounds.swordswipe,
 
-            swipeEffect.display = IconData.impacts.flashbang;
+                display = IconData.impacts.flashbang
+
+            };
 
             Mod.instance.spellRegister.Add(swipeEffect);
-
-        }
-
-        public override bool TrackNotReady()
-        {
-
-            if (villager.Name == Game1.player.spouse)
-            {
-
-                return false;
-
-            }
-            if (Game1.timeOfDay < 800)
-            {
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-        public override bool TrackOutOfTime()
-        {
-
-            if (villager.Name == Game1.player.spouse)
-            {
-
-                return false;
-
-            }
-
-            if (Game1.timeOfDay > 2200)
-            {
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-        public void BearGrowl()
-        {
-
-            if (growlCue.IsPlaying || growlCueTwo.IsPlaying || growlCueThree.IsPlaying)
-            {
-
-                return;
-
-            }
-
-            switch (Mod.instance.randomIndex.Next(6))
-            {
-
-                case 0:
-
-                    growlCue.Play();
-
-                    break;
-
-                case 1:
-
-                    growlCueTwo.Play();
-
-                    break;
-
-                case 2:
-
-                    growlCueThree.Play();
-
-                    break;
-
-            }
 
         }
 

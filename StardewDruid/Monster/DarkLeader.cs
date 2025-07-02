@@ -49,8 +49,6 @@ namespace StardewDruid.Monster
 
             weaponRender.LoadWeapon(WeaponRender.weapons.carnyx);
 
-            overHead = new(16, -144);
-
             loadedOut = true;
 
         }
