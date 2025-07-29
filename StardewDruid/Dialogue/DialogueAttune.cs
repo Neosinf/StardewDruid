@@ -93,7 +93,7 @@ namespace StardewDruid.Dialogue
                     if (Mod.instance.questHandle.IsComplete(QuestHandle.questBlackfeather))
                     {
 
-                        return AttunementIntro(Rite.Rites.bones);
+                        return AttunementIntro(Rite.Rites.witch);
 
                     }
 
@@ -307,7 +307,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.crow_brazier:
 
-                    attuneUpdate = AttunementUpdate(Rite.Rites.bones);
+                    attuneUpdate = AttunementUpdate(Rite.Rites.witch);
 
                     switch (attuneUpdate)
                     {
@@ -393,7 +393,7 @@ namespace StardewDruid.Dialogue
 
             }
 
-            return Mod.instance.Helper.Translation.Get("CharacterHandle.1584").Tokens(new { tool = Game1.player.CurrentTool.Name, rite = StringData.RiteNames(compare), });
+            return Mod.instance.Helper.Translation.Get("CharacterHandle.1584").Tokens(new { tool = Game1.player.CurrentTool.Name, rite = RiteData.RiteNames(compare), });
 
         }
 

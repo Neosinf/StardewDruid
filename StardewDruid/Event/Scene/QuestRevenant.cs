@@ -282,7 +282,7 @@ namespace StardewDruid.Event.Scene
 
             mainEvent = true;
 
-            activeLimit = -1;
+            
 
         }
 
@@ -318,12 +318,10 @@ namespace StardewDruid.Event.Scene
 
         }
 
-        public override bool AttemptReset()
+        public override void OnLocationAbort()
         {
 
-            Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
-
-            return false;
+            Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
 
         }
 
@@ -1805,11 +1803,9 @@ namespace StardewDruid.Event.Scene
 
                         Winds windsNew = new();
 
-                        windsNew.EventSetup(eventVectors[157] * 64, Rite.eventDeathwinds);
+                        windsNew.EventSetup(Game1.player, eventVectors[157] * 64, Rite.eventDeathwinds);
 
                         windsNew.EventActivate();
-
-                        windsNew.eventLocked = true;
 
                         windsNew.WindArray(new(), WispHandle.wisptypes.death, 16);
 
@@ -2373,7 +2369,7 @@ namespace StardewDruid.Event.Scene
 
                 sweep.scheme = IconData.schemes.death;
 
-                sweep.factor = d;
+                sweep.displayFactor = d;
 
                 sweep.added = new() { SpellHandle.Effects.bigcrits, };
 

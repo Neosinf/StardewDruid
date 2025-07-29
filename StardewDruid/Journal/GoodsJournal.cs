@@ -36,7 +36,7 @@ namespace StardewDruid.Journal
 
             type = journalTypes.goods;
 
-            title = StringData.Strings(StringData.stringkeys.goods);
+            title = JournalData.JournalTitle(type);
 
             pagination = 0;
 
@@ -58,12 +58,17 @@ namespace StardewDruid.Journal
             interfaceComponents = new()
             {
 
-                [101] = addButton(journalButtons.herbalism),
+                [101] = addButton(journalButtons.openQuests),
+                [102] = addButton(journalButtons.openMasteries),
+                [103] = addButton(journalButtons.openRelics),
+                [104] = addButton(journalButtons.openAlchemy),
+                [105] = addButton(journalButtons.openPotions),
+                [106] = addButton(journalButtons.openCompanions),
+                [107] = addButton(journalButtons.openDragonomicon),
 
                 [201] = addButton(journalButtons.back),
                 [202] = addButton(journalButtons.start),
-                [203] = addButton(journalButtons.bombs),
-                [204] = addButton(journalButtons.omens),
+                [203] = addButton(journalButtons.openPowders),
 
                 [301] = addButton(journalButtons.exit),
 
@@ -92,7 +97,7 @@ namespace StardewDruid.Journal
 
                 case journalButtons.back:
 
-                    DruidJournal.openJournal(journalTypes.omens);
+                    DruidJournal.openJournal(journalTypes.powders);
 
                     return;
 

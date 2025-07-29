@@ -53,7 +53,7 @@ namespace StardewDruid.Character
 
             LoadIntervals();
 
-            if (Mod.instance.questHandle.IsComplete(QuestHandle.bonesOne))
+            if (Mod.instance.questHandle.IsComplete(QuestHandle.witchOne))
             {
 
                 cooldownInterval = 225;
@@ -204,7 +204,7 @@ namespace StardewDruid.Character
             }
 
             b.Draw(
-                Mod.instance.iconData.cursorTexture, 
+                Mod.instance.iconData.shadowTexture, 
                 shadowPosition, 
                 Mod.instance.iconData.shadowRectangle, 
                 Color.White * 0.15f * fade, 
@@ -418,10 +418,10 @@ namespace StardewDruid.Character
         public override void ConnectSweep()
         {
 
-            if (!Mod.instance.questHandle.IsComplete(QuestHandle.bonesOne))
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.witchOne))
             {
 
-                Mod.instance.questHandle.UpdateTask(QuestHandle.bonesOne, 1);
+                Mod.instance.questHandle.UpdateTask(QuestHandle.witchOne, 1);
 
             }
 
@@ -435,7 +435,7 @@ namespace StardewDruid.Character
 
                 display = IconData.impacts.flashbang,
 
-                scheme = IconData.schemes.bones
+                scheme = IconData.schemes.witch
             };
 
             Mod.instance.spellRegister.Add(swipeEffect);
@@ -493,7 +493,7 @@ namespace StardewDruid.Character
         public bool ValidVillagerTarget()
         {
 
-            if (!Mod.instance.questHandle.IsGiven(QuestHandle.bonesThree))
+            if (!Mod.instance.questHandle.IsGiven(QuestHandle.witchThree))
             {
                 
                 return false;
@@ -549,7 +549,7 @@ namespace StardewDruid.Character
         public bool ValidDebrisTarget()
         {
 
-            if (!Mod.instance.questHandle.IsGiven(QuestHandle.bonesTwo))
+            if (!Mod.instance.questHandle.IsGiven(QuestHandle.witchTwo))
             {
                 
                 return false;
@@ -658,7 +658,7 @@ namespace StardewDruid.Character
 
             }
 
-            if (!Mod.instance.questHandle.IsComplete(QuestHandle.bonesTwo))
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.witchTwo))
             {
 
                 return false;
@@ -776,7 +776,7 @@ namespace StardewDruid.Character
 
                     int friendshipBehaviour = Mod.instance.randomIndex.Next(2);
 
-                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.bonesThree))
+                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.witchThree))
                     {
 
                         friendshipBehaviour = 1;
@@ -884,10 +884,10 @@ namespace StardewDruid.Character
 
                     ReactionData.ReactTo(witness, ReactionData.reactions.corvid, friendship, new());
 
-                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.bonesThree))
+                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.witchThree))
                     {
 
-                        Mod.instance.questHandle.UpdateTask(QuestHandle.bonesThree, 1);
+                        Mod.instance.questHandle.UpdateTask(QuestHandle.witchThree, 1);
 
                     }
 
@@ -917,7 +917,7 @@ namespace StardewDruid.Character
 
             }
 
-            if(!Mod.instance.questHandle.IsComplete(QuestHandle.bonesTwo))
+            if(!Mod.instance.questHandle.IsComplete(QuestHandle.witchTwo))
             {
 
                 return;
@@ -938,9 +938,7 @@ namespace StardewDruid.Character
 
             }
 
-            explode.power = 2;
-
-            explode.terrain = 2;
+            explode.added = new() { SpellHandle.Effects.explode };
 
             Mod.instance.spellRegister.Add(explode);
 
@@ -961,10 +959,10 @@ namespace StardewDruid.Character
 
                 }
 
-                if (!Mod.instance.questHandle.IsComplete(QuestHandle.bonesTwo))
+                if (!Mod.instance.questHandle.IsComplete(QuestHandle.witchTwo))
                 {
 
-                    Mod.instance.questHandle.UpdateTask(QuestHandle.bonesTwo, 1);
+                    Mod.instance.questHandle.UpdateTask(QuestHandle.witchTwo, 1);
 
                 }
 

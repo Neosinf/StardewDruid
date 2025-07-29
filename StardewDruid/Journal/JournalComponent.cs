@@ -59,24 +59,51 @@ namespace StardewDruid.Journal
 
             bounds = new((int)position.X - (int)(8f * spec.scale), (int)position.Y - (int)(8f * spec.scale), (int)(16f * spec.scale), (int)(16f * spec.scale));
 
-            text = StringData.ButtonStrings(button);
+            text = JournalData.ButtonStrings(button);
 
         }
 
         public void draw(SpriteBatch b)
         {
 
-            b.Draw(
-                Mod.instance.iconData.displayTexture,
-                position,
-                source,
-                Color.White * fade,
-                0f,
-                new Vector2(8),
-                spec.scale + (0.05f * hover),
-                spec.flip ? SpriteEffects.FlipHorizontally : 0,
-                999f
-            );
+            switch (button)
+            {
+
+                default:
+
+                    b.Draw(
+                        Mod.instance.iconData.displayTexture,
+                        position,
+                        source,
+                        Color.White * fade,
+                        0f,
+                        new Vector2(8),
+                        spec.scale + (0.05f * hover),
+                        spec.flip ? SpriteEffects.FlipHorizontally : 0,
+                        999f
+                    );
+
+                    break;
+
+                case DruidJournal.journalButtons.HP:
+
+                    b.DrawString(Game1.smallFont, text, position - new Vector2(28,32), Color.Wheat, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.88f);
+
+                    b.DrawString(Game1.smallFont, Game1.player.health + StringData.slash + Game1.player.maxHealth, position - new Vector2(28, 0), Color.Wheat, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.88f);
+
+                    break;
+
+                case DruidJournal.journalButtons.STM:
+
+                    b.DrawString(Game1.smallFont, text, position - new Vector2(28,32), Color.Wheat, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.88f);
+
+                    b.DrawString(Game1.smallFont, (int)Game1.player.Stamina + StringData.slash + Game1.player.MaxStamina, position - new Vector2(28, 0), Color.Wheat, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.88f);
+
+                    break;
+
+
+            }
+
 
         }
 
@@ -98,8 +125,13 @@ namespace StardewDruid.Journal
 
         public enum contentTypes
         {
+
             list,
             header,
+
+            masterysection,
+            masterynode,
+
             potion,
             toggle,
             toggleleft,
@@ -289,7 +321,7 @@ namespace StardewDruid.Journal
 
                 case contentTypes.potion:
 
-                    bounds = new Rectangle(xP + 16 + 4 + (index % 6) * ((width - 32) / 6), yP + 16 + (int)(index / 6) * (146 + row), (width - 32) / 6 - 8, 146);
+                    bounds = new Rectangle(xP + 16 + 4 + (index % 6) * ((width - 32) / 6), yP + 16 + (int)(index / 6) * (146 + row), ((width - 32) / 6) - 8, 146);
 
                     if (!textureColours.ContainsKey(0))
                     {
@@ -382,6 +414,18 @@ namespace StardewDruid.Journal
                 case contentTypes.battlereturn:
 
                     bounds = new Rectangle(xP + width - 20 - ((width - 36) / 3), yP - 144, ((width - 36) / 3) - 8, 80);
+
+                    return;
+
+                case contentTypes.masterysection:
+
+                    bounds = new Rectangle(xP + 16 + 4 + ((index % 5) * ((width - 32) / 5)), yP + 24 + (int)(index / 4) * (224 + 4), ((width - 32) / 5) - 8, height - 64);
+
+                    return;
+
+                case contentTypes.masterynode:
+
+                    bounds = new Rectangle(xP + 16 + 4 + (index % 4) * ((width - 32) / 4), yP + 24 + (int)(index / 4) * (224 + 4), ((width - 32) / 4) - 8, 224);
 
                     return;
 
@@ -1230,6 +1274,14 @@ namespace StardewDruid.Journal
                          );
 
                     }
+
+                    return;
+
+                case contentTypes.masterysection:
+
+                    return;
+
+                case contentTypes.masterynode:
 
                     return;
 

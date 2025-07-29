@@ -547,7 +547,7 @@ namespace StardewDruid.Render
             float shadowScale = 0.5f + Math.Abs(0 - 0.1f + (((float)hoverOffset / (float)hoverLapseThree) * 0.2f));
 
             b.Draw(
-                Mod.instance.iconData.cursorTexture,
+                Mod.instance.iconData.shadowTexture,
                 shadowPosition,
                 shadowFrames[0][0],
                 Color.White * 0.25f * use.fade,

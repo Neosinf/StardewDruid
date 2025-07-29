@@ -86,7 +86,7 @@ namespace StardewDruid.Event.Relics
 
                     runestone.layer += 0.0064f;
 
-                    eventRenders.Add(runestone);
+                    eventRenders.Add("runestones_alchemistry", runestone);
 
                     break;
 

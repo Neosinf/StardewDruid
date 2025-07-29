@@ -20,7 +20,6 @@ namespace StardewDruid.Cast.Fates
     internal class Enchant : Event.EventHandle
     {
 
-
         public int radialCounter = 0;
 
         public int faeth = 0;
@@ -33,97 +32,28 @@ namespace StardewDruid.Cast.Fates
 
         }
 
-        public override bool EventActive()
-        {
-
-            if (!inabsentia && !eventLocked)
-            {
-
-                if (!Mod.instance.RiteButtonHeld())
-                {
-
-                    return false;
-
-                }
-
-                if (Vector2.Distance(origin, Game1.player.Position) > 32 && !Mod.instance.ShiftButtonHeld())
-                {
-
-                    return false;
-
-                }
-
-            }
-
-            return base.EventActive();
-
-        }
-
         public override void EventDecimal()
         {
 
-            if (!EventActive())
-            {
-
-                RemoveAnimations();
-
-                return;
-
-            }
-
-            if (!inabsentia && !eventLocked)
-            {
-
-                decimalCounter++;
-
-                if (decimalCounter == 5)
-                {
-
-                    Mod.instance.rite.Channel(IconData.skies.temple, 75);
-
-                    channel = IconData.skies.temple;
-
-                }
-
-                if (decimalCounter == 15)
-                {
-
-                    eventLocked = true;
-
-                    Mod.instance.spellRegister.Add(new(origin, 160, IconData.impacts.supree, new()) { sound = SpellHandle.Sounds.getNewSpecialItem, });
-
-                    SpellHandle spellHandle = new(origin, 128, IconData.impacts.summoning, new())
-                    {
-                        scheme = IconData.schemes.fates
-                    };
-
-                    Mod.instance.spellRegister.Add(spellHandle);
-
-                }
-
-                return;
-
-            }
+            radialCounter++;
 
             if (radialCounter % 2 == 0)
             {
                 
-                if (!inabsentia)
+                if (locationAbort == abortBehaviour.ignore)
                 {
-                    
-                    Enchantment();
+
+                    KissedByTheStars(); 
 
                 }
                 else
                 {
 
-                    KissedByTheStars();
+                    Enchantment();
 
                 }
 
             }
-
-            radialCounter++;
 
             if (radialCounter == 18)
             {
@@ -142,11 +72,11 @@ namespace StardewDruid.Cast.Fates
             if (faeth > 0)
             {
 
-                Herbal resource = Mod.instance.herbalData.herbalism[HerbalHandle.herbals.faeth.ToString()];
+                Herbal resource = Mod.instance.herbalHandle.herbalism[HerbalHandle.herbals.faeth.ToString()];
 
                 string message = "-" + faeth + " " + resource.title;
 
-                DisplayPotion hudmessage = new(message, resource);
+                DisplayMessage hudmessage = new(message, resource);
 
                 Game1.addHUDMessage(hudmessage);
 

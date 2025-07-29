@@ -18,6 +18,14 @@ namespace StardewDruid.Location.Terrain
     public class Menhir : TerrainField
     {
 
+        public const int menhirIndex = 3;
+
+        public const int benchIndex = 7;
+
+        public const int anvilIndex = 8;
+
+        public const int seatIndex = 9;
+
         public Menhir(Vector2 Position, int Index)
            : base()
         {
@@ -54,43 +62,43 @@ namespace StardewDruid.Location.Terrain
             switch (index)
             {
 
-                case 11:
+                case 1:
 
                     source = new(0, 0, 48, 96);
 
                     break;
 
-                case 12:
+                case 2:
 
                     source = new(48, 0, 48, 96);
 
                     break;
 
-                case 13:
+                case 3:
 
                     source = new(96, 0, 48, 96);
 
                     break;
 
-                case 14:
+                case 4:
 
                     source = new(144, 0, 48, 96);
 
                     break;
 
-                case 15:
+                case 5:
 
                     source = new(192, 0, 48, 96);
 
                     break;
 
-                case 16:
+                case 6:
 
                     source = new(0, 96, 48, 96);
 
                     break;
 
-                case 17:
+                case 7:
 
                     source = new(48, 96, 96, 48);
 
@@ -102,7 +110,7 @@ namespace StardewDruid.Location.Terrain
 
                     break;
 
-                case 18:
+                case 8:
 
                     source = new(48, 144, 48, 48);
 
@@ -112,7 +120,7 @@ namespace StardewDruid.Location.Terrain
 
                     break;
 
-                case 19:
+                case 9:
 
                     source = new(144, 96, 64, 32);
 

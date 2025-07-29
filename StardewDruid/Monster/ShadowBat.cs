@@ -214,7 +214,7 @@ namespace StardewDruid.Monster
             {
                 type = SpellHandle.Spells.echo,
 
-                factor = 2 + netScheme.Value,
+                displayFactor = 2 + netScheme.Value,
 
                 boss = this
             };
@@ -229,7 +229,7 @@ namespace StardewDruid.Monster
         {
             if (!sweepSet) { return false; }
 
-            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 96f + (GetWidth() * 3));
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, Position, 96f + (GetWidth() * 3));
 
             if (targets.Count > 0)
             {
@@ -247,7 +247,7 @@ namespace StardewDruid.Monster
         public override void ConnectSweep()
         {
 
-            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 128f);
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, Position, 128f);
 
             if (targets.Count > 0)
             {

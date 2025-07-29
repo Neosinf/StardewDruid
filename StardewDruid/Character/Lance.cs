@@ -98,6 +98,7 @@ namespace StardewDruid.Character
 
             SpellHandle special = new(currentLocation, monster.Position, GetBoundingBox().Center.ToVector2(), 256, -1, Mod.instance.CombatDamage() / 2)
             {
+
                 type = SpellHandle.Spells.missile,
 
                 missile = MissileHandle.missiles.fireball,
@@ -106,16 +107,13 @@ namespace StardewDruid.Character
 
                 scheme = IconData.schemes.stars,
 
-                factor = 2,
-
-                power = 4,
-
-                explosion = 4,
-
-                terrain = 4,
+                displayFactor = 2,
 
                 display = IconData.impacts.bomb
+
             };
+
+            special.added = new() { SpellHandle.Effects.explode, };
 
             Mod.instance.spellRegister.Add(special);
 

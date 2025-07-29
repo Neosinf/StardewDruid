@@ -75,7 +75,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.anvil:
 
-                    if (RelicData.HasRelic(IconData.relics.crow_hammer))
+                    if (RelicHandle.HasRelic(IconData.relics.druid_hammer))
                     {
 
                         return Mod.instance.Helper.Translation.Get("DialogueInventory.373.1");
@@ -129,19 +129,17 @@ namespace StardewDruid.Dialogue
 
                             generate.intro = Mod.instance.Helper.Translation.Get("DialogueInventory.386.2");
 
-                            generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueInventory.386.3"));
+                            generate.responses.Add(1,Mod.instance.Helper.Translation.Get("DialogueInventory.386.3"));
 
-                            generate.answers.Add(1.ToString());
+                            generate.leads.Add(1, 1);
 
-                            generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueInventory.386.4"));
+                            generate.responses.Add(2,Mod.instance.Helper.Translation.Get("DialogueInventory.386.4"));
 
-                            generate.answers.Add(2.ToString());
+                            generate.leads.Add(2, 2);
 
-                            generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueInventory.386.5"));
+                            generate.responses.Add(3,Mod.instance.Helper.Translation.Get("DialogueInventory.386.5"));
 
-                            generate.answers.Add(3.ToString());
-
-                            generate.lead = true;
+                            generate.leads.Add(3, 3);
 
                             return generate;
 

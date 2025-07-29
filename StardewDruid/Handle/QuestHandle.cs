@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using StardewDruid.Cast;
+using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
 using StardewDruid.Event.Challenge;
@@ -42,7 +43,6 @@ namespace StardewDruid.Handle
         public enum milestones
         {
             none,
-            whetstone,
             effigy,
             sworn_weapon,
             sworn_lessons,
@@ -68,11 +68,11 @@ namespace StardewDruid.Handle
             quest_shadowtin,
             ether_treasure,
             ether_challenge,
-            bones_weapon,
-            bones_lessons,
+            witch_weapon,
+            witch_lessons,
             quest_buffin,
             quest_revenant,
-            bones_challenge,
+            witch_challenge,
             heirs_weapon,
             moors_challenge,
             heirs_lessons,
@@ -83,10 +83,9 @@ namespace StardewDruid.Handle
         public static Dictionary<milestones, List<string>> milestoneQuests = new()
         {
 
-            [milestones.whetstone] = new() { receiveStone, },
             [milestones.effigy] = new() { approachEffigy, },
-            [milestones.sworn_weapon] = new() { swordSworn, },
-            [milestones.sworn_lessons] = new() { swornOne, swornTwo, swornThree, swornFour, },
+            [milestones.sworn_weapon] = new() { squireWinds, },
+            [milestones.sworn_lessons] = new() { windsOne, windsTwo, windsThree,},
             [milestones.weald_weapon] = new() { swordWeald, },
             [milestones.weald_lessons] = new() { herbalism, wealdOne, wealdTwo, wealdThree, wealdFour, chargeUps, bombs, wealdFive, },
             [milestones.weald_challenge] = new() { challengeWeald, },
@@ -109,11 +108,11 @@ namespace StardewDruid.Handle
             [milestones.quest_shadowtin] = new() { questShadowtin, },
             [milestones.ether_treasure] = new() { etherFour, },
             [milestones.ether_challenge] = new() { challengeEther, },
-            [milestones.bones_weapon] = new() { questBlackfeather, },
-            [milestones.bones_lessons] = new() { bonesOne, bonesTwo, bonesThree, },
+            [milestones.witch_weapon] = new() { questBlackfeather, },
+            [milestones.witch_lessons] = new() { witchOne, witchTwo, witchThree, },
             [milestones.quest_buffin] = new() { questBuffin, },
             [milestones.quest_revenant] = new() { questRevenant, },
-            [milestones.bones_challenge] = new() { challengeBones, },
+            [milestones.witch_challenge] = new() { challengeBones, },
             [milestones.heirs_weapon] = new() { swordHeirs, },
             [milestones.moors_challenge] = new() { challengeMoors, },
             [milestones.heirs_lessons] = new() { heirsOne, heirsTwo, },
@@ -121,19 +120,15 @@ namespace StardewDruid.Handle
 
         };
 
-        public const string receiveStone = "receiveStone";
-
         public const string approachEffigy = "approachEffigy";
 
-        public const string swordSworn = "swordSworn";
+        public const string squireWinds = "squireWinds";
 
-        public const string swornOne = "projection";
+        public const string windsOne = "castlesson";
 
-        public const string swornTwo = "utility";
+        public const string windsTwo = "alchemylesson";
 
-        public const string swornThree = "alchemy";
-
-        public const string swornFour = "augmentation";
+        public const string windsThree = "bomblesson";
 
         public const string swordWeald = "swordWeald";
 
@@ -219,11 +214,11 @@ namespace StardewDruid.Handle
 
         public const string questBlackfeather = "questBlackfeather";
 
-        public const string bonesOne = "familiars";
+        public const string witchOne = "familiars";
 
-        public const string bonesTwo = "retrievers";
+        public const string witchTwo = "retrievers";
 
-        public const string bonesThree = "opportunists";
+        public const string witchThree = "opportunists";
 
         public const string questBuffin = "questBuffin";
 
@@ -651,6 +646,8 @@ namespace StardewDruid.Handle
 
                         Mod.instance.save.progress[key].status = 1;
 
+                        OnAccept(key);
+
                     }
 
                     DialogueBefore(key);
@@ -880,7 +877,7 @@ namespace StardewDruid.Handle
 
             }
 
-            Mod.instance.CastMessage(quests[questId].title + " " + StringData.Strings(StringData.stringkeys.questComplete), 1, true);
+            Mod.instance.RegisterMessage(quests[questId].title + " " + StringData.Strings(StringData.stringkeys.questComplete), 1, true);
 
             if (quests[questId].reward > 0)
             {
@@ -969,7 +966,7 @@ namespace StardewDruid.Handle
                 if (progress % portion == 0)
                 {
 
-                    Mod.instance.CastMessage(quests[quest].title + " " + (progress * 100 / limit).ToString() + " " + StringData.Strings(StringData.stringkeys.percentComplete), 2, true);
+                    Mod.instance.RegisterMessage(quests[quest].title + " " + (progress * 100 / limit).ToString() + " " + StringData.Strings(StringData.stringkeys.percentComplete), 2, true);
                 }
 
             }
@@ -1108,6 +1105,7 @@ namespace StardewDruid.Handle
 
         public void Localise(string questId)
         {
+
             switch (questId)
             {
 
@@ -1117,23 +1115,21 @@ namespace StardewDruid.Handle
 
                     LocationHandle.DruidLocations(LocationHandle.druid_cavern_name);
 
-                    LocationHandle.DruidLocations(LocationHandle.druid_temple_name);
+                    //LocationHandle.DruidLocations(LocationHandle.druid_temple_name);
 
-                    LocationHandle.DruidLocations(LocationHandle.druid_sanctuary_name);
-
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_stone.ToString());
+                    //LocationHandle.DruidLocations(LocationHandle.druid_sanctuary_name);
 
                     return;
 
                 case wealdFive:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.crow_hammer.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.druid_hammer.ToString());
 
                     return;
 
                 case challengeWeald:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_pot.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.lantern_pot.ToString());
 
                     LocationHandle.DruidLocations(LocationHandle.druid_spring_name);
 
@@ -1145,7 +1141,7 @@ namespace StardewDruid.Handle
 
                 case swordMists:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_censer.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.lantern_censer.ToString());
 
                     LocationHandle.DruidLocations(LocationHandle.druid_atoll_name);
 
@@ -1153,13 +1149,13 @@ namespace StardewDruid.Handle
 
                 case mistsTwo:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_pan.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.herbalism_pan.ToString());
 
                     return;
 
                 case challengeMists:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_key.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.wayfinder_key.ToString());
 
                     LocationHandle.DruidLocations(LocationHandle.druid_graveyard_name);
 
@@ -1171,19 +1167,19 @@ namespace StardewDruid.Handle
 
                     LocationHandle.DruidLocations(LocationHandle.druid_chapel_name);
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_lantern.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.lantern_guardian.ToString());
 
                     return;
 
                 case starsOne:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_still.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.herbalism_still.ToString());
 
                     return;
 
                 case captures:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.monsterbadge.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.companion_badge.ToString());
 
                     foreach (KeyValuePair<CharacterHandle.characters, PalData> pal in Mod.instance.save.pals)
                     {
@@ -1196,7 +1192,7 @@ namespace StardewDruid.Handle
                 
                 case challengeStars:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_glove.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.wayfinder_glove.ToString());
 
                     LocationHandle.DruidLocations(LocationHandle.druid_clearing_name);
 
@@ -1208,7 +1204,7 @@ namespace StardewDruid.Handle
 
                     LocationHandle.DruidLocations(LocationHandle.druid_lair_name);
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_water.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.lantern_water.ToString());
 
                     return;
 
@@ -1228,19 +1224,19 @@ namespace StardewDruid.Handle
 
                 case fatesFour:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_crucible.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.herbalism_crucible.ToString());
 
                     return;
 
                 case swordEther:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_ceremonial.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.lantern_ceremony.ToString());
 
                     return;
 
                 case etherOne:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.dragon_form.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.druid_dragonomicon.ToString());
 
                     return;
 
@@ -1252,13 +1248,13 @@ namespace StardewDruid.Handle
 
                 case etherFour:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_gauge.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.herbalism_gauge.ToString());
 
                     return;
 
                 case questBlackfeather:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.blackfeather_glove.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.companion_glove.ToString());
 
                     return;
 
@@ -1276,6 +1272,17 @@ namespace StardewDruid.Handle
 
                 case approachEffigy:
 
+                    if (!RelicHandle.HasRelic(IconData.relics.wayfinder_stone))
+                    {
+
+                        ThrowHandle throwRelic = new(Game1.player, Game1.player.Position, IconData.relics.wayfinder_stone);
+
+                        throwRelic.delay = 300;
+
+                        throwRelic.register();
+
+                    }
+
                     if (!Mod.instance.eventRegister.ContainsKey(questId))
                     {
 
@@ -1285,12 +1292,12 @@ namespace StardewDruid.Handle
 
                     return;
 
-                case swordWeald:
+                case squireWinds:
 
                     if (!Mod.instance.eventRegister.ContainsKey(questId))
                     {
 
-                        new SwordWeald().EventSetup(questId);
+                        new SquireWinds().EventSetup(questId);
 
                     }
 
@@ -1299,6 +1306,10 @@ namespace StardewDruid.Handle
                 case herbalism:
 
                     (Mod.instance.locations[LocationHandle.druid_grove_name] as Grove).ToggleBowl();
+
+                    return;
+
+                case swordWeald:
 
                     return;
 
@@ -1603,19 +1614,19 @@ namespace StardewDruid.Handle
 
                     return;
 
-                case bonesOne:
+                case witchOne:
 
-                    CheckAssignment(bonesTwo, 1);
-
-                    return;
-
-                case bonesTwo:
-
-                    CheckAssignment(bonesThree, 1);
+                    CheckAssignment(witchTwo, 1);
 
                     return;
 
-                case bonesThree:
+                case witchTwo:
+
+                    CheckAssignment(witchThree, 1);
+
+                    return;
+
+                case witchThree:
 
                     CheckAssignment(questBuffin, 1);
 
@@ -1766,29 +1777,29 @@ namespace StardewDruid.Handle
 
                     LocationHandle.DruidLocations(LocationHandle.druid_cavern_name);
 
-                    LocationHandle.DruidLocations(LocationHandle.druid_temple_name);
+                    //LocationHandle.DruidLocations(LocationHandle.druid_temple_name);
 
-                    LocationHandle.DruidLocations(LocationHandle.druid_sanctuary_name);
+                    //LocationHandle.DruidLocations(LocationHandle.druid_sanctuary_name);
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_stone.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.wayfinder_stone.ToString());
 
                     return;
 
                 case herbalism:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_mortar.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.herbalism_mortar.ToString());
 
                     return;
 
                 case wealdFive:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.crow_hammer.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.druid_hammer.ToString());
 
                     return;
 
                 case challengeWeald:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_pot.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.lantern_pot.ToString());
 
                     LocationHandle.DruidLocations(LocationHandle.druid_spring_name);
 
@@ -1800,9 +1811,9 @@ namespace StardewDruid.Handle
 
                 case swordMists:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_censer.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.lantern_censer.ToString());
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.tactical_discombobulator.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.tactical_discombobulator.ToString());
 
                     LocationHandle.DruidLocations(LocationHandle.druid_atoll_name);
 
@@ -1810,25 +1821,25 @@ namespace StardewDruid.Handle
 
                 case mistsTwo:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_pan.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.herbalism_pan.ToString());
 
                     return;
 
                 case questEffigy:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.effigy_crest.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.companion_crest.ToString());
 
                     return;
 
                 case challengeMists:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_key.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.wayfinder_key.ToString());
 
                     LocationHandle.DruidLocations(LocationHandle.druid_graveyard_name);
 
                     LocationHandle.GetRestoration(LocationHandle.druid_graveyard_name);
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.runestones_spring.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.runestones_spring.ToString());
 
                     return;
 
@@ -1836,25 +1847,25 @@ namespace StardewDruid.Handle
 
                     LocationHandle.DruidLocations(LocationHandle.druid_chapel_name);
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_lantern.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.lantern_guardian.ToString());
 
                     break;
 
                 case starsOne:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_still.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.herbalism_still.ToString());
 
                     return;
 
                 case orders:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.crest_church.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.crest_church.ToString());
 
                     return;
 
                 case captures:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.monsterbadge.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.companion_badge.ToString());
 
                     foreach (KeyValuePair<CharacterHandle.characters, PalData> pal in Mod.instance.save.pals)
                     {
@@ -1871,9 +1882,9 @@ namespace StardewDruid.Handle
 
                     LocationHandle.GetRestoration(LocationHandle.druid_clearing_name);
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_glove.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.wayfinder_glove.ToString());
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.runestones_moon.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.runestones_moon.ToString());
 
                     return;
 
@@ -1882,15 +1893,15 @@ namespace StardewDruid.Handle
 
                     if (questId == challengeAtoll)
                     {
-                        Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.runestones_farm.ToString());
+                        Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.runestones_farm.ToString());
                     }
 
                     if (questId == challengeDragon)
                     {
 
-                        Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_water.ToString());
+                        Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.lantern_water.ToString());
 
-                        Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.runestones_cat.ToString());
+                        Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.runestones_cat.ToString());
 
                         LocationHandle.DruidLocations(LocationHandle.druid_lair_name);
 
@@ -1900,13 +1911,13 @@ namespace StardewDruid.Handle
 
                 case approachJester:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.jester_dice.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.companion_dice.ToString());
 
                     break;
 
                 case distillery:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.crest_dwarf.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.crest_dwarf.ToString());
 
                     return;
 
@@ -1920,29 +1931,29 @@ namespace StardewDruid.Handle
 
                 case fatesOne:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_eye.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.wayfinder_eye.ToString());
 
                     return;
 
                 case questJester:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.skull_saurus.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.skull_saurus.ToString());
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.crest_associate.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.crest_associate.ToString());
 
                     return;
 
                 case fatesFour:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_crucible.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.herbalism_crucible.ToString());
 
                     return;
 
                 case challengeFates:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.book_wyrven.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.book_wyrven.ToString());
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.shadowtin_tome.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.companion_tome.ToString());
 
                     LocationHandle.DruidLocations(LocationHandle.druid_tomb_name);
 
@@ -1950,27 +1961,27 @@ namespace StardewDruid.Handle
 
                 case swordEther:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_ceremonial.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.lantern_ceremony.ToString());
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.box_measurer.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.box_measurer.ToString());
 
                     return;
 
                 case etherOne:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.dragon_form.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.druid_dragonomicon.ToString());
 
                     return;
 
                 case questShadowtin:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_dwarf.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.shadowtin_cell.ToString());
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.skull_gelatin.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.skull_gelatin.ToString());
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.skull_cannoli.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.skull_cannoli.ToString());
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.crest_smuggler.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.crest_smuggler.ToString());
 
                     LocationHandle.DruidLocations(LocationHandle.druid_engineum_name);
 
@@ -1985,31 +1996,31 @@ namespace StardewDruid.Handle
 
                 case etherFour:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_gauge.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.herbalism_gauge.ToString());
 
                     return;
 
                 case questBlackfeather:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.blackfeather_glove.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.companion_glove.ToString());
 
                     return;
 
                 case questBuffin:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.skull_fox.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.skull_fox.ToString());
 
                     return;
 
                 case questRevenant:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.book_knight.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.book_knight.ToString());
 
                     return;
 
                 case challengeBones:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.golden_core.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.golden_core.ToString());
 
                     return;
 
@@ -2019,13 +2030,13 @@ namespace StardewDruid.Handle
 
                     (Mod.instance.locations[LocationHandle.druid_sanctuary_name] as Sanctuary).OpenGate();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.heiress_gift.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.druid_hieress.ToString());
 
                     return;
 
                 case heirsTwo:
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.stardew_druid.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.stardew_druid.ToString());
 
                     return;
             }
@@ -2044,15 +2055,11 @@ namespace StardewDruid.Handle
 
                     CharacterHandle.CharacterLoad(CharacterHandle.characters.Effigy, CharacterHandle.CharacterSaveMode(CharacterHandle.characters.Effigy));
 
-                    CheckAssignment(swordWeald, 0);
-
-                    Milecrossed(milestones.effigy);
+                    CheckAssignment(squireWinds, 0);
 
                     return;
 
                 case swordWeald:
-
-                    Milecrossed(milestones.weald_weapon);
 
                     CheckAssignment(herbalism, 0);
 
@@ -2098,26 +2105,15 @@ namespace StardewDruid.Handle
 
                     CheckAssignment(challengeWeald, 0);
 
-                    if (!IsComplete(wealdOne)) { return; }
-                    if (!IsComplete(wealdTwo)) { return; }
-                    if (!IsComplete(wealdThree)) { return; }
-                    if (!IsComplete(wealdFour)) { return; }
-
-                    Milecrossed(milestones.weald_lessons);
-
                     return;
 
                 case challengeWeald:
-
-                    Milecrossed(milestones.weald_challenge);
 
                     CheckAssignment(swordMists, 1);
 
                     return;
 
                 case swordMists:
-
-                    Milecrossed(milestones.mists_weapon);
 
                     CheckAssignment(mistsOne, 0);
 
@@ -2145,17 +2141,9 @@ namespace StardewDruid.Handle
 
                     CheckAssignment(questEffigy, 0);
 
-                    if (!IsComplete(mistsOne)) { return; }
-                    if (!IsComplete(mistsTwo)) { return; }
-                    if (!IsComplete(mistsThree)) { return; }
-
-                    Milecrossed(milestones.mists_lessons);
-
                     return;
 
                 case questEffigy:
-
-                    Milecrossed(milestones.quest_effigy);
 
                     CheckAssignment(challengeMists, 1);
 
@@ -2163,15 +2151,11 @@ namespace StardewDruid.Handle
 
                 case challengeMists:
 
-                    Milecrossed(milestones.mists_challenge);
-
                     CheckAssignment(swordStars, 1);
 
                     return;
 
                 case swordStars:
-
-                    Milecrossed(milestones.stars_weapon);
 
                     CheckAssignment(orders, 0);
 
@@ -2199,8 +2183,6 @@ namespace StardewDruid.Handle
 
                     if (!IsComplete(starsOne)) { return; }
 
-                    Milecrossed(milestones.stars_lessons);
-
                     return;
 
                 case challengeStars:
@@ -2208,8 +2190,6 @@ namespace StardewDruid.Handle
                     CheckAssignment(challengeAtoll, 0);
 
                     CheckAssignment(challengeDragon, 0);
-
-                    Milecrossed(milestones.stars_challenge);
 
                     return;
 
@@ -2219,8 +2199,6 @@ namespace StardewDruid.Handle
                     if (!IsComplete(challengeAtoll)) { return; }
 
                     if (!IsComplete(challengeDragon)) { return; }
-
-                    Milecrossed(milestones.stars_threats);
 
                     CheckAssignment(distillery, 0);
 
@@ -2234,13 +2212,9 @@ namespace StardewDruid.Handle
 
                     CheckAssignment(swordFates, 0);
 
-                    Milecrossed(milestones.jester);
-
                     break;
 
                 case swordFates:
-
-                    Milecrossed(milestones.fates_weapon);
 
                     CheckAssignment(fatesOne, 0);
 
@@ -2267,15 +2241,11 @@ namespace StardewDruid.Handle
                     if (!IsComplete(fatesOne)) { return; }
                     if (!IsComplete(fatesTwo)) { return; }
 
-                    Milecrossed(milestones.fates_lessons);
-
                     return;
 
                 case questJester:
 
                     CheckAssignment(fatesFour, 1);
-
-                    Milecrossed(milestones.quest_jester);
 
                     CharacterHandle.CharacterLoad(CharacterHandle.characters.Buffin, CharacterHandle.CharacterSaveMode(CharacterHandle.characters.Buffin));
 
@@ -2285,8 +2255,6 @@ namespace StardewDruid.Handle
 
                     CheckAssignment(challengeFates, 1);
 
-                    Milecrossed(milestones.fates_enchant);
-
                     return;
 
                 case challengeFates:
@@ -2295,8 +2263,6 @@ namespace StardewDruid.Handle
 
                     CheckAssignment(swordEther, 1);
 
-                    Milecrossed(milestones.fates_challenge);
-
                     return;
 
                 case swordEther:
@@ -2304,8 +2270,6 @@ namespace StardewDruid.Handle
                     CheckAssignment(etherOne, 0);
 
                     CheckAssignment(etherTwo, 1);
-
-                    Milecrossed(milestones.ether_weapon);
 
                     return;
 
@@ -2325,26 +2289,17 @@ namespace StardewDruid.Handle
 
                     CheckAssignment(questShadowtin, 1);
 
-                    if (!IsComplete(etherOne)) { return; }
-                    if (!IsComplete(etherTwo)) { return; }
-
-                    Milecrossed(milestones.ether_lessons);
-
                     return;
 
                 case questShadowtin:
 
                     CheckAssignment(etherFour, 1);
 
-                    Milecrossed(milestones.quest_shadowtin);
-
                     return;
 
                 case etherFour:
 
                     CheckAssignment(challengeEther, 1);
-
-                    Milecrossed(milestones.ether_treasure);
 
                     return;
 
@@ -2354,46 +2309,35 @@ namespace StardewDruid.Handle
 
                     CheckAssignment(questBlackfeather, 1);
 
-                    Milecrossed(milestones.ether_challenge);
-
                     return;
 
                 case questBlackfeather:
 
-                    CheckAssignment(bonesOne, 0);
-
-                    Milecrossed(milestones.bones_weapon);
+                    CheckAssignment(witchOne, 0);
 
                     return;
 
-                case bonesOne:
+                case witchOne:
 
-                    CheckAssignment(bonesTwo, 1);
-
-                    return;
-
-                case bonesTwo:
-
-                    CheckAssignment(bonesThree, 1);
+                    CheckAssignment(witchTwo, 1);
 
                     return;
 
-                case bonesThree:
+                case witchTwo:
+
+                    CheckAssignment(witchThree, 1);
+
+                    return;
+
+                case witchThree:
 
                     CheckAssignment(questBuffin, 1);
-
-                    if (!IsComplete(bonesOne)) { return; }
-                    if (!IsComplete(bonesTwo)) { return; }
-
-                    Milecrossed(milestones.bones_lessons);
 
                     return;
 
                 case questBuffin:
 
                     CheckAssignment(questRevenant, 1);
-
-                    Milecrossed(milestones.quest_buffin);
 
                     return;
 
@@ -2403,8 +2347,6 @@ namespace StardewDruid.Handle
 
                     CharacterHandle.CharacterLoad(CharacterHandle.characters.Marlon, CharacterHandle.CharacterSaveMode(CharacterHandle.characters.Marlon));
 
-                    Milecrossed(milestones.quest_revenant);
-
                     return;
 
                 case challengeBones:
@@ -2412,8 +2354,6 @@ namespace StardewDruid.Handle
                     CheckAssignment(swordHeirs, 1);
 
                     CharacterHandle.CharacterLoad(CharacterHandle.characters.Aldebaran, CharacterHandle.CharacterSaveMode(CharacterHandle.characters.Aldebaran));
-
-                    Milecrossed(milestones.bones_challenge);
 
                     return;
 
@@ -2471,23 +2411,11 @@ namespace StardewDruid.Handle
 
                     CheckAssignment(heirsOne, 1);
 
-                    Milecrossed(milestones.moors_challenge);
-
-                    /*CheckAssignment(heirsOne, 0);
-                    CheckAssignment(heirsTwo, 0);
-                    CheckAssignment(heirsThree, 0);*/
-
                     return;
 
                 case heirsOne:
 
                     CheckAssignment(heirsTwo, 1);
-
-                    return;
-
-                case heirsTwo:
-
-                    Milecrossed(milestones.heirs_lessons);
 
                     return;
 
@@ -2497,6 +2425,28 @@ namespace StardewDruid.Handle
 
         public void OnAccept(string questId)
         {
+
+            StringData.stringkeys messageKey = StringData.stringkeys.questReceived;
+
+            switch (quests[questId].type)
+            {
+                case Data.Quest.questTypes.lesson:
+
+                    break;
+
+                case Data.Quest.questTypes.challenge:
+
+                    break;
+
+            }
+
+            string acceptMessage = quests[questId].title + StringData.Strings(messageKey);
+
+            DisplayMessage displayMessage = new(acceptMessage, quests[questId].icon);
+
+            Game1.addHUDMessage(displayMessage);
+
+            // --------------------------------------------------------
 
             ThrowHandle throwRelic;
 
@@ -2509,7 +2459,7 @@ namespace StardewDruid.Handle
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_pan.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.herbalism_pan.ToString());
 
                     List<HerbalHandle.herbals> satius = new()
                     {
@@ -2532,31 +2482,31 @@ namespace StardewDruid.Handle
 
                 case wealdFive:
 
-                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.crow_hammer);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.druid_hammer);
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.crow_hammer.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.druid_hammer.ToString());
 
                     break;
 
                 case challengeWeald:
 
-                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.wayfinder_pot);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.lantern_pot);
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_pot.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.lantern_pot.ToString());
 
                     break;
 
                 case swordMists:
 
-                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.wayfinder_censer);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.lantern_censer);
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_censer.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.lantern_censer.ToString());
 
                     break;
 
@@ -2566,17 +2516,17 @@ namespace StardewDruid.Handle
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_key.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.wayfinder_key.ToString());
 
                     break;
 
                 case swordStars:
 
-                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.wayfinder_lantern);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Effigy].Position, IconData.relics.lantern_guardian);
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_lantern.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.lantern_guardian.ToString());
 
                     break;
 
@@ -2586,7 +2536,7 @@ namespace StardewDruid.Handle
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_still.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.herbalism_still.ToString());
 
                     List<HerbalHandle.herbals> magnus = new()
                     {
@@ -2609,11 +2559,11 @@ namespace StardewDruid.Handle
 
                 case captures:
 
-                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Revenant].Position, IconData.relics.monsterbadge);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Revenant].Position, IconData.relics.companion_badge);
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.monsterbadge.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.companion_badge.ToString());
 
                     break;
 
@@ -2623,17 +2573,17 @@ namespace StardewDruid.Handle
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_glove.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.wayfinder_glove.ToString());
 
                     break;
 
                 case challengeDragon:
 
-                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Revenant].Position, IconData.relics.wayfinder_water);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Revenant].Position, IconData.relics.lantern_water);
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_water.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.lantern_water.ToString());
 
                     break;
 
@@ -2643,7 +2593,7 @@ namespace StardewDruid.Handle
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_eye.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.wayfinder_eye.ToString());
 
                     break;
 
@@ -2653,7 +2603,7 @@ namespace StardewDruid.Handle
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.herbalism_crucible.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.herbalism_crucible.ToString());
 
                     HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.faeth, 5);
 
@@ -2661,21 +2611,21 @@ namespace StardewDruid.Handle
 
                 case swordEther:
 
-                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Revenant].Position, IconData.relics.wayfinder_ceremonial);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Revenant].Position, IconData.relics.lantern_ceremony);
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.wayfinder_ceremonial.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.lantern_ceremony.ToString());
 
                     break;
 
                 case etherOne:
 
-                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Shadowtin].Position, IconData.relics.dragon_form);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Shadowtin].Position, IconData.relics.druid_dragonomicon);
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.dragon_form.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.druid_dragonomicon.ToString());
 
                     break;
 
@@ -2712,17 +2662,17 @@ namespace StardewDruid.Handle
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.crest_smuggler.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.crest_smuggler.ToString());
 
                     break;
 
                 case questBlackfeather:
 
-                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Blackfeather].Position, IconData.relics.blackfeather_glove);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Blackfeather].Position, IconData.relics.companion_glove);
 
                     throwRelic.register();
 
-                    Mod.instance.relicsData.ReliquaryUpdate(IconData.relics.blackfeather_glove.ToString());
+                    Mod.instance.relicHandle.ReliquaryUpdate(IconData.relics.companion_glove.ToString());
 
                     break;
 
@@ -2739,10 +2689,46 @@ namespace StardewDruid.Handle
 
             ThrowHandle throwRelic;
 
+            Vector2 throwPosition;
+
             int friendship;
 
             switch (questId)
             {
+
+                case squireWinds:
+
+                    throwPosition = Game1.player.Position + new Vector2(64);
+
+                    if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Effigy))
+                    {
+
+                        if (Mod.instance.characters[CharacterHandle.characters.Effigy] is Effigy effigy)
+                        {
+
+                            if(effigy.currentLocation.Name == Game1.player.currentLocation.Name)
+                            {
+
+                                if(Vector2.Distance(effigy.Position,Game1.player.Position) <= 320)
+                                {
+
+                                    throwPosition = effigy.Position;
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                    Mod.instance.spellRegister.Add(new(Game1.player, IconData.ritecircles.winds) { soundTrigger = Handle.SoundHandle.SoundCue.RisingWind, });
+
+                    throwRelic = new(Game1.player, throwPosition, IconData.relics.druid_grimoire);
+
+                    throwRelic.register();
+
+                    break;
 
                 case swordWeald:
 
@@ -2856,7 +2842,7 @@ namespace StardewDruid.Handle
 
                 case challengeAtoll:
 
-                    if (!RelicData.HasRelic(IconData.relics.runestones_farm))
+                    if (!RelicHandle.HasRelic(IconData.relics.runestones_farm))
                     {
                         throwRelic = new(Game1.player, Game1.player.Position + new Vector2(192, -64), IconData.relics.runestones_farm);
 
@@ -2868,7 +2854,7 @@ namespace StardewDruid.Handle
 
                 case challengeDragon:
 
-                    if (!RelicData.HasRelic(IconData.relics.runestones_cat))
+                    if (!RelicHandle.HasRelic(IconData.relics.runestones_cat))
                     {
                         throwRelic = new(Game1.player, Game1.player.Position + new Vector2(192, -64), IconData.relics.runestones_cat);
 
@@ -2933,7 +2919,7 @@ namespace StardewDruid.Handle
 
                 case approachJester:
 
-                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Jester].Position, IconData.relics.jester_dice);
+                    throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Jester].Position, IconData.relics.companion_dice);
 
                     throwRelic.register();
 
@@ -2947,9 +2933,9 @@ namespace StardewDruid.Handle
 
                 case challengeFates:
 
-                    if (!RelicData.HasRelic(IconData.relics.shadowtin_tome))
+                    if (!RelicHandle.HasRelic(IconData.relics.companion_tome))
                     {
-                        throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Shadowtin].Position, IconData.relics.shadowtin_tome);
+                        throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Shadowtin].Position, IconData.relics.companion_tome);
 
                         throwRelic.register();
 
@@ -2976,7 +2962,7 @@ namespace StardewDruid.Handle
 
                 case questBlackfeather:
 
-                    Mod.instance.save.rite = Rite.Rites.bones;
+                    Mod.instance.save.rite = Rite.Rites.witch;
 
                     swordThrow = new(Game1.player, Game1.player.Position + new Vector2(192, -64), SpawnData.Swords.knife);
 
@@ -3008,10 +2994,10 @@ namespace StardewDruid.Handle
 
                     // Gift of the Heiress
 
-                    if (!RelicData.HasRelic(IconData.relics.heiress_gift))
+                    if (!RelicHandle.HasRelic(IconData.relics.druid_hieress))
                     {
 
-                        throwRelic = new(Game1.player, new Vector2(27, 5) * 64, IconData.relics.heiress_gift);
+                        throwRelic = new(Game1.player, new Vector2(27, 5) * 64, IconData.relics.druid_hieress);
 
                         throwRelic.register();
 
@@ -3021,7 +3007,7 @@ namespace StardewDruid.Handle
 
                 case heirsTwo:
 
-                    if (!RelicData.HasRelic(IconData.relics.stardew_druid))
+                    if (!RelicHandle.HasRelic(IconData.relics.stardew_druid))
                     {
 
                         throwRelic = new(Game1.player, Game1.player.Position + new Vector2(192, -64), IconData.relics.stardew_druid);
@@ -3115,9 +3101,9 @@ namespace StardewDruid.Handle
                 case swordEther:
 
                     // faeth *20
-                    Herbal Faeth = Mod.instance.herbalData.herbalism[HerbalHandle.herbals.faeth.ToString()];
+                    Herbal Faeth = Mod.instance.herbalHandle.herbalism[HerbalHandle.herbals.faeth.ToString()];
 
-                    DisplayPotion hudmessage = new("+20 " + Faeth.title, Faeth);
+                    DisplayMessage hudmessage = new("+20 " + Faeth.title, Faeth);
 
                     Game1.addHUDMessage(hudmessage);
 
@@ -3156,18 +3142,6 @@ namespace StardewDruid.Handle
             }
 
             Mod.instance.save.progress[questId].status = 3;
-
-        }
-
-        public void Milecrossed(milestones milestone)
-        {
-
-            if (milestone > Mod.instance.save.milestone)
-            {
-
-                Mod.instance.save.milestone = milestone;
-
-            }
 
         }
 

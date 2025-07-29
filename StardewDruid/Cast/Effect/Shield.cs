@@ -32,7 +32,7 @@ namespace StardewDruid.Cast.Effect
             Buff shieldBuff = new(
                 Rite.buffIdShield,
                 source: StringData.Strings(StringData.stringkeys.druidShield),
-                displaySource: StringData.RiteNames(Rite.Rites.stars),
+                displaySource: RiteData.RiteNames(Rite.Rites.stars),
                 duration: 3000,
                 displayName: StringData.Strings(StringData.stringkeys.druidShield),
                 description: StringData.Strings(StringData.stringkeys.defenseIncrease),

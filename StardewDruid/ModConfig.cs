@@ -77,10 +77,10 @@ namespace StardewDruid
 
             configMenu.AddKeybindList(
                 mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("ModConfig.41"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.42"),
-                getValue: () => Config.effectsButtons,
-                setValue: value => Config.effectsButtons = value
+                name: () => Mod.instance.Helper.Translation.Get("ModConfig.500.skills.1"),
+                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.500.skills.2"),
+                getValue: () => Config.skillsButtons,
+                setValue: value => Config.skillsButtons = value
             );
 
             configMenu.AddKeybindList(
@@ -232,14 +232,6 @@ namespace StardewDruid
                 tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.137"),
                 getValue: () => Config.slotAttune,
                 setValue: value => Config.slotAttune = value
-            );
-
-            configMenu.AddBoolOption(
-                mod: mod.ModManifest,
-                name: () => Mod.instance.Helper.Translation.Get("ModConfig.144"),
-                tooltip: () => Mod.instance.Helper.Translation.Get("ModConfig.145"),
-                getValue: () => Config.slotConsume,
-                setValue: value => Config.slotConsume = value
             );
 
             configMenu.AddBoolOption(

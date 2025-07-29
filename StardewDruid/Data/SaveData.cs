@@ -1,5 +1,6 @@
 ﻿using Force.DeepCloner;
 using StardewDruid.Cast;
+using StardewDruid.Dialogue;
 using StardewDruid.Handle;
 using StardewDruid.Location;
 using StardewValley;
@@ -9,7 +10,7 @@ using System.Collections.Generic;
 
 namespace StardewDruid.Data
 {
-    class StaticData
+    class SaveData
     {
 
         public int version = 0;
@@ -40,6 +41,8 @@ namespace StardewDruid.Data
 
         public Dictionary<int, ExportOrder> orders = new();
 
+        public Dictionary<string, int> dialogues = new();
+
         public Dictionary<string, int> restoration = new();
 
         public Dictionary<string, int> reliquary = new();
@@ -52,7 +55,7 @@ namespace StardewDruid.Data
 
         public string serialise = string.Empty;
 
-        public StaticData()
+        public SaveData()
         {
 
             // Player specific
@@ -91,6 +94,8 @@ namespace StardewDruid.Data
         public Dictionary<HerbalHandle.herbals, int> potions = new();
 
         public Dictionary<CharacterHandle.characters, PalData> pals = new();
+
+        public Dictionary<int, ExportOrder> orders = new();
 
         public MultiplayerData()
         {

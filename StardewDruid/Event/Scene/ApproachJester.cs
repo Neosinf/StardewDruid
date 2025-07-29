@@ -24,45 +24,6 @@ namespace StardewDruid.Event.Scene
 
         }
 
-        public override void SetupCompanion()
-        {
-
-            CharacterHandle.CharacterLoad(CharacterHandle.characters.Jester, StardewDruid.Character.Character.mode.scene);
-
-            location = Game1.getLocationFromName(Mod.instance.questHandle.quests[eventId].triggerLocation);
-
-            CharacterMover.Warp(location, Mod.instance.characters[CharacterHandle.characters.Jester], origin);
-
-            companions[0] = Mod.instance.characters[CharacterHandle.characters.Jester];
-
-            companions[0].ResetActives();
-
-            companions[0].eventName = eventId;
-
-            DialogueLoad(companions[0], 1);
-
-        }
-
-        public override bool AttemptReset()
-        {
-
-            if (!eventActive)
-            {
-
-                return true;
-
-            }
-
-            eventActive = false;
-
-            EventRemove();
-
-            SetupCompanion();
-
-            return true;
-
-        }
-
         public override void EventInterval()
         {
 
@@ -70,6 +31,22 @@ namespace StardewDruid.Event.Scene
 
             switch (activeCounter)
             {
+
+                case 1:
+
+                    location = Game1.getLocationFromName(Mod.instance.questHandle.quests[eventId].triggerLocation);
+
+                    LoadCompanion(CharacterHandle.characters.Jester, origin, 0, 0, false);
+
+                    DialogueLoad(companions[0], 1);
+
+                    break;
+
+                case 5:
+
+                    activeCounter = 2;
+
+                    break;
 
                 case 101:
 

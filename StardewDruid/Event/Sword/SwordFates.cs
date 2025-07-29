@@ -27,32 +27,13 @@ namespace StardewDruid.Event.Sword
         {
 
         }
-        public override void EventRemove()
+
+        public override void OnHealthReset()
         {
 
-            base.EventRemove();
+            DialogueCue(901);
 
-            if (eventAbort)
-            {
-
-                if (Game1.player.currentLocation.Name == LocationHandle.druid_tunnel_name)
-                {
-
-                    DialogueCue(901);
-
-                    Vector2 warpBack = ModUtility.PositionToTile(Mod.instance.questHandle.quests[eventId].origin);
-
-                    Mod.instance.WarpAllFarmers(
-                        Mod.instance.questHandle.quests[eventId].triggerLocation,
-                        (int)warpBack.X,
-                        (int)warpBack.Y, 
-                        2);
-
-
-                }
-
-            }
-
+            EventReset();
 
         }
 
@@ -180,7 +161,7 @@ namespace StardewDruid.Event.Sword
 
                     DialogueCue(900);
 
-                    EventDisplay run = EventBar(StringData.Strings(StringData.stringkeys.reachEnd), 1);
+                    EventBar run = ProgressBar(StringData.Strings(StringData.stringkeys.reachEnd), 1);
 
                     run.colour = Color.Orange;
 
@@ -225,7 +206,9 @@ namespace StardewDruid.Event.Sword
             if(activeCounter == 89)
             {
 
-                eventAbort = true;
+                DialogueCue(901);
+
+                EventReset();
 
             }
 
@@ -422,7 +405,7 @@ namespace StardewDruid.Event.Sword
 
         }
 
-        public override float SpecialProgress(int displayId)
+        public override float DisplayProgress(int displayId)
         {
 
             if (activeCounter > 80)
@@ -432,6 +415,27 @@ namespace StardewDruid.Event.Sword
             }
 
             return (float)(activeCounter - 10) / 80f;
+
+        }
+
+
+
+        public override void LeaveLocations()
+        {
+
+            if (Game1.player.currentLocation.Name == LocationHandle.druid_tunnel_name)
+            {
+
+                Vector2 warpBack = ModUtility.PositionToTile(Mod.instance.questHandle.quests[eventId].origin);
+
+                Mod.instance.WarpAllFarmers(
+                    Mod.instance.questHandle.quests[eventId].triggerLocation,
+                    (int)warpBack.X,
+                    (int)warpBack.Y,
+                    2);
+
+
+            }
 
         }
 

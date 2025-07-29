@@ -31,7 +31,7 @@ namespace StardewDruid.Cast.Effect
           : base()
         {
 
-            activeLimit = -1;
+            
 
         }
 
@@ -601,10 +601,10 @@ namespace StardewDruid.Cast.Effect
             };
 
 
-            if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
+            if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
             {
 
-                if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
+                if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
                 {
 
                     death.added.Add(SpellHandle.Effects.capture);
@@ -627,10 +627,10 @@ namespace StardewDruid.Cast.Effect
                 scheme = IconData.schemes.golden
             };
 
-            if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
+            if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
             {
 
-                if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
+                if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
                 {
 
                     critical.added.Add(SpellHandle.Effects.capture);

@@ -24,8 +24,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using xTile.Dimensions;
-using static StardewDruid.Handle.ExportHandle;
-using static StardewValley.Minigames.TargetGame;
 
 namespace StardewDruid.Handle
 {
@@ -294,6 +292,13 @@ namespace StardewDruid.Handle
         {
 
             Dictionary<int, ContentComponent> journal = new();
+
+            if (stock.Count <= 0)
+            {
+
+                return journal;
+
+            }
 
             int start = 0;
 
@@ -776,7 +781,7 @@ namespace StardewDruid.Handle
             foreach (KeyValuePair<exports, ExportGood> viable in goods)
             {
 
-                if (!RelicData.HasRelic(viable.Value.license))
+                if (!RelicHandle.HasRelic(viable.Value.license))
                 {
 
                     continue;
@@ -799,7 +804,7 @@ namespace StardewDruid.Handle
 
                 ExportGuild guild = contracts.Value;
 
-                if (!RelicData.HasRelic(guild.license))
+                if (!RelicHandle.HasRelic(guild.license))
                 {
 
                     continue;

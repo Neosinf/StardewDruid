@@ -257,7 +257,7 @@ namespace StardewDruid.Location
 
                 case shadows.circle:
 
-                    b.Draw(Mod.instance.iconData.cursorTexture, origin + new Vector2(useSource.Width * 2, useSource.Height * 4 - 24), Mod.instance.iconData.shadowRectangle, Color.White * shade, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
+                    b.Draw(Mod.instance.iconData.shadowTexture, origin + new Vector2(useSource.Width * 2, useSource.Height * 4 - 24), Mod.instance.iconData.shadowRectangle, Color.White * shade, 0f, Vector2.Zero, 4, flip ? (SpriteEffects)1 : 0, layer - 0.001f);
 
                     break;
 

@@ -58,7 +58,7 @@ namespace StardewDruid.Event.Challenge
         public ChallengeMoors()
         {
 
-            activeLimit = -1;
+            
 
             mainEvent = true;
 
@@ -283,7 +283,7 @@ namespace StardewDruid.Event.Challenge
 
                     goldenCore.scale = 3f;
 
-                    eventRenders.Add(goldenCore);
+                    eventRenders.Add("golden_pot", goldenCore);
 
                     break;
 
@@ -529,7 +529,7 @@ namespace StardewDruid.Event.Challenge
 
                     bosses[2].tempermentActive = Boss.temperment.aggressive;
 
-                    EventBar(Mod.instance.questHandle.quests[eventId].title, 1);
+                    ProgressBar(Mod.instance.questHandle.quests[eventId].title, 1);
 
                     break;
 
@@ -759,7 +759,7 @@ namespace StardewDruid.Event.Challenge
 
         }
 
-        public override float SpecialProgress(int displayId)
+        public override float DisplayProgress(int displayId)
         {
 
             switch (displayId)

@@ -25,81 +25,10 @@ namespace StardewDruid.Cast.Weald
 
         }
 
-        public override bool EventActive()
-        {
-
-            if (!inabsentia && !eventLocked)
-            {
-
-                if (!Mod.instance.RiteButtonHeld())
-                {
-
-                    return false;
-
-                }
-
-                if (Vector2.Distance(origin, Game1.player.Position) > 32 && !Mod.instance.ShiftButtonHeld())
-                {
-
-                    return false;
-
-                }
-
-            }
-            
-            return base.EventActive();
-
-        }
-
         public override void EventDecimal()
         {
 
-            if (!EventActive())
-            {
-
-                RemoveAnimations();
-
-                return;
-
-            }
-
             decimalCounter++;
-
-            if (!inabsentia && !eventLocked)
-            {
-
-                if (decimalCounter == 5)
-                {
-
-                    Mod.instance.rite.Channel(IconData.skies.mountain, 75);
-
-                    channel = IconData.skies.mountain;
-
-                }
-
-                if (decimalCounter == 15)
-                {
-
-                    eventLocked = true;
-
-                    SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new())
-                    {
-                        displayRadius = 3,
-
-                        scheme = IconData.schemes.herbal_ligna,
-
-                        sound = SpellHandle.Sounds.discoverMineral
-                    };
-
-                    Mod.instance.spellRegister.Add(circleHandle);
-
-                    decimalCounter = 0;
-
-                }
-
-                return;
-
-            }
 
             if(decimalCounter == 8)
             {
@@ -120,7 +49,7 @@ namespace StardewDruid.Cast.Weald
                 if (Mod.instance.save.restoration[location.Name] >= maxRestoration)
                 {
 
-                    Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.restoreFully));
+                    Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.restoreFully));
 
                     return;
                 
@@ -129,7 +58,7 @@ namespace StardewDruid.Cast.Weald
                 if (Mod.instance.rite.specialCasts[location.Name].Contains("restoration"))
                 {
 
-                    Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.restoreTomorrow));
+                    Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.restoreTomorrow));
 
                     location.playSound(SpellHandle.Sounds.ghost.ToString());
 
@@ -150,13 +79,13 @@ namespace StardewDruid.Cast.Weald
                 if (Mod.instance.save.restoration[location.Name] == 1)
                 {
 
-                    Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.restoreStart));
+                    Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.restoreStart));
 
                 }
                 else if (Mod.instance.save.restoration[location.Name] >= maxRestoration)
                 {
 
-                    Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.restoreFully));
+                    Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.restoreFully));
 
                     if (Game1.player.currentLocation is Clearing clearing)
                     {
@@ -169,7 +98,7 @@ namespace StardewDruid.Cast.Weald
                 else
                 {
 
-                    Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.restorePartial));
+                    Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.restorePartial));
 
                 }
 

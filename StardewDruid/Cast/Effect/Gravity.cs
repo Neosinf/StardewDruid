@@ -24,10 +24,6 @@ namespace StardewDruid.Cast.Effect
         public Gravity()
         {
 
-
-            activeLimit = 5;
-
-
         }
 
         public virtual void AddTarget(GameLocation location, Vector2 tile, int timer, float radius = 256)
@@ -40,14 +36,19 @@ namespace StardewDruid.Cast.Effect
 
             gravityWells.Add(tile, new(location, tile, timer, radius));
 
-
-            activeLimit = eventCounter + timer;
-
-
         }
 
         public override void EventDecimal()
         {
+
+            if (gravityWells.Count == 0)
+            {
+
+                eventComplete = true;
+
+                return;
+
+            }
 
             List<StardewValley.Monsters.Monster> procced = new();
 
@@ -67,7 +68,7 @@ namespace StardewDruid.Cast.Effect
 
                 Vector2 gravityCenter = gravityWell.Value.tile * 64;
 
-                List<StardewValley.Monsters.Monster> victims = ModUtility.MonsterProximity(gravityWell.Value.location, new() { gravityCenter, }, gravityWell.Value.radius, true);
+                List<StardewValley.Monsters.Monster> victims = ModUtility.MonsterProximity(gravityWell.Value.location, gravityCenter, gravityWell.Value.radius, true);
 
                 foreach(StardewValley.Monsters.Monster victim in victims)
                 {

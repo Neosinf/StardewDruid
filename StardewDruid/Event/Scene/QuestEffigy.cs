@@ -91,12 +91,10 @@ namespace StardewDruid.Event.Scene
 
         }
 
-        public override bool AttemptReset()
+        public override void OnLocationAbort()
         {
 
-            Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
-
-            return false;
+            Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
 
         }
 
@@ -144,7 +142,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(1);
 
-                    RelicHandle.RelicFunction(IconData.relics.wayfinder_censer.ToString());
+                    RelicFunction.RelicFunction(IconData.relics.lantern_censer.ToString());
 
                     //activeCounter = 300;
 
@@ -202,7 +200,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].specialTimer = 60;
 
-                    Mod.instance.iconData.DecorativeIndicator(location, companions[0].Position, IconData.decorations.weald, 3f, new() { interval = 1200, });
+                    Mod.instance.iconData.RiteCircle(location, companions[0].Position, IconData.ritecircles.weald, 3f, new() { interval = 1200, });
 
                     break;
 
@@ -354,7 +352,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].specialTimer = 60;
 
-                    Mod.instance.iconData.DecorativeIndicator(location, companions[0].Position, IconData.decorations.mists, 3f, new() { interval = 1200, });
+                    Mod.instance.iconData.RiteCircle(location, companions[0].Position, IconData.ritecircles.mists, 3f, new() { interval = 1200, });
 
                     break;
 
@@ -397,7 +395,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].specialTimer = 60;
 
-                    Mod.instance.iconData.DecorativeIndicator(location, companions[0].Position, IconData.decorations.mists, 3f, new() { interval = 1200, });
+                    Mod.instance.iconData.RiteCircle(location, companions[0].Position, IconData.ritecircles.mists, 3f, new() { interval = 1200, });
 
                     break;
 
@@ -432,7 +430,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].specialTimer = 60;
 
-                    Mod.instance.iconData.DecorativeIndicator(location, companions[0].Position, IconData.decorations.mists, 3f, new() { interval = 1200, });
+                    Mod.instance.iconData.RiteCircle(location, companions[0].Position, IconData.ritecircles.mists, 3f, new() { interval = 1200, });
 
                     break;
 
@@ -533,6 +531,7 @@ namespace StardewDruid.Event.Scene
                     activeCounter = 300;
 
                     break;
+
                 // ------------------------------------------
                 // 4 Jellyking
                 // ------------------------------------------
@@ -716,7 +715,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].LookAtTarget(bosses[0].Position, true);
 
-                    Mod.instance.iconData.DecorativeIndicator(location, companions[0].Position, IconData.decorations.stars, 3f, new() { interval = 1200, });
+                    Mod.instance.iconData.RiteCircle(location, companions[0].Position, IconData.ritecircles.stars, 3f, new() { interval = 1200, });
 
                     SpellHandle meteor = new(location, bosses[0].Position, Game1.player.Position)
                     {
@@ -724,7 +723,7 @@ namespace StardewDruid.Event.Scene
 
                         missile = MissileHandle.missiles.meteor,
 
-                        factor = 4
+                        displayFactor = 4
                     };
 
                     Mod.instance.spellRegister.Add(meteor);
@@ -788,9 +787,7 @@ namespace StardewDruid.Event.Scene
 
                     Wisps wispNew = new();
 
-                    wispNew.EventSetup(eventVectors[106] * 64, Rite.eventWisps);
-
-                    wispNew.eventLocked = true;
+                    wispNew.EventSetup(Game1.player, eventVectors[106] * 64, Rite.eventWisps);
 
                     wispNew.EventActivate();
 
@@ -1001,7 +998,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(35);
 
-                    ThrowHandle throwRelic = new(Game1.player, companions[0].Position, IconData.relics.effigy_crest);
+                    ThrowHandle throwRelic = new(Game1.player, companions[0].Position, IconData.relics.companion_crest);
 
                     throwRelic.register();
 

@@ -58,10 +58,17 @@ namespace StardewDruid.Character
 
         }
 
+        public override bool OverheadFrame()
+        {
+
+            return false;
+
+        }
+
         public override Microsoft.Xna.Framework.Rectangle OverheadPortrait()
         {
 
-            return IconData.DisplayRectangle(Data.IconData.displays.chaos);
+            return IconData.DisplayRectangle(Data.IconData.displays.speech);
 
         }
 

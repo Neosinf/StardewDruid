@@ -129,7 +129,7 @@ namespace StardewDruid.Handle
 
                         string notReadyMessage = Mod.instance.Helper.Translation.Get("CharacterHandle.363.1").Tokens(new { name = subject.displayName });
 
-                        Mod.instance.CastMessage(notReadyMessage);
+                        Mod.instance.RegisterMessage(notReadyMessage);
 
                     }
 
@@ -149,7 +149,7 @@ namespace StardewDruid.Handle
 
                         string outOfTimeMessage = Mod.instance.Helper.Translation.Get("CharacterHandle.363.2").Tokens(new { name = subject.displayName });
 
-                        Mod.instance.CastMessage(outOfTimeMessage);
+                        Mod.instance.RegisterMessage(outOfTimeMessage);
 
                     }
 
@@ -167,7 +167,7 @@ namespace StardewDruid.Handle
 
                         suspended = true;
 
-                        Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.4").Tokens(new { name = subject.displayName, }), 0, true);
+                        Mod.instance.RegisterMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.4").Tokens(new { name = subject.displayName, }), 0, true);
                     }
 
                     return;
@@ -179,7 +179,7 @@ namespace StardewDruid.Handle
 
                     suspended = false;
 
-                    Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.3").Tokens(new { name = subject.displayName, }), 0, true);
+                    Mod.instance.RegisterMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.3").Tokens(new { name = subject.displayName, }), 0, true);
 
                     if (subject.currentLocation != null)
                     {

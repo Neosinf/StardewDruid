@@ -850,7 +850,7 @@ namespace StardewDruid.Monster
 
             Vector2 shadowPosition = spritePosition + new Vector2(0, spriteScale * 14);
 
-            b.Draw(Mod.instance.iconData.cursorTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * 0.35f * fadeOut, 0.0f, new Vector2(24), spriteScale / 2, 0, drawLayer - 1E-06f);
+            b.Draw(Mod.instance.iconData.shadowTexture, shadowPosition, Mod.instance.iconData.shadowRectangle, Color.White * 0.35f * fadeOut, 0.0f, new Vector2(24), spriteScale / 2, 0, drawLayer - 1E-06f);
 
         }
 
@@ -1007,7 +1007,7 @@ namespace StardewDruid.Monster
             {
                 type = SpellHandle.Spells.missile,
 
-                factor = 2,
+                displayFactor = 2,
 
                 missile = MissileHandle.missiles.shuriken,
 

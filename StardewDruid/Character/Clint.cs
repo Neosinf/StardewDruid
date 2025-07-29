@@ -113,7 +113,7 @@ namespace StardewDruid.Character
 
                 counter = -30,
 
-                factor = 3,
+                displayFactor = 3,
 
                 display = IconData.impacts.flashbang
             };
@@ -220,7 +220,7 @@ namespace StardewDruid.Character
 
             }
 
-            SpellHandle explode = new(Game1.player, workVector * 64, 128, -1)
+            /*SpellHandle explode = new(Game1.player, workVector * 64, 128, -1)
             {
                 type = SpellHandle.Spells.explode,
 
@@ -238,7 +238,7 @@ namespace StardewDruid.Character
 
             explode.terrain = 2;
 
-            Mod.instance.spellRegister.Add(explode);
+            Mod.instance.spellRegister.Add(explode);*/
 
         }
 

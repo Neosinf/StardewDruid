@@ -37,7 +37,7 @@ namespace StardewDruid.Journal
 
             type = journalTypes.orders;
 
-            title = StringData.Strings(StringData.stringkeys.orders);
+            title = JournalData.JournalTitle(type);
 
             pagination = 4;
 

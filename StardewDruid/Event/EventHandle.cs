@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
+using StardewDruid.Cast.Witch;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
@@ -9,7 +10,9 @@ using StardewDruid.Handle;
 using StardewDruid.Location;
 using StardewDruid.Monster;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Buildings;
 using StardewValley.Companions;
 using StardewValley.GameData;
 using StardewValley.Menus;
@@ -28,15 +31,37 @@ namespace StardewDruid.Event
 
         public string eventId = "none";
 
+        public string eventTitle = "none";
+
         public GameLocation location;
 
         public Vector2 origin = Vector2.Zero;
 
-        public bool inabsentia;
-
         public List<string> locales = new();
 
         public int costCounter = 0;
+
+        public enum abortBehaviour
+        {
+            ignore,
+            reset,
+            abort,
+            stall,
+        }
+
+        //public abortBehaviour pauseAbort = abortBehaviour.abort;
+
+        public abortBehaviour locationAbort = abortBehaviour.abort;
+
+        public abortBehaviour healthAbort = abortBehaviour.ignore;
+
+        public bool stalled;
+
+        // ----------------- local management
+
+        public bool localEvent;
+
+        public bool localActive;
 
         // ----------------- trigger management
 
@@ -44,9 +69,9 @@ namespace StardewDruid.Event
 
         public bool triggerActive;
 
-        public bool triggerAbort;
+        public Rite.Rites triggerRite = Rite.Rites.none;
 
-        public int triggerCounter;
+        public int triggerTime;
 
         // ------------------ event management
 
@@ -56,12 +81,9 @@ namespace StardewDruid.Event
             action,
             special,
             rite,
-            shift,
             warp,
             favourite,
         }
-
-        public int eventCounter;
 
         public bool eventActive;
 
@@ -69,25 +91,25 @@ namespace StardewDruid.Event
 
         public bool mainEvent = false;
 
+        public int activeScene;
+
+        public int sceneLimit;
+
         public int activeCounter;
+
+        public int activeLimit;
 
         public int decimalCounter;
 
-        public int activeLimit = 60;
-
-        public bool eventAbort;
-
         public int proximityCounter = 0;
-
-        public bool eventLocked;
 
         public int eventRating;
 
         public List<actionButtons> clicks = new();
 
-        public List<EventRender> eventRenders = new();
+        public Dictionary<string, EventRender> eventRenders = new();
 
-        public IconData.skies channel = IconData.skies.none;
+        public Dictionary<int, Vector2> sceneVectors = new();
 
         // ------------------- event entities
 
@@ -122,46 +144,78 @@ namespace StardewDruid.Event
 
         }
 
-        public virtual void EventSetup(string id)
-        {
-
-            origin = Mod.instance.questHandle.quests[id].origin;
-
-            eventId = id;
-
-            triggerEvent = Mod.instance.questHandle.quests[id].trigger;
-
-            locales = new() { Mod.instance.questHandle.quests[eventId].triggerLocation, };
-
-            Mod.instance.RegisterEvent(this, eventId);
-
-            SetupNarration(eventId);
-
-            SetupCompanion();
-
-        }
-
-        public virtual void EventSetup(Vector2 target, string id, bool trigger = false)
+        public virtual void EventSetup(Farmer player, Vector2 target, string id)
         {
 
             origin = target;
 
             eventId = id;
-            
-            triggerEvent = trigger;
 
-            if(locales.Count == 0)
+            locales = new() { player.currentLocation.Name, };
+
+            location = player.currentLocation;
+
+            Mod.instance.RegisterEvent(this, eventId);
+
+        }
+
+        public virtual void EventSetup(string id)
+        {
+
+            if(origin == Vector2.Zero)
             {
 
-                locales = new() { Game1.player.currentLocation.Name, };
+                origin = Mod.instance.questHandle.quests[id].origin;
 
             }
+
+            eventId = id;
+
+            eventTitle = Mod.instance.questHandle.quests[id].title;
+
+            triggerEvent = Mod.instance.questHandle.quests[id].trigger;
+
+            triggerRite = Mod.instance.questHandle.quests[id].triggerRite;
+
+            triggerTime = Mod.instance.questHandle.quests[id].triggerTime;
+
+            localEvent = Mod.instance.questHandle.quests[id].local;
+
+            locales = new() { Mod.instance.questHandle.quests[eventId].triggerLocation, };
+
+            //pauseAbort = Mod.instance.questHandle.quests[id].pauseAbort;
+
+            locationAbort = Mod.instance.questHandle.quests[id].locationAbort;
+
+            healthAbort = Mod.instance.questHandle.quests[id].healthAbort;
 
             Mod.instance.RegisterEvent(this, eventId);
 
             SetupNarration(eventId);
 
-            SetupCompanion();
+        }
+
+        public virtual void EventSetup(Vector2 target, string id, List<string> Locations, bool trigger, bool local)
+        {
+
+            if (origin == Vector2.Zero)
+            {
+
+                origin = target;
+
+            }
+
+            eventId = id;
+
+            locales = Locations;
+
+            triggerEvent = trigger;
+
+            localEvent = local;
+
+            Mod.instance.RegisterEvent(this, eventId);
+
+            SetupNarration(eventId);
 
         }
 
@@ -172,20 +226,13 @@ namespace StardewDruid.Event
 
             eventId = id;
 
-            inabsentia = true;
+            locationAbort = abortBehaviour.ignore;
 
             locales = new() { Location.Name, };
 
             location = Location;
 
             Mod.instance.RegisterEvent(this, eventId);
-
-        }
-
-        public virtual void SetupCompanion()
-        {
-
-
 
         }
 
@@ -210,71 +257,108 @@ namespace StardewDruid.Event
 
             }
 
-            foreach (EventRender er in eventRenders)
+            foreach (KeyValuePair<string,EventRender> er in eventRenders)
             {
 
-                er.draw(b);
+                er.Value.draw(b);
 
             }
 
         }
 
         // ------------------------------------
-
-        public virtual bool TriggerActive()
+        
+        public virtual bool LocalUpdate()
         {
 
-            if (!TriggerLocation())
+            if (TriggerLocation())
             {
 
-                if (triggerActive)
-                {
+                EventActivate();
 
-                    triggerActive = false;
-
-                    TriggerRemove();
-
-                }
-
-                return false;
+                return true;
 
             }
 
-            if (!triggerActive)
+            return false;
+
+        }
+
+        // ------------------------------------
+
+
+        public virtual void TriggerAbort()
+        {
+
+            if (triggerActive)
             {
 
-                location = Game1.player.currentLocation;
+                TriggerRemove();
 
-                triggerActive = true;
+            }
 
-                TriggerField();
+        }
+
+        public virtual bool TriggerUpdate()
+        {
+
+            if (TriggerLocation())
+            {
+
+                if (!triggerActive)
+                {
+
+                    TriggerCreate();
+
+                }
+
+                return true;
+
+            }
+
+            if (triggerActive)
+            {
+
+                TriggerRemove();
 
             }
 
             return true;
-
-        }
-
-        public virtual void TriggerField()
-        {
-
-            EventRender triggerField = new(eventId, location.Name, origin, Mod.instance.iconData.riteDisplays[Mod.instance.questHandle.quests[eventId].triggerRite]);
-
-            eventRenders.Add(triggerField);
 
         }
 
         public virtual bool TriggerLocation()
         {
 
-            if (!locales.Contains(Game1.player.currentLocation.Name))
-            {
+            return locales.Contains(Game1.player.currentLocation.Name);
 
-                return false;
+        }
 
-            }
+        public virtual void TriggerCreate()
+        {
 
-            return true;
+            triggerActive = true;
+
+            Mod.instance.triggerRegister[eventId] = true;
+
+            EventRender triggerField = new(eventId, Game1.player.currentLocation.Name, origin, Mod.instance.iconData.riteDisplays[triggerRite]);
+
+            eventRenders.Add(eventId + "_trigger", triggerField);
+
+            location = Game1.player.currentLocation;
+
+        }
+        
+        public virtual void TriggerRemove()
+        {
+
+            triggerActive = false;
+
+            Mod.instance.triggerRegister.Remove(eventId);
+
+            eventRenders.Clear();
+
+            location = null;
 
         }
 
@@ -295,11 +379,13 @@ namespace StardewDruid.Event
 
             }
 
-            if (Mod.instance.questHandle.quests[eventId].triggerRite != Rite.Rites.none)
+            if (triggerTime != 0)
             {
 
-                if (Mod.instance.rite.castType != Mod.instance.questHandle.quests[eventId].triggerRite)
+                if (Game1.timeOfDay < triggerTime)
                 {
+
+                    Mod.instance.RegisterDisplay(StringData.Strings(StringData.stringkeys.returnLater));
 
                     return false;
 
@@ -307,13 +393,11 @@ namespace StardewDruid.Event
 
             }
 
-            if (Mod.instance.questHandle.quests[eventId].triggerTime != 0)
+            if (triggerRite != Rite.Rites.none)
             {
 
-                if (Game1.timeOfDay < Mod.instance.questHandle.quests[eventId].triggerTime)
+                if (Mod.instance.rite.appliedBuff != triggerRite)
                 {
-
-                    Mod.instance.CastDisplay(StringData.Strings(StringData.stringkeys.returnLater));
 
                     return false;
 
@@ -327,71 +411,10 @@ namespace StardewDruid.Event
 
         }
 
-        public virtual void TriggerRemove()
-        {
-
-            RemoveActors();
-
-            RemoveAnimations();
-
-            if (soundTrack)
-            {
-
-                Game1.stopMusicTrack(MusicContext.Default);
-
-            }
-
-            triggerActive = false;
-
-            triggerCounter = 0;
-
-            eventRenders.Clear();
-
-            location = null;
-
-        }
-
-        public virtual bool TriggerAbort()
-        {
-
-            return triggerAbort;
-
-        }
-
-        public virtual void TriggerInterval()
-        {
-
-            triggerCounter++;
-
-        }
-
-        public virtual void ResetToTrigger()
-        {
-
-            EventRemove();
-
-            eventActive = false;
-
-        }
-
         public virtual void SendFriendsHome()
         {
 
-            if (Mod.instance.eventRegister.ContainsKey(Rite.eventCorvids))
-            {
-
-                if(Mod.instance.eventRegister[Rite.eventCorvids] is Cast.Bones.Corvids corvids)
-                {
-
-                    Cast.Bones.Corvids.RemoveCorvids();
-
-                    corvids.EventRemove();
-
-                    Mod.instance.eventRegister.Remove(Rite.eventCorvids);
-
-                }
-
-            }
+            CorvidHandle.RemoveCorvids();
 
             for (int t = Mod.instance.trackers.Count - 1; t >= 0; t--)
             {
@@ -432,20 +455,29 @@ namespace StardewDruid.Event
 
             eventActive = true;
 
-            eventAbort = false;
-
-            eventCounter = 0;
+            activeScene = 0;
 
             activeCounter = 0;
 
             decimalCounter = 0;
 
-            if (!inabsentia || location == null)
+            if (location == null)
             {
 
                 location = Game1.player.currentLocation;
 
             }
+
+        }
+
+        public virtual void EventReset()
+        {
+
+            EventRemove();
+
+            Mod.instance.activeEvent.Remove(eventId);
+
+            eventActive = false;
 
         }
 
@@ -465,80 +497,138 @@ namespace StardewDruid.Event
 
         }
 
-        public virtual EventDisplay EventBar(string Title, int Id)
+        public virtual EventBar SceneBar(string Title, int Id)
         {
 
-            EventDisplay bar = Mod.instance.CastDisplay(Title,Title);
-
-            bar.uniqueId = Id;
+            EventBar bar = Mod.instance.RegisterBar(Title, EventBar.barTypes.scene, Id);
 
             bar.eventId = eventId;
 
-            bar.type = EventDisplay.displayTypes.bar;
-
-            bar.colour = Color.Blue;
+            bar.colour = Color.LightGreen;
 
             return bar;
 
         }
 
-        public virtual EventDisplay BossBar(int bossId, int narratorId)
+        public virtual EventBar ProgressBar(string Title, int Id)
         {
 
-            EventDisplay bar = Mod.instance.CastDisplay(narrators[narratorId], narrators[narratorId]);
-
-            bar.boss = bossId;
+            EventBar bar = Mod.instance.RegisterBar(Title, EventBar.barTypes.progress, Id);
 
             bar.eventId = eventId;
 
-            bar.type = EventDisplay.displayTypes.bar;
-
-            bar.colour = Microsoft.Xna.Framework.Color.Red;
+            bar.colour = Color.LightBlue;
 
             return bar;
 
         }
 
-        public virtual void EventTimer()
+        public virtual EventBar BossBar(int bossId, int narratorId)
         {
 
-            eventCounter++;
+            EventBar bar = Mod.instance.RegisterBar(narrators[narratorId], EventBar.barTypes.boss, bossId);
+
+            bar.eventId = eventId;
+
+            bar.colour = Microsoft.Xna.Framework.Color.LightCoral;
+
+            return bar;
 
         }
 
         public virtual bool EventActive()
         {
 
-            if (eventAbort)
+            if (eventComplete)
             {
 
-                return AttemptReset();
+                return false;
 
             }
-            
-            if (!inabsentia)
+
+            bool stallCheck = false;
+
+            if (!EventLocation())
             {
 
-                if (!EventLocation())
+                switch (locationAbort)
                 {
 
-                    return AttemptReset();
+                    case abortBehaviour.ignore:
+
+                        break;
+
+                    case abortBehaviour.reset:
+
+                        OnLocationReset();
+
+                        break;
+
+                    case abortBehaviour.abort:
+
+                        OnLocationAbort();
+
+                        return false;
+
+                    case abortBehaviour.stall:
+
+                        if (!stalled)
+                        {
+
+                            OnStall();
+
+                        }
+
+                        stallCheck = true;
+
+                        break;
 
                 }
 
             }
 
-            if (eventComplete)
+            if(Game1.player.health <= 7)
             {
 
-                return EventComplete();
+                switch (healthAbort)
+                {
+
+                    case abortBehaviour.ignore:
+
+                        break;
+
+                    case abortBehaviour.reset:
+
+                        OnHealthReset();
+
+                        break;
+
+                    case abortBehaviour.abort:
+
+                        OnHealthAbort();
+
+                        return false;
+
+                    case abortBehaviour.stall:
+
+                        if (!stalled)
+                        {
+
+                            OnStall();
+
+                        }
+
+                        stallCheck = true;
+
+                        break;
+                }
 
             }
 
-            if (activeLimit != -1 && eventCounter > activeLimit)
+            if(stalled && !stallCheck)
             {
 
-                return EventExpire();
+                OnResume();
 
             }
 
@@ -546,24 +636,53 @@ namespace StardewDruid.Event
 
         }
 
-        public virtual bool AttemptReset()
+        public virtual void OnPauseReset()
         {
-
-            return false;
+            
+            EventReset();
 
         }
 
-        public virtual bool EventComplete()
+        public virtual void OnPauseAbort()
         {
-
-            return false;
 
         }
 
-        public virtual bool EventExpire()
+        public virtual void OnLocationReset()
         {
 
-            return false;
+            EventReset();
+
+        }
+
+        public virtual void OnLocationAbort()
+        {
+
+        }
+
+        public virtual void OnHealthReset()
+        {
+
+            EventReset();
+
+        }
+
+        public virtual void OnHealthAbort()
+        {
+
+        }
+
+        public virtual void OnStall()
+        {
+
+            stalled = true;
+
+        }
+
+        public virtual void OnResume()
+        {
+
+            stalled = false;
 
         }
 
@@ -581,13 +700,6 @@ namespace StardewDruid.Event
             StopTrack();
 
             eventRenders.Clear();
-
-            if(channel != IconData.skies.none)
-            {
-
-                Mod.instance.rite.ChannelShutdown(channel);
-
-            }
 
             foreach (string local in locales)
             {
@@ -614,6 +726,14 @@ namespace StardewDruid.Event
                 EventCompleted();
 
             }
+
+            LeaveLocations();
+
+            Mod.instance.RemoveBars(eventId);
+
+            Mod.instance.RemoveDisplays(eventId);
+
+            stalled = false;
 
         }
 
@@ -643,7 +763,7 @@ namespace StardewDruid.Event
 
         }
 
-        public virtual bool EventPerformAction(SButton Button, actionButtons Action = actionButtons.action)
+        public virtual bool EventPerformAction(actionButtons Action = actionButtons.action)
         {
 
             return false;
@@ -653,18 +773,68 @@ namespace StardewDruid.Event
         public virtual void EventDecimal()
         {
 
-
         }
 
         public virtual void EventInterval()
         {
 
-            activeCounter++;
+        }
+
+        public virtual void NextScene(int index = -1)
+        {
+
+            activeCounter = 0;
+
+            switch (index)
+            {
+
+                case -1:
+
+                    activeScene++;
+
+                    break;
+
+                default:
+
+                    activeScene = index;
+
+                    break;
+
+            }
+
+        }
+
+        public virtual void NextCounter(int index = -1)
+        {
+
+            switch (index)
+            {
+
+                case -1:
+
+                    activeCounter++;
+
+                    break;
+
+                default:
+
+                    activeCounter = index;
+
+                    break;
+
+            }
+
+        }
+
+        public virtual void SkipEvent(int index = -1)
+        {
+
+
 
         }
 
         // ------------------------------------ entities
-        
+
         public void CastVoice(int id, string message, int duration = 2000)
         {
 
@@ -761,6 +931,28 @@ namespace StardewDruid.Event
 
         }
 
+        public virtual void LoadCompanion(CharacterHandle.characters character, Vector2 companionPosition, int companionId = 0, int voiceId = 0, bool animateWarp = false)
+        {
+
+            CharacterHandle.CharacterLoad(character, StardewDruid.Character.Character.mode.scene);
+
+            companions[companionId] = Mod.instance.characters[character];
+
+            CharacterMover.Warp(location, companions[companionId], companionPosition, animateWarp, companions[companionId].warpDisplay);
+
+            companions[companionId].LookAtTarget(Game1.player.Position, true);
+
+            companions[companionId].eventName = eventId;
+
+            if(voiceId != -1)
+            {
+
+                voices[voiceId] = companions[companionId];
+
+            }
+
+        }
+
         public void SetTrack(string track)
         {
 
@@ -831,17 +1023,14 @@ namespace StardewDruid.Event
 
                 voices[voice] = boss;
 
-                EventDisplay bossBar = BossBar(index,voice);
-
-                bossBar.colour = Microsoft.Xna.Framework.Color.LightCoral;
+                BossBar(index,voice);
 
             }
 
         }
 
         // ------------------------------------ dialogue
-
-        public virtual float DisplayProgress(int displayId = 0)
+        public virtual float DisplayScene(int displayId = 0)
         {
 
             if (!eventActive)
@@ -851,38 +1040,37 @@ namespace StardewDruid.Event
 
             }
 
-            if (activeCounter == 0)
-            {
-
-                return 0f;
-
-            }
-
-            float progress = 0f;
 
             switch (displayId)
             {
 
-                case 0:
-
-                    progress = (float)activeCounter / (float)activeLimit;
-
-                    break;
-
                 default:
 
-                    progress = SpecialProgress(displayId);
+                    if (activeScene == 0)
+                    {
 
-                    break;
+                        return 0f;
 
+                    }
+
+                    return (float)activeScene / sceneLimit;
+
+                case 1:
+
+                    if (activeCounter == 0)
+                    {
+
+                        return 0f;
+
+                    }
+
+                    return (float)activeCounter / activeLimit;
 
             }
 
-            return progress;
-
         }
 
-        public virtual float SpecialProgress(int displayId)
+        public virtual float DisplayProgress(int displayId)
         {
 
             return -1f;
@@ -901,7 +1089,7 @@ namespace StardewDruid.Event
                     if(cue.Key == 999)
                     {
 
-                        Mod.instance.CastDisplay(cue.Value,0);
+                        Mod.instance.RegisterDisplay(cue.Value,0.ToString(),EventDisplay.displayTypes.strong);
 
                         if (Context.IsMultiplayer)
                         {
@@ -955,6 +1143,8 @@ namespace StardewDruid.Event
 
                         Rectangle cueSource = Rectangle.Empty;
 
+                        bool cueFrame = false;
+
                         string speakerName = string.Empty;
 
                         if (voices[cue.Key] is StardewDruid.Monster.Boss bossMonster)
@@ -971,6 +1161,8 @@ namespace StardewDruid.Event
 
                             cuePortrait = bossMonster.OverheadTexture();
 
+                            cueFrame = bossMonster.OverheadFrame();
+
                             cueSource = bossMonster.OverheadPortrait();
 
                             speakerName = bossMonster.Name;
@@ -980,6 +1172,8 @@ namespace StardewDruid.Event
                         {
 
                             cuePortrait = charSpeaker.OverheadTexture();
+
+                            cueFrame = charSpeaker.OverheadFrame();
 
                             cueSource = charSpeaker.OverheadPortrait();
 
@@ -999,14 +1193,16 @@ namespace StardewDruid.Event
                         if (Mod.instance.Config.captionOption != ModData.captionOptions.none.ToString())
                         {
 
-                            EventDisplay cueDisplay = Mod.instance.CastDisplay(cueTitle, cue.Value);
+                            EventDisplay cueDisplay = Mod.instance.RegisterDisplay(cue.Value, cueTitle);
 
                             if (Mod.instance.Config.captionOption == ModData.captionOptions.auto.ToString() && cuePortrait != null)
                             {
 
-                                cueDisplay.portrait = cuePortrait;
+                                cueDisplay.imageTexture = cuePortrait;
 
-                                cueDisplay.portraitSource = cueSource;
+                                cueDisplay.imageFrame = cueFrame;
+
+                                cueDisplay.imageSource = cueSource;
 
                             }
 
@@ -1212,6 +1408,8 @@ namespace StardewDruid.Event
 
             }
 
+            Mod.instance.RemoveDisplays(eventId);
+
             string intro = conversations[dialogueId].intro;
 
             List<Response> responseList = new();
@@ -1240,7 +1438,6 @@ namespace StardewDruid.Event
 
             Game1.player.currentLocation.createQuestionDialogue(intro, responseList.ToArray(), questionBehavior, npc);
 
-
             if (Context.IsMultiplayer)
             {
 
@@ -1249,11 +1446,11 @@ namespace StardewDruid.Event
 
                     name = npc != null ? npc.Name : null,
 
-                    value = intro,
+                    value = conversations[dialogueId].questId,
+
+                    description = dialogueId.ToString(),
 
                     location = location.Name,
-
-                    description = string.Join("|", conversations[dialogueId].responses) 
 
                 };
 
@@ -1274,32 +1471,78 @@ namespace StardewDruid.Event
 
             int answerIndex = Convert.ToInt32(dialogueIndexes[2]);
 
-            if(conversations[dialogueIndex].questContext != 0)
+            DialogueSpecial currentConversation = conversations[dialogueIndex];
+
+            if (currentConversation.updateScene != 999)
             {
 
-                activeCounter = Math.Max(conversations[dialogueIndex].questContext, activeCounter);
+                NextScene(currentConversation.updateScene);
 
             }
 
-            if(companions.ContainsKey(conversations[dialogueIndex].companion))
+            if (currentConversation.updateCounter != 999)
             {
 
-                StardewValley.NPC npc = companions[conversations[dialogueIndex].companion];
+                NextCounter(currentConversation.updateCounter);
 
-                if (conversations[dialogueIndex].answers.Count > answerIndex)
+            }
+
+            if (currentConversation.choices.Count > 0)
+            {
+
+                if (currentConversation.choices.ContainsKey(answerIndex) && currentConversation.dialogueId != null)
                 {
 
-                    DialogueDraw(npc, conversations[dialogueIndex].answers[answerIndex]);
-
-                }
-                else if (conversations[dialogueIndex].answers.Count > 0)
-                {
-
-                    DialogueDraw(npc, conversations[dialogueIndex].answers.First());
+                    Mod.instance.save.dialogues[currentConversation.dialogueId] = (int)currentConversation.choices[answerIndex];
 
                 }
 
             }
+
+            if (currentConversation.answers.Count == 0)
+            {
+
+                return;
+
+            }
+            
+            if (companions.ContainsKey(currentConversation.companion))
+            {
+
+                StardewValley.NPC npc = companions[currentConversation.companion];
+
+                if (currentConversation.answers.ContainsKey(answerIndex))
+                {
+
+                    DialogueDraw(npc, currentConversation.answers[answerIndex]);
+
+                }
+                else
+                {
+
+                    DialogueDraw(npc, currentConversation.answers.First().Value);
+
+                }
+
+            }
+            else
+            {
+
+                if (currentConversation.answers.ContainsKey(answerIndex))
+                {
+
+                    DialogueDraw(null, currentConversation.answers[answerIndex]);
+
+                }
+                else
+                {
+
+                    DialogueDraw(null, currentConversation.answers.First().Value);
+
+                }
+
+            }
+            
 
         }
 
@@ -1308,29 +1551,53 @@ namespace StardewDruid.Event
 
             Game1.currentSpeaker = npc;
 
-            StardewValley.Dialogue dialogue = new(npc, "0", text);
+            if (npc == null)
+            {
 
-            Game1.activeClickableMenu = new DialogueBox(dialogue);
+                List<string> answers = ModUtility.SplitStringByLength(text, 185);
+
+                Game1.activeClickableMenu = new DialogueBox(answers);
+
+            }
+            else
+            {
+
+                StardewValley.Dialogue dialogue = new(npc, "0", text);
+
+                Game1.activeClickableMenu = new DialogueBox(dialogue);
+
+            }
 
             Game1.player.Halt();
 
             Game1.player.CanMove = false;
 
-            if (Context.IsMultiplayer)
+        }
+
+        public virtual void SetDialogueChoices(int from, int to)
+        {
+
+            for (int i = from; i <= to; i++)
             {
 
-                QueryData queryData = new()
+                if (conversations.ContainsKey(i))
                 {
 
-                    name = npc != null ? npc.Name : null,
+                    DialogueSpecial currentConversation = conversations[i];
 
-                    value = text,
+                    if (currentConversation.choices.Count > 0)
+                    {
 
-                    location = npc.currentLocation.Name,
+                        if (currentConversation.dialogueId != null)
+                        {
 
-                };
+                            Mod.instance.save.dialogues[currentConversation.dialogueId] = (int)DialogueSpecial.dialoguemanner.impatient;
 
-                Mod.instance.EventQuery(queryData, QueryData.queries.EventDialogue);
+                        }
+
+                    }
+
+                }
 
             }
 
@@ -1385,9 +1652,8 @@ namespace StardewDruid.Event
 
             List<string> summons = new()
             {
-                Rite.eventCorvids,
                 Rite.eventWisps,
-
+                Rite.eventWinds,
             };
 
             foreach(string riteSummon in summons)
@@ -1396,13 +1662,13 @@ namespace StardewDruid.Event
                 if (Mod.instance.eventRegister.ContainsKey(riteSummon))
                 {
 
-                    Mod.instance.eventRegister[riteSummon].eventAbort = true;
+                    Mod.instance.eventRegister[riteSummon].eventComplete = true;
 
                 }
 
             }
 
-            Cast.Bones.Corvids.RemoveCorvids();
+            CorvidHandle.RemoveCorvids();
 
         }
 
@@ -1559,6 +1825,10 @@ namespace StardewDruid.Event
 
         }
 
+        public virtual void LeaveLocations()
+        {
+
+        }
 
     }
 

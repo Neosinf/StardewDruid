@@ -199,7 +199,7 @@ namespace StardewDruid.Character
 
                         Cast.Effect.Shield shieldEffect = new();
 
-                        shieldEffect.EventSetup(Game1.player.Position, Rite.eventShield);
+                        shieldEffect.EventSetup(currentLocation, Game1.player.Position, Rite.eventShield);
 
                         shieldEffect.EventActivate();
 

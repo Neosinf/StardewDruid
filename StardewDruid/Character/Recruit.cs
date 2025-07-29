@@ -188,7 +188,7 @@ namespace StardewDruid.Character
 
             }
 
-            List<StardewValley.Monsters.Monster> monsters = ModUtility.MonsterProximity(currentLocation, new() { Position, }, 640f, true);
+            List<StardewValley.Monsters.Monster> monsters = ModUtility.MonsterProximity(currentLocation, Position, 640f, true);
 
             if (monsters.Count > 0)
             {

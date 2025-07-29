@@ -42,7 +42,7 @@ namespace StardewDruid.Journal
 
                 [113] = addButton(journalButtons.dismissPal),
 
-                [114] = addButton(journalButtons.removePal),
+                [114] = addButton(journalButtons.rewildPal),
 
                 [201] = addButton(journalButtons.back),
 
@@ -337,7 +337,7 @@ namespace StardewDruid.Journal
 
                     Mod.instance.save.pals[entity].PalLoad(Character.Character.mode.track);
 
-                    Mod.instance.CastMessage(Mod.instance.save.pals[entity].name + StringData.Strings(StringData.stringkeys.joinedPlayer), 0, true);
+                    Mod.instance.RegisterMessage(Mod.instance.save.pals[entity].name + StringData.Strings(StringData.stringkeys.joinedPlayer), 0, true);
 
                     exitThisMenu();
 
@@ -358,7 +358,7 @@ namespace StardewDruid.Journal
 
                     Mod.instance.save.pals[entity].PalLoad(Character.Character.mode.home);
 
-                    Mod.instance.CastMessage(Mod.instance.save.pals[entity].name + StringData.Strings(StringData.stringkeys.returnedHome), 0, true);
+                    Mod.instance.RegisterMessage(Mod.instance.save.pals[entity].name + StringData.Strings(StringData.stringkeys.returnedHome), 0, true);
 
                     exitThisMenu();
 
@@ -366,7 +366,7 @@ namespace StardewDruid.Journal
 
                     return;
 
-                case journalButtons.removePal:
+                case journalButtons.rewildPal:
 
                     if (!Mod.instance.save.pals.ContainsKey(entity))
                     {
@@ -379,7 +379,7 @@ namespace StardewDruid.Journal
 
                     Mod.instance.save.pals[entity].PalLoad(Character.Character.mode.limbo);
 
-                    Mod.instance.CastMessage(Mod.instance.save.pals[entity].name + StringData.Strings(StringData.stringkeys.wandering), 0, true);
+                    Mod.instance.RegisterMessage(Mod.instance.save.pals[entity].name + StringData.Strings(StringData.stringkeys.wandering), 0, true);
 
                     exitThisMenu();
 

@@ -111,7 +111,7 @@ namespace StardewDruid.Location.Terrain
             Microsoft.Xna.Framework.Vector2 origin = new(position.X - Game1.viewport.X, position.Y - Game1.viewport.Y);
 
             b.Draw(
-                Mod.instance.iconData.cursorTexture,
+                Mod.instance.iconData.shadowTexture,
                 origin + new Vector2(2, (source.Height*2) - shadowOffset),
                 Mod.instance.iconData.shadowRectangle,
                 Color.Black * shadowStrength * fade,

@@ -212,7 +212,7 @@ namespace StardewDruid.Character
             {
                 type = SpellHandle.Spells.artemis,
 
-                factor = 6,
+                displayFactor = 6,
 
                 counter = 0
             };

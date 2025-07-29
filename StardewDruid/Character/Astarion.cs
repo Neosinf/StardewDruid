@@ -183,9 +183,9 @@ namespace StardewDruid.Character
 
                 directions.Remove(d);
 
-                sweep.factor = d;
+                sweep.displayFactor = d;
 
-                sweep.radius = 128;
+                sweep.damageRadius = 128;
 
                 sweep.display = IconData.impacts.flashbang;
 

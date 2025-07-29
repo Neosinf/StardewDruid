@@ -39,8 +39,6 @@ namespace StardewDruid.Cast.Fates
 
             }
 
-            activeLimit = 5;
-
             ChooseCreature();
 
         }
@@ -132,13 +130,6 @@ namespace StardewDruid.Cast.Fates
 
         public override void EventDecimal()
         {
-
-            if (!EventActive())
-            {
-
-                return;
-
-            }
 
             decimalCounter++;
 

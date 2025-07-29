@@ -36,118 +36,33 @@ namespace StardewDruid.Cast.Weald
 
         }
 
-        public override bool EventActive()
-        {
-
-            if (!inabsentia && !eventLocked)
-            {
-
-                if (!Mod.instance.RiteButtonHeld())
-                {
-
-                    return false;
-
-                }
-
-                if (Vector2.Distance(origin, Game1.player.Position) > 32 && !Mod.instance.ShiftButtonHeld())
-                {
-
-                    return false;
-
-                }
-
-            }
-            
-            return base.EventActive();
-
-        }
-
         public override void EventDecimal()
         {
 
-            if (!EventActive())
+            decimalCounter++;
+
+            if (decimalCounter == 1)
             {
 
-                RemoveAnimations();
+                CultivateConversions();
 
                 return;
 
             }
 
-            if (!eventLocked)
+            if (decimalCounter == 2)
             {
 
-                decimalCounter++;
+                CultivateImports();
 
-                if (inabsentia)
-                {
+                return;
 
-                    if (decimalCounter == 1)
-                    {
+            }
 
-                        CultivateConversions();
+            if (decimalCounter == 3)
+            {
 
-                    }
-
-                    if (decimalCounter == 2)
-                    {
-
-                        CultivateImports();
-
-                    }
-
-                    if(decimalCounter == 3)
-                    {
-
-                        Plot();
-
-                        eventLocked = true;
-
-                    }
-
-                    return;
-
-                }
-
-                if (decimalCounter == 5)
-                {
-
-                    Mod.instance.rite.Channel(IconData.skies.valley, 75);
-
-                    channel = IconData.skies.valley;
-
-                }
-
-                if(decimalCounter == 13)
-                {
-                    CultivateConversions();
-
-                }
-
-                if(decimalCounter == 14)
-                {
-
-                    CultivateImports();
-
-                }
-
-                if (decimalCounter == 15)
-                {
-
-                    Mod.instance.spellRegister.Add(new(origin, 128, IconData.impacts.supree, new()) { scheme = IconData.schemes.weald, sound = SpellHandle.Sounds.getNewSpecialItem, displayRadius = 4, });
-
-                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdThree))
-                    {
-
-                        Mod.instance.questHandle.UpdateTask(QuestHandle.wealdThree, 1);
-
-                    }
-
-                    Plot();
-
-                    eventLocked = true;
-
-                }
+                Plot();
 
                 return;
 
@@ -250,20 +165,6 @@ namespace StardewDruid.Cast.Weald
 
             foreach(Vector2 tile in affected)
             {
-
-                if (!location.terrainFeatures.ContainsKey(tile))
-                {
-
-                    if (!inabsentia && Game1.player.CurrentTool is Hoe && radialCounter < 5)
-                    {
-
-                        ModUtility.Reave(location, tile, 0, false);
-
-                    }
-
-                    continue;
-
-                }
 
                 // =========================================================================
                 // crops
@@ -503,7 +404,7 @@ namespace StardewDruid.Cast.Weald
 
                     }
 
-                    if (!inabsentia)
+                    if (locationAbort != abortBehaviour.ignore)
                     {
 
                         costCounter += cultivationCost;

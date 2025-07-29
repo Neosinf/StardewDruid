@@ -200,7 +200,7 @@ namespace StardewDruid.Character
 
                 instant = true,
 
-                indicator = IconData.cursors.divineCharge,
+                indicator = IconData.cursors.divine,
 
                 sound = SpellHandle.Sounds.explosion,
 

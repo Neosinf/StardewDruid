@@ -28,7 +28,7 @@ namespace StardewDruid.Cast.Effect
         public Creature()
         {
 
-            activeLimit = -1;
+            
 
         }
 
@@ -62,6 +62,13 @@ namespace StardewDruid.Cast.Effect
                     creatures.Remove(pair.Key);
 
                 }
+
+            }
+
+            if(creatures.Count == 0)
+            {
+
+                eventComplete = true;
 
             }
 

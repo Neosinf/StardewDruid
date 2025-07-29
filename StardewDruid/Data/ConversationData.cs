@@ -17,6 +17,8 @@ namespace StardewDruid.Data
 
             Dictionary<int, DialogueSpecial> conversations = new();
 
+            // Effigy intro quest
+
             switch (scene)
             {
 
@@ -28,46 +30,66 @@ namespace StardewDruid.Data
                         [1] = new()
                         {
 
-                            intro = Mod.instance.Helper.Translation.Get("DialogueData.1613"),
+                            dialogueId = scene + 0.ToString(),
+
+                            intro = "Stranger: So a successor appears. I am the Effigy, crafted by the First Farmer, and sustained by the old powers.",
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1617"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1618"),
+                                [0] = "Greetings Effigy. I inherited this plot of land from my grandfather. Amongst his things was an old waystone that guided me here.",
+                                [1] = "Grandpa's notes didn't say anything about a magic scarecrow.",
+                                [2] = "(Say nothing)"
                             },
 
                             answers = new()
                             {
-
-                                Mod.instance.Helper.Translation.Get("DialogueData.1625") +
-                                Mod.instance.Helper.Translation.Get("DialogueData.1626") +
-                                Mod.instance.Helper.Translation.Get("DialogueData.1627") +
-                                Mod.instance.Helper.Translation.Get("DialogueData.1628")
-
+                                [0] = "The last time I roamed the furrowed hills of this farm, your grandfather was a young farmer. " +
+                                "I'm sorry for his passing. He could not see the hidden paths as you do. Only someone with an affinity for the Weald would have found the waystone.",
+                                [1] = "Scarecrow? If only I possessed the means to frighten the feathered creatures away, for they are attracted to the nest-like qualities of my headdress. " +
+                                "In regards to magic, if you are a seeker of the arcane, I have a power even more ancient to reveal to you.",
+                                [2] = "You do not need to introduce yourself, I know exactly why you have come."
                             },
 
-                            questContext = 100,
+                            choices = new()
+                            {
+                                [0] = DialogueSpecial.dialoguemanner.serious,
+                                [1] = DialogueSpecial.dialoguemanner.lighthearted,
+                                [2] = DialogueSpecial.dialoguemanner.taciturn,
+                            },
+
+                            updateScene = -1
 
                         },
 
                         [2] = new()
                         {
 
-                            intro = Mod.instance.Helper.Translation.Get("DialogueData.1639") +
-                            Mod.instance.Helper.Translation.Get("DialogueData.1640"),
+                            dialogueId = scene + 2.ToString(),
+
+                            intro = "The Effigy: The first farmer to cultivate this land befriended those who are aligned with the otherworld. They formed a circle of Druids.",
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1644"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1645"),
+                                [0] = "I've always felt a special connection to this place. I would like to follow in the footsteps of the first farmer and learn the traditions of the Circle.",
+                                [1] = "Yes, great things happen when people stand in circles.",
+                                [2] = "(nod thoughtfully)"
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1651"),
+                                [0] = "A wise decision, as the ways of the Druid are harmonious with the nature of the valley. Meet me in the grove outside, and we will test your aptitude for the otherworld.",
+                                [1] = "I am glad that you are already familiar with the ancient ways, as this familiarity will benefit you in the trials ahead. Meet me in the grove outside, and we can begin.",
+                                [2] = "Follow me, we shall see if we can reform the Circle ourselves.",
                             },
 
-                            questContext = 200,
+                            choices = new()
+                            {
+                                [0] = DialogueSpecial.dialoguemanner.serious,
+                                [1] = DialogueSpecial.dialoguemanner.lighthearted,
+                                [2] = DialogueSpecial.dialoguemanner.taciturn,
+                            },
+
+                            updateScene = -1
 
                         },
 
@@ -75,57 +97,152 @@ namespace StardewDruid.Data
 
                     break;
 
-                case QuestHandle.swordWeald:
+                case QuestHandle.squireWinds:
 
-
+                    //"DialogueData.1671": "Sighs of the Earth: What say you, farmer?",
+                    //"DialogueData.1675": "I seek the blessing of the Two Kings to reform the circle of Druids.",
+                    // "DialogueData.1676": "Uh... is there someone hiding behind that rock?",
+                    //"DialogueData.1687": "Whispers on the wind: The monarchs remain dormant, their realm untended. Who are you to claim the inheritance of the broken circle?",
+                    //"DialogueData.1691": "The valley is my home now. I want to care for and protect it.",
+                    //"DialogueData.1692": "A magic scarecrow told me that I'm special.",
+                    //"DialogueData.1703": "Rustling in the Woodland: It is not an easy path, the one tread by a squire of the Two Kings. Are you ready to serve?",
+                    //"DialogueData.1708": "I will serve the sleeping monarchs like the Druids of yore.",
+                    //"DialogueData.1709": "Will I get a title or a fancy moniker?",
                     conversations = new()
                     {
+
+                        [0] = new()
+                        {
+
+                            dialogueId = scene + 0.ToString(),
+
+                            intro = "Sighs of the Earth: Why have you come here, traveller?",
+
+                            responses = new()
+                            {
+                                [0] = "I seek the blessing of the Two Kings to reform the circle of Druids.",
+                                [1] = "My dear rock ghosts, I am but a seeker of the magic of circles.",
+                                [2] = "(allow the winds to pass over you)"
+                            },
+
+                            answers = new()
+                            {
+                                [0] = "Whispers on the wind: The monarchs remain dormant, their realm untended. The wilderness has claimed much of the Weald.",
+                                [1] = "Sighs of the Earth: This pleases me. Though I'm not sure why.",
+                                [2] = "(the energies of the weald bristle past, softly chuckling)",
+                            },
+
+                            choices = new()
+                            {
+                                [0] = DialogueSpecial.dialoguemanner.serious,
+                                [1] = DialogueSpecial.dialoguemanner.lighthearted,
+                                [2] = DialogueSpecial.dialoguemanner.taciturn,
+                            },
+
+                            updateScene = -1
+
+                        },
 
                         [1] = new()
                         {
 
-                            intro = Mod.instance.Helper.Translation.Get("DialogueData.1671"),
+                            dialogueId = scene + 1.ToString(),
+
+                            intro = "Whispers on the wind: Who are you to claim the inheritance of the broken circle ?",
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1675"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1676"),
+                                [0] = "The valley is my home now. I want to care for and protect it.",
+                                [1] = "A magic scarecrow told me that I'm special.",
+                                [2] = "(hold the waystone up above you)"
+
                             },
 
-                            questContext = 100,
+                            answers = new()
+                            {
+                                [0] = "Whispers on the wind: The Weald yearns for a gentle hand to care for it and a strong hand to protect it. Hands like those of the Two Kings.",
+                                [1] = "Sighs of the Earth: As was foretold, a successor blessed in the art of circle-making would walk these paths again.",
+                                [2] = "(you hear gasps in the winds, and the excited chittering of the energies amongst the standing stones)",
+                            },
+
+                            choices = new()
+                            {
+                                [0] = DialogueSpecial.dialoguemanner.serious,
+                                [1] = DialogueSpecial.dialoguemanner.lighthearted,
+                                [2] = DialogueSpecial.dialoguemanner.taciturn,
+                            },
+
+                            updateScene = -1
 
                         },
 
                         [2] = new()
                         {
 
-                            intro = Mod.instance.Helper.Translation.Get("DialogueData.1687"),
+                            dialogueId = scene + 2.ToString(),
+
+                            intro = "Rustling in the Woodland: It is not an easy path, the one tread by a squire of the Two Kings. Are you ready to serve?",
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1691"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1692"),
+
+                                [0] = "I will faithfully serve the sleeping monarchs like the Druids of yore.",
+                                [1] = "Will I get a title or a fancy moniker?",
+                                [2] = "(nod)"
 
                             },
 
-                            questContext = 200,
+                            answers = new()
+                            {
+                                [0] = "Whispers on the wind: Arise, squire of the Two Kings. The winds of the Weald beckon to you.",
+                                [1] = "Sighs of the Earth: If you prove yourself adept in the powers of the Weald, you might yet ascend to the esteemed rank of the Archdruid.",
+                                [2] = "(the breeze intensifies through the standing stones, a sign of agreement and new possibilities)",
+                            },
+
+                            choices = new()
+                            {
+                                [0] = DialogueSpecial.dialoguemanner.serious,
+                                [1] = DialogueSpecial.dialoguemanner.lighthearted,
+                                [2] = DialogueSpecial.dialoguemanner.taciturn,
+                            },
+
+                            updateScene = -1
 
                         },
 
                         [3] = new()
                         {
 
-                            intro = Mod.instance.Helper.Translation.Get("DialogueData.1703"),
+                            companion = 0,
 
+                            dialogueId = scene + 3.ToString(),
+
+                            intro = "The Effigy: So you have entreated with the energies of the Weald, the old winds.",
+             
                             responses = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("DialogueData.1708"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1709"),
+                                [0] = "I have pledged myself to the sleeping monarchs, the Kings of Oak and Holly. The Circle is reformed.",
+                                [1] = "I thought I heard something speak but maybe it was just the wind.",
+                                [2] = "(shrug)"
 
                             },
 
-                            questContext = 300,
+                            answers = new()
+                            {
+                                [0] = "The energies of the Weald are unsettling, but their loyalty to the sleeping monarchs endures. You have gained powerful allies for the trials ahead of you.",
+                                [1] = "Indeed it was, and you heard them clearly. I am already amazed at your talent, especially the ease with which you engage with the agents of the otherworld.",
+                                [2] = "Until tomorrow then.",
+                            },
+
+                            choices = new()
+                            {
+                                [0] = DialogueSpecial.dialoguemanner.serious,
+                                [1] = DialogueSpecial.dialoguemanner.lighthearted,
+                                [2] = DialogueSpecial.dialoguemanner.taciturn,
+                            },
+
+                            updateScene = -1
 
                         },
 
@@ -146,8 +263,8 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1734"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1735"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1734"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.1735"),
 
                             },
 
@@ -162,8 +279,8 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1750"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1751"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1750"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.1751"),
 
                             },
 
@@ -178,8 +295,8 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1766"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1767"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1766"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.1767"),
 
                             },
 
@@ -204,14 +321,14 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1792"),
-                                Mod.instance.Helper.Translation.Get("ConversationData.377.1"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1792"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.377.1"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1797") +
-                            Mod.instance.Helper.Translation.Get("DialogueData.1798")
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1797") +
+                                Mod.instance.Helper.Translation.Get("DialogueData.1798")
 
                             },
 
@@ -226,13 +343,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1813"),
-                                Mod.instance.Helper.Translation.Get("ConversationData.377.2"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1813"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.377.2"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1819") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1819") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.1820") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.1821")
                             },
@@ -248,13 +365,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1835"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1836"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1835"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.1836"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1841") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1841") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.1842") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.1843") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.1844") +
@@ -273,14 +390,14 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1860"),
-                                Mod.instance.Helper.Translation.Get("ConversationData.377.3"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1860"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.377.3"),
                                 //Mod.instance.Helper.Translation.Get("DialogueData.1861"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1866") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1866") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.1867") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.1868")
                             },
@@ -296,13 +413,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1882"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1883"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1882"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.1883"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1888") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1888") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.1889") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.1890"),
                             },
@@ -320,15 +437,15 @@ namespace StardewDruid.Data
                             responses = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("DialogueData.1906"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1907"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1906"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.1907"),
 
                             },
 
                             answers = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("DialogueData.1914") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1914") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.1915") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.1916"),
 
@@ -355,14 +472,14 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1941"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1942"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1941"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.1942"),
                             },
 
                             answers = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("DialogueData.1948"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1948"),
 
                             },
 
@@ -377,13 +494,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1963"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1964"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1963"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.1964"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1969"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1969"),
                             },
 
                             questContext = 200,
@@ -397,13 +514,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1983"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.1984"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1983"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.1984"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.1989"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.1989"),
 
                             },
 
@@ -428,14 +545,14 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2014"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2015"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2014"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2015"),
                             },
 
                             answers = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("DialogueData.2021") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2021") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2022"),
 
                             },
@@ -451,14 +568,14 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2037"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2038"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2039"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2037"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2038"),
+                                [2] = Mod.instance.Helper.Translation.Get("DialogueData.2039"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2044"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2044"),
                             },
 
                             questContext = 200,
@@ -472,16 +589,22 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2058"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2059"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2058"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2059"),
+                                [2] = Mod.instance.Helper.Translation.Get("DialogueData.2079"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2064") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2064") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2065") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2066"),
-
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2064") +
+                                Mod.instance.Helper.Translation.Get("DialogueData.2065") +
+                                Mod.instance.Helper.Translation.Get("DialogueData.2066"),
+                                [2] = Mod.instance.Helper.Translation.Get("DialogueData.2085") +
+                                Mod.instance.Helper.Translation.Get("DialogueData.2086") +
+                                Mod.instance.Helper.Translation.Get("DialogueData.2087"),
                             },
 
                             questContext = 300,
@@ -489,21 +612,6 @@ namespace StardewDruid.Data
                         },
 
                     };
-
-                    if (Mod.instance.questHandle.IsComplete(QuestHandle.relicWeald))
-                    {
-
-                        conversations[3].responses.Add(Mod.instance.Helper.Translation.Get("DialogueData.2079"));
-
-                        string buffer = conversations[3].answers.First();
-
-                        conversations[3].answers.Add(buffer);
-
-                        conversations[3].answers.Add(Mod.instance.Helper.Translation.Get("DialogueData.2085") +
-                                Mod.instance.Helper.Translation.Get("DialogueData.2086") +
-                                Mod.instance.Helper.Translation.Get("DialogueData.2087"));
-
-                    }
 
                     break;
 
@@ -519,14 +627,14 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2105"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2106"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2105"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2106"),
                             },
 
                             answers = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("DialogueData.2112"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2112"),
 
                             },
 
@@ -541,13 +649,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2127"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2128"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2127"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2128"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2133"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2133"),
                             },
 
                             questContext = 140,
@@ -561,13 +669,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2147"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2148"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2147"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2148"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2153") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2153") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2154"),
 
                             },
@@ -592,13 +700,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2178"),
-                                 Mod.instance.Helper.Translation.Get("DialogueData.2179"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2178"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2179"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2184")
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2184")
 
                             },
 
@@ -612,14 +720,14 @@ namespace StardewDruid.Data
                             intro = Mod.instance.Helper.Translation.Get("DialogueData.2195"),
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2198"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2199"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2198"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2199"),
 
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2205") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2205") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2206") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2207") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2208") +
@@ -639,14 +747,14 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2225"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2226"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2227"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2225"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2226"),
+                                [2] = Mod.instance.Helper.Translation.Get("DialogueData.2227"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2232") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2232") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2233")
                             },
 
@@ -661,14 +769,14 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2247"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2248"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2249"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2247"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2248"),
+                                [2] = Mod.instance.Helper.Translation.Get("DialogueData.2249"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2254") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2254") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2255")
                             },
 
@@ -682,13 +790,13 @@ namespace StardewDruid.Data
                             intro = Mod.instance.Helper.Translation.Get("DialogueData.2265"),
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2268"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2269"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2268"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2269"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2274") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2274") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2275") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2276")
                             },
@@ -706,15 +814,15 @@ namespace StardewDruid.Data
                             responses = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("DialogueData.2292"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2293"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2292"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2293"),
 
                             },
 
                             answers = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("DialogueData.2300") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2300") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2301") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2302") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2303"),
@@ -744,13 +852,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2330"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2331"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2330"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2331"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2337") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2337") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2338") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2339") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2340") +
@@ -770,13 +878,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2357"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2358"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2357"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2358"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2364") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2364") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2365") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2366") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2367") +
@@ -804,13 +912,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2392"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2393").Tokens(new { farm = Game1.player.farmName.Value, }),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2392"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2393").Tokens(new { farm = Game1.player.farmName.Value, }),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2400") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2400") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2401") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2402")
 
@@ -827,13 +935,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2417"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2418")
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2417"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2418")
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2423") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2423") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2424") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2425"),
                             },
@@ -851,13 +959,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2441"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2442"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2441"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2442"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2447") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2447") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2448") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2449") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2450"),
@@ -876,13 +984,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2466"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2467"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2466"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2467"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2472") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2472") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2473") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2474") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2475") +
@@ -900,13 +1008,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2493"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2494"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2493"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2494"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.2499") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2499") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2500") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2501") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2502") +
@@ -926,15 +1034,15 @@ namespace StardewDruid.Data
                             responses = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("DialogueData.2519"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2520"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2519"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2520"),
 
                             },
 
                             answers = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("DialogueData.2527") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2527") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2528") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2529") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2530") +
@@ -957,15 +1065,15 @@ namespace StardewDruid.Data
                             responses = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("DialogueData.2550"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.2551"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2550"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.2551"),
 
                             },
 
                             answers = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("DialogueData.2558") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.2558") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2559") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2560") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.2561") +
@@ -1003,13 +1111,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.315.2"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.315.3"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.315.2"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.315.3"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.315.4"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.315.4"),
                             },
 
                             questContext = 199,
@@ -1023,13 +1131,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.315.6"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.315.7")
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.315.6"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.315.7")
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.315.8") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.315.8") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.315.9"),
                             },
 
@@ -1044,13 +1152,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.315.11"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.315.12"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.315.11"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.315.12"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.315.13") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.315.13") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.315.14") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.315.15") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.315.16"),
@@ -1076,13 +1184,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.91"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.92"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.324.91"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.324.92"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.93"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.324.93"),
                             },
 
                             questContext = 100,
@@ -1096,13 +1204,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.95"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.96"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.324.95"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.324.96"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.97") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.324.97") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.324.98") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.324.99") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.324.100"),
@@ -1119,13 +1227,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.102"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.103"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.324.102"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.324.103"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.104") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.324.104") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.324.105"),
                             },
 
@@ -1140,13 +1248,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.107"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.108"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.324.107"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.324.108"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.109") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.324.109") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.324.110") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.324.111") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.324.112"),
@@ -1163,13 +1271,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.114"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.115"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.324.114"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.324.115"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.116"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.324.116"),
                             },
 
                             questContext = 500,
@@ -1183,13 +1291,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.118"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.119"),
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.324.118"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.324.119"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.324.120") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.324.120") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.324.121") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.324.122") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.324.123") +
@@ -1219,13 +1327,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.87"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.88")
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.87"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.88")
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.92") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.92") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.339.1.93"),
                             },
 
@@ -1240,13 +1348,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.102"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.103")
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.102"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.103")
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.107") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.107") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.339.1.108") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.339.1.109") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.339.1.110"),
@@ -1263,13 +1371,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.119"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.120")
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.119"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.120")
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.124") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.124") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.339.1.125") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.339.1.126"),
                             },
@@ -1285,13 +1393,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.135"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.136")
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.135"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.136")
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.140") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.140") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.339.1.141") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.339.1.142") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.339.1.143") +
@@ -1310,13 +1418,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.154"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.155")
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.154"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.155")
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.159") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.159") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.339.1.160") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.339.1.161"),
 
@@ -1333,13 +1441,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.170"),
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.171")
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.170"),
+                                [1] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.171")
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("DialogueData.339.1.175") +
+                                [0] = Mod.instance.Helper.Translation.Get("DialogueData.339.1.175") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.339.1.176") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.339.1.177") +
                                 Mod.instance.Helper.Translation.Get("DialogueData.339.1.178"),
@@ -1367,13 +1475,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.342.1.167"),
-                                Mod.instance.Helper.Translation.Get("ConversationData.342.1.168"),
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.342.1.167"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.342.1.168"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.342.1.172") +
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.342.1.172") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.342.1.173"),
                             },
 
@@ -1390,13 +1498,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.342.1.183"),
-                                Mod.instance.Helper.Translation.Get("ConversationData.342.1.184"),
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.342.1.183"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.342.1.184"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.342.1.188") +
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.342.1.188") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.342.1.189") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.342.1.190"),
                             },
@@ -1412,13 +1520,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.342.1.199"),
-                                Mod.instance.Helper.Translation.Get("ConversationData.342.1.200"),
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.342.1.199"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.342.1.200"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.342.1.204") +
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.342.1.204") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.342.1.205") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.342.1.206"),
                             },
@@ -1436,13 +1544,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.342.1.216"),
-                                Mod.instance.Helper.Translation.Get("ConversationData.342.1.217"),
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.342.1.216"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.342.1.217"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.342.1.221") +
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.342.1.221") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.342.1.222") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.342.1.223") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.342.1.224") +
@@ -1467,15 +1575,15 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.342.1.240"),
-                                Mod.instance.Helper.Translation.Get("ConversationData.342.1.241"),
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.342.1.240"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.342.1.241"),
                             },
 
                             companion = 1,
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.342.1.246") +
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.342.1.246") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.342.1.247") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.342.1.248"),
                             },
@@ -1502,19 +1610,19 @@ namespace StardewDruid.Data
                             intro = Mod.instance.Helper.Translation.Get("ConversationData.343.1.85"),
 
                             responses = new()
-                          {
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.88"),
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.89"),
-                          },
+                            {
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.343.1.88"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.343.1.89"),
+                            },
 
                             answers = new()
-                          {
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.93") +
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.94") +
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.95") +
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.96") +
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.97"),
-                          },
+                            {
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.343.1.93") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.343.1.94") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.343.1.95") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.343.1.96") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.343.1.97"),
+                            },
 
                             questContext = 100,
 
@@ -1526,18 +1634,18 @@ namespace StardewDruid.Data
                             intro = Mod.instance.Helper.Translation.Get("ConversationData.343.1.103"),
 
                             responses = new()
-                          {
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.106"),
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.107"),
-                          },
+                            {
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.343.1.106"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.343.1.107"),
+                            },
 
                             answers = new()
-                          {
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.111") +
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.112") +
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.113"),
+                            {
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.343.1.111") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.343.1.112") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.343.1.113"),
 
-                          },
+                            },
 
                             questContext = 200,
 
@@ -1551,17 +1659,17 @@ namespace StardewDruid.Data
                             intro = Mod.instance.Helper.Translation.Get("ConversationData.343.1.120"),
 
                             responses = new()
-                          {
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.123"),
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.124"),
-                          },
+                            {
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.343.1.123"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.343.1.124"),
+                            },
 
                             answers = new()
-                          {
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.128") +
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.129"),
+                            {
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.343.1.128") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.343.1.129"),
 
-                          },
+                            },
 
                             questContext = 300,
 
@@ -1575,16 +1683,16 @@ namespace StardewDruid.Data
                             intro = Mod.instance.Helper.Translation.Get("ConversationData.343.1.136"),
 
                             responses = new()
-                          {
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.139"),
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.140"),
-                          },
+                            {
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.343.1.139"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.343.1.140"),
+                            },
 
                             answers = new()
-                          {
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.144") +
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.145"),
-                          },
+                            {
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.343.1.144") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.343.1.145"),
+                            },
 
                             questContext = 400,
 
@@ -1597,16 +1705,16 @@ namespace StardewDruid.Data
                             intro = Mod.instance.Helper.Translation.Get("ConversationData.343.1.151"),
 
                             responses = new()
-                          {
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.154"),
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.155"),
-                          },
+                            {
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.343.1.154"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.343.1.155"),
+                            },
 
                             answers = new()
-                          {
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.159") +
-                              Mod.instance.Helper.Translation.Get("ConversationData.343.1.160"),
-                          },
+                            {
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.343.1.159") +
+                                Mod.instance.Helper.Translation.Get("ConversationData.343.1.160"),
+                            },
 
                             questContext = 500,
 
@@ -1629,13 +1737,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.9"),
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.10"),
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.361.9"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.361.10"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.14"),
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.361.14"),
                             },
 
                             questContext = 100,
@@ -1649,13 +1757,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.23"),
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.24"),
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.361.23"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.361.24"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.28") +
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.361.28") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.361.29") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.361.30"),
 
@@ -1683,13 +1791,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.44"),
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.45"),
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.361.44"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.361.45"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.49") +
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.361.49") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.385.1") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.385.2"),
                             },
@@ -1705,13 +1813,13 @@ namespace StardewDruid.Data
 
                             responses = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.58"),
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.59"),
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.361.58"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.361.59"),
                             },
 
                             answers = new()
                             {
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.63") +
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.361.63") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.361.64") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.361.65") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.361.66") +
@@ -1731,14 +1839,14 @@ namespace StardewDruid.Data
                             responses = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.76"),
-                                Mod.instance.Helper.Translation.Get("ConversationData.385.3"),
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.361.76"),
+                                [1] = Mod.instance.Helper.Translation.Get("ConversationData.385.3"),
                             },
 
                             answers = new()
                             {
 
-                                Mod.instance.Helper.Translation.Get("ConversationData.361.80") +
+                                [0] = Mod.instance.Helper.Translation.Get("ConversationData.361.80") +
                                 Mod.instance.Helper.Translation.Get("ConversationData.385.4"),
 
                             },

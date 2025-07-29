@@ -83,7 +83,7 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle = new(origin, location);
 
-            EventBar(Mod.instance.questHandle.quests[eventId].title,0);
+            ProgressBar(Mod.instance.questHandle.quests[eventId].title,0);
 
             //Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { displayRadius = 4, scheme = IconData.schemes.mists, sound = SpellHandle.sounds.getNewSpecialItem, });
 
@@ -102,13 +102,11 @@ namespace StardewDruid.Event.Challenge
 
             Wisps wispNew = new();
 
-            wispNew.EventSetup(Game1.player.Position, Rite.eventWisps);
+            wispNew.EventSetup(Game1.player, Game1.player.Position, Rite.eventWisps);
 
             wispNew.EventActivate();
 
             wispNew.WispArray();
-
-            wispNew.eventLocked = true;
 
             location.warps.Clear();
 
@@ -387,7 +385,7 @@ namespace StardewDruid.Event.Challenge
                     {
                         type = SpellHandle.Spells.missile,
 
-                        factor = 3,
+                        displayFactor = 3,
 
                         instant = true,
 

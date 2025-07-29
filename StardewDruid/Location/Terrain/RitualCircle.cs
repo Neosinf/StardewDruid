@@ -47,7 +47,7 @@ namespace StardewDruid.Location.Terrain
 
             index = 1;
 
-            position = Position;
+            position = Position - new Vector2(192,128);
 
             color = Color.White;
 

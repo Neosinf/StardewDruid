@@ -131,9 +131,9 @@ namespace StardewDruid.Character
                     {
                         type = SpellHandle.Spells.judgement,
 
-                        indicator = IconData.cursors.divineCharge,
+                        indicator = IconData.cursors.divine,
 
-                        factor = 4
+                        displayFactor = 4
                     };
 
                     special.TargetCursor();

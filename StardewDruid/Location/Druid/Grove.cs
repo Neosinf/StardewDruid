@@ -32,9 +32,31 @@ namespace StardewDruid.Location.Druid
     public class Grove : DruidLocation
     {
 
+        public Vector2 menhirPosition = Vector2.Zero;
+
         public Vector2 anvilPosition = Vector2.Zero;
 
+        public Vector2 benchPosition = Vector2.Zero;
+
         public Vector2 circlePosition = Vector2.Zero;
+
+        public Vector2 seatPosition = Vector2.Zero;
+
+        public const int sanctuaryExitX = 29;
+
+        public const int sanctuaryExitY = 1;
+
+        public const int sanctuaryEnterX = 29;
+
+        public const int sanctuaryEnterY = 3;
+
+        public const int cavernExitX = 29;
+
+        public const int cavernExitY = 30;
+
+        public const int cavernEnterX = 29;
+
+        public const int cavernEnterY = 27;
 
         public Grove() { }
 
@@ -368,7 +390,9 @@ namespace StardewDruid.Location.Druid
                         {
                             default:
 
-                                Menhir menhir = new(new Vector2(array[0], code.Key) * 64, array[1]);
+                                int menhirIndex = array[1] - 10;
+
+                                Menhir menhir = new(new Vector2(array[0], code.Key) * 64, menhirIndex);
 
                                 baseTiles = menhir.baseTiles;
 
@@ -384,6 +408,40 @@ namespace StardewDruid.Location.Druid
                                 };
 
                                 lightFields.Add(light);
+
+                                switch (menhirIndex)
+                                {
+
+                                    //menhir
+                                    case Menhir.menhirIndex:
+
+                                        menhirPosition = baseTiles.First() * 64;
+
+                                        circlePosition = menhirPosition + new Vector2(64, 384);
+
+                                        break;
+
+                                    //anvil
+                                    case Menhir.anvilIndex:
+
+                                        anvilPosition = baseTiles.First() * 64;
+
+                                        break;
+
+                                    //bench
+                                    case Menhir.benchIndex:
+
+                                        benchPosition = baseTiles.First() * 64;
+
+                                        break;
+
+                                    //seat
+                                    case Menhir.seatIndex:
+
+                                        seatPosition = baseTiles.First() * 64;
+
+                                        break;
+                                }
 
                                 break;
 
@@ -597,7 +655,7 @@ namespace StardewDruid.Location.Druid
             if (Mod.instance.Config.decorateGrove)
             {
 
-                RitualCircle circle = new(new Vector2(16, 12)*64);
+                RitualCircle circle = new(circlePosition);
 
                 switch (Game1.season)
                 {
@@ -634,8 +692,6 @@ namespace StardewDruid.Location.Druid
 
                 circle.LoadCandles();
 
-                circlePosition = circle.bounds.Center.ToVector2();
-
                 terrainFields.Add(circle);
 
             }
@@ -653,7 +709,9 @@ namespace StardewDruid.Location.Druid
 
             MapSeat seat = new();
 
-            seat.tilePosition.Set(new Vector2(36, 15));
+            Vector2 seatTile = ModUtility.PositionToTile(seatPosition);
+
+            seat.tilePosition.Set(seatTile);
 
             seat.size.Set(new Vector2(4, 1));
 
@@ -670,7 +728,7 @@ namespace StardewDruid.Location.Druid
         public override bool readyDialogue()
         {
 
-            return Mod.instance.questHandle.IsComplete(QuestHandle.swordWeald);
+            return Mod.instance.questHandle.IsComplete(QuestHandle.squireWinds);
 
         }
 
@@ -679,37 +737,29 @@ namespace StardewDruid.Location.Druid
 
             if (dialogueTiles.Count > 0) { return; }
 
-            dialogueTiles.Add(new(18, 9), CharacterHandle.characters.energies);
+            Vector2 menhirTile = ModUtility.PositionToTile(menhirPosition);
 
-            dialogueTiles.Add(new(19, 9), CharacterHandle.characters.energies);
+            dialogueTiles.Add(new(menhirTile.X-1, menhirTile.Y), CharacterHandle.characters.energies);
 
-            dialogueTiles.Add(new(20, 9), CharacterHandle.characters.energies);
+            dialogueTiles.Add(menhirTile, CharacterHandle.characters.energies);
 
-            dialogueTiles.Add(new(17, 20), CharacterHandle.characters.herbalism);
+            dialogueTiles.Add(new(menhirTile.X+1, menhirTile.Y), CharacterHandle.characters.energies);
 
-            dialogueTiles.Add(new(18, 20), CharacterHandle.characters.herbalism);
+            Vector2 benchTile = ModUtility.PositionToTile(benchPosition);
 
-            dialogueTiles.Add(new(19, 20), CharacterHandle.characters.herbalism);
+            dialogueTiles.Add(new(benchTile.X - 1, benchTile.Y), CharacterHandle.characters.herbalism);
 
-            dialogueTiles.Add(new(20, 20), CharacterHandle.characters.herbalism);
+            dialogueTiles.Add(benchTile, CharacterHandle.characters.herbalism);
 
-            dialogueTiles.Add(new(17, 21), CharacterHandle.characters.herbalism);
+            dialogueTiles.Add(new(benchTile.X + 1, benchTile.Y), CharacterHandle.characters.herbalism);
 
-            dialogueTiles.Add(new(18, 21), CharacterHandle.characters.herbalism);
+            dialogueTiles.Add(new(benchTile.X + 2, benchTile.Y), CharacterHandle.characters.herbalism);
 
-            dialogueTiles.Add(new(19, 21), CharacterHandle.characters.herbalism);
+            Vector2 anvilTile = ModUtility.PositionToTile(anvilPosition);
 
-            dialogueTiles.Add(new(20, 21), CharacterHandle.characters.herbalism);
+            dialogueTiles.Add(new(anvilTile.X + 1, anvilTile.Y), CharacterHandle.characters.anvil);
 
-            dialogueTiles.Add(new(12, 17), CharacterHandle.characters.anvil);
-
-            dialogueTiles.Add(new(13, 17), CharacterHandle.characters.anvil);
-
-            dialogueTiles.Add(new(12, 18), CharacterHandle.characters.anvil);
-
-            dialogueTiles.Add(new(13, 18), CharacterHandle.characters.anvil);
-
-            anvilPosition = new Vector2(12f, 17f) * 64;
+            dialogueTiles.Add(new(anvilTile.X + 1, anvilTile.Y+1), CharacterHandle.characters.anvil);
 
         }
 
@@ -735,13 +785,13 @@ namespace StardewDruid.Location.Druid
 
             warps.Clear();
 
-            warps.Add(new Warp(29, 1, LocationHandle.druid_sanctuary_name, 26, 26, flipFarmer: false));
+            warps.Add(new Warp(sanctuaryExitX, sanctuaryExitY, LocationHandle.druid_sanctuary_name, Sanctuary.groveEnterX, Sanctuary.groveEnterY, flipFarmer: false));
 
-            warps.Add(new Warp(30, 1, LocationHandle.druid_sanctuary_name, 26, 26, flipFarmer: false));
+            warps.Add(new Warp(sanctuaryExitX, sanctuaryExitY, LocationHandle.druid_sanctuary_name, Sanctuary.groveEnterX, Sanctuary.groveEnterY, flipFarmer: false));
 
-            warps.Add(new Warp(29, 29, LocationHandle.druid_cavern_name, 8, 8, flipFarmer: false));
+            warps.Add(new Warp(cavernExitX, cavernExitY, LocationHandle.druid_cavern_name, Cavern.groveEnterX, Cavern.groveEnterY, flipFarmer: false));
 
-            warps.Add(new Warp(30, 29, LocationHandle.druid_cavern_name, 8, 8, flipFarmer: false));
+            warps.Add(new Warp(cavernExitX, cavernExitY, LocationHandle.druid_cavern_name, Cavern.groveEnterX, Cavern.groveEnterY, flipFarmer: false));
 
         }
 

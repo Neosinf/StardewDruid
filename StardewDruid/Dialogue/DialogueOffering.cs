@@ -313,9 +313,9 @@ namespace StardewDruid.Dialogue
                             if (Mod.instance.questHandle.IsComplete(QuestHandle.swordEther))
                             {
 
-                                generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.343.10"));
+                                generate.responses.Add(1,Mod.instance.Helper.Translation.Get("DialogueAdventure.343.10"));
 
-                                generate.answers.Add(16.ToString());
+                                generate.leads.Add(1,16);
 
                             }
 
@@ -323,9 +323,9 @@ namespace StardewDruid.Dialogue
                             if (Mod.instance.questHandle.IsComplete(QuestHandle.questShadowtin))
                             {
 
-                                generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.343.11"));
+                                generate.responses.Add(2, Mod.instance.Helper.Translation.Get("DialogueAdventure.343.11"));
 
-                                generate.answers.Add(17.ToString());
+                                generate.leads.Add(2, 17);
 
                             }
 
@@ -333,13 +333,11 @@ namespace StardewDruid.Dialogue
                             if (Mod.instance.questHandle.IsComplete(QuestHandle.challengeMoors))
                             {
 
-                                generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.363.1"));
+                                generate.responses.Add(3, Mod.instance.Helper.Translation.Get("DialogueAdventure.363.1"));
 
-                                generate.answers.Add(18.ToString());
+                                generate.leads.Add(3,18);
 
                             }
-
-                            generate.lead = true;
 
                             return generate;
 
@@ -352,7 +350,7 @@ namespace StardewDruid.Dialogue
                                 // Tomb of Tyrannus
                                 case 16:
 
-                                    SpellHandle tombWarp = new(Mod.instance.locations[LocationHandle.druid_tomb_name], new Vector2(26, 17), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, factor = 0 }; ;
+                                    SpellHandle tombWarp = new(Mod.instance.locations[LocationHandle.druid_tomb_name], new Vector2(26, 17), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, displayFactor = 0 }; ;
 
                                     Mod.instance.spellRegister.Add(tombWarp);
 
@@ -361,7 +359,7 @@ namespace StardewDruid.Dialogue
                                 // Shrine Engine Room
                                 case 17:
 
-                                    SpellHandle shrineWarp = new(Mod.instance.locations[LocationHandle.druid_engineum_name], new Vector2(27, 19), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, factor = 0 }; ;
+                                    SpellHandle shrineWarp = new(Mod.instance.locations[LocationHandle.druid_engineum_name], new Vector2(27, 19), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, displayFactor = 0 }; ;
 
                                     Mod.instance.spellRegister.Add(shrineWarp);
 
@@ -370,7 +368,7 @@ namespace StardewDruid.Dialogue
                                 // Moors
                                 case 18:
 
-                                    SpellHandle moorsWarp = new(Mod.instance.locations[LocationHandle.druid_moors_name], new Vector2(27, 28), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, factor = 2 }; ;
+                                    SpellHandle moorsWarp = new(Mod.instance.locations[LocationHandle.druid_moors_name], new Vector2(27, 28), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, displayFactor = 2 }; ;
 
                                     Mod.instance.spellRegister.Add(moorsWarp);
 
@@ -392,7 +390,7 @@ namespace StardewDruid.Dialogue
 
                         generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1443");
 
-                        Mod.instance.herbalData.MassBrew(true);
+                        Mod.instance.herbalHandle.MassBrew(true);
 
                         return generate;
 
@@ -405,19 +403,17 @@ namespace StardewDruid.Dialogue
 
                             generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1456");
 
-                            generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.1458"));
+                            generate.responses.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.1458"));
 
-                            generate.answers.Add(0.ToString());
+                            generate.leads.Add(1, 0);
 
-                            generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.1462"));
+                            generate.responses.Add(2, Mod.instance.Helper.Translation.Get("CharacterHandle.1462"));
 
-                            generate.answers.Add(1.ToString());
+                            generate.leads.Add(2, 1);
 
-                            generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.1466"));
+                            generate.responses.Add(3, Mod.instance.Helper.Translation.Get("CharacterHandle.1466"));
 
-                            generate.answers.Add(2.ToString());
-
-                            generate.lead = true;
+                            generate.leads.Add(3, 2);
 
                             break;
 
@@ -589,7 +585,7 @@ namespace StardewDruid.Dialogue
 
                     int faethBlessing = Mod.instance.randomIndex.Next(3, 6);
 
-                    Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.780").Tokens(new { faeth = faethBlessing.ToString(), }));
+                    Mod.instance.RegisterMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.780").Tokens(new { faeth = faethBlessing.ToString(), }));
 
                     HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.faeth, faethBlessing);
 
@@ -640,7 +636,7 @@ namespace StardewDruid.Dialogue
 
                     int aetherBlessing = Mod.instance.randomIndex.Next(2, 5);
 
-                    Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.323.14").Tokens(new { aether = aetherBlessing.ToString(), }));
+                    Mod.instance.RegisterMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.323.14").Tokens(new { aether = aetherBlessing.ToString(), }));
 
                     HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.aether, aetherBlessing);
 
@@ -696,10 +692,10 @@ namespace StardewDruid.Dialogue
 
                     HerbalHandle.UpdateHerbalism(HerbalHandle.herbals.aether,0 - upgradeRequirement);
 
-                    DisplayPotion shrineForgeMessage = new(
-                        Mod.instance.Helper.Translation.Get("HerbalData.1116").Tokens(new { potion = Mod.instance.herbalData.herbalism[HerbalHandle.herbals.aether.ToString()].title, }) 
+                    DisplayMessage shrineForgeMessage = new(
+                        Mod.instance.Helper.Translation.Get("HerbalData.1116").Tokens(new { potion = Mod.instance.herbalHandle.herbalism[HerbalHandle.herbals.aether.ToString()].title, }) 
                         + " " + StringData.Strings(StringData.stringkeys.multiplier) + upgradeRequirement.ToString(),
-                        Mod.instance.herbalData.herbalism[HerbalHandle.herbals.aether.ToString()]
+                        Mod.instance.herbalHandle.herbalism[HerbalHandle.herbals.aether.ToString()]
                     );
 
                     Game1.addHUDMessage(shrineForgeMessage);
@@ -756,9 +752,9 @@ namespace StardewDruid.Dialogue
                         Game1.player.Items.ReduceId("388", 25);
                         Game1.player.Items.ReduceId("390", 25);
 
-                        DisplayPotion shrineDeskMessage = new(
-                            Mod.instance.Helper.Translation.Get("HerbalData.1116").Tokens(new { potion = Mod.instance.herbalData.herbalism[HerbalHandle.herbals.aether.ToString()].title, }) + " " + StringData.Strings(StringData.stringkeys.multiplier) + "3", 
-                            Mod.instance.herbalData.herbalism[HerbalHandle.herbals.aether.ToString()]
+                        DisplayMessage shrineDeskMessage = new(
+                            Mod.instance.Helper.Translation.Get("HerbalData.1116").Tokens(new { potion = Mod.instance.herbalHandle.herbalism[HerbalHandle.herbals.aether.ToString()].title, }) + " " + StringData.Strings(StringData.stringkeys.multiplier) + "3", 
+                            Mod.instance.herbalHandle.herbalism[HerbalHandle.herbals.aether.ToString()]
                         );
 
                         Game1.addHUDMessage(shrineDeskMessage);
@@ -787,7 +783,7 @@ namespace StardewDruid.Dialogue
 
                         generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.5");
 
-                        if (!RelicData.HasRelic(IconData.relics.restore_goshuin))
+                        if (!RelicHandle.HasRelic(IconData.relics.restore_goshuin))
                         {
 
                             generate.intro += Mod.instance.Helper.Translation.Get("CharacterHandle.329.6");
@@ -822,7 +818,7 @@ namespace StardewDruid.Dialogue
 
                         generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.329.23");
 
-                        if (!RelicData.HasRelic(IconData.relics.restore_offering))
+                        if (!RelicHandle.HasRelic(IconData.relics.restore_offering))
                         {
 
                             generate.intro += Mod.instance.Helper.Translation.Get("CharacterHandle.329.24");
@@ -853,7 +849,7 @@ namespace StardewDruid.Dialogue
 
                         generate.intro = Mod.instance.Helper.Translation.Get("DialogueOffering.372.4");
 
-                        if (!RelicData.HasRelic(IconData.relics.restore_cloth))
+                        if (!RelicHandle.HasRelic(IconData.relics.restore_cloth))
                         {
 
                             generate.intro += Mod.instance.Helper.Translation.Get("DialogueOffering.372.5");
@@ -883,30 +879,31 @@ namespace StardewDruid.Dialogue
 
                             generate.intro = Mod.instance.Helper.Translation.Get("DialogueOffering.386.2").Tokens(new { name = PalHandle.PalName(character), title = PalHandle.PalScheme(character) });
 
-                            if (Mod.instance.herbalData.BestHerbal(HerbalHandle.herbals.ligna) != HerbalHandle.herbals.none)
+                            if (Mod.instance.herbalHandle.BestHerbal(HerbalHandle.herbals.ligna) != HerbalHandle.herbals.none)
                             {
 
-                                generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueOffering.386.3"));
+                                generate.responses.Add(1, Mod.instance.Helper.Translation.Get("DialogueOffering.386.3"));
 
-                                generate.answers.Add(1.ToString());
+                                generate.leads.Add(1, 1);
 
                             }
 
-                            if (Mod.instance.herbalData.BestHerbal(HerbalHandle.herbals.impes) != HerbalHandle.herbals.none)
+                            if (Mod.instance.herbalHandle.BestHerbal(HerbalHandle.herbals.impes) != HerbalHandle.herbals.none)
                             {
 
-                                generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueOffering.386.4"));
+                                generate.responses.Add(2, Mod.instance.Helper.Translation.Get("DialogueOffering.386.4"));
 
-                                generate.answers.Add(2.ToString());
+                                generate.leads.Add(2, 2);
 
                             }
 
-                            if (Mod.instance.herbalData.BestHerbal(HerbalHandle.herbals.celeri) != HerbalHandle.herbals.none)
+                            if (Mod.instance.herbalHandle.BestHerbal(HerbalHandle.herbals.celeri) != HerbalHandle.herbals.none)
                             {
 
-                                generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueOffering.386.5"));
+                                generate.responses.Add(3, Mod.instance.Helper.Translation.Get("DialogueOffering.386.5"));
 
-                                generate.answers.Add(3.ToString());
+                                generate.leads.Add(3, 3);
+
                             }
 
                             if (Mod.instance.save.herbalism.ContainsKey(HerbalHandle.herbals.faeth))
@@ -915,15 +912,14 @@ namespace StardewDruid.Dialogue
                                 if (Mod.instance.save.herbalism[HerbalHandle.herbals.faeth] > 0)
                                 {
 
-                                    generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueOffering.390.1"));
+                                    generate.responses.Add(4, Mod.instance.Helper.Translation.Get("DialogueOffering.390.1"));
 
-                                    generate.answers.Add(4.ToString());
+                                    generate.leads.Add(4, 4);
+
 
                                 }
 
                             }
-
-                            generate.lead = true;
 
                             break;
 

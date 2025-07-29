@@ -28,20 +28,6 @@ namespace StardewDruid.Event.Sword
 
         }
 
-        public override bool TriggerActive()
-        {
-
-            if (TriggerLocation())
-            {
-
-                EventActivate();
-
-            }
-
-            return false;
-
-        }
-
         public override void EventActivate()
         {
 
@@ -49,7 +35,7 @@ namespace StardewDruid.Event.Sword
 
             base.EventActivate();
 
-            EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
+            ProgressBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
             activeLimit = 120;
 
@@ -97,40 +83,24 @@ namespace StardewDruid.Event.Sword
 
         }
 
-        public override bool AttemptReset()
+        public override void OnHealthReset()
         {
 
-            if (!eventActive)
+            DialogueCue(991);
+
+            EventReset();
+
+        }
+
+        public override void LeaveLocations()
+        {
+
+            if (Game1.player.currentLocation.Name == LocationHandle.druid_tomb_name)
             {
-
-                return true;
-
-            }
-
-            if(Game1.player.currentLocation.Name == LocationHandle.druid_tomb_name)
-            {
-                
-                DialogueCue(991);
 
                 Mod.instance.WarpAllFarmers("SkullCave", 5, 5, 1);
 
             }
-
-            EventRemove();
-
-            eventActive = false;
-
-            triggerEvent = true;
-
-            return true;
-
-        }
-
-        public override bool EventExpire()
-        {
-
-            return AttemptReset();
-
         }
 
         public override void EventInterval()

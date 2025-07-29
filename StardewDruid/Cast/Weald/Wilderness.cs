@@ -24,8 +24,6 @@ namespace StardewDruid.Cast.Weald
 
         public int radialCounter = 0;
 
-        public int costing = 0;
-
         public List<string> ignore = new();
 
         public int offset = 0;
@@ -54,93 +52,44 @@ namespace StardewDruid.Cast.Weald
 
         }
 
-        public override bool EventActive()
+        public override void EventActivate()
         {
 
-            if (!inabsentia && !eventLocked)
+            base.EventActivate();
+
+            SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new())
+            {
+                scheme = IconData.schemes.herbal_ligna,
+
+                sound = SpellHandle.Sounds.discoverMineral
+            };
+
+            Mod.instance.spellRegister.Add(circleHandle);
+
+            SpellHandle roots = new(origin, 384, IconData.impacts.roots, new() { SpellHandle.Effects.snare }) { 
+                
+                sound = SpellHandle.Sounds.treethud, 
+
+                displayRadius = 4, 
+            
+            };
+
+            Mod.instance.spellRegister.Add(roots);
+
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour))
             {
 
-                if (!Mod.instance.RiteButtonHeld())
-                {
-
-                    return false;
-
-                }
-
-                if (Vector2.Distance(origin, Game1.player.Position) > 32 && !Mod.instance.ShiftButtonHeld())
-                {
-
-                    return false;
-
-                }
-
+                Mod.instance.questHandle.UpdateTask(QuestHandle.wealdFour, 1);
             }
-            
-            return base.EventActive();
 
         }
 
         public override void EventDecimal()
         {
 
-            if (!EventActive())
-            {
-
-                RemoveAnimations();
-
-                return;
-
-            }
-
-            if (!inabsentia && !eventLocked)
-            {
-                
-                decimalCounter++;
-
-                if (decimalCounter == 5)
-                {
-
-                    Mod.instance.rite.Channel(IconData.skies.mountain, 75);
-
-                    channel = IconData.skies.mountain;
-
-                }
-
-                if (decimalCounter == 15)
-                {
-
-                    eventLocked = true;
-
-                    SpellHandle circleHandle = new(origin, 256, IconData.impacts.summoning, new())
-                    {
-                        scheme = IconData.schemes.herbal_ligna,
-
-                        sound = SpellHandle.Sounds.discoverMineral
-                    };
-
-                    Mod.instance.spellRegister.Add(circleHandle);
-
-                    Mod.instance.spellRegister.Add(new(origin, 384, IconData.impacts.roots, new() { SpellHandle.Effects.snare}) { sound = SpellHandle.Sounds.treethud, displayRadius = 4,});
-
-                    Mod.instance.rite.specialCasts[location.Name].Add(Rite.eventWilderness + costing.ToString());
-
-                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour))
-                    {
-
-                        Mod.instance.questHandle.UpdateTask(QuestHandle.wealdFour, 1);
-                    }
-
-                    Mod.instance.rite.ChargeSet(IconData.cursors.wealdCharge);
-
-                }
-
-                return;
-
-            }
+            radialCounter++;
 
             Wilding();
-
-            radialCounter++;
 
             if (radialCounter == 5)
             {
@@ -153,13 +102,6 @@ namespace StardewDruid.Cast.Weald
 
         public void Wilding()
         {
-            
-            if(radialCounter == 0)
-            {
-
-                return;
-
-            }
 
             Layer back = location.map.GetLayer("Back");
 
@@ -402,15 +344,6 @@ namespace StardewDruid.Cast.Weald
                     }
 
                 }
-
-            }
-
-            if (spawnCount > 0)
-            {
-
-                costCounter = spawnCount * costing;
-
-                Rite.ApplyCost(costCounter);
 
             }
 

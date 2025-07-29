@@ -6,6 +6,7 @@ using StardewDruid.Cast;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Cast.Ether;
 using StardewDruid.Cast.Mists;
+using StardewDruid.Cast.Witch;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
@@ -186,7 +187,7 @@ namespace StardewDruid.Event.Scene
 
             mainEvent = true;
 
-            activeLimit = -1;
+            
 
         }
 
@@ -266,15 +267,6 @@ namespace StardewDruid.Event.Scene
                 }
 
             }
-
-        }
-
-        public override bool AttemptReset()
-        {
-
-            Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
-
-            return false;
 
         }
 
@@ -989,7 +981,7 @@ namespace StardewDruid.Event.Scene
 
                         scheme = IconData.schemes.stars,
 
-                        factor = 3,
+                        displayFactor = 3,
 
                         soundTrigger = SoundHandle.SoundCue.CastStars,
 
@@ -1232,7 +1224,7 @@ namespace StardewDruid.Event.Scene
 
                         type = SpellHandle.Spells.bolt,
 
-                        factor = 4,
+                        displayFactor = 4,
 
                         sound = SpellHandle.Sounds.thunder,
 
@@ -1263,7 +1255,7 @@ namespace StardewDruid.Event.Scene
 
                         type = SpellHandle.Spells.bolt,
 
-                        factor = 4,
+                        displayFactor = 4,
 
                         sound = SpellHandle.Sounds.thunder,
 
@@ -1288,7 +1280,7 @@ namespace StardewDruid.Event.Scene
                         
                         type = SpellHandle.Spells.bolt,
 
-                        factor = 4,
+                        displayFactor = 4,
 
                         sound = SpellHandle.Sounds.thunder,
 
@@ -1312,7 +1304,7 @@ namespace StardewDruid.Event.Scene
 
                     EventRender goldenCore = new("goldenCore", location.Name, eventVectors[204] * 64 + new Vector2(32), IconData.relics.golden_core) { layer = 1f};
 
-                    eventRenders.Add(goldenCore);
+                    eventRenders.Add("goldenCore", goldenCore);
 
                     DialogueLoad(companions[1], 4);
 
@@ -1340,7 +1332,7 @@ namespace StardewDruid.Event.Scene
 
                 case 402:
 
-                    Cast.Bones.Corvids.SummonCorvids();
+                    CorvidHandle.SummonCorvids();
 
                     Mod.instance.trackers[CharacterHandle.characters.Raven].eventLock = true;
 
@@ -1362,7 +1354,7 @@ namespace StardewDruid.Event.Scene
 
                 case 406:
 
-                    ThrowHandle throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Raven].Position, IconData.relics.crow_hammer)
+                    ThrowHandle throwRelic = new(Game1.player, Mod.instance.characters[CharacterHandle.characters.Raven].Position, IconData.relics.druid_hammer)
                     {
                         pocket = false
                     };
@@ -1375,7 +1367,7 @@ namespace StardewDruid.Event.Scene
 
                     ThrowHandle.AnimateHoldup();
 
-                    Microsoft.Xna.Framework.Rectangle relicRectCrow = IconData.RelicRectangles(IconData.relics.crow_hammer);
+                    Microsoft.Xna.Framework.Rectangle relicRectCrow = IconData.RelicRectangles(IconData.relics.druid_hammer);
 
                     TemporaryAnimatedSprite animationCrow = new(0, 2500, 1, 1, Game1.player.Position + new Vector2(2, -124f), false, false)
                     {
@@ -1428,9 +1420,9 @@ namespace StardewDruid.Event.Scene
 
                     Vector2 where = eventVectors[204] * 64 + new Vector2(32, 32);
 
-                    Mod.instance.spellRegister.Add(new(where, 192, IconData.impacts.none, new()) { type = SpellHandle.Spells.greatbolt, factor = 3, displayRadius = 2, sound = SpellHandle.Sounds.thunder, });
+                    Mod.instance.spellRegister.Add(new(where, 192, IconData.impacts.none, new()) { type = SpellHandle.Spells.greatbolt, displayFactor = 3, displayRadius = 2, sound = SpellHandle.Sounds.thunder, });
 
-                    Rectangle relicRect = IconData.RelicRectangles(IconData.relics.crow_hammer);
+                    Rectangle relicRect = IconData.RelicRectangles(IconData.relics.druid_hammer);
 
                     TemporaryAnimatedSprite animation = new(0, 1500, 1, 1, where, false, false)
                     {

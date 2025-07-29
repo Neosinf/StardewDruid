@@ -1350,12 +1350,12 @@ namespace StardewDruid.Character
             }
 
             b.Draw(
-                Mod.instance.iconData.cursorTexture, 
+                Mod.instance.iconData.shadowTexture, 
                 shadowPosition, 
                 Mod.instance.iconData.shadowRectangle, 
                 Color.White * (0.35f * fade), 
                 0.0f, 
-                new Vector2(24), 
+                new Vector2(Mod.instance.iconData.shadowRectangle.Width/2), 
                 setScale/ offset, 
                 0, 
                 drawLayer - 0.0001f
@@ -1538,6 +1538,13 @@ namespace StardewDruid.Character
 
         }
 
+        public virtual bool OverheadFrame()
+        {
+
+            return true;
+
+        }
+
         public virtual Microsoft.Xna.Framework.Rectangle OverheadPortrait()
         {
 
@@ -1617,7 +1624,7 @@ namespace StardewDruid.Character
             if (Mod.instance.eventRegister.ContainsKey(Rite.eventTransform))
             {
 
-                Mod.instance.CastMessage("Unable to converse while transformed");
+                Mod.instance.RegisterMessage("Unable to converse while transformed");
 
                 return false;
             
@@ -1765,6 +1772,13 @@ namespace StardewDruid.Character
             ResetTimers();
 
             SettleOccupied();
+
+            if(netLayer.Value > 0)
+            {
+
+                netLayer.Set(0);
+
+            }
 
             if (clearEvents)
             {
@@ -2664,7 +2678,7 @@ namespace StardewDruid.Character
         public virtual List<StardewValley.Monsters.Monster> FindMonsters()
         {
 
-            return ModUtility.MonsterProximity(currentLocation, new() { Position, }, 640f, true);
+            return ModUtility.MonsterProximity(currentLocation, Position, 640f, true);
 
         }
 
@@ -2896,7 +2910,6 @@ namespace StardewDruid.Character
 
                 counter = -15,
 
-                power = 3
             };
 
             Mod.instance.spellRegister.Add(fireball);

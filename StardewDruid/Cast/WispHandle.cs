@@ -281,7 +281,7 @@ namespace StardewDruid.Cast
             );
 
             b.Draw(
-                Mod.instance.iconData.cursorTexture,
+                Mod.instance.iconData.shadowTexture,
                 localPosition + new Vector2(0,32*scale),
                 Mod.instance.iconData.shadowRectangle,
                 Microsoft.Xna.Framework.Color.White * fade,
@@ -440,7 +440,7 @@ namespace StardewDruid.Cast
 
                         cooldown = 10;
 
-                        List<StardewValley.Monsters.Monster> mistVictims = ModUtility.MonsterProximity(Game1.player.currentLocation, new() { position, }, 192, true);
+                        List<StardewValley.Monsters.Monster> mistVictims = ModUtility.MonsterProximity(Game1.player.currentLocation, position, 192, true);
 
                         if (mistVictims.Count > 0)
                         {
@@ -495,7 +495,7 @@ namespace StardewDruid.Cast
 
                         cooldown = 0;
 
-                        List<StardewValley.Monsters.Monster> windVictims = ModUtility.MonsterProximity(Game1.player.currentLocation, new() { position, }, 192, true);
+                        List<StardewValley.Monsters.Monster> windVictims = ModUtility.MonsterProximity(Game1.player.currentLocation,position, 192, true);
 
                         if (windVictims.Count > 0)
                         {
@@ -513,7 +513,7 @@ namespace StardewDruid.Cast
                                 displayRadius = 3
                             };
 
-                            spell.added.Add(Mod.instance.rite.ChargeEffect(IconData.cursors.fatesCharge, true));
+                            spell.added.Add(Mod.instance.rite.ChargeEffect(Rite.riteCharges.fates, true));
 
                             Mod.instance.spellRegister.Add(spell);
 

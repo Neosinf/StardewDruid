@@ -60,7 +60,7 @@ namespace StardewDruid.Event
 
         }
 
-        public EventRender(string Id, string Location, Vector2 Origin, IconData.decorations Decoration)
+        public EventRender(string Id, string Location, Vector2 Origin, IconData.ritecircles Decoration)
         {
 
             eventId = Id;
@@ -75,7 +75,7 @@ namespace StardewDruid.Event
 
             layer = 0.0001f;
 
-            rectangle = IconData.DecorativeRectangle(Decoration);
+            rectangle = IconData.RiteRectangle(Decoration);
 
         }
 
@@ -218,7 +218,7 @@ namespace StardewDruid.Event
             float rotate = (float)Math.PI / 60 * offset;
 
             b.Draw(
-                Mod.instance.iconData.decorationTexture,
+                Mod.instance.iconData.ritecircleTexture,
                 drawPosition + new Vector2(32),
                 rectangle,
                 Color.White * 0.75f,

@@ -5,11 +5,11 @@ using Microsoft.Xna.Framework.Input;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Cast.Mists;
+using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
 using StardewDruid.Event.Challenge;
 using StardewDruid.Journal;
-using StardewDruid.Location;
 using StardewDruid.Location.Druid;
 using StardewModdingAPI;
 using StardewValley;
@@ -23,637 +23,661 @@ using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using static StardewDruid.Data.IconData;
+using System.Threading.Tasks.Sources;
+
 
 namespace StardewDruid.Handle
 {
     public class RelicHandle
     {
 
-        public static void WarpFunction()
+        public enum relicsets
         {
 
-            List<IconData.relics> access = new()
-            {
+            none,
+            companion,
+            lantern,
+            wayfinder,
+            druid,
+            monsterstones,
+            crests,
+            herbalism,
+            tactical,
+            runestones,
+            avalant,
+            books,
+            boxes,
+            restore,
+            skulls,
+            shadowtin,
+        
+        }
+
+        public Dictionary<relicsets, List<IconData.relics>> lines = new()
+        {
+            [relicsets.companion] = new() {
+                IconData.relics.companion_crest,
+                IconData.relics.companion_badge,
+                IconData.relics.companion_dice,
+                IconData.relics.companion_tome,
+                IconData.relics.companion_glove,
+                IconData.relics.stardew_druid,
+            },
+            [relicsets.wayfinder] = new() {
                 IconData.relics.wayfinder_stone,
-                IconData.relics.wayfinder_pot,
-                IconData.relics.wayfinder_censer,
                 IconData.relics.wayfinder_key,
-                IconData.relics.wayfinder_lantern,
                 IconData.relics.wayfinder_glove,
-                IconData.relics.wayfinder_water,
-                IconData.relics.wayfinder_ceremonial,
-                IconData.relics.runestones_alchemistry,
                 IconData.relics.wayfinder_eye,
+            },
+            [relicsets.lantern] = new() {
+                IconData.relics.lantern_pot,
+                IconData.relics.lantern_censer,
+                IconData.relics.lantern_guardian,
+                IconData.relics.lantern_water,
+                IconData.relics.lantern_ceremony,
+            },
+            [relicsets.druid] = new() {
+                IconData.relics.druid_grimoire,
+                IconData.relics.druid_runeboard,
+                IconData.relics.druid_hammer,
+                IconData.relics.druid_hieress,
+                IconData.relics.druid_dragonomicon,
+            },
+            [relicsets.monsterstones] = new() {
+                IconData.relics.monster_bat,
+                IconData.relics.monster_slime,
+                IconData.relics.monster_spirit,
+                IconData.relics.monster_ghost,
+                IconData.relics.monster_serpent,
+            },
+            [relicsets.crests] = new() {
+                IconData.relics.crest_church,
+                IconData.relics.crest_dwarf,
+                IconData.relics.crest_associate,
+                IconData.relics.crest_smuggler,
+            },
+            [relicsets.herbalism] = new() {
+                IconData.relics.herbalism_mortar,
+                IconData.relics.herbalism_pan,
+                IconData.relics.herbalism_still,
+                IconData.relics.herbalism_crucible,
+                IconData.relics.herbalism_gauge,
+            },
+            [relicsets.tactical] = new() {
+                IconData.relics.tactical_discombobulator,
+                IconData.relics.tactical_mask,
+                IconData.relics.tactical_cell,
+                IconData.relics.tactical_lunchbox,
+                IconData.relics.tactical_peppermint,
+            },
+            [relicsets.runestones] = new() {
+                IconData.relics.runestones_spring,
+                IconData.relics.runestones_farm,
+                IconData.relics.runestones_moon,
+                IconData.relics.runestones_cat,
+                IconData.relics.runestones_alchemistry,
+            },
+            [relicsets.avalant] = new() {
+                IconData.relics.avalant_disc,
+                IconData.relics.avalant_chassis,
+                IconData.relics.avalant_gears,
+                IconData.relics.avalant_casing,
+                IconData.relics.avalant_needle,
+                IconData.relics.avalant_measure,
+            },
+            [relicsets.books] = new() {
+                IconData.relics.book_wyrven,
+                IconData.relics.book_letters,
+                IconData.relics.book_manual,
+                IconData.relics.book_druid,
+                IconData.relics.book_annal,
+                IconData.relics.book_knight,
+            },
+            [relicsets.boxes] = new() {
+                IconData.relics.box_measurer,
+                IconData.relics.box_mortician,
+                IconData.relics.box_artisan,
+                IconData.relics.box_chaos,
+            },
+            [relicsets.restore] = new() {
+                IconData.relics.restore_goshuin,
+                IconData.relics.restore_offering,
+                IconData.relics.restore_cloth,
+            },
+            [relicsets.skulls] = new() {
+                IconData.relics.skull_saurus,
+                IconData.relics.skull_gelatin,
+                IconData.relics.skull_cannoli,
+                IconData.relics.skull_fox,
+                IconData.relics.golden_core,
+            },
+            [relicsets.shadowtin] = new() {
+                IconData.relics.shadowtin_cell,
+                IconData.relics.shadowtin_bazooka,
+            },
+        };
 
-            };
+        public Dictionary<relicsets, string> quests = new()
+        {
+            [relicsets.tactical] = QuestHandle.relicTactical,
+            [relicsets.runestones] = QuestHandle.relicWeald,
+            [relicsets.avalant] = QuestHandle.relicMists,
+            [relicsets.books] = QuestHandle.relicEther,
+            [relicsets.boxes] = QuestHandle.relicFates,
+            [relicsets.restore] = QuestHandle.relicRestore,
+        };
 
-            foreach (IconData.relics relic in access)
+        public Dictionary<string, Relic> reliquary = new();
+
+        public Dictionary<relicsets, List<string>> titles = new()
+        {
+
+            [relicsets.companion] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.6"),
+                Mod.instance.Helper.Translation.Get("RelicData.7"), },
+            [relicsets.lantern] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.9"),
+                Mod.instance.Helper.Translation.Get("RelicData.10"), },
+            [relicsets.wayfinder] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.27"),
+                Mod.instance.Helper.Translation.Get("RelicData.28"), },
+            [relicsets.druid] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.500.druidrelics.1"),
+                Mod.instance.Helper.Translation.Get("RelicData.500.druidrelics.2"), },
+            [relicsets.monsterstones] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.386.8"),
+                Mod.instance.Helper.Translation.Get("RelicData.386.9"), },
+            [relicsets.crests] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.386.30"),
+                Mod.instance.Helper.Translation.Get("RelicData.386.31"), },
+            [relicsets.herbalism] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.12"),
+                Mod.instance.Helper.Translation.Get("RelicData.13"), },
+            [relicsets.tactical] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.309.1"),
+                Mod.instance.Helper.Translation.Get("RelicData.309.2"), },
+            [relicsets.runestones] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.15"),
+                Mod.instance.Helper.Translation.Get("RelicData.16"), },
+            [relicsets.avalant] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.18"),
+                Mod.instance.Helper.Translation.Get("RelicData.19"), },
+            [relicsets.books] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.21"),
+                Mod.instance.Helper.Translation.Get("RelicData.22"), },
+            [relicsets.boxes] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.24"),
+                Mod.instance.Helper.Translation.Get("RelicData.25"), },
+            [relicsets.restore] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.329.5"),
+                Mod.instance.Helper.Translation.Get("RelicData.329.6"), },
+            [relicsets.skulls] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.339.1"),
+                Mod.instance.Helper.Translation.Get("RelicData.339.2"), },
+            [relicsets.shadowtin] = new() {
+                Mod.instance.Helper.Translation.Get("RelicData.500.shadowtinrelics.1"),
+                Mod.instance.Helper.Translation.Get("RelicData.500.shadowtinrelics.2"), },
+
+        };
+
+
+        public IconData.relics favourite = IconData.relics.none;
+
+        public RelicHandle()
+        {
+
+        }
+
+        public void LoadRelics()
+        {
+
+            if (Mod.instance.magic)
             {
 
-                if (!RelicData.HasRelic(relic))
+                return;
+
+            }
+
+            reliquary = RelicData.RelicsList();
+
+        }
+
+        public static bool HasRelic(IconData.relics relic)
+        {
+
+            if (Mod.instance.magic)
+            {
+
+                return true;
+
+            }
+
+            if (Mod.instance.save.reliquary.ContainsKey(relic.ToString()))
+            {
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+        public Dictionary<int, ContentComponent> JournalRelics()
+        {
+
+            Dictionary<int, ContentComponent> journal = new();
+
+            int start = 0;
+
+            foreach (KeyValuePair<relicsets,List<IconData.relics>> set in lines)
+            {
+
+                Dictionary<IconData.relics, bool> setDisplay = new();
+
+                bool setActive = false;
+
+                foreach (IconData.relics relicName in set.Value)
+                {
+
+                    if (!HasRelic(relicName))
+                    {
+
+                        if (reliquary[relicName.ToString()].hint == null)
+                        {
+
+                            continue;
+
+                        }
+
+                        setDisplay.Add(relicName, false);
+
+                    }
+                    else
+                    {
+
+                        setDisplay.Add(relicName, true);
+
+                        setActive = true;
+
+                    }
+                    
+                }
+
+                if (!setActive)
                 {
 
                     continue;
 
                 }
 
-                if (RelicFunction(relic.ToString()) == 1)
+                foreach (IconData.relics relicName in set.Value)
                 {
 
-                    return;
+                    ContentComponent content = new(ContentComponent.contentTypes.relic, relicName.ToString());
 
-                }
-
-            }
-
-            Game1.playSound(SpellHandle.Sounds.ghost.ToString());
-
-        }
-
-        public static void QuickFunction()
-        {
-
-            if(Mod.instance.relicsData.favourite != IconData.relics.none)
-            {
-
-                if (RelicFunction(Mod.instance.relicsData.favourite.ToString()) == 1)
-                {
-
-                    return;
-
-                }
-
-            }
-
-            Game1.playSound(SpellHandle.Sounds.ghost.ToString());
-
-        }
-
-        public static int RelicFunction(string id, int record = 0)
-        {
-
-            if (Mod.instance.activeEvent.Count > 0) { return 0; }
-
-            IconData.relics relic = Enum.Parse<IconData.relics>(id);
-
-            switch (relic)
-            {
-
-                case IconData.relics.effigy_crest:
-
-                    if (!Context.IsMainPlayer)
+                    if (!setDisplay.ContainsKey(relicName))
                     {
 
-                        break;
+                        content.active = false;
 
-                    }
-
-                    CharacterHandle.characters crestSummon = CharacterHandle.characters.Effigy;
-
-                    if (Mod.instance.questHandle.IsComplete(QuestHandle.challengeBones))
-                    {
-
-                        crestSummon = CharacterHandle.characters.Aldebaran;
-
-                    }
-
-                    if (Mod.instance.characters.ContainsKey(crestSummon))
-                    {
-
-                        List<Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, Character.Character.mode.track, };
-
-                        if (!reservedModes.Contains(Mod.instance.characters[crestSummon].modeActive))
-                        {
-
-                            Mod.instance.characters[crestSummon].SwitchToMode(Character.Character.mode.track, Game1.player);
-
-                            Mod.instance.CastMessage(CharacterHandle.CharacterTitle(crestSummon) + StringData.Strings(StringData.stringkeys.joinedPlayer), 0, true);
-
-                            Mod.instance.relicsData.favourite = relic;
-
-                            return 1;
-
-                        }
-
-                    }
-
-                    break;
-
-                case IconData.relics.jester_dice:
-
-                    if (!Context.IsMainPlayer)
-                    {
-
-                        break;
-
-                    }
-
-                    if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Jester))
-                    {
-
-                        List<Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, Character.Character.mode.track, };
-
-                        if (!reservedModes.Contains(Mod.instance.characters[CharacterHandle.characters.Jester].modeActive))
-                        {
-
-                            Mod.instance.characters[CharacterHandle.characters.Jester].SwitchToMode(Character.Character.mode.track, Game1.player);
-
-                            Mod.instance.CastMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Jester) +
-                                StringData.Strings(StringData.stringkeys.joinedPlayer), 0, true);
-
-                            Mod.instance.relicsData.favourite = relic;
-
-                            return 1;
-
-                        }
-
-                    }
-
-                    break;
-
-                case IconData.relics.shadowtin_tome:
-
-                    if (!Context.IsMainPlayer)
-                    {
-
-                        break;
-
-                    }
-
-                    if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Shadowtin))
-                    {
-
-                        List<Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, Character.Character.mode.track, };
-
-                        if (!reservedModes.Contains(Mod.instance.characters[CharacterHandle.characters.Shadowtin].modeActive))
-                        {
-
-                            Mod.instance.characters[CharacterHandle.characters.Shadowtin].SwitchToMode(Character.Character.mode.track, Game1.player);
-
-                            Mod.instance.CastMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Shadowtin) +
-                                StringData.Strings(StringData.stringkeys.joinedPlayer), 0, true);
-
-                            Mod.instance.relicsData.favourite = relic;
-
-                            return 1;
-
-                        }
-
-                    }
-
-                    break;
-
-                case IconData.relics.blackfeather_glove:
-
-                    if (!Context.IsMainPlayer)
-                    {
-
-                        break;
-
-                    }
-
-                    if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Blackfeather))
-                    {
-
-                        List<Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, Character.Character.mode.track, };
-
-                        if (!reservedModes.Contains(Mod.instance.characters[CharacterHandle.characters.Blackfeather].modeActive))
-                        {
-
-                            Mod.instance.characters[CharacterHandle.characters.Blackfeather].SwitchToMode(Character.Character.mode.track, Game1.player);
-
-                            Mod.instance.CastMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Blackfeather) +
-                                StringData.Strings(StringData.stringkeys.joinedPlayer), 0, true);
-
-                            Mod.instance.relicsData.favourite = relic;
-
-                            return 1;
-
-                        }
-
-                    }
-
-                    break;
-
-                case IconData.relics.heiress_gift:
-
-                    if (!Context.IsMainPlayer)
-                    {
-
-                        break;
-
-                    }
-
-                    DruidJournal.openJournal(DruidJournal.journalTypes.recruits, id, record);
-
-                    return 5;
-
-                case IconData.relics.wayfinder_stone:
-
-                    if (Game1.player.currentLocation is Farm || Game1.player.currentLocation is FarmHouse)
-                    {
-
-                        SpellHandle gravesWarp = new(Mod.instance.locations[LocationHandle.druid_grove_name], new Vector2(19f, 15f), Game1.player.Position) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, sound = SpellHandle.Sounds.wand, factor = 0 };
-
-                        Mod.instance.spellRegister.Add(gravesWarp);
-
-                        return 1;
-
-                    }
-
-                    if (Game1.player.currentLocation is Grove)
-                    {
-
-
-                        FarmHouse homeOfFarmer = Utility.getHomeOfFarmer(Game1.player);
-
-                        if (homeOfFarmer != null)
-                        {
-                            Point frontDoorSpot = homeOfFarmer.getFrontDoorSpot();
-
-                            SpellHandle gravesWarp = new(Game1.getFarm(), new Vector2(frontDoorSpot.X, frontDoorSpot.Y), Game1.player.Position) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, sound = SpellHandle.Sounds.wand, factor = 2 };
-
-                            Mod.instance.spellRegister.Add(gravesWarp);
-
-                            return 1;
-
-                        }
-
-                    }
-
-                    break;
-
-                case IconData.relics.wayfinder_pot:
-
-                    if (Game1.player.currentLocation.Name == "UndergroundMine20")
-                    {
-
-                        Event.Access.AccessHandle potAccess = new();
-
-                        potAccess.AccessSetup("UndergroundMine20", LocationHandle.druid_spring_name, new(24, 13), new(21, 20));
-
-                        potAccess.AccessCheck(Game1.player.currentLocation);
-
-                        Mod.instance.CastDisplay(Mod.instance.Helper.Translation.Get("RelicData.309.8"));
-
-                        return 1;
-
-                    }
-
-                    break;
-
-                case IconData.relics.wayfinder_censer:
-
-                    if (Game1.player.currentLocation is Beach)
-                    {
-
-                        SpellHandle warp = new(Mod.instance.locations[LocationHandle.druid_atoll_name], new Vector2(14, 10), Game1.player.Position) { type = SpellHandle.Spells.warp, factor = 0, };
-
-                        Mod.instance.spellRegister.Add(warp);
-
-                        //(Mod.instance.locations[LocationHandle.druid_atoll_name] as Atoll).AddBoatAccess();
-
-                        return 1;
-
-                    }
-
-                    break;
-
-                case IconData.relics.wayfinder_key:
-
-                    /*SpellHandle keyWarp = new(Mod.instance.locations[LocationData.druid_graveyard_name], new Vector2(28, 29), new Vector2(0, 0)) { type = SpellHandle.spells.warp, }; ;
-
-                    Mod.instance.spellRegister.Add(keyWarp);
-
-                    return 1; */
-
-                    if (Game1.player.currentLocation is Town)
-                    {
-
-                        if (Vector2.Distance(Game1.player.Position, new Vector2(47, 88) * 64) <= 640)
-                        {
-
-                            SpellHandle warp = new(Mod.instance.locations[LocationHandle.druid_graveyard_name], new Vector2(28, 29), Game1.player.Position) { type = SpellHandle.Spells.warp, factor = 0, };
-
-                            Mod.instance.spellRegister.Add(warp);
-
-                            return 1;
-
-                        }
-                    }
-
-                    break;
-
-                case IconData.relics.wayfinder_lantern:
-
-                    /*SpellHandle lanternWarp = new(Mod.instance.locations[LocationData.druid_chapel_name], new(27, 30), new Vector2(0, 0)) { type = SpellHandle.spells.warp, };
-
-                    Mod.instance.spellRegister.Add(lanternWarp);
-
-                    return 1;*/
-
-                    if (Game1.player.currentLocation.Name == "UndergroundMine60")
-                    {
-
-                        Event.Access.AccessHandle lanternAccess = new();
-
-                        lanternAccess.AccessSetup("UndergroundMine60", LocationHandle.druid_chapel_name, new(17, 10), new(27, 30), Event.Access.AccessHandle.types.door);
-
-                        lanternAccess.AccessCheck(Game1.player.currentLocation);
-
-                        return 1;
-
-                    }
-
-                    break;
-
-                case IconData.relics.wayfinder_glove:
-
-                    if (Game1.player.currentLocation is Forest)
-                    {
-
-                        SpellHandle warpGlove = new(Mod.instance.locations[LocationHandle.druid_clearing_name], new Vector2(28, 8), Game1.player.Position) { type = SpellHandle.Spells.warp, factor = 2, };
-
-                        Mod.instance.spellRegister.Add(warpGlove);
-
-                        return 1;
-
-                    }
-
-                    break;
-
-                case IconData.relics.wayfinder_water:
-
-                    if (Game1.player.currentLocation.Name == "UndergroundMine100")
-                    {
-
-                        Event.Access.AccessHandle waterAccess = new();
-
-                        waterAccess.AccessSetup("UndergroundMine100", LocationHandle.druid_lair_name, new(24, 13), new(27, 30));
-
-                        waterAccess.AccessCheck(Game1.player.currentLocation);
-
-                        return 1;
-
-                    }
-
-                    break;
-
-                case IconData.relics.wayfinder_eye:
-
-                    Vector2 destination;
-
-                    if (Game1.player.currentLocation is MineShaft mineShaft)
-                    {
-
-                        if (mineShaft.mineLevel == MineShaft.quarryMineShaft)
-                        {
-
-                            SpellHandle warpEye = new(Mod.instance.locations[LocationHandle.druid_court_name], new Vector2(28, 29), Game1.player.Position) { type = SpellHandle.Spells.warp, factor = 0, };
-
-                            Mod.instance.spellRegister.Add(warpEye);
-
-                            return 1;
-
-                        }
-
-                        destination = WarpData.WarpXZone(mineShaft);
-
-
-                    }
-                    else if (Game1.player.currentLocation is Town)
-                    {
-
-                        if (Vector2.Distance(Game1.player.Position, new Vector2(98, 8) * 64) <= 800)
-                        {
-
-                            SpellHandle warpEye = new(Mod.instance.locations[LocationHandle.druid_court_name], new Vector2(28, 29), Game1.player.Position) { type = SpellHandle.Spells.warp, factor = 0, };
-
-                            Mod.instance.spellRegister.Add(warpEye);
-
-                            return 1;
-
-                        }
-
-                        destination = WarpData.WarpEntrance(Game1.player.currentLocation, Game1.player.Position);
-
-                    }
-                    else if (Game1.player.currentLocation is Court)
-                    {
-
-                        GameLocation backToTown = Game1.getLocationFromName("Town");
-
-                        destination = WarpData.WarpEntrance(Game1.getLocationFromName("Town"), new Vector2(98, 8) * 64);
-
-                        SpellHandle warp = new(backToTown, ModUtility.PositionToTile(destination), Game1.player.Position) { type = SpellHandle.Spells.warp, factor = 0, };
-
-                        Mod.instance.spellRegister.Add(warp);
-
-                        return 1;
-
-                    }
-                    else
-                    {
-                        destination = WarpData.WarpEntrance(Game1.player.currentLocation, Game1.player.Position);
-
-                    }
-
-                    if (destination != Vector2.Zero)
-                    {
-
-                        SpellHandle teleport = new(Game1.player.currentLocation, destination, Game1.player.Position)
-                        {
-                            type = SpellHandle.Spells.teleport
-                        };
-
-                        Mod.instance.spellRegister.Add(teleport);
-
-                        Mod.instance.AbortAllEvents();
+                        continue;
 
                     }
                     else
                     {
 
-                        Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.noWarpPoint));
+                        content.textureSources[0] = IconData.RelicRectangles(relicName);
 
-                    }
-
-                    return 1;
-
-                case IconData.relics.wayfinder_ceremonial:
-
-                    if (Game1.player.currentLocation.Name == "SkullCave")
-                    {
-
-                        Event.Access.AccessHandle ceremonialAccess = new();
-
-                        ceremonialAccess.AccessSetup("SkullCave", LocationHandle.druid_tomb_name, new(10, 5), new(27, 30));
-
-                        ceremonialAccess.AccessCheck(Game1.player.currentLocation);
-
-                        return 1;
-
-                    }
-
-                    break;
-
-                case IconData.relics.wayfinder_dwarf:
-
-
-                    if (Game1.player.currentLocation is Clearing clearing)
-                    {
-
-                        if (!clearing.accessOpen)
+                        if (setDisplay[relicName])
                         {
 
-                            clearing.OpenAccess();
+                            content.textureColours[0] = Color.White;
 
-                            clearing.playSound(SpellHandle.Sounds.Ship.ToString());
+                        }
+                        else
+                        {
+
+                            content.textureColours[0] = Color.Black * 0.01f;
 
                         }
 
-                        return 1;
-
                     }
 
-                    break;
+                    journal[start++] = content;
 
-                case IconData.relics.runestones_alchemistry:
+                }
 
-                    if (Game1.player.currentLocation is Forest || Game1.player.currentLocation is Farm || Game1.player.currentLocation is WizardHouse)
+                for (int i = 0; i < 6 - set.Value.Count; i++)
+                {
+
+                    ContentComponent content = new(ContentComponent.contentTypes.relic, set.ToString() + i.ToString())
                     {
+                        active = false
+                    };
 
-                        GameLocation MagesRest = Game1.getLocationFromName("Custom_MagesRest");
+                    journal[start++] = content;
 
-                        if (MagesRest != null)
+                }
+
+            }
+
+            return journal;
+
+        }
+
+        public Dictionary<int, ContentComponent> JournalHeaders()
+        {
+
+            Dictionary<int, ContentComponent> journal = new();
+
+            int start = 0;
+
+            foreach (relicsets set in lines.Keys)
+            {
+
+                switch (set)
+                {
+
+                    case relicsets.runestones:
+
+                        if (!HasRelic(lines[set][0]) && !HasRelic(lines[set][4]))
                         {
 
-                            SpellHandle warpGlove = new(MagesRest, new Vector2(48, 29), Game1.player.Position) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, factor = 3, };
+                            continue;
 
-                            Mod.instance.spellRegister.Add(warpGlove);
+                        }
 
-                            Mod.instance.relicsData.favourite = relic;
+                        break;
+
+                    case relicsets.avalant:
+                    case relicsets.restore:
+
+
+                        if (ProgressRelicQuest(set) == 0)
+                        {
+
+                            continue;
+
+                        }
+                        break;
+
+                    default:
+
+                        if (!HasRelic(lines[set][0]))
+                        {
+
+                            continue;
+
+                        }
+
+                        break;
+
+                }
+
+                ContentComponent content = new(ContentComponent.contentTypes.header, set.ToString());
+
+                content.text[0] = titles[set][0];
+
+                content.text[1] = titles[set][1];
+
+                journal[start++] = content;
+
+            }
+
+            return journal;
+
+        }
+
+        public void ReliquaryUpdate(string id)
+        {
+
+            Mod.instance.save.reliquary[id] = 1;
+
+        }
+
+        public IconData.relics RelicTacticalLocations()
+        {
+
+            if (!Mod.instance.questHandle.IsComplete(QuestHandle.challengeWeald) || !Context.IsMainPlayer)
+            {
+
+                return IconData.relics.none;
+
+            }
+
+            if (Game1.player.currentLocation is Forest || Game1.player.currentLocation.Name.Contains("Custom_Forest"))
+            {
+
+                return IconData.relics.tactical_cell;
+
+            }
+            else if (Game1.player.currentLocation is Woods || Game1.player.currentLocation.Name.Contains("Custom_Woods"))
+            {
+
+                return IconData.relics.tactical_mask;
+
+            }
+            else if (Game1.player.currentLocation is FarmCave)
+            {
+
+                return IconData.relics.tactical_peppermint;
+
+            }
+            else if (Game1.player.currentLocation is BusStop || Game1.player.currentLocation.Name.Equals("Backwoods") || Game1.player.currentLocation.Name.Equals("Tunnel"))
+            {
+
+                return IconData.relics.tactical_lunchbox;
+
+            }
+
+            return IconData.relics.none;
+
+        }
+
+        public IconData.relics RelicMistsLocations()
+        {
+
+            if (!Context.IsMainPlayer)
+            {
+
+                return IconData.relics.none;
+
+            }
+
+            if (Game1.player.currentLocation is Forest)
+            {
+
+                return IconData.relics.avalant_disc;
+
+            }
+            else if (Game1.player.currentLocation is Mountain)
+            {
+
+                return IconData.relics.avalant_chassis;
+
+            }
+            else if (Game1.player.currentLocation is Beach)
+            {
+
+                return IconData.relics.avalant_gears;
+
+            }
+            else if (Game1.player.currentLocation is MineShaft || Game1.player.currentLocation is Spring)
+            {
+
+                return IconData.relics.avalant_casing;
+
+            }
+            else if (Game1.player.currentLocation is Town)
+            {
+
+                return IconData.relics.avalant_needle;
+
+            }
+            else if (Game1.player.currentLocation is Atoll)
+            {
+
+                return IconData.relics.avalant_measure;
+
+            }
+
+            return IconData.relics.none;
+
+        }
+
+        public IconData.relics RelicBooksLocations()
+        {
+
+            if (!Context.IsMainPlayer)
+            {
+
+                return IconData.relics.none;
+
+            }
+
+            if (Game1.player.currentLocation is Forest)
+            {
+
+                return IconData.relics.book_letters;
+
+            }
+            else if (Game1.player.currentLocation is Mountain)
+            {
+
+                return IconData.relics.book_manual;
+
+            }
+            else if (Game1.player.currentLocation is Atoll)
+            {
+
+                return IconData.relics.book_druid;
+
+            }
+            else if (Game1.player.currentLocation is Desert)
+            {
+
+                return IconData.relics.book_annal;
+
+            }
+            return IconData.relics.none;
+
+        }
+
+        public int ArtisanRelicQuest()
+        {
+
+            if (!Context.IsMainPlayer)
+            {
+
+                return -1;
+
+            }
+
+            if (HasRelic(IconData.relics.box_artisan))
+            {
+
+                return -1;
+
+            }
+
+            for (int i = 0; i < Game1.player.Items.Count; i++)
+            {
+
+                Item checkSlot = Game1.player.Items[i];
+
+                // ignore empty slots
+                if (checkSlot == null || checkSlot is not Tool toolCheck)
+                {
+
+                    continue;
+
+                }
+
+                if (toolCheck.UpgradeLevel >= 4)
+                {
+
+                    return 1;
+
+                }
+
+            }
+
+            return 0;
+
+        }
+
+        public int MorticianRelicQuest()
+        {
+
+            if (!Context.IsMainPlayer)
+            {
+
+                return -1;
+
+            }
+
+            if (HasRelic(IconData.relics.box_mortician))
+            {
+
+                return -1;
+
+            }
+
+            for(int i = 0; i < 18; i++)
+            {
+
+                HerbalHandle.herbals herbal = (HerbalHandle.herbals)((int)HerbalHandle.herbals.omen_feather + i);
+
+                if (HerbalHandle.GetHerbalism(herbal) <= 0)
+                {
+
+                    return 0;
+
+                }
+
+
+            }
+
+            return 1;
+
+        }
+
+        public int ChaosRelicQuest()
+        {
+            if (!Context.IsMainPlayer)
+            {
+
+                return -1;
+
+            }
+
+            if (HasRelic(IconData.relics.box_chaos))
+            {
+
+                return -1;
+
+            }
+
+            foreach(GameLocation location in Game1.locations)
+            {
+
+                if(location.buildings.Count > 0)
+                {
+
+                    foreach (Building building in location.buildings)
+                    {
+
+                        if (building.buildingType.Contains("Deluxe Coop") || building.buildingType.Contains("Deluxe Barn"))
+                        {
 
                             return 1;
 
                         }
 
                     }
-                    else if (Game1.player.currentLocation.Name == "Custom_MagesRest")
-                    {
 
-                        FarmHouse homeOfFarmer = Utility.getHomeOfFarmer(Game1.player);
-
-                        if (homeOfFarmer != null)
-                        {
-                            Point frontDoorSpot = homeOfFarmer.getFrontDoorSpot();
-
-                            SpellHandle gravesWarp = new(Game1.getFarm(), new Vector2(frontDoorSpot.X, frontDoorSpot.Y), Game1.player.Position) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, sound = SpellHandle.Sounds.wand, factor = 2 };
-
-                            Mod.instance.spellRegister.Add(gravesWarp);
-
-                            Mod.instance.relicsData.favourite = relic;
-
-                            return 1;
-
-                        }
-                    }
-                    break;
-
-                case IconData.relics.monsterbadge:
-
-                    BattleHandle battleHandle = new();
-
-                    battleHandle.SearchChallengers();
-
-                    Mod.instance.relicsData.favourite = relic;
-
-                    return 1;
-
-                case IconData.relics.monster_bat:
-                case IconData.relics.monster_slime:
-                case IconData.relics.monster_spirit:
-                case IconData.relics.monster_ghost:
-                case IconData.relics.monster_serpent:
-
-                    CharacterHandle.characters entity = CharacterHandle.characters.PalBat;
-
-                    switch (relic)
-                    {
-
-                        case IconData.relics.monster_slime:
-                            entity = CharacterHandle.characters.PalSlime;
-                            break;
-                        case IconData.relics.monster_spirit:
-                            entity = CharacterHandle.characters.PalSpirit;
-                            break;
-                        case IconData.relics.monster_ghost:
-                            entity = CharacterHandle.characters.PalGhost;
-                            break;
-                        case IconData.relics.monster_serpent:
-                            entity = CharacterHandle.characters.PalSerpent;
-                            break;
-
-                    }
-
-                    if (!Mod.instance.save.pals.ContainsKey(entity))
-                    {
-
-                        return 0;
-
-                    }
-
-                    DruidJournal.openJournal(DruidJournal.journalTypes.palPage,entity.ToString(),record);
-
-                    Mod.instance.relicsData.favourite = relic;
-
-                    return 5;
-
-
-                case IconData.relics.crest_church:
-                case IconData.relics.crest_dwarf:
-                case IconData.relics.crest_associate:
-                case IconData.relics.crest_smuggler:
-
-                    ExportHandle.exports guild = ExportHandle.exports.church;
-
-                    switch (relic)
-                    {
-
-                        case IconData.relics.crest_dwarf:
-                            guild = ExportHandle.exports.dwarf;
-                            break;
-                        case IconData.relics.crest_associate:
-                            guild = ExportHandle.exports.associate;
-                            break;
-                        case IconData.relics.crest_smuggler:
-                            guild = ExportHandle.exports.smuggler;
-                            break;
-
-                    }
-
-                    DruidJournal.openJournal(DruidJournal.journalTypes.guildPage, guild.ToString(), record);
-                    
-                    return 5;
-
-                case IconData.relics.book_wyrven:
-                case IconData.relics.book_letters:
-                case IconData.relics.book_manual:
-                case IconData.relics.book_druid:
-                case IconData.relics.book_annal:
-                case IconData.relics.book_knight:
-
-                    DruidJournal.openJournal(DruidJournal.journalTypes.relicPage, id, record);
-
-                    return 5;
-
-                case IconData.relics.dragon_form:
-
-                    DruidJournal.openJournal(DruidJournal.journalTypes.dragonPage, id, record);
-
-                    return 5;
+                }
 
             }
 
@@ -662,267 +686,55 @@ namespace StardewDruid.Handle
 
         }
 
-        public static int RelicCancel(string id, int record)
+        public int ProgressRelicQuest(relicsets relicset)
         {
 
-            if (Mod.instance.activeEvent.Count > 0) { return 0; }
-
-            Event.Access.AccessHandle access;
-
-            IconData.relics relic = Enum.Parse<IconData.relics>(id);
-
-            switch (relic)
+            if (!Context.IsMainPlayer)
             {
 
-                case IconData.relics.effigy_crest:
-
-                    if (!Context.IsMainPlayer)
-                    {
-
-                        break;
-
-                    }
-
-                    CharacterHandle.characters crestSummon = CharacterHandle.characters.Effigy;
-
-                    if (Mod.instance.questHandle.IsComplete(QuestHandle.challengeBones))
-                    {
-
-                        crestSummon = CharacterHandle.characters.Aldebaran;
-
-                    }
-
-                    if (Mod.instance.characters.ContainsKey(crestSummon))
-                    {
-
-                        List<Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, };
-
-                        if (!reservedModes.Contains(Mod.instance.characters[crestSummon].modeActive))
-                        {
-
-                            Mod.instance.characters[crestSummon].SwitchToMode(Character.Character.mode.home, Game1.player);
-
-                            Mod.instance.CastMessage(
-                                CharacterHandle.CharacterTitle(crestSummon) +
-                                StringData.Strings(StringData.stringkeys.returnedHome), 0, true);
-
-                            return 1;
-
-                        }
-
-                    }
-
-                    break;
-
-                case IconData.relics.jester_dice:
-
-                    if (!Context.IsMainPlayer)
-                    {
-
-                        break;
-
-                    }
-
-                    if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Jester))
-                    {
-
-                        List<Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, };
-
-                        if (!reservedModes.Contains(Mod.instance.characters[CharacterHandle.characters.Jester].modeActive))
-                        {
-
-                            Mod.instance.characters[CharacterHandle.characters.Jester].SwitchToMode(Character.Character.mode.home, Game1.player);
-
-                            Mod.instance.CastMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Jester) +
-                                StringData.Strings(StringData.stringkeys.returnedHome), 0, true);
-
-                            if (Mod.instance.trackers.ContainsKey(CharacterHandle.characters.Buffin))
-                            {
-
-                                Mod.instance.characters[CharacterHandle.characters.Buffin].SwitchToMode(Character.Character.mode.home, Game1.player);
-
-                            }
-
-                            return 1;
-
-                        }
-
-                    }
-
-                    break;
-
-
-                case IconData.relics.shadowtin_tome:
-
-                    if (!Context.IsMainPlayer)
-                    {
-
-                        break;
-
-                    }
-
-                    if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Shadowtin))
-                    {
-
-                        List<Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, };
-
-                        if (!reservedModes.Contains(Mod.instance.characters[CharacterHandle.characters.Shadowtin].modeActive))
-                        {
-
-                            Mod.instance.characters[CharacterHandle.characters.Shadowtin].SwitchToMode(Character.Character.mode.home, Game1.player);
-
-                            Mod.instance.CastMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Shadowtin) +
-                                StringData.Strings(StringData.stringkeys.returnedHome), 0, true);
-
-                            return 1;
-
-                        }
-
-                    }
-
-                    break;
-
-                case IconData.relics.blackfeather_glove:
-
-                    if (!Context.IsMainPlayer)
-                    {
-
-                        break;
-
-                    }
-
-                    if (Mod.instance.characters.ContainsKey(CharacterHandle.characters.Blackfeather))
-                    {
-
-                        List<Character.Character.mode> reservedModes = new() { Character.Character.mode.scene, };
-
-                        if (!reservedModes.Contains(Mod.instance.characters[CharacterHandle.characters.Blackfeather].modeActive))
-                        {
-
-                            Mod.instance.characters[CharacterHandle.characters.Blackfeather].SwitchToMode(Character.Character.mode.home, Game1.player);
-
-                            Mod.instance.CastMessage(CharacterHandle.CharacterTitle(CharacterHandle.characters.Blackfeather) +
-                                StringData.Strings(StringData.stringkeys.returnedHome), 0, true);
-
-                            return 1;
-
-                        }
-
-                    }
-
-                    break;
-
-                case IconData.relics.wayfinder_pot:
-
-                    if (Game1.player.currentLocation.Name == "UndergroundMine20")
-                    {
-
-                        access = new();
-
-                        access.AccessSetup("UndergroundMine20", LocationHandle.druid_spring_name, new(24, 13), new(21, 20));
-
-                        access.AccessCheck(Game1.player.currentLocation, true);
-
-                        return 1;
-
-                    }
-
-                    break;
-
-                case IconData.relics.wayfinder_lantern:
-
-                    if (Game1.player.currentLocation.Name == "UndergroundMine60")
-                    {
-
-                        access = new();
-
-                        access.AccessSetup("UndergroundMine60", LocationHandle.druid_chapel_name, new(17, 10), new(27, 30), Event.Access.AccessHandle.types.door);
-
-                        access.AccessCheck(Game1.player.currentLocation, true);
-
-                        return 1;
-
-                    }
-
-                    break;
-
-                case IconData.relics.wayfinder_water:
-
-                    if (Game1.player.currentLocation.Name == "UndergroundMine100")
-                    {
-
-                        access = new();
-
-                        access.AccessSetup("UndergroundMine100", LocationHandle.druid_lair_name, new(24, 13), new(27, 30));
-
-                        access.AccessCheck(Game1.player.currentLocation, true);
-
-                        return 1;
-
-                    }
-
-                    break;
-
-                case IconData.relics.wayfinder_ceremonial:
-
-                    if (Game1.player.currentLocation.Name == "SkullCave")
-                    {
-
-                        access = new();
-
-                        access.AccessSetup("SkullCave", LocationHandle.druid_tomb_name, new(10, 5), new(27, 30));
-
-                        access.AccessCheck(Game1.player.currentLocation, true);
-
-                        return 1;
-
-                    }
-
-                    break;
-
-                case IconData.relics.monster_bat:
-                case IconData.relics.monster_slime:
-                case IconData.relics.monster_spirit:
-                case IconData.relics.monster_ghost:
-                case IconData.relics.monster_serpent:
-
-                    CharacterHandle.characters entity = CharacterHandle.characters.PalBat;
-
-                    switch (relic)
-                    {
-
-                        case IconData.relics.monster_slime:
-                            entity = CharacterHandle.characters.PalSlime;
-                            break;
-                        case IconData.relics.monster_spirit:
-                            entity = CharacterHandle.characters.PalSpirit;
-                            break;
-                        case IconData.relics.monster_ghost:
-                            entity = CharacterHandle.characters.PalGhost;
-                            break;
-                        case IconData.relics.monster_serpent:
-                            entity = CharacterHandle.characters.PalSerpent;
-                            break;
-
-                    }
-
-                    if (!Mod.instance.save.pals.ContainsKey(entity))
-                    {
-
-                        return 0;
-
-                    }
-
-                    DruidJournal.openJournal(DruidJournal.journalTypes.palPage, entity.ToString(), record);
-
-                    return 5;
+                return -1;
 
             }
 
-            return 0;
+            if (Mod.instance.questHandle.IsComplete(quests[relicset]))
+            {
 
+                return -1;
+
+            }
+
+            int count = 0;
+
+            foreach (IconData.relics relic in lines[relicset])
+            {
+
+                //if (relic == IconData.relics.book_knight)
+                //{
+
+                //    continue;
+
+                //}
+
+                if (relic == IconData.relics.runestones_alchemistry)
+                {
+
+                    continue;
+
+                }
+
+                if (HasRelic(relic))
+                {
+
+                    count++;
+
+                }
+
+            }
+
+            return count;
 
         }
+
 
     }
 

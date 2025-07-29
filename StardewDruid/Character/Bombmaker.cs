@@ -119,19 +119,14 @@ namespace StardewDruid.Character
 
                 display = IconData.impacts.bomb,
 
-                power = 3,
-
-                explosion = 2,
-
-                terrain = 2
             };
+
+            special.added = new() { SpellHandle.Effects.explode };
 
             switch (Mod.instance.randomIndex.Next(4))
             {
 
                 case 1:
-
-                    special.power = 4;
 
                     special.added.Add(SpellHandle.Effects.embers);
 
@@ -162,6 +157,10 @@ namespace StardewDruid.Character
 
                     special.sound = SpellHandle.Sounds.flameSpellHit;
 
+                    special.added = new() { SpellHandle.Effects.explode };
+
+                    special.effectRadius = 2;
+
                     Mod.instance.spellRegister.Add(special);
 
                     break;
@@ -173,13 +172,11 @@ namespace StardewDruid.Character
 
                     special.sound = SpellHandle.Sounds.explosion;
 
-                    special.factor = 3;
+                    special.displayFactor = 3;
 
-                    special.radius = 320;
+                    special.damageRadius = 320;
 
-                    special.explosion = 4;
-
-                    special.terrain = 4;
+                    special.effectRadius = 4;
 
                     Mod.instance.spellRegister.Add(special);
 
@@ -191,13 +188,13 @@ namespace StardewDruid.Character
 
                     special.sound = SpellHandle.Sounds.explosion;
 
-                    special.factor = 4;
+                    special.displayFactor = 4;
 
-                    special.radius = 512;
+                    special.damageRadius = 512;
 
-                    special.explosion = 6;
+                    special.added = new() { SpellHandle.Effects.explode };
 
-                    special.terrain = 6;
+                    special.effectRadius = 6;
 
                     special.damageMonsters = Mod.instance.CombatDamage();
 

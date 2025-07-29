@@ -21,7 +21,7 @@ namespace StardewDruid.Event.Relics
 
         }
 
-        public override bool TriggerAbort()
+        public override bool TriggerUpdate()
         {
 
             if ((Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[2])
@@ -29,13 +29,18 @@ namespace StardewDruid.Event.Relics
 
                 Mod.instance.questHandle.CompleteQuest(eventId);
 
-                TriggerRemove();
+                if (triggerActive)
+                {
 
-                triggerAbort = true;
+                    TriggerRemove();
+
+                }
+
+                return false;
 
             }
 
-            return triggerAbort;
+            return base.TriggerUpdate();
 
         }
 
@@ -44,15 +49,15 @@ namespace StardewDruid.Event.Relics
 
             if ((Game1.getLocationFromName("CommunityCenter") as CommunityCenter).numberOfCompleteBundles() == 0)
             {
-                
-                Mod.instance.CastDisplay(StringData.Strings(StringData.stringkeys.noInstructions));
+
+                Mod.instance.RegisterDisplay(StringData.Strings(StringData.stringkeys.noInstructions));
 
                 return false;
 
             }
 
             return base.TriggerCheck();
-        
+
         }
 
         public override void EventActivate()

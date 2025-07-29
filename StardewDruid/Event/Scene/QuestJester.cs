@@ -37,7 +37,7 @@ namespace StardewDruid.Event.Scene
             
             mainEvent = true;
 
-            activeLimit = -1;
+            
 
         }
 
@@ -78,12 +78,10 @@ namespace StardewDruid.Event.Scene
 
         }
 
-        public override bool AttemptReset()
+        public override void OnLocationAbort()
         {
 
-            Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
-
-            return false;
+            Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
 
         }
 
@@ -300,7 +298,7 @@ namespace StardewDruid.Event.Scene
 
                     saurusSkull.layer += 0.0064f;
 
-                    eventRenders.Add( saurusSkull);
+                    eventRenders.Add("skull_saurus", saurusSkull);
 
                     break;
 
@@ -326,7 +324,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[2].TargetEvent(302, origin + new Vector2 (448, 64));
 
-                    eventRenders.RemoveAt(eventRenders.Count - 1);
+                    eventRenders.Remove("skull_saurus");
 
                     break;
 
@@ -1254,7 +1252,7 @@ namespace StardewDruid.Event.Scene
 
                     voices[3] = companions[3];
 
-                    eventRenders.Add(new("skull_saurus", location.Name, new Vector2(eventVectors[900].X + 3f, eventVectors[900].Y + 3f) * 64, IconData.relics.skull_saurus));
+                    eventRenders.Add("skull_saurus", new("skull_saurus", location.Name, new Vector2(eventVectors[900].X + 3f, eventVectors[900].Y + 3f) * 64, IconData.relics.skull_saurus));
 
                     MuseumAccess.AccessWarps();
 
@@ -1329,11 +1327,9 @@ namespace StardewDruid.Event.Scene
 
                     Winds windsNew = new();
 
-                    windsNew.EventSetup(new Vector2(eventVectors[900].X+3, eventVectors[900].Y+3) * 64, Rite.eventWinds);
+                    windsNew.EventSetup(Game1.player, new Vector2(eventVectors[900].X+3, eventVectors[900].Y+3) * 64, Rite.eventWinds);
 
                     windsNew.EventActivate();
-
-                    windsNew.eventLocked = true;
 
                     windsNew.WindArray(new(), WispHandle.wisptypes.winds, 50);
 
@@ -1369,7 +1365,7 @@ namespace StardewDruid.Event.Scene
 
                     Mod.instance.spellRegister.Add(circleHandle);
 
-                    eventRenders.RemoveAt(eventRenders.Count - 1);
+                    eventRenders.Remove("skull_saurus");
 
                     break;
 
@@ -1448,7 +1444,7 @@ namespace StardewDruid.Event.Scene
 
                     bosses[0].idleTimer = 2000;
 
-                    Mod.instance.iconData.DecorativeIndicator(location, bosses[0].Position, IconData.decorations.fates, 3f, new() { interval = 2000 });
+                    Mod.instance.iconData.RiteCircle(location, bosses[0].Position, IconData.ritecircles.fates, 3f, new() { interval = 2000 });
 
                     break;
 

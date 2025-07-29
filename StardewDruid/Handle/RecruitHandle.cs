@@ -119,7 +119,7 @@ namespace StardewDruid.Handle
 
             }*/
 
-            if (!RelicData.HasRelic(IconData.relics.heiress_gift))
+            if (!RelicHandle.HasRelic(IconData.relics.druid_hieress))
             {
 
                 return false;
@@ -148,7 +148,7 @@ namespace StardewDruid.Handle
             if (Mod.instance.save.recruits.Count >= 4)
             {
 
-                Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.2").Tokens(new { name = witness.Name, }), 0, true);
+                Mod.instance.RegisterMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.2").Tokens(new { name = witness.Name, }), 0, true);
 
                 return false;
 
@@ -160,7 +160,7 @@ namespace StardewDruid.Handle
                 if (recruitData.Value.name == witness.Name)
                 {
 
-                    Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.377.5").Tokens(new { name = witness.Name, }), 0, true);
+                    Mod.instance.RegisterMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.377.5").Tokens(new { name = witness.Name, }), 0, true);
 
                     return false;
 
@@ -171,7 +171,7 @@ namespace StardewDruid.Handle
             if (witness.currentLocation == Game1.player.currentLocation)
             {
 
-                Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles(IconData.relics.heiress_gift);
+                Microsoft.Xna.Framework.Rectangle relicRect = IconData.RelicRectangles(IconData.relics.druid_hieress);
 
                 TemporaryAnimatedSprite animation = new(0, 2000, 1, 1, witness.Position + new Microsoft.Xna.Framework.Vector2(2, -124f), false, false)
                 {
@@ -188,7 +188,7 @@ namespace StardewDruid.Handle
 
             }
 
-            Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.1").Tokens(new { name = witness.Name, }), 0, true);
+            Mod.instance.RegisterMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.1").Tokens(new { name = witness.Name, }), 0, true);
 
             List<CharacterHandle.characters> slots = new()
             {
@@ -647,25 +647,25 @@ namespace StardewDruid.Handle
             {
                 case 101:
 
-                    Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.377.14").Tokens(new { name = hero.display, }));
+                    Mod.instance.RegisterMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.377.14").Tokens(new { name = hero.display, }));
 
                     break;
 
                 case 76:
 
-                    Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.377.13").Tokens(new { name = hero.display, }));
+                    Mod.instance.RegisterMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.377.13").Tokens(new { name = hero.display, }));
 
                     break;
 
                 case 51:
 
-                    Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.377.12").Tokens(new { name = hero.display, }));
+                    Mod.instance.RegisterMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.377.12").Tokens(new { name = hero.display, }));
 
                     break;
 
                 case 26:
 
-                    Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.377.11").Tokens(new { name = hero.display, }));
+                    Mod.instance.RegisterMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.377.11").Tokens(new { name = hero.display, }));
 
                     break;
 

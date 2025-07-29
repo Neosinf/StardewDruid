@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Ether;
 using StardewDruid.Cast.Mists;
+using StardewDruid.Cast.Witch;
 using StardewDruid.Character;
 using StardewDruid.Data;
 using StardewDruid.Dialogue;
@@ -122,7 +123,7 @@ namespace StardewDruid.Event.Scene
 
             mainEvent = true;
 
-            activeLimit = -1;
+            
 
         }
 
@@ -146,18 +147,12 @@ namespace StardewDruid.Event.Scene
             SendFriendsHome();
 
         }
-        
-        public override bool AttemptReset()
-        {
-
-            Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
-
-            return false;
-
-        }
 
         public override void RemoveActors()
         {
+
+            CorvidHandle.RemoveCorvids();
+
             if (Mod.instance.trackers.ContainsKey(CharacterHandle.characters.Raven))
             {
 
@@ -166,8 +161,6 @@ namespace StardewDruid.Event.Scene
             }
 
             base.RemoveActors();
-
-            Cast.Bones.Corvids.RemoveCorvids();
 
         }
 
@@ -322,9 +315,7 @@ namespace StardewDruid.Event.Scene
 
                     Wisps wispNew = new();
 
-                    wispNew.EventSetup(eventVectors[101] * 64, Rite.eventWisps);
-
-                    wispNew.eventLocked = true;
+                    wispNew.EventSetup(Game1.player, eventVectors[101] * 64, Rite.eventWisps);
 
                     wispNew.EventActivate();
 
@@ -729,8 +720,6 @@ namespace StardewDruid.Event.Scene
 
                     StopTrack();
 
-                    Cast.Bones.Corvids.RemoveCorvids();
-
                     break;
 
                 case 142:
@@ -766,7 +755,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].TargetEvent(0, eventVectors[201] * 64, true);
 
-                    Mod.instance.eventRegister[Rite.eventWisps].eventAbort = true;
+                    Mod.instance.eventRegister[Rite.eventWisps].eventComplete = true;
 
                     break;
 
@@ -1160,9 +1149,7 @@ namespace StardewDruid.Event.Scene
 
                     Wisps wispNew = new();
 
-                    wispNew.EventSetup(eventVectors[307] * 64, Rite.eventWisps);
-
-                    wispNew.eventLocked = true;
+                    wispNew.EventSetup(Game1.player,eventVectors[307] * 64, Rite.eventWisps);
 
                     wispNew.EventActivate();
 
@@ -1765,7 +1752,7 @@ namespace StardewDruid.Event.Scene
 
                     voices[2] = bosses[0];
 
-                    EventDisplay bossBar = BossBar(0, 2);
+                    EventBar bossBar = BossBar(0, 2);
 
                     bossBar.colour = Microsoft.Xna.Framework.Color.RoyalBlue;
 
@@ -1797,7 +1784,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(503);
 
-                    Cast.Bones.Corvids.SummonRaven();
+                    CorvidHandle.SummonRaven();
 
                     Mod.instance.trackers[CharacterHandle.characters.Raven].eventLock = true;
 
@@ -1819,7 +1806,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(505);
 
-                    Cast.Bones.Corvids.SummonCrow();
+                    CorvidHandle.SummonCrow();
 
                     location.playSound(SpellHandle.Sounds.crow.ToString());
 
@@ -1839,7 +1826,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(507);
 
-                    Cast.Bones.Corvids.SummonRook();
+                    CorvidHandle.SummonRook();
 
                     location.playSound(SpellHandle.Sounds.crow.ToString());
 
@@ -1859,7 +1846,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(509);
 
-                    Cast.Bones.Corvids.SummonMagpie();
+                    CorvidHandle.SummonMagpie();
 
                     location.playSound(SpellHandle.Sounds.crow.ToString());
 

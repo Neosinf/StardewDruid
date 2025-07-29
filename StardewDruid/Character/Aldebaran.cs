@@ -214,7 +214,7 @@ namespace StardewDruid.Character
 
                         counter = -30,
 
-                        indicator = IconData.cursors.divineCharge,
+                        indicator = IconData.cursors.divine,
 
                         type = SpellHandle.Spells.lightbeam,
 
@@ -241,9 +241,9 @@ namespace StardewDruid.Character
                         {
                             type = SpellHandle.Spells.judgement,
 
-                            indicator = IconData.cursors.divineCharge,
+                            indicator = IconData.cursors.divine,
 
-                            factor = 4
+                            displayFactor = 4
                         };
 
                         special.TargetCursor();
@@ -274,9 +274,9 @@ namespace StardewDruid.Character
 
                         int d = s + (i * 2);
 
-                        sweep.factor = d;
+                        sweep.displayFactor = d;
 
-                        sweep.display = IconData.impacts.sparkbang;
+                        sweep.display = IconData.impacts.megaslash;
 
                         Mod.instance.spellRegister.Add(sweep);
 
@@ -395,9 +395,9 @@ namespace StardewDruid.Character
 
                     type = SpellHandle.Spells.judgement,
 
-                    indicator = IconData.cursors.divineCharge,
+                    indicator = IconData.cursors.divine,
 
-                    factor = 4
+                    displayFactor = 4
 
                 };
 
@@ -405,7 +405,7 @@ namespace StardewDruid.Character
 
                 Enchant enchantEvent = new();
 
-                enchantEvent.EventSetup(workVector * 64, "aldebaran_enchant_" + workVector.ToString());
+                enchantEvent.EventSetup(currentLocation, workVector * 64, "aldebaran_enchant_" + workVector.ToString());
 
                 enchantEvent.giantTiles = new()
                 {
@@ -423,8 +423,6 @@ namespace StardewDruid.Character
 
 
                 };
-
-                enchantEvent.inabsentia = true;
 
                 enchantEvent.EventActivate();
 

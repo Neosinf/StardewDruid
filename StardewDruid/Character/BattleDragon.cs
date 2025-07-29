@@ -265,7 +265,7 @@ namespace StardewDruid.Character
 
                     break;
 
-                case Rite.Rites.bones:
+                case Rite.Rites.witch:
 
                     moves[BattleCombatant.battleoptions.attack] = BattleAbility.battleabilities.dragonstare;
 

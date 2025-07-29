@@ -39,89 +39,6 @@ namespace StardewDruid.Event.Challenge
 
         }
 
-        public override void TriggerInterval()
-        {
-
-            base.TriggerInterval();
-
-            TrashAnimation();
-
-        }
-
-        public void TrashAnimation()
-        {
-
-            TemporaryAnimatedSprite newAnimation;
-
-            if (animations.Count == 0)
-            {
-
-                foreach (Vector2 trashVector in trashVectors)
-                {
-
-                    Microsoft.Xna.Framework.Rectangle targetRectangle = Game1.getSourceRectForStandardTileSheet(Game1.objectSpriteSheet, 168, 16, 16);
-
-                    newAnimation = new(
-                        "Maps\\springobjects",
-                        targetRectangle,
-                        trashVector - new Vector2(16, 0),
-                        flipped: false,
-                        0f,
-                        Color.White * 0.5f
-                    )
-                    {
-                        interval = 99999f,
-                        totalNumberOfLoops = 99999,
-                        scale = 4f,
-                    };
-
-                    location.temporarySprites.Add(newAnimation);
-
-                    animations.Add(newAnimation);
-
-                }
-
-            }
-            else
-            {
-
-                foreach (TemporaryAnimatedSprite trashAnimation in animations)
-                {
-
-                    trashAnimation.reset();
-
-                }
-
-            }
-
-            foreach (Vector2 trashVector in trashVectors)
-            {
-
-                newAnimation = new(
-                    "LooseSprites\\Cursors",
-                    new Microsoft.Xna.Framework.Rectangle(372, 1956, 10, 10),
-                    trashVector,
-                    flipped: false,
-                    0.001f,
-                    Color.Teal
-                )
-                {
-                    alpha = 0.75f,
-                    motion = new Vector2(0f, -0.5f),
-                    //acceleration = new Vector2(0.002f, 0f),
-                    interval = 9999f,
-                    layerDepth = 0.001f,
-                    scale = 2.75f,
-                    scaleChange = 0.02f,
-                    rotationChange = Game1.random.Next(-5, 6) * MathF.PI / 256f,
-                };
-
-                location.temporarySprites.Add(newAnimation);
-
-            }
-
-        }
-
         public override void EventActivate()
         {
 
@@ -154,9 +71,9 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.spawnWater = true;
 
-            EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
+            ProgressBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
-            EventDisplay trashbar = EventBar(StringData.Strings(StringData.stringkeys.trashCollected), 1);
+            EventBar trashbar = ProgressBar(StringData.Strings(StringData.stringkeys.trashCollected), 1);
 
             trashbar.colour = Color.LightGreen;
 
@@ -166,13 +83,13 @@ namespace StardewDruid.Event.Challenge
 
             EventRender ritePortal = new(eventId, location.Name, origin, IconData.circles.summoning, Color.White);
 
-            eventRenders.Add(ritePortal);
+            eventRenders.Add("ritePortal",ritePortal);
 
             Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { displayRadius = 4, sound = SpellHandle.Sounds.getNewSpecialItem, });
 
         }
 
-        public override float SpecialProgress(int displayId)
+        public override float DisplayProgress(int displayId)
         {
 
             return (float)eventRating / 36;
@@ -184,8 +101,6 @@ namespace StardewDruid.Event.Challenge
 
             activeCounter++;
 
-            TrashAnimation();
-
             if (activeCounter % 3 == 0 && Vector2.Distance(Game1.player.Position, origin) <= 320)
             {
 
@@ -193,13 +108,6 @@ namespace StardewDruid.Event.Challenge
 
             }
             
-            //if (activeCounter % 2 == 0)
-            //{
-                
-            //    Mod.instance.iconData.ImpactIndicator(location, origin, IconData.impacts.supree, 6f, new() { alpha = 0.3f, });
-            
-            //}
-
             if (activeCounter % 20 == 0)
             {
 
@@ -281,7 +189,7 @@ namespace StardewDruid.Event.Challenge
 
                             type = SpellHandle.Spells.missile,
 
-                            factor = 5,
+                            displayFactor = 5,
 
                             scheme = IconData.schemes.rock,
 
@@ -289,9 +197,6 @@ namespace StardewDruid.Event.Challenge
 
                             missile = MissileHandle.missiles.rockfall,
 
-                            terrain = 3,
-
-                            added = new() { SpellHandle.Effects.stone, }
                         };
 
                         Mod.instance.spellRegister.Add(rockSpell);

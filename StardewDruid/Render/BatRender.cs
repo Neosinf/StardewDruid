@@ -608,7 +608,7 @@ namespace StardewDruid.Render
                     source = restFrames[use.direction][use.frame];
 
                     b.Draw(
-                        Mod.instance.iconData.cursorTexture,
+                        Mod.instance.iconData.shadowTexture,
                         shadowPosition,
                         Mod.instance.iconData.shadowRectangle,
                         Color.White * 0.25f * use.fade,
@@ -642,7 +642,7 @@ namespace StardewDruid.Render
             float shadowScale = 0.5f + Math.Abs(0 - 0.1f + (((float)batOffset / (float)batLapseThree) * 0.2f));
 
             b.Draw(
-                Mod.instance.iconData.cursorTexture,
+                Mod.instance.iconData.shadowTexture,
                 shadowPosition,
                 Mod.instance.iconData.shadowRectangle,
                 Color.White * 0.25f * use.fade,

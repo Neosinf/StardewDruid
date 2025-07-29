@@ -77,7 +77,7 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.spawnGroup = true;
 
-            EventBar(StringData.Strings(StringData.stringkeys.theDusting),0);
+            ProgressBar(StringData.Strings(StringData.stringkeys.theDusting),0);
 
             Mod.instance.spellRegister.Add(new(Game1.player.Position, 288, IconData.impacts.supree, new()) { displayRadius = 4, sound = SpellHandle.Sounds.getNewSpecialItem, });
 
@@ -85,7 +85,7 @@ namespace StardewDruid.Event.Challenge
 
             EventRender cannoliBone = new("cannoliBone", location.Name, eventVectors[1] * 64 + new Vector2(32,18), IconData.relics.skull_cannoli) { layer = 1f };
 
-            eventRenders.Add(cannoliBone);
+            eventRenders.Add("cannoliBone", cannoliBone);
 
             location.playSound("furnace");
 
@@ -452,7 +452,7 @@ namespace StardewDruid.Event.Challenge
                         IconData.impacts.plume,
                         4f, 
                         new() { 
-                            color = Mod.instance.iconData.schemeColours[IconData.schemes.bones], 
+                            color = Mod.instance.iconData.schemeColours[IconData.schemes.witch], 
                             alpha = 1f, 
                         }
                         );

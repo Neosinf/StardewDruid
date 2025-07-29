@@ -23,15 +23,6 @@ namespace StardewDruid.Cast.Ether
         public override void EventDecimal()
         {
 
-            if (!EventActive())
-            {
-
-                RemoveAnimations();
-
-                return;
-
-            }
-
             Stomp();
 
             radialCounter++;

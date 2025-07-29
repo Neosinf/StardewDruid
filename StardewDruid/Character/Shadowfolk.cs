@@ -149,23 +149,20 @@ namespace StardewDruid.Character
 
                 missile = MissileHandle.missiles.rocket,
 
-                display = IconData.impacts.impact,
+                display = IconData.impacts.bigimpact,
 
                 indicator = IconData.cursors.scope,
 
-                factor = 3,
+                displayFactor = 3,
 
                 scheme = IconData.schemes.stars,
 
                 sound = SpellHandle.Sounds.explosion,
 
-                added = new() { SpellHandle.Effects.embers, },
+                effectRadius = 4,
 
-                power = 4,
+                added = new() { SpellHandle.Effects.explode, SpellHandle.Effects.embers, },
 
-                explosion = 4,
-
-                terrain = 4
             };
 
             Mod.instance.spellRegister.Add(fireball);

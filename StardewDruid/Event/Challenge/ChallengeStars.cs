@@ -53,9 +53,9 @@ namespace StardewDruid.Event.Challenge
 
             monsterHandle.spawnGroup = true;
 
-            EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
+            ProgressBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
-            EventDisplay slimebar = EventBar(StringData.Strings(StringData.stringkeys.slimesDestroyed), 1);
+            EventBar slimebar = ProgressBar(StringData.Strings(StringData.stringkeys.slimesDestroyed), 1);
 
             slimebar.colour = Microsoft.Xna.Framework.Color.LightGreen;
 
@@ -72,7 +72,7 @@ namespace StardewDruid.Event.Challenge
 
         }
 
-        public override float SpecialProgress(int displayId)
+        public override float DisplayProgress(int displayId)
         {
 
             return (float)eventRating / 10f;
@@ -178,13 +178,10 @@ namespace StardewDruid.Event.Challenge
 
                             missile = MissileHandle.missiles.meteor,
 
-                            factor = 5,
+                            displayFactor = 5,
 
                             sound = SpellHandle.Sounds.explosion,
 
-                            explosion = 8,
-
-                            power = 3
                         };
 
                         Mod.instance.spellRegister.Add(meteor);

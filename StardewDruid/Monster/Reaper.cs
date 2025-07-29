@@ -150,7 +150,7 @@ namespace StardewDruid.Monster
             {
                 type = SpellHandle.Spells.missile,
 
-                factor = 3,
+                displayFactor = 3,
 
                 missile = MissileHandle.missiles.death,
 
@@ -194,7 +194,7 @@ namespace StardewDruid.Monster
                     {
                         type = SpellHandle.Spells.missile,
 
-                        factor = 4,
+                        displayFactor = 4,
 
                         missile = MissileHandle.missiles.deathfall,
 

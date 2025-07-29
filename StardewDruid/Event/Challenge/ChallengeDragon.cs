@@ -20,26 +20,12 @@ namespace StardewDruid.Event.Challenge
 
         }
 
-        public override bool TriggerActive()
-        {
-
-            if (TriggerLocation())
-            {
-
-                EventActivate();
-
-            }
-
-            return false;
-
-        }
-
         public override void EventActivate()
         {
 
             base.EventActivate();
 
-            EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
+            ProgressBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
             activeLimit = 120;
 
@@ -82,42 +68,19 @@ namespace StardewDruid.Event.Challenge
 
         }
 
-        public override bool AttemptReset()
+        public override void LeaveLocations()
         {
-
-            if (!eventActive)
-            {
-
-                return true;
-
-            }
 
             if (location.Name == LocationHandle.druid_lair_name)
             {
 
                 Mod.instance.WarpAllFarmers("Mine", 17, 6, 2);
-                
+
                 DialogueCue(900);
 
             }
 
-            EventRemove();
-
-            eventActive = false;
-
-            triggerEvent = true;
-
-            return true;
-
         }
-
-        public override bool EventExpire()
-        {
-            
-            return AttemptReset();
-
-        }
-
 
         public override void EventInterval()
         {

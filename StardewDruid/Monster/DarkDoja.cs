@@ -101,7 +101,7 @@ namespace StardewDruid.Monster
             {
                 type = SpellHandle.Spells.missile,
 
-                factor = 3,
+                displayFactor = 3,
 
                 missile = MissileHandle.missiles.warpball,
 

@@ -61,76 +61,30 @@
     "NarratorData.391.3": "Serpent",
     "NarratorData.391.4": "River Serpent",
 
+
+    // ===========================================================================
+    // JOURNAL DATA
+    // ===========================================================================
+
+
+
+
     // ===========================================================================
     // GENERAL MOD TEXT / LABELS
     // ===========================================================================
 
-    "DialogueData.38": "Rite of the Weald",
-    "DialogueData.39": "Rite of Mists",
-    "DialogueData.40": "Rite of the Stars",
-    "DialogueData.41": "Rite of the Fates",
-    "DialogueData.42": "Rite of Ether",
-    "DialogueData.312.2": "Rite of Bones",
-
-    // Button text
-    "DialogueData.177": "Go Back",
-    "DialogueData.181": "Start page",
-    "DialogueData.185": "Go Forward",
-    "DialogueData.189": "End page",
-    "DialogueData.193": "Exit Menu",
-    "DialogueData.197": "Open Questlog",
-    "DialogueData.201": "Open Grimoire",
-    "DialogueData.205": "Open Reliquary",
-    "DialogueData.209": "Open Apothecary",
-    "DialogueData.318.1": "Open Chronicle",
-    "DialogueData.318.2": "Open Dragonomicon",
-    "DialogueData.213": "Sort quests by completion",
-    "DialogueData.217": "Reverse order of entries",
-    "DialogueData.221": "Refresh all",
-    "DialogueData.225": "Skip Quest",
-    "DialogueData.229": "Replay Quest",
-    "DialogueData.233": "Replay Available Tomorrow",
-    "DialogueData.237": "Cancel Replay",
-    "DialogueData.241": "View Related Effect",
-    "DialogueData.245": "View Related Quest",
-    "DialogueData.316.1": "Copy Preset to Custom",
-    "DialogueData.316.2": "Save Changes",
+    // Menu titles
+    "DialogueData.343": "Stardew Druid",
+    "DialogueData.352.1": "Magic By Neosinf",
 
     "DialogueData.265": "Received Stardew Druid data for Farmer ID ",
     "DialogueData.269": "Challenge aborted due to critical condition",
-    "DialogueData.273": "Click to open Journal",
+
     "DialogueData.277": "Dragon Scales",
     "DialogueData.281": "Defense increased by transformation",
-    "DialogueData.285": "Not enough energy to perform skill",
-    "DialogueData.289": "to open Druid Journal and get started",
-    "DialogueData.293": "No rite attuned to slot ",
-    "DialogueData.297": "Rite requires a melee weapon or tool",
-    "DialogueData.301": "This tool has not been attuned to a rite",
-    "DialogueData.330.2": "This tool is not attuned, and will cast {{rite}} by default",
-    "DialogueData.305": "Nothing happened... ",
-    "DialogueData.309": "Unable to reach the otherworldly plane from this location",
-    "DialogueData.313": "Not enough energy to continue rite",
-    "DialogueData.317": "Not enough energy to perform rite",
-    "DialogueData.321": "stamina",
-    "DialogueData.325": "Druidic Freneticism",
-    "DialogueData.329": "Speed increased when casting amongst Grass",
+
     "DialogueData.333": "quest complete",
     "DialogueData.337": "percent complete",
-
-    "DialogueData.329.1": "You have started to restore this sacred space",
-    "DialogueData.329.2": "This sacred space has been restored a little more",
-    "DialogueData.329.3": "You have fully restored this sacred space!",
-    "DialogueData.330.1": "You have restored as much as possible today, come again tomorrow",
-
-    // Menu titles
-    "DialogueData.343": "Stardew Druid",
-    "DialogueData.347": "Grimoire",
-    "DialogueData.351": "Reliquary",
-    "DialogueData.355": "Dragonomicon",
-    "DialogueData.359": "Apothecary",
-    "DialogueData.318.3": "Chronicle",
-
-    "DialogueData.352.1": "Magic By Neosinf",
 
     // Menu strings
     "DialogueData.399": "(Please note only the farm host can activate quests.)",
@@ -154,17 +108,6 @@
     "DialogueData.319.1": "Lesson Skipped",
     "DialogueData.319.2": "Mastered",
 
-    "DialogueData.343.1": "Current Objective",
-    "DialogueData.343.2": "Talk to ",
-    "DialogueData.343.3": " tomorrow",
-    "DialogueData.343.4": "Journey Complete",
-    "DialogueData.343.5": "Congratulations, you've reached the end of the current version of Stardew Druid!",
-    "DialogueData.343.6": "(Hint)",
-    "DialogueData.343.7": "(Previously)",
-
-    "DialogueData.356.1": "Druid Level: ",
-    "DialogueData.356.2": "Average Damage: ",
-
     // Dragon Menu
     "DialogueData.455": "Primary Colour",
     "DialogueData.459": "Secondary Colour",
@@ -176,10 +119,6 @@
     "DialogueData.483": "Accent colour",
     "DialogueData.487": "Eye colour",
     "DialogueData.316.3": "Size",
-
-    // Lore menu
-    "DialogueData.318.4": "The following is an account of the conversations I had during this time in my journey.",
-    "DialogueData.318.5": "The following is an account of words I heard spoken during this event.",
 
     // Event strings
     "DialogueData.529": "Trash Collected",
@@ -208,6 +147,127 @@
     "Punctuation.4": "g", // currency
     "Punctuation.5": "+",
 
+    // Ether treasure hunt
+    "DialogueData.1526": "Chase the thief to recover the treasure!",
+    "DialogueData.1527": "A way down has appeared",
+
+    // Lore menu
+    "DialogueData.318.4": "The following is an account of the conversations I had during this time in my journey.",
+    "DialogueData.318.5": "The following is an account of words I heard spoken during this event.",
+
+    "DialogueData.329.1": "You have started to restore this sacred space",
+    "DialogueData.329.2": "This sacred space has been restored a little more",
+    "DialogueData.329.3": "You have fully restored this sacred space!",
+    "DialogueData.330.1": "You have restored as much as possible today, come again tomorrow",
+
+    // Shield effect
+    "DialogueData.335.1": "Starblessed Shield",
+    "DialogueData.335.2": "Temporarily increases defense.",
+
+    // Jester buff
+    "DialogueData.338.1": "Jester of Fate",
+    "DialogueData.338.2": "Jester's Luck",
+    "DialogueData.338.3": "Luck increased by companion",
+
+    "DialogueData.343.1": "Current Objective",
+    "DialogueData.343.2": "Talk to ",
+    "DialogueData.343.3": " tomorrow",
+    "DialogueData.343.4": "Journey Complete",
+    "DialogueData.343.5": "Congratulations, you've reached the end of the current version of Stardew Druid!",
+    "DialogueData.343.6": "(Hint)",
+    "DialogueData.343.7": "(Previously)",
+
+    "DialogueData.347.1": "Learned how to cook ",
+    "DialogueData.347.3": "x",
+    "DialogueData.347.4": "g",
+    "DialogueData.347.5": "(short {{stock}} stock)",
+
+    "DialogueData.351.1": "Custom Colour",
+    "DialogueData.351.2": "Red",
+    "DialogueData.351.3": "Blue",
+    "DialogueData.351.4": "Black",
+    "DialogueData.351.5": "Green",
+    "DialogueData.351.6": "Purple",
+    "DialogueData.351.7": "Stars",
+    "DialogueData.351.8": "Fates",
+    "DialogueData.351.9": "Ether",
+    "DialogueData.351.10": "Lilest",
+    "DialogueData.351.11": "Small",
+    "DialogueData.351.12": "Medium",
+    "DialogueData.351.13": "Large",
+    "DialogueData.351.14": "Legendary",
+
+    "EventHandle.352.1": "Remaining Threats",
+
+    "DialogueData.356.1": "Druid Level: ",
+    "DialogueData.356.2": "Average Damage: ",
+
+    // Ether treasure hunt
+    "DialogueData.366.1": "Defeat the guardian to recover the bounty!",
+    "DialogueData.366.2": "A way down has appeared",
+
+    "CharacterHandle.377.6": "Level 1",
+    "CharacterHandle.377.7": "Level 2",
+    "CharacterHandle.377.8": "Level 3",
+    "CharacterHandle.377.9": "Level 4",
+    "CharacterHandle.377.10": "Level 5",
+
+    "DialogueData.380.1": "Trapped ",
+    "DialogueData.386.1": "Rapidfire",
+    "DialogueData.386.2": "Overheated",
+    "DialogueData.386.3": "View captured monsters",
+    //"DialogueData.386.4": "Menagerie",
+    "DialogueData.386.5": "Summon recruit",
+    "DialogueData.386.6": "Dismiss recruit",
+    "DialogueData.386.7": "Summon monster",
+    "DialogueData.386.8": "Dismiss monster",
+    "DialogueData.386.9": "Change monster scheme",
+    "DialogueData.386.10": "Experience: ",
+    "DialogueData.386.11": "MAX LEVEL",
+    "DialogueData.386.12": "Clear recruit",
+    "DialogueData.386.13": "Friendship: ",
+    "DialogueData.386.14": "Health: ",
+    "DialogueData.386.15": "Attack: ",
+    "DialogueData.386.16": "Speed: ",
+    "DialogueData.386.17": "Hired: ",
+    "DialogueData.386.18": "Rename monster",
+    "DialogueData.386.27": "Send to Goods",
+    "DialogueData.386.28": " wanders the wilds",
+    "DialogueData.386.29": "Allow to wander (Can be summoned later)",
+
+    "DialogueData.386.30": "Stock Shortfall",
+
+    "DialogueData.386.31": "Normal",
+    "DialogueData.386.32": "Silver",
+    "DialogueData.386.33": "Gold",
+    "DialogueData.386.34": "Iridium",
+
+    "DialogueData.386.36": "Current Price: ",
+
+    "DialogueData.388.1": "Battle",
+    "DialogueData.388.2": " damage!",
+    "DialogueData.388.3": " health!",
+    "DialogueData.388.4": "Your ",
+    "DialogueData.388.5": "   ",
+    "DialogueData.388.6": "'s ",
+
+    "DialogueData.390.3": "(Guild Benefit) Left click to sell now for the discounted market price of ",
+    "DialogueData.390.4": "Magic Attack/Resist: ",
+    "DialogueData.390.5": "Battle event stats and abilities are based on colour choices, size choices and the current active rite.",
+    "DialogueData.390.6": "Battles won: ",
+
+    "DialogueData.393.9": "Critical Hit!",
+
+    "DialogueData.399.1": "Relationship to next level: ",
+
+    "DialogueData.401.1": "Right click to consume and apply buff",
+    "DialogueData.401.2": "Buff is already in effect",
+
+    "StringData.500.stamina": "stamina",
+    "StringData.500.relicReceived": "stamina",
+    "StringData.500.questReceived": " quest received",
+    "StringData.500.lessonReceived": " lesson received",
+    "StringData.500.challengeReceived": " challenge received",
 
     // ===========================================================================
     // EVENT DIALOGUE (OVERHEAD)
@@ -221,16 +281,18 @@
     "DialogueData.800": "As the first farmer did long ago",
     "DialogueData.801": "Well done",
     "DialogueData.802": "Press one of {{button}} with a tool selected in your inventory",
+    "DialogueData.500.approachEffigy.1": "Do not be alarmed",
+    "DialogueData.500.approachEffigy.2": "This way",
 
-    //Weald Sword
+    // The Two Kings
     "DialogueData.816": "Something treads the old paths",
     "DialogueData.817": "!",
     "DialogueData.818": "!",
     "DialogueData.819": "Aye, a mortal",
     "DialogueData.820": "Sent by the gardener",
-    "DialogueData.821": "arise",
-    "DialogueData.822": "arise",
-    "DialogueData.823": "sunrise",
+    "DialogueData.500.squireWinds.1": "Well done, successor",
+    "DialogueData.500.squireWinds.2": "A druid has much to learn",
+    "DialogueData.500.squireWinds.3": "This tome will guide your studies",
 
     //Polluted Aquifer (Cleric Bat)
     "DialogueData.835": "Trespasser!",
@@ -778,14 +840,6 @@
     "DialogueData.1514": "take it",
     "DialogueData.1515": "blow it all away",
 
-    // Ether treasure hunt
-    "DialogueData.1526": "Chase the thief to recover the treasure!",
-    "DialogueData.1527": "A way down has appeared",
-
-    // Ether treasure hunt
-    "DialogueData.366.1": "Defeat the guardian to recover the bounty!",
-    "DialogueData.366.2": "A way down has appeared",
-
     // ===========================================================================
     // EVENT DIALOGUE (BOXED)
     // ===========================================================================
@@ -793,29 +847,8 @@
     "DialogueData.Nothing": "(Say nothing)",
 
     // Effigy intro quest
-    "DialogueData.1613": "The Forgotten Effigy: So a successor appears. I am the Effigy, crafted by the First Farmer, and sustained by the old powers.",
-    "DialogueData.1617": "Who stuck you in the ceiling?",
-    "DialogueData.1618": "I inherited this plot from my grandfather. His notes didn't say anything about a magic scarecrow.",
-    "DialogueData.1625": "One of the leylines of the valley seams through the bedrock of this cavern. This is where I have spent many of your centuries, in stasis, ",
-    "DialogueData.1626": "listening to the energies of the Weald, leaving periodically to witness the change of seasons. ",
-    "DialogueData.1627": "The last time I ventured out, your predecessor had already departed this plane. I found the farm abandoned, the mining town, diminished. ",
-    "DialogueData.1628": "Now strange shadows stalk the sacred spaces, and it has not been safe for me to leave this refuge.",
-    "DialogueData.1639": "The Forgotten Effigy: The valley didn't always seem so inhospitable. ",
-    "DialogueData.1640": "The farmers were once aligned with the otherworld. They formed a circle of Druids.",
-    "DialogueData.1644": "I would love to know more about the traditions of my forebearers.",
-    "DialogueData.1645": "I want to be like the farmers of old and form a circle",
-    "DialogueData.1651": "Very well. Meet me in the grove outside, and we will test your aptitude for the otherworld.",
 
     // Weald sword quest (Standing stones)
-    "DialogueData.1671": "Sighs of the Earth: What say you, farmer?",
-    "DialogueData.1675": "I seek the blessing of the Two Kings to reform the circle of Druids.",
-    "DialogueData.1676": "Uh... is there someone hiding behind that rock?",
-    "DialogueData.1687": "Whispers on the wind: The monarchs remain dormant, their realm untended. Who are you to claim the inheritance of the broken circle?",
-    "DialogueData.1691": "The valley is my home now. I want to care for and protect it.",
-    "DialogueData.1692": "A magic scarecrow told me that I'm special.",
-    "DialogueData.1703": "Rustling in the Woodland: It is not an easy path, the one tread by a squire of the Two Kings. Are you ready to serve?",
-    "DialogueData.1708": "I will serve the sleeping monarchs like the Druids of yore.",
-    "DialogueData.1709": "Will I get a title or a fancy moniker?",
 
     // Mists sword quest (Waves)
     "DialogueData.1730": "Murmurs of the waves: We thank you for restoring our sacred waters. Though you are young. And dry. This is unexpected.",
@@ -1214,19 +1247,6 @@
     "DialogueData.324.125": "Forever encircled around the resting place of the Two Kings. Her voice becomes the thunder, and she still awaits her time of retribution. ",
     "DialogueData.324.126": "But for now she is content. You are the hope of those that believe in the crowmother's plan, to restore the harmony that existed before the downfall of the elders and dragons, and to that end, I will follow you.",
 
-    // Shield effect
-    "DialogueData.335.1": "Starblessed Shield",
-    "DialogueData.335.2": "Temporarily increases defense.",
-
-    // Active attunement 
-    "DialogueData.336.1": "Normal Attunement: Rite is based on the attunement of current tool/weapon",
-    "DialogueData.336.2": "Slot Attunement: Rite is based on currently selected inventory slot",
-
-    // Jester buff
-    "DialogueData.338.1": "Jester of Fate",
-    "DialogueData.338.2": "Jester's Luck",
-    "DialogueData.338.3": "Luck increased by companion",
-
     // BUFFIN QUEST
 
     "DialogueData.339.1.9": "Welcome to my lair",
@@ -1603,38 +1623,6 @@
     "ConversationData.343.1.159": "I suffered a grievous betrayal at the behest of someone I love. My rage has been boundless, but my experiences as a simple wooden creature were real, and present in my mind. ",
     "ConversationData.343.1.160": "Now that I have recovered all my faculties, I require time, time enough to reconcile what I have learned as Effigy of the First Farmer with what I have wrought as the Bull of the Heavens.",
 
-    "DialogueData.347.1": "Learned how to cook ",
-    "DialogueData.347.2": "Potion Requests",
-    "DialogueData.347.3": "x",
-    "DialogueData.347.4": "g",
-    "DialogueData.347.5": "(short {{stock}} stock)",
-
-    "DialogueData.351.1": "Custom Colour",
-    "DialogueData.351.2": "Red",
-    "DialogueData.351.3": "Blue",
-    "DialogueData.351.4": "Black",
-    "DialogueData.351.5": "Green",
-    "DialogueData.351.6": "Purple",
-    "DialogueData.351.7": "Stars",
-    "DialogueData.351.8": "Fates",
-    "DialogueData.351.9": "Ether",
-    "DialogueData.351.10": "Lilest",
-    "DialogueData.351.11": "Small",
-    "DialogueData.351.12": "Medium",
-    "DialogueData.351.13": "Large",
-    "DialogueData.351.14": "Legendary",
-
-    "EventHandle.352.1": "Remaining Threats",
-
-    "DialogueData.361.1": "No Rite Available",
-    "DialogueData.361.2": "Bomb Alchemy",
-    "DialogueData.361.3": "Powderbox",
-    "DialogueData.361.4": "Open Powderbox",
-    "DialogueData.361.5": "Clear Current Buffs",
-    "DialogueData.361.6": "Open Ledger",
-    "DialogueData.361.7": "Ledger",
-    "DialogueData.361.8": "Clear Slot",
-
     "ConversationData.361.6": "Aldebaran: There's something strange about the enchantment on this gate. Though Merra was a powerful enchantress, I can not sense her powers at work here.",
     "ConversationData.361.9": "The seal doesn't respond to the presence of the Crowmother's familiars either. What are we missing?",
     "ConversationData.361.10": "Perhaps a message of familial intent would suffice. What's the celestial word for 'Yo Merra it's ya bro'?",
@@ -1738,92 +1726,6 @@
     "DialogueData.362.71": "I will honour our bond",
     "DialogueData.362.72": "and the promise of reckoning",
 
-    "DialogueData.380.1": "Trapped ",
-    "DialogueData.386.1": "Rapidfire",
-    "DialogueData.386.2": "Overheated",
-    "DialogueData.386.3": "View captured monsters",
-    "DialogueData.386.4": "Menagerie",
-    "DialogueData.386.5": "Summon recruit",
-    "DialogueData.386.6": "Dismiss recruit",
-    "DialogueData.386.7": "Summon monster",
-    "DialogueData.386.8": "Dismiss monster",
-    "DialogueData.386.9": "Change monster scheme",
-    "DialogueData.386.10": "Experience: ",
-    "DialogueData.386.11": "MAX LEVEL",
-    "DialogueData.386.12": "Clear recruit",
-    "DialogueData.386.13": "Friendship: ",
-    "DialogueData.386.14": "Health: ",
-    "DialogueData.386.15": "Attack: ",
-    "DialogueData.386.16": "Speed: ",
-    "DialogueData.386.17": "Hired: ",
-    "DialogueData.386.18": "Rename monster",
-    "DialogueData.386.19": "Orders",
-    "DialogueData.386.20": "Goods",
-    "DialogueData.386.21": "Distillery",
-    "DialogueData.386.22": "Open Goods Inventory",
-    "DialogueData.386.23": "View Estimated Production",
-    "DialogueData.386.24": "View Recent Production",
-    "DialogueData.386.25": "Estimated Production",
-    "DialogueData.386.26": "Recent Production",
-    "DialogueData.386.27": "Send to Goods",
-    "DialogueData.386.28": " wanders the wilds",
-    "DialogueData.386.29": "Allow to wander (Can be summoned later)",
-
-    "CharacterHandle.377.6": "Level 1",
-    "CharacterHandle.377.7": "Level 2",
-    "CharacterHandle.377.8": "Level 3",
-    "CharacterHandle.377.9": "Level 4",
-    "CharacterHandle.377.10": "Level 5",
-
-    "DialogueData.386.30": "Stock Shortfall",
-
-    "DialogueData.386.31": "Normal",
-    "DialogueData.386.32": "Silver",
-    "DialogueData.386.33": "Gold",
-    "DialogueData.386.34": "Iridium",
-
-    "DialogueData.386.36": "Current Price: ",
-
-    "DialogueData.388.1": "Battle",
-    "DialogueData.388.2": " damage!",
-    "DialogueData.388.3": " health!",
-    "DialogueData.388.4": "Your ",
-    "DialogueData.388.5": "   ",
-    "DialogueData.388.6": "'s ",
-
-    "DialogueData.390.1": "Open Satchel",
-    "DialogueData.390.2": "Druid Satchel",
-    "DialogueData.390.3": "(Guild Benefit) Left click to sell now for the discounted market price of ",
-    "DialogueData.390.4": "Magic Attack/Resist: ",
-    "DialogueData.390.5": "Battle event stats and abilities are based on colour choices, size choices and the current active rite.",
-    "DialogueData.390.6": "Battles won: ",
-
-    "DialogueData.393.1": "Axe Critical Hits",
-    "DialogueData.393.2": "Chance for instant tree felling",
-    "DialogueData.393.3": "Pickaxe Critical Hits",
-    "DialogueData.393.4": "Chance for instant node cracking",
-    "DialogueData.393.5": "Hoe Cultivation",
-    "DialogueData.393.6": "Weald: Cultivate will till unturned soil",
-    "DialogueData.393.7": "Watercan Critical Hits",
-    "DialogueData.393.8": "Chance for a large splash radius",
-
-    "DialogueData.393.9": "Critical Hit!",
-
-    "DialogueData.399.1": "Relationship to next level: ",
-
-    "DialogueData.399.11": "Sap Charge",
-    "DialogueData.399.2": "Chance to sap health and stamina on weapon strike ",
-    "DialogueData.399.3": "Wisp Charge",
-    "DialogueData.399.4": "Chance to summon a wisp on weapon strike",
-    "DialogueData.399.5": "Starburst Charge",
-    "DialogueData.399.6": "Chance to knock down an opponent on weapon strike",
-    "DialogueData.399.7": "Curses Charge",
-    "DialogueData.399.8": "Chance to curse to an opponent on weapon strike",
-    "DialogueData.399.9": "Bounty Charge",
-    "DialogueData.399.10": "Chance to steal from an opponent on weapon strike",
-
-    "DialogueData.401.1": "Right click to consume and apply buff",
-    "DialogueData.401.2": "Buff is already in effect",
 
     // ===========================================================================
     // NPC DIALOGUE
@@ -2166,7 +2068,7 @@
     "CharacterHandle.1476": "A soft sound of contentment fills your ear. You're startled. You look back and forth but find no other creature but yourself at the stone table. ",
     "CharacterHandle.1477": "Even stranger, you have acquired the forgotten knowledge of herbalism, with all the craft secrets of the druids that stood before this bowl in ages past. ",
     "CharacterHandle.1478": "With a bit of amateur effort, three stoppered flasks, each with a small amount of herbal remedy, dangle from your belt. ",
-    "CharacterHandle.1479": "The bowl is pleased. (Herbalism journal unlocked)",
+    "CharacterHandle.1479": "The bowl is pleased. (Potions journal unlocked)",
 
     // Shrine Forge
     "CharacterHandle.328.2": "(forge) Requires an upgradeable tool (in hand) and an amount of aether (in apothecary) proportional to the upgrade cost. Limit 1 upgrade per day.",
@@ -2290,7 +2192,7 @@
     // anvil
     "DialogueInventory.373.1": "(inventory) Review contents of cracked geodes.",
     "DialogueIntroduction.373.1": "This standing stone has been sawyered down to a single clast of rock.",
-    "DialogueAdventure.373.1": "(menu) Open Apothecary satchel ({{keybind}}).",
+    "DialogueAdventure.373.1": "(menu) Open Apothecary ({{keybind}}).",
     "DialogueAdventure.373.2": "(menu) Open Powderbox ({{keybind}}).",
 
     // Advanced heroic recruit dialogue
@@ -2850,27 +2752,27 @@
     "RelicData.189": "One of the tools left behind by the old circle of Druids.",
     "RelicData.192": "Provides the means to brew basic potions.",
     "RelicData.193": "The bowl is pleased.",
-    "RelicData.195": "You received the Circle Mortar and Pestle! You are now able to brew basic potions. Check the herbalism journal for more details.",
+    "RelicData.195": "You received the Circle Mortar and Pestle! You are now able to brew basic potions. Check the potions journal for more details.",
 
     "RelicData.200": "The First Pan",
     "RelicData.203": "It belonged to the first farmer, but is useless to the Effigy, who does not consume organic matter",
     "RelicData.206": "Provides the means to brew better potions.",
-    "RelicData.208": "You received The First Pan! You are now able to brew good potions. Check the herbalism journal for more details.",
+    "RelicData.208": "You received The First Pan! You are now able to brew good potions. Check the potions journal for more details.",
 
     "RelicData.213": "Sacred Water Still",
     "RelicData.216": "Before they were reformed into the Order of the Guardians of the Star, some amongst the human custodians of the sacred spring were hobby brewers.",
     "RelicData.219": "Provides the means to brew good potions.",
-    "RelicData.221": "You received the Sacred Water Still! You are now able to brew great potions. Check the herbalism journal for more details.",
+    "RelicData.221": "You received the Sacred Water Still! You are now able to brew great potions. Check the potions journal for more details.",
 
     "RelicData.226": "Dark Crucible of Yoba",
     "RelicData.229": "From the smelter-halls of the Artisans of the Fates, who delight in drawing things down to their very essence.",
     "RelicData.232": "Provides the means to brew great potions.",
-    "RelicData.234": "You received the Dark Crucible Of Yoba! You are now able to brew a special resource; Faeth! Check the herbalism journal for more details.",
+    "RelicData.234": "You received the Dark Crucible Of Yoba! You are now able to brew a special resource; Faeth! Check the potions journal for more details.",
 
     "RelicData.240": "Splendid Ether Gauge",
     "RelicData.243": "Required by most shadowfolk machinery to measure ether pressure.",
     "RelicData.246": "Provides the means to brew the best potions.",
-    "RelicData.248": "You received the Splendid Ether Gauge! You are now able to brew the best potions and a special resource; Aether! Check the herbalism journal for more details.",
+    "RelicData.248": "You received the Splendid Ether Gauge! You are now able to brew the best potions and a special resource; Aether! Check the potions journal for more details.",
 
     "RelicData.257": "Runestone of the Sacred Spring",
     "RelicData.260": "Dropped by a shadowfolk mercenary.",
@@ -3134,11 +3036,11 @@
     "RelicData.312.5": "You've recieved the Gardener's Glove! This relic provides access to the Forsaken Orchard. See the Relics Journal for more details.",
 
     // Relics 313
-    "RelicData.313.1": "Grandpa's Whetstone",
+    "RelicData.500.Waystone.4": "Farmer's Waystone",
     "RelicData.313.2": "Whether used to sharpen tools, or as a paperweight, this stone seems as much a part of this farm as the burrowed hills the farm was founded on.",
-    "RelicData.313.3": "Use while on the farm to warp to the secluded grove, otherwise accessible from the Farmcave entrance.",
-    "RelicData.313.4": "Use while in the secluded grove to warp back to outside the Farmhouse",
-    "RelicData.313.5": "You've recieved Grandpa's Whetstone! This relic provides access to the Secluded Grove. See the Relics Journal for more details.",
+    "RelicData.500.Waystone.1": "A message is scratched to the underside 'For the successor of the first farmer, I await you in the caverns below the abandoned grove'",
+    "RelicData.500.Waystone.2": "Use while on the farm to warp to the secluded grove, otherwise accessible from the Farmcave entrance, and vice versa to return to the farmhouse.",
+    "RelicData.500.Waystone.3": "You found an Old Waystone! Someone scratched a message into the underside. Check the Stardew Druid quest and relics journals for more details.",
 
     // Relics 329 Restoration quest
     "RelicData.329.1": "Sacred Spring Goshuin",
@@ -3203,11 +3105,11 @@
     "RelicData.361.4": "You've recieved the Gift of the Heiress! This relic provides the ability to recruit friendly villagers to become Members of the Circle. View more details in the Ledger in the Druid menu.",
     "RelicData.361.5": "Click to open the Ledger of the Circle",
 
-    "RelicData.361.6": "Achievements",
-    "RelicData.361.7": "Badges of Honour",
+    //"RelicData.361.6": "Achievements",
+    //"RelicData.361.7": "Badges of Honour",
 
-    "RelicData.386.6": "Final Testaments",
-    "RelicData.386.7": "Unveil the mysteries of the past",
+    //"RelicData.386.6": "Final Testaments",
+    //"RelicData.386.7": "Unveil the mysteries of the past",
 
     "RelicData.386.8": "Monster Friends",
     "RelicData.386.9": "Summoning stones for monster friends",
@@ -3243,35 +3145,59 @@
     "RelicData.386.32": "Church of Bats",
     "RelicData.386.33": "The Bats are interested in spreading the message of the Lady's Hope through proselytising apothecaries.",
     "RelicData.386.34": "Left click to view Guild Page",
-    "RelicData.386.35": "You received the Guild Crest for the Church of Bats. This unlocks special export goods (goods menu accessible from the apothecary) and special orders at the dispatch bench within the Chapel of the Stars.",
+    "RelicData.386.35": "You received the Guild Crest for the Church of Bats! This unlocks special export goods (goods menu accessible from the potions menu) and special orders at the dispatch bench within the Chapel of the Stars.",
 
     "RelicData.386.36": "Dwarven Distillers Syndicate",
     "RelicData.386.37": "The stellarfolk believe there is a strong market for beverages produced with the special qualities of the Sacred Spring.",
-    "RelicData.386.38": "You received the Guild Crest for the Dwarven Distillers Syndicate. This unlocks the distillery within the Sacred Spring for production and further expansion, and more special orders at the dispatch bench within the Chapel of the Stars.",
+    "RelicData.386.38": "You received the Guild Crest for the Dwarven Distillers Syndicate! This unlocks the distillery within the Sacred Spring for production and further expansion, and more special orders at the dispatch bench within the Chapel of the Stars.",
 
     "RelicData.386.39": "Associated Adventurers",
     "RelicData.386.40": "The associated adventurers guild want to outfit new recruits and enthusiasts with enough equipment to give at least some semblance of safety.",
-    "RelicData.386.41": "You received the Guild Crest for the Associated Adventurer Guilds. This unlocks more special orders at the dispatch bench within the Chapel of the Stars.",
+    "RelicData.386.41": "You received the Guild Crest for the Associated Adventurer Guilds! This unlocks more special orders at the dispatch bench within the Chapel of the Stars.",
 
     "RelicData.386.42": "Shadowtin's Smugglers",
     "RelicData.386.43": "Shadowtin wants to establish supply lines between the valley and those groups of Shadowfolk sympathetic with his cause.",
-    "RelicData.386.44": "You received the Guild Crest for the Shadowtin's Smuggling Company. This unlocks more special orders at the dispatch bench within the Chapel of the Stars.",
+    "RelicData.386.44": "You received the Guild Crest for the Shadowtin's Smuggling Company! This unlocks more special orders at the dispatch bench within the Chapel of the Stars.",
 
     "RelicData.390.1": "Ghost Stone",
     "RelicData.390.2": "Contained inside is the mystifying qualities of a wayward ghost that you managed to catch.",
     "RelicData.390.3": "Click to open monster page",
     "RelicData.390.4": "You caught a Wayward Ghost! Click this relic in the reliquary menu to open the monster page and view your new friend's stats and abilities.",
 
+    "RelicData.500.bazooka.1": "Shadowforge RPG Launcher",
+    "RelicData.500.bazooka.2": "Crafted by stellarfolk dwarves to clear obstructions underground, desired by shadowfolk to clear obstructions everywhere else",
+    "RelicData.500.bazooka.3": "You gained a Shadowforge RPG Launcher! Shadowtin now has access to a powerful ranged attack.",
+
+    "RelicData.500.druidrelics.1": "Circle of Druids",
+    "RelicData.500.druidrelics.2": "Tools from the distant past",
+
+    "RelicData.500.shadowtinrelics.1": "Shadowtin's Stuff",
+    "RelicData.500.shadowtinrelics.2": "Shared by the shadow scholar",
+
+    "RelicData.500.grimoire.1": "The Change of Seasons",
+    "RelicData.500.grimoire.2": "A grimoire of rites and lore, compiled by previous members of the circle of Druid.",
+    "RelicData.500.grimoire.3": "Click to open the skills menu.",
+    "RelicData.500.grimoire.4": "You gained a grimoire, The Change of Seasons! The masteries, effects and lore menus are unlocked for you to review.",
+
+    "RelicData.500.apothecary.1": "Apothecary Satchel",
+    "RelicData.500.apothecary.2": "It has a pocket for everything. Really, there's an old bottle labelled 'the homeopath's tonic for everything'. The bottle is empty.",
+    "RelicData.500.apothecary.3": "Click to open the potions menu.",
+    "RelicData.500.apothecary.4": "You gained the Apothecary Satchel! The apothecary menus are unlocked for you to brew and mix new potions and powders.",
+
+    "RelicData.500.runeboard.1": "Stained Runeboard",
+    "RelicData.500.runeboard.2": "A long piece of hardwood, dressed in runes and drenched in essence.",
+    "RelicData.500.runeboard.3": "Click to open the alchemy menu.",
+    "RelicData.500.runeboard.4": "You gained the Stained Runeboard! The alchemy, omens and trophy menus are unlocked for you to review.",
 
     // ===========================================================================
     // QUEST DATA
     // ===========================================================================
 
-    "QuestData.32": "Grandfather's note",
-    "QuestData.34": "There's a note stuck to grandpa's old scythe: ",
-    "QuestData.35": "For the new farmer. Before my forefathers came to the valley, the secluded grove beyond the farm caves was a frequent meeting ground for a circle of Druids. ",
-    "QuestData.36": "An eeriness hangs over the place, so I have kept my father's tradition of leaving it well enough alone. Perhaps you should too.",
+    "QuestData.500.ApproachEffigy.1": "The Waystone",
+    "QuestData.500.ApproachEffigy.2": "You found a stone with a mystic pattern on it, with a message etched into the underside: ",
+    "QuestData.500.ApproachEffigy.3": "'For the successor of the first farmer, I await you in the caverns below the abandoned grove.'",
     "QuestData.38": "Investigate the farm cave. Press one of {{button}} to cast a rite at the quest icon.",
+    "QuestData.500.ApproachEffigy.4": "The waystone is connected to the unseen paths of the otherworld, and can be used to travel directly to the abandoned grove. Check the relics journal for details.",
     "QuestData.41": "I heard a voice in the cave, and it bid me to speak words in a forgotten dialect. ",
     "QuestData.42": "I raised my hands, recited a chant, and a wooden effigy crashed to the floor, which then started to talk! ",
     "QuestData.43": "It spoke to me and told me how I could learn the ways of the valley Druids. And so my apprenticeship begins...",
@@ -3280,16 +3206,10 @@
     "QuestData.83": "The Effigy says I need the favour of the Kings of Oak and Holly to begin my apprencticeship to the circle of Druids. ",
     "QuestData.84": "He instructed me to pay homage to the forgotten monarchs at a sacred place in the secluded grove.",
     "QuestData.86": "Investigate the standing stones in the grove west of the farmcave. Press one of {{button}} to cast a rite at the quest icon.",
-    "QuestData.89": "The voices that spoke from beyond the standing stones made me a squire, and the sword I received seems to brim with woodland magic.",
+    "QuestData.500.TwoKings.1": "The winds flowing through the standing stones carried voices of the earth and woodlands. These voices bid me to become a squire of the sleeping monarchs, the Two Kings of the Weald. Now the winds heed my call.",
     "QuestData.104": "The standing stones to the west of here were important to the old circle of Druids. Stand before them, and pay homage to the two kings by performing the rite as you did before. ",
     "QuestData.105": "If you truly possess a connection to the otherworld, then the latent energies there will be drawn to you. ",
     "QuestData.106": "(New quest received)",
-    // Effigy after dialogue
-    "QuestData.116": "So you have returned as a squire of the Two Kings.",
-    "QuestData.119": "I heard some really weird voices. Something touched me. I'm ok.",
-    "QuestData.120": "So it is real. The power of the Druids.",
-    "QuestData.121": "I have a sword shaped like a branch. It's a stick of power.",
-    "QuestData.124": "The energies of the Weald are unsettling, but their loyalty to the sleeping monarchs endures. Seek them out again if you would like to dedicate a different implement to the work of the Kings.",
 
     "QuestData.149": "The Druid Tradition",
     "QuestData.151": "I have the opportunity to augment my natural abilities with tonics and potions brewed in the Druidic tradition.",
@@ -3630,7 +3550,7 @@
     "QuestData.1791": "Lesson Fifteen: Enchant",
     "QuestData.1793": "Even a machine can answer to a higher purpose.",
     "QuestData.1795": "Successfully channelling Rite of the Fates (stand still, then hold rite button for 2-3 seconds) will apply a randomised input to nearby farm machines. ",
-    "QuestData.1796": "Each application consumes one Faeth, a new brewable resource available in the herbalism journal. Enchant ten farm machines with Faeth.",
+    "QuestData.1796": "Each application consumes one Faeth, a new brewable resource available in the potions journal. Enchant ten farm machines with Faeth.",
     "QuestData.1798": "machines enchanted",
     "QuestData.1810": "So I checked out your 'machines'. Well built but... kind of predictable, I think. What happens if you put something from the otherworld in them? ",
     "QuestData.1811": "At court we trade and serve in vintages of Faeth, which is easy to make, if you can get the right stuff from the celestial and material realms.",
@@ -4064,6 +3984,12 @@
     "LoreData.87": "The first farmer was blessed by the elderfolk, the monarchs of the valley, to cultivate and protect this special land. ",
     "LoreData.88": "He and the Circle elders taught me their techniques and stories, that I might be a repository of tradition for future generations of the circle. ",
     "LoreData.89": "Though my former mentor's long gone, I remain, because the power of the elders remain. For now.",
+
+    "LoreData.500.EffigyCave.1": "The farmcave is a curious place for you to hide in",
+    "LoreData.500.EffigyCave.2": "One of the leylines of the valley seams through the bedrock of the cavern. I have often resided there, in stasis, ",
+    "LoreData.500.EffigyCave.3": "listening to the energies of the Weald, before leaving the valley to witness the change of seasons. Some time ago, the energies bid me to return to the valley, in anticipation of a successor to appear.",
+    "LoreData.500.EffigyCave.4": "By that time your predecessor had already departed this plane. I found the farm abandoned, the mining town, diminished. ",
+    "LoreData.500.EffigyCave.5": "Now strange shadows stalk the sacred spaces, and the cave has served as a quiet refuge while I waited for the foretold successor to appear.",
 
     "LoreData.100": "Who is the Lady Beyond the Shore?",
     "LoreData.101": "The Lady of the Isle of Mists is as beautiful and distant as the sunset on the Gem Sea. She was once a courtier of the Two Kings, from a time before the war. ",
@@ -4759,7 +4685,8 @@
 
     "HerbalData.361.5": "Imbus",
     "HerbalData.361.6": "It's certified organic and tastes like spirulina",
-    "HerbalData.361.7": "Imbuement: Applies the players current charge effect to thrown bombs, 10 hours",
+    //"HerbalData.361.7": "Imbuement: Applies the players current charge effect to thrown bombs, 10 hours",
+    "HerbalData.500.buff.1": "Imbuement: Thrown bombs, stones and windslashes drain stamina and health from enemies, 10 hours",
     "HerbalData.361.8": "Requires: 1x Coruscant, 1x Hardwood",
 
     "HerbalData.361.9": "Amori",
@@ -4767,9 +4694,12 @@
     "HerbalData.361.11": "Amorous: Thrown bombs will charm villagers (30-60 friendship depending on bomb size) and monsters, 10 hours",
     "HerbalData.361.12": "Requires: 1x Coruscant, 1x Coral",
 
-    "HerbalData.361.13": "Donis",
-    "HerbalData.361.14": "Made with a bit of sleight of hand and a wink",
-    "HerbalData.361.15": "Donor: Chance to throw a free bomb that doesnt consume inventory stock, 10 hours",
+    //"HerbalData.361.13": "Donis",
+    //"HerbalData.361.14": "Made with a bit of sleight of hand and a wink",
+    //"HerbalData.361.15": "Donor: Chance to throw a free bomb that doesnt consume inventory stock, 10 hours",
+    "HerbalData.500.buff.2": "Macerari",
+    "HerbalData.500.buff.3": "It will leak all over your refridgerator shelf",
+    "HerbalData.500.buff.4": "Macerate: Thrown bombs, stones and wind slashes will dampen soil and slow enemies",
     "HerbalData.361.16": "Requires: 1x Coruscant, 1x Refined Quartz",
 
     "HerbalData.361.17": "Concutere",
@@ -4784,29 +4714,33 @@
 
     "HerbalData.361.25": "Felis",
     "HerbalData.361.26": "What you get when you crush your old cat's medication",
-    "HerbalData.361.27": "Feline: Thrown bombs smell like cat, 10 hours",
+    //"HerbalData.361.27": "Feline: Thrown bombs smell like cat, 10 hours",
+    "HerbalData.500.buff.5": "Feline: Thrown bombs turn into cats. 20% chance to avoid consumption of item or stamina when throwing bombs.",
     "HerbalData.361.28": "Requires: 1x Voil, 1x Milk",
 
     "HerbalData.361.29": "Imbuement",
     "HerbalData.361.30": "Amorous",
-    "HerbalData.361.31": "Doner",
+    //"HerbalData.361.31": "Doner",
+    "HerbalData.500.buff.6": "Macerate",
     "HerbalData.361.32": "Concussion",
     "HerbalData.361.33": "Jumper",
     "HerbalData.361.34": "Feline",
 
     "HerbalData.361.35": "Learned how to cook ",
 
-    "HerbalData.373.1": "Applies the players current charge effect to thrown bombs and stones",
+    //"HerbalData.373.1": "Applies the players current charge effect to thrown bombs and stones",
+    "HerbalData.500.buff.7": "Thrown bombs and windslashes drain stamina and health from enemies",
     "HerbalData.373.2": "Thrown bombs will charm villagers (30-60 friendship) and monsters.",
-    "HerbalData.373.3": "Chance to throw a free bomb or stone that doesnt consume inventory stock",
+    //"HerbalData.373.3": "Chance to throw a free bomb or stone that doesnt consume inventory stock",
+    "HerbalData.500.buff.8": "Thrown bombs and windslashes will dampen soil and slow enemies",
     "HerbalData.373.4": "Thrown bombs shatter resource clumps. Chance to spawn ladders.",
     "HerbalData.373.5": "Thrown bombs and stones will bounce in the direction cast",
     "HerbalData.373.6": "Thrown bombs and stones smell like cat",
 
     "HerbalData.373.7": "Active Effects",
-    "HerbalData.374.1": "Axes can critical hit",
-    "HerbalData.374.2": "Pickaxes can critical hit",
-    "HerbalData.374.3": "Water cans can critical hit",
+    //"HerbalData.374.1": "Axes can critical hit",
+    //"HerbalData.374.2": "Pickaxes can critical hit",
+    //"HerbalData.374.3": "Water cans can critical hit",
 
     // Second Bomb update
     "HerbalData.386.1": "Coruscant",
@@ -4973,6 +4907,7 @@
     "HerbalData.399.5": "Spellcatch",
     "HerbalData.399.6": "If the Capture buff is active, that buff will be applied to Rite effects that damage monsters, such as Stars: Meteor Rain",
 
+
     // ===========================================================================
     // MOD CONFIGURATION
     // ===========================================================================
@@ -4985,12 +4920,12 @@
     "ModConfig.26": "Assigns an alternative keybind for the Check / Special / Right Click / Placedown function, for the purposes of the mod only. This keybind does not override or re-map any keybinds in the base game. Useful for controllers with non-standard button maps.",
     "ModConfig.33": "Quests Journal",
     "ModConfig.34": "Keybind assignment to open the Stardew Druid effects journal while in world. The rite keybind can be used to open the journal from the game questlog.",
-    "ModConfig.41": "Effects Journal",
-    "ModConfig.42": "Keybind assignment to open the Stardew Druid effects journal while in world.",
-    "ModConfig.49": "Relics Journal",
+    //"ModConfig.41": "Effects Journal",
+    //"ModConfig.42": "Keybind assignment to open the Stardew Druid effects journal while in world.",
+    "ModConfig.49": "Relics Journal (Reliquary)",
     "ModConfig.50": "Keybind assignment to open the Stardew Druid relics journal while in world.",
-    "ModConfig.57": "Herbalism Journal",
-    "ModConfig.58": "Keybind assignment to open the Stardew Druid herbalism journal while in world.",
+    "ModConfig.57": "Potions Journal (Apothecary)",
+    "ModConfig.58": "Keybind assignment to open the Stardew Druid potions journal while in world.",
     "ModConfig.65": "Reverse Journal",
     "ModConfig.66": "Reverse the order in which Stardew Druid journal entries are displayed. Default: oldest to newest. Enabled: newest to oldest.",
     "ModConfig.73": "Active Journal",
@@ -5095,6 +5030,9 @@
     "ModConfig.401.3": "Heroic Extensions",
     "ModConfig.401.4": "Enables all heroic crossovers (Astarion, Sevinae etc) without requiring installation of external modules.",
 
+    "ModConfig.500.skills.1": "Skills Journal",
+    "ModConfig.500.skills.2": "Keybind assignment to open the Stardew Druid skills journal while in world.",
+
     // ===========================================================================
     // EFFECTS JOURNAL
     // ===========================================================================
@@ -5123,7 +5061,7 @@
 
     "EffectsData.361.2": "Every alchemist possesses a curiosity for pyrotechnics",
     "EffectsData.361.3": "Bombs that are selected and held in the inventory can be thrown with the rite button. Rate of fire and damage can be enhanced with druid potion effects. ",
-    "EffectsData.361.4": "The powderbox menu is accessed from the apothecary menu. There are six types of powder to grind to augment the effects of thrown bombs. ",
+    "EffectsData.361.4": "The powderbox menu is accessed from the potions menu (apothecary). There are six types of powder to grind to augment the effects of thrown bombs. ",
     "EffectsData.386.1": "Stone can be thrown when selected in the toolbar. The cost is 5 stone and 4 stamina. Some augments can not be applied to stone toss.",
     //"EffectsData.361.5": "Imbus: Applies the players current charge effect to thrown bombs.",
     //"EffectsData.361.6": "Amori: Thrown bombs will charm villagers (+100 friendship) and monsters.",
@@ -5447,7 +5385,7 @@
 
     "EffectsData.518": "The otherworld has its own devices of faye design, powered by Faeth, an essence distilled from light and void. Now I can experiment with using Faeth to power my own artifice.",
     "EffectsData.519": "Enchant one of various types of farm machine to produce a randomised product without standard inputs. Sprinkle faeth on crops to update their growth phase. Each enchantment consumes one Faeth.",
-    "EffectsData.522": "Requires: 1 Faeth, brewable in the herbalism journal (page 2)",
+    "EffectsData.522": "Requires: 1 Faeth, brewable in the potions journal (page 2)",
     "EffectsData.523": "Mastery: Extracts existing products from machines.",
     "EffectsData.524": "Channel: Cast and hold Rite of the Fates for 2-3 seconds while standing still, until the essence fills the rite indicator. When released, the enchantment effect will radiate in increasing magnitude.",
     "EffectsData.525": "Machines: Works on Deconstructors, Dehydrators, Bone Mills, Kegs, Preserves Jars, Cheese Presses, Mayonnaise Machines, Looms, Oil Makers, Furnaces and Geode Crushers.",
@@ -5583,8 +5521,8 @@
     "EffectsData.388.1": "Druid Goods",
 
     "EffectsData.388.2": "The druids were central to ensuring fair and open commerce between ancient clans.",
-    "EffectsData.388.3": "Open the goods menu by clicking the crate button in the apothecary menu. Sell goods by completing orders at the Order's bench in the Chapel of the Stars.",
-    "EffectsData.388.4": "Potion and Powder crates can be created by submitting units from the Apothecary and Powderbox menus.",
+    "EffectsData.388.3": "Open the goods menu by clicking the crate button in the potions menu (apothecary). Sell goods by completing orders at the Order's bench in the Chapel of the Stars.",
+    "EffectsData.388.4": "Potion and Powder crates can be created by submitting units from the potions and powderbox menus.",
     "EffectsData.388.5": "Trophies and Omens will be gained as rewards and gatherables from various experiences throughout the playthrough.",
     "EffectsData.388.6": "Whiskey and Brandy are produced at the distillery, which is managed at the Sacred Shrine. Craft distillery machines and submit base crops and fruits to the steep and batch houses.",
     "EffectsData.388.7": "Weapon and Supply crates are produced by submitting weapon and supply items to the packhouse inventory at the distillery, and require Packing machines.",
@@ -5592,7 +5530,7 @@
     "EffectsData.390.1": "Omens and Trophies",
 
     "EffectsData.390.2": "Ceremonies conducted by Druids often incorporated curiosities of the material world to enhance atmosphere and storytelling.",
-    "EffectsData.390.3": "Open the apothecary menu and move forward to the Satchel menu to view gathered omens and trophies",
+    "EffectsData.390.3": "The omens and trophies menus can be accessed from the alchemy menu",
     "EffectsData.390.4": "Omens are typically spawned from interactions with the environment",
     "EffectsData.390.5": "Trophies have a chance to drop from commmon monsters and other foes encountered in the playthrough",
     "EffectsData.390.6": "Each item has a unique property that makes it useful for alchemy",

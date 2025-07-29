@@ -19,7 +19,7 @@ namespace StardewDruid
 
         public KeybindList journalButtons { get; set; }
 
-        public KeybindList effectsButtons { get; set; }
+        public KeybindList skillsButtons { get; set; }
 
         public KeybindList relicsButtons { get; set; }
 
@@ -48,8 +48,6 @@ namespace StardewDruid
         public bool maxDamage { get; set; }
 
         public bool slotAttune { get; set; }
-
-        public bool slotConsume { get; set; }
 
         public bool slotFreedom { get; set; }
 
@@ -95,7 +93,7 @@ namespace StardewDruid
 
         public bool decorateGrove { get; set; }
 
-        public bool plantGrove { get; set; }
+        //public bool plantGrove { get; set; }
 
         public bool reverseJournal { get; set; }
 
@@ -146,9 +144,8 @@ namespace StardewDruid
             stars,
             fates,
             ether,
-            bones,
+            witch,
             none,
-            lunch,
 
         }
 
@@ -191,7 +188,7 @@ namespace StardewDruid
             actionButtons = KeybindList.Parse("MouseLeft,C,ControllerX");
             specialButtons = KeybindList.Parse("MouseRight,X,ControllerY");
             journalButtons = KeybindList.Parse("K");
-            effectsButtons = KeybindList.Parse("L");
+            skillsButtons = KeybindList.Parse("L");
             relicsButtons = KeybindList.Parse("I");
             herbalismButtons = KeybindList.Parse("O");
             warpButtons = KeybindList.Parse("P");
@@ -208,7 +205,6 @@ namespace StardewDruid
             maxDamage = false;
             modDifficulty = difficulties.medium.ToString();
             slotAttune = false;
-            slotConsume = true;
             slotFreedom = false;
             slotReverse = false;
             potionDefault = potionDefaults.automatic.ToString();
@@ -217,13 +213,13 @@ namespace StardewDruid
             slotThree = slotOptions.stars.ToString();
             slotFour = slotOptions.fates.ToString();
             slotFive = slotOptions.ether.ToString();
-            slotSix = slotOptions.bones.ToString();
+            slotSix = slotOptions.witch.ToString();
             slotSeven = slotOptions.none.ToString();
             slotEight = slotOptions.none.ToString();
-            slotNine = slotOptions.lunch.ToString();
-            slotTen = slotOptions.lunch.ToString();
-            slotEleven = slotOptions.lunch.ToString();
-            slotTwelve = slotOptions.lunch.ToString();
+            slotNine = slotOptions.none.ToString();
+            slotTen = slotOptions.none.ToString();
+            slotEleven = slotOptions.none.ToString();
+            slotTwelve = slotOptions.none.ToString();
             cultivateBehaviour = 2;
             cultivatePlot = 3;
             cultivateTallCrops = false;
@@ -231,7 +227,7 @@ namespace StardewDruid
             meteorBehaviour = 3;
             cardinalMovement = false;
             decorateGrove = false;
-            plantGrove = false;
+            //plantGrove = false;
             enableGothic = false;
             enableCrossover = true;
             dragonScale = 3;

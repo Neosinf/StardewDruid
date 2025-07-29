@@ -26,14 +26,13 @@ namespace StardewDruid.Journal
 
             interfaceComponents = new()
             {
-
-                [101] = addButton(journalButtons.quests),
-                [102] = addButton(journalButtons.effects),
-                [103] = addButton(journalButtons.relics),
-                [104] = addButton(journalButtons.herbalism),
-                [105] = addButton(journalButtons.lore),
-                [106] = addButton(journalButtons.transform),
-                [107] = addButton(journalButtons.recruits),
+                [101] = addButton(journalButtons.openQuests),
+                [102] = addButton(journalButtons.openMasteries),
+                [103] = addButton(journalButtons.openRelics),
+                [104] = addButton(journalButtons.openAlchemy),
+                [105] = addButton(journalButtons.openPotions),
+                [106] = addButton(journalButtons.openCompanions),
+                [107] = addButton(journalButtons.openDragonomicon),
 
                 [201] = addButton(journalButtons.back),
                 [202] = addButton(journalButtons.start),
@@ -45,13 +44,6 @@ namespace StardewDruid.Journal
 
             };
 
-            /*if (!RelicData.HasRelic(StardewDruid.Data.IconData.relics.heiress_gift))
-            {
-
-                interfaceComponents[107] = addButton(journalButtons.pals);
-
-            }*/
-
         }
 
         public override void populateContent()
@@ -59,15 +51,15 @@ namespace StardewDruid.Journal
 
             type = journalTypes.relics;
 
-            title = StringData.Strings(StringData.stringkeys.reliquary);
+            title = JournalData.JournalTitle(type);
 
             contentColumns = 6;
 
             pagination = 18;
 
-            contentComponents = Mod.instance.relicsData.JournalRelics(); //Mod.instance.questHandle.JournalEffects();
+            contentComponents = Mod.instance.relicHandle.JournalRelics(); 
 
-            otherComponents = Mod.instance.relicsData.JournalHeaders();
+            otherComponents = Mod.instance.relicHandle.JournalHeaders();
 
             if (record >= contentComponents.Count)
             {
@@ -97,7 +89,7 @@ namespace StardewDruid.Journal
 
             resetInterface();
 
-            fadeMenu();
+            reviseInterface();
 
             int firstOnThisPage = record - (record % pagination);
 
@@ -144,14 +136,14 @@ namespace StardewDruid.Journal
 
             }
 
-            if (!Mod.instance.relicsData.reliquary[relicId].function)
+            if (!Mod.instance.relicHandle.reliquary[relicId].function)
             {
 
                 return;
 
             }
 
-            int function = RelicHandle.RelicFunction(relicId, focus);
+            int function = RelicFunction.RelicFunction(relicId, focus);
 
             switch (function)
             {
@@ -188,14 +180,14 @@ namespace StardewDruid.Journal
 
             }
 
-            if (!Mod.instance.relicsData.reliquary[relicId].cancel)
+            if (!Mod.instance.relicHandle.reliquary[relicId].cancel)
             {
 
                 return;
 
             }
 
-            int function = RelicHandle.RelicCancel(relicId, focus);
+            int function = RelicFunction.RelicCancel(relicId, focus);
 
             switch (function)
             {
@@ -284,7 +276,7 @@ namespace StardewDruid.Journal
 
             string relicId = contentComponents[focus].id;
 
-            Relic relic = Mod.instance.relicsData.reliquary[relicId];
+            Relic relic = Mod.instance.relicHandle.reliquary[relicId];
 
             string relicTitle;
 

@@ -27,8 +27,6 @@ namespace StardewDruid.Cast.Effect
         public Ember()
         {
 
-            inabsentia = true;
-
         }
 
         public override void EventInterval()
@@ -79,6 +77,13 @@ namespace StardewDruid.Cast.Effect
                     Mod.instance.spellRegister.Add(burning);
 
                 }
+
+            }
+
+            if(embers.Count == 0)
+            {
+
+                eventComplete = true;
 
             }
 
@@ -134,8 +139,6 @@ namespace StardewDruid.Cast.Effect
                 }
 
             }
-
-            activeLimit = eventCounter + 5;
 
         }
 

@@ -52,7 +52,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.anvil:
 
-                    if (RelicData.HasRelic(IconData.relics.crow_hammer))
+                    if (RelicHandle.HasRelic(IconData.relics.druid_hammer))
                     {
 
                         return Mod.instance.Helper.Translation.Get("CharacterHandle.427");
@@ -151,7 +151,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.Marlon:
 
-                    if (RelicData.HasRelic(IconData.relics.heiress_gift))
+                    if (RelicHandle.HasRelic(IconData.relics.druid_hieress))
                     {
 
                         /*foreach (KeyValuePair<CharacterHandle.characters, RecruitHandle> recruitData in Mod.instance.save.recruits)
@@ -223,17 +223,18 @@ namespace StardewDruid.Dialogue
                     if (Mod.instance.characters[character].modeActive != StardewDruid.Character.Character.mode.track)
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.901"));
+                        generate.responses.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.901"));
 
-                        generate.answers.Add(1.ToString());
+                        generate.leads.Add(1, 1);
+
                     }
 
                     if (Mod.instance.characters[character].modeActive != StardewDruid.Character.Character.mode.roam)
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.909"));
+                        generate.responses.Add(2, Mod.instance.Helper.Translation.Get("CharacterHandle.909"));
 
-                        generate.answers.Add(2.ToString());
+                        generate.leads.Add(2, 2);
 
                     }
 
@@ -241,13 +242,11 @@ namespace StardewDruid.Dialogue
                         && Mod.instance.characters[character].currentLocation.Name != CharacterHandle.CharacterLocation(CharacterHandle.locations.grove))
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.919"));
+                        generate.responses.Add(3, Mod.instance.Helper.Translation.Get("CharacterHandle.919"));
 
-                        generate.answers.Add(3.ToString());
+                        generate.leads.Add(3, 3);
 
                     }
-
-                    generate.lead = true;
 
                     return generate;
 
@@ -267,18 +266,18 @@ namespace StardewDruid.Dialogue
                     if (Jester.modeActive != StardewDruid.Character.Character.mode.track)
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.944"));
+                        generate.responses.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.944"));
 
-                        generate.answers.Add(1.ToString());
+                        generate.leads.Add(1, 1);
 
                     }
 
                     if (Jester.modeActive != StardewDruid.Character.Character.mode.roam)
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.953"));
+                        generate.responses.Add(2, Mod.instance.Helper.Translation.Get("CharacterHandle.953"));
 
-                        generate.answers.Add(2.ToString());
+                        generate.leads.Add(2, 2);
 
                     }
 
@@ -286,22 +285,20 @@ namespace StardewDruid.Dialogue
                         && Jester.currentLocation.Name != CharacterHandle.CharacterLocation(CharacterHandle.locations.grove))
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.963"));
+                        generate.responses.Add(3, Mod.instance.Helper.Translation.Get("CharacterHandle.963"));
 
-                        generate.answers.Add(3.ToString());
+                        generate.leads.Add(3, 3);
 
                     }
 
                     if (Jester.modeActive == StardewDruid.Character.Character.mode.track && Mod.instance.questHandle.IsComplete(QuestHandle.questJester))
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.379.1"));
+                        generate.responses.Add(4, Mod.instance.Helper.Translation.Get("DialogueAdventure.379.1"));
 
-                        generate.answers.Add(4.ToString());
+                        generate.leads.Add(4, 4);
 
                     }
-
-                    generate.lead = true;
 
                     return generate;
 
@@ -319,18 +316,18 @@ namespace StardewDruid.Dialogue
                     if (Mod.instance.characters[character].modeActive != StardewDruid.Character.Character.mode.track)
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.987"));
+                        generate.responses.Add(1,Mod.instance.Helper.Translation.Get("CharacterHandle.987"));
 
-                        generate.answers.Add(1.ToString());
+                        generate.leads.Add(1, 1);
 
                     }
 
                     if (Mod.instance.characters[character].modeActive != StardewDruid.Character.Character.mode.roam)
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.996"));
+                        generate.responses.Add(2,Mod.instance.Helper.Translation.Get("CharacterHandle.996"));
 
-                        generate.answers.Add(2.ToString());
+                        generate.leads.Add(2, 2);
 
                     }
 
@@ -338,13 +335,11 @@ namespace StardewDruid.Dialogue
                         && Mod.instance.characters[character].currentLocation.Name != CharacterHandle.CharacterLocation(CharacterHandle.locations.grove))
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.1006"));
+                        generate.responses.Add(3,Mod.instance.Helper.Translation.Get("CharacterHandle.1006"));
 
-                        generate.answers.Add(3.ToString());
+                        generate.leads.Add(3, 3);
 
                     }
-
-                    generate.lead = true;
 
                     return generate;
 
@@ -362,31 +357,29 @@ namespace StardewDruid.Dialogue
                     if (Mod.instance.characters[character].modeActive != StardewDruid.Character.Character.mode.track)
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.323.5"));
+                        generate.responses.Add(1,Mod.instance.Helper.Translation.Get("CharacterHandle.323.5"));
 
-                        generate.answers.Add(1.ToString());
+                        generate.leads.Add(1, 1);
 
                     }
 
                     if (Mod.instance.characters[character].modeActive != StardewDruid.Character.Character.mode.roam)
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.323.6"));
+                        generate.responses.Add(2,Mod.instance.Helper.Translation.Get("CharacterHandle.323.6"));
 
-                        generate.answers.Add(2.ToString());
+                        generate.leads.Add(2, 2);
 
                     }
 
                     if (Mod.instance.characters[character].modeActive != StardewDruid.Character.Character.mode.home)
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.323.7"));
+                        generate.responses.Add(3,Mod.instance.Helper.Translation.Get("CharacterHandle.323.7"));
 
-                        generate.answers.Add(3.ToString());
+                        generate.leads.Add(3, 3);
 
                     }
-
-                    generate.lead = true;
 
                     return generate;
 
@@ -398,31 +391,29 @@ namespace StardewDruid.Dialogue
                     if (Mod.instance.characters[character].modeActive != StardewDruid.Character.Character.mode.track)
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.343.10"));
+                        generate.responses.Add(1,Mod.instance.Helper.Translation.Get("CharacterHandle.343.10"));
 
-                        generate.answers.Add(1.ToString());
+                        generate.leads.Add(1, 1);
 
                     }
 
                     if (Mod.instance.characters[character].modeActive != StardewDruid.Character.Character.mode.roam)
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.343.11"));
+                        generate.responses.Add(2,Mod.instance.Helper.Translation.Get("CharacterHandle.343.11"));
 
-                        generate.answers.Add(2.ToString());
+                        generate.leads.Add(2, 2);
 
                     }
 
                     if (Mod.instance.characters[character].modeActive != StardewDruid.Character.Character.mode.home)
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.343.12"));
+                        generate.responses.Add(3,Mod.instance.Helper.Translation.Get("CharacterHandle.343.12"));
 
-                        generate.answers.Add(3.ToString());
+                        generate.leads.Add(3, 3);
 
                     }
-
-                    generate.lead = true;
 
                     return generate;
 
@@ -476,35 +467,33 @@ namespace StardewDruid.Dialogue
                     if (Mod.instance.characters[character].modeActive != StardewDruid.Character.Character.mode.track)
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.386.3"));
+                        generate.responses.Add(1,Mod.instance.Helper.Translation.Get("DialogueAdventure.386.3"));
 
-                        generate.answers.Add(1.ToString());
+                        generate.leads.Add(1, 1);
 
                     }
 
                     if (Mod.instance.characters[character].modeActive != StardewDruid.Character.Character.mode.roam)
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.386.4"));
+                        generate.responses.Add(2,Mod.instance.Helper.Translation.Get("DialogueAdventure.386.4"));
 
-                        generate.answers.Add(2.ToString());
+                        generate.leads.Add(2, 2);
 
                     }
 
                     if (Mod.instance.characters[character].modeActive != StardewDruid.Character.Character.mode.home)
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.386.5"));
+                        generate.responses.Add(3,Mod.instance.Helper.Translation.Get("DialogueAdventure.386.5"));
 
-                        generate.answers.Add(3.ToString());
+                        generate.leads.Add(3, 3);
 
                     }
 
-                    generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.386.6"));
+                    generate.responses.Add(4, Mod.instance.Helper.Translation.Get("DialogueAdventure.386.6"));
 
-                    generate.answers.Add(4.ToString());
-
-                    generate.lead = true;
+                    generate.leads.Add(4, 4);
 
                     return generate;
 
@@ -515,49 +504,48 @@ namespace StardewDruid.Dialogue
                     if (Mod.instance.questHandle.IsComplete(QuestHandle.challengeWeald))
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.348.1"));
+                        generate.responses.Add(1,Mod.instance.Helper.Translation.Get("DialogueAdventure.348.1"));
 
-                        generate.answers.Add(11.ToString());
+                        generate.leads.Add(1, 11);
 
                     }
 
                     if (Mod.instance.questHandle.IsComplete(QuestHandle.swordMists))
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.343.6"));
+                        generate.responses.Add(2,Mod.instance.Helper.Translation.Get("DialogueAdventure.343.6"));
 
-                        generate.answers.Add(12.ToString());
+                        generate.leads.Add(2, 12);
 
                     }
 
                     if (Mod.instance.questHandle.IsComplete(QuestHandle.challengeMists))
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.343.7"));
+                        generate.responses.Add(3, Mod.instance.Helper.Translation.Get("DialogueAdventure.343.7"));
 
-                        generate.answers.Add(13.ToString());
+                        generate.leads.Add(3, 13);
+
 
                     }
 
                     if (Mod.instance.questHandle.IsComplete(QuestHandle.swordStars))
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.343.8"));
+                        generate.responses.Add(4, Mod.instance.Helper.Translation.Get("DialogueAdventure.343.8"));
 
-                        generate.answers.Add(14.ToString());
+                        generate.leads.Add(4, 14);
 
                     }
 
                     if (Mod.instance.questHandle.IsComplete(QuestHandle.swordFates))
                     {
 
-                        generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.343.9"));
+                        generate.responses.Add(5, Mod.instance.Helper.Translation.Get("DialogueAdventure.343.9"));
 
-                        generate.answers.Add(15.ToString());
+                        generate.leads.Add(5, 15);
 
                     }
-
-                    generate.lead = true;
 
                     return generate;
 
@@ -565,11 +553,9 @@ namespace StardewDruid.Dialogue
 
                     generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1018");
 
-                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.1020"));
+                    generate.responses.Add(1,Mod.instance.Helper.Translation.Get("CharacterHandle.1020"));
 
-                    generate.answers.Add(10.ToString());
-
-                    generate.lead = true;
+                    generate.leads.Add(1, 10);
 
                     return generate;
 
@@ -604,11 +590,9 @@ namespace StardewDruid.Dialogue
                     generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.1043") +
                         Mod.instance.Helper.Translation.Get("CharacterHandle.1044");
 
-                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.1046"));
+                    generate.responses.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.1046"));
 
-                    generate.answers.Add(10.ToString());
-
-                    generate.lead = true;
+                    generate.leads.Add(1, 10);
 
                     return generate;
 
@@ -616,11 +600,9 @@ namespace StardewDruid.Dialogue
 
                     generate.intro = Mod.instance.Helper.Translation.Get("DialogueAdventure.379.8");
 
-                    generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.379.9"));
+                    generate.responses.Add(1,Mod.instance.Helper.Translation.Get("DialogueAdventure.379.9"));
 
-                    generate.answers.Add(10.ToString());
-
-                    generate.lead = true;
+                    generate.leads.Add(1, 10);
 
                     return generate;
 
@@ -628,11 +610,9 @@ namespace StardewDruid.Dialogue
 
                     generate.intro = Mod.instance.Helper.Translation.Get("DialogueAdventure.343.2");
 
-                    generate.responses.Add(Mod.instance.Helper.Translation.Get("DialogueAdventure.343.3"));
+                    generate.responses.Add(1, Mod.instance.Helper.Translation.Get("DialogueAdventure.343.3"));
 
-                    generate.answers.Add(10.ToString());
-
-                    generate.lead = true;
+                    generate.leads.Add(1, 10);
 
                     return generate;
 
@@ -640,17 +620,15 @@ namespace StardewDruid.Dialogue
 
                     generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.323.18");
 
-                    generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.323.19"));
+                    generate.responses.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.323.19"));
 
-                    generate.answers.Add(10.ToString());
-
-                    generate.lead = true;
+                    generate.leads.Add(1, 10);
 
                     return generate;
 
                 case CharacterHandle.characters.anvil:
 
-                    Mod.instance.herbalData.ConvertGeodes();
+                    Mod.instance.herbalHandle.ConvertGeodes();
 
                     return null;
 
@@ -937,7 +915,7 @@ namespace StardewDruid.Dialogue
                 // Sacred Spring
                 case 11:
 
-                    SpellHandle springWarp = new(Mod.instance.locations[LocationHandle.druid_spring_name], new(27, 18), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, factor = 1 };
+                    SpellHandle springWarp = new(Mod.instance.locations[LocationHandle.druid_spring_name], new(27, 18), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, displayFactor = 1 };
 
                     Mod.instance.spellRegister.Add(springWarp);
 
@@ -946,7 +924,7 @@ namespace StardewDruid.Dialogue
                 // Secluded Atoll
                 case 12:
 
-                    SpellHandle atollWarp = new(Mod.instance.locations[LocationHandle.druid_atoll_name], new(30, 21), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, factor = 1 };
+                    SpellHandle atollWarp = new(Mod.instance.locations[LocationHandle.druid_atoll_name], new(30, 21), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, displayFactor = 1 };
 
                     Mod.instance.spellRegister.Add(atollWarp);
 
@@ -955,7 +933,7 @@ namespace StardewDruid.Dialogue
                 // Elder Graves
                 case 13:
 
-                    SpellHandle gravesWarp = new(Mod.instance.locations[LocationHandle.druid_graveyard_name], new Vector2(27, 17), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, factor = 0 };
+                    SpellHandle gravesWarp = new(Mod.instance.locations[LocationHandle.druid_graveyard_name], new Vector2(27, 17), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, displayFactor = 0 };
 
                     Mod.instance.spellRegister.Add(gravesWarp);
 
@@ -964,7 +942,7 @@ namespace StardewDruid.Dialogue
                 // Chapel of the Stars
                 case 14:
 
-                    SpellHandle chapelWarp = new(Mod.instance.locations[LocationHandle.druid_chapel_name], new(26, 23), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, factor = 0 };
+                    SpellHandle chapelWarp = new(Mod.instance.locations[LocationHandle.druid_chapel_name], new(26, 23), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, displayFactor = 0 };
 
                     Mod.instance.spellRegister.Add(chapelWarp);
 
@@ -973,7 +951,7 @@ namespace StardewDruid.Dialogue
                 // Court of Fates and Chaos
                 case 15:
 
-                    SpellHandle courtWarp = new(Mod.instance.locations[LocationHandle.druid_court_name], new Vector2(34, 18), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, factor = 0 };
+                    SpellHandle courtWarp = new(Mod.instance.locations[LocationHandle.druid_court_name], new Vector2(34, 18), groveWarp) { type = SpellHandle.Spells.warp, scheme = IconData.schemes.white, displayFactor = 0 };
 
                     Mod.instance.spellRegister.Add(courtWarp);
 

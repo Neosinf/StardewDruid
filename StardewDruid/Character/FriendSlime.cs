@@ -328,7 +328,7 @@ namespace StardewDruid.Character
 
                 displayRadius = (int)setScale,
 
-                factor = Math.Min(4,1 + (int)setScale),
+                displayFactor = Math.Min(4,1 + (int)setScale),
 
                 type = SpellHandle.Spells.missile,
 

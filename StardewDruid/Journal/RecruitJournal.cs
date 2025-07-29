@@ -28,9 +28,9 @@ namespace StardewDruid.Journal
         public override void populateContent()
         {
 
-            type = journalTypes.recruits;
+            type = journalTypes.ledger;
 
-            title = StringData.Strings(StringData.stringkeys.ledger);
+            title = JournalData.JournalTitle(type);
 
             pagination = 4;
 
@@ -122,12 +122,13 @@ namespace StardewDruid.Journal
             interfaceComponents = new()
             {
 
-                [101] = addButton(journalButtons.quests),
-                [102] = addButton(journalButtons.effects),
-                [103] = addButton(journalButtons.relics),
-                [104] = addButton(journalButtons.herbalism),
-                [105] = addButton(journalButtons.lore),
-                [106] = addButton(journalButtons.transform),
+                [101] = addButton(journalButtons.openQuests),
+                [102] = addButton(journalButtons.openMasteries),
+                [103] = addButton(journalButtons.openRelics),
+                [104] = addButton(journalButtons.openAlchemy),
+                [105] = addButton(journalButtons.openPotions),
+                [106] = addButton(journalButtons.openCompanions),
+                [107] = addButton(journalButtons.openDragonomicon),
 
                 [301] = addButton(journalButtons.exit),
 
@@ -140,7 +141,7 @@ namespace StardewDruid.Journal
 
             resetInterface();
 
-            fadeMenu();
+            reviseInterface();
 
             List<CharacterHandle.characters> slots = new()
             {
@@ -156,7 +157,7 @@ namespace StardewDruid.Journal
         public override void pressContent()
         {
 
-            openJournal(journalTypes.recruitPage, contentComponents[focus].id, focus);
+            openJournal(journalTypes.companion, contentComponents[focus].id, focus);
 
         }
 

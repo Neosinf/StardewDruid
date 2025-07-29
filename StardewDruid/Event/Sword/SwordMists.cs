@@ -71,7 +71,7 @@ namespace StardewDruid.Event.Sword
 
                     location.playSound(SpellHandle.Sounds.thunder_small.ToString());
 
-                    Mod.instance.spellRegister.Add(new(origin + new Vector2(64, 320), 192, IconData.impacts.splash, new()) { type = SpellHandle.Spells.bolt, factor = 3, displayRadius = 2, });
+                    Mod.instance.spellRegister.Add(new(origin + new Vector2(64, 320), 192, IconData.impacts.splash, new()) { type = SpellHandle.Spells.bolt, displayFactor = 3, displayRadius = 2, });
 
                     DialogueSetups(null, 3);
 
@@ -83,7 +83,7 @@ namespace StardewDruid.Event.Sword
 
                     location.playSound(SpellHandle.Sounds.thunder.ToString());
 
-                    Mod.instance.spellRegister.Add(new(origin + new Vector2(64, 320), 256, IconData.impacts.splash, new()) { type = SpellHandle.Spells.bolt, factor = 5, displayRadius = 3, });
+                    Mod.instance.spellRegister.Add(new(origin + new Vector2(64, 320), 256, IconData.impacts.splash, new()) { type = SpellHandle.Spells.bolt, displayFactor = 5, displayRadius = 3, });
 
                     DialogueCue(4);
 

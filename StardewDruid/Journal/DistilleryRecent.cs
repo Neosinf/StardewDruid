@@ -27,12 +27,12 @@ namespace StardewDruid.Journal
 
             type = journalTypes.distilleryRecent;
 
-            title = StringData.Strings(StringData.stringkeys.distilleryRecent);
+            title = JournalData.JournalTitle(type);
 
             interfaceComponents = new()
             {
 
-                [101] = addButton(journalButtons.distilleryEstimated),
+                [101] = addButton(journalButtons.openProductionEstimated),
 
                 [201] = addButton(journalButtons.back),
 

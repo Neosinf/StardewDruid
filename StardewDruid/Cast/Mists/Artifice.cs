@@ -236,23 +236,6 @@ namespace StardewDruid.Cast.Mists
 
                                 }
                             }
-                            else if (targetObject.IsScarecrow())
-                            {
-
-                                string scid = "scarecrow_" + Game1.season.ToString() + Game1.dayOfMonth.ToString() + "_" + location.Name + "_" + tileVector.X.ToString() + "_" + tileVector.Y.ToString();
-
-                                if (!Game1.isRaining && !Mod.instance.rite.specialCasts[locationName].Contains(scid))
-                                {
-
-                                    Mod.instance.rite.specialCasts[locationName].Add(scid);
-
-                                    ArtificeScarecrow(location,tileVector);
-
-                                    casts++;
-
-                                }
-
-                            }
                             else if(targetObject.QualifiedItemId == "(BC)MushroomLog")
                             {
 
@@ -389,46 +372,6 @@ namespace StardewDruid.Cast.Mists
                 }
 
             }
-
-        }
-
-        public void ArtificeScarecrow(GameLocation location, Vector2 targetVector, bool animate = true)
-        {
-
-            if (Game1.player.currentLocation.Name != location.Name || !Utility.isOnScreen(targetVector * 64, 0))
-            {
-
-                animate = false;
-
-            }
-
-            int radius = (Mod.instance.PowerLevel * 2) + 1;
-
-            radius = Math.Min(11, radius);
-
-            ModUtility.WaterRadius(location, targetVector, radius, animate);
-
-            if (animate)
-            {
-
-                SpellHandle bolt = new(targetVector * 64 - new Vector2(0, 32), 160, IconData.impacts.spiral, new())
-                {
-                    type = SpellHandle.Spells.bolt,
-
-                    explosion = radius
-                };
-
-                Mod.instance.spellRegister.Add(bolt);
-
-            }
-
-            int tryCost = 32 - Game1.player.FarmingLevel * 3;
-
-            tryCost = tryCost < 8 ? 8 : tryCost;
-
-            Rite.ApplyCost(tryCost);
-
-            return;
 
         }
 

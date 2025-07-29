@@ -177,6 +177,7 @@ namespace StardewDruid.Data
 
             Effigy_Weald,
             Effigy_self_1,
+            Effigy_Cave,
 
             Effigy_Mists,
 
@@ -332,7 +333,7 @@ namespace StardewDruid.Data
 
                     title = Mod.instance.Helper.Translation.Get("LoreData.340.1.6"),
 
-                    quest = QuestHandle.startPoint,
+                    quest = QuestHandle.squireWinds,
 
                     display = IconData.displays.weald,
 
@@ -439,7 +440,7 @@ namespace StardewDruid.Data
 
                     quest = QuestHandle.challengeMists,
 
-                    display = IconData.displays.chaos,
+                    display = IconData.displays.druid,
 
                 },
 
@@ -677,7 +678,7 @@ namespace StardewDruid.Data
 
                     quest = QuestHandle.challengeEther,
 
-                    display = IconData.displays.bones,
+                    display = IconData.displays.witch,
                 },
 
                 [LoreSet.loresets.challengeEther] = new()
@@ -730,7 +731,7 @@ namespace StardewDruid.Data
 
                     quest = QuestHandle.challengeBones,
 
-                    display = IconData.displays.bones,
+                    display = IconData.displays.witch,
 
                 },
 
@@ -775,6 +776,7 @@ namespace StardewDruid.Data
 
             // ===========================================
             // Characters
+
             storylist[LoreStory.stories.Effigy_Profile] = new()
             {
                 loreset = LoreSet.loresets.Effigy,
@@ -787,7 +789,6 @@ namespace StardewDruid.Data
                     Mod.instance.Helper.Translation.Get("LoreData.340.1.219"),
                 }
             };
-
 
             storylist[LoreStory.stories.Effigy_Adventure] = new()
             {
@@ -988,7 +989,7 @@ namespace StardewDruid.Data
             {
                 loreset = LoreSet.loresets.Grove,
                 loretype = LoreStory.loretypes.information,
-                quest = QuestHandle.startPoint,
+                quest = QuestHandle.squireWinds,
                 description = Mod.instance.Helper.Translation.Get("LoreData.340.1.305"),
                 details = new()
                {
@@ -1158,7 +1159,7 @@ namespace StardewDruid.Data
                 loreset = LoreSet.loresets.Effigy,
                 character = CharacterHandle.characters.Effigy,
                 story = LoreStory.stories.Effigy_Weald,
-                quest = QuestHandle.swordWeald,
+                quest = QuestHandle.squireWinds,
 
                 loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.75"),
@@ -1173,13 +1174,29 @@ namespace StardewDruid.Data
                 loreset = LoreSet.loresets.Effigy,
                 story = LoreStory.stories.Effigy_self_1,
                 character = CharacterHandle.characters.Effigy,
-                quest = QuestHandle.swordWeald,
+                quest = QuestHandle.squireWinds,
 
                 loretype = LoreStory.loretypes.story,
                 question = Mod.instance.Helper.Translation.Get("LoreData.86"),
                 answer = Mod.instance.Helper.Translation.Get("LoreData.87") +
                     Mod.instance.Helper.Translation.Get("LoreData.88") +
                     Mod.instance.Helper.Translation.Get("LoreData.89"),
+
+            };
+
+            storylist[LoreStory.stories.Effigy_Cave] = new()
+            {
+                loreset = LoreSet.loresets.Effigy,
+                story = LoreStory.stories.Effigy_Cave,
+                character = CharacterHandle.characters.Effigy,
+                quest = QuestHandle.squireWinds,
+
+                loretype = LoreStory.loretypes.story,
+                question = Mod.instance.Helper.Translation.Get("LoreData.500.EffigyCave.1"),
+                answer = Mod.instance.Helper.Translation.Get("LoreData.500.EffigyCave.2") +
+                    Mod.instance.Helper.Translation.Get("LoreData.500.EffigyCave.3") +
+                    Mod.instance.Helper.Translation.Get("LoreData.500.EffigyCave.4") +
+                    Mod.instance.Helper.Translation.Get("LoreData.500.EffigyCave.5"),
 
             };
 

@@ -436,6 +436,30 @@ namespace StardewDruid.Monster
 
             }
 
+            switch (netMode.Value)
+            {
+
+                case 2: // multiple bosses
+                case 3: // single boss
+                case 4: // hard boss
+                case 5: // mega boss
+
+                    foreach (Companion companion in Game1.player.companions)
+                    {
+
+                        if (companion is HungryFrogCompanion frog)
+                        {
+
+                            frog.fullnessTime = 12000f;
+
+                        }
+
+                    }
+
+                    break;
+
+            }
+
             GetThreat();
 
         }
@@ -485,7 +509,7 @@ namespace StardewDruid.Monster
 
             }
 
-            if(debuffJuice > 0f)
+            if (debuffJuice > 0f)
             {
 
                 threat = (int)((float)threat * debuffJuice);
@@ -1089,7 +1113,7 @@ namespace StardewDruid.Monster
 
             }
 
-            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 15 * 64);
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, Position, 15 * 64);
 
             if (targets.Count > 0)
             {
@@ -1185,6 +1209,35 @@ namespace StardewDruid.Monster
             updateEmote(time);
 
             updateFaceTowardsFarmer(time, location);
+
+            if(Game1.player.companions.Count > 0)
+            {
+
+                switch (netMode.Value)
+                {
+
+                    case 2: // multiple bosses
+                    case 3: // single boss
+                    case 4: // hard boss
+                    case 5: // mega boss
+
+                        foreach (Companion companion in Game1.player.companions)
+                        {
+
+                            if (companion is HungryFrogCompanion frog)
+                            {
+
+                                frog.fullnessTime = 12000f;
+
+                            }
+
+                        }
+
+                        break;
+
+                }
+
+            }
 
             if (localMonster)
             {
@@ -2042,7 +2095,7 @@ namespace StardewDruid.Monster
 
             List<Vector2> targets = new();
 
-            List<Farmer> farmers = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 20 * 64);
+            List<Farmer> farmers = ModUtility.FarmerProximity(currentLocation, Position, 20 * 64);
 
             if (farmers.Count > 0)
             {
@@ -2054,7 +2107,7 @@ namespace StardewDruid.Monster
             if(groupMode)
             {
 
-                List<StardewDruid.Character.Character> characters = ModUtility.CompanionProximity(currentLocation, new() { Position, }, 20 * 64);
+                List<StardewDruid.Character.Character> characters = ModUtility.CompanionProximity(currentLocation, Position, 20 * 64);
 
                 if (characters.Count > 0)
                 {
@@ -2426,7 +2479,7 @@ namespace StardewDruid.Monster
 
             if (!sweepSet) { return false; }
 
-            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 96f + (GetWidth() * 3));
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, Position, 96f + (GetWidth() * 3));
 
             if (targets.Count > 0)
             {
@@ -2493,7 +2546,7 @@ namespace StardewDruid.Monster
 
             }
 
-            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { sweepVector, }, GetWidth() * GetScale() * 0.7f);
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, sweepVector, GetWidth() * GetScale() * 0.7f);
 
             if(targets.Count > 0)
             {
@@ -3065,6 +3118,13 @@ namespace StardewDruid.Monster
         {
 
             return Mod.instance.iconData.displayTexture;
+
+        }
+
+        public virtual bool OverheadFrame()
+        {
+
+            return false;
 
         }
 

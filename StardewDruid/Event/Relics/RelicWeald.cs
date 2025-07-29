@@ -21,7 +21,7 @@ namespace StardewDruid.Event.Relics
 
         }
 
-        public override bool TriggerAbort()
+        public override bool TriggerUpdate()
         {
 
             if ((Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areasComplete[1])
@@ -29,13 +29,18 @@ namespace StardewDruid.Event.Relics
 
                 Mod.instance.questHandle.CompleteQuest(eventId);
 
-                TriggerRemove();
+                if (triggerActive)
+                {
 
-                triggerAbort = true;
+                    TriggerRemove();
+
+                }
+
+                return false;
 
             }
 
-            return triggerAbort;
+            return base.TriggerUpdate();
 
         }
 
@@ -45,7 +50,7 @@ namespace StardewDruid.Event.Relics
             if (!Game1.player.hasOrWillReceiveMail("canReadJunimoText"))
             {
 
-                Mod.instance.CastDisplay(StringData.Strings(StringData.stringkeys.noJunimo));
+                Mod.instance.RegisterDisplay(StringData.Strings(StringData.stringkeys.noJunimo));
 
                 return false;
 

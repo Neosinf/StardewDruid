@@ -39,7 +39,22 @@ namespace StardewDruid.Cast.Fates
             : base()
         {
 
-            activeLimit = -1;
+            
+
+        }
+
+        public override void EventActivate()
+        {
+
+            base.EventActivate();
+
+            Game1.flashAlpha = 1f;
+
+            location.playSound("thunder");
+
+            WindArray(new(), WispHandle.wisptypes.winds, 120);
+
+            Mod.instance.rite.castLevel = 0;
 
         }
 
@@ -80,25 +95,6 @@ namespace StardewDruid.Cast.Fates
         public override bool EventActive()
         {
 
-            if (!eventLocked)
-            {
-
-                if (!Mod.instance.RiteButtonHeld())
-                {
-
-                    return false;
-
-                }
-
-                if (Vector2.Distance(origin, Game1.player.Position) > 32 && !Mod.instance.ShiftButtonHeld())
-                {
-
-                    return false;
-
-                }
-
-            }
-
             if (Vector2.Distance(origin, Game1.player.Position) > 1280)
             {
 
@@ -129,66 +125,38 @@ namespace StardewDruid.Cast.Fates
         public override void EventDecimal()
         {
 
-            if (!EventActive())
-            {
-
-                RemoveAnimations();
-
-                return;
-
-            }
-
             decimalCounter++;
 
-            if (eventLocked)
+            if (decimalCounter % 3 == 0)
             {
 
-                if (decimalCounter % 3 == 0)
+                foreach (KeyValuePair<Vector2, WispHandle> wisp in wisps)
                 {
 
-                    foreach (KeyValuePair<Vector2, WispHandle> wisp in wisps)
-                    {
-
-                        wisp.Value.Behaviour();
-
-                    }
+                    wisp.Value.Behaviour();
 
                 }
 
-                return;
+            }
+
+            if(decimalCounter == 600)
+            {
+
+                for (int w = wisps.Count - 1; w >= 0; w--)
+                {
+
+                    KeyValuePair<Vector2, WispHandle> wisp = wisps.ElementAt(w);
+
+                    wisp.Value.fadeTo = 0f;
+
+                }
 
             }
 
-            if (decimalCounter == 5)
+            if(decimalCounter == 605)
             {
 
-                Mod.instance.rite.Channel(IconData.skies.hellscape, 75);
-
-                channel = IconData.skies.hellscape;
-
-            }
-
-            if (decimalCounter < 15)
-            {
-
-                return;
-
-            }
-
-            if(decimalCounter == 15)
-            {
-
-                Game1.flashAlpha = 1f;
-
-                location.playSound("thunder");
-
-                WindArray(new(),WispHandle.wisptypes.winds, 120);
-
-                eventLocked = true;
-
-                Mod.instance.rite.castLevel = 0;
-
-                Mod.instance.rite.ChargeSet(IconData.cursors.fatesCharge);
+                eventComplete = true;
 
             }
 
@@ -273,29 +241,6 @@ namespace StardewDruid.Cast.Fates
                 Vector2 wind = origin + (new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * 320);
 
                 wisps[wind] = new(location, Tile, wispType, wind, 0.2f);
-
-            }
-
-            eventCounter = 0;
-
-            activeLimit = charge;
-
-        }
-
-        public override void EventInterval()
-        {
-
-            if(activeLimit - eventCounter < 5)
-            {
-
-                for (int w = wisps.Count - 1; w >= 0; w--)
-                {
-
-                    KeyValuePair<Vector2, WispHandle> wisp = wisps.ElementAt(w);
-
-                    wisp.Value.fadeTo = 0f;
-
-                }
 
             }
 

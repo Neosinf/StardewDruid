@@ -1,805 +1,16 @@
-﻿
-using Microsoft.VisualBasic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using StardewDruid.Cast;
-using StardewDruid.Cast.Effect;
-using StardewDruid.Cast.Mists;
-using StardewDruid.Character;
-using StardewDruid.Dialogue;
-using StardewDruid.Event.Challenge;
-using StardewDruid.Handle;
-using StardewDruid.Journal;
-using StardewDruid.Location.Druid;
+﻿using StardewDruid.Handle;
 using StardewModdingAPI;
-using StardewValley;
-using StardewValley.Buildings;
-using StardewValley.Events;
-using StardewValley.GameData.Characters;
-using StardewValley.Locations;
-using StardewValley.Objects;
-using StardewValley.Quests;
-using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Text;
+using System.Threading.Tasks;
+using static StardewDruid.Handle.RelicHandle;
 
 namespace StardewDruid.Data
 {
-    public class RelicData
+    public static class RelicData
     {
-
-        public enum relicsets
-        {
-
-            none,
-            companion,
-            wayfinder,
-            other,
-            monsterstones,
-            crests,
-            herbalism,
-            tactical,
-            runestones,
-            avalant,
-            books,
-            boxes,
-            restore,
-            skulls,
-            testaments,
-            druid,
-        
-        }
-
-        public Dictionary<relicsets, List<IconData.relics>> lines = new()
-        {
-            [relicsets.companion] = new() {
-                IconData.relics.effigy_crest,
-                IconData.relics.jester_dice,
-                IconData.relics.shadowtin_tome,
-                IconData.relics.dragon_form,
-                IconData.relics.blackfeather_glove,
-                IconData.relics.heiress_gift,
-            },
-            [relicsets.wayfinder] = new() {
-                IconData.relics.wayfinder_pot,
-                IconData.relics.wayfinder_censer,
-                IconData.relics.wayfinder_lantern,
-                IconData.relics.wayfinder_water,
-                IconData.relics.wayfinder_ceremonial,
-                IconData.relics.wayfinder_dwarf,
-            },
-            [relicsets.other] = new() {
-                IconData.relics.wayfinder_stone,
-                IconData.relics.crow_hammer,
-                IconData.relics.wayfinder_key,
-                IconData.relics.wayfinder_glove,
-                IconData.relics.wayfinder_eye,
-            },
-            [relicsets.monsterstones] = new() {
-                IconData.relics.monsterbadge,
-                IconData.relics.monster_bat,
-                IconData.relics.monster_slime,
-                IconData.relics.monster_spirit,
-                IconData.relics.monster_ghost,
-                IconData.relics.monster_serpent,
-            },
-            [relicsets.crests] = new() {
-                IconData.relics.crest_church,
-                IconData.relics.crest_dwarf,
-                IconData.relics.crest_associate,
-                IconData.relics.crest_smuggler,
-            },
-            [relicsets.herbalism] = new() {
-                IconData.relics.herbalism_mortar,
-                IconData.relics.herbalism_pan,
-                IconData.relics.herbalism_still,
-                IconData.relics.herbalism_crucible,
-                IconData.relics.herbalism_gauge,
-            },
-            [relicsets.tactical] = new() {
-                IconData.relics.tactical_discombobulator,
-                IconData.relics.tactical_mask,
-                IconData.relics.tactical_cell,
-                IconData.relics.tactical_lunchbox,
-                IconData.relics.tactical_peppermint,
-            },
-            [relicsets.runestones] = new() {
-                IconData.relics.runestones_spring,
-                IconData.relics.runestones_farm,
-                IconData.relics.runestones_moon,
-                IconData.relics.runestones_cat,
-                IconData.relics.runestones_alchemistry,
-            },
-            [relicsets.avalant] = new() {
-                IconData.relics.avalant_disc,
-                IconData.relics.avalant_chassis,
-                IconData.relics.avalant_gears,
-                IconData.relics.avalant_casing,
-                IconData.relics.avalant_needle,
-                IconData.relics.avalant_measure,
-            },
-            [relicsets.books] = new() {
-                IconData.relics.book_wyrven,
-                IconData.relics.book_letters,
-                IconData.relics.book_manual,
-                IconData.relics.book_druid,
-                IconData.relics.book_annal,
-            },
-            [relicsets.boxes] = new() {
-                IconData.relics.box_measurer,
-                IconData.relics.box_mortician,
-                IconData.relics.box_artisan,
-                IconData.relics.box_chaos,
-            },
-            [relicsets.restore] = new() {
-                IconData.relics.restore_goshuin,
-                IconData.relics.restore_offering,
-                IconData.relics.restore_cloth,
-            },
-            [relicsets.skulls] = new() {
-                IconData.relics.skull_saurus,
-                IconData.relics.skull_gelatin,
-                IconData.relics.skull_cannoli,
-                IconData.relics.skull_fox,
-                IconData.relics.golden_core,
-            },
-            [relicsets.testaments] = new() {
-                IconData.relics.book_knight,
-            },
-            [relicsets.druid] = new() {
-                IconData.relics.stardew_druid,
-            },
-
-        };
-
-        public Dictionary<relicsets, string> quests = new()
-        {
-            [relicsets.tactical] = QuestHandle.relicTactical,
-            [relicsets.runestones] = QuestHandle.relicWeald,
-            [relicsets.avalant] = QuestHandle.relicMists,
-            [relicsets.books] = QuestHandle.relicEther,
-            [relicsets.boxes] = QuestHandle.relicFates,
-            [relicsets.restore] = QuestHandle.relicRestore,
-        };
-
-        public Dictionary<string, Relic> reliquary = new();
-
-        public Dictionary<relicsets, List<string>> titles = new()
-        {
-
-            [relicsets.companion] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.6"),
-                Mod.instance.Helper.Translation.Get("RelicData.7"), },
-            [relicsets.wayfinder] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.9"),
-                Mod.instance.Helper.Translation.Get("RelicData.10"), },
-            [relicsets.other] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.27"),
-                Mod.instance.Helper.Translation.Get("RelicData.28"), },
-            [relicsets.monsterstones] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.386.8"),
-                Mod.instance.Helper.Translation.Get("RelicData.386.9"), },
-            [relicsets.crests] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.386.30"),
-                Mod.instance.Helper.Translation.Get("RelicData.386.31"), },
-            [relicsets.herbalism] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.12"),
-                Mod.instance.Helper.Translation.Get("RelicData.13"), },
-            [relicsets.tactical] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.309.1"),
-                Mod.instance.Helper.Translation.Get("RelicData.309.2"), },
-            [relicsets.runestones] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.15"),
-                Mod.instance.Helper.Translation.Get("RelicData.16"), },
-            [relicsets.avalant] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.18"),
-                Mod.instance.Helper.Translation.Get("RelicData.19"), },
-            [relicsets.books] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.21"),
-                Mod.instance.Helper.Translation.Get("RelicData.22"), },
-            [relicsets.boxes] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.24"),
-                Mod.instance.Helper.Translation.Get("RelicData.25"), },
-            [relicsets.restore] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.329.5"),
-                Mod.instance.Helper.Translation.Get("RelicData.329.6"), },
-            [relicsets.skulls] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.339.1"),
-                Mod.instance.Helper.Translation.Get("RelicData.339.2"), },
-            [relicsets.testaments] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.386.6"),
-                Mod.instance.Helper.Translation.Get("RelicData.386.7"), },
-            [relicsets.druid] = new() {
-                Mod.instance.Helper.Translation.Get("RelicData.361.6"),
-                Mod.instance.Helper.Translation.Get("RelicData.361.7"), },
-        };
-
-
-        public IconData.relics favourite = IconData.relics.none;
-
-        public RelicData()
-        {
-
-        }
-
-        public void LoadRelics()
-        {
-
-            if (Mod.instance.magic)
-            {
-
-                return;
-
-            }
-
-            reliquary = RelicsList();
-
-        }
-
-        public static bool HasRelic(IconData.relics relic)
-        {
-
-            if (Mod.instance.magic)
-            {
-
-                return true;
-
-            }
-
-            if (Mod.instance.save.reliquary.ContainsKey(relic.ToString()))
-            {
-
-                return true;
-
-            }
-
-            return false;
-
-        }
-
-        public Dictionary<int, ContentComponent> JournalRelics()
-        {
-
-            Dictionary<int, ContentComponent> journal = new();
-
-            int start = 0;
-
-            foreach (relicsets set in lines.Keys)
-            {
-                switch (set)
-                {
-
-                    case relicsets.runestones:
-
-                        if (!HasRelic(lines[set][0]) && !HasRelic(lines[set][4]))
-                        {
-
-                            continue;
-
-                        }
-
-                        break;
-
-                    case relicsets.avalant:
-                    case relicsets.restore:
-
-                        if (ProgressRelicQuest(set) == 0)
-                        {
-
-                            continue;
-
-                        }
-                        break;
-
-                    default:
-
-                        if (!HasRelic(lines[set][0]))
-                        {
-
-                            continue;
-
-                        }
-
-                        break;
-
-                }
-
-                for (int i = 0; i < lines[set].Count; i++)
-                {
-
-                    IconData.relics relicName = lines[set][i];
-
-                    ContentComponent content = new(ContentComponent.contentTypes.relic, relicName.ToString());
-
-                    content.textureSources[0] = IconData.RelicRectangles(relicName);
-
-                    content.textureColours[0] = Color.White;
-
-                    if (!HasRelic(relicName))
-                    {
-
-                        switch (set)
-                        {
-
-                            case relicsets.runestones:
-
-                                if (relicName == IconData.relics.runestones_alchemistry)
-                                {
-
-                                    content.active = false;
-
-                                }
-
-                                content.textureColours[0] = Color.Black * 0.01f;
-
-                                break;
-
-                            case relicsets.tactical:
-                            case relicsets.avalant:
-                            case relicsets.boxes:
-                            case relicsets.restore:
-
-                                content.textureColours[0] = Color.Black * 0.01f;
-
-                                break;
-
-                            case relicsets.books:
-
-                                if (relicName == IconData.relics.book_knight)
-                                {
-
-                                    content.active = false;
-
-                                    break;
-                                }
-
-                                content.textureColours[0] = Color.Black * 0.01f;
-
-                                break;
-
-                            default:
-
-                                content.active = false;
-
-                                break;
-
-                        }
-
-                    }
-
-                    journal[start++] = content;
-
-                }
-
-                for (int i = 0; i < 6 - lines[set].Count; i++)
-                {
-
-                    ContentComponent content = new(ContentComponent.contentTypes.relic, set.ToString() + i.ToString())
-                    {
-                        active = false
-                    };
-
-                    journal[start++] = content;
-
-                }
-
-            }
-
-            return journal;
-
-        }
-
-        public Dictionary<int, ContentComponent> JournalHeaders()
-        {
-
-            Dictionary<int, ContentComponent> journal = new();
-
-            int start = 0;
-
-            foreach (relicsets set in lines.Keys)
-            {
-
-                switch (set)
-                {
-
-                    case relicsets.runestones:
-
-                        if (!HasRelic(lines[set][0]) && !HasRelic(lines[set][4]))
-                        {
-
-                            continue;
-
-                        }
-
-                        break;
-
-                    case relicsets.avalant:
-                    case relicsets.restore:
-
-
-                        if (ProgressRelicQuest(set) == 0)
-                        {
-
-                            continue;
-
-                        }
-                        break;
-
-                    default:
-
-                        if (!HasRelic(lines[set][0]))
-                        {
-
-                            continue;
-
-                        }
-
-                        break;
-
-                }
-
-                ContentComponent content = new(ContentComponent.contentTypes.header, set.ToString());
-
-                content.text[0] = titles[set][0];
-
-                content.text[1] = titles[set][1];
-
-                journal[start++] = content;
-
-            }
-
-            return journal;
-
-        }
-
-        public void ReliquaryUpdate(string id)
-        {
-
-            Mod.instance.save.reliquary[id] = 1;
-
-        }
-
-        public IconData.relics RelicTacticalLocations()
-        {
-
-            if (!Mod.instance.questHandle.IsComplete(QuestHandle.challengeWeald) || !Context.IsMainPlayer)
-            {
-
-                return IconData.relics.none;
-
-            }
-
-            if (Game1.player.currentLocation is Forest || Game1.player.currentLocation.Name.Contains("Custom_Forest"))
-            {
-
-                return IconData.relics.tactical_cell;
-
-            }
-            else if (Game1.player.currentLocation is Woods || Game1.player.currentLocation.Name.Contains("Custom_Woods"))
-            {
-
-                return IconData.relics.tactical_mask;
-
-            }
-            else if (Game1.player.currentLocation is FarmCave)
-            {
-
-                return IconData.relics.tactical_peppermint;
-
-            }
-            else if (Game1.player.currentLocation is BusStop || Game1.player.currentLocation.Name.Equals("Backwoods") || Game1.player.currentLocation.Name.Equals("Tunnel"))
-            {
-
-                return IconData.relics.tactical_lunchbox;
-
-            }
-
-            return IconData.relics.none;
-
-        }
-
-        public IconData.relics RelicMistsLocations()
-        {
-
-            if (!Context.IsMainPlayer)
-            {
-
-                return IconData.relics.none;
-
-            }
-
-            if (Game1.player.currentLocation is Forest)
-            {
-
-                return IconData.relics.avalant_disc;
-
-            }
-            else if (Game1.player.currentLocation is Mountain)
-            {
-
-                return IconData.relics.avalant_chassis;
-
-            }
-            else if (Game1.player.currentLocation is Beach)
-            {
-
-                return IconData.relics.avalant_gears;
-
-            }
-            else if (Game1.player.currentLocation is MineShaft || Game1.player.currentLocation is Spring)
-            {
-
-                return IconData.relics.avalant_casing;
-
-            }
-            else if (Game1.player.currentLocation is Town)
-            {
-
-                return IconData.relics.avalant_needle;
-
-            }
-            else if (Game1.player.currentLocation is Atoll)
-            {
-
-                return IconData.relics.avalant_measure;
-
-            }
-
-            return IconData.relics.none;
-
-        }
-
-        public IconData.relics RelicBooksLocations()
-        {
-
-            if (!Context.IsMainPlayer)
-            {
-
-                return IconData.relics.none;
-
-            }
-
-            if (Game1.player.currentLocation is Forest)
-            {
-
-                return IconData.relics.book_letters;
-
-            }
-            else if (Game1.player.currentLocation is Mountain)
-            {
-
-                return IconData.relics.book_manual;
-
-            }
-            else if (Game1.player.currentLocation is Atoll)
-            {
-
-                return IconData.relics.book_druid;
-
-            }
-            else if (Game1.player.currentLocation is Desert)
-            {
-
-                return IconData.relics.book_annal;
-
-            }
-            return IconData.relics.none;
-
-        }
-
-        public int ArtisanRelicQuest()
-        {
-
-            if (!Context.IsMainPlayer)
-            {
-
-                return -1;
-
-            }
-
-            if (HasRelic(IconData.relics.box_artisan))
-            {
-
-                return -1;
-
-            }
-
-            for (int i = 0; i < Game1.player.Items.Count; i++)
-            {
-
-                Item checkSlot = Game1.player.Items[i];
-
-                // ignore empty slots
-                if (checkSlot == null || checkSlot is not Tool toolCheck)
-                {
-
-                    continue;
-
-                }
-
-                if (toolCheck.UpgradeLevel >= 4)
-                {
-
-                    return 1;
-
-                }
-
-            }
-
-            return 0;
-
-        }
-
-        public int MorticianRelicQuest()
-        {
-
-            if (!Context.IsMainPlayer)
-            {
-
-                return -1;
-
-            }
-
-            if (HasRelic(IconData.relics.box_mortician))
-            {
-
-                return -1;
-
-            }
-
-            for(int i = 0; i < 18; i++)
-            {
-
-                HerbalHandle.herbals herbal = (HerbalHandle.herbals)((int)HerbalHandle.herbals.omen_feather + i);
-
-                if (HerbalHandle.GetHerbalism(herbal) <= 0)
-                {
-
-                    return 0;
-
-                }
-
-
-            }
-
-            return 1;
-
-            /*List<string> boneItems = new()
-            {
-                "(O)579", //"Prehistoric Scapula
-                "(O)580", //"Prehistoric Tibia/100/-300/Arch/Prehistoric Tibia/A thick and sturdy leg bone./Forest .01//",
-                "(O)581", //"Prehistoric Skull/100/-300/Arch/Prehistoric Skull/This is definitely a mammalian skull./Mountain .01//",
-                //"(O)582", //"Skeletal Hand/100/-300/Arch/Skeletal Hand/It's a wonder all these ancient little pieces lasted so long./Beach .01//",
-                "(O)583", //"Prehistoric Rib/100/-300/Arch/Prehistoric Rib/Little gouge marks on the side suggest that this rib was someone's dinner./Farm .01//",
-                "(O)584", //"Prehistoric Vertebra/100/-300/Arch/Prehistoric Vertebra/A segment of some prehistoric creature's spine./BusStop .01//",
-                //"(O)585", //"Skeletal Tail/100/-300/Arch/Skeletal Tail/It's pretty short for a tail./UndergroundMine .01//",
-                "(O)820", //"Fossilized Skull/100/-300/Basic/Fossilized Skull/It's a perfect specimen!/Island_North .01//",
-                "(O)821", //"Fossilized Spine/100/-300/Basic/Fossilized Spine/A column of interlocking vertebrae./Island_North .01//",
-                "(O)822", //"Fossilized Tail/100/-300/Basic/Fossilized Tail/This tail has a club-like feature at the tip./Island_North .01//",
-                "(O)823", //"Fossilized Leg/100/-300/Basic/Fossilized Leg/A thick and sturdy leg bone./Island_North .01//",
-                "(O)824", //"Fossilized Ribs/100/-300/Basic/Fossilized Ribs/Long ago, these ribs protected the body of a large animal./Island_North .01//",
-                //"(O)825", //"Snake Skull/100/-300/Basic/Snake Skull/A preserved skull that once belonged to a snake./Island_North .01//",
-                //"(O)826", //"Snake Vertebrae/100/-300/Basic/Snake Vertebrae/It appears this serpent may have been extremely flexible./Island_North .01//",
-                //"(O)119", //119: "Bone Flute/100/-300/Arch/Bone Flute/It's a prehistoric wind instrument carved from an animal's bone. It produces an eerie tone./Mountain .01 Forest .01 UndergroundMine .02 Town .005/Recipe 2 Flute_Block 150/",
-            };
-
-            for (int i = 0; i < Game1.player.Items.Count; i++)
-            {
-
-                Item checkSlot = Game1.player.Items[i];
-
-                // ignore empty slots
-                if (checkSlot == null || checkSlot is not StardewValley.Object itemCheck)
-                {
-
-                    continue;
-
-                }
-
-                if (boneItems.Contains(itemCheck.QualifiedItemId))
-                {
-
-                    return 1;
-
-                }
-
-            }
-
-            return 0;*/
-        }
-
-        public int ChaosRelicQuest()
-        {
-            if (!Context.IsMainPlayer)
-            {
-
-                return -1;
-
-            }
-
-            if (HasRelic(IconData.relics.box_chaos))
-            {
-
-                return -1;
-
-            }
-
-            foreach(GameLocation location in Game1.locations)
-            {
-
-                if(location.buildings.Count > 0)
-                {
-
-                    foreach (Building building in location.buildings)
-                    {
-
-                        if (building.buildingType.Contains("Deluxe Coop") || building.buildingType.Contains("Deluxe Barn"))
-                        {
-
-                            return 1;
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-            return 0;
-
-
-        }
-
-        public int ProgressRelicQuest(relicsets relicset)
-        {
-            if (!Context.IsMainPlayer)
-            {
-
-                return -1;
-
-            }
-
-            if (Mod.instance.questHandle.IsComplete(quests[relicset]))
-            {
-
-                return -1;
-
-            }
-
-            int count = 0;
-
-            foreach (IconData.relics relic in lines[relicset])
-            {
-
-                //if (relic == IconData.relics.book_knight)
-                //{
-
-                //    continue;
-
-                //}
-
-                if (relic == IconData.relics.runestones_alchemistry)
-                {
-
-                    continue;
-
-                }
-
-                if (HasRelic(relic))
-                {
-
-                    count++;
-
-                }
-
-            }
-
-            return count;
-
-        }
 
         public static Dictionary<string, Relic> RelicsList()
         {
@@ -809,10 +20,10 @@ namespace StardewDruid.Data
             // ====================================================================
             // Companion Tokens
 
-            relics[IconData.relics.effigy_crest.ToString()] = new()
+            relics[IconData.relics.companion_crest.ToString()] = new()
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.41"),
-                relic = IconData.relics.effigy_crest,
+                relic = IconData.relics.companion_crest,
                 line = relicsets.companion,
                 function = true,
                 cancel = true,
@@ -824,10 +35,24 @@ namespace StardewDruid.Data
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.51"),
             };
 
-            relics[IconData.relics.jester_dice.ToString()] = new()
+            relics[IconData.relics.companion_badge.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.386.26"),
+                relic = IconData.relics.companion_badge,
+                line = relicsets.companion,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.386.27"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.386.28"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.386.29"),
+            };
+
+            relics[IconData.relics.companion_dice.ToString()] = new()
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.56"),
-                relic = IconData.relics.jester_dice,
+                relic = IconData.relics.companion_dice,
                 line = relicsets.companion,
                 function = true,
                 cancel = true,
@@ -839,10 +64,10 @@ namespace StardewDruid.Data
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.66"),
             };
 
-            relics[IconData.relics.shadowtin_tome.ToString()] = new()
+            relics[IconData.relics.companion_tome.ToString()] = new()
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.71"),
-                relic = IconData.relics.shadowtin_tome,
+                relic = IconData.relics.companion_tome,
                 line = relicsets.companion,
                 function = true,
                 cancel = true,
@@ -854,23 +79,10 @@ namespace StardewDruid.Data
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.81"),
             };
 
-            relics[IconData.relics.dragon_form.ToString()] = new()
-            {
-                title = Mod.instance.Helper.Translation.Get("RelicData.86"),
-                relic = IconData.relics.dragon_form,
-                line = relicsets.companion,
-                function = true,
-                description = Mod.instance.Helper.Translation.Get("RelicData.90"),
-                details = new(){
-                    Mod.instance.Helper.Translation.Get("RelicData.715"),
-                },
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.91"),
-            };
-
-            relics[IconData.relics.blackfeather_glove.ToString()] = new()
+            relics[IconData.relics.companion_glove.ToString()] = new()
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.323.1"),
-                relic = IconData.relics.blackfeather_glove,
+                relic = IconData.relics.companion_glove,
                 line = relicsets.companion,
                 function = true,
                 cancel = true,
@@ -881,38 +93,40 @@ namespace StardewDruid.Data
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.323.4"),
             };
 
-            relics[IconData.relics.heiress_gift.ToString()] = new()
+            relics[IconData.relics.stardew_druid.ToString()] = new()
             {
-                title = Mod.instance.Helper.Translation.Get("RelicData.361.1"),
-                relic = IconData.relics.heiress_gift,
+                title = Mod.instance.Helper.Translation.Get("RelicData.96"),
+                relic = IconData.relics.stardew_druid,
                 line = relicsets.companion,
-                function = true,
-                description = Mod.instance.Helper.Translation.Get("RelicData.361.2"),
-                details = new(){
-                    Mod.instance.Helper.Translation.Get("RelicData.361.3"),
+                description = Mod.instance.Helper.Translation.Get("RelicData.99"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.102") +
+                    Mod.instance.Helper.Translation.Get("RelicData.103") +
+                    Mod.instance.Helper.Translation.Get("RelicData.104"),
+                    Mod.instance.Helper.Translation.Get("RelicData.105"),
                 },
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.361.4"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.107"),
             };
 
             if (Context.IsMainPlayer)
             {
 
-                relics[IconData.relics.effigy_crest.ToString()].details.Add(Mod.instance.Helper.Translation.Get("RelicData.665"));
-                relics[IconData.relics.jester_dice.ToString()].details.Add(Mod.instance.Helper.Translation.Get("RelicData.676"));
-                relics[IconData.relics.shadowtin_tome.ToString()].details.Add(Mod.instance.Helper.Translation.Get("RelicData.687"));
-                relics[IconData.relics.blackfeather_glove.ToString()].details.Add(Mod.instance.Helper.Translation.Get("RelicData.323.11"));
-                relics[IconData.relics.heiress_gift.ToString()].details.Add(Mod.instance.Helper.Translation.Get("RelicData.361.5"));
+                relics[IconData.relics.companion_crest.ToString()].details.Add(Mod.instance.Helper.Translation.Get("RelicData.665"));
+                relics[IconData.relics.companion_dice.ToString()].details.Add(Mod.instance.Helper.Translation.Get("RelicData.676"));
+                relics[IconData.relics.companion_tome.ToString()].details.Add(Mod.instance.Helper.Translation.Get("RelicData.687"));
+                relics[IconData.relics.companion_glove.ToString()].details.Add(Mod.instance.Helper.Translation.Get("RelicData.323.11"));
 
             }
 
             // ====================================================================
             // Wayfinder relics
 
-            relics[IconData.relics.wayfinder_pot.ToString()] = new()
+            relics[IconData.relics.lantern_pot.ToString()] = new()
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.309.3"),
-                relic = IconData.relics.wayfinder_pot,
-                line = relicsets.wayfinder,
+                relic = IconData.relics.lantern_pot,
+                line = relicsets.lantern,
                 function = true,
                 description = Mod.instance.Helper.Translation.Get("RelicData.309.4"),
                 details = new()
@@ -923,22 +137,22 @@ namespace StardewDruid.Data
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.309.6"),
             };
 
-            relics[IconData.relics.wayfinder_censer.ToString()] = new()
+            relics[IconData.relics.lantern_censer.ToString()] = new()
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.115"),
-                relic = IconData.relics.wayfinder_censer,
-                line = relicsets.wayfinder,
+                relic = IconData.relics.lantern_censer,
+                line = relicsets.lantern,
                 function = true,
                 description = Mod.instance.Helper.Translation.Get("RelicData.119"),
                 details = new() { Mod.instance.Helper.Translation.Get("RelicData.691"), },
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.120"),
             };
 
-            relics[IconData.relics.wayfinder_lantern.ToString()] = new()
+            relics[IconData.relics.lantern_guardian.ToString()] = new()
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.125"),
-                relic = IconData.relics.wayfinder_lantern,
-                line = relicsets.wayfinder,
+                relic = IconData.relics.lantern_guardian,
+                line = relicsets.lantern,
                 function = true,
                 cancel = true,
                 description = Mod.instance.Helper.Translation.Get("RelicData.130"),
@@ -946,11 +160,11 @@ namespace StardewDruid.Data
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.131"),
             };
 
-            relics[IconData.relics.wayfinder_water.ToString()] = new()
+            relics[IconData.relics.lantern_water.ToString()] = new()
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.136"),
-                relic = IconData.relics.wayfinder_water,
-                line = relicsets.wayfinder,
+                relic = IconData.relics.lantern_water,
+                line = relicsets.lantern,
                 function = true,
                 cancel = true,
                 description = Mod.instance.Helper.Translation.Get("RelicData.141"),
@@ -958,11 +172,11 @@ namespace StardewDruid.Data
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.142"),
             };
 
-            relics[IconData.relics.wayfinder_ceremonial.ToString()] = new()
+            relics[IconData.relics.lantern_ceremony.ToString()] = new()
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.161"),
-                relic = IconData.relics.wayfinder_ceremonial,
-                line = relicsets.wayfinder,
+                relic = IconData.relics.lantern_ceremony,
+                line = relicsets.lantern,
                 function = true,
                 cancel = true,
                 description = Mod.instance.Helper.Translation.Get("RelicData.166"),
@@ -970,52 +184,29 @@ namespace StardewDruid.Data
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.167"),
             };
 
-            relics[IconData.relics.wayfinder_dwarf.ToString()] = new()
-            {
-                title = Mod.instance.Helper.Translation.Get("RelicData.172"),
-                relic = IconData.relics.wayfinder_dwarf,
-                line = relicsets.wayfinder,
-                function = true,
-                description = Mod.instance.Helper.Translation.Get("RelicData.177"),
-                details = new() { Mod.instance.Helper.Translation.Get("RelicData.711"), },
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.178"),
-            };
 
             // ======================================================================
-            // Other wayfinder relics
+            // Wayfinder relics
 
             relics[IconData.relics.wayfinder_stone.ToString()] = new()
             {
-                title = Mod.instance.Helper.Translation.Get("RelicData.313.1"),
+                title = Mod.instance.Helper.Translation.Get("RelicData.500.Waystone.4"),
                 relic = IconData.relics.wayfinder_stone,
-                line = relicsets.other,
+                line = relicsets.wayfinder,
                 function = true,
                 description = Mod.instance.Helper.Translation.Get("RelicData.313.2"),
                 details = new(){
-                    Mod.instance.Helper.Translation.Get("RelicData.313.3"),
-                    Mod.instance.Helper.Translation.Get("RelicData.313.4"),
+                    Mod.instance.Helper.Translation.Get("RelicData.500.Waystone.1"),
+                    Mod.instance.Helper.Translation.Get("RelicData.500.Waystone.2"),
                 },
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.313.5"),
-            };
-
-            relics[IconData.relics.crow_hammer.ToString()] = new()
-            {
-                title = Mod.instance.Helper.Translation.Get("RelicData.630"),
-                relic = IconData.relics.crow_hammer,
-                line = relicsets.other,
-                description = Mod.instance.Helper.Translation.Get("RelicData.633"),
-                details = new(){
-                    Mod.instance.Helper.Translation.Get("RelicData.635"),
-                    Mod.instance.Helper.Translation.Get("RelicData.636"),
-                },
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.638"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.500.Waystone.3"),
             };
 
             relics[IconData.relics.wayfinder_key.ToString()] = new()
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.311.1"),
                 relic = IconData.relics.wayfinder_key,
-                line = relicsets.other,
+                line = relicsets.wayfinder,
                 function = true,
                 description = Mod.instance.Helper.Translation.Get("RelicData.311.2"),
                 details = new()
@@ -1030,7 +221,7 @@ namespace StardewDruid.Data
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.312.1"),
                 relic = IconData.relics.wayfinder_glove,
-                line = relicsets.other,
+                line = relicsets.wayfinder,
                 function = true,
                 description = Mod.instance.Helper.Translation.Get("RelicData.312.2"),
                 details = new()
@@ -1046,7 +237,7 @@ namespace StardewDruid.Data
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.147"),
                 relic = IconData.relics.wayfinder_eye,
-                line = relicsets.other,
+                line = relicsets.wayfinder,
                 function = true,
                 description = Mod.instance.Helper.Translation.Get("RelicData.151"),
                 details = new()
@@ -1059,21 +250,165 @@ namespace StardewDruid.Data
             };
 
             // ====================================================================
-            // Monsterball Relics
+            // Druid Relics
 
-            relics[IconData.relics.monsterbadge.ToString()] = new()
+            relics[IconData.relics.druid_grimoire.ToString()] = new()
             {
-                title = Mod.instance.Helper.Translation.Get("RelicData.386.26"),
-                relic = IconData.relics.monsterbadge,
-                line = relicsets.monsterstones,
+                title = Mod.instance.Helper.Translation.Get("RelicData.500.grimoire.1"),
+                relic = IconData.relics.druid_grimoire,
+                line = relicsets.druid,
                 function = true,
-                description = Mod.instance.Helper.Translation.Get("RelicData.386.27"),
+                description = Mod.instance.Helper.Translation.Get("RelicData.500.grimoire.2"),
+                details = new(){
+                    Mod.instance.Helper.Translation.Get("RelicData.500.grimoire.3"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.500.grimoire.4"),
+            };
+
+            relics[IconData.relics.druid_runeboard.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.500.runeboard.1"),
+                relic = IconData.relics.druid_runeboard,
+                line = relicsets.druid,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.500.runeboard.2"),
+                details = new(){
+                    Mod.instance.Helper.Translation.Get("RelicData.500.runeboard.3"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.500.runeboard.4"),
+            };
+
+            relics[IconData.relics.druid_hammer.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.630"),
+                relic = IconData.relics.druid_hammer,
+                line = relicsets.druid,
+                description = Mod.instance.Helper.Translation.Get("RelicData.633"),
+                details = new(){
+                    Mod.instance.Helper.Translation.Get("RelicData.635"),
+                    Mod.instance.Helper.Translation.Get("RelicData.636"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.638"),
+            };
+
+            relics[IconData.relics.druid_dragonomicon.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.86"),
+                relic = IconData.relics.druid_dragonomicon,
+                line = relicsets.druid,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.90"),
+                details = new(){
+                    Mod.instance.Helper.Translation.Get("RelicData.715"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.91"),
+            };
+
+            relics[IconData.relics.druid_hieress.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.361.1"),
+                relic = IconData.relics.druid_hieress,
+                line = relicsets.druid,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.361.2"),
+                details = new(){
+                    Mod.instance.Helper.Translation.Get("RelicData.361.3"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.361.4"),
+            };
+
+            if (Context.IsMainPlayer)
+            {
+
+                relics[IconData.relics.druid_hieress.ToString()].details.Add(Mod.instance.Helper.Translation.Get("RelicData.361.5"));
+
+            }
+
+            // ====================================================================
+            // Herbalism Relics
+
+            relics[IconData.relics.herbalism_apothecary.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.500.herbalism_apothecary.1"),
+                relic = IconData.relics.herbalism_apothecary,
+                line = relicsets.herbalism,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.500.herbalism_apothecary.2"),
+                details = new(){
+                    Mod.instance.Helper.Translation.Get("RelicData.500.herbalism_apothecary.3"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.500.herbalism_apothecary.4"),
+            };
+
+            relics[IconData.relics.herbalism_mortar.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.186"),
+                relic = IconData.relics.herbalism_mortar,
+                line = relicsets.herbalism,
+                description = Mod.instance.Helper.Translation.Get("RelicData.189"),
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("RelicData.386.28"),
+                    Mod.instance.Helper.Translation.Get("RelicData.192"),
+                    Mod.instance.Helper.Translation.Get("RelicData.193")
                 },
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.386.29"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.195"),
             };
+
+            relics[IconData.relics.herbalism_pan.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.200"),
+                relic = IconData.relics.herbalism_pan,
+                line = relicsets.herbalism,
+                description = Mod.instance.Helper.Translation.Get("RelicData.203"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.206"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.208"),
+            };
+
+            relics[IconData.relics.herbalism_still.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.213"),
+                relic = IconData.relics.herbalism_still,
+                line = relicsets.herbalism,
+                description = Mod.instance.Helper.Translation.Get("RelicData.216"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.219"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.221"),
+            };
+
+            relics[IconData.relics.herbalism_crucible.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.226"),
+                relic = IconData.relics.herbalism_crucible,
+                line = relicsets.herbalism,
+                description = Mod.instance.Helper.Translation.Get("RelicData.229"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.232"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.234"),
+            };
+
+
+            relics[IconData.relics.herbalism_gauge.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.240"),
+                relic = IconData.relics.herbalism_gauge,
+                line = relicsets.herbalism,
+                description = Mod.instance.Helper.Translation.Get("RelicData.243"),
+                details = new()
+                {
+                    Mod.instance.Helper.Translation.Get("RelicData.246"),
+                },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.248"),
+            };
+
+            // ====================================================================
+            // Monsterball Relics
 
             relics[IconData.relics.monster_bat.ToString()] = new()
             {
@@ -1266,76 +601,6 @@ namespace StardewDruid.Data
                 heldup = Mod.instance.Helper.Translation.Get("RelicData.310.20"),
             };
 
-            // ====================================================================
-            // Herbalism Relics
-
-            relics[IconData.relics.herbalism_mortar.ToString()] = new()
-            {
-                title = Mod.instance.Helper.Translation.Get("RelicData.186"),
-                relic = IconData.relics.herbalism_mortar,
-                line = relicsets.herbalism,
-                description = Mod.instance.Helper.Translation.Get("RelicData.189"),
-                details = new()
-                {
-                    Mod.instance.Helper.Translation.Get("RelicData.192"),
-                    Mod.instance.Helper.Translation.Get("RelicData.193")
-                },
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.195"),
-            };
-
-            relics[IconData.relics.herbalism_pan.ToString()] = new()
-            {
-                title = Mod.instance.Helper.Translation.Get("RelicData.200"),
-                relic = IconData.relics.herbalism_pan,
-                line = relicsets.herbalism,
-                description = Mod.instance.Helper.Translation.Get("RelicData.203"),
-                details = new()
-                {
-                    Mod.instance.Helper.Translation.Get("RelicData.206"),
-                },
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.208"),
-            };
-
-            relics[IconData.relics.herbalism_still.ToString()] = new()
-            {
-                title = Mod.instance.Helper.Translation.Get("RelicData.213"),
-                relic = IconData.relics.herbalism_still,
-                line = relicsets.herbalism,
-                description = Mod.instance.Helper.Translation.Get("RelicData.216"),
-                details = new()
-                {
-                    Mod.instance.Helper.Translation.Get("RelicData.219"),
-                },
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.221"),
-            };
-
-            relics[IconData.relics.herbalism_crucible.ToString()] = new()
-            {
-                title = Mod.instance.Helper.Translation.Get("RelicData.226"),
-                relic = IconData.relics.herbalism_crucible,
-                line = relicsets.herbalism,
-                description = Mod.instance.Helper.Translation.Get("RelicData.229"),
-                details = new()
-                {
-                    Mod.instance.Helper.Translation.Get("RelicData.232"),
-                },
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.234"),
-            };
-
-
-            relics[IconData.relics.herbalism_gauge.ToString()] = new()
-            {
-                title = Mod.instance.Helper.Translation.Get("RelicData.240"),
-                relic = IconData.relics.herbalism_gauge,
-                line = relicsets.herbalism,
-                description = Mod.instance.Helper.Translation.Get("RelicData.243"),
-                details = new()
-                {
-                    Mod.instance.Helper.Translation.Get("RelicData.246"),
-                },
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.248"),
-            };
-
 
             // ====================================================================
             // Circle Runestones
@@ -1400,7 +665,7 @@ namespace StardewDruid.Data
             {
                 title = Mod.instance.Helper.Translation.Get("RelicData.351.1"),
                 relic = IconData.relics.runestones_alchemistry,
-                line = relicsets.other,
+                line = relicsets.runestones,
                 function = true,
                 description = Mod.instance.Helper.Translation.Get("RelicData.351.2"),
                 details = new()
@@ -1694,6 +959,32 @@ namespace StardewDruid.Data
 
             };
 
+            relics[IconData.relics.book_knight.ToString()] = new()
+            {
+                title = Mod.instance.Helper.Translation.Get("RelicData.343.4"),
+                relic = IconData.relics.book_knight,
+                line = relicsets.books,
+                function = true,
+                description = Mod.instance.Helper.Translation.Get("RelicData.343.5"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.343.6"),
+
+                narrative = new()
+                {
+
+                    Mod.instance.Helper.Translation.Get("RelicData.343.7"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.8"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.9"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.10"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.11"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.12"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.13"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.14"),
+                    Mod.instance.Helper.Translation.Get("RelicData.343.15"),
+
+                }
+
+            };
+
             // ====================================================================
             // Fates Relics
 
@@ -1834,51 +1125,26 @@ namespace StardewDruid.Data
             };
 
             // ====================================================================
-            // Testaments
+            // Shadowtin Relics
 
-            relics[IconData.relics.book_knight.ToString()] = new()
+            relics[IconData.relics.shadowtin_cell.ToString()] = new()
             {
-                title = Mod.instance.Helper.Translation.Get("RelicData.343.4"),
-                relic = IconData.relics.book_knight,
-                line = relicsets.testaments,
+                title = Mod.instance.Helper.Translation.Get("RelicData.172"),
+                relic = IconData.relics.shadowtin_cell,
+                line = relicsets.shadowtin,
                 function = true,
-                description = Mod.instance.Helper.Translation.Get("RelicData.343.5"),
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.343.6"),
-
-                narrative = new()
-                {
-
-                    Mod.instance.Helper.Translation.Get("RelicData.343.7"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.8"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.9"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.10"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.11"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.12"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.13"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.14"),
-                    Mod.instance.Helper.Translation.Get("RelicData.343.15"),
-
-                }
-
+                description = Mod.instance.Helper.Translation.Get("RelicData.177"),
+                details = new() { Mod.instance.Helper.Translation.Get("RelicData.711"), },
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.178"),
             };
 
-            // ====================================================================
-            // Stardew Druid
-
-            relics[IconData.relics.stardew_druid.ToString()] = new()
+            relics[IconData.relics.shadowtin_bazooka.ToString()] = new()
             {
-                title = Mod.instance.Helper.Translation.Get("RelicData.96"),
-                relic = IconData.relics.stardew_druid,
-                line = relicsets.druid,
-                description = Mod.instance.Helper.Translation.Get("RelicData.99"),
-                details = new()
-                {
-                    Mod.instance.Helper.Translation.Get("RelicData.102") +
-                    Mod.instance.Helper.Translation.Get("RelicData.103") +
-                    Mod.instance.Helper.Translation.Get("RelicData.104"),
-                    Mod.instance.Helper.Translation.Get("RelicData.105"),
-                },
-                heldup = Mod.instance.Helper.Translation.Get("RelicData.107"),
+                title = Mod.instance.Helper.Translation.Get("RelicData.500.bazooka.1"),
+                relic = IconData.relics.shadowtin_bazooka,
+                line = relicsets.shadowtin,
+                description = Mod.instance.Helper.Translation.Get("RelicData.500.bazooka.2"),
+                heldup = Mod.instance.Helper.Translation.Get("RelicData.500.bazooka.3"),
             };
 
             return relics;
@@ -1898,7 +1164,7 @@ namespace StardewDruid.Data
 
         public IconData.relics relic = IconData.relics.none;
 
-        public RelicData.relicsets line = RelicData.relicsets.none;
+        public RelicHandle.relicsets line = RelicHandle.relicsets.none;
 
         public bool function;
 
@@ -1917,5 +1183,6 @@ namespace StardewDruid.Data
         public List<string> narrative;
 
     }
+
 
 }

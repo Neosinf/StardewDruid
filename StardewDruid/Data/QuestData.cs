@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Media;
 using StardewDruid.Cast;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Dialogue;
+using StardewDruid.Event;
 using StardewDruid.Event.Relics;
 using StardewDruid.Handle;
 using StardewDruid.Location;
@@ -52,23 +53,24 @@ namespace StardewDruid.Data
 
                 give = Quest.questGivers.none,
 
-                trigger = true,
+                local = true,
+
+                //trigger = true,
 
                 triggerLocation = LocationHandle.druid_cavern_name,
 
-                triggerRite = Rite.Rites.none,
-
-                origin = new Vector2(7.5f, 9) * 64,
+                //triggerRite = Rite.Rites.none,
 
                 // -----------------------------------------------
 
-                title = Mod.instance.Helper.Translation.Get("QuestData.32"),
+                title = Mod.instance.Helper.Translation.Get("QuestData.500.ApproachEffigy.1"),
 
-                description = Mod.instance.Helper.Translation.Get("QuestData.34") +
-                    ReactionData.quotationMark + Mod.instance.Helper.Translation.Get("QuestData.35") +
-                    Mod.instance.Helper.Translation.Get("QuestData.36") + ReactionData.quotationMark,
+                description = Mod.instance.Helper.Translation.Get("QuestData.500.ApproachEffigy.2") +
+                    ReactionData.quotationMark + Mod.instance.Helper.Translation.Get("QuestData.500.ApproachEffigy.3") + ReactionData.quotationMark,
 
                 instruction = Mod.instance.Helper.Translation.Get("QuestData.38").Tokens(new { button = Mod.instance.Config.riteButtons.ToString() }),
+
+                notes = new() { Mod.instance.Helper.Translation.Get("QuestData.500.ApproachEffigy.4"), },
 
                 explanation = Mod.instance.Helper.Translation.Get("QuestData.41") +
                     Mod.instance.Helper.Translation.Get("QuestData.42") +
@@ -83,16 +85,16 @@ namespace StardewDruid.Data
             quests.Add(approachEffigy.name, approachEffigy);
 
             // =====================================================
-            // SWORD WEALD
+            // SQUIRE OF THE TWO KINGS
 
-            Quest swordWeald = new()
+            Quest squireWind = new()
             {
 
-                name = QuestHandle.swordWeald,
+                name = QuestHandle.squireWinds,
 
                 type = Quest.questTypes.sword,
 
-                icon = IconData.displays.weald,
+                icon = IconData.displays.winds,
 
                 // -----------------------------------------------
 
@@ -106,8 +108,6 @@ namespace StardewDruid.Data
 
                 triggerRite = Rite.Rites.none,
 
-                origin = new Vector2(19, 10) * 64,
-
                 // -----------------------------------------------
 
                 title = Mod.instance.Helper.Translation.Get("QuestData.81"),
@@ -117,7 +117,7 @@ namespace StardewDruid.Data
 
                 instruction = Mod.instance.Helper.Translation.Get("QuestData.86").Tokens(new { button = Mod.instance.Config.riteButtons.ToString() }),
 
-                explanation = Mod.instance.Helper.Translation.Get("QuestData.89"),
+                explanation = Mod.instance.Helper.Translation.Get("QuestData.500.TwoKings.1"),
 
                 progression = null,
 
@@ -140,29 +140,11 @@ namespace StardewDruid.Data
                     }
                 },
 
-                after = new()
-                {
-                    [CharacterHandle.characters.Effigy] = new()
-                    {
-                        prompt = true,
-                        intro = Mod.instance.Helper.Translation.Get("QuestData.116"),
-                        responses = new()
-                        {
-                            Mod.instance.Helper.Translation.Get("QuestData.119"),
-                            Mod.instance.Helper.Translation.Get("QuestData.120"),
-                            Mod.instance.Helper.Translation.Get("QuestData.121")
-                        },
-                        answers = new(){
-                            Mod.instance.Helper.Translation.Get("QuestData.124"),
-                        }
-                    }
-                },
-
                 // -----------------------------------------------
 
             };
 
-            quests.Add(swordWeald.name, swordWeald);
+            quests.Add(squireWind.name, squireWind);
 
             // =====================================================
             // WEALD LESSONS
@@ -182,7 +164,7 @@ namespace StardewDruid.Data
 
                 description = Mod.instance.Helper.Translation.Get("QuestData.187"),
 
-                instruction = Mod.instance.Helper.Translation.Get("QuestData.189").Tokens(new { button = Mod.instance.Config.effectsButtons.ToString() }),
+                instruction = Mod.instance.Helper.Translation.Get("QuestData.189").Tokens(new { button = Mod.instance.Config.skillsButtons.ToString() }),
 
                 progression = Mod.instance.Helper.Translation.Get("QuestData.192"),
 
@@ -216,7 +198,7 @@ namespace StardewDruid.Data
 
                 name = QuestHandle.herbalism,
 
-                icon = IconData.displays.chaos,
+                icon = IconData.displays.druid,
 
                 type = Quest.questTypes.miscellaneous,
 
@@ -487,7 +469,7 @@ namespace StardewDruid.Data
 
                 name = QuestHandle.chargeUps,
 
-                icon = IconData.displays.chaos,
+                icon = IconData.displays.druid,
 
                 type = Quest.questTypes.lesson,
 
@@ -596,11 +578,11 @@ namespace StardewDruid.Data
                         intro = Mod.instance.Helper.Translation.Get("QuestData.455"),
                         responses = new()
                         {
-                            Mod.instance.Helper.Translation.Get("QuestData.458"),
-                            Mod.instance.Helper.Translation.Get("QuestData.459")
+                            [0] = Mod.instance.Helper.Translation.Get("QuestData.458"),
+                            [1] = Mod.instance.Helper.Translation.Get("QuestData.459")
                         },
                         answers = new(){
-                            Mod.instance.Helper.Translation.Get("QuestData.462"),
+                            [0] = Mod.instance.Helper.Translation.Get("QuestData.462"),
                         }
                     }
                 },
@@ -735,12 +717,12 @@ namespace StardewDruid.Data
                         intro = Mod.instance.Helper.Translation.Get("QuestData.581"),
                         responses = new()
                         {
-                            Mod.instance.Helper.Translation.Get("QuestData.584"),
-                            Mod.instance.Helper.Translation.Get("QuestData.585"),
+                            [0] = Mod.instance.Helper.Translation.Get("QuestData.584"),
+                            [1] = Mod.instance.Helper.Translation.Get("QuestData.585"),
                         },
                         answers = new()
                         {
-                            Mod.instance.Helper.Translation.Get("QuestData.589"),
+                            [0] = Mod.instance.Helper.Translation.Get("QuestData.589"),
                         },
                     }
                 },
@@ -1080,7 +1062,7 @@ namespace StardewDruid.Data
                 //give = Quest.questGivers.none,
                 give = Quest.questGivers.dialogue,
 
-                trigger = true,
+                local = true,
 
                 triggerLocation = LocationHandle.druid_graveyard_name,
 
@@ -1267,12 +1249,12 @@ namespace StardewDruid.Data
                         intro = Mod.instance.Helper.Translation.Get("QuestData.1048"),
                         responses = new()
                         {
-                            Mod.instance.Helper.Translation.Get("QuestData.1051"),
-                            Mod.instance.Helper.Translation.Get("QuestData.1052"),
+                            [0] = Mod.instance.Helper.Translation.Get("QuestData.1051"),
+                            [1] = Mod.instance.Helper.Translation.Get("QuestData.1052"),
                         },
                         answers = new()
                         {
-                            Mod.instance.Helper.Translation.Get("QuestData.1056"),
+                            [0] = Mod.instance.Helper.Translation.Get("QuestData.1056"),
                         }
 
                     }
@@ -1290,7 +1272,7 @@ namespace StardewDruid.Data
 
                 name = QuestHandle.orders,
 
-                icon = IconData.displays.chaos,
+                icon = IconData.displays.druid,
 
                 type = Quest.questTypes.miscellaneous,
 
@@ -1657,7 +1639,7 @@ namespace StardewDruid.Data
 
                 give = Quest.questGivers.dialogue,
 
-                trigger = true,
+                local = true,
 
                 triggerLocation = LocationHandle.druid_lair_name,
 
@@ -1826,7 +1808,7 @@ namespace StardewDruid.Data
 
                 name = QuestHandle.distillery,
 
-                icon = IconData.displays.chaos,
+                icon = IconData.displays.druid,
 
                 type = Quest.questTypes.miscellaneous,
 
@@ -2194,12 +2176,12 @@ namespace StardewDruid.Data
                         Mod.instance.Helper.Translation.Get("QuestData.1811"),
                         responses = new()
                         {
-                            Mod.instance.Helper.Translation.Get("QuestData.1814"),
-                            Mod.instance.Helper.Translation.Get("QuestData.1815")
+                            [0] = Mod.instance.Helper.Translation.Get("QuestData.1814"),
+                            [1] = Mod.instance.Helper.Translation.Get("QuestData.1815")
                         },
                         answers = new()
                         {
-                            Mod.instance.Helper.Translation.Get("QuestData.1819") +
+                            [0] = Mod.instance.Helper.Translation.Get("QuestData.1819") +
                             Mod.instance.Helper.Translation.Get("QuestData.1820"),
                         },
                         questContext = 1
@@ -2319,7 +2301,7 @@ namespace StardewDruid.Data
 
                 give = Quest.questGivers.dialogue,
 
-                trigger = true,
+                local = true,
 
                 triggerLocation = LocationHandle.druid_tomb_name,
 
@@ -2373,11 +2355,11 @@ namespace StardewDruid.Data
                         intro = Mod.instance.Helper.Translation.Get("QuestData.1988"),
                         responses = new()
                         {
-                            Mod.instance.Helper.Translation.Get("QuestData.1991"),
-                            Mod.instance.Helper.Translation.Get("QuestData.1992"),
+                            [0] = Mod.instance.Helper.Translation.Get("QuestData.1991"),
+                            [1] = Mod.instance.Helper.Translation.Get("QuestData.1992"),
                         },
                         answers = new(){
-                            Mod.instance.Helper.Translation.Get("QuestData.1995") +
+                            [0] = Mod.instance.Helper.Translation.Get("QuestData.1995") +
                             Mod.instance.Helper.Translation.Get("QuestData.1996") +
                             Mod.instance.Helper.Translation.Get("QuestData.1997") +
                             Mod.instance.Helper.Translation.Get("QuestData.1998") +
@@ -2894,13 +2876,13 @@ namespace StardewDruid.Data
                         responses = new()
                         {
 
-                            Mod.instance.Helper.Translation.Get("QuestData.2432"),
-                            Mod.instance.Helper.Translation.Get("QuestData.2433"),
+                            [0] = Mod.instance.Helper.Translation.Get("QuestData.2432"),
+                            [1] = Mod.instance.Helper.Translation.Get("QuestData.2433"),
 
                         },
                         answers = new()
                         {
-                            Mod.instance.Helper.Translation.Get("QuestData.2438") +
+                            [0] = Mod.instance.Helper.Translation.Get("QuestData.2438") +
                             Mod.instance.Helper.Translation.Get("QuestData.2439") +
                             Mod.instance.Helper.Translation.Get("QuestData.2440") +
                             Mod.instance.Helper.Translation.Get("QuestData.2441") +
@@ -2988,9 +2970,9 @@ namespace StardewDruid.Data
             Quest bonesOne = new()
             {
 
-                name = QuestHandle.bonesOne,
+                name = QuestHandle.witchOne,
 
-                icon = IconData.displays.bones,
+                icon = IconData.displays.witch,
 
                 type = Quest.questTypes.lesson,
 
@@ -3039,9 +3021,9 @@ namespace StardewDruid.Data
             Quest bonesTwo = new()
             {
 
-                name = QuestHandle.bonesTwo,
+                name = QuestHandle.witchTwo,
 
-                icon = IconData.displays.bones,
+                icon = IconData.displays.witch,
 
                 type = Quest.questTypes.lesson,
 
@@ -3083,9 +3065,9 @@ namespace StardewDruid.Data
             Quest bonesThree = new()
             {
 
-                name = QuestHandle.bonesThree,
+                name = QuestHandle.witchThree,
 
-                icon = IconData.displays.bones,
+                icon = IconData.displays.witch,
 
                 type = Quest.questTypes.lesson,
 
@@ -3146,7 +3128,7 @@ namespace StardewDruid.Data
 
                 triggerLocation = LocationHandle.druid_lair_name,
 
-                triggerRite = Rite.Rites.bones,
+                triggerRite = Rite.Rites.witch,
 
                 origin = new Vector2(27, 18) * 64,
 
@@ -3300,7 +3282,7 @@ namespace StardewDruid.Data
 
                 name = QuestHandle.challengeBones,
 
-                icon = IconData.displays.bones,
+                icon = IconData.displays.witch,
 
                 type = Quest.questTypes.challenge,
 
@@ -3526,7 +3508,7 @@ namespace StardewDruid.Data
 
                 name = QuestHandle.heirsTwo,
 
-                icon = IconData.displays.chaos,
+                icon = IconData.displays.druid,
 
                 type = Quest.questTypes.lesson,
 
@@ -3616,10 +3598,18 @@ namespace StardewDruid.Data
 
         public EffectsData.EffectPage effect = EffectsData.EffectPage.none;
 
+        //public EventHandle.abortBehaviour pauseAbort = EventHandle.abortBehaviour.stall;
+
+        public EventHandle.abortBehaviour locationAbort = EventHandle.abortBehaviour.reset;
+
+        public EventHandle.abortBehaviour healthAbort = EventHandle.abortBehaviour.reset;
+
         // -----------------------------------------------
         // trigger
 
         public bool trigger;
+
+        public bool local;
 
         public string triggerLocation;
 

@@ -44,17 +44,25 @@ namespace StardewDruid.Cast.Ether
         public Crate()
         {
 
-            activeLimit = -1;
+            
 
             mainEvent = true;
 
         }
 
-        public override void TriggerField()
+        public override void TriggerCreate()
         {
 
-            eventRenders.Add(new(eventId, location.Name, origin, IconData.decorations.ether));
+            triggerActive = true;
 
+            Mod.instance.triggerRegister[eventId] = true;
+
+            EventRender triggerField = new(eventId, location.Name, origin, IconData.ritecircles.ether);
+
+            eventRenders.Add("crate",triggerField);
+
+            location = Game1.player.currentLocation;
+            
         }
 
         public override bool TriggerCheck()
@@ -84,8 +92,6 @@ namespace StardewDruid.Cast.Ether
 
                 }
 
-                triggerAbort = true;
-
                 location = Game1.player.currentLocation;
 
                 ReleaseReward();
@@ -104,8 +110,6 @@ namespace StardewDruid.Cast.Ether
         {
             
             StardewDruid.Monster.Boss thief;
-
-            activeLimit = 60;
 
             switch (crateTerrain)
             {
@@ -293,13 +297,13 @@ namespace StardewDruid.Cast.Ether
 
                 default:
 
-                    EventBar(StringData.Strings(StringData.stringkeys.treasureHunt), 0);
+                    ProgressBar(StringData.Strings(StringData.stringkeys.treasureHunt), 0);
 
                     break;
 
                 case 2:
 
-                    EventBar(StringData.Strings(StringData.stringkeys.treasureGuardian), 0);
+                    ProgressBar(StringData.Strings(StringData.stringkeys.treasureGuardian), 0);
 
                     break;
 
@@ -373,6 +377,15 @@ namespace StardewDruid.Cast.Ether
         public bool ContestInterval()
         {
 
+            if(activeCounter >= activeLimit)
+            {
+
+                eventComplete = true;
+
+                return false;
+
+            }
+
             if (bosses.Count == 0)
             {
 
@@ -443,12 +456,12 @@ namespace StardewDruid.Cast.Ether
         public void FishRelic()
         {
 
-            IconData.relics fishRelic = Mod.instance.relicsData.RelicMistsLocations();
+            IconData.relics fishRelic = Mod.instance.relicHandle.RelicMistsLocations();
 
             if (fishRelic != IconData.relics.none)
             {
 
-                if (!RelicData.HasRelic(fishRelic))
+                if (!RelicHandle.HasRelic(fishRelic))
                 {
 
                     ThrowHandle throwRelic = new(Game1.player, origin, fishRelic);
@@ -531,12 +544,12 @@ namespace StardewDruid.Cast.Ether
 
             // relics
 
-            IconData.relics bookRelic = Mod.instance.relicsData.RelicBooksLocations();
+            IconData.relics bookRelic = Mod.instance.relicHandle.RelicBooksLocations();
 
             if (bookRelic != IconData.relics.none)
             {
 
-                if (!RelicData.HasRelic(bookRelic))
+                if (!RelicHandle.HasRelic(bookRelic))
                 {
 
                     ThrowHandle throwRelic = new(Game1.player, origin, bookRelic);

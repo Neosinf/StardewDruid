@@ -126,13 +126,6 @@ namespace StardewDruid.Event.Scene
 
             activeLimit = 600;
 
-        }
-
-        public override void EventSetup(string id)
-        {
-
-            base.EventSetup(id);
-
             origin = eventVectors[0] * 64;
 
         }
@@ -164,16 +157,12 @@ namespace StardewDruid.Event.Scene
             }
 
         }
-        
-        public override bool AttemptReset()
+        public override void OnLocationAbort()
         {
 
-            Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
-
-            return false;
+            Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
 
         }
-
 
         public override void EventInterval()
         {
@@ -325,7 +314,7 @@ namespace StardewDruid.Event.Scene
 
                 case 13:
 
-                    ThrowHandle throwDwarfRelic = new(companions[1].Position, companions[0].Position, IconData.relics.wayfinder_dwarf);
+                    ThrowHandle throwDwarfRelic = new(companions[1].Position, companions[0].Position, IconData.relics.shadowtin_cell);
 
                     throwDwarfRelic.register();
 
@@ -821,7 +810,7 @@ namespace StardewDruid.Event.Scene
 
                     voices[6] = bosses[0];
 
-                    EventDisplay bossBar = BossBar(0, 6);
+                    EventBar bossBar = BossBar(0, 6);
 
                     bossBar.colour = Microsoft.Xna.Framework.Color.Purple;
 
@@ -1103,7 +1092,7 @@ namespace StardewDruid.Event.Scene
 
                 case 500:
 
-                    ThrowHandle throwRelic = new(Game1.player, companions[0].Position, IconData.relics.wayfinder_dwarf);
+                    ThrowHandle throwRelic = new(Game1.player, companions[0].Position, IconData.relics.shadowtin_cell);
 
                     throwRelic.register();
 
@@ -1138,7 +1127,7 @@ namespace StardewDruid.Event.Scene
                 //case 507:
                 case 506:
 
-                    Mod.instance.iconData.DecorativeIndicator(location, eventVectors[32] * 64, IconData.decorations.ether, 3f, new() { interval = 10000, });
+                    Mod.instance.iconData.RiteCircle(location, eventVectors[32] * 64, IconData.ritecircles.ether, 3f, new() { interval = 10000, });
 
                     DialogueCueWithFeeling(501);
 
@@ -1161,7 +1150,7 @@ namespace StardewDruid.Event.Scene
 
                 case 513:
 
-                    Rite.CastTransform();
+                    Mod.instance.rite.ChannelEther();
 
                     StardewDruid.Cast.Ether.Dragon dragon = (Mod.instance.eventRegister[Rite.eventTransform] as Transform).avatar;
 
@@ -1191,12 +1180,6 @@ namespace StardewDruid.Event.Scene
 
                         instant = true,
 
-                        power = 4,
-
-                        terrain = 8,
-
-                        explosion = 8,
-
                         display = IconData.impacts.dustimpact,
 
                         sound = SpellHandle.Sounds.flameSpellHit
@@ -1209,12 +1192,6 @@ namespace StardewDruid.Event.Scene
                         type = SpellHandle.Spells.explode,
 
                         scheme = IconData.schemes.ether,
-
-                        power = 4,
-
-                        terrain = 8,
-
-                        explosion = 8,
 
                         display = IconData.impacts.shockwave,
 
@@ -1235,11 +1212,11 @@ namespace StardewDruid.Event.Scene
 
                     EventRender gelatinBone = new("gelatinBone", location.Name, eventVectors[32] * 64 + new Vector2(32), IconData.relics.skull_gelatin) { layer = 1f };
 
-                    eventRenders.Add(gelatinBone);
+                    eventRenders.Add("gelatinBone", gelatinBone);
 
                     EventRender cannoliBone = new("cannoliBone", location.Name, eventVectors[32] * 64 + new Vector2(96,32), IconData.relics.skull_cannoli) { layer = 1f };
 
-                    eventRenders.Add(cannoliBone);
+                    eventRenders.Add("cannoliBone", cannoliBone);
                     break;
 
                 case 517:
@@ -1428,7 +1405,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCueWithFeeling(613);
 
-                    ThrowHandle throwMap = new(companions[0].Position, companions[7].Position, IconData.relics.book_chart);
+                    ThrowHandle throwMap = new(companions[0].Position, companions[7].Position, IconData.relics.shadowtin_chart);
 
                     throwMap.register();
 
@@ -1484,7 +1461,7 @@ namespace StardewDruid.Event.Scene
 
                 case 655:
 
-                    ThrowHandle throwBazooka = new(companions[1].Position, companions[0].Position, IconData.relics.dwarven_bazooka);
+                    ThrowHandle throwBazooka = new(companions[1].Position, companions[0].Position, IconData.relics.shadowtin_bazooka);
 
                     throwBazooka.register();
 

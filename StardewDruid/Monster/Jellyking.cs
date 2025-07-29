@@ -80,7 +80,7 @@ namespace StardewDruid.Monster
             {
                 displayRadius = (int)spriteScale,
 
-                factor = (int)spriteScale - 1,
+                displayFactor = (int)spriteScale - 1,
 
                 type = SpellHandle.Spells.missile,
 

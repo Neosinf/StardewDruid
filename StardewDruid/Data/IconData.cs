@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using xTile.Dimensions;
+using xTile.Layers;
 
 namespace StardewDruid.Data
 {
@@ -30,28 +31,33 @@ namespace StardewDruid.Data
         {
             none,
 
+            winds1,
+            winds2,
+            winds3,
+
             weald,
             mists,
             stars,
             fates,
 
-            wealdCharge,
-            mistsCharge,
-            starsCharge,
-            fatesCharge,
+            empty,
+            empty1,
+            empty2,
+            whisk,
 
             scope,
             death,
             shadow,
             target,
 
-            divineCharge,
+            divine,
             feathers,
-            bonesCharge,
 
         }
 
         public Texture2D cursorTexture;
+
+        public Texture2D shadowTexture;
 
         public enum displays
         {
@@ -62,7 +68,7 @@ namespace StardewDruid.Data
             stars,
             fates,
             ether,
-            chaos,
+            druid,
 
             effigy,
             revenant,
@@ -79,7 +85,7 @@ namespace StardewDruid.Data
             complete,
 
             quest,
-            effect,
+            skills,
             relic,
             herbalism,
             lore,
@@ -99,7 +105,7 @@ namespace StardewDruid.Data
             replay,
             flag,
 
-            bones,
+            witch,
             skip,
             save,
             aldebaran,
@@ -116,7 +122,7 @@ namespace StardewDruid.Data
             vitality,
             strength,
             speed,
-            omens,
+            trophies,
             axe,
             pickaxe,
             
@@ -125,51 +131,61 @@ namespace StardewDruid.Data
             fatigue,
             fullheart,
             halfheart,
-            chargeweald,
+            sword,
 
             chargemists,
             chargestars,
             chargefates,
-            chargebones,
+            chargewitch,
             tree,
+            winds,
+
+            omens,
+            alchemy,
+            effects,
+            lunchbox,
+            voide,
 
         }
 
         public Texture2D displayTexture;
 
-        public enum decorations
+        public enum ritecircles
         {
             none,
+            druid,
+            winds,
             weald,
             mists,
             stars,
+            voide,
             fates,
             ether,
-            bones,
+            witch,
 
         }
 
-        public Dictionary<Rite.Rites, decorations> riteDecorations = new()
+        public Dictionary<Rite.Rites, ritecircles> riteDecorations = new()
         {
 
-            [Rite.Rites.weald] = decorations.weald,
+            [Rite.Rites.weald] = ritecircles.weald,
 
-            [Rite.Rites.mists] = decorations.mists,
+            [Rite.Rites.mists] = ritecircles.mists,
 
-            [Rite.Rites.stars] = decorations.stars,
+            [Rite.Rites.stars] = ritecircles.stars,
 
-            [Rite.Rites.fates] = decorations.fates,
+            [Rite.Rites.fates] = ritecircles.fates,
 
-            [Rite.Rites.ether] = decorations.ether,
+            [Rite.Rites.ether] = ritecircles.ether,
 
-            [Rite.Rites.bones] = decorations.bones,
+            [Rite.Rites.witch] = ritecircles.witch,
 
         };
 
         public Dictionary<Rite.Rites, displays> riteDisplays = new()
         {
 
-            [Rite.Rites.none] = displays.chaos,
+            [Rite.Rites.none] = displays.druid,
 
             [Rite.Rites.weald] = displays.weald,
 
@@ -181,11 +197,11 @@ namespace StardewDruid.Data
 
             [Rite.Rites.ether] = displays.ether,
 
-            [Rite.Rites.bones] = displays.bones,
+            [Rite.Rites.witch] = displays.witch,
 
         };
 
-        public Texture2D decorationTexture;
+        public Texture2D ritecircleTexture;
 
         public enum impacts
         {
@@ -202,15 +218,15 @@ namespace StardewDruid.Data
             sparknode,
             clouds,
             puff,
-            empty1,
+            pop,
             skull,
 
             plume,
             steam,
             smoke,
             love,
-            sparkbang,
-            crit,
+            slashes,
+            critical,
 
             splat,
             splatter,
@@ -218,6 +234,13 @@ namespace StardewDruid.Data
             splattertwo,
             bomb,
             holy,
+
+            slash,
+            wave,
+            drops,
+            dust,
+            empty1,
+            empty2,
 
             supree,
             dustimpact,
@@ -232,6 +255,7 @@ namespace StardewDruid.Data
             deathbomb,
             grasp,
             roots,
+            megaslash,
 
             aard,
             igni,
@@ -248,6 +272,8 @@ namespace StardewDruid.Data
         public Texture2D impactsTextureThree;
 
         public Texture2D impactsTextureFour;
+
+        public Texture2D impactsTextureFive;
 
         public Texture2D swirlsTexture;
 
@@ -336,40 +362,47 @@ namespace StardewDruid.Data
         {
             none,
 
-            effigy_crest,
-            jester_dice,
-            shadowtin_tome,
-            dragon_form,
-            blackfeather_glove,
-            heiress_gift,
+            companion_crest,
+            companion_badge,
+            companion_dice,
+            companion_tome,
+            companion_glove,
+            stardew_druid,
 
-            wayfinder_pot,
-            wayfinder_censer,
-            wayfinder_lantern,
-            wayfinder_water,
-            wayfinder_ceremonial,
-            wayfinder_dwarf,
+            lantern_pot,
+            lantern_censer,
+            lantern_guardian,
+            lantern_water,
+            lantern_ceremony,
+            blank_lantern_6,
 
+            wayfinder_stone,
+            wayfinder_key,
+            wayfinder_glove,
+            wayfinder_eye,
+            blank_wayfinder_5,
+            blank_wayfinder_6,
+
+            herbalism_apothecary,
             herbalism_mortar,
             herbalism_pan,
             herbalism_still,
             herbalism_crucible,
             herbalism_gauge,
-            dwarven_bazooka,
 
-            wayfinder_stone,
-            crow_hammer,
-            wayfinder_key,
-            wayfinder_glove,
-            wayfinder_eye,
-            stardew_druid,
+            druid_grimoire,
+            druid_runeboard,
+            druid_hammer,
+            druid_dragonomicon,
+            druid_hieress,
+            blank_druid_6,
 
             tactical_discombobulator,
             tactical_mask,
             tactical_cell,
             tactical_lunchbox,
             tactical_peppermint,
-            tactical_6,
+            blank_tactical_6,
 
             runestones_spring,
             runestones_farm,
@@ -389,8 +422,8 @@ namespace StardewDruid.Data
             book_letters,
             book_manual, 
             book_druid, 
-            book_chart,
             book_annal,
+            book_knight,
 
             box_measurer,
             box_mortician,
@@ -413,19 +446,12 @@ namespace StardewDruid.Data
             restore_4,
             restore_5,
 
-            book_knight,
-            testament_1,
-            testament_2,
-            testament_3,
-            testament_4,
-            testament_5,
-
-            monsterbadge,
             monster_bat,
             monster_slime,
             monster_spirit,
             monster_ghost,
             monster_serpent,
+            monster_six,
 
             crest_church,
             crest_dwarf,
@@ -433,6 +459,20 @@ namespace StardewDruid.Data
             crest_smuggler,
             crest_4,
             crest_5,
+
+            shadowtin_cell,
+            shadowtin_bazooka,
+            shadowtin_chart,
+            shadowtin_4,
+            shadowtin_5,
+            shadowtin_6,
+
+            skills_druid,
+            skills_alchemy,
+            skills_industry,
+            skills_community,
+            skills_curiosity,
+            skills_6,
 
         }
 
@@ -602,6 +642,8 @@ namespace StardewDruid.Data
 
         public Texture2D workshopTexture;
 
+        public Texture2D masteryTexture;
+
         public enum warps
         {
 
@@ -663,12 +705,13 @@ namespace StardewDruid.Data
         {
             none,
 
+            winds,
             weald,
             mists,
             stars,
             fates,
             ether,
-            bones,
+            witch,
 
             death,
             golden,
@@ -704,12 +747,13 @@ namespace StardewDruid.Data
         {
             [schemes.none] = Microsoft.Xna.Framework.Color.White,
 
+            [schemes.winds] = new(96, 116, 130),
             [schemes.weald] =  Microsoft.Xna.Framework.Color.Green,
             [schemes.mists] = new(75, 138, 187),
             [schemes.stars] =  new(231, 102, 84),
             [schemes.fates] = new(119, 75, 131),
             [schemes.ether] = new(13, 114, 185),
-            [schemes.bones] = new(81, 115, 131),
+            [schemes.witch] = new(81, 115, 131),
 
             [schemes.death] = new(119, 201, 177),
             [schemes.golden] = new(251, 201, 38),
@@ -749,7 +793,7 @@ namespace StardewDruid.Data
             [schemes.stars] = new() { new(255, 230, 166), new(255, 173, 84), new(231, 102, 84), },
             [schemes.fates] = new() { new(119, 75, 131), new(59, 55, 100), new(37, 34, 74), new(236, 118, 124), },
             [schemes.ether] = new() { new(111, 203, 220), new(84, 163, 218), new(13, 114, 185), },
-            [schemes.bones] = new() { new(81, 115, 131), new(51, 85, 101), new(21, 55, 71), },
+            [schemes.witch] = new() { new(81, 115, 131), new(51, 85, 101), new(21, 55, 71), },
             
 
             [schemes.death] = new() { new(109, 175, 156), new(119, 201, 177),  new(162, 216, 202), },
@@ -764,9 +808,11 @@ namespace StardewDruid.Data
 
             cursorTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Cursors.png"));
 
+            shadowTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Shadow.png"));
+
             displayTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Displays.png"));
 
-            decorationTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Decorations.png"));
+            ritecircleTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "RiteCircles.png"));
 
             emberTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Embers.png"));
 
@@ -777,6 +823,8 @@ namespace StardewDruid.Data
             impactsTextureThree = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ImpactsThree.png"));
 
             impactsTextureFour = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ImpactsFour.png"));
+
+            impactsTextureFive = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "ImpactsFive.png"));
 
             swirlsTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Swirl.png"));
 
@@ -922,8 +970,7 @@ namespace StardewDruid.Data
 
             hatTexture = Mod.instance.Helper.ModContent.Load<Texture2D>(Path.Combine("Images", "Hats.png"));
 
-            shadowRectangle = CursorRectangle(cursors.shadow);
-
+            shadowRectangle = new Microsoft.Xna.Framework.Rectangle(0, 0, 32, 32);
 
         }
 
@@ -1035,14 +1082,32 @@ namespace StardewDruid.Data
 
         }
 
-        public static Microsoft.Xna.Framework.Rectangle CursorRectangle(cursors id)
+        public static ritecircles SchemeToCircle(schemes scheme)
+        {
+
+            switch (scheme)
+            {
+                default: return ritecircles.druid;
+
+                case schemes.winds:
+
+                    return ritecircles.winds;
+
+                case schemes.weald:
+
+                    return ritecircles.weald;
+            }
+
+        }
+
+        public static Microsoft.Xna.Framework.Rectangle CursorRectangle(cursors id, int frame = 0)
         {
 
             if (id == cursors.none) { return new(); }
 
             int slot = (int)id - 1;
 
-            return new(slot % 4 * 48, slot / 4 * 48, 48, 48);
+            return new(frame * 24, slot * 24, 24, 24);
 
 
         }
@@ -1050,7 +1115,7 @@ namespace StardewDruid.Data
         public TemporaryAnimatedSprite CursorIndicator(GameLocation location, Vector2 origin, cursors cursorId, CursorAdditional additional)
         {
 
-            Vector2 originOffset = origin + new Vector2(32f, 32f) - new Vector2(24 * additional.scale, 24 * additional.scale);
+            Vector2 originOffset = origin - new Vector2(12 * additional.scale, 12 * additional.scale);
 
             Microsoft.Xna.Framework.Rectangle cursorRect = CursorRectangle(cursorId);
 
@@ -1102,12 +1167,12 @@ namespace StardewDruid.Data
 
             };
 
-            if (additional.rotation > 0)
+            /*if (additional.rotation > 0)
             {
 
                 animation.rotationChange = (float)(Math.PI / additional.rotation);
 
-            }
+            }*/
 
             location.temporarySprites.Add(animation);
 
@@ -1169,7 +1234,7 @@ namespace StardewDruid.Data
 
                 case Quest.questTypes.lesson:
 
-                    return DisplayRectangle(displays.effect);
+                    return DisplayRectangle(displays.skills);
 
                 case Quest.questTypes.miscellaneous:
 
@@ -1183,69 +1248,93 @@ namespace StardewDruid.Data
 
         }
 
-        public static Microsoft.Xna.Framework.Rectangle DecorativeRectangle(decorations id)
+        public static Microsoft.Xna.Framework.Rectangle RiteRectangle(ritecircles id)
         {
 
-            if (id == decorations.none) { return new(); }
+            if (id == ritecircles.none) { return new(); }
 
             int slot = Convert.ToInt32(id) - 1;
 
-            return new(slot * 64, 0, 64, 64);
+            return new(0, slot * 64, 80, 64);
 
         }
 
-        public TemporaryAnimatedSprite DecorativeIndicator(GameLocation location, Vector2 origin, decorations decorationId, float scale, DecorativeAdditional additional)
+        public TemporaryAnimatedSprite RiteCircle(ritecircles circleId)
         {
 
-            Vector2 originOffset = origin + new Vector2(32f, 32f) - (new Vector2(32f, 32f) * scale);
+            return RiteCircle(Game1.player.currentLocation, Game1.player.Position + new Vector2(32), circleId, 4f, new() { interval = 2000, loops = 1, fade = 0.0005f});
 
-            Microsoft.Xna.Framework.Rectangle rect = DecorativeRectangle(decorationId);
+        }
 
-            float interval = additional.interval;
+        public TemporaryAnimatedSprite RiteCircle(GameLocation location, Vector2 origin, ritecircles circleId, float scale, CircleAdditional additional)
+        {
 
-            float rotation = 0;
+            Vector2 originOffset = origin - (new Vector2(40f, 32f) * scale);
 
-            if (additional.rotation > 0)
+            Microsoft.Xna.Framework.Rectangle rect = RiteRectangle(circleId);
+
+            if(additional.layer < 0f)
             {
 
-                rotation = (float)(Math.PI / additional.rotation);
+                additional.layer = (originOffset.Y - 32) / 10000;
 
             }
 
-            float alpha = additional.alpha;
-
-            int delay = additional.delay;
-
-            int loops = additional.loops;
-
-            float layer = (originOffset.Y - 32) / 10000;
-
-            TemporaryAnimatedSprite animation = new(0, interval, 1, loops, originOffset, false, false)
+            TemporaryAnimatedSprite animation = new(0, additional.interval, 1, additional.loops, originOffset, false, false)
             {
 
                 sourceRect = rect,
 
                 sourceRectStartingPos = new Vector2(rect.X, rect.Y),
 
-                texture = decorationTexture,
+                texture = ritecircleTexture,
 
                 scale = scale,
 
-                timeBasedMotion = true,
-
-                layerDepth = layer,
-
-                rotationChange = rotation,
+                layerDepth = additional.layer,
 
                 Parent = location,
 
-                alpha = alpha,
+                alpha = additional.alpha,
 
-                delayBeforeAnimationStart = delay,
+                alphaFade = additional.fade,
+
+                delayBeforeAnimationStart = additional.delay,
+
+                timeBasedMotion = true,
 
             };
 
             location.temporarySprites.Add(animation);
+
+            Microsoft.Xna.Framework.Rectangle recttwo = new(rect.X + 80,rect.Y,rect.Width,rect.Height);
+
+            TemporaryAnimatedSprite animationtwo = new(0, additional.interval, 1, additional.loops, originOffset, false, false)
+            {
+
+                sourceRect = recttwo,
+
+                sourceRectStartingPos = new Vector2(recttwo.X, recttwo.Y),
+
+                texture = ritecircleTexture,
+
+                scale = scale,
+
+                layerDepth = additional.layer,
+
+                Parent = location,
+
+                alpha = additional.alpha / 3,
+
+                alphaFade = additional.fade / 3,
+
+                delayBeforeAnimationStart = additional.delay,
+
+                timeBasedMotion = true,
+
+            };
+
+            location.temporarySprites.Add(animationtwo);
 
             return animation;
 
@@ -1303,38 +1392,28 @@ namespace StardewDruid.Data
                     break;
 
                 case impacts.sparknode:
-
-                    impact = impacts.boltnode;
+                case impacts.slashes:
+                case impacts.critical:
 
                     additional.flip = Mod.instance.randomIndex.NextBool();
 
-                    additional.interval = 50;
-
-                    additional.alpha = 1f;
-
                     additional.frames = 4;
 
-                    additional.frame = 4;//Mod.instance.randomIndex.Next(2) * 4;
+                    additional.frame = Mod.instance.randomIndex.Next(2) * 4;
 
-                    size = 4;
+                    additional.interval = 75;
 
-                    break;
-
-                case impacts.sparkbang:
-
-                    size = Math.Min(size, 3);
-
-                    additional.frame = 2;
-
-                    additional.layerOffset = 0.001f;
-
-                    additional.alpha = 0.75f;
+                    additional.alpha = 0.5f;
 
                     additional.color = SchemeColour(additional.scheme);
 
-                    CreateImpact(location, origin, impact, size, additional);
-                    
-                    return;
+                    break;
+
+                case impacts.drops:
+
+                    additional.alphaFade = 0.001f;
+
+                    break;
 
                 case impacts.skull:
 
@@ -1374,21 +1453,37 @@ namespace StardewDruid.Data
 
                     return;
 
-                case impacts.crit:
+                case impacts.megaslash:
 
-                    additional.interval = 70;
+                    additional.frames = 4;
+
+                    additional.frame = Mod.instance.randomIndex.Next(2) == 0 ? 0 : 4;
+
+                    additional.flip = Mod.instance.randomIndex.Next(2) == 0;
+
+                    additional.interval = 75;
 
                     additional.alpha = 0.5f;
 
-                    CreateImpact(location, origin, IconData.impacts.crit, 3f, additional);
+                    additional.delay = 225;
 
-                    additional.light = 0f;
+                    CreateImpact(location, origin, IconData.impacts.critical, 3f, additional);
 
-                    additional.color = schemeColours[additional.scheme];
+                    ImpactAdditional megaslashAdditional = additional.Copy();
 
-                    additional.alpha = 0.4f;
+                    megaslashAdditional.frames = 4;
 
-                    CreateImpact(location, origin, IconData.impacts.sparkbang, 2.5f, additional);
+                    additional.frame = Mod.instance.randomIndex.Next(2) == 0 ? 0 : 4;
+
+                    megaslashAdditional.flip = Mod.instance.randomIndex.Next(2) == 0;
+
+                    megaslashAdditional.light = 0f;
+
+                    megaslashAdditional.color = schemeColours[megaslashAdditional.scheme];
+
+                    megaslashAdditional.alpha = 0.4f;
+
+                    CreateImpact(location, origin, IconData.impacts.slashes, 2.5f, megaslashAdditional);
 
                     return;
 
@@ -1773,6 +1868,12 @@ namespace StardewDruid.Data
                 sheet = impactsTextureFour;
 
             }
+            else if (Y >= 24 && Y < 30)
+            {
+
+                sheet = impactsTextureFive;
+
+            }
 
             return sheet;
 
@@ -1862,7 +1963,7 @@ namespace StardewDruid.Data
 
             layer += additional.layerOffset;
 
-            Microsoft.Xna.Framework.Rectangle source = new((128) * additional.frame, 0,128, 128);
+            Microsoft.Xna.Framework.Rectangle source = new(128 * additional.frame, 0,128, 128);
 
             TemporaryAnimatedSprite bomb = new(0, additional.interval, additional.frames, additional.loops, originOffset, false, false)
             {
@@ -2081,33 +2182,37 @@ namespace StardewDruid.Data
 
             additional.layerOffset = 0.001f;
 
-            additional.frames = 6;
-
-            additional.frame = 2;
+            additional.frames = 4;
 
             additional.color = SchemeColour(additional.scheme);
 
             additional.delay = 150;
 
-            CreateImpact(location, origin - new Vector2(8 * size), IconData.impacts.sparkbang, size - 1, additional);
+            CreateImpact(location, origin - new Vector2(8 * size), IconData.impacts.flashbang, size - 1, additional);
 
             additional.color = Microsoft.Xna.Framework.Color.White;
 
             additional.delay = 300;
 
-            CreateImpact(location, origin + new Vector2(8 * size), IconData.impacts.sparkbang, size - 1, additional);
+            additional.frame = 4;
+
+            CreateImpact(location, origin + new Vector2(8 * size), IconData.impacts.flashbang, size - 1, additional);
 
             additional.color = SchemeColour(additional.scheme);
 
             additional.delay = 450;
 
-            CreateImpact(location, origin + new Vector2(12 * size, -12 * size), IconData.impacts.sparkbang, size - 1, additional);
+            additional.frame = 0;
+
+            CreateImpact(location, origin + new Vector2(12 * size, -12 * size), IconData.impacts.flashbang, size - 1, additional);
 
             additional.color = Microsoft.Xna.Framework.Color.White;
 
             additional.delay = 600;
 
-            CreateImpact(location, origin + new Vector2(-12 * size, 12 * size), IconData.impacts.sparkbang, size - 1, additional);
+            additional.frame = 4;
+
+            CreateImpact(location, origin + new Vector2(-12 * size, 12 * size), IconData.impacts.flashbang, size - 1, additional);
 
         }
 
@@ -2281,7 +2386,7 @@ namespace StardewDruid.Data
 
             SpellHandle warpSpell = new(location, origin, origin);
 
-            warpSpell.factor = (int)warp;
+            warpSpell.displayFactor = (int)warp;
 
             warpSpell.type = reverse ? SpellHandle.Spells.warpout : SpellHandle.Spells.warpin;
 
@@ -2436,7 +2541,7 @@ namespace StardewDruid.Data
 
                 case warps.corvids:
 
-                    CreateImpact(location, origin, impacts.plume, 2f, new() { color = schemeColours[schemes.bones], alpha = 1f, });
+                    CreateImpact(location, origin, impacts.plume, 2f, new() { color = schemeColours[schemes.witch], alpha = 1f, });
 
                     break;
 
@@ -2460,11 +2565,11 @@ namespace StardewDruid.Data
 
         public float fade = 0f;
 
-        public float rotation = 60;
+        //public float rotation = 60;
 
         public int delay = 0;
 
-        public float scale = 3f;
+        public float scale = 4f;
 
         public int loops = 1;
 
@@ -2474,18 +2579,22 @@ namespace StardewDruid.Data
 
     }
 
-    public class DecorativeAdditional
+    public class CircleAdditional
     {
 
-        public float interval = 1000f;
+        public float interval = 3000f;
 
-        public float alpha = 0.65f;
-
-        public float rotation = 120;
+        public float alpha = 0.99f;
 
         public int delay = 0;
 
         public int loops = 1;
+
+        public float fade = 0.00033f;
+
+        public Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
+
+        public float layer = -1f;
 
     }
 
@@ -2586,23 +2695,6 @@ namespace StardewDruid.Data
         public int delay = 0;
 
         public int loops = 1;
-
-    }
-
-    public class CircleAdditional
-    {
-
-        public float interval = 3000f;
-
-        public float alpha = 0.99f;
-
-        public int delay = 0;
-
-        public int loops = 1;
-
-        public float fade = 0.00033f;
-
-        public Microsoft.Xna.Framework.Color color = Microsoft.Xna.Framework.Color.White;
 
     }
 

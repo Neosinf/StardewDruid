@@ -413,7 +413,7 @@ namespace StardewDruid.Event.Challenge
             if (activeCounter == 25)
             {
 
-                EventBar(Mod.instance.questHandle.quests[eventId].title, 0);
+                ProgressBar(Mod.instance.questHandle.quests[eventId].title, 0);
 
                 EngageBosses();
 

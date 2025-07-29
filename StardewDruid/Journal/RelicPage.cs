@@ -53,7 +53,7 @@ namespace StardewDruid.Journal
 
             int textHeight = 48;
 
-            title = Mod.instance.relicsData.reliquary[relicId].title;
+            title = Mod.instance.relicHandle.reliquary[relicId].title;
 
             int start = 0;
 
@@ -61,7 +61,7 @@ namespace StardewDruid.Journal
 
             contentComponents[start] = new(ContentComponent.contentTypes.text, "description");
 
-            contentComponents[start].text[0] = Mod.instance.relicsData.reliquary[relicId].description;
+            contentComponents[start].text[0] = Mod.instance.relicHandle.reliquary[relicId].description;
 
             contentComponents[start].setBounds(0, xPositionOnScreen + 64, yPositionOnScreen + textHeight, width - 128, 0);
 
@@ -70,10 +70,10 @@ namespace StardewDruid.Journal
 
             // ------------------------------ conditional instructions
 
-            for (int i = 0; i < Mod.instance.relicsData.reliquary[relicId].narrative.Count; i++)
+            for (int i = 0; i < Mod.instance.relicHandle.reliquary[relicId].narrative.Count; i++)
             {
 
-                string detail = Mod.instance.relicsData.reliquary[relicId].narrative[i];
+                string detail = Mod.instance.relicHandle.reliquary[relicId].narrative[i];
 
                 contentComponents[start] = new(ContentComponent.contentTypes.text, i.ToString());
 

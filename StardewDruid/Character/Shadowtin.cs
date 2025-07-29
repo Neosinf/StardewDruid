@@ -12,6 +12,7 @@ using StardewValley.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static StardewDruid.Character.Character;
 
 namespace StardewDruid.Character
 {
@@ -440,23 +441,20 @@ namespace StardewDruid.Character
 
                 missile = MissileHandle.missiles.rocket,
 
-                display = IconData.impacts.impact,
+                display = IconData.impacts.bigimpact,
 
                 indicator = IconData.cursors.scope,
 
-                factor = 3,
+                displayFactor = 3,
 
                 scheme = IconData.schemes.stars,
 
                 sound = SpellHandle.Sounds.explosion,
 
-                added = new() { SpellHandle.Effects.embers, },
+                effectRadius = 5,
 
-                power = 4,
+                added = new() { SpellHandle.Effects.explode, SpellHandle.Effects.reave, SpellHandle.Effects.embers, },
 
-                explosion = 4,
-
-                terrain = 4
             };
 
             Mod.instance.spellRegister.Add(fireball);

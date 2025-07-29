@@ -63,57 +63,9 @@ namespace StardewDruid.Event.Challenge
         public ChallengeMists()
         {
 
-            activeLimit = -1;
+            
 
             mainEvent = true;
-
-        }
-
-        public override bool TriggerActive()
-        {
-
-            if(Game1.timeOfDay < 1900)
-            {
-
-                return false;
-
-            }
-
-            if (TriggerLocation())
-            {
-
-                EventActivate();
-
-            }
-
-            return false;
-
-        }
-
-        public override bool AttemptReset()
-        {
-
-            if (!eventActive)
-            {
-
-                return true;
-
-            }
-
-            if(activeCounter >= 100)
-            {
-
-                return false;
-
-            }
-
-            eventActive = false;
-
-            EventRemove();
-
-            triggerEvent = true;
-
-            return true;
 
         }
 
@@ -155,7 +107,7 @@ namespace StardewDruid.Event.Challenge
 
         }
 
-        public override float SpecialProgress(int displayId)
+        public override float DisplayProgress(int displayId)
         {
 
             switch (displayId)
@@ -431,9 +383,9 @@ namespace StardewDruid.Event.Challenge
 
                 bosses[0].LookAtFarmer();
 
-                EventBar(Mod.instance.questHandle.quests[eventId].title, 1);
+                ProgressBar(Mod.instance.questHandle.quests[eventId].title, 1);
 
-                EventDisplay bomberbar = EventBar(StringData.Strings(StringData.stringkeys.bomberInterruptions), 2);
+                EventBar bomberbar = ProgressBar(StringData.Strings(StringData.stringkeys.bomberInterruptions), 2);
 
                 bomberbar.colour = Microsoft.Xna.Framework.Color.LightGreen;
 

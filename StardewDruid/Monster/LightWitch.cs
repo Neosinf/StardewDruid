@@ -141,7 +141,7 @@ namespace StardewDruid.Monster
             {
                 type = SpellHandle.Spells.lightning,
 
-                factor = 2,
+                displayFactor = 2,
 
                 counter = -45,
 
@@ -176,7 +176,7 @@ namespace StardewDruid.Monster
 
             }
 
-            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 96f + (GetWidth() * 3));
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, Position, 96f + (GetWidth() * 3));
 
             if (targets.Count > 0)
             {
@@ -225,7 +225,7 @@ namespace StardewDruid.Monster
 
             bolt.TargetCursor();
 
-            bolt.factor = 4;
+            bolt.displayFactor = 4;
 
             Mod.instance.spellRegister.Add(bolt);
 

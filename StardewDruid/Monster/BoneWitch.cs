@@ -240,7 +240,7 @@ namespace StardewDruid.Monster
         {
             if (!sweepSet) { return false; }
 
-            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 96f + (GetWidth() * 3));
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, Position, 96f + (GetWidth() * 3));
 
             if (targets.Count > 0)
             {
@@ -289,7 +289,7 @@ namespace StardewDruid.Monster
             {
                 type = SpellHandle.Spells.missile,
 
-                factor = 4,
+                displayFactor = 4,
 
                 missile = MissileHandle.missiles.bats,
 
@@ -313,7 +313,7 @@ namespace StardewDruid.Monster
 
                     type = SpellHandle.Spells.missile,
 
-                    factor = Mod.instance.randomIndex.Next(2,5),
+                    displayFactor = Mod.instance.randomIndex.Next(2,5),
 
                     missile = MissileHandle.missiles.bats,
 
@@ -338,7 +338,7 @@ namespace StardewDruid.Monster
         public override void ConnectSweep()
         {
 
-            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, new() { Position, }, 128f);
+            List<Farmer> targets = ModUtility.FarmerProximity(currentLocation, Position, 128f);
 
             if (targets.Count > 0)
             {
@@ -392,7 +392,7 @@ namespace StardewDruid.Monster
                     {
                         type = SpellHandle.Spells.missile,
 
-                        factor = 3,
+                        displayFactor = 3,
 
                         missile = MissileHandle.missiles.deathfall,
 

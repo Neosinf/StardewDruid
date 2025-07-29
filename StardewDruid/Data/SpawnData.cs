@@ -134,7 +134,7 @@ namespace StardewDruid.Data
             weapons[3] = Rite.Rites.stars;
             weapons[53] = Rite.Rites.fates;
             weapons[57] = Rite.Rites.ether;
-            weapons[16] = Rite.Rites.bones;
+            weapons[16] = Rite.Rites.witch;
 
             if (Mod.instance.Helper.ModRegistry.IsLoaded("DaLion.Overhaul"))
             {

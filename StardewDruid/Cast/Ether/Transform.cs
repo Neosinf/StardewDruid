@@ -9,6 +9,7 @@ using StardewDruid.Event;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buffs;
+using System.Windows.Markup;
 
 namespace StardewDruid.Cast.Ether
 {
@@ -52,23 +53,6 @@ namespace StardewDruid.Cast.Ether
 
             }
 
-            /*if (warpTrigger)
-            {
-
-                if (warpLocation != Game1.locationRequest.Location.Name)
-                {
-
-                    warpTimeout = 30;
-
-                    warpLocation = Game1.locationRequest.Location.Name;
-
-                }
-
-                return;
-
-            }*/
-
-
         }
 
         public override void EventActivate()
@@ -106,9 +90,11 @@ namespace StardewDruid.Cast.Ether
 
             buffEffect.Defense.Set(5);
 
+            string etherBuffName = RiteData.RiteNames(Rite.Rites.ether);
+
             Buff dragonBuff = new(Rite.buffIdDragon, 
-                source: StringData.RiteNames(Rite.Rites.ether),
-                displaySource: StringData.RiteNames(Rite.Rites.ether),
+                source: etherBuffName,
+                displaySource: etherBuffName,
                 duration: Buff.ENDLESS, 
                 displayName: StringData.Strings(StringData.stringkeys.dragonBuff),
                 description: StringData.Strings(StringData.stringkeys.dragonBuffDescription),
@@ -121,9 +107,7 @@ namespace StardewDruid.Cast.Ether
         public override bool EventActive()
         {
 
-            eventCounter = 0;
-
-            if (eventComplete)
+            if (!base.EventActive())
             {
 
                 return false;
@@ -179,24 +163,24 @@ namespace StardewDruid.Cast.Ether
 
         }
 
-        public override bool AttemptReset()
+        public bool AttemptShutdown()
         {
 
-            /*if (warpTrigger)
+            if (avatar != null)
             {
 
-                return true;
+                if (avatar.SafeExit())
+                {
 
-            }*/
+                    EventRemove();
 
-            if (avatar == null)
-            {
+                    return true;
 
-                return false;
-
+                }
+                
             }
 
-            return !avatar.SafeExit();
+            return false;
 
         }
 
@@ -237,7 +221,7 @@ namespace StardewDruid.Cast.Ether
 
         }
 
-        public override bool EventPerformAction(SButton Button, actionButtons Action = actionButtons.action)
+        public override bool EventPerformAction(actionButtons Action = actionButtons.action)
         {
 
             if (!EventActive())
@@ -286,9 +270,9 @@ namespace StardewDruid.Cast.Ether
             if (Action == actionButtons.special && rightActive)
             {
 
-                avatar.RightClickAction(Button);
+                avatar.RightClickAction(Mod.instance.buttonPress);
 
-                rightButton = Button;
+                rightButton = Mod.instance.buttonPress;
 
                 return true;
 
@@ -299,9 +283,9 @@ namespace StardewDruid.Cast.Ether
                 return false;
             }
 
-            avatar.LeftClickAction(Button);
+            avatar.LeftClickAction(Mod.instance.buttonPress);
 
-            leftButton = Button;
+            leftButton = Mod.instance.buttonPress;
 
             return true;
 

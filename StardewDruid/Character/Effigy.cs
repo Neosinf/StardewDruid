@@ -238,7 +238,7 @@ namespace StardewDruid.Character
                 if (currentLocation.Name == Game1.player.currentLocation.Name && Utility.isOnScreen(Position, 128))
                 {
 
-                    Mod.instance.iconData.DecorativeIndicator(currentLocation, Position, IconData.decorations.weald, 3f, new());
+                    Mod.instance.iconData.RiteCircle(currentLocation, Position, IconData.ritecircles.weald, 3f, new());
 
                     TemporaryAnimatedSprite skyAnimation = Mod.instance.iconData.SkyIndicator(currentLocation, Position, IconData.skies.valley, 1f, new() { interval = 1000, });
 
@@ -281,15 +281,6 @@ namespace StardewDruid.Character
 
             }
 
-            if (specialTimer == 20 && !Game1.IsRainingHere(currentLocation) && Game1.currentSeason != "winter")
-            {
-
-                Artifice artificeHandle = new();
-
-                artificeHandle.ArtificeScarecrow(currentLocation, workVector, true);
-
-            }
-
         }
 
         public override bool SpecialAttack(StardewValley.Monsters.Monster monster)
@@ -315,16 +306,12 @@ namespace StardewDruid.Character
 
                 scheme = IconData.schemes.stars,
 
-                factor = 2,
-
-                power = 4,
-
-                explosion = 4,
-
-                terrain = 4,
+                displayFactor = 2,
 
                 display = IconData.impacts.bomb
             };
+
+            special.added = new() { SpellHandle.Effects.explode, SpellHandle.Effects.embers, };
 
             Mod.instance.spellRegister.Add(special);
 

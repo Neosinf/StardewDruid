@@ -5,6 +5,7 @@ using StardewDruid.Data;
 using StardewDruid.Dialogue;
 using StardewDruid.Handle;
 using StardewDruid.Journal;
+using StardewDruid.Location.Druid;
 using StardewModdingAPI;
 using StardewValley;
 using System;
@@ -17,34 +18,114 @@ namespace StardewDruid.Event.Scene
     public class ApproachEffigy : EventHandle
     {
 
-        public Dictionary<int,Vector2> eventVectors = new()
-        {
-
-            [0] = new Vector2(6f,6f),
-
-        };
+        public Dictionary<int, Vector2> eventVectors = new();
 
         public ApproachEffigy()
         {
 
+            eventVectors[0] = (Mod.instance.locations[Location.LocationHandle.druid_cavern_name] as Cavern).middlePosition;
+
+            eventVectors[1] = new Vector2(Cavern.groveExitX, Cavern.groveExitY) * 64;
+
+            origin = eventVectors[0];
+
+            sceneLimit = 3;
+
         }
 
-        public override void TriggerInterval()
+        public override bool EventPerformAction(actionButtons Action = actionButtons.action)
         {
 
-            base.TriggerInterval();
-
-            int actionCycle = triggerCounter % 20;
-
-            if (actors.Count == 0)
+            if(Action != actionButtons.rite)
             {
 
-                AddActor(0, origin - new Vector2(0, 48));
+                return false;
 
             }
 
-            switch (actionCycle)
+            if (activeScene != 0)
             {
+
+                return false;
+
+            }
+
+            Mod.instance.spellRegister.Add(new(Game1.player, IconData.ritecircles.druid) { soundTrigger = SoundHandle.SoundCue.DruidHorn });
+
+            ExitPreamble();
+
+            return true;
+
+        }
+
+        public override void EventActivate()
+        {
+
+            base.EventActivate();
+
+            // add false trigger
+
+            EventClicks(actionButtons.rite);
+
+            EventRender triggerField = new(eventId, location.Name, origin, IconData.displays.druid);
+
+            eventRenders.Add("trigger",triggerField);
+
+            // add voice
+
+            AddActor(0, origin - new Vector2(24, 80));
+
+        }
+
+        public override void EventInterval()
+        {
+
+            activeCounter++;
+
+            switch (activeScene)
+            {
+
+                case 0:
+
+                    ScenePreamble();
+
+                    break;
+
+                case 1:
+
+                    SceneEffigyEnter();
+
+                    break;
+
+                case 2:
+
+                    SceneEffigy();
+                    
+                    break;
+
+                case 3:
+
+                    SceneEffigyTwo();
+
+                    break;
+
+                case 4:
+
+                    SceneExit();
+
+                    break;
+
+            }
+
+        }
+
+        public void ScenePreamble()
+        {
+
+            switch (activeCounter)
+            {
+
+
                 case 1:
 
                     DialogueCue(1);
@@ -81,111 +162,67 @@ namespace StardewDruid.Event.Scene
 
                     break;
 
+                case 19:
+
+                    activeCounter = 0;
+
+                    break;
+
             }
 
         }
 
-        public override void EventActivate()
+        public void ExitPreamble()
         {
 
-            TriggerRemove();
+            activeScene = 1;
 
-            eventActive = true;
+            activeCounter = 0;
 
-            locales = new() { Location.LocationHandle.druid_grove_name, Game1.player.currentLocation.Name, };
+            eventRenders.Remove("trigger");
 
-            location = Game1.player.currentLocation;
-
-            Mod.instance.RegisterEvent(this, eventId, true);
-
-            activeLimit = eventCounter + 302;
-
-            Mod.instance.spellRegister.Add(new(Game1.player.Position, 384, IconData.impacts.supree, new()) { sound = SpellHandle.Sounds.discoverMineral, });
-
-            Mod.instance.rite.CastRockfall(true);
-            Mod.instance.rite.CastRockfall(true);
-            Mod.instance.rite.CastRockfall(true);
-            Mod.instance.rite.CastRockfall(true);
-            Mod.instance.rite.CastRockfall(true);
-            Mod.instance.rite.CastRockfall(true);
+            RemoveClicks();
 
         }
 
-        public override void EventInterval()
+        public void SceneEffigyEnter()
         {
-
-            if(Game1.activeClickableMenu != null)
-            {
-
-                activeLimit += 1;
-
-                return;
-
-            }
-
-            activeCounter++;
 
             switch (activeCounter)
             {
 
-                // ------------------------------------------
-                // 1 Beginning
-                // ------------------------------------------
-
                 case 1:
 
-                    Vector2 EffigyPosition = origin + new Vector2(128, -640);
+                RemoveActors();
 
-                    TemporaryAnimatedSprite EffigyAnimation = new(0, 2000f, 1, 1, EffigyPosition - new Vector2(36, 72), false, false)
-                    {
+                SceneBar(eventTitle, 0);
 
-                        sourceRect = new(0, 0, 32, 32),
+                Vector2 EffigyPosition = origin + new Vector2(512, -512);
 
-                        texture = CharacterHandle.CharacterTexture(CharacterHandle.characters.Effigy),
+                LoadCompanion(CharacterHandle.characters.Effigy, EffigyPosition, 0, 1, false);
 
-                        scale = 4.25f,
+                companions[0].TargetEvent(100, Game1.player.Position + new Vector2(128, 0), true);
 
-                        motion = new Vector2(0, 0.32f),
+                companions[0].SetDash(Game1.player.Position + new Vector2(128, 0));
 
-                        rotationChange = 0.1f,
+                companions[0].netLayer.Set(10000);
 
-                        timeBasedMotion = true,
+                DialogueCue(6);
 
-                        layerDepth = 999f
+                break;
 
-                    };
+            }
 
-                    location.temporarySprites.Add(EffigyAnimation);
+        }
 
-                    break;
+        public void SceneEffigy()
+        {
 
-                case 3:
+            switch (activeCounter)
+            {
+                case 1:
 
-                    RemoveActors();
-
-                    CharacterHandle.CharacterLoad(CharacterHandle.characters.Effigy, StardewDruid.Character.Character.mode.scene);
-
-                    companions.Add(0,Mod.instance.characters[CharacterHandle.characters.Effigy]);
-
-                    companions[0].ResetActives();
-
-                    companions[0].currentLocation = location;
-
-                    companions[0].Position = origin + new Vector2(64,0);
-
-                    companions[0].currentLocation.characters.Add(companions[0]);
-
-                    companions[0].LookAtTarget(Game1.player.Position);
-
-                    companions[0].eventName = eventId;
-
-                    voices[1] = companions[0];
-
-                    DialogueCue(6);
-
-                    Mod.instance.iconData.ImpactIndicator(location, origin + new Vector2(64, 0), IconData.impacts.impact, 5f, new());
-
-                    location.playSound("explosion");
+                    DialogueCueWithFeeling(7, 0, Character.Character.specials.gesture);
 
                     break;
 
@@ -203,35 +240,57 @@ namespace StardewDruid.Event.Scene
 
                 case 10:
 
-                    activeCounter = 100;
+                    NextScene();
 
                     break;
 
-                case 101:
+            }
+
+        }
+
+        public void SceneEffigyTwo()
+        {
+
+            switch (activeCounter)
+            {
+
+                case 1:
 
                     DialogueLoad(0, 2);
 
                     break;
 
-                case 106:
+                case 6:
 
                     DialogueNext(companions[0]);
 
                     break;
 
-                case 110:
+                case 10:
 
-                    activeCounter = 200;
-
-                    break;
-
-                case 201:
-
-                    companions[0].TargetEvent(0, eventVectors[0]*64);
+                    NextScene();
 
                     break;
 
-                case 203:
+            }
+
+        }
+
+        public void SceneExit()
+        {
+
+            switch (activeCounter)
+            {
+
+                case 1:
+
+                    companions[0].TargetEvent(0, eventVectors[1]);
+
+                    DialogueCue(8);
+
+                    break;
+
+                case 3:
 
                     eventComplete = true;
 
@@ -239,6 +298,72 @@ namespace StardewDruid.Event.Scene
 
             }
 
+        }
+
+        public override void SkipEvent(int index = -1)
+        {
+
+            switch (activeScene)
+            {
+                case 0:
+
+                    ExitPreamble();
+
+                    break;
+
+                case 1:
+                case 2:
+                case 3:
+
+
+                    SetDialogueChoices(1, 2);
+
+                    Vector2 warpScene3 = ModUtility.PositionToTile(origin);
+
+                    Mod.instance.WarpAllFarmers(location.Name, (int)warpScene3.X - 1, (int)warpScene3.Y, 1);
+                    
+                    LoadCompanion(CharacterHandle.characters.Effigy, origin + new Vector2(64, 0), 0, 1, false);
+
+                    activeScene = 3;
+
+                    activeCounter = 0;
+
+                    break;
+
+                case 4:
+
+                    eventComplete = true;
+
+                    break;
+
+            }
+
+        }
+
+        public override void EventScene(int index)
+        {
+            switch (index)
+            {
+                case 100:
+
+                    companions[0].LookAtTarget(Game1.player.Position,true);
+
+                    companions[0].netSpecial.Set((int)Character.Character.specials.pickup);
+
+                    companions[0].specialTimer = 30;
+
+                    companions[0].netLayer.Set(0);
+
+                    SpellHandle explosion = new(companions[0].Position, 256, IconData.impacts.impact, new());
+
+                    Mod.instance.spellRegister.Add(explosion);
+
+                    NextScene();
+
+                    break;
+
+
+            }
         }
 
     }

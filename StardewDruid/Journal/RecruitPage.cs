@@ -26,20 +26,18 @@ namespace StardewDruid.Journal
         public override void populateInterface()
         {
 
-            parentJournal = journalTypes.recruits;
+            parentJournal = journalTypes.ledger;
 
-            type = journalTypes.recruitPage;
+            type = journalTypes.companion;
 
             interfaceComponents = new()
             {
 
                 // ------------------------------------------
 
-                [110] = addButton(journalButtons.clearRecruit),
+                [111] = addButton(journalButtons.summonCompanion),
 
-                [111] = addButton(journalButtons.summonRecruit),
-
-                [112] = addButton(journalButtons.dismissRecruit),
+                [112] = addButton(journalButtons.dismissCompanion),
 
                 //-------------------------------------------
 
@@ -209,7 +207,7 @@ namespace StardewDruid.Journal
             switch (button)
             {
 
-                case journalButtons.summonRecruit:
+                case journalButtons.summonCompanion:
 
                     if (Mod.instance.trackers.ContainsKey(type))
                     {
@@ -223,7 +221,7 @@ namespace StardewDruid.Journal
                     if (RecruitHandle.RecruitLoad(type))
                     {
 
-                        Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.3").Tokens(new { name = Mod.instance.save.recruits[type].display, }), 0, true);
+                        Mod.instance.RegisterMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.3").Tokens(new { name = Mod.instance.save.recruits[type].display, }), 0, true);
 
                     }
                     else
@@ -239,7 +237,7 @@ namespace StardewDruid.Journal
 
                     return;
 
-                case journalButtons.dismissRecruit:
+                case journalButtons.dismissCompanion:
 
                     if (!Mod.instance.characters.ContainsKey(type))
                     {
@@ -261,21 +259,11 @@ namespace StardewDruid.Journal
 
                     RecruitHandle hero = Mod.instance.save.recruits[type];
 
-                    Mod.instance.CastMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.4").Tokens(new { name = Mod.instance.save.recruits[type].display, }), 0, true);
+                    Mod.instance.RegisterMessage(Mod.instance.Helper.Translation.Get("CharacterHandle.361.4").Tokens(new { name = Mod.instance.save.recruits[type].display, }), 0, true);
 
                     RecruitHandle.RecruitRemove(type);
 
                     exitThisMenu();
-
-                    return;
-
-                case journalButtons.clearRecruit:
-
-                    RecruitHandle.RecruitRemove(type);
-
-                    Mod.instance.save.recruits.Remove(type);
-
-                    DruidJournal.openJournal(parentJournal, null);
 
                     return;
 

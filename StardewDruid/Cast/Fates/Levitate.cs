@@ -33,8 +33,6 @@ namespace StardewDruid.Cast.Fates
 
             }
 
-            activeLimit = 5;
-
             // NPC frame
 
             Microsoft.Xna.Framework.Rectangle npcSource = npc.Sprite.SourceRect;
@@ -72,13 +70,6 @@ namespace StardewDruid.Cast.Fates
 
         public override void EventDecimal()
         {
-
-            if (!EventActive())
-            {
-
-                return;
-
-            }
 
             decimalCounter++;
 

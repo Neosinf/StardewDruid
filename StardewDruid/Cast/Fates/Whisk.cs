@@ -54,9 +54,9 @@ namespace StardewDruid.Cast.Fates
 
                 missile = MissileHandle.missiles.whisk,
 
-                factor = 3,
+                displayFactor = 3,
 
-                indicator = IconData.cursors.fatesCharge,
+                indicator = IconData.cursors.whisk,
 
                 instant = true
             };
@@ -67,29 +67,7 @@ namespace StardewDruid.Cast.Fates
 
         }
 
-
-        public override bool EventActive()
-        {
-
-            if (Game1.player.currentLocation.Name != location.Name)
-            {
-
-                eventComplete = true;
-
-            }
-
-            if (eventComplete)
-            {
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        public override bool EventPerformAction(SButton Button, actionButtons Action = actionButtons.action)
+        public override bool EventPerformAction(actionButtons Action = actionButtons.action)
         {
 
             if (!EventActive())
@@ -259,10 +237,10 @@ namespace StardewDruid.Cast.Fates
 
                         sweep.damageMonsters = strikes * baseDamage;
 
-                        if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
+                        if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
                         {
 
-                            if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
+                            if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
                             {
 
                                 sweep.added.Add(SpellHandle.Effects.capture);
@@ -277,9 +255,9 @@ namespace StardewDruid.Cast.Fates
 
                     directions.Remove(d);
 
-                    sweep.factor = d;
+                    sweep.displayFactor = d;
 
-                    sweep.radius = 128;
+                    sweep.damageRadius = 128;
 
                     sweep.display = IconData.impacts.flashbang;
 
@@ -315,7 +293,7 @@ namespace StardewDruid.Cast.Fates
             {
                 type = SpellHandle.Spells.teleport,
 
-                factor = warpTimer
+                displayFactor = warpTimer
             };
 
             teleport.Update();

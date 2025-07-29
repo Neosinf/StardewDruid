@@ -103,7 +103,7 @@ namespace StardewDruid.Character
 
                 scheme = IconData.schemes.fates,
 
-                factor = 2,
+                displayFactor = 2,
 
                 display = IconData.impacts.puff,
 

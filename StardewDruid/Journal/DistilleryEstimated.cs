@@ -27,12 +27,12 @@ namespace StardewDruid.Journal
 
             type = journalTypes.distilleryEstimated;
 
-            title = StringData.Strings(StringData.stringkeys.distilleryEstimated);
+            title = JournalData.JournalTitle(type);
 
             interfaceComponents = new()
             {
 
-                [101] = addButton(journalButtons.distilleryRecent),
+                [101] = addButton(journalButtons.openProductionRecent),
 
                 [201] = addButton(journalButtons.back),
 
@@ -79,13 +79,13 @@ namespace StardewDruid.Journal
 
                     return;
 
-                case journalButtons.distilleryEstimated:
+                case journalButtons.openProductionEstimated:
 
                     DruidJournal.openJournal(journalTypes.distilleryEstimated);
 
                     return;
 
-                case journalButtons.distilleryRecent:
+                case journalButtons.openProductionRecent:
 
                     DruidJournal.openJournal(journalTypes.distilleryRecent);
 

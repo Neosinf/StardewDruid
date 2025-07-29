@@ -93,7 +93,7 @@ namespace StardewDruid.Character
 
                 scheme = IconData.schemes.fates,
 
-                factor = 2
+                displayFactor = 2
             };
 
             switch (Mod.instance.randomIndex.Next(3))

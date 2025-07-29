@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework.Media;
-using StardewDruid.Cast.Bones;
 using StardewDruid.Cast.Weald;
 using StardewDruid.Character;
 using StardewModdingAPI.Events;
@@ -53,8 +52,7 @@ namespace StardewDruid.Data
                 default:
                 case villagerLocales.mountain:
 
-                    Mod.instance.CastDisplay(
-                        Mod.instance.Helper.Translation.Get("VillagerData.11").Tokens(new { rating = questRating, friendship = friendship,}),2);
+                    Mod.instance.RegisterDisplay(Mod.instance.Helper.Translation.Get("VillagerData.11").Tokens(new { rating = questRating, friendship = friendship,}));
 
                     NPCIndex = new(){
                         villagers.Sebastian.ToString(), villagers.Sam.ToString(),
@@ -68,7 +66,7 @@ namespace StardewDruid.Data
 
                 case villagerLocales.town:
 
-                    Mod.instance.CastDisplay(Mod.instance.Helper.Translation.Get("VillagerData.27").Tokens(new { rating = questRating, friendship = friendship, }), 2);
+                    Mod.instance.RegisterDisplay(Mod.instance.Helper.Translation.Get("VillagerData.27").Tokens(new { rating = questRating, friendship = friendship, }));
 
                     NPCIndex = new(){
                         villagers.Alex.ToString(), villagers.Elliott.ToString(), villagers.Harvey.ToString(),
@@ -85,7 +83,7 @@ namespace StardewDruid.Data
 
                 case villagerLocales.forest:
 
-                    Mod.instance.CastDisplay(Mod.instance.Helper.Translation.Get("VillagerData.46").Tokens(new { rating = questRating, friendship = friendship, }), 2);
+                    Mod.instance.RegisterDisplay(Mod.instance.Helper.Translation.Get("VillagerData.46").Tokens(new { rating = questRating, friendship = friendship, }));
 
                     NPCIndex = new(){
                         villagers.Shane.ToString(),

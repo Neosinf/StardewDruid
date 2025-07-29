@@ -271,11 +271,13 @@ namespace StardewDruid.Journal
                         interfaceComponents[202] = addButton(journalButtons.replayQuest);
 
                         break;
+                    
                     case 3:
 
                         interfaceComponents[202] = addButton(journalButtons.replayTomorrow);
 
                         break;
+
                     case 4:
 
                         interfaceComponents[202] = addButton(journalButtons.cancelReplay);

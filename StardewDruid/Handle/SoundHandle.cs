@@ -34,6 +34,9 @@ namespace StardewDruid.Handle
             WolfGrowl,
             BatScreech,
             SerpentCall,
+            WindSlash,
+            RisingWind,
+            DruidHorn,
 
         }
 
@@ -51,7 +54,7 @@ namespace StardewDruid.Handle
 
             SoundEffect CastWealdSound = SoundEffect.FromStream(CastWealdStream);
 
-            SoundInstance CastWealdInstance = new(CastWealdSound, -0.5f, 0.125f, 0.8f, 0.05f, 8);
+            SoundInstance CastWealdInstance = new(CastWealdSound, -0.5f, 0.125f, 0.8f, 0.05f, 8, 2);
 
             soundcues.Add(SoundCue.CastWeald, CastWealdInstance);
 
@@ -61,7 +64,7 @@ namespace StardewDruid.Handle
 
             SoundEffect CastMistsSound = SoundEffect.FromStream(CastMistsStream);
 
-            SoundInstance CastMistsInstance = new(CastMistsSound, -1f, 0.125f, 0.6f, 0.05f, 8);
+            SoundInstance CastMistsInstance = new(CastMistsSound, -1f, 0.125f, 0.8f, 0.05f, 8, 2);
 
             soundcues.Add(SoundCue.CastMists, CastMistsInstance);
 
@@ -71,7 +74,7 @@ namespace StardewDruid.Handle
 
             SoundEffect CastBoltSound = SoundEffect.FromStream(CastBoltStream);
 
-            SoundInstance CastBoltInstance = new(CastBoltSound, -1f, 0.125f, 0.5f, 0.05f, 8);
+            SoundInstance CastBoltInstance = new(CastBoltSound, -1f, 0.125f, 0.8f, 0.05f, 8, 5);
 
             soundcues.Add(SoundCue.CastBolt, CastBoltInstance);
 
@@ -81,7 +84,7 @@ namespace StardewDruid.Handle
 
             SoundEffect CastBeamSound = SoundEffect.FromStream(CastBeamStream);
 
-            SoundInstance CastBeamInstance = new(CastBeamSound, 0, 0.125f, 0.8f, 0.05f, 8);
+            SoundInstance CastBeamInstance = new(CastBeamSound, 0, 0.125f, 0.8f, 0.05f, 8, 10);
 
             soundcues.Add(SoundCue.CastBeam, CastBeamInstance);
 
@@ -91,7 +94,7 @@ namespace StardewDruid.Handle
 
             SoundEffect CastStarsSound = SoundEffect.FromStream(CastStarsStream);
 
-            SoundInstance CastStarsInstance = new(CastStarsSound, -1, 0.125f, 0.3f, 0.02f, 8);
+            SoundInstance CastStarsInstance = new(CastStarsSound, -1, 0.125f, 0.8f, 0.02f, 8, 5);
 
             soundcues.Add(SoundCue.CastStars, CastStarsInstance);
 
@@ -101,7 +104,7 @@ namespace StardewDruid.Handle
 
             SoundEffect ImpactStarsSound = SoundEffect.FromStream(ImpactStarsStream);
 
-            SoundInstance ImpactStarsInstance = new(ImpactStarsSound, -1, 0.125f, 0.5f, 0.05f, 8);
+            SoundInstance ImpactStarsInstance = new(ImpactStarsSound, -1, 0.125f, 1f, 0.05f, 8, 5);
 
             soundcues.Add(SoundCue.ImpactStars, ImpactStarsInstance);
 
@@ -111,7 +114,7 @@ namespace StardewDruid.Handle
 
             SoundEffect DragonFlightSound = SoundEffect.FromStream(DragonFlightStream);
 
-            SoundInstance DragonFlightInstance = new(DragonFlightSound, 0, 0.05f, 0.6f, 0.05f, 8);
+            SoundInstance DragonFlightInstance = new(DragonFlightSound, 0, 0.05f, 0.8f, 0.05f, 8, 2);
 
             DragonFlightInstance.limit = 1;
 
@@ -123,7 +126,7 @@ namespace StardewDruid.Handle
 
             SoundEffect DragonRoarSound = SoundEffect.FromStream(DragonRoarStream);
 
-            SoundInstance DragonRoarInstance = new(DragonRoarSound, -1, 0.25f, 1f, 0.05f, 5);
+            SoundInstance DragonRoarInstance = new(DragonRoarSound, -1, 0.25f, 1f, 0.05f, 5, 10);
 
             DragonRoarInstance.limit = 1;
 
@@ -135,7 +138,7 @@ namespace StardewDruid.Handle
 
             SoundEffect DragonGrowlSound = SoundEffect.FromStream(DragonGrowlStream);
 
-            SoundInstance DragonGrowlInstance = new(DragonGrowlSound, -1f, 0.25f, 1f, 0.05f, 5);
+            SoundInstance DragonGrowlInstance = new(DragonGrowlSound, -1f, 0.25f, 1f, 0.05f, 5, 10);
 
             DragonGrowlInstance.limit = 1;
 
@@ -147,7 +150,7 @@ namespace StardewDruid.Handle
 
             SoundEffect DragonFireSound = SoundEffect.FromStream(DragonFireStream);
 
-            SoundInstance DragonFireInstance = new(DragonFireSound, -0.5f, 0.125f, 0.8f, 0.02f, 10);
+            SoundInstance DragonFireInstance = new(DragonFireSound, -0.5f, 0.125f, 1f, 0.02f, 10, 2);
 
             DragonFireInstance.limit = 3;
 
@@ -159,7 +162,7 @@ namespace StardewDruid.Handle
 
             SoundEffect BearGrowlSound = SoundEffect.FromStream(BearGrowlStream);
 
-            SoundInstance BearGrowlInstance = new(BearGrowlSound, -0.5f, 0.25f, 0.75f, 0.05f, 5);
+            SoundInstance BearGrowlInstance = new(BearGrowlSound, -0.5f, 0.25f, 1f, 0.05f, 5, 10);
 
             BearGrowlInstance.limit = 1;
 
@@ -171,7 +174,7 @@ namespace StardewDruid.Handle
 
             SoundEffect BearRoarSound = SoundEffect.FromStream(BearRoarStream);
 
-            SoundInstance BearRoarInstance = new(BearRoarSound, -0.5f, 0.25f, 0.5f, 0.05f, 5);
+            SoundInstance BearRoarInstance = new(BearRoarSound, -0.5f, 0.25f, 0.8f, 0.05f, 5, 10);
 
             BearRoarInstance.limit = 1;
 
@@ -183,7 +186,7 @@ namespace StardewDruid.Handle
 
             SoundEffect WolfGrowlSound = SoundEffect.FromStream(WolfGrowlStream);
 
-            SoundInstance WolfGrowlInstance = new(WolfGrowlSound, -0.5f, 0.25f, 1f, 0.05f, 5);
+            SoundInstance WolfGrowlInstance = new(WolfGrowlSound, -0.5f, 0.25f, 1f, 0.05f, 5, 10);
 
             WolfGrowlInstance.limit = 1;
 
@@ -195,7 +198,7 @@ namespace StardewDruid.Handle
 
             SoundEffect BatScreechSound = SoundEffect.FromStream(BatScreechStream);
 
-            SoundInstance BatScreechInstance = new(BatScreechSound, 0f, 0.125f, 1f, 0.05f, 5);
+            SoundInstance BatScreechInstance = new(BatScreechSound, 0f, 0.125f, 1f, 0.05f, 5, 10);
 
             BatScreechInstance.limit = 1;
 
@@ -207,11 +210,47 @@ namespace StardewDruid.Handle
 
             SoundEffect SerpentCallSound = SoundEffect.FromStream(SerpentCallStream);
 
-            SoundInstance SerpentCallInstance = new(SerpentCallSound, 0f, 0.125f, 1f, 0.05f, 5);
+            SoundInstance SerpentCallInstance = new(SerpentCallSound, 0f, 0.125f, 1f, 0.05f, 5, 10);
 
             SerpentCallInstance.limit = 1;
 
             soundcues.Add(SoundCue.SerpentCall, SerpentCallInstance);
+
+            // ---------------------------------
+
+            FileStream WindSlashStream = new(Path.Combine(Mod.instance.Helper.DirectoryPath, "Sounds", "WindSlash.wav"), FileMode.Open);
+
+            SoundEffect WindSlashSound = SoundEffect.FromStream(WindSlashStream);
+
+            SoundInstance WindSlashInstance = new(WindSlashSound, 0f, 0.125f, 0.8f, 0.05f, 5, 8);
+
+            WindSlashInstance.limit = 2;
+
+            soundcues.Add(SoundCue.WindSlash, WindSlashInstance);
+
+            // ---------------------------------
+
+            FileStream RisingWindStream = new(Path.Combine(Mod.instance.Helper.DirectoryPath, "Sounds", "RisingWind.wav"), FileMode.Open);
+
+            SoundEffect RisingWindSound = SoundEffect.FromStream(RisingWindStream);
+
+            SoundInstance RisingWindInstance = new(RisingWindSound, 0, 0.1f, 0.8f, 0.05f, 8, 2);
+
+            RisingWindInstance.limit = 10;
+
+            soundcues.Add(SoundCue.RisingWind, RisingWindInstance);
+
+            // ---------------------------------
+
+            FileStream DruidHornStream = new(Path.Combine(Mod.instance.Helper.DirectoryPath, "Sounds", "DruidHorn.wav"), FileMode.Open);
+
+            SoundEffect DruidHornSound = SoundEffect.FromStream(DruidHornStream);
+
+            SoundInstance DruidHornInstance = new(DruidHornSound, 0, 0.1f, 1f, 0.05f, 8, 2);
+
+            DruidHornInstance.limit = 10;
+
+            soundcues.Add(SoundCue.DruidHorn, DruidHornInstance);
 
         }
 
@@ -302,7 +341,7 @@ namespace StardewDruid.Handle
 
         public List<SoundEffectInstance> instances = new();
 
-        public SoundInstance(SoundEffect Effect, float Pitch, float PitchRaise, float Volume, float VolumeRaise, int Ascend, double Timeout = 10.0)
+        public SoundInstance(SoundEffect Effect, float Pitch, float PitchRaise, float Volume, float VolumeRaise, int Ascend, double Timeout = 1.0)
         {
             
             effect = Effect;
@@ -390,8 +429,8 @@ namespace StardewDruid.Handle
         {
 
             double current = Game1.currentGameTime.TotalGameTime.TotalSeconds;
-
-            if (played + timeout < current)
+            
+            if (played + 2 < current)
             {
 
                 ascended = 0;

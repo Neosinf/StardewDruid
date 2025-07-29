@@ -193,7 +193,7 @@ namespace StardewDruid.Handle
 
             }
 
-            List<StardewDruid.Character.Character> companions = ModUtility.CompanionProximity(Game1.player.currentLocation, new() { Game1.player.Position, }, threshold);
+            List<StardewDruid.Character.Character> companions = ModUtility.CompanionProximity(Game1.player.currentLocation, Game1.player.Position, threshold);
 
             List<CharacterHandle.characters> safelist = new()
             {
@@ -250,7 +250,7 @@ namespace StardewDruid.Handle
 
             responseList.Add(new Response(1.ToString(), Mod.instance.Helper.Translation.Get("BattleHandle.388.73")));
 
-            if (RelicData.HasRelic(IconData.relics.dragon_form))
+            if (RelicHandle.HasRelic(IconData.relics.druid_dragonomicon))
             {
 
                 responseList.Add(new Response(2.ToString(), Mod.instance.Helper.Translation.Get("BattleHandle.391.2")));
@@ -280,7 +280,7 @@ namespace StardewDruid.Handle
 
             responseList.Add(new Response(1.ToString(), Mod.instance.Helper.Translation.Get("BattleHandle.388.73")));
 
-            if (RelicData.HasRelic(IconData.relics.dragon_form))
+            if (RelicHandle.HasRelic(IconData.relics.druid_dragonomicon))
             {
 
                 responseList.Add(new Response(2.ToString(), Mod.instance.Helper.Translation.Get("BattleHandle.391.2")));
@@ -837,7 +837,7 @@ namespace StardewDruid.Handle
                 if (winState == winstates.pending)
                 {
 
-                    Mod.instance.CastDisplay(Mod.instance.Helper.Translation.Get("BattleHandle.388.415"));
+                    Mod.instance.RegisterDisplay(Mod.instance.Helper.Translation.Get("BattleHandle.388.415"));
 
                 }
 
@@ -1069,13 +1069,13 @@ namespace StardewDruid.Handle
 
                                 DistributeRewards();
 
-                                Mod.instance.CastDisplay(Mod.instance.Helper.Translation.Get("BattleHandle.388.524"));
+                                Mod.instance.RegisterDisplay(Mod.instance.Helper.Translation.Get("BattleHandle.388.524"));
 
                             }
                             else
                             {
 
-                                Mod.instance.CastDisplay(Mod.instance.Helper.Translation.Get("BattleHandle.388.528"));
+                                Mod.instance.RegisterDisplay(Mod.instance.Helper.Translation.Get("BattleHandle.388.528"));
 
                             }
 
@@ -1138,7 +1138,7 @@ namespace StardewDruid.Handle
                         if (Game1.activeClickableMenu is BattlePage)
                         {
 
-                            Mod.instance.CastDisplay(Mod.instance.Helper.Translation.Get("BattleHandle.388.415"));
+                            Mod.instance.RegisterDisplay(Mod.instance.Helper.Translation.Get("BattleHandle.388.415"));
 
                             Game1.exitActiveMenu();
 
@@ -1461,7 +1461,7 @@ namespace StardewDruid.Handle
 
             PalHandle.CheckDefault();
 
-            foreach (IconData.relics relicName in Mod.instance.relicsData.lines[RelicData.relicsets.monsterstones])
+            foreach (IconData.relics relicName in Mod.instance.relicHandle.lines[RelicHandle.relicsets.monsterstones])
             {
 
                 ContentComponent content = new(ContentComponent.contentTypes.relic, relicName.ToString());
@@ -1470,14 +1470,14 @@ namespace StardewDruid.Handle
 
                 content.textureColours[0] = Color.White;
 
-                if (!RelicData.HasRelic(relicName))
+                if (!RelicHandle.HasRelic(relicName))
                 {
 
                     continue;
 
                 }
 
-                if (relicName == IconData.relics.monsterbadge)
+                if (relicName == IconData.relics.companion_badge)
                 {
 
                     content.text[1] = Mod.instance.Helper.Translation.Get("BattleHandle.388.730");
@@ -1706,9 +1706,9 @@ namespace StardewDruid.Handle
 
             headerText = Mod.instance.Helper.Translation.Get("BattleHandle.388.805");
 
-            HerbalHandle.herbals bestLigna = Mod.instance.herbalData.BestHerbal(HerbalHandle.herbals.ligna);
-            HerbalHandle.herbals bestImpes = Mod.instance.herbalData.BestHerbal(HerbalHandle.herbals.impes);
-            HerbalHandle.herbals bestCeleri = Mod.instance.herbalData.BestHerbal(HerbalHandle.herbals.celeri);
+            HerbalHandle.herbals bestLigna = Mod.instance.herbalHandle.BestHerbal(HerbalHandle.herbals.ligna);
+            HerbalHandle.herbals bestImpes = Mod.instance.herbalHandle.BestHerbal(HerbalHandle.herbals.impes);
+            HerbalHandle.herbals bestCeleri = Mod.instance.herbalHandle.BestHerbal(HerbalHandle.herbals.celeri);
 
             List<HerbalHandle.herbals> potions = new()
             {
@@ -1734,12 +1734,12 @@ namespace StardewDruid.Handle
                 if (amount == 0)
                 {
 
-                    content.textureSources[0] = IconData.PotionRectangles(Mod.instance.herbalData.herbalism[potionName.ToString()].grayed);
+                    content.textureSources[0] = IconData.PotionRectangles(Mod.instance.herbalHandle.herbalism[potionName.ToString()].grayed);
                 }
                 else
                 {
 
-                    content.textureSources[0] = IconData.PotionRectangles(Mod.instance.herbalData.herbalism[potionName.ToString()].display);
+                    content.textureSources[0] = IconData.PotionRectangles(Mod.instance.herbalHandle.herbalism[potionName.ToString()].display);
 
                 }
 

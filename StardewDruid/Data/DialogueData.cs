@@ -29,6 +29,8 @@ namespace StardewDruid.Data
                         [4] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.799"), },
                         [5] = new() { [0] = Mod.instance.Helper.Translation.Get("DialogueData.800"), },
                         [6] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.801"), },
+                        [7] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.500.approachEffigy.1"), },
+                        [8] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.500.approachEffigy.2"), },
 
                         [900] = new()
                         {
@@ -38,7 +40,7 @@ namespace StardewDruid.Data
 
                     break;
 
-                case QuestHandle.swordWeald:
+                case QuestHandle.squireWinds:
 
                     sceneDialogue = new()
                     {
@@ -49,13 +51,26 @@ namespace StardewDruid.Data
                             [1] = Mod.instance.Helper.Translation.Get("DialogueData.817"),
                             [2] = Mod.instance.Helper.Translation.Get("DialogueData.818"),
                         },
+
                         [2] = new() { [1] = Mod.instance.Helper.Translation.Get("DialogueData.819"), },
                         [3] = new() { [2] = Mod.instance.Helper.Translation.Get("DialogueData.820"), },
+                        
                         [4] = new()
                         {
-                            [0] = Mod.instance.Helper.Translation.Get("DialogueData.821"),
-                            //[1] = Mod.instance.Helper.Translation.Get("DialogueData.822"),
-                            //[2] = Mod.instance.Helper.Translation.Get("DialogueData.823"),
+                            [3] = Mod.instance.Helper.Translation.Get("DialogueData.500.squireWinds.1"),
+
+                        },
+
+                        [5] = new()
+                        {
+                            [3] = Mod.instance.Helper.Translation.Get("DialogueData.500.squireWinds.2"),
+
+                        },
+
+                        [6] = new()
+                        {
+                            [3] = Mod.instance.Helper.Translation.Get("DialogueData.500.squireWinds.3"),
+
                         },
 
                     };

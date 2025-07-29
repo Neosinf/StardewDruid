@@ -23,8 +23,6 @@ namespace StardewDruid.Cast.Mists
         public Fishspot()
         {
 
-            activeLimit = 300;
-
         }
 
         public override void EventActivate()
@@ -32,15 +30,14 @@ namespace StardewDruid.Cast.Mists
 
             base.EventActivate();
 
-            //Mod.instance.iconData.AnimateBolt(location, origin + new Vector2(32));
             Mod.instance.spellRegister.Add(new(origin + new Vector2(32), 128, IconData.impacts.splash, new()) { type = SpellHandle.Spells.bolt });
 
-            IconData.relics fishRelic = Mod.instance.relicsData.RelicMistsLocations();
+            IconData.relics fishRelic = Mod.instance.relicHandle.RelicMistsLocations();
 
             if (fishRelic != IconData.relics.none)
             {
 
-                if (!RelicData.HasRelic(fishRelic))
+                if (!RelicHandle.HasRelic(fishRelic))
                 {
                     fishingRelic = true;
                 }
@@ -55,13 +52,6 @@ namespace StardewDruid.Cast.Mists
 
         public override void EventDecimal()
         {
-
-            if (!EventActive())
-            {
-
-                return;
-
-            }
 
             fishCounter--;
 
@@ -123,12 +113,12 @@ namespace StardewDruid.Cast.Mists
                 if(fishTotal >= (checkTime * 3) && fishingRelic)
                 {
 
-                    IconData.relics fishRelic = Mod.instance.relicsData.RelicMistsLocations();
+                    IconData.relics fishRelic = Mod.instance.relicHandle.RelicMistsLocations();
 
                     if (fishRelic != IconData.relics.none)
                     {
 
-                        if (!RelicData.HasRelic(fishRelic))
+                        if (!RelicHandle.HasRelic(fishRelic))
                         {
 
                             ThrowHandle throwRelic = new(Game1.player, origin, fishRelic);

@@ -26,34 +26,27 @@ namespace StardewDruid.Journal
 
             type = journalTypes.omens;
 
-            title = StringData.Strings(StringData.stringkeys.satchel);
+            title = JournalData.JournalTitle(type);
 
             interfaceComponents = new()
             {
 
-                [101] = addButton(journalButtons.herbalism),
+
+                [101] = addButton(journalButtons.openQuests),
+                [102] = addButton(journalButtons.openMasteries),
+                [103] = addButton(journalButtons.openRelics),
+                [104] = addButton(journalButtons.openAlchemy),
+                [105] = addButton(journalButtons.openPotions),
+                [106] = addButton(journalButtons.openCompanions),
+                [107] = addButton(journalButtons.openDragonomicon),
 
                 [201] = addButton(journalButtons.back),
-                [202] = addButton(journalButtons.start),
-                [203] = addButton(journalButtons.bombs),
-                [204] = addButton(journalButtons.goods),
+                [202] = addButton(journalButtons.openTrophies),
 
                 [301] = addButton(journalButtons.exit),
                 [302] = addButton(journalButtons.forward),
-                [303] = addButton(journalButtons.end),
 
             };
-
-            if (Mod.instance.magic)
-            {
-
-                interfaceComponents.Remove(204);
-
-                interfaceComponents.Remove(302);
-
-                interfaceComponents.Remove(303);
-
-            }
 
         }
         
@@ -64,7 +57,7 @@ namespace StardewDruid.Journal
 
             pagination = 0;
 
-            contentComponents = Mod.instance.herbalData.JournalOmens();
+            contentComponents = Mod.instance.herbalHandle.JournalOmens();
 
             if (record >= contentComponents.Count)
             {
@@ -94,22 +87,15 @@ namespace StardewDruid.Journal
 
             switch (button)
             {
-
-                case journalButtons.start:
-
-                    DruidJournal.openJournal(journalTypes.herbalism);
-
-                    return;
-
                 case journalButtons.back:
 
-                    DruidJournal.openJournal(journalTypes.bombs);
+                    DruidJournal.openJournal(journalTypes.alchemy);
 
                     return;
 
                 case journalButtons.forward:
 
-                    DruidJournal.openJournal(journalTypes.goods);
+                    DruidJournal.openJournal(journalTypes.trophies);
 
                     return;
 
@@ -148,7 +134,7 @@ namespace StardewDruid.Journal
             if (contentComponents[focus].type == ContentComponent.contentTypes.toggle)
             {
 
-                Mod.instance.herbalData.ConvertToGoods(contentComponents[focus].id, amount);
+                Mod.instance.herbalHandle.ConvertToGoods(contentComponents[focus].id, amount);
 
                 populateContent();
 
@@ -158,7 +144,7 @@ namespace StardewDruid.Journal
 
             string herbalId = contentComponents[focus].id;
 
-            Mod.instance.herbalData.ConsumeOmen(herbalId, amount);
+            Mod.instance.herbalHandle.ConsumeOmen(herbalId, amount);
 
             populateContent();
 

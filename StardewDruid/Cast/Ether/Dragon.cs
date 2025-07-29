@@ -22,6 +22,7 @@ using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using xTile.Tiles;
+using static StardewValley.Menus.QuestContainerMenu;
 
 namespace StardewDruid.Cast.Ether
 {
@@ -1000,7 +1001,7 @@ namespace StardewDruid.Cast.Ether
         public void PerformFlight()
         {
 
-            if (ModUtility.MonsterProximity(Game1.player.currentLocation, new() { Game1.player.Position, }, 160).Count > 0)
+            if (ModUtility.MonsterProximity(Game1.player.currentLocation, Game1.player.Position, 160).Count > 0)
             {
 
                 PerformSweep();
@@ -1259,9 +1260,9 @@ namespace StardewDruid.Cast.Ether
                 added = new() { SpellHandle.Effects.knock, SpellHandle.Effects.stomping }
             };
 
-            Mod.instance.spellRegister.Add(sweep);
+            sweep.added.Add(Mod.instance.rite.ChargeEffect(Mod.instance.rite.chargeType));
 
-            Mod.instance.rite.Dispense(160);
+            Mod.instance.spellRegister.Add(sweep);
 
         }
 
@@ -1362,9 +1363,9 @@ namespace StardewDruid.Cast.Ether
                 instant = true
             };
 
-            Mod.instance.spellRegister.Add(sweep);
+            sweep.added.Add(Mod.instance.rite.ChargeEffect(Mod.instance.rite.chargeType));
 
-            Mod.instance.rite.Dispense(160);
+            Mod.instance.spellRegister.Add(sweep);
 
         }
 
@@ -1967,13 +1968,9 @@ namespace StardewDruid.Cast.Ether
 
                         instant = true,
 
-                        power = 4,
+                        targetType = SpellHandle.TargetTypes.conic,
 
-                        terrain = 2,
-
-                        explosion = 2,
-
-                        added = new() { SpellHandle.Effects.embers, }
+                        added = new() { SpellHandle.Effects.explode, SpellHandle.Effects.hack, SpellHandle.Effects.embers, }
 
                     };
 
@@ -1984,10 +1981,10 @@ namespace StardewDruid.Cast.Ether
 
                     }
 
-                    if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
+                    if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
                     {
 
-                        if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
+                        if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
                         {
 
                             burn.added.Add(SpellHandle.Effects.capture);
@@ -2215,7 +2212,7 @@ namespace StardewDruid.Cast.Ether
 
                         Crate treasureEvent = new();
 
-                        treasureEvent.EventSetup(treasurePosition, treasureId, false);
+                        treasureEvent.EventSetup(Game1.player, treasurePosition, treasureId);
 
                         treasureEvent.crateThief = true;
 
@@ -2224,8 +2221,6 @@ namespace StardewDruid.Cast.Ether
                         treasureEvent.crateTerrain = 2;
 
                         treasureEvent.treasures = new() { treasureItem };
-
-                        treasureEvent.location = Game1.player.currentLocation;
 
                         treasureEvent.EventActivate();
 
@@ -2300,19 +2295,12 @@ namespace StardewDruid.Cast.Ether
         public bool AccountStamina()
         {
 
-            if (Game1.player.Stamina <= 32 || Game1.player.health <= 25)
-            {
-
-                Mod.instance.AutoConsume();
-
-            }
-
             int cost = (int)Mod.instance.ModDifficulty() / 2;
 
             if (Game1.player.Stamina <= cost)
             {
 
-                Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.energySkill), 3);
+                Mod.instance.RegisterMessage(RiteData.Strings(RiteData.riteStrings.energyContinue), 3);
 
                 return false;
 

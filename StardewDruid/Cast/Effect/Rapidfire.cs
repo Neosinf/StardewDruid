@@ -18,7 +18,7 @@ namespace StardewDruid.Cast.Effect
         public Rapidfire()
         {
 
-            activeLimit = -1;
+            
 
             chainCounter = 50;
 
@@ -69,7 +69,7 @@ namespace StardewDruid.Cast.Effect
 
                 chainCounter = 50;
 
-                EventBar(StringData.Strings(StringData.stringkeys.rapidfire), 1);
+                ProgressBar(StringData.Strings(StringData.stringkeys.rapidfire), 1);
 
             }
 
@@ -80,7 +80,7 @@ namespace StardewDruid.Cast.Effect
 
                 chainHeat = true;
 
-                EventDisplay heatbar = EventBar(StringData.Strings(StringData.stringkeys.overheated), 2);
+                EventBar heatbar = ProgressBar(StringData.Strings(StringData.stringkeys.overheated), 2);
 
                 heatbar.colour = Microsoft.Xna.Framework.Color.DarkMagenta;
 

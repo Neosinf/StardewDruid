@@ -155,7 +155,7 @@ namespace StardewDruid.Character
 
                 type = SpellHandle.Spells.missile,
 
-                factor = 4,
+                displayFactor = 4,
 
                 missile = MissileHandle.missiles.bats,
 
@@ -165,7 +165,7 @@ namespace StardewDruid.Character
 
                 sound = SpellHandle.Sounds.batFlap,
 
-                added = new() { Mod.instance.rite.ChargeEffect(IconData.cursors.fatesCharge, true), }
+                added = new() { Mod.instance.rite.ChargeEffect(Rite.riteCharges.fates, true), }
 
             };
 

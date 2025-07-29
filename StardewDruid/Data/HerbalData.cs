@@ -1181,7 +1181,7 @@ namespace StardewDruid.Data
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.361.7"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.500.buff.1"),
                     Mod.instance.Helper.Translation.Get("HerbalData.361.8"),
                 },
 
@@ -1234,7 +1234,7 @@ namespace StardewDruid.Data
             potions[HerbalHandle.herbals.donis.ToString()] = new()
             {
 
-                buff = HerbalBuff.herbalbuffs.donor,
+                buff = HerbalBuff.herbalbuffs.macerari,
 
                 herbal = HerbalHandle.herbals.donis,
 
@@ -1244,9 +1244,9 @@ namespace StardewDruid.Data
 
                 // level = 99,
 
-                title = Mod.instance.Helper.Translation.Get("HerbalData.361.13"),
+                title = Mod.instance.Helper.Translation.Get("HerbalData.500.buff.2"),
 
-                description = Mod.instance.Helper.Translation.Get("HerbalData.361.14"),
+                description = Mod.instance.Helper.Translation.Get("HerbalData.500.buff.3"),
 
                 ingredients = HerbalIngredients(HerbalHandle.herbals.donis),
 
@@ -1258,7 +1258,7 @@ namespace StardewDruid.Data
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.361.15"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.500.buff.4"),
                     Mod.instance.Helper.Translation.Get("HerbalData.361.16"),
                 },
 
@@ -1450,7 +1450,7 @@ namespace StardewDruid.Data
 
                 details = new()
                 {
-                    Mod.instance.Helper.Translation.Get("HerbalData.361.27"),
+                    Mod.instance.Helper.Translation.Get("HerbalData.500.buff.5"),
                     Mod.instance.Helper.Translation.Get("HerbalData.361.28"),
                 },
 

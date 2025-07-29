@@ -156,7 +156,7 @@ namespace StardewDruid.Cast.Weald
 
                         }
 
-                        Mod.instance.iconData.CursorIndicator(location, (check.Key * 64), IconData.cursors.weald, new());
+                        Mod.instance.iconData.CursorIndicator(location, (check.Key * 64) + new Vector2(32), IconData.cursors.weald, new());
 
                     }
                     else if (terrainFeature is StardewValley.TerrainFeatures.Tree treeFeature)
@@ -182,7 +182,7 @@ namespace StardewDruid.Cast.Weald
 
                             treeFeature.growthStage.Value++;
 
-                            Mod.instance.iconData.CursorIndicator(location, (check.Key * 64), IconData.cursors.weald, new());
+                            Mod.instance.iconData.CursorIndicator(location, (check.Key * 64) + new Vector2(32), IconData.cursors.weald, new());
 
                         }
 
@@ -355,7 +355,7 @@ namespace StardewDruid.Cast.Weald
 
                 if (
                     Mod.instance.Helper.ModRegistry.IsLoaded("Morghoula.AlchemistryCP") 
-                    && !RelicData.HasRelic(IconData.relics.runestones_alchemistry) 
+                    && !RelicHandle.HasRelic(IconData.relics.runestones_alchemistry) 
                     && !Mod.instance.eventRegister.ContainsKey("RelicAlchemistry")
                 )
                 {
@@ -548,12 +548,12 @@ namespace StardewDruid.Cast.Weald
 
                     bool batRelic = false;
 
-                    dropRelic = Mod.instance.relicsData.RelicTacticalLocations();
+                    dropRelic = Mod.instance.relicHandle.RelicTacticalLocations();
 
                     if (dropRelic != IconData.relics.none)
                     {
 
-                        if (!RelicData.HasRelic(dropRelic))
+                        if (!RelicHandle.HasRelic(dropRelic))
                         {
 
                             batRelic = true;
@@ -642,12 +642,12 @@ namespace StardewDruid.Cast.Weald
 
                     }
 
-                    dropRelic = Mod.instance.relicsData.RelicTacticalLocations();
+                    dropRelic = Mod.instance.relicHandle.RelicTacticalLocations();
 
                     if (dropRelic != IconData.relics.none)
                     {
 
-                        if (!RelicData.HasRelic(dropRelic))
+                        if (!RelicHandle.HasRelic(dropRelic))
                         {
 
                             throwRelic = new(Game1.player, fruitTop, dropRelic);
@@ -719,12 +719,12 @@ namespace StardewDruid.Cast.Weald
 
                     creature.AddCreature(location, CharacterHandle.characters.BrownBat, new Vector2(10, 0) * 64, new Vector2(12, 30) * 64, 4f, 2);
 
-                    dropRelic = Mod.instance.relicsData.RelicTacticalLocations();
+                    dropRelic = Mod.instance.relicHandle.RelicTacticalLocations();
 
                     if (dropRelic != IconData.relics.none)
                     {
 
-                        if (!RelicData.HasRelic(dropRelic))
+                        if (!RelicHandle.HasRelic(dropRelic))
                         {
 
                             throwRelic = new(Game1.player, new Vector2(6, 0) * 64, dropRelic);
@@ -816,12 +816,12 @@ namespace StardewDruid.Cast.Weald
 
                     creature.AddCreature(location, CharacterHandle.characters.Bat,  new Vector2(39, 11) * 64, new Vector2(1, 11) * 64, 4f);
 
-                    dropRelic = Mod.instance.relicsData.RelicTacticalLocations();
+                    dropRelic = Mod.instance.relicHandle.RelicTacticalLocations();
 
                     if (dropRelic != IconData.relics.none)
                     {
 
-                        if (!RelicData.HasRelic(dropRelic))
+                        if (!RelicHandle.HasRelic(dropRelic))
                         {
 
                             throwRelic = new(Game1.player, new Vector2(39, 8) * 64, dropRelic);

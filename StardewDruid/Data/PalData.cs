@@ -77,7 +77,7 @@ namespace StardewDruid.Data
 
             pettoday = false;
 
-            Mod.instance.relicsData.ReliquaryUpdate(PalHandle.PalRelic(type).ToString());
+            Mod.instance.relicHandle.ReliquaryUpdate(PalHandle.PalRelic(type).ToString());
 
             PalLoad(CharacterHandle.CharacterSaveMode(type));
 
@@ -339,9 +339,9 @@ namespace StardewDruid.Data
 
             }
 
-            HerbalHandle.herbals best = Mod.instance.herbalData.BestHerbal(potion);
+            HerbalHandle.herbals best = Mod.instance.herbalHandle.BestHerbal(potion);
 
-            Herbal data = Mod.instance.herbalData.herbalism[best.ToString()];
+            Herbal data = Mod.instance.herbalHandle.herbalism[best.ToString()];
 
             int boost = data.level + 1;
 
@@ -418,7 +418,7 @@ namespace StardewDruid.Data
 
             }
 
-            DisplayPotion hudmessage = new(Mod.instance.Helper.Translation.Get("HerbalData.386.35").Tokens(new { potion = data.title, monster = name }), data);
+            DisplayMessage hudmessage = new(Mod.instance.Helper.Translation.Get("HerbalData.386.35").Tokens(new { potion = data.title, monster = name }), data);
 
             Game1.addHUDMessage(hudmessage);
 

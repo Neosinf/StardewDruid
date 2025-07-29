@@ -20,8 +20,9 @@ using System.Threading.Tasks;
 
 namespace StardewDruid.Journal
 {
-    public class DragonPage : DruidJournal
+    public class DragonJournal : DruidJournal
     {
+
         public DragonRender dragonRender;
 
         public ColorPicker dragonPrimary;
@@ -50,7 +51,7 @@ namespace StardewDruid.Journal
 
         public int dragonResist;
 
-        public DragonPage(string QuestId, int Record) : base(QuestId, Record) 
+        public DragonJournal(string QuestId, int Record) : base(QuestId, Record) 
         {
 
         }
@@ -58,43 +59,29 @@ namespace StardewDruid.Journal
         public override void populateInterface()
         {
 
-            type = journalTypes.dragonPage;
+            type = journalTypes.dragon;
 
             parentJournal = journalTypes.relics;
 
-            title = StringData.Strings(StringData.stringkeys.dragonomicon);
+            title = JournalData.JournalTitle(type);
 
             interfaceComponents = new()
             {
 
-                [101] = addButton(journalButtons.quests),
-                [102] = addButton(journalButtons.effects),
-                [103] = addButton(journalButtons.relics),
-                [104] = addButton(journalButtons.herbalism),
-                [105] = addButton(journalButtons.lore),
-                [106] = addButton(journalButtons.transform),
-                [107] = addButton(journalButtons.recruits),
+                [101] = addButton(journalButtons.openQuests),
+                [102] = addButton(journalButtons.openMasteries),
+                [103] = addButton(journalButtons.openRelics),
+                [104] = addButton(journalButtons.openAlchemy),
+                [105] = addButton(journalButtons.openPotions),
+                [106] = addButton(journalButtons.openCompanions),
+                [107] = addButton(journalButtons.openDragonomicon),
 
-                [109] = addButton(journalButtons.dragonReset),
+                [109] = addButton(journalButtons.dragonCopy),
                 [110] = addButton(journalButtons.dragonSave),
 
                 [301] = addButton(journalButtons.exit),
 
             };
-
-            /*if (!RelicData.HasRelic(StardewDruid.Data.IconData.relics.heiress_gift))
-            {
-
-                interfaceComponents[107] = addButton(journalButtons.pals);
-
-            }*/
-
-        }
-
-        public void FixSchemes()
-        {
-
-
 
         }
 
@@ -260,26 +247,6 @@ namespace StardewDruid.Journal
 
         }
 
-        public override void activateInterface()
-        {
-
-            resetInterface();
-
-            fadeMenu();
-
-            if (Mod.instance.magic)
-            {
-
-                interfaceComponents[101].active = false;
-
-                interfaceComponents[103].fade = 1f;
-
-                interfaceComponents[103].text = StringData.Strings(StringData.stringkeys.dragonomicon);
-
-            }
-
-        }
-
         public override void pressButton(journalButtons button)
         {
 
@@ -292,7 +259,7 @@ namespace StardewDruid.Journal
 
                     break;
 
-                case journalButtons.dragonReset:
+                case journalButtons.dragonCopy:
 
                     if (dragonScheme != 0)
                     {

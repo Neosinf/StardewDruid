@@ -30,7 +30,7 @@ namespace StardewDruid.Cast.Effect
             : base()
         {
 
-            activeLimit = -1;
+            
 
         }
 
@@ -43,7 +43,7 @@ namespace StardewDruid.Cast.Effect
 
         }
 
-        public override bool EventPerformAction(SButton Button, actionButtons Action = actionButtons.action)
+        public override bool EventPerformAction(actionButtons Action = actionButtons.action)
         {
 
             if (!EventActive())
@@ -242,7 +242,7 @@ namespace StardewDruid.Cast.Effect
 
         }
 
-        public override float SpecialProgress(int displayId)
+        public override float DisplayProgress(int displayId)
         {
 
             for (int m = snareVictims.Count - 1; m >= 0; m--)
@@ -321,7 +321,7 @@ namespace StardewDruid.Cast.Effect
 
             snareVictims.Add(Victim, snare);
 
-            EventDisplay bar = EventBar(StringData.Strings(StringData.stringkeys.chained) + Victim.displayName, snare.index);
+            EventBar bar = ProgressBar(StringData.Strings(StringData.stringkeys.chained) + Victim.displayName, snare.index);
 
             bar.colour = Mod.instance.iconData.SchemeColour(IconData.schemes.death);
 
@@ -349,7 +349,7 @@ namespace StardewDruid.Cast.Effect
 
             snarePlayers.Add(Game1.player,snare);
 
-            EventDisplay bar = EventBar(StringData.Strings(StringData.stringkeys.chained) + Game1.player.Name, snare.index);
+            EventBar bar = ProgressBar(StringData.Strings(StringData.stringkeys.chained) + Game1.player.Name, snare.index);
 
             bar.colour = Mod.instance.iconData.SchemeColour(IconData.schemes.death);
 

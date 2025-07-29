@@ -144,7 +144,7 @@ namespace StardewDruid.Character
         public override List<StardewValley.Monsters.Monster> FindMonsters()
         {
 
-            return ModUtility.MonsterProximity(currentLocation, new() { Position, }, 960f, true);
+            return ModUtility.MonsterProximity(currentLocation, Position, 960f, true);
 
         }
 

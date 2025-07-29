@@ -64,7 +64,7 @@ namespace StardewDruid.Monster
             {
                 type = SpellHandle.Spells.missile,
 
-                factor = 2,
+                displayFactor = 2,
 
                 missile = MissileHandle.missiles.axe,
 

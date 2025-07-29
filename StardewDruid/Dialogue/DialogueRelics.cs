@@ -30,7 +30,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.energies:
 
-                    int runestones = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.runestones);
+                    int runestones = Mod.instance.relicHandle.ProgressRelicQuest(RelicHandle.relicsets.runestones);
 
                     if (runestones == -1)
                     {
@@ -78,7 +78,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.attendant:
 
-                    int tactical = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.tactical);
+                    int tactical = Mod.instance.relicHandle.ProgressRelicQuest(RelicHandle.relicsets.tactical);
 
                     if (tactical == -1)
                     {
@@ -104,7 +104,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.waves:
 
-                    int avalant = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.avalant);
+                    int avalant = Mod.instance.relicHandle.ProgressRelicQuest(RelicHandle.relicsets.avalant);
 
                     if (avalant == -1)
                     {
@@ -131,7 +131,7 @@ namespace StardewDruid.Dialogue
                 case CharacterHandle.characters.Revenant:
                 case CharacterHandle.characters.Marlon:
 
-                    int books = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.books);
+                    int books = Mod.instance.relicHandle.ProgressRelicQuest(RelicHandle.relicsets.books);
 
                     if (books == -1)
                     {
@@ -157,7 +157,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.Buffin:
 
-                    int boxes = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.boxes);
+                    int boxes = Mod.instance.relicHandle.ProgressRelicQuest(RelicHandle.relicsets.boxes);
 
                     if (boxes == -1)
                     {
@@ -188,7 +188,7 @@ namespace StardewDruid.Dialogue
                         return null;
                     }
 
-                    int restores = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.restore);
+                    int restores = Mod.instance.relicHandle.ProgressRelicQuest(RelicHandle.relicsets.restore);
 
                     if (restores == -1)
                     {
@@ -214,7 +214,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.monument_artisans:
 
-                    if (RelicData.HasRelic(IconData.relics.box_measurer))
+                    if (RelicHandle.HasRelic(IconData.relics.box_measurer))
                     {
 
                         return Mod.instance.Helper.Translation.Get("CharacterHandle.302");
@@ -229,7 +229,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.monument_morticians:
 
-                    if (RelicData.HasRelic(IconData.relics.box_measurer))
+                    if (RelicHandle.HasRelic(IconData.relics.box_measurer))
                     {
 
                         return Mod.instance.Helper.Translation.Get("CharacterHandle.310");
@@ -240,7 +240,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.monument_chaos:
 
-                    if (RelicData.HasRelic(IconData.relics.box_measurer))
+                    if (RelicHandle.HasRelic(IconData.relics.box_measurer))
                     {
 
                         return Mod.instance.Helper.Translation.Get("CharacterHandle.314");
@@ -273,7 +273,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.energies:
 
-                    int runestones = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.runestones);
+                    int runestones = Mod.instance.relicHandle.ProgressRelicQuest(RelicHandle.relicsets.runestones);
 
                     if (runestones == -1)
                     {
@@ -293,9 +293,9 @@ namespace StardewDruid.Dialogue
 
                             Mod.instance.questHandle.AssignQuest(QuestHandle.relicWeald);
 
-                            generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.559"));
+                            generate.responses.Add(1,Mod.instance.Helper.Translation.Get("CharacterHandle.559"));
 
-                            generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.561"));
+                            generate.answers.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.561"));
 
                         }
                         else
@@ -328,13 +328,13 @@ namespace StardewDruid.Dialogue
 
                     Game1.exitActiveMenu();
 
-                    DruidJournal.openJournal(DruidJournal.journalTypes.bombs);
+                    DruidJournal.openJournal(DruidJournal.journalTypes.powders);
 
                     return null;
 
                 case CharacterHandle.characters.attendant:
 
-                    int tactical = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.tactical);
+                    int tactical = Mod.instance.relicHandle.ProgressRelicQuest(RelicHandle.relicsets.tactical);
 
                     if (tactical == -1)
                     {
@@ -353,9 +353,9 @@ namespace StardewDruid.Dialogue
                         {
                             Mod.instance.questHandle.AssignQuest(QuestHandle.relicTactical);
 
-                            generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.310.6"));
+                            generate.responses.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.310.6"));
 
-                            generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.310.7"));
+                            generate.answers.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.310.7"));
                         }
                         else
                         {
@@ -379,7 +379,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.waves:
 
-                    int avalant = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.avalant);
+                    int avalant = Mod.instance.relicHandle.ProgressRelicQuest(RelicHandle.relicsets.avalant);
 
                     if (avalant == -1)
                     {
@@ -398,9 +398,9 @@ namespace StardewDruid.Dialogue
                         {
                             Mod.instance.questHandle.AssignQuest(QuestHandle.relicMists);
 
-                            generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.604"));
+                            generate.responses.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.604"));
 
-                            generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.606") +
+                            generate.answers.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.606") +
                                 Mod.instance.Helper.Translation.Get("CharacterHandle.607"));
                         }
                         else
@@ -429,7 +429,7 @@ namespace StardewDruid.Dialogue
                         return null;
                     }
 
-                    int restoration = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.restore);
+                    int restoration = Mod.instance.relicHandle.ProgressRelicQuest(RelicHandle.relicsets.restore);
 
                     if (restoration == -1)
                     {
@@ -447,9 +447,9 @@ namespace StardewDruid.Dialogue
                         {
                             Mod.instance.questHandle.AssignQuest(QuestHandle.relicRestore);
 
-                            generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.329.17"));
+                            generate.responses.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.329.17"));
 
-                            generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.329.18"));
+                            generate.answers.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.329.18"));
 
                         }
                         else
@@ -472,7 +472,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.Revenant:
 
-                    int books = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.books);
+                    int books = Mod.instance.relicHandle.ProgressRelicQuest(RelicHandle.relicsets.books);
 
                     if (books == -1)
                     {
@@ -492,9 +492,9 @@ namespace StardewDruid.Dialogue
 
                             Mod.instance.questHandle.AssignQuest(QuestHandle.relicEther);
 
-                            generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.652"));
+                            generate.responses.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.652"));
 
-                            generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.654"));
+                            generate.answers.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.654"));
 
                         }
                         else
@@ -517,7 +517,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.Marlon:
 
-                    int booksMarlon = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.books);
+                    int booksMarlon = Mod.instance.relicHandle.ProgressRelicQuest(RelicHandle.relicsets.books);
 
                     if (booksMarlon == -1)
                     {
@@ -538,9 +538,9 @@ namespace StardewDruid.Dialogue
 
                             Mod.instance.questHandle.AssignQuest(QuestHandle.relicEther);
 
-                            generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.652"));
+                            generate.responses.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.652"));
 
-                            generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.343.20"));
+                            generate.answers.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.343.20"));
 
                         }
                         else
@@ -563,7 +563,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.Buffin:
 
-                    int boxes = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.boxes);
+                    int boxes = Mod.instance.relicHandle.ProgressRelicQuest(RelicHandle.relicsets.boxes);
 
                     if (boxes == -1)
                     {
@@ -583,10 +583,10 @@ namespace StardewDruid.Dialogue
 
                             generate.intro = Mod.instance.Helper.Translation.Get("CharacterHandle.697");
 
-                            generate.responses.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.699") +
+                            generate.responses.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.699") +
                                 Mod.instance.Helper.Translation.Get("CharacterHandle.700"));
 
-                            generate.answers.Add(Mod.instance.Helper.Translation.Get("CharacterHandle.702") +
+                            generate.answers.Add(1, Mod.instance.Helper.Translation.Get("CharacterHandle.702") +
                                 Mod.instance.Helper.Translation.Get("CharacterHandle.703") +
                                 Mod.instance.Helper.Translation.Get("CharacterHandle.704"));
 
@@ -616,7 +616,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.monument_artisans:
 
-                    switch (Mod.instance.relicsData.ArtisanRelicQuest())
+                    switch (Mod.instance.relicHandle.ArtisanRelicQuest())
                     {
 
                         case 0:
@@ -648,7 +648,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.monument_priesthood:
 
-                    int priestProgress = Mod.instance.relicsData.ProgressRelicQuest(RelicData.relicsets.boxes);
+                    int priestProgress = Mod.instance.relicHandle.ProgressRelicQuest(RelicHandle.relicsets.boxes);
 
                     if (priestProgress >= 0)
                     {
@@ -684,7 +684,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.monument_morticians:
 
-                    switch (Mod.instance.relicsData.MorticianRelicQuest())
+                    switch (Mod.instance.relicHandle.MorticianRelicQuest())
                     {
 
                         case 0:
@@ -711,7 +711,7 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.monument_chaos:
 
-                    switch (Mod.instance.relicsData.ChaosRelicQuest())
+                    switch (Mod.instance.relicHandle.ChaosRelicQuest())
                     {
 
                         case 0:
@@ -742,31 +742,31 @@ namespace StardewDruid.Dialogue
 
                 case CharacterHandle.characters.PalBat:
 
-                    RelicHandle.RelicFunction(IconData.relics.monster_bat.ToString());
+                    RelicFunction.RelicFunction(IconData.relics.monster_bat.ToString());
 
                     return null;
 
                 case CharacterHandle.characters.PalSlime:
 
-                    RelicHandle.RelicFunction(IconData.relics.monster_slime.ToString());
+                    RelicFunction.RelicFunction(IconData.relics.monster_slime.ToString());
 
                     return null;
 
                 case CharacterHandle.characters.PalSpirit:
 
-                    RelicHandle.RelicFunction(IconData.relics.monster_spirit.ToString());
+                    RelicFunction.RelicFunction(IconData.relics.monster_spirit.ToString());
 
                     return null;
 
                 case CharacterHandle.characters.PalGhost:
 
-                    RelicHandle.RelicFunction(IconData.relics.monster_ghost.ToString());
+                    RelicFunction.RelicFunction(IconData.relics.monster_ghost.ToString());
 
                     return null;
 
                 case CharacterHandle.characters.PalSerpent:
 
-                    RelicHandle.RelicFunction(IconData.relics.monster_serpent.ToString());
+                    RelicFunction.RelicFunction(IconData.relics.monster_serpent.ToString());
 
                     return null;
 

@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static StardewValley.Minigames.TargetGame;
 
 namespace StardewDruid.Cast.Effect
 {
@@ -47,14 +46,21 @@ namespace StardewDruid.Cast.Effect
 
             harvesters.Add(tile, new(location, tile));
 
-            activeLimit = eventCounter + 8;
-
             iridium = (Game1.getLocationFromName("CommunityCenter") as CommunityCenter).areAllAreasComplete() || Mod.instance.Config.cultivateBehaviour == 4;
 
         }
 
         public override void EventDecimal()
         {
+
+            if (harvesters.Count == 0)
+            {
+
+                eventComplete = true;
+
+                return;
+
+            }
 
             // -------------------------------------------------
             // Crops

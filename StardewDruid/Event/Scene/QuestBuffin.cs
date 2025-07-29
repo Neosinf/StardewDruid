@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using StardewDruid.Cast;
-using StardewDruid.Cast.Bones;
 using StardewDruid.Cast.Effect;
 using StardewDruid.Cast.Ether;
 using StardewDruid.Cast.Mists;
@@ -143,7 +142,7 @@ namespace StardewDruid.Event.Scene
 
             mainEvent = true;
 
-            activeLimit = -1;
+            
 
         }
 
@@ -163,18 +162,16 @@ namespace StardewDruid.Event.Scene
 
             location.playSound("discoverMineral");
 
-            Mod.instance.iconData.DecorativeIndicator(location, Game1.player.Position, IconData.decorations.bones, 3f, new());
+            Mod.instance.iconData.RiteCircle(location, Game1.player.Position, IconData.ritecircles.witch, 3f, new());
 
             SendFriendsHome();
 
         }
 
-        public override bool AttemptReset()
+        public override void OnLocationAbort()
         {
 
-            Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
-
-            return false;
+            Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
 
         }
 
@@ -928,13 +925,13 @@ namespace StardewDruid.Event.Scene
 
                 case 218:
 
-                    eventRenders.Add(new("skull_saurus", location.Name, eventVectors[220] * 64 - new Vector2(0,32), IconData.relics.skull_saurus));
+                    eventRenders.Add("skull_saurus", new("skull_saurus", location.Name, eventVectors[220] * 64 - new Vector2(0,32), IconData.relics.skull_saurus));
 
-                    eventRenders.Add(new("skull_gelatin", location.Name, eventVectors[220] * 64 + new Vector2(0, 32), IconData.relics.skull_gelatin));
+                    eventRenders.Add("skull_gelatin", new("skull_gelatin", location.Name, eventVectors[220] * 64 + new Vector2(0, 32), IconData.relics.skull_gelatin));
 
-                    eventRenders.Add(new("skull_cannoli", location.Name, eventVectors[221] * 64 - new Vector2(0, 32), IconData.relics.skull_cannoli));
+                    eventRenders.Add("skull_cannoli", new("skull_cannoli", location.Name, eventVectors[221] * 64 - new Vector2(0, 32), IconData.relics.skull_cannoli));
 
-                    eventRenders.Add(new("skull_fox", location.Name, eventVectors[221] * 64 + new Vector2(0, 32), IconData.relics.skull_fox));
+                    eventRenders.Add("skull_fox", new("skull_fox", location.Name, eventVectors[221] * 64 + new Vector2(0, 32), IconData.relics.skull_fox));
 
                     DialogueCue(218);
 
@@ -1125,7 +1122,7 @@ namespace StardewDruid.Event.Scene
 
                     bosses[0] = dinosaur;
 
-                    eventRenders.Remove(eventRenders.First());
+                    eventRenders.Remove("skull_saurus");
 
                     SpellHandle smokeOne = new(eventVectors[220] * 64 + new Vector2(32, 0), 256, IconData.impacts.smoke, new()) { displayRadius = 3, sound = SpellHandle.Sounds.flameSpellHit };
 
@@ -1155,7 +1152,7 @@ namespace StardewDruid.Event.Scene
 
                     companions[0].doEmote(16);
 
-                    eventRenders.Remove(eventRenders.First());
+                    eventRenders.Remove("skull_gelatin");
 
                     SpellHandle smokeTwo = new(eventVectors[221] * 64 + new Vector2(32, 0), 256, IconData.impacts.smoke, new()) { displayRadius = 3, sound = SpellHandle.Sounds.flameSpellHit };
 
@@ -1183,7 +1180,7 @@ namespace StardewDruid.Event.Scene
 
                     bosses[2] = dustking;
 
-                    eventRenders.Remove(eventRenders.First());
+                    eventRenders.Remove("skull_cannoli");
 
                     SpellHandle smokeThree = new(eventVectors[221] * 64 + new Vector2(32, 0), 256, IconData.impacts.smoke, new()) { displayRadius = 3, sound = SpellHandle.Sounds.flameSpellHit };
 
@@ -1212,7 +1209,7 @@ namespace StardewDruid.Event.Scene
 
                     bosses[3] = dragon;
 
-                    eventRenders.Remove(eventRenders.First());
+                    eventRenders.Remove("skull_fox");
 
                     SpellHandle smokeFour = new(eventVectors[220] * 64 + new Vector2(32, 0), 256, IconData.impacts.smoke, new()) { displayRadius = 3, sound = SpellHandle.Sounds.flameSpellHit };
 
@@ -1370,7 +1367,7 @@ namespace StardewDruid.Event.Scene
 
                     DialogueCue(355);
 
-                    ThrowHandle throwMap = new(companions[7].Position, companions[0].Position, IconData.relics.book_chart);
+                    ThrowHandle throwMap = new(companions[7].Position, companions[0].Position, IconData.relics.shadowtin_chart);
 
                     throwMap.register();
 
@@ -1529,7 +1526,7 @@ namespace StardewDruid.Event.Scene
 
                     voices[8] = bosses[0];
 
-                    EventDisplay bossBar = BossBar(0, 8);
+                    EventBar bossBar = BossBar(0, 8);
 
                     bossBar.colour = Microsoft.Xna.Framework.Color.Brown;
 

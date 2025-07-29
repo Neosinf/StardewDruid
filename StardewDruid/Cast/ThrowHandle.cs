@@ -163,7 +163,7 @@ namespace StardewDruid.Cast
 
             pocket = true;
 
-            Mod.instance.relicsData.ReliquaryUpdate(relic.ToString());
+            Mod.instance.relicHandle.ReliquaryUpdate(relic.ToString());
 
             track = true;
 
@@ -415,7 +415,7 @@ namespace StardewDruid.Cast
 
                     };
 
-                    Mod.instance.EventQuery(query, QueryData.queries.ThrowRelic);
+                    Mod.instance.EventQuery(query, QueryData.queries.ReceiveRelic);
 
                     break;
 
@@ -523,6 +523,8 @@ namespace StardewDruid.Cast
 
             ParsedItemData dataOrErrorItem;
 
+            Microsoft.Xna.Framework.Rectangle itemRect;
+
             switch (thrown)
             {
 
@@ -540,7 +542,7 @@ namespace StardewDruid.Cast
 
                     dataOrErrorItem = ItemRegistry.GetDataOrErrorItem(item.QualifiedItemId);
 
-                    Microsoft.Xna.Framework.Rectangle itemRect = dataOrErrorItem.GetSourceRect(0, item.ParentSheetIndex);
+                    itemRect = dataOrErrorItem.GetSourceRect(0, item.ParentSheetIndex);
 
                     animation = new(0, timeframe * 16.66f, 1, 1, origin + new Vector2(8, 8), false, false)
                     {
@@ -601,7 +603,7 @@ namespace StardewDruid.Cast
 
                 case throwing.potion:
 
-                    Herbal herbal = Mod.instance.herbalData.herbalism[((HerbalHandle.herbals)index).ToString()];
+                    Herbal herbal = Mod.instance.herbalHandle.herbalism[((HerbalHandle.herbals)index).ToString()];
 
                     Microsoft.Xna.Framework.Rectangle potionRect = IconData.PotionRectangles(herbal.display);
 
@@ -709,7 +711,7 @@ namespace StardewDruid.Cast
 
                     Game1.player.currentLocation.TemporarySprites.Add(animation);
 
-                    string text = Mod.instance.relicsData.reliquary[((IconData.relics)index).ToString()].heldup;
+                    string text = Mod.instance.relicHandle.reliquary[((IconData.relics)index).ToString()].heldup;
 
                     Game1.drawObjectDialogue(text);
 
@@ -717,9 +719,9 @@ namespace StardewDruid.Cast
 
                 case throwing.potion:
 
-                    Herbal herbal = Mod.instance.herbalData.herbalism[((HerbalHandle.herbals)index).ToString()];
+                    Herbal herbal = Mod.instance.herbalHandle.herbalism[((HerbalHandle.herbals)index).ToString()];
 
-                    DisplayPotion hudmessage = new("+" + quality.ToString() + " " + herbal.title, herbal);
+                    DisplayMessage hudmessage = new("+" + quality.ToString() + " " + herbal.title, herbal);
 
                     Game1.addHUDMessage(hudmessage);
 

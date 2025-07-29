@@ -262,8 +262,33 @@ namespace StardewDruid.Handle
         public static void Warp(GameLocation target, Character.Character entity, Vector2 position, bool animate = true, IconData.warps Warp = IconData.warps.portal)
         {
 
+            entity.Position = position;
+
+            entity.ResetActives(true);
+
+            if (Mod.instance.trackers.ContainsKey(entity.characterType))
+            {
+
+                entity.attentionTimer = 180;
+
+            }
+
             if (entity.currentLocation != null)
             {
+
+                if (entity.currentLocation.Name == target.Name)
+                {
+
+                    if (animate)
+                    {
+
+                        Mod.instance.iconData.AnimateQuickWarp(entity.currentLocation, entity.Position, false, Warp);
+
+                    }
+
+                    return;
+
+                }
 
                 if (animate)
                 {
@@ -275,23 +300,10 @@ namespace StardewDruid.Handle
                 entity.currentLocation.characters.Remove(entity);
 
             }
-
-            entity.ResetActives(true);
-
+ 
             target.characters.Add(entity);
 
             entity.currentLocation = target;
-
-            entity.Position = position;
-
-            entity.SettleOccupied();
-
-            if (Mod.instance.trackers.ContainsKey(entity.characterType))
-            {
-
-               entity.attentionTimer = 180;
-
-            }
 
             if (animate)
             {

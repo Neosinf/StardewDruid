@@ -27,6 +27,14 @@ namespace StardewDruid.Location.Druid
     public class Cavern : DruidLocation
     {
 
+        public const int groveExitX = 5;
+
+        public const int groveExitY = 7;
+
+        public const int groveEnterX = 6;
+
+        public const int groveEnterY = 9;
+
         public Cavern() { }
 
         public Cavern(string Name)
@@ -77,6 +85,8 @@ namespace StardewDruid.Location.Druid
             ignoreOutdoorLighting.Set(false);
 
             mapReset();
+
+            middlePosition = new Vector2(10) * 64;
 
             Dictionary<int, List<List<int>>> codes = new()
             {

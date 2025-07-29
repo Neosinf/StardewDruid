@@ -32,6 +32,14 @@ namespace StardewDruid.Location.Druid
 
         public bool gateOpen;
 
+        public const int groveExitX = 25;
+
+        public const int groveExitY = 28;
+
+        public const int groveEnterX = 25;
+
+        public const int groveEnterY = 26;
+
         public Sanctuary() { }
 
         public Sanctuary(string Name)

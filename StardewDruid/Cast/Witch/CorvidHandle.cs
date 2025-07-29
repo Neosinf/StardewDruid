@@ -9,111 +9,27 @@ using StardewValley;
 using StardewValley.Tools;
 using System.Collections.Generic;
 
-namespace StardewDruid.Cast.Bones
+namespace StardewDruid.Cast.Witch
 {
-    public class Corvids : EventHandle
+    public class CorvidHandle
     {
 
-        public Corvids()
+        public static void ToggleCorvids()
         {
-
-        }
-
-        public override bool EventActive()
-        {
-
-            if (!inabsentia && !eventLocked)
-            {
-
-                if (!Mod.instance.RiteButtonHeld())
-                {
-
-                    return false;
-
-                }
-
-                if (Vector2.Distance(origin, Game1.player.Position) > 32 && !Mod.instance.ShiftButtonHeld())
-                {
-
-                    return false;
-
-                }
-
-            }
-            
-            return base.EventActive();
-
-        }
-
-        public override void EventDecimal()
-        {
-
-            if (!EventActive())
-            {
-
-                RemoveAnimations();
-
-                return;
-
-            }
-
-            if (!inabsentia && !eventLocked)
-            {
-                
-                decimalCounter++;
-
-                if (decimalCounter == 5)
-                {
-
-                    Mod.instance.rite.Channel(IconData.skies.sunset, 75);
-
-                    channel = IconData.skies.sunset;
-
-                }
-
-                if (decimalCounter == 15)
-                {
-
-                    eventLocked = true;
-
-                    Mod.instance.spellRegister.Add(new(origin, 128, IconData.impacts.smoke, new()) {  sound = SpellHandle.Sounds.getNewSpecialItem, });
-
-                    if (!Mod.instance.questHandle.IsComplete(QuestHandle.wealdFour))
-                    {
-
-                        Mod.instance.questHandle.UpdateTask(QuestHandle.wealdFour, 1);
-
-                    }
-
-                    Mod.instance.rite.ChargeSet(IconData.cursors.bonesCharge);
-
-                }
-
-                return;
-
-            }
 
             if (CheckCorvids())
             {
 
-                if (!Mod.instance.trackers[CharacterHandle.characters.Raven].eventLock)
-                {
+                RemoveCorvids();
 
-                    RemoveCorvids();
-
-                }
-
-            }
-            else
-            {
-
-                SummonCorvids();
+                return;
 
             }
 
-            eventComplete = true;
+            SummonCorvids();
 
         }
+
 
         public static bool CheckCorvids()
         {

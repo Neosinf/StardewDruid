@@ -139,9 +139,9 @@ namespace StardewDruid.Character
 
                 scheme = IconData.schemes.ether,
 
-                factor = 3,
+                displayFactor = 3,
 
-                added = new() { SpellHandle.Effects.freeze, },
+                added = new() { SpellHandle.Effects.wisp, },
 
                 display = IconData.impacts.puff
             };

@@ -50,12 +50,19 @@ namespace StardewDruid.Cast.Effect
 
             tornadoes.Add(tile, new(location, tile));
 
-            activeLimit = eventCounter + 16;
-
         }
 
         public override void EventDecimal()
         {
+
+            if(tornadoes.Count == 0)
+            {
+
+                eventComplete = true; 
+                
+                return;
+
+            }
 
             // -------------------------------------------------
             // Fish
@@ -353,7 +360,7 @@ namespace StardewDruid.Cast.Effect
 
                 Crate treasure = new();
 
-                treasure.EventSetup(tile * 64, treasureId, false);
+                treasure.EventSetup(Game1.player, tile * 64, treasureId);
 
                 treasure.crateThief = true;
 
@@ -369,8 +376,6 @@ namespace StardewDruid.Cast.Effect
                 treasure.crateTerrain = 2;
 
                 treasure.treasures = treasureHorde.Value;
-
-                treasure.location = Game1.player.currentLocation;
 
                 treasure.EventActivate();
 

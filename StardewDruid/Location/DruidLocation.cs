@@ -31,6 +31,8 @@ namespace StardewDruid.Location
 
         public Dictionary<Vector2, CharacterHandle.characters> dialogueTiles = new();
 
+        public Vector2 middlePosition = Vector2.Zero;
+
         public bool internalDarkness;
 
         public bool ambientDarkness;

@@ -239,9 +239,9 @@ namespace StardewDruid.Handle
 
         };
 
-        public Dictionary<herbals, List<herbals>> omenlines = new()
+        public List<herbals> omenLines = new()
         {
-            [herbals.omen_feather] = new() {
+
                 herbals.omen_feather,
                 herbals.omen_tuft,
                 herbals.omen_shell,
@@ -251,8 +251,12 @@ namespace StardewDruid.Handle
                 herbals.omen_down,
                 herbals.omen_coral,
                 herbals.omen_bloom,
-            },
-            [herbals.trophy_shroom] = new() {
+
+        };
+
+        public List<herbals> trophyLines = new()
+        {
+
                 herbals.trophy_shroom,
                 herbals.trophy_eye,
                 herbals.trophy_pumpkin,
@@ -262,34 +266,6 @@ namespace StardewDruid.Handle
                 herbals.trophy_spike,
                 herbals.trophy_seed,
                 herbals.trophy_dragon
-            },
-
-        };
-
-        public List<herbals> omenLayout = new()
-        {
-
-            // omens
-            herbals.omen_feather,
-            herbals.omen_tuft,
-            herbals.omen_shell,
-            herbals.omen_tusk,
-            herbals.omen_nest,
-            herbals.omen_glass,
-            herbals.omen_down,
-            herbals.omen_coral,
-            herbals.omen_bloom,
-
-            // trophies
-            herbals.trophy_shroom,
-            herbals.trophy_eye,
-            herbals.trophy_pumpkin,
-            herbals.trophy_pearl,
-            herbals.trophy_tooth,
-            herbals.trophy_spiral,
-            herbals.trophy_spike,
-            herbals.trophy_seed,
-            herbals.trophy_dragon
 
         };
 
@@ -310,25 +286,25 @@ namespace StardewDruid.Handle
         public int MaxHerbal()
         {
 
-            if (RelicData.HasRelic(IconData.relics.herbalism_gauge))
+            if (RelicHandle.HasRelic(IconData.relics.herbalism_gauge))
             {
 
                 return 4;
 
             }
-            if (RelicData.HasRelic(IconData.relics.herbalism_still))
+            if (RelicHandle.HasRelic(IconData.relics.herbalism_still))
             {
 
                 return 3;
 
             }
-            if (RelicData.HasRelic(IconData.relics.herbalism_pan))
+            if (RelicHandle.HasRelic(IconData.relics.herbalism_pan))
             {
 
                 return 2;
 
             }
-            if (RelicData.HasRelic(IconData.relics.herbalism_mortar))
+            if (RelicHandle.HasRelic(IconData.relics.herbalism_mortar))
             {
 
                 return 1;
@@ -370,7 +346,7 @@ namespace StardewDruid.Handle
 
                         case herbals.aether:
 
-                            if (!RelicData.HasRelic(IconData.relics.herbalism_gauge))
+                            if (!RelicHandle.HasRelic(IconData.relics.herbalism_gauge))
                             {
 
                                 empty = true;
@@ -381,7 +357,7 @@ namespace StardewDruid.Handle
 
                         case herbals.faeth:
 
-                            if (!RelicData.HasRelic(IconData.relics.herbalism_crucible))
+                            if (!RelicHandle.HasRelic(IconData.relics.herbalism_crucible))
                             {
 
                                 empty = true;
@@ -392,7 +368,7 @@ namespace StardewDruid.Handle
 
                         case herbals.voil:
 
-                            if (!RelicData.HasRelic(IconData.relics.herbalism_crucible))
+                            if (!RelicHandle.HasRelic(IconData.relics.herbalism_crucible))
                             {
 
                                 empty = true;
@@ -550,7 +526,7 @@ namespace StardewDruid.Handle
 
                 ContentComponent toggleTwo = new(ContentComponent.contentTypes.toggleright, key);
 
-                if (!Mod.instance.magic && Mod.instance.herbalData.herbalism[key].units > 0)
+                if (!Mod.instance.magic && Mod.instance.herbalHandle.herbalism[key].units > 0)
                 {
 
                     toggleTwo.icons[0] = IconData.displays.goods;
@@ -580,7 +556,7 @@ namespace StardewDruid.Handle
 
             int start = 0;
 
-            if (!RelicData.HasRelic(IconData.relics.herbalism_mortar))
+            if (!RelicHandle.HasRelic(IconData.relics.herbalism_mortar))
             {
 
                 return journal;
@@ -592,7 +568,7 @@ namespace StardewDruid.Handle
 
                 bool blankSpace = false;
 
-                if (!RelicData.HasRelic(IconData.relics.herbalism_still))
+                if (!RelicHandle.HasRelic(IconData.relics.herbalism_still))
                 {
 
                     if (bomblines[herbals.voil].Contains(herbal) || herbal == herbals.voil)
@@ -604,7 +580,7 @@ namespace StardewDruid.Handle
 
                 }
 
-                if (!RelicData.HasRelic(IconData.relics.monsterbadge) || Mod.instance.magic)
+                if (!RelicHandle.HasRelic(IconData.relics.companion_badge) || Mod.instance.magic)
                 {
 
                     if (bomblines[herbals.captis].Contains(herbal))
@@ -751,7 +727,7 @@ namespace StardewDruid.Handle
 
                 ContentComponent toggleTwo = new(ContentComponent.contentTypes.toggleright, key);
 
-                if (!Mod.instance.magic && Mod.instance.herbalData.herbalism[key].units > 0)
+                if (!Mod.instance.magic && Mod.instance.herbalHandle.herbalism[key].units > 0)
                 {
 
                     toggleTwo.icons[0] = IconData.displays.goods;
@@ -777,11 +753,24 @@ namespace StardewDruid.Handle
         public Dictionary<int, ContentComponent> JournalOmens()
         {
 
+            return OmenLayout(omenLines);
+
+        }
+        public Dictionary<int, ContentComponent> JournalTrophies()
+        {
+
+            return OmenLayout(trophyLines);
+
+        }
+
+        public Dictionary<int, ContentComponent> OmenLayout(List<herbals> layout)
+        {
+
             Dictionary<int, ContentComponent> journal = new();
 
             int start = 0;
 
-            foreach (herbals herbal in omenLayout)
+            foreach (herbals herbal in layout)
             {
 
                 string key = herbal.ToString();
@@ -821,19 +810,13 @@ namespace StardewDruid.Handle
 
                 ContentComponent toggleTwo = new(ContentComponent.contentTypes.toggle, key);
 
-                if (!Mod.instance.magic)
+                toggleTwo.icons[0] = IconData.displays.goods;
+
+                toggleTwo.text[0] = StringData.Strings(StringData.stringkeys.sendToGoods);
+
+                if (Mod.instance.magic)
                 {
-
-                    toggleTwo.icons[0] = IconData.displays.goods;
-
-                    toggleTwo.text[0] = StringData.Strings(StringData.stringkeys.sendToGoods);
-
-                }
-                else
-                {
-
                     toggleTwo.active = false;
-
                 }
 
                 journal[start++] = toggleTwo;
@@ -939,7 +922,7 @@ namespace StardewDruid.Handle
 
                     }
 
-                    int level = Mod.instance.herbalData.MaxHerbal();
+                    int level = Mod.instance.herbalHandle.MaxHerbal();
 
                     switch (herbal.herbal)
                     {
@@ -1205,19 +1188,19 @@ namespace StardewDruid.Handle
 
                     }
 
-                    int level = Mod.instance.herbalData.MaxHerbal();
+                    int level = Mod.instance.herbalHandle.MaxHerbal();
 
                     switch (herbal.herbal)
                     {
 
                         case herbals.omen_feather:
 
-                            for (int i = Mod.instance.herbalData.lines[herbals.ligna].Count - 1; i >= 0; i--)
+                            for (int i = Mod.instance.herbalHandle.lines[herbals.ligna].Count - 1; i >= 0; i--)
                             {
 
-                                herbals herbalName = Mod.instance.herbalData.lines[herbals.ligna][i];
+                                herbals herbalName = Mod.instance.herbalHandle.lines[herbals.ligna][i];
 
-                                if (Mod.instance.herbalData.herbalism[herbalName.ToString()].level <= level && GetHerbalism(herbalName) < 999)
+                                if (Mod.instance.herbalHandle.herbalism[herbalName.ToString()].level <= level && GetHerbalism(herbalName) < 999)
                                 {
 
                                     herbal.potions.Add(herbalName, 1);
@@ -1232,12 +1215,12 @@ namespace StardewDruid.Handle
 
                         case herbals.omen_tuft:
 
-                            for (int i = Mod.instance.herbalData.lines[herbals.impes].Count - 1; i >= 0; i--)
+                            for (int i = Mod.instance.herbalHandle.lines[herbals.impes].Count - 1; i >= 0; i--)
                             {
 
-                                herbals herbalName = Mod.instance.herbalData.lines[herbals.impes][i];
+                                herbals herbalName = Mod.instance.herbalHandle.lines[herbals.impes][i];
 
-                                if (Mod.instance.herbalData.herbalism[herbalName.ToString()].level <= level && GetHerbalism(herbalName) < 999)
+                                if (Mod.instance.herbalHandle.herbalism[herbalName.ToString()].level <= level && GetHerbalism(herbalName) < 999)
                                 {
 
                                     herbal.potions.Add(herbalName, 1);
@@ -1251,12 +1234,12 @@ namespace StardewDruid.Handle
 
                         case herbals.omen_shell:
 
-                            for (int i = Mod.instance.herbalData.lines[herbals.celeri].Count - 1; i >= 0; i--)
+                            for (int i = Mod.instance.herbalHandle.lines[herbals.celeri].Count - 1; i >= 0; i--)
                             {
 
-                                herbals herbalName = Mod.instance.herbalData.lines[herbals.celeri][i];
+                                herbals herbalName = Mod.instance.herbalHandle.lines[herbals.celeri][i];
 
-                                if (Mod.instance.herbalData.herbalism[herbalName.ToString()].level <= level && GetHerbalism(herbalName) < 999)
+                                if (Mod.instance.herbalHandle.herbalism[herbalName.ToString()].level <= level && GetHerbalism(herbalName) < 999)
                                 {
 
                                     herbal.potions.Add(herbalName, 1);
@@ -1507,14 +1490,14 @@ namespace StardewDruid.Handle
 
             int max = MaxHerbal();
 
-            if (RelicData.HasRelic(IconData.relics.herbalism_gauge))
+            if (RelicHandle.HasRelic(IconData.relics.herbalism_gauge))
             {
 
                 BrewHerbal(herbals.aether.ToString(), 50, bench);
 
             }
 
-            if (RelicData.HasRelic(IconData.relics.herbalism_crucible))
+            if (RelicHandle.HasRelic(IconData.relics.herbalism_crucible))
             {
 
                 BrewHerbal(herbals.faeth.ToString(), 50, bench);
@@ -1556,7 +1539,7 @@ namespace StardewDruid.Handle
                 {
                     case herbals.coruscant:
 
-                        if (!RelicData.HasRelic(IconData.relics.herbalism_mortar))
+                        if (!RelicHandle.HasRelic(IconData.relics.herbalism_mortar))
                         {
 
                             continue;
@@ -1569,7 +1552,7 @@ namespace StardewDruid.Handle
 
                     case herbals.voil:
 
-                        if (!RelicData.HasRelic(IconData.relics.herbalism_still))
+                        if (!RelicHandle.HasRelic(IconData.relics.herbalism_still))
                         {
 
                             continue;
@@ -1582,7 +1565,7 @@ namespace StardewDruid.Handle
 
                     case herbals.captis:
 
-                        if (!RelicData.HasRelic(IconData.relics.monsterbadge) || Mod.instance.magic)
+                        if (!RelicHandle.HasRelic(IconData.relics.companion_badge) || Mod.instance.magic)
                         {
 
                             continue;
@@ -1794,7 +1777,7 @@ namespace StardewDruid.Handle
 
                 consumeBuffer = Game1.currentGameTime.TotalGameTime.TotalSeconds + 5;
 
-                DisplayPotion hudmessage = new(Mod.instance.Helper.Translation.Get("HerbalData.1116").Tokens(new { potion = herbal.title, }), herbal);
+                DisplayMessage hudmessage = new(Mod.instance.Helper.Translation.Get("HerbalData.1116").Tokens(new { potion = herbal.title, }), herbal);
 
                 Game1.addHUDMessage(hudmessage);
 
@@ -2007,9 +1990,9 @@ namespace StardewDruid.Handle
 
             }
 
-            Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.Spells.greatbolt, factor = 3, sound = SpellHandle.Sounds.thunder, });
+            Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.Spells.greatbolt, displayFactor = 3, sound = SpellHandle.Sounds.thunder, });
 
-            Rectangle relicRect = IconData.RelicRectangles(IconData.relics.crow_hammer);
+            Rectangle relicRect = IconData.RelicRectangles(IconData.relics.druid_hammer);
 
             TemporaryAnimatedSprite animation = new(0, 1500, 1, 1, origin, false, false)
             {
@@ -2150,9 +2133,9 @@ namespace StardewDruid.Handle
 
                     new ThrowHandle(Game1.player, origin, tooling) { delay = 60 }.register();
 
-                    Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.Spells.greatbolt, factor = 3, sound = SpellHandle.Sounds.thunder, });
+                    Mod.instance.spellRegister.Add(new(origin, 192, IconData.impacts.none, new()) { type = SpellHandle.Spells.greatbolt, displayFactor = 3, sound = SpellHandle.Sounds.thunder, });
 
-                    Rectangle relicRect = IconData.RelicRectangles(IconData.relics.crow_hammer);
+                    Rectangle relicRect = IconData.RelicRectangles(IconData.relics.druid_hammer);
 
                     TemporaryAnimatedSprite animation = new(0, 1500, 1, 1, origin, false, false)
                     {
@@ -2339,21 +2322,21 @@ namespace StardewDruid.Handle
 
             }
 
-            int level = Mod.instance.herbalData.MaxHerbal();
+            int level = Mod.instance.herbalHandle.MaxHerbal();
 
             switch (herbal.herbal)
             {
 
                 case herbals.omen_feather:
 
-                    for (int i = Mod.instance.herbalData.lines[herbals.ligna].Count - 1; i >= 0; i--)
+                    for (int i = Mod.instance.herbalHandle.lines[herbals.ligna].Count - 1; i >= 0; i--)
                     {
 
-                        herbals herbalName = Mod.instance.herbalData.lines[herbals.ligna][i];
+                        herbals herbalName = Mod.instance.herbalHandle.lines[herbals.ligna][i];
 
                         int potionExist = GetHerbalism(herbalName);
 
-                        if (Mod.instance.herbalData.herbalism[herbalName.ToString()].level <= level && potionExist < 999)
+                        if (Mod.instance.herbalHandle.herbalism[herbalName.ToString()].level <= level && potionExist < 999)
                         {
 
                             List<int> potionLimits = new()
@@ -2384,14 +2367,14 @@ namespace StardewDruid.Handle
 
                 case herbals.omen_tuft:
 
-                    for (int i = Mod.instance.herbalData.lines[herbals.impes].Count - 1; i >= 0; i--)
+                    for (int i = Mod.instance.herbalHandle.lines[herbals.impes].Count - 1; i >= 0; i--)
                     {
 
-                        herbals herbalName = Mod.instance.herbalData.lines[herbals.impes][i];
+                        herbals herbalName = Mod.instance.herbalHandle.lines[herbals.impes][i];
 
                         int potionExist = GetHerbalism(herbalName);
 
-                        if (Mod.instance.herbalData.herbalism[herbalName.ToString()].level <= level && potionExist < 999)
+                        if (Mod.instance.herbalHandle.herbalism[herbalName.ToString()].level <= level && potionExist < 999)
                         {
 
                             List<int> potionLimits = new()
@@ -2421,14 +2404,14 @@ namespace StardewDruid.Handle
 
                 case herbals.omen_shell:
 
-                    for (int i = Mod.instance.herbalData.lines[herbals.celeri].Count - 1; i >= 0; i--)
+                    for (int i = Mod.instance.herbalHandle.lines[herbals.celeri].Count - 1; i >= 0; i--)
                     {
 
-                        herbals herbalName = Mod.instance.herbalData.lines[herbals.celeri][i];
+                        herbals herbalName = Mod.instance.herbalHandle.lines[herbals.celeri][i];
 
                         int potionExist = GetHerbalism(herbalName);
 
-                        if (Mod.instance.herbalData.herbalism[herbalName.ToString()].level <= level && potionExist < 999)
+                        if (Mod.instance.herbalHandle.herbalism[herbalName.ToString()].level <= level && potionExist < 999)
                         {
 
                             List<int> potionLimits = new()
@@ -3077,14 +3060,14 @@ namespace StardewDruid.Handle
 
             int tier = 0;
 
-            if (RelicData.HasRelic(IconData.relics.herbalism_still))
+            if (RelicHandle.HasRelic(IconData.relics.herbalism_still))
             {
 
                 tier = Mod.instance.randomIndex.Next(2);
 
             }
 
-            if (RelicData.HasRelic(IconData.relics.monsterbadge))
+            if (RelicHandle.HasRelic(IconData.relics.companion_badge))
             {
 
                 tier = Mod.instance.randomIndex.Next(3);
@@ -3201,7 +3184,7 @@ namespace StardewDruid.Handle
             celerity,
             imbuement,
             amorous,
-            donor,
+            macerari,
             rapidfire,
             concussion,
             jumper,
@@ -3372,7 +3355,7 @@ namespace StardewDruid.Handle
 
                         description.Add(Mod.instance.Helper.Translation.Get("HerbalData.2"));
 
-                        description.Add(Mod.instance.Helper.Translation.Get("HerbalData.374.1"));
+                        //description.Add(Mod.instance.Helper.Translation.Get("HerbalData.374.1"));
 
                         break;
 
@@ -3382,7 +3365,7 @@ namespace StardewDruid.Handle
 
                         description.Add(Mod.instance.Helper.Translation.Get("HerbalData.4"));
 
-                        description.Add(Mod.instance.Helper.Translation.Get("HerbalData.374.2"));
+                        //description.Add(Mod.instance.Helper.Translation.Get("HerbalData.374.2"));
 
                         break;
 
@@ -3392,7 +3375,7 @@ namespace StardewDruid.Handle
 
                         description.Add(Mod.instance.Helper.Translation.Get("HerbalData.6"));
 
-                        description.Add(Mod.instance.Helper.Translation.Get("HerbalData.374.3"));
+                        //description.Add(Mod.instance.Helper.Translation.Get("HerbalData.374.3"));
 
                         break;
 
@@ -3400,7 +3383,7 @@ namespace StardewDruid.Handle
 
                         description.Add(Mod.instance.Helper.Translation.Get("HerbalData.361.29") + level + expire);
 
-                        description.Add(Mod.instance.Helper.Translation.Get("HerbalData.373.1"));
+                        description.Add(Mod.instance.Helper.Translation.Get("HerbalData.500.buff.7"));
 
                         break;
 
@@ -3412,11 +3395,11 @@ namespace StardewDruid.Handle
 
                         break;
 
-                    case herbalbuffs.donor:
+                    case herbalbuffs.macerari:
 
-                        description.Add(Mod.instance.Helper.Translation.Get("HerbalData.361.31") + level + expire);
+                        description.Add(Mod.instance.Helper.Translation.Get("HerbalData.500.buff.6") + level + expire);
 
-                        description.Add(Mod.instance.Helper.Translation.Get("HerbalData.373.3"));
+                        description.Add(Mod.instance.Helper.Translation.Get("HerbalData.500.buff.8"));
 
                         break;
 

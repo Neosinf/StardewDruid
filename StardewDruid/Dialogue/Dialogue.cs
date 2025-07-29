@@ -8,6 +8,7 @@ using StardewValley.Menus;
 using StardewValley.Minigames;
 using StardewValley.Monsters;
 using StardewValley.Quests;
+using StardewValley.TerrainFeatures;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
@@ -358,10 +359,10 @@ namespace StardewDruid.Dialogue
 
             List<Response> responseList = new();
 
-            for (int r = 0; r < specialEntry.responses.Count; r++)
+            foreach(KeyValuePair<int,string> response in specialEntry.responses)
             {
 
-                responseList.Add(new(r.ToString(), specialEntry.responses[r]));
+                responseList.Add(new(response.Key.ToString(), response.Value));
 
             }
 
@@ -399,30 +400,49 @@ namespace StardewDruid.Dialogue
 
         }
 
-        public virtual void RespondSpecialDialogue(Farmer visitor, string dialogueId)
+        public virtual void RespondSpecialDialogue(Farmer visitor, string answerGiven)
         {
 
             string specialId = currentSpecial;
 
             DialogueSpecial special = specialDialogue[specialId];
 
-            int id = Convert.ToInt32(dialogueId);
+            int answerId = Convert.ToInt32(answerGiven);
 
-            if (id == 999)
+            if (answerId == 999)
             {
 
                 return;
 
             }
 
-            if (special.lead)
+            if(special.choices.Count > 0)
+            {
+
+                if (special.choices.ContainsKey(answerId) && special.dialogueId != null)
+                {
+
+                    Mod.instance.save.dialogues[special.dialogueId] = (int)special.choices[answerId];
+
+                }
+
+            }
+
+            if (special.leads.Count > 0)
             {
 
                 currentIndex++;
 
-                int answer = Convert.ToInt32(special.answers[id]);
+                int lead = special.leads.First().Value;
 
-                DialogueSpecial nextEntry = DialogueGenerator(characterType, currentSubject, currentIndex, answer);
+                if (special.leads.ContainsKey(answerId))
+                {
+
+                    lead = special.leads[answerId];
+
+                }
+
+                DialogueSpecial nextEntry = DialogueGenerator(characterType, currentSubject, currentIndex, lead);
 
                 if (nextEntry == null)
                 {
@@ -457,7 +477,7 @@ namespace StardewDruid.Dialogue
             if (special.questId != null)
             {
 
-                Mod.instance.questHandle.DialogueCheck(special.questId, special.questContext, characterType, id);
+                Mod.instance.questHandle.DialogueCheck(special.questId, special.questContext, characterType, answerId);
 
             }
 
@@ -466,16 +486,16 @@ namespace StardewDruid.Dialogue
 
                 string answer;
 
-                if (special.answers.Count <= id)
+                if (special.answers.Count <= answerId)
                 {
 
-                    answer = special.answers.First();
+                    answer = special.answers.First().Value;
 
                 }
                 else
                 {
 
-                    answer = special.answers[id];
+                    answer = special.answers[answerId];
 
                 }
 
@@ -500,7 +520,7 @@ namespace StardewDruid.Dialogue
 
             }
 
-            Data.Quest.questTypes dial = Data.Quest.questTypes.approach;
+            Data.Quest.questTypes useDialogue = Data.Quest.questTypes.approach;
 
             specialDialogue[eventId] = special;
 
@@ -515,19 +535,19 @@ namespace StardewDruid.Dialogue
 
                         case Data.Quest.questTypes.challenge:
 
-                            dial = Data.Quest.questTypes.challenge;
+                            useDialogue = Data.Quest.questTypes.challenge;
 
                             break;
 
                         case Data.Quest.questTypes.lesson:
 
-                            dial = Data.Quest.questTypes.lesson;
+                            useDialogue = Data.Quest.questTypes.lesson;
 
                             break;
 
                         default:
 
-                            dial = Data.Quest.questTypes.miscellaneous;
+                            useDialogue = Data.Quest.questTypes.miscellaneous;
 
                             break;
                     
@@ -540,9 +560,28 @@ namespace StardewDruid.Dialogue
             if (special.prompt)
             {
 
-                promptDialogue[eventId] = dial;
+                promptDialogue[eventId] = useDialogue;
 
             }
+
+        }
+
+
+        public virtual void QuickplaySpecialDialogue(string dialogueId, DialogueSpecial special)
+        {
+
+            if (special == null)
+            {
+
+                return;
+
+            }
+
+            specialDialogue[dialogueId] = special;
+
+            currentSpecial = dialogueId;
+
+            DelayedAction.functionAfterDelay(RunSpecialQuestion, 100);
 
         }
 
@@ -570,21 +609,41 @@ namespace StardewDruid.Dialogue
     public class DialogueSpecial
     {
 
+        public enum dialoguemanner
+        {
+
+            serious,
+            lighthearted,
+            taciturn,
+            impatient,
+
+        }
+
+        public string dialogueId;
+
         public string intro;
 
         public int companion;
 
-        public List<string> responses = new();
+        public Dictionary<int, string> responses = new();
 
-        public List<string> answers = new();
+        public Dictionary<int, string> answers = new();
+
+        public Dictionary<int, int> leads = new();
+
+        public Dictionary<int, dialoguemanner> choices = new();
+
+        public bool redirect;
 
         public bool prompt;
 
         public string questId;
 
-        public int questContext;
+        public int updateScene = 999;
 
-        public bool lead;
+        public int updateCounter = 999;
+
+        public int questContext;
 
     }
 

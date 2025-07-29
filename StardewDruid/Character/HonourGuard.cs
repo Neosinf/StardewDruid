@@ -87,7 +87,7 @@ namespace StardewDruid.Character
 
                 type = SpellHandle.Spells.missile,
 
-                factor = 3,
+                displayFactor = 3,
 
                 missile = MissileHandle.missiles.knife,
 

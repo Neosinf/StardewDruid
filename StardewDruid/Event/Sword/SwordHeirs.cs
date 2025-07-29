@@ -67,7 +67,7 @@ namespace StardewDruid.Event.Scene
 
             mainEvent = true;
 
-            activeLimit = -1;
+            
 
         }
 
@@ -90,12 +90,10 @@ namespace StardewDruid.Event.Scene
 
         }
 
-        public override bool AttemptReset()
+        public override void OnLocationAbort()
         {
 
-            Mod.instance.CastMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
-
-            return false;
+            Mod.instance.RegisterMessage(StringData.Strings(StringData.stringkeys.abortTomorrow), 3, true);
 
         }
 
@@ -252,9 +250,7 @@ namespace StardewDruid.Event.Scene
 
                     Wisps wispNew = new();
 
-                    wispNew.EventSetup(eventVectors[101] * 64, Rite.eventWisps);
-
-                    wispNew.eventLocked = true;
+                    wispNew.EventSetup(Game1.player, eventVectors[101] * 64, Rite.eventWisps);
 
                     wispNew.EventActivate();
 
@@ -410,7 +406,7 @@ namespace StardewDruid.Event.Scene
 
                     goldenCore.scale = 3f;
 
-                    eventRenders.Add(goldenCore);
+                    eventRenders.Add("golden_core", goldenCore);
 
                     DialogueCueWithFeeling(111, 0, Character.Character.specials.gesture); // [111] = new() { [2] = "in return for the heart of a star", },
 
@@ -528,13 +524,13 @@ namespace StardewDruid.Event.Scene
 
                 case 170:
 
-                    EventRender heiressGift = new("heiress_gift", location.Name, companions[1].Position + new Vector2(96,-128), IconData.relics.heiress_gift);
+                    EventRender heiressGift = new("heiress_gift", location.Name, companions[1].Position + new Vector2(96,-128), IconData.relics.druid_hieress);
 
                     heiressGift.layer += 0.64f;
 
                     heiressGift.scale = 3f;
 
-                    eventRenders.Add(heiressGift);
+                    eventRenders.Add("heiress_gift", heiressGift);
                     
                     break;
 
@@ -542,7 +538,7 @@ namespace StardewDruid.Event.Scene
 
                     Vector2 strikeVector = companions[1].Position + new Vector2(80, -172);
 
-                    Mod.instance.spellRegister.Add(new(strikeVector, 192, IconData.impacts.none, new()) { type = SpellHandle.Spells.greatbolt, factor = 3, sound = SpellHandle.Sounds.thunder, });
+                    Mod.instance.spellRegister.Add(new(strikeVector, 192, IconData.impacts.none, new()) { type = SpellHandle.Spells.greatbolt, displayFactor = 3, sound = SpellHandle.Sounds.thunder, });
 
                     break;
 

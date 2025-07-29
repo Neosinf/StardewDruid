@@ -35,7 +35,7 @@ namespace StardewDruid.Cast.Mists
             : base()
         {
 
-            activeLimit = -1;
+            
 
         }
 
@@ -52,6 +52,19 @@ namespace StardewDruid.Cast.Mists
                 wisp.Value.draw(b);
 
             }
+
+        }
+
+        public override void EventActivate()
+        {
+            
+            base.EventActivate();
+
+            Game1.flashAlpha = 1f;
+
+            location.playSound("thunder");
+
+            WispArray();
 
         }
 
@@ -127,32 +140,6 @@ namespace StardewDruid.Cast.Mists
 
         }
 
-        public override bool EventActive()
-        {
-
-            if (!eventLocked)
-            {
-
-                if (!Mod.instance.RiteButtonHeld())
-                {
-
-                    return false;
-
-                }
-
-                if (Vector2.Distance(origin, Game1.player.Position) > 32 && !Mod.instance.ShiftButtonHeld())
-                {
-
-                    return false;
-
-                }
-
-            }
-
-            return base.EventActive();
-
-        }
-
         public override void EventRemove()
         {
 
@@ -172,79 +159,48 @@ namespace StardewDruid.Cast.Mists
         public override void EventDecimal()
         {
 
-            if (!EventActive())
+            decimalCounter++;
+
+            foreach (KeyValuePair<Vector2, WispHandle> wisp in wisps)
             {
 
-                RemoveAnimations();
-
-                return;
+                wisp.Value.Movement();
 
             }
 
-            decimalCounter++;
-
-            if (eventLocked)
+            if (decimalCounter % 3 == 0)
             {
 
                 foreach (KeyValuePair<Vector2, WispHandle> wisp in wisps)
                 {
 
-                    wisp.Value.Movement();
+                    wisp.Value.Behaviour();
 
                 }
 
-                if (decimalCounter % 3 == 0)
+            }
+
+            if(decimalCounter == 600)
+            {
+
+                for (int w = wisps.Count - 1; w >= 0; w--)
                 {
 
-                    foreach (KeyValuePair<Vector2, WispHandle> wisp in wisps)
-                    {
+                    KeyValuePair<Vector2, WispHandle> wisp = wisps.ElementAt(w);
 
-                        wisp.Value.Behaviour();
-
-                    }
+                    wisp.Value.fadeTo = 0;
 
                 }
 
-                return;
-
             }
 
-            if (decimalCounter == 5)
+            if(decimalCounter == 605)
             {
 
-                Mod.instance.rite.Channel(IconData.skies.moon, 75);
-
-                channel = IconData.skies.moon;
+                eventComplete = true;
 
             }
 
-            if (decimalCounter < 15)
-            {
-
-                return;
-
-            }
-
-            if(decimalCounter == 15)
-            {
-
-                Game1.flashAlpha = 1f;
-
-                location.playSound("thunder");
-
-                WispArray();
-
-                activeLimit = 120;
-
-                eventCounter = 0;
-
-                eventLocked = true;
-
-                Mod.instance.rite.castLevel = 0;
-
-                Mod.instance.rite.ChargeSet(IconData.cursors.mistsCharge);
-
-            }
 
         }
 

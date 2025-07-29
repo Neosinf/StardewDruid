@@ -14,12 +14,12 @@ namespace StardewDruid.Event.Sword
         public SwordStars()
         {
 
-            activeLimit = -1;
-
         }
 
-        public override void SetupCompanion()
+        public override void EventActivate()
         {
+
+            base.EventActivate();
 
             if (!Mod.instance.characters.ContainsKey(CharacterHandle.characters.Revenant))
             {
@@ -44,55 +44,6 @@ namespace StardewDruid.Event.Sword
 
             DialogueLoad(companions[0], 1);
 
-        }
-
-        public override bool TriggerActive()
-        {
-
-            if (TriggerLocation())
-            {
-
-                EventActivate();
-
-            }
-
-            return false;
-
-        }
-
-        public override bool AttemptReset()
-        {
-
-            if (!eventActive)
-            {
-
-                return true;
-
-            }
-
-            eventActive = false;
-
-            EventRemove();
-
-            triggerEvent = true;
-
-            SetupCompanion();
-
-            return true;
-
-        }
-
-        public override void EventRemove()
-        {
-
-            if (activeCounter >= 100 && eventActive)
-            {
-
-                eventComplete = true;
-
-            }
-
-            base.EventRemove();
         }
 
         public override void EventInterval()

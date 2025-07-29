@@ -247,7 +247,7 @@ namespace StardewDruid.Battle
 
                     onMiss = Mod.instance.Helper.Translation.Get("BattleHandle.388.1990");
 
-                    display = IconData.displays.effect;
+                    display = IconData.displays.skills;
 
                     impact = IconData.impacts.impact;
 
@@ -293,7 +293,7 @@ namespace StardewDruid.Battle
 
                     display = IconData.displays.relic;
 
-                    impact = IconData.impacts.sparkbang;
+                    impact = IconData.impacts.critical;
 
                     damage = 75;
 

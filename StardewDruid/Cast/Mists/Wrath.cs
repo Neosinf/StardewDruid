@@ -29,7 +29,7 @@ namespace StardewDruid.Cast.Mists
             : base()
         {
 
-            activeLimit = -1;
+            
 
             int tryCost = 18 - Game1.player.CombatLevel;
 
@@ -37,27 +37,11 @@ namespace StardewDruid.Cast.Mists
 
         }
 
-        public override bool EventActive()
-        {
-
-            if (!Mod.instance.RiteButtonHeld())
-            {
-
-                return false;
-
-            }
-
-            return base.EventActive();
-
-        }
-
         public override void EventDecimal()
         {
-
-            if (!EventActive())
+            
+            if (!Mod.instance.RiteButtonHeld())
             {
-
-                RemoveAnimations();
 
                 eventComplete = true;
 
@@ -101,7 +85,7 @@ namespace StardewDruid.Cast.Mists
                 {
                     type = SpellHandle.Spells.quickbolt,
 
-                    factor = 3,
+                    displayFactor = 3,
 
                     sound = SpellHandle.Sounds.silent,
 
@@ -119,7 +103,7 @@ namespace StardewDruid.Cast.Mists
                 if (decimalCounter % 6 == 0)
                 {
 
-                    bolt.factor =4;
+                    bolt.displayFactor =4;
 
                     bolt.sound = SpellHandle.Sounds.flameSpellHit;
 
@@ -135,10 +119,10 @@ namespace StardewDruid.Cast.Mists
                 }
 
 
-                if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
+                if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.spellcatch))
                 {
 
-                    if (Mod.instance.herbalData.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
+                    if (Mod.instance.herbalHandle.buff.applied.ContainsKey(HerbalBuff.herbalbuffs.capture))
                     {
 
                         bolt.added.Add(SpellHandle.Effects.capture);

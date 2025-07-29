@@ -566,7 +566,7 @@ namespace StardewDruid.Location.Terrain
         public override void draw(SpriteBatch b, GameLocation location)
         {
 
-            if (!Utility.isOnScreen(bounds.Center.ToVector2(), 576))
+            if (!Utility.isOnScreen(bounds.Center.ToVector2(), size == 1 ? 704 : 352))
             {
                 
                 return;

@@ -114,7 +114,7 @@ namespace StardewDruid.Data
                         return new()
                         {
                         title = Mod.instance.Helper.Translation.Get("EffectsData.6"),
-                        icon = IconData.displays.chaos,
+                        icon = IconData.displays.druid,
                         description = Mod.instance.Helper.Translation.Get("EffectsData.8"),
                         instruction = Mod.instance.Helper.Translation.Get("EffectsData.9"),
                         details = new()
@@ -133,7 +133,7 @@ namespace StardewDruid.Data
                         return new()
                         {
                             title = Mod.instance.Helper.Translation.Get("EffectsData.313.10"),
-                            icon = IconData.displays.effect,
+                            icon = IconData.displays.skills,
                             description = Mod.instance.Helper.Translation.Get("EffectsData.313.11"),
                             details = new()
                             {
@@ -152,7 +152,7 @@ namespace StardewDruid.Data
                     return new()
                     {
                         title = Mod.instance.Helper.Translation.Get("EffectsData.51"),
-                        icon = IconData.displays.chaos,
+                        icon = IconData.displays.druid,
                         description = Mod.instance.Helper.Translation.Get("EffectsData.53"),
                         instruction = Mod.instance.Helper.Translation.Get("EffectsData.54"),
                         details = new()
@@ -206,9 +206,9 @@ namespace StardewDruid.Data
                         details = new()
                             {
                                 Mod.instance.Helper.Translation.Get("EffectsData.386.1"),
-                                Mod.instance.Helper.Translation.Get("HerbalData.361.29") + StringData.colon + Mod.instance.Helper.Translation.Get("HerbalData.373.1"),
+                                Mod.instance.Helper.Translation.Get("HerbalData.361.29") + StringData.colon + Mod.instance.Helper.Translation.Get("HerbalData.500.buff.7"),
                                 Mod.instance.Helper.Translation.Get("HerbalData.361.30") + StringData.colon + Mod.instance.Helper.Translation.Get("HerbalData.373.2"),
-                                Mod.instance.Helper.Translation.Get("HerbalData.361.31") + StringData.colon + Mod.instance.Helper.Translation.Get("HerbalData.373.3"),
+                                Mod.instance.Helper.Translation.Get("HerbalData.500.buff.6") + StringData.colon + Mod.instance.Helper.Translation.Get("HerbalData.500.buff.8"),
                                 Mod.instance.Helper.Translation.Get("HerbalData.386.29") + StringData.colon + Mod.instance.Helper.Translation.Get("HerbalData.386.30"),
 
                                 Mod.instance.Helper.Translation.Get("HerbalData.361.32") + StringData.colon + Mod.instance.Helper.Translation.Get("HerbalData.373.4"),
@@ -408,7 +408,7 @@ namespace StardewDruid.Data
                     Effect crowhammer = new()
                     {
                         title = Mod.instance.Helper.Translation.Get("EffectsData.168"),
-                        icon = IconData.displays.chaos,
+                        icon = IconData.displays.druid,
                         description = Mod.instance.Helper.Translation.Get("EffectsData.170") +
                         Mod.instance.Helper.Translation.Get("EffectsData.171"),
                         instruction = Mod.instance.Helper.Translation.Get("EffectsData.172"),
@@ -1086,7 +1086,7 @@ namespace StardewDruid.Data
                     Effect riteOfBones = new()
                     {
                         title = Mod.instance.Helper.Translation.Get("EffectsData.340.24"),
-                        icon = IconData.displays.bones,
+                        icon = IconData.displays.witch,
                         description = Mod.instance.Helper.Translation.Get("EffectsData.340.25"),
                         instruction = Mod.instance.Helper.Translation.Get("EffectsData.340.26"),
 
@@ -1108,7 +1108,7 @@ namespace StardewDruid.Data
                     Effect corvidsSummon = new()
                     {
                         title = Mod.instance.Helper.Translation.Get("EffectsData.313.1"),
-                        icon = IconData.displays.bones,
+                        icon = IconData.displays.witch,
                         description = Mod.instance.Helper.Translation.Get("EffectsData.313.2"),
                         instruction = Mod.instance.Helper.Translation.Get("EffectsData.313.3") + Mod.instance.Helper.Translation.Get("EffectsData.313.4"),
                         details = new()
@@ -1127,7 +1127,7 @@ namespace StardewDruid.Data
                     Effect corvidsRetrieve = new()
                     {
                         title = Mod.instance.Helper.Translation.Get("EffectsData.324.1"),
-                        icon = IconData.displays.bones,
+                        icon = IconData.displays.witch,
                         description = Mod.instance.Helper.Translation.Get("EffectsData.324.2"),
                         instruction = Mod.instance.Helper.Translation.Get("EffectsData.324.3"),
                         details = new()
@@ -1144,7 +1144,7 @@ namespace StardewDruid.Data
                     Effect corvidsOpportunist = new()
                     {
                         title = Mod.instance.Helper.Translation.Get("EffectsData.324.6"),
-                        icon = IconData.displays.bones,
+                        icon = IconData.displays.witch,
                         description = Mod.instance.Helper.Translation.Get("EffectsData.324.7"),
                         instruction = Mod.instance.Helper.Translation.Get("EffectsData.324.8"),
                         details = new()
@@ -1277,11 +1277,11 @@ namespace StardewDruid.Data
 
             }
 
-            effects[QuestHandle.bonesOne] = new() { EffectPage.riteOfBones, EffectPage.corvidsSummon, };
+            effects[QuestHandle.witchOne] = new() { EffectPage.riteOfBones, EffectPage.corvidsSummon, };
 
-            effects[QuestHandle.bonesTwo] = new() { EffectPage.corvidsRetrieve, };
+            effects[QuestHandle.witchTwo] = new() { EffectPage.corvidsRetrieve, };
 
-            effects[QuestHandle.bonesThree] = new() { EffectPage.corvidsOpportunist, };
+            effects[QuestHandle.witchThree] = new() { EffectPage.corvidsOpportunist, };
 
             effects[QuestHandle.swordHeirs] = new() { EffectPage.ledgerOfTheCircle, };
 

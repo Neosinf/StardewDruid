@@ -74,13 +74,18 @@ namespace StardewDruid.Dialogue
 
             List<LoreStory> stories = RetrieveLore(character);
 
+            int loreIndex = 1;
+
             foreach (LoreStory story in stories)
             {
+
                 generate.intro = DialogueIntro(character);
 
-                generate.responses.Add(story.question);
+                generate.responses.Add(loreIndex,story.question);
 
-                generate.answers.Add(story.answer);
+                generate.answers.Add(loreIndex,story.answer);
+
+                loreIndex++;
 
             }
 
